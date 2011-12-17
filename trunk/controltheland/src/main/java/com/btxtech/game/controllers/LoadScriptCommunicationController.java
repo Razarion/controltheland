@@ -14,8 +14,9 @@
 package com.btxtech.game.controllers;
 
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.services.connection.Session;
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import com.btxtech.game.services.utg.UserTrackingService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,23 +29,30 @@ import javax.servlet.http.HttpServletResponse;
 
 @Component(value = "loadScriptCommunicationController")
 public class LoadScriptCommunicationController implements Controller {
-    public static final byte[] PIXEL_BYTES = Base64.decode("R0lGODlhAQABAPAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==");
+    public static final byte[] PIXEL_BYTES = org.apache.wicket.util.crypt.Base64.decodeBase64("R0lGODlhAQABAPAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==".getBytes());
     public static final String CONTENT_TYPE = "image/gif";
     @Autowired
     private Session session;
+    @Autowired
+    private UserTrackingService userTrackingService;
     private Log log = LogFactory.getLog(LoadScriptCommunicationController.class);
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         try {
-            log.error("------------------LoadScriptCommunication---------------------------------");
-            log.error("User Agent: " + session.getUserAgent());
-            log.error("Session Id: " + session.getSessionId());
-            log.error(httpServletRequest.getParameter(Constants.ERROR_KEY));
+            String message = httpServletRequest.getParameter(Constants.ERROR_KEY);
+            if (ClientUserTracker.WINDOW_CLOSE.equals(message)) {
+                userTrackingService.trackWindowsClosed();
+            } else {
+                log.error("------------------LoadScriptCommunication---------------------------------");
+                log.error("User Agent: " + session.getUserAgent());
+                log.error("Session Id: " + session.getSessionId());
+                log.error(message);
+            }
 
             httpServletResponse.setContentType(CONTENT_TYPE);
             httpServletResponse.getOutputStream().write(PIXEL_BYTES);
-            httpServletResponse.setContentLength(PIXEL_BYTES.length);            
+            httpServletResponse.setContentLength(PIXEL_BYTES.length);
             httpServletResponse.getOutputStream().close();
         } catch (Exception e) {
             log.error("", e);

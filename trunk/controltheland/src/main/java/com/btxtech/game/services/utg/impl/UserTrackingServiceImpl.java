@@ -62,6 +62,7 @@ import com.btxtech.game.services.utg.tracker.DbStartupTask;
 import com.btxtech.game.services.utg.tracker.DbTutorialProgress;
 import com.btxtech.game.services.utg.tracker.DbUserCommand;
 import com.btxtech.game.services.utg.tracker.DbUserHistory;
+import com.btxtech.game.services.utg.tracker.DbWindowClosed;
 import com.btxtech.game.wicket.pages.Game;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -541,6 +542,16 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     public void trackUserMessage(UserMessage userMessage) {
         try {
             hibernateTemplate.saveOrUpdate(new DbUserMessage(userMessage));
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void trackWindowsClosed() {
+        try {
+            hibernateTemplate.saveOrUpdate(new DbWindowClosed(session.getSessionId()));
         } catch (Throwable t) {
             log.error("", t);
         }

@@ -53,6 +53,7 @@ import java.util.List;
  * Time: 15:12:08
  */
 public class ClientUserTracker implements SelectionListener, TerrainScrollListener {
+    public static final String WINDOW_CLOSE = "Window closed -> move to DB";
     private static final int SEND_TIMEOUT = 1000 * 5;
     private static final ClientUserTracker INSTANCE = new ClientUserTracker();
     private List<EventTrackingItem> eventTrackingItems = new ArrayList<EventTrackingItem>();
@@ -74,10 +75,13 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
      * Singleton
      */
     private ClientUserTracker() {
+    }
+
+    public void registerWindowsCloseHandler() {
         Window.addCloseHandler(new CloseHandler<Window>() {
             @Override
             public void onClose(CloseEvent<Window> windowCloseEvent) {
-                GwtCommon.sendLogViaLoadScriptCommunication("Window closed");
+                GwtCommon.sendLogViaLoadScriptCommunication(WINDOW_CLOSE);
                 sendEventTrackerItems();
             }
         });
