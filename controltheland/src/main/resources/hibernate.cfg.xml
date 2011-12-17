@@ -76,6 +76,7 @@
         <mapping class="com.btxtech.game.services.utg.tracker.DbSelectionTrackingItem"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbScrollTrackingItem"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbDialogTracking"/>
+        <mapping class="com.btxtech.game.services.utg.tracker.DbWindowClosed"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbComparisonItemCount"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbConditionConfig"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbCountComparisonConfig"/>

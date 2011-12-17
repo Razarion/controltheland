@@ -29,12 +29,12 @@ import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.utg.tracker.DbBrowserWindowTracking;
 import com.btxtech.game.services.utg.tracker.DbDialogTracking;
-import com.btxtech.game.services.utg.tracker.DbSyncItemInfo;
 import com.btxtech.game.services.utg.tracker.DbEventTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbEventTrackingStart;
 import com.btxtech.game.services.utg.tracker.DbScrollTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbSelectionTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbSessionDetail;
+import com.btxtech.game.services.utg.tracker.DbSyncItemInfo;
 
 import java.util.Collection;
 import java.util.List;
@@ -78,6 +78,8 @@ public interface UserTrackingService {
     void onUserLeftGame(User user);
 
     void trackUserMessage(UserMessage userMessage);
+
+    void trackWindowsClosed();
 
     void onJavaScriptDetected(Boolean html5Support);
 
