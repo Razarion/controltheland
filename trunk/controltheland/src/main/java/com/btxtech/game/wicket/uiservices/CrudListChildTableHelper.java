@@ -31,8 +31,7 @@ public abstract class CrudListChildTableHelper<P, T extends CrudChild> extends A
 
     @Override
     protected void deleteChild(T modelObject) {
-        getCrudListChildServiceHelperImpl().deleteDbChild(modelObject);
-        getRuServiceHelper().updateDbEntity(getParent());
+        getRuServiceHelper().removeChildAndUpdate(getParent(), getCrudListChildServiceHelperImpl(), modelObject);
     }
 
     @Override
