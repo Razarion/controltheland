@@ -362,6 +362,8 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
             if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
                 removeGuardingBaseItem(syncItem);
             }
+        } catch (ItemDoesNotExistException ignore) {
+            // Target has may been killed in the meantime
         } catch (Throwable t) {
             log.log(Level.SEVERE, "", t);
         }
