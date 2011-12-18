@@ -31,11 +31,7 @@ public abstract class CrudChildTableHelper<P, T extends CrudChild> extends Abstr
 
     @Override
     protected void deleteChild(T modelObject) {
-        // TODO whole delet should be in one transaction
-        // only getRuServiceHelper().updateDbEntity(getParent()) is in a transaction
-        // -> on exception in updateDbEntity -> getCrudChildServiceHelperImpl().deleteDbChild(modelObject) is saved
-        getCrudChildServiceHelperImpl().deleteDbChild(modelObject);
-        getRuServiceHelper().updateDbEntity(getParent());
+        getRuServiceHelper().removeChildAndUpdate(getParent(), getCrudChildServiceHelperImpl(), modelObject);
     }
 
     @Override

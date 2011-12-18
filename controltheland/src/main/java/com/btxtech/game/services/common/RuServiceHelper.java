@@ -34,5 +34,19 @@ public class RuServiceHelper<T> {
         return hibernateTemplate.get(clazz, id);
     }
 
+    @Transactional
+    public <C extends CrudChild> void removeChildAndUpdate(final T entity, final CrudChildServiceHelper<C> crudChildServiceHelper, final C childToRemove) {
+        // Delete and save in the same transaction
+        crudChildServiceHelper.deleteDbChild(childToRemove);
+        hibernateTemplate.update(entity);
+        hibernateTemplate.flush();
+    }
 
+    @Transactional
+    public <C extends CrudChild> void removeChildAndUpdate(T entity, CrudListChildServiceHelper<C> crudListChildServiceHelper, C childToRemove) {
+        // Delete and save in the same transaction
+        crudListChildServiceHelper.deleteDbChild(childToRemove);
+        hibernateTemplate.update(entity);
+        hibernateTemplate.flush();
+    }
 }
