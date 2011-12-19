@@ -56,6 +56,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
     private ProgressBar factorizeBar;
     private ProgressBar projectileBar;
     private SimplePanel marker;
+    private boolean mouseOver = false;
 
     public ClientSyncItemView() {
         sinkEvents(Event.ONMOUSEMOVE);
@@ -222,6 +223,10 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         int y = toRelativePosition(clientSyncItem.getSyncItem().getSyncItemArea().getPosition().getY(),
                 TerrainView.getInstance().getViewOriginTop(),
                 clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageHeight());
+        if(mouseOver) {
+            mouseOver = false;
+            SpeechBubbleHandler.getInstance().onSyncItemMouseOut(clientSyncItem.getSyncItem());
+        }
         MapWindow.getAbsolutePanel().setWidgetPosition(this, x, y);
     }
 
@@ -419,6 +424,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
 
     @Override
     public void onMouseOver(MouseOverEvent event) {
+        mouseOver = true;
         CursorHandler.getInstance().setItemCursor(this, cursorItemState);
         SpeechBubbleHandler.getInstance().show(getClientSyncItem().getSyncItem());
         GwtCommon.preventDefault(event);
@@ -426,7 +432,8 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
 
     @Override
     public void onMouseOut(MouseOutEvent event) {
-        SpeechBubbleHandler.getInstance().hide();
+        mouseOver = false;
+        SpeechBubbleHandler.getInstance().onSyncItemMouseOut(clientSyncItem.getSyncItem());
     }
 
     public ClientSyncItem getClientSyncItem() {

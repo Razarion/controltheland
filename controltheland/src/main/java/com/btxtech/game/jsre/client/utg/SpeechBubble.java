@@ -23,6 +23,10 @@ import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -32,7 +36,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * Date: 22.01.2010
  * Time: 21:59:32
  */
-public class SpeechBubble extends AbsolutePanel {
+public class SpeechBubble extends AbsolutePanel implements MouseOverHandler, MouseOutHandler {
     public static final int LINE_SIZE = 2;
     public static final int SPACING = 2;
     public static final int CURVE_SIZE = 20;
@@ -73,6 +77,8 @@ public class SpeechBubble extends AbsolutePanel {
                 break;
         }
         ClientUserTracker.getInstance().onDialogAppears(this, "SpeechBubble1");
+        addDomHandler(this, MouseOverEvent.getType());
+        addDomHandler(this, MouseOutEvent.getType());
     }
 
     public SpeechBubble(int beakRelX, int beakRelY, String html, boolean scrollWithTerrain, boolean bottomRelative) {
@@ -435,4 +441,16 @@ public class SpeechBubble extends AbsolutePanel {
         context2d.fill();
         context2d.setGlobalCompositeOperation(Context2d.Composite.DESTINATION_OVER);
     }
+
+
+    @Override
+    public void onMouseOver(MouseOverEvent event) {
+        SpeechBubbleHandler.getInstance().onSpeechBubbleMouseOver();
+    }
+
+    @Override
+    public void onMouseOut(MouseOutEvent event) {
+        SpeechBubbleHandler.getInstance().onSpeechBubbleMouseOut();
+    }
+
 }
