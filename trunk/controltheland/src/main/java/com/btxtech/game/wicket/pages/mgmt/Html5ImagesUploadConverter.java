@@ -21,6 +21,8 @@ import org.apache.wicket.util.crypt.Base64;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +65,12 @@ public class Html5ImagesUploadConverter {
             }
         } else {
             double step = MathHelper.ONE_RADIANT / (double) dbItemTypeImages.size();
+            Collections.sort(dbItemTypeImages, new Comparator<DbItemTypeImage>() {
+                @Override
+                public int compare(DbItemTypeImage o1, DbItemTypeImage o2) {
+                    return o1.getNumber() - o2.getNumber();
+                }
+            });
             for (int i = 0; i < dbItemTypeImages.size(); i++) {
                 dbItemTypeImages.get(i).setAngel(step * (double) i);
             }
