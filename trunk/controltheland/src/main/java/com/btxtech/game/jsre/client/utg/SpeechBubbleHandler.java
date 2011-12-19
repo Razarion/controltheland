@@ -6,19 +6,19 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
-import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.user.client.Timer;
 
 /**
  * User: beat
  * Date: 12.11.2011
  * Time: 17:00:22
  */
-public class SpeechBubbleHandler implements SyncItemListener {
+public class SpeechBubbleHandler {
     private static final SpeechBubbleHandler INSTANCE = new SpeechBubbleHandler();
     private SpeechBubble itemSpeechBubble;
-    private Index positionOrigin;
-    private SyncBaseItem syncBaseItem;
+    private SyncItem syncItem;
+    private boolean mouseOverSpeechBubble = false;
+    private boolean mouseOverItemType = false;
 
     public static SpeechBubbleHandler getInstance() {
         return INSTANCE;
@@ -31,20 +31,28 @@ public class SpeechBubbleHandler implements SyncItemListener {
     }
 
     public void show(SyncItem syncItem) {
+        if (syncItem.equals(this.syncItem)) {
+            mouseOverItemType = true;
+            return;
+        }
         hide();
+        mouseOverSpeechBubble = false;
+        mouseOverItemType = true;
         itemSpeechBubble = new SpeechBubble(syncItem, setupHtml(syncItem), true);
         itemSpeechBubble.setBgColor(setupColor(syncItem));
         Index position = syncItem.getSyncItemArea().getPosition();
         TerrainView.getInstance().toAbsoluteIndex(position);
-        addMoveListener(syncItem);
+        this.syncItem = syncItem;
     }
 
-    public void hide() {
+    private void hide() {
         if (itemSpeechBubble != null) {
             itemSpeechBubble.close();
             itemSpeechBubble = null;
-            removeMoveListener();
+            syncItem = null;
         }
+        mouseOverItemType = false;
+        mouseOverSpeechBubble = false;
     }
 
     private String setupColor(SyncItem syncItem) {
@@ -80,36 +88,37 @@ public class SpeechBubbleHandler implements SyncItemListener {
         return builder.toString();
     }
 
-    private void addMoveListener(SyncItem syncItem) {
-        if (syncItem instanceof SyncBaseItem) {
-            SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
-            if (syncBaseItem.hasSyncMovable()) {
-                syncBaseItem.addSyncItemListener(this);
-                positionOrigin = syncItem.getSyncItemArea().getPosition();
-                this.syncBaseItem = syncBaseItem;
-            }
+    public void onSpeechBubbleMouseOver() {
+        mouseOverSpeechBubble = true;
+    }
+
+    public void onSpeechBubbleMouseOut() {
+        mouseOverSpeechBubble = false;
+        deferredClose();
+    }
+
+    public void onSyncItemMouseOut(SyncItem syncItem) {
+        if (syncItem.equals(this.syncItem)) {
+            mouseOverItemType = false;
+            deferredClose();
         }
     }
 
-    private void removeMoveListener() {
-        if (syncBaseItem != null) {
-            syncBaseItem.removeSyncItemListener(this);
-            syncBaseItem = null;
-        }
+    private void deferredClose() {
+        Timer timer = new Timer() {
+            @Override
+            public void run() {
+                if (!mouseOverSpeechBubble && !mouseOverItemType) {
+                    hide();
+                }
+            }
+        };
+        timer.schedule(500);
     }
 
-    @Override
-    public void onItemChanged(Change change, SyncItem syncItem) {
-        if (change == Change.POSITION) {
-            if (syncItem.getSyncItemArea().getPosition().getDistance(positionOrigin) > 100) {
-                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                    @Override
-                    public void execute() {
-                        // Prevent ConcurrentModificationException
-                        hide();
-                    }
-                });
-            }
+    public void itemKilled(SyncItem syncItem) {
+        if (syncItem.equals(this.syncItem)) {
+            hide();
         }
     }
 }
