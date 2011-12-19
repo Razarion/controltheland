@@ -42,10 +42,10 @@ public class MuzzleFlash {
     public static final long MILIS_SHOW_TIME = 100;
     private Index normCenter;
     private ClientSyncItem clientSyncItem;
-    private double angel;
     private long time;
     private Canvas canvas;
     private Context2d context2d;
+    private double muzzleRotationAngel;
 
     public MuzzleFlash(ClientSyncItem clientSyncItem, int muzzleFlashNr) throws ItemDoesNotExistException {
         time = System.currentTimeMillis();
@@ -53,7 +53,7 @@ public class MuzzleFlash {
         BaseItemType baseItemType = clientSyncItem.getSyncBaseItem().getBaseItemType();
         WeaponType weaponType = baseItemType.getWeaponType();
 
-        angel = clientSyncItem.getSyncBaseItem().getSyncItemArea().getAngel();
+        double angel = clientSyncItem.getSyncBaseItem().getSyncItemArea().getAngel();
         angel = baseItemType.getBoundingBox().getAllowedAngel(angel);
         int imageNr = baseItemType.getBoundingBox().angelToImageNr(angel);
         Index muzzleStart = baseItemType.getWeaponType().getMuzzleFlashPosition(muzzleFlashNr, imageNr);
@@ -67,16 +67,18 @@ public class MuzzleFlash {
             int distance = target.getSyncItemArea().getPosition().getDistance(absoluteMuzzleStart);
             y = absoluteMuzzleStart.getY() - distance;
             height = distance;
+            muzzleRotationAngel = absoluteMuzzleStart.getAngleToNord(target.getSyncItemArea().getPosition());
         } else {
             y = absoluteMuzzleStart.getY() - weaponType.getMuzzleFlashLength();
             height = weaponType.getMuzzleFlashLength();
+            muzzleRotationAngel = angel;
         }
         if (x < 0 || y < 0 || width < 0 || height < 0) {
             return;
         }
 
         Rectangle rectangle = new Rectangle(x, y, width, height);
-        rectangle = rectangle.getSurroundedRectangle(absoluteMuzzleStart, angel);
+        rectangle = rectangle.getSurroundedRectangle(absoluteMuzzleStart, muzzleRotationAngel);
 
         canvas = Canvas.createIfSupported();
         if (canvas == null) {
@@ -105,7 +107,7 @@ public class MuzzleFlash {
                 WeaponType weaponType = clientSyncItem.getSyncBaseItem().getSyncWeapon().getWeaponType();
                 try {
                     context2d.translate(normCenter.getX(), normCenter.getY());
-                    context2d.rotate(-angel);
+                    context2d.rotate(-muzzleRotationAngel);
                     context2d.drawImage(imageElements[0], -Math.round(weaponType.getMuzzleFlashWidth() / 2.0), -weaponType.getMuzzleFlashLength());
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);
