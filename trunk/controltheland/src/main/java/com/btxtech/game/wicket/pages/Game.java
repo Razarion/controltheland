@@ -69,7 +69,7 @@ public class Game extends WebPage implements IHeaderContributor {
     @Override
     public void renderHead(IHeaderResponse iHeaderResponse) {
         if (!userTrackingService.isJavaScriptDetected()) {
-            iHeaderResponse.renderJavascript(CmsPage.JAVA_SCRIPT_HTML5_DETECTION, null);
+            iHeaderResponse.renderOnLoadJavascript(CmsPage.JAVA_SCRIPT_HTML5_DETECTION);
         }
     }
 }

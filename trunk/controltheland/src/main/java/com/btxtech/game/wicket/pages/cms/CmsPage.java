@@ -45,7 +45,14 @@ public class CmsPage extends WebPage implements IHeaderContributor {
     public static final String HTML5_KEY_Y = "y";
     public static final char SORT_ASCENDING = 'a';
     public static final char SORT_DESCENDING = 'd';
-    public static final String JAVA_SCRIPT_HTML5_DETECTION = "var value='/spring/statJS?" + HTML5_KEY + "=';if(window.HTMLCanvasElement){value+='" + HTML5_KEY_Y + "';}else{value+='" + HTML5_KEY_N + "';}var f = document.createElement('img');f.setAttribute('src',value);document.body.appendChild(f);";
+    public static final String JAVA_SCRIPT_HTML5_DETECTION = "var value='/spring/statJS?" + HTML5_KEY + "=';" +
+            "if(window.HTMLCanvasElement){value+='" + HTML5_KEY_Y + "';}else{value+='" + HTML5_KEY_N + "';}" +
+            "var f = document.createElement('img');" +
+            "f.setAttribute('src',value);" +
+            "f.style.position='absolute';" +
+            "f.style.top='0';" +
+            "f.style.left='0';" +
+            "document.body.appendChild(f);";
     public static final int MAX_LEVELS = 20;
 
     @SpringBean
