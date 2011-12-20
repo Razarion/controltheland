@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.cockpit.radar;
 
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 
@@ -28,6 +29,7 @@ public class RadarPanel {
     private static final RadarPanel INSTANCE = new RadarPanel();
     private MiniTerrain miniTerrain;
     private RadarFrameView radarFrameView;
+    private RadarHintView radarHintView;
     private RadarItemView radarItemView;
     private boolean hasRadar1 = false;
     private boolean hasEnergy = false;
@@ -63,15 +65,20 @@ public class RadarPanel {
         miniTerrain.getCanvas().setVisible(state);
         absolutePanel.add(miniTerrain.getCanvas(), 0, 0);
 
-        // Own item view
+        // Item view
         radarItemView = new RadarItemView(width, height);
         radarItemView.getCanvas().getElement().getStyle().setZIndex(2);
         radarItemView.getCanvas().setVisible(hasRadar1 && hasEnergy);
         absolutePanel.add(radarItemView.getCanvas(), 0, 0);
 
+        // Hint view
+        radarHintView = new RadarHintView(width, height);
+        radarHintView.getCanvas().getElement().getStyle().setZIndex(3);
+        absolutePanel.add(radarHintView.getCanvas(), 0, 0);
+
         // Frame view
         radarFrameView = new RadarFrameView(width, height);
-        radarFrameView.getCanvas().getElement().getStyle().setZIndex(3);
+        radarFrameView.getCanvas().getElement().getStyle().setZIndex(4);
         radarFrameView.getCanvas().setVisible(state);
         absolutePanel.add(radarFrameView.getCanvas(), 0, 0);
 
@@ -118,6 +125,7 @@ public class RadarPanel {
     public void onTerrainSettings(TerrainSettings terrainSettings) {
         miniTerrain.onTerrainSettings(terrainSettings);
         radarFrameView.onTerrainSettings(terrainSettings);
+        radarHintView.onTerrainSettings(terrainSettings);
         radarItemView.onTerrainSettings(terrainSettings);
     }
 
@@ -128,6 +136,18 @@ public class RadarPanel {
     public void setRadarItemsVisible() {
         hasEnergy = true;
         hasRadar1 = true;
-        handleRadarState();        
+        handleRadarState();
+    }
+
+    public void showHint(SyncBaseItem enemyBaseItem) {
+        radarHintView.showHint(enemyBaseItem);
+    }
+
+    public void hideHint() {
+        radarHintView.hideHint();
+    }
+
+    public void blinkHint() {
+        radarHintView.blinkHint();
     }
 }

@@ -1,4 +1,4 @@
-package com.btxtech.game.jsre.client.utg;
+package com.btxtech.game.jsre.client.utg.tip;
 
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.cockpit.AbstractControlPanel;
@@ -16,9 +16,9 @@ public class TipPanel extends AbstractControlPanel {
 
     private String tip;
 
-    public TipPanel(String tip) {
+    public TipPanel(ImageTipEntry tip) {
         super(WIDTH, HEIGHT);
-        this.tip = tip;
+        this.tip = tip.getImage();
         getElement().getStyle().setZIndex(Constants.Z_INDEX_TIP);
         setup();
     }
@@ -26,9 +26,5 @@ public class TipPanel extends AbstractControlPanel {
     @Override
     protected Widget createBody() {
         return ImageHandler.getTipImage(tip);
-    }
-
-    public String getTip() {
-        return tip;
     }
 }

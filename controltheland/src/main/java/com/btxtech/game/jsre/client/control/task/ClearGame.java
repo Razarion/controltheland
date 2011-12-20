@@ -20,7 +20,7 @@ import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
-import com.btxtech.game.jsre.client.utg.TipManager;
+import com.btxtech.game.jsre.client.utg.tip.TipManager;
 
 /**
  * User: beat
