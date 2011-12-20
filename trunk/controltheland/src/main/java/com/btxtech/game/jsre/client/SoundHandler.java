@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  * Time: 20:32:53
  */
 public class SoundHandler {
-    public static final SoundHandler INSTANCE = new SoundHandler();
+    private static final SoundHandler INSTANCE = new SoundHandler();
     private static final int PARALLEL_PLAY_COUNT = 5;
     private static final String EXPLODE_MP3 = "/sounds/explosion.mp3";
     private static final String EXPLODE_OGG = "/sounds/explosion.ogg";
@@ -38,6 +38,7 @@ public class SoundHandler {
     private Collection<Audio> explodeSounds = new ArrayList<Audio>();
     private String mimeType;
     private String explodeSrc;
+    private boolean logNoCreation = true;
 
     public static SoundHandler getInstance() {
         return INSTANCE;
@@ -75,7 +76,10 @@ public class SoundHandler {
         if (available.size() < PARALLEL_PLAY_COUNT) {
             audio = Audio.createIfSupported();
             if (audio == null) {
-                log.severe("Audio not supported for muzzle");
+                if (logNoCreation) {
+                    log.severe("Audio not supported for muzzle");
+                    logNoCreation = false;
+                }
                 return null;
             }
             String codec = determineMimeType(audio);
@@ -106,7 +110,10 @@ public class SoundHandler {
         if (explodeSounds.size() < PARALLEL_PLAY_COUNT) {
             audio = Audio.createIfSupported();
             if (audio == null) {
-                log.severe("Audio not supported for explode");
+                if (logNoCreation) {
+                    log.severe("Audio not supported for explode");
+                    logNoCreation = false;
+                }
                 return null;
             }
             if (explodeSrc == null) {
