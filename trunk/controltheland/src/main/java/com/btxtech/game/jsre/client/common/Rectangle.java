@@ -291,8 +291,12 @@ public class Rectangle implements Serializable {
     }
 
     public void shift(int deltaX, int deltaY) {
-        start = start.add(deltaX, deltaY);
-        endExclusive = endExclusive.add(deltaX, deltaY);
+        shift(new Index(deltaX, deltaY));
+    }
+
+    public void shift(Index delta) {
+        start = start.add(delta);
+        endExclusive = endExclusive.add(delta);
     }
 
     public Rectangle moveTo(int absX, int absY) {
