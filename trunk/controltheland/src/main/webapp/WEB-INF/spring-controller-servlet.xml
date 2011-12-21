@@ -40,7 +40,6 @@
                 <prop key="item">itemImageController</prop>
                 <prop key="muzzle">muzzleFlashController</prop>
                 <prop key="statJS">statisticsController</prop>
-                <prop key="cms">cmsImageController</prop>
                 <prop key="tutorial">tutorialResourceHintController</prop>
                 <prop key="lsc">loadScriptCommunicationController</prop>
             </props>
