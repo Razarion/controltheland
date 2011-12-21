@@ -120,8 +120,6 @@
         <mapping class="com.btxtech.game.services.utg.condition.backup.DbSyncItemIdComparisonBackup"/>
         <mapping class="com.btxtech.game.services.utg.condition.backup.DbSyncItemTypeComparisonBackup"/>
         <!-- CMS -->
-        <mapping class="com.btxtech.game.services.cms.DbCmsHomeText"/>
-        <mapping class="com.btxtech.game.services.cms.DbCmsHomeLayout"/>
         <mapping class="com.btxtech.game.services.cms.DbCmsImage"/>
         <mapping class="com.btxtech.game.services.cms.DbMenu"/>
         <mapping class="com.btxtech.game.services.cms.DbMenuItem"/>

@@ -17,8 +17,6 @@ import com.btxtech.game.jsre.common.CmsPredefinedPageDoesNotExistException;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbAds;
-import com.btxtech.game.services.cms.DbCmsHomeLayout;
-import com.btxtech.game.services.cms.DbCmsHomeText;
 import com.btxtech.game.services.cms.DbCmsImage;
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentBooleanExpressionImage;
@@ -34,20 +32,14 @@ import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -64,10 +56,6 @@ public class CmsServiceImpl implements CmsService {
     @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
-    private CrudRootServiceHelper<DbCmsHomeText> dbCmsHomeTextCrudRootServiceHelper;
-    @Autowired
-    private CrudRootServiceHelper<DbCmsHomeLayout> dbCmsHomeLayoutCrudRootServiceHelper;
-    @Autowired
     private CrudRootServiceHelper<DbCmsImage> imageCrudRootServiceHelper;
     @Autowired
     private CrudRootServiceHelper<DbPage> pageCrudRootServiceHelper;
@@ -82,8 +70,6 @@ public class CmsServiceImpl implements CmsService {
     @Autowired
     private CmsUiService cmsUiService;
 
-    private DbCmsHomeText dbCmsHomeText;
-    private DbCmsHomeLayout dbCmsHomeLayout;
     private Map<Integer, DbCmsImage> imageCache = new HashMap<Integer, DbCmsImage>();
     private Map<Integer, DbPage> pageCache = new HashMap<Integer, DbPage>();
     private Map<Integer, DbContent> contentCache = new HashMap<Integer, DbContent>();
@@ -97,8 +83,6 @@ public class CmsServiceImpl implements CmsService {
 
     @PostConstruct
     public void init() {
-        dbCmsHomeTextCrudRootServiceHelper.init(DbCmsHomeText.class);
-        dbCmsHomeLayoutCrudRootServiceHelper.init(DbCmsHomeLayout.class);
         imageCrudRootServiceHelper.init(DbCmsImage.class);
         pageCrudRootServiceHelper.init(DbPage.class);
         menuCrudRootServiceHelper.init(DbMenu.class);
@@ -107,7 +91,6 @@ public class CmsServiceImpl implements CmsService {
         adsCrud.init(DbAds.class);
         SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
         try {
-            activateHome();
             activateCms();
         } catch (Throwable t) {
             log.error("", t);
@@ -225,70 +208,6 @@ public class CmsServiceImpl implements CmsService {
                 }
             }
         }
-    }
-
-    @Override
-    @Deprecated
-    public void activateHome() {
-        @SuppressWarnings("unchecked")
-        List<DbCmsHomeText> dbCmsHomeTexts = hibernateTemplate.executeFind(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbCmsHomeText.class);
-                criteria.add(Restrictions.eq("isActive", true));
-                return criteria.list();
-            }
-        });
-        if (dbCmsHomeTexts.isEmpty()) {
-            log.error("No active DbCmsHomeText found");
-            return;
-        }
-        if (dbCmsHomeTexts.size() > 1) {
-            log.info("More the one active DbCmsHomeText found. Take first one.");
-        }
-        dbCmsHomeText = dbCmsHomeTexts.get(0);
-
-        @SuppressWarnings("unchecked")
-        List<DbCmsHomeLayout> dbCmsHomeLayouts = hibernateTemplate.executeFind(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbCmsHomeLayout.class);
-                criteria.add(Restrictions.eq("isActive", true));
-                return criteria.list();
-            }
-        });
-        if (dbCmsHomeLayouts.isEmpty()) {
-            log.error("No active DbCmsHomeLayout found");
-            return;
-        }
-        if (dbCmsHomeLayouts.size() > 1) {
-            log.info("More the one active DbCmsHomeLayout found. Take first one.");
-        }
-        dbCmsHomeLayout = dbCmsHomeLayouts.get(0);
-    }
-
-    @Override
-    @Deprecated
-    public CrudRootServiceHelper<DbCmsHomeText> getCmsHomeTextCrudRootServiceHelper() {
-        return dbCmsHomeTextCrudRootServiceHelper;
-    }
-
-    @Override
-    @Deprecated
-    public CrudRootServiceHelper<DbCmsHomeLayout> getCmsHomeLayoutCrudRootServiceHelper() {
-        return dbCmsHomeLayoutCrudRootServiceHelper;
-    }
-
-    @Override
-    @Deprecated
-    public DbCmsHomeText getDbCmsHomeText() {
-        return dbCmsHomeText;
-    }
-
-    @Override
-    @Deprecated
-    public DbCmsHomeLayout getDbCmsHomeLayout() {
-        return dbCmsHomeLayout;
     }
 
     @Override

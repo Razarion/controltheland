@@ -23,21 +23,6 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
  * Time: 21:39:03
  */
 public interface CmsService {
-    @Deprecated
-    void activateHome();
-
-    @Deprecated
-    DbCmsHomeText getDbCmsHomeText();
-
-    @Deprecated
-    DbCmsHomeLayout getDbCmsHomeLayout();
-
-    @Deprecated
-    CrudRootServiceHelper<DbCmsHomeText> getCmsHomeTextCrudRootServiceHelper();
-
-    @Deprecated
-    CrudRootServiceHelper<DbCmsHomeLayout> getCmsHomeLayoutCrudRootServiceHelper();
-
     DbPage getPage(int pageId);
 
     DbContent getDbContent(int contentId);
