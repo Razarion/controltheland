@@ -16,7 +16,7 @@ package com.btxtech.game.wicket.pages.cms;
 import com.btxtech.game.jsre.common.CmsPredefinedPageDoesNotExistException;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.CmsService;
-import com.btxtech.game.services.cms.DbPage;
+import com.btxtech.game.services.cms.page.DbPage;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.uiservices.DisplayPageViewLink;

@@ -1,10 +1,9 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
-import com.btxtech.game.services.cms.DbPageStyle;
+import com.btxtech.game.services.cms.page.DbPageStyle;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.RuModel;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;

@@ -1,4 +1,4 @@
-package com.btxtech.game.services.cms;
+package com.btxtech.game.services.cms.layout;
 
 import org.hibernate.annotations.Cascade;
 
@@ -9,7 +9,6 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * User: beat

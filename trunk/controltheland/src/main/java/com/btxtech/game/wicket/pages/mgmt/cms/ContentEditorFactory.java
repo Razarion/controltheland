@@ -1,20 +1,20 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
-import com.btxtech.game.services.cms.DbContent;
-import com.btxtech.game.services.cms.DbContentActionButton;
-import com.btxtech.game.services.cms.DbContentBook;
-import com.btxtech.game.services.cms.DbContentBooleanExpressionImage;
-import com.btxtech.game.services.cms.DbContentContainer;
-import com.btxtech.game.services.cms.DbContentDetailLink;
-import com.btxtech.game.services.cms.DbContentDynamicHtml;
-import com.btxtech.game.services.cms.DbContentGameLink;
-import com.btxtech.game.services.cms.DbContentInvokerButton;
-import com.btxtech.game.services.cms.DbContentList;
-import com.btxtech.game.services.cms.DbContentPageLink;
-import com.btxtech.game.services.cms.DbContentPlugin;
-import com.btxtech.game.services.cms.DbContentSmartPageLink;
-import com.btxtech.game.services.cms.DbContentStaticHtml;
-import com.btxtech.game.services.cms.DbExpressionProperty;
+import com.btxtech.game.services.cms.layout.DbContent;
+import com.btxtech.game.services.cms.layout.DbContentActionButton;
+import com.btxtech.game.services.cms.layout.DbContentBook;
+import com.btxtech.game.services.cms.layout.DbContentBooleanExpressionImage;
+import com.btxtech.game.services.cms.layout.DbContentContainer;
+import com.btxtech.game.services.cms.layout.DbContentDetailLink;
+import com.btxtech.game.services.cms.layout.DbContentDynamicHtml;
+import com.btxtech.game.services.cms.layout.DbContentGameLink;
+import com.btxtech.game.services.cms.layout.DbContentInvokerButton;
+import com.btxtech.game.services.cms.layout.DbContentList;
+import com.btxtech.game.services.cms.layout.DbContentPageLink;
+import com.btxtech.game.services.cms.layout.DbContentPlugin;
+import com.btxtech.game.services.cms.layout.DbContentSmartPageLink;
+import com.btxtech.game.services.cms.layout.DbContentStaticHtml;
+import com.btxtech.game.services.cms.layout.DbExpressionProperty;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 

@@ -1,4 +1,4 @@
-package com.btxtech.game.services.cms;
+package com.btxtech.game.services.cms.layout;
 
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.HibernateUtil;

@@ -1,4 +1,6 @@
-package com.btxtech.game.services.cms;
+package com.btxtech.game.services.cms.layout;
+
+import com.btxtech.game.services.cms.page.DbPage;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;

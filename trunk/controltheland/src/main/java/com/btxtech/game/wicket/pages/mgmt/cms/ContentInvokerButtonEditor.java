@@ -1,7 +1,7 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
-import com.btxtech.game.services.cms.DbContentInvoker;
-import com.btxtech.game.services.cms.DbContentInvokerButton;
+import com.btxtech.game.services.cms.layout.DbContentInvoker;
+import com.btxtech.game.services.cms.layout.DbContentInvokerButton;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;

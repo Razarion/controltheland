@@ -11,8 +11,9 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.cms;
+package com.btxtech.game.services.cms.page;
 
+import com.btxtech.game.services.cms.layout.DbContent;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;

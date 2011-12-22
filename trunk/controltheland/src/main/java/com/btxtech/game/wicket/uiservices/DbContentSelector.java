@@ -1,8 +1,7 @@
 package com.btxtech.game.wicket.uiservices;
 
 import com.btxtech.game.services.cms.CmsService;
-import com.btxtech.game.services.cms.DbCmsImage;
-import com.btxtech.game.services.cms.DbContent;
+import com.btxtech.game.services.cms.layout.DbContent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;

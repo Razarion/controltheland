@@ -1,4 +1,4 @@
-package com.btxtech.game.services.cms;
+package com.btxtech.game.services.cms.content;
 
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.user.UserService;
@@ -11,18 +11,17 @@ import java.io.Serializable;
 
 /**
  * User: beat
- * Date: 28.07.2011
- * Time: 13:56:21
+ * Date: 03.07.2011
+ * Time: 12:35:50
  */
-@Entity(name = "CMS_ADS")
-public class DbAds implements CrudChild {
+@Entity(name = "CONTENT_WIKI_SECTION")
+public class DbWikiSection implements CrudChild {
     @Id
     @GeneratedValue
     private Integer id;
+    @Column(length = 50000)
+    private String html;
     private String name;
-    @Column(length = 20000)
-    private String code;
-    private boolean active;
 
     @Override
     public Serializable getId() {
@@ -39,20 +38,12 @@ public class DbAds implements CrudChild {
         this.name = name;
     }
 
-    public String getCode() {
-        return code;
+    public String getHtml() {
+        return html;
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setHtml(String html) {
+        this.html = html;
     }
 
     @Override
@@ -66,15 +57,15 @@ public class DbAds implements CrudChild {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DbAds)) return false;
+        if (!(o instanceof DbWikiSection)) return false;
 
-        DbAds dbAds = (DbAds) o;
+        DbWikiSection that = (DbWikiSection) o;
 
-        return id != null && id.equals(dbAds.id);
+        return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : System.identityHashCode(this);
+        return id != null ? id.hashCode() : 0;
     }
 }

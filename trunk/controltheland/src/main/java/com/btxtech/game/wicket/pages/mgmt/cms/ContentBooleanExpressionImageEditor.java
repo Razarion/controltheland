@@ -1,28 +1,16 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
-import com.btxtech.game.services.cms.DbCmsImage;
-import com.btxtech.game.services.cms.DbContent;
-import com.btxtech.game.services.cms.DbContentBook;
-import com.btxtech.game.services.cms.DbContentBooleanExpressionImage;
-import com.btxtech.game.services.cms.DbContentRow;
-import com.btxtech.game.services.common.CrudListChildServiceHelper;
+import com.btxtech.game.services.cms.layout.DbContentBooleanExpressionImage;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CmsImageSelector;
-import com.btxtech.game.wicket.uiservices.CrudListChildTableHelper;
 import com.btxtech.game.wicket.uiservices.RuModel;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
 
 /**
  * User: beat

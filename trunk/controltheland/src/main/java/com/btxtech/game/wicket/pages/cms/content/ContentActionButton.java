@@ -1,6 +1,6 @@
 package com.btxtech.game.wicket.pages.cms.content;
 
-import com.btxtech.game.services.cms.DbContentActionButton;
+import com.btxtech.game.services.cms.layout.DbContentActionButton;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.markup.html.basic.Label;
@@ -8,7 +8,6 @@ import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * User: beat

@@ -1,7 +1,7 @@
 package com.btxtech.game.wicket.pages.cms.content;
 
-import com.btxtech.game.services.cms.DbContentBook;
-import com.btxtech.game.services.cms.DbContentRow;
+import com.btxtech.game.services.cms.layout.DbContentBook;
+import com.btxtech.game.services.cms.layout.DbContentRow;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.pages.cms.EditPanel;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;

@@ -1,4 +1,6 @@
-package com.btxtech.game.services.cms;
+package com.btxtech.game.services.cms.content;
+
+import com.btxtech.game.services.cms.layout.DbContentDynamicHtml;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

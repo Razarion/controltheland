@@ -1,6 +1,6 @@
 package com.btxtech.game.wicket.pages.cms.content;
 
-import com.btxtech.game.services.cms.DbContentBooleanExpressionImage;
+import com.btxtech.game.services.cms.layout.DbContentBooleanExpressionImage;
 import com.btxtech.game.wicket.pages.cms.CmsImageResource;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;

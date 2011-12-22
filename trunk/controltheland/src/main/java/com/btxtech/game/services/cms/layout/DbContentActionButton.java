@@ -1,6 +1,4 @@
-package com.btxtech.game.services.cms;
-
-import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
+package com.btxtech.game.services.cms.layout;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;

@@ -1,7 +1,7 @@
 package com.btxtech.game.wicket.pages.cms.content;
 
 import com.btxtech.game.services.cms.ContentService;
-import com.btxtech.game.services.cms.DbContentDynamicHtml;
+import com.btxtech.game.services.cms.layout.DbContentDynamicHtml;
 import com.btxtech.game.wicket.pages.cms.EditPanel;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.behavior.SimpleAttributeModifier;

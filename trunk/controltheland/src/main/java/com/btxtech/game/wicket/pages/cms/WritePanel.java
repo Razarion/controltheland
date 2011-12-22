@@ -1,7 +1,7 @@
 package com.btxtech.game.wicket.pages.cms;
 
 import com.btxtech.game.services.cms.CmsService;
-import com.btxtech.game.services.cms.DbExpressionProperty;
+import com.btxtech.game.services.cms.layout.DbExpressionProperty;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.markup.html.form.TextArea;

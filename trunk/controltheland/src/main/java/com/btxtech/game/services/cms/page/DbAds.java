@@ -1,4 +1,4 @@
-package com.btxtech.game.services.cms;
+package com.btxtech.game.services.cms.page;
 
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.user.UserService;
@@ -11,18 +11,18 @@ import java.io.Serializable;
 
 /**
  * User: beat
- * Date: 14.06.2011
- * Time: 16:05:23
+ * Date: 28.07.2011
+ * Time: 13:56:21
  */
-@Entity(name = "CONTENT_BLOG")
-public class DbBlogEntry implements CrudChild {
+@Entity(name = "CMS_ADS")
+public class DbAds implements CrudChild {
     @Id
     @GeneratedValue
     private Integer id;
     private String name;
-    @Column(length = 50000)
-    private String html;
-    private long timeStamp;
+    @Column(length = 20000)
+    private String code;
+    private boolean active;
 
     @Override
     public Serializable getId() {
@@ -39,21 +39,24 @@ public class DbBlogEntry implements CrudChild {
         this.name = name;
     }
 
-    public String getHtml() {
-        return html;
+    public String getCode() {
+        return code;
     }
 
-    public void setHtml(String html) {
-        this.html = html;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public long getTimeStamp() {
-        return timeStamp;
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     @Override
     public void init(UserService userService) {
-        timeStamp = System.currentTimeMillis();
     }
 
     @Override
@@ -63,11 +66,11 @@ public class DbBlogEntry implements CrudChild {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DbBlogEntry)) return false;
+        if (!(o instanceof DbAds)) return false;
 
-        DbBlogEntry that = (DbBlogEntry) o;
+        DbAds dbAds = (DbAds) o;
 
-        return id != null && id.equals(that.id);
+        return id != null && id.equals(dbAds.id);
     }
 
     @Override

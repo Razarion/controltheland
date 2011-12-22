@@ -1,8 +1,8 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
-import com.btxtech.game.services.cms.DbContent;
-import com.btxtech.game.services.cms.DbContentBook;
-import com.btxtech.game.services.cms.DbContentRow;
+import com.btxtech.game.services.cms.layout.DbContent;
+import com.btxtech.game.services.cms.layout.DbContentBook;
+import com.btxtech.game.services.cms.layout.DbContentRow;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;

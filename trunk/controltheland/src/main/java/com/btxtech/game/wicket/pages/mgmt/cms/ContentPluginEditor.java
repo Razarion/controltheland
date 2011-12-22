@@ -1,6 +1,6 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
-import com.btxtech.game.services.cms.DbContentPlugin;
+import com.btxtech.game.services.cms.layout.DbContentPlugin;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.wicket.pages.cms.content.plugin.PluginEnum;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;

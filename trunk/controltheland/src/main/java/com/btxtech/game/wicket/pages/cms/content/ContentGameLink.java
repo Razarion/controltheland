@@ -1,7 +1,7 @@
 package com.btxtech.game.wicket.pages.cms.content;
 
 import com.btxtech.game.jsre.common.CmsUtil;
-import com.btxtech.game.services.cms.DbContentGameLink;
+import com.btxtech.game.services.cms.layout.DbContentGameLink;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsImageResource;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;

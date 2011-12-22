@@ -121,32 +121,32 @@
         <mapping class="com.btxtech.game.services.utg.condition.backup.DbSyncItemTypeComparisonBackup"/>
         <!-- CMS -->
         <mapping class="com.btxtech.game.services.cms.DbCmsImage"/>
-        <mapping class="com.btxtech.game.services.cms.DbMenu"/>
-        <mapping class="com.btxtech.game.services.cms.DbMenuItem"/>
-        <mapping class="com.btxtech.game.services.cms.DbPage"/>
-        <mapping class="com.btxtech.game.services.cms.DbPageStyle"/>
-        <mapping class="com.btxtech.game.services.cms.DbContentList"/>
-        <mapping class="com.btxtech.game.services.cms.DbContentContainer"/>
-        <mapping class="com.btxtech.game.services.cms.DbExpressionProperty"/>
-        <mapping class="com.btxtech.game.services.cms.DbContentDetailLink"/>
-        <mapping class="com.btxtech.game.services.cms.DbContentBook"/>
-        <mapping class="com.btxtech.game.services.cms.DbContentRow"/>
-        <mapping class="com.btxtech.game.services.cms.DbContentStaticHtml"/>
-        <mapping class="com.btxtech.game.services.cms.DbContentPageLink"/>
-        <mapping class="com.btxtech.game.services.cms.DbContentGameLink"/>
-        <mapping class="com.btxtech.game.services.cms.DbContentPlugin"/>
-        <mapping class="com.btxtech.game.services.cms.DbContentDynamicHtml"/>
-        <mapping class="com.btxtech.game.services.cms.DbContentActionButton"/>
-        <mapping class="com.btxtech.game.services.cms.DbContentCreateEdit"/>
-        <mapping class="com.btxtech.game.services.cms.DbContentSmartPageLink"/>
-        <mapping class="com.btxtech.game.services.cms.DbContentBooleanExpressionImage"/>
-        <mapping class="com.btxtech.game.services.cms.DbContentInvoker"/>
-        <mapping class="com.btxtech.game.services.cms.DbContentInvokerButton"/>
-        <mapping class="com.btxtech.game.services.cms.DbAds"/>
+        <mapping class="com.btxtech.game.services.cms.page.DbMenu"/>
+        <mapping class="com.btxtech.game.services.cms.page.DbMenuItem"/>
+        <mapping class="com.btxtech.game.services.cms.page.DbPage"/>
+        <mapping class="com.btxtech.game.services.cms.page.DbPageStyle"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentList"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentContainer"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbExpressionProperty"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentDetailLink"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentBook"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentRow"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentStaticHtml"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentPageLink"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentGameLink"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentPlugin"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentDynamicHtml"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentActionButton"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentCreateEdit"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentSmartPageLink"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentBooleanExpressionImage"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentInvoker"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentInvokerButton"/>
+        <mapping class="com.btxtech.game.services.cms.page.DbAds"/>
         <!-- Content -->
-        <mapping class="com.btxtech.game.services.cms.DbBlogEntry"/>
-        <mapping class="com.btxtech.game.services.cms.DbWikiSection"/>
-        <mapping class="com.btxtech.game.services.cms.DbHtmlContent"/>
+        <mapping class="com.btxtech.game.services.cms.content.DbBlogEntry"/>
+        <mapping class="com.btxtech.game.services.cms.content.DbWikiSection"/>
+        <mapping class="com.btxtech.game.services.cms.content.DbHtmlContent"/>
         <!-- Statistics -->
         <mapping class="com.btxtech.game.services.statistics.DbStatisticsEntry"/>
 
