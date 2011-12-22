@@ -1,9 +1,9 @@
 package com.btxtech.game.wicket.pages.cms.content;
 
 import com.btxtech.game.services.cms.CmsService;
-import com.btxtech.game.services.cms.DbContent;
-import com.btxtech.game.services.cms.DbContentCreateEdit;
-import com.btxtech.game.services.cms.DbExpressionProperty;
+import com.btxtech.game.services.cms.layout.DbContent;
+import com.btxtech.game.services.cms.layout.DbContentCreateEdit;
+import com.btxtech.game.services.cms.layout.DbExpressionProperty;
 import com.btxtech.game.wicket.pages.cms.WritePanel;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;

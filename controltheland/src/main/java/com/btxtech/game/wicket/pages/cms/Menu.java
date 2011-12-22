@@ -1,9 +1,9 @@
 package com.btxtech.game.wicket.pages.cms;
 
 import com.btxtech.game.jsre.common.CmsUtil;
-import com.btxtech.game.services.cms.DbMenu;
-import com.btxtech.game.services.cms.DbMenuItem;
-import com.btxtech.game.services.cms.DbPage;
+import com.btxtech.game.services.cms.page.DbMenu;
+import com.btxtech.game.services.cms.page.DbMenuItem;
+import com.btxtech.game.services.cms.page.DbPage;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.Component;

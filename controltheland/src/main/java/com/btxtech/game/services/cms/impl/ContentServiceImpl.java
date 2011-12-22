@@ -2,10 +2,10 @@ package com.btxtech.game.services.cms.impl;
 
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.ContentService;
-import com.btxtech.game.services.cms.DbBlogEntry;
-import com.btxtech.game.services.cms.DbContentDynamicHtml;
-import com.btxtech.game.services.cms.DbHtmlContent;
-import com.btxtech.game.services.cms.DbWikiSection;
+import com.btxtech.game.services.cms.content.DbBlogEntry;
+import com.btxtech.game.services.cms.layout.DbContentDynamicHtml;
+import com.btxtech.game.services.cms.content.DbHtmlContent;
+import com.btxtech.game.services.cms.content.DbWikiSection;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

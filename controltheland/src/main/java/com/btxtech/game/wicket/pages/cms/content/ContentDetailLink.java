@@ -1,6 +1,6 @@
 package com.btxtech.game.wicket.pages.cms.content;
 
-import com.btxtech.game.services.cms.DbContentDetailLink;
+import com.btxtech.game.services.cms.layout.DbContentDetailLink;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;

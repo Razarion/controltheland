@@ -1,6 +1,6 @@
 package com.btxtech.game.services.user;
 
-import com.btxtech.game.services.cms.DbContent;
+import com.btxtech.game.services.cms.layout.DbContent;
 import com.btxtech.game.services.common.CrudChild;
 
 import javax.persistence.Entity;

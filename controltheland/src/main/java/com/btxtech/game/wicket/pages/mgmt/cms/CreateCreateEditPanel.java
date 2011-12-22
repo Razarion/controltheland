@@ -1,6 +1,6 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
-import com.btxtech.game.services.cms.DbContentCreateEdit;
+import com.btxtech.game.services.cms.layout.DbContentCreateEdit;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.panel.Panel;
 

@@ -13,7 +13,7 @@
 package com.btxtech.game.wicket.pages.cms;
 
 import com.btxtech.game.services.cms.CmsService;
-import com.btxtech.game.services.cms.DbPage;
+import com.btxtech.game.services.cms.page.DbPage;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.injection.web.InjectorHolder;

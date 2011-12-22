@@ -1,4 +1,4 @@
-package com.btxtech.game.services.cms;
+package com.btxtech.game.services.cms.layout;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;

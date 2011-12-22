@@ -1,8 +1,8 @@
 package com.btxtech.game.wicket.uiservices;
 
-import com.btxtech.game.services.cms.DataProviderInfo;
-import com.btxtech.game.services.cms.DbContent;
-import com.btxtech.game.services.cms.DbPage;
+import com.btxtech.game.services.cms.layout.DataProviderInfo;
+import com.btxtech.game.services.cms.layout.DbContent;
+import com.btxtech.game.services.cms.page.DbPage;
 
 import java.io.Serializable;
 

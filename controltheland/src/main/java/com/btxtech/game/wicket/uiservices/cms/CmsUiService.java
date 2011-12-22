@@ -1,17 +1,16 @@
 package com.btxtech.game.wicket.uiservices.cms;
 
 import com.btxtech.game.jsre.common.CmsUtil;
-import com.btxtech.game.services.cms.DbContent;
-import com.btxtech.game.services.cms.DbContentBook;
-import com.btxtech.game.services.cms.DbContentInvoker;
-import com.btxtech.game.services.cms.DbPage;
+import com.btxtech.game.services.cms.layout.DbContent;
+import com.btxtech.game.services.cms.layout.DbContentBook;
+import com.btxtech.game.services.cms.layout.DbContentInvoker;
+import com.btxtech.game.services.cms.page.DbPage;
 import com.btxtech.game.services.cms.EditMode;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import org.apache.wicket.Component;
-import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
 
 import java.lang.reflect.InvocationTargetException;

@@ -1,5 +1,7 @@
 package com.btxtech.game.services.cms;
 
+import com.btxtech.game.services.cms.content.DbBlogEntry;
+import com.btxtech.game.services.cms.content.DbWikiSection;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 
 /**

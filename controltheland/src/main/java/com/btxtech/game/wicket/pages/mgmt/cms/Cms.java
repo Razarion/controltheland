@@ -1,11 +1,11 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
 import com.btxtech.game.services.cms.CmsService;
-import com.btxtech.game.services.cms.DbAds;
-import com.btxtech.game.services.cms.DbContent;
-import com.btxtech.game.services.cms.DbMenu;
-import com.btxtech.game.services.cms.DbPage;
-import com.btxtech.game.services.cms.DbPageStyle;
+import com.btxtech.game.services.cms.layout.DbContent;
+import com.btxtech.game.services.cms.page.DbAds;
+import com.btxtech.game.services.cms.page.DbMenu;
+import com.btxtech.game.services.cms.page.DbPage;
+import com.btxtech.game.services.cms.page.DbPageStyle;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;

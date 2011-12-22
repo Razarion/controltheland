@@ -1,6 +1,6 @@
 package com.btxtech.game.wicket.pages.cms;
 
-import com.btxtech.game.services.cms.DbPage;
+import com.btxtech.game.services.cms.page.DbPage;
 import org.apache.wicket.markup.html.panel.Panel;
 
 /**

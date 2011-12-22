@@ -1,6 +1,6 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
-import com.btxtech.game.services.cms.DbContentDetailLink;
+import com.btxtech.game.services.cms.layout.DbContentDetailLink;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.RuModel;

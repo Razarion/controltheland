@@ -1,4 +1,6 @@
-package com.btxtech.game.services.cms;
+package com.btxtech.game.services.cms.layout;
+
+import com.btxtech.game.services.cms.DbCmsImage;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -7,24 +9,15 @@ import javax.persistence.ManyToOne;
 
 /**
  * User: beat
- * Date: 30.06.2011
+ * Date: 01.07.2011
  * Time: 12:06:45
  */
 @Entity
-@DiscriminatorValue("CONTENT_PAGE_LINK")
-public class DbContentPageLink extends DbContent {
-    @ManyToOne(fetch = FetchType.LAZY)
-    private DbPage dbPage;
+@DiscriminatorValue("CONTENT_GAME_LINK")
+public class DbContentGameLink extends DbContent {
     @ManyToOne(fetch = FetchType.LAZY)
     private DbCmsImage dbCmsImage;
-
-    public DbPage getDbPage() {
-        return dbPage;
-    }
-
-    public void setDbPage(DbPage dbPage) {
-        this.dbPage = dbPage;
-    }
+    private String linkText;
 
     public DbCmsImage getDbCmsImage() {
         return dbCmsImage;
@@ -32,5 +25,13 @@ public class DbContentPageLink extends DbContent {
 
     public void setDbCmsImage(DbCmsImage dbCmsImage) {
         this.dbCmsImage = dbCmsImage;
+    }
+
+    public String getLinkText() {
+        return linkText;
+    }
+
+    public void setLinkText(String linkText) {
+        this.linkText = linkText;
     }
 }

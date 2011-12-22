@@ -1,4 +1,4 @@
-package com.btxtech.game.services.cms;
+package com.btxtech.game.services.cms.content;
 
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.user.UserService;
@@ -11,17 +11,18 @@ import java.io.Serializable;
 
 /**
  * User: beat
- * Date: 03.07.2011
- * Time: 12:35:50
+ * Date: 14.06.2011
+ * Time: 16:05:23
  */
-@Entity(name = "CONTENT_WIKI_SECTION")
-public class DbWikiSection implements CrudChild {
+@Entity(name = "CONTENT_BLOG")
+public class DbBlogEntry implements CrudChild {
     @Id
     @GeneratedValue
     private Integer id;
+    private String name;
     @Column(length = 50000)
     private String html;
-    private String name;
+    private long timeStamp;
 
     @Override
     public Serializable getId() {
@@ -46,8 +47,13 @@ public class DbWikiSection implements CrudChild {
         this.html = html;
     }
 
+    public long getTimeStamp() {
+        return timeStamp;
+    }
+
     @Override
     public void init(UserService userService) {
+        timeStamp = System.currentTimeMillis();
     }
 
     @Override
@@ -57,15 +63,15 @@ public class DbWikiSection implements CrudChild {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DbWikiSection)) return false;
+        if (!(o instanceof DbBlogEntry)) return false;
 
-        DbWikiSection that = (DbWikiSection) o;
+        DbBlogEntry that = (DbBlogEntry) o;
 
         return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 }

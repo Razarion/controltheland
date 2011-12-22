@@ -1,6 +1,6 @@
 package com.btxtech.game.wicket.pages.cms.content;
 
-import com.btxtech.game.services.cms.DbContentSmartPageLink;
+import com.btxtech.game.services.cms.layout.DbContentSmartPageLink;
 import com.btxtech.game.wicket.pages.cms.CmsStringGenerator;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.behavior.SimpleAttributeModifier;

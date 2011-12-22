@@ -1,8 +1,8 @@
 package com.btxtech.game.wicket.pages.cms.content;
 
-import com.btxtech.game.services.cms.DbContent;
-import com.btxtech.game.services.cms.DbContentList;
-import com.btxtech.game.services.cms.DbExpressionProperty;
+import com.btxtech.game.services.cms.layout.DbContent;
+import com.btxtech.game.services.cms.layout.DbContentList;
+import com.btxtech.game.services.cms.layout.DbExpressionProperty;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
