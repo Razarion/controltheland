@@ -1,7 +1,7 @@
 -- CHANGE THIS
-SET @TIME_BEFORE = '2011-11-22 00:30:00'; 
-SET @TIME_AFTER = '2011-11-22 09:30:00';
-SET @CLICKS_ADWORDS = 457;
+SET @TIME_BEFORE = '2011-12-23 00:17:00'; 
+SET @TIME_AFTER = '2011-12-23 09:00:00';
+SET @CLICKS_ADWORDS = 229;
 -- CHANGE THIS
 
 SET SQL_SAFE_UPDATES=0; 
@@ -152,5 +152,12 @@ SELECT count(*)"MSIE 6,7,8", sum(startups)"startup", sum(gameAttemps)"gameAttemp
    WHERE userAgent like "%MSIE 8%" 
    OR userAgent like "%MSIE 7%" 
    OR userAgent like "%MSIE 6%";        
+
+-- Show browser info javascript is disabled
+SELECT userAgent, html5Support, sessionId FROM TRACKER_BROWSER_DETAILS WHERE javaScriptDetected = FALSE AND timeStamp > @TIME_BEFORE AND timeStamp < @TIME_AFTER;
+
+-- Show browser info javascript is enabled but HTML5 is disabled
+SELECT userAgent, html5Support, sessionId FROM TRACKER_BROWSER_DETAILS WHERE javaScriptDetected = TRUE AND html5Support = FALSE AND timeStamp > @TIME_BEFORE AND timeStamp < @TIME_AFTER;
+
 
 SET SQL_SAFE_UPDATES=1;
