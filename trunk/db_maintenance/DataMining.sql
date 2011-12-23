@@ -20,6 +20,8 @@ CREATE TABLE tmp_data_mining (
     maxLevelIndex INT NULL,
     userAgent VARCHAR(1000) NULL,
     scrollCount INT NULL,
+    syncInfoCount INT NULL,
+    selectionCount INT NULL,
     PRIMARY KEY ( id )
  );
  
@@ -51,6 +53,8 @@ UPDATE tmp_data_mining m SET maxLevelIndex = (SELECT max(l.orderIndex)
           AND h.type = 5
           GROUP BY h.sessionId);
 UPDATE tmp_data_mining m  SET scrollCount = (SELECT COUNT(*) FROM TRACKER_SCROLLING s WHERE m.sessionId = s.sessionId);
+UPDATE tmp_data_mining m  SET syncInfoCount = (SELECT COUNT(*) FROM TRACKER_SYNC_INFOS s WHERE m.sessionId = s.sessionId);
+UPDATE tmp_data_mining m  SET selectionCount = (SELECT COUNT(*) FROM TRACKER_SELECTIONS s WHERE m.sessionId = s.sessionId);
 
 
 DROP TABLE IF EXISTS tmp_data_mining_startup;
@@ -73,8 +77,8 @@ INSERT INTO tmp_data_mining_startup (sessionId, startupId, taskCount, timeStamp,
     AND l.name = s.level
     GROUP BY s.id;
 
--- Startups
--- SELECT * FROM tmp_data_mining_startup ORDER BY timeStamp ASC;
+-- All
+SELECT * FROM tmp_data_mining;
 
 -- Detected users
 SELECT @detectedUsers := COUNT(*)"All detected users" FROM tmp_data_mining;        
@@ -159,5 +163,10 @@ SELECT userAgent, html5Support, sessionId FROM TRACKER_BROWSER_DETAILS WHERE jav
 -- Show browser info javascript is enabled but HTML5 is disabled
 SELECT userAgent, html5Support, sessionId FROM TRACKER_BROWSER_DETAILS WHERE javaScriptDetected = TRUE AND html5Support = FALSE AND timeStamp > @TIME_BEFORE AND timeStamp < @TIME_AFTER;
 
+-- In game analysis
+-- SELECT m.sessionId, 
+--       (Select count(*) FROM TRACKER_SYNC_INFOS i WHERE m.sessionId = i.sessionId)"SyncInfos", 
+--       (Select count(*) FROM TRACKER_SCROLLING s WHERE m.sessionId = s.sessionId)"Scrollings",
+--       (Select count(*) FROM TRACKER_SELECTIONS e WHERE m.sessionId = e.sessionId)"Selections" FROM tmp_data_mining m WHERE m.gameAttemps > 0 AND m.startups > 0; 
 
 SET SQL_SAFE_UPDATES=1;
