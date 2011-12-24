@@ -14,8 +14,10 @@ import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulato
 import org.apache.wicket.extensions.markup.html.repeater.data.table.HeaderlessColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
@@ -48,6 +50,15 @@ public class ContentList extends Panel {
     }
 
     private void setupDetailTable(WebMarkupContainer table, DbContentList dbContentList) {
+        add(new EditPanel("edit", dbContentList, contentId, beanIdPathElement, true, false));
+        if (dbContentList.getColumnsCrud().readDbChildren().size() == 1 && dbContentList.getColumnCountSingleCell() != null) {
+            setupDetailTableSingleCellMode(table, dbContentList);
+        } else {
+            setupDetailTableNormalColumns(table, dbContentList);
+        }
+    }
+
+    private void setupDetailTableNormalColumns(WebMarkupContainer table, DbContentList dbContentList) {
 
         List<IColumn> columns = new ArrayList<IColumn>();
         for (DbContent dbContent : dbContentList.getColumnsCrud().readDbChildren()) {
@@ -64,7 +75,6 @@ public class ContentList extends Panel {
         }
 
         // Edit stuff
-        add(new EditPanel("edit", dbContentList, contentId, beanIdPathElement, true, false));
         if (cmsUiService.isEnterEditModeAllowed(contentId, beanIdPathElement)) {
             columns.add(new HeaderlessColumn<Object>() {
 
@@ -99,6 +109,35 @@ public class ContentList extends Panel {
         }
         pagingNavigator.setVisible(dbContentList.isPageable());
         add(pagingNavigator);
+    }
+
+    private void setupDetailTableSingleCellMode(WebMarkupContainer table, DbContentList dbContentList) {
+        DbContent dbContent = dbContentList.getColumnsCrud().readDbChildren().get(0);
+
+        List list = cmsUiService.getDataProviderBeans(beanIdPathElement, contentId, contentContext);
+
+        RepeatingView row = new RepeatingView("rows");
+        while (!list.isEmpty()) {
+            WebMarkupContainer rowContainer = new WebMarkupContainer(row.newChildId());
+            row.add(rowContainer);
+            RepeatingView cells = new RepeatingView("cells");
+            rowContainer.add(cells);
+            for (int cellNumber = 0; cellNumber < dbContentList.getColumnCountSingleCell(); cellNumber++) {
+                WebMarkupContainer cellContainer = new WebMarkupContainer(cells.newChildId());
+                cells.add(cellContainer);
+                if (list.isEmpty()) {
+                    cellContainer.add(new Label("cell", ""));
+                } else {
+                    Object o = list.remove(0);
+                    BeanIdPathElement childBeanIdPathElement = cmsUiService.createChildBeanIdPathElement(dbContent, beanIdPathElement, (CrudChild) o);
+                    cellContainer.add(cmsUiService.getComponent(dbContent, o, "cell", childBeanIdPathElement, contentContext));
+                }
+            }
+        }
+        table.add(row);
+
+        table.add(new Label("tHead", "").setVisible(false));
+        add(new Label("navigator", "").setVisible(false));
     }
 
     @Override
