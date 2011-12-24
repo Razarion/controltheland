@@ -53,6 +53,7 @@ public class DbContentList extends DbContent implements DataProviderInfo, CrudPa
     private String cssClassHead;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private DbContentCreateEdit dbContentCreateEdit;
+    private Integer columnCountSingleCell;
     @Transient
     private CrudListChildServiceHelper<DbContent> columnsCrud;
     @Transient
@@ -135,6 +136,14 @@ public class DbContentList extends DbContent implements DataProviderInfo, CrudPa
 
     public void setCssClassHead(String cssClassHead) {
         this.cssClassHead = cssClassHead;
+    }
+
+    public Integer getColumnCountSingleCell() {
+        return columnCountSingleCell;
+    }
+
+    public void setColumnCountSingleCell(Integer columnCountSingleCell) {
+        this.columnCountSingleCell = columnCountSingleCell;
     }
 
     @Override

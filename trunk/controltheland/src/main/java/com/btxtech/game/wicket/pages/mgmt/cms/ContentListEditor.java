@@ -66,6 +66,7 @@ public class ContentListEditor extends MgmtWebPage {
         form.add(new TextField("rowsPerPage"));
         form.add(new CheckBox("showHead"));
         form.add(new TextField("cssClassHead"));
+        form.add(new TextField("columnCountSingleCell"));
 
         new CrudListChildTableHelper<DbContentList, DbContent>("columns", null, "createColumn", true, form, true) {
 
