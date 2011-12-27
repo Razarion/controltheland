@@ -19,6 +19,12 @@ public class CmsUtil {
     // If the predefined page urls are not yet available in the client
     public static final String PREDEFINED_PAGE_URL_NO_HTML_5 = getUrl4CmsPage(NO_HTML5_BROWSER_PAGE_STRING_ID);
 
+    // CMS urls
+    public static final String CHILD_ID = "childId";
+    public static final String SECTION_ID = "sec";
+    public static final String UNIT_SECTION = "units";
+    public static final String LEVEL_SECTION = "level";
+
     /**
      * User: beat
      * Date: 05.08.2011

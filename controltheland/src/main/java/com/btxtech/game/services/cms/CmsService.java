@@ -50,6 +50,10 @@ public interface CmsService {
 
     DbPage getPredefinedDbPage(CmsUtil.CmsPredefinedPage predefinedType) throws CmsPredefinedPageDoesNotExistException;
 
+    CmsSectionInfo getCmsSectionInfo(String sectionName);
+
+    CmsSectionInfo getCmsSectionInfo4Class(Class clazz);
+
     String getAdsCode();
 
     CrudRootServiceHelper<DbAds> getAdsCrud();

@@ -2,7 +2,9 @@ package com.btxtech.game.wicket.uiservices.cms.impl;
 
 import com.btxtech.game.jsre.common.CmsPredefinedPageDoesNotExistException;
 import com.btxtech.game.jsre.common.CmsUtil;
+import com.btxtech.game.services.cms.CmsSectionInfo;
 import com.btxtech.game.services.cms.CmsService;
+import com.btxtech.game.services.cms.EditMode;
 import com.btxtech.game.services.cms.layout.DataProviderInfo;
 import com.btxtech.game.services.cms.layout.DbContent;
 import com.btxtech.game.services.cms.layout.DbContentActionButton;
@@ -22,7 +24,6 @@ import com.btxtech.game.services.cms.layout.DbContentSmartPageLink;
 import com.btxtech.game.services.cms.layout.DbContentStaticHtml;
 import com.btxtech.game.services.cms.layout.DbExpressionProperty;
 import com.btxtech.game.services.cms.page.DbPage;
-import com.btxtech.game.services.cms.EditMode;
 import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.common.ContentSortList;
 import com.btxtech.game.services.common.CrudChild;
@@ -51,6 +52,7 @@ import com.btxtech.game.wicket.pages.cms.content.ContentInvokerButton;
 import com.btxtech.game.wicket.pages.cms.content.ContentList;
 import com.btxtech.game.wicket.pages.cms.content.ContentPageLink;
 import com.btxtech.game.wicket.pages.cms.content.ContentSmartPageLink;
+import com.btxtech.game.wicket.pages.cms.content.SectionLink;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import com.btxtech.game.wicket.uiservices.cms.SecurityCmsUiService;
@@ -234,6 +236,14 @@ public class CmsUiServiceImpl implements CmsUiService {
             beanIdPathElement.setChildDetailPage(true);
             Object bean = getDataProviderBean(beanIdPathElement);
             dbContent = ((DbContentList) dbContent).getDbPropertyBook(bean.getClass().getName());
+        } else if (pageParameters.containsKey(CmsUtil.SECTION_ID)) {
+            String section = pageParameters.getString(CmsUtil.SECTION_ID);
+            CmsSectionInfo cmsSectionInfo = cmsService.getCmsSectionInfo(section);
+            DbContentList dbContentList = cmsSectionInfo.getDbContentList();
+            beanIdPathElement = createBeanIdPathElement(pageParameters, dbContentList, beanIdPathElement);
+            Object bean = getDataProviderBean(beanIdPathElement);
+            dbContent = dbContentList.getDbPropertyBook(bean.getClass().getName());
+            beanIdPathElement.setChildDetailPage(true);
         } else if (pageParameters.containsKey(CmsPage.CREATE_CONTENT_ID)) {
             dbContent = cmsService.getDbContent(pageParameters.getInt(CmsPage.CREATE_CONTENT_ID));
             beanIdPathElement = createBeanIdPathElement(pageParameters, dbContent, beanIdPathElement);
@@ -382,9 +392,14 @@ public class CmsUiServiceImpl implements CmsUiService {
                     } else {
                         stringValue = value.toString();
                     }
-                    component = new Label(id, stringValue);
-                    component.setVisible(isReadAllowed(dbExpressionProperty.getId()));
-                    component.setEscapeModelStrings(dbExpressionProperty.getEscapeMarkup());
+                    CmsSectionInfo cmsSectionInfo = cmsService.getCmsSectionInfo4Class(bean.getClass());
+                    if (dbExpressionProperty.isLink() && cmsSectionInfo != null) {
+                        component = new SectionLink(id, stringValue, cmsSectionInfo, dbExpressionProperty, bean);
+                    } else {
+                        component = new Label(id, stringValue);
+                        component.setVisible(isReadAllowed(dbExpressionProperty.getId()));
+                        component.setEscapeModelStrings(dbExpressionProperty.getEscapeMarkup());
+                    }
                 } else {
                     component = new Label(id, "");
                 }
