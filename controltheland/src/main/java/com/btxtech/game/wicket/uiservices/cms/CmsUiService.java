@@ -1,11 +1,11 @@
 package com.btxtech.game.wicket.uiservices.cms;
 
 import com.btxtech.game.jsre.common.CmsUtil;
+import com.btxtech.game.services.cms.EditMode;
 import com.btxtech.game.services.cms.layout.DbContent;
 import com.btxtech.game.services.cms.layout.DbContentBook;
 import com.btxtech.game.services.cms.layout.DbContentInvoker;
 import com.btxtech.game.services.cms.page.DbPage;
-import com.btxtech.game.services.cms.EditMode;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
@@ -27,6 +27,12 @@ public interface CmsUiService {
     PageParameters getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage predefinedType);
 
     PageParameters createPageParametersFromBeanId(BeanIdPathElement beanIdPathElement);
+
+    PageParameters getPreviousPageParameters(BeanIdPathElement beanIdPathElement, int contentId, ContentContext contentContext);
+
+    PageParameters getNextPageParameters(BeanIdPathElement beanIdPathElement, int contentId, ContentContext contentContext);
+
+    PageParameters getUpPageParameters(BeanIdPathElement beanIdPathElement);
 
     CmsPage getPredefinedNotFound();
 

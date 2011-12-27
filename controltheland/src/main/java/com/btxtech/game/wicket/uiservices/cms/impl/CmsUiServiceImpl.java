@@ -179,6 +179,49 @@ public class CmsUiServiceImpl implements CmsUiService {
     }
 
     @Override
+    public PageParameters getPreviousPageParameters(BeanIdPathElement beanIdPathElement, int contentId, ContentContext contentContext) {
+        DbContent dbContent = getDbContent(contentId).getParent();
+        List list = getDataProviderBeans(beanIdPathElement.getParent(), dbContent.getId(), contentContext);
+        int position = getBeanIdPosition(list, beanIdPathElement.getBeanId());
+        if (position == 0) {
+            return null;
+        }
+        BeanIdPathElement newBeanIdPathElement = beanIdPathElement.getParent().createChildFromBeanId(((CrudChild) list.get(position - 1)).getId());
+        PageParameters pageParameters = createPageParametersFromBeanId(newBeanIdPathElement);
+        pageParameters.put(CmsPage.DETAIL_CONTENT_ID, Integer.toString(dbContent.getId()));
+        return pageParameters;
+    }
+
+    @Override
+    public PageParameters getNextPageParameters(BeanIdPathElement beanIdPathElement, int contentId, ContentContext contentContext) {
+        DbContent dbContent = getDbContent(contentId).getParent();
+        List list = getDataProviderBeans(beanIdPathElement.getParent(), dbContent.getId(), contentContext);
+        int position = getBeanIdPosition(list, beanIdPathElement.getBeanId());
+        if (position > list.size() - 2) {
+            return null;
+        }
+        BeanIdPathElement newBeanIdPathElement = beanIdPathElement.getParent().createChildFromBeanId(((CrudChild) list.get(position + 1)).getId());
+        PageParameters pageParameters = createPageParametersFromBeanId(newBeanIdPathElement);
+        pageParameters.put(CmsPage.DETAIL_CONTENT_ID, Integer.toString(dbContent.getId()));
+        return pageParameters;
+    }
+
+    @Override
+    public PageParameters getUpPageParameters(BeanIdPathElement beanIdPathElement) {
+        return createPageParametersFromBeanId(beanIdPathElement.getParent());
+    }
+
+    private int getBeanIdPosition(List list, Serializable beanId) {
+        for (int i = 0; i < list.size(); i++) {
+            CrudChild crudChild = (CrudChild) list.get(i);
+            if (beanId.equals(crudChild.getId())) {
+                return i;
+            }
+        }
+        throw new IllegalArgumentException("Bean position can not be fund: " + beanId);
+    }
+
+    @Override
     public CmsPage getPredefinedNotFound() {
         PageParameters pageParameters = getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.NOT_FOUND);
         CmsPage cmsPage = new CmsPage(pageParameters);

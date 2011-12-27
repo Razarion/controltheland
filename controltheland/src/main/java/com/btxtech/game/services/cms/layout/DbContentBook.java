@@ -34,6 +34,11 @@ public class DbContentBook extends DbContent implements DataProviderInfo, CrudPa
     private String contentProviderGetter;
     private boolean showName = true;
     private String hiddenMethodName;
+    private boolean navigationVisible;
+    private String upNavigationName;
+    private String previousNavigationName;
+    private String nextNavigationName;
+    private String navigationCssClass;
     @Transient
     private CrudListChildServiceHelper<DbContentRow> rowCrud;
 
@@ -94,5 +99,45 @@ public class DbContentBook extends DbContent implements DataProviderInfo, CrudPa
     @Override
     public void init(UserService userService) {
         dbContentRows = new ArrayList<DbContentRow>();
+    }
+
+    public boolean isNavigationVisible() {
+        return navigationVisible;
+    }
+
+    public void setNavigationVisible(boolean navigationVisible) {
+        this.navigationVisible = navigationVisible;
+    }
+
+    public String getPreviousNavigationName() {
+        return previousNavigationName;
+    }
+
+    public void setPreviousNavigationName(String previousNavigationName) {
+        this.previousNavigationName = previousNavigationName;
+    }
+
+    public String getUpNavigationName() {
+        return upNavigationName;
+    }
+
+    public void setUpNavigationName(String upNavigationName) {
+        this.upNavigationName = upNavigationName;
+    }
+
+    public String getNextNavigationName() {
+        return nextNavigationName;
+    }
+
+    public void setNextNavigationName(String nextNavigationName) {
+        this.nextNavigationName = nextNavigationName;
+    }
+
+    public String getNavigationCssClass() {
+        return navigationCssClass;
+    }
+
+    public void setNavigationCssClass(String navigationCssClass) {
+        this.navigationCssClass = navigationCssClass;
     }
 }

@@ -2,21 +2,25 @@ package com.btxtech.game.wicket.pages.cms.content;
 
 import com.btxtech.game.services.cms.layout.DbContentBook;
 import com.btxtech.game.services.cms.layout.DbContentRow;
+import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.pages.cms.EditPanel;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.DataGridView;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.HeaderlessColumn;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.util.ArrayList;
@@ -53,11 +57,53 @@ public class ContentBook extends Panel {
             }
         });
         add(new EditPanel("edit", dbContentBook, contentId, beanIdPathElement, false, false));
+        setupNavigation(dbContentBook, beanIdPathElement);
         WebMarkupContainer table = new WebMarkupContainer("table");
         add(table);
 
         setupPropertyBook(table, dbContentBook);
         cmsUiService.invokeHiddenMethod(dbContentBook, beanIdPathElement);
+    }
+
+    private void setupNavigation(DbContentBook dbContentBook, BeanIdPathElement beanIdPathElement) {
+        WebMarkupContainer navigation = new WebMarkupContainer("navigation");
+        if (dbContentBook.getNavigationCssClass() != null) {
+            navigation.add(new SimpleAttributeModifier("class", dbContentBook.getNavigationCssClass()));
+        }
+        add(navigation);
+
+        if (beanIdPathElement.getParent() != null && dbContentBook.isNavigationVisible()) {
+            PageParameters pageParameters = cmsUiService.getPreviousPageParameters(beanIdPathElement, contentId, contentContext);
+            BookmarkablePageLink<CmsPage> previous = new BookmarkablePageLink<CmsPage>("previousLink", CmsPage.class, pageParameters);
+            previous.add(new Label("previousLabel", new Model<String>(dbContentBook.getPreviousNavigationName())));
+            previous.setEnabled(pageParameters != null);
+            navigation.add(previous);
+
+            pageParameters = cmsUiService.getUpPageParameters(beanIdPathElement);
+            BookmarkablePageLink<CmsPage> up = new BookmarkablePageLink<CmsPage>("upLink", CmsPage.class, pageParameters);
+            up.setEnabled(pageParameters != null);
+            up.add(new Label("upLabel", new Model<String>(dbContentBook.getUpNavigationName())));
+            navigation.add(up);
+
+            pageParameters = cmsUiService.getNextPageParameters(beanIdPathElement, contentId, contentContext);
+            BookmarkablePageLink<CmsPage> next = new BookmarkablePageLink<CmsPage>("nextLink", CmsPage.class, pageParameters);
+            next.add(new Label("nextLabel", new Model<String>(dbContentBook.getNextNavigationName())));
+            next.setEnabled(pageParameters != null);
+            navigation.add(next);
+        } else {
+            navigation.setVisible(false);
+            BookmarkablePageLink<CmsPage> previous = new BookmarkablePageLink<CmsPage>("previousLink", CmsPage.class);
+            previous.add(new Label("previousLabel", ""));
+            navigation.add(previous);
+
+            BookmarkablePageLink<CmsPage> up = new BookmarkablePageLink<CmsPage>("upLink", CmsPage.class);
+            up.add(new Label("upLabel", ""));
+            navigation.add(up);
+
+            BookmarkablePageLink<CmsPage> nextLabel = new BookmarkablePageLink<CmsPage>("nextLink", CmsPage.class);
+            nextLabel.add(new Label("nextLabel", ""));
+            navigation.add(nextLabel);
+        }
     }
 
     private void setupPropertyBook(WebMarkupContainer table, DbContentBook dbContentBook) {
