@@ -33,7 +33,6 @@ import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 public class CmsPage extends WebPage implements IHeaderContributor {
-    private static final String CHILD_ID = "childId";
     public static final String DETAIL_CONTENT_ID = "detailId";
     public static final String CREATE_CONTENT_ID = "createId";
     public static final String INVOKE_ID = "invokeId";
@@ -115,9 +114,9 @@ public class CmsPage extends WebPage implements IHeaderContributor {
 
     public static String getChildUrlParameter(int level) {
         if (level == 0) {
-            return CHILD_ID;
+            return CmsUtil.CHILD_ID;
         } else {
-            return CHILD_ID + level;
+            return CmsUtil.CHILD_ID + level;
         }
     }
 

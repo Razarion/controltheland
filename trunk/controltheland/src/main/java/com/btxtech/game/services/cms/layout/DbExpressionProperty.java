@@ -24,6 +24,7 @@ public class DbExpressionProperty extends DbContent implements DataProviderInfo 
     private String sortHintExpression;
     private boolean defaultSortable = false;
     private boolean defaultSortableAsc = false;
+    private boolean link;
 
     @Override
     public String getExpression() {
@@ -91,5 +92,14 @@ public class DbExpressionProperty extends DbContent implements DataProviderInfo 
 
     public void setDefaultSortableAsc(boolean defaultSortableAsc) {
         this.defaultSortableAsc = defaultSortableAsc;
+    }
+
+
+    public boolean isLink() {
+        return link;
+    }
+
+    public void setLink(boolean link) {
+        this.link = link;
     }
 }

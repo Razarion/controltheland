@@ -2029,7 +2029,6 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertLabel("form:content:table:rows:5:cells:2:cell:link:label", "Details");
         // Click link
         tester.clickLink("form:content:table:rows:5:cells:2:cell:link");
-        tester.debugComponentTrees();
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TestFactoryItem");
         tester.assertLabel("form:content:table:rows:2:cells:2:cell", "1000.0");
         tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:1:cell", "TEST_HARVESTER_ITEM");
@@ -2037,6 +2036,120 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:3:cell", "TestContainerItem");
         tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:4:cell", "");
         tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:5:cell", "");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify if null property
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertLabel("form:content:table:rows:3:cells:1:cell", "TestAttackItem");
+        tester.assertLabel("form:content:table:rows:3:cells:2:cell:link:label", "Details");
+        // Click link
+        tester.clickLink("form:content:table:rows:3:cells:2:cell:link");
+        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TestAttackItem");
+        tester.assertLabel("form:content:table:rows:2:cells:2:cell", "-");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testItemTypeSectionLink() throws Exception {
+        configureMinimalGame();
+
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+
+        DbContentList dbContentList = new DbContentList();
+        dbContentList.setRowsPerPage(5);
+        dbContentList.init(userService);
+        dbPage.setContentAndAccessWrites(dbContentList);
+        dbContentList.setSpringBeanName("itemService");
+        dbContentList.setContentProviderGetter("dbItemTypeCrud");
+
+        CrudListChildServiceHelper<DbContent> columnCrud = dbContentList.getColumnsCrud();
+        DbExpressionProperty column = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
+        column.setExpression("name");
+        DbContentDetailLink detailLink = (DbContentDetailLink) columnCrud.createDbChild(DbContentDetailLink.class);
+        detailLink.setName("Details");
+
+        CrudChildServiceHelper<DbContentBook> contentBookCrud = dbContentList.getContentBookCrud();
+        DbContentBook dbContentBook = contentBookCrud.createDbChild();
+        dbContentBook.setClassName("com.btxtech.game.services.item.itemType.DbBaseItemType");
+        CrudListChildServiceHelper<DbContentRow> rowCrud = dbContentBook.getRowCrud();
+
+        DbContentRow dbContentRow = rowCrud.createDbChild();
+        dbContentRow.setName("Name");
+        DbExpressionProperty expProperty = new DbExpressionProperty();
+        expProperty.setExpression("name");
+        expProperty.setParent(dbContentRow);
+        dbContentRow.setDbContent(expProperty);
+
+        dbContentRow = rowCrud.createDbChild();
+        dbContentRow.setName("Progress");
+        expProperty = new DbExpressionProperty();
+        expProperty.setParent(dbContentRow);
+        expProperty.setExpression("dbFactoryType.progress");
+        dbContentRow.setDbContent(expProperty);
+
+        dbContentRow = rowCrud.createDbChild();
+        dbContentRow.setName("Able to build");
+        DbContentList ableToBuild = new DbContentList();
+        ableToBuild.init(userService);
+        ableToBuild.setContentProviderGetter("dbFactoryType.ableToBuildCrud");
+        ableToBuild.setParent(dbContentRow);
+        ableToBuild.setColumnCountSingleCell(5);
+        dbContentRow.setDbContent(ableToBuild);
+
+        CrudListChildServiceHelper<DbContent> ableToBuildColumnCrud = ableToBuild.getColumnsCrud();
+        DbExpressionProperty ableToBuildName = (DbExpressionProperty) ableToBuildColumnCrud.createDbChild(DbExpressionProperty.class);
+        ableToBuildName.setExpression("name");
+        ableToBuildName.setLink(true);
+
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertLabel("form:content:table:rows:5:cells:1:cell", "TestFactoryItem");
+        tester.assertLabel("form:content:table:rows:5:cells:2:cell:link:label", "Details");
+        // Click link
+        tester.clickLink("form:content:table:rows:5:cells:2:cell:link");
+        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TestFactoryItem");
+        tester.assertLabel("form:content:table:rows:2:cells:2:cell", "1000.0");
+        tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:1:cell:link:label", "TEST_HARVESTER_ITEM");
+        PageParameters pageParameters = new PageParameters("page=1,sec=units");
+        pageParameters.put("childId", 2);
+        assertBookmarkablePageLink(tester, "form:content:table:rows:3:cells:2:cell:table:rows:1:cells:1:cell:link", CmsPage.class, pageParameters);
+
+        tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:2:cell:link:label", "TestAttackItem");
+        pageParameters = new PageParameters("page=1,sec=units");
+        pageParameters.put("childId", 3);
+        assertBookmarkablePageLink(tester, "form:content:table:rows:3:cells:2:cell:table:rows:1:cells:2:cell:link", CmsPage.class, pageParameters);
+
+        tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:3:cell:link:label", "TestContainerItem");
+        pageParameters = new PageParameters("page=1,sec=units");
+        pageParameters.put("childId", 4);
+        assertBookmarkablePageLink(tester, "form:content:table:rows:3:cells:2:cell:table:rows:1:cells:3:cell:link", CmsPage.class, pageParameters);
+
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -3426,7 +3539,7 @@ public class TestCmsService extends AbstractServiceTest {
         assertBookmarkablePageLink(tester, "form:content:container:2:navigator:navigation:0:pageLink", CmsPage.class, pageParameters);
         tester.assertDisabled("form:content:container:2:navigator:navigation:0:pageLink");
         tester.assertLabel("form:content:container:2:navigator:navigation:0:pageLink:pageNumber", "1");
-        
+
         tester.assertLabel("form:content:container:2:table:rows:1:cells:1:cell", "TEST_LEVEL_1_SIMULATED");
         tester.assertLabel("form:content:container:2:table:rows:2:cells:1:cell", "TEST_LEVEL_2_REAL");
 

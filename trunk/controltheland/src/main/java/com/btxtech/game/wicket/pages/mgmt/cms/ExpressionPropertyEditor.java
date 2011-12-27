@@ -41,6 +41,7 @@ public class ExpressionPropertyEditor extends MgmtWebPage {
         form.add(new TextField("expression"));
         form.add(new CheckBox("escapeMarkup"));
         form.add(new DropDownChoice<DbExpressionProperty.Type>("optionalType", Arrays.asList(DbExpressionProperty.Type.values())));
+        form.add(new CheckBox("link"));
         form.add(new CheckBox("sortable"));
         form.add(new TextField("sortHintExpression"));
         form.add(new CheckBox("defaultSortable"));

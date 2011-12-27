@@ -15,19 +15,24 @@ package com.btxtech.game.services.cms.impl;
 
 import com.btxtech.game.jsre.common.CmsPredefinedPageDoesNotExistException;
 import com.btxtech.game.jsre.common.CmsUtil;
+import com.btxtech.game.services.cms.CmsSectionInfo;
 import com.btxtech.game.services.cms.CmsService;
+import com.btxtech.game.services.cms.DbCmsImage;
 import com.btxtech.game.services.cms.layout.DbContent;
+import com.btxtech.game.services.cms.layout.DbContentBook;
 import com.btxtech.game.services.cms.layout.DbContentBooleanExpressionImage;
 import com.btxtech.game.services.cms.layout.DbContentGameLink;
+import com.btxtech.game.services.cms.layout.DbContentList;
 import com.btxtech.game.services.cms.layout.DbContentPageLink;
 import com.btxtech.game.services.cms.page.DbAds;
-import com.btxtech.game.services.cms.DbCmsImage;
 import com.btxtech.game.services.cms.page.DbMenu;
 import com.btxtech.game.services.cms.page.DbMenuItem;
 import com.btxtech.game.services.cms.page.DbPage;
 import com.btxtech.game.services.cms.page.DbPageStyle;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
+import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.services.utg.DbAbstractLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.commons.logging.Log;
@@ -74,6 +79,7 @@ public class CmsServiceImpl implements CmsService {
     private Map<Integer, DbPage> pageCache = new HashMap<Integer, DbPage>();
     private Map<Integer, DbContent> contentCache = new HashMap<Integer, DbContent>();
     private Map<CmsUtil.CmsPredefinedPage, DbPage> predefinedDbPages = new HashMap<CmsUtil.CmsPredefinedPage, DbPage>();
+    private Map<String, CmsSectionInfo> cmsSectionInfoMap = new HashMap<String, CmsSectionInfo>();
     private String adsCode;
 
     @Autowired
@@ -117,7 +123,7 @@ public class CmsServiceImpl implements CmsService {
             if (dbContent != null) {
                 dbContent = HibernateUtil.deproxy(dbContent, DbContent.class);
                 dbPage.setContent(dbContent);
-                initializeLazyDependenciesAndFillContentCache(dbContent);
+                initializeLazyDependenciesAndFillContentCache(dbContent, dbPage);
             }
         }
         adsCode = null;
@@ -136,6 +142,7 @@ public class CmsServiceImpl implements CmsService {
         cmsUiService.setupPredefinedUrls();
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     private void checkPredefinedDbPages() {
         List<CmsUtil.CmsPredefinedPage> predefinedTypes = Arrays.asList(CmsUtil.CmsPredefinedPage.values());
         for (DbPage dbPage : pageCrudRootServiceHelper.readDbChildren()) {
@@ -165,7 +172,7 @@ public class CmsServiceImpl implements CmsService {
         predefinedDbPages.put(dbPage.getPredefinedType(), dbPage);
     }
 
-    private void initializeLazyDependenciesAndFillContentCache(DbContent dbContent) {
+    private void initializeLazyDependenciesAndFillContentCache(DbContent dbContent, DbPage dbPage) {
         Hibernate.initialize(dbContent);
         if (dbContent instanceof DbContentPageLink) {
             Hibernate.initialize(((DbContentPageLink) dbContent).getDbCmsImage());
@@ -177,11 +184,26 @@ public class CmsServiceImpl implements CmsService {
             Hibernate.initialize(((DbContentBooleanExpressionImage) dbContent).getTrueImage());
             Hibernate.initialize(((DbContentBooleanExpressionImage) dbContent).getFalseImage());
         }
+        if (dbContent instanceof DbContentBook) {
+            DbContentBook dbContentBook = (DbContentBook) dbContent;
+            if (dbContentBook.getClassName() != null) {
+                try {
+                    Class childClass = Class.forName(dbContentBook.getClassName());
+                    if (DbItemType.class.isAssignableFrom(childClass)) {
+                        cmsSectionInfoMap.put(CmsUtil.UNIT_SECTION, new CmsSectionInfo(DbItemType.class, HibernateUtil.deproxy(dbContentBook.getParent(), DbContentList.class), CmsUtil.UNIT_SECTION, dbPage.getId()));
+                    } else if (DbAbstractLevel.class.isAssignableFrom(childClass)) {
+                        cmsSectionInfoMap.put(CmsUtil.LEVEL_SECTION, new CmsSectionInfo(DbAbstractLevel.class, HibernateUtil.deproxy(dbContentBook.getParent(), DbContentList.class), CmsUtil.LEVEL_SECTION, dbPage.getId()));
+                    }
+                } catch (ClassNotFoundException e) {
+                    log.error("", e);
+                }
+            }
+        }
         contentCache.put(dbContent.getId(), dbContent);
         Collection<? extends DbContent> children = dbContent.getChildren();
         if (children != null) {
             for (DbContent child : children) {
-                initializeLazyDependenciesAndFillContentCache(child);
+                initializeLazyDependenciesAndFillContentCache(child, dbPage);
             }
         }
     }
@@ -196,7 +218,7 @@ public class CmsServiceImpl implements CmsService {
         Hibernate.initialize(dbMenu);
         if (dbMenu != null) {
             if (dbMenu.getBottom() != null) {
-                initializeLazyDependenciesAndFillContentCache(dbMenu.getBottom());
+                initializeLazyDependenciesAndFillContentCache(dbMenu.getBottom(), null);
                 dbMenu.setBottom(HibernateUtil.deproxy(dbMenu.getBottom(), DbContent.class));
                 contentCache.put(dbMenu.getBottom().getId(), dbMenu.getBottom());
             }
@@ -242,6 +264,25 @@ public class CmsServiceImpl implements CmsService {
             throw new CmsPredefinedPageDoesNotExistException(predefinedType);
         }
         return dbPage;
+    }
+
+    @Override
+    public CmsSectionInfo getCmsSectionInfo(String sectionName) {
+        CmsSectionInfo cmsSectionInfo = cmsSectionInfoMap.get(sectionName);
+        if (cmsSectionInfo == null) {
+            throw new IllegalArgumentException("No CMS section entry for: " + sectionName);
+        }
+        return cmsSectionInfo;
+    }
+
+    @Override
+    public CmsSectionInfo getCmsSectionInfo4Class(Class clazz) {
+        for (CmsSectionInfo cmsSectionInfo : cmsSectionInfoMap.values()) {
+            if (cmsSectionInfo.isAssignableFrom(clazz)) {
+                return cmsSectionInfo;
+            }
+        }
+        throw new IllegalArgumentException("No CMS section entry for class: " + clazz);
     }
 
     @Override
