@@ -46,6 +46,7 @@ import com.btxtech.game.services.forum.DbPost;
 import com.btxtech.game.services.forum.DbSubForum;
 import com.btxtech.game.services.forum.ForumService;
 import com.btxtech.game.services.forum.TestForum;
+import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.messenger.InvalidFieldException;
 import com.btxtech.game.services.messenger.MessengerService;
@@ -114,6 +115,8 @@ public class TestCmsService extends AbstractServiceTest {
     private UserGuidanceService userGuidanceService;
     @Autowired
     private StatisticsService statisticsService;
+    @Autowired
+    private ItemService itemService;
 
     private WicketTester tester;
 
@@ -2167,6 +2170,187 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void testItemTypeNavigation() throws Exception {
+        configureMinimalGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // Remove resource
+        itemService.getDbItemTypeCrud().deleteDbChild(itemService.getDbItemTypeCrud().readDbChild(TEST_RESOURCE_ITEM_ID));
+        itemService.activate();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+
+        DbContentList dbContentList = new DbContentList();
+        dbContentList.setRowsPerPage(5);
+        dbContentList.init(userService);
+        dbPage.setContentAndAccessWrites(dbContentList);
+        dbContentList.setSpringBeanName("itemService");
+        dbContentList.setContentProviderGetter("dbItemTypeCrud");
+
+        CrudListChildServiceHelper<DbContent> columnCrud = dbContentList.getColumnsCrud();
+        DbExpressionProperty column = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
+        column.setExpression("name");
+        DbContentDetailLink detailLink = (DbContentDetailLink) columnCrud.createDbChild(DbContentDetailLink.class);
+        detailLink.setName("Details");
+
+        CrudChildServiceHelper<DbContentBook> contentBookCrud = dbContentList.getContentBookCrud();
+        DbContentBook dbContentBook = contentBookCrud.createDbChild();
+        dbContentBook.setClassName("com.btxtech.game.services.item.itemType.DbBaseItemType");
+        dbContentBook.setNavigationVisible(true);
+        dbContentBook.setNextNavigationName("next");
+        dbContentBook.setPreviousNavigationName("previous");
+        dbContentBook.setUpNavigationName("up");
+        CrudListChildServiceHelper<DbContentRow> rowCrud = dbContentBook.getRowCrud();
+
+        DbContentRow dbContentRow = rowCrud.createDbChild();
+        dbContentRow.setName("Name");
+        DbExpressionProperty expProperty = new DbExpressionProperty();
+        expProperty.setExpression("name");
+        expProperty.setParent(dbContentRow);
+        dbContentRow.setDbContent(expProperty);
+
+        dbContentRow = rowCrud.createDbChild();
+        dbContentRow.setName("Progress");
+        expProperty = new DbExpressionProperty();
+        expProperty.setParent(dbContentRow);
+        expProperty.setExpression("dbFactoryType.progress");
+        dbContentRow.setDbContent(expProperty);
+
+        dbContentRow = rowCrud.createDbChild();
+        dbContentRow.setName("Able to build");
+        DbContentList ableToBuild = new DbContentList();
+        ableToBuild.init(userService);
+        ableToBuild.setContentProviderGetter("dbFactoryType.ableToBuildCrud");
+        ableToBuild.setParent(dbContentRow);
+        dbContentRow.setDbContent(ableToBuild);
+
+        CrudListChildServiceHelper<DbContent> ableToBuildColumnCrud = ableToBuild.getColumnsCrud();
+        DbExpressionProperty ableToBuildName = (DbExpressionProperty) ableToBuildColumnCrud.createDbChild(DbExpressionProperty.class);
+        ableToBuildName.setExpression("name");
+        ableToBuildName.setLink(true);
+
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        // Click link
+        tester.clickLink("form:content:table:rows:1:cells:2:cell:link");
+        tester.assertLabel("form:content:navigation:previousLink:previousLabel", "previous");
+        tester.assertDisabled("form:content:navigation:previousLink:previousLabel");
+        tester.assertDisabled("form:content:navigation:previousLink");
+
+        tester.assertLabel("form:content:navigation:upLink:upLabel", "up");
+        tester.assertEnabled("form:content:navigation:upLink:upLabel");
+        tester.assertEnabled("form:content:navigation:upLink");
+        tester.assertBookmarkablePageLink("form:content:navigation:upLink", CmsPage.class, "page = 1");
+
+        tester.assertLabel("form:content:navigation:nextLink:nextLabel", "next");
+        tester.assertEnabled("form:content:navigation:nextLink:nextLabel");
+        tester.assertEnabled("form:content:navigation:nextLink");
+        PageParameters pageParameters = new PageParameters("page=1");
+        pageParameters.put("childId", 2);
+        pageParameters.put("detailId", "1");
+        assertBookmarkablePageLink(tester, "form:content:navigation:nextLink", CmsPage.class, pageParameters);
+
+        // Click next
+        tester.clickLink("form:content:navigation:nextLink");
+        tester.assertLabel("form:content:navigation:previousLink:previousLabel", "previous");
+        tester.assertEnabled("form:content:navigation:previousLink:previousLabel");
+        tester.assertEnabled("form:content:navigation:previousLink");
+        pageParameters = new PageParameters("page=1");
+        pageParameters.put("childId", 1);
+        pageParameters.put("detailId", "1");
+        assertBookmarkablePageLink(tester, "form:content:navigation:previousLink", CmsPage.class, pageParameters);
+
+        tester.assertLabel("form:content:navigation:upLink:upLabel", "up");
+        tester.assertEnabled("form:content:navigation:upLink:upLabel");
+        tester.assertEnabled("form:content:navigation:upLink");
+        tester.assertBookmarkablePageLink("form:content:navigation:upLink", CmsPage.class, "page = 1");
+
+        tester.assertLabel("form:content:navigation:nextLink:nextLabel", "next");
+        tester.assertEnabled("form:content:navigation:nextLink:nextLabel");
+        tester.assertEnabled("form:content:navigation:nextLink");
+        pageParameters = new PageParameters("page=1");
+        pageParameters.put("childId", 3);
+        pageParameters.put("detailId", "1");
+        assertBookmarkablePageLink(tester, "form:content:navigation:nextLink", CmsPage.class, pageParameters);
+
+        // Click next (go to the last)
+        tester.clickLink("form:content:navigation:nextLink");
+        tester.clickLink("form:content:navigation:nextLink");
+        tester.clickLink("form:content:navigation:nextLink");
+        tester.clickLink("form:content:navigation:nextLink");
+        tester.clickLink("form:content:navigation:nextLink");
+        tester.assertLabel("form:content:navigation:previousLink:previousLabel", "previous");
+        tester.assertEnabled("form:content:navigation:previousLink:previousLabel");
+        tester.assertEnabled("form:content:navigation:previousLink");
+        pageParameters = new PageParameters("page=1");
+        pageParameters.put("childId", 6);
+        pageParameters.put("detailId", "1");
+        assertBookmarkablePageLink(tester, "form:content:navigation:previousLink", CmsPage.class, pageParameters);
+
+        tester.assertLabel("form:content:navigation:upLink:upLabel", "up");
+        tester.assertEnabled("form:content:navigation:upLink:upLabel");
+        tester.assertEnabled("form:content:navigation:upLink");
+        tester.assertBookmarkablePageLink("form:content:navigation:upLink", CmsPage.class, "page = 1");
+
+        tester.assertLabel("form:content:navigation:nextLink:nextLabel", "next");
+        tester.assertDisabled("form:content:navigation:nextLink:nextLabel");
+        tester.assertDisabled("form:content:navigation:nextLink");
+
+        // Click pref
+        tester.clickLink("form:content:navigation:previousLink");
+        tester.assertLabel("form:content:navigation:previousLink:previousLabel", "previous");
+        tester.assertEnabled("form:content:navigation:previousLink:previousLabel");
+        tester.assertEnabled("form:content:navigation:previousLink");
+        pageParameters = new PageParameters("page=1");
+        pageParameters.put("childId", 5);
+        pageParameters.put("detailId", "1");
+        assertBookmarkablePageLink(tester, "form:content:navigation:previousLink", CmsPage.class, pageParameters);
+
+        tester.assertLabel("form:content:navigation:upLink:upLabel", "up");
+        tester.assertEnabled("form:content:navigation:upLink:upLabel");
+        tester.assertEnabled("form:content:navigation:upLink");
+        tester.assertBookmarkablePageLink("form:content:navigation:upLink", CmsPage.class, "page = 1");
+
+        tester.assertLabel("form:content:navigation:nextLink:nextLabel", "next");
+        tester.assertEnabled("form:content:navigation:nextLink:nextLabel");
+        tester.assertEnabled("form:content:navigation:nextLink");
+        pageParameters = new PageParameters("page=1");
+        pageParameters.put("childId", 7);
+        pageParameters.put("detailId", "1");
+        assertBookmarkablePageLink(tester, "form:content:navigation:nextLink", CmsPage.class, pageParameters);
+
+        // Click up
+        tester.clickLink("form:content:navigation:upLink");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 
     @Test
     @DirtiesContext

@@ -46,6 +46,12 @@ public class ContentBookEditor extends MgmtWebPage {
         form.add(new CheckBox("showName"));
         form.add(new TextField("hiddenMethodName"));
 
+        form.add(new CheckBox("navigationVisible"));
+        form.add(new TextField("upNavigationName"));
+        form.add(new TextField("previousNavigationName"));
+        form.add(new TextField("nextNavigationName"));
+        form.add(new TextField("navigationCssClass"));
+
         new CrudListChildTableHelper<DbContentBook, DbContentRow>("rows", null, "createRow", true, form, true) {
 
             @Override
