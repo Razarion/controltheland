@@ -392,9 +392,8 @@ public class CmsUiServiceImpl implements CmsUiService {
                     } else {
                         stringValue = value.toString();
                     }
-                    CmsSectionInfo cmsSectionInfo = cmsService.getCmsSectionInfo4Class(bean.getClass());
-                    if (dbExpressionProperty.isLink() && cmsSectionInfo != null) {
-                        component = new SectionLink(id, stringValue, cmsSectionInfo, dbExpressionProperty, bean);
+                    if (bean != null && dbExpressionProperty.isLink() && cmsService.getCmsSectionInfo4Class(bean.getClass()) != null) {
+                        component = new SectionLink(id, stringValue, cmsService.getCmsSectionInfo4Class(bean.getClass()), dbExpressionProperty, bean);
                     } else {
                         component = new Label(id, stringValue);
                         component.setVisible(isReadAllowed(dbExpressionProperty.getId()));
