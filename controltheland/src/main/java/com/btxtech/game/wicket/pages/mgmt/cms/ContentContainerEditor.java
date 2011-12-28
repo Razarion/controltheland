@@ -40,6 +40,7 @@ public class ContentContainerEditor extends MgmtWebPage {
         form.add(new TextField("cssClass"));
         form.add(new TextField("springBeanName"));
         form.add(new TextField("contentProviderGetter"));
+        form.add(new TextField("expression"));
 
         new CrudListChildTableHelper<DbContentContainer, DbContent>("children", null, "createChild", true, form, true) {
 
