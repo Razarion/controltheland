@@ -32,6 +32,7 @@ public class DbContentContainer extends DbContent implements DataProviderInfo, C
     private List<DbContent> dbContents;
     private String springBeanName;
     private String contentProviderGetter;
+    private String expression;
     @Transient
     private CrudListChildServiceHelper<DbContent> contentCrud;
 
@@ -51,6 +52,16 @@ public class DbContentContainer extends DbContent implements DataProviderInfo, C
 
     public void setContentProviderGetter(String contentProviderGetter) {
         this.contentProviderGetter = contentProviderGetter;
+    }
+
+    @Override
+    public String getExpression() {
+        return expression;
+    }
+
+    @Override
+    public void setExpression(String expression) {
+        this.expression = expression;
     }
 
     @Override
