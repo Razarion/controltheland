@@ -282,7 +282,7 @@ public class CmsServiceImpl implements CmsService {
                 return cmsSectionInfo;
             }
         }
-        throw new IllegalArgumentException("No CMS section entry for class: " + clazz);
+        return null;
     }
 
     @Override
