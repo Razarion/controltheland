@@ -21,6 +21,7 @@ import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -54,6 +55,9 @@ public class DbLevelEditor extends MgmtWebPage {
         tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.unlink, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after);
         contentArea.add(new TinyMceBehavior(tinyMCESettings));
         form.add(contentArea);
+
+        form.add(new TextField("inGameHtml"));
+
 
         if (dbAbstractLevel instanceof DbRealGameLevel) {
             form.add(new RealGameLevelEditor("levelDetail"));
