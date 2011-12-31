@@ -22,6 +22,7 @@ import java.util.Map;
  * Time: 18:48:18
  */
 public class Level implements Serializable {
+    private int id;
     private String name;
     private String html;
     private boolean realGame;
@@ -35,13 +36,18 @@ public class Level implements Serializable {
     public Level() {
     }
 
-    public Level(String name, String html, boolean realGame, int maxMoney, Map<Integer, Integer> itemTypeLimitation, int houseSpace) {
+    public Level(int id, String name, String html, boolean realGame, int maxMoney, Map<Integer, Integer> itemTypeLimitation, int houseSpace) {
+        this.id = id;
         this.name = name;
         this.html = html;
         this.realGame = realGame;
         this.maxMoney = maxMoney;
         this.itemTypeLimitation = itemTypeLimitation;
         this.houseSpace = houseSpace;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {

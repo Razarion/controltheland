@@ -1,5 +1,8 @@
 package com.btxtech.game.jsre.common;
 
+import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+
 /**
  * User: beat
  * Date: 05.08.2011
@@ -48,6 +51,40 @@ public class CmsUtil {
         builder.append(ID);
         builder.append('/');
         builder.append(id);
+        return builder.toString();
+    }
+
+    public static void getUrl4ItemTypePage(StringBuilder builder, ItemType itemType, String text) {
+        builder.append("<a href=\"/");
+        builder.append(MOUNT_GAME_CMS);
+        builder.append('/');
+        builder.append(SECTION_ID);
+        builder.append('/');
+        builder.append(UNIT_SECTION);
+        builder.append('/');
+        builder.append(CHILD_ID);
+        builder.append('/');
+        builder.append(itemType.getId());
+        builder.append("\" target=\"_blank\" >");
+        builder.append(text);
+        builder.append("</a>");
+    }
+
+    public static String getUrl4LavalPage(Level level, String text) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("<a href=\"/");
+        builder.append(MOUNT_GAME_CMS);
+        builder.append('/');
+        builder.append(SECTION_ID);
+        builder.append('/');
+        builder.append(LEVEL_SECTION);
+        builder.append('/');
+        builder.append(CHILD_ID);
+        builder.append('/');
+        builder.append(level.getId());
+        builder.append("\" target=\"_blank\" style=\"color: white\">");
+        builder.append(text);
+        builder.append("</a>");
         return builder.toString();
     }
 

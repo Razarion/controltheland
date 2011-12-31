@@ -56,7 +56,7 @@ public class ItemTypeEditorPanel extends FlexTable {
                 ///--- Setup div
                 TerrainView.uglySuppressRadar = true;
                 Connection.getInstance().init4ItemTypeEditor();
-                ClientLevelHandler.getInstance().setLevel(new com.btxtech.game.jsre.client.common.Level("ItemTypeEditorLevel", "", false, 0, null, 0));
+                ClientLevelHandler.getInstance().setLevel(new com.btxtech.game.jsre.client.common.Level(0, "ItemTypeEditorLevel", "", false, 0, null, 0));
                 ///--- Setup terrain
                 ArrayList<SurfaceImage> surfaceImages = new ArrayList<SurfaceImage>();
                 surfaceImages.add(new SurfaceImage(itemType.getTerrainType().getSurfaceTypes().get(0), 23, "#00FF00"));
