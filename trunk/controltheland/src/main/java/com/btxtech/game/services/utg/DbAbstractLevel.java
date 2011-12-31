@@ -51,6 +51,8 @@ public abstract class DbAbstractLevel implements CrudChild, Serializable {
     @Column(length = 50000)
     private String html;
     @Column(length = 1000)
+    private String inGameHtml;
+    @Column(length = 1000)
     private String internalDescription;
     @Transient
     private ConditionConfig conditionConfig;
@@ -91,6 +93,14 @@ public abstract class DbAbstractLevel implements CrudChild, Serializable {
 
     public void setHtml(String html) {
         this.html = html;
+    }
+
+    public String getInGameHtml() {
+        return inGameHtml;
+    }
+
+    public void setInGameHtml(String inGameHtml) {
+        this.inGameHtml = inGameHtml;
     }
 
     public String getInternalDescription() {
