@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.user.client.Timer;
@@ -74,16 +75,20 @@ public class SpeechBubbleHandler {
             SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
             if (ClientBase.getInstance().isMyOwnProperty(syncBaseItem)) {
                 builder.append(syncBaseItem.getBaseItemType().getDescription());
+                builder.append("</br>");
+                CmsUtil.getUrl4ItemTypePage(builder, syncItem.getItemType(), "Details");
                 if (ItemCockpit.hasItemCockpit(syncBaseItem) || syncBaseItem.hasSyncMovable()) {
                     builder.append("</br><b>Click on it!</b>");
                 }
             } else {
-                builder.append("Attack this <b>enemy</b> unit!");
+                builder.append("Attack this <b>enemy</b> ");
+                CmsUtil.getUrl4ItemTypePage(builder, syncItem.getItemType(), "unit!");
                 builder.append("</br>");
                 builder.append(ClientBase.getInstance().getBaseName(syncBaseItem.getBase()));
             }
         } else {
-            builder.append("Gather <b>money</b> from this gold.");
+            builder.append("Gather <b>money</b> from this ");
+            CmsUtil.getUrl4ItemTypePage(builder, syncItem.getItemType(), "gold");
         }
         return builder.toString();
     }

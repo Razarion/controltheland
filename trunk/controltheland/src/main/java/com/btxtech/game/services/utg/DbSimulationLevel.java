@@ -63,7 +63,7 @@ public class DbSimulationLevel extends DbAbstractLevel {
             throw new LevelActivationException("No tutorial set");
         }
 
-        return new Level(getName(), getInGameHtml(), false, 0, createLimitationMap(), 0);
+        return new Level(getId(), getName(), getInGameHtml(), false, 0, createLimitationMap(), 0);
     }
 
     private Map<Integer, Integer> createLimitationMap() {

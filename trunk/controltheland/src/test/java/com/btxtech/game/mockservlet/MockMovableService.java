@@ -127,7 +127,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     private void setupLevel(GameInfo gameInfo) {
-        gameInfo.setLevel(new Level("TestLevel", "", false, 1000, null, 100));
+        gameInfo.setLevel(new Level(0, "TestLevel", "", false, 1000, null, 100));
     }
 
     @Override

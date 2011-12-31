@@ -2,6 +2,7 @@ package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
@@ -61,6 +62,6 @@ public class CockpitControlPanel extends AbstractControlPanel {
 
     public void setLevel(Level level) {
         this.level.setText(level.getName());
-        mission.setHTML(level.getHtml());
+        mission.setHTML(level.getHtml() + " " + CmsUtil.getUrl4LavalPage(level, "More"));
     }
 }

@@ -23,10 +23,14 @@ import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -167,8 +171,7 @@ public class SpeechBubble extends AbsolutePanel implements MouseOverHandler, Mou
         }
         // HTML content
         VerticalPanel verticalPanel = new VerticalPanel();
-        HTML htmlContent = new HTML(html);
-        verticalPanel.add(htmlContent);
+        verticalPanel.add(createHtml(html));
         verticalPanel.getElement().getStyle().setZIndex(2);
         verticalPanel.setPixelSize(htmlWidth, htmlHeight);
         switch (direction) {
@@ -193,6 +196,23 @@ public class SpeechBubble extends AbsolutePanel implements MouseOverHandler, Mou
             getElement().getStyle().setProperty("bottom", bottom + "px");
         }
 
+    }
+
+    private HTML createHtml(String html) {
+        HTML htmlContent = new HTML(html);
+        htmlContent.addMouseDownHandler(new MouseDownHandler() {
+            @Override
+            public void onMouseDown(MouseDownEvent event) {
+                event.stopPropagation();
+            }
+        });
+        htmlContent.addMouseUpHandler(new MouseUpHandler() {
+            @Override
+            public void onMouseUp(MouseUpEvent event) {
+                event.stopPropagation();
+            }
+        });
+        return htmlContent;
     }
 
     private int getBubbleSize(int htmlSize) {
