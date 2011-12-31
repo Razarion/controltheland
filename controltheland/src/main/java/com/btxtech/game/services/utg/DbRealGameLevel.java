@@ -205,7 +205,7 @@ public class DbRealGameLevel extends DbAbstractLevel implements CrudParent {
         for (DbItemTypeLimitation dbItemTypeLimitation : this.itemTypeLimitation) {
             itemTypeLimitation.put(dbItemTypeLimitation.getDbBaseItemType().getId(), dbItemTypeLimitation.getCount());
         }
-        return new Level(getId(), getName(), getInGameHtml(), true, maxMoney, itemTypeLimitation, houseSpace);
+        return new Level(getSaveId(), getName(), getInGameHtml(), true, maxMoney, itemTypeLimitation, houseSpace);
 
     }
 

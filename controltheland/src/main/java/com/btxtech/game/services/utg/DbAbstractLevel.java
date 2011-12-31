@@ -125,6 +125,15 @@ public abstract class DbAbstractLevel implements CrudChild, Serializable {
         return id;
     }
 
+    protected int getSaveId() {
+        if (id != null) {
+            return id;
+        } else {
+            // Only used in dummy level
+            return -1;
+        }
+    }
+
     public abstract String getDisplayType();
 
     @Override
