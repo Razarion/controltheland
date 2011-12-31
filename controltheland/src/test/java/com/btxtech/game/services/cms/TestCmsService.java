@@ -2306,6 +2306,62 @@ public class TestCmsService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
+    public void testLevelSectionLink() throws Exception {
+        configureMinimalGame();
+
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+
+        DbExpressionProperty dbExpressionProperty = new DbExpressionProperty();
+        dbExpressionProperty.init(userService);
+        dbPage.setContentAndAccessWrites(dbExpressionProperty);
+        dbExpressionProperty.setSpringBeanName("userGuidanceService");
+        dbExpressionProperty.setExpression("dbAbstractLevelCms.name");
+        dbExpressionProperty.setLink(true);
+        pageCrud.updateDbChild(dbPage);
+
+        // Setup the level page
+        DbPage dbLevelPage = pageCrud.createDbChild();
+        dbLevelPage.setName("Level");
+        DbContentBook dbContentBook = new DbContentBook();
+        dbContentBook.init(userService);
+        dbContentBook.setClassName("com.btxtech.game.services.utg.DbSimulationLevel");
+        dbLevelPage.setContentAndAccessWrites(dbContentBook);
+        pageCrud.updateDbChild(dbLevelPage);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertLabel("form:content", "-");
+        // Enter game
+        movableService.getGameInfo();
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertLabel("form:content:link:label", "TEST_LEVEL_1_SIMULATED");
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
     public void testItemTypeNavigation() throws Exception {
         configureMinimalGame();
 

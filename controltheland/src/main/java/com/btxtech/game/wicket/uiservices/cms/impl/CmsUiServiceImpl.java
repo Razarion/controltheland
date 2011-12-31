@@ -95,6 +95,7 @@ import java.util.Map;
 public class CmsUiServiceImpl implements CmsUiService {
     public static final String REQUEST_TMP_CREATE_BEAN_ATTRIBUTES = "btxtech.game.tmpCreateBeanAttributes";
     private static final String CURRENT_PATH = ".";
+    private static final String NESTED_PROPERTY = ".";
     @Autowired
     private CmsService cmsService;
     @Autowired
@@ -435,8 +436,17 @@ public class CmsUiServiceImpl implements CmsUiService {
                     } else {
                         stringValue = value.toString();
                     }
-                    if (bean != null && dbExpressionProperty.isLink() && cmsService.getCmsSectionInfo4Class(bean.getClass()) != null) {
-                        component = new SectionLink(id, stringValue, cmsService.getCmsSectionInfo4Class(bean.getClass()), dbExpressionProperty, bean);
+                    if (dbExpressionProperty.isLink()) {
+                        if (bean != null && cmsService.getCmsSectionInfo4Class(bean.getClass()) != null) {
+                            component = new SectionLink(id, stringValue, cmsService.getCmsSectionInfo4Class(bean.getClass()), dbExpressionProperty, bean);
+                        } else {
+                            String expression = beanIdPathElement.getExpression();
+                            if(expression.contains(NESTED_PROPERTY)) {
+                               expression = expression.substring(0, expression.lastIndexOf(NESTED_PROPERTY));
+                            }
+                            bean = getValue(beanIdPathElement.getSpringBeanName(), expression);
+                            component = new SectionLink(id, stringValue, cmsService.getCmsSectionInfo4Class(bean.getClass()), dbExpressionProperty, bean);
+                        }
                     } else {
                         component = new Label(id, stringValue);
                         component.setVisible(isReadAllowed(dbExpressionProperty.getId()));
