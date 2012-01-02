@@ -46,7 +46,7 @@ public class SpeechBubbleHandler {
         this.syncItem = syncItem;
     }
 
-    private void hide() {
+    public void hide() {
         if (itemSpeechBubble != null) {
             itemSpeechBubble.close();
             itemSpeechBubble = null;
