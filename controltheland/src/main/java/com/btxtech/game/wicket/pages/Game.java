@@ -17,12 +17,9 @@ import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
-import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
-import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -32,7 +29,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: Jun 1, 2009
  * Time: 12:10:57 AM
  */
-public class Game extends WebPage implements IHeaderContributor {
+public class Game extends WebPage {
     @SpringBean
     private UserTrackingService userTrackingService;
     @SpringBean
@@ -64,12 +61,5 @@ public class Game extends WebPage implements IHeaderContributor {
     protected void onBeforeRender() {
         super.onBeforeRender();
         userTrackingService.pageAccess(getClass());
-    }
-
-    @Override
-    public void renderHead(IHeaderResponse iHeaderResponse) {
-        if (!userTrackingService.isJavaScriptDetected()) {
-            iHeaderResponse.renderOnLoadJavascript(CmsPage.JAVA_SCRIPT_HTML5_DETECTION);
-        }
     }
 }
