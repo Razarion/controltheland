@@ -61,6 +61,7 @@ public class MapView implements EntryPoint {
         territoryEditModel.setTerritoryCockpit(cockpit);
 
         final MiniTerrain miniTerrain = new MiniTerrain(RootPanel.get().getOffsetWidth(), RootPanel.get().getOffsetHeight());
+        TerrainView.getInstance().getTerrainHandler().addTerrainListener(miniTerrain);
         miniTerrain.getCanvas().getElement().getStyle().setZIndex(1);
         absolutePanel.add(miniTerrain.getCanvas(), 0, 0);
 
