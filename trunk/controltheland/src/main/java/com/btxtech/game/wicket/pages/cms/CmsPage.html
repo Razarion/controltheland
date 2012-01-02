@@ -17,8 +17,18 @@
     <link wicket:id="css"/>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <title wicket:id="title"/>
+    <script type="text/javascript">
+        window.onerror = handleError;
+        function handleError(message, file, lineNumber) {
+            errorMessage = "InPageError(CmsPage):\n" + message + " File: " + file + " Linenumber: " + lineNumber;
+            var img = document.createElement('img');
+            img.src = '/spring/lsc?e=' + errorMessage;
+            document.body.appendChild(img);
+            return true;
+        }
+    </script>
 </head>
-<body>
+<body onload="jsDetect()">
 <div class="header" wicket:id="header"></div>
 
 <div class="middle">
