@@ -157,7 +157,13 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
             placeAbleItems.add(item.getSyncBaseItem());
         }
 
-        double angel = target.getPosition().getAngleToNord(lastPoint);
+        double angel;
+        if (target.getPosition().equals(lastPoint)) {
+            angel = 0;
+        } else {
+            angel = target.getPosition().getAngleToNord(lastPoint);
+        }
+
         AttackFormation attackFormation = AttackFormationFactory.create(target, angel, items);
         while (attackFormation.hasNext()) {
             AttackFormationItem attackFormationItem = attackFormation.calculateNextEntry();
