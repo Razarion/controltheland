@@ -39,6 +39,7 @@ public class SoundHandler {
     private String mimeType;
     private String explodeSrc;
     private boolean logNoCreation = true;
+    private boolean logNoMimeType = true;
 
     public static SoundHandler getInstance() {
         return INSTANCE;
@@ -150,7 +151,10 @@ public class SoundHandler {
             mimeType = Constants.CODEC_TYPE_OGG;
             return mimeType;
         } else {
-            log.severe("Can not play sound mime type OGG or MP3");
+            if (logNoMimeType) {
+                log.severe("Can not play sound mime type OGG or MP3");
+                logNoMimeType = false;
+            }
             return null;
         }
     }
