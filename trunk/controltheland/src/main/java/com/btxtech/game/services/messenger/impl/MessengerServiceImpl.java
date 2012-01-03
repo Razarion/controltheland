@@ -91,6 +91,7 @@ public class MessengerServiceImpl implements MessengerService {
 
     @Override
     @Secured(SecurityRoles.ROLE_USER)
+    @Transactional
     public void sendMail(String to, String subject, String body) throws InvalidFieldException {
         final User fromUser = userService.getUser();
         if (to == null || to.isEmpty()) {

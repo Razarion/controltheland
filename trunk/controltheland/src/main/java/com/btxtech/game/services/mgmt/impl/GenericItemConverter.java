@@ -111,9 +111,13 @@ public class GenericItemConverter {
             if (!userState.isRegistered()) {
                 continue;
             }
-            DbUserState dbUserState = createDbUserState(userState);
-            dbUserState.setDbAbstractComparisonBackup(serverConditionService.createBackup(dbUserState, userState));
-            dbUserStates.add(dbUserState);
+            try {
+                DbUserState dbUserState = createDbUserState(userState);
+                dbUserState.setDbAbstractComparisonBackup(serverConditionService.createBackup(dbUserState, userState));
+                dbUserStates.add(dbUserState);
+            } catch (Exception e) {
+                log.error("Can not back user: " + userState, e);
+            }
         }
 
         backupEntry.setUserStates(dbUserStates);
