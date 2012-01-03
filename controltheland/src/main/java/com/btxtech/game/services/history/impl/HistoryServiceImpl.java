@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -76,6 +77,7 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
+    @Transactional
     public void addBaseStartEntry(SimpleBase simpleBase) {
         save(new DbHistoryElement(DbHistoryElement.Type.BASE_STARTED,
                 userService.getUser(simpleBase),
@@ -90,6 +92,7 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
+    @Transactional
     public void addBaseDefeatedEntry(SimpleBase actor, SimpleBase target) {
         save(new DbHistoryElement(DbHistoryElement.Type.BASE_DEFEATED,
                 userService.getUser(actor),
@@ -104,6 +107,7 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
+    @Transactional
     public void addBaseSurrenderedEntry(SimpleBase simpleBase) {
         save(new DbHistoryElement(DbHistoryElement.Type.BASE_SURRENDERED,
                 userService.getUser(simpleBase),
@@ -118,6 +122,7 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
+    @Transactional
     public void addItemCreatedEntry(SyncBaseItem syncBaseItem) {
         save(new DbHistoryElement(DbHistoryElement.Type.ITEM_CREATED,
                 userService.getUser(syncBaseItem.getBase()),
@@ -132,6 +137,7 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
+    @Transactional
     public void addItemDestroyedEntry(SimpleBase actor, SyncBaseItem target) {
         save(new DbHistoryElement(DbHistoryElement.Type.ITEM_DESTROYED,
                 userService.getUser(actor),
@@ -146,6 +152,7 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
+    @Transactional
     public void addLevelPromotionEntry(UserState userState, DbAbstractLevel level) {
         save(new DbHistoryElement(DbHistoryElement.Type.LEVEL_PROMOTION,
                 userState.getUser(),

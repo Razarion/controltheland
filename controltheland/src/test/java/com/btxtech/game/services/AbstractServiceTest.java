@@ -1368,7 +1368,7 @@ abstract public class AbstractServiceTest {
         }
 
         Session session = SessionFactoryUtils.getSession(getHibernateTemplate().getSessionFactory(), true);
-        session.setFlushMode(FlushMode.AUTO);
+        session.setFlushMode(FlushMode.MANUAL);
         sessionHolder = new SessionHolder(session);
         TransactionSynchronizationManager.bindResource(getHibernateTemplate().getSessionFactory(), sessionHolder);
     }

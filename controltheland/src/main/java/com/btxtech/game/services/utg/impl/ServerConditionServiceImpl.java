@@ -35,6 +35,8 @@ import com.btxtech.game.services.utg.condition.backup.DbAbstractComparisonBackup
 import com.btxtech.game.services.utg.condition.backup.DbCountComparisonBackup;
 import com.btxtech.game.services.utg.condition.backup.DbSyncItemIdComparisonBackup;
 import com.btxtech.game.services.utg.condition.backup.DbSyncItemTypeComparisonBackup;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -59,6 +61,7 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState> 
     @Autowired
     private ServerServices serverServices;
     private final Map<UserState, AbstractConditionTrigger<UserState>> triggerMap = new HashMap<UserState, AbstractConditionTrigger<UserState>>();
+    private Log log = LogFactory.getLog(ServerConditionServiceImpl.class);
 
     @Override
     protected void saveAbstractConditionTrigger(AbstractConditionTrigger<UserState> abstractConditionTrigger) {
@@ -99,10 +102,14 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState> 
         synchronized (triggerMap) {
             triggerMap.clear();
             for (Map.Entry<DbUserState, UserState> entry : userStates.entrySet()) {
-                DbAbstractLevel dbAbstractLevel = userGuidanceService.getDbLevel(entry.getValue().getCurrentAbstractLevel().getId());
-                AbstractConditionTrigger<UserState> abstractConditionTrigger = activateCondition(dbAbstractLevel.getConditionConfig(), entry.getValue());
-                if (entry.getKey().getDbAbstractComparisonBackup() != null) {
-                    entry.getKey().getDbAbstractComparisonBackup().restore(abstractConditionTrigger.getAbstractComparison(), itemService);
+                try {
+                    DbAbstractLevel dbAbstractLevel = userGuidanceService.getDbLevel(entry.getValue().getCurrentAbstractLevel().getId());
+                    AbstractConditionTrigger<UserState> abstractConditionTrigger = activateCondition(dbAbstractLevel.getConditionConfig(), entry.getValue());
+                    if (entry.getKey().getDbAbstractComparisonBackup() != null) {
+                        entry.getKey().getDbAbstractComparisonBackup().restore(abstractConditionTrigger.getAbstractComparison(), itemService);
+                    }
+                } catch (Exception e) {
+                    log.error("Can not restore user: " + entry.getKey(), e);
                 }
             }
         }

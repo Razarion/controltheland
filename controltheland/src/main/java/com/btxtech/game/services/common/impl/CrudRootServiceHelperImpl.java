@@ -162,6 +162,7 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
     }
 
     @Override
+    @Transactional
     public T createDbChild(UserService userService) {
         return createDbChild();
     }

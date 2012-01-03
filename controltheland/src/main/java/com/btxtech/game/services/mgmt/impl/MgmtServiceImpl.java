@@ -347,6 +347,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     }
 
     @PreDestroy
+    @Transactional
     public void shutdown() {
         try {
             backup();
