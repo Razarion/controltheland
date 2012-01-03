@@ -1,6 +1,6 @@
 ﻿SET SQL_SAFE_UPDATES=0;
 
-SET @deleteBefore := "2011-12-12";
+SET @deleteBefore := "2012-01-03";
 
 DELETE FROM gamedb.TRACKER_BROWSER_DETAILS where timeStamp < @deleteBefore;
 DELETE FROM gamedb.TRACKER_BROWSER_WINDOW where timeStamp < @deleteBefore;
