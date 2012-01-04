@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosi
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * User: beat
@@ -35,5 +36,7 @@ public interface TerrainEditor extends RemoteService {
     void saveTerritory(int territoryId, Collection<Rectangle> territoryTileRegions);
 
     Collection<Territory> getTerritories();
+
+    Map<String, Collection<Integer>> getTerrainImageGroups();
 
 }

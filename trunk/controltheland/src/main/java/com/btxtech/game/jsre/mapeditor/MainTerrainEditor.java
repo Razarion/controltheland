@@ -16,13 +16,11 @@ package com.btxtech.game.jsre.mapeditor;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 
 /**
@@ -55,25 +53,5 @@ public class MainTerrainEditor implements EntryPoint {
         // Radar panel
         MapEditorRadar mapEditorRadar = new MapEditorRadar();
         mapEditorRadar.addToParent(MapWindow.getAbsolutePanel(), TopMapPanel.Direction.RIGHT_TOP, 0);
-
-        terrainEditor.getTerrainInfo(terrainId, new AsyncCallback<TerrainInfo>() {
-            @Override
-            public void onFailure(Throwable throwable) {
-                GwtCommon.handleException(throwable);
-            }
-
-            @Override
-            public void onSuccess(TerrainInfo terrainInfo) {
-                TerrainView.getInstance().setupTerrain(terrainInfo.getTerrainSettings(),
-                        terrainInfo.getTerrainImagePositions(),
-                        terrainInfo.getSurfaceRects(),
-                        terrainInfo.getSurfaceImages(),
-                        terrainInfo.getTerrainImages());
-                TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
-                cockpit.fillTerrainImages(terrainInfo.getTerrainImages());
-                cockpit.fillSurfaces(terrainInfo.getSurfaceImages());
-            }
-        });
-
     }
 }

@@ -16,6 +16,8 @@ package com.btxtech.game.jsre.mapeditor;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -27,15 +29,33 @@ import com.google.gwt.user.client.ui.Image;
  * Time: 10:07:13 PM
  */
 public class TerrainImageSelectorItem extends FlowPanel implements MouseDownHandler {
+    private static final int MAX_EDGE_LENGTH = 100;
     private TerrainImage terrainImage;
 
     public TerrainImageSelectorItem(TerrainImage terrainImage) {
         this.terrainImage = terrainImage;
-        Image image = ImageHandler.getTerrainImage(terrainImage.getId());
+        Image image = new Image();
+        image.addLoadHandler(new LoadHandler() {
+            @Override
+            public void onLoad(LoadEvent event) {
+                Image image = (Image) event.getSource();
+                if (image.getWidth() > image.getHeight()) {
+                    if (image.getWidth() > MAX_EDGE_LENGTH) {
+                        image.setWidth(Integer.toString(MAX_EDGE_LENGTH) + "px");
+                    }
+                } else {
+                    if (image.getHeight() > MAX_EDGE_LENGTH) {
+                        image.setHeight(Integer.toString(MAX_EDGE_LENGTH) + "px");
+                    }
+                }
+            }
+        });
+        image.setUrl(ImageHandler.getTerrainImageUrl(terrainImage.getId()));
         add(image);
         image.addMouseDownHandler(this);
         setSelected(false);
-        image.setPixelSize(100, 100);
+        getElement().getStyle().setBackgroundColor("#888888");
+        setPixelSize(MAX_EDGE_LENGTH, MAX_EDGE_LENGTH);
     }
 
     @Override

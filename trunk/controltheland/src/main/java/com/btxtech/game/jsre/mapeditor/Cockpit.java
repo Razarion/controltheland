@@ -15,22 +15,26 @@ package com.btxtech.game.jsre.mapeditor;
 
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.TopMapPanel;
+import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
+
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: beat
@@ -39,20 +43,22 @@ import java.util.Collection;
  */
 public class Cockpit extends TopMapPanel {
     public static final String HEIGHT = "600px";
+    private static final String RADIO_BUTTON_GROUP = "RadioButtonGroup";
     private TerrainImageSelectorItem selection;
-    private FlexTable terrainImageSelector;
     private FlexTable surfaceSelector;
     private ToggleButton deleteButton;
     private TerrainEditorAsync terrainEditor;
     private int terrainId;
     private TerrainImageModifier terrainImageModifier;
     private SurfaceModifier surfaceModifier;
-    private ScrollPanel terrainImageScroll;
-    private ScrollPanel surfaceScroll;
+    private Map<Integer, FlexTable> imageGroup = new HashMap<Integer, FlexTable>();
+    private FlexTable controlPanel;
+    private int selectorRow;
 
     public Cockpit(TerrainEditorAsync terrainEditor, int terrainId) {
         this.terrainEditor = terrainEditor;
         this.terrainId = terrainId;
+        setupTerrainImageGroups();
     }
 
     @Override
@@ -60,7 +66,7 @@ public class Cockpit extends TopMapPanel {
         terrainImageModifier = new TerrainImageModifier(this);
         surfaceModifier = new SurfaceModifier(this);
 
-        FlexTable controlPanel = new FlexTable();
+        controlPanel = new FlexTable();
         // Delete Button
         deleteButton = new ToggleButton("Delete");
         controlPanel.setWidget(0, 0, deleteButton);
@@ -89,72 +95,106 @@ public class Cockpit extends TopMapPanel {
             }
         });
         controlPanel.setWidget(1, 0, saveButton);
-
-        // Tab panel
-        TabPanel tp = new TabPanel();
-        tp.add(setupSurfaces(), "Surface");
-        tp.add(setupTerrainImages(), "Images");
-        tp.addSelectionHandler(new SelectionHandler<Integer>() {
-            @Override
-            public void onSelection(SelectionEvent<Integer> integerSelectionEvent) {
-                editModeChanged(integerSelectionEvent.getSelectedItem());
-            }
-        });
-        tp.selectTab(0);
-        controlPanel.setWidget(2, 0, tp);
         return controlPanel;
     }
 
-    private void editModeChanged(int mode) {
+    private void setupTerrainImageGroups() {
+        terrainEditor.getTerrainImageGroups(new AsyncCallback<Map<String, Collection<Integer>>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                GwtCommon.handleException(caught, true);
+            }
 
-        switch (mode) {
-            case 0:
-                // Surface
-                MapWindow.getInstance().setTerrainMouseMoveListener(surfaceModifier);
-                break;
-            case 1:
-                // Terrain Images
-                MapWindow.getInstance().setTerrainMouseMoveListener(terrainImageModifier);
-                break;
-            case 2:
-                // TerritoryEditor
-                break;
+            @Override
+            public void onSuccess(Map<String, Collection<Integer>> result) {
+                setupSurfaceSelector();
 
-        }
+                for (Map.Entry<String, Collection<Integer>> entry : result.entrySet()) {
+                    setupImageSelector(entry);
+                }
+                selectorRow = controlPanel.getRowCount();
+                
+                terrainEditor.getTerrainInfo(terrainId, new AsyncCallback<TerrainInfo>() {
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        GwtCommon.handleException(throwable);
+                    }
+
+                    @Override
+                    public void onSuccess(TerrainInfo terrainInfo) {
+                        TerrainView.getInstance().setupTerrain(terrainInfo.getTerrainSettings(),
+                                terrainInfo.getTerrainImagePositions(),
+                                terrainInfo.getSurfaceRects(),
+                                terrainInfo.getSurfaceImages(),
+                                terrainInfo.getTerrainImages());
+                        TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
+                        fillTerrainImages(terrainInfo.getTerrainImages());
+                        fillSurfaces(terrainInfo.getSurfaceImages());
+                    }
+                });
+
+            }
+        });
     }
 
-    private Widget setupSurfaces() {
+    private void setupImageSelector(Map.Entry<String, Collection<Integer>> entry) {
+        FlexTable imageSelector = new FlexTable();
+        imageSelector.setCellSpacing(5);
+        imageSelector.setCellPadding(3);
+        imageSelector.addStyleName("tile-selector");
+        final ScrollPanel imageScroll = new ScrollPanel(imageSelector);
+        imageScroll.setAlwaysShowScrollBars(true);
+        imageScroll.setHeight(HEIGHT);
+        for (Integer imageId : entry.getValue()) {
+            imageGroup.put(imageId, imageSelector);
+        }
+
+        RadioButton imageButton = new RadioButton(RADIO_BUTTON_GROUP, entry.getKey());
+        imageButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
+                MapWindow.getInstance().setTerrainMouseMoveListener(terrainImageModifier);
+                controlPanel.setWidget(selectorRow, 0, imageScroll);
+            }
+        });
+
+        controlPanel.setWidget(controlPanel.getRowCount(), 0, imageButton);
+    }
+
+    private void setupSurfaceSelector() {
         surfaceSelector = new FlexTable();
         surfaceSelector.setCellSpacing(5);
         surfaceSelector.setCellPadding(3);
         surfaceSelector.addStyleName("tile-selector");
-        surfaceScroll = new ScrollPanel(surfaceSelector);
+        final ScrollPanel surfaceScroll = new ScrollPanel(surfaceSelector);
         surfaceScroll.setAlwaysShowScrollBars(true);
-        return surfaceScroll;
+        surfaceScroll.setHeight(HEIGHT);
+
+        RadioButton surfaceButton = new RadioButton(RADIO_BUTTON_GROUP, "Surface");
+        surfaceButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
+                MapWindow.getInstance().setTerrainMouseMoveListener(surfaceModifier);
+                controlPanel.setWidget(selectorRow, 0, surfaceScroll);
+            }
+        });
+        controlPanel.setWidget(controlPanel.getRowCount(), 0, surfaceButton);
     }
 
-    private Widget setupTerrainImages() {
-        terrainImageSelector = new FlexTable();
-        terrainImageSelector.setCellSpacing(5);
-        terrainImageSelector.setCellPadding(3);
-        terrainImageSelector.addStyleName("tile-selector");
-        terrainImageScroll = new ScrollPanel(terrainImageSelector);
-        terrainImageScroll.setAlwaysShowScrollBars(true);
-        return terrainImageScroll;
-    }
-
-    public void fillTerrainImages(Collection<TerrainImage> terrainImages) {
+    private void fillTerrainImages(Collection<TerrainImage> terrainImages) {
         for (TerrainImage terrainImage : terrainImages) {
+            FlexTable terrainImageSelector = imageGroup.get(terrainImage.getId());
+            if (terrainImageSelector == null) {
+                throw new IllegalArgumentException("No group for terrain image: " + terrainImage.getId());
+            }
             terrainImageSelector.setWidget(terrainImageSelector.getRowCount(), 0, new TerrainImageSelectorItem(terrainImage));
         }
-        terrainImageScroll.setHeight(HEIGHT);
     }
 
-    public void fillSurfaces(Collection<SurfaceImage> surfaceImages) {
+    private void fillSurfaces(Collection<SurfaceImage> surfaceImages) {
         for (SurfaceImage surfaceImage : surfaceImages) {
             surfaceSelector.setWidget(surfaceSelector.getRowCount(), 0, new SurfaceSelectorItem(surfaceImage));
         }
-        surfaceScroll.setHeight(HEIGHT);
     }
 
     public void onSelectionChanged(TerrainImageSelectorItem newSelection) {

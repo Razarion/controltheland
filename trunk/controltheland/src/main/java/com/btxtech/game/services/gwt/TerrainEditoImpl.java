@@ -19,13 +19,19 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.mapeditor.TerrainEditor;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
+import com.btxtech.game.services.terrain.DbTerrainImage;
+import com.btxtech.game.services.terrain.DbTerrainImageGroup;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.TerritoryService;
-import java.util.Collection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: beat
@@ -74,6 +80,24 @@ public class TerrainEditoImpl implements TerrainEditor {
     public Collection<Territory> getTerritories() {
         try {
             return territoryService.getTerritories();
+        } catch (Throwable t) {
+            log.error("", t);
+            return null;
+        }
+    }
+
+    @Override
+    public Map<String, Collection<Integer>> getTerrainImageGroups() {
+        try {
+            Map<String, Collection<Integer>> imageGroups = new HashMap<String, Collection<Integer>>();
+            for (DbTerrainImageGroup imageGroup : terrainService.getDbTerrainImageGroupCrudServiceHelper().readDbChildren()) {
+                Collection<Integer> imageId = new ArrayList<Integer>();
+                imageGroups.put(imageGroup.getName(), imageId);
+                for (DbTerrainImage dbTerrainImage : imageGroup.getTerrainImageCrud().readDbChildren()) {
+                    imageId.add(dbTerrainImage.getId());
+                }
+            }
+            return imageGroups;
         } catch (Throwable t) {
             log.error("", t);
             return null;
