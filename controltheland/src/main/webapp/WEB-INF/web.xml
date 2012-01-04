@@ -119,6 +119,31 @@
         <url-pattern>/pathfinding/remote_logging</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>mapviewRemoteLogging</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.ExtendedRemoteLoggingServiceImpl</servlet-class>
+        <init-param>
+            <param-name>symbolMapsDirectory</param-name>
+            <param-value>WEB-INF/deploy/mapview/symbolMaps</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>mapviewRemoteLogging</servlet-name>
+        <url-pattern>/mapview/remote_logging</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>mapeditorRemoteLogging</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.ExtendedRemoteLoggingServiceImpl</servlet-class>
+        <init-param>
+            <param-name>symbolMapsDirectory</param-name>
+            <param-value>WEB-INF/deploy/mapeditor/symbolMaps</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>mapeditorRemoteLogging</servlet-name>
+        <url-pattern>/mapeditor/remote_logging</url-pattern>
+    </servlet-mapping>
 
     <filter>
         <filter-name>spring-security</filter-name>
