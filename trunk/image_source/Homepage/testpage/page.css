@@ -17,25 +17,25 @@ body {
 #cell {
     display:table-cell;
     vertical-align: middle;
+    background: url(images/bg.jpg) center no-repeat;
 }
 
 #content {
-    width: 1920px ;
+    width: 740px ;
     height: 600px;
 	margin: auto;
-    background: url(images/bg.jpg) center no-repeat;
 	position:relative;
 }
 
 #login {
-    left: 820px;
+    left: 245px;
     top: 535px;
     position:absolute;
 }
 
 #text {
-    left: 810px;
-    top: 475px;
+    left: 220px;
+    top: 470px;
     width: 290px;
     height: 52px;
     position: absolute;
@@ -48,18 +48,18 @@ body {
 
 #play_btn {
     top: 182px;
-  	left: 869px;
+  	left: 280px;
     position:absolute;
 }
 
 #register_btn {
-    top: 42px;
-  	left: 42px;
+    top: 520px;
+  	left: 536px;
     position:absolute;
 }
 
 #info_btn {
-    top: 462px;
-  	left: 72px;
+    top: 520px;
+  	left: 18px;
     position:absolute;
 }
