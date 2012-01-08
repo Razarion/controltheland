@@ -44,7 +44,6 @@ public abstract class DbAbstractLevel implements CrudChild, Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-    @Column(unique = true)
     private String name;
     @OrderBy
     private int orderIndex;
