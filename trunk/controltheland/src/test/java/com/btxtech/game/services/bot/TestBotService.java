@@ -4,13 +4,13 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.user.UserService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.test.annotation.DirtiesContext;
 
 /**
@@ -68,11 +68,11 @@ public class TestBotService extends AbstractServiceTest {
         // Wait for bot to complete
         waitForBotToBuildup(botConfig);
 
-        SessionFactoryUtils.initDeferredClose(getHibernateTemplate().getSessionFactory());
+        HibernateUtil.openSession4InternalCall(getSessionFactory());
         try {
             botService.activate();
         } finally {
-            SessionFactoryUtils.processDeferredClose(getHibernateTemplate().getSessionFactory());
+            HibernateUtil.closeSession4InternalCall(getSessionFactory());
         }
 
 

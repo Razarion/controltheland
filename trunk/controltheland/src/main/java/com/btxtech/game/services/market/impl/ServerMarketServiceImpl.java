@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.QueueWorker;
 import com.btxtech.game.services.common.ReadonlyCollectionContentProvider;
 import com.btxtech.game.services.connection.ConnectionService;
@@ -40,18 +41,14 @@ import com.btxtech.game.services.utg.UserGuidanceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -87,7 +84,8 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     private CrudRootServiceHelper<DbMarketFunction> marketFunctionCrudRootServiceHelper;
     @Autowired
     private CrudRootServiceHelper<DbMarketEntry> marketEntryCrudRootServiceHelper;
-    private HibernateTemplate hibernateTemplate;
+    @Autowired
+    SessionFactory sessionFactory;
     private Timer timer;
     private XpSettings xpSettings;
     private Log log = LogFactory.getLog(ServerMarketServiceImpl.class);
@@ -113,6 +111,16 @@ public class ServerMarketServiceImpl implements ServerMarketService {
         marketCategoryCrudRootServiceHelper.init(DbMarketCategory.class);
         marketFunctionCrudRootServiceHelper.init(DbMarketFunction.class);
         marketEntryCrudRootServiceHelper.init(DbMarketEntry.class);
+
+        HibernateUtil.openSession4InternalCall(sessionFactory);
+        try {
+            activateXpSettings();
+        } finally {
+            HibernateUtil.closeSession4InternalCall(sessionFactory);
+        }
+    }
+
+    private void activateXpSettings() {
         loadXpPointSettings();
         stop();
         if (xpSettings.getPeriodMilliSeconds() > 0) {
@@ -133,12 +141,6 @@ public class ServerMarketServiceImpl implements ServerMarketService {
             xpPerKillQueueWorker = null;
         }
     }
-
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
-    }
-
 
     @Override
     public Collection<Integer> getAllowedItemTypes() {
@@ -188,15 +190,11 @@ public class ServerMarketServiceImpl implements ServerMarketService {
 
     @SuppressWarnings("unchecked")
     private Collection<DbMarketEntry> getAlwaysAllowed() {
-        return (Collection<DbMarketEntry>) hibernateTemplate.execute(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbMarketEntry.class);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                criteria.add(Restrictions.eq("alwaysAllowed", true));
-                return criteria.list();
-            }
-        });
+        org.hibernate.Session session = sessionFactory.getCurrentSession();
+        Criteria criteria = session.createCriteria(DbMarketEntry.class);
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        criteria.add(Restrictions.eq("alwaysAllowed", true));
+        return criteria.list();
     }
 
     @Override
@@ -217,15 +215,11 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     @Override
     @SuppressWarnings("unchecked")
     public List<DbMarketEntry> getMarketEntries(final DbMarketCategory dbMarketCategory) {
-        return (List<DbMarketEntry>) hibernateTemplate.executeFind(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbMarketEntry.class);
-                criteria.add(Restrictions.eq("dbMarketCategory", dbMarketCategory));
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                return criteria.list();
-            }
-        });
+        org.hibernate.Session session = sessionFactory.getCurrentSession();
+        Criteria criteria = session.createCriteria(DbMarketEntry.class);
+        criteria.add(Restrictions.eq("dbMarketCategory", dbMarketCategory));
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
     }
 
     public int getXp() {
@@ -279,16 +273,17 @@ public class ServerMarketServiceImpl implements ServerMarketService {
         return createOrGetUserItemTypeAccess(userState);
     }
 
+    @Override
     public XpSettings getXpPointSettings() {
         XpSettings xpSettings;
-        List<XpSettings> settings = hibernateTemplate.loadAll(XpSettings.class);
+        List<XpSettings> settings = HibernateUtil.loadAll(sessionFactory, XpSettings.class);
         if (settings.isEmpty()) {
             log.warn("No XpSettings found in DB. Will be created.");
             xpSettings = new XpSettings();
             xpSettings.setKillPriceFactor(0.1);
             xpSettings.setPeriodItemFactor(0.001);
             xpSettings.setPeriodMinutes(10);
-            hibernateTemplate.saveOrUpdate(xpSettings);
+            sessionFactory.getCurrentSession().saveOrUpdate(xpSettings);
         } else if (settings.size() != 1) {
             log.warn("More then one XpSettings found in DB.");
             xpSettings = settings.get(0);
@@ -305,26 +300,26 @@ public class ServerMarketServiceImpl implements ServerMarketService {
 
     @Transactional
     public void saveXpPointSettings(XpSettings xpSettings) {
-        hibernateTemplate.saveOrUpdate(xpSettings);
-        start();
+        sessionFactory.getCurrentSession().saveOrUpdate(xpSettings);
+        activateXpSettings();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public List<DbMarketCategory> getMarketCategories() {
-        return hibernateTemplate.loadAll(DbMarketCategory.class);
+        return sessionFactory.getCurrentSession().createCriteria(DbMarketCategory.class).list();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public List<DbMarketFunction> getMarketFunctions() {
-        return hibernateTemplate.loadAll(DbMarketFunction.class);
+        return sessionFactory.getCurrentSession().createCriteria(DbMarketFunction.class).list();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public List<DbMarketCategory> getUsedMarketCategories() {
-        return (List<DbMarketCategory>) hibernateTemplate.find("from com.btxtech.game.services.market.DbMarketCategory where exists (from com.btxtech.game.services.market.DbMarketEntry where dbMarketCategory is not null)");
+        return (List<DbMarketCategory>) sessionFactory.getCurrentSession().createQuery("from com.btxtech.game.services.market.DbMarketCategory where exists (from com.btxtech.game.services.market.DbMarketEntry where dbMarketCategory is not null)");
     }
 
     class XpPeriodTask extends TimerTask {

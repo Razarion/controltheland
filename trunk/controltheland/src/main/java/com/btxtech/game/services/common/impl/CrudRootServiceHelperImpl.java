@@ -16,27 +16,23 @@ package com.btxtech.game.services.common.impl;
 import com.btxtech.game.services.common.ContentSortList;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.NoSuchChildException;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +45,6 @@ import java.util.Map;
 @Component(value = "crudRootServiceHelper")
 @Scope("prototype")
 public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootServiceHelper<T> {
-    private HibernateTemplate hibernateTemplate;
     private Class<T> childClass;
     private String orderColumn;
     private boolean setOrderColumn;
@@ -58,6 +53,8 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
     private Map<Object, Criterion> criterionMap = new HashMap<Object, Criterion>();
     @Autowired
     private UserService userService;
+    @Autowired
+    private SessionFactory sessionFactory;
 
     @Override
     public void init(Class<T> childClass) {
@@ -73,37 +70,27 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
         this.userField = userField;
     }
 
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
-    }
-
     @Override
     @Transactional(readOnly = true)
     @SuppressWarnings("unchecked")
     public Collection<T> readDbChildren(final ContentSortList contentSortList) {
-        return hibernateTemplate.executeFind(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(childClass);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                for (Criterion criterion : criterionMap.values()) {
-                    criteria.add(criterion);
-                }
-                if (contentSortList != null) {
-                    for (Order order : contentSortList.generateHibernateOrders()) {
-                        criteria.addOrder(order);
-                    }
-                } else if (orderColumn != null) {
-                    if (orderAsc) {
-                        criteria.addOrder(Order.asc(orderColumn));
-                    } else {
-                        criteria.addOrder(Order.desc(orderColumn));
-                    }
-                }
-                return criteria.list();
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(childClass);
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        for (Criterion criterion : criterionMap.values()) {
+            criteria.add(criterion);
+        }
+        if (contentSortList != null) {
+            for (Order order : contentSortList.generateHibernateOrders()) {
+                criteria.addOrder(order);
             }
-        });
+        } else if (orderColumn != null) {
+            if (orderAsc) {
+                criteria.addOrder(Order.asc(orderColumn));
+            } else {
+                criteria.addOrder(Order.desc(orderColumn));
+            }
+        }
+        return criteria.list();
     }
 
     @Override
@@ -115,8 +102,9 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
 
     @Override
     @Transactional(readOnly = true, noRollbackFor = NoSuchChildException.class)
+    @SuppressWarnings("unchecked")
     public T readDbChild(Serializable id) {
-        T t = hibernateTemplate.get(childClass, id);
+        T t = (T) sessionFactory.getCurrentSession().get(childClass, id);
         if (t == null) {
             throw new NoSuchChildException("Class: " + childClass + " id: " + id);
         }
@@ -126,7 +114,7 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
     @Override
     @Transactional
     public void deleteDbChild(T child) {
-        hibernateTemplate.delete(child);
+        sessionFactory.getCurrentSession().delete(child);
     }
 
     @Override
@@ -146,13 +134,13 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
                 }
             }
         }
-        hibernateTemplate.saveOrUpdateAll(children);
+        HibernateUtil.saveOrUpdateAll(sessionFactory, children);
     }
 
     @Override
     @Transactional
     public void updateDbChild(T t) {
-        hibernateTemplate.update(t);
+        sessionFactory.getCurrentSession().update(t);
     }
 
     @Override
@@ -210,6 +198,7 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
 
     @Override
     @Transactional
+    @SuppressWarnings("unchecked")
     public T copyDbChild(Serializable copyFromId) {
         T copyFrom = readDbChild(copyFromId);
         Class<? extends CrudChild> copyFromClass = copyFrom.getClass();
@@ -227,7 +216,7 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
     @Override
     @Transactional
     public void deleteAllChildren() {
-        hibernateTemplate.deleteAll(readDbChildren());
+        HibernateUtil.deleteAll(sessionFactory, readDbChildren());
     }
 
     @Override
@@ -243,19 +232,15 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
     @Transactional
     private void addChild(T t) {
         if (orderColumn != null && setOrderColumn) {
-            int nextFreeIndex = hibernateTemplate.execute(new HibernateCallback<Integer>() {
-                @Override
-                public Integer doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                    Criteria criteria = session.createCriteria(childClass);
-                    criteria.setProjection(Projections.max(orderColumn));
-                    Number number = (Number) criteria.list().get(0);
-                    if (number != null) {
-                        return number.intValue() + 1;
-                    } else {
-                        return 0;
-                    }
-                }
-            });
+            Criteria criteria = sessionFactory.getCurrentSession().createCriteria(childClass);
+            criteria.setProjection(Projections.max(orderColumn));
+            Number number = (Number) criteria.list().get(0);
+            int nextFreeIndex;
+            if (number != null) {
+                nextFreeIndex = number.intValue() + 1;
+            } else {
+                nextFreeIndex = 0;
+            }
             try {
                 Field field = childClass.getDeclaredField(orderColumn);
                 field.setAccessible(true);
@@ -265,6 +250,6 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
                 throw new RuntimeException(e);
             }
         }
-        hibernateTemplate.save(t);
+        sessionFactory.getCurrentSession().save(t);
     }
 }

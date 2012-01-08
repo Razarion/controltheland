@@ -71,7 +71,6 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
@@ -106,14 +105,10 @@ public class CmsUiServiceImpl implements CmsUiService {
     private Session session;
     @Autowired
     private SecurityCmsUiService securityCmsUiService;
-    private HibernateTemplate hibernateTemplate;
+    @Autowired
+    private SessionFactory sessionFactory;
     private Log log = LogFactory.getLog(CmsUiServiceImpl.class);
     private Map<CmsUtil.CmsPredefinedPage, String> predefinedUrls = new HashMap<CmsUtil.CmsPredefinedPage, String>();
-
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
-    }
 
     @Override
     public Map<CmsUtil.CmsPredefinedPage, String> getPredefinedUrls() {
@@ -344,6 +339,7 @@ public class CmsUiServiceImpl implements CmsUiService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends DbContent> T getDbContent(int contentId) {
         return (T) cmsService.getDbContent(contentId);
     }
@@ -557,6 +553,7 @@ public class CmsUiServiceImpl implements CmsUiService {
 
 
     @Override
+    @SuppressWarnings("unchecked")
     public List getDataProviderBeans(BeanIdPathElement beanIdPathElement, int contentId, ContentContext contentContext) {
         try {
             ContentProvider contentProvider;
@@ -702,7 +699,7 @@ public class CmsUiServiceImpl implements CmsUiService {
 
     @Override
     public void leaveEditMode() {
-        hibernateTemplate.clear();
+        sessionFactory.getCurrentSession().clear();
         session.setEditMode(null);
     }
 
@@ -868,6 +865,7 @@ public class CmsUiServiceImpl implements CmsUiService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public CrudChild createAndFillBean(BeanIdPathElement beanIdPathElement) {
         CrudChild crudChild = createBean(beanIdPathElement);
         Map<String, Object> attributeMap = (Map<String, Object>) ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().getAttribute(REQUEST_TMP_CREATE_BEAN_ATTRIBUTES);
@@ -890,6 +888,7 @@ public class CmsUiServiceImpl implements CmsUiService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void deleteBean(BeanIdPathElement beanIdPathElement) {
         ContentProvider contentProvider = getContentProvider(beanIdPathElement.getParent());
         Object bean = getDataProviderBean(beanIdPathElement);
@@ -898,7 +897,7 @@ public class CmsUiServiceImpl implements CmsUiService {
 
     @Override
     public void save(BeanIdPathElement beanIdPathElement) {
-        hibernateTemplate.flush();
+        sessionFactory.getCurrentSession().flush();
     }
 
     @Override
@@ -951,7 +950,7 @@ public class CmsUiServiceImpl implements CmsUiService {
         }
     }
 
-
+    @SuppressWarnings("unchecked")
     private void putCreateEditTmpBeanAttribute(BeanIdPathElement beanIdPathElement, Object value) {
         Map<String, Object> attributeMap = (Map<String, Object>) ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().getAttribute(REQUEST_TMP_CREATE_BEAN_ATTRIBUTES);
         if (attributeMap == null) {

@@ -11,7 +11,6 @@ import com.btxtech.game.services.terrain.TerrainService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateJdbcException;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;

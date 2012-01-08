@@ -22,6 +22,7 @@ import java.sql.Types;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
 import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.usertype.UserType;
 
 
@@ -52,7 +53,7 @@ public class IndexUserType implements UserType {
     }
 
     @Override
-    public Object nullSafeGet(ResultSet resultSet, String[] names, Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet resultSet, String[] names, SessionImplementor sessionImplementor, Object owner) throws HibernateException, SQLException {
         int x = resultSet.getInt(names[0]);
         if (resultSet.wasNull()) {
             return null;
@@ -65,7 +66,7 @@ public class IndexUserType implements UserType {
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement statement, Object obj, int columnIndex) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement statement, Object obj, int columnIndex, SessionImplementor sessionImplementor) throws HibernateException, SQLException {
         Index index = (Index) obj;
         if (index != null) {
             statement.setInt(columnIndex, index.getX());

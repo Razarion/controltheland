@@ -1,6 +1,15 @@
 package com.btxtech.game.services.common;
 
+import org.hibernate.FlushMode;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.proxy.HibernateProxy;
+import org.springframework.orm.hibernate4.SessionHolder;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * User: beat
@@ -17,5 +26,39 @@ public class HibernateUtil {
         } else {
             return baseClass.cast(maybeProxy);
         }
+    }
+
+    public static void openSession4InternalCall(SessionFactory sessionFactory) {
+        Session session = sessionFactory.openSession();
+        session.setFlushMode(FlushMode.MANUAL);
+        SessionHolder sessionHolder = new SessionHolder(session);
+        TransactionSynchronizationManager.bindResource(sessionFactory, sessionHolder);
+    }
+
+    public static void closeSession4InternalCall(SessionFactory sessionFactory) {
+        sessionFactory.getCurrentSession().close();
+        TransactionSynchronizationManager.unbindResource(sessionFactory);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> loadAll(SessionFactory sessionFactory, Class<T> theClass) {
+        return sessionFactory.getCurrentSession().createCriteria(theClass).list();
+    }
+
+    public static void saveOrUpdateAll(SessionFactory sessionFactory, Collection entities) {
+        for (Object entity : entities) {
+            sessionFactory.getCurrentSession().saveOrUpdate(entity);
+        }
+    }
+
+    public static void deleteAll(SessionFactory sessionFactory, Collection entities) {
+        for (Object entity : entities) {
+            sessionFactory.getCurrentSession().delete(entity);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T get(SessionFactory sessionFactory, Class<T> theClass, Serializable id) {
+        return (T) sessionFactory.getCurrentSession().get(theClass, id);
     }
 }

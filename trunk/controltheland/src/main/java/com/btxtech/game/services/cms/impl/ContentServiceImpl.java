@@ -3,25 +3,21 @@ package com.btxtech.game.services.cms.impl;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.ContentService;
 import com.btxtech.game.services.cms.content.DbBlogEntry;
-import com.btxtech.game.services.cms.layout.DbContentDynamicHtml;
 import com.btxtech.game.services.cms.content.DbHtmlContent;
 import com.btxtech.game.services.cms.content.DbWikiSection;
+import com.btxtech.game.services.cms.layout.DbContentDynamicHtml;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -37,13 +33,9 @@ public class ContentServiceImpl implements ContentService {
     private CrudRootServiceHelper<DbWikiSection> wikiSectionCrudRootServiceHelper;
     @Autowired
     private CmsService cmsService;
-    private HibernateTemplate hibernateTemplate;
-    private Log log = LogFactory.getLog(ContentServiceImpl.class);
-
     @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
-    }
+    private SessionFactory sessionFactory;
+    private Log log = LogFactory.getLog(ContentServiceImpl.class);
 
     @PostConstruct
     public void init() {
@@ -62,29 +54,22 @@ public class ContentServiceImpl implements ContentService {
     }
 
     private DbHtmlContent getDbHtmlContent(final int contentId) {
-        DbHtmlContent dbHtmlContent = hibernateTemplate.execute(new HibernateCallback<DbHtmlContent>() {
-            @Override
-            public DbHtmlContent doInHibernate(Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbHtmlContent.class);
-                criteria.add(Restrictions.eq("dbContentDynamicHtml", cmsService.getDbContent(contentId)));
-                List list = criteria.list();
-                if (list.isEmpty()) {
-                    return null;
-                } else {
-                    if (list.size() > 1) {
-                        log.warn("More than one DbHtmlContent found for dbContentDynamicHtml: " + contentId);
-                    }
-                    return (DbHtmlContent) list.get(0);
-                }
-            }
-        });
-        if (dbHtmlContent == null) {
-            dbHtmlContent = new DbHtmlContent();
+        Session session = sessionFactory.getCurrentSession();
+        Criteria criteria = session.createCriteria(DbHtmlContent.class);
+        criteria.add(Restrictions.eq("dbContentDynamicHtml", cmsService.getDbContent(contentId)));
+        List list = criteria.list();
+        if (list.isEmpty()) {
+            DbHtmlContent dbHtmlContent = new DbHtmlContent();
             dbHtmlContent.setDbContentDynamicHtml((DbContentDynamicHtml) cmsService.getDbContent(contentId));
             dbHtmlContent.setHtml("No Content");
-            hibernateTemplate.save(dbHtmlContent);
+            session.save(dbHtmlContent);
+            return dbHtmlContent;
+        } else {
+            if (list.size() > 1) {
+                log.warn("More than one DbHtmlContent found for dbContentDynamicHtml: " + contentId);
+            }
+            return (DbHtmlContent) list.get(0);
         }
-        return dbHtmlContent;
     }
 
     @Override
@@ -98,6 +83,6 @@ public class ContentServiceImpl implements ContentService {
     public void setDynamicHtml(int contentId, String value) {
         DbHtmlContent dbHtmlContent = getDbHtmlContent(contentId);
         dbHtmlContent.setHtml(value);
-        hibernateTemplate.update(dbHtmlContent);
+        sessionFactory.getCurrentSession().update(dbHtmlContent);
     }
 }

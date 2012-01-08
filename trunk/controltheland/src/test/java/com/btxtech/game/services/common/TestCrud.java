@@ -1,6 +1,5 @@
 package com.btxtech.game.services.common;
 
-import com.btxtech.game.TestHelper;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.statistics.DbStatisticsEntry;
 import com.btxtech.game.services.user.User;
@@ -122,7 +121,7 @@ public class TestCrud {
 
         ContentSortList sort = new ContentSortList();
         sort.addAsc("d");
-        TestHelper.printJarLocation(BeanComparator.class);
+        Utils.printJarLocation(BeanComparator.class);
         List<TestSortClass> sorted = (List<TestSortClass>) provider.readDbChildren(sort);
         Assert.assertEquals(3, (int) sorted.get(0).getId());
         Assert.assertEquals(1, (int) sorted.get(1).getId());

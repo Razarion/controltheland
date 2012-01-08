@@ -8,16 +8,12 @@ import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.tracker.DbUserHistory;
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -188,18 +184,14 @@ public class TestUserHistory extends AbstractServiceTest {
         Assert.assertNotNull(dbUserHistories.get(5).getCreated());
     }
 
+    @SuppressWarnings("unchecked")
     private List<DbUserHistory> getUserHistory() {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
 
-        List<DbUserHistory> dbUserHistories = getHibernateTemplate().execute(new HibernateCallback<List<DbUserHistory>>() {
-            @Override
-            public List<DbUserHistory> doInHibernate(Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbUserHistory.class);
-                criteria.addOrder(Order.desc("id"));
-                return criteria.list();
-            }
-        });
+        Criteria criteria = getSessionFactory().getCurrentSession().createCriteria(DbUserHistory.class);
+        criteria.addOrder(Order.desc("id"));
+        List<DbUserHistory> dbUserHistories = criteria.list();
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

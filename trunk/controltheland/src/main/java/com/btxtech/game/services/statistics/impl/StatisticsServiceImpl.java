@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.DateUtil;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.statistics.CurrentStatisticEntry;
 import com.btxtech.game.services.statistics.DbStatisticsEntry;
@@ -28,15 +29,10 @@ import com.btxtech.game.services.user.UserState;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -47,7 +43,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -76,7 +71,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     private CrudRootServiceHelper<DbStatisticsEntry> allTimeStatistics;
     @Autowired
     private UserService userService;
-    private HibernateTemplate hibernateTemplate;
+    @Autowired
+    private SessionFactory sessionFactory;
     private final Map<UserState, DbStatisticsEntry> currentStatisticsCache = new HashMap<UserState, DbStatisticsEntry>();
     private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
     private long nextDay;
@@ -128,11 +124,6 @@ public class StatisticsServiceImpl implements StatisticsService {
         scheduledThreadPoolExecutor.shutdownNow();
     }
 
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
-    }
-
     void moveCacheToDb() {
         Collection<DbStatisticsEntry> dbStatisticsEntries = new ArrayList<DbStatisticsEntry>();
         synchronized (currentStatisticsCache) {
@@ -149,11 +140,11 @@ public class StatisticsServiceImpl implements StatisticsService {
             }
             currentStatisticsCache.clear();
         }
-        hibernateTemplate.saveOrUpdateAll(dbStatisticsEntries);
+        HibernateUtil.saveOrUpdateAll(sessionFactory, dbStatisticsEntries);
     }
 
     protected void endOfDayProcessing(final Date processingDay) {
-        SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
+        HibernateUtil.openSession4InternalCall(sessionFactory);
         try {
             TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
             transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -168,41 +159,35 @@ public class StatisticsServiceImpl implements StatisticsService {
         } catch (Throwable t) {
             log.error("", t);
         } finally {
-            SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
+            HibernateUtil.closeSession4InternalCall(sessionFactory);
         }
     }
 
     private void makeDay(final Date day) {
-        hibernateTemplate.execute(new HibernateCallback<Void>() {
-            @Override
-            public Void doInHibernate(Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbStatisticsEntry.class);
-                criteria.add(Restrictions.le("date", day));
-                criteria.add(Restrictions.eq("type", DbStatisticsEntry.Type.DAY));
-                // Order all entries
-                @SuppressWarnings("unchecked")
-                Map<Date, Map<User, List<DbStatisticsEntry>>> dateMap = setupDateMap(criteria.list());
-                // Find broken days and sum up
-                List<DbStatisticsEntry> toBeDeleted = new ArrayList<DbStatisticsEntry>();
-                for (Map<User, List<DbStatisticsEntry>> userListMap : dateMap.values()) {
-                    for (List<DbStatisticsEntry> dbStatisticsEntries : userListMap.values()) {
-                        if (dbStatisticsEntries.size() > 1) {
-                            DbStatisticsEntry summedUp = null;
-                            for (DbStatisticsEntry dbStatisticsEntry : dbStatisticsEntries) {
-                                if (summedUp == null) {
-                                    summedUp = dbStatisticsEntry;
-                                } else {
-                                    summedUp.sumUp(dbStatisticsEntry);
-                                    toBeDeleted.add(dbStatisticsEntry);
-                                }
-                            }
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbStatisticsEntry.class);
+        criteria.add(Restrictions.le("date", day));
+        criteria.add(Restrictions.eq("type", DbStatisticsEntry.Type.DAY));
+        // Order all entries
+        @SuppressWarnings("unchecked")
+        Map<Date, Map<User, List<DbStatisticsEntry>>> dateMap = setupDateMap(criteria.list());
+        // Find broken days and sum up
+        List<DbStatisticsEntry> toBeDeleted = new ArrayList<DbStatisticsEntry>();
+        for (Map<User, List<DbStatisticsEntry>> userListMap : dateMap.values()) {
+            for (List<DbStatisticsEntry> dbStatisticsEntries : userListMap.values()) {
+                if (dbStatisticsEntries.size() > 1) {
+                    DbStatisticsEntry summedUp = null;
+                    for (DbStatisticsEntry dbStatisticsEntry : dbStatisticsEntries) {
+                        if (summedUp == null) {
+                            summedUp = dbStatisticsEntry;
+                        } else {
+                            summedUp.sumUp(dbStatisticsEntry);
+                            toBeDeleted.add(dbStatisticsEntry);
                         }
                     }
                 }
-                hibernateTemplate.deleteAll(toBeDeleted);
-                return null;
             }
-        });
+        }
+        HibernateUtil.deleteAll(sessionFactory, toBeDeleted);
     }
 
     private Map<Date, Map<User, List<DbStatisticsEntry>>> setupDateMap(List<DbStatisticsEntry> statisticsEntries) {
@@ -227,101 +212,89 @@ public class StatisticsServiceImpl implements StatisticsService {
         final Date thisWeekStart = DateUtil.weekStart(date);
         final Date lastWeekStart = DateUtil.removeOneWeek(thisWeekStart);
 
-        hibernateTemplate.execute(new HibernateCallback<Void>() {
-            @Override
-            public Void doInHibernate(Session session) throws HibernateException, SQLException {
-                // Check first if last week has already been processed
-                Criteria criteria = session.createCriteria(DbStatisticsEntry.class);
-                criteria.add(Restrictions.eq("date", lastWeekStart));
-                criteria.add(Restrictions.eq("type", DbStatisticsEntry.Type.WEEK));
-                criteria.setProjection(Projections.count("user"));
-                if ((Long) criteria.list().get(0) > 0) {
-                    return null;
-                }
+        // Check first if last week has already been processed
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbStatisticsEntry.class);
+        criteria.add(Restrictions.eq("date", lastWeekStart));
+        criteria.add(Restrictions.eq("type", DbStatisticsEntry.Type.WEEK));
+        criteria.setProjection(Projections.count("user"));
+        if ((Long) criteria.list().get(0) > 0) {
+            return;
+        }
 
-                // Process last week                
-                criteria = session.createCriteria(DbStatisticsEntry.class);
-                criteria.add(Restrictions.lt("date", thisWeekStart));
-                criteria.add(Restrictions.ge("date", lastWeekStart));
-                criteria.add(Restrictions.eq("type", DbStatisticsEntry.Type.DAY));
+        // Process last week
+        criteria = sessionFactory.getCurrentSession().createCriteria(DbStatisticsEntry.class);
+        criteria.add(Restrictions.lt("date", thisWeekStart));
+        criteria.add(Restrictions.ge("date", lastWeekStart));
+        criteria.add(Restrictions.eq("type", DbStatisticsEntry.Type.DAY));
 
-                @SuppressWarnings("unchecked")
-                List<DbStatisticsEntry> dbStatisticsEntries = criteria.list();
-                Map<User, DbStatisticsEntry> userWeek = new HashMap<User, DbStatisticsEntry>();
-                for (DbStatisticsEntry dbStatisticsEntry : dbStatisticsEntries) {
-                    DbStatisticsEntry week = userWeek.get(dbStatisticsEntry.getUser());
-                    if (week == null) {
-                        week = new DbStatisticsEntry();
-                        week.setDate(lastWeekStart);
-                        week.setType(DbStatisticsEntry.Type.WEEK);
-                        week.setUser(dbStatisticsEntry.getUser());
-                        userWeek.put(dbStatisticsEntry.getUser(), week);
-                    }
-                    week.sumUp(dbStatisticsEntry);
-
-                }
-                hibernateTemplate.saveOrUpdateAll(userWeek.values());
-                return null;
+        @SuppressWarnings("unchecked")
+        List<DbStatisticsEntry> dbStatisticsEntries = criteria.list();
+        Map<User, DbStatisticsEntry> userWeek = new HashMap<User, DbStatisticsEntry>();
+        for (DbStatisticsEntry dbStatisticsEntry : dbStatisticsEntries) {
+            DbStatisticsEntry week = userWeek.get(dbStatisticsEntry.getUser());
+            if (week == null) {
+                week = new DbStatisticsEntry();
+                week.setDate(lastWeekStart);
+                week.setType(DbStatisticsEntry.Type.WEEK);
+                week.setUser(dbStatisticsEntry.getUser());
+                userWeek.put(dbStatisticsEntry.getUser(), week);
             }
-        });
+            week.sumUp(dbStatisticsEntry);
+
+        }
+        HibernateUtil.saveOrUpdateAll(sessionFactory, userWeek.values());
     }
 
     private void sumUpAllTime(final Date date) {
-        hibernateTemplate.execute(new HibernateCallback<Void>() {
-            @Override
-            public Void doInHibernate(Session session) throws HibernateException, SQLException {
-                // Check first if all time is up to date
-                Date lastProcessingDate = null;
-                Criteria criteria = session.createCriteria(DbStatisticsEntry.class);
-                criteria.add(Restrictions.eq("type", DbStatisticsEntry.Type.ALL_TIME));
-                criteria.setProjection(Projections.max("date"));
-                List list = criteria.list();
-                if (!list.isEmpty()) {
-                    lastProcessingDate = (Date) list.get(0);
-                }
-                if (lastProcessingDate != null && (lastProcessingDate.after(date) || lastProcessingDate.equals(date))) {
-                    return null;
-                }
+        // Check first if all time is up to date
+        Date lastProcessingDate = null;
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbStatisticsEntry.class);
+        criteria.add(Restrictions.eq("type", DbStatisticsEntry.Type.ALL_TIME));
+        criteria.setProjection(Projections.max("date"));
+        List list = criteria.list();
+        if (!list.isEmpty()) {
+            lastProcessingDate = (Date) list.get(0);
+        }
+        if (lastProcessingDate != null && (lastProcessingDate.after(date) || lastProcessingDate.equals(date))) {
+            return;
+        }
 
-                criteria = session.createCriteria(DbStatisticsEntry.class);
-                criteria.add(Restrictions.eq("type", DbStatisticsEntry.Type.ALL_TIME));
-                @SuppressWarnings("unchecked")
-                List<DbStatisticsEntry> existingList = criteria.list();
-                Map<User, DbStatisticsEntry> allTimeMap = new HashMap<User, DbStatisticsEntry>();
-                for (DbStatisticsEntry dbStatisticsEntry : existingList) {
-                    if (allTimeMap.containsKey(dbStatisticsEntry.getUser())) {
-                        log.warn("More than one entry in all time statistics for user: " + dbStatisticsEntry.getUser());
-                    }
-                    allTimeMap.put(dbStatisticsEntry.getUser(), dbStatisticsEntry);
-                }
-
-                criteria = session.createCriteria(DbStatisticsEntry.class);
-                criteria.add(Restrictions.le("date", date));
-                if (lastProcessingDate != null) {
-                    criteria.add(Restrictions.gt("date", lastProcessingDate));
-                }
-                criteria.add(Restrictions.eq("type", DbStatisticsEntry.Type.DAY));
-                // Order all entries
-                @SuppressWarnings("unchecked")
-                List<DbStatisticsEntry> dbStatisticsEntries = criteria.list();
-
-                for (DbStatisticsEntry dbStatisticsEntry : dbStatisticsEntries) {
-                    DbStatisticsEntry allTime = allTimeMap.get(dbStatisticsEntry.getUser());
-                    if (allTime == null) {
-                        allTime = new DbStatisticsEntry();
-                        allTime.setType(DbStatisticsEntry.Type.ALL_TIME);
-                        allTime.setUser(dbStatisticsEntry.getUser());
-                        allTimeMap.put(dbStatisticsEntry.getUser(), allTime);
-                    }
-                    allTime.sumUp(dbStatisticsEntry);
-                }
-                for (DbStatisticsEntry dbStatisticsEntry : allTimeMap.values()) {
-                    dbStatisticsEntry.setDate(date);
-                }
-                hibernateTemplate.saveOrUpdateAll(allTimeMap.values());
-                return null;
+        criteria = sessionFactory.getCurrentSession().createCriteria(DbStatisticsEntry.class);
+        criteria.add(Restrictions.eq("type", DbStatisticsEntry.Type.ALL_TIME));
+        @SuppressWarnings("unchecked")
+        List<DbStatisticsEntry> existingList = criteria.list();
+        Map<User, DbStatisticsEntry> allTimeMap = new HashMap<User, DbStatisticsEntry>();
+        for (DbStatisticsEntry dbStatisticsEntry : existingList) {
+            if (allTimeMap.containsKey(dbStatisticsEntry.getUser())) {
+                log.warn("More than one entry in all time statistics for user: " + dbStatisticsEntry.getUser());
             }
-        });
+            allTimeMap.put(dbStatisticsEntry.getUser(), dbStatisticsEntry);
+        }
+
+        criteria = sessionFactory.getCurrentSession().createCriteria(DbStatisticsEntry.class);
+        criteria.add(Restrictions.le("date", date));
+        if (lastProcessingDate != null) {
+            criteria.add(Restrictions.gt("date", lastProcessingDate));
+        }
+        criteria.add(Restrictions.eq("type", DbStatisticsEntry.Type.DAY));
+        // Order all entries
+        @SuppressWarnings("unchecked")
+        List<DbStatisticsEntry> dbStatisticsEntries = criteria.list();
+
+        for (DbStatisticsEntry dbStatisticsEntry : dbStatisticsEntries) {
+            DbStatisticsEntry allTime = allTimeMap.get(dbStatisticsEntry.getUser());
+            if (allTime == null) {
+                allTime = new DbStatisticsEntry();
+                allTime.setType(DbStatisticsEntry.Type.ALL_TIME);
+                allTime.setUser(dbStatisticsEntry.getUser());
+                allTimeMap.put(dbStatisticsEntry.getUser(), allTime);
+            }
+            allTime.sumUp(dbStatisticsEntry);
+        }
+        for (DbStatisticsEntry dbStatisticsEntry : allTimeMap.values()) {
+            dbStatisticsEntry.setDate(date);
+        }
+        HibernateUtil.saveOrUpdateAll(sessionFactory, allTimeMap.values());
     }
 
     @Override
