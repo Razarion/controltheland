@@ -36,17 +36,17 @@ public class TestDbBotConfig extends AbstractServiceTest {
         dbBotConfig.setRealm(realm);
 
         DbBotItemConfig builder = dbBotConfig.getBotItemCrud().createDbChild();
-        builder.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        builder.setBaseItemType(getDbBaseItemTypeInSession(TEST_START_BUILDER_ITEM_ID));
         builder.setCount(1);
         builder.setCreateDirectly(true);
         builder.setRegion(new Rectangle(1, 2, 30, 40));
         DbBotItemConfig factory = dbBotConfig.getBotItemCrud().createDbChild();
-        factory.setBaseItemType(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
+        factory.setBaseItemType(getDbBaseItemTypeInSession(TEST_FACTORY_ITEM_ID));
         factory.setCount(3);
         factory.setRegion(new Rectangle(8, 9, 33, 44));
         factory.setMoveRealmIfIdle(true);
         DbBotItemConfig defence = dbBotConfig.getBotItemCrud().createDbChild();
-        defence.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        defence.setBaseItemType(getDbBaseItemTypeInSession(TEST_ATTACK_ITEM_ID));
         defence.setCount(2);
         defence.setIdleTtl(1234);
         botService.getDbBotConfigCrudServiceHelper().updateDbChild(dbBotConfig);

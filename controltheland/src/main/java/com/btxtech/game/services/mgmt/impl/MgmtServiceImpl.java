@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeExce
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.energy.ServerEnergyService;
@@ -33,7 +34,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.hibernate.Criteria;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
@@ -48,9 +48,6 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,6 +66,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -103,8 +101,9 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     private ApplicationContext applicationContext;
     @Autowired
     private GenericItemConverter genericItemConverter;
+    @Autowired
+    private SessionFactory sessionFactory;
     private static Log log = LogFactory.getLog(MgmtServiceImpl.class);
-    private HibernateTemplate hibernateTemplate;
     private boolean testMode;
     private boolean noGameEngine;
     private StartupData startupData;
@@ -129,11 +128,6 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     @Autowired
     public void setSessionFactory(DataSource dataSource) {
         readonlyJdbcTemplate = new JdbcTemplate(dataSource);
-    }
-
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
     }
 
     @Override
@@ -165,26 +159,16 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     @Override
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveQuery(final String query) {
-        hibernateTemplate.execute(new HibernateCallback<Void>() {
-            public Void doInHibernate(Session session) {
-                SavedQuery savedQuery = new SavedQuery();
-                savedQuery.setQuery(query);
-                session.saveOrUpdate(savedQuery);
-                return null;
-            }
-        });
+        SavedQuery savedQuery = new SavedQuery();
+        savedQuery.setQuery(query);
+        sessionFactory.getCurrentSession().saveOrUpdate(savedQuery);
     }
 
     @Override
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public List<String> getSavedQueris() {
         @SuppressWarnings("unchecked")
-        List<SavedQuery> list = (List<SavedQuery>) hibernateTemplate.execute(new HibernateCallback() {
-            public Object doInHibernate(Session session) {
-                Criteria criteria = session.createCriteria(SavedQuery.class);
-                return criteria.list();
-            }
-        });
+        List<SavedQuery> list = HibernateUtil.loadAll(sessionFactory, SavedQuery.class);
         ArrayList<String> result = new ArrayList<String>();
         for (SavedQuery savedQuery : list) {
             result.add(savedQuery.getQuery());
@@ -195,18 +179,13 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     @Override
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void removeSavedQuery(final String query) {
-        hibernateTemplate.execute(new HibernateCallback<Void>() {
-            public Void doInHibernate(Session session) {
-                Criteria criteria = session.createCriteria(SavedQuery.class);
-                criteria.add(Restrictions.like("query", query));
-                List list = criteria.list();
-                if (list.size() != 1) {
-                    throw new IllegalStateException("Only one entry expected for: " + query + ". Entries found: " + list.size());
-                }
-                session.delete(list.get(0));
-                return null;
-            }
-        });
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(SavedQuery.class);
+        criteria.add(Restrictions.like("query", query));
+        List list = criteria.list();
+        if (list.size() != 1) {
+            throw new IllegalStateException("Only one entry expected for: " + query + ". Entries found: " + list.size());
+        }
+        sessionFactory.getCurrentSession().delete(list.get(0));
     }
 
     @Override
@@ -222,33 +201,28 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         long time = System.currentTimeMillis();
         BackupEntry backupEntry = genericItemConverter.generateBackupEntry();
         // Save to db
-        hibernateTemplate.save(backupEntry);
+        sessionFactory.getCurrentSession().save(backupEntry);
         log.info("Time used for backup: " + (System.currentTimeMillis() - time) + "ms. Items: " + backupEntry.getItemCount() + " Bases: " + backupEntry.getBaseCount() + " UserStates: " + backupEntry.getUserStateCount());
         genericItemConverter.clear();
     }
 
     @Override
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
+    @SuppressWarnings("unchecked")
     public List<BackupSummary> getBackupSummary() {
-        @SuppressWarnings("unchecked")
-        List<Object[]> list = (List<Object[]>) hibernateTemplate.execute(new HibernateCallback() {
-            public Object doInHibernate(Session session) {
-                Criteria criteriaEntries = session.createCriteria(BackupEntry.class);
-                criteriaEntries.createCriteria("items", "itemAlias", CriteriaSpecification.LEFT_JOIN);
-                criteriaEntries.createCriteria("userStates", "userStateAlias", CriteriaSpecification.LEFT_JOIN);
-                ProjectionList entryProjectionList = Projections.projectionList();
-                entryProjectionList.add(Projections.groupProperty("timeStamp"));
-                entryProjectionList.add(Projections.countDistinct("itemAlias.id"));
-                entryProjectionList.add(Projections.countDistinct("itemAlias.base"));
-                entryProjectionList.add(Projections.countDistinct("userStateAlias.id"));
-                criteriaEntries.setProjection(entryProjectionList);
-                criteriaEntries.addOrder(Order.desc("timeStamp"));
-                return criteriaEntries.list();
-            }
-        });
+        Criteria criteriaEntries = sessionFactory.getCurrentSession().createCriteria(BackupEntry.class);
+        criteriaEntries.createCriteria("items", "itemAlias", CriteriaSpecification.LEFT_JOIN);
+        criteriaEntries.createCriteria("userStates", "userStateAlias", CriteriaSpecification.LEFT_JOIN);
+        ProjectionList entryProjectionList = Projections.projectionList();
+        entryProjectionList.add(Projections.groupProperty("timeStamp"));
+        entryProjectionList.add(Projections.countDistinct("itemAlias.id"));
+        entryProjectionList.add(Projections.countDistinct("itemAlias.base"));
+        entryProjectionList.add(Projections.countDistinct("userStateAlias.id"));
+        criteriaEntries.setProjection(entryProjectionList);
+        criteriaEntries.addOrder(Order.desc("timeStamp"));
 
         ArrayList<BackupSummary> result = new ArrayList<BackupSummary>();
-        for (Object[] objects : list) {
+        for (Object[] objects : (Collection<Object[]>) criteriaEntries.list()) {
             Date date = new Date(((Timestamp) objects[0]).getTime());
             result.add(new BackupSummary(date, (Long) objects[1], (Long) objects[2], (Long) objects[3]));
         }
@@ -257,16 +231,12 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
 
     @Override
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
+    @SuppressWarnings("unchecked")
     public void restore(final Date date) throws NoSuchItemTypeException {
         long time = System.currentTimeMillis();
-        @SuppressWarnings("unchecked")
-        List<BackupEntry> list = (List<BackupEntry>) hibernateTemplate.execute(new HibernateCallback() {
-            public Object doInHibernate(Session session) {
-                Criteria criteria = session.createCriteria(BackupEntry.class);
-                criteria.add(Restrictions.eq("timeStamp", date));
-                return criteria.list();
-            }
-        });
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(BackupEntry.class);
+        criteria.add(Restrictions.eq("timeStamp", date));
+        List<BackupEntry> list = criteria.list();
         if (list.isEmpty()) {
             throw new IllegalArgumentException("No entry for " + date);
         }
@@ -281,20 +251,16 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     @Override
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     @Transactional
+    @SuppressWarnings("unchecked")
     public void deleteBackupEntry(final Date date) throws NoSuchItemTypeException {
-        @SuppressWarnings("unchecked")
-        List<BackupEntry> list = (List<BackupEntry>) hibernateTemplate.execute(new HibernateCallback() {
-            public Object doInHibernate(Session session) {
-                Criteria criteria = session.createCriteria(BackupEntry.class);
-                criteria.add(Restrictions.eq("timeStamp", date));
-                return criteria.list();
-            }
-        });
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(BackupEntry.class);
+        criteria.add(Restrictions.eq("timeStamp", date));
+        List<BackupEntry> list = criteria.list();
         if (list.isEmpty()) {
             throw new IllegalArgumentException("No entry for " + date);
         }
         BackupEntry backupEntry = list.get(0);
-        hibernateTemplate.delete(backupEntry);
+        sessionFactory.getCurrentSession().delete(backupEntry);
         log.info("Backup entry deleted: " + date);
     }
 
@@ -321,11 +287,11 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         if (noGameEngine) {
             return;
         }
-        SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
-        try {
-            if (applicationEvent instanceof ContextRefreshedEvent &&
-                    applicationEvent.getSource() instanceof AbstractApplicationContext &&
-                    ((AbstractApplicationContext) applicationEvent.getSource()).getParent() == null) {
+        if (applicationEvent instanceof ContextRefreshedEvent &&
+                applicationEvent.getSource() instanceof AbstractApplicationContext &&
+                ((AbstractApplicationContext) applicationEvent.getSource()).getParent() == null) {
+            HibernateUtil.openSession4InternalCall(sessionFactory);
+            try {
                 userGuidanceService.init2();
                 List<BackupSummary> backupSummaries = getBackupSummary();
                 if (!backupSummaries.isEmpty()) {
@@ -337,27 +303,30 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
                 }
                 resourceService.activate();
                 botService.activate();
+            } catch (Throwable t) {
+                log.error("", t);
+            } finally {
+                HibernateUtil.closeSession4InternalCall(sessionFactory);
             }
-        } catch (Throwable t) {
-            log.error("", t);
-        } finally {
-            SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
         }
-
     }
 
     @PreDestroy
     @Transactional
     public void shutdown() {
         try {
+            HibernateUtil.openSession4InternalCall(sessionFactory);
             backup();
         } catch (Throwable t) {
             log.error("", t);
+        } finally {
+            HibernateUtil.closeSession4InternalCall(sessionFactory);
         }
     }
 
     @PostConstruct
     public void startup() {
+        HibernateUtil.openSession4InternalCall(sessionFactory);
         try {
             testMode = Utils.isTestModeStatic();
             if (!testMode) {
@@ -367,6 +336,8 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
             startupData = readStartupData();
         } catch (Throwable t) {
             log.error("", t);
+        } finally {
+            HibernateUtil.closeSession4InternalCall(sessionFactory);
         }
     }
 
@@ -378,7 +349,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     @Override
     public StartupData readStartupData() {
         @SuppressWarnings("unchecked")
-        List<StartupData> startups = hibernateTemplate.loadAll(StartupData.class);
+        List<StartupData> startups = HibernateUtil.loadAll(sessionFactory, StartupData.class);
         if (startups.isEmpty()) {
             log.info("Startup data does not exist. Create default.");
             StartupData startupData = new StartupData();
@@ -398,7 +369,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveStartupData(StartupData startupData) {
         this.startupData = startupData;
-        hibernateTemplate.saveOrUpdate(startupData);
+        sessionFactory.getCurrentSession().saveOrUpdate(startupData);
     }
 
     @Override

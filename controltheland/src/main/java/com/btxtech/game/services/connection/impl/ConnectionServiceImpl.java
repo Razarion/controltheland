@@ -34,7 +34,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -65,16 +64,12 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     private BaseService baseService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private SessionFactory sessionFactory;
     private Timer timer;
     private Log log = LogFactory.getLog(ConnectionServiceImpl.class);
-    private HibernateTemplate hibernateTemplate;
     private final ArrayList<Connection> onlineConnection = new ArrayList<Connection>();
     private static final int MAX_NO_TICK_COUNT = 20;
-
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
-    }
 
     @PostConstruct
     public void init() {
@@ -164,7 +159,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
                         if (!Double.isInfinite(ticksPerSecond) && !Double.isNaN(ticksPerSecond)) {
                             String baseName = baseService.getBaseName(connection.getBase().getSimpleBase());
                             ConnectionStatistics connectionStatistics = new ConnectionStatistics(baseName, connection.getSessionId(), ticksPerSecond);
-                            hibernateTemplate.saveOrUpdate(connectionStatistics);
+                            sessionFactory.getCurrentSession().saveOrUpdate(connectionStatistics);
                         }
                     }
                 } catch (Throwable t) {

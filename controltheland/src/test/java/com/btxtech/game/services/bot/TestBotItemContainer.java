@@ -58,7 +58,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Collection<DbBotItemConfig> dbBotItemConfigs = new ArrayList<DbBotItemConfig>();
         DbBotItemConfig config1 = new DbBotItemConfig();
         config1.setCount(1);
-        config1.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        config1.setBaseItemType(getDbBaseItemTypeInSession(TEST_START_BUILDER_ITEM_ID));
         config1.setRegion(new Rectangle(2000, 2000, 1000, 1000));
         config1.setCreateDirectly(true);
         dbBotItemConfigs.add(config1);
@@ -96,13 +96,13 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Collection<DbBotItemConfig> dbBotItemConfigs = new ArrayList<DbBotItemConfig>();
         DbBotItemConfig config1 = new DbBotItemConfig();
         config1.setCount(1);
-        config1.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        config1.setBaseItemType(getDbBaseItemTypeInSession(TEST_START_BUILDER_ITEM_ID));
         config1.setRegion(new Rectangle(2000, 2000, 2000, 2000));
         config1.setCreateDirectly(true);
         dbBotItemConfigs.add(config1);
         DbBotItemConfig config2 = new DbBotItemConfig();
         config2.setCount(2);
-        config2.setBaseItemType(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
+        config2.setBaseItemType(getDbBaseItemTypeInSession(TEST_FACTORY_ITEM_ID));
         config2.setRegion(new Rectangle(2000, 2000, 2000, 2000));
         dbBotItemConfigs.add(config2);
 
@@ -175,22 +175,22 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Collection<DbBotItemConfig> dbBotItemConfigs = new ArrayList<DbBotItemConfig>();
         DbBotItemConfig config1 = new DbBotItemConfig();
         config1.setCount(1);
-        config1.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        config1.setBaseItemType(getDbBaseItemTypeInSession(TEST_START_BUILDER_ITEM_ID));
         config1.setRegion(new Rectangle(2000, 2000, 2000, 2000));
         config1.setCreateDirectly(true);
         dbBotItemConfigs.add(config1);
         DbBotItemConfig config2 = new DbBotItemConfig();
         config2.setCount(1);
-        config2.setBaseItemType(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
+        config2.setBaseItemType(getDbBaseItemTypeInSession(TEST_FACTORY_ITEM_ID));
         config2.setRegion(new Rectangle(4000, 2000, 2000, 2000));
         dbBotItemConfigs.add(config2);
         DbBotItemConfig config3 = new DbBotItemConfig();
         config3.setCount(3);
-        config3.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        config3.setBaseItemType(getDbBaseItemTypeInSession(TEST_ATTACK_ITEM_ID));
         dbBotItemConfigs.add(config3);
         DbBotItemConfig config4 = new DbBotItemConfig();
         config4.setCount(2);
-        config4.setBaseItemType(itemService.getDbBaseItemType(TEST_SIMPLE_BUILDING_ID));
+        config4.setBaseItemType(getDbBaseItemTypeInSession(TEST_SIMPLE_BUILDING_ID));
         config4.setRegion(new Rectangle(4000, 4000, 2000, 2000));
         config4.setCreateDirectly(true);
         dbBotItemConfigs.add(config4);
@@ -238,18 +238,18 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Collection<DbBotItemConfig> dbBotItemConfigs = new ArrayList<DbBotItemConfig>();
         DbBotItemConfig config1 = new DbBotItemConfig();
         config1.setCount(1);
-        config1.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        config1.setBaseItemType(getDbBaseItemTypeInSession(TEST_START_BUILDER_ITEM_ID));
         config1.setRegion(new Rectangle(2000, 2000, 1000, 1000));
         config1.setCreateDirectly(true);
         dbBotItemConfigs.add(config1);
         DbBotItemConfig config2 = new DbBotItemConfig();
         config2.setCount(6);
-        config2.setBaseItemType(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
+        config2.setBaseItemType(getDbBaseItemTypeInSession(TEST_FACTORY_ITEM_ID));
         config2.setRegion(new Rectangle(2000, 2000, 1000, 1000));
         dbBotItemConfigs.add(config2);
         DbBotItemConfig config3 = new DbBotItemConfig();
         config3.setCount(3);
-        config3.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        config3.setBaseItemType(getDbBaseItemTypeInSession(TEST_ATTACK_ITEM_ID));
         dbBotItemConfigs.add(config3);
 
         Collection<BotItemConfig> botItemConfigs = convert(dbBotItemConfigs, itemService);
@@ -290,13 +290,13 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Collection<DbBotItemConfig> dbBotItemConfigs = new ArrayList<DbBotItemConfig>();
         DbBotItemConfig config1 = new DbBotItemConfig();
         config1.setCount(1);
-        config1.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        config1.setBaseItemType(getDbBaseItemTypeInSession(TEST_START_BUILDER_ITEM_ID));
         config1.setRegion(new Rectangle(2000, 2000, 1000, 1000));
         config1.setCreateDirectly(true);
         dbBotItemConfigs.add(config1);
         DbBotItemConfig config2 = new DbBotItemConfig();
         config2.setCount(3);
-        config2.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        config2.setBaseItemType(getDbBaseItemTypeInSession(TEST_ATTACK_ITEM_ID));
         dbBotItemConfigs.add(config2);
 
         Collection<BotItemConfig> botItemConfigs = convert(dbBotItemConfigs, itemService);
@@ -343,7 +343,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         DbBotItemConfig attackerConfig = new DbBotItemConfig();
         attackerConfig.setCount(3);
         attackerConfig.setCreateDirectly(true);
-        attackerConfig.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        attackerConfig.setBaseItemType(getDbBaseItemTypeInSession(TEST_ATTACK_ITEM_ID));
         dbBotItemConfigs.add(attackerConfig);
 
         Collection<BotItemConfig> botItemConfigs = convert(dbBotItemConfigs, itemService);

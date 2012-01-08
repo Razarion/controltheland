@@ -21,20 +21,15 @@ import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,46 +42,31 @@ import java.util.StringTokenizer;
  */
 @Component("messengerService")
 public class MessengerServiceImpl implements MessengerService {
-    private HibernateTemplate hibernateTemplate;
     @Autowired
     private UserService userService;
-
     @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
-    }
+    private SessionFactory sessionFactory;
 
     @Override
     @Secured(SecurityRoles.ROLE_USER)
     public int getUnreadMails() {
-        final User user = userService.getUser();
-        return hibernateTemplate.execute(new HibernateCallback<Integer>() {
-            @Override
-            public Integer doInHibernate(Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbMail.class);
-                criteria.add(Restrictions.eq("user", user));
-                criteria.add(Restrictions.eq("read", false));
-                criteria.setProjection(Projections.rowCount());
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                return ((Number) criteria.list().get(0)).intValue();
-            }
-        });
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbMail.class);
+        criteria.add(Restrictions.eq("user", userService.getUser()));
+        criteria.add(Restrictions.eq("read", false));
+        criteria.setProjection(Projections.rowCount());
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return ((Number) criteria.list().get(0)).intValue();
     }
 
     @Override
     @Secured(SecurityRoles.ROLE_USER)
+    @SuppressWarnings("unchecked")
     public List<DbMail> getMails() {
-        final User user = userService.getUser();
-        return hibernateTemplate.execute(new HibernateCallback<List<DbMail>>() {
-            @Override
-            public List<DbMail> doInHibernate(Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbMail.class);
-                criteria.add(Restrictions.eq("user", user));
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                criteria.addOrder(Order.desc("sent"));
-                return criteria.list();
-            }
-        });
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbMail.class);
+        criteria.add(Restrictions.eq("user", userService.getUser()));
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        criteria.addOrder(Order.desc("sent"));
+        return criteria.list();
     }
 
     @Override
@@ -141,7 +121,7 @@ public class MessengerServiceImpl implements MessengerService {
         dbMail.setToUsers(toString);
         dbMail.setSent(new Date());
         dbMail.setUser(to);
-        hibernateTemplate.save(dbMail);
+        sessionFactory.getCurrentSession().save(dbMail);
     }
 
     @Override
@@ -151,7 +131,7 @@ public class MessengerServiceImpl implements MessengerService {
             return;
         }
         dbMail.setRead(true);
-        hibernateTemplate.update(dbMail);
+        sessionFactory.getCurrentSession().update(dbMail);
     }
 
     @Override

@@ -35,6 +35,7 @@ import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.bot.DbBotItemConfig;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
@@ -85,8 +86,6 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.util.tester.WicketTester;
 import org.easymock.EasyMock;
-import org.hibernate.FlushMode;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Before;
@@ -100,15 +99,11 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
-import org.springframework.orm.hibernate3.SessionHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -195,7 +190,6 @@ abstract public class AbstractServiceTest {
     protected static String COMPLEX_TERRITORY = "ComplexTerritory";
     protected static int COMPLEX_TERRITORY_ID = -1;
 
-    private HibernateTemplate hibernateTemplate;
     @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
@@ -230,20 +224,12 @@ abstract public class AbstractServiceTest {
     private PlatformTransactionManager transactionManager;
     @Autowired
     private CollisionService collisionService;
-    private SessionHolder sessionHolder;
+    @Autowired
+    private SessionFactory sessionFactory;
     private MockHttpServletRequest mockHttpServletRequest;
     private MockHttpServletResponse mockHttpServletResponse;
     private MockHttpSession mockHttpSession;
     private SecurityContext securityContext;
-
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
-    }
-
-    protected HibernateTemplate getHibernateTemplate() {
-        return hibernateTemplate;
-    }
 
     protected PlatformTransactionManager getTransactionManager() {
         return transactionManager;
@@ -262,6 +248,20 @@ abstract public class AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         return base;
+    }
+
+    // ---------------------- Base -----------------------
+
+    protected DbBaseItemType getDbBaseItemTypeInSession(int id) {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        DbBaseItemType dbBaseItemType = itemService.getDbBaseItemType(id);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        return dbBaseItemType;
     }
 
     // ------------------- Sync Items --------------------
@@ -1362,35 +1362,16 @@ abstract public class AbstractServiceTest {
 
     // ------------------- Session Config --------------------
 
-    private void beginOpenSessionInViewFilter() {
-        if (sessionHolder != null) {
-            throw new IllegalStateException("SessionHolder is NOT null. afterOpenSessionInViewFilter() was not called.");
-        }
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
 
-        Session session = SessionFactoryUtils.getSession(getHibernateTemplate().getSessionFactory(), true);
-        session.setFlushMode(FlushMode.MANUAL);
-        sessionHolder = new SessionHolder(session);
-        TransactionSynchronizationManager.bindResource(getHibernateTemplate().getSessionFactory(), sessionHolder);
+    private void beginOpenSessionInViewFilter() {
+        HibernateUtil.openSession4InternalCall(sessionFactory);
     }
 
     private void endOpenSessionInViewFilter() {
-        if (sessionHolder == null) {
-            throw new IllegalStateException("SessionHolder is null. Call beforeOpenSessionInViewFilter() first.");
-        }
-        SessionFactoryUtils.closeSession(sessionHolder.getSession());
-        TransactionSynchronizationManager.unbindResource(getHibernateTemplate().getSessionFactory());
-        sessionHolder = null;
-    }
-
-    protected Session getSessionFromSessionInViewFilter() {
-        if (sessionHolder == null) {
-            throw new IllegalStateException("SessionHolder is null. Call beforeOpenSessionInViewFilter() first.");
-        }
-        Session session = sessionHolder.getSession();
-        if (session == null) {
-            throw new IllegalStateException("Session is null");
-        }
-        return session;
+        HibernateUtil.closeSession4InternalCall(sessionFactory);
     }
 
     protected void beginHttpSession() {

@@ -41,6 +41,7 @@ import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.energy.ServerEnergyService;
@@ -64,20 +65,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -117,7 +112,8 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     private CrudRootServiceHelper<DbItemType> dbItemTypeCrud;
     @Autowired
     private StatisticsService statisticsService;
-    private HibernateTemplate hibernateTemplate;
+    @Autowired
+    private SessionFactory sessionFactory;
     private int lastId = 0;
     private final HashMap<Id, SyncItem> items = new HashMap<Id, SyncItem>();
     private Log log = LogFactory.getLog(ItemServiceImpl.class);
@@ -129,18 +125,13 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     public void setup() {
         dbItemTypeCrud.init(DbItemType.class);
         try {
-            SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
+            HibernateUtil.openSession4InternalCall(sessionFactory);
             activate();
         } catch (Throwable t) {
             log.error("", t);
         } finally {
-            SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
+            HibernateUtil.closeSession4InternalCall(sessionFactory);
         }
-    }
-
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
     }
 
     @Override
@@ -376,7 +367,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     @Transactional
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveDbItemTypes(Collection<DbItemType> itemTypes) {
-        hibernateTemplate.saveOrUpdateAll(itemTypes);
+        HibernateUtil.saveOrUpdateAll(sessionFactory, itemTypes);
     }
 
     @Override
@@ -384,7 +375,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveAttackMatrix(Collection<DbBaseItemType> weaponDbItemTypes) {
         for (DbBaseItemType weaponDbItemType : weaponDbItemTypes) {
-            hibernateTemplate.merge(weaponDbItemType);
+            sessionFactory.getCurrentSession().merge(weaponDbItemType);
         }
     }
 
@@ -392,7 +383,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     @Transactional
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveDbItemType(DbItemType dbItemType) {
-        hibernateTemplate.saveOrUpdate(dbItemType);
+        sessionFactory.getCurrentSession().saveOrUpdate(dbItemType);
     }
 
     @Override
@@ -444,54 +435,34 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     @Override
     @SuppressWarnings("unchecked")
     public Collection<DbItemType> getDbItemTypes() {
-        return hibernateTemplate.executeFind(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbItemType.class);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                return criteria.list();
-            }
-        });
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbItemType.class);
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public Collection<DbBaseItemType> getDbBaseItemTypes() {
-        return hibernateTemplate.executeFind(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbBaseItemType.class);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                return criteria.list();
-            }
-        });
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbBaseItemType.class);
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public Collection<DbProjectileItemType> getDbProjectileItemTypes() {
-        return hibernateTemplate.executeFind(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbProjectileItemType.class);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                return criteria.list();
-            }
-        });
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbProjectileItemType.class);
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public Collection<DbBaseItemType> getWeaponDbBaseItemTypes() {
-        return hibernateTemplate.executeFind(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbBaseItemType.class);
-                criteria.add(Restrictions.isNotNull("dbWeaponType"));
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                return criteria.list();
-            }
-        });
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbBaseItemType.class);
+        criteria.add(Restrictions.isNotNull("dbWeaponType"));
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
     }
 
     @Override
@@ -570,24 +541,24 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
     @Override
     public DbItemType getDbItemType(int itemTypeId) {
-        return hibernateTemplate.get(DbItemType.class, itemTypeId);
+        return HibernateUtil.get(sessionFactory, DbItemType.class, itemTypeId);
     }
 
     @Override
     public DbBaseItemType getDbBaseItemType(int itemBaseTypeId) {
-        return hibernateTemplate.get(DbBaseItemType.class, itemBaseTypeId);
+        return HibernateUtil.get(sessionFactory, DbBaseItemType.class, itemBaseTypeId);
     }
 
     @Override
     public DbResourceItemType getDbResourceItemType(int resourceItemType) {
-        return hibernateTemplate.get(DbResourceItemType.class, resourceItemType);
+        return HibernateUtil.get(sessionFactory, DbResourceItemType.class, resourceItemType);
     }
 
     @Override
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     @Transactional
     public void deleteItemType(DbItemType dbItemType) {
-        hibernateTemplate.delete(dbItemType);
+        sessionFactory.getCurrentSession().delete(dbItemType);
     }
 
     @Override

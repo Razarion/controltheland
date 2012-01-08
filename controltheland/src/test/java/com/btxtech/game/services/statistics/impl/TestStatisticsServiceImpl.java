@@ -9,6 +9,7 @@ import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.ContentSortList;
 import com.btxtech.game.services.common.DateUtil;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.statistics.CurrentStatisticEntry;
 import com.btxtech.game.services.statistics.DbStatisticsEntry;
@@ -23,7 +24,6 @@ import org.junit.Test;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -58,9 +58,12 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void simpleSave() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
         User user = new User();
         user.registerUser("xxx", "", "");
-        getHibernateTemplate().save(user);
+        getSessionFactory().getCurrentSession().save(user);
 
         SimpleBase unregBase = new SimpleBase(1);
         UserState userState1 = new UserState();
@@ -77,21 +80,27 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         Date date = new Date();
         statisticsService.onMoneyEarned(unregBase, 0.5);
         statisticsService.onMoneyEarned(regBase, 0.8);
-        Assert.assertTrue(getHibernateTemplate().loadAll(DbStatisticsEntry.class).isEmpty());
+        Assert.assertTrue(HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).isEmpty());
         getImpl().moveCacheToDb();
 
-        Assert.assertEquals(1, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = getHibernateTemplate().loadAll(DbStatisticsEntry.class).get(0);
+        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
+        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
         Assert.assertEquals(0.8, dbStatisticsEntry.getMoneyEarned(), 0.0001);
         Assert.assertEquals(DateUtil.dayStart(date), dbStatisticsEntry.getDate());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test
     @DirtiesContext
     public void sumUpSimpleSave() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
         User user = new User();
         user.registerUser("xxx", "", "");
-        getHibernateTemplate().save(user);
+        getSessionFactory().getCurrentSession().save(user);
 
         SimpleBase regBase = new SimpleBase(2);
         UserState userState2 = new UserState();
@@ -106,29 +115,35 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         statisticsService.onMoneyEarned(regBase, 0.8);
         statisticsService.onMoneyEarned(regBase, 1.2);
         statisticsService.onMoneyEarned(regBase, 2.0);
-        Assert.assertTrue(getHibernateTemplate().loadAll(DbStatisticsEntry.class).isEmpty());
+        Assert.assertTrue(HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).isEmpty());
         getImpl().moveCacheToDb();
 
-        Assert.assertEquals(1, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = getHibernateTemplate().loadAll(DbStatisticsEntry.class).get(0);
+        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
+        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
         Assert.assertEquals(4.0, dbStatisticsEntry.getMoneyEarned(), 0.0001);
         Assert.assertEquals(DateUtil.dayStart(date), dbStatisticsEntry.getDate());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test
     @DirtiesContext
     public void threeUsers() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
         User user1 = new User();
         user1.registerUser("xxx", "", "");
-        getHibernateTemplate().save(user1);
+        getSessionFactory().getCurrentSession().save(user1);
 
         User user2 = new User();
         user2.registerUser("yyy", "", "");
-        getHibernateTemplate().save(user2);
+        getSessionFactory().getCurrentSession().save(user2);
 
         User user3 = new User();
         user3.registerUser("zzz", "", "");
-        getHibernateTemplate().save(user3);
+        getSessionFactory().getCurrentSession().save(user3);
 
         SimpleBase base1 = new SimpleBase(1);
         UserState userState1 = new UserState();
@@ -155,17 +170,15 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         statisticsService.onMoneyEarned(base1, 1.2);
         statisticsService.onMoneyEarned(base3, 2.1);
         statisticsService.onMoneyEarned(base2, 10.1);
-        Assert.assertTrue(getHibernateTemplate().loadAll(DbStatisticsEntry.class).isEmpty());
+        Assert.assertTrue(HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).isEmpty());
         getImpl().moveCacheToDb();
 
-        Assert.assertEquals(3, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
+        Assert.assertEquals(3, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
         DbStatisticsEntry dbStatisticsEntry1 = null;
         DbStatisticsEntry dbStatisticsEntry2 = null;
         DbStatisticsEntry dbStatisticsEntry3 = null;
 
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        for (DbStatisticsEntry dbStatisticsEntry : getHibernateTemplate().loadAll(DbStatisticsEntry.class)) {
+        for (DbStatisticsEntry dbStatisticsEntry : HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class)) {
             if (dbStatisticsEntry.getUser().equals(user1)) {
                 dbStatisticsEntry1 = dbStatisticsEntry;
             } else if (dbStatisticsEntry.getUser().equals(user2)) {
@@ -196,9 +209,12 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     public void killedStructureBot() throws Exception {
         configureMinimalGame();
 
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
         User user = new User();
         user.registerUser("xxx", "", "");
-        getHibernateTemplate().save(user);
+        getSessionFactory().getCurrentSession().save(user);
 
         SimpleBase botBase = new SimpleBase(1);
         SimpleBase actorBase = new SimpleBase(2);
@@ -216,8 +232,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         statisticsService.onItemKilled(target, actorBase);
 
         getImpl().moveCacheToDb();
-        Assert.assertEquals(1, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = getHibernateTemplate().loadAll(DbStatisticsEntry.class).get(0);
+        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
+        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
         Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedBot());
         Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedPlayer());
         Assert.assertEquals(0, dbStatisticsEntry.getOwnBaseLost());
@@ -230,6 +246,10 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(0, dbStatisticsEntry.getLevelCompleted());
         Assert.assertEquals(0, dbStatisticsEntry.getMoneyEarned(), 0.00001);
         Assert.assertEquals(0, dbStatisticsEntry.getMoneySpent(), 0.00001);
+
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test
@@ -237,9 +257,12 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     public void killedUnitsBot() throws Exception {
         configureMinimalGame();
 
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
         User user = new User();
         user.registerUser("xxx", "", "");
-        getHibernateTemplate().save(user);
+        getSessionFactory().getCurrentSession().save(user);
 
         SimpleBase botBase = new SimpleBase(1);
         SimpleBase actorBase = new SimpleBase(2);
@@ -257,8 +280,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         statisticsService.onItemKilled(target, actorBase);
 
         getImpl().moveCacheToDb();
-        Assert.assertEquals(1, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = getHibernateTemplate().loadAll(DbStatisticsEntry.class).get(0);
+        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
+        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
         Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedBot());
         Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedPlayer());
         Assert.assertEquals(0, dbStatisticsEntry.getOwnBaseLost());
@@ -271,6 +294,10 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(0, dbStatisticsEntry.getLevelCompleted());
         Assert.assertEquals(0, dbStatisticsEntry.getMoneyEarned(), 0.00001);
         Assert.assertEquals(0, dbStatisticsEntry.getMoneySpent(), 0.00001);
+
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test
@@ -278,12 +305,15 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     public void killedStructurePlayer() throws Exception {
         configureMinimalGame();
 
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
         User actorUser = new User();
         actorUser.registerUser("xxx", "", "");
-        getHibernateTemplate().save(actorUser);
+        getSessionFactory().getCurrentSession().save(actorUser);
         User targetUser = new User();
         targetUser.registerUser("yyy", "", "");
-        getHibernateTemplate().save(targetUser);
+        getSessionFactory().getCurrentSession().save(targetUser);
 
         SimpleBase targetBase = new SimpleBase(1);
         UserState targetUserState = new UserState();
@@ -304,8 +334,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         statisticsService.onItemKilled(target, actorBase);
 
         getImpl().moveCacheToDb();
-        Assert.assertEquals(1, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = getHibernateTemplate().loadAll(DbStatisticsEntry.class).get(0);
+        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
+        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
         Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedBot());
         Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedPlayer());
         Assert.assertEquals(0, dbStatisticsEntry.getOwnBaseLost());
@@ -318,6 +348,9 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(0, dbStatisticsEntry.getLevelCompleted());
         Assert.assertEquals(0, dbStatisticsEntry.getMoneyEarned(), 0.00001);
         Assert.assertEquals(0, dbStatisticsEntry.getMoneySpent(), 0.00001);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test
@@ -325,12 +358,15 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     public void killedUnitsPlayer() throws Exception {
         configureMinimalGame();
 
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
         User actorUser = new User();
         actorUser.registerUser("xxx", "", "");
-        getHibernateTemplate().save(actorUser);
+        getSessionFactory().getCurrentSession().save(actorUser);
         User targetUser = new User();
         targetUser.registerUser("yyy", "", "");
-        getHibernateTemplate().save(targetUser);
+        getSessionFactory().getCurrentSession().save(targetUser);
 
         SimpleBase targetBase = new SimpleBase(1);
         UserState targetUserState = new UserState();
@@ -351,8 +387,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         statisticsService.onItemKilled(target, actorBase);
 
         getImpl().moveCacheToDb();
-        Assert.assertEquals(1, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = getHibernateTemplate().loadAll(DbStatisticsEntry.class).get(0);
+        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
+        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
         Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedBot());
         Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedPlayer());
         Assert.assertEquals(0, dbStatisticsEntry.getOwnBaseLost());
@@ -365,6 +401,9 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(0, dbStatisticsEntry.getLevelCompleted());
         Assert.assertEquals(0, dbStatisticsEntry.getMoneyEarned(), 0.00001);
         Assert.assertEquals(0, dbStatisticsEntry.getMoneySpent(), 0.00001);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test
@@ -372,9 +411,12 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     public void builtStructures() throws Exception {
         configureMinimalGame();
 
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
         User actorUser = new User();
         actorUser.registerUser("xxx", "", "");
-        getHibernateTemplate().save(actorUser);
+        getSessionFactory().getCurrentSession().save(actorUser);
 
         SimpleBase actorBase = new SimpleBase(2);
         UserState actorUserState = new UserState();
@@ -390,8 +432,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         statisticsService.onItemCreated(createdItem);
 
         getImpl().moveCacheToDb();
-        Assert.assertEquals(1, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = getHibernateTemplate().loadAll(DbStatisticsEntry.class).get(0);
+        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
+        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
         Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedBot());
         Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedPlayer());
         Assert.assertEquals(0, dbStatisticsEntry.getOwnBaseLost());
@@ -404,6 +446,9 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(0, dbStatisticsEntry.getLevelCompleted());
         Assert.assertEquals(0, dbStatisticsEntry.getMoneyEarned(), 0.00001);
         Assert.assertEquals(0, dbStatisticsEntry.getMoneySpent(), 0.00001);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test
@@ -411,12 +456,15 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     public void baseLostPlayer() throws Exception {
         configureMinimalGame();
 
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
         User actorUser = new User();
         actorUser.registerUser("xxx", "", "");
-        getHibernateTemplate().save(actorUser);
+        getSessionFactory().getCurrentSession().save(actorUser);
         User targetUser = new User();
         targetUser.registerUser("yyy", "", "");
-        getHibernateTemplate().save(targetUser);
+        getSessionFactory().getCurrentSession().save(targetUser);
 
         SimpleBase targetBase = new SimpleBase(1);
         UserState targetUserState = new UserState();
@@ -436,10 +484,9 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         statisticsService.onBaseKilled(targetBase, actorBase);
 
         getImpl().moveCacheToDb();
-        Assert.assertEquals(2, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        Iterator<DbStatisticsEntry> iterator = getHibernateTemplate().loadAll(DbStatisticsEntry.class).iterator();
+        Assert.assertEquals(2, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
+
+        Iterator<DbStatisticsEntry> iterator = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).iterator();
         DbStatisticsEntry entry1 = iterator.next();
         DbStatisticsEntry entry2 = iterator.next();
         DbStatisticsEntry actorEntry;
@@ -486,9 +533,12 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     public void baseLostBot() throws Exception {
         configureMinimalGame();
 
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
         User user = new User();
         user.registerUser("xxx", "", "");
-        getHibernateTemplate().save(user);
+        getSessionFactory().getCurrentSession().save(user);
 
         SimpleBase botBase = new SimpleBase(1);
         SimpleBase actorBase = new SimpleBase(2);
@@ -505,8 +555,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         statisticsService.onBaseKilled(botBase, actorBase);
 
         getImpl().moveCacheToDb();
-        Assert.assertEquals(1, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = getHibernateTemplate().loadAll(DbStatisticsEntry.class).get(0);
+        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
+        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
         Assert.assertEquals(1, dbStatisticsEntry.getBasesDestroyedBot());
         Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedPlayer());
         Assert.assertEquals(0, dbStatisticsEntry.getOwnBaseLost());
@@ -519,6 +569,9 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(0, dbStatisticsEntry.getLevelCompleted());
         Assert.assertEquals(0, dbStatisticsEntry.getMoneyEarned(), 0.00001);
         Assert.assertEquals(0, dbStatisticsEntry.getMoneySpent(), 0.00001);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test
@@ -526,9 +579,12 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     public void builtUnits() throws Exception {
         configureMinimalGame();
 
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
         User actorUser = new User();
         actorUser.registerUser("xxx", "", "");
-        getHibernateTemplate().save(actorUser);
+        getSessionFactory().getCurrentSession().save(actorUser);
 
         SimpleBase actorBase = new SimpleBase(2);
         UserState actorUserState = new UserState();
@@ -544,8 +600,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         statisticsService.onItemCreated(createdItem);
 
         getImpl().moveCacheToDb();
-        Assert.assertEquals(1, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = getHibernateTemplate().loadAll(DbStatisticsEntry.class).get(0);
+        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
+        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
         Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedBot());
         Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedPlayer());
         Assert.assertEquals(0, dbStatisticsEntry.getOwnBaseLost());
@@ -558,6 +614,9 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(0, dbStatisticsEntry.getLevelCompleted());
         Assert.assertEquals(0, dbStatisticsEntry.getMoneyEarned(), 0.00001);
         Assert.assertEquals(0, dbStatisticsEntry.getMoneySpent(), 0.00001);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test
@@ -565,9 +624,12 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     public void moneySpent() throws Exception {
         configureMinimalGame();
 
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
         User actorUser = new User();
         actorUser.registerUser("xxx", "", "");
-        getHibernateTemplate().save(actorUser);
+        getSessionFactory().getCurrentSession().save(actorUser);
 
         SimpleBase actorBase = new SimpleBase(1);
         UserState actorUserState = new UserState();
@@ -581,8 +643,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         statisticsService.onMoneySpent(actorBase, 0.5);
 
         getImpl().moveCacheToDb();
-        Assert.assertEquals(1, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = getHibernateTemplate().loadAll(DbStatisticsEntry.class).get(0);
+        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
+        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
         Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedBot());
         Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedPlayer());
         Assert.assertEquals(0, dbStatisticsEntry.getOwnBaseLost());
@@ -595,6 +657,9 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(0, dbStatisticsEntry.getLevelCompleted());
         Assert.assertEquals(0, dbStatisticsEntry.getMoneyEarned(), 0.00001);
         Assert.assertEquals(0.5, dbStatisticsEntry.getMoneySpent(), 0.00001);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test
@@ -602,9 +667,12 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     public void levelCompleted() throws Exception {
         configureMinimalGame();
 
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
         User actorUser = new User();
         actorUser.registerUser("xxx", "", "");
-        getHibernateTemplate().save(actorUser);
+        getSessionFactory().getCurrentSession().save(actorUser);
 
         UserState actorUserState = new UserState();
         actorUserState.setUser(actorUser);
@@ -612,8 +680,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         statisticsService.onLevelPromotion(actorUserState);
 
         getImpl().moveCacheToDb();
-        Assert.assertEquals(1, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = getHibernateTemplate().loadAll(DbStatisticsEntry.class).get(0);
+        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
+        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
         Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedBot());
         Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedPlayer());
         Assert.assertEquals(0, dbStatisticsEntry.getOwnBaseLost());
@@ -626,14 +694,20 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(1, dbStatisticsEntry.getLevelCompleted());
         Assert.assertEquals(0, dbStatisticsEntry.getMoneyEarned(), 0.00001);
         Assert.assertEquals(0, dbStatisticsEntry.getMoneySpent(), 0.00001);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test
     @DirtiesContext
     public void multipleMoveCacheToDb() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
         User user1 = new User();
         user1.registerUser("xxx", "", "");
-        getHibernateTemplate().save(user1);
+        getSessionFactory().getCurrentSession().save(user1);
 
         SimpleBase base1 = new SimpleBase(1);
         UserState userState1 = new UserState();
@@ -646,28 +720,22 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
 
         Date date = new Date();
         statisticsService.onMoneyEarned(base1, 0.7);
-        Assert.assertTrue(getHibernateTemplate().loadAll(DbStatisticsEntry.class).isEmpty());
+        Assert.assertTrue(HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).isEmpty());
         getImpl().moveCacheToDb();
-        Assert.assertEquals(1, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
+        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
 
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        DbStatisticsEntry entry1 = getHibernateTemplate().loadAll(DbStatisticsEntry.class).get(0);
+        DbStatisticsEntry entry1 = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
         Assert.assertEquals(0.7, entry1.getMoneyEarned(), 0.0001);
         Assert.assertEquals(DateUtil.dayStart(date), entry1.getDate());
         Assert.assertEquals(user1.getUsername(), entry1.getUser().getUsername());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
 
         statisticsService.onMoneyEarned(base1, 1.5);
-        Assert.assertEquals(1, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
+        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
         getImpl().moveCacheToDb();
-        Assert.assertEquals(2, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
+        Assert.assertEquals(2, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
 
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        entry1 = getHibernateTemplate().load(DbStatisticsEntry.class, entry1.getId());
-        List<DbStatisticsEntry> entries = getHibernateTemplate().loadAll(DbStatisticsEntry.class);
+        entry1 = HibernateUtil.get(getSessionFactory(), DbStatisticsEntry.class, entry1.getId());
+        List<DbStatisticsEntry> entries = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class);
         entries.remove(entry1);
         Assert.assertEquals(1, entries.size());
         DbStatisticsEntry entry2 = entries.get(0);
@@ -677,19 +745,15 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(user1.getUsername(), entry2.getUser().getUsername());
         Assert.assertEquals(0.7, entry1.getMoneyEarned(), 0.0001);
         Assert.assertEquals(1.5, entry2.getMoneyEarned(), 0.0001);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
 
         statisticsService.onMoneyEarned(base1, 2.2);
-        Assert.assertEquals(2, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
+        Assert.assertEquals(2, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
         getImpl().moveCacheToDb();
-        Assert.assertEquals(3, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
+        Assert.assertEquals(3, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
 
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        entry1 = getHibernateTemplate().load(DbStatisticsEntry.class, entry1.getId());
-        entry2 = getHibernateTemplate().load(DbStatisticsEntry.class, entry2.getId());
-        entries = getHibernateTemplate().loadAll(DbStatisticsEntry.class);
+        entry1 = HibernateUtil.get(getSessionFactory(), DbStatisticsEntry.class, entry1.getId());
+        entry2 = HibernateUtil.get(getSessionFactory(), DbStatisticsEntry.class, entry2.getId());
+        entries = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class);
         entries.remove(entry1);
         entries.remove(entry2);
         Assert.assertEquals(1, entries.size());
@@ -710,9 +774,12 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void closeDayIfNecessary() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
         User user1 = new User();
         user1.registerUser("xxx", "", "");
-        getHibernateTemplate().save(user1);
+        getSessionFactory().getCurrentSession().save(user1);
 
         SimpleBase base1 = new SimpleBase(1);
         UserState userState1 = new UserState();
@@ -725,21 +792,21 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
 
         Date date = new Date();
         statisticsService.onMoneyEarned(base1, 3.4);
-        Assert.assertTrue(getHibernateTemplate().loadAll(DbStatisticsEntry.class).isEmpty());
+        Assert.assertTrue(HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).isEmpty());
         statisticsService.onMoneyEarned(base1, 5.6);
-        Assert.assertTrue(getHibernateTemplate().loadAll(DbStatisticsEntry.class).isEmpty());
+        Assert.assertTrue(HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).isEmpty());
 
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.dayStart(date).getTime());
         statisticsService.onMoneyEarned(base1, 1.2);
-        Assert.assertEquals(1, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
+        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
 
-        DbStatisticsEntry entry1 = getHibernateTemplate().loadAll(DbStatisticsEntry.class).get(0);
+        DbStatisticsEntry entry1 = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
         Assert.assertEquals(9.0, entry1.getMoneyEarned(), 0.0001);
         Assert.assertEquals(DateUtil.removeOneDay(DateUtil.dayStart(date)), entry1.getDate());
 
         getImpl().moveCacheToDb();
-        Assert.assertEquals(2, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
-        List<DbStatisticsEntry> entries = getHibernateTemplate().loadAll(DbStatisticsEntry.class);
+        Assert.assertEquals(2, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
+        List<DbStatisticsEntry> entries = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class);
         entries.remove(entry1);
         Assert.assertEquals(1, entries.size());
         DbStatisticsEntry entry2 = entries.get(0);
@@ -747,16 +814,19 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(DateUtil.removeOneDay(DateUtil.dayStart(date)), entry1.getDate());
         Assert.assertEquals(1.2, entry2.getMoneyEarned(), 0.0001);
         Assert.assertEquals(DateUtil.dayStart(date), entry2.getDate());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test
     @DirtiesContext
     public void endOfDayProcessingEmpty() throws Exception {
         getImpl().endOfDayProcessing(DateUtil.createDate(2011, Calendar.SEPTEMBER, 2));
-        Assert.assertTrue(getHibernateTemplate().loadAll(DbStatisticsEntry.class).isEmpty());
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertTrue(HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).isEmpty());
         Assert.assertTrue(statisticsService.getDayStatistics().readDbChildren().isEmpty());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -765,22 +835,30 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void endOfDayProcessingMakeWholeDays() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
         User user1 = new User();
         user1.registerUser("xxx", "", "");
-        getHibernateTemplate().save(user1);
+        getSessionFactory().getCurrentSession().save(user1);
 
         Date date = DateUtil.createDate(2011, Calendar.SEPTEMBER, 2);
 
         createSaveDbStatisticsEntry(date, user1, 3.8, DbStatisticsEntry.Type.DAY);
         createSaveDbStatisticsEntry(date, user1, 42.7, DbStatisticsEntry.Type.DAY);
         createSaveDbStatisticsEntry(date, user1, 19.5, DbStatisticsEntry.Type.DAY);
-        Assert.assertEquals(3, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
+        Assert.assertEquals(3, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
 
         getImpl().endOfDayProcessing(date);
-        Assert.assertEquals(2, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+
+        Assert.assertEquals(2, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
+
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.addOneDay(date).getTime());
         Collection<DbStatisticsEntry> collection = statisticsService.getDayStatistics().readDbChildren();
         Assert.assertEquals(1, collection.size());
@@ -796,12 +874,15 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void endOfDayProcessingMakeWholeDaysTwoUsers() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
         User user1 = new User();
         user1.registerUser("xxx", "", "");
-        getHibernateTemplate().save(user1);
+        getSessionFactory().getCurrentSession().save(user1);
         User user2 = new User();
         user2.registerUser("yyy", "", "");
-        getHibernateTemplate().save(user2);
+        getSessionFactory().getCurrentSession().save(user2);
 
         Date date = DateUtil.createDate(2011, Calendar.AUGUST, 18);
 
@@ -809,13 +890,15 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         createSaveDbStatisticsEntry(date, user1, 42.7, DbStatisticsEntry.Type.DAY);
         createSaveDbStatisticsEntry(date, user2, 17, DbStatisticsEntry.Type.DAY);
         createSaveDbStatisticsEntry(date, user2, 18, DbStatisticsEntry.Type.DAY);
-        Assert.assertEquals(4, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
+        Assert.assertEquals(4, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
 
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
         getImpl().endOfDayProcessing(date);
-        Assert.assertEquals(4, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
-
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+
+        Assert.assertEquals(4, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
 
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.addOneDay(date).getTime());
         ContentSortList contentSortList = new ContentSortList();
@@ -843,9 +926,12 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void endOfDayProcessingMakeWholeDaysTwoDates() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
         User user1 = new User();
         user1.registerUser("xxx", "", "");
-        getHibernateTemplate().save(user1);
+        getSessionFactory().getCurrentSession().save(user1);
 
         Date date1 = DateUtil.createDate(2011, Calendar.AUGUST, 18);
         Date date2 = DateUtil.createDate(2011, Calendar.AUGUST, 19);
@@ -854,13 +940,14 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         createSaveDbStatisticsEntry(date1, user1, 42.7, DbStatisticsEntry.Type.DAY);
         createSaveDbStatisticsEntry(date2, user1, 17, DbStatisticsEntry.Type.DAY);
         createSaveDbStatisticsEntry(date2, user1, 18, DbStatisticsEntry.Type.DAY);
-        Assert.assertEquals(4, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
+        Assert.assertEquals(4, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
 
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
         getImpl().endOfDayProcessing(date2);
-        Assert.assertEquals(3, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
-
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(3, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
 
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.addOneDay(date2).getTime());
         ContentSortList contentSortList = new ContentSortList();
@@ -882,9 +969,12 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void endOfDayProcessingWeek() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
         User user1 = new User();
         user1.registerUser("xxx", "", "");
-        getHibernateTemplate().save(user1);
+        getSessionFactory().getCurrentSession().save(user1);
 
         createSaveDbStatisticsEntry(DateUtil.createDate(2011, Calendar.SEPTEMBER, 12), user1, 1.0, DbStatisticsEntry.Type.DAY);
         createSaveDbStatisticsEntry(DateUtil.createDate(2011, Calendar.SEPTEMBER, 13), user1, 2.0, DbStatisticsEntry.Type.DAY);
@@ -896,13 +986,15 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         // Will be ignored, not processing week
         createSaveDbStatisticsEntry(DateUtil.createDate(2011, Calendar.SEPTEMBER, 19), user1, 128.0, DbStatisticsEntry.Type.DAY);
 
-        Assert.assertEquals(8, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
+        Assert.assertEquals(8, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
 
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
         getImpl().endOfDayProcessing(DateUtil.createDate(2011, Calendar.SEPTEMBER, 19));
-        Assert.assertEquals(10, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
-
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+
+        Assert.assertEquals(10, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
 
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 20).getTime());
         ContentSortList contentSortList = new ContentSortList();
@@ -943,20 +1035,26 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void endOfDayProcessingAllTime() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
         User user1 = new User();
         user1.registerUser("xxx", "", "");
-        getHibernateTemplate().save(user1);
+        getSessionFactory().getCurrentSession().save(user1);
 
         createSaveDbStatisticsEntry(DateUtil.createDate(2011, Calendar.SEPTEMBER, 1), user1, 2.0, DbStatisticsEntry.Type.DAY);
         createSaveDbStatisticsEntry(DateUtil.createDate(2011, Calendar.SEPTEMBER, 2), user1, 2.0, DbStatisticsEntry.Type.DAY);
         createSaveDbStatisticsEntry(DateUtil.createDate(2011, Calendar.SEPTEMBER, 3), user1, 2.0, DbStatisticsEntry.Type.DAY);
-        Assert.assertEquals(3, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
+        Assert.assertEquals(3, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
 
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
         getImpl().endOfDayProcessing(DateUtil.createDate(2011, Calendar.SEPTEMBER, 4));
-        Assert.assertEquals(4, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
-
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+
+        Assert.assertEquals(4, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
+
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 20).getTime());
         ContentSortList contentSortList = new ContentSortList();
         contentSortList.addDesc("moneyEarned");
@@ -968,14 +1066,15 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(user1.getUsername(), dbStatisticsEntry1.getUser().getUsername());
         Assert.assertEquals(6, dbStatisticsEntry1.getMoneyEarned(), 0.0001);
         Assert.assertEquals(DbStatisticsEntry.Type.ALL_TIME, dbStatisticsEntry1.getType());
+
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-
         getImpl().endOfDayProcessing(DateUtil.createDate(2011, Calendar.SEPTEMBER, 4));
-        Assert.assertEquals(4, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
-
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+
+        Assert.assertEquals(4, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
+
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 20).getTime());
         contentSortList = new ContentSortList();
         contentSortList.addDesc("moneyEarned");
@@ -987,14 +1086,15 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(user1.getUsername(), dbStatisticsEntry1.getUser().getUsername());
         Assert.assertEquals(6, dbStatisticsEntry1.getMoneyEarned(), 0.0001);
         Assert.assertEquals(DbStatisticsEntry.Type.ALL_TIME, dbStatisticsEntry1.getType());
+
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-
         getImpl().endOfDayProcessing(DateUtil.createDate(2011, Calendar.SEPTEMBER, 5));
-        Assert.assertEquals(5, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
-
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+
+        Assert.assertEquals(5, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
+
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 20).getTime());
         contentSortList = new ContentSortList();
         contentSortList.addDesc("moneyEarned");
@@ -1006,16 +1106,16 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(user1.getUsername(), dbStatisticsEntry1.getUser().getUsername());
         Assert.assertEquals(6, dbStatisticsEntry1.getMoneyEarned(), 0.0001);
         Assert.assertEquals(DbStatisticsEntry.Type.ALL_TIME, dbStatisticsEntry1.getType());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
 
         createSaveDbStatisticsEntry(DateUtil.createDate(2011, Calendar.SEPTEMBER, 6), user1, 2.0, DbStatisticsEntry.Type.DAY);
-        Assert.assertEquals(6, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
+        Assert.assertEquals(6, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
         getImpl().endOfDayProcessing(DateUtil.createDate(2011, Calendar.SEPTEMBER, 6));
-        Assert.assertEquals(6, getHibernateTemplate().loadAll(DbStatisticsEntry.class).size());
-
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(6, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
+
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 20).getTime());
         contentSortList = new ContentSortList();
         contentSortList.addDesc("moneyEarned");
@@ -1032,25 +1132,20 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     }
 
     private DbStatisticsEntry createSaveDbStatisticsEntry(final Date date, final User user, final double moneyEarned, final DbStatisticsEntry.Type type) {
-        SessionFactoryUtils.initDeferredClose(getHibernateTemplate().getSessionFactory());
-        try {
-            TransactionTemplate transactionTemplate = new TransactionTemplate(getTransactionManager());
-            return transactionTemplate.execute(new TransactionCallback<DbStatisticsEntry>() {
+        TransactionTemplate transactionTemplate = new TransactionTemplate(getTransactionManager());
+        return transactionTemplate.execute(new TransactionCallback<DbStatisticsEntry>() {
 
-                @Override
-                public DbStatisticsEntry doInTransaction(TransactionStatus status) {
-                    DbStatisticsEntry entry = new DbStatisticsEntry();
-                    entry.setDate(date);
-                    entry.setUser(user);
-                    entry.setMoneyEarned(moneyEarned);
-                    entry.setType(type);
-                    getHibernateTemplate().save(entry);
-                    return entry;
-                }
-            });
-        } finally {
-            SessionFactoryUtils.processDeferredClose(getHibernateTemplate().getSessionFactory());
-        }
+            @Override
+            public DbStatisticsEntry doInTransaction(TransactionStatus status) {
+                DbStatisticsEntry entry = new DbStatisticsEntry();
+                entry.setDate(date);
+                entry.setUser(user);
+                entry.setMoneyEarned(moneyEarned);
+                entry.setType(type);
+                getSessionFactory().getCurrentSession().save(entry);
+                return entry;
+            }
+        });
     }
 
     @Test

@@ -91,7 +91,6 @@ public class TestCurdRootTable extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(BotTable.class);
         tester.assertRenderedPage(BotTable.class);
-        tester.debugComponentTrees();
         // Delete Bot
         tester.newFormTester("form").submit("bots:1:delete");
         endHttpRequestAndOpenSessionInViewFilter();

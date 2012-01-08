@@ -18,17 +18,17 @@ import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.SyncItemTypeComparison;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbItemType;
-import com.btxtech.game.services.mgmt.impl.BackupEntry;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
-import com.btxtech.game.services.user.UserState;
-import java.util.HashMap;
-import java.util.Map;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinTable;
-import org.hibernate.annotations.CollectionOfElements;
+import javax.persistence.MapKey;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: beat
@@ -38,11 +38,8 @@ import org.hibernate.annotations.CollectionOfElements;
 @Entity
 @DiscriminatorValue("SYNC_ITEM_TYPE")
 public class DbSyncItemTypeComparisonBackup extends DbAbstractComparisonBackup {
-    @CollectionOfElements(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(name = "BACKUP_LEVEL_COMPARISON_SYNC_ITEM_TYPE")
-    // Does not work
-    @org.hibernate.annotations.MapKey(columns = @Column(name = "itemType"))
-    @Column(name = "theCount")
     private Map<DbItemType, Integer> itemTypeCount;
 
     /**

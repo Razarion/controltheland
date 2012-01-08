@@ -34,7 +34,7 @@ public class TestNeed extends AbstractServiceTest {
 
         DbBotItemConfig config1 = new DbBotItemConfig();
         config1.setCount(1);
-        config1.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        config1.setBaseItemType(getDbBaseItemTypeInSession(TEST_START_BUILDER_ITEM_ID));
         config1.setRegion(new Rectangle(2000, 2000, 1000, 1000));
         config1.setCreateDirectly(true);
 
@@ -71,21 +71,21 @@ public class TestNeed extends AbstractServiceTest {
 
         DbBotItemConfig direct1 = new DbBotItemConfig();
         direct1.setCount(1);
-        direct1.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        direct1.setBaseItemType(getDbBaseItemTypeInSession(TEST_START_BUILDER_ITEM_ID));
         direct1.setRegion(new Rectangle(2000, 2000, 1000, 1000));
         direct1.setCreateDirectly(true);
         dbBotItemConfigs.add(direct1);
 
         DbBotItemConfig direct2 = new DbBotItemConfig();
         direct2.setCount(2);
-        direct2.setBaseItemType(itemService.getDbBaseItemType(TEST_HARVESTER_ITEM_ID));
+        direct2.setBaseItemType(getDbBaseItemTypeInSession(TEST_HARVESTER_ITEM_ID));
         direct2.setRegion(new Rectangle(2000, 2000, 1000, 1000));
         direct2.setCreateDirectly(true);
         dbBotItemConfigs.add(direct2);
 
         DbBotItemConfig normal1 = new DbBotItemConfig();
         normal1.setCount(1);
-        normal1.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        normal1.setBaseItemType(getDbBaseItemTypeInSession(TEST_ATTACK_ITEM_ID));
         normal1.setCreateDirectly(false);
         dbBotItemConfigs.add(normal1);
 

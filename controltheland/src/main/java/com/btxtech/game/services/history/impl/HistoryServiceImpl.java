@@ -27,20 +27,16 @@ import com.btxtech.game.services.utg.DbAbstractLevel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,18 +49,14 @@ import java.util.List;
 public class HistoryServiceImpl implements HistoryService {
     static private final int NEWEST_HISTORY_ELEMENT_COUNT = 30;
     private Log log = LogFactory.getLog(HistoryServiceImpl.class);
-    private HibernateTemplate hibernateTemplate;
     @Autowired
     private BaseService baseService;
     @Autowired
     private UserService userService;
     @Autowired
-    private com.btxtech.game.services.connection.Session session;
-
+    private SessionFactory sessionFactory;
     @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
-    }
+    private com.btxtech.game.services.connection.Session session;
 
     private DbHistoryElement.Source determineSource(SimpleBase actor, SimpleBase target) {
         if (actor != null && !baseService.isBot(actor)) {
@@ -179,47 +171,39 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<DisplayHistoryElement> getNewestHistoryElements(final User user, final int count) {
         ArrayList<DisplayHistoryElement> displayHistoryElements = new ArrayList<DisplayHistoryElement>();
-        @SuppressWarnings("unchecked")
-        List<DbHistoryElement> dbHistoryElements = hibernateTemplate.execute(new HibernateCallback<List<DbHistoryElement>>() {
-            public List<DbHistoryElement> doInHibernate(Session session) {
-                Criteria criteria = session.createCriteria(DbHistoryElement.class);
-                criteria.setMaxResults(count);
-                criteria.add(Restrictions.or(Restrictions.eq("actorUserName", user.getUsername()), Restrictions.eq("targetUserName", user.getUsername())));
-                criteria.addOrder(Property.forName("timeStampMs").desc());
-                return criteria.list();
-            }
-        });
-        for (DbHistoryElement dbHistoryElement : dbHistoryElements) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbHistoryElement.class);
+        criteria.setMaxResults(count);
+        criteria.add(Restrictions.or(Restrictions.eq("actorUserName", user.getUsername()), Restrictions.eq("targetUserName", user.getUsername())));
+        criteria.addOrder(Property.forName("timeStampMs").desc());
+        criteria.addOrder(Property.forName("id").desc()); // If Timestamp is equals, assume id is in ascending form
+        for (DbHistoryElement dbHistoryElement : (Collection<DbHistoryElement>) criteria.list()) {
             displayHistoryElements.add(convert(user, null, dbHistoryElement));
         }
         return displayHistoryElements;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<DisplayHistoryElement> getHistoryElements(final Long from, final Long to, final String sessionId, final Integer baseId) {
         ArrayList<DisplayHistoryElement> displayHistoryElements = new ArrayList<DisplayHistoryElement>();
-        @SuppressWarnings("unchecked")
-        List<DbHistoryElement> dbHistoryElements = hibernateTemplate.execute(new HibernateCallback<List<DbHistoryElement>>() {
-            public List<DbHistoryElement> doInHibernate(Session session) {
-                Criteria criteria = session.createCriteria(DbHistoryElement.class);
-                if (baseId != null) {
-                    criteria.add(Restrictions.or(Restrictions.eq("sessionId", sessionId), Restrictions.or(Restrictions.eq("actorBaseId", baseId), Restrictions.eq("targetBaseId", baseId))));
-                } else {
-                    criteria.add(Restrictions.eq("sessionId", sessionId));
-                }
-                if (from != null) {
-                    criteria.add(Restrictions.ge("timeStampMs", from));
-                }
-                if (to != null) {
-                    criteria.add(Restrictions.lt("timeStampMs", to));
-                }
-                criteria.addOrder(Property.forName("timeStampMs").desc());
-                return criteria.list();
-            }
-        });
-        for (DbHistoryElement dbHistoryElement : dbHistoryElements) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbHistoryElement.class);
+        if (baseId != null) {
+            criteria.add(Restrictions.or(Restrictions.eq("sessionId", sessionId), Restrictions.or(Restrictions.eq("actorBaseId", baseId), Restrictions.eq("targetBaseId", baseId))));
+        } else {
+            criteria.add(Restrictions.eq("sessionId", sessionId));
+        }
+        if (from != null) {
+            criteria.add(Restrictions.ge("timeStampMs", from));
+        }
+        if (to != null) {
+            criteria.add(Restrictions.lt("timeStampMs", to));
+        }
+        criteria.addOrder(Property.forName("timeStampMs").desc());
+        criteria.addOrder(Property.forName("id").desc()); // If Timestamp is equals, assume id is in ascending form
+        for (DbHistoryElement dbHistoryElement : (Collection<DbHistoryElement>) criteria.list()) {
             displayHistoryElements.add(convert(null, baseId, dbHistoryElement));
         }
         return displayHistoryElements;
@@ -227,16 +211,11 @@ public class HistoryServiceImpl implements HistoryService {
 
     @Override
     public int getLevelPromotionCount(final String sessionId) {
-        return hibernateTemplate.execute(new HibernateCallback<Integer>() {
-            @Override
-            public Integer doInHibernate(Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbHistoryElement.class);
-                criteria.add(Restrictions.eq("type", DbHistoryElement.Type.LEVEL_PROMOTION));
-                criteria.add(Restrictions.eq("sessionId", sessionId));
-                criteria.setProjection(Projections.rowCount());
-                return ((Number) criteria.list().get(0)).intValue();
-            }
-        });
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbHistoryElement.class);
+        criteria.add(Restrictions.eq("type", DbHistoryElement.Type.LEVEL_PROMOTION));
+        criteria.add(Restrictions.eq("sessionId", sessionId));
+        criteria.setProjection(Projections.rowCount());
+        return ((Number) criteria.list().get(0)).intValue();
     }
 
     private DisplayHistoryElement convert(User user, Integer baseId, DbHistoryElement dbHistoryElement) {
@@ -320,7 +299,7 @@ public class HistoryServiceImpl implements HistoryService {
 
     private void save(DbHistoryElement dbHistoryElement) {
         try {
-            hibernateTemplate.save(dbHistoryElement);
+            sessionFactory.getCurrentSession().save(dbHistoryElement);
         } catch (Throwable t) {
             log.error("", t);
         }

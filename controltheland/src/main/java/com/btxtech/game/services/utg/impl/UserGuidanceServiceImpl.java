@@ -24,6 +24,7 @@ import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.history.HistoryService;
@@ -51,7 +52,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,7 +101,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     private TerritoryService territoryService;
     @Autowired
     private StatisticsService statisticsService;
-    private HibernateTemplate hibernateTemplate;
+    @Autowired
+    private SessionFactory sessionFactory;
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
     private List<DbAbstractLevel> dbAbstractLevels = new ArrayList<DbAbstractLevel>();
     private DbRealGameLevel dummyRealGameLevel;
@@ -120,11 +121,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         } catch (Throwable t) {
             log.error("", t);
         }
-    }
-
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
     }
 
     @Override
@@ -390,31 +386,31 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     @Override
     @Transactional
     public void updateDbConditionConfig(DbConditionConfig dbConditionConfig) {
-        hibernateTemplate.saveOrUpdate(dbConditionConfig);
+        sessionFactory.getCurrentSession().saveOrUpdate(dbConditionConfig);
     }
 
     @Override
     @Transactional
     public void createDbComparisonItemCount(DbSyncItemTypeComparisonConfig dbSyncItemTypeComparisonConfigId) {
         dbSyncItemTypeComparisonConfigId.getCrudDbComparisonItemCount().createDbChild();
-        hibernateTemplate.save(dbSyncItemTypeComparisonConfigId);
+        sessionFactory.getCurrentSession().save(dbSyncItemTypeComparisonConfigId);
     }
 
     @Override
     @Transactional
     public void createDbItemTypeLimitation(DbRealGameLevel dbRealGameLevel) {
         dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
-        hibernateTemplate.update(dbRealGameLevel);
+        sessionFactory.getCurrentSession().update(dbRealGameLevel);
     }
 
     @Override
     public DbAbstractComparisonConfig getDbAbstractComparisonConfig(int dbAbstractComparisonConfigId) {
-        return hibernateTemplate.get(DbAbstractComparisonConfig.class, dbAbstractComparisonConfigId);
+        return HibernateUtil.get(sessionFactory, DbAbstractComparisonConfig.class, dbAbstractComparisonConfigId);
     }
 
     @Override
     public DbSyncItemTypeComparisonConfig getDbSyncItemTypeComparisonConfig(int dbSyncItemTypeComparisonConfigId) {
-        return hibernateTemplate.get(DbSyncItemTypeComparisonConfig.class, dbSyncItemTypeComparisonConfigId);
+        return HibernateUtil.get(sessionFactory,DbSyncItemTypeComparisonConfig.class, dbSyncItemTypeComparisonConfigId);
     }
 
     @Override

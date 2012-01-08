@@ -3,7 +3,6 @@ package com.btxtech.game.services.common;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,36 +16,33 @@ import java.io.Serializable;
 @Component(value = "ruServiceHelper")
 @Scope("prototype")
 public class RuServiceHelper<T> {
-    private HibernateTemplate hibernateTemplate;
-
     @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
-    }
+    private SessionFactory sessionFactory;
 
     @Transactional
     public void updateDbEntity(T entity) {
-        hibernateTemplate.update(entity);
+        sessionFactory.getCurrentSession().update(entity);
     }
 
     @Transactional
+    @SuppressWarnings("unchecked")
     public T readDbChild(Serializable id, Class<T> clazz) {
-        return hibernateTemplate.get(clazz, id);
+        return (T) sessionFactory.getCurrentSession().get(clazz, id);
     }
 
     @Transactional
     public <C extends CrudChild> void removeChildAndUpdate(final T entity, final CrudChildServiceHelper<C> crudChildServiceHelper, final C childToRemove) {
         // Delete and save in the same transaction
         crudChildServiceHelper.deleteDbChild(childToRemove);
-        hibernateTemplate.update(entity);
-        hibernateTemplate.flush();
+        sessionFactory.getCurrentSession().update(entity);
+        sessionFactory.getCurrentSession().flush();
     }
 
     @Transactional
     public <C extends CrudChild> void removeChildAndUpdate(T entity, CrudListChildServiceHelper<C> crudListChildServiceHelper, C childToRemove) {
         // Delete and save in the same transaction
         crudListChildServiceHelper.deleteDbChild(childToRemove);
-        hibernateTemplate.update(entity);
-        hibernateTemplate.flush();
+        sessionFactory.getCurrentSession().update(entity);
+        sessionFactory.getCurrentSession().flush();
     }
 }

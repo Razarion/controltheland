@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosi
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbSurfaceRect;
@@ -40,8 +41,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,17 +74,13 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     private CrudRootServiceHelper<DbSurfaceImage> dbSurfaceImageCrudServiceHelper;
     @Autowired
     private MgmtService mgmtService;
+    @Autowired
+    private SessionFactory sessionFactory;
 
-    private HibernateTemplate hibernateTemplate;
     private HashMap<Integer, DbTerrainImage> dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
     private HashMap<Integer, DbSurfaceImage> dbSurfaceImages = new HashMap<Integer, DbSurfaceImage>();
     private Log log = LogFactory.getLog(TerrainServiceImpl.class);
     private TerrainImageBackground terrainImageBackground;
-
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
-    }
 
     @PostConstruct
     public void init() {
@@ -95,11 +90,11 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         dbTerrainImageGroupCrudRootServiceHelper.init(DbTerrainImageGroup.class);
         dbSurfaceImageCrudServiceHelper.init(DbSurfaceImage.class);
         dbTerrainSettingCrudServiceHelper.init(DbTerrainSetting.class);
-        SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
+        HibernateUtil.openSession4InternalCall(sessionFactory);
         try {
             activateTerrain();
         } finally {
-            SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
+            HibernateUtil.closeSession4InternalCall(sessionFactory);
         }
     }
 
@@ -263,7 +258,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
             dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(surfaceRect.getTileRectangle(), dbSurfaceImage), null);
         }
 
-        hibernateTemplate.saveOrUpdate(dbTerrainSetting);
+        sessionFactory.getCurrentSession().saveOrUpdate(dbTerrainSetting);
     }
 
     @Override
@@ -288,7 +283,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     }
 
     private DbTerrainSetting reattachDbTerrainSetting4Tutorial(DbSimulationLevel dbSimulationLevel) {
-        hibernateTemplate.load(dbSimulationLevel, dbSimulationLevel.getId());
+        sessionFactory.getCurrentSession().load(dbSimulationLevel, dbSimulationLevel.getId());
 
         DbTutorialConfig dbTutorialConfig = dbSimulationLevel.getDbTutorialConfig();
         if (dbTutorialConfig == null) {

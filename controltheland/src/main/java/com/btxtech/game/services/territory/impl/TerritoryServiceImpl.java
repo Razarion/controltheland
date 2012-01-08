@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.territory.impl.AbstractTerritoryServiceImpl;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.DbTerritory;
 import com.btxtech.game.services.territory.TerritoryService;
@@ -27,8 +28,6 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 
@@ -49,24 +48,20 @@ public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implement
     private ApplicationContext applicationContext;
     @Autowired
     private CrudRootServiceHelper<DbTerritory> dbTerritoryCrudServiceHelper;
-    private Log log = LogFactory.getLog(TerritoryServiceImpl.class);
-    private HibernateTemplate hibernateTemplate;
-
     @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
-    }
+    private SessionFactory sessionFactory;
+    private Log log = LogFactory.getLog(TerritoryServiceImpl.class);
 
     @PostConstruct
     public void setup() {
-        SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
+        HibernateUtil.openSession4InternalCall(sessionFactory);
         try {
             dbTerritoryCrudServiceHelper.init(DbTerritory.class);
             updateTerritories();
         } catch (Throwable t) {
             log.error("", t);
         } finally {
-            SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
+            HibernateUtil.closeSession4InternalCall(sessionFactory);
         }
     }
 

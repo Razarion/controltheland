@@ -17,6 +17,8 @@ import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -84,4 +86,14 @@ public class Utils {
         }
         return ints;
     }
+
+    public static void printJarLocation(Class clazz) {
+        try {
+            File jarFile = new File(clazz.getProtectionDomain().getCodeSource().getLocation().toURI());
+            System.out.println(jarFile);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+    
 }

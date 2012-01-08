@@ -40,9 +40,8 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
@@ -56,7 +55,6 @@ import java.util.Map;
  */
 @Component("cmsService")
 public class CmsServiceImpl implements CmsService {
-    private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(CmsServiceImpl.class);
     @Autowired
     private UserGuidanceService userGuidanceService;
@@ -74,6 +72,8 @@ public class CmsServiceImpl implements CmsService {
     private CrudRootServiceHelper<DbAds> adsCrud;
     @Autowired
     private CmsUiService cmsUiService;
+    @Autowired
+    private SessionFactory sessionFactory;
 
     private Map<Integer, DbCmsImage> imageCache = new HashMap<Integer, DbCmsImage>();
     private Map<Integer, DbPage> pageCache = new HashMap<Integer, DbPage>();
@@ -81,11 +81,6 @@ public class CmsServiceImpl implements CmsService {
     private Map<CmsUtil.CmsPredefinedPage, DbPage> predefinedDbPages = new HashMap<CmsUtil.CmsPredefinedPage, DbPage>();
     private Map<String, CmsSectionInfo> cmsSectionInfoMap = new HashMap<String, CmsSectionInfo>();
     private String adsCode;
-
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
-    }
 
     @PostConstruct
     public void init() {
@@ -95,13 +90,13 @@ public class CmsServiceImpl implements CmsService {
         pageStyleCrudRootServiceHelper.init(DbPageStyle.class);
         contentCrud.init(DbContent.class);
         adsCrud.init(DbAds.class);
-        SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
+        HibernateUtil.openSession4InternalCall(sessionFactory);
         try {
             activateCms();
         } catch (Throwable t) {
             log.error("", t);
         } finally {
-            SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
+            HibernateUtil.closeSession4InternalCall(sessionFactory);
         }
     }
 

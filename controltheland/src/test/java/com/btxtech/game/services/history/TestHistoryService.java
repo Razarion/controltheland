@@ -11,6 +11,7 @@ import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.history.impl.HistoryServiceImpl;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.user.UserService;
@@ -19,6 +20,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 
@@ -40,6 +45,8 @@ public class TestHistoryService extends AbstractServiceTest {
     private ItemService itemService;
     @Autowired
     private CollisionService collisionService;
+    @Autowired
+    private PlatformTransactionManager platformTransactionManager;
 
     @Test
     @DirtiesContext
@@ -464,10 +471,20 @@ public class TestHistoryService extends AbstractServiceTest {
     }
 
     private void checkSource(DbHistoryElement.Source source) {
-        List<DbHistoryElement> dbHistoryElements;
-        dbHistoryElements = getHibernateTemplate().loadAll(DbHistoryElement.class);
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        final List<DbHistoryElement> dbHistoryElements = HibernateUtil.loadAll(getSessionFactory(), DbHistoryElement.class);
         Assert.assertEquals(1, dbHistoryElements.size());
         Assert.assertEquals(source, dbHistoryElements.get(0).getSource());
-        getHibernateTemplate().deleteAll(dbHistoryElements);
+        new TransactionTemplate(platformTransactionManager).execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                HibernateUtil.deleteAll(getSessionFactory(), dbHistoryElements);
+            }
+        });
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 }

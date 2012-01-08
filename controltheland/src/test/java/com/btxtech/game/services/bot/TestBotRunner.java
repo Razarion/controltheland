@@ -12,6 +12,7 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.impl.ServerBotRunner;
 import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.user.UserService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -46,7 +47,7 @@ public class TestBotRunner extends AbstractServiceTest {
         dbBotConfig.setActionDelay(10);
         DbBotItemConfig config1 = dbBotConfig.getBotItemCrud().createDbChild();
         config1.setCount(1);
-        config1.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        config1.setBaseItemType(getDbBaseItemTypeInSession(TEST_START_BUILDER_ITEM_ID));
         config1.setRegion(new Rectangle(2000, 2000, 1000, 1000));
         config1.setCreateDirectly(true);
 
@@ -70,16 +71,16 @@ public class TestBotRunner extends AbstractServiceTest {
         dbBotConfig.setActionDelay(10);
         DbBotItemConfig config1 = dbBotConfig.getBotItemCrud().createDbChild();
         config1.setCount(1);
-        config1.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        config1.setBaseItemType(getDbBaseItemTypeInSession(TEST_START_BUILDER_ITEM_ID));
         config1.setRegion(new Rectangle(2000, 2000, 1000, 1000));
         config1.setCreateDirectly(true);
         DbBotItemConfig config2 = dbBotConfig.getBotItemCrud().createDbChild();
         config2.setCount(3);
-        config2.setBaseItemType(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
+        config2.setBaseItemType(getDbBaseItemTypeInSession(TEST_FACTORY_ITEM_ID));
         config2.setRegion(new Rectangle(2000, 2000, 1000, 1000));
         DbBotItemConfig config3 = dbBotConfig.getBotItemCrud().createDbChild();
         config3.setCount(3);
-        config3.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        config3.setBaseItemType(getDbBaseItemTypeInSession(TEST_ATTACK_ITEM_ID));
 
         BotRunner botRunner = new ServerBotRunner(dbBotConfig.createBotConfig(itemService), serverServices);
         botRunner.start();
@@ -113,7 +114,7 @@ public class TestBotRunner extends AbstractServiceTest {
         dbBotConfig.setName("Bot2");
         DbBotItemConfig config1 = dbBotConfig.getBotItemCrud().createDbChild();
         config1.setCount(1);
-        config1.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        config1.setBaseItemType(getDbBaseItemTypeInSession(TEST_START_BUILDER_ITEM_ID));
         config1.setRegion(new Rectangle(2000, 2000, 1000, 1000));
         config1.setCreateDirectly(true);
 
@@ -143,16 +144,16 @@ public class TestBotRunner extends AbstractServiceTest {
         dbBotConfig.setActionDelay(10);
         DbBotItemConfig config1 = dbBotConfig.getBotItemCrud().createDbChild();
         config1.setCount(1);
-        config1.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        config1.setBaseItemType(getDbBaseItemTypeInSession(TEST_START_BUILDER_ITEM_ID));
         config1.setRegion(new Rectangle(2000, 2000, 1000, 1000));
         config1.setCreateDirectly(true);
         DbBotItemConfig config2 = dbBotConfig.getBotItemCrud().createDbChild();
         config2.setCount(3);
-        config2.setBaseItemType(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
+        config2.setBaseItemType(getDbBaseItemTypeInSession(TEST_FACTORY_ITEM_ID));
         config2.setRegion(new Rectangle(2000, 2000, 1000, 1000));
         DbBotItemConfig config3 = dbBotConfig.getBotItemCrud().createDbChild();
         config3.setCount(4);
-        config3.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        config3.setBaseItemType(getDbBaseItemTypeInSession(TEST_ATTACK_ITEM_ID));
 
         BotRunner botRunner = new ServerBotRunner(dbBotConfig.createBotConfig(itemService), serverServices);
         botRunner.start();
@@ -195,7 +196,7 @@ public class TestBotRunner extends AbstractServiceTest {
         dbBotConfig.setRealm(new Rectangle(0, 0, 4000, 4000));
         DbBotItemConfig config1 = dbBotConfig.getBotItemCrud().createDbChild();
         config1.setCount(1);
-        config1.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        config1.setBaseItemType(getDbBaseItemTypeInSession(TEST_ATTACK_ITEM_ID));
         config1.setRegion(new Rectangle(0, 0, 1000, 1000));
         config1.setCreateDirectly(true);
 
@@ -348,7 +349,7 @@ public class TestBotRunner extends AbstractServiceTest {
         dbBotConfig.setName("Bot4");
         DbBotItemConfig config1 = dbBotConfig.getBotItemCrud().createDbChild();
         config1.setCount(3);
-        config1.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        config1.setBaseItemType(getDbBaseItemTypeInSession(TEST_ATTACK_ITEM_ID));
         config1.setRegion(new Rectangle(0, 0, 1000, 1000));
         config1.setCreateDirectly(true);
 
@@ -380,7 +381,7 @@ public class TestBotRunner extends AbstractServiceTest {
         dbBotConfig.setRealm(new Rectangle(0, 0, 4000, 4000));
         DbBotItemConfig config1 = dbBotConfig.getBotItemCrud().createDbChild();
         config1.setCount(5);
-        config1.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        config1.setBaseItemType(getDbBaseItemTypeInSession(TEST_ATTACK_ITEM_ID));
         config1.setRegion(new Rectangle(0, 0, 1000, 1000));
         config1.setCreateDirectly(true);
 
@@ -415,7 +416,7 @@ public class TestBotRunner extends AbstractServiceTest {
         dbBotConfig.setRealm(new Rectangle(0, 0, 4000, 4000));
         DbBotItemConfig config1 = dbBotConfig.getBotItemCrud().createDbChild();
         config1.setCount(3);
-        config1.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        config1.setBaseItemType(getDbBaseItemTypeInSession(TEST_ATTACK_ITEM_ID));
         config1.setRegion(new Rectangle(0, 0, 1000, 1000));
         config1.setCreateDirectly(true);
 
@@ -452,7 +453,7 @@ public class TestBotRunner extends AbstractServiceTest {
         dbBotConfig.setRealm(new Rectangle(0, 0, 4000, 4000));
         DbBotItemConfig config1 = dbBotConfig.getBotItemCrud().createDbChild();
         config1.setCount(3);
-        config1.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        config1.setBaseItemType(getDbBaseItemTypeInSession(TEST_ATTACK_ITEM_ID));
         config1.setRegion(new Rectangle(0, 0, 1000, 1000));
         config1.setCreateDirectly(true);
 

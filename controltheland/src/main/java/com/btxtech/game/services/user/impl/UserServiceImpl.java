@@ -32,14 +32,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -79,17 +76,13 @@ public class UserServiceImpl implements UserService {
     private AuthenticationManager authenticationManager;
     @Autowired
     private PlatformTransactionManager transactionManager;
+    @Autowired
+    private SessionFactory sessionFactory;
     @Value(value = "${security.md5salt}")
     private String md5HashSalt;
 
-    private HibernateTemplate hibernateTemplate;
     private final Collection<UserState> userStates = new ArrayList<UserState>();
     private Log log = LogFactory.getLog(UserServiceImpl.class);
-
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
-    }
 
     @Override
     public boolean login(String userName, String password) throws AlreadyLoggedInException {
@@ -225,16 +218,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public User getUser(final String name) {
-        List<User> users = hibernateTemplate.execute(new HibernateCallback<List<User>>() {
-            @SuppressWarnings("unchecked")
-            public List<User> doInHibernate(Session session) {
-                Criteria criteria = session.createCriteria(User.class);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                criteria.add(Restrictions.eq("name", name));
-                return criteria.list();
-            }
-        });
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        criteria.add(Restrictions.eq("name", name));
+        List<User> users = criteria.list();
         if (users == null || users.isEmpty()) {
             return null;
         } else {
@@ -278,7 +267,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void save(User user) {
-        hibernateTemplate.saveOrUpdate(user);
+        sessionFactory.getCurrentSession().saveOrUpdate(user);
     }
 
     private void privateSave(final User user) {
@@ -287,7 +276,7 @@ public class UserServiceImpl implements UserService {
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             public void doInTransactionWithoutResult(TransactionStatus status) {
-                hibernateTemplate.saveOrUpdate(user);
+                sessionFactory.getCurrentSession().saveOrUpdate(user);
             }
         });
     }
@@ -296,23 +285,19 @@ public class UserServiceImpl implements UserService {
     @SuppressWarnings("unchecked")
     @Override
     public List<User> getAllUsers() {
-        Object result = hibernateTemplate.execute(new HibernateCallback() {
-            public Object doInHibernate(Session session) {
-                Criteria criteria = session.createCriteria(User.class);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                return criteria.list();
-            }
-        });
-        return (List<User>) result;
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return (List<User>) criteria.list();
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Collection<GrantedAuthority> getAuthorities() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
             return Collections.emptyList();
         }
-        return authentication.getAuthorities();
+        return (Collection<GrantedAuthority>) authentication.getAuthorities();
     }
 
     @Override

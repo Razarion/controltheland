@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.usertype.UserType;
 
 /**
@@ -61,7 +62,7 @@ public class PathUserType implements UserType {
     }
 
     @Override
-    public Object nullSafeGet(ResultSet resultSet, String[] names, Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet resultSet, String[] names, SessionImplementor sessionImplementor, Object owner) throws HibernateException, SQLException {
         String string = resultSet.getString(names[0]);
         if (resultSet.wasNull()) {
             return null;
@@ -80,7 +81,7 @@ public class PathUserType implements UserType {
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement statement, Object obj, int columnIndex) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement statement, Object obj, int columnIndex, SessionImplementor sessionImplementor) throws HibernateException, SQLException {
         List<Index> path = (List<Index>) obj;
         if (path == null || path.isEmpty()) {
             statement.setNull(columnIndex, Types.VARCHAR);

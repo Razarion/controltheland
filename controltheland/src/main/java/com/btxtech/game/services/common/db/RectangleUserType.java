@@ -15,6 +15,7 @@ package com.btxtech.game.services.common.db;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
 import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.usertype.UserType;
 
 import java.io.Serializable;
@@ -51,7 +52,7 @@ public class RectangleUserType implements UserType {
     }
 
     @Override
-    public Object nullSafeGet(ResultSet resultSet, String[] names, Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet resultSet, String[] names, SessionImplementor sessionImplementor, Object owner) throws HibernateException, SQLException {
         int x = resultSet.getInt(names[0]);
         if (resultSet.wasNull()) {
             return null;
@@ -73,7 +74,7 @@ public class RectangleUserType implements UserType {
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement statement, Object obj, int columnIndex) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement statement, Object obj, int columnIndex, SessionImplementor sessionImplementor) throws HibernateException, SQLException {
         Rectangle rectangle = (Rectangle) obj;
         if (rectangle != null) {
             statement.setInt(columnIndex, rectangle.getX());
