@@ -31,7 +31,7 @@
         <MavenRunnerParameters>
           <option name="goals">
             <list>
-              <option value="org.codehaus.mojo:gwt-maven-plugin:2.3.0-1:run" />
+              <option value="org.codehaus.mojo:gwt-maven-plugin:2.4.0:run" />
             </list>
           </option>
           <option name="profiles">
