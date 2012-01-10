@@ -90,10 +90,7 @@ public class SyncBuilder extends SyncBaseAbility {
         }
         getSyncItemArea().turnTo(toBeBuildPosition);
         if (getServices().getItemService().baseObjectExists(currentBuildup)) {
-            double buildFactor = factor * builderType.getProgress() / (double) toBeBuiltType.getBuildup();
-            if (buildFactor + currentBuildup.getBuildup() > 1.0) {
-                buildFactor = 1.0 - currentBuildup.getBuildup();
-            }
+            double buildFactor = setupBuildFactor(factor, builderType.getProgress(), toBeBuiltType, currentBuildup);
             try {
                 getServices().getBaseService().withdrawalMoney(buildFactor * (double) toBeBuiltType.getPrice(), getSyncBaseItem().getBase());
                 currentBuildup.addBuildup(buildFactor);
@@ -110,6 +107,14 @@ public class SyncBuilder extends SyncBaseAbility {
             stop();
             return false;
         }
+    }
+
+    public static double setupBuildFactor(double factor, double builderProgress, BaseItemType toBeBuilt, SyncBaseItem currentBuildup) {
+        double buildFactor = factor * builderProgress / (double) toBeBuilt.getBuildup();
+        if (buildFactor + currentBuildup.getBuildup() > 1.0) {
+            buildFactor = 1.0 - currentBuildup.getBuildup();
+        }
+        return buildFactor;
     }
 
     private boolean isInRange() {

@@ -6,6 +6,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -280,8 +281,14 @@ public class MuzzleFlashControl extends DecoratorPanel {
         return horizontalPanel;
     }
 
-    public void init(int imageNr, BaseItemType baseItemType) {
+    public void init(int imageNr, ItemType itemType) {
+        if (!(itemType instanceof BaseItemType)) {
+            setWidget(new Label("No Muzzle Flash because no Base Item Type "));
+            return;
+        }
+        BaseItemType baseItemType = (BaseItemType) itemType;
         if (baseItemType.getWeaponType() == null) {
+            setWidget(new Label("No Muzzle Flash because Base Item Type has no weapon"));
             return;
         }
         this.imageNr = imageNr;

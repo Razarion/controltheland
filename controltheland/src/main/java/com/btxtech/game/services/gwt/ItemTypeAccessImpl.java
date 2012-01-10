@@ -1,6 +1,7 @@
 package com.btxtech.game.services.gwt;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.BuildupStep;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -8,6 +9,8 @@ import com.btxtech.game.jsre.itemtypeeditor.ItemTypeAccess;
 import com.btxtech.game.services.item.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * User: beat
@@ -25,8 +28,9 @@ public class ItemTypeAccessImpl implements ItemTypeAccess {
     }
 
     @Override
-    public void saveItemTypeProperties(int itemTypeId, BoundingBox boundingBox, WeaponType weaponType) throws NoSuchItemTypeException {
+    public void saveItemTypeProperties(int itemTypeId, BoundingBox boundingBox, WeaponType weaponType, List<BuildupStep> buildupStep) throws NoSuchItemTypeException {
         itemService.saveBoundingBox(itemTypeId, boundingBox);
         itemService.saveWeaponType(itemTypeId, weaponType);
+        itemService.saveBuildupStepData(itemTypeId, buildupStep);
     }
 }

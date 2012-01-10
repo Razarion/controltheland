@@ -25,6 +25,7 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.SpeechBubbleHandler;
+import com.btxtech.game.jsre.common.gameengine.itemType.BuildupStep;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.google.gwt.dom.client.Style;
@@ -205,7 +206,8 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         if (image != null) {
             remove(image);
         }
-        image = ImageHandler.getItemTypeImage(clientSyncItem.getSyncItem());
+
+        image = new Image();
         image.addMouseDownHandler(this);
         image.sinkEvents(Event.ONMOUSEMOVE);
         image.getElement().getStyle().setZIndex(1);
@@ -349,25 +351,26 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
 
 
     private void setupImageSizeAndPos() {
-        if (clientSyncItem.isSyncBaseItem() && !clientSyncItem.getSyncBaseItem().isReady() && !GwtCommon.isIe6()) {
+        if (clientSyncItem.isSyncBaseItem() && !clientSyncItem.getSyncBaseItem().isReady()) {
             SyncBaseItem syncBaseItem = clientSyncItem.getSyncBaseItem();
-            int width = (int) (syncBaseItem.getItemType().getBoundingBox().getImageWidth() * syncBaseItem.getBuildup());
-            if (width < 1) {
-                width = 1;
+            BuildupStep buildupStep = syncBaseItem.getBaseItemType().getBuildupStepData4Progress(syncBaseItem.getBuildup());
+            if(buildupStep != null) {
+                if(buildupStep.getBase64ImageData() != null) {
+                    // During ItemTypeEditor usage
+                    image.setUrl(buildupStep.getBase64ImageData());
+                } else {
+                    image.setUrl(ImageHandler.getBuildupStepImageUrl(clientSyncItem.getSyncBaseItem().getBaseItemType(), buildupStep));
+                }
+            } else {
+                image.setUrl(ImageHandler.getItemTypeImageUrl(clientSyncItem.getSyncItem()));
             }
-            int height = (int) (syncBaseItem.getItemType().getBoundingBox().getImageHeight() * syncBaseItem.getBuildup());
-            if (height < 1) {
-                height = 1;
-            }
-            image.setPixelSize(width, height);
-            int imgX = (syncBaseItem.getItemType().getBoundingBox().getImageWidth() - width) / 2;
-            int imgY = (syncBaseItem.getItemType().getBoundingBox().getImageHeight() - height) / 2;
-            setWidgetPosition(image, imgX, imgY);
         } else {
-            image.setPixelSize(clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageWidth(),
-                    clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageHeight());
-            setWidgetPosition(image, 0, 0);
+            image.setUrl(ImageHandler.getItemTypeImageUrl(clientSyncItem.getSyncItem()));
         }
+        image.setPixelSize(clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageWidth(),
+                clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageHeight());
+        setWidgetPosition(image, 0, 0);
+
     }
 
 

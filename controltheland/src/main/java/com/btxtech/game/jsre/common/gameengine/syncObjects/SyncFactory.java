@@ -26,6 +26,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -38,6 +40,7 @@ public class SyncFactory extends SyncBaseAbility {
     private double buildup;
     private int createdChildCount;
     private Index rallyPoint;
+    private Logger log = Logger.getLogger(SyncFactory.class.getName());
 
     public SyncFactory(FactoryType factoryType, SyncBaseItem syncBaseItem) throws NoSuchItemTypeException {
         super(syncBaseItem);
@@ -168,9 +171,14 @@ public class SyncFactory extends SyncBaseAbility {
 
     void calculateRallyPoint() throws NoSuchItemTypeException {
         Collection<ItemType> types = new ArrayList<ItemType>();
-        for (int id : factoryType.getAbleToBuild()) {
-            types.add(getServices().getItemService().getItemType(id));
+        try {
+            for (int id : factoryType.getAbleToBuild()) {
+                types.add(getServices().getItemService().getItemType(id));
+            }
+            rallyPoint = getServices().getCollisionService().getRallyPoint(getSyncBaseItem(), types);
+        } catch (NoSuchItemTypeException e) {
+            log.log(Level.SEVERE, "Unable to calculate rally point: " + e.getMessage());
+            rallyPoint = getSyncItemArea().getPosition();
         }
-        rallyPoint = getServices().getCollisionService().getRallyPoint(getSyncBaseItem(), types);
     }
 }

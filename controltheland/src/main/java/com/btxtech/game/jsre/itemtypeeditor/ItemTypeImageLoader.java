@@ -11,7 +11,7 @@ public class ItemTypeImageLoader extends ImageLoader {
     public ItemTypeImageLoader(int itemTypeId, int imageCount, Listener listener) {
         super(listener);
         for (int i = 0; i < imageCount; i++) {
-            loadImage(ImageHandler.getItemTYpeUrl(itemTypeId, i + 1));
+            loadImage(ImageHandler.getItemTypeUrl(itemTypeId, i + 1));
         }
     }
 }

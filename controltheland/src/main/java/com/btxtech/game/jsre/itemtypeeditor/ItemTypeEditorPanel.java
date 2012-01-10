@@ -53,34 +53,38 @@ public class ItemTypeEditorPanel extends FlexTable {
 
             @Override
             public void onSuccess(ItemType itemType) {
-                ///--- Setup div
-                TerrainView.uglySuppressRadar = true;
-                Connection.getInstance().init4ItemTypeEditor();
-                ClientLevelHandler.getInstance().setLevel(new com.btxtech.game.jsre.client.common.Level(0, "ItemTypeEditorLevel", "", false, 0, null, 0));
-                ///--- Setup terrain
-                ArrayList<SurfaceImage> surfaceImages = new ArrayList<SurfaceImage>();
-                surfaceImages.add(new SurfaceImage(itemType.getTerrainType().getSurfaceTypes().get(0), 23, "#00FF00"));
-                ArrayList<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
-                surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, SIM_WIDTH / 100, SIM_HEIGHT / 100), 23));
-                TerrainView.getInstance().setupTerrain(new TerrainSettings(SIM_WIDTH / 100, SIM_HEIGHT / 100, 100, 100),
-                        new ArrayList<TerrainImagePosition>(),
-                        surfaceRects,
-                        surfaceImages,
-                        new ArrayList<TerrainImage>());
-                TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
-                TerrainView.getInstance().addToParent(MapWindow.getAbsolutePanel());
-                ClientCollisionService.getInstance().setup();
-                ///--- Setup Item Container
-                Collection<ItemType> itemTypes = new ArrayList<ItemType>();
-                itemTypes.add(itemType);
-                ItemContainer.getInstance().setItemTypes(itemTypes);
-                ///--- Setup Base
-                ClientBase.getInstance().setBase(MY_BASE);
-                setupGui(itemType);
-                itemTypeSimulation.createSyncItem();
-                //---- Init the editors
-                if (itemType instanceof BaseItemType) {
-                    muzzleFlashControl.init(0, (BaseItemType) itemType);
+                try {
+                    ///--- Setup div
+                    TerrainView.uglySuppressRadar = true;
+                    Connection.getInstance().init4ItemTypeEditor();
+                    ClientLevelHandler.getInstance().setLevel(new com.btxtech.game.jsre.client.common.Level(0, "ItemTypeEditorLevel", "", false, 0, null, 0));
+                    ///--- Setup terrain
+                    ArrayList<SurfaceImage> surfaceImages = new ArrayList<SurfaceImage>();
+                    surfaceImages.add(new SurfaceImage(itemType.getTerrainType().getSurfaceTypes().get(0), 23, "#00FF00"));
+                    ArrayList<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
+                    surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, SIM_WIDTH / 100, SIM_HEIGHT / 100), 23));
+                    TerrainView.getInstance().setupTerrain(new TerrainSettings(SIM_WIDTH / 100, SIM_HEIGHT / 100, 100, 100),
+                            new ArrayList<TerrainImagePosition>(),
+                            surfaceRects,
+                            surfaceImages,
+                            new ArrayList<TerrainImage>());
+                    TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
+                    TerrainView.getInstance().addToParent(MapWindow.getAbsolutePanel());
+                    ClientCollisionService.getInstance().setup();
+                    ///--- Setup Item Container
+                    Collection<ItemType> itemTypes = new ArrayList<ItemType>();
+                    itemTypes.add(itemType);
+                    ItemContainer.getInstance().setItemTypes(itemTypes);
+                    ///--- Setup Base
+                    ClientBase.getInstance().setBase(MY_BASE);
+                    setupGui(itemType);
+                    if (itemType instanceof BaseItemType) {
+                        itemTypeSimulation.createSyncItem();
+                    }
+                    //---- Init the editors
+                    muzzleFlashControl.init(0, itemType);
+                } catch (Throwable t) {
+                    log.log(Level.SEVERE, "Can not start ItemTypeEditor", t);
                 }
             }
         });
@@ -94,19 +98,21 @@ public class ItemTypeEditorPanel extends FlexTable {
         ItemTypeView itemTypeView = new ItemTypeView(300, 300, itemType, boundingBoxControl, muzzleFlashControl);
         RotationControl rotationControl = new RotationControl(itemType.getBoundingBox(), itemTypeView, itemTypeSimulation, muzzleFlashControl);
         muzzleFlashControl.setRotationControl(rotationControl);
+        BuildupStepEditorPanel buildupStepEditorPanel = new BuildupStepEditorPanel(itemType, itemTypeSimulation, boundingBoxControl);
         // Init panels
         boundingBoxControl.setRotationControl(rotationControl);
         // Add panels to main panel
         setWidget(0, 0, itemTypeView);
         getFlexCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
-        getFlexCellFormatter().setRowSpan(0, 0, 3);
+        getFlexCellFormatter().setRowSpan(0, 0, 4);
         setWidget(0, 1, rotationControl);
         // Col is 0 (only one col in second row)
         setWidget(1, 0, boundingBoxControl);
         setWidget(2, 0, muzzleFlashControl);
+        setWidget(3, 0, buildupStepEditorPanel);
         getFlexCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
         setWidget(0, 2, MapWindow.getAbsolutePanel());
-        getFlexCellFormatter().setRowSpan(0, 2, 3);
+        getFlexCellFormatter().setRowSpan(0, 2, 4);
         MapWindow.getInstance().setMinimalSize(SIM_WIDTH, SIM_HEIGHT);
     }
 }

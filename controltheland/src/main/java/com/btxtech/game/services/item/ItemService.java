@@ -16,6 +16,7 @@ package com.btxtech.game.services.item;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.BuildupStep;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -24,6 +25,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.itemType.DbBuildupStep;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImageData;
 import com.btxtech.game.services.item.itemType.DbItemTypeSoundData;
@@ -60,6 +62,8 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
 
     void saveWeaponType(int itemTypeId, WeaponType weaponType) throws NoSuchItemTypeException;
 
+    void saveBuildupStepData(int itemTypeId, List<BuildupStep> buildupSteps) throws NoSuchItemTypeException;
+
     Collection<DbItemType> getDbItemTypes();
 
     Collection<DbBaseItemType> getDbBaseItemTypes();
@@ -91,4 +95,6 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
     void killSyncItemIds(Collection<Id> itemsToKill);
 
     CrudRootServiceHelper<DbItemType> getDbItemTypeCrud();
+
+    DbBuildupStep getDbBuildupStep(int itemTypeId, int buildupStepId);
 }

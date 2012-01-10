@@ -172,7 +172,7 @@ public class SoundHandler {
         StringBuilder url = new StringBuilder();
         url.append(Constants.MUZZLE_ITEM_IMAGE_URL);
         url.append("?");
-        url.append(Constants.ITEM_IMAGE_ID);
+        url.append(Constants.ITEM_TYPE_ID);
         url.append("=");
         url.append(baseItemType.getId());
         url.append("&");
