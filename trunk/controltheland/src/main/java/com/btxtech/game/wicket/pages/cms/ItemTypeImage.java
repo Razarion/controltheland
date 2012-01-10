@@ -1,7 +1,6 @@
 package com.btxtech.game.wicket.pages.cms;
 
 import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.ComponentTag;
@@ -33,7 +32,7 @@ public class ItemTypeImage extends Panel {
         protected void onComponentTag(ComponentTag tag) {
             super.onComponentTag(tag);
             checkComponentTag(tag, "img");
-            tag.put("src", ImageHandler.getItemTYpeUrl(imgId, imgIndex));
+            tag.put("src", ImageHandler.getItemTypeUrl(imgId, imgIndex));
         }
 
     }

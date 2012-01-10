@@ -15,6 +15,7 @@ package com.btxtech.game.services.item.itemType;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BuilderType;
+import com.btxtech.game.jsre.common.gameengine.itemType.BuildupStep;
 import com.btxtech.game.jsre.common.gameengine.itemType.ConsumerType;
 import com.btxtech.game.jsre.common.gameengine.itemType.FactoryType;
 import com.btxtech.game.jsre.common.gameengine.itemType.GeneratorType;
@@ -25,13 +26,24 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.LauncherType;
 import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
 import com.btxtech.game.jsre.common.gameengine.itemType.SpecialType;
+import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.Utils;
+import com.btxtech.game.services.user.UserService;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * User: beat
@@ -69,6 +81,11 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbLauncherType dbLauncherType;
     private Integer upgradeProgress;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "itemType", orphanRemoval = true)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    private Set<DbBuildupStep> dbBuildupSteps;
+    @Transient
+    private CrudChildServiceHelper<DbBuildupStep> buildupStepCrud;
 
     @Override
     public int getHealth() {
@@ -231,12 +248,44 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
     }
 
     @Override
+    public void init(UserService userService) {
+        super.init(userService);
+        dbBuildupSteps = new HashSet<DbBuildupStep>();
+    }
+
+    @Override
+    public CrudChildServiceHelper<DbBuildupStep> getBuildupStepCrud() {
+        if (buildupStepCrud == null) {
+            buildupStepCrud = new CrudChildServiceHelper<DbBuildupStep>(dbBuildupSteps, DbBuildupStep.class, this);
+        }
+        return buildupStepCrud;
+    }
+
+    private List<BuildupStep> createBuildupStep() {
+        if (dbBuildupSteps == null || dbBuildupSteps.isEmpty()) {
+            return null;
+        }
+        List<BuildupStep> buildupSteps = new ArrayList<BuildupStep>();
+        for (DbBuildupStep dbBuildupStep : getBuildupStepCrud().readDbChildren()) {
+            buildupSteps.add(dbBuildupStep.createBuildupStep());
+        }
+        Collections.sort(buildupSteps, new Comparator<BuildupStep>() {
+            @Override
+            public int compare(BuildupStep o1, BuildupStep o2) {
+                return Double.compare(o1.getFrom(), o2.getFrom());
+            }
+        });
+        return buildupSteps;
+    }
+
+    @Override
     public ItemType createItemType() {
         BaseItemType baseItemType = new BaseItemType();
         setupItemType(baseItemType);
         baseItemType.setPrice(price);
         baseItemType.setHealth(health);
         baseItemType.setBuildup(buildup);
+        baseItemType.setBuildupStep(createBuildupStep());
         if (dbMovableType != null) {
             baseItemType.setMovableType(new MovableType(dbMovableType.getSpeed(), dbMovableType.getTerrainType()));
         }

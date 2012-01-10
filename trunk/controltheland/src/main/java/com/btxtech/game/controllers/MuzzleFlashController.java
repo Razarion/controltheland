@@ -44,7 +44,7 @@ public class MuzzleFlashController implements Controller {
     @Override
     public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         try {
-            int itemTypeId = Integer.parseInt(httpServletRequest.getParameter(Constants.ITEM_IMAGE_ID));
+            int itemTypeId = Integer.parseInt(httpServletRequest.getParameter(Constants.ITEM_TYPE_ID));
             String type = httpServletRequest.getParameter(Constants.TYPE);
             if (Constants.TYPE_IMAGE.equals(type)) {
                 DbItemTypeImageData image = itemService.getMuzzleFlashImage(itemTypeId);

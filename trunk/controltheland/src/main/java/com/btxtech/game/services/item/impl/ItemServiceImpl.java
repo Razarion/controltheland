@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.BuildupStep;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
@@ -48,6 +49,7 @@ import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.itemType.DbBuildupStep;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbItemTypeImageData;
@@ -77,6 +79,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -118,6 +121,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     private final HashMap<Id, SyncItem> items = new HashMap<Id, SyncItem>();
     private Log log = LogFactory.getLog(ItemServiceImpl.class);
     private HashMap<Integer, HashMap<Integer, DbItemTypeImage>> itemTypeImages = new HashMap<Integer, HashMap<Integer, DbItemTypeImage>>();
+    private HashMap<Integer, HashMap<Integer, DbBuildupStep>> buildupStepsImages = new HashMap<Integer, HashMap<Integer, DbBuildupStep>>();
     private HashMap<Integer, DbItemTypeImageData> muzzleItemTypeImages = new HashMap<Integer, DbItemTypeImageData>();
     private HashMap<Integer, DbItemTypeSoundData> muzzleItemTypeSounds = new HashMap<Integer, DbItemTypeSoundData>();
 
@@ -433,6 +437,81 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
+    @Transactional
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
+    public void saveBuildupStepData(int itemTypeId, List<BuildupStep> buildupSteps) throws NoSuchItemTypeException {
+        if (buildupSteps == null) {
+            return;
+        }
+        DbItemType dbItemType = getDbItemType(itemTypeId);
+        if (dbItemType == null) {
+            throw new NoSuchItemTypeException(itemTypeId);
+        }
+        if (!(dbItemType instanceof DbBaseItemType)) {
+            throw new IllegalArgumentException("Given item type is not instance of a DbBaseItemType: " + dbItemType);
+        }
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) dbItemType;
+        Collection<DbBuildupStep> originalBuildupStep = dbBaseItemType.getBuildupStepCrud().readDbChildren();
+        if (originalBuildupStep.isEmpty() && buildupSteps.isEmpty()) {
+            return;
+        } else if (originalBuildupStep.isEmpty() && !buildupSteps.isEmpty()) {
+            for (BuildupStep step : buildupSteps) {
+                DbBuildupStep dbBuildupStep = dbBaseItemType.getBuildupStepCrud().createDbChild();
+                dbBuildupStep.setBuildupStep(step);
+            }
+        } else if (!originalBuildupStep.isEmpty() && buildupSteps.isEmpty()) {
+            dbBaseItemType.getBuildupStepCrud().deleteAllChildren();
+        } else {
+            // Divide in toBeCreated, toBeDeleted and toBeChanged
+            Collection<DbBuildupStep> toBeDeleted = new ArrayList<DbBuildupStep>(originalBuildupStep);
+            Collection<BuildupStep> toBeCreated = new ArrayList<BuildupStep>();
+            Collection<DbBuildupStep> toBeChanged = new ArrayList<DbBuildupStep>();
+            for (BuildupStep buildupStep : buildupSteps) {
+                if (buildupStep.getImageId() != null) {
+                    moveList(toBeDeleted, toBeChanged, buildupStep.getImageId());
+                } else {
+                    toBeCreated.add(buildupStep);
+                }
+            }
+            // create
+            for (BuildupStep buildupStep : toBeCreated) {
+                DbBuildupStep dbBuildupStep = dbBaseItemType.getBuildupStepCrud().createDbChild();
+                dbBuildupStep.setBuildupStep(buildupStep);
+            }
+            // delete
+            for (DbBuildupStep dbBuildupStep : toBeDeleted) {
+                dbBaseItemType.getBuildupStepCrud().deleteDbChild(dbBuildupStep);
+            }
+            // change
+            for (DbBuildupStep dbBuildupStep : toBeChanged) {
+                BuildupStep newBuildupStep = getBuildStep4Id(buildupSteps, dbBuildupStep.getId());
+                dbBuildupStep.setFrom(newBuildupStep.getFrom());
+                dbBuildupStep.setToExclusive(newBuildupStep.getToExclusive());
+            }
+        }
+        sessionFactory.getCurrentSession().saveOrUpdate(dbBaseItemType);
+    }
+
+    private BuildupStep getBuildStep4Id(List<BuildupStep> buildupSteps, int id) {
+        for (BuildupStep buildupStep : buildupSteps) {
+            if (buildupStep.getImageId() != null && buildupStep.getImageId() == id) {
+                return buildupStep;
+            }
+        }
+        throw new IllegalArgumentException("No BuildupStep for id: " + id);
+    }
+
+    private void moveList(Collection<DbBuildupStep> removeList, Collection<DbBuildupStep> addList, int imageId) {
+        for (Iterator<DbBuildupStep> iterator = removeList.iterator(); iterator.hasNext();) {
+            DbBuildupStep dbBuildupStep = iterator.next();
+            if (dbBuildupStep.getId() == imageId) {
+                iterator.remove();
+                addList.add(dbBuildupStep);
+            }
+        }
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public Collection<DbItemType> getDbItemTypes() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbItemType.class);
@@ -470,11 +549,13 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         Collection<DbItemType> dbItemTypes = getDbItemTypes();
         ArrayList<ItemType> itemTypes = new ArrayList<ItemType>();
         itemTypeImages.clear();
+        buildupStepsImages.clear();
         muzzleItemTypeImages.clear();
         muzzleItemTypeSounds.clear();
         for (DbItemType dbItemType : dbItemTypes) {
             itemTypes.add(dbItemType.createItemType());
             addItemTypeImages(dbItemType);
+            addBuildupSteps(dbItemType);
             if (dbItemType instanceof DbBaseItemType) {
                 addMuzzleEffect((DbBaseItemType) dbItemType);
             }
@@ -519,6 +600,24 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             indexImageHashMap.put(itemTypeImage.getNumber(), itemTypeImage);
         }
         itemTypeImages.put(dbItemType.getId(), indexImageHashMap);
+    }
+
+    private void addBuildupSteps(DbItemType dbItemType) {
+        if (buildupStepsImages.containsKey(dbItemType.getId())) {
+            throw new IllegalArgumentException("BuildupStep Images already exits: " + dbItemType);
+        }
+        if (!(dbItemType instanceof DbBaseItemType)) {
+            return;
+        }
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) dbItemType;
+        HashMap<Integer, DbBuildupStep> indexBuildupStepMap = new HashMap<Integer, DbBuildupStep>();
+        for (DbBuildupStep dbBuildupStep : dbBaseItemType.getBuildupStepCrud().readDbChildren()) {
+            if (indexBuildupStepMap.containsKey(dbBuildupStep.getId())) {
+                throw new IllegalArgumentException("Buildup Step Image Index already exits: " + dbItemType + " index: " + dbBuildupStep.getId());
+            }
+            indexBuildupStepMap.put(dbBuildupStep.getId(), dbBuildupStep);
+        }
+        buildupStepsImages.put(dbItemType.getId(), indexBuildupStepMap);
     }
 
     private void addMuzzleEffect(DbBaseItemType dbItemType) {
@@ -572,6 +671,20 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             throw new IllegalArgumentException("Item Type index does not exist: " + index + ". ItemTypeId: " + itemTypeId);
         }
         return itemTypeImage;
+    }
+
+    @Override
+    public DbBuildupStep getDbBuildupStep(int itemTypeId, int buildupStepId) {
+        HashMap<Integer, DbBuildupStep> buildupSteps = this.buildupStepsImages.get(itemTypeId);
+        if (buildupSteps == null) {
+            throw new IllegalArgumentException("Item Type id does not exist in Buildup Steps: " + itemTypeId);
+        }
+        DbBuildupStep dbBuildupStep = buildupSteps.get(buildupStepId);
+        if (dbBuildupStep == null) {
+            throw new IllegalArgumentException("Buildup Step index does not exist: " + buildupStepId + ". ItemTypeId: " + itemTypeId);
+        }
+        return dbBuildupStep;
+
     }
 
     @Override

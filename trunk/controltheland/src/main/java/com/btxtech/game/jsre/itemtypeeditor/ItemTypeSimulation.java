@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBuilder;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
@@ -19,15 +20,18 @@ import java.util.logging.Logger;
  * Time: 12:28:30
  */
 public class ItemTypeSimulation {
+    private static final int BUILDUP_DELAY = 100;
     private SyncItem syncItem;
     private Logger log = Logger.getLogger(ItemTypeSimulation.class.getName());
     private int canvasWidth;
     private int canvasHeight;
     private ItemType itemType;
     private boolean doMove = false;
+    private boolean doBuildup = false;
     private int imageNr = 0;
     private Index destination;
     private MuzzleFlashControl muzzleFlashControl;
+    private BuildupStepEditorPanel buildupStepEditorPanel;
     private Index middle;
 
     public ItemTypeSimulation(int canvasWidth, int canvasHeight, ItemType itemType, MuzzleFlashControl muzzleFlashControl) {
@@ -36,6 +40,10 @@ public class ItemTypeSimulation {
         this.itemType = itemType;
         this.muzzleFlashControl = muzzleFlashControl;
         muzzleFlashControl.setItemTypeSimulation(this);
+    }
+
+    public void setBuilupEditorPanel(BuildupStepEditorPanel buildupStepEditorPanel) {
+        this.buildupStepEditorPanel = buildupStepEditorPanel;
     }
 
     private void executeMoveCommand() {
@@ -103,6 +111,38 @@ public class ItemTypeSimulation {
             }
         }
     }
+
+    public void doBuildup(boolean value) {
+        if (!(syncItem instanceof SyncBaseItem)) {
+            doBuildup = false;
+            return;
+        }
+        if (value) {
+            doBuildup = true;
+            Scheduler.get().scheduleFixedPeriod(new Scheduler.RepeatingCommand() {
+                @Override
+                public boolean execute() {
+                    SyncBaseItem syncBaseItem = ((SyncBaseItem) syncItem);
+                    if (!doBuildup) {
+                        ((SyncBaseItem) syncItem).setBuildup(1.0);
+                        buildupStepEditorPanel.onBuildupProgress(((SyncBaseItem) syncItem).getBuildup());
+                        return false;
+                    }
+                    if (syncBaseItem.isReady()) {
+                        syncBaseItem.setBuildup(0.0);
+                    } else {
+                        double delta = SyncBuilder.setupBuildFactor((double) BUILDUP_DELAY / 1000.0, buildupStepEditorPanel.getProgress(), syncBaseItem.getBaseItemType(), syncBaseItem);
+                        syncBaseItem.addBuildup(delta);
+                    }
+                    buildupStepEditorPanel.onBuildupProgress(syncBaseItem.getBuildup());
+                    return true;
+                }
+            }, BUILDUP_DELAY);
+        } else {
+            doBuildup = false;
+        }
+    }
+
 
     public SyncItem getSyncItem() {
         return syncItem;

@@ -16,6 +16,7 @@ package com.btxtech.game.controllers;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.itemType.DbBuildupStep;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,15 +39,31 @@ public class ItemImageController implements Controller {
     @Override
     public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         try {
-            int itemTypeId = Integer.parseInt(httpServletRequest.getParameter(Constants.ITEM_IMAGE_ID));
-            int index = Integer.parseInt(httpServletRequest.getParameter(Constants.ITEM_IMAGE_INDEX));
-            DbItemTypeImage itemTypeImage = itemService.getItemTypeImage(itemTypeId, index);
-            httpServletResponse.setContentLength(itemTypeImage.getData().length);
-            httpServletResponse.setContentType(itemTypeImage.getContentType());
+            byte[] imageData;
+            String contentType;
+            int itemTypeId = Integer.parseInt(httpServletRequest.getParameter(Constants.ITEM_TYPE_ID));
+            String type = httpServletRequest.getParameter(Constants.TYPE);
+            if (type == null || type.trim().isEmpty()) {
+                // Default is item image
+                int index = Integer.parseInt(httpServletRequest.getParameter(Constants.ITEM_IMAGE_INDEX));
+                DbItemTypeImage itemTypeImage = itemService.getItemTypeImage(itemTypeId, index);
+                imageData = itemTypeImage.getData();
+                contentType = itemTypeImage.getContentType();
+            } else if (type.equals(Constants.TYPE_BUILDUP_STEP)) {
+                int buildupStepId = Integer.parseInt(httpServletRequest.getParameter(Constants.ITEM_IMAGE_BUILDUP_STEP));
+                DbBuildupStep dbBuildupStep = itemService.getDbBuildupStep(itemTypeId, buildupStepId);
+                imageData = dbBuildupStep.getData();
+                contentType = dbBuildupStep.getContentType();
+            } else {
+                throw new IllegalArgumentException("Type is not known: " + type);
+            }
+            httpServletResponse.setContentLength(imageData.length);
+            httpServletResponse.setContentType(contentType);
             httpServletResponse.addDateHeader("Expires", System.currentTimeMillis() + DateUtil.MILLIS_IN_DAY);
             OutputStream out = httpServletResponse.getOutputStream();
-            out.write(itemTypeImage.getData());
+            out.write(imageData);
             out.close();
+
         } catch (IOException e) {
             // Connection lost -> ignore
         } catch (Exception e) {

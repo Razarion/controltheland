@@ -3,6 +3,7 @@ package com.btxtech.game.jsre.itemtypeeditor;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.BuildupStep;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.core.client.GWT;
@@ -19,6 +20,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,6 +36,7 @@ public class BoundingBoxControl extends DecoratorPanel {
     private MuzzleFlashControl muzzleFlashControl;
     private boolean showBoundingBox = true;
     private Logger log = Logger.getLogger(BoundingBoxControl.class.getName());
+    private BuildupStepEditorPanel buildupStepEditorPanel;
 
     public BoundingBoxControl(int itemTypeId, BoundingBox boundingBox, MuzzleFlashControl muzzleFlashControl) {
         this.itemTypeId = itemTypeId;
@@ -82,7 +85,11 @@ public class BoundingBoxControl extends DecoratorPanel {
             public void onClick(ClickEvent event) {
                 final Button button = (Button) event.getSource();
                 ItemTypeAccessAsync itemTypeAccess = GWT.create(ItemTypeAccess.class);
-                itemTypeAccess.saveItemTypeProperties(itemTypeId, boundingBox, muzzleFlashControl.getWeaponType(), new AsyncCallback<Void>() {
+                List<BuildupStep> buildupSteps = null;
+                if (buildupStepEditorPanel != null) {
+                    buildupSteps = buildupStepEditorPanel.getBuildupStepDatas();
+                }
+                itemTypeAccess.saveItemTypeProperties(itemTypeId, boundingBox, muzzleFlashControl.getWeaponType(), buildupSteps, new AsyncCallback<Void>() {
                     @Override
                     public void onFailure(Throwable caught) {
                         button.setEnabled(true);
@@ -141,5 +148,9 @@ public class BoundingBoxControl extends DecoratorPanel {
         context2d.closePath();
         context2d.stroke();
         context2d.restore();
+    }
+
+    public void setBuilupEditorPanel(BuildupStepEditorPanel buildupStepEditorPanel) {
+        this.buildupStepEditorPanel = buildupStepEditorPanel;
     }
 }

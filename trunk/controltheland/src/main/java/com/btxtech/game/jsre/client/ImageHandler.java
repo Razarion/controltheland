@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.utg.ImageSizeCallback;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.BuildupStep;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.event.dom.client.LoadEvent;
@@ -51,12 +52,10 @@ public class ImageHandler {
 
     }
 
-    @Deprecated
-    public static Image getItemTypeImage(SyncItem syncItem) {
+    public static String getItemTypeImageUrl(SyncItem syncItem) {
         int imageNr = syncItem.getSyncItemArea().getBoundingBox().angelToImageNr(syncItem.getSyncItemArea().getAngel());
         imageNr++;// First image start with 1
-        ItemType itemType = syncItem.getItemType();
-        return getItemTypeImage(imageNr, itemType);
+        return getItemTypeUrl(syncItem.getItemType().getId(), imageNr);
     }
 
     public static Image getItemTypeImage(ItemType itemType) {
@@ -64,16 +63,16 @@ public class ImageHandler {
     }
 
     private static Image getItemTypeImage(int imgIndex, ItemType itemType) {
-        String urlStr = getItemTYpeUrl(itemType.getId(), imgIndex);
+        String urlStr = getItemTypeUrl(itemType.getId(), imgIndex);
         loadImage(urlStr);
         return createImageIE6TransparencyProblem(urlStr, itemType.getBoundingBox().getImageWidth(), itemType.getBoundingBox().getImageHeight());
     }
 
-    public static String getItemTYpeUrl(int itemId, int imgIndex) {
+    public static String getItemTypeUrl(int itemId, int imgIndex) {
         StringBuilder url = new StringBuilder();
         url.append(Constants.ITEM_IMAGE_URL);
         url.append("?");
-        url.append(Constants.ITEM_IMAGE_ID);
+        url.append(Constants.ITEM_TYPE_ID);
         url.append("=");
         url.append(itemId);
         url.append("&");
@@ -83,11 +82,29 @@ public class ImageHandler {
         return url.toString();
     }
 
+    public static String getBuildupStepImageUrl(BaseItemType baseItemType, BuildupStep buildupStep) {
+        StringBuilder url = new StringBuilder();
+        url.append(Constants.ITEM_IMAGE_URL);
+        url.append("?");
+        url.append(Constants.TYPE);
+        url.append("=");
+        url.append(Constants.TYPE_BUILDUP_STEP);
+        url.append("&");
+        url.append(Constants.ITEM_TYPE_ID);
+        url.append("=");
+        url.append(baseItemType.getId());
+        url.append("&");
+        url.append(Constants.ITEM_IMAGE_BUILDUP_STEP);
+        url.append("=");
+        url.append(buildupStep.getImageId());
+        return url.toString();
+    }
+
     public static String getMuzzleFlashImageUrl(BaseItemType baseItemType) {
         StringBuilder url = new StringBuilder();
         url.append(Constants.MUZZLE_ITEM_IMAGE_URL);
         url.append("?");
-        url.append(Constants.ITEM_IMAGE_ID);
+        url.append(Constants.ITEM_TYPE_ID);
         url.append("=");
         url.append(baseItemType.getId());
         url.append("&");
