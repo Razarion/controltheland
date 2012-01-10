@@ -23,6 +23,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.connection.ClientLogEntry;
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.ConnectionService;
@@ -150,7 +151,13 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
                     if (connection.getNoTickCount() > MAX_NO_TICK_COUNT) {
                         log.info("User kicked due timeout: " + baseService.getBaseName(connection.getBase().getSimpleBase()));
                         if (connection.getBase() != null && connection.getBase().getUserState() != null && connection.getBase().getUserState().getUser() != null) {
-                            userTrackingService.onUserLeftGame(connection.getBase().getUserState().getUser());
+                            HibernateUtil.openSession4InternalCall(sessionFactory);
+                            try {
+                                userTrackingService.onUserLeftGame(connection.getBase().getUserState().getUser());
+                            } finally {
+                                HibernateUtil.closeSession4InternalCall(sessionFactory);
+                            }
+
                         }
                         connection.setClosed();
                         it.remove();
@@ -159,7 +166,12 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
                         if (!Double.isInfinite(ticksPerSecond) && !Double.isNaN(ticksPerSecond)) {
                             String baseName = baseService.getBaseName(connection.getBase().getSimpleBase());
                             ConnectionStatistics connectionStatistics = new ConnectionStatistics(baseName, connection.getSessionId(), ticksPerSecond);
-                            sessionFactory.getCurrentSession().saveOrUpdate(connectionStatistics);
+                            HibernateUtil.openSession4InternalCall(sessionFactory);
+                            try {
+                                sessionFactory.getCurrentSession().saveOrUpdate(connectionStatistics);
+                            } finally {
+                                HibernateUtil.closeSession4InternalCall(sessionFactory);
+                            }
                         }
                     }
                 } catch (Throwable t) {
