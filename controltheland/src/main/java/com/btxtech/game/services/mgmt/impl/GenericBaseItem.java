@@ -14,6 +14,7 @@
 package com.btxtech.game.services.mgmt.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.services.common.db.PathUserType;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
@@ -48,6 +49,7 @@ public class GenericBaseItem extends GenericItem {
     private Boolean followTarget;
     private Double reloadProgress;
     @Type(type = "path")
+    @Column(length = PathUserType.MAX_STRING_LENGTH)
     private List<Index> pathToAbsoluteDestination;
     @OneToOne(fetch = FetchType.LAZY)
     private GenericBaseItem baseTarget;
