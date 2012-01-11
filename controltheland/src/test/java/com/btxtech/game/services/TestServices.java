@@ -11,6 +11,7 @@ import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeA
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
+import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -31,6 +32,7 @@ public class TestServices implements Services {
     private CommonActionService actionService;
     private AbstractTerritoryService territoryService;
     private CommonBotService botService;
+    private CommonUserGuidanceService commonUserGuidanceService;
 
     @Override
     public ItemService getItemService() {
@@ -82,6 +84,11 @@ public class TestServices implements Services {
         return botService;
     }
 
+    @Override
+    public CommonUserGuidanceService getCommonUserGuidanceService() {
+        return commonUserGuidanceService;
+    }
+    
     public void setItemService(ItemService itemService) {
         this.itemService = itemService;
     }
@@ -120,5 +127,9 @@ public class TestServices implements Services {
 
     public void setBotService(CommonBotService botService) {
         this.botService = botService;
+    }
+
+    public void setCommonUserGuidanceService(CommonUserGuidanceService commonUserGuidanceService) {
+        this.commonUserGuidanceService = commonUserGuidanceService;
     }
 }

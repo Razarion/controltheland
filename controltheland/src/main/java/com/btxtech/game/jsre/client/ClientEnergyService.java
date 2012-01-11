@@ -14,7 +14,7 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.action.ActionHandler;
-import com.btxtech.game.jsre.client.cockpit.Cockpit;
+import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.common.EnergyPacket;
 import com.btxtech.game.jsre.common.gameengine.services.energy.EnergyService;
@@ -83,7 +83,7 @@ public class ClientEnergyService extends AbstractBaseEnergy implements EnergySer
 
     @Override
     protected void updateEnergyState() {
-        Cockpit.getInstance().updateEnergy(getGenerating(), getConsuming());
+        SideCockpit.getInstance().updateEnergy(getGenerating(), getConsuming());
         RadarPanel.getInstance().updateEnergy(getGenerating(), getConsuming());
     }
 

@@ -72,18 +72,10 @@ public class CockpitMode implements SelectionListener {
     @Override
     public void onTargetSelectionChanged(ClientSyncItem selection) {
         ItemCockpit.getInstance().deActivate();
-        if (selection.isSyncBaseItem()) {
-            Cockpit.getInstance().getSelectedItemPanel().displayEnemyItem(selection.getSyncBaseItem());
-        } else if (selection.isSyncResourceItem()) {
-            Cockpit.getInstance().getSelectedItemPanel().displayResourceItem(selection.getSyncResourceItem());
-        } else {
-            throw new IllegalArgumentException(this + " can not set details for: " + selection);
-        }
     }
 
     @Override
     public void onSelectionCleared() {
-        Cockpit.getInstance().getSelectedItemPanel().displayNone();
     }
 
     @Override
@@ -101,7 +93,6 @@ public class CockpitMode implements SelectionListener {
             }
         } else {
             ItemCockpit.getInstance().deActivate();
-            // TODO Cockpit.getInstance().getSelectedItemPanel().displayMultiOwnItems(selectedGroup);
         }
     }
 }

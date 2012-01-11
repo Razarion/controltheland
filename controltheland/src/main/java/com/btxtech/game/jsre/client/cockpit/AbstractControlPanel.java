@@ -25,10 +25,17 @@ public abstract class AbstractControlPanel extends Grid {
         super(3, 3);
         this.width = width;
         this.height = height;
+        setPixelSize(width, height);
+    }
+
+    public AbstractControlPanel(int width) {
+        super(3, 3);
+        this.width = width;
+        setHeight("100%");
+        setWidth(Integer.toString(width) + "px");
     }
 
     protected void setup() {
-        setPixelSize(width, height);
         setCellSpacing(0);
         setCellPadding(0);
         setBorderWidth(0);
@@ -87,6 +94,10 @@ public abstract class AbstractControlPanel extends Grid {
     }
 
     public int getContentHeight() {
-        return height - HEIGHT_IMAGE_TOP - HEIGHT_IMAGE_BOTTOM;
+        if (height != null) {
+            return height - HEIGHT_IMAGE_TOP - HEIGHT_IMAGE_BOTTOM;
+        } else {
+            return getOffsetHeight() - HEIGHT_IMAGE_TOP - HEIGHT_IMAGE_BOTTOM;
+        }
     }
 }

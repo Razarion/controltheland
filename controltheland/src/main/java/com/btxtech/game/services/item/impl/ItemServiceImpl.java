@@ -14,7 +14,6 @@
 package com.btxtech.game.services.item.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
@@ -723,25 +722,6 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             }
         }
         return syncItems;
-    }
-
-    @Override
-    public void sellItem(Id id) throws ItemDoesNotExistException, NotYourBaseException {
-        SyncBaseItem syncBaseItem = (SyncBaseItem) getItem(id);
-        baseService.checkBaseAccess(syncBaseItem);
-        double health = syncBaseItem.getHealth();
-        double fullHealth = syncBaseItem.getBaseItemType().getHealth();
-        double price = syncBaseItem.getBaseItemType().getPrice();
-        double buildup = syncBaseItem.getBuildup();
-        killSyncItem(syncBaseItem, null, true, false);
-        SimpleBase simpleBase = syncBaseItem.getBase();
-        // May last item sold
-        if (baseService.isAlive(simpleBase)) {
-            Base base = baseService.getBase(simpleBase);
-            double money = health / fullHealth * buildup * price * userGuidanceService.getDbLevel().getItemSellFactor();
-            baseService.depositResource(money, simpleBase);
-            baseService.sendAccountBaseUpdate(base);
-        }
     }
 
     @Override

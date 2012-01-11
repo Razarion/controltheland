@@ -13,15 +13,11 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.terrain;
 
-import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
-import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.ui.Widget;
 
 import java.util.ArrayList;
@@ -395,48 +391,6 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
                 return SurfaceType.NONE;
             }
         }
-    }
-
-    public Index getAbsoluteFreeTerrainInRegion(Index absolutePos, int targetMinRange, int targetMaxRange, int edgeLength) {
-        for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            int x;
-            int y;
-            if (Random.nextBoolean()) {
-                x = absolutePos.getX() + targetMinRange + Random.nextInt(targetMaxRange - targetMinRange);
-            } else {
-                x = absolutePos.getX() - targetMinRange - Random.nextInt(targetMaxRange - targetMinRange);
-            }
-            if (Random.nextBoolean()) {
-                y = absolutePos.getY() + targetMinRange + Random.nextInt(targetMaxRange - targetMinRange);
-            } else {
-                y = absolutePos.getY() - targetMinRange - Random.nextInt(targetMaxRange - targetMinRange);
-            }
-            if (x - edgeLength / 2 < 0 || y - edgeLength / 2 < 0) {
-                continue;
-            }
-            if (x + edgeLength / 2 > terrainSettings.getPlayFieldXSize() || y + edgeLength / 2 > terrainSettings.getPlayFieldYSize()) {
-                continue;
-            }
-
-            Index point = new Index(x, y);
-            if (!isTerrainPassable(point)) {
-                continue;
-            }
-            Rectangle itemRectangle = new Rectangle(x - edgeLength / 2, y - edgeLength / 2, edgeLength, edgeLength);
-            if (!ItemContainer.getInstance().getItemsInRect(itemRectangle, false).isEmpty()) {
-                continue;
-            }
-            if (isInTopMapPanel(point)) {
-                continue;
-            }
-            return point;
-        }
-        throw new IllegalStateException(this + " getAbsoluteFreeTerrainInRegion: Can not find free position absolutePos: " + absolutePos + " targetMinRange: " + targetMinRange);
-    }
-
-    public boolean isInTopMapPanel(Index absolutePoint) {
-        Index point = TerrainView.getInstance().toRelativeIndex(absolutePoint);
-        return Cockpit.getInstance().contains(point);
     }
 
     public Rectangle getRectangle4Widget(Widget widget) {

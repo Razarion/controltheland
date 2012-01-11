@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
  * Date: 22.11.2010
  * Time: 19:45:33
  */
+@Deprecated
 public class CockpitSpeechBubbleHintConfig extends SpeechBubbleHintConfig {
     private CockpitWidgetEnum cockpitWidgetEnum;
     private int baseItemTypeId;

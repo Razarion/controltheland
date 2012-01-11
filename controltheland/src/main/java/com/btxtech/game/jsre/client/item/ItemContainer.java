@@ -20,8 +20,8 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.action.ActionHandler;
-import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
+import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
@@ -228,7 +228,7 @@ public class ItemContainer extends AbstractItemService {
         items.put(id, itemView);
         if (itemView.isMyOwnProperty()) {
             ownItemCount++;
-            Cockpit.getInstance().updateItemLimit();
+            SideCockpit.getInstance().updateItemLimit();
         }
         return itemView;
     }
@@ -275,7 +275,7 @@ public class ItemContainer extends AbstractItemService {
         items.remove(itemView.getSyncItem().getId());
         if (itemView.isMyOwnProperty()) {
             ownItemCount--;
-            Cockpit.getInstance().updateItemLimit();
+            SideCockpit.getInstance().updateItemLimit();
             ClientBase.getInstance().recalculate4FakedHouseSpace(itemView.getSyncBaseItem());
         }
         checkSpecialRemoved(itemView);

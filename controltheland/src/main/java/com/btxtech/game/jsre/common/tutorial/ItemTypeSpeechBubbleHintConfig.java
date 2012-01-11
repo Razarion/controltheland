@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
  * Date: 20.04.2011
  * Time: 22:28:34
  */
+@Deprecated
 public class ItemTypeSpeechBubbleHintConfig extends SpeechBubbleHintConfig {
     private String html;
     private ItemType itemType;

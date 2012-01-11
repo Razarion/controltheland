@@ -14,11 +14,10 @@
 package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.Connection;
-import com.btxtech.game.jsre.client.cockpit.Cockpit;
+import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
-import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 
 /**
  * User: beat
@@ -26,7 +25,7 @@ import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
  * Time: 17:55:03
  */
 public class RunRealGameStartupTask extends AbstractStartupTask {
-    
+
     public RunRealGameStartupTask(StartupTaskEnum taskEnum) {
         super(taskEnum);
     }
@@ -36,11 +35,10 @@ public class RunRealGameStartupTask extends AbstractStartupTask {
         Connection.getInstance().startSyncInfoPoll();
         RegisterDialog.showDialogRepeating();
         MapWindow.getInstance().displayVisibleItems();
-        Cockpit.getInstance().updateItemLimit();
-        Cockpit.getInstance().setVisibleRadar(true);
+        SideCockpit.getInstance().updateItemLimit();
         MapWindow.getInstance().setScrollingAllowed(true);
-        Cockpit.getInstance().enableFocusWidget(CockpitWidgetEnum.SCROLL_HOME_BUTTON, true);
-        Cockpit.getInstance().enableFocusWidget(CockpitWidgetEnum.OPTION_BUTTON, true);
-        Cockpit.getInstance().enableFocusWidget(CockpitWidgetEnum.SELL_BUTTON, true);
+        // TODO set enable or disable CockpitWidgetEnum.SCROLL_HOME_BUTTON
+        // TODO set enable or disable CockpitWidgetEnum.OPTION_BUTTON
+        // TODO set enable or disable CockpitWidgetEnum.SELL_BUTTON
     }
 }

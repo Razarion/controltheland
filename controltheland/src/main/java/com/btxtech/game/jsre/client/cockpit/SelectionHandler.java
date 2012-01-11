@@ -211,7 +211,7 @@ public class SelectionHandler {
             clearSelection();
         }
         if(!sellMode) {
-            Cockpit.getInstance().clearSellMode();
+            SideCockpit.getInstance().clearSellMode();
         }
         CursorHandler.getInstance().setSell(sellMode);
     }

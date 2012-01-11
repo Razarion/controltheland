@@ -15,7 +15,6 @@ package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientEnergyService;
-import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 
@@ -40,6 +39,5 @@ public class SimulationDeltaStartupTask extends GameEngineStartupTask {
         }
         deltaSetupGameStructure(simulationInfo);
         ClientBase.getInstance().setAllBaseAttributes(simulationInfo.getTutorialConfig().getBaseAttributes());
-        Cockpit.getInstance().enableOnlinePanel(false);
     }
 }

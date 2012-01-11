@@ -18,6 +18,7 @@ package com.btxtech.game.jsre.common.tutorial;
  * Date: 18.07.2010
  * Time: 22:28:34
  */
+@Deprecated
 public class ItemSpeechBubbleHintConfig extends SpeechBubbleHintConfig {
     private int syncItemId;
     private String html;

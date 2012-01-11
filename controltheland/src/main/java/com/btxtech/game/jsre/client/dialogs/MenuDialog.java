@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * Date: 25.03.2010
  * Time: 17:24:31
  */
+@Deprecated
 public class MenuDialog extends Dialog {
     public MenuDialog() {
         setShowCloseButton(true);

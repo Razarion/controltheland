@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.client.common.Index;
  * Date: 18.07.2010
  * Time: 22:28:34
  */
+@Deprecated
 public class TerrainPositionSpeechBubbleHintConfig extends SpeechBubbleHintConfig {
     private Index position;
     private String html;

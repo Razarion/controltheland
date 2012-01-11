@@ -14,18 +14,18 @@
 package com.btxtech.game.jsre.client.utg;
 
 import com.btxtech.game.jsre.client.ClientServices;
-import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupScreen;
+import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
 
 /**
  * User: beat
  * Date: 09.01.2011
  * Time: 14:20:37
  */
-public class ClientLevelHandler {
+public class ClientLevelHandler implements CommonUserGuidanceService {
     private static final ClientLevelHandler INSTANCE = new ClientLevelHandler();
     private Level level;
 
@@ -53,7 +53,7 @@ public class ClientLevelHandler {
         this.level = level;
         if (oldLevel.isRealGame() && level.isRealGame()) {
             SideCockpit.getInstance().setLevel(level);
-            Cockpit.getInstance().updateItemLimit();
+            SideCockpit.getInstance().updateItemLimit();
         } else {
             StartupScreen.getInstance().fadeOut(new Runnable() {
                 @Override
@@ -76,5 +76,10 @@ public class ClientLevelHandler {
 
     public Level getLevel() {
         return level;
+    }
+
+    @Override
+    public double getItemSellFactor() {
+        return 0.5;
     }
 }

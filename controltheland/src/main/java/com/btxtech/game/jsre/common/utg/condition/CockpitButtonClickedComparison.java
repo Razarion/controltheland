@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.common.utg.condition;
 
-import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -25,6 +24,7 @@ import com.google.gwt.user.client.ui.FocusWidget;
  * Date: 18.07.2010
  * Time: 21:06:41
  */
+@Deprecated
 public class CockpitButtonClickedComparison implements AbstractComparison {
     private CockpitWidgetEnum cockpitButton;
     private HandlerRegistration handlerRegistration;
@@ -33,7 +33,6 @@ public class CockpitButtonClickedComparison implements AbstractComparison {
 
     public CockpitButtonClickedComparison(CockpitWidgetEnum cockpitButton) {
         this.cockpitButton = cockpitButton;
-        button = Cockpit.getInstance().getFocusWidget(cockpitButton);
     }
 
     public void onClick(ClickEvent event) {

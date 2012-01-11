@@ -18,6 +18,7 @@ public class CmsUtil {
     public static final String TARGET_USER_PAGE = "userPage";
     public static final String TARGET_USER_INFO = "info";
     public static final String TARGET_SELF = "_self";
+    public static final String TARGET_BLANK = "_blank";
 
     // If the predefined page urls are not yet available in the client
     public static final String PREDEFINED_PAGE_URL_NO_HTML_5 = getUrl4CmsPage(NO_HTML5_BROWSER_PAGE_STRING_ID);

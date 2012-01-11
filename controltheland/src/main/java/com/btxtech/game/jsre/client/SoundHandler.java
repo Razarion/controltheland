@@ -40,6 +40,7 @@ public class SoundHandler {
     private String explodeSrc;
     private boolean logNoCreation = true;
     private boolean logNoMimeType = true;
+    private boolean isMute = false;
 
     public static SoundHandler getInstance() {
         return INSTANCE;
@@ -87,8 +88,7 @@ public class SoundHandler {
             if (codec == null) {
                 return null;
             }
-
-
+            setVolume(audio);
             audio.setSrc(buildUrl(baseItemType, codec));
             available.add(audio);
             return audio;
@@ -129,7 +129,7 @@ public class SoundHandler {
                     return null;
                 }
             }
-
+            setVolume(audio);
             audio.setSrc(explodeSrc);
             explodeSounds.add(audio);
             return audio;
@@ -138,6 +138,13 @@ public class SoundHandler {
         }
     }
 
+    private void setVolume(Audio audio) {
+        if (isMute) {
+            audio.setVolume(0.0);
+        } else {
+            audio.setVolume(1.0);
+        }
+    }
 
     private String determineMimeType(Audio audio) {
         // TODO will be handled by GWT 2.4
@@ -159,14 +166,12 @@ public class SoundHandler {
         }
     }
 
-
     public void playItemExplode() {
         Audio audio = getExplodeAudio();
         if (audio != null) {
             audio.play();
         }
     }
-
 
     private static String buildUrl(BaseItemType baseItemType, String codec) {
         StringBuilder url = new StringBuilder();
@@ -184,5 +189,20 @@ public class SoundHandler {
         url.append("=");
         url.append(codec);
         return url.toString();
+    }
+
+    public void mute(boolean mute) {
+        if (mute == isMute) {
+            return;
+        }
+        isMute = mute;
+        for (Collection<Audio> audios : muzzleSound.values()) {
+            for (Audio audio : audios) {
+                setVolume(audio);
+            }
+        }
+        for (Audio audio : explodeSounds) {
+            setVolume(audio);
+        }
     }
 }
