@@ -18,6 +18,11 @@ import com.btxtech.game.services.common.db.IdUserType;
 import com.btxtech.game.services.common.db.IndexUserType;
 import com.btxtech.game.services.common.db.PathUserType;
 import com.btxtech.game.services.item.itemType.DbItemType;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -26,12 +31,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 
 /**
  * User: beat
@@ -42,10 +42,10 @@ import org.hibernate.annotations.TypeDefs;
 @TypeDefs({@TypeDef(name = "index", typeClass = IndexUserType.class),
         @TypeDef(name = "id", typeClass = IdUserType.class),
         @TypeDef(name = "path", typeClass = PathUserType.class)})
-@Inheritance(strategy= InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="ITEM_TYPE", discriminatorType= DiscriminatorType.STRING)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "ITEM_TYPE", discriminatorType = DiscriminatorType.STRING)
 public abstract class GenericItem {
-     // TODO some entries should not be nullable
+    // TODO some entries should not be nullable
     @Id
     @GeneratedValue
     private Integer id;

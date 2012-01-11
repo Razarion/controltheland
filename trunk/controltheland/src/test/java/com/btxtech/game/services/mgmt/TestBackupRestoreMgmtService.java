@@ -12,7 +12,9 @@ import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededE
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncMovable;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.Base;
@@ -344,7 +346,6 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         Assert.assertEquals(1, baseService.getBases().size());
         SimpleBase botBase = baseService.getBases().get(0).getSimpleBase();
 
-
         // U1 reg user
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -424,6 +425,79 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void longPathToDestination() throws Exception {
+        configureMinimalGame();
+        System.out.println("**** longPathToDestination ****");
+
+        // U1 no real base, second level
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "test", "test", "test");
+        userService.login("U1", "test");
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+        SimpleBase realUser = ((RealityInfo) movableService.getGameInfo()).getBase();
+        Id id = getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID);
+        SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.getItem(id);
+        // Fill artificial path to long
+        List<Index> pathToDestination = new ArrayList<Index>();
+        for (int i = 0; i < 200; i++) {
+            pathToDestination.add(new Index(i, i));
+        }
+        syncBaseItem.getSyncMovable().setPathToDestination(pathToDestination);
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        assertBackupSummery(1, 1, 1, 1);
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        realUser = ((RealityInfo) movableService.getGameInfo()).getBase();
+        id = getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID);
+        syncBaseItem = (SyncBaseItem) itemService.getItem(id);
+        SyncMovable syncMovable = syncBaseItem.getSyncMovable();
+        Assert.assertTrue(syncMovable.getPathToDestination() == null || syncMovable.getPathToDestination().isEmpty());
+        // Fill artificial path ca. 820 cahracters
+        pathToDestination = new ArrayList<Index>();
+        for (int i = 0; i < 130; i++) {
+            pathToDestination.add(new Index(i, i));
+        }
+        syncMovable.setPathToDestination(pathToDestination);
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        assertBackupSummery(2, 1, 1, 1);
+        backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        realUser = ((RealityInfo) movableService.getGameInfo()).getBase();
+        id = getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID);
+        syncBaseItem = (SyncBaseItem) itemService.getItem(id);
+        // Assert path has at lease more the 50 entries (original it was 130 but some are may be already achievement)
+        Assert.assertTrue(syncBaseItem.getSyncMovable().getPathToDestination().size() > 50);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
     private void verifyUserStates(List<UserState> newUserStates, List<UserState> oldUserStates) {
         Assert.assertEquals(oldUserStates.size(), newUserStates.size());
         for (UserState oldUserState : oldUserStates) {
@@ -473,7 +547,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
                     Assert.fail("Second matching UserState found: " + newUserState + " fist matching base: " + foundUserState);
                 }
                 foundUserState = newUserState;
-            } 
+            }
         }
         if (foundUserState == null) {
             Assert.fail("No matching UserState found for: " + oldUserState);

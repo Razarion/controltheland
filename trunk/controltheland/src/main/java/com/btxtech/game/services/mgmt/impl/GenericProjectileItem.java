@@ -13,25 +13,19 @@
 
 package com.btxtech.game.services.mgmt.impl;
 
-import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.itemType.ProjectileItemType;
-import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.common.db.IdUserType;
 import com.btxtech.game.services.common.db.IndexUserType;
-import com.btxtech.game.services.common.db.PathUserType;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 
 /**
  * User: beat
@@ -41,7 +35,7 @@ import org.hibernate.annotations.TypeDefs;
 @Entity
 @TypeDefs({@TypeDef(name = "index", typeClass = IndexUserType.class)})
 @DiscriminatorValue("PROJECTILE")
-public class GenericProjectileItem extends GenericItem{
+public class GenericProjectileItem extends GenericItem {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbBase base;
     @Type(type = "index")

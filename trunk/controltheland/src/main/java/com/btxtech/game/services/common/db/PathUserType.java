@@ -14,6 +14,12 @@
 package com.btxtech.game.services.common.db;
 
 import com.btxtech.game.jsre.client.common.Index;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.usertype.UserType;
+
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,9 +28,6 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.usertype.UserType;
 
 /**
  * User: beat
@@ -32,8 +35,10 @@ import org.hibernate.usertype.UserType;
  * Time: 11:37:48 AM
  */
 public class PathUserType implements UserType {
-    public static final String X_Y_DELIMITER = ",";
-    public static final String DELIMITER = ";";
+    public static final int MAX_STRING_LENGTH = 1000;
+    private static final String X_Y_DELIMITER = ",";
+    private static final String DELIMITER = ";";
+    private Log log = LogFactory.getLog(PathUserType.class);
 
     @Override
     public int[] sqlTypes() {
@@ -95,7 +100,12 @@ public class PathUserType implements UserType {
             builder.append(index.getY());
             builder.append(DELIMITER);
         }
-        statement.setString(columnIndex, builder.toString());
+        if (builder.length() > MAX_STRING_LENGTH) {
+            log.error("Path is to long in PathUserType.nullSafeSet(). Path will not be saved.");
+            statement.setNull(columnIndex, Types.VARCHAR);
+        } else {
+            statement.setString(columnIndex, builder.toString());
+        }
     }
 
     @Override
