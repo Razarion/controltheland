@@ -58,10 +58,10 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
     @Override
     public void onMouseUp(int absoluteX, int absoluteY, MouseUpEvent event) {
         if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
-            if (Cockpit.getInstance().getCockpitMode().isUnloadMode()) {
+            if (SideCockpit.getInstance().getCockpitMode().isUnloadMode()) {
                 executeUnloadContainerCommand(absoluteX, absoluteY);
-                Cockpit.getInstance().getCockpitMode().clearUnloadMode();
-            } else if (Cockpit.getInstance().getCockpitMode().isLaunchMode()) {
+                SideCockpit.getInstance().getCockpitMode().clearUnloadMode();
+            } else if (SideCockpit.getInstance().getCockpitMode().isLaunchMode()) {
                 ActionHandler.getInstance().executeLaunchCommand(absoluteX, absoluteY);
             } else {
                 executeMoveCommand(absoluteX, absoluteY);

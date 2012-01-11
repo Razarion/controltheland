@@ -15,8 +15,8 @@ package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameCommon;
-import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
+import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
@@ -40,8 +40,8 @@ public class ClearGame extends AbstractStartupTask {
         GameCommon.clearGame();
         Simulation.getInstance().cleanup();
         SelectionHandler.getInstance().setSellMode(false);
-        Cockpit.getInstance().getCockpitMode().clearLaunchMode();
-        Cockpit.getInstance().getCockpitMode().clearUnloadMode();
+        SideCockpit.getInstance().getCockpitMode().clearLaunchMode();
+        SideCockpit.getInstance().getCockpitMode().clearUnloadMode();
         TipManager.getInstance().deactivate();
     }
 }

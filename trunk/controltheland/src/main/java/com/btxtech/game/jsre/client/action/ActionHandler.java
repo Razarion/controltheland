@@ -19,9 +19,9 @@ import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
+import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.collision.ClientCollisionService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
@@ -349,7 +349,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
 
         launch(selection.getFirst().getSyncBaseItem(), new Index(absoluteX, absoluteY));
         Connection.getInstance().sendCommandQueue();
-        Cockpit.getInstance().getCockpitMode().clearLaunchMode();
+        SideCockpit.getInstance().getCockpitMode().clearLaunchMode();
     }
 
     protected void executeCommand(SyncBaseItem syncItem, BaseCommand baseCommand) throws ItemLimitExceededException, HouseSpaceExceededException, ItemDoesNotExistException, NoSuchItemTypeException, InsufficientFundsException {

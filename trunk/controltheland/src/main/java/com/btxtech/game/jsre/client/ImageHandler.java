@@ -43,6 +43,10 @@ public class ImageHandler {
     public static final String ICONS = "icons";
     public static final String TIPS = "tips";
 
+    public static final String BTN_IMAGE_PATH = "/images/cockpit/";
+    public static final String BTN_UP_IMAGE = "-up.png";
+    public static final String BTN_DOWN_IMAGE = "-down.png";
+
     private static HashSet<String> loadedUrls = new HashSet<String>();
 
     /**
@@ -140,6 +144,14 @@ public class ImageHandler {
         url.append("=");
         url.append(Integer.toString(id));
         return url.toString();
+    }
+
+    public static Image getButtonUpImage(String name) {
+        return new Image(BTN_IMAGE_PATH + name + BTN_UP_IMAGE);
+    }
+
+    public static Image getButtonDownImage(String name) {
+        return new Image(BTN_IMAGE_PATH + name + BTN_DOWN_IMAGE);
     }
 
     public static Image getTerrainImage(int id) {

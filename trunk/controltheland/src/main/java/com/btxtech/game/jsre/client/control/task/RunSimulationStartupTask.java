@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.client.control.task;
 
-import com.btxtech.game.jsre.client.cockpit.Cockpit;
+import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.btxtech.game.jsre.client.simulation.Simulation;
@@ -25,7 +25,7 @@ import com.btxtech.game.jsre.client.terrain.MapWindow;
  * Time: 17:53:47
  */
 public class RunSimulationStartupTask extends AbstractStartupTask {
-    
+
     public RunSimulationStartupTask(StartupTaskEnum taskEnum) {
         super(taskEnum);
     }
@@ -35,6 +35,6 @@ public class RunSimulationStartupTask extends AbstractStartupTask {
         RegisterDialog.showDialogRepeating();
         Simulation.getInstance().start();
         MapWindow.getInstance().displayVisibleItems();
-        Cockpit.getInstance().updateItemLimit();
+        SideCockpit.getInstance().updateItemLimit();
     }
 }

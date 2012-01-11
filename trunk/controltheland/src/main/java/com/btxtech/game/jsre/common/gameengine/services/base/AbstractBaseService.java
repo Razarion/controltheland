@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.common.gameengine.services.base;
 
 import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -22,7 +23,6 @@ import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeExce
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * User: beat
@@ -61,4 +61,8 @@ public interface AbstractBaseService {
     SimpleBase createBotBase(BotConfig botConfig);
 
     Collection<SyncBaseItem> getItems(SimpleBase simpleBase);
+
+    void checkBaseAccess(SyncBaseItem syncBaseItem) throws NotYourBaseException;
+
+    void sendAccountBaseUpdate(SimpleBase simpleBase);
 }

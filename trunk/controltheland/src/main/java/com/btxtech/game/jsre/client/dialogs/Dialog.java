@@ -15,7 +15,6 @@ package com.btxtech.game.jsre.client.dialogs;
 
 import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -47,7 +46,7 @@ public abstract class Dialog extends DialogBox {
         dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
         setWidget(dialogVPanel);
         if (showCloseButton) {
-            final ExtendedCustomButton closeButton = new ExtendedCustomButton("/images/gwtdialog/closeButton-up.png", "/images/gwtdialog/closeButton-down.png", false, TOOL_TIP_CLOSE, new ClickHandler() {
+            final ExtendedCustomButton closeButton = new ExtendedCustomButton("closeButton", false, TOOL_TIP_CLOSE, new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
                     close();

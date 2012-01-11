@@ -152,7 +152,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
 
         Base base = baseService.getBase(userState);
         base.setAccountBalance(dbResurrection.getMoney());
-        baseService.sendAccountBaseUpdate(base);
+        baseService.sendAccountBaseUpdate(base.getSimpleBase());
 
         log.debug("User: " + userState + " will be resurrected: " + dbResurrection);
 
@@ -234,7 +234,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         if (dbRealGameLevel.getDeltaMoney() != 0) {
             base.depositMoney(dbRealGameLevel.getDeltaMoney());
             statisticsService.onMoneyEarned(base.getSimpleBase(), dbRealGameLevel.getDeltaMoney());
-            baseService.sendAccountBaseUpdate(base);
+            baseService.sendAccountBaseUpdate(base.getSimpleBase());
         }
         if (dbRealGameLevel.getDeltaXp() != 0) {
             marketService.increaseXp(base, dbRealGameLevel.getDeltaXp());
@@ -410,7 +410,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
 
     @Override
     public DbSyncItemTypeComparisonConfig getDbSyncItemTypeComparisonConfig(int dbSyncItemTypeComparisonConfigId) {
-        return HibernateUtil.get(sessionFactory,DbSyncItemTypeComparisonConfig.class, dbSyncItemTypeComparisonConfigId);
+        return HibernateUtil.get(sessionFactory, DbSyncItemTypeComparisonConfig.class, dbSyncItemTypeComparisonConfigId);
     }
 
     @Override
@@ -436,5 +436,10 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     @Override
     public CrudRootServiceHelper<DbResurrection> getCrudRootDbResurrection() {
         return crudRootDbResurrection;
+    }
+
+    @Override
+    public double getItemSellFactor() {
+        return getDbLevel().getItemSellFactor();
     }
 }

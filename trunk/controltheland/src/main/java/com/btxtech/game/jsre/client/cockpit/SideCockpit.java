@@ -16,6 +16,7 @@ import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
  * User: beat
@@ -25,19 +26,16 @@ import com.google.gwt.user.client.ui.Label;
 public class SideCockpit extends AbsolutePanel {
     private static final SideCockpit INSTANCE = new SideCockpit();
     private static final int WIDTH = 200;
-    public static final int HEIGHT = 395;
+    public static final int HEIGHT = 540;
     // Common
     private static final int CONTROL_PANEL_WIDTH = 185;
     private static final int CONTROL_PANEL_LEFT = 5;
-    // Control Panel
-    private static final int CONTROL_PANEL_HEIGHT = 160;
     private static final int CONTROL_PANEL_TOP = 25;
-    // Radar
-    private static final int RADAR_TOP = CONTROL_PANEL_HEIGHT + CONTROL_PANEL_TOP + 10;
 
-    private CockpitControlPanel cockpitControlPanel;
+    private CockpitDisplayPanel cockpitDisplayPanel;
+    private CockpitButtonPanel cockpitButtonPanel;
     private Label debugPosition;
-    private RadarControlPanel radarControlPanel;
+    private CockpitMode cockpitMode;
 
     public static SideCockpit getInstance() {
         return INSTANCE;
@@ -49,14 +47,18 @@ public class SideCockpit extends AbsolutePanel {
     private SideCockpit() {
         setPixelSize(WIDTH, HEIGHT);
         setupMetal();
-        setupControlPanel();
-        setupRadar();
+        VerticalPanel verticalPanel = new VerticalPanel();
+        add(verticalPanel, CONTROL_PANEL_LEFT, CONTROL_PANEL_TOP);
+        setupControlPanel(verticalPanel);
+        setupRadar(verticalPanel);
+        setupButtonPanel(verticalPanel);
         if (Game.isDebug()) {
             debugPosition = new Label();
             debugPosition.getElement().getStyle().setBackgroundColor("#FFFFFF");
             add(debugPosition, CONTROL_PANEL_LEFT, CONTROL_PANEL_TOP);
         }
         preventEvents();
+        cockpitMode = new CockpitMode();
     }
 
     public void addToParent(AbsolutePanel parent) {
@@ -86,15 +88,19 @@ public class SideCockpit extends AbsolutePanel {
         add(rightBorder, WIDTH - 17, 0);
     }
 
-    private void setupControlPanel() {
-        cockpitControlPanel = new CockpitControlPanel(CONTROL_PANEL_WIDTH, CONTROL_PANEL_HEIGHT);
-        add(cockpitControlPanel, CONTROL_PANEL_LEFT, CONTROL_PANEL_TOP);
+    private void setupControlPanel(VerticalPanel verticalPanel) {
+        cockpitDisplayPanel = new CockpitDisplayPanel(CONTROL_PANEL_WIDTH);
+        verticalPanel.add(cockpitDisplayPanel);
     }
 
-    private void setupRadar() {
-        //@SuppressWarnings({"SuspiciousNameCombination"})
-        radarControlPanel = new RadarControlPanel(CONTROL_PANEL_WIDTH, CONTROL_PANEL_WIDTH);
-        add(radarControlPanel, CONTROL_PANEL_LEFT, RADAR_TOP);
+    private void setupRadar(VerticalPanel verticalPanel) {
+        RadarControlPanel radarControlPanel = new RadarControlPanel(CONTROL_PANEL_WIDTH, CONTROL_PANEL_WIDTH);
+        verticalPanel.add(radarControlPanel);
+    }
+
+    private void setupButtonPanel(VerticalPanel verticalPanel) {
+        cockpitButtonPanel = new CockpitButtonPanel(CONTROL_PANEL_WIDTH);
+        verticalPanel.add(cockpitButtonPanel);
     }
 
     public void debugAbsoluteCursorPos(int x, int y) {
@@ -103,8 +109,8 @@ public class SideCockpit extends AbsolutePanel {
 
     public void updateMoney() {
         double accountBalance = ClientBase.getInstance().getAccountBalance();
-        if (cockpitControlPanel != null) {
-            cockpitControlPanel.updateMoney(accountBalance);
+        if (cockpitDisplayPanel != null) {
+            cockpitDisplayPanel.updateMoney(accountBalance);
         }
         if (ItemCockpit.getInstance().isActive()) {
             ItemCockpit.getInstance().onMoneyChanged(accountBalance);
@@ -112,13 +118,12 @@ public class SideCockpit extends AbsolutePanel {
     }
 
     public void setGameInfo(RealityInfo realityInfo) {
-        cockpitControlPanel.updateMoney(realityInfo.getAccountBalance());
-        // TODO updateBase();
+        cockpitDisplayPanel.updateMoney(realityInfo.getAccountBalance());
     }
 
     public void setLevel(Level level) {
-        if (cockpitControlPanel != null) {
-            cockpitControlPanel.setLevel(level);
+        if (cockpitDisplayPanel != null) {
+            cockpitDisplayPanel.setLevel(level);
         }
         onStateChanged();
     }
@@ -129,6 +134,23 @@ public class SideCockpit extends AbsolutePanel {
         }
     }
 
+    public void updateItemLimit() {
+        if (cockpitDisplayPanel != null) {
+            cockpitDisplayPanel.updateItemLimit();
+        }
+    }
+
+    public void updateEnergy(int generating, int consuming) {
+        if (cockpitDisplayPanel != null) {
+            cockpitDisplayPanel.updateEnergy(generating, consuming);
+        }
+    }
+
+    public void clearSellMode() {
+        if (cockpitButtonPanel != null) {
+            cockpitButtonPanel.clearSellMode();
+        }
+    }
 
     private void preventEvents() {
         getElement().getStyle().setCursor(Style.Cursor.DEFAULT);
@@ -162,4 +184,8 @@ public class SideCockpit extends AbsolutePanel {
     public void setRadarItems() {
         RadarPanel.getInstance().setRadarItemsVisible();
     }
+
+    public CockpitMode getCockpitMode() {
+        return cockpitMode;
+    }    
 }

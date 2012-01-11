@@ -15,7 +15,6 @@ package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientEnergyService;
-import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
@@ -50,7 +49,6 @@ public class RealStartupTask extends GameEngineStartupTask {
         ClientEnergyService.getInstance().onEnergyPacket(realityInfo.getEnergyGenerating(), realityInfo.getEnergyConsuming());
         ClientTerritoryService.getInstance().setTerritories(realityInfo.getTerritories());
         ClientBase.getInstance().setHouseSpace(realityInfo.getHouseSpace());
-        Cockpit.getInstance().enableOnlinePanel(true);
     }
 
 }

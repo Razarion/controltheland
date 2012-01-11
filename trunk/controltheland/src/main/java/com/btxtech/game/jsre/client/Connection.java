@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.Message;
@@ -228,8 +227,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
                     AccountBalancePacket balancePacket = (AccountBalancePacket) packet;
                     ClientBase.getInstance().setAccountBalance(balancePacket.getAccountBalance());
                 } else if (packet instanceof XpBalancePacket) {
-                    XpBalancePacket xpBalancePacket = (XpBalancePacket) packet;
-                    Cockpit.getInstance().updateXp(xpBalancePacket.getXp());
+                    // TODO XP
                 } else if (packet instanceof ItemTypeAccessSyncInfo) {
                     ItemTypeAccessSyncInfo itemTypeAccessSyncInfo = (ItemTypeAccessSyncInfo) packet;
                     ClientItemTypeAccess.getInstance().setAllowedItemTypes(itemTypeAccessSyncInfo.getAllowedItemTypes());
@@ -237,13 +235,13 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
                 } else if (packet instanceof EnergyPacket) {
                     ClientEnergyService.getInstance().onEnergyPacket((EnergyPacket) packet);
                 } else if (packet instanceof UserMessage) {
-                    Cockpit.getInstance().onMessageReceived((UserMessage) packet);
+                    // TODO Chat
                 } else if (packet instanceof LevelPacket) {
                     ClientLevelHandler.getInstance().onLevelChanged(((LevelPacket) packet).getLevel());
                 } else if (packet instanceof HouseSpacePacket) {
                     HouseSpacePacket houseSpacePacket = (HouseSpacePacket) packet;
                     ClientBase.getInstance().setHouseSpace(houseSpacePacket.getHouseSpace());
-                    Cockpit.getInstance().updateItemLimit();
+                    SideCockpit.getInstance().updateItemLimit();
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }
@@ -315,12 +313,20 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
         }
     }
 
-    public void sendSellItem(SyncItem syncItem) {
-        if (!syncItem.getId().isSynchronized()) {
-            return;
-        }
-        if (movableServiceAsync != null) {
-            movableServiceAsync.sellItem(syncItem.getId(), this);
+    public void sellItem(SyncItem syncItem) {
+        if (gameEngineMode == GameEngineMode.SLAVE) {
+            if (!syncItem.getId().isSynchronized()) {
+                return;
+            }
+            if (movableServiceAsync != null) {
+                movableServiceAsync.sellItem(syncItem.getId(), this);
+            }
+        } else if (gameEngineMode == GameEngineMode.MASTER) {
+            try {
+                ItemContainer.getInstance().sellItem(syncItem.getId());
+            } catch (Exception e) {
+                log.log(java.util.logging.Level.SEVERE, "sendSellItem()", e);
+            }
         }
     }
 

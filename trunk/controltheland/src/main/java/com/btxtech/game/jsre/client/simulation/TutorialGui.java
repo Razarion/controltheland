@@ -14,7 +14,7 @@
 package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.jsre.client.cockpit.Cockpit;
+import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -63,11 +63,11 @@ public class TutorialGui {
 
     private void centerImage(Image image, int width, int height) {
         int left = (TerrainView.getInstance().getViewWidth() - width) / 2;
-        int top = (TerrainView.getInstance().getViewHeight() - height - Cockpit.HEIGHT) / 2;
-        if(left < 0) {
+        int top = (TerrainView.getInstance().getViewHeight() - height - SideCockpit.HEIGHT) / 2;
+        if (left < 0) {
             left = 0;
         }
-        if(top < 0) {
+        if (top < 0) {
             top = 0;
         }
         MapWindow.getAbsolutePanel().setWidgetPosition(image, left, top);

@@ -30,8 +30,11 @@ public class TaskConfig implements Serializable {
     private boolean clearGame;
     private String taskText;
     private Collection<ItemTypeAndPosition> ownItems;
+    @Deprecated
     private boolean isScrollingAllowed;
+    @Deprecated
     private boolean sellingAllowed;
+    @Deprecated
     private boolean optionAllowed;
     private Index scroll;
     private List<StepConfig> stepConfigs;

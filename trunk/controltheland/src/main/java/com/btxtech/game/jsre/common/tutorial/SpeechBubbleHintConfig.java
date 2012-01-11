@@ -18,6 +18,7 @@ package com.btxtech.game.jsre.common.tutorial;
  * Date: 20.12.2010
  * Time: 14:21:08
  */
+@Deprecated
 public class SpeechBubbleHintConfig extends HintConfig {
     private int blinkDelay;
     private int blinkInterval;

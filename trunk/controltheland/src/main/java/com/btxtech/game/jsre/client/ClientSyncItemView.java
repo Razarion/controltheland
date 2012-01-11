@@ -14,11 +14,11 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.action.ActionHandler;
-import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.CursorHandler;
 import com.btxtech.game.jsre.client.cockpit.CursorItemState;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
+import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.effects.AttackEffectHandler;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -225,7 +225,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         int y = toRelativePosition(clientSyncItem.getSyncItem().getSyncItemArea().getPosition().getY(),
                 TerrainView.getInstance().getViewOriginTop(),
                 clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageHeight());
-        if(mouseOver) {
+        if (mouseOver) {
             mouseOver = false;
             SpeechBubbleHandler.getInstance().onSyncItemMouseOut(clientSyncItem.getSyncItem());
         }
@@ -281,10 +281,10 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
         if (SelectionHandler.getInstance().isSellMode()) {
             if (clientSyncItem.isMyOwnProperty()) {
-                Connection.getInstance().sendSellItem(clientSyncItem.getSyncItem());
+                Connection.getInstance().sellItem(clientSyncItem.getSyncItem());
                 SelectionHandler.getInstance().setSellMode(false);
             }
-        } else if (Cockpit.getInstance().getCockpitMode().isLaunchMode() && !clientSyncItem.isMyOwnProperty()) {
+        } else if (SideCockpit.getInstance().getCockpitMode().isLaunchMode() && !clientSyncItem.isMyOwnProperty()) {
             int x = mouseDownEvent.getRelativeX(TerrainView.getInstance().getCanvas().getElement()) + TerrainView.getInstance().getViewOriginLeft();
             int y = mouseDownEvent.getRelativeY(TerrainView.getInstance().getCanvas().getElement()) + TerrainView.getInstance().getViewOriginTop();
             ActionHandler.getInstance().executeLaunchCommand(x, y);
@@ -354,8 +354,8 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         if (clientSyncItem.isSyncBaseItem() && !clientSyncItem.getSyncBaseItem().isReady()) {
             SyncBaseItem syncBaseItem = clientSyncItem.getSyncBaseItem();
             BuildupStep buildupStep = syncBaseItem.getBaseItemType().getBuildupStepData4Progress(syncBaseItem.getBuildup());
-            if(buildupStep != null) {
-                if(buildupStep.getBase64ImageData() != null) {
+            if (buildupStep != null) {
+                if (buildupStep.getBase64ImageData() != null) {
                     // During ItemTypeEditor usage
                     image.setUrl(buildupStep.getBase64ImageData());
                 } else {

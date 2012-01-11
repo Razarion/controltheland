@@ -13,9 +13,9 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.client.dialogs.UnfrequentDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -116,7 +116,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
             return;
         }
         if (Math.round(price) > Math.round(accountBalance)) {
-            if(Connection.getInstance().getGameEngineMode() == GameEngineMode.PLAYBACK) {
+            if (Connection.getInstance().getGameEngineMode() == GameEngineMode.PLAYBACK) {
                 return;
             }
             UnfrequentDialog.open(UnfrequentDialog.Type.NO_MONEY);
@@ -157,9 +157,6 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         switch (baseChangedPacket.getType()) {
             case CHANGED:
                 updateBase(baseChangedPacket.getBaseAttributes());
-                if (simpleBase.equals(baseChangedPacket.getBaseAttributes().getSimpleBase())) {
-                    Cockpit.getInstance().updateBase();
-                }
                 ItemViewContainer.getInstance().updateMarker();
                 break;
             case CREATED:
@@ -253,7 +250,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
                 houseSpace += syncBaseItem.getSyncHouse().getSpace();
             }
         }
-        Cockpit.getInstance().updateItemLimit();
+        SideCockpit.getInstance().updateItemLimit();
     }
 
     public void setConnectedToServer4FakedHouseSpace(boolean connectedToServer) {
@@ -301,5 +298,17 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
 
     public void setOwnBaseDestroyedListener(OwnBaseDestroyedListener ownBaseDestroyedListener) {
         this.ownBaseDestroyedListener = ownBaseDestroyedListener;
+    }
+
+    @Override
+    public void checkBaseAccess(SyncBaseItem syncBaseItem) throws NotYourBaseException {
+        if (!isMyOwnProperty(syncBaseItem)) {
+            throw new NotYourBaseException(getBaseName(simpleBase), getBaseName(syncBaseItem.getBase()));
+        }
+    }
+
+    @Override
+    public void sendAccountBaseUpdate(SimpleBase simpleBase) {
+        // Do nothing here
     }
 }

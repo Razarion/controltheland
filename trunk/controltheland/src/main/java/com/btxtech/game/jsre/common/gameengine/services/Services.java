@@ -23,6 +23,7 @@ import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeA
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
+import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
 
 /**
  * User: beat
@@ -49,4 +50,6 @@ public interface Services {
     AbstractTerritoryService getTerritoryService();
 
     CommonBotService getBotService();
+
+    CommonUserGuidanceService getCommonUserGuidanceService();
 }

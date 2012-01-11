@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.common.gameengine.services.items;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
@@ -87,4 +88,6 @@ public interface ItemService {
     void killSyncItems(Collection<SyncItem> syncItems);
 
     SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem);
+
+    void sellItem(Id id) throws ItemDoesNotExistException, NotYourBaseException;
 }

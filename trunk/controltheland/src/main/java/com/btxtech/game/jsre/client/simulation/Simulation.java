@@ -20,7 +20,6 @@ import com.btxtech.game.jsre.client.GameCommon;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ParametrisedRunnable;
 import com.btxtech.game.jsre.client.bot.ClientBotService;
-import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Constants;
@@ -40,7 +39,6 @@ import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
-import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 
@@ -93,7 +91,6 @@ public class Simulation implements ConditionServiceListener<Object>, ClientBase.
             ClientBase.getInstance().setOwnBaseDestroyedListener(this);
         }
         SimulationConditionServiceImpl.getInstance().setConditionServiceListener(this);
-        Cockpit.getInstance().updateBase();
         tutorialTime = System.currentTimeMillis();
         MapWindow.getInstance().setMinimalSize(tutorialConfig.getWidth(), tutorialConfig.getHeight());
         if (tutorialConfig.isEventTracking()) {
@@ -113,14 +110,13 @@ public class Simulation implements ConditionServiceListener<Object>, ClientBase.
     }
 
     private void processPreparation(TaskConfig taskConfig) {
-        Cockpit.getInstance().setVisibleRadar(taskConfig.isScrollingAllowed());
         SideCockpit.getInstance().setRadarItems(); //todo
         MapWindow.getInstance().setScrollingAllowed(taskConfig.isScrollingAllowed());
-        Cockpit.getInstance().enableFocusWidget(CockpitWidgetEnum.SCROLL_HOME_BUTTON, taskConfig.isScrollingAllowed());
-        Cockpit.getInstance().enableFocusWidget(CockpitWidgetEnum.OPTION_BUTTON, taskConfig.isOptionAllowed());
-        Cockpit.getInstance().enableFocusWidget(CockpitWidgetEnum.SELL_BUTTON, taskConfig.isSellingAllowed());
+        // TODO set enable or disable CockpitWidgetEnum.SCROLL_HOME_BUTTON, taskConfig.isScrollingAllowed());
+        // TODO set enable or disable CockpitWidgetEnum.OPTION_BUTTON, taskConfig.isOptionAllowed());
+        // TODO set enable or disable CockpitWidgetEnum.SELL_BUTTON, taskConfig.isSellingAllowed());
         ClientLevelHandler.getInstance().getLevel().setHouseSpace(taskConfig.getHouseCount());
-        Cockpit.getInstance().updateItemLimit();
+        SideCockpit.getInstance().updateItemLimit();
 
         if (taskConfig.hasBots()) {
             ClientBotService.getInstance().setBotConfigs(taskConfig.getBotConfigs());

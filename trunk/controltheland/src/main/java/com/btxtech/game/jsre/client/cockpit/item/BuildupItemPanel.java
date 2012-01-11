@@ -20,13 +20,9 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.Group;
-import com.btxtech.game.jsre.client.cockpit.HintWidgetException;
-import com.btxtech.game.jsre.client.cockpit.HintWidgetProvider;
 import com.btxtech.game.jsre.client.cockpit.PlaceablePreviewSyncItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
-import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -46,7 +42,7 @@ import java.util.Map;
  * Date: 15.11.2009
  * Time: 14:12:18
  */
-public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvider {
+public class BuildupItemPanel extends AbsolutePanel {
     private static final String TOOL_TIP_SCROLL_LEFT = "Scroll left";
     private static final String TOOL_TIP_SCROLL_RIGHT = "Scroll right";
 
@@ -72,14 +68,14 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
     public BuildupItemPanel(BuildListener buildListener) {
         this.buildListener = buildListener;
         setPixelSize(WIDTH, HEIGHT);
-        ExtendedCustomButton leftArrow = new ExtendedCustomButton("/images/cockpit/leftArrowButton-up.png", "/images/cockpit/leftArrowButton-down.png", false, TOOL_TIP_SCROLL_LEFT, new ClickHandler() {
+        ExtendedCustomButton leftArrow = new ExtendedCustomButton("leftArrowButton", false, TOOL_TIP_SCROLL_LEFT, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 scrollPanel.setHorizontalScrollPosition(scrollPanel.getHorizontalScrollPosition() - SCROLL_STEP);
             }
         });
         add(leftArrow, ARROW_L_LEFT, ARROW_L_TOP);
-        ExtendedCustomButton rightArrow = new ExtendedCustomButton("/images/cockpit/rightArrowButton-up.png", "/images/cockpit/rightArrowButton-down.png", false, TOOL_TIP_SCROLL_RIGHT, new ClickHandler() {
+        ExtendedCustomButton rightArrow = new ExtendedCustomButton("rightArrowButton", false, TOOL_TIP_SCROLL_RIGHT, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 scrollPanel.setHorizontalScrollPosition(scrollPanel.getHorizontalScrollPosition() + SCROLL_STEP);
@@ -139,7 +135,7 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
                 public void onMouseDown(MouseDownEvent event) {
                     if (buildListener != null) {
                         buildListener.onBuild();
-                }
+                    }
                     new PlaceablePreviewSyncItem(ImageHandler.getItemTypeImage(itemType), event, constructionVehicles, itemType);
                 }
             }));
@@ -176,23 +172,6 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
         BuildupItem buildupItem = new BuildupItem(itemType, mouseDownHandler);
         this.buildupItem.put(itemType.getId(), buildupItem);
         return buildupItem;
-    }
-
-    @Override
-    public Widget getHintWidgetAndEnsureVisible(CockpitSpeechBubbleHintConfig config) throws HintWidgetException {
-        if (config.getCockpitWidgetEnum() != CockpitWidgetEnum.BUILDUP_ITEM) {
-            return null;
-        }
-        if (!isVisible()) {
-            throw new HintWidgetException(this + " BuildupItemPanel not visible", config);
-        }
-        Widget widget = buildupItem.get(config.getBaseItemTypeId());
-        if (widget != null) {
-            scrollPanel.setHorizontalScrollPosition(widget.getAbsoluteLeft() - scrollPanel.getAbsoluteLeft());
-            return widget;
-        } else {
-            return null;
-        }
     }
 
     public void onMoneyChanged(double accountBalance) {

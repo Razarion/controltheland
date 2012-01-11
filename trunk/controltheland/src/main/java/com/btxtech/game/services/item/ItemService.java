@@ -88,8 +88,6 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
 
     DbItemTypeSoundData getMuzzleFlashSound(int itemTypeId);
 
-    void sellItem(Id id) throws ItemDoesNotExistException, NotYourBaseException;
-
     ItemType getItemType(DbItemType dbItemType);
 
     void killSyncItemIds(Collection<Id> itemsToKill);

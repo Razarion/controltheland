@@ -18,7 +18,6 @@ import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemContainer;
-import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
@@ -32,7 +31,8 @@ import com.google.gwt.user.client.ui.Widget;
  * Date: 18.11.2010
  * Time: 10:51:09
  */
-public class SpecialFunctionPanel extends VerticalPanel implements HintWidgetProvider {
+@Deprecated
+public class SpecialFunctionPanel extends VerticalPanel {
     private static final String TOOL_TIP_UPGRADE = "Upgrade this structure or unit";
     private static final String TOOL_TIP_UNLOAD = "Unload containing units";
     private static final String TOOL_TIP_LAUNCH = "Launch the missile";
@@ -64,7 +64,7 @@ public class SpecialFunctionPanel extends VerticalPanel implements HintWidgetPro
     }
 
     private void addUpgradeable(final SyncBaseItem upgradeable) {
-        ExtendedCustomButton button = new ExtendedCustomButton("/images/cockpit/upgradeButton-up.png", "/images/cockpit/upgradeButton-down.png", false, TOOL_TIP_UPGRADE, new ClickHandler() {
+        ExtendedCustomButton button = new ExtendedCustomButton("upgradeButton", false, TOOL_TIP_UPGRADE, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 ActionHandler.getInstance().upgrade(upgradeable);
@@ -78,10 +78,10 @@ public class SpecialFunctionPanel extends VerticalPanel implements HintWidgetPro
 
     private void addSyncItemContainer(SyncItemContainer syncItemContainer) {
         HorizontalPanel horizontalPanel = new HorizontalPanel();
-        ExtendedCustomButton button = new ExtendedCustomButton("/images/cockpit/unloadButton-up.png", "/images/cockpit/unloadButton-down.png", false, TOOL_TIP_UNLOAD, new ClickHandler() {
+        ExtendedCustomButton button = new ExtendedCustomButton("unloadButton", false, TOOL_TIP_UNLOAD, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                Cockpit.getInstance().getCockpitMode().setUnloadMode();
+                SideCockpit.getInstance().getCockpitMode().setUnloadMode();
             }
         });
         horizontalPanel.add(button);
@@ -91,35 +91,13 @@ public class SpecialFunctionPanel extends VerticalPanel implements HintWidgetPro
     }
 
     private void addSyncLauncher() {
-        ExtendedCustomButton button = new ExtendedCustomButton("/images/cockpit/launchButton-up.png", "/images/cockpit/launchButton-down.png", false, TOOL_TIP_LAUNCH, new ClickHandler() {
+        ExtendedCustomButton button = new ExtendedCustomButton("launchButton", false, TOOL_TIP_LAUNCH, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                Cockpit.getInstance().getCockpitMode().setUnloadMode();
+                SideCockpit.getInstance().getCockpitMode().setUnloadMode();
             }
         });
         launch = button;
         add(button);
-    }
-
-    @Override
-    public Widget getHintWidgetAndEnsureVisible(CockpitSpeechBubbleHintConfig config) throws HintWidgetException {
-        switch (config.getCockpitWidgetEnum()) {
-            case UNLOAD:
-                if (unload == null) {
-                    throw new HintWidgetException("Unload button is not initialised", config);
-                }
-                return unload;
-            case LAUNCH:
-                if (upgrade == null) {
-                    throw new HintWidgetException("Upgrade button is not initialised", config);
-                }
-                return upgrade;
-            case UPGRADE:
-                if (launch == null) {
-                    throw new HintWidgetException("Launch button is not initialised", config);
-                }
-                return launch;
-        }
-        return null;
     }
 }
