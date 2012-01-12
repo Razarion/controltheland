@@ -23,7 +23,6 @@ import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -34,10 +33,9 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class ItemCockpit extends AbstractControlPanel implements BuildupItemPanel.BuildListener {
     private static final ItemCockpit INSTANCE = new ItemCockpit();
-    private static final int WIDTH = 410;
-    private static final int HEIGHT = 166;
     private boolean isActive = false;
     private BuildupItemPanel buildupItemPanel;
+    private SpecialFunctionPanel specialFunctionPanel;
     private AbsolutePanel panel;
     private FocusPanel excFocusPanel;
 
@@ -49,7 +47,6 @@ public class ItemCockpit extends AbstractControlPanel implements BuildupItemPane
      * Singleton
      */
     private ItemCockpit() {
-        super(WIDTH, HEIGHT);
         setup();
         getElement().getStyle().setZIndex(Constants.Z_INDEX_ITEM_COCKPIT);
         preventEvents();
@@ -61,27 +58,27 @@ public class ItemCockpit extends AbstractControlPanel implements BuildupItemPane
         }
 
         excFocusPanel.setFocus(true);
+        buildupItemPanel.display(clientSyncItem);
+        specialFunctionPanel.display(clientSyncItem.getSyncBaseItem());
 
+        setVisible(true);
         Index relPosition = TerrainView.getInstance().toRelativeIndex(clientSyncItem.getSyncItem().getSyncItemArea().getPosition());
-        relPosition = relPosition.sub(WIDTH / 2, HEIGHT);
+        relPosition = relPosition.sub(getOffsetWidth() / 2, getOffsetHeight());
         if (relPosition.getX() < 0) {
             relPosition.setX(0);
         }
         if (relPosition.getY() < 0) {
             relPosition.setY(0);
         }
-        if (relPosition.getX() + WIDTH > TerrainView.getInstance().getViewWidth()) {
-            relPosition.setX(TerrainView.getInstance().getViewWidth() - WIDTH);
+        if (relPosition.getX() + getOffsetWidth() > TerrainView.getInstance().getViewWidth()) {
+            relPosition.setX(TerrainView.getInstance().getViewWidth() - getOffsetWidth());
         }
-        if (relPosition.getY() + HEIGHT > TerrainView.getInstance().getViewHeight()) {
-            relPosition.setY(TerrainView.getInstance().getViewHeight() - HEIGHT);
+        if (relPosition.getY() + getOffsetHeight() > TerrainView.getInstance().getViewHeight()) {
+            relPosition.setY(TerrainView.getInstance().getViewHeight() - getOffsetHeight());
         }
 
         panel.setWidgetPosition(this, relPosition.getX(), relPosition.getY());
-        setVisible(true);
-
-        buildupItemPanel.display(clientSyncItem);
-
+        
         ClientUserTracker.getInstance().onDialogAppears(this, "ItemCockpit");
         SpeechBubbleHandler.getInstance().hide();
 
@@ -106,10 +103,11 @@ public class ItemCockpit extends AbstractControlPanel implements BuildupItemPane
     protected Widget createBody() {
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.getElement().getStyle().setColor("#C2D7EC");
-        verticalPanel.add(new HTML("Build units:"));
         buildupItemPanel = new BuildupItemPanel(this);
         verticalPanel.add(buildupItemPanel);
         addEscKeyHandler(verticalPanel);
+        specialFunctionPanel = new SpecialFunctionPanel();
+        verticalPanel.add(specialFunctionPanel);
         return verticalPanel;
     }
 
@@ -178,6 +176,10 @@ public class ItemCockpit extends AbstractControlPanel implements BuildupItemPane
     }
 
     public static boolean hasItemCockpit(SyncBaseItem syncBaseItem) {
-        return syncBaseItem.hasSyncBuilder() || syncBaseItem.hasSyncFactory();
+        return syncBaseItem.hasSyncBuilder() ||
+                syncBaseItem.hasSyncFactory() ||
+                syncBaseItem.isUpgradeable() ||
+                syncBaseItem.hasSyncItemContainer() ||
+                syncBaseItem.hasSyncLauncher();
     }
 }

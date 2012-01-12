@@ -35,6 +35,13 @@ public abstract class AbstractControlPanel extends Grid {
         setWidth(Integer.toString(width) + "px");
     }
 
+    /**
+     * Width and height is auto
+     */
+    public AbstractControlPanel() {
+        super(3, 3);
+    }
+
     protected void setup() {
         setCellSpacing(0);
         setCellPadding(0);
@@ -90,7 +97,11 @@ public abstract class AbstractControlPanel extends Grid {
     protected abstract Widget createBody();
 
     public int getContentWidth() {
-        return width - WIDTH_IMAGE_LEFT - WIDTH_IMAGE_RIGHT;
+        if (width != null) {
+            return width - WIDTH_IMAGE_LEFT - WIDTH_IMAGE_RIGHT;
+        } else {
+            return getOffsetWidth() - WIDTH_IMAGE_LEFT - WIDTH_IMAGE_RIGHT;
+        }
     }
 
     public int getContentHeight() {

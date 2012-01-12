@@ -30,6 +30,7 @@ import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -47,14 +48,16 @@ public class BuildupItemPanel extends AbsolutePanel {
     private static final String TOOL_TIP_SCROLL_RIGHT = "Scroll right";
 
     private static final int WIDTH = 355;
-    private static final int HEIGHT = 100;
+    private static final int HEIGHT = 120;
     private static final int SCROLL_STEP = 50;
+    private static final int DESCRIPTION_LEFT = 0;
+    private static final int DESCRIPTION_TOP = 0;
     private static final int ARROW_L_LEFT = 0;
-    private static final int ARROW_L_TOP = 0;
+    private static final int ARROW_L_TOP = 20;
     private static final int ARROW_R_LEFT = 300;
-    private static final int ARROW_R_TOP = 0;
+    private static final int ARROW_R_TOP = 20;
     private static final int SCROLL_LEFT = 50;
-    private static final int SCROLL_TOP = 0;
+    private static final int SCROLL_TOP = 20;
     private static final int SCROLL_LENGTH = 250;
     private static final int SCROLL_HEIGHT = 100;
     private ScrollPanel scrollPanel;
@@ -68,6 +71,7 @@ public class BuildupItemPanel extends AbsolutePanel {
     public BuildupItemPanel(BuildListener buildListener) {
         this.buildListener = buildListener;
         setPixelSize(WIDTH, HEIGHT);
+        add(new Label("Build units or structures"), DESCRIPTION_LEFT, DESCRIPTION_TOP);
         ExtendedCustomButton leftArrow = new ExtendedCustomButton("leftArrowButton", false, TOOL_TIP_SCROLL_LEFT, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
