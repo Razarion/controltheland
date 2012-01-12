@@ -18,7 +18,6 @@ import com.btxtech.game.jsre.client.ClientEnergyService;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
-import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 
 /**
@@ -43,7 +42,7 @@ public class RealStartupTask extends GameEngineStartupTask {
         ClientBase.getInstance().setBase(realityInfo.getBase());
         ClientBase.getInstance().setAccountBalance(realityInfo.getAccountBalance());
         SideCockpit.getInstance().setGameInfo(realityInfo);
-        ClientItemTypeAccess.getInstance().setAllowedItemTypes(realityInfo.getAllowedItemTypes());
+        // ClientItemTypeAccess.getInstance().setAllowedItemTypes(realityInfo.getAllowedItemTypes());
         ClientEnergyService.getInstance().init(true);
         ClientBase.getInstance().setConnectedToServer4FakedHouseSpace(true);
         ClientEnergyService.getInstance().onEnergyPacket(realityInfo.getEnergyGenerating(), realityInfo.getEnergyConsuming());

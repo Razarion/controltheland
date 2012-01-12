@@ -149,7 +149,8 @@ public class ServerMarketServiceImpl implements ServerMarketService {
 
     @Override
     public boolean isAllowed(int itemTypeId) {
-        return getUserItemTypeAccess().contains(itemTypeId);
+        return true;
+        //return getUserItemTypeAccess().contains(itemTypeId);
     }
 
     @Override
