@@ -306,7 +306,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
         AttackFormationItem attackFormationItem = ClientCollisionService.getInstance().getDestinationHint(syncBaseItem,
                 container.getSyncBaseItem().getSyncItemContainer().getRange(),
                 container.getSyncBaseItem().getSyncItemArea(),
-                syncBaseItem.getBaseItemType().getTerrainType());
+                container.getSyncBaseItem().getTerrainType());
 
         if (!attackFormationItem.isInRange()) {
             move(items, container.getSyncBaseItem().getSyncItemArea().getPosition());
@@ -318,7 +318,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                 if (ClientTerritoryService.getInstance().isAllowed(container.getSyncBaseItem().getSyncItemArea().getPosition(), container.getSyncBaseItem())
                         && container.getSyncBaseItem().getSyncItemContainer().isAbleToContain(item.getSyncBaseItem())
                         && item.getSyncBaseItem().getSyncMovable().isLoadPosReachable(container.getSyncBaseItem().getSyncItemContainer())) {
-                    loadContainer(container.getSyncBaseItem(), item.getSyncBaseItem(), container.getSyncBaseItem().getSyncItemArea().getPosition());
+                    loadContainer(container.getSyncBaseItem(), item.getSyncBaseItem(), attackFormationItem.getDestinationHint());
                 }
             } else {
                 GwtCommon.sendLogToServer("ActionHandler.loadContainer(): has no movable:" + item);

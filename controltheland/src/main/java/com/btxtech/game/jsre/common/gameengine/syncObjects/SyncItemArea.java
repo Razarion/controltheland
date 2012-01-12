@@ -103,7 +103,7 @@ public class SyncItemArea {
     }
 
     public void correctPosition() {
-        if (syncItem != null && syncItem.getServices() != null) {
+        if (syncItem != null && syncItem.getServices() != null && hasPosition()) {
             setPosition(syncItem.getServices().getTerrainService().correctPosition(syncItem, getPosition()));
         }
     }

@@ -1,8 +1,8 @@
 package com.btxtech.game.jsre.common.gameengine.services.action.impl;
 
-import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
+import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
@@ -13,6 +13,7 @@ import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededE
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -245,10 +246,20 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         unloadContainerCommand.setId(container.getId());
         unloadContainerCommand.setTimeStamp();
         unloadContainerCommand.setUnloadPos(unloadPos);
+
+        // TODO this is ugly. Getting the TerrainType only of the first item. Problem: If different Items have different TerrainTypes
+        Id id = CommonJava.getFirst(container.getSyncItemContainer().getContainedItems());
+        TerrainType targetTerrainType;
+        try {
+            targetTerrainType = getServices().getItemService().getItem(id).getTerrainType();
+        } catch (ItemDoesNotExistException e) {
+            throw new RuntimeException(e);
+        }
+
         AttackFormationItem format = getServices().getCollisionService().getDestinationHint(container,
                 container.getSyncItemContainer().getRange(),
                 container.getSyncItemArea().getBoundingBox().createSyntheticSyncItemArea(unloadPos),
-                container.getTerrainType());
+                targetTerrainType);
         if (format.isInRange()) {
             unloadContainerCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(container, format.getDestinationHint()));
         } else {

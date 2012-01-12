@@ -96,7 +96,7 @@ public class SyncItemContainer extends SyncBaseAbility {
         if (!getServices().getTerritoryService().isAllowed(unloadContainerCommand.getUnloadPos(), getSyncBaseItem())) {
             throw new IllegalArgumentException(this + " Container not allowed to unload on territory: " + unloadContainerCommand.getUnloadPos() + "  " + getSyncBaseItem());
         }
-
+        setPathToDestinationIfSyncMovable(unloadContainerCommand.getPathToDestination());        
         unloadPos = unloadContainerCommand.getUnloadPos();
     }
 

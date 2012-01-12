@@ -16,9 +16,11 @@ package com.btxtech.game.jsre.client.cockpit;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.action.ActionHandler;
+import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
+import com.btxtech.game.jsre.client.utg.SpeechBubbleHandler;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -116,9 +118,11 @@ public class SelectionHandler {
     public void setItemGroupSelected(Group selectedGroup) {
         if (hasOwnSelection() && selectedGroup.getCount() == 1) {
             if (selectedGroup.getFirst().getSyncBaseItem().hasSyncItemContainer()) {
-                ActionHandler.getInstance().loadContainer(selectedGroup.getFirst(), this.selectedGroup.getItems());
-                clearSelection();
-                return;
+                if(this.selectedGroup.canMove()) {
+                    ActionHandler.getInstance().loadContainer(selectedGroup.getFirst(), this.selectedGroup.getItems());
+                    clearSelection();
+                    return;
+                }
             } else if (!selectedGroup.getFirst().getSyncBaseItem().isReady()) {
                 ActionHandler.getInstance().finalizeBuild(this.selectedGroup.getItems(), selectedGroup.getFirst());
                 return;
@@ -145,6 +149,8 @@ public class SelectionHandler {
             listener.onSelectionCleared();
         }
         CursorHandler.getInstance().onSelectionCleared();
+        ItemCockpit.getInstance().deActivate();
+        SpeechBubbleHandler.getInstance().hide();
     }
 
     private void onTargetSelectionItemChanged(ClientSyncItem selection) {
