@@ -11,44 +11,41 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.client.cockpit;
+package com.btxtech.game.jsre.client.cockpit.item;
 
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.action.ActionHandler;
+import com.btxtech.game.jsre.client.cockpit.SideCockpit;
+import com.btxtech.game.jsre.client.cockpit.ToolTips;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemContainer;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * User: beat
  * Date: 18.11.2010
  * Time: 10:51:09
  */
-@Deprecated
 public class SpecialFunctionPanel extends VerticalPanel {
-    private static final String TOOL_TIP_UPGRADE = "Upgrade this structure or unit";
-    private static final String TOOL_TIP_UNLOAD = "Unload containing units";
-    private static final String TOOL_TIP_LAUNCH = "Launch the missile";
-
-    private static final int WIDTH = 92;
-    private static final int HEIGHT = 76;
-    private Widget unload;
-    private Widget upgrade;
-    private Widget launch;
 
     public SpecialFunctionPanel() {
-        setPixelSize(WIDTH, HEIGHT);
+        setHeight("100%");
     }
 
-    public void display(SyncBaseItem syncBaseItem) {
+    public void display(SyncItem syncItem) {
         clear();
+        if (!(syncItem instanceof SyncBaseItem)) {
+            return;
+        }
+        SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
         if (syncBaseItem.isUpgradeable()) {
             addUpgradeable(syncBaseItem);
         }
@@ -64,7 +61,8 @@ public class SpecialFunctionPanel extends VerticalPanel {
     }
 
     private void addUpgradeable(final SyncBaseItem upgradeable) {
-        ExtendedCustomButton button = new ExtendedCustomButton("upgradeButton", false, TOOL_TIP_UPGRADE, new ClickHandler() {
+        add(new Label("Can be upgraded"));
+        ExtendedCustomButton button = new ExtendedCustomButton("upgradeButton", false, ToolTips.TOOL_TIP_UPGRADE, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 ActionHandler.getInstance().upgrade(upgradeable);
@@ -72,13 +70,13 @@ public class SpecialFunctionPanel extends VerticalPanel {
         });
         button.getUpDisabledFace().setImage(new Image("/images/cockpit/upgradeButton-disabled-up.png"));
         button.setEnabled(ClientServices.getInstance().getItemTypeAccess().isAllowed(upgradeable.getBaseItemType().getUpgradeable()));
-        upgrade = button;
         add(button);
     }
 
     private void addSyncItemContainer(SyncItemContainer syncItemContainer) {
+        add(new Label("Can contain other units"));
         HorizontalPanel horizontalPanel = new HorizontalPanel();
-        ExtendedCustomButton button = new ExtendedCustomButton("unloadButton", false, TOOL_TIP_UNLOAD, new ClickHandler() {
+        ExtendedCustomButton button = new ExtendedCustomButton("unloadButton", false, ToolTips.TOOL_TIP_UNLOAD, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 SideCockpit.getInstance().getCockpitMode().setUnloadMode();
@@ -86,18 +84,17 @@ public class SpecialFunctionPanel extends VerticalPanel {
         });
         horizontalPanel.add(button);
         horizontalPanel.add(new HTML("&nbsp;Items: " + syncItemContainer.getContainedItems().size()));
-        unload = button;
         add(horizontalPanel);
     }
 
     private void addSyncLauncher() {
-        ExtendedCustomButton button = new ExtendedCustomButton("launchButton", false, TOOL_TIP_LAUNCH, new ClickHandler() {
+        add(new Label("Can launch missiles"));
+        ExtendedCustomButton button = new ExtendedCustomButton("launchButton", false, ToolTips.TOOL_TIP_LAUNCH, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                SideCockpit.getInstance().getCockpitMode().setUnloadMode();
+                SideCockpit.getInstance().getCockpitMode().setLaunchMode();
             }
         });
-        launch = button;
         add(button);
     }
 }

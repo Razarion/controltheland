@@ -19,4 +19,7 @@ public class ToolTips {
     public static final String TOOL_TIP_MUTE = "Mute sound";
     public static final String TOOL_TIP_TERMINAL = "Open your terminal page";
     public static final String TOOL_TIP_HIGH_SCORE = "Open the highscore page";
+    public static final String TOOL_TIP_UPGRADE = "Upgrade this structure or unit";
+    public static final String TOOL_TIP_UNLOAD = "Unload containing units";
+    public static final String TOOL_TIP_LAUNCH = "Launch the missile";
 }
