@@ -43,8 +43,6 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
     public void onTerrainChanged() {
         clear();
 
-        getContext2d().setLineWidth(2);
-
         // Draw surface
         for (SurfaceRect surfaceRect : TerrainView.getInstance().getTerrainHandler().getSurfaceRects()) {
             Rectangle tileRectangle = surfaceRect.getTileRectangle();
@@ -80,14 +78,12 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
             TerrainImage terrainImage = TerrainView.getInstance().getTerrainHandler().getTerrainImage(terrainImagePosition);
             String bgColor = terrainImageBackground.get(terrainImage.getId());
             getContext2d().setFillStyle(bgColor);
-            getContext2d().setStrokeStyle(bgColor);
 
             for (int x = 0; x < terrainImage.getTileWidth(); x++) {
                 for (int y = 0; y < terrainImage.getTileHeight(); y++) {
                     int startX = terrainImagePosition.getTileIndex().getX() + x;
                     int startY = terrainImagePosition.getTileIndex().getY() + y;
                     getContext2d().fillRect(startX, startY, 1, 1);
-                    getContext2d().strokeRect(startX, startY, 1, 1);
                 }
             }
         }

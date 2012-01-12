@@ -77,8 +77,16 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
         // Restore & save to get old state before scale
         context2d.restore();
         context2d.save();
+
         try {
             context2d.scale(scale, scale);
+            if (getTerrainSettings().getTileXCount() > getTerrainSettings().getTileYCount()) {
+                int yShift = (getTerrainSettings().getTileXCount() - getTerrainSettings().getTileYCount()) / 2;
+                getContext2d().translate(0, yShift);
+            } else if (getTerrainSettings().getTileYCount() > getTerrainSettings().getTileXCount()) {
+                int xShift = (getTerrainSettings().getTileYCount() - getTerrainSettings().getTileXCount()) / 2;
+                getContext2d().translate(xShift, 0);
+            }
         } catch (Exception e) {
             // Fails during tests
             log.log(Level.SEVERE, "", e);
@@ -86,7 +94,9 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
     }
 
     protected void clear() {
-        context2d.clearRect(0, 0, terrainSettings.getTileXCount(), terrainSettings.getTileYCount());
+        context2d.save();
+        context2d.clearRect(0, 0, getWidth(), getHeight());
+        context2d.restore();
     }
 
     public TerrainSettings getTerrainSettings() {
