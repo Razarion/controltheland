@@ -163,7 +163,7 @@ public class MovableServiceImpl implements MovableService {
             setCommonInfo(realityInfo, userService, itemService, mgmtService, cmsUiService);
             realityInfo.setBase(baseService.getBase().getSimpleBase());
             realityInfo.setAccountBalance(baseService.getBase().getAccountBalance());
-            realityInfo.setAllowedItemTypes(serverMarketService.getAllowedItemTypes());
+            // realityInfo.setAllowedItemTypes(serverMarketService.getAllowedItemTypes());
             realityInfo.setXp(serverMarketService.getXp());
             realityInfo.setEnergyConsuming(serverEnergyService.getConsuming());
             realityInfo.setEnergyGenerating(serverEnergyService.getGenerating());

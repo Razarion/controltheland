@@ -41,7 +41,8 @@ public class ClientItemTypeAccess implements ItemTypeAccess {
 
     @Override
     public boolean isAllowed(int itemTypeId) {
-        return allowedItemTypes.contains(itemTypeId);
+        return true;
+        // return allowedItemTypes.contains(itemTypeId);
     }
 
     public Collection<Integer> getAllowedItemTypes() {
