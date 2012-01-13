@@ -84,20 +84,20 @@ public class Group {
 
     public boolean canAttack() {
         for (ClientSyncItem clientSyncItem : clientSyncItems) {
-            if (!clientSyncItem.getSyncBaseItem().hasSyncWeapon()) {
-                return false;
+            if (clientSyncItem.getSyncBaseItem().hasSyncWeapon()) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     public boolean canCollect() {
         for (ClientSyncItem clientSyncItem : clientSyncItems) {
-            if (!clientSyncItem.getSyncBaseItem().hasSyncHarvester()) {
-                return false;
+            if (clientSyncItem.getSyncBaseItem().hasSyncHarvester()) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     public boolean canMove() {
@@ -177,16 +177,6 @@ public class Group {
             syncBaseItems.add(clientSyncItem.getSyncBaseItem());
         }
         return syncBaseItems;
-    }
-
-    public Collection<ClientSyncItem> getMovableItems() {
-        ArrayList<ClientSyncItem> movables = new ArrayList<ClientSyncItem>();
-        for (ClientSyncItem clientSyncItem : clientSyncItems) {
-            if (clientSyncItem.getSyncBaseItem().hasSyncMovable()) {
-                movables.add(clientSyncItem);
-            }
-        }
-        return movables;
     }
 
     public ClientSyncItem getFirst() {
