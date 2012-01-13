@@ -110,6 +110,10 @@ public class UserServiceImpl implements UserService {
     private void loginUser(User user) {
         user.setLastLoginDate(new Date());
         privateSave(user);
+        if (hasUserState()) {
+            //handle old userState
+            removeUserState(getUserState());
+        }
         UserState userState = getUserState(user);
         if (userState != null) {
             userState.setSessionId(session.getSessionId());
@@ -139,13 +143,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void onSessionTimedOut(UserState userState, String sessionId) {
         if (userState != null) {
-            userState.setSessionId(null);
-            baseService.onSessionTimedOut(userState);
-            if (!userState.isRegistered()) {
-                synchronized (userStates) {
-                    userStates.remove(userState);
-                }
-            }
+            removeUserState(userState);
         }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
@@ -154,6 +152,16 @@ public class UserServiceImpl implements UserService {
                 userTrackingService.onUserLoggedOut(user);
             }
             SecurityContextHolder.getContext().setAuthentication(null);
+        }
+    }
+
+    private void removeUserState(UserState userState) {
+        userState.setSessionId(null);
+        baseService.onSessionTimedOut(userState);
+        if (!userState.isRegistered()) {
+            synchronized (userStates) {
+                userStates.remove(userState);
+            }
         }
     }
 
