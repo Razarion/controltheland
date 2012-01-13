@@ -13,10 +13,14 @@
 
 package com.btxtech.game.jsre.playback;
 
+import com.btxtech.game.jsre.client.SoundHandler;
 import com.btxtech.game.jsre.client.TopMapPanel;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -62,6 +66,17 @@ public class PlaybackControlPanel extends TopMapPanel {
                 playbackVisualisation.skip();
             }
         }));
+
+        // Mute
+        CheckBox mute = new CheckBox("Mute");
+        mute.setValue(false);
+        mute.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
+                SoundHandler.getInstance().mute(booleanValueChangeEvent.getValue());
+            }
+        });
+        verticalPanel.add(mute);
 
         return verticalPanel;
     }
