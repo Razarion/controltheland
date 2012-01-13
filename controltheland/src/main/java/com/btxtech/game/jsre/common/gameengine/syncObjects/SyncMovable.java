@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.common.gameengine.syncObjects;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
@@ -94,7 +95,7 @@ public class SyncMovable extends SyncBaseAbility {
     }
 
     public boolean onFinished() {
-        if(getServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
+        if (getServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
             return false;
         }
         SyncBaseItem syncBaseItem = getSyncBaseItem();
@@ -149,7 +150,7 @@ public class SyncMovable extends SyncBaseAbility {
 
     @Override
     public void fillSyncItemInfo(SyncItemInfo syncItemInfo) {
-        syncItemInfo.setPathToDestination(pathToDestination);
+        syncItemInfo.setPathToDestination(CommonJava.saveArrayListCopy(pathToDestination));
         syncItemInfo.setTargetContainer(targetContainer);
     }
 

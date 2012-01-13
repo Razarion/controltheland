@@ -1,7 +1,10 @@
 package com.btxtech.game.jsre.common;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.google.gwt.i18n.shared.DateTimeFormat;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -43,4 +46,19 @@ public class CommonJava {
     public static <T> T getFirst(Iterable<T> iterable) {
         return iterable.iterator().next();
     }
+
+    public static String getGwtFormattedTimeMilis() {
+        long time = System.currentTimeMillis();
+        DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("yyyy.MM.dd HH:mm:ss.SSS");
+        return dateTimeFormat.format(new Date(time));
+    }
+
+    public static <T> List<T> saveArrayListCopy(List<T> list) {
+        if (list != null) {
+            return new ArrayList<T>(list);
+        } else {
+            return null;
+        }
+    }
+
 }
