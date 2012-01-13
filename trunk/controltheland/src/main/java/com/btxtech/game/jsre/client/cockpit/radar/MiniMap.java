@@ -49,6 +49,8 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
     private Canvas canvas;
     private Context2d context2d;
     private Logger log = Logger.getLogger(MiniMap.class.getName());
+    private int xShift = 0;
+    private int yShift = 0;
 
     public MiniMap(int width, int height) {
         canvas = Canvas.createIfSupported();
@@ -81,10 +83,10 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
         try {
             context2d.scale(scale, scale);
             if (getTerrainSettings().getTileXCount() > getTerrainSettings().getTileYCount()) {
-                int yShift = (getTerrainSettings().getTileXCount() - getTerrainSettings().getTileYCount()) / 2;
+                yShift = (int) ((getHeight() / getScale() - getTerrainSettings().getTileYCount()) / 2);
                 getContext2d().translate(0, yShift);
             } else if (getTerrainSettings().getTileYCount() > getTerrainSettings().getTileXCount()) {
-                int xShift = (getTerrainSettings().getTileYCount() - getTerrainSettings().getTileXCount()) / 2;
+                xShift = (int) ((getWidth() / getScale() - getTerrainSettings().getTileXCount()) / 2);
                 getContext2d().translate(xShift, 0);
             }
         } catch (Exception e) {
@@ -161,6 +163,9 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
         x = (int) (x / scale);
         y = (int) (y / scale);
 
+        x -= xShift;
+        y -= yShift;
+
         for (MiniMapMouseMoveListener miniMapMouseMoveListener : miniMapMouseMoveListeners) {
             miniMapMouseMoveListener.onMouseMove(x, y);
         }
@@ -179,6 +184,9 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
         x = (int) (x / scale);
         y = (int) (y / scale);
 
+        x -= xShift;
+        y -= yShift;
+
         for (MiniMapMouseDownListener miniMapMouseDownListener : miniMapMouseDownListeners) {
             miniMapMouseDownListener.onMouseDown(x, y, mouseDownEvent);
         }
@@ -196,6 +204,9 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
         }
         x = (int) (x / scale);
         y = (int) (y / scale);
+
+        x -= xShift;
+        y -= yShift;
 
         for (MiniMapMouseUpListener miniMapMouseUpListener : miniMapMouseUpListeners) {
             miniMapMouseUpListener.onMouseUp(x, y, event);
