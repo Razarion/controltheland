@@ -103,7 +103,7 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
             return;
         }
 
-        ActionHandler.getInstance().move(selection.getMovableItems(), new Index(absoluteX, absoluteY));
+        ActionHandler.getInstance().move(selection.getItems(), new Index(absoluteX, absoluteY));
     }
 
 

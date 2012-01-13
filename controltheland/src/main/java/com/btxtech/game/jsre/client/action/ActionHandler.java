@@ -166,8 +166,6 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                     }
                 }
                 move(clientSyncItem.getSyncBaseItem(), pos);
-            } else {
-                GwtCommon.sendLogToServer("ActionHandler.moveDelta(): can not cast to MovableSyncItem:" + clientSyncItem);
             }
         }
         Connection.getInstance().sendCommandQueue();
@@ -256,8 +254,6 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                                 clientSyncItem.getSyncBaseItem().getSyncWeapon().getWeaponType().getRange()));
                     }
                 }
-            } else {
-                GwtCommon.sendLogToServer("ActionHandler.attack(): can not cast to TankSyncItem:" + clientSyncItem);
             }
         }
         attackFormationItemList = ClientCollisionService.getInstance().setupDestinationHints(target, attackFormationItemList);
@@ -280,9 +276,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                 if (ClientTerritoryService.getInstance().isAllowed(money.getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem())) {
                     attackFormationItemList.add(new AttackFormationItem(clientSyncItem.getSyncBaseItem(), clientSyncItem.getSyncBaseItem().getSyncHarvester().getHarvesterType().getRange()));
                 }
-            } else {
-                GwtCommon.sendLogToServer("ActionHandler.collect(): can not cast to MoneyCollectorSyncItem:" + clientSyncItem);
-            }
+            } 
         }
         attackFormationItemList = ClientCollisionService.getInstance().setupDestinationHints(money, attackFormationItemList);
         for (AttackFormationItem item : attackFormationItemList) {
