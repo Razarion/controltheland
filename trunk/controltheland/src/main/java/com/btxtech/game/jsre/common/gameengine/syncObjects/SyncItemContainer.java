@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemContainerType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -49,8 +50,8 @@ public class SyncItemContainer extends SyncBaseAbility {
 
     @Override
     public void fillSyncItemInfo(SyncItemInfo syncItemInfo) {
-        syncItemInfo.setUnloadPos(unloadPos);
-        syncItemInfo.setContainedItems(containedItems);
+        syncItemInfo.setUnloadPos(Index.saveCopy(unloadPos));
+        syncItemInfo.setContainedItems(CommonJava.saveArrayListCopy(containedItems));
     }
 
     public void load(SyncBaseItem syncBaseItem) {
@@ -96,7 +97,7 @@ public class SyncItemContainer extends SyncBaseAbility {
         if (!getServices().getTerritoryService().isAllowed(unloadContainerCommand.getUnloadPos(), getSyncBaseItem())) {
             throw new IllegalArgumentException(this + " Container not allowed to unload on territory: " + unloadContainerCommand.getUnloadPos() + "  " + getSyncBaseItem());
         }
-        setPathToDestinationIfSyncMovable(unloadContainerCommand.getPathToDestination());        
+        setPathToDestinationIfSyncMovable(unloadContainerCommand.getPathToDestination());
         unloadPos = unloadContainerCommand.getUnloadPos();
     }
 

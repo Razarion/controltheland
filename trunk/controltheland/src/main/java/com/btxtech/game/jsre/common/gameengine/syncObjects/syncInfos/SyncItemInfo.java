@@ -73,7 +73,7 @@ public class SyncItemInfo extends Packet {
     }
 
     public void setPosition(Index position) {
-        this.position = position;
+        this.position = Index.saveCopy(position);
     }
 
     public int getItemTypeId() {
@@ -281,7 +281,7 @@ public class SyncItemInfo extends Packet {
     }
 
     public void setTargetPosition(Index targetPosition) {
-        this.targetPosition = targetPosition;
+        this.targetPosition = Index.saveCopy(targetPosition);
     }
 
     public void setDestinationAngel(Double destinationAngel) {

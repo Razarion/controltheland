@@ -230,4 +230,12 @@ public class Index implements Serializable {
         return createSaveIndex(index.getX(), index.getY());
     }
 
+    public static Index saveCopy(Index index) {
+        if (index != null) {
+            return index.getCopy();
+        } else {
+            return null;
+        }
+    }
+
 }

@@ -115,7 +115,7 @@ public class SyncFactory extends SyncBaseAbility {
         }
         syncItemInfo.setFactoryBuildupProgress(buildup);
         syncItemInfo.setCreatedChildCount(createdChildCount);
-        syncItemInfo.setRallyPoint(rallyPoint);
+        syncItemInfo.setRallyPoint(Index.saveCopy(rallyPoint));
     }
 
     public void stop() {
