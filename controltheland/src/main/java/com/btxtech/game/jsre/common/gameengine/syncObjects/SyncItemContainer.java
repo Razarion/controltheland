@@ -114,10 +114,14 @@ public class SyncItemContainer extends SyncBaseAbility {
         }
 
         if (!isInRange(unloadPos)) {
-            // Destination place was may be taken. Calculate a new one.
-            recalculateNewPath(itemContainerType.getRange(), getSyncItemArea().getBoundingBox().createSyntheticSyncItemArea(unloadPos));
-            getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
-            return true;
+            if (isNewPathRecalculationAllowed()) {
+                // Destination place was may be taken. Calculate a new one.
+                recalculateNewPath(itemContainerType.getRange(), getSyncItemArea().getBoundingBox().createSyntheticSyncItemArea(unloadPos));
+                getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+                return true;
+            } else {
+                return false;
+            }
         }
 
         getSyncItemArea().turnTo(unloadPos);
