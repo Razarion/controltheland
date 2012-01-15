@@ -29,12 +29,9 @@ import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -46,52 +43,17 @@ import java.util.Collection;
  * Date: Jul 4, 2009
  * Time: 12:30:16 PM
  */
-public class MapWindow implements TerrainScrollListener, MouseMoveHandler, MouseOutHandler {
+public class MapWindow implements TerrainScrollListener, MouseMoveHandler {
     public static final int AUTO_SCROLL_DETECTION_WIDTH = 40;
     public static final int SCROLL_SPEED = 50;
     public static final int SCROLL_DISTANCE = 50;
     public static final int SCROLL_DISTANCE_KEY = 205; // 5 is to avoid the effect that it seem not to moveDelta on key-down-repeat
     private static final MapWindow INSTANCE = new MapWindow();
     private ExtendedAbsolutePanel mapWindow;
-    private ScrollDirection scrollDirectionX;
-    private ScrollDirection scrollDirectionY;
     private TerrainMouseMoveListener terrainMouseMoveListener;
     private boolean scrollingAllowed = true;
     private boolean isTrackingEvents = false;
     private Collection<Widget> scrollAbleWidget = new ArrayList<Widget>();
-
-    private enum ScrollDirection {
-        NORTH,
-        SOUTH,
-        WEST,
-        EAST
-    }
-
-    private Timer timer = new Timer() {
-        @Override
-        public void run() {
-            scroll();
-        }
-    };
-
-
-    private void scroll() {
-        int scrollX = 0;
-        if (scrollDirectionX == ScrollDirection.WEST) {
-            scrollX = -SCROLL_DISTANCE;
-        } else if (scrollDirectionX == ScrollDirection.EAST) {
-            scrollX = SCROLL_DISTANCE;
-        }
-
-        int scrollY = 0;
-        if (scrollDirectionY == ScrollDirection.SOUTH) {
-            scrollY = SCROLL_DISTANCE;
-        } else if (scrollDirectionY == ScrollDirection.NORTH) {
-            scrollY = -SCROLL_DISTANCE;
-        }
-
-        TerrainView.getInstance().moveDelta(scrollX, scrollY);
-    }
 
     /**
      * Singleton
@@ -114,8 +76,6 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
             }
         });
 
-
-        // TODO mapWindow.addMouseOutHandler(this);
         Event.addNativePreviewHandler(new Event.NativePreviewHandler() {
             @Override
             public void onPreviewNativeEvent(Event.NativePreviewEvent event) {
@@ -201,29 +161,6 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
         if (terrainMouseMoveListener != null) {
             terrainMouseMoveListener.onMove(x + TerrainView.getInstance().getViewOriginLeft(), y + TerrainView.getInstance().getViewOriginTop(), x, y);
         }
-    }
-
-    private void executeScrolling(ScrollDirection tmpScrollDirectionX, ScrollDirection tmpScrollDirectionY) {
-        if (tmpScrollDirectionX != scrollDirectionX || tmpScrollDirectionY != scrollDirectionY) {
-            boolean isTimerRunningOld = scrollDirectionX != null || scrollDirectionY != null;
-            boolean isTimerRunningNew = tmpScrollDirectionX != null || tmpScrollDirectionY != null;
-            scrollDirectionX = tmpScrollDirectionX;
-            scrollDirectionY = tmpScrollDirectionY;
-
-            if (isTimerRunningOld != isTimerRunningNew) {
-                if (isTimerRunningNew) {
-                    scroll();
-                    timer.scheduleRepeating(AUTO_SCROLL_DETECTION_WIDTH);
-                } else {
-                    timer.cancel();
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onMouseOut(MouseOutEvent event) {
-        executeScrolling(null, null);
     }
 
     public void setTerrainMouseMoveListener(TerrainMouseMoveListener terrainMouseMoveListener) {
