@@ -45,7 +45,7 @@ public class CockpitButtonPanel extends AbstractControlPanel {
         });
         grid.setWidget(0, 1, sellButton);
         // Sell button
-        ExtendedCustomButton mute = new ExtendedCustomButton("speakerButton", true, ToolTips.TOOL_TIP_SELL, new ClickHandler() {
+        ExtendedCustomButton mute = new ExtendedCustomButton("speakerButton", true, ToolTips.TOOL_TIP_MUTE, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 ExtendedCustomButton btn = (ExtendedCustomButton) event.getSource();
