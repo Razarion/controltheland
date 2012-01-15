@@ -49,10 +49,14 @@ public class SyncHarvester extends SyncBaseAbility {
         try {
             SyncResourceItem resource = (SyncResourceItem) getServices().getItemService().getItem(target);
             if (!isInRange(resource)) {
-                // Destination place was may be taken. Calculate a new one.
-                destinationAngel = recalculateNewPath(harvesterType.getRange(), resource.getSyncItemArea());
-                getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
-                return true;
+                if (isNewPathRecalculationAllowed()) {
+                    // Destination place was may be taken. Calculate a new one.
+                    destinationAngel = recalculateNewPath(harvesterType.getRange(), resource.getSyncItemArea());
+                    getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+                    return true;
+                } else {
+                    return false;
+                }
             }
             getSyncItemArea().turnTo(resource);
             double money = resource.harvest(factor * harvesterType.getProgress());

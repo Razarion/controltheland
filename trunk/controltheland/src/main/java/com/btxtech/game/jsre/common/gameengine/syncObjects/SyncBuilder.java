@@ -59,15 +59,19 @@ public class SyncBuilder extends SyncBaseAbility {
 
         if (!isInRange()) {
             // Destination place was may be taken. Calculate a new one.
-            SyncItemArea syncItemArea;
-            if (currentBuildup != null) {
-                syncItemArea = currentBuildup.getSyncItemArea();
+            if (isNewPathRecalculationAllowed()) {
+                SyncItemArea syncItemArea;
+                if (currentBuildup != null) {
+                    syncItemArea = currentBuildup.getSyncItemArea();
+                } else {
+                    syncItemArea = toBeBuiltType.getBoundingBox().createSyntheticSyncItemArea(toBeBuildPosition);
+                }
+                destinationAngel = recalculateNewPath(builderType.getRange(), syncItemArea);
+                getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+                return true;
             } else {
-                syncItemArea = toBeBuiltType.getBoundingBox().createSyntheticSyncItemArea(toBeBuildPosition);
+                return false;
             }
-            destinationAngel = recalculateNewPath(builderType.getRange(), syncItemArea);
-            getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
-            return true;
         }
 
         if (currentBuildup == null) {

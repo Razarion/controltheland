@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
@@ -51,6 +52,10 @@ public abstract class SyncBaseAbility {
         if (syncBaseItem.hasSyncMovable()) {
             syncBaseItem.getSyncMovable().setPathToDestination(pathToDestination);
         }
+    }
+
+    public boolean isNewPathRecalculationAllowed() {
+        return getServices().getConnectionService().getGameEngineMode() == GameEngineMode.MASTER;
     }
 
     public double recalculateNewPath(int range, SyncItemArea target) {
