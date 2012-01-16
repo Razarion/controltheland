@@ -127,7 +127,6 @@ public class MgmtPage extends MgmtWebPage {
         toolPages.add(new LinkAndName("Item Type Editpr", ItemTypeTable.class));
         toolPages.add(new LinkAndName("Attack Matrix", AttackMatrix.class));
         toolPages.add(new LinkAndName("Resource", ResourceEditor.class));
-        toolPages.add(new LinkAndName("Market", MarketEntryEditor.class));
         toolPages.add(new LinkAndName("User Tracking", SessionTable.class));
         toolPages.add(new LinkAndName("Bases", BasesTable.class));
         toolPages.add(new LinkAndName("XP Settings", XpSettingsEditor.class));
@@ -137,6 +136,5 @@ public class MgmtPage extends MgmtWebPage {
         toolPages.add(new LinkAndName("Tutorial", TutorialTable.class));
         toolPages.add(new LinkAndName("User States", UserStateTable.class));
         toolPages.add(new LinkAndName("CMS", Cms.class));
-
     }
 }

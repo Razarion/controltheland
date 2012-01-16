@@ -7,7 +7,6 @@ import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
@@ -131,12 +130,9 @@ public class TestResurrection extends AbstractServiceTest {
         baseChangedPacket.setType(BaseChangedPacket.Type.REMOVED);
         baseChangedPacket.setBaseAttributes(new BaseAttributes(targetBase, targetName, false));
 
-        XpBalancePacket xpBalancePacket = new XpBalancePacket();
-        xpBalancePacket.setXp(1);
-
         Thread.sleep(3000);
 
-        assertPackagesIgnoreSyncItemInfoAndClear(message, baseChangedPacket, xpBalancePacket);
+        assertPackagesIgnoreSyncItemInfoAndClear(message, baseChangedPacket);
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

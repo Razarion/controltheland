@@ -14,8 +14,6 @@
 package com.btxtech.game.services.user;
 
 import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.bot.DbBotConfig;
-import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.utg.DbAbstractLevel;
 
 import java.io.Serializable;
@@ -29,7 +27,7 @@ public class UserState implements Serializable {
     private User user;
     private Base base;
     private DbAbstractLevel currentAbstractLevel;
-    private UserItemTypeAccess userItemTypeAccess;
+    private int xp;
     private String sessionId;
 
     public boolean isRegistered() {
@@ -52,12 +50,16 @@ public class UserState implements Serializable {
         return base;
     }
 
-    public UserItemTypeAccess getUserItemTypeAccess() {
-        return userItemTypeAccess;
+    public int getXp() {
+        return xp;
     }
 
-    public void setUserItemTypeAccess(UserItemTypeAccess userItemTypeAccess) {
-        this.userItemTypeAccess = userItemTypeAccess;
+    public void setXp(int xp) {
+        this.xp = xp;
+    }
+
+    public void increaseXp(int deltaXp) {
+        xp += deltaXp;
     }
 
     public String getSessionId() {

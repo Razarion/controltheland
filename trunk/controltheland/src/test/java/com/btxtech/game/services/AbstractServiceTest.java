@@ -11,7 +11,6 @@ import com.btxtech.game.jsre.common.HouseSpacePacket;
 import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
@@ -48,9 +47,6 @@ import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbMovableType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
-import com.btxtech.game.services.market.DbMarketEntry;
-import com.btxtech.game.services.market.ServerMarketService;
-import com.btxtech.game.services.market.XpSettings;
 import com.btxtech.game.services.resource.DbRegionResource;
 import com.btxtech.game.services.resource.ResourceService;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
@@ -73,8 +69,10 @@ import com.btxtech.game.services.utg.DbItemTypeLimitation;
 import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.DbResurrection;
 import com.btxtech.game.services.utg.DbSimulationLevel;
+import com.btxtech.game.services.utg.DbXpSettings;
 import com.btxtech.game.services.utg.LevelActivationException;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.XpService;
 import com.btxtech.game.services.utg.condition.DbComparisonItemCount;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbContainedInComparisonConfig;
@@ -201,7 +199,7 @@ abstract public class AbstractServiceTest {
     @Autowired
     private ItemService itemService;
     @Autowired
-    private ServerMarketService serverMarketService;
+    private XpService xpService;
     @Autowired
     private ActionService actionService;
     @Autowired
@@ -211,7 +209,7 @@ abstract public class AbstractServiceTest {
     @Autowired
     private TerritoryService territoryService;
     @Autowired
-    private ServerMarketService serverMarketServic;
+    private XpService xpServic;
     @Autowired
     private ResourceService resourceService;
     @Autowired
@@ -435,10 +433,6 @@ abstract public class AbstractServiceTest {
             AccountBalancePacket expected = (AccountBalancePacket) expectedPacket;
             AccountBalancePacket received = (AccountBalancePacket) receivedPacket;
             Assert.assertEquals(expected.getAccountBalance(), received.getAccountBalance(), 0.1);
-        } else if (expectedPacket instanceof XpBalancePacket) {
-            XpBalancePacket expected = (XpBalancePacket) expectedPacket;
-            XpBalancePacket received = (XpBalancePacket) receivedPacket;
-            Assert.assertEquals(expected.getXp(), received.getXp());
         } else if (expectedPacket instanceof LevelPacket) {
             LevelPacket expected = (LevelPacket) expectedPacket;
             LevelPacket received = (LevelPacket) receivedPacket;
@@ -568,8 +562,7 @@ abstract public class AbstractServiceTest {
         setupNoobTerritory();
         // Level
         setupLevels();
-        // Market
-        setupMinimalMarket();
+        // Xp
         setupXpSettings();
 
         endHttpRequestAndOpenSessionInViewFilter();
@@ -827,35 +820,6 @@ abstract public class AbstractServiceTest {
             dbItemTypeImage.setData(new byte[]{1, 2, 3});
             dbItemTypeImage.setContentType("image");
         }
-    }
-
-    // ------------------- Setup Market --------------------
-
-    protected void setupMinimalMarket() {
-        DbMarketEntry factory = serverMarketService.getCrudMarketEntryService().createDbChild();
-        factory.setAlwaysAllowed(true);
-        factory.setItemType(itemService.getDbItemType(TEST_FACTORY_ITEM_ID));
-        serverMarketService.getCrudMarketEntryService().updateDbChild(factory);
-
-        DbMarketEntry attacker = serverMarketService.getCrudMarketEntryService().createDbChild();
-        attacker.setAlwaysAllowed(true);
-        attacker.setItemType(itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
-        serverMarketService.getCrudMarketEntryService().updateDbChild(attacker);
-
-        DbMarketEntry harvester = serverMarketService.getCrudMarketEntryService().createDbChild();
-        harvester.setAlwaysAllowed(true);
-        harvester.setItemType(itemService.getDbItemType(TEST_HARVESTER_ITEM_ID));
-        serverMarketService.getCrudMarketEntryService().updateDbChild(harvester);
-
-        DbMarketEntry itemContainer = serverMarketService.getCrudMarketEntryService().createDbChild();
-        itemContainer.setAlwaysAllowed(true);
-        itemContainer.setItemType(itemService.getDbItemType(TEST_CONTAINER_ITEM_ID));
-        serverMarketService.getCrudMarketEntryService().updateDbChild(itemContainer);
-
-        DbMarketEntry simpleBuilding = serverMarketService.getCrudMarketEntryService().createDbChild();
-        simpleBuilding.setItemType(itemService.getDbItemType(TEST_SIMPLE_BUILDING_ID));
-        simpleBuilding.setPrice(10);
-        serverMarketService.getCrudMarketEntryService().updateDbChild(simpleBuilding);
     }
 
     // ------------------- Setup Terrain --------------------
@@ -1326,24 +1290,16 @@ abstract public class AbstractServiceTest {
         return dbTerritory;
     }
 
-    // ------------------- XpSettings Config --------------------
+    // ------------------- DbXpSettings Config --------------------
 
-    protected XpSettings setupXpSettings() {
-        XpSettings xpSettings = serverMarketServic.getXpPointSettings();
-        xpSettings.setPeriodMinutes(0);
-        xpSettings.setPeriodItemFactor(0);
-        xpSettings.setKillPriceFactor(1);
-        serverMarketServic.saveXpPointSettings(xpSettings);
-        return xpSettings;
-    }
-
-    protected XpSettings setupXpSettings(int msForPeriod, double periodItemFactor) {
-        XpSettings xpSettings = serverMarketServic.getXpPointSettings();
-        xpSettings.setPeriodMilliSeconds(msForPeriod);
-        xpSettings.setPeriodItemFactor(periodItemFactor);
-        xpSettings.setKillPriceFactor(1);
-        serverMarketServic.saveXpPointSettings(xpSettings);
-        return xpSettings;
+    protected DbXpSettings setupXpSettings() {
+        DbXpSettings dbXpSettings = xpServic.getXpPointSettings();
+        dbXpSettings.setKillPriceFactor(1);
+        dbXpSettings.setKillQueuePeriod(2000);
+        dbXpSettings.setKillQueueSize(10000);
+        dbXpSettings.setBuiltPriceFactor(0.5);
+        xpServic.saveXpPointSettings(dbXpSettings);
+        return dbXpSettings;
     }
 
     // ------------------- Setup Resource --------------------
@@ -1504,5 +1460,13 @@ abstract public class AbstractServiceTest {
         field.setAccessible(true);
         field.set(object, value);
         field.setAccessible(false);
+    }
+
+    public static Object deAopProxy(Object object) throws Exception {
+        if (AopUtils.isJdkDynamicProxy(object)) {
+            return ((Advised) object).getTargetSource().getTarget();
+        } else {
+            return object;
+        }
     }
 }

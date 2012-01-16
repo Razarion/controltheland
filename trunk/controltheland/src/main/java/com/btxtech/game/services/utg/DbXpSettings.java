@@ -11,9 +11,8 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.market;
+package com.btxtech.game.services.utg;
 
-import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -24,13 +23,21 @@ import javax.persistence.Id;
  * Time: 14:49:30
  */
 @Entity(name = "XP_SETTINGS")
-public class XpSettings implements Serializable, Cloneable {
+public class DbXpSettings implements Cloneable {
     @Id
     @GeneratedValue
     private Integer id;
     private double killPriceFactor;
-    private double periodItemFactor;
-    private int periodMilliSeconds;
+    private long killQueuePeriod;
+    private int killQueueSize;
+    private double builtPriceFactor;
+
+    public void fill(DbXpSettings dbXpSettings) {
+        killPriceFactor = dbXpSettings.killPriceFactor;
+        killQueuePeriod = dbXpSettings.killQueuePeriod;
+        killQueueSize = dbXpSettings.killQueueSize;
+        builtPriceFactor = dbXpSettings.builtPriceFactor;
+    }
 
     public double getKillPriceFactor() {
         return killPriceFactor;
@@ -40,33 +47,28 @@ public class XpSettings implements Serializable, Cloneable {
         this.killPriceFactor = killPriceFactor;
     }
 
-    public double getPeriodItemFactor() {
-        return periodItemFactor;
+    public double getBuiltPriceFactor() {
+        return builtPriceFactor;
     }
 
-    public void setPeriodItemFactor(double periodItemFactor) {
-        this.periodItemFactor = periodItemFactor;
+    public void setBuiltPriceFactor(double builtPriceFactor) {
+        this.builtPriceFactor = builtPriceFactor;
     }
 
-    public int getPeriodMinutes() {
-        return periodMilliSeconds / 1000 / 60;
+    public long getKillQueuePeriod() {
+        return killQueuePeriod;
     }
 
-    public void setPeriodMinutes(int periodMinutes) {
-        periodMilliSeconds = periodMinutes  * 1000 * 60;
+    public void setKillQueuePeriod(long killQueuePeriod) {
+        this.killQueuePeriod = killQueuePeriod;
     }
 
-    public long getPeriodMilliSeconds() {
-        return periodMilliSeconds;
+    public int getKillQueueSize() {
+        return killQueueSize;
     }
 
-    public void setPeriodMilliSeconds(int periodMilliSeconds) {
-        this.periodMilliSeconds = periodMilliSeconds;
-    }
-
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
+    public void setKillQueueSize(int killQueueSize) {
+        this.killQueueSize = killQueueSize;
     }
 
     @Override
@@ -74,14 +76,14 @@ public class XpSettings implements Serializable, Cloneable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        XpSettings that = (XpSettings) o;
+        DbXpSettings that = (DbXpSettings) o;
 
-        return !(id != null ? !id.equals(that.id) : that.id != null);
+        return id != null && id.equals(that.id);
 
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 }

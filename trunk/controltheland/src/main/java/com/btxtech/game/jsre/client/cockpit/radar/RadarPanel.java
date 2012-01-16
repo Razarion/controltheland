@@ -24,8 +24,8 @@ import com.google.gwt.user.client.ui.HTML;
  * Time: 12:26:58
  */
 public class RadarPanel {
-    public static final String NO_POWER = "<br/>You do not have a enough energy. Get a Power Plant from <a href=\"?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.market.MarketPage\" target=\"_blank\">Market</a> and build it with your construction vehicle.";
     public static final String RADAR_1 = "Radar 1";
+    private static final String NO_POWER = "<br/>You do not have a enough energy.";
     private static final RadarPanel INSTANCE = new RadarPanel();
     private MiniTerrain miniTerrain;
     private RadarFrameView radarFrameView;

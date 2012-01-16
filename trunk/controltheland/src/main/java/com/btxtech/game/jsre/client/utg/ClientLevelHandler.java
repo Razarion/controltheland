@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupScreen;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
 
 /**
@@ -76,6 +77,14 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
 
     public Level getLevel() {
         return level;
+    }
+
+    public boolean isItemTypeAllowed(BaseItemType baseItemType) {
+        return isItemTypeAllowed(baseItemType.getId());
+    }
+
+    public boolean isItemTypeAllowed(int baseItemTypeId) {
+        return level.getLimitation4ItemType(baseItemTypeId) > 0;
     }
 
     @Override

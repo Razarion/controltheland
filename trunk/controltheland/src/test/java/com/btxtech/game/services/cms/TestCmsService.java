@@ -14,7 +14,6 @@ import com.btxtech.game.services.cms.content.DbBlogEntry;
 import com.btxtech.game.services.cms.content.DbWikiSection;
 import com.btxtech.game.services.cms.impl.CmsServiceImpl;
 import com.btxtech.game.services.cms.layout.DbContent;
-import com.btxtech.game.services.cms.layout.DbContentActionButton;
 import com.btxtech.game.services.cms.layout.DbContentBook;
 import com.btxtech.game.services.cms.layout.DbContentBooleanExpressionImage;
 import com.btxtech.game.services.cms.layout.DbContentContainer;
@@ -47,7 +46,7 @@ import com.btxtech.game.services.forum.DbSubForum;
 import com.btxtech.game.services.forum.ForumService;
 import com.btxtech.game.services.forum.TestForum;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.market.ServerMarketService;
+import com.btxtech.game.services.utg.XpService;
 import com.btxtech.game.services.messenger.InvalidFieldException;
 import com.btxtech.game.services.messenger.MessengerService;
 import com.btxtech.game.services.statistics.StatisticsService;
@@ -106,7 +105,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Autowired
     private MovableService movableService;
     @Autowired
-    private ServerMarketService serverMarketService;
+    private XpService xpService;
     @Autowired
     private ForumService forumService;
     @Autowired
@@ -1060,94 +1059,6 @@ public class TestCmsService extends AbstractServiceTest {
         // Verify
         Assert.assertEquals("qaywsxedc", contentService.getDynamicHtml(dynamicHtml1.getId()));
         Assert.assertEquals("qaywsxedc2", contentService.getDynamicHtml(dynamicHtml2.getId()));
-    }
-
-    @Test
-    @DirtiesContext
-    public void testMarket() throws Exception {
-        configureMinimalGame();
-
-        // Setup CMS content
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
-        DbPage dbPage1 = pageCrud.createDbChild();
-        dbPage1.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
-        dbPage1.setName("Home");
-
-        DbContentList dbContentList = new DbContentList();
-        dbContentList.init(userService);
-        dbPage1.setContentAndAccessWrites(dbContentList);
-        dbContentList.setRowsPerPage(5);
-        dbContentList.setSpringBeanName("marketService");
-        dbContentList.setContentProviderGetter("availableCrud");
-
-        DbContentContainer dbContentContainer = (DbContentContainer) dbContentList.getColumnsCrud().createDbChild(DbContentContainer.class);
-        DbExpressionProperty image = (DbExpressionProperty) dbContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
-        image.setExpression("dbMarketEntry.itemType");
-        DbExpressionProperty price = (DbExpressionProperty) dbContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
-        price.setExpression("dbMarketEntry.price");
-        DbExpressionProperty name = (DbExpressionProperty) dbContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
-        name.setExpression("dbMarketEntry.itemType.name");
-        DbContentActionButton buyButton = (DbContentActionButton) dbContentContainer.getContentCrud().createDbChild(DbContentActionButton.class);
-        buyButton.setName("buy");
-        buyButton.setParameterExpression("dbMarketEntry");
-        buyButton.setMethodName("buy");
-        buyButton.setSpringBeanName("marketService");
-        buyButton.setLeftSideSpringBeanName("marketService");
-        buyButton.setLeftSideOperandExpression("userItemTypeAccess.xp");
-        buyButton.setRightSideOperandExpression("dbMarketEntry.price");
-        buyButton.setUnfilledHtml("UnfilledText");
-
-        pageCrud.updateDbChild(dbPage1);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        // Activate
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        cmsService.activateCms();
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        beginHttpSession();
-        // No market
-        beginHttpRequestAndOpenSessionInViewFilter();
-        tester.startPage(CmsPage.class);
-        endHttpRequestAndOpenSessionInViewFilter();
-        // Enter game
-        beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
-        endHttpRequestAndOpenSessionInViewFilter();
-        // Verify
-        beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertFalse(serverMarketService.getUserItemTypeAccess().contains(TEST_SIMPLE_BUILDING_ID));
-        endHttpRequestAndOpenSessionInViewFilter();
-        // Not enough XPs
-        beginHttpRequestAndOpenSessionInViewFilter();
-        tester.startPage(CmsPage.class);
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:3", TEST_SIMPLE_BUILDING);
-        tester.assertInvisible("form:content:table:rows:1:cells:1:cell:container:4:button");
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:4:label", "UnfilledText");
-        tester.assertVisible("form:content:table:rows:1:cells:1:cell:container:4:label");
-        endHttpRequestAndOpenSessionInViewFilter();
-        // Get Some XP
-        beginHttpRequestAndOpenSessionInViewFilter();
-        serverMarketService.getUserItemTypeAccess().setXp(10);
-        endHttpRequestAndOpenSessionInViewFilter();
-        // Buy in market
-        beginHttpRequestAndOpenSessionInViewFilter();
-        tester.startPage(CmsPage.class);
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:3", TEST_SIMPLE_BUILDING);
-        tester.assertInvisible("form:content:table:rows:1:cells:1:cell:container:4:label");
-        FormTester formTester = tester.newFormTester("form");
-        formTester.submit("content:table:rows:1:cells:1:cell:container:4:button");
-        endHttpRequestAndOpenSessionInViewFilter();
-        // Verify
-        beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertTrue(serverMarketService.getUserItemTypeAccess().contains(TEST_SIMPLE_BUILDING_ID));
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        endHttpSession();
     }
 
     private void fillForum() throws UserAlreadyExistsException, PasswordNotMatchException {
@@ -3389,7 +3300,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         DbExpressionProperty xp = (DbExpressionProperty) dbContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
         xp.setSpringBeanName("userService");
-        xp.setExpression("userState.userItemTypeAccess.xp");
+        xp.setExpression("userState.xp");
 
         pageCrud.updateDbChild(dbPage);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -3412,7 +3323,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         tester.startPage(CmsPage.class);
         tester.assertLabel("form:content:container:1", "TEST_LEVEL_3_REAL");
-        tester.assertLabel("form:content:container:2", "500");
+        tester.assertLabel("form:content:container:2", "0");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

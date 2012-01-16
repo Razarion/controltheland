@@ -27,7 +27,6 @@ import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.DeferredStartup;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
-import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
@@ -41,8 +40,6 @@ import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
-import com.btxtech.game.jsre.common.XpBalancePacket;
-import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccessSyncInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
@@ -226,12 +223,6 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
                 } else if (packet instanceof AccountBalancePacket) {
                     AccountBalancePacket balancePacket = (AccountBalancePacket) packet;
                     ClientBase.getInstance().setAccountBalance(balancePacket.getAccountBalance());
-                } else if (packet instanceof XpBalancePacket) {
-                    // TODO XP
-                } else if (packet instanceof ItemTypeAccessSyncInfo) {
-                    ItemTypeAccessSyncInfo itemTypeAccessSyncInfo = (ItemTypeAccessSyncInfo) packet;
-                    ClientItemTypeAccess.getInstance().setAllowedItemTypes(itemTypeAccessSyncInfo.getAllowedItemTypes());
-                    SideCockpit.getInstance().onStateChanged();
                 } else if (packet instanceof EnergyPacket) {
                     ClientEnergyService.getInstance().onEnergyPacket((EnergyPacket) packet);
                 } else if (packet instanceof UserMessage) {

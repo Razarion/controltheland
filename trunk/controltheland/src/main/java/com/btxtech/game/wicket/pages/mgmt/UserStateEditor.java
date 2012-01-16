@@ -13,7 +13,6 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.services.market.DbMarketEntry;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -88,22 +87,7 @@ public class UserStateEditor extends MgmtWebPage {
                 dbLevelId = null;
             }
         }, Integer.class));
-        boolean enabled = false;
-        List<DbMarketEntry> dbMarketEntries = Collections.emptyList();
-        if (form.getModelObject().getUserItemTypeAccess() != null) {
-            dbMarketEntries = new ArrayList<DbMarketEntry>(form.getModelObject().getUserItemTypeAccess().getAllowedItemTypes());
-            enabled = true;
-        }
-
-        form.add(new TextField<Integer>("userItemTypeAccess.xp").setEnabled(enabled));
-        form.add(new ListView<DbMarketEntry>("allowedItemTypes", dbMarketEntries) {
-
-            @Override
-            protected void populateItem(ListItem<DbMarketEntry> marketEntryListItem) {
-                marketEntryListItem.add(new Label("itemType", marketEntryListItem.getModelObject().getItemType().getName()));
-            }
-        }.setEnabled(enabled));
-
+        form.add(new TextField("xp"));
 
         form.add(new Button("activate") {
 

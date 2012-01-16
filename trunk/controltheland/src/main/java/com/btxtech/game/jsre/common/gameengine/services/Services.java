@@ -19,7 +19,6 @@ import com.btxtech.game.jsre.common.gameengine.services.bot.CommonBotService;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService;
 import com.btxtech.game.jsre.common.gameengine.services.energy.EnergyService;
-import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccess;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
@@ -38,8 +37,6 @@ public interface Services {
     AbstractBaseService getBaseService();
 
     ConnectionService getConnectionService();
-
-    ItemTypeAccess getItemTypeAccess();
 
     EnergyService getEnergyService();
 

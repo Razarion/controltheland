@@ -24,7 +24,6 @@ import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.collision.ClientCollisionService;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
@@ -201,8 +200,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
             if (builder.getSyncBaseItem().hasSyncBuilder()
                     && ClientTerritoryService.getInstance().isAllowed(building.getSyncItem().getSyncItemArea().getPosition(), builder.getSyncBaseItem())
                     && ClientTerritoryService.getInstance().isAllowed(building.getSyncItem().getSyncItemArea().getPosition(), building.getSyncBaseItem())
-                    && builder.getSyncBaseItem().getSyncBuilder().getBuilderType().isAbleToBuild(building.getSyncBaseItem().getItemType().getId())
-                    && ClientItemTypeAccess.getInstance().isAllowed(building.getSyncBaseItem().getItemType().getId())) {
+                    && builder.getSyncBaseItem().getSyncBuilder().getBuilderType().isAbleToBuild(building.getSyncBaseItem().getItemType().getId())) {
                 attackFormationItemList.add(new AttackFormationItem(builder.getSyncBaseItem(), builder.getSyncBaseItem().getSyncBuilder().getBuilderType().getRange()));
             }
         }

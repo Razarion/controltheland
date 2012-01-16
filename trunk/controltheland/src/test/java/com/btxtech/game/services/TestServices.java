@@ -7,7 +7,6 @@ import com.btxtech.game.jsre.common.gameengine.services.bot.CommonBotService;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService;
 import com.btxtech.game.jsre.common.gameengine.services.energy.EnergyService;
-import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccess;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
@@ -26,7 +25,6 @@ public class TestServices implements Services {
     private AbstractTerrainService terrainService;
     private AbstractBaseService baseService;
     private ConnectionService connectionService;
-    private ItemTypeAccess itemTypeAccess;
     private EnergyService energyService;
     private CommonCollisionService collisionService;
     private CommonActionService actionService;
@@ -52,11 +50,6 @@ public class TestServices implements Services {
     @Override
     public ConnectionService getConnectionService() {
         return connectionService;
-    }
-
-    @Override
-    public ItemTypeAccess getItemTypeAccess() {
-        return itemTypeAccess;
     }
 
     @Override
@@ -103,10 +96,6 @@ public class TestServices implements Services {
 
     public void setConnectionService(ConnectionService connectionService) {
         this.connectionService = connectionService;
-    }
-
-    public void setItemTypeAccess(ItemTypeAccess itemTypeAccess) {
-        this.itemTypeAccess = itemTypeAccess;
     }
 
     public void setEnergyService(EnergyService energyService) {

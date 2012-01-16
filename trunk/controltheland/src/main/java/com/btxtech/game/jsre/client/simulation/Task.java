@@ -14,7 +14,6 @@
 package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
@@ -37,7 +36,6 @@ public class Task {
     }
 
     private void start() {
-        ClientItemTypeAccess.getInstance().setAllowedItemTypes(taskConfig.getAllowedItemTypes());
         ClientBase.getInstance().setAccountBalance(taskConfig.getAccountBalance());
         runNextStep();
     }

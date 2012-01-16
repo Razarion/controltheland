@@ -11,24 +11,25 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess;
+package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.common.Packet;
-import java.util.Collection;
+import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.services.base.Base;
 
 /**
  * User: beat
  * Date: 18.12.2009
- * Time: 21:45:28
+ * Time: 21:07:42
  */
-public class ItemTypeAccessSyncInfo extends Packet {
-    private Collection<Integer> allowedItemTypes;
+public interface XpService {
+    void onItemKilled(Base actorBase, SyncBaseItem killedItem);
 
-    public Collection<Integer> getAllowedItemTypes() {
-        return allowedItemTypes;
-    }
+    void onReward(SimpleBase simpleBase, int deltaXp);
 
-    public void setAllowedItemTypes(Collection<Integer> allowedItemTypes) {
-        this.allowedItemTypes = allowedItemTypes;
-    }
+    void onItemBuilt(SyncBaseItem builtItem);
+
+    DbXpSettings getXpPointSettings();
+
+    void saveXpPointSettings(DbXpSettings dbXpSettings);
 }

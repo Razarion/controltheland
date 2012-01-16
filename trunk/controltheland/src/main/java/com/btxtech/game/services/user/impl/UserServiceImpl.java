@@ -18,7 +18,6 @@ import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchExc
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.NoConnectionException;
-import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.DbPageAccessControl;
@@ -64,8 +63,6 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     @Autowired
     private com.btxtech.game.services.connection.Session session;
-    @Autowired
-    private ServerMarketService serverMarketService;
     @Autowired
     private BaseService baseService;
     @Autowired
