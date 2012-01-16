@@ -178,6 +178,8 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         setupHealthBar();
         if (clientSyncItem.getSyncBaseItem().hasSyncFactory()) {
             setupFactorizeBar();
+        } else if (clientSyncItem.getSyncBaseItem().hasSyncBuilder()) {
+            setupFactorizeBar();
         } else if (factorizeBar != null) {
             factorizeBar.setVisible(false);
         }
@@ -398,6 +400,13 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         if (clientSyncItem.getSyncBaseItem().hasSyncFactory()) {
             factorizeBar.setMaxProgress(1.0);
             factorizeBar.setProgress(clientSyncItem.getSyncBaseItem().getSyncFactory().getBuildupProgress());
+        } else if (clientSyncItem.getSyncBaseItem().hasSyncBuilder()) {
+            factorizeBar.setMaxProgress(1.0);
+            if (clientSyncItem.getSyncBaseItem().getSyncBuilder().getCurrentBuildup() != null) {
+                factorizeBar.setProgress(clientSyncItem.getSyncBaseItem().getSyncBuilder().getCurrentBuildup().getBuildup());
+            } else {
+                factorizeBar.setProgress(0);
+            }
         } else if (clientSyncItem.getSyncBaseItem().isUpgrading()) {
             factorizeBar.setMaxProgress(clientSyncItem.getSyncBaseItem().getFullUpgradeProgress());
             factorizeBar.setProgress(clientSyncItem.getSyncBaseItem().getUpgradeProgress());

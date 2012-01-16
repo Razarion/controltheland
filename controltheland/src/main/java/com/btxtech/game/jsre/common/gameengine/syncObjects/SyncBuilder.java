@@ -102,6 +102,7 @@ public class SyncBuilder extends SyncBaseAbility {
                     stop();
                     return false;
                 }
+                getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS);                                    
                 return true;
             } catch (InsufficientFundsException e) {
                 return true;
@@ -134,6 +135,7 @@ public class SyncBuilder extends SyncBaseAbility {
         toBeBuildPosition = null;
         destinationAngel = null;
         getSyncBaseItem().getSyncMovable().stop();
+        getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS);
     }
 
     @Override
