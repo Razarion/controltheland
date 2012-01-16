@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.dialogs.ExceptionDialog;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.ImageElement;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -26,6 +27,7 @@ import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.StatusCodeException;
+import com.google.gwt.user.client.ui.Widget;
 
 import java.util.Date;
 import java.util.logging.Level;
@@ -192,5 +194,16 @@ public class GwtCommon {
                 event.stopPropagation();
             }
         });
+    }
+
+    public static void preventNativeSelection(Widget widget) {
+        // Does not work before IE10. Opera support is unknown
+        Style style = widget.getElement().getStyle();
+        style.setProperty("WebkitUserSelect", "none");
+        style.setProperty("KhtmlUserSelect", "none");
+        style.setProperty("MozUserSelect", "none");
+        style.setProperty("MsUserSelect", "none");
+        style.setProperty("OUserSelect", "none");
+        style.setProperty("UserSelect", "none");
     }
 }

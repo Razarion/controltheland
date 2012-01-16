@@ -85,6 +85,7 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler {
                 }
             }
         });
+        GwtCommon.preventNativeSelection(mapWindow);
     }
 
     public void setMinimalSize(int width, int height) {
