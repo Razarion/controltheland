@@ -70,6 +70,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
                 GwtCommon.preventDefault(event);
             }
         }, MouseUpEvent.getType());
+        GwtCommon.preventNativeSelection(this);
     }
 
     public void transform(ClientSyncItem clientSyncItem) {
