@@ -124,6 +124,7 @@ public class SelectionHandler {
                     return;
                 }
             } else if (!selectedGroup.getFirst().getSyncBaseItem().isReady()) {
+                ItemCockpit.getInstance().deActivate();                
                 ActionHandler.getInstance().finalizeBuild(this.selectedGroup.getItems(), selectedGroup.getFirst());
                 return;
             }
