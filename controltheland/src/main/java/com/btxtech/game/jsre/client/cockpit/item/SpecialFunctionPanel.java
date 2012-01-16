@@ -13,11 +13,11 @@
 
 package com.btxtech.game.jsre.client.cockpit.item;
 
-import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.ToolTips;
+import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemContainer;
@@ -69,7 +69,12 @@ public class SpecialFunctionPanel extends VerticalPanel {
             }
         });
         button.getUpDisabledFace().setImage(new Image("/images/cockpit/upgradeButton-disabled-up.png"));
-        button.setEnabled(ClientServices.getInstance().getItemTypeAccess().isAllowed(upgradeable.getBaseItemType().getUpgradeable()));
+        if (ClientLevelHandler.getInstance().isItemTypeAllowed(upgradeable.getBaseItemType().getUpgradeable())) {
+            button.setEnabled(true);
+        } else {
+            button.setEnabled(false);
+            button.setTitle(ToolTips.TOOL_TIP_UPGRADE_NO);
+        }
         add(button);
     }
 

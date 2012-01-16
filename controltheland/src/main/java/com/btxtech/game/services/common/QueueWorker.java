@@ -13,15 +13,16 @@
 
 package com.btxtech.game.services.common;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import org.apache.commons.collections.Buffer;
 import org.apache.commons.collections.BufferUtils;
 import org.apache.commons.collections.buffer.BoundedFifoBuffer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * User: beat
@@ -30,13 +31,22 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class QueueWorker<T> {
     private static final int MAX_QUEUE_SIZE = 10000;
-    private static final int INTERVAL = 2000;
+    private static final int PERIOD = 2000;
+
     private Buffer buffer;
     private Timer timer;
     private Log log = LogFactory.getLog(QueueWorker.class);
 
-    public QueueWorker() {
-        buffer = BufferUtils.synchronizedBuffer(new BoundedFifoBuffer(MAX_QUEUE_SIZE));
+    public QueueWorker(long period, int queueSize) {
+        if (period < 10) {
+            log.warn("QueueWorker: period to small. Set to: " + PERIOD);
+            period = PERIOD;
+        }
+        if (queueSize < 2) {
+            log.warn("QueueWorker: queue size to small. Set to: " + MAX_QUEUE_SIZE);
+            queueSize = MAX_QUEUE_SIZE;
+        }
+        buffer = BufferUtils.synchronizedBuffer(new BoundedFifoBuffer(queueSize));
         timer = new Timer("QueueWorker timer", true);
         TimerTask timerTask = new TimerTask() {
             @Override
@@ -48,7 +58,7 @@ public abstract class QueueWorker<T> {
                 }
             }
         };
-        timer.scheduleAtFixedRate(timerTask, INTERVAL, INTERVAL);
+        timer.scheduleAtFixedRate(timerTask, period, period);
     }
 
 

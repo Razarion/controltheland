@@ -1,6 +1,5 @@
 package com.btxtech.game.services.mgmt.impl;
 
-import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbAbstractLevel;
@@ -30,12 +29,11 @@ public class DbUserState {
     private DbBase base;
     @ManyToOne
     private DbAbstractLevel currentAbstractLevel;
-    @OneToOne(cascade = CascadeType.ALL)
-    private DbUserItemTypeAccess userItemTypeAccess;
     @ManyToOne(optional = false)
     private BackupEntry backupEntry;
     @OneToOne(cascade = CascadeType.ALL)
     private DbAbstractComparisonBackup dbAbstractComparisonBackup;
+    private int xp;
 
     /**
      * Used by hibernate
@@ -46,20 +44,16 @@ public class DbUserState {
     public DbUserState(BackupEntry backupEntry, UserState userState) {
         this.backupEntry = backupEntry;
         user = userState.getUser();
+        xp = userState.getXp();
         currentAbstractLevel = userState.getCurrentAbstractLevel();
-        if (userState.getUserItemTypeAccess() != null) {
-            userItemTypeAccess = new DbUserItemTypeAccess(userState.getUserItemTypeAccess());
-        }
     }
 
     public UserState createUserState(UserGuidanceService userGuidanceService) {
         UserState userState = new UserState();
         userState.setUser(user);
+        userState.setXp(xp);
         if (currentAbstractLevel != null) {
             userState.setCurrentAbstractLevel(userGuidanceService.getDbLevel(currentAbstractLevel.getId()));
-        }
-        if (userItemTypeAccess != null) {
-            userState.setUserItemTypeAccess(userItemTypeAccess.createUserItemTypeAccess());
         }
         return userState;
     }

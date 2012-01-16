@@ -3,8 +3,6 @@ package com.btxtech.game.jsre.client.cockpit.item;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.jsre.client.common.Level;
-import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -31,7 +29,6 @@ public class BuildupItem extends VerticalPanel {
         DISABLED_LEVEL(false, "Build of", "not possible. Your are in the wrong level. Go to the next level!"),
         DISABLED_LEVEL_EXCEEDED(false, "Build of", "not possible. Item limit exceeded. Go to the next level!"),
         DISABLED_HOUSE_SPACE_EXCEEDED(false, "Build of", "not possible. Item limit exceeded. Build more houses!"),
-        DISABLED_MARKED(false, "Build of", "not possible. Buy it in the market!"),
         DISABLED_MONEY(false, "Build of", "not possible. Not enough money. Earn more money!");
 
         private boolean enabled;
@@ -76,8 +73,7 @@ public class BuildupItem extends VerticalPanel {
     }
 
     private void discoverEnableState() {
-        Level level = ClientLevelHandler.getInstance().getLevel();
-        if (level.getLimitation4ItemType(itemType.getId()) == 0) {
+        if (!ClientLevelHandler.getInstance().isItemTypeAllowed(itemType)) {
             enableState = EnableState.DISABLED_LEVEL;
             return;
         }
@@ -95,11 +91,6 @@ public class BuildupItem extends VerticalPanel {
             enableState = EnableState.ENABLE;
             return;
         }
-        if (!ClientItemTypeAccess.getInstance().isAllowed(itemType.getId())) {
-            enableState = EnableState.DISABLED_MARKED;
-            return;
-        }
-
         if (itemType.getPrice() > ClientBase.getInstance().getAccountBalance()) {
             enableState = EnableState.DISABLED_MONEY;
             return;

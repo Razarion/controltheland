@@ -22,8 +22,6 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.market.DbMarketEntry;
-import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
@@ -35,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -505,35 +502,14 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
             UserState newUserState = findUserState(oldUserState, newUserStates);
             User newUser = newUserState.getUser();
             Assert.assertEquals(oldUser, newUser);
+            Assert.assertEquals(oldUserState.getXp(), newUserState.getXp());
             Assert.assertEquals(oldUserState.getCurrentAbstractLevel(), newUserState.getCurrentAbstractLevel());
             Assert.assertEquals(oldUserState.getCurrentAbstractLevel().getLevel(), newUserState.getCurrentAbstractLevel().getLevel());
-            verifyUserItemTypeAccess(oldUserState.getUserItemTypeAccess(), newUserState.getUserItemTypeAccess());
             if (oldUserState.getBase() != null) {
                 Assert.assertEquals(oldUserState.getBase().getSimpleBase(), newUserState.getBase().getSimpleBase());
             } else {
                 Assert.assertNull(newUserState.getBase());
             }
-        }
-    }
-
-    private void verifyUserItemTypeAccess(UserItemTypeAccess oldUserItemTypeAccess, UserItemTypeAccess newUserItemTypeAccess) {
-        if (oldUserItemTypeAccess != null && newUserItemTypeAccess == null) {
-            Assert.fail("UserItemTypeAccess do not match");
-        } else if (oldUserItemTypeAccess == null && newUserItemTypeAccess != null) {
-            Assert.fail("UserItemTypeAccess do not match");
-        } else if (newUserItemTypeAccess == null) {
-            return;
-        }
-
-        Assert.assertEquals(oldUserItemTypeAccess.getXp(), newUserItemTypeAccess.getXp());
-        Collection<DbMarketEntry> tmpNewDbMarketEntry = new ArrayList<DbMarketEntry>(newUserItemTypeAccess.getAllowedItemTypes());
-        for (DbMarketEntry dbMarketEntry : oldUserItemTypeAccess.getAllowedItemTypes()) {
-            if (!tmpNewDbMarketEntry.remove(dbMarketEntry)) {
-                Assert.fail("No DbMarketEntry in new UserItemTypeAccess found for: " + dbMarketEntry);
-            }
-        }
-        if (!tmpNewDbMarketEntry.isEmpty()) {
-            Assert.fail("DbMarketEntry do not match");
         }
     }
 

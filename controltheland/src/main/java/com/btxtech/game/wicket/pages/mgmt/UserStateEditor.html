@@ -13,7 +13,7 @@
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
 <head>
     <title>Online User State</title>
 </head>
@@ -40,19 +40,9 @@
         <tr>
             <td bgcolor="#dadada">XP</td>
             <td>
-                <input type="text" wicket:id="userItemTypeAccess.xp" size="4"/>
+                <input type="text" wicket:id="xp" size="4"/>
             </td>
         </tr>
-        <tr>
-            <td bgcolor="#dadada">Items Types</td>
-            <td>
-                <table border="1">
-                    <tr wicket:id="allowedItemTypes">
-                        <td wicket:id="itemType"/>
-                    </tr>
-                </table>
-            </td>
-        </tr>        
     </table>
     <br/>
     <br/>

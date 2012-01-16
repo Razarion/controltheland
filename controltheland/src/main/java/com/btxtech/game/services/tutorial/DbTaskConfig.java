@@ -223,7 +223,6 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
                 itemTypeAndPositions,
                 scroll,
                 stepConfigs,
-                convertAllowedItems(),
                 houseCount,
                 accountBalance,
                 finishImageDuration * 1000,
@@ -244,15 +243,6 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
             stepConfigCrudHelper = new CrudChildServiceHelper<DbStepConfig>(stepConfigs, DbStepConfig.class, this);
         }
         return stepConfigCrudHelper;
-    }
-
-
-    private Collection<Integer> convertAllowedItems() {
-        List<Integer> result = new ArrayList<Integer>();
-        for (DbTaskAllowedItem dbTaskAllowedItem : dbTaskAllowedItems) {
-            result.add(dbTaskAllowedItem.getDbBaseItemType().getId());
-        }
-        return result;
     }
 
     private Collection<BotConfig> convertTaskBots(ItemService itemService) {

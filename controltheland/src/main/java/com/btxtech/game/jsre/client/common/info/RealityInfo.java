@@ -25,8 +25,6 @@ import java.util.Collection;
 public class RealityInfo extends GameInfo {
     private SimpleBase base;
     private double accountBalance;
-    private int xp;
-    private Collection<Integer> allowedItemTypes;
     private int energyGenerating;
     private int energyConsuming;
     private Collection<BaseAttributes> allBases;
@@ -46,22 +44,6 @@ public class RealityInfo extends GameInfo {
 
     public void setAccountBalance(double accountBalance) {
         this.accountBalance = accountBalance;
-    }
-
-    public Collection<Integer> getAllowedItemTypes() {
-        return allowedItemTypes;
-    }
-
-    public void setAllowedItemTypes(Collection<Integer> allowedItemTypes) {
-        this.allowedItemTypes = allowedItemTypes;
-    }
-
-    public int getXp() {
-        return xp;
-    }
-
-    public void setXp(int xp) {
-        this.xp = xp;
     }
 
     public int getEnergyGenerating() {

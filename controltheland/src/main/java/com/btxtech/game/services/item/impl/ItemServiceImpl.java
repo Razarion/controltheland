@@ -55,7 +55,7 @@ import com.btxtech.game.services.item.itemType.DbItemTypeImageData;
 import com.btxtech.game.services.item.itemType.DbItemTypeSoundData;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
-import com.btxtech.game.services.market.ServerMarketService;
+import com.btxtech.game.services.utg.XpService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.resource.ResourceService;
 import com.btxtech.game.services.statistics.StatisticsService;
@@ -97,7 +97,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     @Autowired
     private BaseService baseService;
     @Autowired
-    private ServerMarketService serverMarketService;
+    private XpService xpService;
     @Autowired
     private ServerServices services;
     @Autowired
@@ -172,6 +172,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             syncItem.addSyncItemListener(baseService);
             actionService.interactionGuardingItems(syncBaseItem);
             statisticsService.onItemCreated(syncBaseItem);
+            xpService.onItemBuilt(syncBaseItem);
         }
 
         connectionService.sendSyncInfo(syncItem);
@@ -256,9 +257,8 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             if (actor != null) {
                 Base actorBase = baseService.getBase(actor);
                 statisticsService.onItemKilled((SyncBaseItem) killedItem, actorBase.getSimpleBase());
-                serverMarketService.increaseXp(actorBase, (SyncBaseItem) killedItem);
+                xpService.onItemKilled(actorBase, (SyncBaseItem) killedItem);
                 serverConditionService.onSyncItemKilled(actor, (SyncBaseItem) killedItem);
-
             }
             serverEnergyService.onBaseItemKilled((SyncBaseItem) killedItem);
             killContainedItems((SyncBaseItem) killedItem, actor);

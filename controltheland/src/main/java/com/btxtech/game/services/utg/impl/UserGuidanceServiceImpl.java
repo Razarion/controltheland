@@ -30,7 +30,7 @@ import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.market.ServerMarketService;
+import com.btxtech.game.services.utg.XpService;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.tutorial.TutorialService;
@@ -78,8 +78,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     @Autowired
     private ConnectionService connectionService;
     @Autowired
-    private ServerMarketService serverMarketService;
-    @Autowired
     private UserTrackingService userTrackingService;
     @Autowired
     private Session session;
@@ -90,7 +88,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     @Autowired
     private TutorialService tutorialService;
     @Autowired
-    private ServerMarketService marketService;
+    private XpService xpService;
     @Autowired
     private HistoryService historyService;
     @Autowired
@@ -237,7 +235,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
             baseService.sendAccountBaseUpdate(base.getSimpleBase());
         }
         if (dbRealGameLevel.getDeltaXp() != 0) {
-            marketService.increaseXp(base, dbRealGameLevel.getDeltaXp());
+            // TODO move to  TaskRewards xpService.onReward(base.getSimpleBase(), dbRealGameLevel.getDeltaXp());
         }
     }
 

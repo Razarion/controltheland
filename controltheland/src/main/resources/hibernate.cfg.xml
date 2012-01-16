@@ -54,10 +54,7 @@
         <mapping class="com.btxtech.game.services.item.itemType.DbItemContainerType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbHouseType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbLauncherType"/>
-        <mapping class="com.btxtech.game.services.market.DbMarketEntry"/>
-        <mapping class="com.btxtech.game.services.market.XpSettings"/>
-        <mapping class="com.btxtech.game.services.market.DbMarketCategory"/>
-        <mapping class="com.btxtech.game.services.market.DbMarketFunction"/>
+        <mapping class="com.btxtech.game.services.utg.DbXpSettings"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbPageAccess"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbSessionDetail"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbStartupTask"/>
@@ -108,7 +105,6 @@
         <mapping class="com.btxtech.game.services.mgmt.impl.GenericBaseItem"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.GenericResourceItem"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.GenericProjectileItem"/>
-        <mapping class="com.btxtech.game.services.mgmt.impl.DbUserItemTypeAccess"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.DbUserState"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.DbBase"/>
         <mapping class="com.btxtech.game.services.utg.condition.backup.DbCountComparisonBackup"/>

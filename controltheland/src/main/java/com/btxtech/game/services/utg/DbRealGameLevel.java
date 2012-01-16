@@ -64,6 +64,7 @@ public class DbRealGameLevel extends DbAbstractLevel implements CrudParent {
     private int deltaXp;
     // ----- Limitations -----
     private int maxMoney;
+    @Deprecated
     private int maxXp;
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "dbRealGameLevel", orphanRemoval = true)
     private Set<DbItemTypeLimitation> itemTypeLimitation;
@@ -176,10 +177,12 @@ public class DbRealGameLevel extends DbAbstractLevel implements CrudParent {
         this.maxMoney = maxMoney;
     }
 
+    @Deprecated
     public int getMaxXp() {
         return maxXp;
     }
 
+    @Deprecated
     public void setMaxXp(int maxXp) {
         this.maxXp = maxXp;
     }

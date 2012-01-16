@@ -20,7 +20,6 @@ import com.btxtech.game.jsre.common.gameengine.services.bot.CommonBotService;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService;
 import com.btxtech.game.jsre.common.gameengine.services.energy.EnergyService;
-import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccess;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
@@ -29,7 +28,6 @@ import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.energy.ServerEnergyService;
-import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -51,8 +49,6 @@ public class ServerServices implements Services {
     private com.btxtech.game.services.base.BaseService baseService;
     @Autowired
     private com.btxtech.game.services.connection.ConnectionService connectionService;
-    @Autowired
-    private ServerMarketService serverMarketService;
     @Autowired
     private ServerEnergyService serverEnergyService;
     @Autowired
@@ -84,11 +80,6 @@ public class ServerServices implements Services {
     @Override
     public ConnectionService getConnectionService() {
         return connectionService;
-    }
-
-    @Override
-    public ItemTypeAccess getItemTypeAccess() {
-        return serverMarketService;
     }
 
     @Override

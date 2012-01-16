@@ -32,7 +32,6 @@ public class TaskConfig implements Serializable {
     private Collection<ItemTypeAndPosition> ownItems;
     private Index scroll;
     private List<StepConfig> stepConfigs;
-    private Collection<Integer> allowedItemTypes;
     private int houseCount;
     private int accountBalance;
     private int finishImageDuration;
@@ -46,13 +45,12 @@ public class TaskConfig implements Serializable {
     public TaskConfig() {
     }
 
-    public TaskConfig(boolean clearGame, String taskText, ArrayList<ItemTypeAndPosition> ownItems, Index scroll, ArrayList<StepConfig> stepConfigs, Collection<Integer> allowedItemTypes, int houseCount, int accountBalance, int finishImageDuration, String name, Integer finishImageId, Collection<BotConfig> botConfigs) {
+    public TaskConfig(boolean clearGame, String taskText, ArrayList<ItemTypeAndPosition> ownItems, Index scroll, ArrayList<StepConfig> stepConfigs, int houseCount, int accountBalance, int finishImageDuration, String name, Integer finishImageId, Collection<BotConfig> botConfigs) {
         this.clearGame = clearGame;
         this.taskText = taskText;
         this.ownItems = ownItems;
         this.scroll = scroll;
         this.stepConfigs = stepConfigs;
-        this.allowedItemTypes = allowedItemTypes;
         this.houseCount = houseCount;
         this.accountBalance = accountBalance;
         this.finishImageDuration = finishImageDuration;
@@ -75,10 +73,6 @@ public class TaskConfig implements Serializable {
 
     public List<StepConfig> getStepConfigs() {
         return stepConfigs;
-    }
-
-    public Collection<Integer> getAllowedItemTypes() {
-        return allowedItemTypes;
     }
 
     public int getAccountBalance() {

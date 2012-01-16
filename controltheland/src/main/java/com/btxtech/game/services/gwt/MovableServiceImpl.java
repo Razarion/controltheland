@@ -41,7 +41,6 @@ import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.terrain.TerrainService;
@@ -76,8 +75,6 @@ public class MovableServiceImpl implements MovableService {
     private ItemService itemService;
     @Autowired
     private ConnectionService connectionService;
-    @Autowired
-    private ServerMarketService serverMarketService;
     @Autowired
     private ServerEnergyService serverEnergyService;
     @Autowired
@@ -163,8 +160,6 @@ public class MovableServiceImpl implements MovableService {
             setCommonInfo(realityInfo, userService, itemService, mgmtService, cmsUiService);
             realityInfo.setBase(baseService.getBase().getSimpleBase());
             realityInfo.setAccountBalance(baseService.getBase().getAccountBalance());
-            // realityInfo.setAllowedItemTypes(serverMarketService.getAllowedItemTypes());
-            realityInfo.setXp(serverMarketService.getXp());
             realityInfo.setEnergyConsuming(serverEnergyService.getConsuming());
             realityInfo.setEnergyGenerating(serverEnergyService.getGenerating());
             terrainService.setupTerrain(realityInfo, dbRealGameLevel);

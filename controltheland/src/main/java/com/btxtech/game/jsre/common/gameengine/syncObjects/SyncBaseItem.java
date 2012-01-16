@@ -388,9 +388,6 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
             if (getBaseItemType().getUpgradeable() == null) {
                 throw new IllegalArgumentException(this + " can not be upgraded");
             }
-            if (!getServices().getItemTypeAccess().isAllowed(getBaseItemType().getUpgradeable())) {
-                throw new IllegalArgumentException(this + " user is not allowed to upgrade to: " + getBaseItemType().getUpgradeable());
-            }
             BaseItemType tmpUpgradingItemType = (BaseItemType) getServices().getItemService().getItemType(getBaseItemType().getUpgradeable());
             getServices().getBaseService().withdrawalMoney(tmpUpgradingItemType.getPrice(), getBase());
             isUpgrading = true;

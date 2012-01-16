@@ -26,7 +26,6 @@ import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.Territory;
-import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
@@ -53,8 +52,6 @@ import com.btxtech.game.services.energy.impl.BaseEnergy;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.market.ServerMarketService;
-import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.UserService;
@@ -96,8 +93,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     private ConnectionService connectionService;
     @Autowired
     private UserService userService;
-    @Autowired
-    private ServerMarketService serverMarketService;
     @Autowired
     private ServerEnergyService serverEnergyService;
     @Autowired
@@ -334,13 +329,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         Base base = getBaseThrow(simpleBase);
         AccountBalancePacket packet = new AccountBalancePacket();
         packet.setAccountBalance(base.getAccountBalance());
-        connectionService.sendPacket(base.getSimpleBase(), packet);
-    }
-
-    @Override
-    public void sendXpUpdate(UserItemTypeAccess userItemTypeAccess, Base base) {
-        XpBalancePacket packet = new XpBalancePacket();
-        packet.setXp(userItemTypeAccess.getXp());
         connectionService.sendPacket(base.getSimpleBase(), packet);
     }
 

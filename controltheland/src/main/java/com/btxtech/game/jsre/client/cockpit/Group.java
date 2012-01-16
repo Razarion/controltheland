@@ -16,7 +16,6 @@ package com.btxtech.game.jsre.client.cockpit;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -222,7 +221,6 @@ public class Group {
         for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncBuilder()
                     && clientSyncItem.getSyncBaseItem().getSyncBuilder().getBuilderType().isAbleToBuild(tobeFinalized.getItemType().getId())
-                    && ClientItemTypeAccess.getInstance().isAllowed(tobeFinalized.getItemType().getId())
                     && ClientTerritoryService.getInstance().isAllowed(tobeFinalized.getSyncItemArea().getPosition(), tobeFinalized)
                     && ClientTerritoryService.getInstance().isAllowed(tobeFinalized.getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem())) {
                 return true;
