@@ -403,22 +403,6 @@ public class ItemContainer extends AbstractItemService {
 
     // TODO move up
 
-    public boolean hasOwnAttackingMovable() {
-        for (ClientSyncItem clientSyncItem : items.values()) {
-            if (clientSyncItem.isSyncBaseItem()
-                    && clientSyncItem.isMyOwnProperty()
-                    && !orphanItems.containsKey(clientSyncItem.getSyncItem().getId())
-                    && !seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId())
-                    && clientSyncItem.getSyncBaseItem().hasSyncWeapon()
-                    && clientSyncItem.getSyncBaseItem().hasSyncMovable()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // TODO move up
-
     @Override
     public List<? extends SyncItem> getItems(ItemType itemType, SimpleBase simpleBase) {
         ArrayList<SyncItem> syncItems = new ArrayList<SyncItem>();
