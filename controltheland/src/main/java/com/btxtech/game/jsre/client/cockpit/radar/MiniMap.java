@@ -97,6 +97,7 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
 
     protected void clear() {
         context2d.save();
+        context2d.setTransform(1, 0, 0, 1, 0, 0); // No transformation
         context2d.clearRect(0, 0, getWidth(), getHeight());
         context2d.restore();
     }

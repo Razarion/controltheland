@@ -110,7 +110,7 @@ public class Simulation implements ConditionServiceListener<Object>, ClientBase.
     }
 
     private void processPreparation(TaskConfig taskConfig) {
-        SideCockpit.getInstance().setRadarItems(); //todo
+        SideCockpit.getInstance().setRadarItems();
         ClientLevelHandler.getInstance().getLevel().setHouseSpace(taskConfig.getHouseCount());
         SideCockpit.getInstance().updateItemLimit();
 
