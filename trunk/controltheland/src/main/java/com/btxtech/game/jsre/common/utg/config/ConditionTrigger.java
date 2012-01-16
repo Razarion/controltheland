@@ -15,7 +15,6 @@ package com.btxtech.game.jsre.common.utg.config;
 
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
-import com.btxtech.game.jsre.common.utg.condition.CockpitButtonTrigger;
 import com.btxtech.game.jsre.common.utg.condition.ContainedInTrigger;
 import com.btxtech.game.jsre.common.utg.condition.PositionConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.SimpleConditionTrigger;
@@ -58,10 +57,12 @@ public enum ConditionTrigger {
         public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t) {
             return new SimpleConditionTrigger<T>(this, t);
         }},
+    @Deprecated
     COCKPIT_BUTTON_EVENT(true) {
         @Override
+        // TODO remove -> prevent DB migration
         public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t) {
-            return new CockpitButtonTrigger<T>(abstractComparison, t);
+            return null;
         }},
     MONEY_INCREASED(true) {
         @Override
@@ -73,7 +74,7 @@ public enum ConditionTrigger {
         public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t) {
             return new ValueConditionTrigger<T>(this, abstractComparison, t);
         }},
-    CONTAINED_IN(true) {
+    CONTAINED_IN(false) {
         @Override
         public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t) {
             return new ContainedInTrigger<T>(abstractComparison, t);

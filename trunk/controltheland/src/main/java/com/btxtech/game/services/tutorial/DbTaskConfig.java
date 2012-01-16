@@ -23,8 +23,6 @@ import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.db.IndexUserType;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
-import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
 import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Columns;
@@ -63,9 +61,6 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     private boolean clearGame;
     @OneToMany(mappedBy = "dbTaskConfig", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<DbItemTypeAndPosition> items;
-    private boolean isScrollingAllowed;
-    private boolean isSellingAllowed;
-    private boolean isOptionAllowed;
     @Type(type = "index")
     @Columns(columns = {@Column(name = "xScroll"), @Column(name = "yScroll")})
     private Index scroll;
@@ -138,14 +133,6 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         return clearGame;
     }
 
-    public boolean isScrollingAllowed() {
-        return isScrollingAllowed;
-    }
-
-    public void setScrollingAllowed(boolean scrollingAllowed) {
-        isScrollingAllowed = scrollingAllowed;
-    }
-
     public Index getScroll() {
         return scroll;
     }
@@ -160,16 +147,6 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
 
     public void setAccountBalance(int accountBalance) {
         this.accountBalance = accountBalance;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DbTaskConfig)) return false;
-
-        DbTaskConfig that = (DbTaskConfig) o;
-
-        return !(id != null ? !id.equals(that.id) : that.id != null);
     }
 
     public int getFinishImageDuration() {
@@ -204,22 +181,6 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         this.houseCount = houseCount;
     }
 
-    public boolean isSellingAllowed() {
-        return isSellingAllowed;
-    }
-
-    public void setSellingAllowed(boolean sellingAllowed) {
-        isSellingAllowed = sellingAllowed;
-    }
-
-    public boolean isOptionAllowed() {
-        return isOptionAllowed;
-    }
-
-    public void setOptionAllowed(boolean optionAllowed) {
-        isOptionAllowed = optionAllowed;
-    }
-
     public String getTaskText() {
         return taskText;
     }
@@ -229,14 +190,24 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     }
 
     @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DbTaskConfig)) return false;
+
+        DbTaskConfig that = (DbTaskConfig) o;
+
+        return id != null && id.equals(that.id);
     }
 
-    public TaskConfig createTaskConfig(ResourceHintManager resourceHintManager, ItemService itemService) {
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : System.identityHashCode(this);
+    }
+
+    public TaskConfig createTaskConfig(ItemService itemService) {
         ArrayList<StepConfig> stepConfigs = new ArrayList<StepConfig>();
         for (DbStepConfig dBstepConfig : this.stepConfigs) {
-            stepConfigs.add(dBstepConfig.createStepConfig(resourceHintManager, itemService));
+            stepConfigs.add(dBstepConfig.createStepConfig(itemService));
         }
 
         ArrayList<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<ItemTypeAndPosition>();
@@ -246,16 +217,10 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
                 itemTypeAndPositions.add(itemTypeAndPosition);
             }
         }
-        Integer finishImageId = null;
-        if (finishedImageContentType != null && finishImageData != null) {
-            finishImageId = resourceHintManager.addResource(DbResourceHintConfig.createImageOnly(finishedImageContentType, finishImageData));
-        }
+        Integer finishImageId = 42; // TODO
         return new TaskConfig(clearGame,
                 taskText,
                 itemTypeAndPositions,
-                isScrollingAllowed,
-                isSellingAllowed,
-                isOptionAllowed,
                 scroll,
                 stepConfigs,
                 convertAllowedItems(),

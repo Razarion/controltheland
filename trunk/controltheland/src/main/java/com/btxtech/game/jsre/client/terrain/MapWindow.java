@@ -51,7 +51,6 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler {
     private static final MapWindow INSTANCE = new MapWindow();
     private ExtendedAbsolutePanel mapWindow;
     private TerrainMouseMoveListener terrainMouseMoveListener;
-    private boolean scrollingAllowed = true;
     private boolean isTrackingEvents = false;
     private Collection<Widget> scrollAbleWidget = new ArrayList<Widget>();
 
@@ -95,7 +94,7 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler {
     }
 
     private void handlePreviewNativeEvent(Event.NativePreviewEvent event) {
-        if (event.getTypeInt() == Event.ONKEYDOWN && scrollingAllowed) {
+        if (event.getTypeInt() == Event.ONKEYDOWN) {
             switch (event.getNativeEvent().getKeyCode()) {
                 case KeyCodes.KEY_LEFT: {
                     TerrainView.getInstance().moveDelta(-SCROLL_DISTANCE_KEY, 0);
@@ -209,10 +208,5 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler {
             clientSyncItemView.setPosition();
         }
     }
-
-    public void setScrollingAllowed(boolean scrollingAllowed) {
-        this.scrollingAllowed = scrollingAllowed;
-    }
-
 
 }

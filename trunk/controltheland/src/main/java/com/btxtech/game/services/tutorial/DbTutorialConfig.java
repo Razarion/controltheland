@@ -22,7 +22,6 @@ import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
-import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
 import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
 
@@ -180,7 +179,7 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
         this.showWindowTooSmall = showWindowTooSmall;
     }
 
-    public TutorialConfig createTutorialConfig(ResourceHintManager resourceHintManager, ItemService itemService) {
+    public TutorialConfig createTutorialConfig(ItemService itemService) {
         ArrayList<BaseAttributes> baseAttributes = new ArrayList<BaseAttributes>();
         SimpleBase ownBase = new SimpleBase(ownBaseId);
         baseAttributes.add(new BaseAttributes(ownBase, ownBaseName, false));
@@ -188,7 +187,7 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
 
         ArrayList<TaskConfig> taskConfigs = new ArrayList<TaskConfig>();
         for (DbTaskConfig dbTaskConfig : dbTaskConfigs) {
-            taskConfigs.add(dbTaskConfig.createTaskConfig(resourceHintManager, itemService));
+            taskConfigs.add(dbTaskConfig.createTaskConfig(itemService));
         }
 
         return new TutorialConfig(taskConfigs, ownBase, width, height, baseAttributes, failOnOwnItemsLost, failOnMoneyBelowAndNoAttackUnits, tracking, showWindowTooSmall);

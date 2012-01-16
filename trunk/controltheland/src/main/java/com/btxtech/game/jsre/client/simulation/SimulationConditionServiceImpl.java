@@ -29,7 +29,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
  * Date: 28.12.2010
  * Time: 13:09:19
  */
-public class SimulationConditionServiceImpl extends ConditionServiceImpl<Object> implements SelectionListener, TerrainScrollListener, ClickHandler {
+public class SimulationConditionServiceImpl extends ConditionServiceImpl<Object> implements SelectionListener, TerrainScrollListener {
     private static final SimulationConditionServiceImpl INSTANCE = new SimulationConditionServiceImpl();
     private AbstractConditionTrigger<Object> abstractConditionTrigger;
 

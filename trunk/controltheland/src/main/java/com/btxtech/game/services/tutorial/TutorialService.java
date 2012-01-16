@@ -15,7 +15,6 @@ package com.btxtech.game.services.tutorial;
 
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
-import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
 import com.btxtech.game.services.utg.DbSimulationLevel;
 
 /**
@@ -29,6 +28,4 @@ public interface TutorialService {
     void activate();
 
     TutorialConfig getTutorialConfig(DbSimulationLevel dbSimulationLevel);
-
-    DbResourceHintConfig getDbResourceHintConfig(int id);
 }

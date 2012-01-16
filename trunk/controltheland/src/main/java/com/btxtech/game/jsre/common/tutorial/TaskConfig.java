@@ -30,12 +30,6 @@ public class TaskConfig implements Serializable {
     private boolean clearGame;
     private String taskText;
     private Collection<ItemTypeAndPosition> ownItems;
-    @Deprecated
-    private boolean isScrollingAllowed;
-    @Deprecated
-    private boolean sellingAllowed;
-    @Deprecated
-    private boolean optionAllowed;
     private Index scroll;
     private List<StepConfig> stepConfigs;
     private Collection<Integer> allowedItemTypes;
@@ -52,13 +46,10 @@ public class TaskConfig implements Serializable {
     public TaskConfig() {
     }
 
-    public TaskConfig(boolean clearGame, String taskText, ArrayList<ItemTypeAndPosition> ownItems, boolean scrollingAllowed, boolean sellingAllowed, boolean optionAllowed, Index scroll, ArrayList<StepConfig> stepConfigs, Collection<Integer> allowedItemTypes, int houseCount, int accountBalance, int finishImageDuration, String name, Integer finishImageId, Collection<BotConfig> botConfigs) {
+    public TaskConfig(boolean clearGame, String taskText, ArrayList<ItemTypeAndPosition> ownItems, Index scroll, ArrayList<StepConfig> stepConfigs, Collection<Integer> allowedItemTypes, int houseCount, int accountBalance, int finishImageDuration, String name, Integer finishImageId, Collection<BotConfig> botConfigs) {
         this.clearGame = clearGame;
         this.taskText = taskText;
         this.ownItems = ownItems;
-        isScrollingAllowed = scrollingAllowed;
-        this.sellingAllowed = sellingAllowed;
-        this.optionAllowed = optionAllowed;
         this.scroll = scroll;
         this.stepConfigs = stepConfigs;
         this.allowedItemTypes = allowedItemTypes;
@@ -76,10 +67,6 @@ public class TaskConfig implements Serializable {
 
     public Collection<ItemTypeAndPosition> getOwnItems() {
         return ownItems;
-    }
-
-    public boolean isScrollingAllowed() {
-        return isScrollingAllowed;
     }
 
     public Index getScroll() {
@@ -108,14 +95,6 @@ public class TaskConfig implements Serializable {
 
     public Integer getFinishImageId() {
         return finishImageId;
-    }
-
-    public boolean isSellingAllowed() {
-        return sellingAllowed;
-    }
-
-    public boolean isOptionAllowed() {
-        return optionAllowed;
     }
 
     public int getHouseCount() {

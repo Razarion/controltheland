@@ -35,6 +35,7 @@ import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.EnergyPacket;
+import com.btxtech.game.jsre.common.HouseSpacePacket;
 import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
@@ -45,7 +46,6 @@ import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeA
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
-import com.btxtech.game.jsre.common.tutorial.HouseSpacePacket;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;

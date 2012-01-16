@@ -13,22 +13,21 @@
 
 package com.btxtech.game.services.tutorial;
 
-import com.btxtech.game.jsre.common.tutorial.HintConfig;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
 import com.btxtech.game.services.common.CrudChild;
-import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.tutorial.hint.DbHintConfig;
-import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
-import org.hibernate.annotations.Cascade;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 /**
  * User: beat
@@ -46,12 +45,6 @@ public class DbStepConfig implements CrudParent, CrudChild<DbTaskConfig> {
     private DbTaskConfig dbTaskConfig;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbConditionConfig conditionConfig;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "dbStepConfig", nullable = false)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    private Set<DbHintConfig> dbHintConfigs;
-    @Transient
-    private CrudChildServiceHelper<DbHintConfig> hintConfigCrudHelper;
 
     public Integer getId() {
         return id;
@@ -69,7 +62,6 @@ public class DbStepConfig implements CrudParent, CrudChild<DbTaskConfig> {
 
     @Override
     public void init(UserService userService) {
-        dbHintConfigs = new HashSet<DbHintConfig>();
     }
 
     @Override
@@ -85,14 +77,6 @@ public class DbStepConfig implements CrudParent, CrudChild<DbTaskConfig> {
         this.conditionConfig = conditionConfig;
     }
 
-    public CrudChildServiceHelper<DbHintConfig> getHintConfigCrudServiceHelper() {
-        if (hintConfigCrudHelper == null) {
-            hintConfigCrudHelper = new CrudChildServiceHelper<DbHintConfig>(dbHintConfigs, DbHintConfig.class, this);
-        }
-        return hintConfigCrudHelper;
-    }
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -100,12 +84,12 @@ public class DbStepConfig implements CrudParent, CrudChild<DbTaskConfig> {
 
         DbStepConfig that = (DbStepConfig) o;
 
-        return !(id != null ? !id.equals(that.id) : that.id != null);
+        return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 
     @Override
@@ -113,17 +97,10 @@ public class DbStepConfig implements CrudParent, CrudChild<DbTaskConfig> {
         return "DbStepConfig: '" + name + "' id: " + id;
     }
 
-    public StepConfig createStepConfig(ResourceHintManager resourceHintManager, ItemService itemService) {
+    public StepConfig createStepConfig(ItemService itemService) {
         if (conditionConfig == null) {
             throw new IllegalStateException("No condition set in step: " + this);
         }
-        ArrayList<HintConfig> hintConfigs = new ArrayList<HintConfig>();
-        for (DbHintConfig dbHintConfig : dbHintConfigs) {
-            HintConfig hintConfig = dbHintConfig.createHintConfig(resourceHintManager, itemService);
-            if (hintConfig != null) {
-                hintConfigs.add(hintConfig);
-            }
-        }
-        return new StepConfig(conditionConfig.createConditionConfig(itemService), hintConfigs, name);
+        return new StepConfig(conditionConfig.createConditionConfig(itemService), name);
     }
 }
