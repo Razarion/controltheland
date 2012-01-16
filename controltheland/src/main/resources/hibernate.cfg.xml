@@ -83,7 +83,6 @@
         <mapping class="com.btxtech.game.services.utg.condition.DbCountComparisonConfig"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbSyncItemIdComparisonConfig"/>
-        <mapping class="com.btxtech.game.services.utg.condition.DbCockpitButtonClickedComparisonConfig"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbSyncItemIdPositionComparisonConfig"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbContainedInComparisonConfig"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig"/>
@@ -103,11 +102,6 @@
         <mapping class="com.btxtech.game.services.tutorial.DbTaskAllowedItem"/>
         <mapping class="com.btxtech.game.services.tutorial.DbItemTypeAndPosition"/>
         <mapping class="com.btxtech.game.services.tutorial.DbStepConfig"/>
-        <mapping class="com.btxtech.game.services.tutorial.hint.DbItemSpeechBubbleHintConfig"/>
-        <mapping class="com.btxtech.game.services.tutorial.hint.DbItemTypeSpeechBubbleHintConfig"/>
-        <mapping class="com.btxtech.game.services.tutorial.hint.DbResourceHintConfig"/>
-        <mapping class="com.btxtech.game.services.tutorial.hint.DbTerrainPositionSpeechBubbleHintConfig"/>
-        <mapping class="com.btxtech.game.services.tutorial.hint.DbCockpitSpeechBubbleHintConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.DbTaskBot"/>
         <!-- Backup -->
         <mapping class="com.btxtech.game.services.mgmt.impl.BackupEntry"/>

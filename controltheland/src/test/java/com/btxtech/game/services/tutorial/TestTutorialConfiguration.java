@@ -6,7 +6,6 @@ import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,9 +103,6 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         dbTaskConfig.setName("name1");
         dbTaskConfig.setClearGame(true);
         dbTaskConfig.setScroll(new Index(1, 2));
-        dbTaskConfig.setOptionAllowed(true);
-        dbTaskConfig.setScrollingAllowed(true);
-        dbTaskConfig.setSellingAllowed(true);
         dbTaskConfig.setFinishImageDuration(500);
         dbTaskConfig.setFinishImageData(new byte[]{1, 2, 3, 4});
         dbTaskConfig.setHouseCount(5);
@@ -122,9 +118,6 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         dbTaskConfig.setName("name1");
         dbTaskConfig.setClearGame(true);
         dbTaskConfig.setScroll(new Index(1, 2));
-        dbTaskConfig.setOptionAllowed(true);
-        dbTaskConfig.setScrollingAllowed(true);
-        dbTaskConfig.setSellingAllowed(true);
         dbTaskConfig.setFinishImageDuration(500);
         dbTaskConfig.setFinishImageData(new byte[]{1, 2, 3, 4});
         dbTaskConfig.setHouseCount(5);
@@ -140,9 +133,6 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         Assert.assertEquals("name1", dbTaskConfig.getName());
         Assert.assertTrue(dbTaskConfig.isClearGame());
         Assert.assertEquals(new Index(1, 2), dbTaskConfig.getScroll());
-        Assert.assertTrue(dbTaskConfig.isOptionAllowed());
-        Assert.assertTrue(dbTaskConfig.isScrollingAllowed());
-        Assert.assertTrue(dbTaskConfig.isSellingAllowed());
         Assert.assertEquals(500, dbTaskConfig.getFinishImageDuration());
         Assert.assertArrayEquals(new byte[]{1, 2, 3, 4}, dbTaskConfig.getFinishImageData());
         Assert.assertEquals(5, dbTaskConfig.getHouseCount());
@@ -166,30 +156,7 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        dbStepConfig = ruStepServiceHelper.readDbChild(dbStepConfig.getId(), DbStepConfig.class);
-        DbResourceHintConfig dbResourceHintConfig = (DbResourceHintConfig) dbStepConfig.getHintConfigCrudServiceHelper().createDbChild(DbResourceHintConfig.class);
-        ruStepServiceHelper.updateDbEntity(dbStepConfig);
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbStepConfig = ruStepServiceHelper.readDbChild(dbStepConfig.getId(), DbStepConfig.class);
-        dbResourceHintConfig = (DbResourceHintConfig) dbStepConfig.getHintConfigCrudServiceHelper().readDbChild(dbResourceHintConfig.getId());
-        dbResourceHintConfig.setCloseOnTaskEnd(false);
-        dbResourceHintConfig.setName("test1");
-        dbResourceHintConfig.setContentType("test2");
-        dbResourceHintConfig.setData(new byte[]{4, 3, 2, 1});
-        dbResourceHintConfig.setPosition(new Index(9,7));
-        ruStepServiceHelper.updateDbEntity(dbStepConfig);
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbStepConfig = ruStepServiceHelper.readDbChild(dbStepConfig.getId(), DbStepConfig.class);
-        dbResourceHintConfig = (DbResourceHintConfig) dbStepConfig.getHintConfigCrudServiceHelper().readDbChild(dbResourceHintConfig.getId());
-        Assert.assertFalse(dbResourceHintConfig.isCloseOnTaskEnd());
-        Assert.assertEquals("test1", dbResourceHintConfig.getName());
-        Assert.assertEquals("test2", dbResourceHintConfig.getContentType());
-        Assert.assertArrayEquals(new byte[]{4, 3, 2, 1}, dbResourceHintConfig.getData());
-        Assert.assertEquals(new Index(9,7), dbResourceHintConfig.getPosition());
+        ruStepServiceHelper.readDbChild(dbStepConfig.getId(), DbStepConfig.class);
         endHttpRequestAndOpenSessionInViewFilter();
 
         endHttpSession();

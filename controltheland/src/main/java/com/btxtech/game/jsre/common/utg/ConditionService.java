@@ -38,8 +38,6 @@ public interface ConditionService<T> {
 
     void onScroll(int left, int top, int width, int height, int deltaLeft, int deltaTop);
 
-    void onClick(ClickEvent event);
-
     void onIncreaseXp(SimpleBase base, int xp);
 
     void onSyncItemKilled(SimpleBase actor, SyncBaseItem killedItem);

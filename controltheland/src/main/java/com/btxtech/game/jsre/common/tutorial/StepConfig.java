@@ -23,7 +23,6 @@ import java.util.Collection;
  * Time: 15:11:11
  */
 public class StepConfig implements Serializable {
-    private Collection<HintConfig> hintConfigs;
     private String name;
     private ConditionConfig conditionConfig;
 
@@ -33,14 +32,9 @@ public class StepConfig implements Serializable {
     public StepConfig() {
     }
 
-    public StepConfig(ConditionConfig conditionConfig, Collection<HintConfig> hintConfigs, String name) {
+    public StepConfig(ConditionConfig conditionConfig, String name) {
         this.conditionConfig = conditionConfig;
-        this.hintConfigs = hintConfigs;
         this.name = name;
-    }
-
-    public Collection<HintConfig> getGraphicHintConfigs() {
-        return hintConfigs;
     }
 
     public String getName() {

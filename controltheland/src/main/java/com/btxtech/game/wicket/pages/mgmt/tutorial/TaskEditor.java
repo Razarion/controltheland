@@ -68,9 +68,6 @@ public class TaskEditor extends MgmtWebPage {
 
         form.add(new CheckBox("clearGame"));
         form.add(new TextField<String>("taskText"));
-        form.add(new CheckBox("isScrollingAllowed"));
-        form.add(new CheckBox("isOptionAllowed"));
-        form.add(new CheckBox("isSellingAllowed"));
         form.add(new IndexPanel("scroll"));
         form.add(new TextField("accountBalance"));
         form.add(new TextField("houseCount"));

@@ -36,9 +36,5 @@ public class RunRealGameStartupTask extends AbstractStartupTask {
         RegisterDialog.showDialogRepeating();
         MapWindow.getInstance().displayVisibleItems();
         SideCockpit.getInstance().updateItemLimit();
-        MapWindow.getInstance().setScrollingAllowed(true);
-        // TODO set enable or disable CockpitWidgetEnum.SCROLL_HOME_BUTTON
-        // TODO set enable or disable CockpitWidgetEnum.OPTION_BUTTON
-        // TODO set enable or disable CockpitWidgetEnum.SELL_BUTTON
     }
 }

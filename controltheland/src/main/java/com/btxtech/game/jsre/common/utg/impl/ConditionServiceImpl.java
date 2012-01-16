@@ -25,7 +25,6 @@ import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.AbstractSyncItemComparison;
-import com.btxtech.game.jsre.common.utg.condition.CockpitButtonTrigger;
 import com.btxtech.game.jsre.common.utg.condition.ContainedInTrigger;
 import com.btxtech.game.jsre.common.utg.condition.PositionConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.SimpleConditionTrigger;
@@ -158,19 +157,6 @@ public abstract class ConditionServiceImpl<T> implements ConditionService<T> {
         position = position.add(width / 2, height / 2);
         triggerPosition(ConditionTrigger.SCROLL_TO_POSITION, position);
     }
-
-    @Override
-    public void onClick(ClickEvent event) {
-        CockpitButtonTrigger<T> cockpitButtonTrigger = getAbstractCondition(null, ConditionTrigger.COCKPIT_BUTTON_EVENT);
-        if (cockpitButtonTrigger == null) {
-            return;
-        }
-        cockpitButtonTrigger.onClick(event);
-        if (cockpitButtonTrigger.isFulfilled()) {
-            conditionPassed(cockpitButtonTrigger.getUserObject());
-        }
-    }
-
 
     public void onContainedInChanged(boolean containedIn) {
         ContainedInTrigger<T> containedInTrigger = getAbstractCondition(null, ConditionTrigger.CONTAINED_IN);

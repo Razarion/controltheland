@@ -15,14 +15,10 @@ package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
-import com.btxtech.game.jsre.client.simulation.hint.Hint;
-import com.btxtech.game.jsre.client.simulation.hint.HintFactory;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
-import com.btxtech.game.jsre.common.tutorial.HintConfig;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
-import java.util.ArrayList;
-import java.util.Collection;
+
 import java.util.List;
 
 /**
@@ -33,8 +29,6 @@ import java.util.List;
 public class Task {
     private TaskConfig taskConfig;
     private Step activeStep;
-    private Collection<Hint> stepGraphicHints = new ArrayList<Hint>();
-    private Collection<Hint> taskGraphicHints = new ArrayList<Hint>();
     private long stepTime;
 
     public Task(TaskConfig taskConfig) {
@@ -53,7 +47,6 @@ public class Task {
     }
 
     public void runNextStep() {
-        disposeAllStepHints();
         StepConfig stepConfig;
         List<StepConfig> stepConfigs = taskConfig.getStepConfigs();
         if (stepConfigs.isEmpty()) {
@@ -81,29 +74,7 @@ public class Task {
             ClientUserTracker.getInstance().onStepFinished(activeStep, this, time - stepTime, time);
         }
         stepTime = System.currentTimeMillis();
-        for (HintConfig hintConfig : stepConfig.getGraphicHintConfigs()) {
-            Hint hint = HintFactory.createHint(hintConfig);
-            if (hintConfig.isCloseOnTaskEnd()) {
-                taskGraphicHints.add(hint);
-            } else {
-                stepGraphicHints.add(hint);
-            }
-        }
         activeStep = new Step(stepConfig);
-    }
-
-    private void disposeAllStepHints() {
-        for (Hint stepGraphicHint : stepGraphicHints) {
-            stepGraphicHint.dispose();
-        }
-        stepGraphicHints.clear();
-    }
-
-    private void disposeAllTaskHints() {
-        for (Hint stepGraphicHint : taskGraphicHints) {
-            stepGraphicHint.dispose();
-        }
-        taskGraphicHints.clear();
     }
 
     public boolean isFulfilled() {
@@ -111,8 +82,6 @@ public class Task {
     }
 
     public void cleanup() {
-        disposeAllTaskHints();
-        disposeAllStepHints();
         activeStep = null;
     }
 }

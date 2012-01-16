@@ -111,10 +111,6 @@ public class Simulation implements ConditionServiceListener<Object>, ClientBase.
 
     private void processPreparation(TaskConfig taskConfig) {
         SideCockpit.getInstance().setRadarItems(); //todo
-        MapWindow.getInstance().setScrollingAllowed(taskConfig.isScrollingAllowed());
-        // TODO set enable or disable CockpitWidgetEnum.SCROLL_HOME_BUTTON, taskConfig.isScrollingAllowed());
-        // TODO set enable or disable CockpitWidgetEnum.OPTION_BUTTON, taskConfig.isOptionAllowed());
-        // TODO set enable or disable CockpitWidgetEnum.SELL_BUTTON, taskConfig.isSellingAllowed());
         ClientLevelHandler.getInstance().getLevel().setHouseSpace(taskConfig.getHouseCount());
         SideCockpit.getInstance().updateItemLimit();
 

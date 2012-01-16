@@ -15,7 +15,6 @@ package com.btxtech.game.wicket.pages.mgmt.condition;
 
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
-import com.btxtech.game.services.utg.condition.DbCockpitButtonClickedComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbContainedInComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
@@ -44,7 +43,6 @@ public class ComparisonFactory {
         SYNC_ITEM_DEACTIVATE(ConditionTrigger.SYNC_ITEM_DEACTIVATE, DbSyncItemIdPositionComparisonConfig.class, DbItemTypePositionComparisonConfig.class),
         SYNC_ITEM_BUILT(ConditionTrigger.SYNC_ITEM_BUILT, DbSyncItemTypeComparisonConfig.class, DbSyncItemIdComparisonConfig.class, DbCountComparisonConfig.class),
         SCROLL(ConditionTrigger.SCROLL),
-        COCKPIT_BUTTON_EVENT(ConditionTrigger.COCKPIT_BUTTON_EVENT, DbCockpitButtonClickedComparisonConfig.class),
         MONEY_INCREASED(ConditionTrigger.MONEY_INCREASED, DbCountComparisonConfig.class),
         XP_INCREASED(ConditionTrigger.XP_INCREASED, DbCountComparisonConfig.class),
         CONTAINED_IN(ConditionTrigger.CONTAINED_IN, DbContainedInComparisonConfig.class),
@@ -82,8 +80,6 @@ public class ComparisonFactory {
             DbAbstractComparisonConfig config = dbConditionConfig.getDbAbstractComparisonConfig();
             if (config instanceof DbSyncItemTypeComparisonConfig) {
                 return new SyncItemTypeComparisonConfigPanel(id);
-            } else if (config instanceof DbCockpitButtonClickedComparisonConfig) {
-                return new CockpitButtonClickedComparisonConfigPanel(id);
             } else if (config instanceof DbSyncItemIdComparisonConfig) {
                 return new SyncItemIdComparisonConfigPanel(id);
             } else if (config instanceof DbSyncItemIdPositionComparisonConfig) {

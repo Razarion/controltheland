@@ -13,16 +13,7 @@
 
 package com.btxtech.game.jsre.client.simulation;
 
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
-import com.btxtech.game.jsre.common.utg.condition.CockpitButtonClickedComparison;
-import com.btxtech.game.jsre.common.utg.config.CockpitButtonClickedComparisonConfig;
-import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
-import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
-import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
-import com.btxtech.game.jsre.common.utg.config.SyncItemIdComparisonConfig;
-import com.btxtech.game.jsre.common.utg.config.SyncItemIdPositionComparisonConfig;
-import java.util.ArrayList;
 
 /**
  * User: beat
