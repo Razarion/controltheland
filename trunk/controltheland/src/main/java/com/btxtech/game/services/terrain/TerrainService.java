@@ -19,7 +19,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
-import com.btxtech.game.services.utg.DbAbstractLevel;
+import com.btxtech.game.services.tutorial.DbTutorialConfig;
 
 import java.util.Collection;
 import java.util.List;
@@ -42,7 +42,9 @@ public interface TerrainService extends AbstractTerrainService {
 
     void saveTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int terrainId);
 
-    void setupTerrain(GameInfo gameInfo, DbAbstractLevel dbAbstractLevel);
+    void setupTerrainRealGame(GameInfo gameInfo);
+
+    void setupTerrainTutorial(GameInfo gameInfo, DbTutorialConfig dbTutorialConfig);
 
     void saveDbTerrainSetting(List<DbTerrainSetting> dbTerrainSettings);
 

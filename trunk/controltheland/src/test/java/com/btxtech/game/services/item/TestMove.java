@@ -36,7 +36,7 @@ public class TestMove extends AbstractServiceTest {
     private ItemService itemService;
 
     private SyncBaseItem createSyncBaseItem() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         // Mock
         ItemService itemServiceMock = EasyMock.createNiceMock(ItemService.class);

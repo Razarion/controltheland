@@ -37,7 +37,6 @@ public class InitStartupTask extends GameEngineStartupTask {
         PlaybackVisualisation.getInstance().init(playbackInfo);
         MapWindow.getAbsolutePanel().getElement().getStyle().setZIndex(1);
         MapWindow.getAbsolutePanel().setPixelSize(playbackInfo.getEventTrackingStart().getScrollWidth(), playbackInfo.getEventTrackingStart().getScrollHeight());
-        ClientBase.getInstance().setAllBaseAttributes(playbackInfo.getTutorialConfig().getBaseAttributes());
         setupGameStructure(playbackInfo);
     }
 }

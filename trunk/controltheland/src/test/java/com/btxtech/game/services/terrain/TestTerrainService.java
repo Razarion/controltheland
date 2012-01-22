@@ -24,7 +24,7 @@ public class TestTerrainService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testIsFreeSimple() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         Collection<SurfaceType> allowedSurfaces = Arrays.asList(SurfaceType.LAND);
 
@@ -40,7 +40,7 @@ public class TestTerrainService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testIsFreeXCount() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         Collection<SurfaceType> allowedSurfaces = Arrays.asList(SurfaceType.LAND);
 
@@ -55,7 +55,7 @@ public class TestTerrainService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testIsFreeYCount() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         Collection<SurfaceType> allowedSurfaces = Arrays.asList(SurfaceType.LAND);
 

@@ -270,149 +270,151 @@ public class TestTracking extends AbstractServiceTest {
     }
 
     private void tutorial1() throws Exception {
-        // 0 until 1550 (client time )
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess("Page 1", null);
-        userTrackingService.onJavaScriptDetected(true);
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        List<StartupTaskInfo> infos = new ArrayList<StartupTaskInfo>();
-        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_JAVA_SCRIPT, 1000, 100));
-        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GAME, 1100, 150));
-        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GUI, 1250, 50));
-        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_MAP, 1300, 200));
-        movableService.sendStartupInfo(infos, 500);
-        userTrackingService.onJavaScriptDetected(true);
-        endHttpRequestAndOpenSessionInViewFilter();
-
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.onTutorialProgressChanged(TutorialConfig.TYPE.STEP, "step1", "task1", 1, 1100);
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.onTutorialProgressChanged(TutorialConfig.TYPE.TASK, "task1", "Tutorial1", 1, 1500);
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        // Tracking start
-        userTrackingService.onEventTrackingStart(new EventTrackingStart(101, 102, 103, 104, 105, 106, 1200));
-        // Mouse
-        Collection<EventTrackingItem> eventTrackingItems = new ArrayList<EventTrackingItem>();
-        eventTrackingItems.add(new EventTrackingItem(1, 1, 1, 1000));
-        eventTrackingItems.add(new EventTrackingItem(1, 10, 2, 1100));
-        eventTrackingItems.add(new EventTrackingItem(1, 10, 3, 1200));
-        eventTrackingItems.add(new EventTrackingItem(1, 10, 4, 1300));
-        eventTrackingItems.add(new EventTrackingItem(1, 10, 5, 1400));
-        // SyncItemInfo                                                                     1
-        Collection<SyncItemInfo> itemInfos = new ArrayList<SyncItemInfo>();
-        SyncItemInfo syncItemInfo = new SyncItemInfo();
-        syncItemInfo.setAmount(0.5);
-        syncItemInfo.setId(new Id(1, 1, 1));
-        setPrivateField(SyncItemInfo.class, syncItemInfo, "clientTimeStamp", 1200L);
-        itemInfos.add(syncItemInfo);
-        // Selection
-        Collection<SelectionTrackingItem> selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
-        SelectionTrackingItem selectionTrackingItem = new SelectionTrackingItem();
-        setPrivateField(SelectionTrackingItem.class, selectionTrackingItem, "timeStamp", 1300);
-        selectionTrackingItems.add(selectionTrackingItem);
-        // Terrain scrolling
-        Collection<TerrainScrollTracking> terrainScrollTrackings = new ArrayList<TerrainScrollTracking>();
-        terrainScrollTrackings.add(new TerrainScrollTracking(2, 1, 2, 3, 1100));
-        terrainScrollTrackings.add(new TerrainScrollTracking(3, 1, 2, 3, 1150));
-        terrainScrollTrackings.add(new TerrainScrollTracking(1, 1, 2, 3, 1050));
-        // Browser window
-        Collection<BrowserWindowTracking> browserWindowTrackings = new ArrayList<BrowserWindowTracking>();
-        browserWindowTrackings.add(new BrowserWindowTracking(1, 2, 3, 4, 5, 6, 1100));
-        browserWindowTrackings.add(new BrowserWindowTracking(2, 2, 3, 4, 5, 6, 1200));
-        browserWindowTrackings.add(new BrowserWindowTracking(3, 2, 3, 4, 5, 6, 1300));
-        browserWindowTrackings.add(new BrowserWindowTracking(4, 2, 3, 4, 5, 6, 1400));
-        // Dialogs
-        Collection<DialogTracking> dialogTrackings = new ArrayList<DialogTracking>();
-        dialogTrackings.add(new DialogTracking(1, 2, 3, 4, 1, "dialog1", false, 42, 1100));
-        dialogTrackings.add(new DialogTracking(5, 6, 7, 8, 2, "dialog2", false, 43, 1120));
-        dialogTrackings.add(new DialogTracking(null, null, null, null, null, "dialog3", false, 44, 1140));
-
-        movableService.sendEventTrackerItems(eventTrackingItems, itemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings, dialogTrackings);
-        userTrackingService.onTutorialProgressChanged(TutorialConfig.TYPE.TASK, "tutorial1", null, 1, 1550);
-        endHttpRequestAndOpenSessionInViewFilter();
+        Assert.fail();
+//        // 0 until 1550 (client time )
+//        beginHttpRequestAndOpenSessionInViewFilter();
+//        userTrackingService.pageAccess("Page 1", null);
+//        userTrackingService.onJavaScriptDetected(true);
+//        endHttpRequestAndOpenSessionInViewFilter();
+//
+//        beginHttpRequestAndOpenSessionInViewFilter();
+//        List<StartupTaskInfo> infos = new ArrayList<StartupTaskInfo>();
+//        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_JAVA_SCRIPT, 1000, 100));
+//        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GAME, 1100, 150));
+//        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GUI, 1250, 50));
+//        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_MAP, 1300, 200));
+//        movableService.sendStartupInfo(infos, 500);
+//        userTrackingService.onJavaScriptDetected(true);
+//        endHttpRequestAndOpenSessionInViewFilter();
+//
+//
+//        beginHttpRequestAndOpenSessionInViewFilter();
+//        userTrackingService.onTutorialProgressChanged(TutorialConfig.TYPE.STEP, "step1", "task1", 1, 1100);
+//        endHttpRequestAndOpenSessionInViewFilter();
+//
+//        beginHttpRequestAndOpenSessionInViewFilter();
+//        userTrackingService.onTutorialProgressChanged(TutorialConfig.TYPE.TASK, "task1", "Tutorial1", 1, 1500);
+//        endHttpRequestAndOpenSessionInViewFilter();
+//
+//        beginHttpRequestAndOpenSessionInViewFilter();
+//
+//        // Tracking start
+//        userTrackingService.onEventTrackingStart(new EventTrackingStart(101, 102, 103, 104, 105, 106, 1200));
+//        // Mouse
+//        Collection<EventTrackingItem> eventTrackingItems = new ArrayList<EventTrackingItem>();
+//        eventTrackingItems.add(new EventTrackingItem(1, 1, 1, 1000));
+//        eventTrackingItems.add(new EventTrackingItem(1, 10, 2, 1100));
+//        eventTrackingItems.add(new EventTrackingItem(1, 10, 3, 1200));
+//        eventTrackingItems.add(new EventTrackingItem(1, 10, 4, 1300));
+//        eventTrackingItems.add(new EventTrackingItem(1, 10, 5, 1400));
+//        // SyncItemInfo                                                                     1
+//        Collection<SyncItemInfo> itemInfos = new ArrayList<SyncItemInfo>();
+//        SyncItemInfo syncItemInfo = new SyncItemInfo();
+//        syncItemInfo.setAmount(0.5);
+//        syncItemInfo.setId(new Id(1, 1, 1));
+//        setPrivateField(SyncItemInfo.class, syncItemInfo, "clientTimeStamp", 1200L);
+//        itemInfos.add(syncItemInfo);
+//        // Selection
+//        Collection<SelectionTrackingItem> selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
+//        SelectionTrackingItem selectionTrackingItem = new SelectionTrackingItem();
+//        setPrivateField(SelectionTrackingItem.class, selectionTrackingItem, "timeStamp", 1300);
+//        selectionTrackingItems.add(selectionTrackingItem);
+//        // Terrain scrolling
+//        Collection<TerrainScrollTracking> terrainScrollTrackings = new ArrayList<TerrainScrollTracking>();
+//        terrainScrollTrackings.add(new TerrainScrollTracking(2, 1, 2, 3, 1100));
+//        terrainScrollTrackings.add(new TerrainScrollTracking(3, 1, 2, 3, 1150));
+//        terrainScrollTrackings.add(new TerrainScrollTracking(1, 1, 2, 3, 1050));
+//        // Browser window
+//        Collection<BrowserWindowTracking> browserWindowTrackings = new ArrayList<BrowserWindowTracking>();
+//        browserWindowTrackings.add(new BrowserWindowTracking(1, 2, 3, 4, 5, 6, 1100));
+//        browserWindowTrackings.add(new BrowserWindowTracking(2, 2, 3, 4, 5, 6, 1200));
+//        browserWindowTrackings.add(new BrowserWindowTracking(3, 2, 3, 4, 5, 6, 1300));
+//        browserWindowTrackings.add(new BrowserWindowTracking(4, 2, 3, 4, 5, 6, 1400));
+//        // Dialogs
+//        Collection<DialogTracking> dialogTrackings = new ArrayList<DialogTracking>();
+//        dialogTrackings.add(new DialogTracking(1, 2, 3, 4, 1, "dialog1", false, 42, 1100));
+//        dialogTrackings.add(new DialogTracking(5, 6, 7, 8, 2, "dialog2", false, 43, 1120));
+//        dialogTrackings.add(new DialogTracking(null, null, null, null, null, "dialog3", false, 44, 1140));
+//
+//        movableService.sendEventTrackerItems(eventTrackingItems, itemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings, dialogTrackings);
+//        userTrackingService.onTutorialProgressChanged(TutorialConfig.TYPE.TASK, "tutorial1", null, 1, 1550);
+//        endHttpRequestAndOpenSessionInViewFilter();
     }
 
     private void tutorial2() throws Exception {
-        // 1600 until 3100 (client time )
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess("Page 1", null);
-        userTrackingService.onJavaScriptDetected(true);
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        List<StartupTaskInfo> infos = new ArrayList<StartupTaskInfo>();
-        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_JAVA_SCRIPT, 1600, 100));
-        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GAME, 1700, 150));
-        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GUI, 1850, 50));
-        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_MAP, 1900, 200));
-        movableService.sendStartupInfo(infos, 500);
-        userTrackingService.onJavaScriptDetected(true);
-        endHttpRequestAndOpenSessionInViewFilter();
-
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.onTutorialProgressChanged(TutorialConfig.TYPE.STEP, "step2", "task2", 1, 2500);
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.onTutorialProgressChanged(TutorialConfig.TYPE.TASK, "task2", "Tutorial2", 1, 3000);
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        // Tracking start
-        userTrackingService.onEventTrackingStart(new EventTrackingStart(201, 202, 203, 204, 205, 206, 1900));
-        // Mouse
-        Collection<EventTrackingItem> eventTrackingItems = new ArrayList<EventTrackingItem>();
-        eventTrackingItems.add(new EventTrackingItem(1, 1, 1, 1910));
-        eventTrackingItems.add(new EventTrackingItem(2, 10, 1, 1920));
-        eventTrackingItems.add(new EventTrackingItem(3, 10, 1, 1930));
-        eventTrackingItems.add(new EventTrackingItem(4, 10, 1, 1940));
-        eventTrackingItems.add(new EventTrackingItem(5, 10, 1, 1950));
-        // SyncItemInfos                                                                     1
-        Collection<SyncItemInfo> syncItemInfos = new ArrayList<SyncItemInfo>();
-        SyncItemInfo syncItemInfo = new SyncItemInfo();
-        syncItemInfo.setFollowTarget(true);
-        syncItemInfo.setId(new Id(2, 2, 2));
-        setPrivateField(SyncItemInfo.class, syncItemInfo, "clientTimeStamp", 2000L);
-        syncItemInfos.add(syncItemInfo);
-        // Selection
-        Collection<SelectionTrackingItem> selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
-        SelectionTrackingItem selectionTrackingItem1 = new SelectionTrackingItem();
-        setPrivateField(SelectionTrackingItem.class, selectionTrackingItem1, "timeStamp", 2050);
-        selectionTrackingItems.add(selectionTrackingItem1);
-        SelectionTrackingItem selectionTrackingItem2 = new SelectionTrackingItem();
-        setPrivateField(SelectionTrackingItem.class, selectionTrackingItem2, "timeStamp", 2100);
-        selectionTrackingItems.add(selectionTrackingItem2);
-        // Terrain scrolling
-        Collection<TerrainScrollTracking> terrainScrollTrackings = new ArrayList<TerrainScrollTracking>();
-        terrainScrollTrackings.add(new TerrainScrollTracking(1, 1, 2, 3, 2100));
-        terrainScrollTrackings.add(new TerrainScrollTracking(1, 2, 2, 3, 2200));
-        // Browser window
-        Collection<BrowserWindowTracking> browserWindowTrackings = new ArrayList<BrowserWindowTracking>();
-        browserWindowTrackings.add(new BrowserWindowTracking(1, 1, 3, 4, 5, 6, 2100));
-        browserWindowTrackings.add(new BrowserWindowTracking(1, 2, 3, 4, 5, 6, 2120));
-        browserWindowTrackings.add(new BrowserWindowTracking(1, 3, 3, 4, 5, 6, 2130));
-        browserWindowTrackings.add(new BrowserWindowTracking(1, 4, 3, 4, 5, 6, 2140));
-        browserWindowTrackings.add(new BrowserWindowTracking(1, 5, 3, 4, 5, 6, 2150));
-        // Dialogs
-        Collection<DialogTracking> dialogTrackings = new ArrayList<DialogTracking>();
-        dialogTrackings.add(new DialogTracking(10, 2, 3, 4, 19, "dialog11", true, 52, 2100));
-        dialogTrackings.add(new DialogTracking(50, 6, 7, 8, 29, "dialog12", true, 53, 2120));
-        dialogTrackings.add(new DialogTracking(90, 10, 11, 12, 39, "dialog13", true, 54, 2140));
-        dialogTrackings.add(new DialogTracking(130, 14, 15, 16, 49, "dialog14", true, 55, 2160));
-
-        movableService.sendEventTrackerItems(eventTrackingItems, syncItemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings, dialogTrackings);
-        userTrackingService.onTutorialProgressChanged(TutorialConfig.TYPE.TUTORIAL, "tutorial2", null, 1, 3100);
-        endHttpRequestAndOpenSessionInViewFilter();
+        Assert.fail();
+//        // 1600 until 3100 (client time )
+//        beginHttpRequestAndOpenSessionInViewFilter();
+//        userTrackingService.pageAccess("Page 1", null);
+//        userTrackingService.onJavaScriptDetected(true);
+//        endHttpRequestAndOpenSessionInViewFilter();
+//
+//        beginHttpRequestAndOpenSessionInViewFilter();
+//        List<StartupTaskInfo> infos = new ArrayList<StartupTaskInfo>();
+//        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_JAVA_SCRIPT, 1600, 100));
+//        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GAME, 1700, 150));
+//        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GUI, 1850, 50));
+//        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_MAP, 1900, 200));
+//        movableService.sendStartupInfo(infos, 500);
+//        userTrackingService.onJavaScriptDetected(true);
+//        endHttpRequestAndOpenSessionInViewFilter();
+//
+//
+//        beginHttpRequestAndOpenSessionInViewFilter();
+//        userTrackingService.onTutorialProgressChanged(TutorialConfig.TYPE.STEP, "step2", "task2", 1, 2500);
+//        endHttpRequestAndOpenSessionInViewFilter();
+//
+//        beginHttpRequestAndOpenSessionInViewFilter();
+//        userTrackingService.onTutorialProgressChanged(TutorialConfig.TYPE.TASK, "task2", "Tutorial2", 1, 3000);
+//        endHttpRequestAndOpenSessionInViewFilter();
+//
+//        beginHttpRequestAndOpenSessionInViewFilter();
+//
+//        // Tracking start
+//        userTrackingService.onEventTrackingStart(new EventTrackingStart(201, 202, 203, 204, 205, 206, 1900));
+//        // Mouse
+//        Collection<EventTrackingItem> eventTrackingItems = new ArrayList<EventTrackingItem>();
+//        eventTrackingItems.add(new EventTrackingItem(1, 1, 1, 1910));
+//        eventTrackingItems.add(new EventTrackingItem(2, 10, 1, 1920));
+//        eventTrackingItems.add(new EventTrackingItem(3, 10, 1, 1930));
+//        eventTrackingItems.add(new EventTrackingItem(4, 10, 1, 1940));
+//        eventTrackingItems.add(new EventTrackingItem(5, 10, 1, 1950));
+//        // SyncItemInfos                                                                     1
+//        Collection<SyncItemInfo> syncItemInfos = new ArrayList<SyncItemInfo>();
+//        SyncItemInfo syncItemInfo = new SyncItemInfo();
+//        syncItemInfo.setFollowTarget(true);
+//        syncItemInfo.setId(new Id(2, 2, 2));
+//        setPrivateField(SyncItemInfo.class, syncItemInfo, "clientTimeStamp", 2000L);
+//        syncItemInfos.add(syncItemInfo);
+//        // Selection
+//        Collection<SelectionTrackingItem> selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
+//        SelectionTrackingItem selectionTrackingItem1 = new SelectionTrackingItem();
+//        setPrivateField(SelectionTrackingItem.class, selectionTrackingItem1, "timeStamp", 2050);
+//        selectionTrackingItems.add(selectionTrackingItem1);
+//        SelectionTrackingItem selectionTrackingItem2 = new SelectionTrackingItem();
+//        setPrivateField(SelectionTrackingItem.class, selectionTrackingItem2, "timeStamp", 2100);
+//        selectionTrackingItems.add(selectionTrackingItem2);
+//        // Terrain scrolling
+//        Collection<TerrainScrollTracking> terrainScrollTrackings = new ArrayList<TerrainScrollTracking>();
+//        terrainScrollTrackings.add(new TerrainScrollTracking(1, 1, 2, 3, 2100));
+//        terrainScrollTrackings.add(new TerrainScrollTracking(1, 2, 2, 3, 2200));
+//        // Browser window
+//        Collection<BrowserWindowTracking> browserWindowTrackings = new ArrayList<BrowserWindowTracking>();
+//        browserWindowTrackings.add(new BrowserWindowTracking(1, 1, 3, 4, 5, 6, 2100));
+//        browserWindowTrackings.add(new BrowserWindowTracking(1, 2, 3, 4, 5, 6, 2120));
+//        browserWindowTrackings.add(new BrowserWindowTracking(1, 3, 3, 4, 5, 6, 2130));
+//        browserWindowTrackings.add(new BrowserWindowTracking(1, 4, 3, 4, 5, 6, 2140));
+//        browserWindowTrackings.add(new BrowserWindowTracking(1, 5, 3, 4, 5, 6, 2150));
+//        // Dialogs
+//        Collection<DialogTracking> dialogTrackings = new ArrayList<DialogTracking>();
+//        dialogTrackings.add(new DialogTracking(10, 2, 3, 4, 19, "dialog11", true, 52, 2100));
+//        dialogTrackings.add(new DialogTracking(50, 6, 7, 8, 29, "dialog12", true, 53, 2120));
+//        dialogTrackings.add(new DialogTracking(90, 10, 11, 12, 39, "dialog13", true, 54, 2140));
+//        dialogTrackings.add(new DialogTracking(130, 14, 15, 16, 49, "dialog14", true, 55, 2160));
+//
+//        movableService.sendEventTrackerItems(eventTrackingItems, syncItemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings, dialogTrackings);
+//        userTrackingService.onTutorialProgressChanged(TutorialConfig.TYPE.TUTORIAL, "tutorial2", null, 1, 3100);
+//        endHttpRequestAndOpenSessionInViewFilter();
     }
 
     private void realGame1() throws Exception {

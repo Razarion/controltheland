@@ -13,10 +13,7 @@
 
 package com.btxtech.game.jsre.common.tutorial;
 
-import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -33,47 +30,35 @@ public class TutorialConfig implements Serializable {
     }
 
     private List<TaskConfig> taskConfigs;
-    private SimpleBase ownBase;
+    private String ownBaseName;
     private int width;
     private int height;
-    private boolean showWindowTooSmall;
-    private Collection<BaseAttributes> baseAttributes;
-    private boolean failOnOwnItemsLost;
-    private Integer failOnMoneyBelowAndNoAttackUnits;
     private boolean eventTracking;
 
     /**
      * Used by GWT
      */
-    public TutorialConfig() {
+    TutorialConfig() {
     }
 
     public TutorialConfig(List<TaskConfig> taskConfigs,
-                          SimpleBase ownBase,
+                          String ownBaseName,
                           int width,
                           int height,
-                          Collection<BaseAttributes> baseAttributes,
-                          boolean failOnOwnItemsLost,
-                          Integer failOnMoneyBelowAndNoAttackUnits,
-                          boolean eventTracking,
-                          boolean showWindowTooSmall) {
+                          boolean eventTracking) {
         this.taskConfigs = taskConfigs;
-        this.ownBase = ownBase;
+        this.ownBaseName = ownBaseName;
         this.width = width;
         this.height = height;
-        this.baseAttributes = baseAttributes;
-        this.failOnOwnItemsLost = failOnOwnItemsLost;
-        this.failOnMoneyBelowAndNoAttackUnits = failOnMoneyBelowAndNoAttackUnits;
         this.eventTracking = eventTracking;
-        this.showWindowTooSmall = showWindowTooSmall;
     }
 
     public List<TaskConfig> getTasks() {
         return taskConfigs;
     }
 
-    public SimpleBase getOwnBase() {
-        return ownBase;
+    public String getOwnBaseName() {
+        return ownBaseName;
     }
 
     public int getWidth() {
@@ -84,23 +69,7 @@ public class TutorialConfig implements Serializable {
         return height;
     }
 
-    public Collection<BaseAttributes> getBaseAttributes() {
-        return baseAttributes;
-    }
-
-    public boolean isFailOnOwnItemsLost() {
-        return failOnOwnItemsLost;
-    }
-
-    public Integer isFailOnMoneyBelowAndNoAttackUnits() {
-        return failOnMoneyBelowAndNoAttackUnits;
-    }
-
     public boolean isEventTracking() {
         return eventTracking;
-    }
-
-    public boolean isShowWindowTooSmall() {
-        return showWindowTooSmall;
     }
 }

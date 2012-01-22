@@ -23,8 +23,6 @@ import java.io.Serializable;
  * Time: 17:47:19
  */
 public class ItemTypeAndPosition implements Serializable {
-    private SimpleBase base;
-    private int id;
     private int itemTypeId;
     private Index position;
     private double angel;
@@ -32,12 +30,10 @@ public class ItemTypeAndPosition implements Serializable {
     /**
      * Used by GWT
      */
-    public ItemTypeAndPosition() {
+    ItemTypeAndPosition() {
     }
 
-    public ItemTypeAndPosition(SimpleBase base, int id, int itemTypeId, Index position, double angel) {
-        this.base = base;
-        this.id = id;
+    public ItemTypeAndPosition(int itemTypeId, Index position, double angel) {
         this.itemTypeId = itemTypeId;
         this.position = position;
         this.angel = angel;
@@ -49,14 +45,6 @@ public class ItemTypeAndPosition implements Serializable {
 
     public Index getPosition() {
         return position;
-    }
-
-    public SimpleBase getBase() {
-        return base;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public double getAngel() {

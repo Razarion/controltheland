@@ -44,7 +44,7 @@ public class TestBuilder extends AbstractServiceTest {
     private Services servicesMock;
 
     private SyncBaseItem createSyncBuilderItem() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         // Mock
         ItemService itemServiceMock = EasyMock.createNiceMock(ItemService.class);

@@ -15,7 +15,6 @@ package com.btxtech.game.services.tutorial;
 
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
-import com.btxtech.game.services.utg.DbSimulationLevel;
 
 /**
  * User: beat
@@ -25,7 +24,5 @@ import com.btxtech.game.services.utg.DbSimulationLevel;
 public interface TutorialService {
     CrudRootServiceHelper<DbTutorialConfig> getDbTutorialCrudRootServiceHelper();
 
-    void activate();
-
-    TutorialConfig getTutorialConfig(DbSimulationLevel dbSimulationLevel);
+    DbTutorialConfig getDbTutorialConfig(int levelTaskId);
 }

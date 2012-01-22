@@ -133,14 +133,14 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
                 if (conditionTriggerModel.getObject() != dbConditionConfig.getConditionTrigger()) {
                     dbConditionConfig.setConditionTrigger(conditionTriggerModel.getObject());
                     dbConditionConfig.setDbAbstractComparisonConfig(null);
-                    userGuidanceService.updateDbConditionConfig(dbConditionConfig);
+                    // TODO userGuidanceService.updateDbConditionConfig(dbConditionConfig);
                     setupComparisonFields();
                     return;
                 }
 
                 if (!conditionTrigger.isComparisonNeeded()) {
                     dbConditionConfig.setDbAbstractComparisonConfig(null);
-                    userGuidanceService.updateDbConditionConfig(dbConditionConfig);
+                    // TODO userGuidanceService.updateDbConditionConfig(dbConditionConfig);
                     setupComparisonFields();
                     return;
                 }
@@ -163,7 +163,7 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
                 if (createComparisonConfig) {
                     try {
                         dbConditionConfig.setDbAbstractComparisonConfig(comparisonModel.getObject().getConstructor().newInstance());
-                        userGuidanceService.updateDbConditionConfig(dbConditionConfig);
+                        // TODO userGuidanceService.updateDbConditionConfig(dbConditionConfig);
                     } catch (Exception e) {
                         log.error("", e);
                     }

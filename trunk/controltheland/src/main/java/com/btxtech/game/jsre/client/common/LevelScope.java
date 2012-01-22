@@ -21,45 +21,23 @@ import java.util.Map;
  * Date: 17.05.2010
  * Time: 18:48:18
  */
-public class Level implements Serializable {
-    private int id;
-    private String name;
-    private String html;
-    private boolean realGame;
+public class LevelScope implements Serializable {
     private int maxMoney;
     private Map<Integer, Integer> itemTypeLimitation;
     private int houseSpace;
+    private double itemSellFactor;
 
     /**
      * Used by GWT
      */
-    public Level() {
+    public LevelScope() {
     }
 
-    public Level(int id, String name, String html, boolean realGame, int maxMoney, Map<Integer, Integer> itemTypeLimitation, int houseSpace) {
-        this.id = id;
-        this.name = name;
-        this.html = html;
-        this.realGame = realGame;
+    public LevelScope(int maxMoney, Map<Integer, Integer> itemTypeLimitation, int houseSpace, double itemSellFactor) {
         this.maxMoney = maxMoney;
         this.itemTypeLimitation = itemTypeLimitation;
         this.houseSpace = houseSpace;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getHtml() {
-        return html;
-    }
-
-    public boolean isRealGame() {
-        return realGame;
+        this.itemSellFactor = itemSellFactor;
     }
 
     public int getMaxMoney() {
@@ -75,28 +53,11 @@ public class Level implements Serializable {
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Level)) return false;
-
-        Level level = (Level) o;
-
-        return !(name != null ? !name.equals(level.name) : level.name != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        return name != null ? name.hashCode() : 0;
-    }
-
     public int getHouseSpace() {
         return houseSpace;
     }
 
-    public void setHouseSpace(int houseSpace) {
-        // This shall only be set in the Simulated mode
-        this.houseSpace = houseSpace;
+    public double getItemSellFactor() {
+        return itemSellFactor;
     }
 }

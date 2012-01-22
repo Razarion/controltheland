@@ -23,7 +23,7 @@ import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.DbAbstractLevel;
+import com.btxtech.game.services.utg.DbLevel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -145,7 +145,7 @@ public class HistoryServiceImpl implements HistoryService {
 
     @Override
     @Transactional
-    public void addLevelPromotionEntry(UserState userState, DbAbstractLevel level) {
+    public void addLevelPromotionEntry(UserState userState, DbLevel level) {
         save(new DbHistoryElement(DbHistoryElement.Type.LEVEL_PROMOTION,
                 userState.getUser(),
                 null,

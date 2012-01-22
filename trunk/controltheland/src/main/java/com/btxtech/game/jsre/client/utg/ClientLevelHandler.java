@@ -14,12 +14,14 @@
 package com.btxtech.game.jsre.client.utg;
 
 import com.btxtech.game.jsre.client.ClientServices;
+import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
-import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
-import com.btxtech.game.jsre.client.control.StartupScreen;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
+import com.btxtech.game.jsre.common.tutorial.GameFlow;
+import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * User: beat
@@ -28,7 +30,8 @@ import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceSe
  */
 public class ClientLevelHandler implements CommonUserGuidanceService {
     private static final ClientLevelHandler INSTANCE = new ClientLevelHandler();
-    private Level level;
+    private LevelScope levelScope;
+    private Integer nextTaskId;
 
     /**
      * Singleton
@@ -40,43 +43,23 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
         return INSTANCE;
     }
 
-    public void setLevel(Level level) {
-        this.level = level;
-        SideCockpit.getInstance().setLevel(level);
+    public void setLevelScope(LevelScope levelScope) {
+        this.levelScope = levelScope;
+        SideCockpit.getInstance().setLevel(levelScope);
     }
 
-
-    public void onLevelChanged(Level level) {
-        if (this.level == null) {
+    public void onLevelChanged(LevelScope levelScope) {
+        if (this.levelScope == null) {
             throw new IllegalStateException("ClientLevelHandler: level has not been set before.");
         }
-        Level oldLevel = this.level;
-        this.level = level;
-        if (oldLevel.isRealGame() && level.isRealGame()) {
-            SideCockpit.getInstance().setLevel(level);
-            SideCockpit.getInstance().updateItemLimit();
-        } else {
-            StartupScreen.getInstance().fadeOut(new Runnable() {
-                @Override
-                public void run() {
-                    GameStartupSeq gameStartupSeq;
-                    if (ClientLevelHandler.this.level.isRealGame()) {
-                        gameStartupSeq = GameStartupSeq.WARM_REAL;
-                    } else {
-                        gameStartupSeq = GameStartupSeq.WARM_SIMULATED;
-                    }
-                    ClientServices.getInstance().getClientRunner().start(gameStartupSeq);
-                }
-            });
-        }
+        this.levelScope = levelScope;
+        SideCockpit.getInstance().setLevel(levelScope);
+        SideCockpit.getInstance().updateItemLimit();
     }
 
-    public String getHtmlLevel() {
-        return level.getHtml();
-    }
-
-    public Level getLevel() {
-        return level;
+    @Override
+    public LevelScope getLevelScope() {
+        return levelScope;
     }
 
     public boolean isItemTypeAllowed(BaseItemType baseItemType) {
@@ -84,11 +67,39 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
     }
 
     public boolean isItemTypeAllowed(int baseItemTypeId) {
-        return level.getLimitation4ItemType(baseItemTypeId) > 0;
+        return levelScope.getLimitation4ItemType(baseItemTypeId) > 0;
     }
 
-    @Override
-    public double getItemSellFactor() {
-        return 0.5;
+
+    public int getLevelTaskId() {
+        if (nextTaskId != null) {
+            return nextTaskId;
+        } else {
+            RootPanel div = Game.getStartupInformation();
+            String taskIdString = div.getElement().getAttribute(Game.LEVEL_TASK_ID);
+            if (taskIdString == null || taskIdString.trim().isEmpty()) {
+                throw new IllegalStateException("Unable to find LevelTakId in Game.html");
+            } else {
+                return Integer.parseInt(taskIdString);
+            }
+        }
+    }
+
+    public void onTutorialFlow(GameFlow gameFlow) {
+        nextTaskId = null;
+        switch (gameFlow.getType()) {
+            case START_NEXT_LEVEL_TASK_TUTORIAL:
+                nextTaskId = gameFlow.getNextTutorialLevelTaskId();
+                ClientServices.getInstance().getClientRunner().start(GameStartupSeq.WARM_SIMULATED);
+                return;
+            case START_REAL_GAME:
+                ClientServices.getInstance().getClientRunner().start(GameStartupSeq.WARM_REAL);
+                return;
+            case SHOW_LEVEL_TASK_DONE_PAGE:
+                // TODO Load Level Task done Page
+                return;
+            default:
+                throw new IllegalArgumentException("Unknown GameFlow Type: " + gameFlow.getType());
+        }
     }
 }

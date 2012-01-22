@@ -21,15 +21,15 @@ import com.btxtech.game.jsre.client.control.StartupTaskEnum;
  * Date: 04.12.2010
  * Time: 12:59:49
  */
-public class LoadGameInfoStartupTask extends AbstractStartupTask {
+public class LoadRealGameInfoStartupTask extends AbstractStartupTask {
 
-    public LoadGameInfoStartupTask(StartupTaskEnum taskEnum) {
+    public LoadRealGameInfoStartupTask(StartupTaskEnum taskEnum) {
         super(taskEnum);
     }
 
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
         deferredStartup.setDeferred();
-        Connection.INSTANCE.downloadGameInfo(deferredStartup);
+        Connection.INSTANCE.downloadRealGameInfo(deferredStartup);
     }
 }

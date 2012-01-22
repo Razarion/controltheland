@@ -20,7 +20,6 @@ import com.btxtech.game.jsre.client.ParametrisedRunnable;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
-import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.simulation.Step;
 import com.btxtech.game.jsre.client.simulation.Task;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
@@ -28,6 +27,7 @@ import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
@@ -87,20 +87,20 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
         });
     }
 
-    public void onTutorialFailed(long duration, long clientTimeStamp) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL_FAILED, null, null, duration, clientTimeStamp, null);
+    public void onTutorialFailed(int levelTaskId, long duration, long clientTimeStamp) {
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL_FAILED, levelTaskId, null, null, duration, clientTimeStamp, null);
     }
 
-    public void onTutorialFinished(long duration, long clientTimeStamp, ParametrisedRunnable<Level> runnable) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, null, null, duration, clientTimeStamp, runnable);
+    public void onTutorialFinished(int levelTaskId, long duration, long clientTimeStamp, ParametrisedRunnable<GameFlow> runnable) {
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, levelTaskId, null, null, duration, clientTimeStamp, runnable);
     }
 
-    public void onTaskFinished(Task task, long duration, long clientTimeStamp) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TASK, task.getTaskConfig().getName(), null, duration, clientTimeStamp, null);
+    public void onTaskFinished(int levelTaskId, Task task, long duration, long clientTimeStamp) {
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TASK, levelTaskId, task.getTaskConfig().getName(), null, duration, clientTimeStamp, null);
     }
 
-    public void onStepFinished(Step step, Task task, long duration, long clientTimeStamp) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.STEP, step.getStepConfig().getName(), task.getTaskConfig().getName(), duration, clientTimeStamp, null);
+    public void onStepFinished(int levelTaskId, Step step, Task task, long duration, long clientTimeStamp) {
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.STEP, levelTaskId, step.getStepConfig().getName(), task.getTaskConfig().getName(), duration, clientTimeStamp, null);
     }
 
     public void startEventTracking() {

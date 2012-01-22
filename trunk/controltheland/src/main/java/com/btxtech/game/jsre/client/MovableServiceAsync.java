@@ -13,16 +13,16 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.UserMessage;
-import com.btxtech.game.jsre.client.common.info.GameInfo;
+import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.common.Packet;
-import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
+import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
@@ -39,7 +39,9 @@ import java.util.List;
  * The async counterpart of <code>MovableService</code>.
  */
 public interface MovableServiceAsync {
-    void getGameInfo(AsyncCallback<GameInfo> async);
+    void getRealGameInfo(AsyncCallback<RealGameInfo> asyncCallback);
+
+    void getSimulationGameInfo(int levelTaskId, AsyncCallback<SimulationInfo> asyncCallback);
 
     void log(String message, Date date, AsyncCallback async);
 
@@ -57,7 +59,7 @@ public interface MovableServiceAsync {
 
     void closeConnection(AsyncCallback<Void> async);
 
-    void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp, AsyncCallback<Level> asyncCallback);
+    void sendTutorialProgress(TutorialConfig.TYPE type, int levelTaskId, String name, String parent, long duration, long clientTimeStamp, AsyncCallback<GameFlow> asyncCallback);
 
     void sendEventTrackingStart(EventTrackingStart eventTrackingStart, AsyncCallback<Void> asyncCallback);
 

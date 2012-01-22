@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.base.impl;
 
-import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
@@ -152,14 +152,14 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
 
     @Override
     public boolean isLevelLimitation4ItemTypeExceeded(BaseItemType newItemType, SimpleBase simpleBase) throws NoSuchItemTypeException {
-        Level level = getLevel(simpleBase);
-        return getItemCount(simpleBase, newItemType.getId()) >= level.getLimitation4ItemType(newItemType.getId());
+        LevelScope levelScope = getLevel(simpleBase);
+        return getItemCount(simpleBase, newItemType.getId()) >= levelScope.getLimitation4ItemType(newItemType.getId());
     }
 
     @Override
     public boolean isHouseSpaceExceeded(SimpleBase simpleBase) throws NoSuchItemTypeException {
-        Level level = getLevel(simpleBase);
-        return getItemCount(simpleBase) >= getHouseSpace(simpleBase) + level.getHouseSpace();
+        LevelScope levelScope = getLevel(simpleBase);
+        return getItemCount(simpleBase) >= getHouseSpace(simpleBase) + levelScope.getHouseSpace();
     }
 
     @Override

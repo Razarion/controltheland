@@ -5,14 +5,13 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.bot.impl.BotRunner;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.impl.ServerBotRunner;
 import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.user.UserService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,7 +38,7 @@ public class TestBotRunner extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void botRunnerBuildupSimple() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         DbBotConfig dbBotConfig = new DbBotConfig();
         dbBotConfig.init(userService);
@@ -64,7 +63,7 @@ public class TestBotRunner extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void botRunnerBuildupComplex() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         DbBotConfig dbBotConfig = new DbBotConfig();
         dbBotConfig.init(userService);
@@ -106,7 +105,7 @@ public class TestBotRunner extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testRebuildBot() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         DbBotConfig dbBotConfig = new DbBotConfig();
         dbBotConfig.init(userService);
@@ -137,7 +136,7 @@ public class TestBotRunner extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testKillBot() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         DbBotConfig dbBotConfig = new DbBotConfig();
         dbBotConfig.init(userService);
@@ -186,9 +185,16 @@ public class TestBotRunner extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void attack() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
-        Base base = createBase(TEST_START_BUILDER_ITEM_ID);
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        SimpleBase targetBase = getMyBase();
+        Id targetId = getFirstSynItemId(targetBase, TEST_START_BUILDER_ITEM_ID);
+        sendMoveCommand(targetId, new Index(2000, 2000));
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
 
         DbBotConfig dbBotConfig = new DbBotConfig();
         dbBotConfig.init(userService);
@@ -206,13 +212,13 @@ public class TestBotRunner extends AbstractServiceTest {
         waitForBotRunner(botRunner);
         assertWholeItemCount(2);
 
-        SyncBaseItem syncBaseItem2 = createSyncBaseItemAndAddItemService(TEST_START_BUILDER_ITEM_ID, new Index(2000, 2000), base.getSimpleBase());
-        Assert.assertTrue(syncBaseItem2.isAlive());
+        SyncItem target = itemService.getItem(targetId);
+        Assert.assertTrue(target.isAlive());
 
         Thread.sleep(15);
         waitForActionServiceDone();
 
-        Assert.assertFalse(syncBaseItem2.isAlive());
+        Assert.assertFalse(target.isAlive());
     }
 
     @Test
@@ -336,7 +342,7 @@ public class TestBotRunner extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void intervalBuildup() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         DbBotConfig dbBotConfig = new DbBotConfig();
         dbBotConfig.setMaxActiveMs(300L);
@@ -369,7 +375,7 @@ public class TestBotRunner extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void intervalPeriodicalBuildup() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         DbBotConfig dbBotConfig = new DbBotConfig();
         dbBotConfig.setMaxActiveMs(500L);
@@ -404,7 +410,7 @@ public class TestBotRunner extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void intervalKillActive() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         DbBotConfig dbBotConfig = new DbBotConfig();
         dbBotConfig.setMaxActiveMs(120L);
@@ -441,7 +447,7 @@ public class TestBotRunner extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void intervalKillInactive() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         DbBotConfig dbBotConfig = new DbBotConfig();
         dbBotConfig.setMaxActiveMs(60L);

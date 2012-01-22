@@ -15,7 +15,6 @@ package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
-import com.btxtech.game.services.utg.DbSimulationLevel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.markup.html.form.TextField;
@@ -35,34 +34,34 @@ public class SimulationLevelEditor extends Panel {
 
     public SimulationLevelEditor(String id) {
         super(id);
-        add(new TextField<Integer>("dbTutorialConfig", new IModel<Integer>() {
-            @Override
-            public Integer getObject() {
-                DbTutorialConfig dbTutorialConfig = ((DbSimulationLevel) SimulationLevelEditor.this.getParent().getDefaultModelObject()).getDbTutorialConfig();
-                if (dbTutorialConfig != null) {
-                    return dbTutorialConfig.getId();
-                } else {
-                    return null;
-                }
-            }
-
-            @Override
-            public void setObject(Integer id) {
-                try {
-                    DbSimulationLevel dbSimulationLevel = (DbSimulationLevel) SimulationLevelEditor.this.getParent().getDefaultModelObject();
-                    DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().readDbChild(id);
-                    dbSimulationLevel.setDbTutorialConfig(dbTutorialConfig);
-                } catch (Throwable t) {
-                    log.error("", t);
-                    error(t.getMessage());
-                }
-            }
-
-            @Override
-            public void detach() {
-                // Ignore
-            }
-        }, Integer.class));
+//        add(new TextField<Integer>("dbTutorialConfig", new IModel<Integer>() {
+//            @Override
+//            public Integer getObject() {
+//                DbTutorialConfig dbTutorialConfig = ((DbSimulationLevel) SimulationLevelEditor.this.getParent().getDefaultModelObject()).getDbTutorialConfig();
+//                if (dbTutorialConfig != null) {
+//                    return dbTutorialConfig.getId();
+//                } else {
+//                    return null;
+//                }
+//            }
+//
+//            @Override
+//            public void setObject(Integer id) {
+//                try {
+//                    DbSimulationLevel dbSimulationLevel = (DbSimulationLevel) SimulationLevelEditor.this.getParent().getDefaultModelObject();
+//                    DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().readDbChild(id);
+//                    dbSimulationLevel.setDbTutorialConfig(dbTutorialConfig);
+//                } catch (Throwable t) {
+//                    log.error("", t);
+//                    error(t.getMessage());
+//                }
+//            }
+//
+//            @Override
+//            public void detach() {
+//                // Ignore
+//            }
+//        }, Integer.class));
 
     }
 }

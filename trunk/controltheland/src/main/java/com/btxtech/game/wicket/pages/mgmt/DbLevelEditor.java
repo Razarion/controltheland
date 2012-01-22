@@ -14,9 +14,7 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.common.RuServiceHelper;
-import com.btxtech.game.services.utg.DbAbstractLevel;
-import com.btxtech.game.services.utg.DbRealGameLevel;
-import com.btxtech.game.services.utg.DbSimulationLevel;
+import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -35,15 +33,15 @@ import wicket.contrib.tinymce.settings.TinyMCESettings;
  */
 public class DbLevelEditor extends MgmtWebPage {
     @SpringBean
-    private RuServiceHelper<DbAbstractLevel> ruServiceHelper;
+    private RuServiceHelper<DbLevel> ruServiceHelper;
 
-    public DbLevelEditor(DbAbstractLevel dbAbstractLevel) {
+    public DbLevelEditor(DbLevel dbLevel) {
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbAbstractLevel> form = new Form<DbAbstractLevel>("form", new CompoundPropertyModel<DbAbstractLevel>(new RuModel<DbAbstractLevel>(dbAbstractLevel, DbAbstractLevel.class) {
+        final Form<DbLevel> form = new Form<DbLevel>("form", new CompoundPropertyModel<DbLevel>(new RuModel<DbLevel>(dbLevel, DbLevel.class) {
 
             @Override
-            protected RuServiceHelper<DbAbstractLevel> getRuServiceHelper() {
+            protected RuServiceHelper<DbLevel> getRuServiceHelper() {
                 return ruServiceHelper;
             }
         }));
@@ -58,14 +56,14 @@ public class DbLevelEditor extends MgmtWebPage {
 
         form.add(new TextField("inGameHtml"));
 
-
-        if (dbAbstractLevel instanceof DbRealGameLevel) {
-            form.add(new RealGameLevelEditor("levelDetail"));
-        } else if (dbAbstractLevel instanceof DbSimulationLevel) {
-            form.add(new SimulationLevelEditor("levelDetail"));
-        } else {
-            throw new IllegalArgumentException("Unknown level: " + dbAbstractLevel);
-        }
+       // TODO
+//        if (dbLevel instanceof DbRealGameLevel) {
+//            form.add(new RealGameLevelEditor("levelDetail"));
+//        } else if (dbLevel instanceof DbSimulationLevel) {
+//            form.add(new SimulationLevelEditor("levelDetail"));
+//        } else {
+//            throw new IllegalArgumentException("Unknown level: " + dbLevel);
+//        }
         form.add(new Button("save") {
             @Override
             public void onSubmit() {
@@ -80,7 +78,7 @@ public class DbLevelEditor extends MgmtWebPage {
         });
     }
 
-    public RuServiceHelper<DbAbstractLevel> getRuServiceHelper() {
+    public RuServiceHelper<DbLevel> getRuServiceHelper() {
         return ruServiceHelper;
     }
 }

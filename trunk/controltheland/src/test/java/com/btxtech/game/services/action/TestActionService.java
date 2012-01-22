@@ -3,7 +3,6 @@ package com.btxtech.game.services.action;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
-import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.item.ItemService;
@@ -32,12 +31,11 @@ public class TestActionService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testLogoutDuringBuild() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
 
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
         Id target = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
         sendBuildCommand(target, new Index(500, 100), TEST_FACTORY_ITEM_ID);
 
@@ -56,13 +54,12 @@ public class TestActionService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testLogoutDuringBuildRegUser() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("U1", "test", "test", "test");
         userService.login("U1", "test");
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
         Id target = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
         sendBuildCommand(target, new Index(500, 100), TEST_FACTORY_ITEM_ID);
 
@@ -81,12 +78,11 @@ public class TestActionService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testAttackWithDestination() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         // Target
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
         Id target = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -94,7 +90,6 @@ public class TestActionService extends AbstractServiceTest {
         // Attacker
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(500, 100), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(500, 100), TEST_FACTORY_ITEM_ID);

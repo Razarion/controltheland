@@ -2,17 +2,15 @@ package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
-import com.btxtech.game.jsre.common.CmsUtil;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.widgetideas.client.ProgressBar;
 
 /**
  * User: beat
@@ -81,16 +79,17 @@ public class CockpitDisplayPanel extends AbstractControlPanel {
         money.setText(Integer.toString((int) Math.round(accountBalance)));
     }
 
-    public void setLevel(Level level) {
-        this.level.setText(level.getName());
-        mission.setHTML(level.getHtml() + " " + CmsUtil.getUrl4LavalPage(level, "More"));
+    public void setLevel(LevelScope levelScope) {
+        this.level.setText("??????"); // TODO
+        // TODO mission.setHTML("??????" + " " + CmsUtil.getUrl4LevelPage(levelScope, "More")); // TODO Link to where
+        mission.setHTML("??????"); // TODO Remove
     }
 
     public void updateItemLimit() {
         StringBuilder builder = new StringBuilder();
         builder.append(ItemContainer.getInstance().getOwnItemCount());
         builder.append("/");
-        builder.append(ClientBase.getInstance().getHouseSpace() + ClientLevelHandler.getInstance().getLevel().getHouseSpace());
+        builder.append(ClientBase.getInstance().getHouseSpace() + ClientLevelHandler.getInstance().getLevelScope().getHouseSpace());
         itemLimit.setText(builder.toString());
     }
 

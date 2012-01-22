@@ -3,13 +3,10 @@ package com.btxtech.game.services.base;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
-import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
-import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
-import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.user.UserService;
@@ -36,14 +33,13 @@ public class TestBaseService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSellBaseItem() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertNull(userService.getUser());
         userService.createUser("U1", "test", "test", "test");
         userService.login("U1", "test");
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
         // $1000
         SimpleBase simpleBase = getMyBase(); // Setup connection
         Id id = getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID);
@@ -52,7 +48,6 @@ public class TestBaseService extends AbstractServiceTest {
         waitForActionServiceDone();
         Assert.assertEquals(998, baseService.getBase(simpleBase).getAccountBalance(), 0.1);
         movableService.sellItem(id);
-
         // $999
         AccountBalancePacket accountBalancePacket = new AccountBalancePacket();
         accountBalancePacket.setAccountBalance(998.5);
@@ -65,14 +60,13 @@ public class TestBaseService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSellLastBaseItem() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertNull(userService.getUser());
         userService.createUser("U1", "test", "test", "test");
         userService.login("U1", "test");
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
         SimpleBase simpleBase = getMyBase(); // Setup connection
         Id id = getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID);
         clearPackets();
@@ -92,7 +86,7 @@ public class TestBaseService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSurrenderAndCollecting() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -100,7 +94,6 @@ public class TestBaseService extends AbstractServiceTest {
         setupResource();
         userService.createUser("U1", "test", "test", "test");
         userService.login("U1", "test");
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
         SimpleBase simpleBase = getMyBase(); // Setup connection
         sendBuildCommand(getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID), new Index(100, 100), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -124,7 +117,7 @@ public class TestBaseService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSurrender() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -132,11 +125,10 @@ public class TestBaseService extends AbstractServiceTest {
         setupResource();
         userService.createUser("U1", "test", "test", "test");
         userService.login("U1", "test");
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
         SimpleBase simpleBase = getMyBase(); // Setup connection
-        Assert.assertEquals("U1" , baseService.getBaseName(simpleBase));
+        Assert.assertEquals("U1", baseService.getBaseName(simpleBase));
         movableService.surrenderBase();
-        Assert.assertEquals("Base 1" , baseService.getBaseName(simpleBase));
+        Assert.assertEquals("Base 1", baseService.getBaseName(simpleBase));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -144,13 +136,12 @@ public class TestBaseService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testGetBaseItems() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("U1", "test", "test", "test");
         userService.login("U1", "test");
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
         SimpleBase simpleBase = getMyBase(); // Setup connection
         sendBuildCommand(getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID), new Index(100, 100), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();

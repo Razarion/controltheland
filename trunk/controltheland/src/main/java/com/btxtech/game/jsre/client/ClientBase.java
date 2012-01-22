@@ -14,9 +14,9 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
-import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
-import com.btxtech.game.jsre.client.common.info.RealityInfo;
+import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.dialogs.UnfrequentDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemViewContainer;
@@ -69,6 +69,14 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         return INSTANCE;
     }
 
+    public void createOwnSimulationBaseIfNotExist(String onwBaseName) {
+        if (simpleBase == null) {
+            int baseId = getFreeBaseId();
+            simpleBase = new SimpleBase(baseId);
+            createBase(simpleBase, onwBaseName, false);
+        }
+    }
+
     public void setBase(SimpleBase simpleBase) {
         this.simpleBase = simpleBase;
     }
@@ -97,10 +105,10 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     @Override
     public void depositResource(double price, SimpleBase simpleBase) {
         if (this.simpleBase.equals(simpleBase)) {
-            if (Connection.getInstance().getGameInfo() instanceof RealityInfo) {
+            if (Connection.getInstance().getGameInfo() instanceof RealGameInfo) {
                 accountBalance += price;
-                if (accountBalance > ClientLevelHandler.getInstance().getLevel().getMaxMoney()) {
-                    accountBalance = ClientLevelHandler.getInstance().getLevel().getMaxMoney();
+                if (accountBalance > ClientLevelHandler.getInstance().getLevelScope().getMaxMoney()) {
+                    accountBalance = ClientLevelHandler.getInstance().getLevelScope().getMaxMoney();
                 }
             } else {
                 accountBalance += price;
@@ -125,7 +133,6 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
             accountBalance -= price;
             SideCockpit.getInstance().updateMoney();
         }
-        SimulationConditionServiceImpl.getInstance().onWithdrawalMoney();
     }
 
     public String getOwnBaseName() {
@@ -234,9 +241,9 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     }
 
     @Override
-    public Level getLevel(SimpleBase simpleBase) {
+    public LevelScope getLevel(SimpleBase simpleBase) {
         check4OwnBase(simpleBase);
-        return ClientLevelHandler.getInstance().getLevel();
+        return ClientLevelHandler.getInstance().getLevelScope();
     }
 
     public void recalculate4FakedHouseSpace(SyncBaseItem affectedSyncItem) {
@@ -264,6 +271,14 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
 
     @Override
     public SimpleBase createBotBase(BotConfig botConfig) {
+        int baseId = getFreeBaseId();
+        SimpleBase simpleBase = new SimpleBase(baseId);
+        createBase(simpleBase, botConfig.getName(), false);
+        setBot(simpleBase, true);
+        return simpleBase;
+    }
+
+    private int getFreeBaseId() {
         int maxId = 0;
         for (SimpleBase simpleBase : getAllSimpleBases()) {
             if (simpleBase.getId() > maxId) {
@@ -271,10 +286,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
             }
         }
         maxId++;
-        SimpleBase simpleBase = new SimpleBase(maxId);
-        createBase(simpleBase, botConfig.getName(), false);
-        setBot(simpleBase, true);
-        return simpleBase;
+        return maxId;
     }
 
     public void cleanup() {

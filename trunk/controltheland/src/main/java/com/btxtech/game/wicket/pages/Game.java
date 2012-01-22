@@ -43,7 +43,13 @@ public class Game extends WebPage {
             return;
         }
 
-        GameStartupSeq gameStartupSeq = userGuidanceService.getColdStartupSeq();
+        GameStartupSeq gameStartupSeq;
+        // TODO check for TaskId
+        if (userGuidanceService.isStartRealGame()) {
+            gameStartupSeq = GameStartupSeq.COLD_REAL;
+        } else {
+            gameStartupSeq = GameStartupSeq.COLD_SIMULATED;
+        }
 
         add(new Label("startupTaskText", gameStartupSeq.getAbstractStartupTaskEnum()[0].getStartupTaskEnumHtmlHelper().getNiceText()));
 

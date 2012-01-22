@@ -32,7 +32,7 @@ import com.btxtech.game.services.cms.page.DbPageStyle;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.item.itemType.DbItemType;
-import com.btxtech.game.services.utg.DbAbstractLevel;
+import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.commons.logging.Log;
@@ -41,7 +41,6 @@ import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
@@ -186,8 +185,8 @@ public class CmsServiceImpl implements CmsService {
                     Class childClass = Class.forName(dbContentBook.getClassName());
                     if (DbItemType.class.isAssignableFrom(childClass)) {
                         cmsSectionInfoMap.put(CmsUtil.UNIT_SECTION, new CmsSectionInfo(DbItemType.class, HibernateUtil.deproxy(dbContentBook.getParent(), DbContentList.class), CmsUtil.UNIT_SECTION, dbPage.getId()));
-                    } else if (DbAbstractLevel.class.isAssignableFrom(childClass)) {
-                        cmsSectionInfoMap.put(CmsUtil.LEVEL_SECTION, new CmsSectionInfo(DbAbstractLevel.class, HibernateUtil.deproxy(dbContentBook.getParent(), DbContentList.class), CmsUtil.LEVEL_SECTION, dbPage.getId()));
+                    } else if (DbLevel.class.isAssignableFrom(childClass)) {
+                        cmsSectionInfoMap.put(CmsUtil.LEVEL_SECTION, new CmsSectionInfo(DbLevel.class, HibernateUtil.deproxy(dbContentBook.getParent(), DbContentList.class), CmsUtil.LEVEL_SECTION, dbPage.getId()));
                     }
                 } catch (ClassNotFoundException e) {
                     log.error("", e);

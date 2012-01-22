@@ -20,14 +20,9 @@ import com.btxtech.game.jsre.client.GameCommon;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ParametrisedRunnable;
 import com.btxtech.game.jsre.client.bot.ClientBotService;
-import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
-import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
-import com.btxtech.game.jsre.client.dialogs.DialogManager;
-import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -35,12 +30,12 @@ import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.utg.tip.TipManager;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 
 import java.util.List;
 
@@ -53,7 +48,6 @@ public class Simulation implements ConditionServiceListener<Object>, ClientBase.
     private static final Simulation SIMULATION = new Simulation();
     private SimulationInfo simulationInfo;
     private Task activeTask;
-    private TutorialGui tutorialGui;
     private long taskTime;
     private long tutorialTime;
 
@@ -67,43 +61,19 @@ public class Simulation implements ConditionServiceListener<Object>, ClientBase.
         return SIMULATION;
     }
 
-    public void initGameEngine() {
+    public void start() {
         simulationInfo = (SimulationInfo) Connection.getInstance().getGameInfo();
         TutorialConfig tutorialConfig = simulationInfo.getTutorialConfig();
         if (tutorialConfig == null) {
             return;
         }
-        ClientBase.getInstance().setBase(tutorialConfig.getOwnBase());
-    }
-
-    public void start() {
-        initGameEngine();
-        TutorialConfig tutorialConfig = simulationInfo.getTutorialConfig();
-        if (tutorialConfig == null) {
-            return;
-        }
-        if (tutorialGui == null) {
-            SelectionHandler.getInstance().addSelectionListener(SimulationConditionServiceImpl.getInstance());
-            TerrainView.getInstance().addTerrainScrollListener(SimulationConditionServiceImpl.getInstance());
-            tutorialGui = new TutorialGui();
-        }
-        if (tutorialConfig.isFailOnOwnItemsLost()) {
-            ClientBase.getInstance().setOwnBaseDestroyedListener(this);
-        }
+        ClientBase.getInstance().setOwnBaseDestroyedListener(this);
+        ClientBase.getInstance().createOwnSimulationBaseIfNotExist(tutorialConfig.getOwnBaseName());
         SimulationConditionServiceImpl.getInstance().setConditionServiceListener(this);
         tutorialTime = System.currentTimeMillis();
         MapWindow.getInstance().setMinimalSize(tutorialConfig.getWidth(), tutorialConfig.getHeight());
         if (tutorialConfig.isEventTracking()) {
             ClientUserTracker.getInstance().startEventTracking();
-        }
-        if (tutorialConfig.isShowWindowTooSmall() && (Window.getClientWidth() < tutorialConfig.getWidth() || Window.getClientHeight() < tutorialConfig.getHeight())) {
-            MessageDialog messageDialog = new MessageDialog("Your window is too small!") {
-                @Override
-                protected int getZIndex() {
-                    return Constants.Z_INDEX_LEVEL_DIALOG;
-                }
-            };
-            DialogManager.showDialog(messageDialog, DialogManager.Type.STACK_ABLE);
         }
         TipManager.getInstance().activate();
         runNextTask(activeTask);
@@ -111,7 +81,7 @@ public class Simulation implements ConditionServiceListener<Object>, ClientBase.
 
     private void processPreparation(TaskConfig taskConfig) {
         SideCockpit.getInstance().setRadarItems();
-        ClientLevelHandler.getInstance().getLevel().setHouseSpace(taskConfig.getHouseCount());
+        ClientLevelHandler.getInstance().setLevelScope(taskConfig.createLevelScope());
         SideCockpit.getInstance().updateItemLimit();
 
         if (taskConfig.hasBots()) {
@@ -153,42 +123,22 @@ public class Simulation implements ConditionServiceListener<Object>, ClientBase.
         }
         processPreparation(taskConfig);
         taskTime = System.currentTimeMillis();
-        activeTask = new Task(taskConfig);
-        tutorialGui.setTaskText(taskConfig.getTaskText());
+        activeTask = new Task(taskConfig, simulationInfo.getLevelTaskId());
     }
 
     private void tutorialFinished() {
         activeTask = null;
         long time = System.currentTimeMillis();
-        ClientUserTracker.getInstance().onTutorialFinished(time - tutorialTime, time, new ParametrisedRunnable<Level>() {
+        ClientUserTracker.getInstance().onTutorialFinished(simulationInfo.getLevelTaskId(), time - tutorialTime, time, new ParametrisedRunnable<GameFlow>() {
             @Override
-            public void run(Level level) {
-                ClientLevelHandler.getInstance().onLevelChanged(level);
+            public void run(GameFlow gameFlow) {
+                ClientLevelHandler.getInstance().onTutorialFlow(gameFlow);
             }
         });
     }
 
-    /*
-    TODO checkForTutorialFailed
-    private void checkForTutorialFailed() {
-        // TODO mission failed startup sequence + send to server
-        if (simulationInfo.getTutorialConfig().isFailOnOwnItemsLost() && ItemContainer.getInstance().getOwnItemCount() == 0) {
-            throw new RuntimeException("Not implemented yet");
-        } else if (simulationInfo.getTutorialConfig().isFailOnMoneyBelowAndNoAttackUnits() != null
-                && ClientBase.getInstance().getAccountBalance() < simulationInfo.getTutorialConfig().isFailOnMoneyBelowAndNoAttackUnits()
-                && !ItemContainer.getInstance().hasOwnAttackingMovable()) {
-            throw new RuntimeException("Not implemented yet");
-        }
-    }*/
-
     public void cleanup() {
-        if (tutorialGui != null) {
-            tutorialGui.cleanup();
-            tutorialGui = null;
-        }
         activeTask = null;
-        SelectionHandler.getInstance().removeSelectionListener(SimulationConditionServiceImpl.getInstance());
-        TerrainView.getInstance().removeTerrainScrollListener(SimulationConditionServiceImpl.getInstance());
         SimulationConditionServiceImpl.getInstance().setConditionServiceListener(null);
     }
 
@@ -197,30 +147,29 @@ public class Simulation implements ConditionServiceListener<Object>, ClientBase.
         if (activeTask.isFulfilled()) {
             long time = System.currentTimeMillis();
             activeTask.cleanup();
-            ClientUserTracker.getInstance().onTaskFinished(activeTask, time - taskTime, time);
-            if (activeTask.getTaskConfig().getFinishImageDuration() > 0 && activeTask.getTaskConfig().getFinishImageId() != null) {
-                tutorialGui.showFinishImage(activeTask.getTaskConfig().getFinishImageId(), activeTask.getTaskConfig().getFinishImageDuration());
-                final Task closedTask = activeTask;
-                activeTask = null;
-                Timer timer = new Timer() {
-                    @Override
-                    public void run() {
-                        GameCommon.clearGame();
-                        runNextTask(closedTask);
-                    }
-                };
-                timer.schedule(closedTask.getTaskConfig().getFinishImageDuration());
-            } else {
-                GameCommon.clearGame();
-                runNextTask(activeTask);
-            }
+            ClientUserTracker.getInstance().onTaskFinished(simulationInfo.getLevelTaskId(), activeTask, time - taskTime, time);
+//            if (activeTask.getTaskConfig().getFinishImageDuration() > 0 && activeTask.getTaskConfig().getFinishImageId() != null) {
+//                final Task closedTask = activeTask;
+//                activeTask = null;
+//                Timer timer = new Timer() {
+//                    @Override
+//                    public void run() {
+//                        GameCommon.clearGame();
+//                        runNextTask(closedTask);
+//                    }
+//                };
+//                timer.schedule(closedTask.getTaskConfig().getFinishImageDuration());
+//            } else {
+            GameCommon.clearGame();
+            runNextTask(activeTask);
+//            }
         }
     }
 
     @Override
     public void onOwnBaseDestroyed() {
         long time = System.currentTimeMillis();
-        ClientUserTracker.getInstance().onTutorialFailed(time - tutorialTime, time);
+        ClientUserTracker.getInstance().onTutorialFailed(simulationInfo.getLevelTaskId(), time - tutorialTime, time);
         Timer timer = new Timer() {
             @Override
             public void run() {

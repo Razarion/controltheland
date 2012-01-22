@@ -26,7 +26,7 @@ public class TestDbBotConfig extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void convert1() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         Rectangle realm = new Rectangle(10, 20, 3000, 4000);
 
@@ -99,7 +99,7 @@ public class TestDbBotConfig extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void convert2() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         Rectangle realm = new Rectangle(40, 50, 600, 70);
 

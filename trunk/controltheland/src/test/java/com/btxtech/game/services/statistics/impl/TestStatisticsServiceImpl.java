@@ -207,7 +207,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void killedStructureBot() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -255,7 +255,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void killedUnitsBot() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -303,7 +303,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void killedStructurePlayer() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -356,7 +356,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void killedUnitsPlayer() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -409,7 +409,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void builtStructures() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -454,7 +454,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void baseLostPlayer() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -531,7 +531,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void baseLostBot() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -577,7 +577,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void builtUnits() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -622,7 +622,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void moneySpent() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -665,7 +665,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void levelCompleted() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -1166,11 +1166,14 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void currentStatistics() throws Exception {
-        configureMinimalGame();
+        configureGameMultipleLevel();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
 
         List<UserState> userStates = new ArrayList<UserState>();
         UserState userState = new UserState();
-        userState.setCurrentAbstractLevel(userGuidanceService.getDbLevel(TEST_LEVEL_1_SIMULATED));
+        userState.setDbLevelId(TEST_LEVEL_1_SIMULATED_ID);
         userStates.add(userState);
 
         userState = new UserState();
@@ -1180,7 +1183,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         base1.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1, 1)));
         base1.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(2, 1, 1)));
         userState.setBase(base1);
-        userState.setCurrentAbstractLevel(userGuidanceService.getDbLevel(TEST_LEVEL_2_REAL));
+        userState.setDbLevelId(TEST_LEVEL_2_REAL_ID);
         userStates.add(userState);
 
         User user = new User();
@@ -1196,7 +1199,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(4, 1, 1)));
         base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(5, 1, 1)));
         userState.setBase(base2);
-        userState.setCurrentAbstractLevel(userGuidanceService.getDbLevel(TEST_LEVEL_2_REAL));
+        userState.setDbLevelId(TEST_LEVEL_2_REAL_ID);
         userStates.add(userState);
 
         UserService userServiceMock = EasyMock.createMock(UserService.class);
@@ -1234,5 +1237,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         Assert.assertEquals("RegUser", entry.getBaseName());
         Assert.assertEquals(DateUtil.MILLIS_IN_MINUTE, DateUtil.stripOfMillis(entry.getBaseUpTime()));
         Assert.assertEquals(5, (int) entry.getItemCount());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 }

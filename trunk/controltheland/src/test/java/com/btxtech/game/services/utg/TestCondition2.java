@@ -36,132 +36,133 @@ public class TestCondition2 extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void baseDeleted() throws Exception {
-        final UserState userState = new UserState();
-        Base base = new Base(userState, 1);
-        SimpleBase simpleBase1 = base.getSimpleBase();
-        SimpleBase simpleBase2 = new SimpleBase(2);
-
-        // Mock BaseService
-        BaseService baseServiceMock = EasyMock.createStrictMock(BaseService.class);
-        EasyMock.expect(baseServiceMock.getUserState(simpleBase1)).andReturn(userState);
-        EasyMock.expect(baseServiceMock.getUserState(simpleBase2)).andReturn(null);
-        EasyMock.expect(baseServiceMock.getUserState(simpleBase1)).andReturn(userState);
-        EasyMock.replay(baseServiceMock);
-
-        setPrivateField(ServerConditionServiceImpl.class, conditionService, "baseService", baseServiceMock);
-
-        passed = false;
-        conditionService.setConditionServiceListener(new ConditionServiceListener<UserState>() {
-            @Override
-            public void conditionPassed(UserState userState1) {
-                passed = true;
-            }
-        });
-        conditionService.onBaseDeleted(simpleBase1);
-        Assert.assertFalse(passed);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.BASE_DELETED, new CountComparisonConfig(null, 1));
-        conditionService.activateCondition(conditionConfig, userState);
-        conditionService.onBaseDeleted(simpleBase2);
-        Assert.assertFalse(passed);
-        conditionService.onBaseDeleted(simpleBase1);
-        Assert.assertTrue(passed);
+        Assert.fail();
+//        final UserState userState = new UserState();
+//        Base base = new Base(userState, 1);
+//        SimpleBase simpleBase1 = base.getSimpleBase();
+//        SimpleBase simpleBase2 = new SimpleBase(2);
+//
+//        // Mock BaseService
+//        BaseService baseServiceMock = EasyMock.createStrictMock(BaseService.class);
+//        EasyMock.expect(baseServiceMock.getUserState(simpleBase1)).andReturn(userState);
+//        EasyMock.expect(baseServiceMock.getUserState(simpleBase2)).andReturn(null);
+//        EasyMock.expect(baseServiceMock.getUserState(simpleBase1)).andReturn(userState);
+//        EasyMock.replay(baseServiceMock);
+//
+//        setPrivateField(ServerConditionServiceImpl.class, conditionService, "baseService", baseServiceMock);
+//
+//        passed = false;
+//        conditionService.setConditionServiceListener(new ConditionServiceListener<UserState>() {
+//            @Override
+//            public void conditionPassed(UserState userState1) {
+//                passed = true;
+//            }
+//        });
+//        conditionService.onBaseDeleted(simpleBase1);
+//        Assert.assertFalse(passed);
+//        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.BASE_KILLED, new CountComparisonConfig(null, 1));
+//        conditionService.activateCondition(conditionConfig, userState);
+//        conditionService.onBaseDeleted(simpleBase2);
+//        Assert.assertFalse(passed);
+//        conditionService.onBaseDeleted(simpleBase1);
+//        Assert.assertTrue(passed);
     }
 
-    @Test
-    @DirtiesContext
-    public void baseDeleted2() throws Exception {
-        final UserState userState = new UserState();
-        Base base = new Base(userState, 1);
-        SimpleBase simpleBase1 = base.getSimpleBase();
-
-        // Mock BaseService
-        BaseService baseServiceMock = EasyMock.createStrictMock(BaseService.class);
-        EasyMock.expect(baseServiceMock.getUserState(simpleBase1)).andReturn(userState).times(3);
-        EasyMock.replay(baseServiceMock);
-
-        setPrivateField(ServerConditionServiceImpl.class, conditionService, "baseService", baseServiceMock);
-
-        passed = false;
-        conditionService.setConditionServiceListener(new ConditionServiceListener<UserState>() {
-            @Override
-            public void conditionPassed(UserState userState1) {
-                passed = true;
-            }
-        });
-        conditionService.onBaseDeleted(simpleBase1);
-        Assert.assertFalse(passed);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.BASE_DELETED, new CountComparisonConfig(null, 2));
-        conditionService.activateCondition(conditionConfig, userState);
-        Assert.assertFalse(passed);
-        conditionService.onBaseDeleted(simpleBase1);
-        Assert.assertFalse(passed);
-        conditionService.onBaseDeleted(simpleBase1);
-        Assert.assertTrue(passed);
-    }
-
-    @Test
-    @DirtiesContext
-    public void baseDeleted2BackupRestore() throws Exception {
-        final UserState userState = new UserState();
-        DbRealGameLevel dbRealGameLevel = new DbRealGameLevel();
-        setPrivateField(DbAbstractLevel.class, dbRealGameLevel, "id", 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.BASE_DELETED, new CountComparisonConfig(null, 2));
-        setPrivateField(DbAbstractLevel.class, dbRealGameLevel, "conditionConfig", conditionConfig);
-
-        userState.setCurrentAbstractLevel(dbRealGameLevel);
-        Base base = new Base(userState, 1);
-        SimpleBase simpleBase1 = base.getSimpleBase();
-
-        // Mock BaseService
-        BaseService baseServiceMock = EasyMock.createStrictMock(BaseService.class);
-        EasyMock.expect(baseServiceMock.getUserState(simpleBase1)).andReturn(userState).times(4);
-        EasyMock.replay(baseServiceMock);
-        setPrivateField(ServerConditionServiceImpl.class, conditionService, "baseService", baseServiceMock);
-
-        // Mock UserGuidanceService
-        UserGuidanceService userGuidanceServiceMock = EasyMock.createStrictMock(UserGuidanceService.class);
-        EasyMock.expect(userGuidanceServiceMock.getDbLevel(1)).andReturn(dbRealGameLevel);
-        EasyMock.replay(userGuidanceServiceMock);
-        setPrivateField(ServerConditionServiceImpl.class, conditionService, "userGuidanceService", userGuidanceServiceMock);
-
-        passed = false;
-        conditionService.setConditionServiceListener(new ConditionServiceListener<UserState>() {
-            @Override
-            public void conditionPassed(UserState userState1) {
-                passed = true;
-            }
-        });
-        conditionService.onBaseDeleted(simpleBase1);
-        Assert.assertFalse(passed);
-        conditionService.activateCondition(conditionConfig, userState);
-        Assert.assertFalse(passed);
-        conditionService.onBaseDeleted(simpleBase1);
-        Assert.assertFalse(passed);
-
-        // Backup
-        DbUserState dbUserState = new DbUserState(null, userState);
-        DbAbstractComparisonBackup dbAbstractComparisonBackup = conditionService.createBackup(dbUserState, userState);
-        Assert.assertNotNull(dbAbstractComparisonBackup);
-        Assert.assertTrue(dbAbstractComparisonBackup instanceof DbCountComparisonBackup);
-        CountComparison backupCountComparison = new CountComparison(null, 0);
-        dbAbstractComparisonBackup.restore(backupCountComparison, null);
-        Assert.assertEquals(1, backupCountComparison.getCount(), 0.1);
-
-        // Fulfill before backup
-        conditionService.onBaseDeleted(simpleBase1);
-        Assert.assertTrue(passed);
-        passed = false;
-
-        // Restore
-        Map<DbUserState, UserState> userStates = new HashMap<DbUserState, UserState>();
-        dbUserState.setDbAbstractComparisonBackup(dbAbstractComparisonBackup);
-        userStates.put(dbUserState, userState);
-        conditionService.restoreBackup(userStates, null);
-
-        // Fulfill after backup
-        conditionService.onBaseDeleted(simpleBase1);
-        Assert.assertTrue(passed);
-    }
-
+//    @Test
+//    @DirtiesContext
+//    public void baseDeleted2() throws Exception {
+//        final UserState userState = new UserState();
+//        Base base = new Base(userState, 1);
+//        SimpleBase simpleBase1 = base.getSimpleBase();
+//
+//        // Mock BaseService
+//        BaseService baseServiceMock = EasyMock.createStrictMock(BaseService.class);
+//        EasyMock.expect(baseServiceMock.getUserState(simpleBase1)).andReturn(userState).times(3);
+//        EasyMock.replay(baseServiceMock);
+//
+//        setPrivateField(ServerConditionServiceImpl.class, conditionService, "baseService", baseServiceMock);
+//
+//        passed = false;
+//        conditionService.setConditionServiceListener(new ConditionServiceListener<UserState>() {
+//            @Override
+//            public void conditionPassed(UserState userState1) {
+//                passed = true;
+//            }
+//        });
+//        conditionService.onBaseDeleted(simpleBase1);
+//        Assert.assertFalse(passed);
+//        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.BASE_KILLED, new CountComparisonConfig(null, 2));
+//        conditionService.activateCondition(conditionConfig, userState);
+//        Assert.assertFalse(passed);
+//        conditionService.onBaseDeleted(simpleBase1);
+//        Assert.assertFalse(passed);
+//        conditionService.onBaseDeleted(simpleBase1);
+//        Assert.assertTrue(passed);
+//    }
+//
+//    @Test
+//    @DirtiesContext
+//    public void baseDeleted2BackupRestore() throws Exception {
+//        final UserState userState = new UserState();
+//        DbRealGameLevel dbRealGameLevel = new DbRealGameLevel();
+//        setPrivateField(DbLevel.class, dbRealGameLevel, "id", 1);
+//        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.BASE_KILLED, new CountComparisonConfig(null, 2));
+//        setPrivateField(DbLevel.class, dbRealGameLevel, "conditionConfig", conditionConfig);
+//
+//        userState.setDbLevel(dbRealGameLevel);
+//        Base base = new Base(userState, 1);
+//        SimpleBase simpleBase1 = base.getSimpleBase();
+//
+//        // Mock BaseService
+//        BaseService baseServiceMock = EasyMock.createStrictMock(BaseService.class);
+//        EasyMock.expect(baseServiceMock.getUserState(simpleBase1)).andReturn(userState).times(4);
+//        EasyMock.replay(baseServiceMock);
+//        setPrivateField(ServerConditionServiceImpl.class, conditionService, "baseService", baseServiceMock);
+//
+//        // Mock UserGuidanceService
+//        UserGuidanceService userGuidanceServiceMock = EasyMock.createStrictMock(UserGuidanceService.class);
+//        EasyMock.expect(userGuidanceServiceMock.getDbLevel(1)).andReturn(dbRealGameLevel);
+//        EasyMock.replay(userGuidanceServiceMock);
+//        setPrivateField(ServerConditionServiceImpl.class, conditionService, "userGuidanceService", userGuidanceServiceMock);
+//
+//        passed = false;
+//        conditionService.setConditionServiceListener(new ConditionServiceListener<UserState>() {
+//            @Override
+//            public void conditionPassed(UserState userState1) {
+//                passed = true;
+//            }
+//        });
+//        conditionService.onBaseDeleted(simpleBase1);
+//        Assert.assertFalse(passed);
+//        conditionService.activateCondition(conditionConfig, userState);
+//        Assert.assertFalse(passed);
+//        conditionService.onBaseDeleted(simpleBase1);
+//        Assert.assertFalse(passed);
+//
+//        // Backup
+//        DbUserState dbUserState = new DbUserState(null, userState);
+//        DbAbstractComparisonBackup dbAbstractComparisonBackup = conditionService.createBackup(dbUserState, userState);
+//        Assert.assertNotNull(dbAbstractComparisonBackup);
+//        Assert.assertTrue(dbAbstractComparisonBackup instanceof DbCountComparisonBackup);
+//        CountComparison backupCountComparison = new CountComparison(null, 0);
+//        dbAbstractComparisonBackup.restore(backupCountComparison, null);
+//        Assert.assertEquals(1, backupCountComparison.getCount(), 0.1);
+//
+//        // Fulfill before backup
+//        conditionService.onBaseDeleted(simpleBase1);
+//        Assert.assertTrue(passed);
+//        passed = false;
+//
+//        // Restore
+//        Map<DbUserState, UserState> userStates = new HashMap<DbUserState, UserState>();
+//        dbUserState.setDbAbstractComparisonBackup(dbAbstractComparisonBackup);
+//        userStates.put(dbUserState, userState);
+//        conditionService.restoreBackup(userStates, null);
+//
+//        // Fulfill after backup
+//        conditionService.onBaseDeleted(simpleBase1);
+//        Assert.assertTrue(passed);
+//    }
+//
 
 }

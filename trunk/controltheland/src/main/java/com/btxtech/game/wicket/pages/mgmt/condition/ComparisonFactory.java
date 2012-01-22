@@ -38,16 +38,16 @@ import java.util.List;
 public class ComparisonFactory {
     public enum ComparisonClass {
         SYNC_ITEM_KILLED(ConditionTrigger.SYNC_ITEM_KILLED, DbSyncItemTypeComparisonConfig.class, DbSyncItemIdComparisonConfig.class, DbCountComparisonConfig.class),
-        TUTORIAL(ConditionTrigger.TUTORIAL),
-        SYNC_ITEM_SELECT(ConditionTrigger.SYNC_ITEM_SELECT, DbSyncItemTypeComparisonConfig.class, DbSyncItemIdComparisonConfig.class, DbCountComparisonConfig.class),
-        SYNC_ITEM_DEACTIVATE(ConditionTrigger.SYNC_ITEM_DEACTIVATE, DbSyncItemIdPositionComparisonConfig.class, DbItemTypePositionComparisonConfig.class),
+        //TUTORIAL(ConditionTrigger.TUTORIAL),
+        //SYNC_ITEM_SELECT(ConditionTrigger.SYNC_ITEM_SELECT, DbSyncItemTypeComparisonConfig.class, DbSyncItemIdComparisonConfig.class, DbCountComparisonConfig.class),
+        //SYNC_ITEM_DEACTIVATE(ConditionTrigger.SYNC_ITEM_DEACTIVATE, DbSyncItemIdPositionComparisonConfig.class, DbItemTypePositionComparisonConfig.class),
         SYNC_ITEM_BUILT(ConditionTrigger.SYNC_ITEM_BUILT, DbSyncItemTypeComparisonConfig.class, DbSyncItemIdComparisonConfig.class, DbCountComparisonConfig.class),
-        SCROLL(ConditionTrigger.SCROLL),
+        //SCROLL(ConditionTrigger.SCROLL),
         MONEY_INCREASED(ConditionTrigger.MONEY_INCREASED, DbCountComparisonConfig.class),
         XP_INCREASED(ConditionTrigger.XP_INCREASED, DbCountComparisonConfig.class),
-        CONTAINED_IN(ConditionTrigger.CONTAINED_IN, DbContainedInComparisonConfig.class),
-        SCROLL_TO_POSITION(ConditionTrigger.SCROLL_TO_POSITION, DbPositionComparisonConfig.class),
-        BASE_DELETED(ConditionTrigger.BASE_DELETED, DbCountComparisonConfig.class);
+        //CONTAINED_IN(ConditionTrigger.CONTAINED_IN, DbContainedInComparisonConfig.class),
+        //SCROLL_TO_POSITION(ConditionTrigger.SCROLL_TO_POSITION, DbPositionComparisonConfig.class),
+        BASE_DELETED(ConditionTrigger.BASE_KILLED, DbCountComparisonConfig.class);
 
         private ConditionTrigger conditionTrigger;
         private List<Class<? extends DbAbstractComparisonConfig>> comparisons;

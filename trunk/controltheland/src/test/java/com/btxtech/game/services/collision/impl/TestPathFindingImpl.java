@@ -94,7 +94,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testPassableRectangles() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         Map<TerrainType, Collection<PassableRectangle>> passableRectanglesPerTerrainType = collisionService.getPassableRectangles();
         Assert.assertNotNull(passableRectanglesPerTerrainType.get(TerrainType.LAND));
@@ -107,7 +107,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testPassableRectanglesSynthetic1() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
         Collection<Rectangle> rectangles = new ArrayList<Rectangle>();
         rectangles.add(RECT_13_16);
         rectangles.add(RECT_16_16);
@@ -125,7 +125,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testPassableRectanglesSynthetic2() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
         Collection<Rectangle> rectangles = new ArrayList<Rectangle>();
         rectangles.add(RECT_22_13);
         rectangles.add(RECT_19_16);
@@ -166,7 +166,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     }
 
     private Map<TerrainType, Collection<PassableRectangle>> setupPassableRectangle() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         Collection<Rectangle> rectangles = new ArrayList<Rectangle>();
         rectangles.add(RECT_22_13);
@@ -436,7 +436,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testTestGumPath1() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         GumPath gumPathMock = EasyMock.createNiceMock(GumPath.class);
         EasyMock.expect(gumPathMock.getOptimizedPath()).andReturn(Arrays.asList(new Index(1700, 200), new Index(3200, 200)));
@@ -453,7 +453,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testTestGumPath2() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         GumPath gumPathMock = EasyMock.createNiceMock(GumPath.class);
         EasyMock.expect(gumPathMock.getOptimizedPath()).andReturn(Arrays.asList(
@@ -477,7 +477,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testTestGumPathFail() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         GumPath gumPathMock = EasyMock.createNiceMock(GumPath.class);
         EasyMock.expect(gumPathMock.getOptimizedPath()).andReturn(Arrays.asList(
@@ -589,7 +589,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testGumPath1() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         List<Port> ports = new ArrayList<Port>();
         ports.add(new Port(new Rectangle(new Index(1400, 0), new Index(2000, 300)), new Rectangle(new Index(2000, 0), new Index(2500, 300))));
@@ -658,7 +658,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testGumPath2() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         List<Port> ports = new ArrayList<Port>();
         ports.add(new Port(new Rectangle(new Index(400, 1000), new Index(1200, 1600)), new Rectangle(new Index(1200, 1000), new Index(1800, 1800))));
@@ -695,7 +695,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testGumPath3() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         List<Port> ports = new ArrayList<Port>();
         ports.add(new Port(new Rectangle(new Index(4200, 700), new Index(4700, 1400)), new Rectangle(new Index(4700, 700), new Index(5200, 1500))));
@@ -731,7 +731,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testGumPath4() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         List<Port> ports = new ArrayList<Port>();
         ports.add(new Port(new Rectangle(new Index(0, 4000), new Index(600, 4500)), new Rectangle(new Index(600, 3800), new Index(1000, 4500))));
@@ -801,7 +801,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testGumPath5() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         List<Port> ports = new ArrayList<Port>();
         ports.add(new Port(new Rectangle(new Index(100, 6000), new Index(600, 6400)), new Rectangle(new Index(600, 6000), new Index(900, 6700))));
@@ -830,7 +830,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testGumPath6() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         List<Port> ports = new ArrayList<Port>();
         ports.add(new Port(new Rectangle(new Index(5100, 7500), new Index(6000, 7800)), new Rectangle(new Index(6000, 7500), new Index(6400, 7800))));

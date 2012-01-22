@@ -2,7 +2,7 @@ package com.btxtech.game.services.mgmt.impl;
 
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.DbAbstractLevel;
+import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.condition.backup.DbAbstractComparisonBackup;
 
@@ -28,12 +28,13 @@ public class DbUserState {
     @OneToOne
     private DbBase base;
     @ManyToOne
-    private DbAbstractLevel currentAbstractLevel;
+    private DbLevel currentLevel;
     @ManyToOne(optional = false)
     private BackupEntry backupEntry;
     @OneToOne(cascade = CascadeType.ALL)
     private DbAbstractComparisonBackup dbAbstractComparisonBackup;
     private int xp;
+    private boolean sendResurrectionMessage;
 
     /**
      * Used by hibernate
@@ -45,15 +46,19 @@ public class DbUserState {
         this.backupEntry = backupEntry;
         user = userState.getUser();
         xp = userState.getXp();
-        currentAbstractLevel = userState.getCurrentAbstractLevel();
+        //currentLevel = userState.getDbLevelId();
+        sendResurrectionMessage = userState.isSendResurrectionMessage();
     }
 
     public UserState createUserState(UserGuidanceService userGuidanceService) {
         UserState userState = new UserState();
         userState.setUser(user);
         userState.setXp(xp);
-        if (currentAbstractLevel != null) {
-            userState.setCurrentAbstractLevel(userGuidanceService.getDbLevel(currentAbstractLevel.getId()));
+        if (sendResurrectionMessage) {
+            userState.setSendResurrectionMessage();
+        }
+        if (currentLevel != null) {
+            // TODO userState.setDbLevelId(userGuidanceService.getDbLevel(currentLevel.getId()));
         }
         return userState;
     }

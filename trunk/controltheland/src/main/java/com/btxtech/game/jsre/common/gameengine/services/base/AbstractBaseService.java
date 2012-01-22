@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.base;
 
-import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -54,7 +54,7 @@ public interface AbstractBaseService {
 
     boolean isHouseSpaceExceeded(SimpleBase simpleBase) throws NoSuchItemTypeException;
 
-    Level getLevel(SimpleBase simpleBase);
+    LevelScope getLevel(SimpleBase simpleBase);
 
     boolean isAlive(SimpleBase base);
 

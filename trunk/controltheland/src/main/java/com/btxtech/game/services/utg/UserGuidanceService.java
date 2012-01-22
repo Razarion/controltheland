@@ -13,18 +13,12 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.client.control.GameStartupSeq;
+import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
+import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
-import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
-import com.btxtech.game.services.utg.condition.DbConditionConfig;
-import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
-
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * User: beat
@@ -32,53 +26,29 @@ import java.util.List;
  * Time: 22:02:57
  */
 public interface UserGuidanceService extends CommonUserGuidanceService {
-    GameStartupSeq getColdStartupSeq();
-
     void promote(UserState userState, int newDbLevelId);
 
-    DbRealGameLevel getDbLevel();
+    DbLevel getDbLevel();
 
-    DbRealGameLevel getDbLevel(SimpleBase simpleBase);
+    DbLevel getDbLevel(UserState userState);
 
-    DbAbstractLevel getDbAbstractLevel();
-
-    DbAbstractLevel getDbAbstractLevelCms();
-
-    DbAbstractLevel getDbLevel(String levelName);
-
-    DbAbstractLevel getDbLevel(int id);
-
-    String getDbLevelHtml();
+    DbLevel getDbLevelCms();
 
     void setLevelForNewUser(UserState userState);
-
-    List<DbAbstractLevel> getDbLevels();
-
-    CrudRootServiceHelper<DbResurrection> getCrudRootDbResurrection();
 
     void activateLevels() throws LevelActivationException;
 
     void init2();
 
-    CrudRootServiceHelper<DbAbstractLevel> getDbLevelCrudServiceHelper();
-
-    void updateDbConditionConfig(DbConditionConfig dbConditionConfig);
-
-    void createDbComparisonItemCount(DbSyncItemTypeComparisonConfig dbSyncItemTypeComparisonConfigId);
-
-    DbAbstractComparisonConfig getDbAbstractComparisonConfig(int dbAbstractComparisonConfigId);
-
-    DbSyncItemTypeComparisonConfig getDbSyncItemTypeComparisonConfig(int dbSyncItemTypeComparisonConfigId);
-
-    void createDbItemTypeLimitation(DbRealGameLevel dbRealGameLevel);
-
-    boolean isBaseItemTypeAllowedInLevel(DbBaseItemType itemType);
-
-    DbAbstractLevel copyDbAbstractLevel(Serializable copyFromId);
-
-    void onBaseDeleted(SimpleBase actorBase, SimpleBase targetBase);
-
-    void executeResurrection(UserState userState);
+    void createBaseInQuestHub(UserState userState);
 
     void sendResurrectionMessage(SimpleBase simpleBase);
+
+    LevelScope getLevelScope(SimpleBase simpleBase);
+
+    GameFlow onTutorialFinished(Integer taskId);
+
+    boolean isStartRealGame();
+
+    CrudRootServiceHelper<DbQuestHub> getCrudQuestHub();
 }

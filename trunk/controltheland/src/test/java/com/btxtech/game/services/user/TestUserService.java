@@ -19,7 +19,7 @@ public class TestUserService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void createLoginLogoutTimeOut() throws Exception {
-        configureMinimalGame();
+        configureGameMultipleLevel();
         beginHttpSession();
         // Create account
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -80,7 +80,7 @@ public class TestUserService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void createCreateEnterLeaveGame() throws Exception {
-        configureMinimalGame();
+        configureGameMultipleLevel();
         beginHttpSession();
         // Create account
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -118,7 +118,7 @@ public class TestUserService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void createEnterGameRegister() throws Exception {
-        configureMinimalGame();
+        configureGameMultipleLevel();
         beginHttpSession();
         // Enter Game
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -163,7 +163,7 @@ public class TestUserService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void createEnterGameUnRegTimeout() throws Exception {
-        configureMinimalGame();
+        configureGameMultipleLevel();
         beginHttpSession();
         // Enter Game
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -193,7 +193,7 @@ public class TestUserService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void createEnterGameRegTimeout() throws Exception {
-        configureMinimalGame();
+        configureGameMultipleLevel();
         beginHttpSession();
         // Create account
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -237,7 +237,7 @@ public class TestUserService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void createLoginInGame() throws Exception {
-        configureMinimalGame();
+        configureGameMultipleLevel();
         beginHttpSession();
         // Create account
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -278,7 +278,7 @@ public class TestUserService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testLoginTwice() throws Exception {
-        configureMinimalGame();
+        configureGameMultipleLevel();
         // U1 no real base, first level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -297,7 +297,7 @@ public class TestUserService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testCreateUserTwice() throws Exception {
-        configureMinimalGame();
+        configureGameMultipleLevel();
         // U1 no real base, first level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

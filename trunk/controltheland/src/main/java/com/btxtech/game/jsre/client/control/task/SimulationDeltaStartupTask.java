@@ -38,6 +38,5 @@ public class SimulationDeltaStartupTask extends GameEngineStartupTask {
             return;
         }
         deltaSetupGameStructure(simulationInfo);
-        ClientBase.getInstance().setAllBaseAttributes(simulationInfo.getTutorialConfig().getBaseAttributes());
     }
 }

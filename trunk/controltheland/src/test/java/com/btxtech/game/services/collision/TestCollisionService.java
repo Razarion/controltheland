@@ -60,7 +60,7 @@ public class TestCollisionService extends AbstractServiceTest {
     // TODO @Test
     @DirtiesContext
     public void testRandomPositionInTerritory() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         Rectangle noobTerrain = new Rectangle(0, 0, 1599, 1799);
         Rectangle terrainImage1 = new Rectangle(0, 1300, 1000, 400);

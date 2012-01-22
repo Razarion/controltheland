@@ -182,16 +182,9 @@ public class ItemContainer extends AbstractItemService {
         return itemView.getSyncItem();
     }
 
-    public Id createSimulationId(int id, int parentId, int createdChildCount) {
-        if (itemId <= id) {
-            itemId = id + 1;
-        }
-        return new Id(id, parentId, createdChildCount);
-    }
-
     private Id createId(int parentId, int createdChildCount) {
         itemId++;
-        return createSimulationId(itemId, parentId, createdChildCount);
+        return new Id(itemId, parentId, createdChildCount);
     }
 
     public ClientSyncItem getSimulationItem(int intId) {
@@ -204,11 +197,15 @@ public class ItemContainer extends AbstractItemService {
     }
 
     public SyncItem createSimulationSyncObject(ItemTypeAndPosition itemTypeAndPosition) throws NoSuchItemTypeException {
-        Id id = createSimulationId(itemTypeAndPosition.getId(), Id.SIMULATION_ID, Id.SIMULATION_ID);
+        Id id = createId(Id.SIMULATION_ID, Id.SIMULATION_ID);
         if (items.containsKey(id)) {
             throw new IllegalStateException(this + " simulated id is already used: " + id);
         }
-        ClientSyncItem itemView = createAndAddItem(id, itemTypeAndPosition.getPosition(), itemTypeAndPosition.getItemTypeId(), itemTypeAndPosition.getBase());
+        SimpleBase simpleBase = null;
+        if (getItemType(itemTypeAndPosition.getItemTypeId()) instanceof BaseItemType) {
+            simpleBase = ClientBase.getInstance().getSimpleBase();
+        }
+        ClientSyncItem itemView = createAndAddItem(id, itemTypeAndPosition.getPosition(), itemTypeAndPosition.getItemTypeId(), simpleBase);
         id.setUserTimeStamp(System.currentTimeMillis());
         if (itemView.getSyncItem() instanceof SyncBaseItem) {
             SyncBaseItem syncBaseItem = (SyncBaseItem) itemView.getSyncItem();
@@ -220,6 +217,22 @@ public class ItemContainer extends AbstractItemService {
         itemView.update();
         ClientServices.getInstance().getConnectionService().sendSyncInfo(itemView.getSyncItem());
         return itemView.getSyncItem();
+    }
+
+    public SyncItem createItemTypeEditorSyncObject(SimpleBase simpleBase, int itemTypeId, Index position) throws NoSuchItemTypeException {
+        Id id = createId(Id.SIMULATION_ID, Id.SIMULATION_ID);
+        if (items.containsKey(id)) {
+            throw new IllegalStateException(this + " simulated id is already used: " + id);
+        }
+        ClientSyncItem itemView = createAndAddItem(id, position, itemTypeId, simpleBase);
+        id.setUserTimeStamp(System.currentTimeMillis());
+        if (itemView.getSyncItem() instanceof SyncBaseItem) {
+            SyncBaseItem syncBaseItem = (SyncBaseItem) itemView.getSyncItem();
+            syncBaseItem.setBuildup(1.0);
+        }
+        itemView.checkVisibility();
+        itemView.update();
+        return itemView.getSyncItem();        
     }
 
     private ClientSyncItem createAndAddItem(Id id, Index position, int itemTypeId, SimpleBase base) throws NoSuchItemTypeException {

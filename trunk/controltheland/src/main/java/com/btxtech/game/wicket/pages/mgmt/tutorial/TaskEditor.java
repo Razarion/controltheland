@@ -67,32 +67,10 @@ public class TaskEditor extends MgmtWebPage {
         add(form);
 
         form.add(new CheckBox("clearGame"));
-        form.add(new TextField<String>("taskText"));
         form.add(new IndexPanel("scroll"));
-        form.add(new TextField("accountBalance"));
+        form.add(new TextField("money"));
+        form.add(new TextField("maxMoney"));
         form.add(new TextField("houseCount"));
-        form.add(new FileUploadField("upload", new IModel<FileUpload>() {
-
-            @Override
-            public FileUpload getObject() {
-                return null;
-            }
-
-            @Override
-            public void setObject(FileUpload fileUpload) {
-                if (fileUpload == null) {
-                    // I don't know why this is null
-                    return;
-                }
-                ((DbTaskConfig) form.getDefaultModelObject()).setFinishImageData(fileUpload.getBytes());
-                ((DbTaskConfig) form.getDefaultModelObject()).setFinishedImageContentType(fileUpload.getContentType());
-            }
-
-            @Override
-            public void detach() {
-            }
-        }));
-        form.add(new TextField("finishImageDuration"));
 
         new CrudChildTableHelper<DbTaskConfig, DbTaskAllowedItem>("allowedItemTable", null, "createAllowedItem", false, form, false) {
             @Override
@@ -137,11 +115,8 @@ public class TaskEditor extends MgmtWebPage {
             @Override
             protected void extendedPopulateItem(final Item<DbItemTypeAndPosition> dbTaskConfigItem) {
                 dbTaskConfigItem.add(new ItemTypePanel("itemType"));
-                dbTaskConfigItem.add(new TextField("syncItemId"));
                 dbTaskConfigItem.add(new IndexPanel("position"));
                 dbTaskConfigItem.add(new TextField("angel"));
-                dbTaskConfigItem.add(new TextField<Integer>("baseId"));
-
             }
         };
 

@@ -11,27 +11,28 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.playback;
+package com.btxtech.game.jsre.client.control.task;
 
+import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
-import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
-import com.btxtech.game.jsre.client.control.task.DeferredStartup;
-import com.btxtech.game.jsre.client.simulation.Simulation;
+import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
+import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * User: beat
- * Date: 22.12.2010
- * Time: 13:26:18
+ * Date: 04.12.2010
+ * Time: 12:59:49
  */
-public class RunPlaybackStartupTask extends AbstractStartupTask {
+public class LoadSimulationInfoStartupTask extends AbstractStartupTask {
 
-    public RunPlaybackStartupTask(StartupTaskEnum taskEnum) {
+    public LoadSimulationInfoStartupTask(StartupTaskEnum taskEnum) {
         super(taskEnum);
     }
 
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
-        // TODO Simulation.getInstance().initGameEngine();
-        PlaybackVisualisation.getInstance().play();
+        deferredStartup.setDeferred();
+        Connection.INSTANCE.downloadSimulationGameInfo(ClientLevelHandler.getInstance().getLevelTaskId(), deferredStartup);
     }
 }

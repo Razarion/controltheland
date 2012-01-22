@@ -15,8 +15,8 @@ package com.btxtech.game.jsre.client.control;
 
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.ClearGame;
-import com.btxtech.game.jsre.client.control.task.LoadGameInfoStartupTask;
 import com.btxtech.game.jsre.client.control.task.LoadMapImageStartupTask;
+import com.btxtech.game.jsre.client.control.task.LoadSimulationInfoStartupTask;
 import com.btxtech.game.jsre.client.control.task.RunSimulationStartupTask;
 import com.btxtech.game.jsre.client.control.task.SetupPathFindingStartupTask;
 import com.btxtech.game.jsre.client.control.task.SimulationDeltaStartupTask;
@@ -32,10 +32,10 @@ public enum WarmSimulatedGameStartupTaskEnum implements StartupTaskEnum {
         public AbstractStartupTask createTask() {
             return new ClearGame(this);
         }},
-    DOWNLOAD_GAME_INFO("Load game information") {
+    DOWNLOAD_GAME_INFO("Load simulation game information") {
         @Override
         public AbstractStartupTask createTask() {
-            return new LoadGameInfoStartupTask(this);
+            return new LoadSimulationInfoStartupTask(this);
         }},
     INIT_GAME("Delta init simulated Game") {
         @Override

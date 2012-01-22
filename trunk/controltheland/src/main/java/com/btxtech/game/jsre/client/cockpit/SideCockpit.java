@@ -6,9 +6,9 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.common.info.RealityInfo;
+import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -117,13 +117,13 @@ public class SideCockpit extends AbsolutePanel {
         }
     }
 
-    public void setGameInfo(RealityInfo realityInfo) {
-        cockpitDisplayPanel.updateMoney(realityInfo.getAccountBalance());
+    public void setGameInfo(RealGameInfo realGameInfo) {
+        cockpitDisplayPanel.updateMoney(realGameInfo.getAccountBalance());
     }
 
-    public void setLevel(Level level) {
+    public void setLevel(LevelScope levelScope) {
         if (cockpitDisplayPanel != null) {
-            cockpitDisplayPanel.setLevel(level);
+            cockpitDisplayPanel.setLevel(levelScope);
         }
         onStateChanged();
     }

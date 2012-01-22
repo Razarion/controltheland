@@ -27,16 +27,18 @@ import java.util.List;
  */
 public class Task {
     private TaskConfig taskConfig;
+    private int levelTaskId;
     private Step activeStep;
     private long stepTime;
 
-    public Task(TaskConfig taskConfig) {
+    public Task(TaskConfig taskConfig, int levelTaskId) {
         this.taskConfig = taskConfig;
+        this.levelTaskId = levelTaskId;
         start();
     }
 
     private void start() {
-        ClientBase.getInstance().setAccountBalance(taskConfig.getAccountBalance());
+        ClientBase.getInstance().setAccountBalance(taskConfig.getMoney());
         runNextStep();
     }
 
@@ -69,7 +71,7 @@ public class Task {
     private void runNextStep(StepConfig stepConfig) {
         if (activeStep != null) {
             long time = System.currentTimeMillis();
-            ClientUserTracker.getInstance().onStepFinished(activeStep, this, time - stepTime, time);
+            ClientUserTracker.getInstance().onStepFinished(levelTaskId, activeStep, this, time - stepTime, time);
         }
         stepTime = System.currentTimeMillis();
         activeStep = new Step(stepConfig);

@@ -25,7 +25,7 @@ public class TestTerritoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSaveSameTerritoryTiles() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -48,7 +48,7 @@ public class TestTerritoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSaveEmptyTerritoryTiles() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -68,7 +68,7 @@ public class TestTerritoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSaveDifferentTerritoryTiles() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -89,7 +89,7 @@ public class TestTerritoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSaveEqualTerritoryTiles() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -129,7 +129,7 @@ public class TestTerritoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSaveEqual2TerritoryTiles() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -150,7 +150,7 @@ public class TestTerritoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSaveMultiTerritoryTiles() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

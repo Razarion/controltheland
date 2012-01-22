@@ -3,7 +3,6 @@ package com.btxtech.game.crudtabletest;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
-import com.btxtech.game.services.utg.DbAbstractLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.pages.mgmt.BotTable;
 import com.btxtech.game.wicket.pages.mgmt.DbLevelTable;
@@ -16,8 +15,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
-
-import java.util.ArrayList;
 
 /**
  * User: beat
@@ -108,7 +105,7 @@ public class TestCurdRootTable extends AbstractServiceTest {
     public void testMultiTable() throws Exception {
         configureMinimalGame();
 
-        System.out.println("---------------- START ----------------");                     
+        System.out.println("---------------- START ----------------");
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -127,7 +124,8 @@ public class TestCurdRootTable extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals("test", new ArrayList<DbAbstractLevel>(userGuidanceService.getDbLevelCrudServiceHelper().readDbChildren()).get(0).getInternalDescription());
+        Assert.fail();
+        // TODO Assert.assertEquals("test", new ArrayList<DbLevel>(userGuidanceService.getDbLevelCrudServiceHelper().readDbChildren()).get(0).getInternalDescription());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

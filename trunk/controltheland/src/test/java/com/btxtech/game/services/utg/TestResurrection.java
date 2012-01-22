@@ -3,13 +3,11 @@ package com.btxtech.game.services.utg;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Message;
-import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
-import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.user.UserService;
@@ -37,15 +35,13 @@ public class TestResurrection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testOnlineSell() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         System.out.println("***** testOnlineSell *****");
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
-        SimpleBase simpleBase = ((RealityInfo) movableService.getGameInfo()).getBase();
+        SimpleBase simpleBase = movableService.getRealGameInfo().getBase();
         Id id = getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID);
         clearPackets();
         movableService.sellItem(id);
@@ -67,7 +63,7 @@ public class TestResurrection extends AbstractServiceTest {
             // OK
         }
 
-        SimpleBase newBase = ((RealityInfo) movableService.getGameInfo()).getBase();
+        SimpleBase newBase = movableService.getRealGameInfo().getBase();
         Assert.assertEquals(1, baseService.getBases().size());
         Assert.assertFalse(newBase.equals(simpleBase));
 
@@ -82,7 +78,7 @@ public class TestResurrection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testOffline() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         System.out.println("***** testOffline *****");
 
@@ -92,8 +88,7 @@ public class TestResurrection extends AbstractServiceTest {
         // Target
         userService.createUser("U1", "test", "test", "");
         userService.login("U1", "test");
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
-        SimpleBase targetBase = ((RealityInfo) movableService.getGameInfo()).getBase();
+        SimpleBase targetBase = movableService.getRealGameInfo().getBase();
         String targetName = baseService.getBaseName(targetBase);
         Id target = getFirstSynItemId(targetBase, TEST_START_BUILDER_ITEM_ID);
         clearPackets();
@@ -106,9 +101,8 @@ public class TestResurrection extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
 
         // Actor
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+        SimpleBase actorBase = movableService.getRealGameInfo().getBase();
         Assert.assertEquals(2, baseService.getBases().size());
-        SimpleBase actorBase = ((RealityInfo) movableService.getGameInfo()).getBase();
         Id actorBuilder = getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID);
         sendBuildCommand(actorBuilder, new Index(100, 100), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -141,7 +135,7 @@ public class TestResurrection extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
 
         userService.login("U1", "test");
-        SimpleBase targetBaseNew = ((RealityInfo) movableService.getGameInfo()).getBase();
+        SimpleBase targetBaseNew = movableService.getRealGameInfo().getBase();
         Assert.assertFalse(targetBaseNew.equals(targetBase));
         Assert.assertEquals(2, baseService.getBases().size());
         Message message2 = new Message();
@@ -154,67 +148,13 @@ public class TestResurrection extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testResurrectionDuringSimulation() throws Exception {
-        configureMinimalGame();
-
-        System.out.println("***** testOnlineSell *****");
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        // Target
-        userService.createUser("U1", "test", "test", "");
-        userService.login("U1", "test");
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
-        SimpleBase targetBase = getMyBase();
-        UserState targetUserState = userService.getUserState();
-        Id targetId = getFirstSynItemId(targetBase, TEST_START_BUILDER_ITEM_ID);
-        userGuidanceService.promote(targetUserState, TEST_LEVEL_4_SIMULATED_ID);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Kill
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
-        SimpleBase actorBase = getMyBase();
-        Id actorBuilder = getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID);
-        sendBuildCommand(actorBuilder, new Index(100,100), TEST_FACTORY_ITEM_ID);
-        waitForActionServiceDone();
-        Id actorFactory = getFirstSynItemId(actorBase, TEST_FACTORY_ITEM_ID);
-        sendFactoryCommand(actorFactory, TEST_ATTACK_ITEM_ID);
-        waitForActionServiceDone();
-        Id actorAttacker = getFirstSynItemId(actorBase, TEST_ATTACK_ITEM_ID);
-        sendAttackCommand(actorAttacker, targetId);
-        waitForActionServiceDone();
-        
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
-        getMyBase();  // Connection
-        Message message = new Message();
-        message.setMessage("You lost your base. A new base was created.");
-        assertPackagesIgnoreSyncItemInfoAndClear(message);
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
     public void testSurrender() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         System.out.println("***** testSurrender *****");
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
         SimpleBase simpleBase = getMyBase(); // Connection
         movableService.surrenderBase();
 
@@ -244,6 +184,4 @@ public class TestResurrection extends AbstractServiceTest {
         endHttpSession();
 
     }
-
-
 }

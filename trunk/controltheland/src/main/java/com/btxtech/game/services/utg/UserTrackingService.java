@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
@@ -87,7 +87,7 @@ public interface UserTrackingService {
 
     boolean isHtml5Support();
 
-    Level onTutorialProgressChanged(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp);
+    void onTutorialProgressChanged(TutorialConfig.TYPE type, Integer taskId, String name, String parent, long duration, long clientTimeStamp);
 
     void onEventTrackingStart(EventTrackingStart eventTrackingStart);
 

@@ -18,7 +18,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.DbAbstractLevel;
+import com.btxtech.game.services.utg.DbLevel;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public interface HistoryService {
 
     List<DisplayHistoryElement> getHistoryElements(Long from, Long to, String sessionId, Integer baseId);
 
-    void addLevelPromotionEntry(UserState user, DbAbstractLevel level);
+    void addLevelPromotionEntry(UserState user, DbLevel level);
 
     int getLevelPromotionCount(final String sessionId);
 

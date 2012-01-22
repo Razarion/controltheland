@@ -54,17 +54,12 @@
         <mapping class="com.btxtech.game.services.item.itemType.DbItemContainerType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbHouseType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbLauncherType"/>
-        <mapping class="com.btxtech.game.services.utg.DbXpSettings"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbPageAccess"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbSessionDetail"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbStartupTask"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbUserCommand"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbUserHistory"/>
         <mapping class="com.btxtech.game.services.utg.DbUserMessage"/>
-        <mapping class="com.btxtech.game.services.utg.DbSimulationLevel"/>
-        <mapping class="com.btxtech.game.services.utg.DbRealGameLevel"/>
-        <mapping class="com.btxtech.game.services.utg.DbResurrection"/>
-        <mapping class="com.btxtech.game.services.utg.DbItemTypeLimitation"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbTutorialProgress"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbEventTrackingStart"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbEventTrackingItem"/>
@@ -100,6 +95,12 @@
         <mapping class="com.btxtech.game.services.tutorial.DbItemTypeAndPosition"/>
         <mapping class="com.btxtech.game.services.tutorial.DbStepConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.DbTaskBot"/>
+        <!-- User Guidance -->
+        <mapping class="com.btxtech.game.services.utg.DbXpSettings"/>
+        <mapping class="com.btxtech.game.services.utg.DbQuestHub"/>
+        <mapping class="com.btxtech.game.services.utg.DbLevel"/>
+        <mapping class="com.btxtech.game.services.utg.DbLevelTask"/>
+        <mapping class="com.btxtech.game.services.utg.DbItemTypeLimitation"/>
         <!-- Backup -->
         <mapping class="com.btxtech.game.services.mgmt.impl.BackupEntry"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.GenericBaseItem"/>

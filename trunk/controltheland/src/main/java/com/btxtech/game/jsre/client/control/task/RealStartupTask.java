@@ -16,9 +16,10 @@ package com.btxtech.game.jsre.client.control.task;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientEnergyService;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
-import com.btxtech.game.jsre.client.common.info.RealityInfo;
+import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
+import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 
 /**
  * User: beat
@@ -33,20 +34,21 @@ public class RealStartupTask extends GameEngineStartupTask {
 
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
-        RealityInfo realityInfo = reloadIfNotCorrectInfoClass(RealityInfo.class, deferredStartup);
-        if (realityInfo == null) {
+        RealGameInfo realGameInfo = reloadIfNotCorrectInfoClass(RealGameInfo.class, deferredStartup);
+        if (realGameInfo == null) {
             return;
         }
-        setupGameStructure(realityInfo);
-        ClientBase.getInstance().setAllBaseAttributes(realityInfo.getAllBase());
-        ClientBase.getInstance().setBase(realityInfo.getBase());
-        ClientBase.getInstance().setAccountBalance(realityInfo.getAccountBalance());
-        SideCockpit.getInstance().setGameInfo(realityInfo);
+        setupGameStructure(realGameInfo);
+        ClientBase.getInstance().setAllBaseAttributes(realGameInfo.getAllBase());
+        ClientBase.getInstance().setBase(realGameInfo.getBase());
+        ClientBase.getInstance().setAccountBalance(realGameInfo.getAccountBalance());
+        SideCockpit.getInstance().setGameInfo(realGameInfo);
         ClientEnergyService.getInstance().init(true);
         ClientBase.getInstance().setConnectedToServer4FakedHouseSpace(true);
-        ClientEnergyService.getInstance().onEnergyPacket(realityInfo.getEnergyGenerating(), realityInfo.getEnergyConsuming());
-        ClientTerritoryService.getInstance().setTerritories(realityInfo.getTerritories());
-        ClientBase.getInstance().setHouseSpace(realityInfo.getHouseSpace());
+        ClientEnergyService.getInstance().onEnergyPacket(realGameInfo.getEnergyGenerating(), realGameInfo.getEnergyConsuming());
+        ClientTerritoryService.getInstance().setTerritories(realGameInfo.getTerritories());
+        ClientBase.getInstance().setHouseSpace(realGameInfo.getHouseSpace());
+        ClientLevelHandler.getInstance().setLevelScope(realGameInfo.getLevelScope());
     }
 
 }

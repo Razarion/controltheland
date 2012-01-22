@@ -4,7 +4,6 @@ import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
-import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.user.UserService;
@@ -37,16 +36,14 @@ public class TestXpService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSetupXp() throws Exception {
-        configureMinimalGame();
-
         // Verify settings from configureMinimalGame
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbXpSettings dbXpSettings = xpService.getXpPointSettings();
-        Assert.assertEquals(1, dbXpSettings.getKillPriceFactor(), 0.0001);
+        Assert.assertEquals(0.1, dbXpSettings.getKillPriceFactor(), 0.0001);
         Assert.assertEquals(2000, dbXpSettings.getKillQueuePeriod());
         Assert.assertEquals(10000, dbXpSettings.getKillQueueSize());
-        Assert.assertEquals(0.5, dbXpSettings.getBuiltPriceFactor(), 0.001);
+        Assert.assertEquals(0.1, dbXpSettings.getBuiltPriceFactor(), 0.001);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -89,8 +86,8 @@ public class TestXpService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testLevelBuiltItemXp() throws Exception {
-        configureMinimalGame();
+    public void testBuiltItemXp() throws Exception {
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -106,8 +103,8 @@ public class TestXpService extends AbstractServiceTest {
         // Create Items
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
         // Create StartItem gets 1 XP
+        movableService.getRealGameInfo();
         Assert.assertEquals(1, userService.getUserState().getXp());
         Id builder = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
         sendBuildCommand(builder, new Index(500, 100), TEST_FACTORY_ITEM_ID);
@@ -120,7 +117,7 @@ public class TestXpService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testKillItemXp() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -138,7 +135,7 @@ public class TestXpService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+        movableService.getRealGameInfo();
         Id builder = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
         sendBuildCommand(builder, new Index(500, 100), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -167,7 +164,7 @@ public class TestXpService extends AbstractServiceTest {
         for (int i = 0; i < count; i++) {
             beginHttpSession();
             beginHttpRequestAndOpenSessionInViewFilter();
-            movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+            movableService.getRealGameInfo();
             Id target = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
             targets.add(target);
             endHttpRequestAndOpenSessionInViewFilter();
@@ -178,6 +175,4 @@ public class TestXpService extends AbstractServiceTest {
         }
         return targets;
     }
-
-
 }
