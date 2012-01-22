@@ -6,11 +6,6 @@ import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.CountComparisonConfig;
-import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.impl.ServerConditionServiceImpl;
-import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
@@ -29,7 +24,7 @@ public class TestSimulationConditionServiceImpl {
         SimpleBase simpleBase = new SimpleBase(1);
         SimulationConditionServiceImpl conditionService = SimulationConditionServiceImpl.getInstance();
 
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.BASE_DELETED, new CountComparisonConfig(null, 1));
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.BASE_KILLED, new CountComparisonConfig(null, 1));
         conditionService.activateCondition(conditionConfig, null);
         passed = false;
         conditionService.setConditionServiceListener(new ConditionServiceListener<Object>() {

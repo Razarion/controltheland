@@ -22,11 +22,7 @@ import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
  */
 public class SimulationInfo extends GameInfo {
     private TutorialConfig tutorialConfig;
-
-    @Override
-    public boolean isRealGame() {
-        return false;
-    }
+    private int levelTaskId;
 
     public void setTutorialConfig(TutorialConfig tutorialConfig) {
         this.tutorialConfig = tutorialConfig;
@@ -34,5 +30,13 @@ public class SimulationInfo extends GameInfo {
 
     public TutorialConfig getTutorialConfig() {
         return tutorialConfig;
+    }
+
+    public int getLevelTaskId() {
+        return levelTaskId;
+    }
+
+    public void setLevelTaskId(int levelTaskId) {
+        this.levelTaskId = levelTaskId;
     }
 }

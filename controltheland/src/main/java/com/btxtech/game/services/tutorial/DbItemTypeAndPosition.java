@@ -43,8 +43,6 @@ public class DbItemTypeAndPosition implements CrudChild<DbTaskConfig> {
     @Id
     @GeneratedValue
     private Integer id;
-    private Integer baseId;
-    private int syncItemId;
     @ManyToOne
     private DbItemType itemType;
     @Type(type = "index")
@@ -53,14 +51,6 @@ public class DbItemTypeAndPosition implements CrudChild<DbTaskConfig> {
     @ManyToOne(optional = false)
     private DbTaskConfig dbTaskConfig;
     private Integer angel;
-
-    public int getSyncItemId() {
-        return syncItemId;
-    }
-
-    public void setSyncItemId(int syncItemId) {
-        this.syncItemId = syncItemId;
-    }
 
     public DbItemType getItemType() {
         return itemType;
@@ -105,7 +95,6 @@ public class DbItemTypeAndPosition implements CrudChild<DbTaskConfig> {
 
     @Override
     public void init(UserService userService) {
-        baseId = 1;
         position = new Index(0, 0);
     }
 
@@ -116,14 +105,6 @@ public class DbItemTypeAndPosition implements CrudChild<DbTaskConfig> {
 
     public Integer getId() {
         return id;
-    }
-
-    public Integer getBaseId() {
-        return baseId;
-    }
-
-    public void setBaseId(Integer baseId) {
-        this.baseId = baseId;
     }
 
     public Integer getAngel() {
@@ -142,10 +123,6 @@ public class DbItemTypeAndPosition implements CrudChild<DbTaskConfig> {
         if (angel != null) {
             radiant = (double) angel / 180.0 * Math.PI;
         }
-        SimpleBase simpleBase = null;
-        if (baseId != null) {
-            simpleBase = new SimpleBase(baseId);
-        }
-        return new ItemTypeAndPosition(simpleBase, syncItemId, itemType.getId(), position, radiant);
+        return new ItemTypeAndPosition(itemType.getId(), position, radiant);
     }
 }

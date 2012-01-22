@@ -13,8 +13,6 @@
 
 package com.btxtech.game.services.tutorial;
 
-import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.common.CrudChild;
@@ -54,20 +52,16 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
     @JoinColumn(name = "dbTutorialConfig", nullable = false)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private List<DbTaskConfig> dbTaskConfigs;
-    @Transient
-    private CrudChildServiceHelper<DbTaskConfig> dbTaskConfigCrudChildServiceHelper;
     private int width;
     private int height;
-    private int ownBaseId;
     private String ownBaseName;
-    private int enemyBaseId;
-    private String enemyBaseName;
-    private boolean failOnOwnItemsLost;
-    private Integer failOnMoneyBelowAndNoAttackUnits;
     private boolean tracking;
     @ManyToOne(fetch = FetchType.LAZY)
     private DbTerrainSetting dbTerrainSetting;
-    private boolean showWindowTooSmall;
+
+    @Transient
+    private CrudChildServiceHelper<DbTaskConfig> dbTaskConfigCrudChildServiceHelper;
+    private TutorialConfig tutorialConfig;
 
     @Override
     public String getName() {
@@ -95,52 +89,12 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
         return height;
     }
 
-    public int getOwnBaseId() {
-        return ownBaseId;
-    }
-
-    public void setOwnBaseId(int ownBaseId) {
-        this.ownBaseId = ownBaseId;
-    }
-
     public String getOwnBaseName() {
         return ownBaseName;
     }
 
     public void setOwnBaseName(String ownBaseName) {
         this.ownBaseName = ownBaseName;
-    }
-
-    public int getEnemyBaseId() {
-        return enemyBaseId;
-    }
-
-    public void setEnemyBaseId(int enemyBaseId) {
-        this.enemyBaseId = enemyBaseId;
-    }
-
-    public String getEnemyBaseName() {
-        return enemyBaseName;
-    }
-
-    public void setEnemyBaseName(String enemyBaseName) {
-        this.enemyBaseName = enemyBaseName;
-    }
-
-    public boolean isFailOnOwnItemsLost() {
-        return failOnOwnItemsLost;
-    }
-
-    public void setFailOnOwnItemsLost(boolean failOnOwnItemsLost) {
-        this.failOnOwnItemsLost = failOnOwnItemsLost;
-    }
-
-    public Integer getFailOnMoneyBelowAndNoAttackUnits() {
-        return failOnMoneyBelowAndNoAttackUnits;
-    }
-
-    public void setFailOnMoneyBelowAndNoAttackUnits(Integer failOnMoneyBelowAndNoAttackUnits) {
-        this.failOnMoneyBelowAndNoAttackUnits = failOnMoneyBelowAndNoAttackUnits;
     }
 
     public Integer getId() {
@@ -171,33 +125,8 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
         this.dbTerrainSetting = dbTerrainSetting;
     }
 
-    public boolean isShowWindowTooSmall() {
-        return showWindowTooSmall;
-    }
-
-    public void setShowWindowTooSmall(boolean showWindowTooSmall) {
-        this.showWindowTooSmall = showWindowTooSmall;
-    }
-
-    public TutorialConfig createTutorialConfig(ItemService itemService) {
-        ArrayList<BaseAttributes> baseAttributes = new ArrayList<BaseAttributes>();
-        SimpleBase ownBase = new SimpleBase(ownBaseId);
-        baseAttributes.add(new BaseAttributes(ownBase, ownBaseName, false));
-        baseAttributes.add(new BaseAttributes(new SimpleBase(enemyBaseId), enemyBaseName, false));
-
-        ArrayList<TaskConfig> taskConfigs = new ArrayList<TaskConfig>();
-        for (DbTaskConfig dbTaskConfig : dbTaskConfigs) {
-            taskConfigs.add(dbTaskConfig.createTaskConfig(itemService));
-        }
-
-        return new TutorialConfig(taskConfigs, ownBase, width, height, baseAttributes, failOnOwnItemsLost, failOnMoneyBelowAndNoAttackUnits, tracking, showWindowTooSmall);
-    }
-
     public void init(UserService userService) {
-        ownBaseId = 1;
         ownBaseName = "My Base";
-        enemyBaseId = 2;
-        enemyBaseName = "Enemy";
         dbTaskConfigs = new ArrayList<DbTaskConfig>();
     }
 
@@ -248,4 +177,21 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
     public String toString() {
         return "DbTutorialSetting: " + name;
     }
+
+    public TutorialConfig getTutorialConfig(ItemService itemService) {
+        if (tutorialConfig == null) {
+            tutorialConfig = createTutorialConfig(itemService);
+        }
+        return tutorialConfig;
+    }
+
+    private TutorialConfig createTutorialConfig(ItemService itemService) {
+        ArrayList<TaskConfig> taskConfigs = new ArrayList<TaskConfig>();
+        for (DbTaskConfig dbTaskConfig : dbTaskConfigs) {
+            taskConfigs.add(dbTaskConfig.createTaskConfig(itemService));
+        }
+
+        return new TutorialConfig(taskConfigs, ownBaseName, width, height, tracking);
+    }
+
 }

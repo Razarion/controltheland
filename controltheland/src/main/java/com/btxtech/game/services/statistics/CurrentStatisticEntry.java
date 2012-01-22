@@ -2,7 +2,7 @@ package com.btxtech.game.services.statistics;
 
 import com.btxtech.game.services.common.SimpleCrudChild;
 import com.btxtech.game.services.user.User;
-import com.btxtech.game.services.utg.DbAbstractLevel;
+import com.btxtech.game.services.utg.DbLevel;
 
 import java.io.Serializable;
 
@@ -12,14 +12,14 @@ import java.io.Serializable;
  * Time: 14:54:23
  */
 public class CurrentStatisticEntry extends SimpleCrudChild {
-    private DbAbstractLevel level;
+    private DbLevel level;
     private User user;
     private String baseName;
     private Long baseUpTime;
     private Integer itemCount;
     private Integer money;
 
-    public CurrentStatisticEntry(DbAbstractLevel level, User user, String baseName, Long baseUpTime, Integer itemCount, Integer money) {
+    public CurrentStatisticEntry(DbLevel level, User user, String baseName, Long baseUpTime, Integer itemCount, Integer money) {
         this.level = level;
         this.user = user;
         this.baseName = baseName;
@@ -28,7 +28,7 @@ public class CurrentStatisticEntry extends SimpleCrudChild {
         this.money = money;
     }
 
-    public DbAbstractLevel getLevel() {
+    public DbLevel getLevel() {
         return level;
     }
 

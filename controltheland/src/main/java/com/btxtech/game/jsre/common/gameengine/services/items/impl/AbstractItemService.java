@@ -422,7 +422,7 @@ abstract public class AbstractItemService implements ItemService {
         SimpleBase simpleBase = syncBaseItem.getBase();
         // May last item sold
         if (getServices().getBaseService().isAlive(simpleBase)) {
-            double money = health / fullHealth * buildup * price * getServices().getCommonUserGuidanceService().getItemSellFactor();
+            double money = health / fullHealth * buildup * price * getServices().getCommonUserGuidanceService().getLevelScope().getItemSellFactor();
             getServices().getBaseService().depositResource(money, simpleBase);
             getServices().getBaseService().sendAccountBaseUpdate(simpleBase);
         }

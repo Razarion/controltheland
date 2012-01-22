@@ -53,7 +53,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void oneItem() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         Collection<DbBotItemConfig> dbBotItemConfigs = new ArrayList<DbBotItemConfig>();
         DbBotItemConfig config1 = new DbBotItemConfig();
@@ -91,7 +91,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void threeItems() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         Collection<DbBotItemConfig> dbBotItemConfigs = new ArrayList<DbBotItemConfig>();
         DbBotItemConfig config1 = new DbBotItemConfig();
@@ -170,7 +170,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void complexItems() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         Collection<DbBotItemConfig> dbBotItemConfigs = new ArrayList<DbBotItemConfig>();
         DbBotItemConfig config1 = new DbBotItemConfig();
@@ -233,7 +233,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void multipleFactoriesAndOverdrive() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         Collection<DbBotItemConfig> dbBotItemConfigs = new ArrayList<DbBotItemConfig>();
         DbBotItemConfig config1 = new DbBotItemConfig();
@@ -285,7 +285,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void buildupWrongConfig() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         Collection<DbBotItemConfig> dbBotItemConfigs = new ArrayList<DbBotItemConfig>();
         DbBotItemConfig config1 = new DbBotItemConfig();
@@ -316,7 +316,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void getIdleAttackers() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
 
@@ -387,7 +387,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void moveRealIfIdle() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(1, Id.NO_ID, 0));
@@ -431,7 +431,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void ttlIfIdle() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(1, Id.NO_ID, 0));
@@ -465,7 +465,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void noRebuild() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(1, Id.NO_ID, 0));

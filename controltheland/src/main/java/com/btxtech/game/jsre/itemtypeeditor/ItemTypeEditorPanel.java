@@ -3,6 +3,7 @@ package com.btxtech.game.jsre.itemtypeeditor;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.collision.ClientCollisionService;
+import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -57,7 +58,7 @@ public class ItemTypeEditorPanel extends FlexTable {
                     ///--- Setup div
                     TerrainView.uglySuppressRadar = true;
                     Connection.getInstance().init4ItemTypeEditor();
-                    ClientLevelHandler.getInstance().setLevel(new com.btxtech.game.jsre.client.common.Level(0, "ItemTypeEditorLevel", "", false, 0, null, 0));
+                    ClientLevelHandler.getInstance().setLevelScope(new LevelScope(0, null, 0, 0));
                     ///--- Setup terrain
                     ArrayList<SurfaceImage> surfaceImages = new ArrayList<SurfaceImage>();
                     surfaceImages.add(new SurfaceImage(itemType.getTerrainType().getSurfaceTypes().get(0), 23, "#00FF00"));

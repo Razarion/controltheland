@@ -2,12 +2,10 @@ package com.btxtech.game.services.item;
 
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemContainer;
-import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.collision.CollisionService;
 import org.junit.Assert;
@@ -31,14 +29,13 @@ public class TestItemContainer extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testLoadUnloadContainer() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         System.out.println("**** testLoadContainer ****");
         beginHttpSession();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "xx", "xx", 0, 0);
-        SimpleBase actorBase = ((RealityInfo) movableService.getGameInfo()).getBase();
+        SimpleBase actorBase = getMyBase();
         Id builderId = getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID);
         SyncBaseItem builder = (SyncBaseItem) itemService.getItem(builderId);
 

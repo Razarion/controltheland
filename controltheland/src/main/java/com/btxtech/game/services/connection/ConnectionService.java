@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.Base;
+import com.btxtech.game.services.user.UserState;
 
 import java.util.Collection;
 import java.util.Date;

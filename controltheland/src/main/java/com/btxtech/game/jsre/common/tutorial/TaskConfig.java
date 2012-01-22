@@ -14,12 +14,14 @@
 package com.btxtech.game.jsre.common.tutorial;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -28,16 +30,16 @@ import java.util.List;
  */
 public class TaskConfig implements Serializable {
     private boolean clearGame;
-    private String taskText;
     private Collection<ItemTypeAndPosition> ownItems;
     private Index scroll;
     private List<StepConfig> stepConfigs;
     private int houseCount;
-    private int accountBalance;
-    private int finishImageDuration;
+    private int money;
+    private int maxMoney;
+    private double itemSellFactor;
     private String name;
-    private Integer finishImageId;
     private Collection<BotConfig> botConfigs;
+    private Map<Integer, Integer> itemTypeLimitation;
 
     /**
      * Used by GWT
@@ -45,18 +47,18 @@ public class TaskConfig implements Serializable {
     public TaskConfig() {
     }
 
-    public TaskConfig(boolean clearGame, String taskText, ArrayList<ItemTypeAndPosition> ownItems, Index scroll, ArrayList<StepConfig> stepConfigs, int houseCount, int accountBalance, int finishImageDuration, String name, Integer finishImageId, Collection<BotConfig> botConfigs) {
+    public TaskConfig(boolean clearGame, ArrayList<ItemTypeAndPosition> ownItems, Index scroll, ArrayList<StepConfig> stepConfigs, int houseCount, int money, int maxMoney, double itemSellFactor, String name, Collection<BotConfig> botConfigs, Map<Integer, Integer> itemTypeLimitation) {
         this.clearGame = clearGame;
-        this.taskText = taskText;
         this.ownItems = ownItems;
         this.scroll = scroll;
         this.stepConfigs = stepConfigs;
         this.houseCount = houseCount;
-        this.accountBalance = accountBalance;
-        this.finishImageDuration = finishImageDuration;
+        this.money = money;
+        this.maxMoney = maxMoney;
+        this.itemSellFactor = itemSellFactor;
         this.name = name;
-        this.finishImageId = finishImageId;
         this.botConfigs = botConfigs;
+        this.itemTypeLimitation = itemTypeLimitation;
     }
 
     public boolean isClearGame() {
@@ -75,28 +77,8 @@ public class TaskConfig implements Serializable {
         return stepConfigs;
     }
 
-    public int getAccountBalance() {
-        return accountBalance;
-    }
-
-    public int getFinishImageDuration() {
-        return finishImageDuration;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public Integer getFinishImageId() {
-        return finishImageId;
-    }
-
-    public int getHouseCount() {
-        return houseCount;
-    }
-
-    public String getTaskText() {
-        return taskText;
     }
 
     public Collection<BotConfig> getBotConfigs() {
@@ -105,5 +87,13 @@ public class TaskConfig implements Serializable {
 
     public boolean hasBots() {
         return botConfigs != null && !botConfigs.isEmpty();
+    }
+
+    public int getMoney() {
+        return money;
+    }
+
+    public LevelScope createLevelScope() {
+        return new LevelScope(maxMoney, itemTypeLimitation, houseCount, itemSellFactor);
     }
 }

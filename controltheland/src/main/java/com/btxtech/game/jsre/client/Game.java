@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 public class Game implements EntryPoint {
     public static final String DEBUG_PARAM = "debug";
     public static final String STARTUP_SEQ_ID = "startSeq";
+    public static final String LEVEL_TASK_ID = "taskId";
     private static boolean isDebug = false;
 
     public void onModuleLoad() {
@@ -60,7 +61,7 @@ public class Game implements EntryPoint {
 
     }
 
-    private RootPanel getStartupInformation() {
+    public static RootPanel getStartupInformation() {
         RootPanel div = RootPanel.get(STARTUP_SEQ_ID);
         if (div == null) {
             throw new IllegalArgumentException(STARTUP_SEQ_ID + " not found in html");

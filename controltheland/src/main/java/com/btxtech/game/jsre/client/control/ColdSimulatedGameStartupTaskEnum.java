@@ -15,8 +15,8 @@ package com.btxtech.game.jsre.client.control;
 
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.GuiStartupTask;
-import com.btxtech.game.jsre.client.control.task.LoadGameInfoStartupTask;
 import com.btxtech.game.jsre.client.control.task.LoadMapImageStartupTask;
+import com.btxtech.game.jsre.client.control.task.LoadSimulationInfoStartupTask;
 import com.btxtech.game.jsre.client.control.task.LoadStartJsAbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.RunSimulationStartupTask;
 import com.btxtech.game.jsre.client.control.task.SetupPathFindingStartupTask;
@@ -38,10 +38,10 @@ public enum ColdSimulatedGameStartupTaskEnum implements StartupTaskEnum {
         public AbstractStartupTask createTask() {
             return new GuiStartupTask(this);
         }},
-    DOWNLOAD_GAME_INFO("Load game information") {
+    DOWNLOAD_GAME_INFO("Load simulation game information") {
         @Override
         public AbstractStartupTask createTask() {
-            return new LoadGameInfoStartupTask(this);
+            return new LoadSimulationInfoStartupTask(this);
         }},
     INIT_GAME("Init simulated Game") {
         @Override

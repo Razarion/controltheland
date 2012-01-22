@@ -26,7 +26,7 @@ public class TestItemServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void isSyncItemOverlapping() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         SimpleBase base1 = new SimpleBase(1);
         SimpleBase base2 = new SimpleBase(2);
@@ -54,7 +54,7 @@ public class TestItemServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void isSyncItemOverlappingAngel() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         SimpleBase base1 = new SimpleBase(1);
         SimpleBase base2 = new SimpleBase(2);

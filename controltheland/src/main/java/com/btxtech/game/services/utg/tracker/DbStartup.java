@@ -13,9 +13,7 @@
 
 package com.btxtech.game.services.utg.tracker;
 
-import com.btxtech.game.services.utg.DbAbstractLevel;
-import com.btxtech.game.services.utg.DbRealGameLevel;
-import com.btxtech.game.services.utg.DbSimulationLevel;
+import com.btxtech.game.services.utg.DbLevel;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 
@@ -30,7 +28,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -69,22 +66,24 @@ public class DbStartup implements Serializable {
     public DbStartup() {
     }
 
-    public DbStartup(long startupDuration, long clientTimeStamp, DbAbstractLevel abstractLevel, String sessionId, String baseName, Integer baseId) {
+    public DbStartup(long startupDuration, long clientTimeStamp, DbLevel level, String sessionId, String baseName, Integer baseId) {
         this.clientTimeStamp = clientTimeStamp;
         serverTimeStamp = System.currentTimeMillis();
-        this.level = abstractLevel.getName();
+        this.level = level.getName();
         this.sessionId = sessionId;
         this.startupDuration = startupDuration;
         timeStamp = new Date();
-        if (abstractLevel instanceof DbRealGameLevel) {
+/*
+        if (level instanceof DbRealGameLevel) {
             realGame = true;
-        } else if (abstractLevel instanceof DbSimulationLevel) {
+        } else if (level instanceof DbSimulationLevel) {
             realGame = false;
         } else {
-            throw new IllegalArgumentException("Unknown level type: " + abstractLevel);
+            throw new IllegalArgumentException("Unknown level type: " + level);
         }
         this.baseName = baseName;
         this.baseId = baseId;
+*/
     }
 
     public Date getTimeStamp() {

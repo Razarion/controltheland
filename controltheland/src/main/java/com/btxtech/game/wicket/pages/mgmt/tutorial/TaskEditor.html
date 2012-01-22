@@ -30,28 +30,20 @@
             <td><input wicket:id="clearGame" type="checkbox"></td>
         </tr>
         <tr>
-            <td bgcolor="#dadada">Task Text</td>
-            <td><input wicket:id="taskText" type="text" size="40" maxlength="40"></td>
-        </tr>
-        <tr>
             <td bgcolor="#dadada">Scroll</td>
             <td wicket:id="scroll"/>
         </tr>
         <tr>
             <td bgcolor="#dadada">Money</td>
-            <td><input wicket:id="accountBalance" type="text" size="10"></td>
+            <td><input wicket:id="money" type="text" size="10"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Max Money</td>
+            <td><input wicket:id="maxMoney" type="text" size="10"></td>
         </tr>
         <tr>
             <td bgcolor="#dadada">House Count</td>
             <td><input wicket:id="houseCount" type="text" size="10"></td>
-        </tr>
-        <tr>
-            <td bgcolor="#dadada">Upload Finish Image</td>
-            <td valign="top"><input type="file" wicket:id="upload"/></td>
-        </tr>
-        <tr>
-            <td bgcolor="#dadada">Finish Image Duration [s]</td>
-            <td><input wicket:id="finishImageDuration" type="text" size="10"></td>
         </tr>
     </table>
     <h2>Allowed Items</h2>
@@ -75,18 +67,14 @@
     <table cellpadding="1" cellspacing="1" border="0">
         <tr>
             <th bgcolor="#dadada">Item Type</th>
-            <th bgcolor="#dadada">Id (Engine)</th>
             <th bgcolor="#dadada">Position</th>
             <th bgcolor="#dadada">Angel</th>
-            <th bgcolor="#dadada">Base Id</th>
             <th bgcolor="#dadada">Delete</th>
         </tr>
         <tr wicket:id="itemTable">
             <td wicket:id="itemType"/>
-            <td><input type="text" wicket:id="syncItemId" size="6"></td>
             <td wicket:id="position"/>
             <td><input type="text" wicket:id="angel" size="5"/></td>
-            <td><input type="text" wicket:id="baseId"></td>
             <td valign="center">
                 <input type="submit" value="Delete" wicket:id="delete"/>
             </td>

@@ -4,7 +4,6 @@ import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.HouseSpacePacket;
@@ -27,7 +26,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.action.ActionService;
-import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
@@ -58,27 +56,20 @@ import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.DbTerritory;
 import com.btxtech.game.services.territory.TerritoryService;
-import com.btxtech.game.services.tutorial.DbItemTypeAndPosition;
 import com.btxtech.game.services.tutorial.DbStepConfig;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbItemTypeLimitation;
-import com.btxtech.game.services.utg.DbRealGameLevel;
-import com.btxtech.game.services.utg.DbResurrection;
-import com.btxtech.game.services.utg.DbSimulationLevel;
+import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbLevelTask;
+import com.btxtech.game.services.utg.DbQuestHub;
 import com.btxtech.game.services.utg.DbXpSettings;
-import com.btxtech.game.services.utg.LevelActivationException;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.XpService;
-import com.btxtech.game.services.utg.condition.DbComparisonItemCount;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
-import com.btxtech.game.services.utg.condition.DbContainedInComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
-import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig;
-import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -143,7 +134,10 @@ abstract public class AbstractServiceTest {
     protected static int TEST_RESOURCE_ITEM_ID = -1;
     protected static final String TEST_HARVESTER_ITEM = "TEST_HARVESTER_ITEM";
     protected static int TEST_HARVESTER_ITEM_ID = -1;
+    protected static final String TEST_QUEST_HUB_1 = "TEST_QUEST_HUB_1";
+    protected static final String TEST_QUEST_HUB_2 = "TEST_QUEST_HUB_2";
     protected static final String TEST_LEVEL_1_SIMULATED = "TEST_LEVEL_1_SIMULATED";
+    protected static int TEST_LEVEL_1_SIMULATED_ID = -1;
     protected static final String TEST_LEVEL_2_REAL = "TEST_LEVEL_2_REAL";
     protected static int TEST_LEVEL_2_REAL_ID = -1;
     protected static final String TEST_LEVEL_3_REAL = "TEST_LEVEL_3_REAL";
@@ -154,8 +148,8 @@ abstract public class AbstractServiceTest {
     protected static int TEST_LEVEL_5_REAL_ID = -1;
     protected static final String TEST_NOOB_TERRITORY = "TEST_NOOB_TERRITORY";
     protected static int TEST_NOOB_TERRITORY_ID = -1;
-    protected static final String TEST_NOOB_RESURRECTION = "NOOB_RESURRECTION";
-    protected static int TEST_NOOB_RESURRECTION_ID = -1;
+    //protected static final String TEST_NOOB_RESURRECTION = "NOOB_RESURRECTION";
+    //protected static int TEST_NOOB_RESURRECTION_ID = -1;
     // Terrain
     protected static int TERRAIN_IMAGE_4x10 = -1;
     protected static int TERRAIN_IMAGE_10x4 = -1;
@@ -232,21 +226,6 @@ abstract public class AbstractServiceTest {
     protected PlatformTransactionManager getTransactionManager() {
         return transactionManager;
     }
-// ---------------------- Base -----------------------
-
-    protected Base createBase(int startItem) throws Exception {
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        UserState userState = userService.getUserState();
-        userGuidanceService.promote(userState, TEST_LEVEL_3_REAL_ID);
-        Base base = baseService.createNewBase(userState,
-                itemService.getDbBaseItemType(startItem),
-                territoryService.getTerritory(TEST_NOOB_TERRITORY_ID),
-                100);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        return base;
-    }
 
     // ---------------------- Base -----------------------
 
@@ -298,17 +277,13 @@ abstract public class AbstractServiceTest {
         return syncResourceItem;
     }
 
-    protected SyncBaseItem createSyncBaseItemAndAddItemService(int itemTypeId, Index position, SimpleBase simpleBase) throws Exception {
-        return (SyncBaseItem) itemService.createSyncObject(itemService.getItemType(itemTypeId), position, null, simpleBase, 0);
-    }
-
     /**
      * Attention: closes the current connection!!!
      *
      * @return Simple Base
      */
     protected SimpleBase getMyBase() {
-        return ((RealityInfo) movableService.getGameInfo()).getBase();
+        return movableService.getRealGameInfo().getBase();
     }
 
     protected Id getFirstSynItemId(int itemTypeId) {
@@ -540,6 +515,65 @@ abstract public class AbstractServiceTest {
 
     // -------------------  Game Config --------------------
 
+    protected void configureRealGame() throws Exception {
+        System.out.println("---- Configure Real Game ---");
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        // Item Types
+        createSimpleBuilding();
+        createHarvesterItemType();
+        createAttackBaseItemType();
+        createContainerBaseItemType();
+        createFactoryBaseItemType();
+        createBuilderBaseItemType();
+        finishAttackBaseItemType();
+        finishContainerBaseItemType();
+        createAttackBaseItemType2();
+        createMoney();
+        // Terrain
+        setupMinimalTerrain();
+        // Setup territory
+        setupNoobTerritory();
+        // QuestHubs
+        setupQuestHubWithOneRealGame(TEST_NOOB_TERRITORY_ID);
+        // Xp
+        setupXpSettings();
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    protected void configureGameMultipleLevel() throws Exception {
+        System.out.println("---- configureGameMultipleLevel Game ---");
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        // Item Types
+        createSimpleBuilding();
+        createHarvesterItemType();
+        createAttackBaseItemType();
+        createContainerBaseItemType();
+        createFactoryBaseItemType();
+        createBuilderBaseItemType();
+        finishAttackBaseItemType();
+        finishContainerBaseItemType();
+        createAttackBaseItemType2();
+        createMoney();
+        // Terrain
+        setupMinimalTerrain();
+        // Setup territory
+        setupNoobTerritory();
+        // QuestHubs
+        setupQuestHubMultipleLevels();
+        // Xp
+        setupXpSettings();
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Deprecated
     protected void configureMinimalGame() throws Exception {
         System.out.println("---- Configure minimal Game ---");
         beginHttpSession();
@@ -560,8 +594,14 @@ abstract public class AbstractServiceTest {
         setupMinimalTerrain();
         // Setup territory
         setupNoobTerritory();
-        // Level
-        setupLevels();
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // QuestHubs
+        // setupQuestHub();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
         // Xp
         setupXpSettings();
 
@@ -569,7 +609,7 @@ abstract public class AbstractServiceTest {
         endHttpSession();
     }
 
-    protected void configureComplexGame() throws Exception {
+    protected void configureComplexGameOneRealLevel() throws Exception {
         System.out.println("---- Configure complex Game ---");
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -580,6 +620,7 @@ abstract public class AbstractServiceTest {
         createContainerBaseItemType();
         createFactoryBaseItemType();
         createBuilderBaseItemType();
+        createSimpleBuilding();
         finishAttackBaseItemType();
         finishContainerBaseItemType();
         createMoney();
@@ -587,8 +628,8 @@ abstract public class AbstractServiceTest {
         setupComplexTerrain();
         // Setup territory
         setupComplexTerritory();
-        // Level
-        //setupLevels();
+        // QuestHubs
+        setupQuestHubWithOneRealGame(COMPLEX_TERRITORY_ID);
         // Market
         //setupMinimalMarket();
         //setupXpSettings();
@@ -935,158 +976,104 @@ abstract public class AbstractServiceTest {
 
     // ------------------- Setup Levels --------------------
 
-    protected void setupLevels() throws LevelActivationException {
-        setupResurrection();
-        setupSimulationLevel();
-        setupCreateBaseRealGameLevel();
-        setupBuildFactoryRealGameLevel();
-        setupSimulationLevel4();
-        setupBuildRealGameLevel5();
+    private void setupQuestHubWithOneRealGame(int territoryId) throws Exception {
+        DbQuestHub realGameQuestHub = userGuidanceService.getCrudQuestHub().createDbChild();
+        realGameQuestHub.setName(TEST_QUEST_HUB_1);        
+        realGameQuestHub.setStartItemFreeRange(300);
+        realGameQuestHub.setStartMoney(1000);
+        realGameQuestHub.setStartTerritory(territoryService.getDbTerritoryCrudServiceHelper().readDbChild(territoryId));
+        realGameQuestHub.setStartItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
+        DbLevel dbLevel = createDbLevel2(realGameQuestHub);
+        dbLevel.setName(TEST_LEVEL_2_REAL);
+        // Limitation
+        DbItemTypeLimitation builder = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        builder.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
+        builder.setCount(10);
+        DbItemTypeLimitation factory = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        factory.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_FACTORY_ITEM_ID));
+        factory.setCount(10);
+        DbItemTypeLimitation attacker = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        attacker.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
+        attacker.setCount(10);
+        DbItemTypeLimitation harvester = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        harvester.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_HARVESTER_ITEM_ID));
+        harvester.setCount(10);
+        DbItemTypeLimitation container = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        container.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_CONTAINER_ITEM_ID));
+        container.setCount(10);
+        DbItemTypeLimitation simpleBuilding = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        simpleBuilding.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_SIMPLE_BUILDING_ID));
+        simpleBuilding.setCount(10);
+        userGuidanceService.getCrudQuestHub().updateDbChild(realGameQuestHub);
+        userGuidanceService.activateLevels();
+        TEST_LEVEL_2_REAL_ID = dbLevel.getId();
+    }
+
+    private void setupQuestHubMultipleLevels() throws Exception {
+        DbTutorialConfig tut1 = createTutorial1();
+
+        // Setup QuestHub1 - Level - Task - Tutorial
+        DbQuestHub startQuestHub = userGuidanceService.getCrudQuestHub().createDbChild();
+        startQuestHub.setName(TEST_QUEST_HUB_1);
+        startQuestHub.setRealBaseRequired(false);
+        DbLevel dbSimLevel = startQuestHub.getLevelCrud().createDbChild();
+        dbSimLevel.setName(TEST_LEVEL_1_SIMULATED);
+        DbLevelTask dbSimLevelTask = dbSimLevel.getLevelTaskCrud().createDbChild();
+        dbSimLevelTask.setDbTutorialConfig(tut1);
+        userGuidanceService.getCrudQuestHub().updateDbChild(startQuestHub);
+        TEST_LEVEL_1_SIMULATED_ID = dbSimLevel.getId();
+
+        // Setup QuestHub1 - Level1 - 2*LevelTask
+        DbQuestHub realGameQuestHub = userGuidanceService.getCrudQuestHub().createDbChild();
+        realGameQuestHub.setName(TEST_QUEST_HUB_2);
+        realGameQuestHub.setStartItemFreeRange(300);
+        realGameQuestHub.setStartMoney(1000);
+        realGameQuestHub.setStartTerritory(territoryService.getDbTerritoryCrudServiceHelper().readDbChild(TEST_NOOB_TERRITORY_ID));
+        realGameQuestHub.setStartItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
+        DbLevel dbLevel1 = createDbLevel2(realGameQuestHub);
+        dbLevel1.setName(TEST_LEVEL_2_REAL);
+        setupCreateLevelTask1RealGameLevel(dbLevel1);
+        setupCreateLevelTask2RealGameLevel(dbLevel1);
+        DbLevel dbLevel2 = realGameQuestHub.getLevelCrud().createDbChild();
+        dbLevel2.setName(TEST_LEVEL_3_REAL);
+        userGuidanceService.getCrudQuestHub().updateDbChild(startQuestHub);
+        TEST_LEVEL_2_REAL_ID = dbLevel1.getId();
+        TEST_LEVEL_3_REAL_ID = dbLevel2.getId();
         userGuidanceService.activateLevels();
     }
 
-    private void setupResurrection() {
-        DbResurrection dbResurrection = userGuidanceService.getCrudRootDbResurrection().createDbChild();
-        dbResurrection.setDbTerritory(territoryService.getDbTerritoryCrudServiceHelper().readDbChild(TEST_NOOB_TERRITORY_ID));
-        dbResurrection.setMoney(1000);
-        dbResurrection.setName(TEST_NOOB_RESURRECTION);
-        dbResurrection.setStartItemFreeRange(100);
-        dbResurrection.setStartItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
-        userGuidanceService.getCrudRootDbResurrection().updateDbChild(dbResurrection);
-        TEST_NOOB_RESURRECTION_ID = dbResurrection.getId();
-    }
-
-    private void setupCreateBaseRealGameLevel() {
-        DbRealGameLevel dbRealGameLevel = (DbRealGameLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbRealGameLevel.class);
-        dbRealGameLevel.setName(TEST_LEVEL_2_REAL);
-        dbRealGameLevel.setDbResurrection(userGuidanceService.getCrudRootDbResurrection().readDbChild(TEST_NOOB_RESURRECTION_ID));
-        // Create Base
-        dbRealGameLevel.setCreateRealBase(true);
-        dbRealGameLevel.setStartItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
-        dbRealGameLevel.setStartTerritory(territoryService.getDbTerritoryCrudServiceHelper().readDbChild(TEST_NOOB_TERRITORY_ID));
-        dbRealGameLevel.setStartItemFreeRange(300);
-        // Rewards
-        dbRealGameLevel.setDeltaMoney(1000);
-        // Scope
-        dbRealGameLevel.setHouseSpace(20);
-        dbRealGameLevel.setMaxMoney(10000);
-        dbRealGameLevel.setItemSellFactor(0.5);
-        dbRealGameLevel.setMaxXp(1000);
-        // Condition
-        DbConditionConfig dbConditionConfig = new DbConditionConfig();
-        dbConditionConfig.setConditionTrigger(ConditionTrigger.MONEY_INCREASED);
-        DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
-        dbCountComparisonConfig.setCount(100);
-        dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
-        dbRealGameLevel.setDbConditionConfig(dbConditionConfig);
+    private DbLevel createDbLevel2(DbQuestHub realGameQuestHub) {
+        DbLevel dbLevel1 = realGameQuestHub.getLevelCrud().createDbChild();
+        dbLevel1.setHouseSpace(20);
+        dbLevel1.setMaxMoney(10000);
+        dbLevel1.setItemSellFactor(0.5);
+        dbLevel1.setName(TEST_LEVEL_2_REAL);
         // Limitation
-        DbItemTypeLimitation builder = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
+        DbItemTypeLimitation builder = dbLevel1.getItemTypeLimitationCrud().createDbChild();
         builder.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
         builder.setCount(10);
-        DbItemTypeLimitation factory = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
+        DbItemTypeLimitation factory = dbLevel1.getItemTypeLimitationCrud().createDbChild();
         factory.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_FACTORY_ITEM_ID));
         factory.setCount(10);
-        DbItemTypeLimitation attacker = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
+        DbItemTypeLimitation attacker = dbLevel1.getItemTypeLimitationCrud().createDbChild();
         attacker.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
         attacker.setCount(10);
-        DbItemTypeLimitation harvester = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
+        DbItemTypeLimitation harvester = dbLevel1.getItemTypeLimitationCrud().createDbChild();
         harvester.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_HARVESTER_ITEM_ID));
         harvester.setCount(10);
-        DbItemTypeLimitation container = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
+        DbItemTypeLimitation container = dbLevel1.getItemTypeLimitationCrud().createDbChild();
         container.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_CONTAINER_ITEM_ID));
         container.setCount(10);
-        DbItemTypeLimitation simpleBuilding = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
+        DbItemTypeLimitation simpleBuilding = dbLevel1.getItemTypeLimitationCrud().createDbChild();
         simpleBuilding.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_SIMPLE_BUILDING_ID));
         simpleBuilding.setCount(10);
 
-        userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbRealGameLevel);
-        TEST_LEVEL_2_REAL_ID = dbRealGameLevel.getId();
+        return dbLevel1;
     }
 
-    private void setupBuildFactoryRealGameLevel() {
-        DbRealGameLevel dbRealGameLevel = (DbRealGameLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbRealGameLevel.class);
-        dbRealGameLevel.setName(TEST_LEVEL_3_REAL);
-        // Scope
-        dbRealGameLevel.setHouseSpace(40);
-        dbRealGameLevel.setMaxMoney(2000);
-        dbRealGameLevel.setItemSellFactor(1);
-        dbRealGameLevel.setMaxXp(2000);
-        // Rewards
-        dbRealGameLevel.setDeltaMoney(500);
-        dbRealGameLevel.setDeltaXp(500);
-        // Condition
-        DbConditionConfig dbConditionConfig = new DbConditionConfig();
-        dbConditionConfig.setConditionTrigger(ConditionTrigger.SYNC_ITEM_BUILT);
-        DbSyncItemTypeComparisonConfig dbSyncItemTypeComparisonConfig = new DbSyncItemTypeComparisonConfig();
-        DbComparisonItemCount dbComparisonItemCount = dbSyncItemTypeComparisonConfig.getCrudDbComparisonItemCount().createDbChild();
-        dbComparisonItemCount.setItemType(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
-        dbComparisonItemCount.setCount(1);
-        dbConditionConfig.setDbAbstractComparisonConfig(dbSyncItemTypeComparisonConfig);
-        dbRealGameLevel.setDbConditionConfig(dbConditionConfig);
-        // Limitation
-        DbItemTypeLimitation builder = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
-        builder.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
-        builder.setCount(20);
-        DbItemTypeLimitation factory = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
-        factory.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_FACTORY_ITEM_ID));
-        factory.setCount(20);
-        DbItemTypeLimitation attacker = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
-        attacker.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
-        attacker.setCount(20);
-
-        userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbRealGameLevel);
-        TEST_LEVEL_3_REAL_ID = dbRealGameLevel.getId();
-    }
-
-    private void setupBuildRealGameLevel5() throws LevelActivationException {
-        // Condition
-        DbConditionConfig dbConditionConfig = new DbConditionConfig();
-        dbConditionConfig.setConditionTrigger(ConditionTrigger.SYNC_ITEM_BUILT);
-        DbSyncItemTypeComparisonConfig dbSyncItemTypeComparisonConfig = new DbSyncItemTypeComparisonConfig();
-        DbComparisonItemCount dbComparisonItemCount = dbSyncItemTypeComparisonConfig.getCrudDbComparisonItemCount().createDbChild();
-        dbComparisonItemCount.setItemType(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
-        dbComparisonItemCount.setCount(1);
-        dbConditionConfig.setDbAbstractComparisonConfig(dbSyncItemTypeComparisonConfig);
-        // Create
-        DbRealGameLevel dbRealGameLevel = setupGameLevel(TEST_LEVEL_5_REAL, dbConditionConfig);
-        dbRealGameLevel.setDbResurrection(userGuidanceService.getCrudRootDbResurrection().readDbChild(TEST_NOOB_RESURRECTION_ID));
-        // Rewards
-        dbRealGameLevel.setDeltaMoney(100);
-        dbRealGameLevel.setDeltaXp(50);
-        userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbRealGameLevel);
-        TEST_LEVEL_5_REAL_ID = dbRealGameLevel.getId();
-    }
-
-    protected DbRealGameLevel setupGameLevel(String name, DbConditionConfig dbConditionConfig) throws LevelActivationException {
-        DbRealGameLevel dbRealGameLevel = (DbRealGameLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbRealGameLevel.class);
-        dbRealGameLevel.setName(name);
-        // Scope
-        dbRealGameLevel.setHouseSpace(20);
-        // Condition
-        dbRealGameLevel.setDbConditionConfig(dbConditionConfig);
-        // Limitation
-        DbItemTypeLimitation builder = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
-        builder.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
-        builder.setCount(10);
-        DbItemTypeLimitation factory = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
-        factory.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_FACTORY_ITEM_ID));
-        factory.setCount(10);
-        DbItemTypeLimitation attacker = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
-        attacker.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
-        attacker.setCount(10);
-
-        userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbRealGameLevel);
-        userGuidanceService.activateLevels();
-        return dbRealGameLevel;
-    }
-
-
-    private void setupSimulationLevel() {
-        DbSimulationLevel dbSimulationLevel = (DbSimulationLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbSimulationLevel.class);
-        dbSimulationLevel.setName(TEST_LEVEL_1_SIMULATED);
+    protected DbTutorialConfig createTutorial1() {
         // Tutorial
         DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().createDbChild();
-        dbSimulationLevel.setDbTutorialConfig(dbTutorialConfig);
         // Terrain
         DbTerrainSetting dbTerrainSetting = setupMinimalSimulatedTerrain();
         dbTutorialConfig.setDbTerrainSetting(dbTerrainSetting);
@@ -1101,106 +1088,39 @@ abstract public class AbstractServiceTest {
         dbCountComparisonConfig.setCount(100);
         dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
         dbStepConfig.setConditionConfig(dbConditionConfig);
-
-        userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbSimulationLevel);
-    }
-
-    protected DbSimulationLevel setupContainedInSimulationLevel(String name, boolean containedIn) throws LevelActivationException {
-        DbSimulationLevel dbSimulationLevel = (DbSimulationLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbSimulationLevel.class);
-        dbSimulationLevel.setName(name);
-        // Tutorial
-        DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().createDbChild();
-        dbTutorialConfig.setOwnBaseId(1);
-        dbSimulationLevel.setDbTutorialConfig(dbTutorialConfig);
-        // Terrain
-        DbTerrainSetting dbTerrainSetting = setupMinimalSimulatedTerrain();
-        dbTutorialConfig.setDbTerrainSetting(dbTerrainSetting);
-        // Task
-        DbTaskConfig dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild();
-        DbItemTypeAndPosition bulldozer = dbTaskConfig.getItemCrudServiceHelper().createDbChild();
-        bulldozer.setSyncItemId(1);
-        bulldozer.setPosition(new Index(100, 100));
-        bulldozer.setItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
-        bulldozer.setBaseId(1);
-        DbItemTypeAndPosition container = dbTaskConfig.getItemCrudServiceHelper().createDbChild();
-        container.setSyncItemId(2);
-        container.setPosition(new Index(150, 150));
-        container.setItemType(itemService.getDbBaseItemType(TEST_CONTAINER_ITEM_ID));
-        container.setBaseId(1);
-        // Step
-        DbStepConfig dbStepConfig = dbTaskConfig.getStepConfigCrudServiceHelper().createDbChild();
-        // Condition
-        DbConditionConfig dbConditionConfig = new DbConditionConfig();
-        dbConditionConfig.setConditionTrigger(ConditionTrigger.CONTAINED_IN);
-        DbContainedInComparisonConfig containedInComparisonConfig = new DbContainedInComparisonConfig();
-        containedInComparisonConfig.setContainedIn(containedIn);
-        dbConditionConfig.setDbAbstractComparisonConfig(containedInComparisonConfig);
-        dbStepConfig.setConditionConfig(dbConditionConfig);
         tutorialService.getDbTutorialCrudRootServiceHelper().updateDbChild(dbTutorialConfig);
-
-        userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbSimulationLevel);
-        userGuidanceService.activateLevels();
-        return dbSimulationLevel;
+        return dbTutorialConfig;
     }
 
-    private void setupSimulationLevel4() {
-        DbSimulationLevel dbSimulationLevel = (DbSimulationLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbSimulationLevel.class);
-        dbSimulationLevel.setName(TEST_LEVEL_4_SIMULATED);
-        // Tutorial
-        DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().createDbChild();
-        dbSimulationLevel.setDbTutorialConfig(dbTutorialConfig);
-        // Terrain
-        DbTerrainSetting dbTerrainSetting = setupMinimalSimulatedTerrain();
-        dbTutorialConfig.setDbTerrainSetting(dbTerrainSetting);
-        // Task
-        DbTaskConfig dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild();
-        // Step
-        DbStepConfig dbStepConfig = dbTaskConfig.getStepConfigCrudServiceHelper().createDbChild();
+    private void setupCreateLevelTask1RealGameLevel(DbLevel dbLevel) {
+        DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().createDbChild();
+        // Rewards
+        dbLevelTask.setMoney(1000);
+        dbLevelTask.setXp(1000);
         // Condition
         DbConditionConfig dbConditionConfig = new DbConditionConfig();
         dbConditionConfig.setConditionTrigger(ConditionTrigger.MONEY_INCREASED);
         DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
         dbCountComparisonConfig.setCount(100);
         dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
-        dbStepConfig.setConditionConfig(dbConditionConfig);
-
-        userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbSimulationLevel);
-        TEST_LEVEL_4_SIMULATED_ID = dbSimulationLevel.getId();
+        dbLevelTask.setDbConditionConfig(dbConditionConfig);
     }
 
-    protected DbSimulationLevel setupItemTypePositionSimulationLevel(String name) throws LevelActivationException {
-        DbSimulationLevel dbSimulationLevel = (DbSimulationLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbSimulationLevel.class);
-        dbSimulationLevel.setName(name);
-        // Tutorial
-        DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().createDbChild();
-        dbTutorialConfig.setOwnBaseId(1);
-        dbSimulationLevel.setDbTutorialConfig(dbTutorialConfig);
-        // Terrain
-        DbTerrainSetting dbTerrainSetting = setupMinimalSimulatedTerrain();
-        dbTutorialConfig.setDbTerrainSetting(dbTerrainSetting);
-        // Task
-        DbTaskConfig dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild();
-        DbItemTypeAndPosition bulldozer = dbTaskConfig.getItemCrudServiceHelper().createDbChild();
-        bulldozer.setSyncItemId(1);
-        bulldozer.setPosition(new Index(100, 100));
-        bulldozer.setItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
-        bulldozer.setBaseId(1);
-        // Step
-        DbStepConfig dbStepConfig = dbTaskConfig.getStepConfigCrudServiceHelper().createDbChild();
+
+    private void setupCreateLevelTask2RealGameLevel(DbLevel dbLevel) {
+        DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().createDbChild();
+        // Rewards
+        dbLevelTask.setMoney(1200);
+        dbLevelTask.setXp(1300);
         // Condition
         DbConditionConfig dbConditionConfig = new DbConditionConfig();
-        dbConditionConfig.setConditionTrigger(ConditionTrigger.SYNC_ITEM_DEACTIVATE);
-        DbItemTypePositionComparisonConfig itemTypePositionComparisonConfig = new DbItemTypePositionComparisonConfig();
-        itemTypePositionComparisonConfig.setDbItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
-        itemTypePositionComparisonConfig.setRegion(new Rectangle(300, 300, 200, 200));
-        dbConditionConfig.setDbAbstractComparisonConfig(itemTypePositionComparisonConfig);
-        dbStepConfig.setConditionConfig(dbConditionConfig);
-        tutorialService.getDbTutorialCrudRootServiceHelper().updateDbChild(dbTutorialConfig);
-
-        userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbSimulationLevel);
-        userGuidanceService.activateLevels();
-        return dbSimulationLevel;
+        dbConditionConfig.setConditionTrigger(ConditionTrigger.MONEY_INCREASED);
+        DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
+        dbCountComparisonConfig.setCount(100);
+        dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
+        dbLevelTask.setDbConditionConfig(dbConditionConfig);
     }
+
 
     // ------------------- Setup minimal bot --------------------
 
@@ -1260,6 +1180,13 @@ abstract public class AbstractServiceTest {
     }
 
     // ------------------- Territory Config --------------------
+
+    protected DbTerritory setupSimpleTerritory(String name, int itemTypeId) {
+        DbTerritory dbTerritory = setupTerritory(name,
+                new int[]{itemTypeId},
+                new Rectangle(50, 50, 50, 50));
+        return dbTerritory;
+    }
 
     protected void setupNoobTerritory() {
         DbTerritory dbTerritory = setupTerritory(TEST_NOOB_TERRITORY,

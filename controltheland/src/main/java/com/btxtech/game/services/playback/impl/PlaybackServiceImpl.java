@@ -27,8 +27,7 @@ import com.btxtech.game.services.playback.PlaybackService;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.services.utg.DbAbstractLevel;
-import com.btxtech.game.services.utg.DbSimulationLevel;
+import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.LifecycleTrackingInfo;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -78,10 +77,10 @@ public class PlaybackServiceImpl implements PlaybackService {
 
             // Tutorial
             MovableServiceImpl.setCommonInfo(playbackInfo, userService, itemService, mgmtService, cmsUiService);
-            DbAbstractLevel dbAbstractLevel = userGuidanceService.getDbLevel(levelName);
-            playbackInfo.setTutorialConfig(tutorialService.getTutorialConfig((DbSimulationLevel) dbAbstractLevel));
-            playbackInfo.setLevel(dbAbstractLevel.getLevel());
-            terrainService.setupTerrain(playbackInfo, dbAbstractLevel);
+            // TODO DbLevel dbLevel = userGuidanceService.getDbLevel(levelName);
+            // TODO playbackInfo.setTutorialConfig(tutorialService.getTutorialConfig((DbSimulationLevel) dbLevel));
+            // TODO playbackInfo.setLevelScope(dbLevel.getLevel());
+            // TODO terrainService.setupTerrain(playbackInfo, dbLevel);
 
             // Start and and time
 

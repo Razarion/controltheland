@@ -3,7 +3,7 @@ package com.btxtech.game.services.history;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.common.info.RealityInfo;
+import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -51,69 +51,69 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testCreateBaseLevel() throws Exception {
-        configureMinimalGame();
-
-        System.out.println("**** testHistoryService ****");
-        beginHttpSession();
-        // Create account
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
-        endHttpRequestAndOpenSessionInViewFilter();
-        // Finish tutorial
-        beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "xx", "xx", 0, 0);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        // Verify
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 1000);
-
-        System.out.println("----- History -----");
-        for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
-            System.out.println(displayHistoryElement);
-        }
-        System.out.println("----- History End -----");
-
-        Assert.assertEquals(3, displayHistoryElements.size());
-
-        Assert.assertEquals("Item created: " + TEST_START_BUILDER_ITEM, displayHistoryElements.get(0).getMessage());
-
-        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
-        Assert.assertEquals("Base created: U1", displayHistoryElements.get(1).getMessage());
-
-        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
-        Assert.assertEquals("Level reached: " + TEST_LEVEL_2_REAL, displayHistoryElements.get(2).getMessage());
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Verify
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
-        Assert.assertEquals(3, historyService.getNewestHistoryElements().readDbChildren().size());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
+        Assert.fail("Test LevelTask done and Level up");
+//        configureMinimalGame();
+//
+//        System.out.println("**** testHistoryService ****");
+//        beginHttpSession();
+//        // Create account
+//        beginHttpRequestAndOpenSessionInViewFilter();
+//        userService.createUser("U1", "test", "test", "test");
+//        userService.login("U1", "test");
+//        endHttpRequestAndOpenSessionInViewFilter();
+//        // Finish tutorial
+//        beginHttpRequestAndOpenSessionInViewFilter();
+//        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "xx", "xx", 0, 0);
+//        endHttpRequestAndOpenSessionInViewFilter();
+//        endHttpSession();
+//        // Verify
+//        beginHttpSession();
+//        beginHttpRequestAndOpenSessionInViewFilter();
+//        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 1000);
+//
+//        System.out.println("----- History -----");
+//        for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
+//            System.out.println(displayHistoryElement);
+//        }
+//        System.out.println("----- History End -----");
+//
+//        Assert.assertEquals(3, displayHistoryElements.size());
+//
+//        Assert.assertEquals("Item created: " + TEST_START_BUILDER_ITEM, displayHistoryElements.get(0).getMessage());
+//
+//        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
+//        Assert.assertEquals("Base created: U1", displayHistoryElements.get(1).getMessage());
+//
+//        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
+//        Assert.assertEquals("Level reached: " + TEST_LEVEL_2_REAL, displayHistoryElements.get(2).getMessage());
+//
+//        endHttpRequestAndOpenSessionInViewFilter();
+//        endHttpSession();
+//
+//        // Verify
+//        beginHttpSession();
+//        beginHttpRequestAndOpenSessionInViewFilter();
+//        userService.login("U1", "test");
+//        Assert.assertEquals(3, historyService.getNewestHistoryElements().readDbChildren().size());
+//        endHttpRequestAndOpenSessionInViewFilter();
+//        endHttpSession();
     }
 
     @Test
     @DirtiesContext
     public void testCreateItem() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         System.out.println("**** testCreateItem ****");
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("U1", "test", "test", "test");
         userService.login("U1", "test");
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "xx", "xx", 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
         // Establish Connection
-        movableService.getGameInfo();
+        movableService.getRealGameInfo();
 
         // Build Factory
         System.out.println("---- build unit ---");
@@ -135,7 +135,7 @@ public class TestHistoryService extends AbstractServiceTest {
         }
         System.out.println("----- History End -----");
 
-        Assert.assertEquals(4, displayHistoryElements.size());
+        Assert.assertEquals(3, displayHistoryElements.size());
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
         Assert.assertEquals("Item created: " + TEST_FACTORY_ITEM, displayHistoryElements.get(0).getMessage());
 
@@ -147,15 +147,14 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testKillItem() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         System.out.println("**** testKillItem ****");
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("Target", "test", "test", "test");
         userService.login("Target", "test");
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "xx", "xx", 0, 0);
-        SimpleBase targetBase = ((RealityInfo) movableService.getGameInfo()).getBase();
+        SimpleBase targetBase = movableService.getRealGameInfo().getBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -163,8 +162,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("Actor", "test", "test", "test");
         userService.login("Actor", "test");
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "xx", "xx", 0, 0);
-        SimpleBase actorBase = ((RealityInfo) movableService.getGameInfo()).getBase();
+        SimpleBase actorBase = movableService.getRealGameInfo().getBase();
         Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
         sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -185,7 +183,7 @@ public class TestHistoryService extends AbstractServiceTest {
             System.out.println(displayHistoryElement);
         }
         System.out.println("----- History End -----");
-        Assert.assertEquals(7, displayHistoryElements.size());
+        Assert.assertEquals(6, displayHistoryElements.size());
         Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
         Assert.assertEquals("Destroyed a " + TEST_START_BUILDER_ITEM + " from Target", displayHistoryElements.get(1).getMessage());
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
@@ -198,7 +196,7 @@ public class TestHistoryService extends AbstractServiceTest {
             System.out.println(displayHistoryElement);
         }
         System.out.println("----- History End -----");
-        Assert.assertEquals(5, displayHistoryElements.size());
+        Assert.assertEquals(4, displayHistoryElements.size());
         Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
         Assert.assertEquals("Actor destroyed your " + TEST_START_BUILDER_ITEM, displayHistoryElements.get(1).getMessage());
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
@@ -210,13 +208,12 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testKillAnonymousItem() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         System.out.println("**** testKillAnonymousItem ****");
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "xx", "xx", 0, 0);
-        SimpleBase targetBase = ((RealityInfo) movableService.getGameInfo()).getBase();
+        SimpleBase targetBase = movableService.getRealGameInfo().getBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -224,8 +221,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("Actor", "test", "test", "test");
         userService.login("Actor", "test");
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "xx", "xx", 0, 0);
-        SimpleBase actorBase = ((RealityInfo) movableService.getGameInfo()).getBase();
+        SimpleBase actorBase = movableService.getRealGameInfo().getBase();
         Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
         sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -246,7 +242,7 @@ public class TestHistoryService extends AbstractServiceTest {
             System.out.println(displayHistoryElement);
         }
         System.out.println("----- History End -----");
-        Assert.assertEquals(7, displayHistoryElements.size());
+        Assert.assertEquals(6, displayHistoryElements.size());
         Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
         Assert.assertEquals("Destroyed a " + TEST_START_BUILDER_ITEM + " from Base 1", displayHistoryElements.get(1).getMessage());
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
@@ -258,22 +254,20 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testKillByAnonymous() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         System.out.println("**** testKillByAnonymous ****");
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("Target", "test", "test", "test");
         userService.login("Target", "test");
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "xx", "xx", 0, 0);
-        SimpleBase targetBase = ((RealityInfo) movableService.getGameInfo()).getBase();
+        SimpleBase targetBase = movableService.getRealGameInfo().getBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "xx", "xx", 0, 0);
-        SimpleBase actorBase = ((RealityInfo) movableService.getGameInfo()).getBase();
+        SimpleBase actorBase = movableService.getRealGameInfo().getBase();
         Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
         sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -302,7 +296,7 @@ public class TestHistoryService extends AbstractServiceTest {
             System.out.println(displayHistoryElement);
         }
         System.out.println("----- Target End -----");
-        Assert.assertEquals(7, displayHistoryElements.size());
+        Assert.assertEquals(6, displayHistoryElements.size());
 
 
         Assert.assertTrue(displayHistoryElements.get(3).getTimeStamp() >= displayHistoryElements.get(4).getTimeStamp());
@@ -322,15 +316,14 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSurrender() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         System.out.println("**** testSurrender ****");
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("Actor", "test", "test", "test");
         userService.login("Actor", "test");
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "xx", "xx", 0, 0);
-        ((RealityInfo) movableService.getGameInfo()).getBase();
+        movableService.getRealGameInfo();
         movableService.surrenderBase();
 
         getMyBase(); // Connection -> resurrection
@@ -348,7 +341,7 @@ public class TestHistoryService extends AbstractServiceTest {
             System.out.println(displayHistoryElement);
         }
         System.out.println("----- Actor End -----");
-        Assert.assertEquals(6, displayHistoryElements.size());
+        Assert.assertEquals(5, displayHistoryElements.size());
         Assert.assertTrue(displayHistoryElements.get(2).getTimeStamp() >= displayHistoryElements.get(3).getTimeStamp());
         Assert.assertEquals("Base surrendered", displayHistoryElements.get(2).getMessage());
         Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
@@ -365,14 +358,13 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSellItem() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         System.out.println("**** testSellItem ****");
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("Actor", "test", "test", "test");
         userService.login("Actor", "test");
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "xx", "xx", 0, 0);
         SimpleBase simpleBase = getMyBase();
         movableService.sellItem(getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID));
         endHttpRequestAndOpenSessionInViewFilter();
@@ -388,7 +380,7 @@ public class TestHistoryService extends AbstractServiceTest {
             System.out.println(displayHistoryElement);
         }
         System.out.println("----- Actor End -----");
-        Assert.assertEquals(4, displayHistoryElements.size());
+        Assert.assertEquals(3, displayHistoryElements.size());
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
         Assert.assertEquals(TEST_START_BUILDER_ITEM + " has been sold", displayHistoryElements.get(0).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -398,7 +390,7 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void dbHistoryElementBaseSurrenderedHuman() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         SimpleBase humanBase1 = new SimpleBase(1);
         SimpleBase humanBase2 = new SimpleBase(2);

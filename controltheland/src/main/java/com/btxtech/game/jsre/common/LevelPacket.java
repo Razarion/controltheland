@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.common;
 
-import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.client.common.LevelScope;
 
 /**
  * User: beat
@@ -21,13 +21,13 @@ import com.btxtech.game.jsre.client.common.Level;
  * Time: 14:38:58
  */
 public class LevelPacket extends Packet {
-    private Level level;
+    private LevelScope levelScope;
 
-    public Level getLevel() {
-        return level;
+    public LevelScope getLevel() {
+        return levelScope;
     }
 
-    public void setLevel(Level level) {
-        this.level = level;
+    public void setLevel(LevelScope levelScope) {
+        this.levelScope = levelScope;
     }
 }

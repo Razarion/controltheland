@@ -86,102 +86,105 @@ public class TestUserHistory extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void enterGame() throws Exception {
-        configureMinimalGame();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "");
-        userService.login("U1", "test");
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
-        getMyBase(); // Setup connection
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        List<DbUserHistory> dbUserHistories = getUserHistory();
-        Assert.assertEquals(5, dbUserHistories.size());
-        Assert.assertNotNull(dbUserHistories.get(0).getLoggedOut());
-        Assert.assertNotNull(dbUserHistories.get(1).getGameEntered());
-        Assert.assertNotNull(dbUserHistories.get(2).getBaseCreated());
-        Assert.assertNotNull(dbUserHistories.get(3).getLoggedIn());
-        Assert.assertNotNull(dbUserHistories.get(4).getCreated());
+        Assert.fail();
+//        configureMinimalGame();
+//
+//        beginHttpSession();
+//        beginHttpRequestAndOpenSessionInViewFilter();
+//        userService.createUser("U1", "test", "test", "");
+//        userService.login("U1", "test");
+//        endHttpRequestAndOpenSessionInViewFilter();
+//
+//        beginHttpRequestAndOpenSessionInViewFilter();
+//        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+//        getMyBase(); // Setup connection
+//
+//        endHttpRequestAndOpenSessionInViewFilter();
+//        endHttpSession();
+//
+//        List<DbUserHistory> dbUserHistories = getUserHistory();
+//        Assert.assertEquals(5, dbUserHistories.size());
+//        Assert.assertNotNull(dbUserHistories.get(0).getLoggedOut());
+//        Assert.assertNotNull(dbUserHistories.get(1).getGameEntered());
+//        Assert.assertNotNull(dbUserHistories.get(2).getBaseCreated());
+//        Assert.assertNotNull(dbUserHistories.get(3).getLoggedIn());
+//        Assert.assertNotNull(dbUserHistories.get(4).getCreated());
     }
 
     @Test
     @DirtiesContext
     public void surrendered() throws Exception {
-        configureMinimalGame();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "");
-        userService.login("U1", "test");
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
-        getMyBase(); // Setup connection
-        movableService.surrenderBase();
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        List<DbUserHistory> dbUserHistories = getUserHistory();
-        Assert.assertEquals(6, dbUserHistories.size());
-        Assert.assertNotNull(dbUserHistories.get(0).getLoggedOut());
-        Assert.assertNotNull(dbUserHistories.get(1).getBaseSurrender());
-        Assert.assertEquals("U1", dbUserHistories.get(1).getBaseName());
-        Assert.assertNotNull(dbUserHistories.get(2).getGameEntered());
-        Assert.assertNotNull(dbUserHistories.get(3).getBaseCreated());
-        Assert.assertNotNull(dbUserHistories.get(4).getLoggedIn());
-        Assert.assertNotNull(dbUserHistories.get(5).getCreated());
+        Assert.fail();
+//        configureMinimalGame();
+//
+//        beginHttpSession();
+//        beginHttpRequestAndOpenSessionInViewFilter();
+//        userService.createUser("U1", "test", "test", "");
+//        userService.login("U1", "test");
+//        endHttpRequestAndOpenSessionInViewFilter();
+//
+//        beginHttpRequestAndOpenSessionInViewFilter();
+//        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+//        getMyBase(); // Setup connection
+//        movableService.surrenderBase();
+//
+//        endHttpRequestAndOpenSessionInViewFilter();
+//        endHttpSession();
+//
+//        List<DbUserHistory> dbUserHistories = getUserHistory();
+//        Assert.assertEquals(6, dbUserHistories.size());
+//        Assert.assertNotNull(dbUserHistories.get(0).getLoggedOut());
+//        Assert.assertNotNull(dbUserHistories.get(1).getBaseSurrender());
+//        Assert.assertEquals("U1", dbUserHistories.get(1).getBaseName());
+//        Assert.assertNotNull(dbUserHistories.get(2).getGameEntered());
+//        Assert.assertNotNull(dbUserHistories.get(3).getBaseCreated());
+//        Assert.assertNotNull(dbUserHistories.get(4).getLoggedIn());
+//        Assert.assertNotNull(dbUserHistories.get(5).getCreated());
     }
 
     @Test
     @DirtiesContext
     public void defeated() throws Exception {
-        configureMinimalGame();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "");
-        userService.login("U1", "test");
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
-        SimpleBase target = getMyBase(); // Setup connection
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
-        SimpleBase actor = getMyBase(); // Setup connection
-        sendBuildCommand(getFirstSynItemId(actor, TEST_START_BUILDER_ITEM_ID), new Index(200, 200), TEST_FACTORY_ITEM_ID);
-        waitForActionServiceDone();
-        sendFactoryCommand(getFirstSynItemId(actor, TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
-        waitForActionServiceDone();
-        sendAttackCommand(getFirstSynItemId(actor, TEST_ATTACK_ITEM_ID), getFirstSynItemId(target, TEST_START_BUILDER_ITEM_ID));
-        waitForActionServiceDone();
-
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        List<DbUserHistory> dbUserHistories = getUserHistory();
-        Assert.assertEquals(6, dbUserHistories.size());
-        Assert.assertEquals("U1", dbUserHistories.get(0).getBaseName());
-        Assert.assertNotNull(dbUserHistories.get(0).getBaseDefeated());
-        Assert.assertNotNull(dbUserHistories.get(1).getLoggedOut());
-        Assert.assertNotNull(dbUserHistories.get(2).getGameEntered());
-        Assert.assertNotNull(dbUserHistories.get(3).getBaseCreated());
-        Assert.assertNotNull(dbUserHistories.get(4).getLoggedIn());
-        Assert.assertNotNull(dbUserHistories.get(5).getCreated());
+        Assert.fail();
+//        configureMinimalGame();
+//
+//        beginHttpSession();
+//        beginHttpRequestAndOpenSessionInViewFilter();
+//        userService.createUser("U1", "test", "test", "");
+//        userService.login("U1", "test");
+//        endHttpRequestAndOpenSessionInViewFilter();
+//
+//        beginHttpRequestAndOpenSessionInViewFilter();
+//        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+//        SimpleBase target = getMyBase(); // Setup connection
+//
+//        endHttpRequestAndOpenSessionInViewFilter();
+//        endHttpSession();
+//
+//        beginHttpSession();
+//        beginHttpRequestAndOpenSessionInViewFilter();
+//        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+//        SimpleBase actor = getMyBase(); // Setup connection
+//        sendBuildCommand(getFirstSynItemId(actor, TEST_START_BUILDER_ITEM_ID), new Index(200, 200), TEST_FACTORY_ITEM_ID);
+//        waitForActionServiceDone();
+//        sendFactoryCommand(getFirstSynItemId(actor, TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
+//        waitForActionServiceDone();
+//        sendAttackCommand(getFirstSynItemId(actor, TEST_ATTACK_ITEM_ID), getFirstSynItemId(target, TEST_START_BUILDER_ITEM_ID));
+//        waitForActionServiceDone();
+//
+//
+//        endHttpRequestAndOpenSessionInViewFilter();
+//        endHttpSession();
+//
+//        List<DbUserHistory> dbUserHistories = getUserHistory();
+//        Assert.assertEquals(6, dbUserHistories.size());
+//        Assert.assertEquals("U1", dbUserHistories.get(0).getBaseName());
+//        Assert.assertNotNull(dbUserHistories.get(0).getBaseDefeated());
+//        Assert.assertNotNull(dbUserHistories.get(1).getLoggedOut());
+//        Assert.assertNotNull(dbUserHistories.get(2).getGameEntered());
+//        Assert.assertNotNull(dbUserHistories.get(3).getBaseCreated());
+//        Assert.assertNotNull(dbUserHistories.get(4).getLoggedIn());
+//        Assert.assertNotNull(dbUserHistories.get(5).getCreated());
     }
 
     @SuppressWarnings("unchecked")

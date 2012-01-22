@@ -61,7 +61,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void oneIntrudersNoDefender() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         SimpleBase botBase = new SimpleBase(1);
         Rectangle region = new Rectangle(0, 0, 2000, 2000);
@@ -90,7 +90,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void oneIntruders() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         SimpleBase botBase = new SimpleBase(1);
         Rectangle region = new Rectangle(0, 0, 2000, 2000);
@@ -126,7 +126,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void oneIntruderAndGone() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         SimpleBase botBase = new SimpleBase(1);
         Rectangle region = new Rectangle(0, 0, 2000, 2000);
@@ -165,7 +165,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void oneIntruderAndAttackerDies() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         SimpleBase botBase = new SimpleBase(1);
         Rectangle region = new Rectangle(0, 0, 2000, 2000);
@@ -206,7 +206,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void oneIntruderAndAttackerBecomesIdle() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         SimpleBase botBase = new SimpleBase(1);
         Rectangle region = new Rectangle(0, 0, 2000, 2000);
@@ -248,7 +248,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void oneIntruderAndAttackerException() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         SimpleBase botBase = new SimpleBase(1);
         Rectangle region = new Rectangle(0, 0, 2000, 2000);
@@ -291,7 +291,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void twoIntruderTakeNextEnemy() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         SimpleBase botBase = new SimpleBase(1);
         Rectangle region = new Rectangle(0, 0, 2000, 2000);
@@ -335,7 +335,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void shortestWaySorter() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         // Intruders
         SyncBaseItem intruder1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1200), new Id(-1, -1, 0));

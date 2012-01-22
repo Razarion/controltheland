@@ -13,8 +13,11 @@
 
 package com.btxtech.game.jsre.client.common.info;
 
+import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
+
 import java.util.Collection;
 
 /**
@@ -22,13 +25,15 @@ import java.util.Collection;
  * Date: 16.07.2010
  * Time: 23:41:47
  */
-public class RealityInfo extends GameInfo {
+public class RealGameInfo extends GameInfo {
     private SimpleBase base;
     private double accountBalance;
     private int energyGenerating;
     private int energyConsuming;
     private Collection<BaseAttributes> allBases;
     private int houseSpace;
+    private Collection<Territory> territories;
+    private LevelScope levelScope;
 
     public SimpleBase getBase() {
         return base;
@@ -70,11 +75,6 @@ public class RealityInfo extends GameInfo {
         this.allBases = allBases;
     }
 
-    @Override
-    public boolean isRealGame() {
-        return true;
-    }
-
     public int getHouseSpace() {
         return houseSpace;
     }
@@ -82,4 +82,20 @@ public class RealityInfo extends GameInfo {
     public void setHouseSpace(int houseSpace) {
         this.houseSpace = houseSpace;
     }
+
+    public Collection<Territory> getTerritories() {
+        return territories;
+    }
+
+    public void setTerritories(Collection<Territory> territories) {
+        this.territories = territories;
+    }
+
+    public LevelScope getLevelScope() {
+        return levelScope;
+    }
+
+    public void setLevelScope(LevelScope levelScope) {
+        this.levelScope = levelScope;
+    }    
 }

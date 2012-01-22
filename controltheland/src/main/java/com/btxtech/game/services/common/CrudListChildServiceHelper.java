@@ -45,14 +45,14 @@ public class CrudListChildServiceHelper<T extends CrudChild> implements Serializ
         sort();
     }
 
+    public CrudListChildServiceHelper(List<T> children, Class<T> childClass, CrudParent crudParent) {
+        this(children, childClass, crudParent, null, null);
+    }
+
     public void sort() {
         if (comparable != null && children.size() > 1) {
             Collections.sort(children, comparable);
         }
-    }
-
-    public CrudListChildServiceHelper(List<T> children, Class<T> childClass, CrudParent crudParent) {
-        this(children, childClass, crudParent, null, null);
     }
 
     @Override

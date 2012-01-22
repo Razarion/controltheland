@@ -17,7 +17,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.user.User;
-import com.btxtech.game.services.utg.DbAbstractLevel;
+import com.btxtech.game.services.utg.DbLevel;
 import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
@@ -76,7 +76,7 @@ public class DbHistoryElement implements Serializable {
     protected DbHistoryElement() {
     }
 
-    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncBaseItem syncBaseItem, DbAbstractLevel level, BaseService baseService, String sessionId, Source source) {
+    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncBaseItem syncBaseItem, DbLevel level, BaseService baseService, String sessionId, Source source) {
         this.sessionId = sessionId;
         timeStamp = new Date();
         timeStampMs = timeStamp.getTime();

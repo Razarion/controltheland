@@ -30,7 +30,7 @@ import javax.persistence.ManyToOne;
  * Time: 23:24:19
  */
 @Entity(name = "GUIDANCE_LEVEL_ITEM_TYPE_LIMITATION")
-public class DbItemTypeLimitation implements CrudChild<DbRealGameLevel> {
+public class DbItemTypeLimitation implements CrudChild<DbLevel> {
     @Id
     @GeneratedValue
     private Integer id;
@@ -39,7 +39,7 @@ public class DbItemTypeLimitation implements CrudChild<DbRealGameLevel> {
     @Column(name = "theCount")
     private int count;
     @ManyToOne
-    private DbRealGameLevel dbRealGameLevel;
+    private DbLevel dbLevel;
 
     public DbItemTypeLimitation() {
     }
@@ -102,7 +102,7 @@ public class DbItemTypeLimitation implements CrudChild<DbRealGameLevel> {
     }
 
     @Override
-    public void setParent(DbRealGameLevel parent) {
-        dbRealGameLevel = parent;
+    public void setParent(DbLevel parent) {
+        dbLevel = parent;
     }
 }

@@ -15,10 +15,9 @@ package com.btxtech.game.services.gwt;
 
 
 import com.btxtech.game.jsre.client.MovableService;
-import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
-import com.btxtech.game.jsre.client.common.info.RealityInfo;
+import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
@@ -28,6 +27,7 @@ import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsEx
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
@@ -45,11 +45,9 @@ import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.TerritoryService;
+import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.services.utg.DbAbstractLevel;
-import com.btxtech.game.services.utg.DbRealGameLevel;
-import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
@@ -137,37 +135,21 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public GameInfo getGameInfo() {
-        try {
-            DbAbstractLevel dbAbstractLevel = userGuidanceService.getDbAbstractLevel();
-            if (dbAbstractLevel instanceof DbRealGameLevel) {
-                return createRealInfo((DbRealGameLevel) dbAbstractLevel);
-            } else if (dbAbstractLevel instanceof DbSimulationLevel) {
-                return createSimulationInfo((DbSimulationLevel) dbAbstractLevel);
-            } else {
-                throw new IllegalArgumentException("Unknown DbAbstractLevel " + dbAbstractLevel);
-            }
-        } catch (Throwable t) {
-            log.error("", t);
-        }
-        return null;
-    }
-
-    private GameInfo createRealInfo(DbRealGameLevel dbRealGameLevel) {
+    public RealGameInfo getRealGameInfo() {
         try {
             baseService.continueBase();
-            RealityInfo realityInfo = new RealityInfo();
-            setCommonInfo(realityInfo, userService, itemService, mgmtService, cmsUiService);
-            realityInfo.setBase(baseService.getBase().getSimpleBase());
-            realityInfo.setAccountBalance(baseService.getBase().getAccountBalance());
-            realityInfo.setEnergyConsuming(serverEnergyService.getConsuming());
-            realityInfo.setEnergyGenerating(serverEnergyService.getGenerating());
-            terrainService.setupTerrain(realityInfo, dbRealGameLevel);
-            realityInfo.setLevel(userGuidanceService.getDbLevel().getLevel());
-            realityInfo.setTerritories(territoryService.getTerritories());
-            realityInfo.setAllBases(baseService.getAllBaseAttributes());
-            realityInfo.setHouseSpace(baseService.getBase().getHouseSpace());
-            return realityInfo;
+            RealGameInfo realGameInfo = new RealGameInfo();
+            setCommonInfo(realGameInfo, userService, itemService, mgmtService, cmsUiService);
+            realGameInfo.setBase(baseService.getBase().getSimpleBase());
+            realGameInfo.setAccountBalance(baseService.getBase().getAccountBalance());
+            realGameInfo.setEnergyConsuming(serverEnergyService.getConsuming());
+            realGameInfo.setEnergyGenerating(serverEnergyService.getGenerating());
+            terrainService.setupTerrainRealGame(realGameInfo);
+            realGameInfo.setLevelScope(userGuidanceService.getLevelScope());
+            realGameInfo.setTerritories(territoryService.getTerritories());
+            realGameInfo.setAllBases(baseService.getAllBaseAttributes());
+            realGameInfo.setHouseSpace(baseService.getBase().getHouseSpace());
+            return realGameInfo;
         } catch (com.btxtech.game.services.connection.NoConnectionException t) {
             log.error(t.getMessage() + ", SessionId: " + t.getSessionId());
         } catch (Throwable t) {
@@ -176,15 +158,17 @@ public class MovableServiceImpl implements MovableService {
         return null;
     }
 
-    private SimulationInfo createSimulationInfo(DbSimulationLevel dbSimulationLevel) {
+    @Override
+    public SimulationInfo getSimulationGameInfo(int levelTaskId) {
         try {
             SimulationInfo simulationInfo = new SimulationInfo();
-            simulationInfo.setLevel(dbSimulationLevel.getLevel());
+            DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialConfig(levelTaskId);
             // Common
             setCommonInfo(simulationInfo, userService, itemService, mgmtService, cmsUiService);
-            simulationInfo.setTutorialConfig(tutorialService.getTutorialConfig(dbSimulationLevel));
+            simulationInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(itemService));
+            simulationInfo.setLevelTaskId(levelTaskId);
             // Terrain
-            terrainService.setupTerrain(simulationInfo, dbSimulationLevel);
+            terrainService.setupTerrainTutorial(simulationInfo, dbTutorialConfig);
             return simulationInfo;
         } catch (Throwable t) {
             log.error("", t);
@@ -257,9 +241,14 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public Level sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp) {
+    public GameFlow sendTutorialProgress(TutorialConfig.TYPE type, int levelTaskId, String name, String parent, long duration, long clientTimeStamp) {
         try {
-            return userTrackingService.onTutorialProgressChanged(type, name, parent, duration, clientTimeStamp);
+            userTrackingService.onTutorialProgressChanged(type, levelTaskId, name, parent, duration, clientTimeStamp);
+            if (type == TutorialConfig.TYPE.TUTORIAL) {
+                return userGuidanceService.onTutorialFinished(levelTaskId);
+            } else {
+                return null;
+            }
         } catch (Throwable t) {
             log.error("", t);
             return null;

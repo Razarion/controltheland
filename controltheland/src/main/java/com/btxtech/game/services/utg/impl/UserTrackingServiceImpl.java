@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.utg.impl;
 
-import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
@@ -514,12 +514,8 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     @Transactional
-    public Level onTutorialProgressChanged(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp) {
-        if (type == TutorialConfig.TYPE.TUTORIAL) {
-            serverConditionService.onTutorialFinished(userService.getUserState());
-        }
+    public void onTutorialProgressChanged(TutorialConfig.TYPE type, Integer taskId,  String name, String parent, long duration, long clientTimeStamp) {
         sessionFactory.getCurrentSession().saveOrUpdate(new DbTutorialProgress(session.getSessionId(), type.name(), name, parent, duration, clientTimeStamp));
-        return userGuidanceService.getDbAbstractLevel().getLevel();
     }
 
     @Override
@@ -621,7 +617,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             baseName = null;
         }
 
-        DbStartup dbStartup = new DbStartup(totalTime, infos.get(0).getStartTime(), userGuidanceService.getDbAbstractLevel(), session.getSessionId(), baseName, baseId);
+        DbStartup dbStartup = new DbStartup(totalTime, infos.get(0).getStartTime(), null/* TODO add level userGuidanceService.getDbAbstractLevel()*/, session.getSessionId(), baseName, baseId);
         for (StartupTaskInfo info : infos) {
             dbStartup.addGameStartupTasks(new DbStartupTask(info, dbStartup));
             if (info.getError() != null) {

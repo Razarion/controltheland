@@ -14,17 +14,16 @@
 package com.btxtech.game.jsre.client.action;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.collision.ClientCollisionService;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.CommonJava;
@@ -100,7 +99,6 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                 SyncTickItem activeItem = iterator.next();
                 try {
                     if (!activeItem.tick(factor)) {
-                        SimulationConditionServiceImpl.getInstance().onSyncItemDeactivated(activeItem);
                         iterator.remove();
                         activeItem.stop();
                         if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
@@ -241,13 +239,13 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                 if (ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem())
                         && ClientTerritoryService.getInstance().isAllowed(target.getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem())
                         && clientSyncItem.getSyncBaseItem().getSyncWeapon().isItemTypeAllowed(target)) {
-                    if(clientSyncItem.getSyncBaseItem().getSyncWeapon().isAttackAllowedWithoutMoving(target)) {
+                    if (clientSyncItem.getSyncBaseItem().getSyncWeapon().isAttackAllowedWithoutMoving(target)) {
                         attack(clientSyncItem.getSyncBaseItem(),
                                 target,
                                 clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition(),
                                 clientSyncItem.getSyncBaseItem().getSyncItemArea().getTurnToAngel(target.getSyncItemArea()),
                                 clientSyncItem.getSyncBaseItem().hasSyncMovable());
-                    } else if(clientSyncItem.getSyncBaseItem().hasSyncMovable()) {
+                    } else if (clientSyncItem.getSyncBaseItem().hasSyncMovable()) {
                         attackFormationItemList.add(new AttackFormationItem(clientSyncItem.getSyncBaseItem(),
                                 clientSyncItem.getSyncBaseItem().getSyncWeapon().getWeaponType().getRange()));
                     }
@@ -274,7 +272,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                 if (ClientTerritoryService.getInstance().isAllowed(money.getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem())) {
                     attackFormationItemList.add(new AttackFormationItem(clientSyncItem.getSyncBaseItem(), clientSyncItem.getSyncBaseItem().getSyncHarvester().getHarvesterType().getRange()));
                 }
-            } 
+            }
         }
         attackFormationItemList = ClientCollisionService.getInstance().setupDestinationHints(money, attackFormationItemList);
         for (AttackFormationItem item : attackFormationItemList) {
@@ -349,7 +347,6 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
             syncItem.executeCommand(baseCommand);
 
             Connection.getInstance().addCommandToQueue(baseCommand);
-            SimulationConditionServiceImpl.getInstance().onSendCommand(syncItem, baseCommand);
             tmpAddActiveItems.add(syncItem);
             if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
                 removeGuardingBaseItem(syncItem);

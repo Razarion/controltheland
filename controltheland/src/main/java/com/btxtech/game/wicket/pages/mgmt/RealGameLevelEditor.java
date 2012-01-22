@@ -13,20 +13,12 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.services.common.CrudChildServiceHelper;
-import com.btxtech.game.services.common.RuServiceHelper;
-import com.btxtech.game.services.utg.DbAbstractLevel;
-import com.btxtech.game.services.utg.DbItemTypeLimitation;
-import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.wicket.pages.mgmt.condition.ConditionConfigPanel;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
-import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
-import com.btxtech.game.wicket.uiservices.ResurrectionPanel;
 import com.btxtech.game.wicket.uiservices.TerritoryPanel;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.markup.repeater.Item;
 
 /**
  * User: beat
@@ -57,30 +49,30 @@ public class RealGameLevelEditor extends Panel {
         add(new TextField("maxMoney"));
         add(new TextField("maxXp"));
 
-        new CrudChildTableHelper<DbAbstractLevel, DbItemTypeLimitation>("itemTypeLimitation", null, "createItemTypeLimitation", false, this, false) {
-
-            @Override
-            protected void extendedPopulateItem(Item<DbItemTypeLimitation> dbItemTypeLimitationItem) {
-                dbItemTypeLimitationItem.add(new BaseItemTypePanel("dbBaseItemType"));
-                dbItemTypeLimitationItem.add(new TextField("count"));
-            }
-
-            @Override
-            protected RuServiceHelper<DbAbstractLevel> getRuServiceHelper() {
-                return ((DbLevelEditor) RealGameLevelEditor.this.getParent().getParent()).getRuServiceHelper();
-            }
-
-            @Override
-            protected DbRealGameLevel getParent() {
-                return (DbRealGameLevel) RealGameLevelEditor.this.getParent().getDefaultModelObject();
-            }
-
-            @Override
-            protected CrudChildServiceHelper<DbItemTypeLimitation> getCrudChildServiceHelperImpl() {
-                return getParent().getDbItemTypeLimitationCrudServiceHelper();
-            }
-        };
-
-        add(new ResurrectionPanel("dbResurrection"));
+//        new CrudChildTableHelper<DbLevel, DbItemTypeLimitation>("itemTypeLimitation", null, "createItemTypeLimitation", false, this, false) {
+//
+//            @Override
+//            protected void extendedPopulateItem(Item<DbItemTypeLimitation> dbItemTypeLimitationItem) {
+//                dbItemTypeLimitationItem.add(new BaseItemTypePanel("dbBaseItemType"));
+//                dbItemTypeLimitationItem.add(new TextField("count"));
+//            }
+//
+//            @Override
+//            protected RuServiceHelper<DbLevel> getRuServiceHelper() {
+//                return ((DbLevelEditor) RealGameLevelEditor.this.getParent().getParent()).getRuServiceHelper();
+//            }
+//
+//            @Override
+//            protected DbRealGameLevel getParent() {
+//                return (DbRealGameLevel) RealGameLevelEditor.this.getParent().getDefaultModelObject();
+//            }
+//
+//            @Override
+//            protected CrudChildServiceHelper<DbItemTypeLimitation> getCrudChildServiceHelperImpl() {
+//                return getParent().getDbItemTypeLimitationCrudServiceHelper();
+//            }
+//        };
+//
+//        add(new ResurrectionPanel("dbResurrection"));
     }
 }

@@ -31,7 +31,7 @@ public class TestBotService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testInRealm() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -57,7 +57,7 @@ public class TestBotService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSystemActivate() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -84,7 +84,7 @@ public class TestBotService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testDelete() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

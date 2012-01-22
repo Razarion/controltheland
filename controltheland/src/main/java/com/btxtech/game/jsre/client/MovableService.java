@@ -13,28 +13,28 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.common.Level;
-import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.UserMessage;
-import com.btxtech.game.jsre.client.common.info.GameInfo;
-import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
-import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
-import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
-import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
+import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
-import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
-import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
-import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
+import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
+import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -44,7 +44,9 @@ import java.util.List;
  */
 @RemoteServiceRelativePath("gwtrpc/movableService")
 public interface MovableService extends RemoteService {
-    GameInfo getGameInfo();
+    RealGameInfo getRealGameInfo();
+
+    SimulationInfo getSimulationGameInfo(int levelTaskId);
 
     void log(String message, Date date);
 
@@ -64,7 +66,7 @@ public interface MovableService extends RemoteService {
 
     void sendStartupInfo(List<StartupTaskInfo> infos, long totalTime);
 
-    Level sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp);
+    GameFlow sendTutorialProgress(TutorialConfig.TYPE type, int levelTaskId, String name, String parent, long duration, long clientTimeStamp);
 
     void sendEventTrackingStart(EventTrackingStart eventTrackingStart);
 

@@ -10,7 +10,6 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -61,7 +60,7 @@ public class MuzzleFlashControl extends DecoratorPanel {
                     itemTypeSimulation.doMove(false);
                     if (target == null || !target.isAlive()) {
                         try {
-                            target = (SyncBaseItem) ItemContainer.getInstance().createSimulationSyncObject(new ItemTypeAndPosition(ItemTypeEditorPanel.ENEMY_BASE, 1, itemTypeId, new Index(250, 150), 0));
+                            target = (SyncBaseItem) ItemContainer.getInstance().createItemTypeEditorSyncObject(ItemTypeEditorPanel.ENEMY_BASE, itemTypeId, new Index(250, 150));
                             target.setHealth(1000000);
                         } catch (NoSuchItemTypeException e) {
                             log.log(Level.SEVERE, "", e);

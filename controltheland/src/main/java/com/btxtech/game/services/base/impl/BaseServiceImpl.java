@@ -15,7 +15,7 @@ package com.btxtech.game.services.base.impl;
 
 import com.btxtech.game.jsre.client.AlreadyUsedException;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
@@ -56,7 +56,6 @@ import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -153,11 +152,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         if (userState == null) {
             throw new IllegalStateException("No UserState available.");
         }
-        boolean sendResurrectionMessage = false;
         Base base = userState.getBase();
         if (base == null) {
-            userGuidanceService.executeResurrection(userState);
-            sendResurrectionMessage = true;
+            userGuidanceService.createBaseInQuestHub(userState);
         }
 
         base = userState.getBase();
@@ -166,8 +163,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         }
 
         connectionService.createConnection(base);
-        if (sendResurrectionMessage) {
+        if (userState.isSendResurrectionMessage()) {
             userGuidanceService.sendResurrectionMessage(base.getSimpleBase());
+            userState.clearSendResurrectionMessageAndClear();
         }
     }
 
@@ -202,7 +200,12 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             serverEnergyService.onBaseKilled(base);
         }
         if (!isBot) {
-            userGuidanceService.onBaseDeleted(actor, base.getSimpleBase());
+            if (actor != null) {
+                serverConditionService.onBaseDeleted(actor);
+            }
+            if (connectionService.hasConnection(base.getSimpleBase())) {
+                connectionService.closeConnection(base.getSimpleBase());
+            }
         }
     }
 
@@ -293,6 +296,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             deleteBase(actor, base);
             if (!base.isAbandoned() && base.getUserState() != null) {
                 base.getUserState().setBase(null);
+                base.getUserState().setSendResurrectionMessage();
             }
         } else {
             if (syncItem.hasSyncHouse()) {
@@ -344,7 +348,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     public void surrenderBase(Base base) {
         historyService.addBaseSurrenderedEntry(base.getSimpleBase());
         userTrackingService.onBaseSurrender(userService.getUser(), base);
+        getUserState(base.getSimpleBase()).setSendResurrectionMessage();
         makeBaseAbandoned(base);
+
     }
 
     private void makeBaseAbandoned(Base base) {
@@ -398,15 +404,15 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     @Override
     public void depositResource(double price, SimpleBase simpleBase) {
         Base base = getBase(simpleBase);
-        if (!isBot(simpleBase)) {
-            DbRealGameLevel dbRealGameLevel = userGuidanceService.getDbLevel(simpleBase);
+        if (!isBot(simpleBase) && !base.isAbandoned()) {
+            LevelScope levelScope = userGuidanceService.getLevelScope(simpleBase);
             double money = base.getAccountBalance();
-            if (money == dbRealGameLevel.getMaxMoney()) {
+            if (money == levelScope.getMaxMoney()) {
                 return;
-            } else if (money > dbRealGameLevel.getMaxMoney()) {
-                base.setAccountBalance(dbRealGameLevel.getMaxMoney());
-            } else if (money + price > dbRealGameLevel.getMaxMoney()) {
-                double amount = dbRealGameLevel.getMaxMoney() - money;
+            } else if (money > levelScope.getMaxMoney()) {
+                base.setAccountBalance(levelScope.getMaxMoney());
+            } else if (money + price > levelScope.getMaxMoney()) {
+                double amount = levelScope.getMaxMoney() - money;
                 base.depositMoney(amount);
                 statisticsService.onMoneyEarned(simpleBase, amount);
             } else {
@@ -488,7 +494,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
 
     @Override
     public int getTotalHouseSpace() {
-        return userGuidanceService.getDbLevel().getHouseSpace() + getBase().getHouseSpace();
+        return userGuidanceService.getLevelScope().getHouseSpace() + getBase().getHouseSpace();
     }
 
     @Override
@@ -517,8 +523,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public Level getLevel(SimpleBase simpleBase) {
-        return userGuidanceService.getDbLevel(simpleBase).getLevel();
+    public LevelScope getLevel(SimpleBase simpleBase) {
+        return userGuidanceService.getLevelScope(simpleBase);
     }
 
     @Override

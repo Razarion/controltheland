@@ -22,6 +22,8 @@ import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.google.gwt.event.dom.client.ClickEvent;
 
+import java.util.Collection;
+
 /**
  * User: beat
  * Date: 28.12.2010
@@ -30,14 +32,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 public interface ConditionService<T> {
     AbstractConditionTrigger<T> activateCondition(ConditionConfig conditionConfig, T t);
 
-    void onOwnSelectionChanged(Group selectedGroup);
-
-    void onSendCommand(SyncBaseItem syncItem, BaseCommand baseCommand);
-
-    void onSyncItemDeactivated(SyncTickItem syncTickItem);
-
-    void onScroll(int left, int top, int width, int height, int deltaLeft, int deltaTop);
-
+    void activateConditions(Collection<ConditionConfig> allLevelTaskConditions, Object userObject);
+   
     void onIncreaseXp(SimpleBase base, int xp);
 
     void onSyncItemKilled(SimpleBase actor, SyncBaseItem killedItem);
@@ -45,8 +41,6 @@ public interface ConditionService<T> {
     void onSyncItemBuilt(SyncBaseItem syncBaseItem);
 
     void onMoneyIncrease(SimpleBase base, double accountBalance);
-
-    void onWithdrawalMoney();
 
     void onBaseDeleted(SimpleBase actorBase);
 

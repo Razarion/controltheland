@@ -22,7 +22,7 @@ public class TestWeaponType extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void muzzleFlashPosition() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

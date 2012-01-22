@@ -14,11 +14,12 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
-import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
+import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupProgressListener;
 import com.btxtech.game.jsre.client.control.StartupSeq;
@@ -43,6 +44,7 @@ import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
@@ -94,9 +96,9 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
 
     }
 
-    public void downloadGameInfo(final DeferredStartup deferredStartup) {
+    public void downloadRealGameInfo(final DeferredStartup deferredStartup) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.getGameInfo(new AsyncCallback<GameInfo>() {
+            movableServiceAsync.getRealGameInfo(new AsyncCallback<RealGameInfo>() {
 
                 @Override
                 public void onFailure(Throwable caught) {
@@ -105,14 +107,33 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
                 }
 
                 @Override
-                public void onSuccess(GameInfo gameInfo) {
+                public void onSuccess(RealGameInfo realGameInfo) {
                     disconnectionCount = 0;
-                    Connection.this.gameInfo = gameInfo;
-                    if (gameInfo.isRealGame()) {
-                        gameEngineMode = GameEngineMode.SLAVE;
-                    } else {
-                        gameEngineMode = GameEngineMode.MASTER;
-                    }
+                    Connection.this.gameInfo = realGameInfo;
+                    gameEngineMode = GameEngineMode.SLAVE;
+                    deferredStartup.finished();
+                }
+            });
+        } else {
+            deferredStartup.failed(DeferredStartup.NO_CONNECTION);
+        }
+    }
+
+    public void downloadSimulationGameInfo(int levelTaskId, final DeferredStartup deferredStartup) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.getSimulationGameInfo(levelTaskId, new AsyncCallback<SimulationInfo>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    deferredStartup.failed(caught);
+                    gameEngineMode = null;
+                }
+
+                @Override
+                public void onSuccess(SimulationInfo simulationInfo) {
+                    disconnectionCount = 0;
+                    Connection.this.gameInfo = simulationInfo;
+                    gameEngineMode = GameEngineMode.MASTER;
                     deferredStartup.finished();
                 }
             });
@@ -257,20 +278,20 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
         commandQueue.clear();
     }
 
-    public void sendTutorialProgress(final TutorialConfig.TYPE type, final String name, final String parent, final long duration, final long clientTimeStamp, final ParametrisedRunnable<Level> runnable) {
+    public void sendTutorialProgress(final TutorialConfig.TYPE type, final int levelTaskId, final String name, final String parent, final long duration, final long clientTimeStamp, final ParametrisedRunnable<GameFlow> runnable) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.sendTutorialProgress(type, name, parent, duration, clientTimeStamp, new AsyncCallback<Level>() {
+            movableServiceAsync.sendTutorialProgress(type, levelTaskId, name, parent, duration, clientTimeStamp, new AsyncCallback<GameFlow>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     if (!handleDisconnection(caught)) {
-                        sendTutorialProgress(type, name, parent, duration, clientTimeStamp, runnable);
+                        sendTutorialProgress(type, levelTaskId, name, parent, duration, clientTimeStamp, runnable);
                     }
                 }
 
                 @Override
-                public void onSuccess(Level level) {
+                public void onSuccess(GameFlow gameFlow) {
                     if (runnable != null) {
-                        runnable.run(level);
+                        runnable.run(gameFlow);
                     }
                 }
             });

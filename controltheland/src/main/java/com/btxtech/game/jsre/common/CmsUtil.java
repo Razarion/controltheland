@@ -1,6 +1,6 @@
 package com.btxtech.game.jsre.common;
 
-import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 
 /**
@@ -71,22 +71,22 @@ public class CmsUtil {
         builder.append("</a>");
     }
 
-    public static String getUrl4LavalPage(Level level, String text) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("<a href=\"/");
-        builder.append(MOUNT_GAME_CMS);
-        builder.append('/');
-        builder.append(SECTION_ID);
-        builder.append('/');
-        builder.append(LEVEL_SECTION);
-        builder.append('/');
-        builder.append(CHILD_ID);
-        builder.append('/');
-        builder.append(level.getId());
-        builder.append("\" target=\"_blank\" style=\"color: white\">");
-        builder.append(text);
-        builder.append("</a>");
-        return builder.toString();
-    }
+//    public static String getUrl4LevelPage(LevelScope levelScope, String text) {
+//        StringBuilder builder = new StringBuilder();
+//        builder.append("<a href=\"/");
+//        builder.append(MOUNT_GAME_CMS);
+//        builder.append('/');
+//        builder.append(SECTION_ID);
+//        builder.append('/');
+//        builder.append(LEVEL_SECTION);
+//        builder.append('/');
+//        builder.append(CHILD_ID);
+//        builder.append('/');
+//        builder.append(levelScope.getId());
+//        builder.append("\" target=\"_blank\" style=\"color: white\">");
+//        builder.append(text);
+//        builder.append("</a>");
+//        return builder.toString();
+//    }
 
 }

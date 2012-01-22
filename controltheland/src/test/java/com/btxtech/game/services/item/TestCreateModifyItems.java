@@ -227,7 +227,7 @@ public class TestCreateModifyItems extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void createMuzzleFlashImageSound() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

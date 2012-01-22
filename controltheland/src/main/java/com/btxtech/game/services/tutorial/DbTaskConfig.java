@@ -42,8 +42,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -73,16 +75,14 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     @JoinColumn(name = "dbTaskConfig", nullable = false)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbTaskAllowedItem> dbTaskAllowedItems;
-    private int accountBalance;
+    @Column(name = "accountBalance")
+    private int money;
+    private int maxMoney;
+    double itemSellFactor;
+    private int houseCount;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "dbTutorialConfig", insertable = false, updatable = false, nullable = false)
     private DbTutorialConfig dbTutorialConfig;
-    private int finishImageDuration;
-    private String finishedImageContentType;
-    @Column(length = 500000)
-    private byte[] finishImageData;
-    private int houseCount;
-    private String taskText;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "dbTaskConfig", nullable = false)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
@@ -141,36 +141,28 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         this.scroll = scroll;
     }
 
-    public int getAccountBalance() {
-        return accountBalance;
+    public int getMoney() {
+        return money;
     }
 
-    public void setAccountBalance(int accountBalance) {
-        this.accountBalance = accountBalance;
+    public void setMoney(int money) {
+        this.money = money;
     }
 
-    public int getFinishImageDuration() {
-        return finishImageDuration;
+    public int getMaxMoney() {
+        return maxMoney;
     }
 
-    public void setFinishImageDuration(int finishImageDuration) {
-        this.finishImageDuration = finishImageDuration;
+    public void setMaxMoney(int maxMoney) {
+        this.maxMoney = maxMoney;
     }
 
-    public String getFinishedImageContentType() {
-        return finishedImageContentType;
+    public double getItemSellFactor() {
+        return itemSellFactor;
     }
 
-    public void setFinishedImageContentType(String finishedImageContentType) {
-        this.finishedImageContentType = finishedImageContentType;
-    }
-
-    public byte[] getFinishImageData() {
-        return finishImageData;
-    }
-
-    public void setFinishImageData(byte[] finishImageData) {
-        this.finishImageData = finishImageData;
+    public void setItemSellFactor(double itemSellFactor) {
+        this.itemSellFactor = itemSellFactor;
     }
 
     public int getHouseCount() {
@@ -179,14 +171,6 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
 
     public void setHouseCount(int houseCount) {
         this.houseCount = houseCount;
-    }
-
-    public String getTaskText() {
-        return taskText;
-    }
-
-    public void setTaskText(String taskText) {
-        this.taskText = taskText;
     }
 
     @Override
@@ -217,18 +201,28 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
                 itemTypeAndPositions.add(itemTypeAndPosition);
             }
         }
-        Integer finishImageId = 42; // TODO
+
+        Map<Integer, Integer> itemTypeLimitation = new HashMap<Integer, Integer>();
+        for (DbTaskAllowedItem dbTaskAllowedItem : allowedItemHelper.readDbChildren()) {
+            Integer count = itemTypeLimitation.get(dbTaskAllowedItem.getDbBaseItemType().getId());
+            if (count == null) {
+                count = 0;
+            }
+            Integer newCount = count + dbTaskAllowedItem.getCount();
+            itemTypeLimitation.put(dbTaskAllowedItem.getDbBaseItemType().getId(), newCount);
+        }
+
         return new TaskConfig(clearGame,
-                taskText,
                 itemTypeAndPositions,
                 scroll,
                 stepConfigs,
                 houseCount,
-                accountBalance,
-                finishImageDuration * 1000,
+                money,
+                maxMoney,
+                itemSellFactor,
                 name,
-                finishImageId,
-                convertTaskBots(itemService));
+                convertTaskBots(itemService),
+                itemTypeLimitation);
     }
 
     public CrudChildServiceHelper<DbItemTypeAndPosition> getItemCrudServiceHelper() {

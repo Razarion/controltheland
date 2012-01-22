@@ -8,7 +8,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBuilder;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
-import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.google.gwt.core.client.Scheduler;
 
 import java.util.logging.Level;
@@ -64,7 +63,7 @@ public class ItemTypeSimulation {
     public void createSyncItem() {
         try {
             middle = new Index(canvasWidth / 2, canvasHeight / 2);
-            syncItem = ItemContainer.getInstance().createSimulationSyncObject(new ItemTypeAndPosition(ItemTypeEditorPanel.MY_BASE, 0, itemType.getId(), middle, 0));
+            syncItem = ItemContainer.getInstance().createItemTypeEditorSyncObject(ItemTypeEditorPanel.MY_BASE, itemType.getId(), middle);
             syncItem.addSyncItemListener(new SyncItemListener() {
                 @Override
                 public void onItemChanged(Change change, SyncItem syncItem) {

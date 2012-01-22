@@ -38,6 +38,5 @@ public class SimulationStartupTask extends GameEngineStartupTask {
             return;
         }
         setupGameStructure(simulationInfo);
-        ClientBase.getInstance().setAllBaseAttributes(simulationInfo.getTutorialConfig().getBaseAttributes());
     }
 }

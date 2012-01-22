@@ -26,6 +26,7 @@ import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -71,6 +72,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     private CrudRootServiceHelper<DbStatisticsEntry> allTimeStatistics;
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
     @Autowired
     private SessionFactory sessionFactory;
     private final Map<UserState, DbStatisticsEntry> currentStatisticsCache = new HashMap<UserState, DbStatisticsEntry>();
@@ -429,7 +432,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 itemCount = userState.getBase().getItemCount();
                 money = (int) Math.round(userState.getBase().getAccountBalance());
             }
-            entries.add(new CurrentStatisticEntry(userState.getCurrentAbstractLevel(),
+            entries.add(new CurrentStatisticEntry(userGuidanceService.getDbLevel(userState),
                     userState.getUser(),
                     baseName,
                     upTime,

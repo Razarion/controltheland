@@ -30,7 +30,7 @@ public class TestNeed extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void oneDirectItem() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         DbBotItemConfig config1 = new DbBotItemConfig();
         config1.setCount(1);
@@ -65,7 +65,7 @@ public class TestNeed extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void threeDirectOneNormal() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         Collection<DbBotItemConfig> dbBotItemConfigs = new ArrayList<DbBotItemConfig>();
 

@@ -13,9 +13,8 @@
 
 package com.btxtech.game.jsre.client.common.info;
 
-import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.common.CmsUtil;
-import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
@@ -42,9 +41,7 @@ public abstract class GameInfo implements Serializable {
     private TerrainImageBackground terrainImageBackground;
     private boolean registered;
     private int registerDialogDelay;
-    private Collection<Territory> territories;
     private Collection<ItemType> itemTypes;
-    private Level level;
     private Map<CmsUtil.CmsPredefinedPage, String> predefinedUrls;
 
     public TerrainSettings getTerrainSettings() {
@@ -111,31 +108,12 @@ public abstract class GameInfo implements Serializable {
         this.registered = registered;
     }
 
-
-    public Collection<Territory> getTerritories() {
-        return territories;
-    }
-
-    public void setTerritories(Collection<Territory> territories) {
-        this.territories = territories;
-    }
-
     public Collection<ItemType> getItemTypes() {
         return itemTypes;
     }
 
     public void setItemTypes(Collection<ItemType> itemTypes) {
         this.itemTypes = itemTypes;
-    }
-
-    public abstract boolean isRealGame();
-
-    public Level getLevel() {
-        return level;
-    }
-
-    public void setLevel(Level level) {
-        this.level = level;
     }
 
     public Map<CmsUtil.CmsPredefinedPage, String> getPredefinedUrls() {

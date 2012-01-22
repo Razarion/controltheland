@@ -464,7 +464,7 @@ public class TestAttackFormation extends AbstractServiceTest {
 
     @DirtiesContext
     public void testSetupDestinationHints1() throws Exception {
-        configureComplexGame();
+        configureComplexGameOneRealLevel();
 
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, -100, -100));
 

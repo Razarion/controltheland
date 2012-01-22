@@ -2,10 +2,10 @@ package com.btxtech.game.mockservlet;
 
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.AbstractGwtTest;
-import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
+import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
@@ -15,7 +15,6 @@ import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
-import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
@@ -27,6 +26,7 @@ import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsEx
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
@@ -49,26 +49,27 @@ import java.util.List;
  */
 public class MockMovableService extends RemoteServiceServlet implements MovableService {
     @Override
-    public GameInfo getGameInfo() {
+    public RealGameInfo getRealGameInfo() {
+        return null;
+    }
+
+    @Override
+    public SimulationInfo getSimulationGameInfo(int levelTaskId) {
         SimulationInfo simulationInfo = new SimulationInfo();
         setupCommon(simulationInfo);
         setupSimpleTerrain(simulationInfo);
         setupItemTypes(simulationInfo);
-        setupLevel(simulationInfo);
         setupTutorialConfig(simulationInfo);
         return simulationInfo;
     }
+
 
     private void setupCommon(SimulationInfo simulationInfo) {
         simulationInfo.setRegisterDialogDelay(1000);
     }
 
     private void setupTutorialConfig(SimulationInfo simulationInfo) {
-        ArrayList<BaseAttributes> baseAttributes = new ArrayList<BaseAttributes>();
-        baseAttributes.add(new BaseAttributes(AbstractGwtTest.MY_BASE, "MyTestBase", false));
-        baseAttributes.add(new BaseAttributes(AbstractGwtTest.BOT_BASE, "MyBotBase", false));
-
-        simulationInfo.setTutorialConfig(new TutorialConfig(null, AbstractGwtTest.MY_BASE, 0, 0, baseAttributes, false, null, false, false));
+        simulationInfo.setTutorialConfig(new TutorialConfig(null, "Own Base", 0, 0, false));
     }
 
     protected void setupSimpleTerrain(GameInfo gameInfo) {
@@ -126,10 +127,6 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
         return baseItemType;
     }
 
-    private void setupLevel(GameInfo gameInfo) {
-        gameInfo.setLevel(new Level(0, "TestLevel", "", false, 1000, null, 100));
-    }
-
     @Override
     public void log(String message, Date date) {
         //To change body of implemented methods use File | Settings | File Templates.
@@ -176,7 +173,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public Level sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp) {
+    public GameFlow sendTutorialProgress(TutorialConfig.TYPE type, int levelTaskId, String name, String parent, long duration, long clientTimeStamp) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

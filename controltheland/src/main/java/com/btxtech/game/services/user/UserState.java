@@ -14,7 +14,6 @@
 package com.btxtech.game.services.user;
 
 import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.utg.DbAbstractLevel;
 
 import java.io.Serializable;
 
@@ -26,9 +25,10 @@ import java.io.Serializable;
 public class UserState implements Serializable {
     private User user;
     private Base base;
-    private DbAbstractLevel currentAbstractLevel;
+    private int dbLevelId;
     private int xp;
     private String sessionId;
+    private boolean sendResurrectionMessage = false;
 
     public boolean isRegistered() {
         return user != null;
@@ -38,12 +38,12 @@ public class UserState implements Serializable {
         this.base = base;
     }
 
-    public DbAbstractLevel getCurrentAbstractLevel() {
-        return currentAbstractLevel;
+    public int getDbLevelId() {
+        return dbLevelId;
     }
 
-    public void setCurrentAbstractLevel(DbAbstractLevel currentAbstractLevel) {
-        this.currentAbstractLevel = currentAbstractLevel;
+    public void setDbLevelId(int dbLevelId) {
+        this.dbLevelId = dbLevelId;
     }
 
     public Base getBase() {
@@ -85,5 +85,17 @@ public class UserState implements Serializable {
     @Override
     public String toString() {
         return "UserState: user=" + user;
+    }
+
+    public void setSendResurrectionMessage() {
+        sendResurrectionMessage = true;
+    }
+
+    public void clearSendResurrectionMessageAndClear() {
+        sendResurrectionMessage = false;
+    }
+
+    public boolean isSendResurrectionMessage() {
+        return sendResurrectionMessage;
     }
 }

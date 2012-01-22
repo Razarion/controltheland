@@ -59,9 +59,6 @@ public class ClientSyncItem implements SyncItemListener {
                     }
                 }
                 break;
-            case CONTAINED_IN_CHANGED:
-                SimulationConditionServiceImpl.getInstance().onContainedInChanged(((SyncBaseItem) syncItem).isContainedIn());
-                break;
         }
         if (clientSyncItemView != null) {
             clientSyncItemView.onModelChange(change);

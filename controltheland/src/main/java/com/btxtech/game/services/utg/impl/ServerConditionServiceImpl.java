@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.utg.impl;
 
+import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
@@ -20,6 +21,7 @@ import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.CountComparison;
 import com.btxtech.game.jsre.common.utg.condition.SyncItemIdComparison;
 import com.btxtech.game.jsre.common.utg.condition.SyncItemTypeComparison;
+import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
 import com.btxtech.game.services.base.BaseService;
@@ -28,18 +30,20 @@ import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.DbAbstractLevel;
 import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.backup.DbAbstractComparisonBackup;
 import com.btxtech.game.services.utg.condition.backup.DbCountComparisonBackup;
 import com.btxtech.game.services.utg.condition.backup.DbSyncItemIdComparisonBackup;
 import com.btxtech.game.services.utg.condition.backup.DbSyncItemTypeComparisonBackup;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,6 +64,8 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState> 
     private ItemService itemService;
     @Autowired
     private ServerServices serverServices;
+    @Autowired
+    private SessionFactory sessionFactory;
     private final Map<UserState, AbstractConditionTrigger<UserState>> triggerMap = new HashMap<UserState, AbstractConditionTrigger<UserState>>();
     private Log log = LogFactory.getLog(ServerConditionServiceImpl.class);
 
@@ -93,26 +99,27 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState> 
     }
 
     @Override
-    public void onTutorialFinished(UserState userState) {
-        triggerSimple(ConditionTrigger.TUTORIAL);
+    public void restoreBackup(Map<DbUserState, UserState> userStates, ItemService itemService) {
+        // TODO
+//        synchronized (triggerMap) {
+//            triggerMap.clear();
+//            for (Map.Entry<DbUserState, UserState> entry : userStates.entrySet()) {
+//                try {
+//                    DbLevel dbLevel = userGuidanceService.getDbLevel(entry.getValue().getDbLevel().getId());
+//                    AbstractConditionTrigger<UserState> abstractConditionTrigger = activateCondition(dbLevel.getConditionConfig(), entry.getValue());
+//                    if (entry.getKey().getDbAbstractComparisonBackup() != null) {
+//                        entry.getKey().getDbAbstractComparisonBackup().restore(abstractConditionTrigger.getAbstractComparison(), itemService);
+//                    }
+//                } catch (Exception e) {
+//                    log.error("Can not restore user: " + entry.getKey(), e);
+//                }
+//            }
+//        }
     }
 
     @Override
-    public void restoreBackup(Map<DbUserState, UserState> userStates, ItemService itemService) {
-        synchronized (triggerMap) {
-            triggerMap.clear();
-            for (Map.Entry<DbUserState, UserState> entry : userStates.entrySet()) {
-                try {
-                    DbAbstractLevel dbAbstractLevel = userGuidanceService.getDbLevel(entry.getValue().getCurrentAbstractLevel().getId());
-                    AbstractConditionTrigger<UserState> abstractConditionTrigger = activateCondition(dbAbstractLevel.getConditionConfig(), entry.getValue());
-                    if (entry.getKey().getDbAbstractComparisonBackup() != null) {
-                        entry.getKey().getDbAbstractComparisonBackup().restore(abstractConditionTrigger.getAbstractComparison(), itemService);
-                    }
-                } catch (Exception e) {
-                    log.error("Can not restore user: " + entry.getKey(), e);
-                }
-            }
-        }
+    public void onTutorialFinished(UserState userState, Integer taskId) {
+        // TODO
     }
 
     @Override
