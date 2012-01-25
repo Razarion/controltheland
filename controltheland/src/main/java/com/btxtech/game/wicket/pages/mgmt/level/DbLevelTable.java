@@ -11,12 +11,13 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.wicket.pages.mgmt;
+package com.btxtech.game.wicket.pages.mgmt.level;
 
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.LevelActivationException;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import com.btxtech.game.wicket.uiservices.TerritoryPanel;
@@ -38,6 +39,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 12.05.2010
  * Time: 20:26:33
  */
+@Deprecated
 public class DbLevelTable extends MgmtWebPage {
     @SpringBean
     private UserGuidanceService userGuidanceService;

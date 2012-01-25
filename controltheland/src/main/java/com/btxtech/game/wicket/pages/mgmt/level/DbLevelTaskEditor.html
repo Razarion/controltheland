@@ -13,37 +13,44 @@
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
 <head>
-    <title>Mission Target</title>
+    <title>Level Task Editor</title>
 </head>
 <body>
-<h1>Level Editor</h1>
+<h1>Level Task Editor</h1>
 
 <span wicket:id="msgs"/>
 
 <form wicket:id="form">
-    <table border="0" cellSpacing="1"
-           cellPadding="0">
+    <table border="0" cellSpacing="1" cellPadding="0">
         <tr>
-            <td bgcolor="#dadada" valign="top">Mission Target Description</td>
-            <td><textarea wicket:id="html" rows="20" cols="60">content</textarea></td>
+            <td bgcolor="#aaaaaa" colspan="2" valign="top">Tutorial or Condition</td>
         </tr>
         <tr>
-            <td bgcolor="#dadada" valign="top">In Game Mission Target Description</td>
-            <td><input type="text" wicket:id="inGameHtml" size="60" maxlength="65"></td>
+            <td bgcolor="#dadada" valign="top">Condition</td>
+            <td wicket:id="dbConditionConfig"></td>
         </tr>
         <tr>
-            <td colspan="2" valign="top">&nbsp;</td>
+            <td bgcolor="#dadada" valign="top">Tutorial</td>
+            <td wicket:id="dbTutorialConfig"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#aaaaaa" colspan="2" valign="top">Rewards</td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Money</td>
+            <td><input type="text" wicket:id="money" size="6"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">XP</td>
+            <td><input type="text" wicket:id="xp" size="6"/></td>
         </tr>
     </table>
     <br>
-    <div wicket:id="levelDetail">
-    </div>
     <br>
     <input type="submit" wicket:id="save" value="Save">
     <input type="submit" wicket:id="back" value="Back">
-    <br>
 </form>
 </body>
 </html>

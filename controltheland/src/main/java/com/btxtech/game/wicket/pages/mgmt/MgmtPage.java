@@ -17,6 +17,7 @@ import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.wicket.pages.mgmt.cms.Cms;
 import com.btxtech.game.wicket.pages.mgmt.items.ItemTypeTable;
+import com.btxtech.game.wicket.pages.mgmt.level.DbQuestHubTable;
 import com.btxtech.game.wicket.pages.mgmt.tracking.SessionTable;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.TutorialTable;
 import org.apache.wicket.markup.html.basic.Label;
@@ -130,7 +131,7 @@ public class MgmtPage extends MgmtWebPage {
         toolPages.add(new LinkAndName("User Tracking", SessionTable.class));
         toolPages.add(new LinkAndName("Bases", BasesTable.class));
         toolPages.add(new LinkAndName("XP Settings", XpSettingsEditor.class));
-        toolPages.add(new LinkAndName("Levels", DbLevelTable.class));
+        toolPages.add(new LinkAndName("Levels", DbQuestHubTable.class));
         toolPages.add(new LinkAndName("Bot editor", BotTable.class));
         toolPages.add(new LinkAndName("TerritoryEditor", TerritoryEditor.class));
         toolPages.add(new LinkAndName("Tutorial", TutorialTable.class));
