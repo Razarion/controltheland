@@ -25,7 +25,7 @@ public class Step {
 
     public Step(StepConfig stepConfig) {
         this.stepConfig = stepConfig;
-        SimulationConditionServiceImpl.getInstance().activateCondition(stepConfig.getConditionConfig(), null);
+        SimulationConditionServiceImpl.getInstance().activateCondition(stepConfig.getConditionConfig(), null, null);
     }
 
     public StepConfig getStepConfig() {

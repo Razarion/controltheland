@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.common.utg.condition.SyncItemIdPositionComparison;
  * Date: 18.07.2010
  * Time: 21:06:41
  */
+@Deprecated
 public class ItemTypePositionComparisonConfig implements AbstractComparisonConfig {
     private Integer excludedTerritoryId;
     private ItemType itemType;

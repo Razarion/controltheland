@@ -16,6 +16,7 @@ package com.btxtech.game.services.utg;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.Base;
+import com.btxtech.game.services.user.UserState;
 
 /**
  * User: beat
@@ -25,7 +26,7 @@ import com.btxtech.game.services.base.Base;
 public interface XpService {
     void onItemKilled(Base actorBase, SyncBaseItem killedItem);
 
-    void onReward(SimpleBase simpleBase, int deltaXp);
+    void onReward(UserState userState, int deltaXp);
 
     void onItemBuilt(SyncBaseItem builtItem);
 

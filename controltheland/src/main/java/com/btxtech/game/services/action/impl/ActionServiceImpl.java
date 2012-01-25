@@ -40,6 +40,7 @@ import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.services.utg.condition.ServerConditionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +84,8 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
     private TerritoryService territoryService;
     @Autowired
     private ServerServices serverServices;
+    @Autowired
+    private ServerConditionService serverConditionService;
     private final HashSet<SyncTickItem> activeItems = new HashSet<SyncTickItem>();
     private final ArrayList<SyncTickItem> tmpActiveItems = new ArrayList<SyncTickItem>();
     private Timer timer;

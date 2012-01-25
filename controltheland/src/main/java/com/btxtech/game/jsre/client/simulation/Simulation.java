@@ -29,6 +29,7 @@ import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.utg.tip.TipManager;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
@@ -44,7 +45,7 @@ import java.util.List;
  * Date: 17.07.2010
  * Time: 17:21:24
  */
-public class Simulation implements ConditionServiceListener<Object>, ClientBase.OwnBaseDestroyedListener {
+public class Simulation implements ConditionServiceListener<SimpleBase, Void>, ClientBase.OwnBaseDestroyedListener {
     private static final Simulation SIMULATION = new Simulation();
     private SimulationInfo simulationInfo;
     private Task activeTask;
@@ -142,7 +143,11 @@ public class Simulation implements ConditionServiceListener<Object>, ClientBase.
         SimulationConditionServiceImpl.getInstance().setConditionServiceListener(null);
     }
 
-    public void conditionPassed(Object ignore) {
+    @Override
+    public void conditionPassed(SimpleBase actor, Void identifier) {
+        if (!ClientBase.getInstance().isMyOwnBase(actor)) {
+            throw new IllegalStateException("Received conditionPassed for unexpected base: " + actor);
+        }
         activeTask.runNextStep();
         if (activeTask.isFulfilled()) {
             long time = System.currentTimeMillis();

@@ -1,6 +1,7 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
+import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
@@ -16,7 +17,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.Transient;
 
 /**
  * User: beat
@@ -41,9 +41,6 @@ public class DbLevelTask implements CrudChild<DbLevel> {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private DbConditionConfig dbConditionConfig;
-
-    @Transient
-    private ConditionConfig conditionConfig;
 
     @Override
     public Integer getId() {
@@ -84,8 +81,7 @@ public class DbLevelTask implements CrudChild<DbLevel> {
         if (dbConditionConfig != null) {
             return dbConditionConfig.createConditionConfig(itemService);
         } else {
-            // TODO create Tutorial condition
-            throw new UnsupportedOperationException();
+            return new ConditionConfig(ConditionTrigger.TUTORIAL, null);
         }
     }
 
@@ -116,11 +112,11 @@ public class DbLevelTask implements CrudChild<DbLevel> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof DbLevelTask)) return false;
 
         DbLevelTask that = (DbLevelTask) o;
 
-        return id != null && id.equals(that.id);
+        return id != null && id.equals(that.getId());
     }
 
     @Override

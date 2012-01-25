@@ -271,22 +271,12 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     @Override
     public void setupTerrainTutorial(GameInfo gameInfo, DbTutorialConfig dbTutorialConfig) {
         gameInfo.setTerrainImageBackground(terrainImageBackground);
-        DbTerrainSetting terrainSetting = reattachDbTerrainSetting4Tutorial(dbTutorialConfig);
+        DbTerrainSetting terrainSetting = ((DbTutorialConfig) sessionFactory.getCurrentSession().get(DbTutorialConfig.class, dbTutorialConfig.getId())).getDbTerrainSetting();
         gameInfo.setTerrainSettings(terrainSetting.createTerrainSettings());
         gameInfo.setTerrainImagePositions(getTerrainImagePositions(terrainSetting));
         gameInfo.setTerrainImages(getTerrainImages());
         gameInfo.setSurfaceRects(getSurfaceRects(terrainSetting));
         gameInfo.setSurfaceImages(getSurfaceImages());
-    }
-
-    private DbTerrainSetting reattachDbTerrainSetting4Tutorial(DbTutorialConfig dbTutorialConfig) {
-        sessionFactory.getCurrentSession().load(dbTutorialConfig, dbTutorialConfig.getId());
-
-        DbTerrainSetting dbTerrainSetting = dbTutorialConfig.getDbTerrainSetting();
-        if (dbTerrainSetting == null) {
-            throw new IllegalStateException("No terrain for tutorial: " + dbTutorialConfig);
-        }
-        return dbTerrainSetting;
     }
 
     @Override

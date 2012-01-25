@@ -28,6 +28,10 @@ public class HibernateUtil {
         }
     }
 
+    public static boolean hasOpenSession(SessionFactory sessionFactory) {
+        return TransactionSynchronizationManager.getResource(sessionFactory) != null;
+    }
+
     public static void openSession4InternalCall(SessionFactory sessionFactory) {
         Session session = sessionFactory.openSession();
         session.setFlushMode(FlushMode.MANUAL);

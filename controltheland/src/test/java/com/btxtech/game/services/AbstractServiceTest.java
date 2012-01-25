@@ -148,8 +148,6 @@ abstract public class AbstractServiceTest {
     protected static int TEST_LEVEL_5_REAL_ID = -1;
     protected static final String TEST_NOOB_TERRITORY = "TEST_NOOB_TERRITORY";
     protected static int TEST_NOOB_TERRITORY_ID = -1;
-    //protected static final String TEST_NOOB_RESURRECTION = "NOOB_RESURRECTION";
-    //protected static int TEST_NOOB_RESURRECTION_ID = -1;
     // Terrain
     protected static int TERRAIN_IMAGE_4x10 = -1;
     protected static int TERRAIN_IMAGE_10x4 = -1;
@@ -564,10 +562,12 @@ abstract public class AbstractServiceTest {
         setupMinimalTerrain();
         // Setup territory
         setupNoobTerritory();
-        // QuestHubs
+        // User Guidance
         setupQuestHubMultipleLevels();
         // Xp
         setupXpSettings();
+        // Resource fields
+        setupResource();
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -575,6 +575,7 @@ abstract public class AbstractServiceTest {
 
     @Deprecated
     protected void configureMinimalGame() throws Exception {
+        Assert.fail("DO NOT USE THIS");
         System.out.println("---- Configure minimal Game ---");
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -978,7 +979,7 @@ abstract public class AbstractServiceTest {
 
     private void setupQuestHubWithOneRealGame(int territoryId) throws Exception {
         DbQuestHub realGameQuestHub = userGuidanceService.getCrudQuestHub().createDbChild();
-        realGameQuestHub.setName(TEST_QUEST_HUB_1);        
+        realGameQuestHub.setName(TEST_QUEST_HUB_1);
         realGameQuestHub.setStartItemFreeRange(300);
         realGameQuestHub.setStartMoney(1000);
         realGameQuestHub.setStartTerritory(territoryService.getDbTerritoryCrudServiceHelper().readDbChild(territoryId));
@@ -1020,8 +1021,15 @@ abstract public class AbstractServiceTest {
         dbSimLevel.setName(TEST_LEVEL_1_SIMULATED);
         DbLevelTask dbSimLevelTask = dbSimLevel.getLevelTaskCrud().createDbChild();
         dbSimLevelTask.setDbTutorialConfig(tut1);
+        dbSimLevelTask.setXp(1);
         userGuidanceService.getCrudQuestHub().updateDbChild(startQuestHub);
         TEST_LEVEL_1_SIMULATED_ID = dbSimLevel.getId();
+        DbConditionConfig tutorialCondition = new DbConditionConfig();
+        tutorialCondition.setConditionTrigger(ConditionTrigger.XP_INCREASED);
+        DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
+        dbCountComparisonConfig.setCount(1);
+        tutorialCondition.setDbAbstractComparisonConfig(dbCountComparisonConfig);
+        dbSimLevel.setDbConditionConfig(tutorialCondition);
 
         // Setup QuestHub1 - Level1 - 2*LevelTask
         DbQuestHub realGameQuestHub = userGuidanceService.getCrudQuestHub().createDbChild();
@@ -1032,10 +1040,18 @@ abstract public class AbstractServiceTest {
         realGameQuestHub.setStartItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
         DbLevel dbLevel1 = createDbLevel2(realGameQuestHub);
         dbLevel1.setName(TEST_LEVEL_2_REAL);
+        DbConditionConfig levelCondition = new DbConditionConfig();
+        levelCondition.setConditionTrigger(ConditionTrigger.XP_INCREASED);
+        dbCountComparisonConfig = new DbCountComparisonConfig();
+        dbCountComparisonConfig.setCount(220);
+        levelCondition.setDbAbstractComparisonConfig(dbCountComparisonConfig);
+        dbLevel1.setDbConditionConfig(levelCondition);
         setupCreateLevelTask1RealGameLevel(dbLevel1);
         setupCreateLevelTask2RealGameLevel(dbLevel1);
+
         DbLevel dbLevel2 = realGameQuestHub.getLevelCrud().createDbChild();
         dbLevel2.setName(TEST_LEVEL_3_REAL);
+
         userGuidanceService.getCrudQuestHub().updateDbChild(startQuestHub);
         TEST_LEVEL_2_REAL_ID = dbLevel1.getId();
         TEST_LEVEL_3_REAL_ID = dbLevel2.getId();
@@ -1095,13 +1111,13 @@ abstract public class AbstractServiceTest {
     private void setupCreateLevelTask1RealGameLevel(DbLevel dbLevel) {
         DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().createDbChild();
         // Rewards
-        dbLevelTask.setMoney(1000);
-        dbLevelTask.setXp(1000);
+        dbLevelTask.setMoney(10);
+        dbLevelTask.setXp(100);
         // Condition
         DbConditionConfig dbConditionConfig = new DbConditionConfig();
         dbConditionConfig.setConditionTrigger(ConditionTrigger.MONEY_INCREASED);
         DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
-        dbCountComparisonConfig.setCount(100);
+        dbCountComparisonConfig.setCount(3);
         dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
         dbLevelTask.setDbConditionConfig(dbConditionConfig);
     }
@@ -1110,17 +1126,16 @@ abstract public class AbstractServiceTest {
     private void setupCreateLevelTask2RealGameLevel(DbLevel dbLevel) {
         DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().createDbChild();
         // Rewards
-        dbLevelTask.setMoney(1200);
-        dbLevelTask.setXp(1300);
+        dbLevelTask.setMoney(80);
+        dbLevelTask.setXp(120);
         // Condition
         DbConditionConfig dbConditionConfig = new DbConditionConfig();
-        dbConditionConfig.setConditionTrigger(ConditionTrigger.MONEY_INCREASED);
+        dbConditionConfig.setConditionTrigger(ConditionTrigger.SYNC_ITEM_BUILT);
         DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
-        dbCountComparisonConfig.setCount(100);
+        dbCountComparisonConfig.setCount(2);
         dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
         dbLevelTask.setDbConditionConfig(dbConditionConfig);
     }
-
 
     // ------------------- Setup minimal bot --------------------
 
@@ -1387,6 +1402,17 @@ abstract public class AbstractServiceTest {
         field.setAccessible(true);
         field.set(object, value);
         field.setAccessible(false);
+    }
+
+    public static Object getPrivateField(Class clazz, Object object, String fieldName) throws Exception {
+        if (AopUtils.isJdkDynamicProxy(object)) {
+            object = ((Advised) object).getTargetSource().getTarget();
+        }
+        Field field = clazz.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        Object result = field.get(object);
+        field.setAccessible(false);
+        return result;
     }
 
     public static Object deAopProxy(Object object) throws Exception {

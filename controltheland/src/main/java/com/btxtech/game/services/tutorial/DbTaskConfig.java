@@ -195,7 +195,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         }
 
         ArrayList<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<ItemTypeAndPosition>();
-        for (DbItemTypeAndPosition dbItemTypeAndPosition : items) {
+        for (DbItemTypeAndPosition dbItemTypeAndPosition : getItemCrudServiceHelper().readDbChildren()) {
             ItemTypeAndPosition itemTypeAndPosition = dbItemTypeAndPosition.createItemTypeAndPosition();
             if (itemTypeAndPosition != null) {
                 itemTypeAndPositions.add(itemTypeAndPosition);
@@ -203,7 +203,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         }
 
         Map<Integer, Integer> itemTypeLimitation = new HashMap<Integer, Integer>();
-        for (DbTaskAllowedItem dbTaskAllowedItem : allowedItemHelper.readDbChildren()) {
+        for (DbTaskAllowedItem dbTaskAllowedItem : getAllowedItemHelper().readDbChildren()) {
             Integer count = itemTypeLimitation.get(dbTaskAllowedItem.getDbBaseItemType().getId());
             if (count == null) {
                 count = 0;

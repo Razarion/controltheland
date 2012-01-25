@@ -5,6 +5,6 @@ package com.btxtech.game.jsre.common.utg;
  * Date: 29.03.2011
  * Time: 22:21:18
  */
-public interface ConditionServiceListener<T> {
-    void conditionPassed(T t);
+public interface ConditionServiceListener<A, I> {
+    void conditionPassed(A actor, I identifier);
 }

@@ -22,8 +22,8 @@ import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
  * Time: 18:58:14
  */
 @Deprecated
-public class PositionConditionTrigger<T> extends AbstractConditionTrigger<T> {
-
+public class PositionConditionTrigger/*<T> extends AbstractConditionTrigger<T>*/ {
+/*
     public PositionConditionTrigger(ConditionTrigger conditionTrigger, AbstractComparison abstractComparison, T t) {
         super(conditionTrigger, abstractComparison, t);
     }
@@ -33,5 +33,5 @@ public class PositionConditionTrigger<T> extends AbstractConditionTrigger<T> {
         if (getAbstractComparison().isFulfilled()) {
             setFulfilled();
         }
-    }
+    }*/
 }

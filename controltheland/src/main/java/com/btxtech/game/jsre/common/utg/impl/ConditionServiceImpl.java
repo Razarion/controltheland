@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.common.utg.impl;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.utg.ConditionService;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
@@ -33,38 +34,28 @@ import java.util.Collection;
  * User: beat
  * Date: 27.12.2010
  * Time: 17:21:24
+ * <p/>
+ * A: Actor
+ * I: Identifier
  */
-public abstract class ConditionServiceImpl<T> implements ConditionService<T> {
-    private ConditionServiceListener<T> conditionServiceListener;
+public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, I> {
+    private ConditionServiceListener<A, I> conditionServiceListener;
 
-    protected abstract void saveAbstractConditionTrigger(AbstractConditionTrigger<T> abstractConditionTrigger);
+    protected abstract void saveAbstractConditionTrigger(AbstractConditionTrigger<A, I> abstractConditionTrigger);
 
-    protected abstract AbstractConditionTrigger<T> getAbstractConditionPrivate(SimpleBase simpleBase, ConditionTrigger conditionTrigger);
+    protected abstract Collection<AbstractConditionTrigger<A, I>> getAbstractConditionPrivate(A actor, ConditionTrigger conditionTrigger);
 
     protected abstract Services getServices();
 
-    protected void cleanup() {
-
-    }
+    protected abstract A getActor(SimpleBase actorBase);
 
     @Override
-    public void activateConditions(Collection<ConditionConfig> allLevelTaskConditions, Object userObject) {
-        // TODO
-    }
-
-    protected void conditionPassed(T t) {
-        cleanup();
-        if (conditionServiceListener != null) {
-            conditionServiceListener.conditionPassed(t);
-        }
-    }
-
-    public void setConditionServiceListener(ConditionServiceListener<T> conditionServiceListener) {
+    public void setConditionServiceListener(ConditionServiceListener<A, I> conditionServiceListener) {
         this.conditionServiceListener = conditionServiceListener;
     }
 
     @Override
-    public AbstractConditionTrigger<T> activateCondition(ConditionConfig conditionConfig, T t) {
+    public AbstractConditionTrigger<A, I> activateCondition(ConditionConfig conditionConfig, A a, I i) {
         AbstractComparison abstractComparison = null;
         if (conditionConfig.getConditionTrigger().isComparisonNeeded()) {
             abstractComparison = conditionConfig.getAbstractComparisonConfig().createAbstractComparison();
@@ -72,78 +63,90 @@ public abstract class ConditionServiceImpl<T> implements ConditionService<T> {
                 ((AbstractSyncItemComparison) abstractComparison).setServices(getServices());
             }
         }
-        AbstractConditionTrigger<T> abstractConditionTrigger = conditionConfig.getConditionTrigger().createAbstractConditionTrigger(abstractComparison, t);
+        AbstractConditionTrigger<A, I> abstractConditionTrigger = conditionConfig.getConditionTrigger().createAbstractConditionTrigger(abstractComparison);
+        abstractConditionTrigger.setActorAndIdentifier(a, i);
         saveAbstractConditionTrigger(abstractConditionTrigger);
         return abstractConditionTrigger;
     }
 
-    private <U extends AbstractConditionTrigger<T>> U getAbstractCondition(SimpleBase actor, ConditionTrigger conditionTrigger) {
-        AbstractConditionTrigger<T> abstractConditionTrigger = getAbstractConditionPrivate(actor, conditionTrigger);
-        if (abstractConditionTrigger == null) {
-            return null;
-        }
-        return (U) abstractConditionTrigger;
-    }
-
-    protected void triggerSyncItem(SimpleBase actor, ConditionTrigger conditionTrigger, SyncBaseItem syncBaseItem) {
-        SyncItemConditionTrigger<T> syncItemConditionTrigger = getAbstractCondition(actor, conditionTrigger);
-        if (syncItemConditionTrigger == null) {
-            return;
-        }
-        syncItemConditionTrigger.onItem(actor, syncBaseItem);
-        if (syncItemConditionTrigger.isFulfilled()) {
-            conditionPassed(syncItemConditionTrigger.getUserObject());
-        }
-    }
-
-    protected void triggerSimple(ConditionTrigger conditionTrigger) {
-        SimpleConditionTrigger<T> simpleConditionTrigger = getAbstractCondition(null, conditionTrigger);
-        if (simpleConditionTrigger == null) {
-            return;
-        }
-        simpleConditionTrigger.onTrigger();
-        if (simpleConditionTrigger.isFulfilled()) {
-            conditionPassed(simpleConditionTrigger.getUserObject());
-        }
-    }
-
-    private void triggerValue(SimpleBase actor, ConditionTrigger conditionTrigger, double value) {
-        ValueConditionTrigger<T> valueConditionTrigger = getAbstractCondition(actor, conditionTrigger);
-        if (valueConditionTrigger == null) {
-            return;
-        }
-        valueConditionTrigger.onTriggerValue(value);
-        if (valueConditionTrigger.isFulfilled()) {
-            conditionPassed(valueConditionTrigger.getUserObject());
-        }
-    }
-
-    //------ Server------
-
     @Override
-    public void onIncreaseXp(SimpleBase base, int xp) {
-        triggerValue(base, ConditionTrigger.XP_INCREASED, xp);
-    }
-
-    //------ Both Client and Server ------
-
-    @Override
-    public void onSyncItemKilled(SimpleBase actor, SyncBaseItem killedItem) {
+    public void onSyncItemKilled(SimpleBase actorBase, SyncBaseItem killedItem) {
+        A actor = getActor(actorBase);
         triggerSyncItem(actor, ConditionTrigger.SYNC_ITEM_KILLED, killedItem);
     }
 
     @Override
     public void onSyncItemBuilt(SyncBaseItem syncBaseItem) {
-        triggerSyncItem(syncBaseItem.getBase(), ConditionTrigger.SYNC_ITEM_BUILT, syncBaseItem);
+        A actor = getActor(syncBaseItem.getBase());
+        triggerSyncItem(actor, ConditionTrigger.SYNC_ITEM_BUILT, syncBaseItem);
     }
 
     @Override
-    public void onMoneyIncrease(SimpleBase base, double accountBalance) {
-        triggerValue(base, ConditionTrigger.MONEY_INCREASED, accountBalance);
+    public void onMoneyIncrease(SimpleBase actorBase, double accountBalance) {
+        A actor = getActor(actorBase);
+        triggerValue(actor, ConditionTrigger.MONEY_INCREASED, accountBalance);
     }
 
     @Override
     public void onBaseDeleted(SimpleBase actorBase) {
-        triggerValue(actorBase, ConditionTrigger.BASE_KILLED, 1.0);
+        A actor = getActor(actorBase);
+        triggerValue(actor, ConditionTrigger.BASE_KILLED, 1.0);
+    }
+
+    protected void triggerSyncItem(A actor, ConditionTrigger conditionTrigger, SyncBaseItem syncBaseItem) {
+        Collection<AbstractConditionTrigger<A, I>> abstractConditionTriggers = getAbstractConditions(actor, conditionTrigger);
+        if (abstractConditionTriggers == null) {
+            return;
+        }
+        for (AbstractConditionTrigger<A, I> abstractConditionTrigger : abstractConditionTriggers) {
+            SyncItemConditionTrigger syncItemConditionTrigger = (SyncItemConditionTrigger) abstractConditionTrigger;
+            syncItemConditionTrigger.onItem(syncBaseItem);
+            if (syncItemConditionTrigger.isFulfilled()) {
+                conditionPassed(abstractConditionTrigger);
+            }
+        }
+    }
+
+    protected void triggerSimple(Collection<AbstractConditionTrigger<A, I>> abstractConditionTriggers) {
+        if (abstractConditionTriggers == null) {
+            return;
+        }
+        for (AbstractConditionTrigger<A, I> abstractConditionTrigger : abstractConditionTriggers) {
+            SimpleConditionTrigger simpleConditionTrigger = (SimpleConditionTrigger) abstractConditionTrigger;
+            simpleConditionTrigger.onTrigger();
+            if (simpleConditionTrigger.isFulfilled()) {
+                conditionPassed(abstractConditionTrigger);
+            }
+        }
+    }
+
+    protected void triggerValue(A actor, ConditionTrigger conditionTrigger, double value) {
+        Collection<AbstractConditionTrigger<A, I>> abstractConditionTriggers = getAbstractConditions(actor, conditionTrigger);
+        if (abstractConditionTriggers == null) {
+            return;
+        }
+
+        for (AbstractConditionTrigger<A, I> abstractConditionTrigger : abstractConditionTriggers) {
+            ValueConditionTrigger valueConditionTrigger = (ValueConditionTrigger) abstractConditionTrigger;
+            valueConditionTrigger.onTriggerValue(value);
+            if (valueConditionTrigger.isFulfilled()) {
+                conditionPassed(abstractConditionTrigger);
+            }
+        }
+    }
+
+    private void conditionPassed(AbstractConditionTrigger<A, I> abstractConditionTrigger) {
+        deactivateActorConditions(abstractConditionTrigger.getActor(), abstractConditionTrigger.getIdentifier());
+        if (conditionServiceListener != null) {
+            conditionServiceListener.conditionPassed(abstractConditionTrigger.getActor(), abstractConditionTrigger.getIdentifier());
+        }
+    }
+
+    private Collection<AbstractConditionTrigger<A, I>> getAbstractConditions(A actor, ConditionTrigger conditionTrigger) {
+        Collection<AbstractConditionTrigger<A, I>> abstractConditionTriggers = getAbstractConditionPrivate(actor, conditionTrigger);
+        if (abstractConditionTriggers == null || abstractConditionTriggers.isEmpty()) {
+            return null;
+        }
+        return abstractConditionTriggers;
     }
 }
