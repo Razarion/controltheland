@@ -14,11 +14,9 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.LevelScope;
-import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
-import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
@@ -176,7 +174,7 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
 
         DbLevel dbLevel = (DbLevel) o;
 
-        return id != null && id.equals(dbLevel.id);
+        return id != null && id.equals(dbLevel.getId());
     }
 
     @Override
@@ -211,14 +209,6 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
         return dbTutorialConfig;
     }
 
-    public Collection<ConditionConfig> getAllLevelTaskConditions(ItemService itemService) {
-        Collection<ConditionConfig> conditionConfigs = new ArrayList<ConditionConfig>();
-        for (DbLevelTask dbLevelTask : getLevelTaskCrud().readDbChildren()) {
-            conditionConfigs.add(dbLevelTask.createConditionConfig(itemService));
-        }
-        return conditionConfigs;
-    }
-
     public LevelScope createLevelScope() {
         Map<Integer, Integer> itemTypeLimitation = new HashMap<Integer, Integer>();
         for (DbItemTypeLimitation dbItemTypeLimitation : this.itemTypeLimitation) {
@@ -233,5 +223,14 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
 
     public void setDbConditionConfig(DbConditionConfig dbConditionConfig) {
         this.dbConditionConfig = dbConditionConfig;
+    }
+
+    public DbLevelTask getFirstTutorialLevelTask() {
+        for (DbLevelTask dbLevelTask : getLevelTaskCrud().readDbChildren()) {
+            if (dbLevelTask.getDbTutorialConfig() != null) {
+                return dbLevelTask;
+            }
+        }
+        throw new IllegalStateException("No Tutorial Level Task configured for: " + this);
     }
 }

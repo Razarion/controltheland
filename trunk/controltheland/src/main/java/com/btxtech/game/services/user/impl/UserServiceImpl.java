@@ -159,6 +159,7 @@ public class UserServiceImpl implements UserService {
             synchronized (userStates) {
                 userStates.remove(userState);
             }
+            userGuidanceService.onRemoveUserState(userState);
         }
     }
 

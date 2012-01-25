@@ -22,13 +22,13 @@ import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
  * Date: 27.12.2010
  * Time: 18:58:14
  */
-public class SyncItemConditionTrigger<T> extends AbstractConditionTrigger<T> {
+public class SyncItemConditionTrigger<A, I> extends AbstractConditionTrigger<A, I> {
 
-    public SyncItemConditionTrigger(ConditionTrigger conditionTrigger, AbstractComparison abstractComparison, T t) {
-        super(conditionTrigger, abstractComparison, t);
+    public SyncItemConditionTrigger(ConditionTrigger conditionTrigger, AbstractComparison abstractComparison) {
+        super(conditionTrigger, abstractComparison);
     }
 
-    public void onItem(SimpleBase actor, SyncItem syncItem) {
+    public void onItem(SyncItem syncItem) {
         ((AbstractSyncItemComparison) getAbstractComparison()).onSyncItem(syncItem);
         if (getAbstractComparison().isFulfilled()) {
             setFulfilled();

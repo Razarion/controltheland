@@ -13,42 +13,62 @@
 
 package com.btxtech.game.jsre.client.simulation;
 
+import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
+
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * User: beat
  * Date: 28.12.2010
  * Time: 13:09:19
  */
-public class SimulationConditionServiceImpl extends ConditionServiceImpl<Object> {
+public class SimulationConditionServiceImpl extends ConditionServiceImpl<SimpleBase, Void> {
     private static final SimulationConditionServiceImpl INSTANCE = new SimulationConditionServiceImpl();
-    private AbstractConditionTrigger<Object> abstractConditionTrigger;
+    private AbstractConditionTrigger<SimpleBase, Void> abstractConditionTrigger;
 
     public static SimulationConditionServiceImpl getInstance() {
         return INSTANCE;
     }
 
     @Override
-    protected void saveAbstractConditionTrigger(AbstractConditionTrigger<Object> abstractConditionTrigger) {
+    protected void saveAbstractConditionTrigger(AbstractConditionTrigger<SimpleBase, Void> abstractConditionTrigger) {
+        if (!ClientBase.getInstance().isMyOwnBase(abstractConditionTrigger.getActor())) {
+            return;
+        }
         this.abstractConditionTrigger = abstractConditionTrigger;
     }
 
     @Override
-    protected AbstractConditionTrigger<Object> getAbstractConditionPrivate(SimpleBase actor, ConditionTrigger conditionTrigger) {
+    protected Collection<AbstractConditionTrigger<SimpleBase, Void>> getAbstractConditionPrivate(SimpleBase actor, ConditionTrigger conditionTrigger) {
+        if (!ClientBase.getInstance().isMyOwnBase(actor)) {
+            return null;
+        }
         if (abstractConditionTrigger != null && abstractConditionTrigger.getConditionTrigger() == conditionTrigger) {
-            return abstractConditionTrigger;
+            return Collections.singletonList(abstractConditionTrigger);
         } else {
             return null;
         }
     }
 
     @Override
-    protected void cleanup() {
+    protected SimpleBase getActor(SimpleBase actorBase) {
+        return actorBase;
+    }
+
+    @Override
+    public void deactivateActorConditions(SimpleBase actor, Void identifier) {
+        if (!ClientBase.getInstance().isMyOwnBase(actor)) {
+            return;
+        }
         abstractConditionTrigger = null;
     }
 

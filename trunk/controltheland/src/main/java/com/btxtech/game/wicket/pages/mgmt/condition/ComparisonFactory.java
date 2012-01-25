@@ -16,12 +16,9 @@ package com.btxtech.game.wicket.pages.mgmt.condition;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
-import com.btxtech.game.services.utg.condition.DbContainedInComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbPositionComparisonConfig;
-import com.btxtech.game.services.utg.condition.DbSyncItemIdComparisonConfig;
-import com.btxtech.game.services.utg.condition.DbSyncItemIdPositionComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
@@ -37,16 +34,10 @@ import java.util.List;
  */
 public class ComparisonFactory {
     public enum ComparisonClass {
-        SYNC_ITEM_KILLED(ConditionTrigger.SYNC_ITEM_KILLED, DbSyncItemTypeComparisonConfig.class, DbSyncItemIdComparisonConfig.class, DbCountComparisonConfig.class),
         //TUTORIAL(ConditionTrigger.TUTORIAL),
-        //SYNC_ITEM_SELECT(ConditionTrigger.SYNC_ITEM_SELECT, DbSyncItemTypeComparisonConfig.class, DbSyncItemIdComparisonConfig.class, DbCountComparisonConfig.class),
-        //SYNC_ITEM_DEACTIVATE(ConditionTrigger.SYNC_ITEM_DEACTIVATE, DbSyncItemIdPositionComparisonConfig.class, DbItemTypePositionComparisonConfig.class),
-        SYNC_ITEM_BUILT(ConditionTrigger.SYNC_ITEM_BUILT, DbSyncItemTypeComparisonConfig.class, DbSyncItemIdComparisonConfig.class, DbCountComparisonConfig.class),
-        //SCROLL(ConditionTrigger.SCROLL),
+        SYNC_ITEM_BUILT(ConditionTrigger.SYNC_ITEM_BUILT, DbSyncItemTypeComparisonConfig.class, DbCountComparisonConfig.class),
         MONEY_INCREASED(ConditionTrigger.MONEY_INCREASED, DbCountComparisonConfig.class),
         XP_INCREASED(ConditionTrigger.XP_INCREASED, DbCountComparisonConfig.class),
-        //CONTAINED_IN(ConditionTrigger.CONTAINED_IN, DbContainedInComparisonConfig.class),
-        //SCROLL_TO_POSITION(ConditionTrigger.SCROLL_TO_POSITION, DbPositionComparisonConfig.class),
         BASE_DELETED(ConditionTrigger.BASE_KILLED, DbCountComparisonConfig.class);
 
         private ConditionTrigger conditionTrigger;
@@ -80,14 +71,8 @@ public class ComparisonFactory {
             DbAbstractComparisonConfig config = dbConditionConfig.getDbAbstractComparisonConfig();
             if (config instanceof DbSyncItemTypeComparisonConfig) {
                 return new SyncItemTypeComparisonConfigPanel(id);
-            } else if (config instanceof DbSyncItemIdComparisonConfig) {
-                return new SyncItemIdComparisonConfigPanel(id);
-            } else if (config instanceof DbSyncItemIdPositionComparisonConfig) {
-                return new SyncItemIdPositionComparisonConfigPanel(id);
             } else if (config instanceof DbCountComparisonConfig) {
                 return new CountComparisonConfigPanel(id);
-            } else if (config instanceof DbContainedInComparisonConfig) {
-                return new ContainedInComparisonConfigPanel(id);
             } else if (config instanceof DbItemTypePositionComparisonConfig) {
                 return new ItemTypePositionComparisonConfigPanel(id);
             } else if (config instanceof DbPositionComparisonConfig) {

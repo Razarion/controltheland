@@ -60,7 +60,7 @@ import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.resource.ResourceService;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.SecurityRoles;
-import com.btxtech.game.services.utg.ServerConditionService;
+import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

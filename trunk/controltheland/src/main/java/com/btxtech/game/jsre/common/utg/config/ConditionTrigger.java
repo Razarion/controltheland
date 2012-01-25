@@ -15,7 +15,7 @@ package com.btxtech.game.jsre.common.utg.config;
 
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
-import com.btxtech.game.jsre.common.utg.condition.PositionConditionTrigger;
+import com.btxtech.game.jsre.common.utg.condition.SimpleConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.SyncItemConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.ValueConditionTrigger;
 
@@ -25,36 +25,37 @@ import com.btxtech.game.jsre.common.utg.condition.ValueConditionTrigger;
  * Time: 20:30:23
  */
 public enum ConditionTrigger {
-    // TODO Task finished
-    // TODO NO_OWN_LOST
-    // TODO POSITION_REACHED_OND_HOLD
-    // TODO TUTORIAL
-
     SYNC_ITEM_KILLED(true) {
         @Override
-        public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t) {
-            return new SyncItemConditionTrigger<T>(this, abstractComparison, t);
+        public <A, I> AbstractConditionTrigger<A, I> createAbstractConditionTrigger(AbstractComparison abstractComparison) {
+            return new SyncItemConditionTrigger<A, I>(this, abstractComparison);
         }},
     MONEY_INCREASED(true) {
         @Override
-        public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t) {
-            return new ValueConditionTrigger<T>(this, abstractComparison, t);
+        public <A, I> AbstractConditionTrigger<A, I> createAbstractConditionTrigger(AbstractComparison abstractComparison) {
+            return new ValueConditionTrigger<A, I>(this, abstractComparison);
         }},
     SYNC_ITEM_BUILT(true) {
         @Override
-        public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t) {
-            return new SyncItemConditionTrigger<T>(this, abstractComparison, t);
-        }},    
+        public <A, I> AbstractConditionTrigger<A, I> createAbstractConditionTrigger(AbstractComparison abstractComparison) {
+            return new SyncItemConditionTrigger<A, I>(this, abstractComparison);
+        }},
     XP_INCREASED(true) {
         @Override
-        public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t) {
-            return new ValueConditionTrigger<T>(this, abstractComparison, t);
+        public <A, I> AbstractConditionTrigger<A, I> createAbstractConditionTrigger(AbstractComparison abstractComparison) {
+            return new ValueConditionTrigger<A, I>(this, abstractComparison);
         }},
     BASE_KILLED(true) {
         @Override
-        public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t) {
-            return new ValueConditionTrigger<T>(this, abstractComparison, t);
+        public <A, I> AbstractConditionTrigger<A, I> createAbstractConditionTrigger(AbstractComparison abstractComparison) {
+            return new ValueConditionTrigger<A, I>(this, abstractComparison);
+        }},
+    TUTORIAL(false) {
+        @Override
+        public <A, I> AbstractConditionTrigger<A, I> createAbstractConditionTrigger(AbstractComparison abstractComparison) {
+            return new SimpleConditionTrigger<A, I>(this);
         }};
+
 
     private boolean comparisonNeeded;
 
@@ -62,7 +63,7 @@ public enum ConditionTrigger {
         this.comparisonNeeded = comparisonNeeded;
     }
 
-    public abstract <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t);
+    public abstract <A, I> AbstractConditionTrigger<A, I> createAbstractConditionTrigger(AbstractComparison abstractComparison);
 
     public boolean isComparisonNeeded() {
         return comparisonNeeded;

@@ -32,6 +32,8 @@ public interface UserGuidanceService extends CommonUserGuidanceService {
 
     DbLevel getDbLevel(UserState userState);
 
+    DbLevel getDbLevel(int levelId);
+
     DbLevel getDbLevelCms();
 
     void setLevelForNewUser(UserState userState);
@@ -46,9 +48,13 @@ public interface UserGuidanceService extends CommonUserGuidanceService {
 
     LevelScope getLevelScope(SimpleBase simpleBase);
 
-    GameFlow onTutorialFinished(Integer taskId);
+    GameFlow onTutorialFinished(int levelTaskId);
 
     boolean isStartRealGame();
 
+    int getDefaultLevelTaskId();
+
     CrudRootServiceHelper<DbQuestHub> getCrudQuestHub();
+
+    void onRemoveUserState(UserState userState);
 }

@@ -20,16 +20,21 @@ import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
  * Date: 27.12.2010
  * Time: 23:33:37
  */
-public class AbstractConditionTrigger<T> {
+public class AbstractConditionTrigger<A, I> {
     private ConditionTrigger conditionTrigger;
     private AbstractComparison abstractComparison;
     private boolean fulfilled = false;
-    private T userObject;
+    private A actor;
+    private I identifier;
 
-    public AbstractConditionTrigger(ConditionTrigger conditionTrigger, AbstractComparison abstractComparison, T userObject) {
+    public AbstractConditionTrigger(ConditionTrigger conditionTrigger, AbstractComparison abstractComparison) {
         this.conditionTrigger = conditionTrigger;
         this.abstractComparison = abstractComparison;
-        this.userObject = userObject;
+    }
+
+    public void setActorAndIdentifier(A actor, I identifier) {
+        this.actor = actor;
+        this.identifier = identifier;
     }
 
     public ConditionTrigger getConditionTrigger() {
@@ -48,7 +53,11 @@ public class AbstractConditionTrigger<T> {
         fulfilled = true;
     }
 
-    public T getUserObject() {
-        return userObject;
+    public A getActor() {
+        return actor;
+    }
+
+    public I getIdentifier() {
+        return identifier;
     }
 }

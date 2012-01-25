@@ -13,28 +13,25 @@
 
 package com.btxtech.game.jsre.common.utg;
 
-import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
-import com.google.gwt.event.dom.client.ClickEvent;
-
-import java.util.Collection;
 
 /**
  * User: beat
  * Date: 28.12.2010
  * Time: 18:14:41
+ * A: Actor
+ * I: Identifier
  */
-public interface ConditionService<T> {
-    AbstractConditionTrigger<T> activateCondition(ConditionConfig conditionConfig, T t);
+public interface ConditionService<A, I> {
+    void setConditionServiceListener(ConditionServiceListener<A, I> conditionServiceListener);
 
-    void activateConditions(Collection<ConditionConfig> allLevelTaskConditions, Object userObject);
-   
-    void onIncreaseXp(SimpleBase base, int xp);
+    AbstractConditionTrigger<A, I> activateCondition(ConditionConfig conditionConfig, A a, I i);
+
+    void deactivateActorConditions(A a, I i);
 
     void onSyncItemKilled(SimpleBase actor, SyncBaseItem killedItem);
 
@@ -43,6 +40,4 @@ public interface ConditionService<T> {
     void onMoneyIncrease(SimpleBase base, double accountBalance);
 
     void onBaseDeleted(SimpleBase actorBase);
-
-    void setConditionServiceListener(ConditionServiceListener<T> conditionServiceListener);
 }

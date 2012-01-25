@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.utg;
+package com.btxtech.game.services.utg.condition;
 
 import com.btxtech.game.jsre.common.utg.ConditionService;
 import com.btxtech.game.services.item.ItemService;
@@ -26,10 +26,12 @@ import java.util.Map;
  * Date: 28.12.2010
  * Time: 18:16:08
  */
-public interface ServerConditionService extends ConditionService<UserState> {
+public interface ServerConditionService extends ConditionService<UserState, Integer> {
     DbAbstractComparisonBackup createBackup(DbUserState dbUserState, UserState userState);
 
     void restoreBackup(Map<DbUserState, UserState> userStates, ItemService itemService);
 
-    void onTutorialFinished(UserState userState, Integer taskId);
+    void onTutorialFinished(UserState userState, int taskId);
+
+    void onIncreaseXp(UserState userState, int xp);
 }

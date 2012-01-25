@@ -95,7 +95,7 @@ public class TestSyncItemArea extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testInRangeSyncItem__TMP() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
         // TODO test angel != 0
 
         BoundingBox boundingBox = new BoundingBox(400, 400, 200, 200, ANGELS_24);
@@ -118,7 +118,7 @@ public class TestSyncItemArea extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testInRangeSyncItem() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         assertSameDistance(45, 102);
         assertSameDistance(0, 160);
@@ -175,7 +175,7 @@ public class TestSyncItemArea extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testInRangeSyncItemArea() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         BoundingBox boundingBox = new BoundingBox(400, 400, 200, 200, ANGELS_24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(400, 400));

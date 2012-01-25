@@ -35,7 +35,7 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void defense() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         final List<BaseCommand> commands = new ArrayList<BaseCommand>();
         final TestServices testServices = new TestServices();

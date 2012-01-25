@@ -20,10 +20,10 @@ import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
  * Date: 27.12.2010
  * Time: 18:58:14
  */
-public class ValueConditionTrigger<T> extends AbstractConditionTrigger<T> {
+public class ValueConditionTrigger<A, I> extends AbstractConditionTrigger<A, I> {
 
-    public ValueConditionTrigger(ConditionTrigger conditionTrigger, AbstractComparison abstractComparison, T t) {
-        super(conditionTrigger, abstractComparison, t);
+    public ValueConditionTrigger(ConditionTrigger conditionTrigger, AbstractComparison abstractComparison) {
+        super(conditionTrigger, abstractComparison);
     }
 
     public void onTriggerValue(double value) {

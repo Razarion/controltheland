@@ -15,12 +15,9 @@ package com.btxtech.game.wicket.pages.mgmt.condition;
 
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig;
-import com.btxtech.game.services.utg.condition.DbSyncItemIdPositionComparisonConfig;
-import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.ItemTypePanel;
 import com.btxtech.game.wicket.uiservices.RectanglePanel;
 import com.btxtech.game.wicket.uiservices.TerritoryPanel;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;

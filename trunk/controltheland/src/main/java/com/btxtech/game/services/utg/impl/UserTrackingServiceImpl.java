@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.utg.impl;
 
-import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
@@ -42,7 +41,7 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.DbUserMessage;
 import com.btxtech.game.services.utg.LifecycleTrackingInfo;
 import com.btxtech.game.services.utg.RealGameTrackingInfo;
-import com.btxtech.game.services.utg.ServerConditionService;
+import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.services.utg.SessionDetailDto;
 import com.btxtech.game.services.utg.SessionOverviewDto;
 import com.btxtech.game.services.utg.TutorialTrackingInfo;
@@ -617,7 +616,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             baseName = null;
         }
 
-        DbStartup dbStartup = new DbStartup(totalTime, infos.get(0).getStartTime(), null/* TODO add level userGuidanceService.getDbAbstractLevel()*/, session.getSessionId(), baseName, baseId);
+        DbStartup dbStartup = new DbStartup(totalTime, infos.get(0).getStartTime(), userGuidanceService.getDbLevel(), session.getSessionId(), baseName, baseId);
         for (StartupTaskInfo info : infos) {
             dbStartup.addGameStartupTasks(new DbStartupTask(info, dbStartup));
             if (info.getError() != null) {

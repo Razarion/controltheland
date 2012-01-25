@@ -3,7 +3,6 @@ package com.btxtech.game.services.history;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -15,6 +14,7 @@ import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.history.impl.HistoryServiceImpl;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
@@ -47,56 +47,58 @@ public class TestHistoryService extends AbstractServiceTest {
     private CollisionService collisionService;
     @Autowired
     private PlatformTransactionManager platformTransactionManager;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
 
     @Test
     @DirtiesContext
     public void testCreateBaseLevel() throws Exception {
-        Assert.fail("Test LevelTask done and Level up");
-//        configureMinimalGame();
-//
-//        System.out.println("**** testHistoryService ****");
-//        beginHttpSession();
-//        // Create account
-//        beginHttpRequestAndOpenSessionInViewFilter();
-//        userService.createUser("U1", "test", "test", "test");
-//        userService.login("U1", "test");
-//        endHttpRequestAndOpenSessionInViewFilter();
-//        // Finish tutorial
-//        beginHttpRequestAndOpenSessionInViewFilter();
-//        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "xx", "xx", 0, 0);
-//        endHttpRequestAndOpenSessionInViewFilter();
-//        endHttpSession();
-//        // Verify
-//        beginHttpSession();
-//        beginHttpRequestAndOpenSessionInViewFilter();
-//        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 1000);
-//
-//        System.out.println("----- History -----");
-//        for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
-//            System.out.println(displayHistoryElement);
-//        }
-//        System.out.println("----- History End -----");
-//
-//        Assert.assertEquals(3, displayHistoryElements.size());
-//
-//        Assert.assertEquals("Item created: " + TEST_START_BUILDER_ITEM, displayHistoryElements.get(0).getMessage());
-//
-//        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
-//        Assert.assertEquals("Base created: U1", displayHistoryElements.get(1).getMessage());
-//
-//        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
-//        Assert.assertEquals("Level reached: " + TEST_LEVEL_2_REAL, displayHistoryElements.get(2).getMessage());
-//
-//        endHttpRequestAndOpenSessionInViewFilter();
-//        endHttpSession();
-//
-//        // Verify
-//        beginHttpSession();
-//        beginHttpRequestAndOpenSessionInViewFilter();
-//        userService.login("U1", "test");
-//        Assert.assertEquals(3, historyService.getNewestHistoryElements().readDbChildren().size());
-//        endHttpRequestAndOpenSessionInViewFilter();
-//        endHttpSession();
+        configureGameMultipleLevel();
+
+        System.out.println("**** testHistoryService ****");
+        beginHttpSession();
+        // Create account
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "test", "test", "test");
+        userService.login("U1", "test");
+        endHttpRequestAndOpenSessionInViewFilter();
+        // Finish tutorial
+        beginHttpRequestAndOpenSessionInViewFilter();
+        int levelTaskId = userGuidanceService.getDefaultLevelTaskId();
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, levelTaskId, "xx", "xx", 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 1000);
+
+        System.out.println("----- History -----");
+        for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
+            System.out.println(displayHistoryElement);
+        }
+        System.out.println("----- History End -----");
+
+        Assert.assertEquals(3, displayHistoryElements.size());
+
+        Assert.assertEquals("Item created: " + TEST_START_BUILDER_ITEM, displayHistoryElements.get(0).getMessage());
+
+        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
+        Assert.assertEquals("Base created: U1", displayHistoryElements.get(1).getMessage());
+
+        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
+        Assert.assertEquals("Level reached: " + TEST_LEVEL_2_REAL, displayHistoryElements.get(2).getMessage());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        Assert.assertEquals(3, historyService.getNewestHistoryElements().readDbChildren().size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test

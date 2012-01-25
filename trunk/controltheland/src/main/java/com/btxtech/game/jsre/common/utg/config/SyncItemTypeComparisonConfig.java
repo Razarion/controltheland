@@ -28,7 +28,6 @@ public class SyncItemTypeComparisonConfig implements AbstractComparisonConfig {
     private Integer excludedTerritoryId;
     private Map<ItemType, Integer> itemTypeCount;
 
-
     /**
      * Used by GWT
      */

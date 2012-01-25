@@ -56,7 +56,7 @@ import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.ServerConditionService;
+import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import org.apache.commons.logging.Log;

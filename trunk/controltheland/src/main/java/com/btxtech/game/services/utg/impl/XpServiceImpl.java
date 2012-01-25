@@ -21,8 +21,8 @@ import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.QueueWorker;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbXpSettings;
-import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.XpService;
+import com.btxtech.game.services.utg.condition.ServerConditionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
@@ -113,8 +113,8 @@ public class XpServiceImpl implements XpService {
     }
 
     @Override
-    public void onReward(SimpleBase simpleBase, int deltaXp) {
-        increaseXpPerBase(simpleBase, deltaXp);
+    public void onReward(UserState userState, int deltaXp) {
+        increaseXpPerUserState(userState, deltaXp);
     }
 
     @Override
@@ -126,9 +126,13 @@ public class XpServiceImpl implements XpService {
     private void increaseXpPerBase(SimpleBase simpleBase, int deltaXp) {
         UserState userState = baseService.getUserState(simpleBase);
         if (userState != null) {
-            userState.increaseXp(deltaXp);
-            serverConditionService.onIncreaseXp(simpleBase, deltaXp);
+            increaseXpPerUserState(userState, deltaXp);
         }
+    }
+
+    private void increaseXpPerUserState(UserState userState, int deltaXp) {
+        userState.increaseXp(deltaXp);
+        serverConditionService.onIncreaseXp(userState, deltaXp);
     }
 
     @Override

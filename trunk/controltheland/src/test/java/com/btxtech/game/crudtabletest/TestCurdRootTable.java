@@ -39,7 +39,7 @@ public class TestCurdRootTable extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSingleTable() throws Exception {
-        configureMinimalGame();
+        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -103,7 +103,8 @@ public class TestCurdRootTable extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testMultiTable() throws Exception {
-        configureMinimalGame();
+        // TODO copy
+        configureRealGame();
 
         System.out.println("---------------- START ----------------");
 

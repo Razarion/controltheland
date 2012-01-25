@@ -127,11 +127,11 @@ public class DbQuestHub implements CrudChild, CrudParent {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (!(o instanceof DbQuestHub)) return false;
+        
         DbQuestHub that = (DbQuestHub) o;
 
-        return id != null && id.equals(that.id);
+        return id != null && id.equals(that.getId());
     }
 
     @Override

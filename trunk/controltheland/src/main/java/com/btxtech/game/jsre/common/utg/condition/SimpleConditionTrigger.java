@@ -20,10 +20,10 @@ import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
  * Date: 27.12.2010
  * Time: 18:58:14
  */
-public class SimpleConditionTrigger<T> extends AbstractConditionTrigger<T> {
+public class SimpleConditionTrigger<A, I> extends AbstractConditionTrigger<A, I> {
 
-    public SimpleConditionTrigger(ConditionTrigger conditionTrigger,T t) {
-        super(conditionTrigger, null, t);
+    public SimpleConditionTrigger(ConditionTrigger conditionTrigger) {
+        super(conditionTrigger, null);
     }
 
     public void onTrigger() {
