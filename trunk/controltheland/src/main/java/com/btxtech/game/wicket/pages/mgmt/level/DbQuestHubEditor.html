@@ -1,0 +1,94 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <title>Quest Hub</title>
+</head>
+<body>
+<h1>Quest Hub</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="form">
+    <h2>Quest Hub Properties</h2>
+    <table border="0" cellSpacing="1" cellPadding="0">
+        <tr>
+            <td bgcolor="#aaaaaa" colspan="2" valign="top">Start or resurrect Base</td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Real Base Required</td>
+            <td><input type="checkbox" wicket:id="realBaseRequired"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Start Territory</td>
+            <td wicket:id="startTerritory"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Start Item Type</td>
+            <td wicket:id="startItemType"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Start Item free Range</td>
+            <td><input type="text" wicket:id="startItemFreeRange"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Start Money</td>
+            <td><input type="text" wicket:id="startMoney"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#aaaaaa" colspan="2" valign="top">Quest Hub Levels</td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Levels</td>
+            <td>
+                <table cellpadding="1" cellspacing="1" border="0">
+                    <tr>
+                        <th bgcolor="#dadada">Id</th>
+                        <th bgcolor="#dadada">Name</th>
+                        <th bgcolor="#dadada">Move up</th>
+                        <th bgcolor="#dadada">Move down</th>
+                        <th bgcolor="#dadada">Edit</th>
+                        <th bgcolor="#dadada">Delete</th>
+                    </tr>
+                    <tr wicket:id="levels">
+                        <td wicket:id="id"/>
+                        <td><input type="text" wicket:id="name" size="20" maxlength="500"/></td>
+                        <td valign="center">
+                            <input type="submit" value="Up" wicket:id="up"/>
+                        </td>
+                        <td valign="center">
+                            <input type="submit" value="Down" wicket:id="down"/>
+                        </td>
+                        <td align="center">
+                            <input type="submit" value="Edit" wicket:id="edit"/>
+                        </td>
+                        <td valign="center">
+                            <input type="submit" value="Delete" wicket:id="delete"/>
+                        </td>
+                    </tr>
+                </table>
+                <input type="submit" wicket:id="createLevel" value="Add Level">
+            </td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <input type="submit" wicket:id="save" value="Save">
+    <input type="submit" wicket:id="back" value="Back">
+    <br>
+</form>
+</body>
+</html>
