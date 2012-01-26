@@ -60,15 +60,9 @@ public class TutorialEditor extends MgmtWebPage {
         }));
         add(form);
 
-        form.add(new TextField<Integer>("ownBaseId"));
         form.add(new TextField<String>("ownBaseName"));
-        form.add(new TextField<Integer>("enemyBaseId"));
-        form.add(new TextField<String>("enemyBaseName"));
-        form.add(new CheckBox("showWindowTooSmall"));
         form.add(new TextField<String>("width"));
         form.add(new TextField<String>("height"));
-        form.add(new CheckBox("failOnOwnItemsLost"));
-        form.add(new TextField<Integer>("failOnMoneyBelowAndNoAttackUnits"));
         form.add(new CheckBox("tracking"));
         form.add(new TextField<Integer>("dbTerrainSetting", new IModel<Integer>() {
             @Override
