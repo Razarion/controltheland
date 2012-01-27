@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbLevelTask;
 import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
@@ -40,7 +41,8 @@ public class DbHistoryElement implements Serializable {
         BASE_SURRENDERED,
         ITEM_CREATED,
         ITEM_DESTROYED,
-        LEVEL_PROMOTION
+        LEVEL_PROMOTION,
+        LEVEL_TASK_COMPLETED
     }
 
     public enum Source {
@@ -66,6 +68,7 @@ public class DbHistoryElement implements Serializable {
     private String targetBaseName;
     private String itemTypeName;
     private String levelName;
+    private String levelTaskName;
     @Index(name = "GAME_HISTORY_INDEX_SESSION")
     private String sessionId;
     private Source source;
@@ -76,7 +79,7 @@ public class DbHistoryElement implements Serializable {
     protected DbHistoryElement() {
     }
 
-    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncBaseItem syncBaseItem, DbLevel level, BaseService baseService, String sessionId, Source source) {
+    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncBaseItem syncBaseItem, DbLevel level, DbLevelTask levelTask, BaseService baseService, String sessionId, Source source) {
         this.sessionId = sessionId;
         timeStamp = new Date();
         timeStampMs = timeStamp.getTime();
@@ -89,6 +92,7 @@ public class DbHistoryElement implements Serializable {
         targetBaseName = targetBase != null ? baseService.getBaseName(targetBase) : null;
         itemTypeName = syncBaseItem != null ? syncBaseItem.getBaseItemType().getName() : null;
         levelName = level != null ? level.getName() : null;
+        levelTaskName = levelTask != null ? levelTask.getName() : null;
         this.source = source;
     }
 
@@ -130,6 +134,10 @@ public class DbHistoryElement implements Serializable {
 
     public String getLevelName() {
         return levelName;
+    }
+
+    public String getLevelTaskName() {
+        return levelTaskName;
     }
 
     public String getSessionId() {

@@ -178,7 +178,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
 
     private void conditionPassedInSession(UserState userState, Integer taskId) {
         if (taskId != null) {
-            handleLevelTaskRewards(userState, taskId);
+            handleLevelTaskCompletion(userState, taskId);
         } else {
             DbLevel dbOldLevel = getDbLevel(userState);
             DbLevel dbNextLevel = getNextDbLevel(dbOldLevel);
@@ -230,8 +230,9 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         openLevelTasks.remove(userState);
     }
 
-    private void handleLevelTaskRewards(UserState userState, int levelTaskId) {
+    private void handleLevelTaskCompletion(UserState userState, int levelTaskId) {
         DbLevelTask dbLevelTask = (DbLevelTask) sessionFactory.getCurrentSession().get(DbLevelTask.class, levelTaskId);
+        historyService.addLevelTaskCompletedEntry(userState, dbLevelTask);
         if (dbLevelTask.getXp() > 0) {
             xpService.onReward(userState, dbLevelTask.getXp());
         }
