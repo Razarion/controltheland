@@ -95,16 +95,16 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     }
 
     public boolean isMyOwnProperty(SyncBaseItem syncItem) {
-        return simpleBase.equals(syncItem.getBase());
+        return simpleBase != null && simpleBase.equals(syncItem.getBase());
     }
 
     public boolean isMyOwnBase(SimpleBase simpleBase) {
-        return this.simpleBase.equals(simpleBase);
+        return this.simpleBase != null && this.simpleBase.equals(simpleBase);
     }
 
     @Override
     public void depositResource(double price, SimpleBase simpleBase) {
-        if (this.simpleBase.equals(simpleBase)) {
+        if (this.simpleBase != null && this.simpleBase.equals(simpleBase)) {
             if (Connection.getInstance().getGameInfo() instanceof RealGameInfo) {
                 accountBalance += price;
                 if (accountBalance > ClientLevelHandler.getInstance().getLevelScope().getMaxMoney()) {
@@ -120,7 +120,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
 
     @Override
     public void withdrawalMoney(double price, SimpleBase simpleBase) throws InsufficientFundsException {
-        if (!this.simpleBase.equals(simpleBase)) {
+        if (this.simpleBase == null || !this.simpleBase.equals(simpleBase)) {
             return;
         }
         if (Math.round(price) > Math.round(accountBalance)) {
@@ -291,6 +291,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
 
     public void cleanup() {
         clear();
+        simpleBase = null;
         ownBaseDestroyedListener = null;
     }
 

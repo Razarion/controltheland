@@ -29,7 +29,7 @@ import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 public interface ConditionService<A, I> {
     void setConditionServiceListener(ConditionServiceListener<A, I> conditionServiceListener);
 
-    AbstractConditionTrigger<A, I> activateCondition(ConditionConfig conditionConfig, A a, I i);
+    void activateCondition(ConditionConfig conditionConfig, A a, I i);
 
     void deactivateActorConditions(A a, I i);
 

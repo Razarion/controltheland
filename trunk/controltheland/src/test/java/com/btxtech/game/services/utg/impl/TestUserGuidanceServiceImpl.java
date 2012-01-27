@@ -5,10 +5,16 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
+import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
+import com.btxtech.game.services.utg.DbQuestHub;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.condition.DbConditionConfig;
+import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +93,75 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         Assert.assertTrue(userGuidanceService.isStartRealGame());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void gameFlow() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        DbQuestHub startQuestHub = userGuidanceService.getCrudQuestHub().createDbChild();
+        startQuestHub.setRealBaseRequired(false);
+        DbLevel dbSimLevel1 = startQuestHub.getLevelCrud().createDbChild();
+        DbConditionConfig dbConditionConfig = new DbConditionConfig();
+        dbConditionConfig.setConditionTrigger(ConditionTrigger.XP_INCREASED);
+        DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
+        dbCountComparisonConfig.setCount(1);
+        dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
+        dbSimLevel1.setDbConditionConfig(dbConditionConfig);
+        DbLevelTask dbSimLevelTask1 = dbSimLevel1.getLevelTaskCrud().createDbChild();
+        dbSimLevelTask1.setDbTutorialConfig(createTutorial1());
+        dbSimLevelTask1.setXp(1);
+
+        DbLevel dbSimLevel2 = startQuestHub.getLevelCrud().createDbChild();
+        dbConditionConfig = new DbConditionConfig();
+        dbConditionConfig.setConditionTrigger(ConditionTrigger.XP_INCREASED);
+        dbCountComparisonConfig = new DbCountComparisonConfig();
+        dbCountComparisonConfig.setCount(1);
+        dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
+        dbSimLevel2.setDbConditionConfig(dbConditionConfig);
+        DbLevelTask dbSimLevelTask2 = dbSimLevel2.getLevelTaskCrud().createDbChild();
+        dbSimLevelTask2.setDbTutorialConfig(createTutorial1());
+        dbSimLevelTask2.setXp(1);
+        userGuidanceService.getCrudQuestHub().updateDbChild(startQuestHub);
+
+        DbQuestHub realGameQuestHub = userGuidanceService.getCrudQuestHub().createDbChild();
+        DbBaseItemType dbBaseItemType = createSimpleBuilding();
+        realGameQuestHub.setStartTerritory(setupSimpleTerritory("test", dbBaseItemType.getId()));
+        realGameQuestHub.setStartItemType(dbBaseItemType);
+        realGameQuestHub.getLevelCrud().createDbChild();
+        userGuidanceService.getCrudQuestHub().updateDbChild(realGameQuestHub);
+
+        userGuidanceService.activateLevels();
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertFalse(userGuidanceService.isStartRealGame());
+        Assert.assertEquals((int) dbSimLevelTask1.getId(), userGuidanceService.getDefaultLevelTaskId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertFalse(userGuidanceService.isStartRealGame());
+        Assert.assertEquals((int) dbSimLevelTask1.getId(), userGuidanceService.getDefaultLevelTaskId());
+
+        GameFlow gameFlow = userGuidanceService.onTutorialFinished(dbSimLevelTask1.getId());
+        Assert.assertEquals(GameFlow.Type.START_NEXT_LEVEL_TASK_TUTORIAL, gameFlow.getType());
+        Assert.assertEquals((int)dbSimLevelTask2.getId(), gameFlow.getNextTutorialLevelTaskId());
+        Assert.assertFalse(userGuidanceService.isStartRealGame());
+        Assert.assertEquals((int) dbSimLevelTask2.getId(), userGuidanceService.getDefaultLevelTaskId());
+
+        gameFlow = userGuidanceService.onTutorialFinished(dbSimLevelTask2.getId());
+        Assert.assertEquals(GameFlow.Type.START_REAL_GAME, gameFlow.getType());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
     }
 
 }

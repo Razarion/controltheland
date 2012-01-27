@@ -75,13 +75,12 @@ public class DbLevelTask implements CrudChild<DbLevel> {
     }
 
     public ConditionConfig createConditionConfig(ItemService itemService) {
-        if (dbConditionConfig == null && dbTutorialConfig == null) {
-            throw new IllegalStateException("No condition config for DbLevelTask: " + getName());
-        }
-        if (dbConditionConfig != null) {
+        if (dbTutorialConfig != null) {
+            return new ConditionConfig(ConditionTrigger.TUTORIAL, null);
+        } else if (dbConditionConfig != null) {
             return dbConditionConfig.createConditionConfig(itemService);
         } else {
-            return new ConditionConfig(ConditionTrigger.TUTORIAL, null);
+            return null;
         }
     }
 
