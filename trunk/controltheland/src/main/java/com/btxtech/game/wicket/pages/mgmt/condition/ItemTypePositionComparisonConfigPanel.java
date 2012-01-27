@@ -27,6 +27,7 @@ import org.apache.wicket.model.IModel;
  * Date: 14.01.2011
  * Time: 23:13:41
  */
+@Deprecated
 public class ItemTypePositionComparisonConfigPanel extends Panel {
 
     public ItemTypePositionComparisonConfigPanel(String id) {
