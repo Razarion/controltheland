@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.simulation;
 
+import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
 
 /**
@@ -25,7 +26,7 @@ public class Step {
 
     public Step(StepConfig stepConfig) {
         this.stepConfig = stepConfig;
-        SimulationConditionServiceImpl.getInstance().activateCondition(stepConfig.getConditionConfig(), null, null);
+        SimulationConditionServiceImpl.getInstance().activateCondition(stepConfig.getConditionConfig(), ClientBase.getInstance().getSimpleBase(), null);
     }
 
     public StepConfig getStepConfig() {

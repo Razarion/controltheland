@@ -17,8 +17,6 @@ import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
@@ -42,7 +40,7 @@ public class SimulationConditionServiceImpl extends ConditionServiceImpl<SimpleB
     @Override
     protected void saveAbstractConditionTrigger(AbstractConditionTrigger<SimpleBase, Void> abstractConditionTrigger) {
         if (!ClientBase.getInstance().isMyOwnBase(abstractConditionTrigger.getActor())) {
-            return;
+            throw new IllegalArgumentException("Only condition for own base cam be saved");
         }
         this.abstractConditionTrigger = abstractConditionTrigger;
     }

@@ -304,7 +304,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
                 ownBaseDestroyedListener.onOwnBaseDestroyed();
             }
         } else if (isMyOwnBase(actor)) {
-            SimulationConditionServiceImpl.getInstance().onBaseDeleted(null);
+            SimulationConditionServiceImpl.getInstance().onBaseDeleted(actor);
         }
     }
 

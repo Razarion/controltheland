@@ -2,6 +2,7 @@ package com.btxtech.game.wicket.pages.cms.content;
 
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.layout.DbContentGameLink;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsImageResource;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
@@ -20,6 +21,8 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class ContentGameLink extends Panel {
     @SpringBean
     private CmsUiService cmsUiService;
+    @SpringBean
+    private UserGuidanceService userGuidanceService;
     private int contentId;
 
     public ContentGameLink(String id, DbContentGameLink dbContentGameLink) {
@@ -33,7 +36,11 @@ public class ContentGameLink extends Panel {
             pageLink.add(new Label("label", dbContentGameLink.getLinkText()));
             pageLink.add(new Image("image").setVisible(false));
         }
+        if (!userGuidanceService.isStartRealGame()) {
+            pageLink.setParameter(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, userGuidanceService.getDefaultLevelTaskId());
+        }
         pageLink.add(new SimpleAttributeModifier("target", CmsUtil.TARGET_GAME));
+
         add(pageLink);
         if (dbContentGameLink.getCssClass() != null) {
             add(new SimpleAttributeModifier("class", dbContentGameLink.getCssClass()));
