@@ -19,6 +19,7 @@ import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
+import com.btxtech.game.wicket.uiservices.LevelReadonlyPanel;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -62,7 +63,7 @@ public class UserStateTable extends MgmtWebPage {
         form.add(new DataView<UserState>("userState", userStateProvider) {
             @Override
             protected void populateItem(final Item<UserState> item) {
-                item.add(new Label("currentAbstractLevel.name"));
+                item.add(new LevelReadonlyPanel("dbLevelId"));
                 item.add(new Label("sessionId"));
                 item.add(new Label("online"));
                 item.add(new Label("user.name"));

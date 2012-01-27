@@ -16,20 +16,15 @@ package com.btxtech.game.wicket.pages.mgmt;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.wicket.uiservices.LevelReadonlyPanel;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * User: beat
@@ -69,7 +64,7 @@ public class UserStateEditor extends MgmtWebPage {
             }
         }));
         add(form);
-        form.add(new Label("currentAbstractLevel.name"));
+        form.add(new LevelReadonlyPanel("dbLevelId"));
         form.add(new Label("sessionId"));
         form.add(new TextField<Integer>("newDbLevelId", new IModel<Integer>() {
             @Override

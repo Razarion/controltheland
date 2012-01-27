@@ -10,6 +10,7 @@ import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -29,6 +30,8 @@ public class DbLevelTask implements CrudChild<DbLevel> {
     @GeneratedValue
     private Integer id;
     private String name;
+    @Column(length = 50000)
+    private String html;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "dbLevel", insertable = false, updatable = false, nullable = false)
     private DbLevel dbLevel;
@@ -106,6 +109,14 @@ public class DbLevelTask implements CrudChild<DbLevel> {
 
     public void setDbConditionConfig(DbConditionConfig dbConditionConfig) {
         this.dbConditionConfig = dbConditionConfig;
+    }
+
+    public String getHtml() {
+        return html;
+    }
+
+    public void setHtml(String html) {
+        this.html = html;
     }
 
     @Override

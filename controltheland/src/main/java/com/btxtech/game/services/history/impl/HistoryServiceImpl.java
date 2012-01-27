@@ -24,6 +24,7 @@ import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbLevelTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -78,6 +79,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 null,
+                null,
                 baseService,
                 getSessionId(simpleBase),
                 determineSource(simpleBase, null)));
@@ -93,6 +95,7 @@ public class HistoryServiceImpl implements HistoryService {
                 target,
                 null,
                 null,
+                null,
                 baseService,
                 getSessionId(actor),
                 determineSource(actor, target)));
@@ -105,6 +108,7 @@ public class HistoryServiceImpl implements HistoryService {
                 userService.getUser(simpleBase),
                 null,
                 simpleBase,
+                null,
                 null,
                 null,
                 null,
@@ -123,6 +127,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 syncBaseItem,
                 null,
+                null,
                 baseService,
                 getSessionId(syncBaseItem.getBase()),
                 determineSource(syncBaseItem.getBase(), null)));
@@ -137,6 +142,7 @@ public class HistoryServiceImpl implements HistoryService {
                 actor,
                 target.getBase(),
                 target,
+                null,
                 null,
                 baseService,
                 getSessionId(actor),
@@ -153,6 +159,23 @@ public class HistoryServiceImpl implements HistoryService {
                 null,              // TODO
                 null,
                 level,
+                null,
+                baseService,
+                userState.getSessionId(),
+                DbHistoryElement.Source.HUMAN));
+    }
+
+    @Override
+    @Transactional
+    public void addLevelTaskCompletedEntry(UserState userState, DbLevelTask levelTask) {
+        save(new DbHistoryElement(DbHistoryElement.Type.LEVEL_TASK_COMPLETED,
+                userState.getUser(),
+                null,
+                null,
+                null,              // TODO
+                null,
+                null,
+                levelTask,
                 baseService,
                 userState.getSessionId(),
                 DbHistoryElement.Source.HUMAN));
@@ -290,6 +313,9 @@ public class HistoryServiceImpl implements HistoryService {
                 break;
             case LEVEL_PROMOTION:
                 displayHistoryElement.setMessage("Level reached: " + dbHistoryElement.getLevelName());
+                break;
+            case LEVEL_TASK_COMPLETED:
+                displayHistoryElement.setMessage("Level Task competed: " + dbHistoryElement.getLevelTaskName());
                 break;
             default:
                 throw new IllegalArgumentException("Unknown: " + dbHistoryElement.getType());
