@@ -67,7 +67,8 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
     private int maxMoney;
     private double itemSellFactor;
     private int houseSpace;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "dbLevel",cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbItemTypeLimitation> itemTypeLimitation;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
