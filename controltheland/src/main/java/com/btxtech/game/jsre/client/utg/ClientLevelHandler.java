@@ -90,12 +90,15 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
         switch (gameFlow.getType()) {
             case START_NEXT_LEVEL_TASK_TUTORIAL:
                 nextTaskId = gameFlow.getNextTutorialLevelTaskId();
+                System.out.println("START_NEXT_LEVEL_TASK_TUTORIAL: " + nextTaskId);
                 ClientServices.getInstance().getClientRunner().start(GameStartupSeq.WARM_SIMULATED);
                 return;
             case START_REAL_GAME:
+                System.out.println("START_REAL_GAME: " + nextTaskId);
                 ClientServices.getInstance().getClientRunner().start(GameStartupSeq.WARM_REAL);
                 return;
             case SHOW_LEVEL_TASK_DONE_PAGE:
+                System.out.println("SHOW_LEVEL_TASK_DONE_PAGE: " + nextTaskId);
                 // TODO Load Level Task done Page
                 return;
             default:

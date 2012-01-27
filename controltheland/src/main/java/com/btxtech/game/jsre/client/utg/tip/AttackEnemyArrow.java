@@ -32,10 +32,6 @@ public class AttackEnemyArrow {
         if (canvas == null) {
             throw new Html5NotSupportedException("No Canvas for AttackEnemyArrow");
         }
-        if (enemyBaseItem == null) {
-            return;
-        }
-
         Rectangle rectangle = TerrainView.getInstance().getViewRect();
         Line line = new Line(rectangle.getCenter(), enemyBaseItem.getSyncItemArea().getPosition());
         List<Index> crossPoints = rectangle.getCrossPointsExclusive(line);

@@ -22,6 +22,9 @@ public class AttackEnemyTipEntry extends TipEntry {
     public void show() {
         close();
         SyncBaseItem enemyBaseItem = getEnemyItem();
+        if(enemyBaseItem == null) {
+            return;
+        }
         attackEnemyArrow = new AttackEnemyArrow(enemyBaseItem);
         RadarPanel.getInstance().showHint(enemyBaseItem);
         Scheduler.get().scheduleFixedPeriod(new Scheduler.RepeatingCommand() {
