@@ -25,6 +25,7 @@ import org.apache.wicket.markup.html.basic.Label;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,7 +35,7 @@ import java.util.List;
  */
 public class ComparisonFactory {
     public enum ComparisonClass {
-        //TUTORIAL(ConditionTrigger.TUTORIAL),
+        SYNC_ITEM_KILLED(ConditionTrigger.SYNC_ITEM_KILLED, DbSyncItemTypeComparisonConfig.class, DbCountComparisonConfig.class),
         SYNC_ITEM_BUILT(ConditionTrigger.SYNC_ITEM_BUILT, DbSyncItemTypeComparisonConfig.class, DbCountComparisonConfig.class),
         MONEY_INCREASED(ConditionTrigger.MONEY_INCREASED, DbCountComparisonConfig.class),
         XP_INCREASED(ConditionTrigger.XP_INCREASED, DbCountComparisonConfig.class),
@@ -53,7 +54,7 @@ public class ComparisonFactory {
 
         public static List<Class<? extends DbAbstractComparisonConfig>> getClasses4ConditionTrigger(ConditionTrigger conditionTrigger) {
             if (conditionTrigger == null) {
-                return null;
+                return Collections.emptyList();
             }
             for (ComparisonClass comparisonClass : values()) {
                 if (comparisonClass.conditionTrigger == conditionTrigger) {
@@ -64,7 +65,7 @@ public class ComparisonFactory {
         }
     }
 
-    public static Component createComparisonPanel(DbConditionConfig dbConditionConfig, String id) {
+    public static Component createComparisonPanel(String id, DbConditionConfig dbConditionConfig) {
         if (dbConditionConfig == null || dbConditionConfig.getDbAbstractComparisonConfig() == null) {
             return new Label(id, "").setVisible(false);
         } else {
@@ -81,6 +82,12 @@ public class ComparisonFactory {
                 throw new IllegalArgumentException("No panel for " + config);
             }
         }
+    }
+
+    public static List<ConditionTrigger> getFilteredConditionTriggers() {
+        List<ConditionTrigger> result = new ArrayList<ConditionTrigger>(Arrays.asList(ConditionTrigger.values()));
+        result.remove(ConditionTrigger.TUTORIAL);
+        return result;
     }
 
 }

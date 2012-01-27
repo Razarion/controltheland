@@ -56,8 +56,8 @@ public class DbLevelTaskEditor extends MgmtWebPage {
         }));
         add(form);
 
-        form.add(new TutorialPanel("dbConditionConfig"));
-        form.add(new ConditionConfigPanel("dbTutorialConfig"));
+        form.add(new TutorialPanel("dbTutorialConfig"));
+        form.add(new ConditionConfigPanel("dbConditionConfig"));
 
         // Reward
         form.add(new TextField("money"));

@@ -39,7 +39,7 @@ public class DbConditionConfig implements Serializable {
     private Integer id;
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-    private DbAbstractComparisonConfig dbAbstractComparisonConfig; // DELETE_ORPHAN does not work
+    private DbAbstractComparisonConfig dbAbstractComparisonConfig; // TODO DELETE_ORPHAN does not work
     private ConditionTrigger conditionTrigger;
     @Transient
     private ConditionConfig conditionConfig;
@@ -79,12 +79,12 @@ public class DbConditionConfig implements Serializable {
 
         DbConditionConfig that = (DbConditionConfig) o;
 
-        return id != null && !id.equals(that.id);
+        return id != null && id.equals(that.getId());
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id : 0;
+        return id != null ? id : System.identityHashCode(this);
     }
 
     public ConditionConfig createConditionConfig(ItemService itemService) {

@@ -14,19 +14,17 @@
 package com.btxtech.game.wicket.pages.mgmt.condition;
 
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
-import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.IFormModelUpdateListener;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -35,8 +33,7 @@ import java.util.List;
  * Time: 14:34:18
  */
 public class ConditionConfigPanel extends Panel implements IFormModelUpdateListener {
-    @SpringBean
-    private UserGuidanceService userGuidanceService;
+    private boolean isDirty = false;
 
     private IModel<ConditionTrigger> conditionTriggerModel = new IModel<ConditionTrigger>() {
         private ConditionTrigger conditionTrigger;
@@ -55,11 +52,13 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
         @Override
         public void setObject(ConditionTrigger conditionTrigger) {
             this.conditionTrigger = conditionTrigger;
+            isDirty = true;
         }
 
         @Override
         public void detach() {
-            // Ignore
+            //conditionTrigger = null;
+            isDirty = false;
         }
     };
     private IModel<Class<? extends DbAbstractComparisonConfig>> comparisonModel = new IModel<Class<? extends DbAbstractComparisonConfig>>() {
@@ -79,19 +78,22 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
         @Override
         public void setObject(Class<? extends DbAbstractComparisonConfig> dbAbstractComparisonConfig) {
             this.dbAbstractComparisonConfig = dbAbstractComparisonConfig;
+            isDirty = true;
         }
 
         @Override
         public void detach() {
-            dbAbstractComparisonConfig = null;
+            //dbAbstractComparisonConfig = null;
+            isDirty = false;
         }
     };
     private Log log = LogFactory.getLog(ConditionConfigPanel.class);
 
     public ConditionConfigPanel(String id) {
         super(id);
-        add(new DropDownChoice<ConditionTrigger>("conditionTrigger", conditionTriggerModel, Arrays.asList(ConditionTrigger.values())));
-        add(new DropDownChoice<Class<? extends DbAbstractComparisonConfig>>("comparison", comparisonModel, new IModel<List<Class<? extends DbAbstractComparisonConfig>>>() {
+        DropDownChoice<ConditionTrigger> triggers = new DropDownChoice<ConditionTrigger>("conditionTrigger", conditionTriggerModel, ComparisonFactory.getFilteredConditionTriggers());
+        add(triggers);
+        final DropDownChoice<Class<? extends DbAbstractComparisonConfig>> comparisons = new DropDownChoice<Class<? extends DbAbstractComparisonConfig>>("comparison", comparisonModel, new IModel<List<Class<? extends DbAbstractComparisonConfig>>>() {
 
             @Override
             public List<Class<? extends DbAbstractComparisonConfig>> getObject() {
@@ -107,68 +109,13 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
             public void detach() {
                 // Ignore
             }
-        }) {
-            @Override
-            public boolean isVisible() {
-                if (ComparisonFactory.ComparisonClass.getClasses4ConditionTrigger(conditionTriggerModel.getObject()) != null) {
-                    return true;
-                } else {
-                    comparisonModel.setObject(null);
-                    return false;
-                }
-            }
         });
-        add(new Button("create") {
-
+        comparisons.setOutputMarkupId(true);
+        add(comparisons);
+        triggers.add(new AjaxFormComponentUpdatingBehavior("onchange") {
             @Override
-            public void onSubmit() {
-                if (conditionTriggerModel.getObject() == null) {
-                    error("Trigger must be set");
-                    setupComparisonFields();
-                    return;
-                }
-                DbConditionConfig dbConditionConfig = (DbConditionConfig) ConditionConfigPanel.this.getDefaultModelObject();
-
-                ConditionTrigger conditionTrigger = conditionTriggerModel.getObject();
-                if (conditionTriggerModel.getObject() != dbConditionConfig.getConditionTrigger()) {
-                    dbConditionConfig.setConditionTrigger(conditionTriggerModel.getObject());
-                    dbConditionConfig.setDbAbstractComparisonConfig(null);
-                    // TODO userGuidanceService.updateDbConditionConfig(dbConditionConfig);
-                    setupComparisonFields();
-                    return;
-                }
-
-                if (!conditionTrigger.isComparisonNeeded()) {
-                    dbConditionConfig.setDbAbstractComparisonConfig(null);
-                    // TODO userGuidanceService.updateDbConditionConfig(dbConditionConfig);
-                    setupComparisonFields();
-                    return;
-                }
-
-                if (comparisonModel.getObject() == null) {
-                    error("Comparison must be set");
-                    setupComparisonFields();
-                    return;
-                }
-
-                boolean createComparisonConfig = false;
-                if (dbConditionConfig.getDbAbstractComparisonConfig() != null) {
-                    if (!dbConditionConfig.getDbAbstractComparisonConfig().getClass().equals(comparisonModel.getObject())) {
-                        createComparisonConfig = true;
-                    }
-                } else {
-                    createComparisonConfig = true;
-                }
-
-                if (createComparisonConfig) {
-                    try {
-                        dbConditionConfig.setDbAbstractComparisonConfig(comparisonModel.getObject().getConstructor().newInstance());
-                        // TODO userGuidanceService.updateDbConditionConfig(dbConditionConfig);
-                    } catch (Exception e) {
-                        log.error("", e);
-                    }
-                }
-                setupComparisonFields();
+            protected void onUpdate(AjaxRequestTarget target) {
+                target.addComponent(comparisons);
             }
         });
         setupComparisonFields();
@@ -176,7 +123,7 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
 
     private void setupComparisonFields() {
         DbConditionConfig dbConditionConfig = (DbConditionConfig) getDefaultModelObject();
-        addOrReplace(ComparisonFactory.createComparisonPanel(dbConditionConfig, "dbAbstractComparisonConfig"));
+        addOrReplace(ComparisonFactory.createComparisonPanel("dbAbstractComparisonConfig", dbConditionConfig));
     }
 
     @Override
@@ -187,9 +134,22 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
 
     @Override
     public void updateModel() {
-        if (getDefaultModelObject() == null) {
-            // TODO geht nicht
-            setDefaultModelObject(new DbConditionConfig());
+        if (!isDirty) {
+            return;
         }
+        if (conditionTriggerModel.getObject().isComparisonNeeded() && comparisonModel.getObject() == null) {
+            error("Comparison must be set");
+            return;
+        }
+
+        DbConditionConfig dbConditionConfig = new DbConditionConfig();
+        dbConditionConfig.setConditionTrigger(conditionTriggerModel.getObject());
+        try {
+            dbConditionConfig.setDbAbstractComparisonConfig(comparisonModel.getObject().getConstructor().newInstance());
+        } catch (Exception e) {
+            log.error("", e);
+            error(e.toString());
+        }
+        setDefaultModelObject(dbConditionConfig);
     }
 }
