@@ -28,7 +28,7 @@ public class DbUserState {
     @OneToOne
     private DbBase base;
     @ManyToOne
-    private DbLevel currentLevel;
+    private DbLevel currentLevel;   // TODO
     @ManyToOne(optional = false)
     private BackupEntry backupEntry;
     @OneToOne(cascade = CascadeType.ALL)
