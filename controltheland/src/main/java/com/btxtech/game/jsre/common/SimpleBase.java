@@ -44,9 +44,8 @@ public class SimpleBase implements Serializable {
 
         SimpleBase that = (SimpleBase) o;
 
-        if (id != that.id) return false;
+        return id == that.id;
 
-        return true;
     }
 
     @Override

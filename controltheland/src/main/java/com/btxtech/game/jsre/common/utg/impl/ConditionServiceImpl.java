@@ -16,7 +16,6 @@ package com.btxtech.game.jsre.common.utg.impl;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.utg.ConditionService;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
@@ -55,7 +54,10 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
     }
 
     @Override
-    public AbstractConditionTrigger<A, I> activateCondition(ConditionConfig conditionConfig, A a, I i) {
+    public void activateCondition(ConditionConfig conditionConfig, A a, I i) {
+        if (conditionConfig == null) {
+            return;
+        }
         AbstractComparison abstractComparison = null;
         if (conditionConfig.getConditionTrigger().isComparisonNeeded()) {
             abstractComparison = conditionConfig.getAbstractComparisonConfig().createAbstractComparison();
@@ -66,7 +68,6 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
         AbstractConditionTrigger<A, I> abstractConditionTrigger = conditionConfig.getConditionTrigger().createAbstractConditionTrigger(abstractComparison);
         abstractConditionTrigger.setActorAndIdentifier(a, i);
         saveAbstractConditionTrigger(abstractConditionTrigger);
-        return abstractConditionTrigger;
     }
 
     @Override
