@@ -41,10 +41,10 @@ public class DbQuestHub implements CrudChild, CrudParent {
     private String name;
     // ----- New Base -----
     private boolean realBaseRequired;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private DbBaseItemType startItemType;
     private int startItemFreeRange;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private DbTerritory startTerritory;
     private int startMoney;
 
