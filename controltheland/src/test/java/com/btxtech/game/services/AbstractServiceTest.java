@@ -136,10 +136,18 @@ abstract public class AbstractServiceTest {
     protected static int TEST_HARVESTER_ITEM_ID = -1;
     protected static final String TEST_QUEST_HUB_1 = "TEST_QUEST_HUB_1";
     protected static final String TEST_QUEST_HUB_2 = "TEST_QUEST_HUB_2";
+    protected static final String TEST_QUEST_HUB_3 = "TEST_QUEST_HUB_3";
     protected static final String TEST_LEVEL_1_SIMULATED = "TEST_LEVEL_1_SIMULATED";
     protected static int TEST_LEVEL_1_SIMULATED_ID = -1;
+    protected static int TEST_LEVEL_TASK_1_SIMULATED_ID = -1;
     protected static final String TEST_LEVEL_2_REAL = "TEST_LEVEL_2_REAL";
     protected static int TEST_LEVEL_2_REAL_ID = -1;
+    protected static int TEST_LEVEL_TASK_1_2_REAL_ID = -1;
+    protected static int TEST_LEVEL_TASK_2_2_REAL_ID = -1;
+    protected static int TEST_LEVEL_TASK_1_3_REAL_ID = -1;
+    protected static int TEST_LEVEL_TASK_2_3_REAL_ID = -1;
+    protected static int TEST_LEVEL_TASK_3_3_SIM_ID = -1;
+    protected static int TEST_LEVEL_TASK_4_3_SIM_ID = -1;
     protected static final String TEST_LEVEL_3_REAL = "TEST_LEVEL_3_REAL";
     protected static int TEST_LEVEL_3_REAL_ID = -1;
     protected static final String TEST_LEVEL_4_SIMULATED = "TEST_LEVEL_4_SIMULATED";
@@ -252,11 +260,7 @@ abstract public class AbstractServiceTest {
     }
 
     protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id, SimpleBase simpleBase) throws Exception {
-        Services services = EasyMock.createNiceMock(Services.class);
-        AbstractTerrainService terrainService = EasyMock.createNiceMock(AbstractTerrainService.class);
-        EasyMock.expect(services.getTerrainService()).andReturn(terrainService);
-        EasyMock.replay(services);
-        SyncBaseItem syncBaseItem = createSyncBaseItem(itemTypeId, position, id, services, simpleBase);
+        SyncBaseItem syncBaseItem = createSyncBaseItem(itemTypeId, position, id, createMockServices(), simpleBase);
         syncBaseItem.setBuildup(1.0);
         return syncBaseItem;
     }
@@ -266,11 +270,7 @@ abstract public class AbstractServiceTest {
     }
 
     protected SyncResourceItem createSyncResourceItem(int itemTypeId, Index position, Id id) throws Exception {
-        Services services = EasyMock.createNiceMock(Services.class);
-        AbstractTerrainService terrainService = EasyMock.createNiceMock(AbstractTerrainService.class);
-        EasyMock.expect(services.getTerrainService()).andReturn(terrainService);
-        EasyMock.replay(services);
-        SyncResourceItem syncResourceItem = new SyncResourceItem(id, null, (ResourceType) itemService.getItemType(itemTypeId), services);
+        SyncResourceItem syncResourceItem = new SyncResourceItem(id, null, (ResourceType) itemService.getItemType(itemTypeId), createMockServices());
         syncResourceItem.getSyncItemArea().setPosition(position);
         return syncResourceItem;
     }
@@ -1024,6 +1024,7 @@ abstract public class AbstractServiceTest {
         dbSimLevelTask.setXp(1);
         userGuidanceService.getCrudQuestHub().updateDbChild(startQuestHub);
         TEST_LEVEL_1_SIMULATED_ID = dbSimLevel.getId();
+        TEST_LEVEL_TASK_1_SIMULATED_ID = dbSimLevelTask.getId();
         DbConditionConfig tutorialCondition = new DbConditionConfig();
         tutorialCondition.setConditionTrigger(ConditionTrigger.XP_INCREASED);
         DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
@@ -1032,13 +1033,14 @@ abstract public class AbstractServiceTest {
         dbSimLevel.setDbConditionConfig(tutorialCondition);
 
         // Setup QuestHub1 - Level1 - 2*LevelTask
-        DbQuestHub realGameQuestHub = userGuidanceService.getCrudQuestHub().createDbChild();
-        realGameQuestHub.setName(TEST_QUEST_HUB_2);
-        realGameQuestHub.setStartItemFreeRange(300);
-        realGameQuestHub.setStartMoney(1000);
-        realGameQuestHub.setStartTerritory(territoryService.getDbTerritoryCrudServiceHelper().readDbChild(TEST_NOOB_TERRITORY_ID));
-        realGameQuestHub.setStartItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
-        DbLevel dbLevel1 = createDbLevel2(realGameQuestHub);
+        DbQuestHub realGameQuestHub1 = userGuidanceService.getCrudQuestHub().createDbChild();
+        realGameQuestHub1.setName(TEST_QUEST_HUB_2);
+        realGameQuestHub1.setStartItemFreeRange(300);
+        realGameQuestHub1.setStartMoney(1000);
+        realGameQuestHub1.setStartTerritory(territoryService.getDbTerritoryCrudServiceHelper().readDbChild(TEST_NOOB_TERRITORY_ID));
+        realGameQuestHub1.setStartItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
+
+        DbLevel dbLevel1 = createDbLevel2(realGameQuestHub1);
         dbLevel1.setName(TEST_LEVEL_2_REAL);
         DbConditionConfig levelCondition = new DbConditionConfig();
         levelCondition.setConditionTrigger(ConditionTrigger.XP_INCREASED);
@@ -1046,15 +1048,38 @@ abstract public class AbstractServiceTest {
         dbCountComparisonConfig.setCount(220);
         levelCondition.setDbAbstractComparisonConfig(dbCountComparisonConfig);
         dbLevel1.setDbConditionConfig(levelCondition);
-        setupCreateLevelTask1RealGameLevel(dbLevel1);
-        setupCreateLevelTask2RealGameLevel(dbLevel1);
+        DbLevelTask dbLevelTask1 = setupCreateLevelTask1RealGameLevel(dbLevel1);
+        DbLevelTask dbLevelTask2 = setupCreateLevelTask2RealGameLevel(dbLevel1);
 
-        DbLevel dbLevel2 = realGameQuestHub.getLevelCrud().createDbChild();
+        DbLevel dbLevel2 = realGameQuestHub1.getLevelCrud().createDbChild();
         dbLevel2.setName(TEST_LEVEL_3_REAL);
+        levelCondition = new DbConditionConfig();
+        levelCondition.setConditionTrigger(ConditionTrigger.XP_INCREASED);
+        dbCountComparisonConfig = new DbCountComparisonConfig();
+        dbCountComparisonConfig.setCount(400);
+        levelCondition.setDbAbstractComparisonConfig(dbCountComparisonConfig);
+        dbLevel2.setDbConditionConfig(levelCondition);
+        DbLevelTask dbLevelTask3 = setupCreateLevelTask3RealGameLevel(dbLevel2);
+        DbLevelTask dbLevelTask4 = setupCreateLevelTask4RealGameLevel(dbLevel2);
+        DbTutorialConfig tut2 = createTutorial1();
+        DbTutorialConfig tut3 = createTutorial1();
+        DbLevelTask dbSimLevelTask2 = dbLevel2.getLevelTaskCrud().createDbChild();
+        dbSimLevelTask2.setDbTutorialConfig(tut2);
+        dbSimLevelTask2.setXp(2);
+        DbLevelTask dbSimLevelTask3 = dbLevel2.getLevelTaskCrud().createDbChild();
+        dbSimLevelTask3.setDbTutorialConfig(tut3);
+        dbSimLevelTask3.setXp(3);
 
         userGuidanceService.getCrudQuestHub().updateDbChild(startQuestHub);
         TEST_LEVEL_2_REAL_ID = dbLevel1.getId();
+        TEST_LEVEL_TASK_1_2_REAL_ID = dbLevelTask1.getId();
+        TEST_LEVEL_TASK_2_2_REAL_ID = dbLevelTask2.getId();
         TEST_LEVEL_3_REAL_ID = dbLevel2.getId();
+        TEST_LEVEL_TASK_1_3_REAL_ID = dbLevelTask3.getId();
+        TEST_LEVEL_TASK_2_3_REAL_ID = dbLevelTask4.getId();
+        TEST_LEVEL_TASK_3_3_SIM_ID = dbSimLevelTask2.getId();
+        TEST_LEVEL_TASK_4_3_SIM_ID = dbSimLevelTask3.getId();
+
         userGuidanceService.activateLevels();
     }
 
@@ -1108,7 +1133,7 @@ abstract public class AbstractServiceTest {
         return dbTutorialConfig;
     }
 
-    private void setupCreateLevelTask1RealGameLevel(DbLevel dbLevel) {
+    private DbLevelTask setupCreateLevelTask1RealGameLevel(DbLevel dbLevel) {
         DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().createDbChild();
         // Rewards
         dbLevelTask.setMoney(10);
@@ -1120,10 +1145,41 @@ abstract public class AbstractServiceTest {
         dbCountComparisonConfig.setCount(3);
         dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
         dbLevelTask.setDbConditionConfig(dbConditionConfig);
+        return dbLevelTask;
+    }
+
+    private DbLevelTask setupCreateLevelTask3RealGameLevel(DbLevel dbLevel) {
+        DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().createDbChild();
+        // Rewards
+        dbLevelTask.setMoney(10);
+        dbLevelTask.setXp(100);
+        // Condition
+        DbConditionConfig dbConditionConfig = new DbConditionConfig();
+        dbConditionConfig.setConditionTrigger(ConditionTrigger.MONEY_INCREASED);
+        DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
+        dbCountComparisonConfig.setCount(200);
+        dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
+        dbLevelTask.setDbConditionConfig(dbConditionConfig);
+        return dbLevelTask;
+    }
+
+    private DbLevelTask setupCreateLevelTask4RealGameLevel(DbLevel dbLevel) {
+        DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().createDbChild();
+        // Rewards
+        dbLevelTask.setMoney(10);
+        dbLevelTask.setXp(100);
+        // Condition
+        DbConditionConfig dbConditionConfig = new DbConditionConfig();
+        dbConditionConfig.setConditionTrigger(ConditionTrigger.MONEY_INCREASED);
+        DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
+        dbCountComparisonConfig.setCount(300);
+        dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
+        dbLevelTask.setDbConditionConfig(dbConditionConfig);
+        return dbLevelTask;
     }
 
 
-    private void setupCreateLevelTask2RealGameLevel(DbLevel dbLevel) {
+    private DbLevelTask setupCreateLevelTask2RealGameLevel(DbLevel dbLevel) {
         DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().createDbChild();
         // Rewards
         dbLevelTask.setMoney(80);
@@ -1135,6 +1191,7 @@ abstract public class AbstractServiceTest {
         dbCountComparisonConfig.setCount(2);
         dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
         dbLevelTask.setDbConditionConfig(dbConditionConfig);
+        return dbLevelTask;
     }
 
     // ------------------- Setup minimal bot --------------------
@@ -1394,6 +1451,14 @@ abstract public class AbstractServiceTest {
 
 
     // ------------------- Div --------------------
+
+    protected Services createMockServices() {
+        Services services = EasyMock.createNiceMock(Services.class);
+        AbstractTerrainService terrainService = EasyMock.createNiceMock(AbstractTerrainService.class);
+        EasyMock.expect(services.getTerrainService()).andReturn(terrainService);
+        EasyMock.replay(services);
+        return services;
+    }
 
     public static void setPrivateField(Class clazz, Object object, String fieldName, Object value) throws Exception {
         if (AopUtils.isJdkDynamicProxy(object)) {

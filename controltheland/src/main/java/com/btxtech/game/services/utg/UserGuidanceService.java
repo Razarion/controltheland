@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
+import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.user.UserState;
 
@@ -57,4 +58,9 @@ public interface UserGuidanceService extends CommonUserGuidanceService {
     CrudRootServiceHelper<DbQuestHub> getCrudQuestHub();
 
     void onRemoveUserState(UserState userState);
+
+    ContentProvider<LevelQuest> getQuestsCms();
+
+    ContentProvider<LevelQuest> getMercenaryMissionCms();
+
 }
