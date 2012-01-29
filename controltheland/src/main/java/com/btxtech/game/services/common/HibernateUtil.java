@@ -17,6 +17,17 @@ import java.util.List;
  * Time: 14:42:02
  */
 public class HibernateUtil {
+    public static Object deproxy(Object maybeProxy) throws ClassCastException {
+        if (maybeProxy == null) {
+            return null;
+        }
+        if (maybeProxy instanceof HibernateProxy) {
+            return ((HibernateProxy) maybeProxy).getHibernateLazyInitializer().getImplementation();
+        } else {
+            return maybeProxy;
+        }
+    }
+
     public static <T> T deproxy(Object maybeProxy, Class<T> baseClass) throws ClassCastException {
         if (maybeProxy == null) {
             return null;

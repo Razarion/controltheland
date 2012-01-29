@@ -19,6 +19,7 @@ import com.btxtech.game.services.user.UserService;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -38,7 +39,7 @@ public class DbItemTypeLimitation implements CrudChild<DbLevel> {
     private DbBaseItemType dbBaseItemType;
     @Column(name = "theCount")
     private int count;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private DbLevel dbLevel;
 
     public DbItemTypeLimitation() {

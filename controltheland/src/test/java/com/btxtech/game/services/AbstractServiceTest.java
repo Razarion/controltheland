@@ -1269,6 +1269,7 @@ abstract public class AbstractServiceTest {
     }
 
     private void endOpenSessionInViewFilter() {
+        sessionFactory.getCurrentSession().clear();
         HibernateUtil.closeSession4InternalCall(sessionFactory);
     }
 

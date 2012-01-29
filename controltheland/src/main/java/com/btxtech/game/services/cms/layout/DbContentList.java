@@ -79,13 +79,18 @@ public class DbContentList extends DbContent implements DataProviderInfo, CrudPa
         this.springBeanName = springBeanName;
     }
 
-    public DbContentBook getDbPropertyBook(String className) {
+    public DbContentBook getDbPropertyBook(Class theClass) {
         for (DbContentBook dbContentBook : dbContentBooks) {
-            if (dbContentBook.getClassName().equals(className)) {
-                return dbContentBook;
+            try {
+                Class contentBookClass = Class.forName(dbContentBook.getClassName());
+                if (contentBookClass.isAssignableFrom(contentBookClass)) {
+                    return dbContentBook;
+                }
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
-        throw new IllegalArgumentException("No DbContentBook for: " + className);
+        throw new IllegalArgumentException("No DbContentBook for: " + theClass.getName());
     }
 
     public void setRowsPerPage(Integer rowsPerPage) {

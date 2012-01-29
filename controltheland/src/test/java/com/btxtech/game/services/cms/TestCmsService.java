@@ -54,6 +54,7 @@ import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.XpService;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
@@ -70,6 +71,7 @@ import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.easymock.EasyMock;
+import org.hibernate.proxy.HibernateProxy;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -1733,7 +1735,7 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertVisible("form:content:table:rows:1:cells:2:cell:link");
         tester.assertLabel("form:content:table:rows:2:cells:1:cell", "TEST_QUEST_HUB_2");
         tester.assertVisible("form:content:table:rows:2:cells:2:cell:link");
-        // Click first link
+        // Click first link (RealGame Level)
         tester.clickLink("form:content:table:rows:2:cells:2:cell:link");
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TEST_QUEST_HUB_2");
         tester.assertLabel("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:1:cell", "TEST_LEVEL_2_REAL");
@@ -1759,6 +1761,27 @@ public class TestCmsService extends AbstractServiceTest {
         // unpredictable order tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:3:cells:1:cell", "TestContainerItem");
         tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:3:cells:2:cell", "10");
         tester.assertVisible("form:content:table:rows:3:cells:2:cell:table:rows:3:cells:3:cell:image");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Test that a hibernate proxy as a ContentBook also works
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // Go to start again
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        DbLevel dbLevel = userGuidanceService.getDbLevel(); // User level is now in UserState (HTTP session)
+        Assert.assertFalse(dbLevel.getDbQuestHub() instanceof HibernateProxy);
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbLevel = userGuidanceService.getDbLevel(); // User level is just be read from DB
+        Assert.assertTrue(dbLevel.getDbQuestHub() instanceof HibernateProxy);
+        // Click first link (First Quest. This DBQuestHub is now in the Hibernate-Session as Hibernate-Proxy object)
+        tester.clickLink("form:content:table:rows:1:cells:2:cell:link");
+        tester.debugComponentTrees();
+        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TEST_QUEST_HUB_1");
+        tester.assertLabel("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:1:cell", "TEST_LEVEL_1_SIMULATED");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -2242,10 +2265,8 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpSession();
     }
 
-    // @Test
-    // @DirtiesContext
-    // TODO 
-
+    @Test
+    @DirtiesContext
     public void testLevelSectionLink() throws Exception {
         configureRealGame();
 

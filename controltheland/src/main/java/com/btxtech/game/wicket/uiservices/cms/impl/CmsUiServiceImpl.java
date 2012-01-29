@@ -274,14 +274,14 @@ public class CmsUiServiceImpl implements CmsUiService {
             beanIdPathElement = createBeanIdPathElement(pageParameters, dbContent, beanIdPathElement);
             beanIdPathElement.setChildDetailPage(true);
             Object bean = getDataProviderBean(beanIdPathElement);
-            dbContent = ((DbContentList) dbContent).getDbPropertyBook(bean.getClass().getName());
+            dbContent = ((DbContentList) dbContent).getDbPropertyBook(bean.getClass());
         } else if (pageParameters.containsKey(CmsUtil.SECTION_ID)) {
             String section = pageParameters.getString(CmsUtil.SECTION_ID);
             CmsSectionInfo cmsSectionInfo = cmsService.getCmsSectionInfo(section);
             DbContentList dbContentList = cmsSectionInfo.getDbContentList();
             beanIdPathElement = createBeanIdPathElement(pageParameters, dbContentList, beanIdPathElement);
             Object bean = getDataProviderBean(beanIdPathElement);
-            dbContent = dbContentList.getDbPropertyBook(bean.getClass().getName());
+            dbContent = dbContentList.getDbPropertyBook(bean.getClass());
             beanIdPathElement.setChildDetailPage(true);
         } else if (pageParameters.containsKey(CmsPage.CREATE_CONTENT_ID)) {
             dbContent = cmsService.getDbContent(pageParameters.getInt(CmsPage.CREATE_CONTENT_ID));
@@ -437,8 +437,8 @@ public class CmsUiServiceImpl implements CmsUiService {
                             component = new SectionLink(id, stringValue, cmsService.getCmsSectionInfo4Class(bean.getClass()), dbExpressionProperty, bean);
                         } else {
                             String expression = beanIdPathElement.getExpression();
-                            if(expression.contains(NESTED_PROPERTY)) {
-                               expression = expression.substring(0, expression.lastIndexOf(NESTED_PROPERTY));
+                            if (expression.contains(NESTED_PROPERTY)) {
+                                expression = expression.substring(0, expression.lastIndexOf(NESTED_PROPERTY));
                             }
                             bean = getValue(beanIdPathElement.getSpringBeanName(), expression);
                             component = new SectionLink(id, stringValue, cmsService.getCmsSectionInfo4Class(bean.getClass()), dbExpressionProperty, bean);
