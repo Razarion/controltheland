@@ -34,4 +34,6 @@ public interface ServerConditionService extends ConditionService<UserState, Inte
     void onTutorialFinished(UserState userState, int taskId);
 
     void onIncreaseXp(UserState userState, int xp);
+
+    boolean hasConditionTrigger(UserState actor, int identifier);
 }

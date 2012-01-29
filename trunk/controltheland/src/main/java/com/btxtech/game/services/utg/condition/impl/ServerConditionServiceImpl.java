@@ -132,6 +132,20 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
     }
 
     @Override
+    public boolean hasConditionTrigger(UserState actor, int identifier) {
+        Collection<AbstractConditionTrigger<UserState, Integer>> conditions = triggerMap.get(actor);
+        if (conditions == null) {
+            return false;
+        }
+        for (AbstractConditionTrigger<UserState, Integer> condition : conditions) {
+            if (condition.getIdentifier() != null && condition.getIdentifier() == identifier) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     protected UserState getActor(SimpleBase actorBase) {
         if (actorBase != null) {
             return baseService.getUserState(actorBase);

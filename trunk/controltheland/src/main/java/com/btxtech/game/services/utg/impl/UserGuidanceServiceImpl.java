@@ -23,8 +23,10 @@ import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
+import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ItemService;
@@ -36,6 +38,7 @@ import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.DbQuestHub;
 import com.btxtech.game.services.utg.LevelActivationException;
+import com.btxtech.game.services.utg.LevelQuest;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.XpService;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
@@ -232,6 +235,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
 
     private void handleLevelTaskCompletion(UserState userState, int levelTaskId) {
         DbLevelTask dbLevelTask = (DbLevelTask) sessionFactory.getCurrentSession().get(DbLevelTask.class, levelTaskId);
+        log.debug("Level Task completed. userState: " + userState + " " + dbLevelTask);
         historyService.addLevelTaskCompletedEntry(userState, dbLevelTask);
         if (dbLevelTask.getXp() > 0) {
             xpService.onReward(userState, dbLevelTask.getXp());
@@ -351,42 +355,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         return dbLevel.getFirstTutorialLevelTask().getId();
     }
 
-//    @Override
-//    @Transactional
-//    @Deprecated
-//    // Use CRUD
-//    public void updateDbConditionConfig(DbConditionConfig dbConditionConfig) {
-//        sessionFactory.getCurrentSession().saveOrUpdate(dbConditionConfig);
-//    }
-
-//    @Override
-//    @Transactional
-//    @Deprecated
-//    // Use CRUD
-//    public void createDbComparisonItemCount(DbSyncItemTypeComparisonConfig dbSyncItemTypeComparisonConfigId) {
-//        dbSyncItemTypeComparisonConfigId.getCrudDbComparisonItemCount().createDbChild();
-//        sessionFactory.getCurrentSession().save(dbSyncItemTypeComparisonConfigId);
-//    }
-
-//    @Override
-//    @Transactional
-//    @Deprecated
-//    // Use CRUD
-//    public void createDbItemTypeLimitation(DbLevel dbLevel) {
-//        dbLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
-//        sessionFactory.getCurrentSession().update(dbLevel);
-//    }
-
-//    @Override
-//    public DbAbstractComparisonConfig getDbAbstractComparisonConfig(int dbAbstractComparisonConfigId) {
-//        return HibernateUtil.get(sessionFactory, DbAbstractComparisonConfig.class, dbAbstractComparisonConfigId);
-//    }
-
-//    @Override
-//    public DbSyncItemTypeComparisonConfig getDbSyncItemTypeComparisonConfig(int dbSyncItemTypeComparisonConfigId) {
-//        return HibernateUtil.get(sessionFactory, DbSyncItemTypeComparisonConfig.class, dbSyncItemTypeComparisonConfigId);
-//    }
-
     @Override
     public void activateLevels() throws LevelActivationException {
         levelScopes.clear();
@@ -407,4 +375,29 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     public CrudRootServiceHelper<DbQuestHub> getCrudQuestHub() {
         return crudQuestHub;
     }
+
+    @Override
+    public ContentProvider<LevelQuest> getQuestsCms() {
+        List<LevelQuest> levelQuests = new ArrayList<LevelQuest>();
+        UserState userState = userService.getUserState();
+        for (DbLevelTask dbLevelTask : getDbLevel().getLevelTaskCrud().readDbChildren()) {
+            if (dbLevelTask.getDbTutorialConfig() == null) {
+                levelQuests.add(new LevelQuest(dbLevelTask, !serverConditionService.hasConditionTrigger(userState, dbLevelTask.getId())));
+            }
+        }
+        return new ReadonlyListContentProvider<LevelQuest>(levelQuests);
+    }
+
+    @Override
+    public ContentProvider<LevelQuest> getMercenaryMissionCms() {
+        List<LevelQuest> levelQuests = new ArrayList<LevelQuest>();
+        UserState userState = userService.getUserState();
+        for (DbLevelTask dbLevelTask : getDbLevel().getLevelTaskCrud().readDbChildren()) {
+            if (dbLevelTask.getDbTutorialConfig() != null) {
+                levelQuests.add(new LevelQuest(dbLevelTask, !serverConditionService.hasConditionTrigger(userState, dbLevelTask.getId())));
+            }
+        }
+        return new ReadonlyListContentProvider<LevelQuest>(levelQuests);
+    }
+
 }
