@@ -135,6 +135,11 @@ public class DbMenuItem implements CrudChild<DbMenu> {
     }
 
     @Override
+    public DbMenu getParent() {
+        return dbMenu;
+    }
+
+    @Override
     public Integer getId() {
         return id;
     }

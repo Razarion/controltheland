@@ -71,6 +71,11 @@ public class DbTerrainImage implements CrudChild<DbTerrainImageGroup> {
         this.parent = parent;
     }
 
+    @Override
+    public DbTerrainImageGroup getParent() {
+        return parent;
+    }
+
     public Integer getId() {
         return id;
     }

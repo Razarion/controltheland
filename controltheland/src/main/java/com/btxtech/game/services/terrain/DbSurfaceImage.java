@@ -60,7 +60,12 @@ public class DbSurfaceImage implements CrudChild, Serializable {
 
     @Override
     public void setParent(Object o) {
-        // Ignore
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object getParent() {
+        return null;
     }
 
     public Integer getId() {

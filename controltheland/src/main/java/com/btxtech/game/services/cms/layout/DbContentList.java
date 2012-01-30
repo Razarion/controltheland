@@ -83,7 +83,7 @@ public class DbContentList extends DbContent implements DataProviderInfo, CrudPa
         for (DbContentBook dbContentBook : dbContentBooks) {
             try {
                 Class contentBookClass = Class.forName(dbContentBook.getClassName());
-                if (contentBookClass.isAssignableFrom(contentBookClass)) {
+                if (contentBookClass.isAssignableFrom(theClass)) {
                     return dbContentBook;
                 }
             } catch (ClassNotFoundException e) {

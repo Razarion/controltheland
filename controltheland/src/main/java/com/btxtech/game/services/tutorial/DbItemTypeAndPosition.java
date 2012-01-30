@@ -103,6 +103,11 @@ public class DbItemTypeAndPosition implements CrudChild<DbTaskConfig> {
         dbTaskConfig = crudParent;
     }
 
+    @Override
+    public DbTaskConfig getParent() {
+        return dbTaskConfig;
+    }
+
     public Integer getId() {
         return id;
     }

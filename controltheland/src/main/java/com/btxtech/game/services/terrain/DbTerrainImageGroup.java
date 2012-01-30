@@ -74,6 +74,12 @@ public class DbTerrainImageGroup implements CrudChild, CrudParent {
 
     @Override
     public void setParent(Object o) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object getParent() {
+        return null;
     }
 
     @Override

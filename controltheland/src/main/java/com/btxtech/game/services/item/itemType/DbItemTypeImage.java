@@ -49,6 +49,11 @@ public class DbItemTypeImage implements Serializable, CrudChild<DbItemType> {
     }
 
     @Override
+    public DbItemType getParent() {
+        return itemType;
+    }
+
+    @Override
     public Integer getId() {
         return id;
     }

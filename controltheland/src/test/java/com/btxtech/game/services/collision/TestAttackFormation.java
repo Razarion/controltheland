@@ -218,7 +218,7 @@ public class TestAttackFormation extends AbstractServiceTest {
 
     @DirtiesContext
     public void testAttackFormationNoBlockingObject__TMP() throws Throwable {
-        configureMinimalGame();
+        // TODO configureMinimalGame();
 
         ItemType targetItemType = itemService.getItemType(TEST_SIMPLE_BUILDING_ID);
         targetItemType.setBoundingBox(new BoundingBox(100, 100, 200, 80, ANGELS_24));
@@ -280,11 +280,11 @@ public class TestAttackFormation extends AbstractServiceTest {
         debugService.waitForClose();
     }
 
-    // @Test
+    // TODO @Test
 
     @DirtiesContext
     public void testAttackFormationNoBlockingObject__TMP_smallRange() throws Throwable {
-        configureMinimalGame();
+        // TODO configureMinimalGame();
 
         ItemType targetItemType = itemService.getItemType(TEST_SIMPLE_BUILDING_ID);
         targetItemType.setBoundingBox(new BoundingBox(100, 100, 80, 80, ANGELS_24));

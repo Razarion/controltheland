@@ -163,7 +163,12 @@ public class DbBotConfig implements CrudChild, CrudParent {
 
     @Override
     public void setParent(Object o) {
-        // Ignore
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object getParent() {
+        return null;
     }
 
     public CrudChildServiceHelper<DbBotItemConfig> getBotItemCrud() {

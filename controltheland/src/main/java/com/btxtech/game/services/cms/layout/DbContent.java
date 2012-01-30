@@ -65,6 +65,7 @@ public abstract class DbContent implements CrudChild<DbContent> {
         this.parent = parent;
     }
 
+    @Override
     public DbContent getParent() {
         return parent;
     }

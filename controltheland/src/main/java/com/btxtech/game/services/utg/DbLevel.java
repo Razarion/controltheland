@@ -131,7 +131,8 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
         return id;
     }
 
-    public DbQuestHub getDbQuestHub() {
+    @Override
+    public DbQuestHub getParent() {
         return dbQuestHub;
     }
 

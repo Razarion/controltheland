@@ -122,7 +122,8 @@ public class DbTerrainImagePosition implements Serializable, CrudChild<DbTerrain
         this.dbTerrainSetting = dbTerrainSetting;
     }
 
-    public DbTerrainSetting getDbTerrainSetting() {
+    @Override
+    public DbTerrainSetting getParent() {
         return dbTerrainSetting;
     }
 }

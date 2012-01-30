@@ -107,7 +107,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     @Override
     public void createBaseInQuestHub(UserState userState) {
         DbLevel dbLevel = getDbLevel(userState);
-        DbQuestHub dbQuestHub = dbLevel.getDbQuestHub();
+        DbQuestHub dbQuestHub = dbLevel.getParent();
         if (!dbQuestHub.isRealBaseRequired()) {
             throw new IllegalStateException("QuestHub does not allow to start new base: " + dbQuestHub);
         }
@@ -149,7 +149,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         statisticsService.onLevelPromotion(userState);
         log.debug("User: " + userState + " has been promoted: " + dbOldLevel + " to " + dbNextLevel);
 
-        if (baseService.getBase(userState) == null && dbNextLevel.getDbQuestHub().isRealBaseRequired()) {
+        if (baseService.getBase(userState) == null && dbNextLevel.getParent().isRealBaseRequired()) {
             createBaseInQuestHub(userState);
         }
 
@@ -196,9 +196,9 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         serverConditionService.onTutorialFinished(userState, levelTaskId);
         DbLevel newLevel = getDbLevel();
 
-        if (!oldLevel.getDbQuestHub().isRealBaseRequired() && newLevel.getDbQuestHub().isRealBaseRequired()) {
+        if (!oldLevel.getParent().isRealBaseRequired() && newLevel.getParent().isRealBaseRequired()) {
             return new GameFlow(GameFlow.Type.START_REAL_GAME, null);
-        } else if (!newLevel.getDbQuestHub().isRealBaseRequired()) {
+        } else if (!newLevel.getParent().isRealBaseRequired()) {
             DbLevelTask dbLevelTask = newLevel.getFirstTutorialLevelTask();
             return new GameFlow(GameFlow.Type.START_NEXT_LEVEL_TASK_TUTORIAL, dbLevelTask.getId());
         } else {
@@ -273,7 +273,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
 //    }
 
     private DbLevel getNextDbLevel(DbLevel dbLevel) {
-        DbQuestHub dbQuestHub = dbLevel.getDbQuestHub();
+        DbQuestHub dbQuestHub = dbLevel.getParent();
         List<DbLevel> dbLevels = dbQuestHub.getLevelCrud().readDbChildren();
         int index = dbLevels.indexOf(dbLevel);
         if (index < 0) {
@@ -343,13 +343,13 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
 
     @Override
     public boolean isStartRealGame() {
-        return getDbLevel().getDbQuestHub().isRealBaseRequired();
+        return getDbLevel().getParent().isRealBaseRequired();
     }
 
     @Override
     public int getDefaultLevelTaskId() {
         DbLevel dbLevel = getDbLevel();
-        if (dbLevel.getDbQuestHub().isRealBaseRequired()) {
+        if (dbLevel.getParent().isRealBaseRequired()) {
             throw new IllegalArgumentException("If real game is required, no default tutorial LevelTask is is available");
         }
         return dbLevel.getFirstTutorialLevelTask().getId();

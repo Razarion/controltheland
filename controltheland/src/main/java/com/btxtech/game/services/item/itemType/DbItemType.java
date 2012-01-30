@@ -36,7 +36,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -221,6 +220,12 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
 
     @Override
     public void setParent(Object o) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object getParent() {
+        return null;
     }
 
     public CrudChildServiceHelper<DbItemTypeImage> getItemTypeImageCrud() {

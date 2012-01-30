@@ -125,6 +125,11 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         dbTutorialConfig = crudParent;
     }
 
+    @Override
+    public DbTutorialConfig getParent() {
+        return dbTutorialConfig;
+    }
+
     public void setClearGame(boolean clearGame) {
         this.clearGame = clearGame;
     }

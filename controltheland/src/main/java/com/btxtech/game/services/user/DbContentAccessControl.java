@@ -75,10 +75,6 @@ public class DbContentAccessControl implements CrudChild<User> {
         this.deleteAllowed = deleteAllowed;
     }
 
-    public User getUser() {
-        return user;
-    }
-
     @Override
     public String getName() {
         throw new UnsupportedOperationException();
@@ -96,6 +92,11 @@ public class DbContentAccessControl implements CrudChild<User> {
     @Override
     public void setParent(User user) {
         this.user = user;
+    }
+
+    @Override
+    public User getParent() {
+        return user;
     }
 
     @Override

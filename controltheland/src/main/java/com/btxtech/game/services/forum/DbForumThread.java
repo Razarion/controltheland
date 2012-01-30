@@ -106,6 +106,11 @@ public class DbForumThread implements CrudChild<DbCategory>, CrudParent {
         this.dbCategory = category;
     }
 
+    @Override
+    public DbCategory getParent() {
+        return dbCategory;
+    }
+
     public CrudListChildServiceHelper<DbPost> getPostCrud() {
         if (postCrud == null) {
             postCrud = new CrudListChildServiceHelper<DbPost>(posts, DbPost.class, this, "user", null);

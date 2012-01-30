@@ -39,13 +39,14 @@ public class DbPageAccessControl implements CrudChild<User> {
         this.dbPage = dbPage;
     }
 
-    public User getUser() {
-        return user;
-    }
-
     @Override
     public void setParent(User user) {
         this.user = user;
+    }
+
+    @Override
+    public User getParent() {
+        return user;
     }
 
     @Override

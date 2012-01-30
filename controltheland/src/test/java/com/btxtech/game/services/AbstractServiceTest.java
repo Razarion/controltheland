@@ -140,6 +140,7 @@ abstract public class AbstractServiceTest {
     protected static final String TEST_LEVEL_1_SIMULATED = "TEST_LEVEL_1_SIMULATED";
     protected static int TEST_LEVEL_1_SIMULATED_ID = -1;
     protected static int TEST_LEVEL_TASK_1_SIMULATED_ID = -1;
+    protected static String TEST_LEVEL_TASK_1_SIMULATED_NAME = "TEST_LEVEL_TASK_1_SIMULATED_NAME";
     protected static final String TEST_LEVEL_2_REAL = "TEST_LEVEL_2_REAL";
     protected static int TEST_LEVEL_2_REAL_ID = -1;
     protected static int TEST_LEVEL_TASK_1_2_REAL_ID = -1;
@@ -573,43 +574,6 @@ abstract public class AbstractServiceTest {
         endHttpSession();
     }
 
-    @Deprecated
-    protected void configureMinimalGame() throws Exception {
-        Assert.fail("DO NOT USE THIS");
-        System.out.println("---- Configure minimal Game ---");
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        // Item Types
-        createSimpleBuilding();
-        createHarvesterItemType();
-        createAttackBaseItemType();
-        createContainerBaseItemType();
-        createFactoryBaseItemType();
-        createBuilderBaseItemType();
-        finishAttackBaseItemType();
-        finishContainerBaseItemType();
-        createAttackBaseItemType2();
-        createMoney();
-        // Terrain
-        setupMinimalTerrain();
-        // Setup territory
-        setupNoobTerritory();
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        // QuestHubs
-        // setupQuestHub();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        // Xp
-        setupXpSettings();
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
     protected void configureComplexGameOneRealLevel() throws Exception {
         System.out.println("---- Configure complex Game ---");
         beginHttpSession();
@@ -1021,6 +985,7 @@ abstract public class AbstractServiceTest {
         dbSimLevel.setName(TEST_LEVEL_1_SIMULATED);
         DbLevelTask dbSimLevelTask = dbSimLevel.getLevelTaskCrud().createDbChild();
         dbSimLevelTask.setDbTutorialConfig(tut1);
+        dbSimLevelTask.setName(TEST_LEVEL_TASK_1_SIMULATED_NAME);
         dbSimLevelTask.setXp(1);
         userGuidanceService.getCrudQuestHub().updateDbChild(startQuestHub);
         TEST_LEVEL_1_SIMULATED_ID = dbSimLevel.getId();

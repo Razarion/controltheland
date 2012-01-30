@@ -104,6 +104,11 @@ public class DbBotItemConfig implements CrudChild<DbBotConfig>, Serializable {
         this.parent = parent;
     }
 
+    @Override
+    public DbBotConfig getParent() {
+        return parent;
+    }
+
     public boolean isCreateDirectly() {
         return createDirectly;
     }

@@ -52,6 +52,11 @@ public class DbTaskBot implements CrudChild<DbTaskConfig> {
         this.dbTaskConfig = dbTaskConfig;
     }
 
+    @Override
+    public DbTaskConfig getParent() {
+        return dbTaskConfig;
+    }
+
     public DbBotConfig getDbBotConfig() {
         return dbBotConfig;
     }
