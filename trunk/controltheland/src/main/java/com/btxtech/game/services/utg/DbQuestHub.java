@@ -74,7 +74,12 @@ public class DbQuestHub implements CrudChild, CrudParent {
 
     @Override
     public void setParent(Object o) {
-        // No Parent
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object getParent() {
+        return null;
     }
 
     public boolean isRealBaseRequired() {

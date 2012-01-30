@@ -24,7 +24,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -94,6 +93,11 @@ public class DbCategory implements CrudChild<DbSubForum>, CrudParent {
     @Override
     public void setParent(DbSubForum subForum) {
         this.dbSubForum = subForum;
+    }
+
+    @Override
+    public DbSubForum getParent() {
+        return dbSubForum;
     }
 
     public CrudListChildServiceHelper<DbForumThread> getForumThreadCrud() {

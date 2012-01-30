@@ -490,7 +490,9 @@ public class TestCmsService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testBottomMenu() {
+    public void testBottomMenu() throws Exception {
+        configureRealGame();
+
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
@@ -527,6 +529,7 @@ public class TestCmsService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.getDbLevel(); // Set level for new user
         tester.startPage(CmsPage.class);
         tester.assertLabel("menu:bottom:link:label", "Hallo Galli");
         tester.assertInvisible("menu:bottom:link:image");
@@ -1771,12 +1774,12 @@ public class TestCmsService extends AbstractServiceTest {
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
         DbLevel dbLevel = userGuidanceService.getDbLevel(); // User level is now in UserState (HTTP session)
-        Assert.assertFalse(dbLevel.getDbQuestHub() instanceof HibernateProxy);
+        Assert.assertFalse(dbLevel.getParent() instanceof HibernateProxy);
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
         dbLevel = userGuidanceService.getDbLevel(); // User level is just be read from DB
-        Assert.assertTrue(dbLevel.getDbQuestHub() instanceof HibernateProxy);
+        Assert.assertTrue(dbLevel.getParent() instanceof HibernateProxy);
         // Click first link (First Quest. This DBQuestHub is now in the Hibernate-Session as Hibernate-Proxy object)
         tester.clickLink("form:content:table:rows:1:cells:2:cell:link");
         tester.debugComponentTrees();
@@ -2038,8 +2041,8 @@ public class TestCmsService extends AbstractServiceTest {
         // Go back to table and click the resource item type
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
-        tester.clickLink("form:content:table:rows:8:cells:2:cell:link");
         tester.debugComponentTrees();
+        tester.clickLink("form:content:table:rows:8:cells:2:cell:link");
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TestResourceItem");
         tester.assertLabel("form:content:table:rows:2:cells:2:cell", "3");
 
@@ -2274,25 +2277,54 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+
+        // Setup Home
         DbPage dbPage = pageCrud.createDbChild();
         dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage.setName("Home");
-
         DbExpressionProperty dbExpressionProperty = new DbExpressionProperty();
         dbExpressionProperty.init(userService);
         dbPage.setContentAndAccessWrites(dbExpressionProperty);
         dbExpressionProperty.setSpringBeanName("userGuidanceService");
-        dbExpressionProperty.setExpression("dbAbstractLevelCms.name");
+        dbExpressionProperty.setExpression("dbLevelCms.name");
         dbExpressionProperty.setLink(true);
         pageCrud.updateDbChild(dbPage);
 
         // Setup the level page
         DbPage dbLevelPage = pageCrud.createDbChild();
         dbLevelPage.setName("Level");
-        DbContentBook dbContentBook = new DbContentBook();
-        dbContentBook.init(userService);
-        dbContentBook.setClassName("com.btxtech.game.services.utg.DbSimulationLevel");
-        dbLevelPage.setContentAndAccessWrites(dbContentBook);
+
+        DbContentList dbContentList = new DbContentList();
+        dbContentList.init(userService);
+        dbLevelPage.setContentAndAccessWrites(dbContentList);
+        dbContentList.setSpringBeanName("userGuidanceService");
+        dbContentList.setContentProviderGetter("crudQuestHub");
+        dbLevelPage.setContentAndAccessWrites(dbContentList);
+
+        CrudChildServiceHelper<DbContentBook> contentBookCrud = dbContentList.getContentBookCrud();
+        DbContentBook dbContentBook = contentBookCrud.createDbChild();
+        dbContentBook.setClassName("com.btxtech.game.services.utg.DbQuestHub");
+        CrudListChildServiceHelper<DbContentRow> rowCrud = dbContentBook.getRowCrud();
+
+        DbContentRow dbLevelRow = rowCrud.createDbChild();
+        DbContentList levelContentList = new DbContentList();
+        levelContentList.setRowsPerPage(5);
+        dbLevelRow.setDbContent(levelContentList);
+        levelContentList.init(userService);
+        levelContentList.setParent(dbLevelRow);
+        levelContentList.setContentProviderGetter("levelCrud");
+
+        dbContentBook = levelContentList.getContentBookCrud().createDbChild();
+        dbContentBook.setClassName("com.btxtech.game.services.utg.DbLevel");
+        rowCrud = dbContentBook.getRowCrud();
+
+        DbContentRow dbContentRow = rowCrud.createDbChild();
+        dbContentRow.setName("Name");
+        DbExpressionProperty expProperty = new DbExpressionProperty();
+        expProperty.setParent(dbContentRow);
+        expProperty.setExpression("name");
+        expProperty.setEscapeMarkup(false);
+        dbContentRow.setDbContent(expProperty);
         pageCrud.updateDbChild(dbLevelPage);
 
         endHttpRequestAndOpenSessionInViewFilter();
@@ -2316,7 +2348,110 @@ public class TestCmsService extends AbstractServiceTest {
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
         tester.assertLabel("form:content:link:label", "TEST_LEVEL_2_REAL");
+        // Click Link
+        tester.clickLink("form:content:link");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell", "Name");
+        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TEST_LEVEL_2_REAL");
 
+        tester.debugComponentTrees();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testTaskLevelSectionLink() throws Exception {
+        configureGameMultipleLevel();
+
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+
+        // Setup Home
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        DbContentList taskList = new DbContentList();
+        taskList.init(userService);
+        dbPage.setContentAndAccessWrites(taskList);
+        taskList.setSpringBeanName("userGuidanceService");
+        taskList.setContentProviderGetter("mercenaryMissionCms");
+        DbExpressionProperty dbExpressionProperty = (DbExpressionProperty) taskList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
+        dbExpressionProperty.setExpression("dbLevelTask.name");
+        dbExpressionProperty.setLink(true);
+        pageCrud.updateDbChild(dbPage);
+
+        // Setup the level page
+        DbPage dbLevelPage = pageCrud.createDbChild();
+        dbLevelPage.setName("Level");
+
+        DbContentList dbContentList = new DbContentList();
+        dbContentList.init(userService);
+        dbLevelPage.setContentAndAccessWrites(dbContentList);
+        dbContentList.setSpringBeanName("userGuidanceService");
+        dbContentList.setContentProviderGetter("crudQuestHub");
+        dbLevelPage.setContentAndAccessWrites(dbContentList);
+
+        CrudChildServiceHelper<DbContentBook> contentBookCrud = dbContentList.getContentBookCrud();
+        DbContentBook dbContentBook = contentBookCrud.createDbChild();
+        dbContentBook.setClassName("com.btxtech.game.services.utg.DbQuestHub");
+        CrudListChildServiceHelper<DbContentRow> rowCrud = dbContentBook.getRowCrud();
+
+        DbContentRow dbLevelRow = rowCrud.createDbChild();
+        DbContentList levelContentList = new DbContentList();
+        levelContentList.setRowsPerPage(5);
+        dbLevelRow.setDbContent(levelContentList);
+        levelContentList.init(userService);
+        levelContentList.setParent(dbLevelRow);
+        levelContentList.setContentProviderGetter("levelCrud");
+
+        dbContentBook = levelContentList.getContentBookCrud().createDbChild();
+        dbContentBook.setClassName("com.btxtech.game.services.utg.DbLevel");
+        rowCrud = dbContentBook.getRowCrud();
+
+        DbContentRow dbTaskRow = rowCrud.createDbChild();
+        DbContentList taskContentList = new DbContentList();
+        dbTaskRow.setDbContent(taskContentList);
+        taskContentList.init(userService);
+        taskContentList.setParent(dbTaskRow);
+        taskContentList.setContentProviderGetter("levelTaskCrud");
+
+        dbContentBook = taskContentList.getContentBookCrud().createDbChild();
+        dbContentBook.setClassName("com.btxtech.game.services.utg.DbLevelTask");
+        rowCrud = dbContentBook.getRowCrud();
+
+        DbContentRow dbContentRow = rowCrud.createDbChild();
+        dbContentRow.setName("Name");
+        DbExpressionProperty expProperty = new DbExpressionProperty();
+        expProperty.setParent(dbContentRow);
+        expProperty.setExpression("name");
+        expProperty.setEscapeMarkup(false);
+        dbContentRow.setDbContent(expProperty);
+
+        pageCrud.updateDbChild(dbLevelPage);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.getDbLevel(); // set level for new user
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell:link:label", "TEST_LEVEL_TASK_1_SIMULATED_NAME");
+        // Click Link
+        tester.clickLink("form:content:table:rows:1:cells:1:cell:link");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell", "Name");
+        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TEST_LEVEL_TASK_1_SIMULATED_NAME");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

@@ -69,6 +69,11 @@ public class DbStepConfig implements CrudParent, CrudChild<DbTaskConfig> {
         dbTaskConfig = crudParent;
     }
 
+    @Override
+    public DbTaskConfig getParent() {
+        return dbTaskConfig;
+    }
+
     public DbConditionConfig getConditionConfig() {
         return conditionConfig;
     }

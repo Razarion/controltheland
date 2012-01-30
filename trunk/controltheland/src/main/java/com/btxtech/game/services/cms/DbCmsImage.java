@@ -75,7 +75,12 @@ public class DbCmsImage implements CrudChild {
 
     @Override
     public void setParent(Object o) {
-        // Ignore
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object getParent() {
+        return null;
     }
 
     @Override

@@ -52,6 +52,12 @@ public class DbWikiSection implements CrudChild {
 
     @Override
     public void setParent(Object o) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object getParent() {
+        return null;
     }
 
     @Override

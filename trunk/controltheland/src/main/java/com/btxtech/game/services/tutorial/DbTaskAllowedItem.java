@@ -72,6 +72,11 @@ public class DbTaskAllowedItem implements CrudChild<DbTaskConfig> {
     }
 
     @Override
+    public DbTaskConfig getParent() {
+        return dbTaskConfig;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof DbTaskAllowedItem)) return false;

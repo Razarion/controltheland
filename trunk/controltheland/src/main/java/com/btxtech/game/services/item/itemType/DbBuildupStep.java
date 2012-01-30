@@ -55,6 +55,11 @@ public class DbBuildupStep implements Serializable, CrudChild<DbItemType> {
         itemType = dbItemType;
     }
 
+    @Override
+    public DbItemType getParent() {
+        return itemType;
+    }
+
     public void setBuildupStep(BuildupStep buildupStep) {
         from = buildupStep.getFrom();
         toExclusive = buildupStep.getToExclusive();

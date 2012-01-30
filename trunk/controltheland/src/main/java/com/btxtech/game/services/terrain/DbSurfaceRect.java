@@ -107,4 +107,9 @@ public class DbSurfaceRect implements CrudChild<DbTerrainSetting>, Serializable 
     public void setParent(DbTerrainSetting dbTerrainSetting) {
         this.dbTerrainSetting = dbTerrainSetting;
     }
+
+    @Override
+    public DbTerrainSetting getParent() {
+        return dbTerrainSetting;
+    }
 }

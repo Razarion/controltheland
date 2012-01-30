@@ -2,6 +2,8 @@ package com.btxtech.game.services.common;
 
 import com.btxtech.game.services.user.UserService;
 
+import java.io.Serializable;
+
 /**
  * User: beat
  * Date: 03.07.2011
@@ -26,5 +28,10 @@ public abstract class SimpleCrudChild<T> implements CrudChild<T> {
     @Override
     public void setParent(T t) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public T getParent() {
+        return null;
     }
 }

@@ -434,14 +434,18 @@ public class CmsUiServiceImpl implements CmsUiService {
                     }
                     if (dbExpressionProperty.isLink()) {
                         if (bean != null && cmsService.getCmsSectionInfo4Class(bean.getClass()) != null) {
-                            component = new SectionLink(id, stringValue, cmsService.getCmsSectionInfo4Class(bean.getClass()), dbExpressionProperty, bean);
+                            component = new SectionLink(id, stringValue, cmsService.getCmsSectionInfo4Class(bean.getClass()), dbExpressionProperty, (CrudChild) bean);
                         } else {
                             String expression = beanIdPathElement.getExpression();
                             if (expression.contains(NESTED_PROPERTY)) {
                                 expression = expression.substring(0, expression.lastIndexOf(NESTED_PROPERTY));
                             }
-                            bean = getValue(beanIdPathElement.getSpringBeanName(), expression);
-                            component = new SectionLink(id, stringValue, cmsService.getCmsSectionInfo4Class(bean.getClass()), dbExpressionProperty, bean);
+                            if (bean == null) {
+                                bean = getValue(beanIdPathElement.getSpringBeanName(), expression);
+                            } else {
+                                bean = PropertyUtils.getProperty(bean, expression);
+                            }
+                            component = new SectionLink(id, stringValue, cmsService.getCmsSectionInfo4Class(bean.getClass()), dbExpressionProperty, (CrudChild) bean);
                         }
                     } else {
                         component = new Label(id, stringValue);

@@ -73,7 +73,12 @@ public class DbPage implements CrudChild {
 
     @Override
     public void setParent(Object o) {
-        // Ignore
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object getParent() {
+        return null;
     }
 
     public DbPageStyle getStyle() {

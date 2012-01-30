@@ -33,6 +33,7 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.commons.logging.Log;
@@ -187,6 +188,8 @@ public class CmsServiceImpl implements CmsService {
                         cmsSectionInfoMap.put(CmsUtil.UNIT_SECTION, new CmsSectionInfo(DbItemType.class, HibernateUtil.deproxy(dbContentBook.getParent(), DbContentList.class), CmsUtil.UNIT_SECTION, dbPage.getId()));
                     } else if (DbLevel.class.isAssignableFrom(childClass)) {
                         cmsSectionInfoMap.put(CmsUtil.LEVEL_SECTION, new CmsSectionInfo(DbLevel.class, HibernateUtil.deproxy(dbContentBook.getParent(), DbContentList.class), CmsUtil.LEVEL_SECTION, dbPage.getId()));
+                    } else if (DbLevelTask.class.isAssignableFrom(childClass)) {
+                        cmsSectionInfoMap.put(CmsUtil.LEVEL_TASK_SECTION, new CmsSectionInfo(DbLevelTask.class, HibernateUtil.deproxy(dbContentBook.getParent(), DbContentList.class), CmsUtil.LEVEL_TASK_SECTION, dbPage.getId()));
                     }
                 } catch (ClassNotFoundException e) {
                     log.error("", e);

@@ -108,4 +108,9 @@ public class DbComparisonItemCount implements CrudChild<DbSyncItemTypeComparison
     public void setParent(DbSyncItemTypeComparisonConfig dbSyncItemTypeComparisonConfig) {
         this.dbSyncItemTypeComparisonConfig = dbSyncItemTypeComparisonConfig;
     }
+
+    @Override
+    public DbSyncItemTypeComparisonConfig getParent() {
+        return dbSyncItemTypeComparisonConfig;
+    }
 }

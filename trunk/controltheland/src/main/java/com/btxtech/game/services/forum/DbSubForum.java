@@ -70,7 +70,12 @@ public class DbSubForum implements CrudChild, CrudParent {
 
     @Override
     public void setParent(Object o) {
-        // Not used
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object getParent() {
+        return null;
     }
 
     public CrudListChildServiceHelper<DbCategory> getCategoryCrud() {

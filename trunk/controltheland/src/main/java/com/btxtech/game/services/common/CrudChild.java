@@ -31,5 +31,7 @@ public interface CrudChild<T> {
 
     void setParent(T t);
 
+    T getParent();
+
     Serializable getId();
 }

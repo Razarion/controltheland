@@ -28,6 +28,7 @@ public class CmsUtil {
     public static final String SECTION_ID = "sec";
     public static final String UNIT_SECTION = "units";
     public static final String LEVEL_SECTION = "level";
+    public static final String LEVEL_TASK_SECTION = "leveltask";
 
     /**
      * User: beat

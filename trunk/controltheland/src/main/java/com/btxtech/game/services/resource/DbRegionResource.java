@@ -105,7 +105,12 @@ public class DbRegionResource implements CrudChild {
 
     @Override
     public void setParent(Object o) {
-        // Np parent
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object getParent() {
+        return null;
     }
 
     @Override

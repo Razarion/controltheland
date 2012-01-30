@@ -106,4 +106,9 @@ public class DbItemTypeLimitation implements CrudChild<DbLevel> {
     public void setParent(DbLevel parent) {
         dbLevel = parent;
     }
+
+    @Override
+    public DbLevel getParent() {
+        return dbLevel;
+    }
 }

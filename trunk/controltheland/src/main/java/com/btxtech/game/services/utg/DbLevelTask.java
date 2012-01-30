@@ -69,6 +69,11 @@ public class DbLevelTask implements CrudChild<DbLevel> {
         dbLevel = parent;
     }
 
+    @Override
+    public DbLevel getParent() {
+        return dbLevel;
+    }
+
     public DbTutorialConfig getDbTutorialConfig() {
         return dbTutorialConfig;
     }
