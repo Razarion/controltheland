@@ -21,6 +21,7 @@ import com.btxtech.game.services.cms.layout.DbContentList;
 import com.btxtech.game.services.cms.layout.DbContentPageLink;
 import com.btxtech.game.services.cms.layout.DbContentPlugin;
 import com.btxtech.game.services.cms.layout.DbContentSmartPageLink;
+import com.btxtech.game.services.cms.layout.DbContentStartLevelTaskButton;
 import com.btxtech.game.services.cms.layout.DbContentStaticHtml;
 import com.btxtech.game.services.cms.layout.DbExpressionProperty;
 import com.btxtech.game.services.cms.page.DbPage;
@@ -52,6 +53,7 @@ import com.btxtech.game.wicket.pages.cms.content.ContentInvokerButton;
 import com.btxtech.game.wicket.pages.cms.content.ContentList;
 import com.btxtech.game.wicket.pages.cms.content.ContentPageLink;
 import com.btxtech.game.wicket.pages.cms.content.ContentSmartPageLink;
+import com.btxtech.game.wicket.pages.cms.content.ContentStartLevelTaskButton;
 import com.btxtech.game.wicket.pages.cms.content.SectionLink;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
@@ -388,6 +390,8 @@ public class CmsUiServiceImpl implements CmsUiService {
                 return new ContentInvokerButton(componentId, (DbContentInvokerButton) dbContent, beanIdPathElement);
             } else if (dbContent instanceof DbContentInvoker) {
                 return new ContentInvoker(componentId, (DbContentInvoker) dbContent, beanIdPathElement);
+            } else if (dbContent instanceof DbContentStartLevelTaskButton) {
+                return new ContentStartLevelTaskButton(componentId, (DbContentStartLevelTaskButton) dbContent, bean);
             } else {
                 log.warn("CmsUiServiceImpl: No Wicket Component for content: " + dbContent);
                 return new Label(componentId, "No content");
