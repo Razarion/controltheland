@@ -13,6 +13,7 @@ import com.btxtech.game.services.cms.layout.DbContentList;
 import com.btxtech.game.services.cms.layout.DbContentPageLink;
 import com.btxtech.game.services.cms.layout.DbContentPlugin;
 import com.btxtech.game.services.cms.layout.DbContentSmartPageLink;
+import com.btxtech.game.services.cms.layout.DbContentStartLevelTaskButton;
 import com.btxtech.game.services.cms.layout.DbContentStaticHtml;
 import com.btxtech.game.services.cms.layout.DbExpressionProperty;
 import com.btxtech.game.services.common.HibernateUtil;
@@ -118,6 +119,12 @@ public class ContentEditorFactory {
             @Override
             MgmtWebPage createContentEditor(DbContent dbContent) {
                 return new ContentInvokerButtonEditor((DbContentInvokerButton) dbContent);
+            }},
+        START_LEVEL_TASK_BUTTON(DbContentStartLevelTaskButton.class, "Start Level Task Button") {
+
+            @Override
+            MgmtWebPage createContentEditor(DbContent dbContent) {
+                return new ContentStartLevelTaskButtonEditor((DbContentStartLevelTaskButton) dbContent);
             }};
 
         private Class<? extends DbContent> createClass;

@@ -27,6 +27,7 @@ import com.btxtech.game.services.cms.layout.DbContentPageLink;
 import com.btxtech.game.services.cms.layout.DbContentPlugin;
 import com.btxtech.game.services.cms.layout.DbContentRow;
 import com.btxtech.game.services.cms.layout.DbContentSmartPageLink;
+import com.btxtech.game.services.cms.layout.DbContentStartLevelTaskButton;
 import com.btxtech.game.services.cms.layout.DbContentStaticHtml;
 import com.btxtech.game.services.cms.layout.DbExpressionProperty;
 import com.btxtech.game.services.cms.page.DbAds;
@@ -57,6 +58,7 @@ import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.XpService;
+import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.CmsStringGenerator;
 import com.btxtech.game.wicket.pages.cms.content.plugin.PluginEnum;
@@ -2452,6 +2454,101 @@ public class TestCmsService extends AbstractServiceTest {
         tester.clickLink("form:content:table:rows:1:cells:1:cell:link");
         tester.assertLabel("form:content:table:rows:1:cells:1:cell", "Name");
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TEST_LEVEL_TASK_1_SIMULATED_NAME");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testStartLevelTaskButton() throws Exception {
+        configureGameMultipleLevel();
+
+        // Add cms image
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbCmsImage> crud = cmsService.getImageCrudRootServiceHelper();
+        DbCmsImage dbCmsImage1 = crud.createDbChild();
+        dbCmsImage1.setData(new byte[50000]);
+        dbCmsImage1.setContentType("image1");
+        crud.updateDbChild(dbCmsImage1);
+        DbCmsImage dbCmsImage2 = crud.createDbChild();
+        dbCmsImage2.setData(new byte[10000]);
+        dbCmsImage2.setContentType("image2");
+        crud.updateDbChild(dbCmsImage2);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        DbContentList taskList = new DbContentList();
+        taskList.init(userService);
+        dbPage.setContentAndAccessWrites(taskList);
+        taskList.setSpringBeanName("userGuidanceService");
+        taskList.setContentProviderGetter("mercenaryMissionCms");
+        DbExpressionProperty dbExpressionProperty = (DbExpressionProperty) taskList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
+        dbExpressionProperty.setExpression("dbLevelTask.name");
+        DbContentStartLevelTaskButton taskButton = (DbContentStartLevelTaskButton) taskList.getColumnsCrud().createDbChild(DbContentStartLevelTaskButton.class);
+        taskButton.setExpression("dbLevelTask");
+        taskButton.setDoneExpression("done");
+        taskButton.setStartImage(dbCmsImage1);
+        taskButton.setDoneImage(dbCmsImage2);
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.getDbLevel(); // set level for new user
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell", "TEST_LEVEL_TASK_1_SIMULATED_NAME");
+        tester.assertVisible("form:content:table:rows:1:cells:2:cell:link:linkImage");
+        tester.assertBookmarkablePageLink("form:content:table:rows:1:cells:2:cell:link", Game.class, "taskId = 1");
+        tester.assertInvisible("form:content:table:rows:1:cells:2:cell:doneImage");
+        // go to level 3
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_3_REAL_ID);
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertVisible("form:content:table:rows:1:cells:2:cell:link:linkImage");
+        tester.assertBookmarkablePageLink("form:content:table:rows:1:cells:2:cell:link", Game.class, "taskId = 6");
+        tester.assertInvisible("form:content:table:rows:1:cells:2:cell:doneImage");
+        tester.assertVisible("form:content:table:rows:2:cells:2:cell:link:linkImage");
+        tester.assertBookmarkablePageLink("form:content:table:rows:2:cells:2:cell:link", Game.class, "taskId = 7");
+        tester.assertInvisible("form:content:table:rows:2:cells:2:cell:doneImage");
+        // Click first level task
+        tester.clickLink("form:content:table:rows:1:cells:2:cell:link");
+        tester.assertRenderedPage(Game.class);
+        tester.debugComponentTrees();
+        // Finish first tutorial
+        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_3_3_SIM_ID);
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertInvisible("form:content:table:rows:1:cells:2:cell:link");
+        tester.assertVisible("form:content:table:rows:1:cells:2:cell:doneImage");
+        tester.assertVisible("form:content:table:rows:2:cells:2:cell:link:linkImage");
+        tester.assertBookmarkablePageLink("form:content:table:rows:2:cells:2:cell:link", Game.class, "taskId = 7");
+        tester.assertInvisible("form:content:table:rows:2:cells:2:cell:doneImage");
+        // Finish second tutorial
+        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_4_3_SIM_ID);
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertInvisible("form:content:table:rows:1:cells:2:cell:link");
+        tester.assertVisible("form:content:table:rows:1:cells:2:cell:doneImage");
+        tester.assertInvisible("form:content:table:rows:2:cells:2:cell:link");
+        tester.assertVisible("form:content:table:rows:2:cells:2:cell:doneImage");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
