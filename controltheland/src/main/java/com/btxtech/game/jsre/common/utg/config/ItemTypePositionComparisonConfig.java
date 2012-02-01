@@ -17,18 +17,19 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.ItemTypePositionComparison;
-import com.btxtech.game.jsre.common.utg.condition.SyncItemIdPositionComparison;
+
+import java.util.Map;
 
 /**
  * User: beat
  * Date: 18.07.2010
  * Time: 21:06:41
  */
-@Deprecated
 public class ItemTypePositionComparisonConfig implements AbstractComparisonConfig {
     private Integer excludedTerritoryId;
-    private ItemType itemType;
+    private Map<ItemType, Integer> itemTypes;
     private Rectangle region;
+    private Integer time;
 
     /**
      * Used by GWT
@@ -36,14 +37,15 @@ public class ItemTypePositionComparisonConfig implements AbstractComparisonConfi
     public ItemTypePositionComparisonConfig() {
     }
 
-    public ItemTypePositionComparisonConfig(Integer excludedTerritoryId, ItemType itemType, Rectangle region) {
+    public ItemTypePositionComparisonConfig(Integer excludedTerritoryId, Map<ItemType, Integer> itemTypes, Rectangle region, Integer time) {
         this.excludedTerritoryId = excludedTerritoryId;
-        this.itemType = itemType;
+        this.itemTypes = itemTypes;
         this.region = region;
+        this.time = time;
     }
 
     @Override
     public AbstractComparison createAbstractComparison() {
-        return new ItemTypePositionComparison(excludedTerritoryId, itemType, region);
+        return new ItemTypePositionComparison(excludedTerritoryId, itemTypes, region, time);
     }
 }

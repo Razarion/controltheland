@@ -11,8 +11,8 @@ import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
+import com.btxtech.game.jsre.common.utg.ConditionService;
 import org.junit.Ignore;
-import org.junit.Test;
 
 /**
  * User: beat
@@ -31,6 +31,7 @@ public class TestServices implements Services {
     private AbstractTerritoryService territoryService;
     private CommonBotService botService;
     private CommonUserGuidanceService commonUserGuidanceService;
+    private ConditionService conditionService;
 
     @Override
     public ItemService getItemService() {
@@ -81,7 +82,12 @@ public class TestServices implements Services {
     public CommonUserGuidanceService getCommonUserGuidanceService() {
         return commonUserGuidanceService;
     }
-    
+
+    @Override
+    public ConditionService getConditionService() {
+        return conditionService;
+    }
+
     public void setItemService(ItemService itemService) {
         this.itemService = itemService;
     }
@@ -120,5 +126,9 @@ public class TestServices implements Services {
 
     public void setCommonUserGuidanceService(CommonUserGuidanceService commonUserGuidanceService) {
         this.commonUserGuidanceService = commonUserGuidanceService;
+    }
+
+    public void setConditionService(ConditionService conditionService) {
+        this.conditionService = conditionService;
     }
 }

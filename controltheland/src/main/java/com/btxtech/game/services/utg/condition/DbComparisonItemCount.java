@@ -32,12 +32,14 @@ import java.io.Serializable;
  * Time: 11:40:42
  */
 @Entity(name = "GUIDANCE_COMPARISON_ITEM_COUNT")
-public class DbComparisonItemCount implements CrudChild<DbSyncItemTypeComparisonConfig>, Serializable {
+public class DbComparisonItemCount implements CrudChild, Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-    @ManyToOne(optional = false)
+    @ManyToOne
     private DbSyncItemTypeComparisonConfig dbSyncItemTypeComparisonConfig;
+    @ManyToOne
+    private DbItemTypePositionComparisonConfig dbItemTypePositionComparisonConfig;
     @ManyToOne(fetch = FetchType.LAZY)
     private DbItemType itemType;
     @Column(name = "theCount")
@@ -105,12 +107,16 @@ public class DbComparisonItemCount implements CrudChild<DbSyncItemTypeComparison
     }
 
     @Override
-    public void setParent(DbSyncItemTypeComparisonConfig dbSyncItemTypeComparisonConfig) {
-        this.dbSyncItemTypeComparisonConfig = dbSyncItemTypeComparisonConfig;
+    public void setParent(Object parent) {
+        if (parent instanceof DbSyncItemTypeComparisonConfig) {
+            dbSyncItemTypeComparisonConfig = (DbSyncItemTypeComparisonConfig) parent;
+        } else {
+            dbItemTypePositionComparisonConfig = (DbItemTypePositionComparisonConfig) parent;
+        }
     }
 
     @Override
-    public DbSyncItemTypeComparisonConfig getParent() {
-        return dbSyncItemTypeComparisonConfig;
+    public Object getParent() {
+        return dbSyncItemTypeComparisonConfig != null ? dbSyncItemTypeComparisonConfig : dbItemTypePositionComparisonConfig;
     }
 }

@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.collision.ClientCollisionService;
 import com.btxtech.game.jsre.client.control.ClientRunner;
 import com.btxtech.game.jsre.client.control.StartupScreen;
 import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
@@ -35,6 +36,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainS
 import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.utg.ConditionService;
 
 /**
  * User: beat
@@ -119,6 +121,11 @@ public class ClientServices implements Services {
     @Override
     public CommonUserGuidanceService getCommonUserGuidanceService() {
         return ClientLevelHandler.getInstance();
+    }
+
+    @Override
+    public ConditionService getConditionService() {
+        return SimulationConditionServiceImpl.getInstance();
     }
 
     public ClientRunner getClientRunner() {

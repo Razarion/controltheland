@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
+import com.btxtech.game.jsre.common.utg.ConditionService;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.collision.CollisionService;
@@ -31,6 +32,7 @@ import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.condition.ServerConditionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -61,6 +63,8 @@ public class ServerServices implements Services {
     private BotService botService;
     @Autowired
     private UserGuidanceService userGuidanceService;
+    @Autowired
+    private ServerConditionService serverConditionService;
 
     @Override
     public ItemService getItemService() {
@@ -110,5 +114,10 @@ public class ServerServices implements Services {
     @Override
     public CommonUserGuidanceService getCommonUserGuidanceService() {
         return userGuidanceService;
+    }
+
+    @Override
+    public ConditionService getConditionService() {
+        return serverConditionService;
     }
 }

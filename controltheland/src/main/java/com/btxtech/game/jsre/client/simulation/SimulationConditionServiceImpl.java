@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
+import com.google.gwt.user.client.Timer;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -32,6 +33,8 @@ import java.util.Collections;
 public class SimulationConditionServiceImpl extends ConditionServiceImpl<SimpleBase, Void> {
     private static final SimulationConditionServiceImpl INSTANCE = new SimulationConditionServiceImpl();
     private AbstractConditionTrigger<SimpleBase, Void> abstractConditionTrigger;
+    private int rate = 10000;
+    private Timer timer;
 
     public static SimulationConditionServiceImpl getInstance() {
         return INSTANCE;
@@ -63,15 +66,44 @@ public class SimulationConditionServiceImpl extends ConditionServiceImpl<SimpleB
     }
 
     @Override
-    public void deactivateActorConditions(SimpleBase actor, Void identifier) {
+    protected AbstractConditionTrigger<SimpleBase, Void> removeActorConditionsPrivate(SimpleBase actor, Void identifier) {
         if (!ClientBase.getInstance().isMyOwnBase(actor)) {
-            return;
+            return null;
         }
+        AbstractConditionTrigger<SimpleBase, Void> tmp = abstractConditionTrigger;
         abstractConditionTrigger = null;
+        return tmp;
+    }
+
+    @Override
+    public void deactivateActorConditions(SimpleBase actor, Void identifier) {
     }
 
     @Override
     protected Services getServices() {
         return ClientServices.getInstance();
+    }
+
+    public void setRate(int rate) {
+        this.rate = rate;
+    }
+
+    @Override
+    protected void startTimer() {
+        timer = new Timer() {
+            @Override
+            public void run() {
+                onTimer();
+            }
+        };
+        timer.scheduleRepeating(rate);
+    }
+
+    @Override
+    protected void stopTimer() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
     }
 }

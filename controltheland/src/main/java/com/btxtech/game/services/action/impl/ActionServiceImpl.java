@@ -116,11 +116,15 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
                                 activeItem.stop();
                                 addGuardingBaseItem(activeItem);
                                 connectionService.sendSyncInfo(activeItem);
-                                if (activeItem instanceof SyncBaseItem && ((SyncBaseItem) activeItem).hasSyncHarvester()) {
-                                    baseService.sendAccountBaseUpdate((SyncBaseItem) activeItem);
-                                }
-                                if (activeItem instanceof SyncBaseItem && ((SyncBaseItem) activeItem).isMoneyEarningOrConsuming()) {
-                                    baseService.sendAccountBaseUpdate((SyncBaseItem) activeItem);
+                                if (activeItem instanceof SyncBaseItem) {
+                                    SyncBaseItem syncBaseItem = (SyncBaseItem) activeItem;
+                                    if (syncBaseItem.hasSyncHarvester()) {
+                                        baseService.sendAccountBaseUpdate((SyncBaseItem) activeItem);
+                                    }
+                                    if (syncBaseItem.isMoneyEarningOrConsuming()) {
+                                        baseService.sendAccountBaseUpdate((SyncBaseItem) activeItem);
+                                    }
+                                    serverConditionService.onSyncItemDeactivated(syncBaseItem);
                                 }
                             }
                         } catch (BaseDoesNotExistException e) {

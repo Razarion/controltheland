@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
@@ -141,6 +142,9 @@ public class SyncItemContainer extends SyncBaseAbility {
             if (allowedUnload(surfaceType, containedItem)) {
                 SyncBaseItem syncItem = (SyncBaseItem) getServices().getItemService().getItem(containedItem);
                 syncItem.clearContained(unloadPos);
+                if(getServices().getConnectionService().getGameEngineMode() == GameEngineMode.MASTER) {
+                   getServices().getConditionService().onSyncItemUnloaded(syncItem); 
+                }
                 getServices().getConnectionService().sendSyncInfo(syncItem);
                 iterator.remove();
             }
