@@ -13,22 +13,32 @@
 
 package com.btxtech.game.wicket.pages.mgmt.condition;
 
+import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.common.RuServiceHelper;
+import com.btxtech.game.services.utg.condition.DbComparisonItemCount;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig;
+import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
+import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
+import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
 import com.btxtech.game.wicket.uiservices.ItemTypePanel;
 import com.btxtech.game.wicket.uiservices.RectanglePanel;
 import com.btxtech.game.wicket.uiservices.TerritoryPanel;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
  * User: beat
  * Date: 14.01.2011
  * Time: 23:13:41
  */
-@Deprecated
 public class ItemTypePositionComparisonConfigPanel extends Panel {
+    @SpringBean
+    private RuServiceHelper<DbItemTypePositionComparisonConfig> ruServiceHelper;
 
     public ItemTypePositionComparisonConfigPanel(String id) {
         super(id);
@@ -50,8 +60,33 @@ public class ItemTypePositionComparisonConfigPanel extends Panel {
             public void detach() {
             }
         }));
-        add(new ItemTypePanel("dbItemType"));
+        new CrudChildTableHelper<DbItemTypePositionComparisonConfig, DbComparisonItemCount>("itemCounts", null, "createItemCount", false, this, false) {
+
+
+            @Override
+            protected void extendedPopulateItem(Item<DbComparisonItemCount> dbComparisonItemCountItem) {
+                dbComparisonItemCountItem.add(new BaseItemTypePanel("itemType"));
+                dbComparisonItemCountItem.add(new TextField("count"));
+            }
+
+            @Override
+            protected RuServiceHelper<DbItemTypePositionComparisonConfig> getRuServiceHelper() {
+                return ruServiceHelper;
+            }
+
+            @Override
+            protected DbItemTypePositionComparisonConfig getParent() {
+                return (DbItemTypePositionComparisonConfig) getDefaultModelObject();
+            }
+
+            @Override
+            protected CrudChildServiceHelper<DbComparisonItemCount> getCrudChildServiceHelperImpl() {
+                return getParent().getCrudDbComparisonItemCount();
+            }
+        };
+
         add(new RectanglePanel("region"));
-        add(new TerritoryPanel("excludedDbTerritory"));        
+        add(new TextField("timeInMinutes"));
+        add(new TerritoryPanel("excludedDbTerritory"));
     }
 }

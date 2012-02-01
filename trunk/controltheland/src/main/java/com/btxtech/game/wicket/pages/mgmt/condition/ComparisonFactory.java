@@ -18,7 +18,6 @@ import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig;
-import com.btxtech.game.services.utg.condition.DbPositionComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
@@ -39,7 +38,8 @@ public class ComparisonFactory {
         SYNC_ITEM_BUILT(ConditionTrigger.SYNC_ITEM_BUILT, DbSyncItemTypeComparisonConfig.class, DbCountComparisonConfig.class),
         MONEY_INCREASED(ConditionTrigger.MONEY_INCREASED, DbCountComparisonConfig.class),
         XP_INCREASED(ConditionTrigger.XP_INCREASED, DbCountComparisonConfig.class),
-        BASE_DELETED(ConditionTrigger.BASE_KILLED, DbCountComparisonConfig.class);
+        BASE_DELETED(ConditionTrigger.BASE_KILLED, DbCountComparisonConfig.class),
+        SYNC_ITEM_POSITION(ConditionTrigger.SYNC_ITEM_POSITION, DbItemTypePositionComparisonConfig.class);
 
         private ConditionTrigger conditionTrigger;
         private List<Class<? extends DbAbstractComparisonConfig>> comparisons;
@@ -76,8 +76,6 @@ public class ComparisonFactory {
                 return new CountComparisonConfigPanel(id);
             } else if (config instanceof DbItemTypePositionComparisonConfig) {
                 return new ItemTypePositionComparisonConfigPanel(id);
-            } else if (config instanceof DbPositionComparisonConfig) {
-                return new PositionComparisonConfigPanel(id);
             } else {
                 throw new IllegalArgumentException("No panel for " + config);
             }

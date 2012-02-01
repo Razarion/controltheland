@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 public abstract class AbstractSyncItemComparison implements AbstractComparison {
     private Services services;
     private Integer excludedTerritoryId;
+    private AbstractConditionTrigger abstractConditionTrigger;
 
     protected abstract void privateOnSyncItem(SyncItem syncItem);
 
@@ -46,5 +47,16 @@ public abstract class AbstractSyncItemComparison implements AbstractComparison {
 
     public void setServices(Services services) {
         this.services = services;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <A, I> AbstractConditionTrigger<A, I> getAbstractConditionTrigger() {
+        return abstractConditionTrigger;
+    }
+
+    @Override
+    public void setAbstractConditionTrigger(AbstractConditionTrigger abstractConditionTrigger) {
+        this.abstractConditionTrigger = abstractConditionTrigger;
     }
 }

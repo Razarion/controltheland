@@ -30,6 +30,9 @@ public class AbstractConditionTrigger<A, I> {
     public AbstractConditionTrigger(ConditionTrigger conditionTrigger, AbstractComparison abstractComparison) {
         this.conditionTrigger = conditionTrigger;
         this.abstractComparison = abstractComparison;
+        if (abstractComparison != null) {
+            abstractComparison.setAbstractConditionTrigger(this);
+        }
     }
 
     public void setActorAndIdentifier(A actor, I identifier) {

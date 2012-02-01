@@ -54,6 +54,11 @@ public enum ConditionTrigger {
         @Override
         public <A, I> AbstractConditionTrigger<A, I> createAbstractConditionTrigger(AbstractComparison abstractComparison) {
             return new SimpleConditionTrigger<A, I>(this);
+        }},
+    SYNC_ITEM_POSITION(true) {
+        @Override
+        public <A, I> AbstractConditionTrigger<A, I> createAbstractConditionTrigger(AbstractComparison abstractComparison) {
+            return new SyncItemConditionTrigger<A, I>(this, abstractComparison);
         }};
 
 

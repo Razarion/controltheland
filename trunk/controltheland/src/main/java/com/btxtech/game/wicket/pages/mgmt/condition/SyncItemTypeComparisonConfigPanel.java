@@ -15,7 +15,6 @@ package com.btxtech.game.wicket.pages.mgmt.condition;
 
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
-import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.condition.DbComparisonItemCount;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
@@ -35,8 +34,6 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Time: 23:13:41
  */
 public class SyncItemTypeComparisonConfigPanel extends Panel {
-    @SpringBean
-    private UserGuidanceService userGuidanceService;
     @SpringBean
     private RuServiceHelper<DbSyncItemTypeComparisonConfig> ruServiceHelper;
 

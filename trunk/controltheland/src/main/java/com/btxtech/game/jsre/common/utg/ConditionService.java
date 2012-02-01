@@ -15,8 +15,6 @@ package com.btxtech.game.jsre.common.utg;
 
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
-import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 
 /**
@@ -37,7 +35,11 @@ public interface ConditionService<A, I> {
 
     void onSyncItemBuilt(SyncBaseItem syncBaseItem);
 
+    void onSyncItemDeactivated(SyncBaseItem syncBaseItem);
+
     void onMoneyIncrease(SimpleBase base, double accountBalance);
 
     void onBaseDeleted(SimpleBase actorBase);
+
+    void onSyncItemUnloaded(SyncBaseItem syncItem);
 }

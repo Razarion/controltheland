@@ -29,6 +29,7 @@ import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.services.utg.condition.backup.DbAbstractComparisonBackup;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -36,6 +37,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * User: beat
@@ -56,7 +59,9 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
     private ServerServices serverServices;
     @Autowired
     private SessionFactory sessionFactory;
+    private long rate = 10000;
     private final Map<UserState, Collection<AbstractConditionTrigger<UserState, Integer>>> triggerMap = new HashMap<UserState, Collection<AbstractConditionTrigger<UserState, Integer>>>();
+    private ScheduledThreadPoolExecutor timer = new ScheduledThreadPoolExecutor(1, new CustomizableThreadFactory("ServerConditionServiceImpl timer "));
 
     @Override
     protected void saveAbstractConditionTrigger(AbstractConditionTrigger<UserState, Integer> abstractConditionTrigger) {
@@ -71,11 +76,11 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
     }
 
     @Override
-    public void deactivateActorConditions(UserState userState, Integer identifier) {
+    protected AbstractConditionTrigger<UserState, Integer> removeActorConditionsPrivate(UserState userState, Integer identifier) {
         synchronized (triggerMap) {
             Collection<AbstractConditionTrigger<UserState, Integer>> conditions = triggerMap.get(userState);
             if (conditions == null) {
-                return;
+                return null;
             }
             for (Iterator<AbstractConditionTrigger<UserState, Integer>> iterator = conditions.iterator(); iterator.hasNext();) {
                 AbstractConditionTrigger<UserState, Integer> condition = iterator.next();
@@ -83,14 +88,15 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
                 if (conditionIdentifier == null && identifier == null) {
                     iterator.remove();
                     cleanupTriggerMap(userState, conditions);
-                    return;
+                    return condition;
                 } else if (identifier != null && identifier.equals(conditionIdentifier)) {
                     iterator.remove();
                     cleanupTriggerMap(userState, conditions);
-                    return;
+                    return condition;
                 }
             }
         }
+        return null;
     }
 
     private void cleanupTriggerMap(UserState userState, Collection<AbstractConditionTrigger<UserState, Integer>> conditions) {
@@ -210,5 +216,24 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
     public void onTutorialFinished(UserState userState, int taskId) {
         Collection<AbstractConditionTrigger<UserState, Integer>> abstractConditionTriggers = getAbstractConditions(userState, taskId, ConditionTrigger.TUTORIAL);
         triggerSimple(abstractConditionTriggers);
+    }
+
+    @Override
+    protected void startTimer() {
+        timer.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                onTimer();
+            }
+        }, rate, rate, TimeUnit.MILLISECONDS);
+    }
+
+    public void setRate(long rate) {
+        this.rate = rate;
+    }
+
+    @Override
+    protected void stopTimer() {
+        timer.shutdown();
     }
 }

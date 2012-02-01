@@ -1,5 +1,12 @@
 package com.btxtech.game.services.utg;
 
+import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.CommonJava;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
+import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
+import com.btxtech.game.jsre.common.utg.config.ItemTypePositionComparisonConfig;
+import com.btxtech.game.jsre.common.utg.config.SyncItemTypeComparisonConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.item.ItemService;
@@ -7,7 +14,11 @@ import com.btxtech.game.services.territory.DbTerritory;
 import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
+import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
+import com.btxtech.game.services.utg.condition.DbComparisonItemCount;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
+import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig;
+import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Test;
@@ -17,6 +28,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -817,6 +829,177 @@ public class TestLevel extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         dbConditionConfigs = HibernateUtil.loadAll(sessionFactory, DbConditionConfig.class);
         Assert.assertEquals(0, dbConditionConfigs.size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    @SuppressWarnings("unchecked")
+    public void dbItemTypePositionComparisonConfig() throws Exception {
+        configureItemTypes();
+        // Setup
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbQuestHub dbQuestHub1 = userGuidanceService.getCrudQuestHub().createDbChild();
+        DbLevel dbLevel1 = dbQuestHub1.getLevelCrud().createDbChild();
+        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Create
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbQuestHub1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId());
+        dbLevel1 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel1.getId());
+        DbConditionConfig dbConditionConfig1 = new DbConditionConfig();
+        dbLevel1.setDbConditionConfig(dbConditionConfig1);
+        dbConditionConfig1.setConditionTrigger(ConditionTrigger.SYNC_ITEM_POSITION);
+        DbItemTypePositionComparisonConfig comparisonConfig = new DbItemTypePositionComparisonConfig();
+        DbComparisonItemCount dbComparisonItemCount = comparisonConfig.getCrudDbComparisonItemCount().createDbChild();
+        dbComparisonItemCount.setCount(1);
+        dbComparisonItemCount.setItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        dbComparisonItemCount = comparisonConfig.getCrudDbComparisonItemCount().createDbChild();
+        dbComparisonItemCount.setCount(2);
+        dbComparisonItemCount.setItemType(itemService.getDbBaseItemType(TEST_HARVESTER_ITEM_ID));
+        comparisonConfig.setRegion(new Rectangle(101, 202, 3003, 4004));
+        comparisonConfig.setTimeInMinutes(10);
+        dbConditionConfig1.setDbAbstractComparisonConfig(comparisonConfig);
+        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbLevel1 = userGuidanceService.getDbLevel(dbLevel1.getId());
+        dbConditionConfig1 = dbLevel1.getDbConditionConfig();
+        ConditionConfig conditionConfig = dbConditionConfig1.createConditionConfig(itemService);
+        Assert.assertEquals(ConditionTrigger.SYNC_ITEM_POSITION, conditionConfig.getConditionTrigger());
+        ItemTypePositionComparisonConfig itemTypePositionComparisonConfig = (ItemTypePositionComparisonConfig) conditionConfig.getAbstractComparisonConfig();
+        Rectangle rectangle = (Rectangle) getPrivateField(ItemTypePositionComparisonConfig.class, itemTypePositionComparisonConfig, "region");
+        Assert.assertEquals(new Rectangle(101, 202, 3003, 4004), rectangle);
+        Integer time = (Integer) getPrivateField(ItemTypePositionComparisonConfig.class, itemTypePositionComparisonConfig, "time");
+        Assert.assertEquals((int) time, 10 * 60 * 1000);
+        Map<ItemType, Integer> itemTypes = (Map<ItemType, Integer>) getPrivateField(ItemTypePositionComparisonConfig.class, itemTypePositionComparisonConfig, "itemTypes");
+        Assert.assertEquals(2, itemTypes.size());
+        Assert.assertEquals(1, (int) itemTypes.get(itemService.getItemType(TEST_ATTACK_ITEM_ID)));
+        Assert.assertEquals(2, (int) itemTypes.get(itemService.getItemType(TEST_HARVESTER_ITEM_ID)));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Remove dbComparisonItemCount
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbQuestHub dbQuestHub = CommonJava.getFirst(userGuidanceService.getCrudQuestHub().readDbChildren());
+        dbLevel1 = dbQuestHub.getLevelCrud().readDbChild(dbLevel1.getId());
+        comparisonConfig = (DbItemTypePositionComparisonConfig) dbLevel1.getDbConditionConfig().getDbAbstractComparisonConfig();
+        dbComparisonItemCount = CommonJava.getFirst(comparisonConfig.getCrudDbComparisonItemCount().readDbChildren());
+        comparisonConfig.getCrudDbComparisonItemCount().deleteDbChild(dbComparisonItemCount);
+        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(1, HibernateUtil.loadAll(sessionFactory, DbComparisonItemCount.class).size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Remove whole comparision
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbQuestHub = CommonJava.getFirst(userGuidanceService.getCrudQuestHub().readDbChildren());
+        dbLevel1 = dbQuestHub.getLevelCrud().readDbChild(dbLevel1.getId());
+        dbLevel1.setDbConditionConfig(null);
+        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(0, HibernateUtil.loadAll(sessionFactory, DbConditionConfig.class).size());
+        Assert.assertEquals(0, HibernateUtil.loadAll(sessionFactory, DbAbstractComparisonConfig.class).size());
+        Assert.assertEquals(0, HibernateUtil.loadAll(sessionFactory, DbComparisonItemCount.class).size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void dbSyncItemTypeComparisonConfig() throws Exception {
+        configureItemTypes();
+        // Setup
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbQuestHub dbQuestHub1 = userGuidanceService.getCrudQuestHub().createDbChild();
+        DbLevel dbLevel1 = dbQuestHub1.getLevelCrud().createDbChild();
+        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Create
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbQuestHub1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId());
+        dbLevel1 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel1.getId());
+        DbConditionConfig dbConditionConfig1 = new DbConditionConfig();
+        dbLevel1.setDbConditionConfig(dbConditionConfig1);
+        dbConditionConfig1.setConditionTrigger(ConditionTrigger.SYNC_ITEM_BUILT);
+        DbSyncItemTypeComparisonConfig comparisonConfig = new DbSyncItemTypeComparisonConfig();
+        DbComparisonItemCount dbComparisonItemCount = comparisonConfig.getCrudDbComparisonItemCount().createDbChild();
+        dbComparisonItemCount.setCount(1);
+        dbComparisonItemCount.setItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        dbComparisonItemCount = comparisonConfig.getCrudDbComparisonItemCount().createDbChild();
+        dbComparisonItemCount.setCount(2);
+        dbComparisonItemCount.setItemType(itemService.getDbBaseItemType(TEST_HARVESTER_ITEM_ID));
+        dbConditionConfig1.setDbAbstractComparisonConfig(comparisonConfig);
+        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbLevel1 = userGuidanceService.getDbLevel(dbLevel1.getId());
+        dbConditionConfig1 = dbLevel1.getDbConditionConfig();
+        ConditionConfig conditionConfig = dbConditionConfig1.createConditionConfig(itemService);
+        Assert.assertEquals(ConditionTrigger.SYNC_ITEM_BUILT, conditionConfig.getConditionTrigger());
+        SyncItemTypeComparisonConfig syncItemTypeComparisonConfig = (SyncItemTypeComparisonConfig) conditionConfig.getAbstractComparisonConfig();
+        Map<ItemType, Integer> itemTypes = (Map<ItemType, Integer>) getPrivateField(SyncItemTypeComparisonConfig.class, syncItemTypeComparisonConfig, "itemTypeCount");
+        Assert.assertEquals(2, itemTypes.size());
+        Assert.assertEquals(1, (int) itemTypes.get(itemService.getItemType(TEST_ATTACK_ITEM_ID)));
+        Assert.assertEquals(2, (int) itemTypes.get(itemService.getItemType(TEST_HARVESTER_ITEM_ID)));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Remove dbComparisonItemCount
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbQuestHub dbQuestHub = CommonJava.getFirst(userGuidanceService.getCrudQuestHub().readDbChildren());
+        dbLevel1 = dbQuestHub.getLevelCrud().readDbChild(dbLevel1.getId());
+        comparisonConfig = (DbSyncItemTypeComparisonConfig) dbLevel1.getDbConditionConfig().getDbAbstractComparisonConfig();
+        dbComparisonItemCount = CommonJava.getFirst(comparisonConfig.getCrudDbComparisonItemCount().readDbChildren());
+        comparisonConfig.getCrudDbComparisonItemCount().deleteDbChild(dbComparisonItemCount);
+        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(1, HibernateUtil.loadAll(sessionFactory, DbComparisonItemCount.class).size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Remove whole comparision
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbQuestHub = CommonJava.getFirst(userGuidanceService.getCrudQuestHub().readDbChildren());
+        dbLevel1 = dbQuestHub.getLevelCrud().readDbChild(dbLevel1.getId());
+        dbLevel1.setDbConditionConfig(null);
+        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(0, HibernateUtil.loadAll(sessionFactory, DbConditionConfig.class).size());
+        Assert.assertEquals(0, HibernateUtil.loadAll(sessionFactory, DbAbstractComparisonConfig.class).size());
+        Assert.assertEquals(0, HibernateUtil.loadAll(sessionFactory, DbComparisonItemCount.class).size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

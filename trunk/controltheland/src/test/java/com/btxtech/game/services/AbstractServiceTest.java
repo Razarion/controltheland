@@ -513,6 +513,14 @@ abstract public class AbstractServiceTest {
     }
 
     // -------------------  Game Config --------------------
+    protected void configureItemTypes() throws Exception {
+        System.out.println("---- Configure Item Types ---");
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        setupItemTypes();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
 
     protected void configureRealGame() throws Exception {
         System.out.println("---- Configure Real Game ---");
@@ -520,16 +528,7 @@ abstract public class AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
 
         // Item Types
-        createSimpleBuilding();
-        createHarvesterItemType();
-        createAttackBaseItemType();
-        createContainerBaseItemType();
-        createFactoryBaseItemType();
-        createBuilderBaseItemType();
-        finishAttackBaseItemType();
-        finishContainerBaseItemType();
-        createAttackBaseItemType2();
-        createMoney();
+        setupItemTypes();
         // Terrain
         setupMinimalTerrain();
         // Setup territory
@@ -549,16 +548,7 @@ abstract public class AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
 
         // Item Types
-        createSimpleBuilding();
-        createHarvesterItemType();
-        createAttackBaseItemType();
-        createContainerBaseItemType();
-        createFactoryBaseItemType();
-        createBuilderBaseItemType();
-        finishAttackBaseItemType();
-        finishContainerBaseItemType();
-        createAttackBaseItemType2();
-        createMoney();
+        setupItemTypes();
         // Terrain
         setupMinimalTerrain();
         // Setup territory
@@ -572,6 +562,19 @@ abstract public class AbstractServiceTest {
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+    }
+
+    private void setupItemTypes() {
+        createSimpleBuilding();
+        createHarvesterItemType();
+        createAttackBaseItemType();
+        createContainerBaseItemType();
+        createFactoryBaseItemType();
+        createBuilderBaseItemType();
+        finishAttackBaseItemType();
+        finishContainerBaseItemType();
+        createAttackBaseItemType2();
+        createMoney();
     }
 
     protected void configureComplexGameOneRealLevel() throws Exception {

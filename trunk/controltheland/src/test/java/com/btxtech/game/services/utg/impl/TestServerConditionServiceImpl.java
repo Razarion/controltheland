@@ -1,14 +1,21 @@
 package com.btxtech.game.services.utg.impl;
 
+import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.CountComparisonConfig;
+import com.btxtech.game.jsre.common.utg.config.ItemTypePositionComparisonConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.services.utg.condition.impl.ServerConditionServiceImpl;
@@ -18,6 +25,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,6 +36,10 @@ import java.util.Map;
 public class TestServerConditionServiceImpl extends AbstractServiceTest {
     @Autowired
     private ServerConditionService serverConditionService;
+    @Autowired
+    private ItemService itemService;
+    @Autowired
+    private UserService userService;
     private UserState actor;
     private Integer identifier;
     private boolean passed = false;
@@ -151,7 +163,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
             @Override
             public void conditionPassed(UserState actor, Integer identifier) {
                 Assert.assertEquals(userState, actor);
-                Assert.assertEquals(1, (int)identifier);
+                Assert.assertEquals(1, (int) identifier);
                 passed = true;
             }
         });
@@ -184,7 +196,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
             @Override
             public void conditionPassed(UserState actor, Integer identifier) {
                 Assert.assertEquals(userState, actor);
-                Assert.assertEquals(1, (int)identifier);
+                Assert.assertEquals(1, (int) identifier);
                 passed = true;
             }
         });
@@ -264,4 +276,59 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
 //        Assert.assertTrue(passed);
     }
 
+    @Test
+    @DirtiesContext
+    public void positionConditionTrigger() throws Exception {
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Id builder = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
+
+        serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
+            @Override
+            public void conditionPassed(UserState actor, Integer identifier) {
+                TestServerConditionServiceImpl.this.actor = actor;
+                TestServerConditionServiceImpl.this.identifier = identifier;
+            }
+        });
+        actor = null;
+        identifier = null;
+        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        itemTypes.put(itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 1);
+        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null)), userService.getUserState(), 1);
+        assertClearActorAndIdentifier();
+        sendMoveCommand(builder, new Index(700, 700));
+        waitForActionServiceDone();
+        assertActorAndIdentifierAndClear(userService.getUserState(), 1);
+
+        itemTypes = new HashMap<ItemType, Integer>();
+        itemTypes.put(itemService.getItemType(TEST_FACTORY_ITEM_ID), 1);
+        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null)), userService.getUserState(), 1);
+        sendBuildCommand(builder, new Index(900, 900), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        assertActorAndIdentifierAndClear(userService.getUserState(), 1);
+
+        itemTypes = new HashMap<ItemType, Integer>();
+        itemTypes.put(itemService.getItemType(TEST_ATTACK_ITEM_ID), 1);
+        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null)), userService.getUserState(), 1);
+        Id factory = getFirstSynItemId(TEST_FACTORY_ITEM_ID);
+        sendFactoryCommand(factory, TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        assertActorAndIdentifierAndClear(userService.getUserState(), 1);
+
+        sendFactoryCommand(factory, TEST_CONTAINER_ITEM_ID);
+        waitForActionServiceDone();
+        Id container = getFirstSynItemId(TEST_CONTAINER_ITEM_ID);
+        sendContainerLoadCommand(builder, container);
+        waitForActionServiceDone();
+
+        itemTypes = new HashMap<ItemType, Integer>();
+        itemTypes.put(itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 1);
+        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null)), userService.getUserState(), 1);
+        sendUnloadContainerCommand(container, new Index(1000, 1000));
+        waitForActionServiceDone();
+        assertActorAndIdentifierAndClear(userService.getUserState(), 1);
+
+    }
 }

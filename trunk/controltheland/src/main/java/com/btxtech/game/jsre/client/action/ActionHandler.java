@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.collision.ClientCollisionService;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.CommonJava;
@@ -104,6 +105,9 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                         if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
                             ActionHandler.getInstance().addGuardingBaseItem(activeItem);
                             ClientServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
+                            if (activeItem instanceof SyncBaseItem) {
+                                SimulationConditionServiceImpl.getInstance().onSyncItemDeactivated((SyncBaseItem) activeItem);
+                            }
                         }
                     }
                 } catch (ItemDoesNotExistException ife) {

@@ -13,15 +13,15 @@
 
 package com.btxtech.game.jsre.common.utg.condition;
 
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import java.util.Collection;
-
 /**
  * User: beat
  * Date: 27.12.2010
  * Time: 17:25:49
  */
 public abstract interface AbstractComparison {
-    public abstract boolean isFulfilled();
+    abstract boolean isFulfilled();
+
+    <A, I> AbstractConditionTrigger<A, I> getAbstractConditionTrigger();
+
+    void setAbstractConditionTrigger(AbstractConditionTrigger abstractConditionTrigger);
 }
