@@ -26,9 +26,6 @@ public class ContentStartLevelTaskButton extends Panel {
 
     public ContentStartLevelTaskButton(String id, DbContentStartLevelTaskButton dbContentStartLevelTaskButton, Object bean) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         super(id);
-
-        System.out.println("bean: " + bean);
-
         DbLevelTask dbLevelTask = (DbLevelTask) PropertyUtils.getProperty(bean, dbContentStartLevelTaskButton.getExpression());
         boolean isDone = (Boolean) PropertyUtils.getProperty(bean, dbContentStartLevelTaskButton.getDoneExpression());
 
