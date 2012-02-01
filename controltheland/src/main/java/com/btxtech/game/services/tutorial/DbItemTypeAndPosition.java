@@ -46,7 +46,7 @@ public class DbItemTypeAndPosition implements CrudChild<DbTaskConfig> {
     @ManyToOne
     private DbItemType itemType;
     @Type(type = "index")
-    @Columns(columns = {@Column(name = "xPosRallyPoint"), @Column(name = "yPosRallyPoint")})
+    @Columns(columns = {@Column(name = "xPos"), @Column(name = "yPos")})
     private Index position;
     @ManyToOne(optional = false)
     private DbTaskConfig dbTaskConfig;
