@@ -16,6 +16,7 @@ package com.btxtech.game.wicket.pages.mgmt;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.XpService;
 import com.btxtech.game.wicket.uiservices.LevelReadonlyPanel;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -36,7 +37,10 @@ public class UserStateEditor extends MgmtWebPage {
     private UserService userService;
     @SpringBean
     private UserGuidanceService userGuidanceService;
+    @SpringBean
+    private XpService xpService;
     private Integer dbLevelId;
+    private Integer xp;
 
     public UserStateEditor(UserState userState) {
         final int userStateHash = userState.hashCode();
@@ -82,9 +86,25 @@ public class UserStateEditor extends MgmtWebPage {
                 dbLevelId = null;
             }
         }, Integer.class));
-        form.add(new TextField("xp"));
+        form.add(new Label("xp"));
+        form.add(new TextField<Integer>("addXp", new IModel<Integer>() {
+            @Override
+            public Integer getObject() {
+                return null;
+            }
 
-        form.add(new Button("activate") {
+            @Override
+            public void setObject(Integer value) {
+                xp = value;
+            }
+
+            @Override
+            public void detach() {
+                xp = null;
+            }
+        }, Integer.class));
+
+        form.add(new Button("activateLevel") {
 
             @Override
             public void onSubmit() {
@@ -93,7 +113,16 @@ public class UserStateEditor extends MgmtWebPage {
                 }
             }
         });
-        form.add(new Button("cancel") {
+        form.add(new Button("activateXp") {
+
+            @Override
+            public void onSubmit() {
+                if (xp != null) {
+                    xpService.onReward((UserState) form.getDefaultModelObject(), xp);
+                }
+            }
+        });
+        form.add(new Button("back") {
 
             @Override
             public void onSubmit() {

@@ -148,14 +148,12 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         historyService.addLevelPromotionEntry(userState, dbNextLevel);
         statisticsService.onLevelPromotion(userState);
         log.debug("User: " + userState + " has been promoted: " + dbOldLevel + " to " + dbNextLevel);
-
+        // Create base if needed
         if (baseService.getBase(userState) == null && dbNextLevel.getParent().isRealBaseRequired()) {
             createBaseInQuestHub(userState);
         }
-
         // Prepare next level
         activateConditions(userState, dbNextLevel, null);
-
         // Send level update packet
         if (baseService.getBase(userState) != null) {
             Base base = baseService.getBase(userState);
@@ -163,6 +161,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
             levelPacket.setLevel(getLevelScope(dbNextLevel.getId()));
             connectionService.sendPacket(base.getSimpleBase(), levelPacket);
         }
+        // Post processing
+        userState.setXp(0);
     }
 
     @Override
