@@ -31,6 +31,10 @@ public interface ConditionService<A, I> {
 
     void deactivateActorConditions(A a, I i);
 
+    void deactivateAllActorConditions(A a);
+
+    void deactivateAll();
+
     void onSyncItemKilled(SimpleBase actor, SyncBaseItem killedItem);
 
     void onSyncItemBuilt(SyncBaseItem syncBaseItem);

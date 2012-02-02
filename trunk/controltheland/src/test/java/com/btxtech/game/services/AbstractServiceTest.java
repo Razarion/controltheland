@@ -1009,7 +1009,9 @@ abstract public class AbstractServiceTest {
         realGameQuestHub1.setStartItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
 
         DbLevel dbLevel1 = createDbLevel2(realGameQuestHub1);
+        dbLevel1.setHouseSpace(5);
         dbLevel1.setName(TEST_LEVEL_2_REAL);
+        setLimitation(dbLevel1);
         DbConditionConfig levelCondition = new DbConditionConfig();
         levelCondition.setConditionTrigger(ConditionTrigger.XP_INCREASED);
         dbCountComparisonConfig = new DbCountComparisonConfig();
@@ -1020,7 +1022,9 @@ abstract public class AbstractServiceTest {
         DbLevelTask dbLevelTask2 = setupCreateLevelTask2RealGameLevel(dbLevel1);
 
         DbLevel dbLevel2 = realGameQuestHub1.getLevelCrud().createDbChild();
+        dbLevel2.setHouseSpace(5);
         dbLevel2.setName(TEST_LEVEL_3_REAL);
+        setLimitation(dbLevel2);
         levelCondition = new DbConditionConfig();
         levelCondition.setConditionTrigger(ConditionTrigger.XP_INCREASED);
         dbCountComparisonConfig = new DbCountComparisonConfig();
@@ -1049,6 +1053,27 @@ abstract public class AbstractServiceTest {
         TEST_LEVEL_TASK_4_3_SIM_ID = dbSimLevelTask3.getId();
 
         userGuidanceService.activateLevels();
+    }
+
+    private void setLimitation(DbLevel dbLevel) {
+        DbItemTypeLimitation builder = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        builder.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
+        builder.setCount(10);
+        DbItemTypeLimitation factory = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        factory.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_FACTORY_ITEM_ID));
+        factory.setCount(10);
+        DbItemTypeLimitation attacker = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        attacker.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
+        attacker.setCount(10);
+        DbItemTypeLimitation harvester = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        harvester.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_HARVESTER_ITEM_ID));
+        harvester.setCount(10);
+        DbItemTypeLimitation container = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        container.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_CONTAINER_ITEM_ID));
+        container.setCount(10);
+        DbItemTypeLimitation simpleBuilding = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        simpleBuilding.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_SIMPLE_BUILDING_ID));
+        simpleBuilding.setCount(10);
     }
 
     private DbLevel createDbLevel2(DbQuestHub realGameQuestHub) {

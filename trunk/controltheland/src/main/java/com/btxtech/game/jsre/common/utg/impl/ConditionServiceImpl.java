@@ -50,6 +50,10 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
 
     protected abstract AbstractConditionTrigger<A, I> removeActorConditionsPrivate(A actor, I identifier);
 
+    protected abstract Collection<AbstractConditionTrigger<A, I>> removeAllActorConditionsPrivate(A a);
+
+    protected abstract void removeAllConditionsPrivate();
+
     protected abstract Collection<AbstractConditionTrigger<A, I>> getAbstractConditionPrivate(A actor, ConditionTrigger conditionTrigger);
 
     protected abstract Services getServices();
@@ -86,6 +90,40 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
         AbstractConditionTrigger<A, I> abstractConditionTrigger = conditionConfig.getConditionTrigger().createAbstractConditionTrigger(abstractComparison);
         abstractConditionTrigger.setActorAndIdentifier(a, i);
         saveAbstractConditionTrigger(abstractConditionTrigger);
+    }
+
+    @Override
+    public void deactivateActorConditions(A a, I i) {
+        AbstractConditionTrigger<A, I> abstractConditionTrigger = removeActorConditionsPrivate(a, i);
+        if (abstractConditionTrigger != null) {
+            handleTimerRemoval(abstractConditionTrigger);
+        }
+    }
+
+    @Override
+    public void deactivateAllActorConditions(A a) {
+        Collection<AbstractConditionTrigger<A, I>> abstractConditionTriggers = removeAllActorConditionsPrivate(a);
+        for (AbstractConditionTrigger<A, I> abstractConditionTrigger : abstractConditionTriggers) {
+            handleTimerRemoval(abstractConditionTrigger);
+        }
+    }
+
+    @Override
+    public void deactivateAll() {
+        stopTimer();
+        timeAwareList.clear();
+        removeAllConditionsPrivate();
+    }
+
+    private void handleTimerRemoval(AbstractConditionTrigger<A, I> abstractConditionTrigger) {
+        AbstractComparison abstractComparison = abstractConditionTrigger.getAbstractComparison();
+        if (abstractComparison instanceof TimeAware) {
+            TimeAware timeAware = (TimeAware) abstractComparison;
+            boolean wasRemoved = timeAwareList.remove(timeAware);
+            if (wasRemoved && timeAwareList.size() == 0) {
+                stopTimer();
+            }
+        }
     }
 
     @Override
@@ -174,22 +212,6 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
         }
     }
 
-    @Override
-    public void deactivateActorConditions(A a, I i) {
-        AbstractConditionTrigger<A, I> abstractConditionTrigger = removeActorConditionsPrivate(a, i);
-        if (abstractConditionTrigger != null) {
-            AbstractComparison abstractComparison = abstractConditionTrigger.getAbstractComparison();
-            if (abstractComparison instanceof TimeAware) {
-                TimeAware timeAware = (TimeAware) abstractComparison;
-                boolean wasRemoved = timeAwareList.remove(timeAware);
-                if (wasRemoved && timeAwareList.size() == 0) {
-                    stopTimer();
-                }
-            }
-        }
-    }
-
-
     private Collection<AbstractConditionTrigger<A, I>> getAbstractConditions(A actor, ConditionTrigger conditionTrigger) {
         Collection<AbstractConditionTrigger<A, I>> abstractConditionTriggers = getAbstractConditionPrivate(actor, conditionTrigger);
         if (abstractConditionTriggers == null || abstractConditionTriggers.isEmpty()) {
@@ -204,7 +226,7 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
             try {
                 timeAware.onTimer();
                 AbstractConditionTrigger<A, I> abstractConditionTrigger = timeAware.getAbstractConditionTrigger();
-                if(abstractConditionTrigger.isFulfilled()) {
+                if (abstractConditionTrigger.isFulfilled()) {
                     triggers.add(abstractConditionTrigger);
                 }
             } catch (Exception e) {

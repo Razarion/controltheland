@@ -3,15 +3,21 @@ package com.btxtech.game.services.mgmt.impl;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.condition.backup.DbAbstractComparisonBackup;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -28,13 +34,27 @@ public class DbUserState {
     @OneToOne
     private DbBase base;
     @ManyToOne
-    private DbLevel currentLevel;   // TODO
+    private DbLevel currentLevel;
     @ManyToOne(optional = false)
     private BackupEntry backupEntry;
     @OneToOne(cascade = CascadeType.ALL)
-    private DbAbstractComparisonBackup dbAbstractComparisonBackup;
+    private DbAbstractComparisonBackup dbAbstractComparisonBackup;// TODO
     private int xp;
     private boolean sendResurrectionMessage;
+//    @ElementCollection(fetch = FetchType.LAZY)
+//    @CollectionTable(
+//            name = "BACKUP_USER_STATUS_LEVEL_TASK_DONE",
+//            joinColumns = @JoinColumn(name = "userState")
+//    )
+//    @Column(name = "levelTaskDone")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable
+            (
+                    name = "BACKUP_USER_STATUS_LEVEL_TASK_DONE",
+                    joinColumns = {@JoinColumn(name = "userState")},
+                    inverseJoinColumns = {@JoinColumn(name = "levelTask")}
+            )
+    private Collection<DbLevelTask> levelTasksDone;
 
     /**
      * Used by hibernate
@@ -42,15 +62,15 @@ public class DbUserState {
     protected DbUserState() {
     }
 
-    public DbUserState(BackupEntry backupEntry, UserState userState) {
+    public DbUserState(BackupEntry backupEntry, UserState userState, UserGuidanceService userGuidanceService) {
         this.backupEntry = backupEntry;
         user = userState.getUser();
         xp = userState.getXp();
-        //currentLevel = userState.getDbLevelId();
+        currentLevel = userGuidanceService.getDbLevel(userState.getDbLevelId());
         sendResurrectionMessage = userState.isSendResurrectionMessage();
     }
 
-    public UserState createUserState(UserGuidanceService userGuidanceService) {
+    public UserState createUserState() {
         UserState userState = new UserState();
         userState.setUser(user);
         userState.setXp(xp);
@@ -58,7 +78,7 @@ public class DbUserState {
             userState.setSendResurrectionMessage();
         }
         if (currentLevel != null) {
-            // TODO userState.setDbLevelId(userGuidanceService.getDbLevel(currentLevel.getId()));
+            userState.setDbLevelId(currentLevel.getId());
         }
         return userState;
     }
@@ -77,6 +97,14 @@ public class DbUserState {
 
     public DbAbstractComparisonBackup getDbAbstractComparisonBackup() {
         return dbAbstractComparisonBackup;
+    }
+
+    public Collection<DbLevelTask> getLevelTasksDone() {
+        return levelTasksDone;
+    }
+
+    public void setLevelTasksDone(Collection<DbLevelTask> levelTasksDone) {
+        this.levelTasksDone = levelTasksDone;
     }
 
     @Override

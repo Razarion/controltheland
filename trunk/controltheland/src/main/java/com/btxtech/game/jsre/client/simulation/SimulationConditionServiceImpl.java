@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
 import com.google.gwt.user.client.Timer;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -76,7 +77,19 @@ public class SimulationConditionServiceImpl extends ConditionServiceImpl<SimpleB
     }
 
     @Override
-    public void deactivateActorConditions(SimpleBase actor, Void identifier) {
+    protected Collection<AbstractConditionTrigger<SimpleBase, Void>> removeAllActorConditionsPrivate(SimpleBase actor) {
+        Collection<AbstractConditionTrigger<SimpleBase, Void>> removed = new ArrayList<AbstractConditionTrigger<SimpleBase, Void>>();
+        if (!ClientBase.getInstance().isMyOwnBase(actor)) {
+            return removed;
+        }
+        removed.add(abstractConditionTrigger);
+        abstractConditionTrigger = null;
+        return removed;
+    }
+
+    @Override
+    protected void removeAllConditionsPrivate() {
+        abstractConditionTrigger = null;
     }
 
     @Override
