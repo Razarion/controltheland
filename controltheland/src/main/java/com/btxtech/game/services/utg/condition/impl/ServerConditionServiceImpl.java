@@ -99,6 +99,25 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
         return null;
     }
 
+    @Override
+    protected Collection<AbstractConditionTrigger<UserState, Integer>> removeAllActorConditionsPrivate(UserState userState) {
+        Collection<AbstractConditionTrigger<UserState, Integer>> removed = new ArrayList<AbstractConditionTrigger<UserState, Integer>>();
+        synchronized (triggerMap) {
+            Collection<AbstractConditionTrigger<UserState, Integer>> conditions = triggerMap.remove(userState);
+            if (conditions != null) {
+                removed.addAll(conditions);
+            }
+        }
+        return removed;
+    }
+
+    @Override
+    protected void removeAllConditionsPrivate() {
+        synchronized (triggerMap) {
+            triggerMap.clear();
+        }
+    }
+
     private void cleanupTriggerMap(UserState userState, Collection<AbstractConditionTrigger<UserState, Integer>> conditions) {
         if (conditions.isEmpty()) {
             triggerMap.remove(userState);

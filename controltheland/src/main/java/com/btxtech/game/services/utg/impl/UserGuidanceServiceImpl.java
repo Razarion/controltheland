@@ -30,6 +30,7 @@ import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.user.UserService;
@@ -87,7 +88,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     private XpService xpService;
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
     private Map<Integer, LevelScope> levelScopes = new HashMap<Integer, LevelScope>();
-    private Map<UserState, Collection<Integer>> openLevelTasks = new HashMap<UserState, Collection<Integer>>();
 
     @PostConstruct
     public void init() {
@@ -154,7 +154,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         }
 
         // Prepare next level
-        activateConditions(userState, dbNextLevel);
+        activateConditions(userState, dbNextLevel, null);
 
         // Send level update packet
         if (baseService.getBase(userState) != null) {
@@ -206,31 +206,21 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         }
     }
 
-    private void activateConditions(UserState userState, DbLevel dbLevel) {
+    private void activateConditions(UserState userState, DbLevel dbLevel, Collection<DbLevelTask> levelTaskDone) {
         if (dbLevel.getDbConditionConfig() != null) {
             ConditionConfig levelCondition = dbLevel.getDbConditionConfig().createConditionConfig(itemService);
             serverConditionService.activateCondition(levelCondition, userState, null);
         }
         for (DbLevelTask dbLevelTask : dbLevel.getLevelTaskCrud().readDbChildren()) {
-            serverConditionService.activateCondition(dbLevelTask.createConditionConfig(itemService), userState, dbLevelTask.getId());
-            Collection<Integer> openTasks = openLevelTasks.get(userState);
-            if (openTasks == null) {
-                openTasks = new ArrayList<Integer>();
-                openLevelTasks.put(userState, openTasks);
+            if (levelTaskDone != null && levelTaskDone.contains(dbLevelTask)) {
+                continue;
             }
-            openTasks.add(dbLevelTask.getId());
+            serverConditionService.activateCondition(dbLevelTask.createConditionConfig(itemService), userState, dbLevelTask.getId());
         }
     }
 
     private void cleanupConditions(UserState userState) {
-        serverConditionService.deactivateActorConditions(userState, null);
-        Collection<Integer> openTasks = openLevelTasks.get(userState);
-        if (openTasks != null) {
-            for (Integer openTaskId : openTasks) {
-                serverConditionService.deactivateActorConditions(userState, openTaskId);
-            }
-        }
-        openLevelTasks.remove(userState);
+        serverConditionService.deactivateAllActorConditions(userState);
     }
 
     private void handleLevelTaskCompletion(UserState userState, int levelTaskId) {
@@ -256,21 +246,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     public void setLevelForNewUser(UserState userState) {
         DbLevel dbLevel = new ArrayList<DbQuestHub>(crudQuestHub.readDbChildren()).get(0).getLevelCrud().readDbChildren().get(0);
         userState.setDbLevelId(dbLevel.getId());
-        activateConditions(userState, dbLevel);
+        activateConditions(userState, dbLevel, null);
     }
-
-    // TODO Start-Buttons
-//    @Override
-//    public GameStartupSeq getColdStartupSeq() {
-//        DbLevel dbLevel = getDbAbstractLevel();
-//        if (dbLevel instanceof DbRealGameLevel) {
-//            return GameStartupSeq.COLD_REAL;
-//        } else if (dbLevel instanceof DbSimulationLevel) {
-//            return GameStartupSeq.COLD_SIMULATED;
-//        } else {
-//            throw new IllegalArgumentException("Unknown level  " + dbLevel);
-//        }
-//    }
 
     private DbLevel getNextDbLevel(DbLevel dbLevel) {
         DbQuestHub dbQuestHub = dbLevel.getParent();
@@ -400,4 +377,35 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         return new ReadonlyListContentProvider<LevelQuest>(levelQuests);
     }
 
+    @Override
+    public void createAndAddBackup(DbUserState dbUserState, UserState userState) {
+        DbLevel dbLevel = getDbLevel(userState);
+        Collection<DbLevelTask> levelTaskDone = new ArrayList<DbLevelTask>();
+        for (DbLevelTask dbLevelTask : dbLevel.getLevelTaskCrud().readDbChildren()) {
+            if (serverConditionService.hasConditionTrigger(userState, dbLevelTask.getId())) {
+                // TODO save leval task details
+            } else {
+                levelTaskDone.add(dbLevelTask);
+            }
+        }
+        dbUserState.setLevelTasksDone(levelTaskDone);
+    }
+
+    @Override
+    public void restoreBackup(Map<DbUserState, UserState> userStates) {
+        serverConditionService.deactivateAll();
+        for (Map.Entry<DbUserState, UserState> entry : userStates.entrySet()) {
+            try {
+                DbLevel dbLevel = getDbLevel(entry.getValue());
+                for (DbLevelTask dbLevelTask : dbLevel.getLevelTaskCrud().readDbChildren()) {
+                    if (entry.getKey().getLevelTasksDone() != null && !entry.getKey().getLevelTasksDone().contains(dbLevelTask)) {
+                        // TODO restore level task details
+                        activateConditions(entry.getValue(), dbLevel, entry.getKey().getLevelTasksDone());
+                    }
+                }
+            } catch (Exception e) {
+                log.error("Can not restore user: " + userStates, e);
+            }
+        }
+    }
 }

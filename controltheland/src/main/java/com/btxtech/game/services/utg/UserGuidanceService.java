@@ -19,7 +19,10 @@ import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceSe
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.user.UserState;
+
+import java.util.Map;
 
 /**
  * User: beat
@@ -63,4 +66,7 @@ public interface UserGuidanceService extends CommonUserGuidanceService {
 
     ContentProvider<LevelQuest> getMercenaryMissionCms();
 
+    void restoreBackup(Map<DbUserState, UserState> userStates);
+
+    void createAndAddBackup(DbUserState dbUserState, UserState userState);
 }

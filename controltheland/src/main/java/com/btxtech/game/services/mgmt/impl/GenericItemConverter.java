@@ -34,7 +34,6 @@ import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -71,8 +70,6 @@ public class GenericItemConverter {
     private Services services;
     @Autowired
     private UserService userService;
-    @Autowired
-    private ServerConditionService serverConditionService;
     @Autowired
     private BotService botService;
     private BackupEntry backupEntry;
@@ -113,7 +110,7 @@ public class GenericItemConverter {
             }
             try {
                 DbUserState dbUserState = createDbUserState(userState);
-                dbUserState.setDbAbstractComparisonBackup(serverConditionService.createBackup(dbUserState, userState));
+                userGuidanceService.createAndAddBackup(dbUserState, userState);
                 dbUserStates.add(dbUserState);
             } catch (Exception e) {
                 log.error("Can not back user: " + userState, e);
@@ -125,7 +122,7 @@ public class GenericItemConverter {
     }
 
     private DbUserState createDbUserState(UserState userState) {
-        DbUserState dbUserState = new DbUserState(backupEntry, userState);
+        DbUserState dbUserState = new DbUserState(backupEntry, userState, userGuidanceService);
         if (userState.getBase() != null) {
             DbBase dbBase = bases.get(userState.getBase());
             if (dbBase != null) {
@@ -145,7 +142,7 @@ public class GenericItemConverter {
 
         Map<DbUserState, UserState> userStates = new HashMap<DbUserState, UserState>();
         for (DbUserState dbUserState : backupEntry.getUserStates()) {
-            UserState userState = dbUserState.createUserState(userGuidanceService);
+            UserState userState = dbUserState.createUserState();
             userStates.put(dbUserState, userState);
         }
 
@@ -189,7 +186,7 @@ public class GenericItemConverter {
         userService.restore(userStates.values());
         baseService.restoreBases(dbBases.values());
         itemService.restoreItems(syncItems.values());
-        serverConditionService.restoreBackup(userStates, itemService);
+        userGuidanceService.restoreBackup(userStates);
         serverEnergyService.pauseService(false);
         serverEnergyService.restoreItems(syncItems.values());
         actionService.pause(false);
