@@ -1,11 +1,12 @@
 package com.btxtech.game.crudtabletest;
 
+import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
-import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.wicket.pages.mgmt.BotTable;
-import com.btxtech.game.wicket.pages.mgmt.level.DbLevelTable;
+import com.btxtech.game.wicket.pages.mgmt.TerrainTileEditor;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
@@ -28,7 +29,7 @@ public class TestCurdRootTable extends AbstractServiceTest {
     @Autowired
     private BotService botService;
     @Autowired
-    private UserGuidanceService userGuidanceService;
+    private TerrainService terrainService;
 
     @Before
     public void setUp() {
@@ -102,31 +103,28 @@ public class TestCurdRootTable extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testMultiTable() throws Exception {
-        // TODO copy
-        configureRealGame();
+    public void testMultipleCrudTable() throws Exception {
+        configureComplexGameOneRealLevel();
 
         System.out.println("---------------- START ----------------");
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        tester.startPage(DbLevelTable.class);
-        tester.assertRenderedPage(DbLevelTable.class);
+        tester.startPage(TerrainTileEditor.class);
+        tester.assertRenderedPage(TerrainTileEditor.class);
         tester.debugComponentTrees();
         // Edit table
-        FormTester formTester = tester.newFormTester("levelForm");
-        //tester.debugComponentTrees();
-        //formTester.setValue("copyRadioChoiceGroup:levels:1:name", "NewLevelName");
-        formTester.setValue("copyRadioChoiceGroup:levels:1:internalDescription", "test");
+        FormTester formTester = tester.newFormTester("tileForm");
+        tester.debugComponentTrees();
+        formTester.setValue("surfaceImages:1:htmlBackgroundColor", "#123456");
         System.out.println("---------------- SAVE ----------------");
-        formTester.submit("copyRadioChoiceGroup:save");
+        formTester.submit("updateSurfaceImages");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.fail();
-        // TODO Assert.assertEquals("test", new ArrayList<DbLevel>(userGuidanceService.getDbLevelCrudServiceHelper().readDbChildren()).get(0).getInternalDescription());
+        Assert.assertEquals("#123456", CommonJava.getFirst(terrainService.getDbSurfaceImageCrudServiceHelper().readDbChildren()).getHtmlBackgroundColor());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
