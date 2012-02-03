@@ -3,6 +3,7 @@ package com.btxtech.game.wicket.pages.mgmt.cms;
 import com.btxtech.game.services.cms.layout.DbContent;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 
 import java.util.Arrays;
@@ -19,6 +20,7 @@ public class ContentAccessPanel extends Panel {
         add(createSelectField("writeRestricted", showWrite));
         add(createSelectField("createRestricted", showCreate));
         add(createSelectField("deleteRestricted", showDelete));
+        add(new TextField("borderCss"));        
     }
 
     public static DropDownChoice createSelectField(String id) {
