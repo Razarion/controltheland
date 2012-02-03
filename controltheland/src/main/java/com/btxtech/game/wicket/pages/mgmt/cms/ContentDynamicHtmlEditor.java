@@ -33,8 +33,7 @@ public class ContentDynamicHtmlEditor extends MgmtWebPage {
         }));
         add(form);
 
-        form.add(new ContentAccessPanel("accessPanel", true, true, false, false));
-        form.add(new TextField("cssClass"));
+        form.add(new ContentCommonPanel("commonPanel", true, true, false, false));
         form.add(new CheckBox("escapeMarkup"));
 
         form.add(new Button("save") {

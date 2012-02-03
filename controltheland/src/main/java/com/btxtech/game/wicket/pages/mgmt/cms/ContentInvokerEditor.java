@@ -40,8 +40,7 @@ public class ContentInvokerEditor extends MgmtWebPage {
         }));
         add(form);
 
-        form.add(new ContentAccessPanel("accessPanel", true, false, false, false));
-        form.add(new TextField("cssClass"));
+        form.add(new ContentCommonPanel("commonPanel", true, false, false, false));
         form.add(new TextField("springBeanName"));
         form.add(new TextField("methodName"));
         form.add(new TextField("invokeButtonName"));

@@ -37,8 +37,7 @@ public class ContentCreateEditEditor extends MgmtWebPage {
         }));
         add(form);
         form.add(new TextField("name"));        
-        form.add(new ContentAccessPanel("accessPanel", false, false, true, false));
-        form.add(new TextField("cssClass"));
+        form.add(new ContentCommonPanel("commonPanel", false, false, true, false));
 
         new CrudListChildTableHelper<DbContentCreateEdit, DbExpressionProperty>("columns", null, "createColumn", true, form, true) {
 

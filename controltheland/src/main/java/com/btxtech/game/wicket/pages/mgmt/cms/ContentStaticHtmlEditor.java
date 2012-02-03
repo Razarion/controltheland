@@ -34,8 +34,7 @@ public class ContentStaticHtmlEditor extends MgmtWebPage {
         }));
         add(form);
 
-        form.add(new ContentAccessPanel("accessPanel", true, false, false, false));
-        form.add(new TextField("cssClass"));
+        form.add(new ContentCommonPanel("commonPanel", true, false, false, false));
         form.add(new TextArea("html"));
         form.add(new CheckBox("escapeMarkup"));
 

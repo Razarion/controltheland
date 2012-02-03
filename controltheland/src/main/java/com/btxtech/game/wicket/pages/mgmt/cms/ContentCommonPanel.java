@@ -13,14 +13,15 @@ import java.util.Arrays;
  * Date: 12.07.2011
  * Time: 10:40:36
  */
-public class ContentAccessPanel extends Panel {
-    public ContentAccessPanel(String id, boolean showRead, boolean showWrite, boolean showCreate, boolean showDelete) {
+public class ContentCommonPanel extends Panel {
+    public ContentCommonPanel(String id, boolean showRead, boolean showWrite, boolean showCreate, boolean showDelete) {
         super(id);
         add(createSelectField("readRestricted", showRead));
         add(createSelectField("writeRestricted", showWrite));
         add(createSelectField("createRestricted", showCreate));
         add(createSelectField("deleteRestricted", showDelete));
-        add(new TextField("borderCss"));        
+        add(new TextField("cssClass"));
+        add(new TextField("borderCss"));
     }
 
     public static DropDownChoice createSelectField(String id) {
