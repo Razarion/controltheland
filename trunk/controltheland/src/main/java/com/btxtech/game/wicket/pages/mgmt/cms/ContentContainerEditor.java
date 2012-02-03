@@ -36,8 +36,7 @@ public class ContentContainerEditor extends MgmtWebPage {
         }));
         add(form);
 
-        form.add(new ContentAccessPanel("accessPanel", true, true, true, true));
-        form.add(new TextField("cssClass"));
+        form.add(new ContentCommonPanel("commonPanel", true, true, true, true));
         form.add(new TextField("springBeanName"));
         form.add(new TextField("contentProviderGetter"));
         form.add(new TextField("expression"));

@@ -35,8 +35,7 @@ public class ContentPluginEditor extends MgmtWebPage {
             }
         }));
         add(form);
-        form.add(new ContentAccessPanel("accessPanel", true, false, false, false));
-        form.add(new TextField("cssClass"));
+        form.add(new ContentCommonPanel("commonPanel", true, false, false, false));
         form.add(new DropDownChoice<PluginEnum>("pluginEnum", Arrays.asList(PluginEnum.values()), new IChoiceRenderer<PluginEnum>() {
 
             @Override

@@ -32,8 +32,7 @@ public class ContentPageLinkEditor extends MgmtWebPage {
             }
         }));
         add(form);
-        form.add(new ContentAccessPanel("accessPanel", true, false, false, false));
-        form.add(new TextField("cssClass"));
+        form.add(new ContentCommonPanel("commonPanel", true, false, false, false));
         form.add(new PageSelector("dbPage"));
         form.add(new CmsImageSelector("dbCmsImage"));
 

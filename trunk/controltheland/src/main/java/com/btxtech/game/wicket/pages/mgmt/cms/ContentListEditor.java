@@ -41,7 +41,7 @@ public class ContentListEditor extends MgmtWebPage {
         }));
         add(form);
 
-        form.add(new ContentAccessPanel("accessPanel", true, true, true, true));
+        form.add(new ContentCommonPanel("commonPanel", true, true, true, true));
         form.add(new CreateCreateEditPanel("dbContentCreateEdit"){
             @Override
             protected void createDbContentCreateEdit() {
@@ -60,7 +60,6 @@ public class ContentListEditor extends MgmtWebPage {
                 ruServiceHelper.updateDbEntity(form.getModelObject());
             }
         });
-        form.add(new TextField("cssClass"));
         form.add(new TextField("springBeanName"));
         form.add(new TextField("contentProviderGetter"));
         form.add(new TextField("rowsPerPage"));
