@@ -4163,4 +4163,54 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void borderWrapper() throws Exception {
+        configureItemTypes();
+        
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+
+        DbContentList dbContentList = new DbContentList();
+        dbContentList.setBorderCss("borderCSS");
+        dbContentList.init(userService);
+        dbPage.setContentAndAccessWrites(dbContentList);
+        dbContentList.setSpringBeanName("itemService");
+        dbContentList.setContentProviderGetter("dbItemTypeCrud");
+
+        CrudListChildServiceHelper<DbContent> columnCrud = dbContentList.getColumnsCrud();
+        DbExpressionProperty column = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
+        column.setExpression("name");
+        DbContentDetailLink detailLink = (DbContentDetailLink) columnCrud.createDbChild(DbContentDetailLink.class);
+        detailLink.setName("Details");
+
+        pageCrud.updateDbChild(dbPage);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.debugComponentTrees();
+        tester.assertVisible("form:content:border");
+        tester.assertVisible("form:content:border:borderContent");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 }

@@ -43,7 +43,7 @@ public abstract class DbContent implements CrudChild<DbContent> {
     private Access writeRestricted = Access.INHERIT;
     private Access createRestricted = Access.INHERIT;
     private Access deleteRestricted = Access.INHERIT;
-
+    private String borderCss;
 
     @Override
     public Integer getId() {
@@ -170,6 +170,18 @@ public abstract class DbContent implements CrudChild<DbContent> {
 
     public void setDeleteRestricted(Access deleteRestricted) {
         this.deleteRestricted = deleteRestricted;
+    }
+
+    public boolean hasBorderCss() {
+        return borderCss != null;
+    }
+
+    public String getBorderCss() {
+        return borderCss;
+    }
+
+    public void setBorderCss(String borderCss) {
+        this.borderCss = borderCss;
     }
 
     @Override

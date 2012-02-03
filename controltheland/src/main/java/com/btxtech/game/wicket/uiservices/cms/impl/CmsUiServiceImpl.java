@@ -35,6 +35,7 @@ import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.DbPageAccessControl;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.wicket.pages.cms.BorderWrapper;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.pages.cms.ItemTypeImage;
@@ -346,8 +347,7 @@ public class CmsUiServiceImpl implements CmsUiService {
         return (T) cmsService.getDbContent(contentId);
     }
 
-    @Override
-    public Component getComponent(DbContent dbContent, Object bean, String componentId, BeanIdPathElement beanIdPathElement, ContentContext contentContext) {
+    private Component getComponentPrivate(DbContent dbContent, Object bean, String componentId, BeanIdPathElement beanIdPathElement, ContentContext contentContext) {
         try {
             if (dbContent instanceof DbContentList) {
                 return new ContentList(componentId, (DbContentList) dbContent, beanIdPathElement, contentContext);
@@ -399,6 +399,17 @@ public class CmsUiServiceImpl implements CmsUiService {
         } catch (Exception e) {
             log.error("DbContent: " + dbContent + " bean: " + bean + " id: " + componentId + " " + beanIdPathElement, e);
             return new Label(componentId, "Error!");
+        }
+    }
+
+
+    @Override
+    public Component getComponent(DbContent dbContent, Object bean, String componentId, BeanIdPathElement beanIdPathElement, ContentContext contentContext) {
+        if (dbContent != null && dbContent.hasBorderCss()) {
+           Component content =  getComponentPrivate(dbContent, bean, "borderContent", beanIdPathElement, contentContext);
+           return new BorderWrapper(componentId, content, dbContent.getBorderCss());
+        } else {
+            return getComponentPrivate(dbContent, bean, componentId, beanIdPathElement, contentContext);
         }
     }
 

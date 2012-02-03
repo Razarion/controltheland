@@ -6,7 +6,7 @@
 </head>
 <body>
 <wicket:panel>
-    <h2>Access</h2>    
+    <h2>Access</h2>
     <table border="0">
         <tr>
             <td bgcolor="#dadada">Read restricted</td>
@@ -23,6 +23,13 @@
         <tr>
             <td bgcolor="#dadada">Delete restricted</td>
             <td><select wicket:id="deleteRestricted" size="1"></select></td>
+        </tr>
+    </table>
+    <h2>Common</h2>    
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Border CSS</td>
+            <td><input type="text" wicket:id="borderCss" size="20"/></td>
         </tr>
     </table>
 </wicket:panel>
