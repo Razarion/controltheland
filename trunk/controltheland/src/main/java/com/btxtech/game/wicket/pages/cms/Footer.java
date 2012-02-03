@@ -1,8 +1,6 @@
 package com.btxtech.game.wicket.pages.cms;
 
 import com.btxtech.game.services.cms.page.DbPage;
-import com.btxtech.game.wicket.pages.cms.content.plugin.login.LoggedinBox;
-import com.btxtech.game.wicket.pages.cms.content.plugin.login.LoginBox;
 import org.apache.wicket.markup.html.panel.Panel;
 
 /**
@@ -16,8 +14,6 @@ public class Footer extends Panel {
     public Footer(String id, DbPage dbPage) {
         super(id);
         footerVisible = dbPage.isFooterVisible();
-        add(new LoggedinBox("loggedinBox"));
-        add(new LoginBox("loginBox", true));
     }
 
     @Override
