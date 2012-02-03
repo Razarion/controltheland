@@ -118,7 +118,8 @@ public class CmsPage extends WebPage implements IHeaderContributor {
         add(CmsCssResource.createCss("css", dbPage));
         add(new Menu("menu", dbPage.getMenu(), contentContext));
         add(new Header("header", dbPage));
-        add(new Footer("footer", dbPage));
+        // Footer removed due CMS redisgn
+        //add(new Footer("footer", dbPage));
         add(new Ads("contentRight", dbPage));
         Form form = new Form("form");
         add(form);
