@@ -49,4 +49,14 @@ public class CountComparison extends AbstractSyncItemComparison {
     public void setCount(double count) {
         this.count = count;
     }
+
+    @Override
+    public void fillGenericComparisonValues(GenericComparisonValueContainer genericComparisonValueContainer) {
+        genericComparisonValueContainer.addChild(GenericComparisonValueContainer.Key.REMAINING_COUNT, count);
+    }
+
+    @Override
+    public void restoreFromGenericComparisonValue(GenericComparisonValueContainer genericComparisonValueContainer) {
+        count = (Double) genericComparisonValueContainer.getValue(GenericComparisonValueContainer.Key.REMAINING_COUNT);
+    }
 }

@@ -28,6 +28,7 @@ import com.btxtech.game.jsre.common.utg.condition.ValueConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Level;
@@ -60,6 +61,8 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
 
     protected abstract A getActor(SimpleBase actorBase);
 
+    protected abstract SimpleBase getSimpleBase(A actorBase);
+
     protected abstract void startTimer();
 
     protected abstract void stopTimer();
@@ -76,7 +79,7 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
         }
         AbstractComparison abstractComparison = null;
         if (conditionConfig.getConditionTrigger().isComparisonNeeded()) {
-            abstractComparison = conditionConfig.getAbstractComparisonConfig().createAbstractComparison();
+            abstractComparison = conditionConfig.getAbstractComparisonConfig().createAbstractComparison(getServices(), getSimpleBase(a));
             if (abstractComparison instanceof AbstractSyncItemComparison) {
                 ((AbstractSyncItemComparison) abstractComparison).setServices(getServices());
             }

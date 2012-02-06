@@ -14,7 +14,6 @@
 package com.btxtech.game.services.item.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -55,13 +54,13 @@ import com.btxtech.game.services.item.itemType.DbItemTypeImageData;
 import com.btxtech.game.services.item.itemType.DbItemTypeSoundData;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
-import com.btxtech.game.services.utg.XpService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.resource.ResourceService;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.SecurityRoles;
-import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.XpService;
+import com.btxtech.game.services.utg.condition.ServerConditionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -722,32 +721,6 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             }
         }
         return syncItems;
-    }
-
-    @Override
-    public Collection<SyncBaseItem> getBaseItemsInRectangle(Rectangle rectangle, SimpleBase simpleBase, Collection<BaseItemType> baseItemTypeFilter) {
-        ArrayList<SyncBaseItem> result = new ArrayList<SyncBaseItem>();
-        synchronized (items) {
-            for (SyncItem syncItem : items.values()) {
-                if (!syncItem.getSyncItemArea().hasPosition()) {
-                    continue;
-                }
-                if (syncItem instanceof SyncBaseItem) {
-                    SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
-                    if (simpleBase != null && !(syncBaseItem.getBase().equals(simpleBase))) {
-                        continue;
-                    }
-                    if (!syncBaseItem.getSyncItemArea().contains(rectangle)) {
-                        continue;
-                    }
-                    if (baseItemTypeFilter != null && !baseItemTypeFilter.contains(syncBaseItem.getBaseItemType())) {
-                        continue;
-                    }
-                    result.add(syncBaseItem);
-                }
-            }
-        }
-        return result;
     }
 
     @Override

@@ -58,4 +58,21 @@ public class SyncItemTypeComparison extends AbstractSyncItemComparison {
     public void setRemaining(Map<ItemType, Integer> remaining) {
         this.remaining = remaining;
     }
+
+    @Override
+    public void fillGenericComparisonValues(GenericComparisonValueContainer genericComparisonValueContainer) {
+        GenericComparisonValueContainer itemCounts = genericComparisonValueContainer.createChildContainer(GenericComparisonValueContainer.Key.REMAINING_ITEM_TYPES);
+        for (Map.Entry<ItemType, Integer> entry : remaining.entrySet()) {
+            itemCounts.addChild(entry.getKey(), entry.getValue());
+        }
+    }
+
+    @Override
+    public void restoreFromGenericComparisonValue(GenericComparisonValueContainer genericComparisonValueContainer) {
+        remaining.clear();
+        GenericComparisonValueContainer itemCounts = genericComparisonValueContainer.getChildContainer(GenericComparisonValueContainer.Key.REMAINING_ITEM_TYPES);
+        for (Map.Entry entry : itemCounts.getEntries()) {
+           remaining.put((ItemType)entry.getKey(), (Integer) entry.getValue());
+        }
+    }
 }

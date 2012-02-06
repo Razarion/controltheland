@@ -55,6 +55,7 @@ public class DbItemTypePositionComparisonConfig extends DbAbstractComparisonConf
     @Columns(columns = {@Column(name = "regionX"), @Column(name = "regionY"), @Column(name = "regionWidth"), @Column(name = "regionHeight")})
     private Rectangle region;
     private Integer timeInMinutes;
+    private boolean addExistingItems;
 
     @Transient
     private CrudChildServiceHelper<DbComparisonItemCount> dbComparisonItemCountCrudServiceHelper;
@@ -75,6 +76,14 @@ public class DbItemTypePositionComparisonConfig extends DbAbstractComparisonConf
         this.timeInMinutes = timeInMinutes;
     }
 
+    public boolean isAddExistingItems() {
+        return addExistingItems;
+    }
+
+    public void setAddExistingItems(boolean addExistingItems) {
+        this.addExistingItems = addExistingItems;
+    }
+
     public CrudChildServiceHelper<DbComparisonItemCount> getCrudDbComparisonItemCount() {
         if (dbComparisonItemCountCrudServiceHelper == null) {
             if (dbComparisonItemCounts == null) {
@@ -92,7 +101,7 @@ public class DbItemTypePositionComparisonConfig extends DbAbstractComparisonConf
             itemTypeCount.put(itemService.getItemType(dbComparisonItemCount.getItemType()), dbComparisonItemCount.getCount());
         }
         Integer timeInMs = timeInMinutes == null ? null : (int) (timeInMinutes * DateUtil.MILLIS_IN_MINUTE);
-        return new ItemTypePositionComparisonConfig(getExcludedTerritoryId(), itemTypeCount, region, timeInMs);
+        return new ItemTypePositionComparisonConfig(getExcludedTerritoryId(), itemTypeCount, region, timeInMs, addExistingItems);
     }
 
     @Override

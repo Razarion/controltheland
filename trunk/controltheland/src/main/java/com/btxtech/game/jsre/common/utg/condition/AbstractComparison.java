@@ -24,4 +24,8 @@ public abstract interface AbstractComparison {
     <A, I> AbstractConditionTrigger<A, I> getAbstractConditionTrigger();
 
     void setAbstractConditionTrigger(AbstractConditionTrigger abstractConditionTrigger);
+
+    void fillGenericComparisonValues(GenericComparisonValueContainer genericComparisonValueContainer);
+
+    void restoreFromGenericComparisonValue(GenericComparisonValueContainer genericComparisonValueContainer);
 }

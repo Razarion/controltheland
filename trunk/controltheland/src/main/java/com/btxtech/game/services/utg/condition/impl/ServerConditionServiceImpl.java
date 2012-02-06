@@ -16,6 +16,7 @@ package com.btxtech.game.services.utg.condition.impl;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
+import com.btxtech.game.jsre.common.utg.condition.GenericComparisonValueContainer;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
 import com.btxtech.game.services.base.BaseService;
@@ -25,18 +26,22 @@ import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.condition.DbGenericComparisonValue;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
-import com.btxtech.game.services.utg.condition.backup.DbAbstractComparisonBackup;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -62,6 +67,13 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
     private long rate = 10000;
     private final Map<UserState, Collection<AbstractConditionTrigger<UserState, Integer>>> triggerMap = new HashMap<UserState, Collection<AbstractConditionTrigger<UserState, Integer>>>();
     private ScheduledThreadPoolExecutor timer = new ScheduledThreadPoolExecutor(1, new CustomizableThreadFactory("ServerConditionServiceImpl timer "));
+    private static Log log = LogFactory.getLog(ServerConditionServiceImpl.class);
+    private ScheduledFuture scheduledFuture;
+
+    @PreDestroy
+    public void cleanup() {
+        timer.shutdown();
+    }
 
     @Override
     protected void saveAbstractConditionTrigger(AbstractConditionTrigger<UserState, Integer> abstractConditionTrigger) {
@@ -180,45 +192,74 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
     }
 
     @Override
-    public void restoreBackup(Map<DbUserState, UserState> userStates, ItemService itemService) {
-        // TODO
-//        synchronized (triggerMap) {
-//            triggerMap.clear();
-//            for (Map.Entry<DbUserState, UserState> entry : userStates.entrySet()) {
-//                try {
-//                    DbLevel dbLevel = userGuidanceService.getDbLevel(entry.getValue().getDbLevel().getId());
-//                    AbstractConditionTrigger<UserState> abstractConditionTrigger = activateCondition(dbLevel.getConditionConfig(), entry.getValue());
-//                    if (entry.getKey().getDbAbstractComparisonBackup() != null) {
-//                        entry.getKey().getDbAbstractComparisonBackup().restore(abstractConditionTrigger.getAbstractComparison(), itemService);
-//                    }
-//                } catch (Exception e) {
-//                    log.error("Can not restore user: " + entry.getKey(), e);
-//                }
-//            }
-//        }
+    protected SimpleBase getSimpleBase(UserState actor) {
+        if (actor.getBase() != null) {
+            return actor.getBase().getSimpleBase();
+        } else {
+            return null;
+        }
     }
 
     @Override
-    public DbAbstractComparisonBackup createBackup(DbUserState dbUserState, UserState userState) {
+    public void restoreBackup(DbUserState dbUserState, UserState userState) {
+        synchronized (triggerMap) {
+            try {
+                Collection<AbstractConditionTrigger<UserState, Integer>> triggers = triggerMap.get(userState);
+                if (triggers == null || triggers.isEmpty()) {
+                    return;
+                }
+                Collection<DbGenericComparisonValue> comparisonValues = dbUserState.getDbGenericComparisonValues();
+                if (comparisonValues == null || comparisonValues.isEmpty()) {
+                    return;
+                }
+                for (DbGenericComparisonValue dbGenericComparisonValue : comparisonValues) {
+                    Integer identifier = dbGenericComparisonValue.getIdentifier();
+                    AbstractConditionTrigger<UserState, Integer> activeTrigger = getAbstractConditionTrigger(identifier, triggers);
+                    if (activeTrigger != null) {
+                        activeTrigger.getAbstractComparison().restoreFromGenericComparisonValue(dbGenericComparisonValue.createGenericComparisonValueContainer(itemService));
+                    } else {
+                        log.warn("Condition trigger was saved on DB but is not active: " + userState + " identifier: " + identifier);
+                    }
+                }
+            } catch (Exception e) {
+                log.error("Can not backup user: " + userState, e);
+            }
+        }
+    }
+
+    private AbstractConditionTrigger<UserState, Integer> getAbstractConditionTrigger(Integer identifier, Collection<AbstractConditionTrigger<UserState, Integer>> triggers) {
+        for (AbstractConditionTrigger<UserState, Integer> condition : triggers) {
+            Integer conditionIdentifier = condition.getIdentifier();
+            if (conditionIdentifier == null && identifier == null) {
+                return condition;
+            } else if (identifier != null && identifier.equals(conditionIdentifier)) {
+                return condition;
+            }
+        }
         return null;
-        // TODO
-//        AbstractConditionTrigger abstractConditionTrigger;
-//        synchronized (triggerMap) {
-//            abstractConditionTrigger = triggerMap.get(userState);
-//        }
-//        AbstractComparison abstractComparison = abstractConditionTrigger.getAbstractComparison();
-//        if (abstractComparison == null) {
-//            return null;
-//        }
-//        if (abstractComparison instanceof CountComparison) {
-//            return new DbCountComparisonBackup(dbUserState, (CountComparison) abstractComparison);
-//        } else if (abstractComparison instanceof SyncItemIdComparison) {
-//            return new DbSyncItemIdComparisonBackup(dbUserState, (SyncItemIdComparison) abstractComparison);
-//        } else if (abstractComparison instanceof SyncItemTypeComparison) {
-//            return new DbSyncItemTypeComparisonBackup(dbUserState, (SyncItemTypeComparison) abstractComparison, itemService);
-//        } else {
-//            throw new IllegalArgumentException("Unknown AbstractComparison: " + abstractComparison);
-//        }
+    }
+
+    @Override
+    public void createBackup(DbUserState dbUserState, UserState userState) {
+        synchronized (triggerMap) {
+            try {
+                Collection<AbstractConditionTrigger<UserState, Integer>> triggers = triggerMap.get(userState);
+                if (triggers == null || triggers.isEmpty()) {
+                    return;
+                }
+                for (AbstractConditionTrigger<UserState, Integer> conditionTrigger : triggers) {
+                    if (conditionTrigger.getAbstractComparison() == null) {
+                        continue;
+                    }
+                    GenericComparisonValueContainer container = new GenericComparisonValueContainer();
+                    conditionTrigger.getAbstractComparison().fillGenericComparisonValues(container);
+                    dbUserState.addDbGenericComparisonValue(new DbGenericComparisonValue(conditionTrigger.getIdentifier(), container, itemService));
+                }
+            } catch (Exception e) {
+                log.error("Can not restore user: " + userState, e);
+            }
+
+        }
     }
 
     @Override
@@ -239,7 +280,7 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
 
     @Override
     protected void startTimer() {
-        timer.scheduleAtFixedRate(new Runnable() {
+        scheduledFuture = timer.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 onTimer();
@@ -253,6 +294,9 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
 
     @Override
     protected void stopTimer() {
-        timer.shutdown();
+        if (scheduledFuture != null) {
+            scheduledFuture.cancel(true);
+            scheduledFuture = null;
+        }
     }
 }

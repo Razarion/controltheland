@@ -2523,10 +2523,10 @@ public class TestCmsService extends AbstractServiceTest {
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
         tester.assertVisible("form:content:table:rows:1:cells:2:cell:link:linkImage");
-        tester.assertBookmarkablePageLink("form:content:table:rows:1:cells:2:cell:link", Game.class, "taskId = 6");
+        tester.assertBookmarkablePageLink("form:content:table:rows:1:cells:2:cell:link", Game.class, "taskId = " + TEST_LEVEL_TASK_3_3_SIM_ID);
         tester.assertInvisible("form:content:table:rows:1:cells:2:cell:doneImage");
         tester.assertVisible("form:content:table:rows:2:cells:2:cell:link:linkImage");
-        tester.assertBookmarkablePageLink("form:content:table:rows:2:cells:2:cell:link", Game.class, "taskId = 7");
+        tester.assertBookmarkablePageLink("form:content:table:rows:2:cells:2:cell:link", Game.class, "taskId = " + TEST_LEVEL_TASK_4_3_SIM_ID);
         tester.assertInvisible("form:content:table:rows:2:cells:2:cell:doneImage");
         // Click first level task
         tester.clickLink("form:content:table:rows:1:cells:2:cell:link");
@@ -2539,7 +2539,7 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertInvisible("form:content:table:rows:1:cells:2:cell:link");
         tester.assertVisible("form:content:table:rows:1:cells:2:cell:doneImage");
         tester.assertVisible("form:content:table:rows:2:cells:2:cell:link:linkImage");
-        tester.assertBookmarkablePageLink("form:content:table:rows:2:cells:2:cell:link", Game.class, "taskId = 7");
+        tester.assertBookmarkablePageLink("form:content:table:rows:2:cells:2:cell:link", Game.class, "taskId = " + TEST_LEVEL_TASK_4_3_SIM_ID);
         tester.assertInvisible("form:content:table:rows:2:cells:2:cell:doneImage");
         // Finish second tutorial
         userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_4_3_SIM_ID);

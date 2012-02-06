@@ -68,8 +68,10 @@ import com.btxtech.game.services.utg.DbQuestHub;
 import com.btxtech.game.services.utg.DbXpSettings;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.XpService;
+import com.btxtech.game.services.utg.condition.DbComparisonItemCount;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
+import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -151,10 +153,14 @@ abstract public class AbstractServiceTest {
     protected static int TEST_LEVEL_TASK_4_3_SIM_ID = -1;
     protected static final String TEST_LEVEL_3_REAL = "TEST_LEVEL_3_REAL";
     protected static int TEST_LEVEL_3_REAL_ID = -1;
+    protected static int  TEST_LEVEL_TASK_5_4_REAL_ID = -1;
+    protected static int  TEST_LEVEL_TASK_6_4_SIM_ID = -1;
     protected static final String TEST_LEVEL_4_SIMULATED = "TEST_LEVEL_4_SIMULATED";
     protected static int TEST_LEVEL_4_SIMULATED_ID = -1;
     protected static final String TEST_LEVEL_5_REAL = "TEST_LEVEL_5_REAL";
     protected static int TEST_LEVEL_5_REAL_ID = -1;
+    protected static int TEST_LEVEL_4_REAL_ID = -1;
+    protected static String TEST_LEVEL_4_REAL = "TEST_LEVEL_4_REAL";
     protected static final String TEST_NOOB_TERRITORY = "TEST_NOOB_TERRITORY";
     protected static int TEST_NOOB_TERRITORY_ID = -1;
     // Terrain
@@ -513,6 +519,7 @@ abstract public class AbstractServiceTest {
     }
 
     // -------------------  Game Config --------------------
+
     protected void configureItemTypes() throws Exception {
         System.out.println("---- Configure Item Types ---");
         beginHttpSession();
@@ -1042,6 +1049,16 @@ abstract public class AbstractServiceTest {
         dbSimLevelTask3.setDbTutorialConfig(tut3);
         dbSimLevelTask3.setXp(3);
 
+        DbLevel dbLevel3 = realGameQuestHub1.getLevelCrud().createDbChild();
+        dbLevel3.setHouseSpace(5);
+        dbLevel3.setName(TEST_LEVEL_4_REAL);
+        setLimitation(dbLevel3);
+        DbLevelTask dbLevelTask5 = setupCreateLevelTask5RealGameLevel(dbLevel3);
+        DbLevelTask dbSimLevelTask6 = dbLevel3.getLevelTaskCrud().createDbChild();
+        dbSimLevelTask6.setDbTutorialConfig(tut3);
+        dbSimLevelTask6.setXp(3);
+
+
         userGuidanceService.getCrudQuestHub().updateDbChild(startQuestHub);
         TEST_LEVEL_2_REAL_ID = dbLevel1.getId();
         TEST_LEVEL_TASK_1_2_REAL_ID = dbLevelTask1.getId();
@@ -1051,6 +1068,9 @@ abstract public class AbstractServiceTest {
         TEST_LEVEL_TASK_2_3_REAL_ID = dbLevelTask4.getId();
         TEST_LEVEL_TASK_3_3_SIM_ID = dbSimLevelTask2.getId();
         TEST_LEVEL_TASK_4_3_SIM_ID = dbSimLevelTask3.getId();
+        TEST_LEVEL_4_REAL_ID = dbLevel3.getId();
+        TEST_LEVEL_TASK_5_4_REAL_ID = dbLevelTask5.getId();
+        TEST_LEVEL_TASK_6_4_SIM_ID = dbSimLevelTask6.getId();
 
         userGuidanceService.activateLevels();
     }
@@ -1183,6 +1203,28 @@ abstract public class AbstractServiceTest {
         DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
         dbCountComparisonConfig.setCount(2);
         dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
+        dbLevelTask.setDbConditionConfig(dbConditionConfig);
+        return dbLevelTask;
+    }
+
+    protected DbLevelTask setupCreateLevelTask5RealGameLevel(DbLevel dbLevel) {
+        DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().createDbChild();
+        // Rewards
+        dbLevelTask.setMoney(10);
+        dbLevelTask.setXp(80);
+        // Condition
+        DbConditionConfig dbConditionConfig = new DbConditionConfig();
+        dbConditionConfig.setConditionTrigger(ConditionTrigger.SYNC_ITEM_POSITION);
+        DbItemTypePositionComparisonConfig dbItemTypePositionComparisonConfig = new DbItemTypePositionComparisonConfig();
+        dbItemTypePositionComparisonConfig.setRegion(new Rectangle(200, 200, 1000, 1000));
+        dbItemTypePositionComparisonConfig.setTimeInMinutes(1);
+        DbComparisonItemCount dbComparisonItemCount = dbItemTypePositionComparisonConfig.getCrudDbComparisonItemCount().createDbChild();
+        dbComparisonItemCount.setItemType(itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
+        dbComparisonItemCount.setCount(1);
+        dbComparisonItemCount = dbItemTypePositionComparisonConfig.getCrudDbComparisonItemCount().createDbChild();
+        dbComparisonItemCount.setItemType(itemService.getDbItemType(TEST_FACTORY_ITEM_ID));
+        dbComparisonItemCount.setCount(1);
+        dbConditionConfig.setDbAbstractComparisonConfig(dbItemTypePositionComparisonConfig);
         dbLevelTask.setDbConditionConfig(dbConditionConfig);
         return dbLevelTask;
     }

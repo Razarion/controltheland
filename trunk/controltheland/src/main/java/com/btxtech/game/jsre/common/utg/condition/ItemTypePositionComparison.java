@@ -14,7 +14,10 @@
 package com.btxtech.game.jsre.common.utg.condition;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 import java.util.Collection;
@@ -32,15 +35,22 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
     private Map<ItemType, Integer> itemTypes;
     private Rectangle region;
     private Integer time;
+    private Services services;
+    private SimpleBase simpleBase;
     private boolean isFulfilled = false;
     private Collection<SyncItem> fulfilledItems = new HashSet<SyncItem>();
-    private Long fulfilledTime;
+    private Long fulfilledTimeStamp;
 
-    public ItemTypePositionComparison(Integer excludedTerritoryId, Map<ItemType, Integer> itemTypes, Rectangle region, Integer time) {
+    public ItemTypePositionComparison(Integer excludedTerritoryId, Map<ItemType, Integer> itemTypes, Rectangle region, Integer time, boolean addExistingItems, Services services, SimpleBase simpleBase) {
         super(excludedTerritoryId);
         this.itemTypes = itemTypes;
         this.region = region;
         this.time = time;
+        this.services = services;
+        this.simpleBase = simpleBase;
+        if (addExistingItems) {
+            addInitail();
+        }
     }
 
     @Override
@@ -61,6 +71,16 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
         } else {
             checkIfTimeFulfilled();
         }
+    }
+
+    private void addInitail() {
+        Collection<SyncBaseItem> items;
+        if (region != null) {
+            items = services.getItemService().getBaseItemsInRectangle(region, simpleBase, null);
+        } else {
+            items = services.getItemService().getItems4Base(simpleBase);
+        }
+        fulfilledItems.addAll(items);
     }
 
     @Override
@@ -98,13 +118,13 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
     private void checkIfTimeFulfilled() {
         verifyFulfilledItems();
         if (areItemsComplete()) {
-            if (fulfilledTime == null) {
-                fulfilledTime = System.currentTimeMillis();
+            if (fulfilledTimeStamp == null) {
+                fulfilledTimeStamp = System.currentTimeMillis();
             } else {
-                isFulfilled = fulfilledTime + time < System.currentTimeMillis();
+                isFulfilled = fulfilledTimeStamp + time < System.currentTimeMillis();
             }
         } else {
-            fulfilledTime = null;
+            fulfilledTimeStamp = null;
         }
     }
 
@@ -132,5 +152,24 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
             }
         }
         return tmpItemTypes.isEmpty();
+    }
+
+    @Override
+    public void fillGenericComparisonValues(GenericComparisonValueContainer genericComparisonValueContainer) {
+        if (fulfilledTimeStamp != null) {
+            long remainingTime = time - (System.currentTimeMillis() - fulfilledTimeStamp);
+            genericComparisonValueContainer.addChild(GenericComparisonValueContainer.Key.REMAINING_TIME, remainingTime);
+        }
+    }
+
+    @Override
+    public void restoreFromGenericComparisonValue(GenericComparisonValueContainer genericComparisonValueContainer) {
+        fulfilledItems.clear();
+        addInitail();
+
+        if (genericComparisonValueContainer.hasKey(GenericComparisonValueContainer.Key.REMAINING_TIME)) {
+            long remainingTime = (Long) genericComparisonValueContainer.getValue(GenericComparisonValueContainer.Key.REMAINING_TIME);
+            fulfilledTimeStamp = remainingTime + System.currentTimeMillis() - time;
+        }
     }
 }

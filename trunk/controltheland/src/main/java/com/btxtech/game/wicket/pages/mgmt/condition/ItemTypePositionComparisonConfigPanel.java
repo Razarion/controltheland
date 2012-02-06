@@ -18,12 +18,11 @@ import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.utg.condition.DbComparisonItemCount;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig;
-import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
-import com.btxtech.game.wicket.uiservices.ItemTypePanel;
 import com.btxtech.game.wicket.uiservices.RectanglePanel;
 import com.btxtech.game.wicket.uiservices.TerritoryPanel;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
@@ -87,6 +86,7 @@ public class ItemTypePositionComparisonConfigPanel extends Panel {
 
         add(new RectanglePanel("region"));
         add(new TextField("timeInMinutes"));
+        add(new CheckBox("addExistingItems"));
         add(new TerritoryPanel("excludedDbTerritory"));
     }
 }
