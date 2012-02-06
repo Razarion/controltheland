@@ -14,7 +14,9 @@
 package com.btxtech.game.jsre.common.utg.config;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.ItemTypePositionComparison;
 
@@ -30,6 +32,7 @@ public class ItemTypePositionComparisonConfig implements AbstractComparisonConfi
     private Map<ItemType, Integer> itemTypes;
     private Rectangle region;
     private Integer time;
+    private boolean addExistingItems;
 
     /**
      * Used by GWT
@@ -37,15 +40,16 @@ public class ItemTypePositionComparisonConfig implements AbstractComparisonConfi
     public ItemTypePositionComparisonConfig() {
     }
 
-    public ItemTypePositionComparisonConfig(Integer excludedTerritoryId, Map<ItemType, Integer> itemTypes, Rectangle region, Integer time) {
+    public ItemTypePositionComparisonConfig(Integer excludedTerritoryId, Map<ItemType, Integer> itemTypes, Rectangle region, Integer time, boolean addExistingItems) {
         this.excludedTerritoryId = excludedTerritoryId;
         this.itemTypes = itemTypes;
         this.region = region;
         this.time = time;
+        this.addExistingItems = addExistingItems;
     }
 
     @Override
-    public AbstractComparison createAbstractComparison() {
-        return new ItemTypePositionComparison(excludedTerritoryId, itemTypes, region, time);
+    public AbstractComparison createAbstractComparison(Services services, SimpleBase simpleBase) {
+        return new ItemTypePositionComparison(excludedTerritoryId, itemTypes, region, time, addExistingItems, services, simpleBase);
     }
 }

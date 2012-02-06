@@ -382,13 +382,12 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         DbLevel dbLevel = getDbLevel(userState);
         Collection<DbLevelTask> levelTaskDone = new ArrayList<DbLevelTask>();
         for (DbLevelTask dbLevelTask : dbLevel.getLevelTaskCrud().readDbChildren()) {
-            if (serverConditionService.hasConditionTrigger(userState, dbLevelTask.getId())) {
-                // TODO save leval task details
-            } else {
+            if (!serverConditionService.hasConditionTrigger(userState, dbLevelTask.getId())) {
                 levelTaskDone.add(dbLevelTask);
             }
         }
         dbUserState.setLevelTasksDone(levelTaskDone);
+        serverConditionService.createBackup(dbUserState, userState);
     }
 
     @Override
@@ -397,12 +396,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         for (Map.Entry<DbUserState, UserState> entry : userStates.entrySet()) {
             try {
                 DbLevel dbLevel = getDbLevel(entry.getValue());
-                for (DbLevelTask dbLevelTask : dbLevel.getLevelTaskCrud().readDbChildren()) {
-                    if (entry.getKey().getLevelTasksDone() != null && !entry.getKey().getLevelTasksDone().contains(dbLevelTask)) {
-                        // TODO restore level task details
-                        activateConditions(entry.getValue(), dbLevel, entry.getKey().getLevelTasksDone());
-                    }
-                }
+                activateConditions(entry.getValue(), dbLevel, entry.getKey().getLevelTasksDone());
+                serverConditionService.restoreBackup(entry.getKey(), entry.getValue());
             } catch (Exception e) {
                 log.error("Can not restore user: " + userStates, e);
             }

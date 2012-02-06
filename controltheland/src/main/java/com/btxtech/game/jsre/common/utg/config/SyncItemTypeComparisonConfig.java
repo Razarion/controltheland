@@ -13,7 +13,9 @@
 
 package com.btxtech.game.jsre.common.utg.config;
 
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.SyncItemTypeComparison;
 
@@ -40,7 +42,7 @@ public class SyncItemTypeComparisonConfig implements AbstractComparisonConfig {
     }
 
     @Override
-    public AbstractComparison createAbstractComparison() {
+    public AbstractComparison createAbstractComparison(Services services, SimpleBase simpleBase) {
         return new SyncItemTypeComparison(excludedTerritoryId, itemTypeCount);
     }
 }

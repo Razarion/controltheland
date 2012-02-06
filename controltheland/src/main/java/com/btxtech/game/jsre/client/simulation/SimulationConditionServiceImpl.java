@@ -67,6 +67,11 @@ public class SimulationConditionServiceImpl extends ConditionServiceImpl<SimpleB
     }
 
     @Override
+    protected SimpleBase getSimpleBase(SimpleBase actorBase) {
+        return actorBase;
+    }
+
+    @Override
     protected AbstractConditionTrigger<SimpleBase, Void> removeActorConditionsPrivate(SimpleBase actor, Void identifier) {
         if (!ClientBase.getInstance().isMyOwnBase(actor)) {
             return null;

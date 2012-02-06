@@ -376,31 +376,6 @@ public class ItemContainer extends AbstractItemService {
 
     // TODO move up
 
-    @Override
-    public Collection<SyncBaseItem> getBaseItemsInRectangle(Rectangle rectangle, SimpleBase simpleBase, Collection<BaseItemType> baseItemTypeFilter) {
-        ArrayList<SyncBaseItem> result = new ArrayList<SyncBaseItem>();
-        for (ClientSyncItem clientSyncItem : items.values()) {
-            if (clientSyncItem.isSyncBaseItem()
-                    && !orphanItems.containsKey(clientSyncItem.getSyncItem().getId())
-                    && !seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId())) {
-                SyncBaseItem syncBaseItem = clientSyncItem.getSyncBaseItem();
-                if (simpleBase != null && !(syncBaseItem.getBase().equals(simpleBase))) {
-                    continue;
-                }
-                if (!syncBaseItem.getSyncItemArea().contains(rectangle)) {
-                    continue;
-                }
-                if (baseItemTypeFilter != null && !baseItemTypeFilter.contains(syncBaseItem.getBaseItemType())) {
-                    continue;
-                }
-                result.add(syncBaseItem);
-            }
-        }
-        return result;
-    }
-
-    // TODO move up
-
     public Collection<ClientSyncItem> getOwnItems() {
         ArrayList<ClientSyncItem> clientBaseItems = new ArrayList<ClientSyncItem>();
         for (ClientSyncItem clientSyncItem : items.values()) {

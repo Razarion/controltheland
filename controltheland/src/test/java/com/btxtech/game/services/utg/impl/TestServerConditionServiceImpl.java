@@ -6,6 +6,8 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
+import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
+import com.btxtech.game.jsre.common.utg.condition.ItemTypePositionComparison;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.CountComparisonConfig;
@@ -14,18 +16,25 @@ import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.mgmt.BackupSummary;
+import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.utg.LevelQuest;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.services.utg.condition.impl.ServerConditionServiceImpl;
 import org.easymock.EasyMock;
+import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,6 +49,12 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
     private ItemService itemService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
+    @Autowired
+    private MgmtService mgmtService;
+    @Autowired
+    private SessionFactory sessionFactory;
     private UserState actor;
     private Integer identifier;
     private boolean passed = false;
@@ -213,71 +228,6 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void baseDeleted2BackupRestore() throws Exception {
-        Assert.fail("TODO backup & restore");
-//        final UserState userState = new UserState();
-//        DbRealGameLevel dbRealGameLevel = new DbRealGameLevel();
-//        setPrivateField(DbLevel.class, dbRealGameLevel, "id", 1);
-//        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.BASE_KILLED, new CountComparisonConfig(null, 2));
-//        setPrivateField(DbLevel.class, dbRealGameLevel, "conditionConfig", conditionConfig);
-//
-//        userState.setDbLevel(dbRealGameLevel);
-//        Base base = new Base(userState, 1);
-//        SimpleBase simpleBase1 = base.getSimpleBase();
-//
-//        // Mock BaseService
-//        BaseService baseServiceMock = EasyMock.createStrictMock(BaseService.class);
-//        EasyMock.expect(baseServiceMock.getUserState(simpleBase1)).andReturn(userState).times(4);
-//        EasyMock.replay(baseServiceMock);
-//        setPrivateField(ServerConditionServiceImpl.class, conditionService, "baseService", baseServiceMock);
-//
-//        // Mock UserGuidanceService
-//        UserGuidanceService userGuidanceServiceMock = EasyMock.createStrictMock(UserGuidanceService.class);
-//        EasyMock.expect(userGuidanceServiceMock.getDbLevel(1)).andReturn(dbRealGameLevel);
-//        EasyMock.replay(userGuidanceServiceMock);
-//        setPrivateField(ServerConditionServiceImpl.class, conditionService, "userGuidanceService", userGuidanceServiceMock);
-//
-//        passed = false;
-//        conditionService.setConditionServiceListener(new ConditionServiceListener<UserState>() {
-//            @Override
-//            public void conditionPassed(UserState userState1) {
-//                passed = true;
-//            }
-//        });
-//        conditionService.onBaseDeleted(simpleBase1);
-//        Assert.assertFalse(passed);
-//        conditionService.activateCondition(conditionConfig, userState);
-//        Assert.assertFalse(passed);
-//        conditionService.onBaseDeleted(simpleBase1);
-//        Assert.assertFalse(passed);
-//
-//        // Backup
-//        DbUserState dbUserState = new DbUserState(null, userState);
-//        DbAbstractComparisonBackup dbAbstractComparisonBackup = conditionService.createBackup(dbUserState, userState);
-//        Assert.assertNotNull(dbAbstractComparisonBackup);
-//        Assert.assertTrue(dbAbstractComparisonBackup instanceof DbCountComparisonBackup);
-//        CountComparison backupCountComparison = new CountComparison(null, 0);
-//        dbAbstractComparisonBackup.restore(backupCountComparison, null);
-//        Assert.assertEquals(1, backupCountComparison.getCount(), 0.1);
-//
-//        // Fulfill before backup
-//        conditionService.onBaseDeleted(simpleBase1);
-//        Assert.assertTrue(passed);
-//        passed = false;
-//
-//        // Restore
-//        Map<DbUserState, UserState> userStates = new HashMap<DbUserState, UserState>();
-//        dbUserState.setDbAbstractComparisonBackup(dbAbstractComparisonBackup);
-//        userStates.put(dbUserState, userState);
-//        conditionService.restoreBackup(userStates, null);
-//
-//        // Fulfill after backup
-//        conditionService.onBaseDeleted(simpleBase1);
-//        Assert.assertTrue(passed);
-    }
-
-    @Test
-    @DirtiesContext
     public void positionConditionTrigger() throws Exception {
         configureRealGame();
 
@@ -296,7 +246,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         identifier = null;
         Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
         itemTypes.put(itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 1);
-        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null)), userService.getUserState(), 1);
+        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null, false)), userService.getUserState(), 1);
         assertClearActorAndIdentifier();
         sendMoveCommand(builder, new Index(700, 700));
         waitForActionServiceDone();
@@ -304,14 +254,14 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
 
         itemTypes = new HashMap<ItemType, Integer>();
         itemTypes.put(itemService.getItemType(TEST_FACTORY_ITEM_ID), 1);
-        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null)), userService.getUserState(), 1);
+        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null, false)), userService.getUserState(), 1);
         sendBuildCommand(builder, new Index(900, 900), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         assertActorAndIdentifierAndClear(userService.getUserState(), 1);
 
         itemTypes = new HashMap<ItemType, Integer>();
         itemTypes.put(itemService.getItemType(TEST_ATTACK_ITEM_ID), 1);
-        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null)), userService.getUserState(), 1);
+        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null, false)), userService.getUserState(), 1);
         Id factory = getFirstSynItemId(TEST_FACTORY_ITEM_ID);
         sendFactoryCommand(factory, TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
@@ -325,10 +275,170 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
 
         itemTypes = new HashMap<ItemType, Integer>();
         itemTypes.put(itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 1);
-        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null)), userService.getUserState(), 1);
+        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null, false)), userService.getUserState(), 1);
         sendUnloadContainerCommand(container, new Index(1000, 1000));
         waitForActionServiceDone();
         assertActorAndIdentifierAndClear(userService.getUserState(), 1);
 
     }
+
+    @Test
+    @DirtiesContext
+    public void testBackupRestoreDb() throws Exception {
+        configureGameMultipleLevel();
+        //Setup user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "test", "test", "test");
+        userService.login("U1", "test");
+        UserState userState1 = userService.getUserState();
+        userGuidanceService.promote(userState1, TEST_LEVEL_2_REAL_ID);
+        SimpleBase simpleBase1 = getMyBase();
+        serverConditionService.onMoneyIncrease(simpleBase1, 2.0);
+        serverConditionService.onIncreaseXp(userState1, 10);
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(100, 100), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        //Backup
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Restore
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertFalse(levelQuest.isDone());
+        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Complete missions
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
+        simpleBase1 = getMyBase();
+        serverConditionService.onMoneyIncrease(simpleBase1, 1.0);
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isDone());
+        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        //Backup
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Restore
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify & Complete last task
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        serverConditionService.onMoneyIncrease(simpleBase1, 1.0);
+        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isDone());
+        }
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        Assert.assertEquals(TEST_LEVEL_3_REAL_ID, (int) userGuidanceService.getDbLevel().getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testBackupRestoreItemTypePositionDb() throws Exception {
+        configureGameMultipleLevel();
+        ((ServerConditionServiceImpl) deAopProxy(serverConditionService)).setRate(50);
+
+        //Setup user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "test", "test", "test");
+        userService.login("U1", "test");
+        UserState userState1 = userService.getUserState();
+        userGuidanceService.promote(userState1, TEST_LEVEL_4_REAL_ID);
+        Assert.assertEquals(1, userGuidanceService.getQuestsCms().readDbChildren().size());
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertFalse(levelQuest.isDone());
+        }
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(600, 600), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        Assert.assertEquals(1, userGuidanceService.getQuestsCms().readDbChildren().size());
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertFalse(levelQuest.isDone());
+        }
+        Thread.sleep(500);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        //Backup
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Restore
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Thread.sleep(500);
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Complete task
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        Assert.assertEquals(1, userGuidanceService.getQuestsCms().readDbChildren().size());
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertFalse(levelQuest.isDone());
+        }
+        assertAndSetTimeRemaining();
+        Thread.sleep(100);
+        Assert.assertEquals(1, userGuidanceService.getQuestsCms().readDbChildren().size());
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertTrue(levelQuest.isDone());
+        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+    }
+
+    private void assertAndSetTimeRemaining() throws Exception {
+        // Manipulate the time inside the position comparison to avoid waiting a minute
+        Map<UserState, Collection<AbstractConditionTrigger<UserState, Integer>>> triggerMap = (Map<UserState, Collection<AbstractConditionTrigger<UserState, Integer>>>) getPrivateField(ServerConditionServiceImpl.class, serverConditionService, "triggerMap");
+        Collection<AbstractConditionTrigger<UserState, Integer>> triggers = triggerMap.get(userService.getUserState());
+        Assert.assertEquals(2, triggers.size());
+        ItemTypePositionComparison itemTypePositionComparison = null;
+        for (AbstractConditionTrigger<UserState, Integer> trigger : triggers) {
+            if (trigger.getIdentifier() == TEST_LEVEL_TASK_5_4_REAL_ID) {
+                itemTypePositionComparison = (ItemTypePositionComparison) trigger.getAbstractComparison();
+            }
+        }
+        Assert.assertNotNull(itemTypePositionComparison);
+        long fulfilledTimeStamp = (Long) getPrivateField(ItemTypePositionComparison.class, itemTypePositionComparison, "fulfilledTimeStamp");
+        long fulfilledTime = (System.currentTimeMillis() - fulfilledTimeStamp);
+        Assert.assertTrue(fulfilledTime > 500 && fulfilledTime < 700);
+        setPrivateField(ItemTypePositionComparison.class, itemTypePositionComparison, "fulfilledTimeStamp", System.currentTimeMillis() - 60000);
+    }
+
 }

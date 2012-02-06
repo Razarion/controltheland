@@ -5,7 +5,8 @@ import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.services.utg.condition.backup.DbAbstractComparisonBackup;
+import com.btxtech.game.services.utg.condition.DbGenericComparisonValue;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -16,7 +17,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -38,23 +41,18 @@ public class DbUserState {
     @ManyToOne(optional = false)
     private BackupEntry backupEntry;
     @OneToOne(cascade = CascadeType.ALL)
-    private DbAbstractComparisonBackup dbAbstractComparisonBackup;// TODO
+    private DbGenericComparisonValue dbGenericComparisonValue;
     private int xp;
     private boolean sendResurrectionMessage;
-//    @ElementCollection(fetch = FetchType.LAZY)
-//    @CollectionTable(
-//            name = "BACKUP_USER_STATUS_LEVEL_TASK_DONE",
-//            joinColumns = @JoinColumn(name = "userState")
-//    )
-//    @Column(name = "levelTaskDone")
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable
-            (
-                    name = "BACKUP_USER_STATUS_LEVEL_TASK_DONE",
-                    joinColumns = {@JoinColumn(name = "userState")},
-                    inverseJoinColumns = {@JoinColumn(name = "levelTask")}
-            )
+    @JoinTable(name = "BACKUP_USER_STATUS_LEVEL_TASK_DONE",
+            joinColumns = {@JoinColumn(name = "userState")},
+            inverseJoinColumns = {@JoinColumn(name = "levelTask")})
     private Collection<DbLevelTask> levelTasksDone;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "dbUserState")
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    private Collection<DbGenericComparisonValue> dbGenericComparisonValues;
 
     /**
      * Used by hibernate
@@ -66,7 +64,7 @@ public class DbUserState {
         this.backupEntry = backupEntry;
         user = userState.getUser();
         xp = userState.getXp();
-        currentLevel = userGuidanceService.getDbLevel(userState.getDbLevelId());
+        currentLevel = userGuidanceService.getDbLevel(userState);
         sendResurrectionMessage = userState.isSendResurrectionMessage();
     }
 
@@ -91,12 +89,15 @@ public class DbUserState {
         this.base = base;
     }
 
-    public void setDbAbstractComparisonBackup(DbAbstractComparisonBackup dbAbstractComparisonBackup) {
-        this.dbAbstractComparisonBackup = dbAbstractComparisonBackup;
+    public void addDbGenericComparisonValue(DbGenericComparisonValue dbGenericComparisonValue) {
+        if(dbGenericComparisonValues == null) {
+           dbGenericComparisonValues = new ArrayList<DbGenericComparisonValue>();
+        }
+        dbGenericComparisonValues.add(dbGenericComparisonValue);
     }
 
-    public DbAbstractComparisonBackup getDbAbstractComparisonBackup() {
-        return dbAbstractComparisonBackup;
+    public Collection<DbGenericComparisonValue> getDbGenericComparisonValues() {
+        return dbGenericComparisonValues;
     }
 
     public Collection<DbLevelTask> getLevelTasksDone() {
@@ -125,6 +126,6 @@ public class DbUserState {
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : System.identityHashCode(this);
+        return id != null ? id : System.identityHashCode(this);
     }
 }

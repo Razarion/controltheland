@@ -411,6 +411,37 @@ abstract public class AbstractItemService implements ItemService {
     }
 
     @Override
+    public Collection<SyncBaseItem> getBaseItemsInRectangle(final Rectangle rectangle, final SimpleBase simpleBase, final Collection<BaseItemType> baseItemTypeFilter) {
+        final Collection<SyncBaseItem> itemsInBase = new ArrayList<SyncBaseItem>();
+        iterateOverItems(new ItemHandler<Void>() {
+            @Override
+            public Void handleItem(SyncItem syncItem) {
+                if (!syncItem.getSyncItemArea().hasPosition()) {
+                    return null;
+                }
+
+                if (!(syncItem instanceof SyncBaseItem)) {
+                    return null;
+                }
+                SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
+                if (simpleBase != null && !(syncBaseItem.getBase().equals(simpleBase))) {
+                    return null;
+                }
+                if (!syncBaseItem.getSyncItemArea().contains(rectangle)) {
+                    return null;
+                }
+                if (baseItemTypeFilter != null && !baseItemTypeFilter.contains(syncBaseItem.getBaseItemType())) {
+                    return null;
+                }
+
+                itemsInBase.add((SyncBaseItem) syncItem);
+                return null;
+            }
+        }, null);
+        return itemsInBase;
+    }
+
+    @Override
     public void sellItem(Id id) throws ItemDoesNotExistException, NotYourBaseException {
         SyncBaseItem syncBaseItem = (SyncBaseItem) getItem(id);
         getServices().getBaseService().checkBaseAccess(syncBaseItem);
