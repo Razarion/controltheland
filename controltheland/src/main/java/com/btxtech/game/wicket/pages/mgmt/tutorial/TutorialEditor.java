@@ -60,6 +60,7 @@ public class TutorialEditor extends MgmtWebPage {
         }));
         add(form);
 
+        form.add(new TextField<String>("inGameHtml"));
         form.add(new TextField<String>("ownBaseName"));
         form.add(new TextField<String>("width"));
         form.add(new TextField<String>("height"));

@@ -70,6 +70,7 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
         }
         ClientBase.getInstance().setOwnBaseDestroyedListener(this);
         ClientBase.getInstance().createOwnSimulationBaseIfNotExist(tutorialConfig.getOwnBaseName());
+        SideCockpit.getInstance().setMissionHtml(tutorialConfig.getInGameHtml());
         SimulationConditionServiceImpl.getInstance().setConditionServiceListener(this);
         tutorialTime = System.currentTimeMillis();
         MapWindow.getInstance().setMinimalSize(tutorialConfig.getWidth(), tutorialConfig.getHeight());
@@ -82,7 +83,7 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
 
     private void processPreparation(TaskConfig taskConfig) {
         SideCockpit.getInstance().setRadarItems();
-        ClientLevelHandler.getInstance().setLevelScope(taskConfig.createLevelScope());
+        ClientLevelHandler.getInstance().setLevelScope(taskConfig.createLevelScope(simulationInfo.getLevelName()));
         SideCockpit.getInstance().updateItemLimit();
 
         if (taskConfig.hasBots()) {

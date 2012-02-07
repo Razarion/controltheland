@@ -93,7 +93,7 @@ public class TaskConfig implements Serializable {
         return money;
     }
 
-    public LevelScope createLevelScope() {
-        return new LevelScope(maxMoney, itemTypeLimitation, houseCount, itemSellFactor);
+    public LevelScope createLevelScope(String levelName) {
+        return new LevelScope(levelName, maxMoney, itemTypeLimitation, houseCount, itemSellFactor);
     }
 }

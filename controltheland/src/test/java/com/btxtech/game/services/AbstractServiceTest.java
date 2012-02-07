@@ -8,6 +8,7 @@ import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.HouseSpacePacket;
 import com.btxtech.game.jsre.common.LevelPacket;
+import com.btxtech.game.jsre.common.LevelTaskDonePacket;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
@@ -417,6 +418,8 @@ abstract public class AbstractServiceTest {
             LevelPacket expected = (LevelPacket) expectedPacket;
             LevelPacket received = (LevelPacket) receivedPacket;
             Assert.assertEquals(expected.getLevel(), received.getLevel());
+        } else if (expectedPacket instanceof LevelTaskDonePacket) {
+            // Do nothing here
         } else if (expectedPacket instanceof HouseSpacePacket) {
             HouseSpacePacket expected = (HouseSpacePacket) expectedPacket;
             HouseSpacePacket received = (HouseSpacePacket) receivedPacket;
@@ -1031,6 +1034,7 @@ abstract public class AbstractServiceTest {
         DbLevel dbLevel2 = realGameQuestHub1.getLevelCrud().createDbChild();
         dbLevel2.setHouseSpace(5);
         dbLevel2.setName(TEST_LEVEL_3_REAL);
+        dbLevel2.setMaxMoney(10000);
         setLimitation(dbLevel2);
         levelCondition = new DbConditionConfig();
         levelCondition.setConditionTrigger(ConditionTrigger.XP_INCREASED);
@@ -1050,6 +1054,7 @@ abstract public class AbstractServiceTest {
         dbSimLevelTask3.setXp(3);
 
         DbLevel dbLevel3 = realGameQuestHub1.getLevelCrud().createDbChild();
+        dbLevel3.setMaxMoney(10000);
         dbLevel3.setHouseSpace(5);
         dbLevel3.setName(TEST_LEVEL_4_REAL);
         setLimitation(dbLevel3);

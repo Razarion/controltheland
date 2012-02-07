@@ -48,7 +48,7 @@ public class Constants {
     public static final String TUTORIAL_RESOURCE_ID = "id";
 
     // zIndex
-    public static final int Z_INDEX_LEVEL_DIALOG = 101;
+    public static final int Z_INDEX_LEVEL_SPLASH = 101;
     public static final int Z_INDEX_STARTUP_SCREEN = 100; // Fix coded in Game.html
     public static final int Z_INDEX_GLASS_PANEL = 99;
     public static final int Z_INDEX_TIP = 18;
@@ -70,25 +70,10 @@ public class Constants {
     public static final int Z_INDEX_TERRAIN = 2;
     public static final int Z_INDEX_HIDDEN = 1;
 
-    // Financial
-    public static final int MONEY_STACK_COUNT = 8;
-
-    // Distances
-    public static final int MIN_FREE_MONEY_DISTANCE = 400;
-
-    // Item names
-    public static final String CONSTRUCTION_VEHICLE = "Construction Vehicle";
-    public static final String FACTORY = "Factory";
-    public static final String JEEP = "Jeep";
-    public static final String HARVESTER = "Harvester";
-    public static final String MONEY = "Money";
-
-    // Missions
-    public static final int TARGET_MAX_RANGE = 300;
-    public static final int TARGET_MIN_RANGE = 150;
-    public static final double MISSION_MONEY = 50.0;
-
     // Error
     public static final String ERROR_KEY = "e";
+
+    // Div
+    public static final String REAL_GAME_MISSION_TEXT = "Gain XP to level up!. Complete quests or attack other players or kill bots.";
 
 }

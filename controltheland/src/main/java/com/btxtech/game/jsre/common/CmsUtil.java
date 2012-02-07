@@ -48,6 +48,7 @@ public class CmsUtil {
 
     public static String getUrl4CmsPage(String id) {
         StringBuilder builder = new StringBuilder();
+        builder.append('/');
         builder.append(MOUNT_GAME_CMS);
         builder.append('/');
         builder.append(ID);

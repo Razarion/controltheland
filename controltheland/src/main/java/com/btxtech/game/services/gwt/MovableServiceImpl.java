@@ -167,6 +167,7 @@ public class MovableServiceImpl implements MovableService {
             setCommonInfo(simulationInfo, userService, itemService, mgmtService, cmsUiService);
             simulationInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(itemService));
             simulationInfo.setLevelTaskId(levelTaskId);
+            simulationInfo.setLevelName(userGuidanceService.getDbLevel().getName());
             // Terrain
             terrainService.setupTerrainTutorial(simulationInfo, dbTutorialConfig);
             return simulationInfo;

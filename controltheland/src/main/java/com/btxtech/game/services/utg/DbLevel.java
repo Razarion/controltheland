@@ -216,7 +216,7 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
         for (DbItemTypeLimitation dbItemTypeLimitation : this.itemTypeLimitation) {
             itemTypeLimitation.put(dbItemTypeLimitation.getDbBaseItemType().getId(), dbItemTypeLimitation.getCount());
         }
-        return new LevelScope(maxMoney, itemTypeLimitation, houseSpace, itemSellFactor);
+        return new LevelScope(name, maxMoney, itemTypeLimitation, houseSpace, itemSellFactor);
     }
 
     public DbConditionConfig getDbConditionConfig() {
