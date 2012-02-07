@@ -16,6 +16,7 @@ package com.btxtech.game.services.utg.impl;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.common.LevelPacket;
+import com.btxtech.game.jsre.common.LevelTaskDonePacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
@@ -225,12 +226,18 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
 
     private void handleLevelTaskCompletion(UserState userState, int levelTaskId) {
         DbLevelTask dbLevelTask = (DbLevelTask) sessionFactory.getCurrentSession().get(DbLevelTask.class, levelTaskId);
+        // Communication
         log.debug("Level Task completed. userState: " + userState + " " + dbLevelTask);
         historyService.addLevelTaskCompletedEntry(userState, dbLevelTask);
+        Base base = baseService.getBase(userState);
+        if (base != null) {
+            LevelTaskDonePacket levelTaskDonePacket = new LevelTaskDonePacket();
+            connectionService.sendPacket(base.getSimpleBase(), levelTaskDonePacket);
+        }
+        // Rewards
         if (dbLevelTask.getXp() > 0) {
             xpService.onReward(userState, dbLevelTask.getXp());
         }
-        Base base = baseService.getBase(userState);
         if (base != null && dbLevelTask.getMoney() > 0) {
             baseService.depositResource(dbLevelTask.getMoney(), base.getSimpleBase());
             baseService.sendAccountBaseUpdate(base.getSimpleBase());

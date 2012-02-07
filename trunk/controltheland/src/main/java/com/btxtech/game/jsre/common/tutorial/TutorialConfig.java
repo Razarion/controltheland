@@ -34,6 +34,7 @@ public class TutorialConfig implements Serializable {
     private int width;
     private int height;
     private boolean eventTracking;
+    private String inGameHtml;
 
     /**
      * Used by GWT
@@ -45,12 +46,14 @@ public class TutorialConfig implements Serializable {
                           String ownBaseName,
                           int width,
                           int height,
-                          boolean eventTracking) {
+                          boolean eventTracking,
+                          String inGameHtml) {
         this.taskConfigs = taskConfigs;
         this.ownBaseName = ownBaseName;
         this.width = width;
         this.height = height;
         this.eventTracking = eventTracking;
+        this.inGameHtml = inGameHtml;
     }
 
     public List<TaskConfig> getTasks() {
@@ -71,5 +74,9 @@ public class TutorialConfig implements Serializable {
 
     public boolean isEventTracking() {
         return eventTracking;
+    }
+
+    public String getInGameHtml() {
+        return inGameHtml;
     }
 }

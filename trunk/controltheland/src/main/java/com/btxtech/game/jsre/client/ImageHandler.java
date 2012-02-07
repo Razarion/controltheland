@@ -46,6 +46,7 @@ public class ImageHandler {
     public static final String BTN_IMAGE_PATH = "/images/cockpit/";
     public static final String BTN_UP_IMAGE = "-up.png";
     public static final String BTN_DOWN_IMAGE = "-down.png";
+    public static final String SPLASH_IMAGE_PREFIX = "/images/splash/";
 
     private static HashSet<String> loadedUrls = new HashSet<String>();
 
@@ -152,6 +153,10 @@ public class ImageHandler {
 
     public static Image getButtonDownImage(String name) {
         return new Image(BTN_IMAGE_PATH + name + BTN_DOWN_IMAGE);
+    }
+
+    public static String getSplashImageUrl(String name) {
+        return SPLASH_IMAGE_PREFIX + name;
     }
 
     public static Image getTerrainImage(int id) {

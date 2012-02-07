@@ -8,7 +8,7 @@ package com.btxtech.game.jsre.client.cockpit;
 public class ToolTips {
     // Fields
     public static final String TOOL_TIP_RADAR = "Overview of the entire map. Click on the minimap to navigate or use the arrow keys";
-    public static final String TOOL_TIP_LEVEL_TARGET = "Shows level target to move to the next level";
+    public static final String TOOL_TIP_MISSION = "Your current mission";
     public static final String TOOL_TIP_LEVEL = "Your current level";
     public static final String TOOL_TIP_MONEY = "Your money";
     public static final String TOOL_TIP_UNITS = "Units amount / max";

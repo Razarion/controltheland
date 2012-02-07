@@ -123,14 +123,26 @@ public class SideCockpit extends AbsolutePanel {
 
     public void setLevel(LevelScope levelScope) {
         if (cockpitDisplayPanel != null) {
-            cockpitDisplayPanel.setLevel(levelScope);
+            cockpitDisplayPanel.getLevelPanel().onLevelUp(levelScope);
         }
         onStateChanged();
+    }
+
+    public void onLevelTaskDone() {
+        if (cockpitDisplayPanel != null) {
+            cockpitDisplayPanel.getLevelPanel().onLevelTaskDone();
+        }
     }
 
     public void onStateChanged() {
         if (ItemCockpit.getInstance().isActive()) {
             ItemCockpit.getInstance().onStateChanged();
+        }
+    }
+
+    public void setMissionHtml(String missionHtml) {
+        if (cockpitDisplayPanel != null) {
+            cockpitDisplayPanel.setMissionHtml(missionHtml);
         }
     }
 
@@ -187,5 +199,5 @@ public class SideCockpit extends AbsolutePanel {
 
     public CockpitMode getCockpitMode() {
         return cockpitMode;
-    }    
+    }
 }

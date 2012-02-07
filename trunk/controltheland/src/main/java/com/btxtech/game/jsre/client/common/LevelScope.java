@@ -22,6 +22,7 @@ import java.util.Map;
  * Time: 18:48:18
  */
 public class LevelScope implements Serializable {
+    private String levelName;
     private int maxMoney;
     private Map<Integer, Integer> itemTypeLimitation;
     private int houseSpace;
@@ -33,11 +34,16 @@ public class LevelScope implements Serializable {
     public LevelScope() {
     }
 
-    public LevelScope(int maxMoney, Map<Integer, Integer> itemTypeLimitation, int houseSpace, double itemSellFactor) {
+    public LevelScope(String levelName, int maxMoney, Map<Integer, Integer> itemTypeLimitation, int houseSpace, double itemSellFactor) {
+        this.levelName = levelName;
         this.maxMoney = maxMoney;
         this.itemTypeLimitation = itemTypeLimitation;
         this.houseSpace = houseSpace;
         this.itemSellFactor = itemSellFactor;
+    }
+
+    public String getLevelName() {
+        return levelName;
     }
 
     public int getMaxMoney() {

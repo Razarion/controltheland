@@ -24,6 +24,7 @@ import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -58,9 +59,12 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
     private boolean tracking;
     @ManyToOne(fetch = FetchType.LAZY)
     private DbTerrainSetting dbTerrainSetting;
+    @Column(length = 50000)
+    private String inGameHtml;
 
     @Transient
     private CrudChildServiceHelper<DbTaskConfig> dbTaskConfigCrudChildServiceHelper;
+    @Transient
     private TutorialConfig tutorialConfig;
 
     @Override
@@ -178,6 +182,14 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
         }
     }
 
+    public String getInGameHtml() {
+        return inGameHtml;
+    }
+
+    public void setInGameHtml(String inGameHtml) {
+        this.inGameHtml = inGameHtml;
+    }
+
     @Override
     public String toString() {
         return "DbTutorialSetting: " + name;
@@ -196,7 +208,7 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
             taskConfigs.add(dbTaskConfig.createTaskConfig(itemService));
         }
 
-        return new TutorialConfig(taskConfigs, ownBaseName, width, height, tracking);
+        return new TutorialConfig(taskConfigs, ownBaseName, width, height, tracking, inGameHtml);
     }
 
 }

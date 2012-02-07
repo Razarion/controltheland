@@ -69,7 +69,8 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     private void setupTutorialConfig(SimulationInfo simulationInfo) {
-        simulationInfo.setTutorialConfig(new TutorialConfig(null, "Own Base", 0, 0, false));
+        simulationInfo.setTutorialConfig(new TutorialConfig(null, "Own Base", 0, 0, false, ""));
+        simulationInfo.setLevelName("Unknown");
     }
 
     protected void setupSimpleTerrain(GameInfo gameInfo) {

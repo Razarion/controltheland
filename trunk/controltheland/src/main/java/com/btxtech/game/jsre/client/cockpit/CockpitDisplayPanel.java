@@ -2,7 +2,6 @@ package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.google.gwt.user.client.ui.Grid;
@@ -20,7 +19,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class CockpitDisplayPanel extends AbstractControlPanel {
     private Label money;
     private HTML mission;
-    private Label level;
+    private LevelPanel levelPanel;
     private Label itemLimit;
     private Label energy;
 
@@ -33,25 +32,23 @@ public class CockpitDisplayPanel extends AbstractControlPanel {
     protected Widget createBody() {
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.setHeight("100%");
-        // Mission
-        mission = new HTML();
-        mission.setTitle(ToolTips.TOOL_TIP_LEVEL_TARGET);
-        verticalPanel.add(mission);
 
         Grid grid = new Grid(5, 2);
         verticalPanel.add(grid);
+        // Mission
+        mission = new HTML();
+        mission.setTitle(ToolTips.TOOL_TIP_MISSION);
+        mission.setHTML("??????");
+        verticalPanel.add(mission);
         grid.setWidget(0, 0, mission);
         grid.getCellFormatter().getElement(0, 0).setAttribute("colspan", "2");
         grid.getElement().getStyle().setColor("#C2D7EC");
         // Level
-        Image image = ImageHandler.getIcon16("medal");
-        image.setTitle(ToolTips.TOOL_TIP_LEVEL);
-        grid.setWidget(1, 0, image);
-        level = new Label();
-        level.setTitle(ToolTips.TOOL_TIP_LEVEL);
-        grid.setWidget(1, 1, level);
+        levelPanel = new LevelPanel();
+        grid.setWidget(1, 0, levelPanel);
+        grid.getCellFormatter().getElement(1, 0).setAttribute("colspan", "2");
         // Money
-        image = ImageHandler.getIcon16("money");
+        Image image = ImageHandler.getIcon16("money");
         image.setTitle(ToolTips.TOOL_TIP_MONEY);
         grid.setWidget(2, 0, image);
         money = new Label();
@@ -79,12 +76,6 @@ public class CockpitDisplayPanel extends AbstractControlPanel {
         money.setText(Integer.toString((int) Math.round(accountBalance)));
     }
 
-    public void setLevel(LevelScope levelScope) {
-        this.level.setText("??????"); // TODO
-        // TODO mission.setHTML("??????" + " " + CmsUtil.getUrl4LevelPage(levelScope, "More")); // TODO Link to where
-        mission.setHTML("??????"); // TODO Remove
-    }
-
     public void updateItemLimit() {
         StringBuilder builder = new StringBuilder();
         builder.append(ItemContainer.getInstance().getOwnItemCount());
@@ -95,5 +86,13 @@ public class CockpitDisplayPanel extends AbstractControlPanel {
 
     public void updateEnergy(int generating, int consuming) {
         energy.setText(Integer.toString(consuming) + "/" + Integer.toString(generating));
-    }    
+    }
+
+    public LevelPanel getLevelPanel() {
+        return levelPanel;
+    }
+
+    public void setMissionHtml(String html) {
+        mission.setHTML(html);
+    }
 }

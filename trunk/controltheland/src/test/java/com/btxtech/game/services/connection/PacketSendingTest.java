@@ -5,11 +5,12 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.LevelPacket;
+import com.btxtech.game.jsre.common.LevelTaskDonePacket;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.condition.ServerConditionService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ public class PacketSendingTest extends AbstractServiceTest {
     private UserGuidanceService userGuidanceService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ServerConditionService serverConditionService;
 
     @Test
     @DirtiesContext
@@ -61,26 +64,34 @@ public class PacketSendingTest extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testLevelUp() throws Exception {
-        Assert.fail("Test Level up & LevelTask done");
-//        configureMinimalGame();
-//        beginHttpSession();
-//        beginHttpRequestAndOpenSessionInViewFilter();
-//        // Create target
-//        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
-//        movableService.getGameInfo(); // Connection is created here. Don't call movableService.getGameInfo() again!
-//        clearPackets();
-//        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_3_REAL_ID);
-//
-//        DbRealGameLevel dbRealGameLevel = userGuidanceService.getDbLevel();
-//        LevelPacket levelPacket = new LevelPacket();
-//        levelPacket.setLevel(dbRealGameLevel.getLevel());
-//
-//        AccountBalancePacket accountBalancePacket = new AccountBalancePacket();
-//        accountBalancePacket.setAccountBalance(1500);
-//
-//        assertPackagesIgnoreSyncItemInfoAndClear(levelPacket, accountBalancePacket);
-//        endHttpRequestAndOpenSessionInViewFilter();
-//        endHttpSession();
-//
+        configureGameMultipleLevel();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.getDbLevel();
+        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_SIMULATED_ID);
+        // Enter real game
+        Assert.assertEquals(TEST_LEVEL_2_REAL_ID, (int) userGuidanceService.getDbLevel().getId());
+        SimpleBase simpleBase = getMyBase(); // Connection
+        assertPackagesIgnoreSyncItemInfoAndClear();
+        // Complete first task
+        serverConditionService.onMoneyIncrease(simpleBase, 3.0);
+        AccountBalancePacket accountBalancePacket = new AccountBalancePacket();
+        accountBalancePacket.setAccountBalance(1010);
+        assertPackagesIgnoreSyncItemInfoAndClear(accountBalancePacket, new LevelTaskDonePacket());
+        // Complete second task
+        sendBuildCommand(getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID), new Index(200, 200), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        sendFactoryCommand(getFirstSynItemId(simpleBase, TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        accountBalancePacket = new AccountBalancePacket();
+        accountBalancePacket.setAccountBalance(1085);
+        LevelPacket levelPacket = new LevelPacket();
+        levelPacket.setLevel(userGuidanceService.getLevelScope());
+        assertPackagesIgnoreSyncItemInfoAndClear(accountBalancePacket, new LevelTaskDonePacket(), levelPacket);
+        Assert.assertEquals(TEST_LEVEL_3_REAL_ID, (int) userGuidanceService.getDbLevel().getId());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 }
