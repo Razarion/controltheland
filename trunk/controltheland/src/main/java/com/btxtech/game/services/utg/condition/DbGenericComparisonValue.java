@@ -6,6 +6,7 @@ import com.btxtech.game.jsre.common.utg.condition.GenericComparisonValueContaine
 import com.btxtech.game.jsre.common.utg.condition.GenericComparisonValueException;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.services.mgmt.impl.DbUserState;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
@@ -31,7 +32,7 @@ public class DbGenericComparisonValue {
     @GeneratedValue
     private Integer id;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent")
+    @JoinColumn(name = "parent_id")
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Collection<DbGenericComparisonValue> children;
     private GenericComparisonValueContainer.Key enumKey;
@@ -49,18 +50,27 @@ public class DbGenericComparisonValue {
 
     public DbGenericComparisonValue(Integer identifier, GenericComparisonValueContainer genericComparisonValueContainer, ItemService itemService) {
         this.identifier = identifier;
+        children = new ArrayList<DbGenericComparisonValue>();
         for (Map.Entry<Object, Object> entry : genericComparisonValueContainer.getEntries()) {
-            setKey(entry.getKey(), itemService);
-            if (entry.getValue() instanceof GenericComparisonValueContainer) {
-                GenericComparisonValueContainer child = (GenericComparisonValueContainer) entry.getValue();
-                if (children == null) {
-                    children = new ArrayList<DbGenericComparisonValue>();
-                }
-                children.add(new DbGenericComparisonValue(null, child, itemService));
-            } else {
-                setValue(entry.getValue());
-            }
+            children.add(createChildDbGenericComparisonValue(entry.getKey(), entry.getValue(), itemService));
         }
+    }
+
+    private DbGenericComparisonValue createChildDbGenericComparisonValue(Object key, Object value, ItemService itemService) {
+        DbGenericComparisonValue dbGenericComparisonValue = new DbGenericComparisonValue();
+        dbGenericComparisonValue.setKey(key, itemService);
+        if (value instanceof GenericComparisonValueContainer) {
+            GenericComparisonValueContainer child = (GenericComparisonValueContainer) value;
+            if (dbGenericComparisonValue.children == null) {
+                dbGenericComparisonValue.children = new ArrayList<DbGenericComparisonValue>();
+            }
+            for (Map.Entry<Object, Object> entry : child.getEntries()) {
+                dbGenericComparisonValue.children.add(createChildDbGenericComparisonValue(entry.getKey(), entry.getValue(), itemService));
+            }
+        } else {
+            dbGenericComparisonValue.setValue(value);
+        }
+        return dbGenericComparisonValue;
     }
 
     public Integer getId() {
@@ -101,12 +111,12 @@ public class DbGenericComparisonValue {
 
     public GenericComparisonValueContainer createGenericComparisonValueContainer(ItemService itemService) throws NoSuchItemTypeException {
         GenericComparisonValueContainer container = new GenericComparisonValueContainer();
-        if (children == null || children.isEmpty()) {
-            getKeyAndValue(itemService, container, getValue());
-        } else {
+        if (children != null && !children.isEmpty()) {
             for (DbGenericComparisonValue child : children) {
                 addChildren(itemService, container, child);
             }
+        } else {
+            throw new GenericComparisonValueException("Root must have children: " + this);
         }
         return container;
     }
@@ -120,9 +130,9 @@ public class DbGenericComparisonValue {
             }
             value = childContainer;
         } else {
-            value = getValue();
+            value = dbGenericComparisonValue.getValue();
         }
-        getKeyAndValue(itemService, container, value);
+        dbGenericComparisonValue.getKeyAndValue(itemService, container, value);
     }
 
     private void getKeyAndValue(ItemService itemService, GenericComparisonValueContainer container, Object value) throws NoSuchItemTypeException {

@@ -40,8 +40,6 @@ public class DbUserState {
     private DbLevel currentLevel;
     @ManyToOne(optional = false)
     private BackupEntry backupEntry;
-    @OneToOne(cascade = CascadeType.ALL)
-    private DbGenericComparisonValue dbGenericComparisonValue;
     private int xp;
     private boolean sendResurrectionMessage;
     @ManyToMany(fetch = FetchType.LAZY)
@@ -60,11 +58,11 @@ public class DbUserState {
     protected DbUserState() {
     }
 
-    public DbUserState(BackupEntry backupEntry, UserState userState, UserGuidanceService userGuidanceService) {
+    public DbUserState(BackupEntry backupEntry, UserState userState, DbLevel dbLevel) {
         this.backupEntry = backupEntry;
         user = userState.getUser();
         xp = userState.getXp();
-        currentLevel = userGuidanceService.getDbLevel(userState);
+        currentLevel = dbLevel;
         sendResurrectionMessage = userState.isSendResurrectionMessage();
     }
 

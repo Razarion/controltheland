@@ -72,7 +72,7 @@ public class SyncItemTypeComparison extends AbstractSyncItemComparison {
         remaining.clear();
         GenericComparisonValueContainer itemCounts = genericComparisonValueContainer.getChildContainer(GenericComparisonValueContainer.Key.REMAINING_ITEM_TYPES);
         for (Map.Entry entry : itemCounts.getEntries()) {
-           remaining.put((ItemType)entry.getKey(), (Integer) entry.getValue());
+           remaining.put((ItemType)entry.getKey(), ((Number) entry.getValue()).intValue());
         }
     }
 }
