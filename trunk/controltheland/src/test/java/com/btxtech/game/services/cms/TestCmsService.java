@@ -3646,6 +3646,10 @@ public class TestCmsService extends AbstractServiceTest {
         dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.NOT_FOUND);
         pageCrud.updateDbChild(dbPage);
 
+        dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.LEVEL_TASK_DONE);
+        pageCrud.updateDbChild(dbPage);
+
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

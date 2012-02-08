@@ -43,7 +43,8 @@ public class CmsUtil {
         HIGH_SCORE,
         INFO,
         NO_HTML5_BROWSER,
-        NOT_FOUND
+        NOT_FOUND,
+        LEVEL_TASK_DONE
     }
 
     public static String getUrl4CmsPage(String id) {
