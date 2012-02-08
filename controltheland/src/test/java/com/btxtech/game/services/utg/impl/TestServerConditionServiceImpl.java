@@ -15,6 +15,7 @@ import com.btxtech.game.jsre.common.utg.config.ItemTypePositionComparisonConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.BackupSummary;
 import com.btxtech.game.services.mgmt.MgmtService;
@@ -23,6 +24,7 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.LevelQuest;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.condition.DbGenericComparisonValue;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.services.utg.condition.impl.ServerConditionServiceImpl;
 import org.easymock.EasyMock;
@@ -377,13 +379,13 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         userService.login("U1", "test");
         UserState userState1 = userService.getUserState();
         userGuidanceService.promote(userState1, TEST_LEVEL_4_REAL_ID);
-        Assert.assertEquals(1, userGuidanceService.getQuestsCms().readDbChildren().size());
+        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
             Assert.assertFalse(levelQuest.isDone());
         }
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(600, 600), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
-        Assert.assertEquals(1, userGuidanceService.getQuestsCms().readDbChildren().size());
+        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
             Assert.assertFalse(levelQuest.isDone());
         }
@@ -408,19 +410,18 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.login("U1", "test");
-        Assert.assertEquals(1, userGuidanceService.getQuestsCms().readDbChildren().size());
+        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
             Assert.assertFalse(levelQuest.isDone());
         }
         assertAndSetTimeRemaining();
         Thread.sleep(100);
-        Assert.assertEquals(1, userGuidanceService.getQuestsCms().readDbChildren().size());
+        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertTrue(levelQuest.isDone());
+            Assert.assertEquals(TEST_LEVEL_TASK_5_4_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isDone());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-
     }
 
     private void assertAndSetTimeRemaining() throws Exception {
@@ -439,6 +440,120 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         long fulfilledTime = (System.currentTimeMillis() - fulfilledTimeStamp);
         Assert.assertTrue(fulfilledTime > 500 && fulfilledTime < 700);
         setPrivateField(ItemTypePositionComparison.class, itemTypePositionComparison, "fulfilledTimeStamp", System.currentTimeMillis() - 60000);
+    }
+
+    @Test
+    @DirtiesContext
+    public void testBackupRestoreSyncItemTypeComparisonDb() throws Exception {
+        configureGameMultipleLevel();
+
+        //Setup user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "test", "test", "test");
+        userService.login("U1", "test");
+        UserState userState1 = userService.getUserState();
+        userGuidanceService.promote(userState1, TEST_LEVEL_4_REAL_ID);
+        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertFalse(levelQuest.isDone());
+        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        //Backup
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Restore
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<DbGenericComparisonValue> list = HibernateUtil.loadAll(sessionFactory, DbGenericComparisonValue.class);
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Proceed task
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertFalse(levelQuest.isDone());
+        }
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(2000, 2000), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertFalse(levelQuest.isDone());
+        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        //Backup
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Restore
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Proceed task
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertFalse(levelQuest.isDone());
+        }
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID),TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID),TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID),TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID),TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertFalse(levelQuest.isDone());
+        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        //Backup
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Restore
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Complete task
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertFalse(levelQuest.isDone());
+        }
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID),TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertEquals(TEST_LEVEL_TASK_6_4_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isDone());
+        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
 }

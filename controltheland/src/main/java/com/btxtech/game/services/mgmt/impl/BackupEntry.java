@@ -13,13 +13,14 @@
 
 package com.btxtech.game.services.mgmt.impl;
 
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.Transient;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -36,9 +37,11 @@ public class BackupEntry {
     @GeneratedValue
     private Integer id;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "backupEntry", fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<GenericItem> items;
     private Date timeStamp;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "backupEntry", fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbUserState> userStates;
 
     @Override

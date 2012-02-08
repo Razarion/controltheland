@@ -122,7 +122,7 @@ public class GenericItemConverter {
     }
 
     private DbUserState createDbUserState(UserState userState) {
-        DbUserState dbUserState = new DbUserState(backupEntry, userState, userGuidanceService);
+        DbUserState dbUserState = new DbUserState(backupEntry, userState, userGuidanceService.getDbLevel(userState));
         if (userState.getBase() != null) {
             DbBase dbBase = bases.get(userState.getBase());
             if (dbBase != null) {

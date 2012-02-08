@@ -51,6 +51,14 @@ public class GenericComparisonValueContainer {
         return value;
     }
 
+    public Object getValue(ItemType key) {
+        Object value = children.get(key);
+        if (value == null) {
+            throw new GenericComparisonValueException("No such key: " + key);
+        }
+        return value;
+    }
+
     public GenericComparisonValueContainer getChildContainer(Key key) {
         Object value = children.get(key);
         if (value == null) {
@@ -59,7 +67,7 @@ public class GenericComparisonValueContainer {
         if (value instanceof GenericComparisonValueContainer) {
             return (GenericComparisonValueContainer) value;
         } else {
-            throw new GenericComparisonValueException("Is no GenericComparisonValueContainer: " + key);
+            throw new GenericComparisonValueException("Is no GenericComparisonValueContainer: " + value);
         }
     }
 
@@ -69,6 +77,9 @@ public class GenericComparisonValueContainer {
 
     public boolean hasKey(Key key) {
         return children.containsKey(key);
+    }
 
+    public boolean isEmpty() {
+        return children.isEmpty();
     }
 }

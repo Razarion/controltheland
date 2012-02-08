@@ -216,13 +216,17 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
                     Integer identifier = dbGenericComparisonValue.getIdentifier();
                     AbstractConditionTrigger<UserState, Integer> activeTrigger = getAbstractConditionTrigger(identifier, triggers);
                     if (activeTrigger != null) {
-                        activeTrigger.getAbstractComparison().restoreFromGenericComparisonValue(dbGenericComparisonValue.createGenericComparisonValueContainer(itemService));
+                        try {
+                            activeTrigger.getAbstractComparison().restoreFromGenericComparisonValue(dbGenericComparisonValue.createGenericComparisonValueContainer(itemService));
+                        } catch (Exception e) {
+                            log.error("Can not backup user conditions: " + userState + " identifier: " + activeTrigger.getIdentifier(), e);
+                        }
                     } else {
                         log.warn("Condition trigger was saved on DB but is not active: " + userState + " identifier: " + identifier);
                     }
                 }
             } catch (Exception e) {
-                log.error("Can not backup user: " + userState, e);
+                log.error("Can not backup user conditions: " + userState, e);
             }
         }
     }
@@ -253,7 +257,9 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
                     }
                     GenericComparisonValueContainer container = new GenericComparisonValueContainer();
                     conditionTrigger.getAbstractComparison().fillGenericComparisonValues(container);
-                    dbUserState.addDbGenericComparisonValue(new DbGenericComparisonValue(conditionTrigger.getIdentifier(), container, itemService));
+                    if (!container.isEmpty()) {
+                        dbUserState.addDbGenericComparisonValue(new DbGenericComparisonValue(conditionTrigger.getIdentifier(), container, itemService));
+                    }
                 }
             } catch (Exception e) {
                 log.error("Can not restore user: " + userState, e);
