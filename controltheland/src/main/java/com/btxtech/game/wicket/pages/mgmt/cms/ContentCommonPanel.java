@@ -22,6 +22,7 @@ public class ContentCommonPanel extends Panel {
         add(createSelectField("deleteRestricted", showDelete));
         add(new TextField("cssClass"));
         add(new TextField("borderCss"));
+        add(new TextField("aboveBorderCss"));
     }
 
     public static DropDownChoice createSelectField(String id) {

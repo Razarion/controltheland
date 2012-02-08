@@ -407,7 +407,11 @@ public class CmsUiServiceImpl implements CmsUiService {
     public Component getComponent(DbContent dbContent, Object bean, String componentId, BeanIdPathElement beanIdPathElement, ContentContext contentContext) {
         if (dbContent != null && dbContent.hasBorderCss()) {
            Component content =  getComponentPrivate(dbContent, bean, "borderContent", beanIdPathElement, contentContext);
-           return new BorderWrapper(componentId, content, dbContent.getBorderCss());
+           BorderWrapper borderWrapper = new BorderWrapper(componentId, content, dbContent.getBorderCss());
+            if (dbContent.hasAboveBorderCss()) {
+                borderWrapper.add(new SimpleAttributeModifier("class", dbContent.getAboveBorderCss()));
+            }
+            return borderWrapper;
         } else {
             return getComponentPrivate(dbContent, bean, componentId, beanIdPathElement, contentContext);
         }
