@@ -135,7 +135,9 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         DbBaseItemType dbBaseItemType = createSimpleBuilding();
         realGameQuestHub.setStartTerritory(setupSimpleTerritory("test", dbBaseItemType.getId()));
         realGameQuestHub.setStartItemType(dbBaseItemType);
-        realGameQuestHub.getLevelCrud().createDbChild();
+        DbLevel realGameLevel = realGameQuestHub.getLevelCrud().createDbChild();
+        DbLevelTask dbLevelTask = realGameLevel.getLevelTaskCrud().createDbChild();
+        dbLevelTask.setDbTutorialConfig(createTutorial1());
         userGuidanceService.getCrudQuestHub().updateDbChild(realGameQuestHub);
 
         userGuidanceService.activateLevels();
@@ -163,6 +165,8 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
 
         gameFlow = userGuidanceService.onTutorialFinished(dbSimLevelTask2.getId());
         Assert.assertEquals(GameFlow.Type.START_REAL_GAME, gameFlow.getType());
+        gameFlow = userGuidanceService.onTutorialFinished(dbLevelTask.getId());
+        Assert.assertEquals(GameFlow.Type.SHOW_LEVEL_TASK_DONE_PAGE, gameFlow.getType());
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

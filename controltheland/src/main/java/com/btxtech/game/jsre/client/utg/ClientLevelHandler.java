@@ -14,13 +14,16 @@
 package com.btxtech.game.jsre.client.utg;
 
 import com.btxtech.game.jsre.client.ClientServices;
+import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 
 /**
@@ -96,7 +99,7 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
                 ClientServices.getInstance().getClientRunner().start(GameStartupSeq.WARM_REAL);
                 return;
             case SHOW_LEVEL_TASK_DONE_PAGE:
-                // TODO Load Level Task done Page
+                Window.open(Connection.getInstance().getGameInfo().getPredefinedUrls().get(CmsUtil.CmsPredefinedPage.LEVEL_TASK_DONE), CmsUtil.TARGET_SELF, "");
                 return;
             default:
                 throw new IllegalArgumentException("Unknown GameFlow Type: " + gameFlow.getType());
