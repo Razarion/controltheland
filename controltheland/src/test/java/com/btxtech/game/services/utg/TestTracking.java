@@ -20,6 +20,7 @@ import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.playback.PlaybackService;
 import com.btxtech.game.services.utg.tracker.DbStartupTask;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -253,8 +254,8 @@ public class TestTracking extends AbstractServiceTest {
         endHttpSession();
     }
 
-
-    @Test
+    @Ignore
+    //@Test
     @DirtiesContext
     public void testTutorialTracking() throws Exception {
         configureGameMultipleLevel();
