@@ -1,8 +1,10 @@
 package com.btxtech.game.wicket.pages.cms;
 
 import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.services.cms.layout.DbExpressionProperty;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.panel.Panel;
 
@@ -15,17 +17,20 @@ public class ItemTypeImage extends Panel {
     private int imgId;
     private int imgIndex;
 
-    public ItemTypeImage(String id, DbItemType dbItemType) {
+    public ItemTypeImage(String id, DbItemType dbItemType, DbExpressionProperty dbExpressionProperty) {
         super(id);
         imgId = dbItemType.getId();
         imgIndex = dbItemType.getBoundingBox().getCosmeticImageIndex();
-        add(new Image());
+        add(new Image(dbExpressionProperty));
     }
 
     private class Image extends MarkupContainer {
 
-        public Image() {
+        public Image(DbExpressionProperty dbExpressionProperty) {
             super("image");
+            if (dbExpressionProperty.getCssClass() != null) {
+                add(new SimpleAttributeModifier("class", dbExpressionProperty.getCssClass()));
+            }
         }
 
         @Override

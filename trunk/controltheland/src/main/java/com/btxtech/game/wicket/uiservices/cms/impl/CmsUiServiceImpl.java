@@ -406,8 +406,8 @@ public class CmsUiServiceImpl implements CmsUiService {
     @Override
     public Component getComponent(DbContent dbContent, Object bean, String componentId, BeanIdPathElement beanIdPathElement, ContentContext contentContext) {
         if (dbContent != null && dbContent.hasBorderCss()) {
-           Component content =  getComponentPrivate(dbContent, bean, "borderContent", beanIdPathElement, contentContext);
-           BorderWrapper borderWrapper = new BorderWrapper(componentId, content, dbContent.getBorderCss());
+            Component content = getComponentPrivate(dbContent, bean, "borderContent", beanIdPathElement, contentContext);
+            BorderWrapper borderWrapper = new BorderWrapper(componentId, content, dbContent.getBorderCss());
             if (dbContent.hasAboveBorderCss()) {
                 borderWrapper.add(new SimpleAttributeModifier("class", dbContent.getAboveBorderCss()));
             }
@@ -435,7 +435,7 @@ public class CmsUiServiceImpl implements CmsUiService {
         }
         Component component;
         if (value instanceof DbItemType) {
-            component = new ItemTypeImage(id, (DbItemType) value);
+            component = new ItemTypeImage(id, (DbItemType) value, dbExpressionProperty);
         } else {
             if (getEditMode(dbExpressionProperty) != null
                     && !dbExpressionProperty.getExpression().equals(CURRENT_PATH)
@@ -476,7 +476,7 @@ public class CmsUiServiceImpl implements CmsUiService {
                 }
             }
         }
-        if (dbExpressionProperty.getCssClass() != null) {
+        if (dbExpressionProperty.getCssClass() != null && !(component instanceof ItemTypeImage)) {
             component.add(new SimpleAttributeModifier("class", dbExpressionProperty.getCssClass()));
         }
         return component;
