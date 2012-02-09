@@ -62,7 +62,7 @@ public class Need {
     }
 
     public void onItemAdded(BotSyncBaseItem botSyncBaseItem) {
-        BotItemConfig botItemConfig = getSuitableDbBotItemConfig(botSyncBaseItem, false);
+        BotItemConfig botItemConfig = getSuitableDbBotItemConfig(botSyncBaseItem);
         setNeedCount(botItemConfig, false);
         botSyncBaseItem.setBotItemConfig(botItemConfig);
     }
@@ -90,18 +90,18 @@ public class Need {
         }
     }
 
-    private BotItemConfig getSuitableDbBotItemConfig(BotSyncBaseItem botSyncBaseItem, boolean ignoreRegion) {
+    private BotItemConfig getSuitableDbBotItemConfig(BotSyncBaseItem botSyncBaseItem) {
         if (botSyncBaseItem.getSyncBaseItem().getId().hasParent()) {
-            return getSuitableDbBotItemConfig(botSyncBaseItem, normalNeeds.keySet(), ignoreRegion);
+            return getSuitableDbBotItemConfig(botSyncBaseItem, normalNeeds.keySet());
         } else {
-            return getSuitableDbBotItemConfig(botSyncBaseItem, directCreatedNeeds.keySet(), ignoreRegion);
+            return getSuitableDbBotItemConfig(botSyncBaseItem, directCreatedNeeds.keySet());
         }
     }
 
-    private BotItemConfig getSuitableDbBotItemConfig(BotSyncBaseItem botSyncBaseItem, Collection<BotItemConfig> botItemConfigs, boolean ignoreRegion) {
+    private BotItemConfig getSuitableDbBotItemConfig(BotSyncBaseItem botSyncBaseItem, Collection<BotItemConfig> botItemConfigs) {
         for (BotItemConfig botItemConfig : botItemConfigs) {
             if (botItemConfig.getBaseItemType().getId() == botSyncBaseItem.getSyncBaseItem().getBaseItemType().getId()) {
-                if (!ignoreRegion && botItemConfig.getRegion() != null) {
+                if (botItemConfig.getRegion() != null && (botItemConfig.getBaseItemType().getMovableType() == null || botItemConfig.isCreateDirectly())) {
                     if (botSyncBaseItem.getSyncBaseItem().getSyncItemArea().contains(botItemConfig.getRegion())) {
                         return botItemConfig;
                     }

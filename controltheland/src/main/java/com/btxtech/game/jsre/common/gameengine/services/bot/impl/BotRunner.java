@@ -68,7 +68,7 @@ public abstract class BotRunner {
                     intruderHandler.handleIntruders(base);
                 }
             } catch (Throwable t) {
-                log.log(Level.SEVERE, "", t);
+                log.log(Level.SEVERE, "Exception in BotRunner (BotTicker): " + botConfig.getName(), t);
             }
         }
     }
@@ -158,7 +158,7 @@ public abstract class BotRunner {
                     throw new IllegalArgumentException("Unknown intervalState: " + intervalState);
             }
         } catch (Throwable t) {
-            log.log(Level.SEVERE, "", t);
+            log.log(Level.SEVERE, "Exception in BotRunner (runBotTimer): " + botConfig.getName(), t);
         }
     }
 

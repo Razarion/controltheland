@@ -232,6 +232,49 @@ public class TestBotItemContainer extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
+    public void regionAndMovable() throws Exception {
+        configureRealGame();
+
+        Collection<DbBotItemConfig> dbBotItemConfigs = new ArrayList<DbBotItemConfig>();
+        DbBotItemConfig config1 = new DbBotItemConfig();
+        config1.setCount(1);
+        config1.setBaseItemType(getDbBaseItemTypeInSession(TEST_START_BUILDER_ITEM_ID));
+        config1.setRegion(new Rectangle(2000, 2000, 2000, 2000));
+        config1.setCreateDirectly(true);
+        dbBotItemConfigs.add(config1);
+        DbBotItemConfig config2 = new DbBotItemConfig();
+        config2.setCount(1);
+        config2.setBaseItemType(getDbBaseItemTypeInSession(TEST_FACTORY_ITEM_ID));
+        config2.setRegion(new Rectangle(4000, 2000, 2000, 2000));
+        dbBotItemConfigs.add(config2);
+        DbBotItemConfig config3 = new DbBotItemConfig();
+        config3.setCount(3);
+        config3.setRegion(new Rectangle(8000, 8000, 2000, 2000));
+        config3.setBaseItemType(getDbBaseItemTypeInSession(TEST_ATTACK_ITEM_ID));
+        dbBotItemConfigs.add(config3);
+
+        Collection<BotItemConfig> botItemConfigs = convert(dbBotItemConfigs, itemService);
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices, "Test Bot");
+        SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, botItemConfigs, null, "Test Bot", null, null, null, null));
+
+        Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
+
+        for (int i = 0; i < 5; i++) {
+            Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
+            botItemContainer.work(simpleBase);
+            waitForActionServiceDone();
+        }
+        Assert.assertTrue(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
+        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
+        Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null).size());
+
+        botItemContainer.killAllItems();
+        assertWholeItemCount(0);
+    }
+
+    @Test
+    @DirtiesContext
     public void multipleFactoriesAndOverdrive() throws Exception {
         configureRealGame();
 
