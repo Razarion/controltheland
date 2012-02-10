@@ -9,6 +9,7 @@ import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -33,6 +34,8 @@ public class DbQuestHub implements CrudChild, CrudParent {
     private Integer id;
     @OrderBy
     private int orderIndex;    
+    @Column(length = 50000)
+    private String html;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "dbQuestHub", nullable = false)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
@@ -127,6 +130,14 @@ public class DbQuestHub implements CrudChild, CrudParent {
             levelCrud = new CrudListChildServiceHelper<DbLevel>(dbLevels, DbLevel.class, this);
         }
         return levelCrud;
+    }
+
+    public String getHtml() {
+        return html;
+    }
+
+    public void setHtml(String html) {
+        this.html = html;
     }
 
     @Override
