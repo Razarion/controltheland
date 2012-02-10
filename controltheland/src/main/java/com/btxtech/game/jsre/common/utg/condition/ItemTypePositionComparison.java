@@ -38,7 +38,7 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
     private Services services;
     private SimpleBase simpleBase;
     private boolean isFulfilled = false;
-    private Collection<SyncItem> fulfilledItems = new HashSet<SyncItem>();
+    private final Collection<SyncItem> fulfilledItems = new HashSet<SyncItem>();
     private Long fulfilledTimeStamp;
 
     public ItemTypePositionComparison(Integer excludedTerritoryId, Map<ItemType, Integer> itemTypes, Rectangle region, Integer time, boolean addExistingItems, Services services, SimpleBase simpleBase) {
@@ -64,12 +64,14 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
         if (!checkRegion(syncItem)) {
             return;
         }
-        fulfilledItems.add(syncItem);
-        if (time == null || time == 0) {
-            verifyFulfilledItems();
-            isFulfilled = areItemsComplete();
-        } else {
-            checkIfTimeFulfilled();
+        synchronized (fulfilledItems) {
+            fulfilledItems.add(syncItem);
+            if (time == null || time == 0) {
+                verifyFulfilledItems();
+                isFulfilled = areItemsComplete();
+            } else {
+                checkIfTimeFulfilled();
+            }
         }
     }
 
@@ -91,7 +93,9 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
     @Override
     public void onTimer() {
         if (!isFulfilled) {
-            checkIfTimeFulfilled();
+            synchronized (fulfilledItems) {
+                checkIfTimeFulfilled();
+            }
             if (isFulfilled) {
                 getAbstractConditionTrigger().setFulfilled();
             }
