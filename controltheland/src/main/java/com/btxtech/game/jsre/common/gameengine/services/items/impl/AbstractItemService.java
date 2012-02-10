@@ -392,7 +392,7 @@ abstract public class AbstractItemService implements ItemService {
     }
 
     @Override
-    public SyncBaseItem getFirstEnemyItemInRange(final SyncBaseItem baseSyncItem) {
+    public SyncBaseItem getFirstEnemyItemInRange(final SyncBaseItem baseSyncItem, final boolean ignoreBot) {
         return iterateOverItems(new ItemHandler<SyncBaseItem>() {
             @Override
             public SyncBaseItem handleItem(SyncItem syncItem) {
@@ -402,7 +402,8 @@ abstract public class AbstractItemService implements ItemService {
 
                 if (syncItem instanceof SyncBaseItem
                         && baseSyncItem.isEnemy((SyncBaseItem) syncItem)
-                        && baseSyncItem.getSyncWeapon().isAttackAllowedWithoutMoving(syncItem)) {
+                        && baseSyncItem.getSyncWeapon().isAttackAllowedWithoutMoving(syncItem)
+                        && (!ignoreBot || !getServices().getBaseService().isBot(((SyncBaseItem) syncItem).getBase()))) {
                     return (SyncBaseItem) syncItem;
                 }
                 return null;
