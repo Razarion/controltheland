@@ -87,7 +87,7 @@ public interface ItemService {
 
     void killSyncItems(Collection<SyncItem> syncItems);
 
-    SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem);
+    SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem, boolean ignoreBot);
 
     void sellItem(Id id) throws ItemDoesNotExistException, NotYourBaseException;
 }
