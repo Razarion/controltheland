@@ -44,6 +44,6 @@ public class ClearGame extends AbstractStartupTask {
         SideCockpit.getInstance().getCockpitMode().clearLaunchMode();
         SideCockpit.getInstance().getCockpitMode().clearUnloadMode();
         TipManager.getInstance().deactivate();
-        RadarPanel.getInstance().setRadarState1(false);
+        RadarPanel.getInstance().clearRadarMode();
     }
 }

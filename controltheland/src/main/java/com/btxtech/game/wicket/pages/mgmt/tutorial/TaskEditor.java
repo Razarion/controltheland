@@ -13,6 +13,7 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tutorial;
 
+import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
@@ -31,15 +32,12 @@ import com.btxtech.game.wicket.uiservices.RuModel;
 import com.btxtech.game.wicket.uiservices.ServiceHelper;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.form.upload.FileUpload;
-import org.apache.wicket.markup.html.form.upload.FileUploadField;
-import org.apache.wicket.markup.html.pages.BrowserInfoPage;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -71,6 +69,7 @@ public class TaskEditor extends MgmtWebPage {
         form.add(new TextField("money"));
         form.add(new TextField("maxMoney"));
         form.add(new TextField("houseCount"));
+        form.add(new DropDownChoice<RadarMode>("radarMode", RadarMode.getList()));
 
         new CrudChildTableHelper<DbTaskConfig, DbTaskAllowedItem>("allowedItemTable", null, "createAllowedItem", false, form, false) {
             @Override

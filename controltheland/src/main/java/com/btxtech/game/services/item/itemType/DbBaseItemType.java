@@ -308,7 +308,7 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
             baseItemType.setGeneratorType(new GeneratorType(dbGeneratorType.getWattage()));
         }
         if (dbSpecialType != null) {
-            baseItemType.setSpecialType(new SpecialType(dbSpecialType.getString()));
+            baseItemType.setSpecialType(new SpecialType(dbSpecialType.getRadarMode()));
         }
         if (dbItemContainerType != null) {
             baseItemType.setItemContainerType(new ItemContainerType(Utils.dbBaseItemTypesToInts(dbItemContainerType.getAbleToContain()), dbItemContainerType.getMaxCount(), dbItemContainerType.getRange()));

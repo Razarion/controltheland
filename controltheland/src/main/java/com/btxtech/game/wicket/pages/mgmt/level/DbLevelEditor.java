@@ -13,6 +13,7 @@
 
 package com.btxtech.game.wicket.pages.mgmt.level;
 
+import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.utg.DbItemTypeLimitation;
@@ -24,6 +25,7 @@ import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
@@ -67,7 +69,8 @@ public class DbLevelEditor extends MgmtWebPage {
         form.add(new TextField("houseSpace"));
         form.add(new TextField("itemSellFactor"));
         form.add(new TextField("maxMoney"));
-
+        form.add(new DropDownChoice<RadarMode>("radarMode", RadarMode.getList()));
+       
         new CrudChildTableHelper<DbLevel, DbItemTypeLimitation>("itemTypeLimitation", null, "createItemTypeLimitation", false, form, false) {
 
             @Override

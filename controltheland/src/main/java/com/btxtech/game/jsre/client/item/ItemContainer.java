@@ -51,7 +51,6 @@ import com.google.gwt.user.client.Timer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +64,6 @@ public class ItemContainer extends AbstractItemService {
     public static final int CLEANUP_INTERVALL = 3000;
     private static final ItemContainer INSATNCE = new ItemContainer();
     private HashMap<Id, ClientSyncItem> items = new HashMap<Id, ClientSyncItem>();
-    private HashSet<ClientSyncItem> specialItems = new HashSet<ClientSyncItem>();
     private HashMap<Id, ClientSyncItem> orphanItems = new HashMap<Id, ClientSyncItem>();
     private HashMap<Id, ClientSyncItem> seeminglyDeadItems = new HashMap<Id, ClientSyncItem>();
     private int ownItemCount = 0;
@@ -107,7 +105,6 @@ public class ItemContainer extends AbstractItemService {
         if (syncItemInfo.isAlive()) {
             if (clientSyncItem == null) {
                 clientSyncItem = createAndAddItem(syncItemInfo.getId(), syncItemInfo.getPosition(), syncItemInfo.getItemTypeId(), syncItemInfo.getBase());
-                checkSpecialAdded(clientSyncItem);
             } else {
                 // Check for  Teleportation effect
                 Index localPos = clientSyncItem.getSyncItem().getSyncItemArea().getPosition();
@@ -121,13 +118,12 @@ public class ItemContainer extends AbstractItemService {
                 ClientSyncItem orphanItem = orphanItems.remove(clientSyncItem.getSyncItem().getId());
                 if (orphanItem != null) {
                     orphanItem.setHidden(false);
-                    checkSpecialAdded(clientSyncItem);
                 }
             }
             clientSyncItem.getSyncItem().synchronize(syncItemInfo);
+            checkSpecialChanged(clientSyncItem.getSyncItem());
             clientSyncItem.checkVisibility();
             clientSyncItem.update();
-            checkSpecialItem(clientSyncItem);
             if (clientSyncItem.isSyncTickItem()) {
                 ActionHandler.getInstance().syncItemActivated(clientSyncItem.getSyncTickItem());
             }
@@ -232,7 +228,7 @@ public class ItemContainer extends AbstractItemService {
         }
         itemView.checkVisibility();
         itemView.update();
-        return itemView.getSyncItem();        
+        return itemView.getSyncItem();
     }
 
     private ClientSyncItem createAndAddItem(Id id, Index position, int itemTypeId, SimpleBase base) throws NoSuchItemTypeException {
@@ -291,7 +287,7 @@ public class ItemContainer extends AbstractItemService {
             SideCockpit.getInstance().updateItemLimit();
             ClientBase.getInstance().recalculate4FakedHouseSpace(itemView.getSyncBaseItem());
         }
-        checkSpecialRemoved(itemView);
+        checkSpecialRemoved(itemView.getSyncItem());
         seeminglyDeadItems.remove(itemView.getSyncItem().getId());
         SelectionHandler.getInstance().itemKilled(itemView);
         SpeechBubbleHandler.getInstance().itemKilled(itemView.getSyncItem());
@@ -421,75 +417,26 @@ public class ItemContainer extends AbstractItemService {
         return ClientBase.getInstance();
     }
 
-    private void checkSpecialItem(ClientSyncItem ClientSyncItem) {
-        if (isMySpecialItem(ClientSyncItem) != null) {
-            checkForSpecialItems();
-        }
-    }
-
-    private void checkSpecialAdded(ClientSyncItem clientSyncItem) {
-        ClientSyncItem specialClientSyncItem = isMySpecialItem(clientSyncItem);
-        if (specialClientSyncItem == null) {
+    public void checkSpecialChanged(SyncItem syncItem) {
+        if (!isSpecialItem(syncItem)) {
             return;
         }
-        specialItems.add(specialClientSyncItem);
-        checkForSpecialItems();
+        RadarPanel.getInstance().onRadarModeItemChanged((SyncBaseItem) syncItem);
     }
 
-    private void checkSpecialRemoved(ClientSyncItem ClientSyncItem) {
-        ClientSyncItem specialClientSyncItem = isMySpecialItem(ClientSyncItem);
-        if (specialClientSyncItem == null) {
+    private void checkSpecialRemoved(SyncItem syncItem) {
+        if (!isSpecialItem(syncItem)) {
             return;
         }
-        specialItems.remove(specialClientSyncItem);
-        checkForSpecialItems();
+        RadarPanel.getInstance().onRadarModeItemRemoved((SyncBaseItem) syncItem);
     }
-
-    private void checkForSpecialItems() {
-        RadarPanel.getInstance().setRadarState1(checkForSpecialItem(RadarPanel.RADAR_1));
-    }
-
-    public void handleSpecial(ClientSyncItem clientSyncItem) {
-        if (!clientSyncItem.isMyOwnProperty() || !clientSyncItem.isSyncBaseItem()) {
-            return;
+    
+    private boolean isSpecialItem(SyncItem syncItem) {
+        if (!(syncItem instanceof SyncBaseItem)) {
+            return false;
         }
-
-        if (specialItems.contains(clientSyncItem)) {
-            if (!clientSyncItem.getSyncBaseItem().hasSyncSpecial()) {
-                checkSpecialRemoved(clientSyncItem);
-            } else {
-                checkForSpecialItems();
-            }
-        } else {
-            if (clientSyncItem.getSyncBaseItem().hasSyncSpecial()) {
-                checkSpecialAdded(clientSyncItem);
-            }
-        }
-    }
-
-    private ClientSyncItem isMySpecialItem(ClientSyncItem clientSyncItem) {
-        if (!clientSyncItem.isMyOwnProperty()) {
-            return null;
-        }
-
-        if (!clientSyncItem.isSyncBaseItem()) {
-            return null;
-        }
-
-        if (!clientSyncItem.getSyncBaseItem().hasSyncSpecial()) {
-            return null;
-        }
-        return clientSyncItem;
-    }
-
-    private boolean checkForSpecialItem(String string) {
-        for (ClientSyncItem specialItem : specialItems) {
-            SyncBaseItem syncBaseItem = specialItem.getSyncBaseItem();
-            if (syncBaseItem.getSyncSpecial().getString().equals(string) && syncBaseItem.isReady()) {
-                return true;
-            }
-        }
-        return false;
+        SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
+        return ClientBase.getInstance().isMyOwnProperty(syncBaseItem) && syncBaseItem.hasSyncSpecial();
     }
 
     public void clear() {
@@ -497,7 +444,6 @@ public class ItemContainer extends AbstractItemService {
             clientSyncItem.dispose();
         }
         items.clear();
-        specialItems.clear();
         orphanItems.clear();
         seeminglyDeadItems.clear();
         ownItemCount = 0;

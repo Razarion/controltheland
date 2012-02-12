@@ -82,7 +82,6 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
     }
 
     private void processPreparation(TaskConfig taskConfig) {
-        SideCockpit.getInstance().setRadarItems();
         ClientLevelHandler.getInstance().setLevelScope(taskConfig.createLevelScope(simulationInfo.getLevelName()));
         SideCockpit.getInstance().updateItemLimit();
 

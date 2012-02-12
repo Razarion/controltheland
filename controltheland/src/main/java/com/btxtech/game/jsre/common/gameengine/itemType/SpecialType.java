@@ -13,6 +13,8 @@
 
 package com.btxtech.game.jsre.common.gameengine.itemType;
 
+import com.btxtech.game.jsre.client.common.RadarMode;
+
 import java.io.Serializable;
 
 /**
@@ -21,7 +23,7 @@ import java.io.Serializable;
  * Time: 12:44:52
  */
 public class SpecialType implements Serializable {
-    private String string;
+    private RadarMode radarMode;
 
     /**
      * Used by GWT
@@ -29,19 +31,19 @@ public class SpecialType implements Serializable {
     SpecialType() {
     }
 
-    public SpecialType(String string) {
-        this.string = string;
+    public SpecialType(RadarMode radarMode) {
+        this.radarMode = radarMode;
     }
 
-    public String getString() {
-        return string;
+    public RadarMode getRadarMode() {
+        return radarMode;
     }
 
-    public void setString(String string) {
-        this.string = string;
+    public void setRadarMode(RadarMode radarMode) {
+        this.radarMode = radarMode;
     }
 
     public void changeTo(SpecialType specialType) {
-        string = specialType.string;
+        radarMode = specialType.radarMode;
     }
 }

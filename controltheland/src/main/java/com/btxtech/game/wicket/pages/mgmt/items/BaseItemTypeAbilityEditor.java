@@ -1,5 +1,6 @@
 package com.btxtech.game.wicket.pages.mgmt.items;
 
+import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
@@ -20,6 +21,7 @@ import com.btxtech.game.services.item.itemType.DbWeaponType;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -74,7 +76,7 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
     private double launcherProgress;
     private Integer launcherDbProjectileItemType;
     private boolean special;
-    private String specialString;
+    private RadarMode radarMode;
     private Collection<DbBaseItemType> baseItemTypes;
     private Collection<DbProjectileItemType> projectileItemTypes;
     private int dbBaseItemTypeId;
@@ -123,7 +125,7 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
         form.add(new CheckBox("house"));
         form.add(new TextField("space"));
         form.add(new CheckBox("special"));
-        form.add(new TextField("specialString"));
+        form.add(new DropDownChoice<RadarMode>("radarMode", RadarMode.getList()));
 
         form.add(new Button("save") {
             @Override
@@ -235,7 +237,7 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
 
         if (dbBaseItemType.getDbSpecialType() != null) {
             special = true;
-            specialString = dbBaseItemType.getDbSpecialType().getString();
+            radarMode = dbBaseItemType.getDbSpecialType().getRadarMode();
         } else {
             special = false;
         }
@@ -395,7 +397,7 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
                 specialType = new DbSpecialType();
                 dbBaseItemType.setDbSpecialType(specialType);
             }
-            specialType.setString(specialString);
+            specialType.setRadarMode(radarMode);
         } else {
             dbBaseItemType.setDbSpecialType(null);
         }

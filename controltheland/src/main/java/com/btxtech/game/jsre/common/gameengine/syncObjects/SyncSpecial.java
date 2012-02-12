@@ -39,7 +39,7 @@ public class SyncSpecial extends SyncBaseAbility {
         // Ignore
     }
 
-    public String getString() {
-        return specialType.getString();
+    public SpecialType getSpecialType() {
+        return specialType;
     }
 }
