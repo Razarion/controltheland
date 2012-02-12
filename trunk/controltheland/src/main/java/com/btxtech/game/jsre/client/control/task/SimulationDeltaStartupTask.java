@@ -14,7 +14,6 @@
 package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.ClientEnergyService;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 
@@ -31,7 +30,6 @@ public class SimulationDeltaStartupTask extends GameEngineStartupTask {
 
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
-        ClientEnergyService.getInstance().init(false);
         ClientBase.getInstance().setConnectedToServer4FakedHouseSpace(false);
         SimulationInfo simulationInfo = reloadIfNotCorrectInfoClass(SimulationInfo.class, deferredStartup);
         if (simulationInfo == null) {

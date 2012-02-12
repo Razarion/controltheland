@@ -13,14 +13,13 @@
 
 package com.btxtech.game.services.energy.impl;
 
-import com.btxtech.game.jsre.client.AbstractBaseEnergy;
+import com.btxtech.game.jsre.common.gameengine.services.energy.AbstractBaseEnergy;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncConsumer;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncGenerator;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
-import java.util.HashSet;
 
 /**
  * User: beat
