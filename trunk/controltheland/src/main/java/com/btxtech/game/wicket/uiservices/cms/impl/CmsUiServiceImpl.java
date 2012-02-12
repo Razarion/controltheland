@@ -500,6 +500,12 @@ public class CmsUiServiceImpl implements CmsUiService {
                 } else {
                     throw new IllegalArgumentException("Date value must be Number ore Date: " + value);
                 }
+            case ROUNDED_DOWN_INTEGER:
+                if(value instanceof Number) {
+                    return Integer.toString(((Number)value).intValue());
+                }else {
+                    throw new IllegalArgumentException("Must be a Number: " + value);
+                }
             default:
                 throw new IllegalArgumentException("Unknown type: " + type);
         }

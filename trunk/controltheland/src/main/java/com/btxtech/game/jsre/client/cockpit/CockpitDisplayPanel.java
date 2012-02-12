@@ -73,7 +73,11 @@ public class CockpitDisplayPanel extends AbstractControlPanel {
     }
 
     public void updateMoney(double accountBalance) {
-        money.setText(Integer.toString((int) Math.round(accountBalance)));
+        if (accountBalance < 0) {
+            money.setText("0");
+        } else {
+            money.setText(Integer.toString((int) accountBalance));
+        }
     }
 
     public void updateItemLimit() {

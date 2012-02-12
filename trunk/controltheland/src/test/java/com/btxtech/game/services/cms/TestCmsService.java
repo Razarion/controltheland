@@ -4217,4 +4217,73 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void testDbExpressionPropertyTypes() throws Exception {
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        DbContentContainer dbContentContainer = new DbContentContainer();
+        dbContentContainer.init(userService);
+        dbPage.setContentAndAccessWrites(dbContentContainer);
+        // Integer property
+        DbExpressionProperty expressionProperty = (DbExpressionProperty) dbContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
+        expressionProperty.setSpringBeanName("testCmsBean");
+        expressionProperty.setExpression("double1");
+        expressionProperty.setOptionalType(DbExpressionProperty.Type.ROUNDED_DOWN_INTEGER);
+
+        expressionProperty = (DbExpressionProperty) dbContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
+        expressionProperty.setSpringBeanName("testCmsBean");
+        expressionProperty.setExpression("double2");
+        expressionProperty.setOptionalType(DbExpressionProperty.Type.ROUNDED_DOWN_INTEGER);
+
+        expressionProperty = (DbExpressionProperty) dbContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
+        expressionProperty.setSpringBeanName("testCmsBean");
+        expressionProperty.setExpression("double3");
+        expressionProperty.setOptionalType(DbExpressionProperty.Type.ROUNDED_DOWN_INTEGER);
+
+        expressionProperty = (DbExpressionProperty) dbContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
+        expressionProperty.setSpringBeanName("testCmsBean");
+        expressionProperty.setExpression("double4");
+        expressionProperty.setOptionalType(DbExpressionProperty.Type.ROUNDED_DOWN_INTEGER);
+
+        expressionProperty = (DbExpressionProperty) dbContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
+        expressionProperty.setSpringBeanName("testCmsBean");
+        expressionProperty.setExpression("integer1");
+        expressionProperty.setOptionalType(DbExpressionProperty.Type.ROUNDED_DOWN_INTEGER);
+
+        expressionProperty = (DbExpressionProperty) dbContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
+        expressionProperty.setSpringBeanName("testCmsBean");
+        expressionProperty.setExpression("integer2");
+        expressionProperty.setOptionalType(DbExpressionProperty.Type.ROUNDED_DOWN_INTEGER);
+        
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("form:content:container:1", "1");
+        tester.assertLabel("form:content:container:2", "2");
+        tester.assertLabel("form:content:container:3", "5");
+        tester.assertLabel("form:content:container:4", "4");
+        tester.assertLabel("form:content:container:5", "10");
+        tester.assertLabel("form:content:container:6", "11");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 }
