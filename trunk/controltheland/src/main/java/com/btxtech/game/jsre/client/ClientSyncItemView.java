@@ -21,7 +21,6 @@ import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.effects.AttackEffectHandler;
-import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.SpeechBubbleHandler;
@@ -268,7 +267,6 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
                 setProjectileProgress();
                 setupImage();
                 SelectionHandler.getInstance().refresh();
-                ItemContainer.getInstance().handleSpecial(clientSyncItem);
                 break;
             case LAUNCHER_PROGRESS:
                 setProjectileProgress();

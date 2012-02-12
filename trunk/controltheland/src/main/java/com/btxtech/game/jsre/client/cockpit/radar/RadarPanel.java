@@ -13,10 +13,15 @@
 
 package com.btxtech.game.jsre.client.cockpit.radar;
 
+import com.btxtech.game.jsre.client.ClientSyncItem;
+import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * User: beat
@@ -24,16 +29,18 @@ import com.google.gwt.user.client.ui.HTML;
  * Time: 12:26:58
  */
 public class RadarPanel {
-    public static final String RADAR_1 = "Radar 1";
-    private static final String NO_POWER = "<br/>You do not have a enough energy.";
+    private static final String NO_POWER = "<br/>You do not have enough energy.";
+    private static final String NO_RADAR = "<br/>You do not have a radar building.";
     private static final RadarPanel INSTANCE = new RadarPanel();
     private MiniTerrain miniTerrain;
     private RadarFrameView radarFrameView;
     private RadarHintView radarHintView;
     private RadarItemView radarItemView;
-    private boolean hasRadar1 = false;
-    private boolean hasEnergy = false;
     private HTML noRadarPanel;
+    private boolean hasEnergy = false;
+    private RadarMode levelRadarMode = RadarMode.NONE;
+    private RadarMode itemRadarMode = RadarMode.NONE;
+    private Set<SyncBaseItem> radarModeItems = new HashSet<SyncBaseItem>();
 
     public static RadarPanel getInstance() {
         return INSTANCE;
@@ -48,67 +55,75 @@ public class RadarPanel {
     public AbsolutePanel createWidget(int width, int height) {
         AbsolutePanel absolutePanel = new AbsolutePanel();
         absolutePanel.setPixelSize(width, height);
-        boolean state = !hasRadar1 || hasEnergy;
 
         // No radar Panel
         noRadarPanel = new HTML();
         noRadarPanel.setSize("100%", "100%");
         noRadarPanel.getElement().getStyle().setColor("#FFFFFF");
         noRadarPanel.getElement().getStyle().setBackgroundColor("#000000");
-        noRadarPanel.setHTML(NO_POWER);
-        noRadarPanel.setVisible(!state);
         absolutePanel.add(noRadarPanel, 0, 0);
 
         // Terrain
         miniTerrain = new MiniTerrain(width, height);
         miniTerrain.getCanvas().getElement().getStyle().setZIndex(1);
-        miniTerrain.getCanvas().setVisible(state);
+        miniTerrain.getCanvas().setVisible(false);
         absolutePanel.add(miniTerrain.getCanvas(), 0, 0);
 
         // Item view
         radarItemView = new RadarItemView(width, height);
         radarItemView.getCanvas().getElement().getStyle().setZIndex(2);
-        radarItemView.getCanvas().setVisible(hasRadar1 && hasEnergy);
+        radarItemView.getCanvas().setVisible(false);
         absolutePanel.add(radarItemView.getCanvas(), 0, 0);
 
         // Hint view
         radarHintView = new RadarHintView(width, height);
         radarHintView.getCanvas().getElement().getStyle().setZIndex(3);
+        radarHintView.getCanvas().setVisible(false);
         absolutePanel.add(radarHintView.getCanvas(), 0, 0);
 
         // Frame view
         radarFrameView = new RadarFrameView(width, height);
         radarFrameView.getCanvas().getElement().getStyle().setZIndex(4);
-        radarFrameView.getCanvas().setVisible(state);
+        radarFrameView.getCanvas().setVisible(false);
         absolutePanel.add(radarFrameView.getCanvas(), 0, 0);
 
         return absolutePanel;
     }
 
-    public void setRadarState1(boolean state) {
-        if (hasRadar1 == state) {
-            return;
-        }
-        hasRadar1 = state;
-        handleRadarState();
-    }
-
     private void handleRadarState() {
-        boolean state = !hasRadar1 || hasEnergy;
+        RadarMode mode;
+        if (hasEnergy) {
+            mode = RadarMode.getHigher(itemRadarMode, levelRadarMode);
+        } else {
+            mode = levelRadarMode;
+        }
+
+        boolean showMap = RadarMode.MAP.sameOrHigher(mode);
 
         if (miniTerrain != null) {
-            miniTerrain.getCanvas().setVisible(state);
+            miniTerrain.getCanvas().setVisible(showMap);
         }
         if (radarFrameView != null) {
-            radarFrameView.getCanvas().setVisible(state);
+            radarFrameView.getCanvas().setVisible(showMap);
         }
+        if (radarHintView != null) {
+            radarHintView.getCanvas().setVisible(showMap);
+        }
+
+        boolean showUnits = RadarMode.MPA_AND_UNITS.sameOrHigher(mode);
         if (radarItemView != null) {
-            radarItemView.getCanvas().setVisible(hasRadar1 && hasEnergy);
+            radarItemView.getCanvas().setVisible(showUnits);
         }
-        if (noRadarPanel != null) {
-            if (hasRadar1 && !hasEnergy) {
+
+        if (showMap) {
+            noRadarPanel.setVisible(false);
+        } else {
+            if (!hasEnergy) {
                 noRadarPanel.setVisible(true);
                 noRadarPanel.setHTML(NO_POWER);
+            } else {
+                noRadarPanel.setVisible(true);
+                noRadarPanel.setHTML(NO_RADAR);
             }
         }
     }
@@ -133,10 +148,52 @@ public class RadarPanel {
         return radarFrameView;
     }
 
-    public void setRadarItemsVisible() {
-        hasEnergy = true;
-        hasRadar1 = true;
+    public void setLevelRadarMode(RadarMode levelRadarMode) {
+        this.levelRadarMode = levelRadarMode;
         handleRadarState();
+    }
+
+    public void onRadarModeItemChanged(SyncBaseItem syncBaseItem) {
+        radarModeItems.add(syncBaseItem);
+        handleItemRadarState();
+    }
+
+    public void onRadarModeItemRemoved(SyncBaseItem syncBaseItem) {
+        radarModeItems.remove(syncBaseItem);
+        handleItemRadarState();
+    }
+
+    public void onItemTypeChanged(ClientSyncItem clientSyncItem) {
+        if (clientSyncItem.getSyncItem() instanceof SyncBaseItem) {
+            SyncBaseItem syncBaseItem = clientSyncItem.getSyncBaseItem();
+            if (radarModeItems.contains(syncBaseItem)) {
+                handleItemRadarState();
+            }
+        }
+    }
+
+    private void handleItemRadarState() {
+        itemRadarMode = findHighestRadarMode();
+        handleRadarState();
+    }
+
+    public void clearRadarMode() {
+        radarModeItems.clear();
+        itemRadarMode = RadarMode.NONE;
+        levelRadarMode = RadarMode.NONE;
+    }
+
+    private RadarMode findHighestRadarMode() {
+        RadarMode radarMode = RadarMode.NONE;
+        for (SyncBaseItem radarModeItem : radarModeItems) {
+            if (!radarModeItem.isReady()) {
+                continue;
+            }
+            if (radarMode.sameOrHigher(radarModeItem.getBaseItemType().getSpecialType().getRadarMode())) {
+                radarMode = radarModeItem.getBaseItemType().getSpecialType().getRadarMode();
+            }
+        }
+        return radarMode;
     }
 
     public void showHint(SyncBaseItem enemyBaseItem) {

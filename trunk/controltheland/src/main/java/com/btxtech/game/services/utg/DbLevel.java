@@ -14,6 +14,7 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.LevelScope;
+import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
@@ -67,6 +68,7 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
     private int maxMoney;
     private double itemSellFactor;
     private int houseSpace;
+    private RadarMode radarMode;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "dbLevel",cascade = CascadeType.ALL, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbItemTypeLimitation> itemTypeLimitation;
@@ -119,6 +121,7 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
     public void init(UserService userService) {
         itemTypeLimitation = new HashSet<DbItemTypeLimitation>();
         dbLevelTasks = new ArrayList<DbLevelTask>();
+        radarMode = RadarMode.NONE;
     }
 
     @Override
@@ -158,6 +161,14 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
 
     public void setHouseSpace(int houseSpace) {
         this.houseSpace = houseSpace;
+    }
+
+    public RadarMode getRadarMode() {
+        return radarMode;
+    }
+
+    public void setRadarMode(RadarMode radarMode) {
+        this.radarMode = radarMode;
     }
 
     protected int getSaveId() {
@@ -216,7 +227,7 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
         for (DbItemTypeLimitation dbItemTypeLimitation : this.itemTypeLimitation) {
             itemTypeLimitation.put(dbItemTypeLimitation.getDbBaseItemType().getId(), dbItemTypeLimitation.getCount());
         }
-        return new LevelScope(name, maxMoney, itemTypeLimitation, houseSpace, itemSellFactor);
+        return new LevelScope(name, maxMoney, itemTypeLimitation, houseSpace, itemSellFactor, radarMode);
     }
 
     public DbConditionConfig getDbConditionConfig() {

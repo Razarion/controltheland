@@ -14,6 +14,7 @@
 package com.btxtech.game.services.tutorial;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
@@ -80,6 +81,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     private int maxMoney;
     double itemSellFactor;
     private int houseCount;
+    private RadarMode radarMode;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "dbTutorialConfig", insertable = false, updatable = false, nullable = false)
     private DbTutorialConfig dbTutorialConfig;
@@ -118,6 +120,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         stepConfigs = new ArrayList<DbStepConfig>();
         dbTaskAllowedItems = new HashSet<DbTaskAllowedItem>();
         dbTaskBots = new HashSet<DbTaskBot>();
+        radarMode = RadarMode.NONE;
     }
 
     @Override
@@ -178,6 +181,14 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         this.houseCount = houseCount;
     }
 
+    public RadarMode getRadarMode() {
+        return radarMode;
+    }
+
+    public void setRadarMode(RadarMode radarMode) {
+        this.radarMode = radarMode;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -227,7 +238,8 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
                 itemSellFactor,
                 name,
                 convertTaskBots(itemService),
-                itemTypeLimitation);
+                itemTypeLimitation,
+                radarMode);
     }
 
     public CrudChildServiceHelper<DbItemTypeAndPosition> getItemCrudServiceHelper() {

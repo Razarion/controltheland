@@ -192,11 +192,6 @@ public class SideCockpit extends AbsolutePanel {
         return new Rectangle(getAbsoluteLeft(), getAbsoluteTop(), WIDTH, HEIGHT);
     }
 
-
-    public void setRadarItems() {
-        RadarPanel.getInstance().setRadarItemsVisible();
-    }
-
     public CockpitMode getCockpitMode() {
         return cockpitMode;
     }

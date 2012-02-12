@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.common.tutorial;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
+import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 
 import java.io.Serializable;
@@ -40,6 +41,7 @@ public class TaskConfig implements Serializable {
     private String name;
     private Collection<BotConfig> botConfigs;
     private Map<Integer, Integer> itemTypeLimitation;
+    private RadarMode radarMode;
 
     /**
      * Used by GWT
@@ -47,7 +49,7 @@ public class TaskConfig implements Serializable {
     public TaskConfig() {
     }
 
-    public TaskConfig(boolean clearGame, ArrayList<ItemTypeAndPosition> ownItems, Index scroll, ArrayList<StepConfig> stepConfigs, int houseCount, int money, int maxMoney, double itemSellFactor, String name, Collection<BotConfig> botConfigs, Map<Integer, Integer> itemTypeLimitation) {
+    public TaskConfig(boolean clearGame, ArrayList<ItemTypeAndPosition> ownItems, Index scroll, ArrayList<StepConfig> stepConfigs, int houseCount, int money, int maxMoney, double itemSellFactor, String name, Collection<BotConfig> botConfigs, Map<Integer, Integer> itemTypeLimitation, RadarMode radarMode) {
         this.clearGame = clearGame;
         this.ownItems = ownItems;
         this.scroll = scroll;
@@ -59,6 +61,7 @@ public class TaskConfig implements Serializable {
         this.name = name;
         this.botConfigs = botConfigs;
         this.itemTypeLimitation = itemTypeLimitation;
+        this.radarMode = radarMode;
     }
 
     public boolean isClearGame() {
@@ -94,6 +97,6 @@ public class TaskConfig implements Serializable {
     }
 
     public LevelScope createLevelScope(String levelName) {
-        return new LevelScope(levelName, maxMoney, itemTypeLimitation, houseCount, itemSellFactor);
+        return new LevelScope(levelName, maxMoney, itemTypeLimitation, houseCount, itemSellFactor, radarMode);
     }
 }

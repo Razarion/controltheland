@@ -13,6 +13,8 @@
 
 package com.btxtech.game.services.item.itemType;
 
+import com.btxtech.game.jsre.client.common.RadarMode;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
@@ -28,14 +30,14 @@ public class DbSpecialType implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-    private String string;
+    private RadarMode radarMode;
 
-    public String getString() {
-        return string;
+    public RadarMode getRadarMode() {
+        return radarMode;
     }
 
-    public void setString(String string) {
-        this.string = string;
+    public void setRadarMode(RadarMode radarMode) {
+        this.radarMode = radarMode;
     }
 
     @Override

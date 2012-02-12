@@ -14,6 +14,8 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.action.ActionHandler;
+import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
+import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemViewContainer;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -56,8 +58,12 @@ public class ClientSyncItem implements SyncItemListener {
                     ClientBase.getInstance().recalculate4FakedHouseSpace((SyncBaseItem) syncItem);
                     if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
                         ActionHandler.getInstance().addGuardingBaseItem((SyncBaseItem) syncItem);
+                        ItemContainer.getInstance().checkSpecialChanged(syncItem);
                     }
                 }
+                break;
+            case ITEM_TYPE_CHANGED:
+                RadarPanel.getInstance().onItemTypeChanged(this);
                 break;
         }
         if (clientSyncItemView != null) {

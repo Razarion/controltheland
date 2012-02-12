@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
+import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.common.CmsUtil;
@@ -48,6 +49,7 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
 
     public void setLevelScope(LevelScope levelScope) {
         this.levelScope = levelScope;
+        RadarPanel.getInstance().setLevelRadarMode(levelScope.getRadarMode());
         SideCockpit.getInstance().setLevel(levelScope);
     }
 
@@ -56,6 +58,7 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
             throw new IllegalStateException("ClientLevelHandler: level has not been set before.");
         }
         this.levelScope = levelScope;
+        RadarPanel.getInstance().setLevelRadarMode(levelScope.getRadarMode());
         SideCockpit.getInstance().setLevel(levelScope);
         SideCockpit.getInstance().updateItemLimit();
     }

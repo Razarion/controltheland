@@ -27,6 +27,7 @@ public class LevelScope implements Serializable {
     private Map<Integer, Integer> itemTypeLimitation;
     private int houseSpace;
     private double itemSellFactor;
+    private RadarMode radarMode;
 
     /**
      * Used by GWT
@@ -34,12 +35,13 @@ public class LevelScope implements Serializable {
     public LevelScope() {
     }
 
-    public LevelScope(String levelName, int maxMoney, Map<Integer, Integer> itemTypeLimitation, int houseSpace, double itemSellFactor) {
+    public LevelScope(String levelName, int maxMoney, Map<Integer, Integer> itemTypeLimitation, int houseSpace, double itemSellFactor, RadarMode radarMode) {
         this.levelName = levelName;
         this.maxMoney = maxMoney;
         this.itemTypeLimitation = itemTypeLimitation;
         this.houseSpace = houseSpace;
         this.itemSellFactor = itemSellFactor;
+        this.radarMode = radarMode;
     }
 
     public String getLevelName() {
@@ -65,5 +67,9 @@ public class LevelScope implements Serializable {
 
     public double getItemSellFactor() {
         return itemSellFactor;
+    }
+
+    public RadarMode getRadarMode() {
+        return radarMode;
     }
 }
