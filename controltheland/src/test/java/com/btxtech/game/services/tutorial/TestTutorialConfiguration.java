@@ -91,7 +91,6 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         dbTutorialConfig = ruTutorialServiceHelper.readDbChild(dbTutorialConfig.getId(), DbTutorialConfig.class);
         dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig.getId());
         dbTaskConfig.setName("name1");
-        dbTaskConfig.setClearGame(true);
         dbTaskConfig.setScroll(new Index(1, 2));
         dbTaskConfig.setHouseCount(5);
         ruTutorialServiceHelper.updateDbEntity(dbTutorialConfig);
@@ -101,7 +100,6 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         dbTutorialConfig = ruTutorialServiceHelper.readDbChild(dbTutorialConfig.getId(), DbTutorialConfig.class);
         dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig.getId());
         dbTaskConfig.setName("name1");
-        dbTaskConfig.setClearGame(true);
         dbTaskConfig.setScroll(new Index(1, 2));
         dbTaskConfig.setHouseCount(5);
         ruTaskServiceHelper.updateDbEntity(dbTaskConfig);
@@ -111,7 +109,6 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         dbTutorialConfig = ruTutorialServiceHelper.readDbChild(dbTutorialConfig.getId(), DbTutorialConfig.class);
         dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig.getId());
         Assert.assertEquals("name1", dbTaskConfig.getName());
-        Assert.assertTrue(dbTaskConfig.isClearGame());
         Assert.assertEquals(new Index(1, 2), dbTaskConfig.getScroll());
         Assert.assertEquals(5, dbTaskConfig.getHouseCount());
         endHttpRequestAndOpenSessionInViewFilter();

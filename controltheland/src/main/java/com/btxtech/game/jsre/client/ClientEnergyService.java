@@ -17,7 +17,9 @@ import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.common.EnergyPacket;
+import com.btxtech.game.jsre.common.gameengine.services.energy.AbstractBaseEnergy;
 import com.btxtech.game.jsre.common.gameengine.services.energy.EnergyService;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncConsumer;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncGenerator;
 
@@ -28,7 +30,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncGenerator;
  */
 public class ClientEnergyService extends AbstractBaseEnergy implements EnergyService {
     private static final ClientEnergyService INSTANCE = new ClientEnergyService();
-    private boolean connectedToServer = true;
 
     /**
      * Singleton
@@ -41,8 +42,7 @@ public class ClientEnergyService extends AbstractBaseEnergy implements EnergySer
         return INSTANCE;
     }
 
-    public void init(boolean connectedToServer) {
-        this.connectedToServer = connectedToServer;
+    public void init() {
         getSyncConsumers().clear();
         getSyncGenerators().clear();
         setConsuming(0);
@@ -51,34 +51,34 @@ public class ClientEnergyService extends AbstractBaseEnergy implements EnergySer
 
     @Override
     public void generatorActivated(SyncGenerator syncGenerator) {
-        if (connectedToServer || !ClientBase.getInstance().isMyOwnBase(syncGenerator.getSyncBaseItem().getBase())) {
-            return;
+        if (checkState(syncGenerator.getSyncBaseItem())) {
+            super.generatorActivated(syncGenerator);
         }
-        super.generatorActivated(syncGenerator);
     }
 
     @Override
     public void generatorDeactivated(SyncGenerator syncGenerator) {
-        if (connectedToServer || !ClientBase.getInstance().isMyOwnBase(syncGenerator.getSyncBaseItem().getBase())) {
-            return;
+        if (checkState(syncGenerator.getSyncBaseItem())) {
+            super.generatorDeactivated(syncGenerator);
         }
-        super.generatorDeactivated(syncGenerator);
     }
 
     @Override
     public void consumerActivated(SyncConsumer syncConsumer) {
-        if (connectedToServer || !ClientBase.getInstance().isMyOwnBase(syncConsumer.getSyncBaseItem().getBase())) {
-            return;
+        if (checkState(syncConsumer.getSyncBaseItem())) {
+            super.consumerActivated(syncConsumer);
         }
-        super.consumerActivated(syncConsumer);
     }
 
     @Override
     public void consumerDeactivated(SyncConsumer syncConsumer) {
-        if (connectedToServer || !ClientBase.getInstance().isMyOwnBase(syncConsumer.getSyncBaseItem().getBase())) {
-            return;
+        if (checkState(syncConsumer.getSyncBaseItem())) {
+            super.consumerDeactivated(syncConsumer);
         }
-        super.consumerDeactivated(syncConsumer);
+    }
+
+    private boolean checkState(SyncBaseItem syncBaseItem) {
+        return Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER && ClientBase.getInstance().isMyOwnProperty(syncBaseItem);
     }
 
     @Override
@@ -92,11 +92,20 @@ public class ClientEnergyService extends AbstractBaseEnergy implements EnergySer
     }
 
     public void onEnergyPacket(int energyGenerating, int energyConsuming) {
-        if (!connectedToServer) {
-            return;
+        if (Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE) {
+            setConsuming(energyConsuming);
+            setGenerating(energyGenerating);
+            updateEnergyState();
         }
-        setConsuming(energyConsuming);
-        setGenerating(energyGenerating);
-        updateEnergyState();
+    }
+
+    public void onSyncItemKilled(SyncBaseItem syncBaseItem) {
+        if (syncBaseItem.hasSyncConsumer()) {
+            consumerDeactivated(syncBaseItem.getSyncConsumer());
+        }
+
+        if (syncBaseItem.hasSyncGenerator()) {
+            generatorDeactivated(syncBaseItem.getSyncGenerator());
+        }
     }
 }

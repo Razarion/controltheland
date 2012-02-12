@@ -1,4 +1,4 @@
-package com.btxtech.game.jsre.client;
+package com.btxtech.game.jsre.common.gameengine.services.energy;
 
 import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncConsumer;

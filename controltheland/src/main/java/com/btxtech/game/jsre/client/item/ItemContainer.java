@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.item;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientEnergyService;
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
@@ -251,8 +252,10 @@ public class ItemContainer extends AbstractItemService {
         if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
             definitelyKillItem(clientSyncItem, force, explode);
             if (killedItem instanceof SyncBaseItem) {
-                ActionHandler.getInstance().removeGuardingBaseItem((SyncBaseItem) killedItem);
-                ClientBase.getInstance().onItemKilled((SyncBaseItem) killedItem, actor);
+                SyncBaseItem syncBaseItem = (SyncBaseItem) killedItem;
+                ActionHandler.getInstance().removeGuardingBaseItem(syncBaseItem);
+                ClientBase.getInstance().onItemKilled(syncBaseItem, actor);
+                ClientEnergyService.getInstance().onSyncItemKilled(syncBaseItem);
             }
             ClientServices.getInstance().getConnectionService().sendSyncInfo(killedItem);
         } else {
