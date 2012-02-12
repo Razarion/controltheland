@@ -44,7 +44,7 @@ public class SimulationConditionServiceImpl extends ConditionServiceImpl<SimpleB
     @Override
     protected void saveAbstractConditionTrigger(AbstractConditionTrigger<SimpleBase, Void> abstractConditionTrigger) {
         if (!ClientBase.getInstance().isMyOwnBase(abstractConditionTrigger.getActor())) {
-            throw new IllegalArgumentException("Only condition for own base cam be saved");
+            throw new IllegalArgumentException("Only condition for own base can be saved");
         }
         this.abstractConditionTrigger = abstractConditionTrigger;
     }

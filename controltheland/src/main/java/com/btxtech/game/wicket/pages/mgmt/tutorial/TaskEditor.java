@@ -31,7 +31,6 @@ import com.btxtech.game.wicket.uiservices.ItemTypePanel;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import com.btxtech.game.wicket.uiservices.ServiceHelper;
 import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
@@ -64,7 +63,6 @@ public class TaskEditor extends MgmtWebPage {
         }));
         add(form);
 
-        form.add(new CheckBox("clearGame"));
         form.add(new IndexPanel("scroll"));
         form.add(new TextField("money"));
         form.add(new TextField("maxMoney"));

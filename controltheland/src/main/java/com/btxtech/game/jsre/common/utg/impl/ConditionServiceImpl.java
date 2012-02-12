@@ -28,7 +28,6 @@ import com.btxtech.game.jsre.common.utg.condition.ValueConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Level;

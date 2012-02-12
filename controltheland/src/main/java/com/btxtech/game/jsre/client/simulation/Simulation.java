@@ -16,7 +16,6 @@ package com.btxtech.game.jsre.client.simulation;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.Connection;
-import com.btxtech.game.jsre.client.GameCommon;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ParametrisedRunnable;
 import com.btxtech.game.jsre.client.bot.ClientBotService;
@@ -153,21 +152,7 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
             long time = System.currentTimeMillis();
             activeTask.cleanup();
             ClientUserTracker.getInstance().onTaskFinished(simulationInfo.getLevelTaskId(), activeTask, time - taskTime, time);
-//            if (activeTask.getTaskConfig().getFinishImageDuration() > 0 && activeTask.getTaskConfig().getFinishImageId() != null) {
-//                final Task closedTask = activeTask;
-//                activeTask = null;
-//                Timer timer = new Timer() {
-//                    @Override
-//                    public void run() {
-//                        GameCommon.clearGame();
-//                        runNextTask(closedTask);
-//                    }
-//                };
-//                timer.schedule(closedTask.getTaskConfig().getFinishImageDuration());
-//            } else {
-            GameCommon.clearGame();
             runNextTask(activeTask);
-//            }
         }
     }
 

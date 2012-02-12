@@ -30,7 +30,6 @@ import java.util.Map;
  * Time: 17:25:27
  */
 public class TaskConfig implements Serializable {
-    private boolean clearGame;
     private Collection<ItemTypeAndPosition> ownItems;
     private Index scroll;
     private List<StepConfig> stepConfigs;
@@ -49,8 +48,7 @@ public class TaskConfig implements Serializable {
     public TaskConfig() {
     }
 
-    public TaskConfig(boolean clearGame, ArrayList<ItemTypeAndPosition> ownItems, Index scroll, ArrayList<StepConfig> stepConfigs, int houseCount, int money, int maxMoney, double itemSellFactor, String name, Collection<BotConfig> botConfigs, Map<Integer, Integer> itemTypeLimitation, RadarMode radarMode) {
-        this.clearGame = clearGame;
+    public TaskConfig(ArrayList<ItemTypeAndPosition> ownItems, Index scroll, ArrayList<StepConfig> stepConfigs, int houseCount, int money, int maxMoney, double itemSellFactor, String name, Collection<BotConfig> botConfigs, Map<Integer, Integer> itemTypeLimitation, RadarMode radarMode) {
         this.ownItems = ownItems;
         this.scroll = scroll;
         this.stepConfigs = stepConfigs;
@@ -62,10 +60,6 @@ public class TaskConfig implements Serializable {
         this.botConfigs = botConfigs;
         this.itemTypeLimitation = itemTypeLimitation;
         this.radarMode = radarMode;
-    }
-
-    public boolean isClearGame() {
-        return clearGame;
     }
 
     public Collection<ItemTypeAndPosition> getOwnItems() {
