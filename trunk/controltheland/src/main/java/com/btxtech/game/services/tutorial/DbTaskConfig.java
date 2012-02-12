@@ -120,6 +120,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         dbTaskAllowedItems = new HashSet<DbTaskAllowedItem>();
         dbTaskBots = new HashSet<DbTaskBot>();
         radarMode = RadarMode.NONE;
+        itemSellFactor = 0.5;
     }
 
     @Override

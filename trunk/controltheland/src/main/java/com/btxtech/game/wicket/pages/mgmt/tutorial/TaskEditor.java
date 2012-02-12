@@ -67,6 +67,7 @@ public class TaskEditor extends MgmtWebPage {
         form.add(new TextField("money"));
         form.add(new TextField("maxMoney"));
         form.add(new TextField("houseCount"));
+        form.add(new TextField("itemSellFactor"));
         form.add(new DropDownChoice<RadarMode>("radarMode", RadarMode.getList()));
 
         new CrudChildTableHelper<DbTaskConfig, DbTaskAllowedItem>("allowedItemTable", null, "createAllowedItem", false, form, false) {
