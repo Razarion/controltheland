@@ -61,7 +61,6 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     @GeneratedValue
     private Integer id;
     private String name;
-    private boolean clearGame;
     @OneToMany(mappedBy = "dbTaskConfig", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<DbItemTypeAndPosition> items;
     @Type(type = "index")
@@ -131,14 +130,6 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     @Override
     public DbTutorialConfig getParent() {
         return dbTutorialConfig;
-    }
-
-    public void setClearGame(boolean clearGame) {
-        this.clearGame = clearGame;
-    }
-
-    public boolean isClearGame() {
-        return clearGame;
     }
 
     public Index getScroll() {
@@ -228,8 +219,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
             itemTypeLimitation.put(dbTaskAllowedItem.getDbBaseItemType().getId(), newCount);
         }
 
-        return new TaskConfig(clearGame,
-                itemTypeAndPositions,
+        return new TaskConfig(itemTypeAndPositions,
                 scroll,
                 stepConfigs,
                 houseCount,
