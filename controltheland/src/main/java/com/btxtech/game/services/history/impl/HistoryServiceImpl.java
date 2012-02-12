@@ -337,7 +337,9 @@ public class HistoryServiceImpl implements HistoryService {
         if (user != null) {
             return new ReadonlyListContentProvider<DisplayHistoryElement>(getNewestHistoryElements(user, NEWEST_HISTORY_ELEMENT_COUNT));
         } else {
-            return new ReadonlyListContentProvider<DisplayHistoryElement>(Collections.<DisplayHistoryElement>emptyList());
+            DisplayHistoryElement displayHistoryElement = new DisplayHistoryElement(System.currentTimeMillis(), 0);
+            displayHistoryElement.setMessage("History only visible to registered users");
+            return new ReadonlyListContentProvider<DisplayHistoryElement>(Collections.singletonList(displayHistoryElement));
         }
     }
 }
