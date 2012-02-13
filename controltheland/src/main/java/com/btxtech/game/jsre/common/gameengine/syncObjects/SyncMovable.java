@@ -118,7 +118,7 @@ public class SyncMovable extends SyncBaseAbility {
                 getSyncItemArea().turnTo(syncItemContainer);
                 syncItemContainer.getSyncItemContainer().load(getSyncBaseItem());
             } else {
-                throw new IllegalStateException("Not in item container range: " + getSyncBaseItem());
+                throw new IllegalStateException("Not in item container range: " + getSyncBaseItem() + " container: " + syncItemContainer);
             }
         } catch (ItemDoesNotExistException ignore) {
             // Item container may be killed
