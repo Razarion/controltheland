@@ -316,6 +316,14 @@ public class ItemContainer extends AbstractItemService {
         return clientSyncItem;
     }
 
+    public ClientSyncItem getClientSyncItem(SyncItem syncItem) throws ItemDoesNotExistException {
+        ClientSyncItem clientSyncItem = items.get(syncItem.getId());
+        if (clientSyncItem == null) {
+            throw new ItemDoesNotExistException(syncItem.getId());
+        }
+        return clientSyncItem;
+    }
+
     @Override
     public SyncItem getItem(Id id) throws ItemDoesNotExistException {
         ClientSyncItem ClientSyncItem = items.get(id);
@@ -350,27 +358,6 @@ public class ItemContainer extends AbstractItemService {
     @Override
     protected Services getServices() {
         return ClientServices.getInstance();
-    }
-
-    // TODO move up
-
-    public Collection<ClientSyncItem> getItemsInRect(Rectangle rectangle, boolean onlyOwnItems) {
-        ArrayList<ClientSyncItem> clientBaseItems = new ArrayList<ClientSyncItem>();
-        for (ClientSyncItem clientSyncItem : items.values()) {
-            if (clientSyncItem.isSyncBaseItem() &&
-                    !orphanItems.containsKey(clientSyncItem.getSyncItem().getId()) &&
-                    !seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId()) &&
-                    clientSyncItem.getSyncItem().getSyncItemArea().contains(rectangle)) {
-                if (onlyOwnItems) {
-                    if (clientSyncItem.isMyOwnProperty()) {
-                        clientBaseItems.add(clientSyncItem);
-                    }
-                } else {
-                    clientBaseItems.add(clientSyncItem);
-                }
-            }
-        }
-        return clientBaseItems;
     }
 
     // TODO move up

@@ -341,6 +341,9 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
 
     @Override
     public void interactionGuardingItems(SyncBaseItem target) {
+        if (target.isContainedIn()) {
+            return;
+        }
         boolean isTargetBot = getServices().getBaseService().isBot(target.getBase());
         // Prevent ConcurrentModificationException
         List<SyncBaseItem> attackers = new ArrayList<SyncBaseItem>();

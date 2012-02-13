@@ -13,13 +13,14 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.ClientSyncItem;
+import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainMouseButtonListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -115,15 +116,11 @@ public class GroupSelectionFrame extends AbsolutePanel implements MouseMoveHandl
             unsuccessfulSelection(mouseEvent);
             return;
         }
-        Collection<ClientSyncItem> selectedItems = ItemContainer.getInstance().getItemsInRect(selection, true);
+        Collection<SyncBaseItem> selectedItems = ItemContainer.getInstance().getBaseItemsInRectangle(selection, ClientBase.getInstance().getSimpleBase(), null);
         if (selectedItems.isEmpty()) {
             return;
         }
-        Group group = new Group();
-        for (ClientSyncItem selectedItem : selectedItems) {
-            group.addItem(selectedItem);
-        }
-        SelectionHandler.getInstance().setItemGroupSelected(group);
+        SelectionHandler.getInstance().setItemGroupSelected(new Group(selectedItems));
     }
 
     private void unsuccessfulSelection(MouseEvent mouseEvent) {

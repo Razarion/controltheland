@@ -16,16 +16,21 @@ package com.btxtech.game.jsre.client.cockpit;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
+import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -34,6 +39,20 @@ import java.util.Map;
  */
 public class Group {
     private Collection<ClientSyncItem> clientSyncItems = new ArrayList<ClientSyncItem>();
+    private Logger log = Logger.getLogger(Group.class.getName());
+
+    public Group() {
+    }
+
+    public Group(Collection<SyncBaseItem> selectedItems) {
+        for (SyncBaseItem selectedItem : selectedItems) {
+            try {
+                clientSyncItems.add(ItemContainer.getInstance().getClientSyncItem(selectedItem));
+            } catch (ItemDoesNotExistException e) {
+                log.log(Level.SEVERE, "Group add selected items", e);
+            }
+        }
+    }
 
     public void addItem(ClientSyncItem clientSyncItem) {
         if (!clientSyncItem.isSyncBaseItem()) {
