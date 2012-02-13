@@ -72,9 +72,9 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
         PassableRectangle atomDestRect = getPassableRectangleOfAbsoluteIndex(destination, terrainType);
         if (atomStartRect == null || atomDestRect == null) {
             if (atomStartRect == null) {
-                throw new IllegalArgumentException("Illegal atomStartRect. start: " + start + " destination: " + destination + " terrainType: " + terrainType);
+                throw new PathCanNotBeFoundException("Illegal atomStartRect. TerrainType: " + terrainType, start, destination);
             } else {
-                throw new IllegalArgumentException("Illegal atomDestRect. start: " + start + " destination: " + destination + " terrainType: " + terrainType);
+                throw new PathCanNotBeFoundException("Illegal atomDestRect. TerrainType: " + terrainType, start, destination);
             }
         }
 

@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotItemConfig;
+import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
 import java.util.logging.Level;
@@ -79,6 +80,9 @@ public class BotSyncBaseItem {
         try {
             services.getActionService().build(syncBaseItem, position, toBeBuilt);
             clearIdle();
+        } catch (PathCanNotBeFoundException e) {
+            setIdle();
+            log.warning("BotSyncBaseItem: " + e.getMessage());
         } catch (Exception e) {
             setIdle();
             log.log(Level.SEVERE, "", e);
@@ -89,6 +93,9 @@ public class BotSyncBaseItem {
         try {
             services.getActionService().fabricate(syncBaseItem, toBeBuilt);
             clearIdle();
+        } catch (PathCanNotBeFoundException e) {
+            setIdle();
+            log.warning("BotSyncBaseItem: " + e.getMessage());
         } catch (Exception e) {
             setIdle();
             log.log(Level.SEVERE, "", e);
@@ -99,6 +106,9 @@ public class BotSyncBaseItem {
         try {
             services.getActionService().attack(syncBaseItem, target, destinationHint, destinationAngel, true);
             clearIdle();
+        } catch (PathCanNotBeFoundException e) {
+            setIdle();
+            log.warning("BotSyncBaseItem: " + e.getMessage());
         } catch (Exception e) {
             setIdle();
             log.log(Level.SEVERE, "", e);
@@ -110,6 +120,9 @@ public class BotSyncBaseItem {
             Index position = services.getCollisionService().getFreeRandomPosition(syncBaseItem.getBaseItemType(), region, 0, false, false);
             services.getActionService().move(syncBaseItem, position);
             clearIdle();
+        } catch (PathCanNotBeFoundException e) {
+            setIdle();
+            log.warning("BotSyncBaseItem: " + e.getMessage());
         } catch (Exception e) {
             setIdle();
             log.log(Level.SEVERE, "", e);
@@ -122,8 +135,8 @@ public class BotSyncBaseItem {
 
     public void updateIdleState() {
         boolean tmpIdle = syncBaseItem.isIdle();
-        if(tmpIdle != idle) {
-            if(tmpIdle) {
+        if (tmpIdle != idle) {
+            if (tmpIdle) {
                 setIdle();
             } else {
                 clearIdle();
