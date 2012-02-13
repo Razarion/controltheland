@@ -113,18 +113,22 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
                         try {
                             if (!activeItem.tick(factor)) {
                                 iterator.remove();
-                                activeItem.stop();
-                                addGuardingBaseItem(activeItem);
-                                connectionService.sendSyncInfo(activeItem);
-                                if (activeItem instanceof SyncBaseItem) {
-                                    SyncBaseItem syncBaseItem = (SyncBaseItem) activeItem;
-                                    if (syncBaseItem.hasSyncHarvester()) {
-                                        baseService.sendAccountBaseUpdate((SyncBaseItem) activeItem);
+                                try {
+                                    activeItem.stop();
+                                    addGuardingBaseItem(activeItem);
+                                    connectionService.sendSyncInfo(activeItem);
+                                    if (activeItem instanceof SyncBaseItem) {
+                                        SyncBaseItem syncBaseItem = (SyncBaseItem) activeItem;
+                                        if (syncBaseItem.hasSyncHarvester()) {
+                                            baseService.sendAccountBaseUpdate((SyncBaseItem) activeItem);
+                                        }
+                                        if (syncBaseItem.isMoneyEarningOrConsuming()) {
+                                            baseService.sendAccountBaseUpdate((SyncBaseItem) activeItem);
+                                        }
+                                        serverConditionService.onSyncItemDeactivated(syncBaseItem);
                                     }
-                                    if (syncBaseItem.isMoneyEarningOrConsuming()) {
-                                        baseService.sendAccountBaseUpdate((SyncBaseItem) activeItem);
-                                    }
-                                    serverConditionService.onSyncItemDeactivated(syncBaseItem);
+                                } catch (Throwable t) {
+                                    log.error("Error during deactivation of active item: " + activeItem, t);
                                 }
                             }
                         } catch (BaseDoesNotExistException e) {

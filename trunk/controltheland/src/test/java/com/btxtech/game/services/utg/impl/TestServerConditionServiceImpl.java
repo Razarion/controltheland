@@ -269,6 +269,10 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         waitForActionServiceDone();
         assertActorAndIdentifierAndClear(userService.getUserState(), 1);
 
+        itemTypes = new HashMap<ItemType, Integer>();
+        itemTypes.put(itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 1);
+        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null, false)), userService.getUserState(), 1);
+
         sendFactoryCommand(factory, TEST_CONTAINER_ITEM_ID);
         waitForActionServiceDone();
         Id container = getFirstSynItemId(TEST_CONTAINER_ITEM_ID);
@@ -277,12 +281,11 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         sendContainerLoadCommand(builder, container);
         waitForActionServiceDone();
 
-        itemTypes = new HashMap<ItemType, Integer>();
-        itemTypes.put(itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 1);
-        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null, false)), userService.getUserState(), 1);
         sendUnloadContainerCommand(container, new Index(1000, 1000));
         waitForActionServiceDone();
         assertActorAndIdentifierAndClear(userService.getUserState(), 1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test
