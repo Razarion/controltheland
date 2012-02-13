@@ -38,7 +38,7 @@ public class ContentPageLink extends Panel {
         }
         add(link);
         if (dbContentPageLink.getCssClass() != null) {
-            add(new SimpleAttributeModifier("class", dbContentPageLink.getCssClass()));
+            link.add(new SimpleAttributeModifier("class", dbContentPageLink.getCssClass()));
         }
     }
 
