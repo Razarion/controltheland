@@ -192,6 +192,12 @@ public class SyncItemArea {
 
 
     public boolean contains(SyncItemArea syncItemArea) {
+        if (!hasPosition()) {
+            return false;
+        }
+        if (!syncItemArea.hasPosition()) {
+            return false;
+        }
         Collection<Line> otherLines = syncItemArea.getLines();
 
         for (Line line : getLines()) {
@@ -258,6 +264,9 @@ public class SyncItemArea {
     }
 
     public boolean contains(Rectangle rectangle) {
+        if (!hasPosition()) {
+            return false;
+        }
         Collection<Line> lines = getLines();
         for (Line line : rectangle.getLines()) {
             for (Line otherLine : lines) {
