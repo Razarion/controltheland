@@ -54,8 +54,8 @@ public class SectionLink extends Panel {
         BookmarkablePageLink<CmsPage> link = new BookmarkablePageLink<CmsPage>("link", CmsPage.class, pageParameters);
         link.add(new Label("label", value));
         add(link);
-        if (dbExpressionProperty.getCssClass() != null) {
-            link.add(new SimpleAttributeModifier("class", dbExpressionProperty.getCssClass()));
+        if (dbExpressionProperty.getLinkCssClass() != null) {
+            link.add(new SimpleAttributeModifier("class", dbExpressionProperty.getLinkCssClass()));
         }
     }
 

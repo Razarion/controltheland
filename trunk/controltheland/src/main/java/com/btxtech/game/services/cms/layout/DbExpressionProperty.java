@@ -26,6 +26,7 @@ public class DbExpressionProperty extends DbContent implements DataProviderInfo 
     private boolean defaultSortable = false;
     private boolean defaultSortableAsc = false;
     private boolean link;
+    private String linkCssClass;
 
     @Override
     public String getExpression() {
@@ -95,12 +96,19 @@ public class DbExpressionProperty extends DbContent implements DataProviderInfo 
         this.defaultSortableAsc = defaultSortableAsc;
     }
 
-
     public boolean isLink() {
         return link;
     }
 
     public void setLink(boolean link) {
         this.link = link;
+    }
+
+    public String getLinkCssClass() {
+        return linkCssClass;
+    }
+
+    public void setLinkCssClass(String linkCssClass) {
+        this.linkCssClass = linkCssClass;
     }
 }
