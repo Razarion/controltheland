@@ -43,7 +43,7 @@ public class ContentGameLink extends Panel {
 
         add(pageLink);
         if (dbContentGameLink.getCssClass() != null) {
-            add(new SimpleAttributeModifier("class", dbContentGameLink.getCssClass()));
+            pageLink.add(new SimpleAttributeModifier("class", dbContentGameLink.getCssClass()));
         }
     }
 
