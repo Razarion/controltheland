@@ -272,6 +272,8 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         sendFactoryCommand(factory, TEST_CONTAINER_ITEM_ID);
         waitForActionServiceDone();
         Id container = getFirstSynItemId(TEST_CONTAINER_ITEM_ID);
+        sendMoveCommand(container, new Index(400,400)); // Prevent container move over other unit       
+        waitForActionServiceDone();
         sendContainerLoadCommand(builder, container);
         waitForActionServiceDone();
 
@@ -281,7 +283,6 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         sendUnloadContainerCommand(container, new Index(1000, 1000));
         waitForActionServiceDone();
         assertActorAndIdentifierAndClear(userService.getUserState(), 1);
-
     }
 
     @Test

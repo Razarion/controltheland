@@ -1,5 +1,6 @@
 package com.btxtech.game.services.cms;
 
+import org.junit.Ignore;
 import org.springframework.stereotype.Component;
 
 /**
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Component;
  * Time: 00:36:37
  */
 @Component("testCmsBean")
+@Ignore
 public class TestCmsBean {
     public double getDouble1() {
         return 1.333333;
