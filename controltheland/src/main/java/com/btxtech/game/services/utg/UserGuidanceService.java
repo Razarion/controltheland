@@ -14,6 +14,7 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.LevelScope;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
@@ -46,7 +47,7 @@ public interface UserGuidanceService extends CommonUserGuidanceService {
 
     void init2();
 
-    void createBaseInQuestHub(UserState userState);
+    void createBaseInQuestHub(UserState userState) throws InvalidLevelState;
 
     void sendResurrectionMessage(SimpleBase simpleBase);
 
@@ -69,4 +70,6 @@ public interface UserGuidanceService extends CommonUserGuidanceService {
     void restoreBackup(Map<DbUserState, UserState> userStates);
 
     void createAndAddBackup(DbUserState dbUserState, UserState userState);
+
+    InvalidLevelState createInvalidLevelState();
 }

@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientEnergyService;
+import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
@@ -34,10 +35,7 @@ public class RealDeltaStartupTask extends GameEngineStartupTask {
 
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
-        RealGameInfo realGameInfo = reloadIfNotCorrectInfoClass(RealGameInfo.class, deferredStartup);
-        if (realGameInfo == null) {
-            return;
-        }
+        RealGameInfo realGameInfo = (RealGameInfo) Connection.getInstance().getGameInfo();
         deltaSetupGameStructure(realGameInfo);
         ClientBase.getInstance().setAllBaseAttributes(realGameInfo.getAllBase());
         ClientBase.getInstance().setBase(realGameInfo.getBase());

@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 
@@ -31,10 +32,7 @@ public class SimulationStartupTask extends GameEngineStartupTask {
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
         ClientBase.getInstance().setConnectedToServer4FakedHouseSpace(false);
-        SimulationInfo simulationInfo = reloadIfNotCorrectInfoClass(SimulationInfo.class, deferredStartup);
-        if (simulationInfo == null) {
-            return;
-        }
+        SimulationInfo simulationInfo = (SimulationInfo) Connection.getInstance().getGameInfo();
         setupGameStructure(simulationInfo);
     }
 }

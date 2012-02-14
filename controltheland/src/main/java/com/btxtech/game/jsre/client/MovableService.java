@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.UserMessage;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.common.NoConnectionException;
@@ -44,9 +45,9 @@ import java.util.List;
  */
 @RemoteServiceRelativePath("gwtrpc/movableService")
 public interface MovableService extends RemoteService {
-    RealGameInfo getRealGameInfo();
+    RealGameInfo getRealGameInfo() throws InvalidLevelState;
 
-    SimulationInfo getSimulationGameInfo(int levelTaskId);
+    SimulationInfo getSimulationGameInfo(int levelTaskId) throws InvalidLevelState;
 
     void log(String message, Date date);
 

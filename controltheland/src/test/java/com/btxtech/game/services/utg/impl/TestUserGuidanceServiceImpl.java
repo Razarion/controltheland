@@ -2,6 +2,7 @@ package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -10,11 +11,7 @@ import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.utg.DbLevel;
-import com.btxtech.game.services.utg.DbLevelTask;
-import com.btxtech.game.services.utg.DbQuestHub;
-import com.btxtech.game.services.utg.LevelQuest;
-import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.*;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
@@ -48,8 +45,12 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        RealGameInfo realGameInfo = movableService.getRealGameInfo();
-        Assert.assertNull(realGameInfo);
+        try {
+            movableService.getRealGameInfo();
+            Assert.fail("InvalidLevelState expected");
+        } catch (InvalidLevelState invalidLevelState) {
+
+        }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

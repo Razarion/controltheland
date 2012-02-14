@@ -15,6 +15,7 @@ package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Message;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.LevelTaskDonePacket;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -106,11 +107,11 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     }
 
     @Override
-    public void createBaseInQuestHub(UserState userState) {
+    public void createBaseInQuestHub(UserState userState) throws InvalidLevelState {
         DbLevel dbLevel = getDbLevel(userState);
         DbQuestHub dbQuestHub = dbLevel.getParent();
         if (!dbQuestHub.isRealBaseRequired()) {
-            throw new IllegalStateException("QuestHub does not allow to start new base: " + dbQuestHub);
+            throw createInvalidLevelState();
         }
         Territory territory = territoryService.getTerritory(dbQuestHub.getStartTerritory());
 
@@ -151,7 +152,11 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         log.debug("User: " + userState + " has been promoted: " + dbOldLevel + " to " + dbNextLevel);
         // Create base if needed
         if (baseService.getBase(userState) == null && dbNextLevel.getParent().isRealBaseRequired()) {
-            createBaseInQuestHub(userState);
+            try {
+                createBaseInQuestHub(userState);
+            } catch (InvalidLevelState invalidLevelState) {
+                log.error("Error during base creation: " + userState, invalidLevelState);
+            }
         }
         // Prepare next level
         activateConditions(userState, dbNextLevel, null);
@@ -349,12 +354,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         }
     }
 
-    //TODO
-//    @Override
-//    public DbLevel copyDbLevel(Serializable copyFromId) {
-//        return crudServiceHelperHibernate.copyDbChild(copyFromId);
-//    }
-
     @Override
     public CrudRootServiceHelper<DbQuestHub> getCrudQuestHub() {
         return crudQuestHub;
@@ -408,6 +407,15 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
             } catch (Exception e) {
                 log.error("Can not restore user: " + userStates, e);
             }
+        }
+    }
+
+    @Override
+    public InvalidLevelState createInvalidLevelState() {
+        if (isStartRealGame()) {
+            return new InvalidLevelState(null);
+        } else {
+            return new InvalidLevelState(getDefaultLevelTaskId());
         }
     }
 }

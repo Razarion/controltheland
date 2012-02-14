@@ -1,6 +1,6 @@
 package com.btxtech.game.jsre.common;
 
-import com.btxtech.game.jsre.client.common.LevelScope;
+import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 
 /**
@@ -72,6 +72,32 @@ public class CmsUtil {
         builder.append("\" target=\"_blank\" >");
         builder.append(text);
         builder.append("</a>");
+    }
+
+    public static String getUrl4RealGame() {
+        StringBuilder builder = new StringBuilder();
+        builder.append('/');
+        builder.append(MOUNT_GAME);
+        return builder.toString();
+    }
+
+    public static String getUrl4LevelTaskGame(int levelTaskId) {
+        StringBuilder builder = new StringBuilder();
+        builder.append('/');
+        builder.append(MOUNT_GAME);
+        builder.append('/');
+        builder.append(Game.LEVEL_TASK_ID);
+        builder.append('/');
+        builder.append(levelTaskId);
+        return builder.toString();
+    }
+
+    public static String getUrl4Game(Integer levelTaskId) {
+        if (levelTaskId != null) {
+            return getUrl4LevelTaskGame(levelTaskId);
+        } else {
+            return getUrl4RealGame();
+        }
     }
 
 //    public static String getUrl4LevelPage(LevelScope levelScope, String text) {

@@ -2,6 +2,7 @@ package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.services.AbstractServiceTest;
@@ -159,7 +160,7 @@ public class TestXpService extends AbstractServiceTest {
         endHttpSession();
     }
 
-    private Collection<Id> createTargets(int count) {
+    private Collection<Id> createTargets(int count) throws InvalidLevelState {
         Collection<Id> targets = new ArrayList<Id>();
         for (int i = 0; i < count; i++) {
             beginHttpSession();
