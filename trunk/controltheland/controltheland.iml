@@ -54,8 +54,10 @@
       <excludeFolder url="file://$MODULE_DIR$/src/main/gwt-unitCache" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/META-INF" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/WEB-INF/classes" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/WEB-INF/deploy" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/WEB-INF/lib" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/game" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/itemtypeeditor" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/mapeditor" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/mapview" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/pathfinding" />
