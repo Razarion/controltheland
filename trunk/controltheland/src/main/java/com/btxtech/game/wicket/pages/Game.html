@@ -24,7 +24,7 @@
         function handleError(message, file, lineNumber) {
             errorMessage = "InPageError:\n" + message + " File: " + file + " Linenumber: " + lineNumber;
             var img = document.createElement('img');
-            img.src = '/spring/lsc?e=' + errorMessage;
+            img.src = '/spring/lsc?e=' + errorMessage + '&t=' + new Date().getTime();
             document.body.appendChild(img);
             return true;
         }

@@ -60,7 +60,7 @@ public class CmsPage extends WebPage implements IHeaderContributor {
                     "} catch(e) {" +
                     "errorMessage = \"JSDetection Ecxeption:\" + e;" +
                     "var img = document.createElement('img');" +
-                    "img.src = '/spring/lsc?e=' + errorMessage;" +
+                    "img.src = '/spring/lsc?e=' + errorMessage + '&t=' + new Date().getTime();" +
                     "document.body.appendChild(img);" +
                     "}" +
                     "}";
