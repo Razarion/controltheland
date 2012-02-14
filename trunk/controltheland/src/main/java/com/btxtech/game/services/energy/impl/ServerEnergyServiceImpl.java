@@ -14,6 +14,7 @@
 package com.btxtech.game.services.energy.impl;
 
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.services.items.BaseDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncConsumer;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncGenerator;
@@ -22,10 +23,11 @@ import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.energy.ServerEnergyService;
-import java.util.HashMap;
-import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Collection;
+import java.util.HashMap;
 
 /**
  * User: beat
@@ -91,12 +93,17 @@ public class ServerEnergyServiceImpl implements ServerEnergyService {
         if (pause) {
             return;
         }
-        if (syncBaseItem.hasSyncConsumer()) {
-            consumerDeactivated(syncBaseItem.getSyncConsumer());
-        }
+        try {
+            if (syncBaseItem.hasSyncConsumer()) {
+                consumerDeactivated(syncBaseItem.getSyncConsumer());
+            }
 
-        if (syncBaseItem.hasSyncGenerator()) {
-            generatorDeactivated(syncBaseItem.getSyncGenerator());
+            if (syncBaseItem.hasSyncGenerator()) {
+                generatorDeactivated(syncBaseItem.getSyncGenerator());
+            }
+        } catch (BaseDoesNotExistException ignore) {
+            // Ignore
+            // The last item of a base was killed
         }
     }
 
@@ -170,7 +177,7 @@ public class ServerEnergyServiceImpl implements ServerEnergyService {
             BaseEnergy baseEnergy = baseEntries.get(simpleBase);
             if (baseEnergy == null) {
                 if (baseService.getBase(simpleBase) == null) {
-                    throw new IllegalStateException("There is no base for: " + simpleBase);
+                    throw new BaseDoesNotExistException(simpleBase);
                 }
                 baseEnergy = new BaseEnergy(baseService, baseService.getBase(simpleBase), actionService);
                 baseEntries.put(simpleBase, baseEnergy);
