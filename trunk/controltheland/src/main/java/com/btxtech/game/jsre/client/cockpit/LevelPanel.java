@@ -6,8 +6,8 @@ import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
@@ -33,14 +33,14 @@ public class LevelPanel extends AbsolutePanel {
         add(image, 2, 2);
         levelName = new Label("?");
         add(levelName, 20, 2);
-        addDomHandler(new MouseDownHandler() {
+        addDomHandler(new ClickHandler() {
             @Override
-            public void onMouseDown(MouseDownEvent event) {
+            public void onClick(ClickEvent event) {
                 isBlinking = false;
-                getElement().getStyle().setBackgroundColor(null);
+                getElement().getStyle().clearBackgroundColor();
                 Window.open(Connection.getInstance().getGameInfo().getPredefinedUrls().get(CmsUtil.CmsPredefinedPage.USER_PAGE), CmsUtil.TARGET_BLANK, "");
             }
-        }, MouseDownEvent.getType());
+        }, ClickEvent.getType());
         getElement().getStyle().setCursor(Style.Cursor.POINTER);
     }
 
@@ -61,7 +61,7 @@ public class LevelPanel extends AbsolutePanel {
                 if (isBlinking && (getElement().getStyle().getBackgroundColor() == null || getElement().getStyle().getBackgroundColor().trim().isEmpty())) {
                     getElement().getStyle().setBackgroundColor(BACKGROUND_COLOR);
                 } else {
-                    getElement().getStyle().setBackgroundColor(null);
+                    getElement().getStyle().clearBackgroundColor();
                 }
                 return isBlinking;
             }
