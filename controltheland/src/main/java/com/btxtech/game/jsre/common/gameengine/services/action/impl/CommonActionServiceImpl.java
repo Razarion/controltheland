@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.common.gameengine.services.action.impl;
 
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.common.CommonJava;
@@ -14,22 +15,8 @@ import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededEx
 import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderFinalizeCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LaunchCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UpgradeCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.*;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -292,6 +279,10 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
 
     @Override
     public void addGuardingBaseItem(SyncTickItem syncTickItem) {
+        if (getServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
+            return;
+        }
+
         if (!(syncTickItem instanceof SyncBaseItem)) {
             return;
         }
@@ -324,6 +315,9 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
 
     @Override
     public void removeGuardingBaseItem(SyncBaseItem syncItem) {
+        if (getServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
+            return;
+        }
         if (!syncItem.hasSyncWeapon()) {
             return;
         }
@@ -341,6 +335,9 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
 
     @Override
     public void interactionGuardingItems(SyncBaseItem target) {
+        if (getServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
+            return;
+        }
         if (target.isContainedIn()) {
             return;
         }
