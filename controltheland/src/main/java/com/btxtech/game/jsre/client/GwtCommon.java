@@ -143,7 +143,7 @@ public class GwtCommon {
     public static void sendLogViaLoadScriptCommunication(String logMessage) {
         try {
             ImageElement imageElement = Document.get().createImageElement();
-            imageElement.setSrc("/spring/lsc?" + Constants.ERROR_KEY + "=" + logMessage);
+            imageElement.setSrc("/spring/lsc?" + Constants.ERROR_KEY + "=" + logMessage + "&t=" + System.currentTimeMillis());
             Document.get().appendChild(imageElement);
         } catch (Throwable ignore) {
             // Ignore
