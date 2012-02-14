@@ -13,11 +13,12 @@
 
 package com.btxtech.game.services.tutorial.impl;
 
+import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.common.NoSuchChildException;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
-import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -49,8 +50,11 @@ public class TutorialServiceImpl implements TutorialService {
     }
 
     @Override
-    public DbTutorialConfig getDbTutorialConfig(int levelTaskId) {
-        DbLevel dbLevel = userGuidanceService.getDbLevel();
-        return dbLevel.getDbTutorialConfigFromTask(levelTaskId);
+    public DbTutorialConfig getDbTutorialConfig(int levelTaskId) throws InvalidLevelState {
+        try {
+            return userGuidanceService.getDbLevel().getDbTutorialConfigFromTask(levelTaskId);
+        } catch (NoSuchChildException e) {
+            throw userGuidanceService.createInvalidLevelState();
+        }
     }
 }

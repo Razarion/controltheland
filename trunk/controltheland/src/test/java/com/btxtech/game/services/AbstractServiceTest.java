@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.HouseSpacePacket;
@@ -155,7 +156,7 @@ abstract public class AbstractServiceTest {
     protected static int TEST_LEVEL_TASK_4_3_SIM_ID = -1;
     protected static final String TEST_LEVEL_3_REAL = "TEST_LEVEL_3_REAL";
     protected static int TEST_LEVEL_3_REAL_ID = -1;
-    protected static int  TEST_LEVEL_TASK_5_4_REAL_ID = -1;
+    protected static int TEST_LEVEL_TASK_5_4_REAL_ID = -1;
     protected static int TEST_LEVEL_TASK_6_4_REAL_ID = -1;
     protected static final String TEST_LEVEL_4_SIMULATED = "TEST_LEVEL_4_SIMULATED";
     protected static int TEST_LEVEL_4_SIMULATED_ID = -1;
@@ -290,7 +291,11 @@ abstract public class AbstractServiceTest {
      * @return Simple Base
      */
     protected SimpleBase getMyBase() {
-        return movableService.getRealGameInfo().getBase();
+        try {
+            return movableService.getRealGameInfo().getBase();
+        } catch (InvalidLevelState invalidLevelState) {
+            throw new RuntimeException(invalidLevelState);
+        }
     }
 
     protected Id getFirstSynItemId(int itemTypeId) {
@@ -1074,7 +1079,7 @@ abstract public class AbstractServiceTest {
         TEST_LEVEL_TASK_4_3_SIM_ID = dbSimLevelTask3.getId();
         TEST_LEVEL_4_REAL_ID = dbLevel3.getId();
         TEST_LEVEL_TASK_5_4_REAL_ID = dbLevelTask5.getId();
-        TEST_LEVEL_TASK_6_4_REAL_ID = dbLevelTask6 .getId();
+        TEST_LEVEL_TASK_6_4_REAL_ID = dbLevelTask6.getId();
 
         userGuidanceService.activateLevels();
     }
@@ -1233,7 +1238,7 @@ abstract public class AbstractServiceTest {
         return dbLevelTask;
     }
 
-    private DbLevelTask setupCreateLevelTask6RealGameLevel(DbLevel dbLevel){
+    private DbLevelTask setupCreateLevelTask6RealGameLevel(DbLevel dbLevel) {
         DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().createDbChild();
         // Rewards
         dbLevelTask.setMoney(20);

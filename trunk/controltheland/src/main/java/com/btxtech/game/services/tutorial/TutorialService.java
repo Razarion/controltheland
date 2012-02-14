@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.tutorial;
 
-import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 
 /**
@@ -24,5 +24,5 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
 public interface TutorialService {
     CrudRootServiceHelper<DbTutorialConfig> getDbTutorialCrudRootServiceHelper();
 
-    DbTutorialConfig getDbTutorialConfig(int levelTaskId);
+    DbTutorialConfig getDbTutorialConfig(int levelTaskId) throws InvalidLevelState;
 }

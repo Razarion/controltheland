@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.EnergyPacket;
@@ -147,7 +148,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public void continueBase() {
+    public void continueBase() throws InvalidLevelState {
         UserState userState = userService.getUserState();
         if (userState == null) {
             throw new IllegalStateException("No UserState available.");

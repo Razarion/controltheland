@@ -69,7 +69,7 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
     private double itemSellFactor;
     private int houseSpace;
     private RadarMode radarMode;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "dbLevel",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "dbLevel", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbItemTypeLimitation> itemTypeLimitation;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -215,11 +215,7 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
     }
 
     public DbTutorialConfig getDbTutorialConfigFromTask(int levelTaskId) {
-        DbTutorialConfig dbTutorialConfig = getLevelTaskCrud().readDbChild(levelTaskId).getDbTutorialConfig();
-        if (dbTutorialConfig == null) {
-            throw new IllegalStateException("DbTaskLevel has no DbTutorialConfig. taskId: " + levelTaskId + " " + this);
-        }
-        return dbTutorialConfig;
+        return getLevelTaskCrud().readDbChild(levelTaskId).getDbTutorialConfig();
     }
 
     public LevelScope createLevelScope() {

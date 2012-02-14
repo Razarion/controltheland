@@ -13,12 +13,13 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.cockpit.SplashManager;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
+import com.btxtech.game.jsre.client.cockpit.SplashManager;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
@@ -31,29 +32,13 @@ import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
-import com.btxtech.game.jsre.common.AccountBalancePacket;
-import com.btxtech.game.jsre.common.BaseChangedPacket;
-import com.btxtech.game.jsre.common.CmsUtil;
-import com.btxtech.game.jsre.common.CommonJava;
-import com.btxtech.game.jsre.common.EnergyPacket;
-import com.btxtech.game.jsre.common.HouseSpacePacket;
-import com.btxtech.game.jsre.common.Html5NotSupportedException;
-import com.btxtech.game.jsre.common.LevelPacket;
-import com.btxtech.game.jsre.common.LevelTaskDonePacket;
-import com.btxtech.game.jsre.common.NoConnectionException;
-import com.btxtech.game.jsre.common.Packet;
-import com.btxtech.game.jsre.common.StartupTaskInfo;
+import com.btxtech.game.jsre.common.*;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
-import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
-import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
-import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
-import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
-import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
+import com.btxtech.game.jsre.common.utg.tracking.*;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
@@ -104,8 +89,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
 
                 @Override
                 public void onFailure(Throwable caught) {
-                    deferredStartup.failed(caught);
-                    gameEngineMode = null;
+                    handleGameInfoThrowable(caught, deferredStartup);
                 }
 
                 @Override
@@ -127,8 +111,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
 
                 @Override
                 public void onFailure(Throwable caught) {
-                    deferredStartup.failed(caught);
-                    gameEngineMode = null;
+                    handleGameInfoThrowable(caught, deferredStartup);
                 }
 
                 @Override
@@ -141,6 +124,15 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
             });
         } else {
             deferredStartup.failed(DeferredStartup.NO_CONNECTION);
+        }
+    }
+
+    private void handleGameInfoThrowable(Throwable caught, DeferredStartup deferredStartup) {
+        if (caught instanceof InvalidLevelState) {
+            Window.open(CmsUtil.getUrl4Game(((InvalidLevelState) caught).getLevelTaskId()), CmsUtil.TARGET_SELF, "");
+        } else {
+            deferredStartup.failed(caught);
+            gameEngineMode = null;
         }
     }
 

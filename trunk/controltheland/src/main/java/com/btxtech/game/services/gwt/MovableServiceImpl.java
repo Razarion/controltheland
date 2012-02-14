@@ -17,6 +17,7 @@ package com.btxtech.game.services.gwt;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.common.NoConnectionException;
@@ -135,7 +136,7 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public RealGameInfo getRealGameInfo() {
+    public RealGameInfo getRealGameInfo() throws InvalidLevelState {
         try {
             baseService.continueBase();
             RealGameInfo realGameInfo = new RealGameInfo();
@@ -150,6 +151,8 @@ public class MovableServiceImpl implements MovableService {
             realGameInfo.setAllBases(baseService.getAllBaseAttributes());
             realGameInfo.setHouseSpace(baseService.getBase().getHouseSpace());
             return realGameInfo;
+        } catch (InvalidLevelState invalidLevelState) {
+            throw invalidLevelState;
         } catch (com.btxtech.game.services.connection.NoConnectionException t) {
             log.error(t.getMessage() + ", SessionId: " + t.getSessionId());
         } catch (Throwable t) {
@@ -159,7 +162,7 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public SimulationInfo getSimulationGameInfo(int levelTaskId) {
+    public SimulationInfo getSimulationGameInfo(int levelTaskId) throws InvalidLevelState {
         try {
             SimulationInfo simulationInfo = new SimulationInfo();
             DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialConfig(levelTaskId);
@@ -171,6 +174,8 @@ public class MovableServiceImpl implements MovableService {
             // Terrain
             terrainService.setupTerrainTutorial(simulationInfo, dbTutorialConfig);
             return simulationInfo;
+        } catch (InvalidLevelState invalidLevelState) {
+            throw invalidLevelState;
         } catch (Throwable t) {
             log.error("", t);
         }

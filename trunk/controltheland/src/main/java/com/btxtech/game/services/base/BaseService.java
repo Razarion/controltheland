@@ -14,6 +14,7 @@
 package com.btxtech.game.services.base;
 
 import com.btxtech.game.jsre.client.AlreadyUsedException;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.Territory;
@@ -58,7 +59,7 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     void setBot(SimpleBase simpleBase, boolean bot);
 
-    void continueBase();
+    void continueBase() throws InvalidLevelState;
 
     Base getBase(SyncBaseObject syncBaseObject);
 
