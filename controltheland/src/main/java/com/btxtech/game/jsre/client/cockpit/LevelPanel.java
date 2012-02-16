@@ -19,8 +19,8 @@ import com.google.gwt.user.client.ui.Label;
  * Time: 01:14:40
  */
 public class LevelPanel extends AbsolutePanel {
-    private static final int WEIGHT = 100;
-    private static final int HEIGHT = 20;
+    private static final int WEIGHT = 30;
+    private static final int HEIGHT = 30;
     private static final int BLINK_DELAY = 500;
     private static final String BACKGROUND_COLOR = "#FFFF00";
     private Label levelName;
