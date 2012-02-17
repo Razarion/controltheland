@@ -50,7 +50,7 @@ public class SideCockpit {
     private static final int ENERGY_W = 95;
     private static final int ENERGY_H = 7;
     private static final int ENERGY_TEXT_X = 75;
-    private static final int ENERGY_TEXT_Y = 27;
+    private static final int ENERGY_TEXT_Y = 26;
     // Radar
     private static final int RADAR_X = 13;
     private static final int RADAR_Y = 65;
