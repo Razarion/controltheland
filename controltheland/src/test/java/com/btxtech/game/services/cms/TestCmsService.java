@@ -4286,4 +4286,90 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void testUglyBeanIdPathElement4LevelTask() throws Exception {
+        configureGameMultipleLevel();
+
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+
+        // Setup the level page
+        DbPage dbLevelPage = pageCrud.createDbChild();
+        dbLevelPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbLevelPage.setName("Level");
+
+        DbContentList dbContentList = new DbContentList();
+        dbContentList.init(userService);
+        dbLevelPage.setContentAndAccessWrites(dbContentList);
+        dbContentList.setSpringBeanName("userGuidanceService");
+        dbContentList.setContentProviderGetter("crudQuestHub");
+        dbLevelPage.setContentAndAccessWrites(dbContentList);
+
+        CrudChildServiceHelper<DbContentBook> contentBookCrud = dbContentList.getContentBookCrud();
+        DbContentBook dbContentBook = contentBookCrud.createDbChild();
+        dbContentBook.setClassName("com.btxtech.game.services.utg.DbQuestHub");
+        CrudListChildServiceHelper<DbContentRow> rowCrud = dbContentBook.getRowCrud();
+
+        DbContentRow dbLevelRow = rowCrud.createDbChild();
+        DbContentList levelContentList = new DbContentList();
+        levelContentList.setRowsPerPage(5);
+        dbLevelRow.setDbContent(levelContentList);
+        levelContentList.init(userService);
+        levelContentList.setParent(dbLevelRow);
+        levelContentList.setContentProviderGetter("levelCrud");
+
+        dbContentBook = levelContentList.getContentBookCrud().createDbChild();
+        dbContentBook.setClassName("com.btxtech.game.services.utg.DbLevel");
+        rowCrud = dbContentBook.getRowCrud();
+
+        DbContentRow dbTaskRow = rowCrud.createDbChild();
+        DbContentList taskContentList = new DbContentList();
+        dbTaskRow.setDbContent(taskContentList);
+        taskContentList.init(userService);
+        taskContentList.setParent(dbTaskRow);
+        taskContentList.setContentProviderGetter("levelTaskCrud");
+
+        dbContentBook = taskContentList.getContentBookCrud().createDbChild();
+        dbContentBook.setClassName("com.btxtech.game.services.utg.DbLevelTask");
+        rowCrud = dbContentBook.getRowCrud();
+
+        DbContentRow dbContentRow = rowCrud.createDbChild();
+        dbContentRow.setName("Name");
+        DbExpressionProperty expProperty = new DbExpressionProperty();
+        expProperty.setParent(dbContentRow);
+        expProperty.setExpression("name");
+        expProperty.setEscapeMarkup(false);
+        dbContentRow.setDbContent(expProperty);
+
+        pageCrud.updateDbChild(dbLevelPage);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.getDbLevel(); // set level for new user
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        PageParameters parameters = new PageParameters();
+        parameters.add(CmsUtil.SECTION_ID, CmsUtil.LEVEL_TASK_SECTION);
+        parameters.add(CmsUtil.CHILD_ID, Integer.toString(TEST_LEVEL_TASK_4_3_SIM_ID));
+        tester.startPage(CmsPage.class, parameters);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertLabel("form:content:table:rows:1:cells:2:cell", TEST_LEVEL_TASK_4_3_SIM_NAME);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 }
