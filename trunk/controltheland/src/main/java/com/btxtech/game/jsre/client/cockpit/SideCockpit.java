@@ -28,7 +28,7 @@ public class SideCockpit {
     private static final String TEXT_COLOR = "#C7C4BB";
     // Background Panels
     private static final int MAIN_PANEL_W = 227;
-    private static final int MAIN_PANEL_H = 246;
+    private static final int MAIN_PANEL_H = 240;
     private static final int MISSION_PANEL_X = 218;
     private static final int MISSION_PANEL_W = 789;
     private static final int MISSION_PANEL_H = 42;
@@ -37,28 +37,28 @@ public class SideCockpit {
     private static final int LEVEL_Y = 5;
     // Money
     private static final int MONEY_X = 75;
-    private static final int MONEY_Y = 13;
+    private static final int MONEY_Y = 4;
     // Item limit
     private static final int ITEM_LIMIT_X = 157;
-    private static final int ITEM_LIMIT_Y = 13;
+    private static final int ITEM_LIMIT_Y = 4;
     // Mission
     private static final int MISSION_X = 20;
-    private static final int MISSION_Y = 7;
+    private static final int MISSION_Y = 5;
     // Energy
-    private static final int ENERGY_X = 118;
-    private static final int ENERGY_Y = 40;
+    private static final int ENERGY_X = 119;
+    private static final int ENERGY_Y = 31;
     private static final int ENERGY_W = 95;
     private static final int ENERGY_H = 7;
     private static final int ENERGY_TEXT_X = 75;
-    private static final int ENERGY_TEXT_Y = 36;
+    private static final int ENERGY_TEXT_Y = 27;
     // Radar
-    private static final int RADAR_X = 10;
-    private static final int RADAR_Y = 70;
+    private static final int RADAR_X = 13;
+    private static final int RADAR_Y = 65;
     private static final int RADAR_W = 150;
     private static final int RADAR_H = 150;
     // Buttons
     private static final int BNT_X = 181;
-    private static final int BNT_Y = 80;
+    private static final int BNT_Y = 73;
     private static final int BNT_Y_SPACE = 35;
     private static final int BNT_SCROLL_X = BNT_X;
     private static final int BNT_SCROLL_Y = BNT_Y;
@@ -70,7 +70,7 @@ public class SideCockpit {
     private static final int BNT_STAT_Y = BNT_MUTE_Y + BNT_Y_SPACE;
     // Debug
     private static final int DEBUG_X = 10;
-    private static final int DEBUG_Y = 220;
+    private static final int DEBUG_Y = 213;
 
     private AbsolutePanel mainPanel;
     private AbsolutePanel missionPanel;
