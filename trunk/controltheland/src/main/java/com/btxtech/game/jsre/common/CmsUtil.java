@@ -100,22 +100,22 @@ public class CmsUtil {
         }
     }
 
-//    public static String getUrl4LevelPage(LevelScope levelScope, String text) {
-//        StringBuilder builder = new StringBuilder();
-//        builder.append("<a href=\"/");
-//        builder.append(MOUNT_GAME_CMS);
-//        builder.append('/');
-//        builder.append(SECTION_ID);
-//        builder.append('/');
-//        builder.append(LEVEL_SECTION);
-//        builder.append('/');
-//        builder.append(CHILD_ID);
-//        builder.append('/');
-//        builder.append(levelScope.getId());
-//        builder.append("\" target=\"_blank\" style=\"color: white\">");
-//        builder.append(text);
-//        builder.append("</a>");
-//        return builder.toString();
-//    }
+    public static String getUrl4LevelPage(int levelTaskId, String text) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("<a href=\"/");
+        builder.append(MOUNT_GAME_CMS);
+        builder.append('/');
+        builder.append(SECTION_ID);
+        builder.append('/');
+        builder.append(LEVEL_TASK_SECTION);
+        builder.append('/');
+        builder.append(CHILD_ID);
+        builder.append('/');
+        builder.append(levelTaskId);
+        builder.append("\" target=\"_blank\" style=\"color: white\">");
+        builder.append(text);
+        builder.append("</a>");
+        return builder.toString();
+    }
 
 }

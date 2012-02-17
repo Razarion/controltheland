@@ -37,6 +37,6 @@ public class RunRealGameStartupTask extends AbstractStartupTask {
         RegisterDialog.showDialogRepeating();
         MapWindow.getInstance().displayVisibleItems();
         SideCockpit.getInstance().updateItemLimit();
-        SideCockpit.getInstance().setMissionHtml(Constants.REAL_GAME_MISSION_TEXT);
+        SideCockpit.getInstance().setMissionHtml(Constants.REAL_GAME_MISSION_TEXT, null);
     }
 }

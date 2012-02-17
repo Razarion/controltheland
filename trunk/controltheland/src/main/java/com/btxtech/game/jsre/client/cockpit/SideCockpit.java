@@ -251,9 +251,13 @@ public class SideCockpit {
         }
     }
 
-    public void setMissionHtml(String missionHtml) {
+    public void setMissionHtml(String missionHtml, String link) {
         if (mission != null) {
-            mission.setHTML(missionHtml);
+            if (link != null) {
+                mission.setHTML(missionHtml + " " + link);
+            } else {
+                mission.setHTML(missionHtml);
+            }
         }
     }
 

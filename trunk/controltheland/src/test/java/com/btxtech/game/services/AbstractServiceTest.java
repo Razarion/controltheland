@@ -154,6 +154,7 @@ abstract public class AbstractServiceTest {
     protected static int TEST_LEVEL_TASK_2_3_REAL_ID = -1;
     protected static int TEST_LEVEL_TASK_3_3_SIM_ID = -1;
     protected static int TEST_LEVEL_TASK_4_3_SIM_ID = -1;
+    protected static String TEST_LEVEL_TASK_4_3_SIM_NAME = "TEST_LEVEL_TASK_4_3_SIM_NAME";
     protected static final String TEST_LEVEL_3_REAL = "TEST_LEVEL_3_REAL";
     protected static int TEST_LEVEL_3_REAL_ID = -1;
     protected static int TEST_LEVEL_TASK_5_4_REAL_ID = -1;
@@ -1058,6 +1059,7 @@ abstract public class AbstractServiceTest {
         DbLevelTask dbSimLevelTask3 = dbLevel2.getLevelTaskCrud().createDbChild();
         dbSimLevelTask3.setDbTutorialConfig(tut3);
         dbSimLevelTask3.setXp(3);
+        dbSimLevelTask3.setName(TEST_LEVEL_TASK_4_3_SIM_NAME);
 
         DbLevel dbLevel3 = realGameQuestHub1.getLevelCrud().createDbChild();
         dbLevel3.setMaxMoney(10000);

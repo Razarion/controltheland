@@ -35,6 +35,7 @@ import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.DbPageAccessControl;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.wicket.pages.cms.BorderWrapper;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
@@ -282,7 +283,11 @@ public class CmsUiServiceImpl implements CmsUiService {
             String section = pageParameters.getString(CmsUtil.SECTION_ID);
             CmsSectionInfo cmsSectionInfo = cmsService.getCmsSectionInfo(section);
             DbContentList dbContentList = cmsSectionInfo.getDbContentList();
-            beanIdPathElement = createBeanIdPathElement(pageParameters, dbContentList, beanIdPathElement);
+            if (section.equals(CmsUtil.LEVEL_TASK_SECTION) && !pageParameters.containsKey(CmsPage.getChildUrlParameter(1)) && !pageParameters.containsKey(CmsPage.getChildUrlParameter(2))) {
+                beanIdPathElement = createUglyBeanIdPathElement4LevelTask(pageParameters, dbContentList, beanIdPathElement);
+            } else {
+                beanIdPathElement = createBeanIdPathElement(pageParameters, dbContentList, beanIdPathElement);
+            }
             Object bean = getDataProviderBean(beanIdPathElement);
             dbContent = dbContentList.getDbPropertyBook(bean.getClass());
             beanIdPathElement.setChildDetailPage(true);
@@ -297,6 +302,20 @@ public class CmsUiServiceImpl implements CmsUiService {
             return new Message(componentId, pageParameters.getString(CmsPage.MESSAGE_ID));
         }
         return getComponent(dbContent, null, componentId, beanIdPathElement, contentContext);
+    }
+
+    private BeanIdPathElement createUglyBeanIdPathElement4LevelTask(PageParameters pageParameters, DbContentList dbContentList, BeanIdPathElement beanIdPathElement) {
+        // TODO: this is ugly
+        // Ugly way to create BeanIdPathElement level task
+        // Main reason: only page id and level task id are given
+        // -> DbQuestHub id and DbLevel id mus be generated in this method
+        // But this can be a new way to access section link without specifying the whole childId path
+        int levelTaskId = pageParameters.getInt(CmsUtil.CHILD_ID);
+        DbLevelTask dbLevelTask = (DbLevelTask) sessionFactory.getCurrentSession().get(DbLevelTask.class, levelTaskId);
+        pageParameters.put(CmsPage.getChildUrlParameter(0), Integer.toString(dbLevelTask.getParent().getParent().getId()));
+        pageParameters.put(CmsPage.getChildUrlParameter(1), Integer.toString(dbLevelTask.getParent().getId()));
+        pageParameters.put(CmsPage.getChildUrlParameter(2), Integer.toString(levelTaskId));
+        return createBeanIdPathElement(pageParameters, dbContentList, beanIdPathElement);
     }
 
     private BeanIdPathElement createBeanIdPathElement(PageParameters pageParameters, DbContent dbContent, BeanIdPathElement beanIdPathElement) {
@@ -501,9 +520,9 @@ public class CmsUiServiceImpl implements CmsUiService {
                     throw new IllegalArgumentException("Date value must be Number ore Date: " + value);
                 }
             case ROUNDED_DOWN_INTEGER:
-                if(value instanceof Number) {
-                    return Integer.toString(((Number)value).intValue());
-                }else {
+                if (value instanceof Number) {
+                    return Integer.toString(((Number) value).intValue());
+                } else {
                     throw new IllegalArgumentException("Must be a Number: " + value);
                 }
             default:
