@@ -26,7 +26,6 @@ import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
@@ -37,6 +36,9 @@ import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeExce
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -58,6 +60,9 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     private int houseSpace;
     private boolean connectedToServer = true;
     private OwnBaseDestroyedListener ownBaseDestroyedListener;
+    private Map<BaseItemType, Integer> myItemTypeCount = new HashMap<BaseItemType, Integer>();
+    private int ownItemCount = 0;
+    private Logger log = Logger.getLogger(ClientBase.class.getName());
 
     /**
      * Singleton
@@ -191,6 +196,22 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         return getHouseSpace();
     }
 
+    @Override
+    public boolean isItemLimit4ItemAddingAllowed(BaseItemType toBeBuiltType, SimpleBase simpleBase) throws NoSuchItemTypeException {
+        if (ClientBase.getInstance().isMyOwnBase(simpleBase)
+                && !ClientBase.getInstance().isBot(simpleBase)
+                && (Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE || Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER)) {
+            if(isHouseSpaceExceeded(simpleBase)) {
+               UnfrequentDialog.open(UnfrequentDialog.Type.SPACE_LIMIT);
+               return false;
+            }
+            if(isLevelLimitation4ItemTypeExceeded(toBeBuiltType, simpleBase)) {
+               UnfrequentDialog.open(UnfrequentDialog.Type.ITEM_LIMIT);
+               return false;
+            }
+        }
+        return true;
+    }
 
     public void checkItemLimit4ItemAdding(BaseItemType itemType) throws ItemLimitExceededException, HouseSpaceExceededException, NoSuchItemTypeException {
         try {
@@ -198,7 +219,6 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         } catch (ItemLimitExceededException e) {
             UnfrequentDialog.open(UnfrequentDialog.Type.ITEM_LIMIT);
             throw new ItemLimitExceededException();
-
         } catch (HouseSpaceExceededException e) {
             UnfrequentDialog.open(UnfrequentDialog.Type.SPACE_LIMIT);
             throw new HouseSpaceExceededException();
@@ -230,14 +250,19 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     @Override
     public int getItemCount(SimpleBase simpleBase) {
         check4OwnBase(simpleBase);
-        return ItemContainer.getInstance().getOwnItemCount();
+        return ownItemCount;
     }
 
     @Override
     public int getItemCount(SimpleBase simpleBase, int itemTypeId) throws NoSuchItemTypeException {
         check4OwnBase(simpleBase);
-        ItemType itemType = ItemContainer.getInstance().getItemType(itemTypeId);
-        return ItemContainer.getInstance().getItems(itemType, simpleBase).size();
+        BaseItemType baseItemType = (BaseItemType) ItemContainer.getInstance().getItemType(itemTypeId);
+        Integer count = myItemTypeCount.get(baseItemType);
+        if (count != null) {
+            return count;
+        } else {
+            return 0;
+        }
     }
 
     @Override
@@ -293,20 +318,8 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         clear();
         simpleBase = null;
         ownBaseDestroyedListener = null;
-    }
-
-    public void onItemKilled(SyncBaseItem syncBaseItem, SimpleBase actor) {
-        if (getItems(syncBaseItem.getBase()).size() > 0) {
-            return;
-        }
-
-        if (isMyOwnProperty(syncBaseItem)) {
-            if (ownBaseDestroyedListener != null) {
-                ownBaseDestroyedListener.onOwnBaseDestroyed();
-            }
-        } else if (isMyOwnBase(actor)) {
-            SimulationConditionServiceImpl.getInstance().onBaseDeleted(actor);
-        }
+        myItemTypeCount.clear();
+        ownItemCount = 0;
     }
 
     public void setOwnBaseDestroyedListener(OwnBaseDestroyedListener ownBaseDestroyedListener) {
@@ -323,5 +336,58 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     @Override
     public void sendAccountBaseUpdate(SimpleBase simpleBase) {
         // Do nothing here
+    }
+
+    @Override
+    public void onItemCreated(SyncBaseItem syncBaseItem) {
+        if (isMyOwnProperty(syncBaseItem)) {
+            ownItemCount++;
+            Integer count = myItemTypeCount.get(syncBaseItem.getBaseItemType());
+            if (count == null) {
+                count = 0;
+            }
+            count++;
+            myItemTypeCount.put(syncBaseItem.getBaseItemType(), count);
+
+            SideCockpit.getInstance().updateItemLimit();
+        }
+    }
+
+    @Override
+    public void onItemDeleted(SyncBaseItem syncBaseItem, SimpleBase actor) {
+        if (isMyOwnProperty(syncBaseItem)) {
+            ownItemCount--;
+            Integer count = myItemTypeCount.get(syncBaseItem.getBaseItemType());
+            if (count == null) {
+                log.warning("ClientBase: onItemDeleted() called but no such SyncBaseItem was added before: " + syncBaseItem + " actor: " + actor);
+            } else {
+                count--;
+                if (count < 0) {
+                    log.warning("ClientBase: count < 0: " + count + " syncBaseItem: " + syncBaseItem + " actor: " + actor);
+                }
+                myItemTypeCount.put(syncBaseItem.getBaseItemType(), count);
+            }
+
+            if (ownItemCount < 0) {
+                log.warning("ClientBase: ownItemCount < 0: " + ownItemCount + " syncBaseItem: " + syncBaseItem + " actor: " + actor);
+                ownItemCount = 0;
+            }
+
+            if (ownItemCount == 0) {
+                if (isMyOwnProperty(syncBaseItem)) {
+                    if (ownBaseDestroyedListener != null) {
+                        ownBaseDestroyedListener.onOwnBaseDestroyed();
+                    }
+                } else if (isMyOwnBase(actor)) {
+                    SimulationConditionServiceImpl.getInstance().onBaseDeleted(actor);
+                }
+            }
+
+            SideCockpit.getInstance().updateItemLimit();
+        }
+    }
+
+    public int getOwnItemCount() {
+        return ownItemCount;
     }
 }

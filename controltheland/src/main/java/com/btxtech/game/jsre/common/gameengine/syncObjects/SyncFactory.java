@@ -69,6 +69,9 @@ public class SyncFactory extends SyncBaseAbility {
             buildup += buildFactor;
             getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS);
             if (buildup >= 1.0) {
+                if (!getServices().getBaseService().isItemLimit4ItemAddingAllowed(toBeBuiltType, getSyncBaseItem().getBase())) {
+                    return true;
+                }
                 SyncBaseItem item = (SyncBaseItem) getServices().getItemService().createSyncObject(toBeBuiltType, rallyPoint, getSyncBaseItem(), getSyncBaseItem().getBase(), createdChildCount);
                 item.setBuildup(buildup);
                 createdChildCount++;

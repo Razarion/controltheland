@@ -22,10 +22,8 @@ import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
-import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.effects.ExplosionHandler;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.utg.SpeechBubbleHandler;
@@ -53,7 +51,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -67,7 +64,6 @@ public class ItemContainer extends AbstractItemService {
     private HashMap<Id, ClientSyncItem> items = new HashMap<Id, ClientSyncItem>();
     private HashMap<Id, ClientSyncItem> orphanItems = new HashMap<Id, ClientSyncItem>();
     private HashMap<Id, ClientSyncItem> seeminglyDeadItems = new HashMap<Id, ClientSyncItem>();
-    private int ownItemCount = 0;
     private int itemId = 1;
 
     /**
@@ -106,6 +102,9 @@ public class ItemContainer extends AbstractItemService {
         if (syncItemInfo.isAlive()) {
             if (clientSyncItem == null) {
                 clientSyncItem = createAndAddItem(syncItemInfo.getId(), syncItemInfo.getPosition(), syncItemInfo.getItemTypeId(), syncItemInfo.getBase());
+                if (clientSyncItem.isSyncBaseItem()) {
+                    ClientBase.getInstance().onItemCreated(clientSyncItem.getSyncBaseItem());
+                }
             } else {
                 // Check for  Teleportation effect
                 Index localPos = clientSyncItem.getSyncItem().getSyncItemArea().getPosition();
@@ -116,9 +115,13 @@ public class ItemContainer extends AbstractItemService {
                         GwtCommon.sendLogToServer("Teleportation detected. Distance: " + distance + " Info:" + syncItemInfo + " | Item:" + clientSyncItem.getSyncItem());
                     }
                 }
+                // It was a orphan until now
                 ClientSyncItem orphanItem = orphanItems.remove(clientSyncItem.getSyncItem().getId());
                 if (orphanItem != null) {
                     orphanItem.setHidden(false);
+                    if (clientSyncItem.isSyncBaseItem()) {
+                        ClientBase.getInstance().onItemCreated(clientSyncItem.getSyncBaseItem());
+                    }
                 }
             }
             clientSyncItem.getSyncItem().synchronize(syncItemInfo);
@@ -130,7 +133,7 @@ public class ItemContainer extends AbstractItemService {
             }
         } else {
             if (clientSyncItem != null) {
-                definitelyKillItem(clientSyncItem, true, syncItemInfo.isExplode());
+                definitelyKillItem(clientSyncItem, true, syncItemInfo.isExplode(), null);
             }
 
         }
@@ -141,7 +144,7 @@ public class ItemContainer extends AbstractItemService {
         if (toBeBuilt instanceof BaseItemType
                 && ClientBase.getInstance().isMyOwnBase(base)
                 && !ClientBase.getInstance().isBot(base)
-                && Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE) {
+                && (Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE || Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER)) {
             ClientBase.getInstance().checkItemLimit4ItemAdding((BaseItemType) toBeBuilt);
         }
         ClientSyncItem itemView;
@@ -157,6 +160,7 @@ public class ItemContainer extends AbstractItemService {
             ActionHandler.getInstance().addGuardingBaseItem(itemView.getSyncTickItem());
             if (itemView.isSyncBaseItem()) {
                 ActionHandler.getInstance().interactionGuardingItems(itemView.getSyncBaseItem());
+                ClientBase.getInstance().onItemCreated(itemView.getSyncBaseItem());
             }
             ClientServices.getInstance().getConnectionService().sendSyncInfo(itemView.getSyncItem());
         } else {
@@ -209,6 +213,7 @@ public class ItemContainer extends AbstractItemService {
             syncBaseItem.setBuildup(1.0);
             syncBaseItem.getSyncItemArea().setAngel(itemTypeAndPosition.getAngel());
             syncBaseItem.fireItemChanged(SyncItemListener.Change.ANGEL);
+            ClientBase.getInstance().onItemCreated(syncBaseItem);
         }
         itemView.checkVisibility();
         itemView.update();
@@ -236,10 +241,6 @@ public class ItemContainer extends AbstractItemService {
         SyncItem syncItem = newSyncItem(id, position, itemTypeId, base, ClientServices.getInstance());
         ClientSyncItem itemView = new ClientSyncItem(syncItem);
         items.put(id, itemView);
-        if (itemView.isMyOwnProperty()) {
-            ownItemCount++;
-            SideCockpit.getInstance().updateItemLimit();
-        }
         return itemView;
     }
 
@@ -250,19 +251,16 @@ public class ItemContainer extends AbstractItemService {
             throw new IllegalStateException("No ClientSyncItem for: " + killedItem);
         }
         if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
-            definitelyKillItem(clientSyncItem, force, explode);
+            definitelyKillItem(clientSyncItem, force, explode, actor);
             if (killedItem instanceof SyncBaseItem) {
                 SyncBaseItem syncBaseItem = (SyncBaseItem) killedItem;
                 ActionHandler.getInstance().removeGuardingBaseItem(syncBaseItem);
-                ClientBase.getInstance().onItemKilled(syncBaseItem, actor);
                 ClientEnergyService.getInstance().onSyncItemKilled(syncBaseItem);
+                SimulationConditionServiceImpl.getInstance().onSyncItemKilled(actor, (SyncBaseItem) killedItem);
             }
             ClientServices.getInstance().getConnectionService().sendSyncInfo(killedItem);
         } else {
             makeItemSeeminglyDead(killedItem, actor, clientSyncItem);
-        }
-        if (killedItem instanceof SyncBaseItem) {
-            SimulationConditionServiceImpl.getInstance().onSyncItemKilled(actor, (SyncBaseItem) killedItem);
         }
     }
 
@@ -275,7 +273,7 @@ public class ItemContainer extends AbstractItemService {
         }
     }
 
-    private void definitelyKillItem(ClientSyncItem itemView, boolean force, boolean explode) {
+    private void definitelyKillItem(ClientSyncItem itemView, boolean force, boolean explode, SimpleBase actor) {
         if (force) {
             if (itemView.isSyncBaseItem()) {
                 itemView.getSyncBaseItem().setHealth(0);
@@ -286,9 +284,8 @@ public class ItemContainer extends AbstractItemService {
 
         items.remove(itemView.getSyncItem().getId());
         if (itemView.isMyOwnProperty()) {
-            ownItemCount--;
-            SideCockpit.getInstance().updateItemLimit();
             ClientBase.getInstance().recalculate4FakedHouseSpace(itemView.getSyncBaseItem());
+            ClientBase.getInstance().onItemDeleted(itemView.getSyncBaseItem(), actor);
         }
         checkSpecialRemoved(itemView.getSyncItem());
         seeminglyDeadItems.remove(itemView.getSyncItem().getId());
@@ -375,33 +372,6 @@ public class ItemContainer extends AbstractItemService {
         return clientBaseItems;
     }
 
-    // TODO move up
-
-    @Override
-    public List<? extends SyncItem> getItems(ItemType itemType, SimpleBase simpleBase) {
-        ArrayList<SyncItem> syncItems = new ArrayList<SyncItem>();
-        for (ClientSyncItem clientSyncItem : items.values()) {
-            SyncItem syncItem = clientSyncItem.getSyncItem();
-            if (orphanItems.containsKey(syncItem.getId()) || seeminglyDeadItems.containsKey(syncItem.getId())) {
-                continue;
-            }
-
-            if (!syncItem.getItemType().equals(itemType)) {
-                continue;
-            }
-
-            if (simpleBase != null) {
-                if (syncItem instanceof SyncBaseItem && clientSyncItem.getSyncBaseItem().getBase().equals(simpleBase)) {
-                    syncItems.add(syncItem);
-                }
-            } else {
-                syncItems.add(syncItem);
-            }
-        }
-        return syncItems;
-
-    }
-
     @Override
     protected AbstractBaseService getBaseService() {
         return ClientBase.getInstance();
@@ -420,7 +390,7 @@ public class ItemContainer extends AbstractItemService {
         }
         RadarPanel.getInstance().onRadarModeItemRemoved((SyncBaseItem) syncItem);
     }
-    
+
     private boolean isSpecialItem(SyncItem syncItem) {
         if (!(syncItem instanceof SyncBaseItem)) {
             return false;
@@ -436,10 +406,5 @@ public class ItemContainer extends AbstractItemService {
         items.clear();
         orphanItems.clear();
         seeminglyDeadItems.clear();
-        ownItemCount = 0;
-    }
-
-    public int getOwnItemCount() {
-        return ownItemCount;
     }
 }

@@ -151,7 +151,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             syncItem = newSyncItem(id, position, toBeBuilt.getId(), base, services);
             items.put(id, syncItem);
             if (syncItem instanceof SyncBaseItem) {
-                baseService.itemCreated((SyncBaseItem) syncItem);
+                baseService.onItemCreated((SyncBaseItem) syncItem);
             }
         }
 
@@ -242,7 +242,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             }
             if (killedItem instanceof SyncBaseItem) {
                 historyService.addItemDestroyedEntry(actor, (SyncBaseItem) killedItem);
-                baseService.itemDeleted((SyncBaseItem) killedItem, actor);
+                baseService.onItemDeleted((SyncBaseItem) killedItem, actor);
             }
         }
         killedItem.setExplode(explode);
@@ -701,26 +701,6 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             throw new IllegalArgumentException("Muzzle sound does not exist: " + itemTypeId);
         }
         return sound;
-    }
-
-    public List<? extends SyncItem> getItems(ItemType itemType, SimpleBase simpleBase) {
-        ArrayList<SyncItem> syncItems = new ArrayList<SyncItem>();
-        synchronized (items) {
-            for (SyncItem syncItem : items.values()) {
-                if (!syncItem.getItemType().equals(itemType)) {
-                    continue;
-                }
-                if (simpleBase != null) {
-                    if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).getBase().equals(simpleBase)) {
-                        syncItems.add(syncItem);
-                    }
-                } else {
-                    syncItems.add(syncItem);
-                }
-
-            }
-        }
-        return syncItems;
     }
 
     @Override

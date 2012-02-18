@@ -63,9 +63,7 @@ public interface ItemService {
 
     Collection<SyncBaseItem> getItems4Base(SimpleBase simpleBase);
 
-    List<? extends SyncItem> getItems(ItemType itemType, SimpleBase simpleBase);
-
-    List<? extends SyncItem> getItems(String itemTypeName, SimpleBase simpleBase) throws NoSuchItemTypeException;
+    Collection<? extends SyncItem> getItems(ItemType itemType, SimpleBase simpleBase);
 
     Collection<SyncBaseItem> getEnemyItems(SimpleBase base, Rectangle region, boolean ignoreBot);
 
