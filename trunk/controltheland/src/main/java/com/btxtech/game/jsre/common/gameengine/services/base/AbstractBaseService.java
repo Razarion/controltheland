@@ -50,6 +50,8 @@ public interface AbstractBaseService {
 
     void checkItemLimit4ItemAdding(BaseItemType newItemType, SimpleBase simpleBase) throws ItemLimitExceededException, HouseSpaceExceededException, NoSuchItemTypeException;
 
+    boolean isItemLimit4ItemAddingAllowed(BaseItemType newItemType, SimpleBase simpleBase) throws NoSuchItemTypeException;
+
     boolean isLevelLimitation4ItemTypeExceeded(BaseItemType newItemType, SimpleBase simpleBase) throws NoSuchItemTypeException;
 
     boolean isHouseSpaceExceeded(SimpleBase simpleBase) throws NoSuchItemTypeException;
@@ -65,4 +67,9 @@ public interface AbstractBaseService {
     void checkBaseAccess(SyncBaseItem syncBaseItem) throws NotYourBaseException;
 
     void sendAccountBaseUpdate(SimpleBase simpleBase);
+
+    void onItemCreated(SyncBaseItem syncBaseItem);
+
+    void onItemDeleted(SyncBaseItem syncBaseItem, SimpleBase actor);
+
 }

@@ -177,11 +177,6 @@ abstract public class AbstractItemService implements ItemService {
 
     abstract protected AbstractBaseService getBaseService();
 
-    public List<? extends SyncItem> getItems(String itemTypeName, SimpleBase simpleBase) throws NoSuchItemTypeException {
-        return getItems(getItemType(itemTypeName), simpleBase);
-    }
-
-
     @Override
     public List<SyncBaseItem> getBaseItems(List<Id> baseItemsIds) throws ItemDoesNotExistException {
         ArrayList<SyncBaseItem> syncBaseItems = new ArrayList<SyncBaseItem>();
@@ -440,6 +435,28 @@ abstract public class AbstractItemService implements ItemService {
             }
         }, null);
         return itemsInBase;
+    }
+
+    @Override
+    public Collection<? extends SyncItem> getItems(final ItemType itemType, final SimpleBase simpleBase) {
+        final Collection<SyncItem> items = new ArrayList<SyncItem>();
+        iterateOverItems(new ItemHandler<Void>() {
+            @Override
+            public Void handleItem(SyncItem syncItem) {
+                if (!syncItem.getItemType().equals(itemType)) {
+                    return null;
+                }
+                if (simpleBase != null) {
+                    if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).getBase().equals(simpleBase)) {
+                        items.add(syncItem);
+                    }
+                } else {
+                    items.add(syncItem);
+                }
+                return null;
+            }
+        }, null);
+        return items;
     }
 
     @Override

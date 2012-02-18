@@ -273,7 +273,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public void itemCreated(SyncBaseItem syncItem) {
+    public void onItemCreated(SyncBaseItem syncItem) {
         Base base = getBase(syncItem);
         base.addItem(syncItem);
         if (syncItem.hasSyncHouse() && syncItem.isReady()) {
@@ -282,7 +282,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public void itemDeleted(SyncBaseItem syncItem, SimpleBase actor) {
+    public void onItemDeleted(SyncBaseItem syncItem, SimpleBase actor) {
         Base base = getBase(syncItem);
         base.removeItem(syncItem);
         if (!base.hasItems()) {
@@ -555,4 +555,11 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         }
         return base.getItems();
     }
+
+    @Override
+    public boolean isItemLimit4ItemAddingAllowed(BaseItemType newItemType, SimpleBase simpleBase) throws NoSuchItemTypeException {
+        return isBot(simpleBase) || isAbandoned(simpleBase) || (!isLevelLimitation4ItemTypeExceeded(newItemType, simpleBase) && !isHouseSpaceExceeded(simpleBase));
+    }
+
+
 }

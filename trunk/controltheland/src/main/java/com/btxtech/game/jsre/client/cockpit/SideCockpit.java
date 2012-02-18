@@ -1,18 +1,27 @@
 package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.*;
+import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ExtendedCustomButton;
+import com.btxtech.game.jsre.client.Game;
+import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.SoundHandler;
+import com.btxtech.game.jsre.client.WebBrowserCustomButton;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.ProgressBar;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
@@ -45,9 +54,9 @@ public class SideCockpit {
     private static final int MISSION_X = 20;
     private static final int MISSION_Y = 5;
     // Energy
-    private static final int ENERGY_X = 119;
+    private static final int ENERGY_X = 122;
     private static final int ENERGY_Y = 31;
-    private static final int ENERGY_W = 95;
+    private static final int ENERGY_W = 92;
     private static final int ENERGY_H = 7;
     private static final int ENERGY_TEXT_X = 75;
     private static final int ENERGY_TEXT_Y = 26;
@@ -164,7 +173,7 @@ public class SideCockpit {
         energyText.getElement().getStyle().setColor(TEXT_COLOR);
         mainPanel.add(energyText, ENERGY_TEXT_X, ENERGY_TEXT_Y);
 
-        updateEnergy(33, 100);
+        updateEnergy(0, 0);
     }
 
     private void setupRadar() {
@@ -210,13 +219,12 @@ public class SideCockpit {
     public void updateItemLimit() {
         if (itemLimit != null) {
             StringBuilder builder = new StringBuilder();
-            builder.append(ItemContainer.getInstance().getOwnItemCount());
+            builder.append(ClientBase.getInstance().getOwnItemCount());
             builder.append("/");
             builder.append(ClientBase.getInstance().getHouseSpace() + ClientLevelHandler.getInstance().getLevelScope().getHouseSpace());
             itemLimit.setText(builder.toString());
         }
     }
-
 
     public void updateMoney() {
         if (money != null) {
@@ -263,7 +271,7 @@ public class SideCockpit {
 
     public void updateEnergy(int generating, int consuming) {
         if (energyBar != null) {
-            energyBar.setProgress(generating, consuming);
+            energyBar.setProgress(consuming, generating);
             energyText.setText(Integer.toString(consuming) + "/" + Integer.toString(generating));
         }
     }

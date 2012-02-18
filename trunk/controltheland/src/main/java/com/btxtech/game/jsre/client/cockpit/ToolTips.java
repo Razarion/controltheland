@@ -12,7 +12,7 @@ public class ToolTips {
     public static final String TOOL_TIP_LEVEL = "Your current level";
     public static final String TOOL_TIP_MONEY = "Your money";
     public static final String TOOL_TIP_UNITS = "Units amount / max";
-    public static final String TOOL_TIP_ENERGY = "Base energy producing / consuming";
+    public static final String TOOL_TIP_ENERGY = "Base energy consuming / producing";
     // Buttons
     public static final String TOOL_TIP_SCROLL_HOME = "Scroll home";
     public static final String TOOL_TIP_SELL = "Activate sell mode for selling units and structures";
