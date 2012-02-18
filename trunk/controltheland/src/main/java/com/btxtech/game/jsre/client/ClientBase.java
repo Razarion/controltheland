@@ -201,13 +201,13 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         if (ClientBase.getInstance().isMyOwnBase(simpleBase)
                 && !ClientBase.getInstance().isBot(simpleBase)
                 && (Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE || Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER)) {
-            if(isHouseSpaceExceeded(simpleBase)) {
-               UnfrequentDialog.open(UnfrequentDialog.Type.SPACE_LIMIT);
-               return false;
+            if (isHouseSpaceExceeded(simpleBase)) {
+                UnfrequentDialog.open(UnfrequentDialog.Type.SPACE_LIMIT);
+                return false;
             }
-            if(isLevelLimitation4ItemTypeExceeded(toBeBuiltType, simpleBase)) {
-               UnfrequentDialog.open(UnfrequentDialog.Type.ITEM_LIMIT);
-               return false;
+            if (isLevelLimitation4ItemTypeExceeded(toBeBuiltType, simpleBase)) {
+                UnfrequentDialog.open(UnfrequentDialog.Type.ITEM_LIMIT);
+                return false;
             }
         }
         return true;
@@ -374,16 +374,16 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
             }
 
             if (ownItemCount == 0) {
-                if (isMyOwnProperty(syncBaseItem)) {
-                    if (ownBaseDestroyedListener != null) {
-                        ownBaseDestroyedListener.onOwnBaseDestroyed();
-                    }
-                } else if (isMyOwnBase(actor)) {
-                    SimulationConditionServiceImpl.getInstance().onBaseDeleted(actor);
+                if (ownBaseDestroyedListener != null) {
+                    ownBaseDestroyedListener.onOwnBaseDestroyed();
                 }
             }
 
             SideCockpit.getInstance().updateItemLimit();
+        } else {
+            if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER && ItemContainer.getInstance().getItems4Base(syncBaseItem.getBase()).isEmpty()) {
+                SimulationConditionServiceImpl.getInstance().onBaseDeleted(actor);
+            }
         }
     }
 

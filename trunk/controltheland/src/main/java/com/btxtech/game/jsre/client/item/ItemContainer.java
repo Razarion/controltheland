@@ -285,6 +285,8 @@ public class ItemContainer extends AbstractItemService {
         items.remove(itemView.getSyncItem().getId());
         if (itemView.isMyOwnProperty()) {
             ClientBase.getInstance().recalculate4FakedHouseSpace(itemView.getSyncBaseItem());
+        }
+        if (itemView.isSyncBaseItem()) {
             ClientBase.getInstance().onItemDeleted(itemView.getSyncBaseItem(), actor);
         }
         checkSpecialRemoved(itemView.getSyncItem());
