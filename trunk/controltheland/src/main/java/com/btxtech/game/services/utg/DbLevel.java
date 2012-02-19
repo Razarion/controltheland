@@ -64,6 +64,10 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "dbQuestHub", insertable = false, updatable = false, nullable = false)
     private DbQuestHub dbQuestHub;
+    // Only used in CMS for sorting
+    @Column(insertable = false, updatable = false)
+    @SuppressWarnings({"UnusedDeclaration"})
+    private int orderIndex;
     // ----- Scope -----
     private int maxMoney;
     private double itemSellFactor;
@@ -242,4 +246,10 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
         }
         throw new IllegalStateException("No Tutorial Level Task configured for: " + this);
     }
+
+
+    public int getCmsOrderIndex() {
+       return dbQuestHub.getOrderIndex() * 1000 + orderIndex; 
+    }
+
 }
