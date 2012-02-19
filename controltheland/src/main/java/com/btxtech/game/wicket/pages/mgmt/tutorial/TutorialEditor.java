@@ -65,6 +65,7 @@ public class TutorialEditor extends MgmtWebPage {
         form.add(new TextField<String>("width"));
         form.add(new TextField<String>("height"));
         form.add(new CheckBox("tracking"));
+        form.add(new CheckBox("showTip"));
         form.add(new TextField<Integer>("dbTerrainSetting", new IModel<Integer>() {
             @Override
             public Integer getObject() {
