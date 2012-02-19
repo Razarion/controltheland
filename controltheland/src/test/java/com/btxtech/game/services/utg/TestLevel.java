@@ -518,6 +518,29 @@ public class TestLevel extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
+        // Verify CmsOrderIndex
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        int coi11 = readCmsOrderIndex(dbLevel11);
+        int coi12 = readCmsOrderIndex(dbLevel12);
+        int coi13 = readCmsOrderIndex(dbLevel13);
+        int coi14 = readCmsOrderIndex(dbLevel14);
+        int coi21 = readCmsOrderIndex(dbLevel21);
+        int coi22 = readCmsOrderIndex(dbLevel22);
+        int coi23 = readCmsOrderIndex(dbLevel23);
+        int coi31 = readCmsOrderIndex(dbLevel31);
+        int coi32 = readCmsOrderIndex(dbLevel32);
+        Assert.assertTrue(coi11 < coi12);
+        Assert.assertTrue(coi12 < coi13);
+        Assert.assertTrue(coi13 < coi14);
+        Assert.assertTrue(coi14 < coi21);
+        Assert.assertTrue(coi21 < coi22);
+        Assert.assertTrue(coi22 < coi23);
+        Assert.assertTrue(coi23 < coi31);
+        Assert.assertTrue(coi31 < coi32);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
         // Modify ordering
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -549,6 +572,29 @@ public class TestLevel extends AbstractServiceTest {
         Assert.assertEquals(dbLevel23.getId(), dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(2).getId());
         Assert.assertEquals(dbLevel31.getId(), dbQuestHubs.get(2).getLevelCrud().readDbChildren().get(0).getId());
         Assert.assertEquals(dbLevel32.getId(), dbQuestHubs.get(2).getLevelCrud().readDbChildren().get(1).getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify CmsOrderIndex
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        coi11 = readCmsOrderIndex(dbLevel11);
+        coi12 = readCmsOrderIndex(dbLevel12);
+        coi13 = readCmsOrderIndex(dbLevel13);
+        coi14 = readCmsOrderIndex(dbLevel14);
+        coi21 = readCmsOrderIndex(dbLevel21);
+        coi22 = readCmsOrderIndex(dbLevel22);
+        coi23 = readCmsOrderIndex(dbLevel23);
+        coi31 = readCmsOrderIndex(dbLevel31);
+        coi32 = readCmsOrderIndex(dbLevel32);
+        Assert.assertTrue(coi21 < coi22);
+        Assert.assertTrue(coi22 < coi23);
+        Assert.assertTrue(coi23 < coi11);
+        Assert.assertTrue(coi11 < coi12);
+        Assert.assertTrue(coi12 < coi13);
+        Assert.assertTrue(coi13 < coi14);
+        Assert.assertTrue(coi14 < coi31);
+        Assert.assertTrue(coi31 < coi32);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -586,6 +632,29 @@ public class TestLevel extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
+        // Verify CmsOrderIndex
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        coi11 = readCmsOrderIndex(dbLevel11);
+        coi12 = readCmsOrderIndex(dbLevel12);
+        coi13 = readCmsOrderIndex(dbLevel13);
+        coi14 = readCmsOrderIndex(dbLevel14);
+        coi21 = readCmsOrderIndex(dbLevel21);
+        coi22 = readCmsOrderIndex(dbLevel22);
+        coi23 = readCmsOrderIndex(dbLevel23);
+        coi31 = readCmsOrderIndex(dbLevel31);
+        coi32 = readCmsOrderIndex(dbLevel32);
+        Assert.assertTrue(coi21 < coi22);
+        Assert.assertTrue(coi22 < coi23);
+        Assert.assertTrue(coi23 < coi11);
+        Assert.assertTrue(coi11 < coi12);
+        Assert.assertTrue(coi12 < coi13);
+        Assert.assertTrue(coi13 < coi14);
+        Assert.assertTrue(coi14 < coi32);
+        Assert.assertTrue(coi32 < coi31);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
         // Delete QuestHub & Levels
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -615,6 +684,24 @@ public class TestLevel extends AbstractServiceTest {
         Assert.assertEquals(dbLevel32.getId(), dbQuestHubs.get(1).getLevelCrud().readDbChildren().get(0).getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+
+        // Verify CmsOrderIndex
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        coi21 = readCmsOrderIndex(dbLevel21);
+        coi23 = readCmsOrderIndex(dbLevel23);
+        coi31 = readCmsOrderIndex(dbLevel31);
+        coi32 = readCmsOrderIndex(dbLevel32);
+        Assert.assertTrue(coi21 < coi23);
+        Assert.assertTrue(coi23 < coi32);
+        Assert.assertTrue(coi32 < coi31);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();        
+    }
+
+    private int readCmsOrderIndex(DbLevel dbLevel) {
+        dbLevel = (DbLevel) sessionFactory.getCurrentSession().get(DbLevel.class, dbLevel.getId());
+        return dbLevel.getCmsOrderIndex();
     }
 
     @Test

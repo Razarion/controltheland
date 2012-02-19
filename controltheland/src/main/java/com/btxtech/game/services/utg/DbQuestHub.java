@@ -33,6 +33,7 @@ public class DbQuestHub implements CrudChild, CrudParent {
     @GeneratedValue
     private Integer id;
     @OrderBy
+    @SuppressWarnings({"UnusedDeclaration"})
     private int orderIndex;    
     @Column(length = 50000)
     private String html;
@@ -138,6 +139,10 @@ public class DbQuestHub implements CrudChild, CrudParent {
 
     public void setHtml(String html) {
         this.html = html;
+    }
+
+    public int getOrderIndex() {
+        return orderIndex;
     }
 
     @Override
