@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.SoundHandler;
 import com.btxtech.game.jsre.client.WebBrowserCustomButton;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
@@ -42,8 +43,8 @@ public class SideCockpit {
     private static final int MISSION_PANEL_W = 789;
     private static final int MISSION_PANEL_H = 42;
     // Level
-    private static final int LEVEL_X = 5;
-    private static final int LEVEL_Y = 5;
+    private static final int LEVEL_X = 6;
+    private static final int LEVEL_Y = 1;
     // Money
     private static final int MONEY_X = 75;
     private static final int MONEY_Y = 4;
@@ -120,7 +121,7 @@ public class SideCockpit {
         mainPanel.setPixelSize(MAIN_PANEL_W, MAIN_PANEL_H);
 
         missionPanel = new AbsolutePanel();
-        missionPanel.getElement().getStyle().setBackgroundImage("url(/images/cockpit/cockpit.png)");
+        missionPanel.getElement().getStyle().setBackgroundImage("url(" + ImageHandler.getCockpitImageUrl("cockpit.png") + ")");
         missionPanel.getElement().getStyle().setProperty("backgroundPosition", "-" + Integer.toString(MISSION_PANEL_X) + "px 0");
         preventEvents(missionPanel);
         missionPanel.setPixelSize(MISSION_PANEL_W, MISSION_PANEL_H);
