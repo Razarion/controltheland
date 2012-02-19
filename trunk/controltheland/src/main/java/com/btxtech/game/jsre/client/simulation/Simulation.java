@@ -77,7 +77,9 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
         if (tutorialConfig.isEventTracking()) {
             ClientUserTracker.getInstance().startEventTracking();
         }
-        TipManager.getInstance().activate();
+        if(tutorialConfig.isShowTip()) {
+            TipManager.getInstance().activate();
+        }
         runNextTask(activeTask);
     }
 

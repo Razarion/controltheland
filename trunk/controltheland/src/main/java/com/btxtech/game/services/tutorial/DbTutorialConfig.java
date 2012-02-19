@@ -61,6 +61,7 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
     private DbTerrainSetting dbTerrainSetting;
     @Column(length = 50000)
     private String inGameHtml;
+    private boolean showTip;
 
     @Transient
     private CrudChildServiceHelper<DbTaskConfig> dbTaskConfigCrudChildServiceHelper;
@@ -190,6 +191,14 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
         this.inGameHtml = inGameHtml;
     }
 
+    public boolean isShowTip() {
+        return showTip;
+    }
+
+    public void setShowTip(boolean showTip) {
+        this.showTip = showTip;
+    }
+
     @Override
     public String toString() {
         return "DbTutorialSetting: " + name;
@@ -208,7 +217,7 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
             taskConfigs.add(dbTaskConfig.createTaskConfig(itemService));
         }
 
-        return new TutorialConfig(taskConfigs, ownBaseName, width, height, tracking, inGameHtml);
+        return new TutorialConfig(taskConfigs, ownBaseName, width, height, tracking, inGameHtml, showTip);
     }
 
 }
