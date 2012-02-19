@@ -4,7 +4,6 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.common.CmsUtil;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -19,25 +18,35 @@ import com.google.gwt.user.client.ui.Label;
  * Time: 01:14:40
  */
 public class LevelPanel extends AbsolutePanel {
-    private static final int WEIGHT = 30;
-    private static final int HEIGHT = 30;
-    private static final int BLINK_DELAY = 500;
-    private static final String BACKGROUND_COLOR = "#FFFF00";
+    private static final int WEIGHT = 48;
+    private static final int HEIGHT = 48;
     private Label levelName;
     private boolean isBlinking = false;
+    private Image blinkImage;
+    private Image normalImage;
 
     public LevelPanel() {
         setPixelSize(WEIGHT, HEIGHT);
         setTitle(ToolTips.TOOL_TIP_LEVEL);
-        Image image = ImageHandler.getIcon16("medal");
-        add(image, 2, 2);
         levelName = new Label("?");
-        add(levelName, 20, 2);
+        levelName.getElement().getStyle().setProperty("textAlign", "center");
+        levelName.getElement().getStyle().setFontWeight(Style.FontWeight.BOLD);
+        levelName.getElement().getStyle().setFontSize(20, Style.Unit.PX);
+        levelName.getElement().getStyle().setFontSize(20, Style.Unit.PX);
+        levelName.getElement().getStyle().setZIndex(2);
+        levelName.getElement().getStyle().setColor("Maroon");
+        levelName.setWidth("100%");
+        add(levelName, 0, 10);
+        blinkImage = ImageHandler.getCockpitImage("levelAnimated.gif");
+        blinkImage.getElement().getStyle().setZIndex(1);
+        add(blinkImage, 0, 0);
+        normalImage = ImageHandler.getCockpitImage("level.jpg");
+        normalImage.getElement().getStyle().setZIndex(1);
+        add(normalImage, 0, 0);
         addDomHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                isBlinking = false;
-                getElement().getStyle().clearBackgroundColor();
+                stopBlink();
                 Window.open(Connection.getInstance().getGameInfo().getPredefinedUrls().get(CmsUtil.CmsPredefinedPage.USER_PAGE), CmsUtil.TARGET_BLANK, "");
             }
         }, ClickEvent.getType());
@@ -54,17 +63,20 @@ public class LevelPanel extends AbsolutePanel {
     }
 
     private void startBlink() {
+        if (isBlinking) {
+            return;
+        }
+        blinkImage.setVisible(true);
+        normalImage.setVisible(false);
         isBlinking = true;
-        Scheduler.get().scheduleFixedPeriod(new Scheduler.RepeatingCommand() {
-            @Override
-            public boolean execute() {
-                if (isBlinking && (getElement().getStyle().getBackgroundColor() == null || getElement().getStyle().getBackgroundColor().trim().isEmpty())) {
-                    getElement().getStyle().setBackgroundColor(BACKGROUND_COLOR);
-                } else {
-                    getElement().getStyle().clearBackgroundColor();
-                }
-                return isBlinking;
-            }
-        }, BLINK_DELAY);
+    }
+
+    private void stopBlink() {
+        if (!isBlinking) {
+            return;
+        }
+        blinkImage.setVisible(false);
+        normalImage.setVisible(true);
+        isBlinking = false;
     }
 }

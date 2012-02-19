@@ -42,8 +42,8 @@ public class ImageHandler {
     public static final String EXPLOSION = "effects";
     public static final String ICONS = "icons";
     public static final String TIPS = "tips";
-
-    public static final String BTN_IMAGE_PATH = "/images/cockpit/";
+    public static final String COCKPIT = "/" + IMAGES + "/cockpit/";
+    public static final String BTN_IMAGE_PATH = COCKPIT;
     public static final String BTN_UP_IMAGE = "-up.png";
     public static final String BTN_DOWN_IMAGE = "-down.png";
     public static final String SPLASH_IMAGE_PREFIX = "/images/splash/";
@@ -224,6 +224,14 @@ public class ImageHandler {
         Element div = DOM.createDiv();
         DOM.setInnerHTML(div, "<span style=\"display:inline-block;width:" + width + "px;height:" + height + "px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + url + "', sizingMethod='scale')\"></span>");
         return DOM.getFirstChild(div);
+    }
+
+    public static String getCockpitImageUrl(String image) {
+        return COCKPIT + image;
+    }
+
+    public static Image getCockpitImage(String image) {
+        return new Image(getCockpitImageUrl(image));
     }
 
     /**
