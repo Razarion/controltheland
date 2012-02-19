@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.mapeditor;
 
 import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
+import com.btxtech.game.jsre.client.common.RadarMode;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
@@ -33,6 +34,7 @@ public class MapEditorRadar extends TopMapPanel {
     @Override
     protected Widget createBody() {
         Widget widget = RadarPanel.getInstance().createWidget(RADAR_WIDTH, RADAR_HEIGHT);
+        RadarPanel.getInstance().setLevelRadarMode(RadarMode.MAP);
         RadarPanel.getInstance().getRadarFrameView().getCanvas().addMouseDownHandler(new MouseDownHandler() {
             @Override
             public void onMouseDown(MouseDownEvent event) {
