@@ -115,15 +115,17 @@ public class RadarPanel {
             radarItemView.getCanvas().setVisible(showUnits);
         }
 
-        if (showMap) {
-            noRadarPanel.setVisible(false);
-        } else {
-            if (!hasEnergy) {
-                noRadarPanel.setVisible(true);
-                noRadarPanel.setHTML(NO_POWER);
+        if (noRadarPanel != null) {
+            if (showMap) {
+                noRadarPanel.setVisible(false);
             } else {
-                noRadarPanel.setVisible(true);
-                noRadarPanel.setHTML(NO_RADAR);
+                if (!hasEnergy) {
+                    noRadarPanel.setVisible(true);
+                    noRadarPanel.setHTML(NO_POWER);
+                } else {
+                    noRadarPanel.setVisible(true);
+                    noRadarPanel.setHTML(NO_RADAR);
+                }
             }
         }
     }
