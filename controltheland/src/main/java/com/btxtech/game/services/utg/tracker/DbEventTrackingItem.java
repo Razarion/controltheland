@@ -35,21 +35,20 @@ public class DbEventTrackingItem implements Serializable {
     @Column(nullable = false)
     private Date timeStamp;
     @Column(nullable = false)
-    private String sessionId;
+    private String startUuid;
     private long clientTimeStamp;
     private int xPos;
     private int yPos;
     private int eventType;
-
     /**
      * Used by Hibernate
      */
     public DbEventTrackingItem() {
     }
 
-    public DbEventTrackingItem(EventTrackingItem eventTrackingItem, String sessionId) {
+    public DbEventTrackingItem(EventTrackingItem eventTrackingItem) {
         timeStamp = new Date();
-        this.sessionId = sessionId;
+        startUuid = eventTrackingItem.getStartUuid();
         clientTimeStamp = eventTrackingItem.getClientTimeStamp();
         xPos = eventTrackingItem.getXPos();
         yPos = eventTrackingItem.getYPos();
@@ -63,17 +62,23 @@ public class DbEventTrackingItem implements Serializable {
 
         DbEventTrackingItem that = (DbEventTrackingItem) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        return id != null && id.equals(that.id);
+    }
 
-        return true;
+    public String getStartUuid() {
+        return startUuid;
+    }
+
+    public Date getTimeStamp() {
+        return timeStamp;
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 
     public EventTrackingItem createEventTrackingItem() {
-        return new EventTrackingItem(xPos, yPos, eventType, clientTimeStamp);
+        return new EventTrackingItem(startUuid, xPos, yPos, eventType, clientTimeStamp);
     }
 }

@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
@@ -79,7 +78,7 @@ public interface UserTrackingService {
 
     void trackUserMessage(UserMessage userMessage);
 
-    void trackWindowsClosed();
+    void trackWindowsClosed(String startUUid);
 
     void onJavaScriptDetected(Boolean html5Support);
 
@@ -87,31 +86,31 @@ public interface UserTrackingService {
 
     boolean isHtml5Support();
 
-    void onTutorialProgressChanged(TutorialConfig.TYPE type, Integer taskId, String name, String parent, long duration, long clientTimeStamp);
+    void onTutorialProgressChanged(TutorialConfig.TYPE type, String startUuid, int taskId, String tutorialTaskName, long duration, long clientTimeStamp);
 
     void onEventTrackingStart(EventTrackingStart eventTrackingStart);
 
     void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<SyncItemInfo> syncItemInfos, Collection<SelectionTrackingItem> selectionTrackingItems, Collection<TerrainScrollTracking> terrainScrollTrackings, Collection<BrowserWindowTracking> browserWindowTrackings, Collection<DialogTracking> dialogTrackings);
 
-    List<DbEventTrackingItem> getDbEventTrackingItem(String sessionId, long startClient, Long endClient);
+    List<DbEventTrackingItem> getDbEventTrackingItem(String startUuid);
 
-    DbEventTrackingStart getDbEventTrackingStart(String sessionId, long startClient, Long endClient);
+    DbEventTrackingStart getDbEventTrackingStart(String startUuid);
 
-    void startUpTaskFinished(List<StartupTaskInfo> infos, long totalTime);
+    void saveStartupTask(StartupTaskInfo startupTaskInfo, String startUuid, Integer levelTaskId);
 
     RealGameTrackingInfo getGameTracking(LifecycleTrackingInfo lifecycleTrackingInfo);
 
     TutorialTrackingInfo getTutorialTrackingInfo(LifecycleTrackingInfo lifecycleTrackingInfo);
 
-    List<DbSelectionTrackingItem> getDbSelectionTrackingItems(String sessionId, long startTime, Long endTime);
+    List<DbSelectionTrackingItem> getDbSelectionTrackingItems(String startUuid);
 
-    List<DbSyncItemInfo> getDbSyncItemInfos(String sessionId, long startTime, Long endTime);
+    List<DbSyncItemInfo> getDbSyncItemInfos(String startUuid);
 
-    List<DbScrollTrackingItem> getDbScrollTrackingItems(String sessionId, long startTime, Long endTime);
+    List<DbScrollTrackingItem> getDbScrollTrackingItems(String startUuid);
 
-    List<DbBrowserWindowTracking> getDbBrowserWindowTrackings(String sessionId, long startTime, Long endTime);
+    List<DbBrowserWindowTracking> getDbBrowserWindowTrackings(String startUuid);
 
-    List<DbDialogTracking> getDbDialogTrackings(String sessionId, long startTime, Long endTime);
+    List<DbDialogTracking> getDbDialogTrackings(String startUuid);
 
-    LifecycleTrackingInfo getLifecycleTrackingInfo(String sessionId, long startServer);
+    LifecycleTrackingInfo getLifecycleTrackingInfo(String startUuid);
 }

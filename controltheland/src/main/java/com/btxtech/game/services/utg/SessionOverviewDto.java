@@ -26,7 +26,7 @@ public class SessionOverviewDto {
     private String sessionId;
     private int pageHits;
     private int enterGameHits;
-    private int successfulStarts;
+    private int startAttempts;
     private boolean startupFailure;
     private int commands;
     private int levelPromotions;
@@ -36,7 +36,7 @@ public class SessionOverviewDto {
                        String sessionId,
                        int pageHits,
                        int enterGameHits,
-                       int successfulStarts,
+                       int startAttempts,
                        boolean startupFailure, int commands,
                        int levelPromotions,
                        String referer) {
@@ -44,7 +44,7 @@ public class SessionOverviewDto {
         this.sessionId = sessionId;
         this.pageHits = pageHits;
         this.enterGameHits = enterGameHits;
-        this.successfulStarts = successfulStarts;
+        this.startAttempts = startAttempts;
         this.startupFailure = startupFailure;
         this.commands = commands;
         this.levelPromotions = levelPromotions;
@@ -83,8 +83,8 @@ public class SessionOverviewDto {
         return levelPromotions;
     }
 
-    public int getSuccessfulStarts() {
-        return successfulStarts;
+    public int getStartAttempts() {
+        return startAttempts;
     }
 
     public boolean isStartupFailure() {

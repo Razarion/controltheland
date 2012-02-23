@@ -127,9 +127,9 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public void sendStartupInfo(List<StartupTaskInfo> infos, long totalTime) {
+    public void sendStartupTask(StartupTaskInfo startupTaskInfo, String startUuid, Integer levelTaskId) {
         try {
-            userTrackingService.startUpTaskFinished(infos, totalTime);
+            userTrackingService.saveStartupTask(startupTaskInfo, startUuid, levelTaskId);
         } catch (Throwable t) {
             log.error("", t);
         }
@@ -247,9 +247,9 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public GameFlow sendTutorialProgress(TutorialConfig.TYPE type, int levelTaskId, String name, String parent, long duration, long clientTimeStamp) {
+    public GameFlow sendTutorialProgress(TutorialConfig.TYPE type, String startUuid, int levelTaskId, String name, long duration, long clientTimeStamp) {
         try {
-            userTrackingService.onTutorialProgressChanged(type, levelTaskId, name, parent, duration, clientTimeStamp);
+            userTrackingService.onTutorialProgressChanged(type, startUuid, levelTaskId, name, duration, clientTimeStamp);
             if (type == TutorialConfig.TYPE.TUTORIAL) {
                 return userGuidanceService.onTutorialFinished(levelTaskId);
             } else {

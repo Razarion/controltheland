@@ -29,18 +29,28 @@ public class SelectionTrackingItem implements Serializable {
     private Collection<Integer> selectedIds;
     private long timeStamp = System.currentTimeMillis();
     private Boolean own;
+    private String startUuid;
 
-    public SelectionTrackingItem(ClientSyncItem selection) {
+    /**
+     * Used by GWT
+     */
+    SelectionTrackingItem() {
+    }
+
+    public SelectionTrackingItem(String startUuid) {
+        this.startUuid = startUuid;
+        own = null;
+    }
+    
+    public SelectionTrackingItem(String startUuid, ClientSyncItem selection) {
+        this.startUuid = startUuid;
         selectedIds = new ArrayList<Integer>();
         selectedIds.add(selection.getSyncItem().getId().getId());
         own = false;
     }
 
-    public SelectionTrackingItem() {
-        own = null;
-    }
-
-    public SelectionTrackingItem(Group selectedGroup) {
+    public SelectionTrackingItem(String startUuid, Group selectedGroup) {
+        this.startUuid = startUuid;
         selectedIds = new ArrayList<Integer>();
         for (SyncBaseItem syncBaseItem : selectedGroup.getSyncBaseItems()) {
             selectedIds.add(syncBaseItem.getId().getId());
@@ -48,7 +58,8 @@ public class SelectionTrackingItem implements Serializable {
         own = true;
     }
 
-    public SelectionTrackingItem(Collection<Integer> selectedIds, long timeStamp, Boolean own) {
+    public SelectionTrackingItem(String startUuid, Collection<Integer> selectedIds, long timeStamp, Boolean own) {
+        this.startUuid = startUuid;
         this.selectedIds = selectedIds;
         this.timeStamp = timeStamp;
         this.own = own;
@@ -64,5 +75,9 @@ public class SelectionTrackingItem implements Serializable {
 
     public Boolean isOwn() {
         return own;
+    }
+
+    public String getStartUuid() {
+        return startUuid;
     }
 }

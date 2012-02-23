@@ -28,6 +28,7 @@ public class EventTrackingStart implements Serializable {
     private int scrollWidth;
     private int scrollHeight;
     private long clientTimeStamp;
+    private String startUuid;
 
     /**
      * Used by GWT
@@ -35,7 +36,8 @@ public class EventTrackingStart implements Serializable {
     public EventTrackingStart() {
     }
 
-    public EventTrackingStart(int clientWidth, int clientHeight, int scrollLeft, int scrollTop, int scrollWidth, int scrollHeight) {
+    public EventTrackingStart(String startUuid, int clientWidth, int clientHeight, int scrollLeft, int scrollTop, int scrollWidth, int scrollHeight) {
+        this.startUuid = startUuid;
         clientTimeStamp = System.currentTimeMillis();
         this.clientWidth = clientWidth;
         this.clientHeight = clientHeight;
@@ -45,7 +47,8 @@ public class EventTrackingStart implements Serializable {
         this.scrollHeight = scrollHeight;
     }
 
-    public EventTrackingStart(int clientWidth, int clientHeight, int scrollLeft, int scrollTop, int scrollWidth, int scrollHeight, long clientTimeStamp) {
+    public EventTrackingStart(String startUuid, int clientWidth, int clientHeight, int scrollLeft, int scrollTop, int scrollWidth, int scrollHeight, long clientTimeStamp) {
+        this.startUuid = startUuid;
         this.clientTimeStamp = clientTimeStamp;
         this.clientWidth = clientWidth;
         this.clientHeight = clientHeight;
@@ -81,5 +84,9 @@ public class EventTrackingStart implements Serializable {
 
     public int getScrollHeight() {
         return scrollHeight;
+    }
+
+    public String getStartUuid() {
+        return startUuid;
     }
 }

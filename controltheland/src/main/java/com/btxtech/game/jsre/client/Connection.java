@@ -31,14 +31,31 @@ import com.btxtech.game.jsre.client.control.task.DeferredStartup;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
-import com.btxtech.game.jsre.common.*;
+import com.btxtech.game.jsre.common.AccountBalancePacket;
+import com.btxtech.game.jsre.common.BaseChangedPacket;
+import com.btxtech.game.jsre.common.CmsUtil;
+import com.btxtech.game.jsre.common.CommonJava;
+import com.btxtech.game.jsre.common.EnergyPacket;
+import com.btxtech.game.jsre.common.HouseSpacePacket;
+import com.btxtech.game.jsre.common.Html5NotSupportedException;
+import com.btxtech.game.jsre.common.LevelPacket;
+import com.btxtech.game.jsre.common.LevelTaskDonePacket;
+import com.btxtech.game.jsre.common.NoConnectionException;
+import com.btxtech.game.jsre.common.Packet;
+import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.jsre.common.utg.tracking.*;
+import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
+import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
@@ -276,13 +293,19 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
         commandQueue.clear();
     }
 
-    public void sendTutorialProgress(final TutorialConfig.TYPE type, final int levelTaskId, final String name, final String parent, final long duration, final long clientTimeStamp, final ParametrisedRunnable<GameFlow> runnable) {
+    public void sendTutorialProgress(final TutorialConfig.TYPE type, final int levelTaskId, final String name, final long duration, final long clientTimeStamp, final ParametrisedRunnable<GameFlow> runnable) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.sendTutorialProgress(type, levelTaskId, name, parent, duration, clientTimeStamp, new AsyncCallback<GameFlow>() {
+            movableServiceAsync.sendTutorialProgress(type,
+                    ClientServices.getInstance().getClientRunner().getStartUuid(),
+                    levelTaskId,
+                    name, 
+                    duration,
+                    clientTimeStamp,
+                    new AsyncCallback<GameFlow>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     if (!handleDisconnection(caught)) {
-                        sendTutorialProgress(type, levelTaskId, name, parent, duration, clientTimeStamp, runnable);
+                        sendTutorialProgress(type, levelTaskId, name, duration, clientTimeStamp, runnable);
                     }
                 }
 
@@ -314,12 +337,6 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
     public void sendEventTrackerItems(List<EventTrackingItem> eventTrackingItems, List<SyncItemInfo> syncItemInfos, List<SelectionTrackingItem> selectionTrackingItems, List<TerrainScrollTracking> terrainScrollTrackings, List<BrowserWindowTracking> browserWindowTrackings, List<DialogTracking> dialogTrackings) {
         if (movableServiceAsync != null) {
             movableServiceAsync.sendEventTrackerItems(eventTrackingItems, syncItemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings, dialogTrackings, this);
-        }
-    }
-
-    public void sendStartupFinished(List<StartupTaskInfo> infos, long totalTime) {
-        if (movableServiceAsync != null) {
-            movableServiceAsync.sendStartupInfo(infos, totalTime, this);
         }
     }
 
@@ -439,11 +456,23 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
 
     @Override
     public void onTaskFinished(AbstractStartupTask task) {
-        // Ignore
+        if (movableServiceAsync != null) {
+            movableServiceAsync.sendStartupTask(task.createStartupTaskInfo(),
+                    ClientServices.getInstance().getClientRunner().getStartUuid(),
+                    Simulation.getInstance().getLevelTaskId(),
+                    this);
+        }
     }
 
     @Override
     public void onTaskFailed(AbstractStartupTask task, String error, Throwable t) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.sendStartupTask(task.createStartupTaskInfo(error),
+                    ClientServices.getInstance().getClientRunner().getStartUuid(),
+                    Simulation.getInstance().getLevelTaskId(),
+                    this);
+        }
+
         @SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})
         Throwable cause = CommonJava.getMostInnerThrowable(t);
         if (cause instanceof Html5NotSupportedException) {
@@ -458,12 +487,12 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
 
     @Override
     public void onStartupFinished(List<StartupTaskInfo> taskInfo, long totalTime) {
-        sendStartupFinished(taskInfo, totalTime);
+        // Ignore, see onTaskFinished()
     }
 
     @Override
     public void onStartupFailed(List<StartupTaskInfo> taskInfo, long totalTime) {
-        sendStartupFinished(taskInfo, totalTime);
+        // Ignore, see onTaskFailed()
     }
 
     public GameEngineMode getGameEngineMode() {

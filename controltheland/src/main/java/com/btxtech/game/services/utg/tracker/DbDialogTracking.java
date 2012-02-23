@@ -21,8 +21,7 @@ public class DbDialogTracking implements Serializable {
     private Integer id;
     @Column(nullable = false)
     private Date timeStamp;
-    @Column(nullable = false)
-    private String sessionId;
+    private String startUuid;
     private long clientTimeStamp;
     @Column(name = "leftColumn")
     private Integer left;
@@ -40,9 +39,9 @@ public class DbDialogTracking implements Serializable {
     protected DbDialogTracking() {
     }
 
-    public DbDialogTracking(DialogTracking dialogTracking, String sessionId) {
-        this.sessionId = sessionId;
+    public DbDialogTracking(DialogTracking dialogTracking) {
         timeStamp = new Date();
+        startUuid = dialogTracking.getStartUuid();
         clientTimeStamp = dialogTracking.getClientTimeStamp();
         left = dialogTracking.getLeft();
         top = dialogTracking.getTop();
@@ -55,7 +54,11 @@ public class DbDialogTracking implements Serializable {
     }
 
     public DialogTracking createDialogTracking() {
-        return new DialogTracking(left, top, width, height, zIndex, description, appearing, identityHashCode, clientTimeStamp);
+        return new DialogTracking(startUuid, left, top, width, height, zIndex, description, appearing, identityHashCode, clientTimeStamp);
+    }
+
+    public Date getTimeStamp() {
+        return timeStamp;
     }
 
     @Override

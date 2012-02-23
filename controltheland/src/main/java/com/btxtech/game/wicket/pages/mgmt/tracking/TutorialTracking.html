@@ -13,7 +13,7 @@
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
 <head>
     <title></title>
 </head>
@@ -41,14 +41,14 @@
     <table border="0">
         <tr>
             <th bgcolor="#dadada">Type</th>
-            <th bgcolor="#dadada">Name</th>
-            <th bgcolor="#dadada">Parent</th>
+            <th bgcolor="#dadada">Level Task</th>
+            <th bgcolor="#dadada">Tutorial Task</th>
             <th bgcolor="#dadada">Duration [s]</th>
         </tr>
         <tr wicket:id="tutorialProgress">
             <td wicket:id="type"/>
-            <td wicket:id="name" />
-            <td wicket:id="parent" />
+            <td wicket:id="levelTaskName" />
+            <td wicket:id="tutorialTaskName" />
             <td wicket:id="duration" align="right"/>
         </tr>
     </table>

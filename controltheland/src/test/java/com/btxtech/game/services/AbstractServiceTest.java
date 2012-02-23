@@ -153,6 +153,7 @@ abstract public class AbstractServiceTest {
     protected static int TEST_LEVEL_TASK_1_3_REAL_ID = -1;
     protected static int TEST_LEVEL_TASK_2_3_REAL_ID = -1;
     protected static int TEST_LEVEL_TASK_3_3_SIM_ID = -1;
+    protected static String TEST_LEVEL_TASK_3_3_SIM_NAME = "TEST_LEVEL_TASK_3_3_SIM_NAME";
     protected static int TEST_LEVEL_TASK_4_3_SIM_ID = -1;
     protected static String TEST_LEVEL_TASK_4_3_SIM_NAME = "TEST_LEVEL_TASK_4_3_SIM_NAME";
     protected static final String TEST_LEVEL_3_REAL = "TEST_LEVEL_3_REAL";
@@ -1056,6 +1057,7 @@ abstract public class AbstractServiceTest {
         DbLevelTask dbSimLevelTask2 = dbLevel2.getLevelTaskCrud().createDbChild();
         dbSimLevelTask2.setDbTutorialConfig(tut2);
         dbSimLevelTask2.setXp(2);
+        dbSimLevelTask2.setName(TEST_LEVEL_TASK_3_3_SIM_NAME);
         DbLevelTask dbSimLevelTask3 = dbLevel2.getLevelTaskCrud().createDbChild();
         dbSimLevelTask3.setDbTutorialConfig(tut3);
         dbSimLevelTask3.setXp(3);

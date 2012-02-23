@@ -8,7 +8,7 @@ import java.io.Serializable;
  * Time: 12:51:32
  */
 public class NoSuchChildException extends RuntimeException {
-    public NoSuchChildException(Serializable id) {
-        super("No such child: " + id);
+    public NoSuchChildException(Serializable id, Class clazz) {
+        super("No such child: " + id + " Class: " + clazz);
     }
 }

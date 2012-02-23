@@ -2,7 +2,6 @@ package com.btxtech.game.services.utg.tracker;
 
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -18,8 +17,6 @@ public class DbBrowserWindowTracking {
     @Id
     @GeneratedValue
     private Integer id;
-    @Column(nullable = false)
-    private String sessionId;
     private int clientWidth;
     private int clientHeight;
     private int scrollLeft;
@@ -28,6 +25,7 @@ public class DbBrowserWindowTracking {
     private int scrollHeight;
     private long clientTimeStamp;
     private Date timeStamp;
+    private String startUuid;
 
     /**
      * Used by hibernate
@@ -35,8 +33,8 @@ public class DbBrowserWindowTracking {
     protected DbBrowserWindowTracking() {
     }
 
-    public DbBrowserWindowTracking(BrowserWindowTracking browserWindowTracking, String sessionId) {
-        this.sessionId = sessionId;
+    public DbBrowserWindowTracking(BrowserWindowTracking browserWindowTracking) {
+        startUuid = browserWindowTracking.getStartUuid();
         clientWidth = browserWindowTracking.getClientWidth();
         clientHeight = browserWindowTracking.getClientHeight();
         scrollLeft = browserWindowTracking.getScrollLeft();
@@ -48,7 +46,11 @@ public class DbBrowserWindowTracking {
     }
 
     public BrowserWindowTracking createBrowserWindowTracking() {
-       return new BrowserWindowTracking(clientWidth,clientHeight,scrollLeft,scrollTop,scrollWidth,scrollHeight,clientTimeStamp);
+        return new BrowserWindowTracking(startUuid, clientWidth, clientHeight, scrollLeft, scrollTop, scrollWidth, scrollHeight, clientTimeStamp);
+    }
+
+    public Date getTimeStamp() {
+        return timeStamp;
     }
 
     @Override

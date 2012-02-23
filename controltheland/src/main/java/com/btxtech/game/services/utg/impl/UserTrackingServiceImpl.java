@@ -38,16 +38,17 @@ import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.DbUserMessage;
 import com.btxtech.game.services.utg.LifecycleTrackingInfo;
 import com.btxtech.game.services.utg.RealGameTrackingInfo;
-import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.services.utg.SessionDetailDto;
 import com.btxtech.game.services.utg.SessionOverviewDto;
 import com.btxtech.game.services.utg.TutorialTrackingInfo;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingFilter;
 import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.services.utg.tracker.DbBrowserWindowTracking;
 import com.btxtech.game.services.utg.tracker.DbDialogTracking;
 import com.btxtech.game.services.utg.tracker.DbEventTrackingItem;
@@ -56,7 +57,6 @@ import com.btxtech.game.services.utg.tracker.DbPageAccess;
 import com.btxtech.game.services.utg.tracker.DbScrollTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbSelectionTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbSessionDetail;
-import com.btxtech.game.services.utg.tracker.DbStartup;
 import com.btxtech.game.services.utg.tracker.DbStartupTask;
 import com.btxtech.game.services.utg.tracker.DbSyncItemInfo;
 import com.btxtech.game.services.utg.tracker.DbTutorialProgress;
@@ -77,6 +77,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -178,7 +179,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         List<DbSessionDetail> browserDetails = criteria.list();
 
         for (DbSessionDetail browserDetail : browserDetails) {
-            int successfulStarts = getSuccessfulStarts(browserDetail.getSessionId());
+            int startAttempts = getStartAttempts(browserDetail.getSessionId());
             boolean failure = hasFailureStarts(browserDetail.getSessionId());
             int enterGameHits = getGameAttempts(browserDetail.getSessionId());
             int commands = getUserCommandCount(browserDetail.getSessionId(), null, null, null);
@@ -187,7 +188,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                     browserDetail.getSessionId(),
                     getPageHits(browserDetail.getSessionId()),
                     enterGameHits,
-                    successfulStarts,
+                    startAttempts,
                     failure,
                     commands,
                     levelPromotions,
@@ -196,18 +197,17 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         return sessionOverviewDtos;
     }
 
-    private int getSuccessfulStarts(final String sessionId) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbStartup.class);
+    private int getStartAttempts(final String sessionId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbStartupTask.class);
         criteria.add(Restrictions.eq("sessionId", sessionId));
-        criteria.setProjection(Projections.rowCount());
+        criteria.setProjection(Projections.countDistinct("startUuid"));
         return ((Number) criteria.list().get(0)).intValue();
     }
 
     private boolean hasFailureStarts(final String sessionId) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbStartup.class);
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbStartupTask.class);
         criteria.add(Restrictions.eq("sessionId", sessionId));
-        Criteria dbStartupTaskCriteria = criteria.createCriteria("dbStartupTasks", "dbStartupTasksAlias");
-        dbStartupTaskCriteria.add(Restrictions.isNotNull("failureText"));
+        criteria.add(Restrictions.isNotNull("failureText"));
         criteria.setProjection(Projections.rowCount());
         return ((Number) criteria.list().get(0)).intValue() > 0;
     }
@@ -244,14 +244,12 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @SuppressWarnings("unchecked")
-    private List<DbUserCommand> getUserCommand(final String sessionId, final Long fromServer, final Long toServer) {
+    private List<DbUserCommand> getUserCommand(LifecycleTrackingInfo lifecycleTrackingInfo) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbUserCommand.class);
-        criteria.add(Restrictions.eq("sessionId", sessionId));
-        if (fromServer != null) {
-            criteria.add(Restrictions.ge("timeStampMs", fromServer));
-        }
-        if (toServer != null) {
-            criteria.add(Restrictions.lt("timeStampMs", toServer));
+        criteria.add(Restrictions.eq("sessionId", lifecycleTrackingInfo.getSessionId()));
+        criteria.add(Restrictions.ge("timeStampMs", lifecycleTrackingInfo.getStartServer()));
+        if (lifecycleTrackingInfo.getNextReaGameLifecycleTrackingInfo() != null) {
+            criteria.add(Restrictions.lt("timeStampMs", lifecycleTrackingInfo.getNextReaGameLifecycleTrackingInfo().getStartServer()));
         }
         return (List<DbUserCommand>) criteria.list();
     }
@@ -279,47 +277,58 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @SuppressWarnings("unchecked")
     private List<LifecycleTrackingInfo> getLifecycleTrackingInfos(final String sessionId) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbStartup.class);
+        // Get all start uuids
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbStartupTask.class);
         criteria.add(Restrictions.eq("sessionId", sessionId));
-        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        criteria.addOrder(Order.asc("serverTimeStamp"));
-        List<DbStartup> startups = criteria.list();
+        criteria.setProjection(Projections.groupProperty("startUuid"));
+        List<String> uuids = criteria.list();
         ArrayList<LifecycleTrackingInfo> lifecycleTrackingInfos = new ArrayList<LifecycleTrackingInfo>();
-        for (int i = 0, startupsSize = startups.size(); i < startupsSize; i++) {
-            DbStartup startup = startups.get(i);
-            LifecycleTrackingInfo lifecycleTrackingInfo = new LifecycleTrackingInfo(sessionId, startup);
-            lifecycleTrackingInfos.add(lifecycleTrackingInfo);
-            if (i + 1 < startups.size()) {
-                DbStartup nextStartup = startups.get(i + 1);
-                lifecycleTrackingInfo.setNext(nextStartup);
+        LifecycleTrackingInfo lastReaGameLifecycleTrackingInfo = null;
+        for (String uuid : uuids) {
+            criteria = sessionFactory.getCurrentSession().createCriteria(DbStartupTask.class);
+            criteria.add(Restrictions.eq("startUuid", uuid));
+            criteria.addOrder(Order.asc("clientTimeStamp"));
+            List<DbStartupTask> dbStartupTasks = criteria.list();
+            String levelTaskName = getLevelTaskName(dbStartupTasks);
+            LifecycleTrackingInfo lifecycleTrackingInfo = new LifecycleTrackingInfo(dbStartupTasks, levelTaskName);
+            if (lifecycleTrackingInfo.isRealGame()) {
+                if (lastReaGameLifecycleTrackingInfo != null) {
+                    lastReaGameLifecycleTrackingInfo.setNextReaGameLifecycleTrackingInfo(lifecycleTrackingInfo);
+                }
+                lastReaGameLifecycleTrackingInfo = lifecycleTrackingInfo;
             }
+            lifecycleTrackingInfos.add(lifecycleTrackingInfo);
         }
+        Collections.sort(lifecycleTrackingInfos);
         return lifecycleTrackingInfos;
+    }
+
+    private String getLevelTaskName(List<DbStartupTask> dbStartupTasks) {
+        try {
+            for (DbStartupTask dbStartupTask : dbStartupTasks) {
+                if (dbStartupTask.getLevelTaskId() != null) {
+                    return ((DbLevelTask) sessionFactory.getCurrentSession().get(DbLevelTask.class, dbStartupTask.getLevelTaskId())).getName();
+                }
+            }
+        } catch (Exception e) {
+            log.error("getLifecycleTrackingInfos", e);
+        }
+        return null;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public LifecycleTrackingInfo getLifecycleTrackingInfo(final String sessionId, final long startServer) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbStartup.class);
-        criteria.add(Restrictions.eq("sessionId", sessionId));
-        criteria.add(Restrictions.ge("serverTimeStamp", startServer));
-        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        criteria.addOrder(Order.asc("serverTimeStamp"));
-        criteria.setFetchSize(2);
-        List<DbStartup> startups = criteria.list();
-
-        LifecycleTrackingInfo lifecycleTrackingInfo = new LifecycleTrackingInfo(sessionId, startups.get(0));
-        if (startups.size() > 1) {
-            lifecycleTrackingInfo.setNext(startups.get(1));
-        }
-        return lifecycleTrackingInfo;
+    public LifecycleTrackingInfo getLifecycleTrackingInfo(String startUuid) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbStartupTask.class);
+        criteria.add(Restrictions.eq("startUuid", startUuid));
+        List<DbStartupTask> startups = criteria.list();
+        return new LifecycleTrackingInfo(startups, getLevelTaskName(startups));
     }
-
 
     @Override
     public RealGameTrackingInfo getGameTracking(LifecycleTrackingInfo lifecycleTrackingInfo) {
         RealGameTrackingInfo trackingInfoReal = new RealGameTrackingInfo();
-        trackingInfoReal.setUserCommands(getUserCommand(lifecycleTrackingInfo.getSessionId(), lifecycleTrackingInfo.getStartServer(), lifecycleTrackingInfo.getNextStartServer()));
+        trackingInfoReal.setUserCommands(getUserCommand(lifecycleTrackingInfo));
         trackingInfoReal.setHistoryElements(historyService.getHistoryElements(lifecycleTrackingInfo.getStartServer(), lifecycleTrackingInfo.getNextStartServer(), lifecycleTrackingInfo.getSessionId(), lifecycleTrackingInfo.getBaseId()));
         return trackingInfoReal;
     }
@@ -327,19 +336,15 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     @Override
     public TutorialTrackingInfo getTutorialTrackingInfo(LifecycleTrackingInfo lifecycleTrackingInfo) {
         TutorialTrackingInfo tutorialTrackingInfo = new TutorialTrackingInfo();
-        tutorialTrackingInfo.setDbEventTrackingStart(getDbEventTrackingStart(lifecycleTrackingInfo.getSessionId(), lifecycleTrackingInfo.getStartClient(), lifecycleTrackingInfo.getNextStartClient()));
-        tutorialTrackingInfo.setDbTutorialProgresss(getDbTutorialProgresses(lifecycleTrackingInfo.getSessionId(), lifecycleTrackingInfo.getStartClient(), lifecycleTrackingInfo.getNextStartClient()));
+        tutorialTrackingInfo.setDbEventTrackingStart(getDbEventTrackingStart(lifecycleTrackingInfo.getStartUuid()));
+        tutorialTrackingInfo.setDbTutorialProgresss(getDbTutorialProgresses(lifecycleTrackingInfo.getStartUuid()));
         return tutorialTrackingInfo;
     }
 
     @SuppressWarnings("unchecked")
-    private List<DbTutorialProgress> getDbTutorialProgresses(final String sessionId, final long beginClient, final Long endClient) {
+    private List<DbTutorialProgress> getDbTutorialProgresses(String startUuid) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbTutorialProgress.class);
-        criteria.add(Restrictions.eq("sessionId", sessionId));
-        criteria.add(Restrictions.ge("clientTimeStamp", beginClient));
-        if (endClient != null) {
-            criteria.add(Restrictions.lt("clientTimeStamp", endClient));
-        }
+        criteria.add(Restrictions.eq("startUuid", startUuid));
         criteria.addOrder(Order.asc("clientTimeStamp"));
         return criteria.list();
     }
@@ -488,9 +493,9 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     @Transactional
-    public void trackWindowsClosed() {
+    public void trackWindowsClosed(String startUUid) {
         try {
-            sessionFactory.getCurrentSession().saveOrUpdate(new DbWindowClosed(session.getSessionId()));
+            sessionFactory.getCurrentSession().saveOrUpdate(new DbWindowClosed(session.getSessionId(), startUUid));
         } catch (Throwable t) {
             log.error("", t);
         }
@@ -513,8 +518,13 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     @Transactional
-    public void onTutorialProgressChanged(TutorialConfig.TYPE type, Integer taskId,  String name, String parent, long duration, long clientTimeStamp) {
-        sessionFactory.getCurrentSession().saveOrUpdate(new DbTutorialProgress(session.getSessionId(), type.name(), name, parent, duration, clientTimeStamp));
+    public void onTutorialProgressChanged(TutorialConfig.TYPE type, String startUuid, int taskId, String tutorialTaskName, long duration, long clientTimeStamp) {
+        try {
+            DbLevelTask dbLevelTask = (DbLevelTask) sessionFactory.getCurrentSession().get(DbLevelTask.class, taskId);
+            sessionFactory.getCurrentSession().save(new DbTutorialProgress(session.getSessionId(), type.name(), startUuid, dbLevelTask.getName(), tutorialTaskName, duration, clientTimeStamp));
+        } catch (Exception e) {
+            log.error("onTutorialProgressChanged", e);
+        }
     }
 
     @Override
@@ -534,11 +544,10 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         saveDialogTrackings(dialogTrackings);
     }
 
-    @Transactional
     private void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems) {
         ArrayList<DbEventTrackingItem> dbEventTrackingItems = new ArrayList<DbEventTrackingItem>();
         for (EventTrackingItem eventTrackingItem : eventTrackingItems) {
-            dbEventTrackingItems.add(new DbEventTrackingItem(eventTrackingItem, session.getSessionId()));
+            dbEventTrackingItems.add(new DbEventTrackingItem(eventTrackingItem));
         }
         HibernateUtil.saveOrUpdateAll(sessionFactory, dbEventTrackingItems);
     }
@@ -546,7 +555,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     private void saveSyncItemInfos(Collection<SyncItemInfo> syncItemInfos) {
         ArrayList<DbSyncItemInfo> dbSyncItemInfos = new ArrayList<DbSyncItemInfo>();
         for (SyncItemInfo syncItemInfo : syncItemInfos) {
-            dbSyncItemInfos.add(new DbSyncItemInfo(syncItemInfo, session.getSessionId()));
+            dbSyncItemInfos.add(new DbSyncItemInfo(syncItemInfo));
         }
         HibernateUtil.saveOrUpdateAll(sessionFactory, dbSyncItemInfos);
     }
@@ -554,7 +563,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     private void saveSelections(Collection<SelectionTrackingItem> selectionTrackingItems) {
         ArrayList<DbSelectionTrackingItem> dbSelectionTrackingItems = new ArrayList<DbSelectionTrackingItem>();
         for (SelectionTrackingItem command : selectionTrackingItems) {
-            dbSelectionTrackingItems.add(new DbSelectionTrackingItem(command, session.getSessionId()));
+            dbSelectionTrackingItems.add(new DbSelectionTrackingItem(command));
         }
         HibernateUtil.saveOrUpdateAll(sessionFactory, dbSelectionTrackingItems);
     }
@@ -562,7 +571,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     private void saveScrollTrackingItems(Collection<TerrainScrollTracking> terrainScrollTrackings) {
         ArrayList<DbScrollTrackingItem> dbScrollTrackingItems = new ArrayList<DbScrollTrackingItem>();
         for (TerrainScrollTracking terrainScroll : terrainScrollTrackings) {
-            dbScrollTrackingItems.add(new DbScrollTrackingItem(terrainScroll, session.getSessionId()));
+            dbScrollTrackingItems.add(new DbScrollTrackingItem(terrainScroll));
         }
         HibernateUtil.saveOrUpdateAll(sessionFactory, dbScrollTrackingItems);
     }
@@ -570,7 +579,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     private void saveBrowserWindowTrackings(Collection<BrowserWindowTracking> browserWindowTrackings) {
         ArrayList<DbBrowserWindowTracking> dbBrowserWindowTrackings = new ArrayList<DbBrowserWindowTracking>();
         for (BrowserWindowTracking browserWindowTracking : browserWindowTrackings) {
-            dbBrowserWindowTrackings.add(new DbBrowserWindowTracking(browserWindowTracking, session.getSessionId()));
+            dbBrowserWindowTrackings.add(new DbBrowserWindowTracking(browserWindowTracking));
         }
         HibernateUtil.saveOrUpdateAll(sessionFactory, dbBrowserWindowTrackings);
     }
@@ -578,20 +587,16 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     private void saveDialogTrackings(Collection<DialogTracking> dialogTrackings) {
         ArrayList<DbDialogTracking> dbDialogTrackings = new ArrayList<DbDialogTracking>();
         for (DialogTracking dialogTracking : dialogTrackings) {
-            dbDialogTrackings.add(new DbDialogTracking(dialogTracking, session.getSessionId()));
+            dbDialogTrackings.add(new DbDialogTracking(dialogTracking));
         }
         HibernateUtil.saveOrUpdateAll(sessionFactory, dbDialogTrackings);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public DbEventTrackingStart getDbEventTrackingStart(final String sessionId, final long beginClient, final Long endClient) {
+    public DbEventTrackingStart getDbEventTrackingStart(String startUuid) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbEventTrackingStart.class);
-        criteria.add(Restrictions.eq("sessionId", sessionId));
-        criteria.add(Restrictions.ge("clientTimeStamp", beginClient));
-        if (endClient != null) {
-            criteria.add(Restrictions.lt("clientTimeStamp", endClient));
-        }
+        criteria.add(Restrictions.eq("startUuid", startUuid));
         criteria.addOrder(Order.asc("clientTimeStamp"));
         List<DbEventTrackingStart> dbEventTrackingStarts = criteria.list();
         if (dbEventTrackingStarts.isEmpty()) {
@@ -603,103 +608,70 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     @Transactional
-    public void startUpTaskFinished(List<StartupTaskInfo> infos, long totalTime) {
-        Integer baseId;
-        String baseName;
-
+    public void saveStartupTask(StartupTaskInfo startupTaskInfo, String startUuid, Integer levelTaskId) {
+        String baseName = null;
+        Integer baseId = null;
         try {
-            Base base = baseService.getBase();
-            baseId = base.getBaseId();
-            baseName = baseService.getBaseName(base.getSimpleBase());
-        } catch (NoConnectionException e) {
-            baseId = null;
-            baseName = null;
-        }
-
-        DbStartup dbStartup = new DbStartup(totalTime, infos.get(0).getStartTime(), userGuidanceService.getDbLevel(), session.getSessionId(), baseName, baseId);
-        for (StartupTaskInfo info : infos) {
-            dbStartup.addGameStartupTasks(new DbStartupTask(info, dbStartup));
-            if (info.getError() != null) {
-                log.debug("Startup failed: " + info.getTaskEnum().getStartupTaskEnumHtmlHelper().getNiceText() + " Error: " + info.getError());
+            if (levelTaskId == null) {
+                baseId = baseService.getBase().getBaseId();
+                baseName = baseService.getBaseName(baseService.getBase().getSimpleBase());
             }
+        } catch (NoConnectionException e) {
+            // Ignore
         }
-        sessionFactory.getCurrentSession().save(dbStartup);
+        sessionFactory.getCurrentSession().save(new DbStartupTask(session.getSessionId(), startupTaskInfo, startUuid, userGuidanceService.getDbLevel(), levelTaskId, userService.getUser(), baseId, baseName));
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<DbEventTrackingItem> getDbEventTrackingItem(final String sessionId, final long startClient, final Long endClient) {
+    public List<DbEventTrackingItem> getDbEventTrackingItem(String startUuid) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbEventTrackingItem.class);
-        criteria.add(Restrictions.eq("sessionId", sessionId));
-        criteria.add(Restrictions.ge("clientTimeStamp", startClient));
-        if (endClient != null) {
-            criteria.add(Restrictions.lt("clientTimeStamp", endClient));
-        }
+        criteria.add(Restrictions.eq("startUuid", startUuid));
         criteria.addOrder(Order.asc("clientTimeStamp"));
         return criteria.list();
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<DbSelectionTrackingItem> getDbSelectionTrackingItems(final String sessionId, final long startTime, final Long endTime) {
+    public List<DbSelectionTrackingItem> getDbSelectionTrackingItems(String startUuid) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbSelectionTrackingItem.class);
-        criteria.add(Restrictions.eq("sessionId", sessionId));
-        criteria.add(Restrictions.ge("clientTimeStamp", startTime));
-        if (endTime != null) {
-            criteria.add(Restrictions.lt("clientTimeStamp", endTime));
-        }
+        criteria.add(Restrictions.eq("startUuid", startUuid));
         criteria.addOrder(Order.asc("clientTimeStamp"));
         return criteria.list();
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<DbSyncItemInfo> getDbSyncItemInfos(final String sessionId, final long startTime, final Long endTime) {
+    public List<DbSyncItemInfo> getDbSyncItemInfos(String startUuid) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbSyncItemInfo.class);
-        criteria.add(Restrictions.eq("sessionId", sessionId));
-        criteria.add(Restrictions.ge("clientTimeStamp", startTime));
-        if (endTime != null) {
-            criteria.add(Restrictions.lt("clientTimeStamp", endTime));
-        }
+        criteria.add(Restrictions.eq("startUuid", startUuid));
         criteria.addOrder(Order.asc("clientTimeStamp"));
         return criteria.list();
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<DbScrollTrackingItem> getDbScrollTrackingItems(final String sessionId, final long startTime, final Long endTime) {
+    public List<DbScrollTrackingItem> getDbScrollTrackingItems(String startUuid) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbScrollTrackingItem.class);
-        criteria.add(Restrictions.eq("sessionId", sessionId));
-        criteria.add(Restrictions.ge("clientTimeStamp", startTime));
-        if (endTime != null) {
-            criteria.add(Restrictions.lt("clientTimeStamp", endTime));
-        }
+        criteria.add(Restrictions.eq("startUuid", startUuid));
         criteria.addOrder(Order.asc("clientTimeStamp"));
         return criteria.list();
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<DbBrowserWindowTracking> getDbBrowserWindowTrackings(final String sessionId, final long startTime, final Long endTime) {
+    public List<DbBrowserWindowTracking> getDbBrowserWindowTrackings(String startUuid) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbBrowserWindowTracking.class);
-        criteria.add(Restrictions.eq("sessionId", sessionId));
-        criteria.add(Restrictions.ge("clientTimeStamp", startTime));
-        if (endTime != null) {
-            criteria.add(Restrictions.lt("clientTimeStamp", endTime));
-        }
+        criteria.add(Restrictions.eq("startUuid", startUuid));
         criteria.addOrder(Order.asc("clientTimeStamp"));
         return criteria.list();
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<DbDialogTracking> getDbDialogTrackings(final String sessionId, final long startTime, final Long endTime) {
+    public List<DbDialogTracking> getDbDialogTrackings(String startUuid) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbDialogTracking.class);
-        criteria.add(Restrictions.eq("sessionId", sessionId));
-        criteria.add(Restrictions.ge("clientTimeStamp", startTime));
-        if (endTime != null) {
-            criteria.add(Restrictions.lt("clientTimeStamp", endTime));
-        }
+        criteria.add(Restrictions.eq("startUuid", startUuid));
         criteria.addOrder(Order.asc("clientTimeStamp"));
         return criteria.list();
     }

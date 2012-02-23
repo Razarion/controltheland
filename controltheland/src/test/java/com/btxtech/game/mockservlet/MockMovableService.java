@@ -169,12 +169,12 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public void sendStartupInfo(List<StartupTaskInfo> infos, long totalTime) {
+    public void sendStartupTask(StartupTaskInfo startupTaskInfo, String uuid, Integer levelTaskId) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public GameFlow sendTutorialProgress(TutorialConfig.TYPE type, int levelTaskId, String name, String parent, long duration, long clientTimeStamp) {
+    public GameFlow sendTutorialProgress(TutorialConfig.TYPE type, String startUuid, int levelTaskId, String name, long duration, long clientTimeStamp) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

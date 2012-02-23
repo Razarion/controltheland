@@ -39,11 +39,7 @@ public class RealGameTracking extends Panel {
         super(id);
         add(new LifecyclePanel("lifecycle", lifecycleTrackingInfo));
         RealGameTrackingInfo realGameTrackingInfo = userTrackingService.getGameTracking(lifecycleTrackingInfo);
-        if (lifecycleTrackingInfo.getBaseName() != null) {
-            add(new Label("baseName", lifecycleTrackingInfo.getBaseName()));
-        } else {
-            add(new Label("baseName", "?"));
-        }
+        add(new Label("baseName", lifecycleTrackingInfo.getBaseName()));
         userActions(realGameTrackingInfo.getUserCommandHistoryElements());
     }
 

@@ -54,8 +54,8 @@ public class TutorialTracking extends Panel {
             @Override
             protected void populateItem(ListItem<DbTutorialProgress> gameStartupListItem) {
                 gameStartupListItem.add(new Label("type", gameStartupListItem.getModelObject().getType()));
-                gameStartupListItem.add(new Label("name", gameStartupListItem.getModelObject().getName()));
-                gameStartupListItem.add(new Label("parent", gameStartupListItem.getModelObject().getParent()));
+                gameStartupListItem.add(new Label("levelTaskName", gameStartupListItem.getModelObject().getLevelTaskName()));
+                gameStartupListItem.add(new Label("tutorialTaskName", gameStartupListItem.getModelObject().getTutorialTaskName()));
                 gameStartupListItem.add(new Label("duration", DateUtil.formatDurationMilis(gameStartupListItem.getModelObject().getDuration())));
             }
         });
@@ -68,9 +68,7 @@ public class TutorialTracking extends Panel {
             @Override
             public void onClick() {
                 HttpSession httpSession = ((WebRequest) getRequest()).getHttpServletRequest().getSession();
-                httpSession.setAttribute(PlaybackEntry.SESSION_ID, lifecycleTrackingInfo.getSessionId());
-                httpSession.setAttribute(PlaybackEntry.START_LIFECYCLE_SERVER, Long.toString(lifecycleTrackingInfo.getStartServer()));
-                httpSession.setAttribute(PlaybackEntry.LEVEL_NAME, lifecycleTrackingInfo.getLevel());
+                httpSession.setAttribute(PlaybackEntry.START_UUID, lifecycleTrackingInfo.getStartUuid());
                 setResponsePage(new PlaybackPage());
             }
         };

@@ -13,12 +13,14 @@
 
 package com.btxtech.game.services.utg.tracker;
 
-import java.io.Serializable;
-import java.util.Date;
+import org.hibernate.annotations.Index;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * User: beat
@@ -33,12 +35,14 @@ public class DbTutorialProgress implements Serializable {
     @Column(nullable = false)
     private Date niceTimeStamp;
     private long timeStamp;
+    private String levelTaskName;
+    @Index(name = "TRACKER_TUTORIAL_INDEX_START_UUID")
+    private String startUuid;
     private long clientTimeStamp;
     private String sessionId;
     private long duration;
     private String type;
-    private String name;
-    private String parent;
+    private String tutorialTaskName;
 
     /**
      * Used by Hibernate
@@ -46,14 +50,15 @@ public class DbTutorialProgress implements Serializable {
     public DbTutorialProgress() {
     }
 
-    public DbTutorialProgress(String sessionId, String type, String name, String parent, long duration, long clientTimeStamp) {
+    public DbTutorialProgress(String sessionId, String type, String startUuid, String levelTaskName, String tutorialTaskName, long duration, long clientTimeStamp) {
         this.sessionId = sessionId;
+        this.startUuid = startUuid;
         this.clientTimeStamp = clientTimeStamp;
         niceTimeStamp = new Date();
         timeStamp = niceTimeStamp.getTime();
         this.type = type;
-        this.name = name;
-        this.parent = parent;
+        this.levelTaskName = levelTaskName;
+        this.tutorialTaskName = tutorialTaskName;
         this.duration = duration;
     }
 
@@ -77,16 +82,20 @@ public class DbTutorialProgress implements Serializable {
         return type;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getParent() {
-        return parent;
+    public String getTutorialTaskName() {
+        return tutorialTaskName;
     }
 
     public long getClientTimeStamp() {
         return clientTimeStamp;
+    }
+
+    public String getLevelTaskName() {
+        return levelTaskName;
+    }
+
+    public String getStartUuid() {
+        return startUuid;
     }
 
     @Override

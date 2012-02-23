@@ -37,7 +37,7 @@ public class DbSelectionTrackingItem implements Serializable {
     @Column(nullable = false)
     private long clientTimeStamp;
     @Column(nullable = false)
-    private String sessionId;
+    private String startUuid;
     @Column(nullable = false)
     private String selectedItems;
     private Boolean own;
@@ -48,16 +48,20 @@ public class DbSelectionTrackingItem implements Serializable {
     public DbSelectionTrackingItem() {
     }
 
-    public DbSelectionTrackingItem(SelectionTrackingItem selectionTrackingItem, String sessionId) {
-        this.sessionId = sessionId;
+    public DbSelectionTrackingItem(SelectionTrackingItem selectionTrackingItem) {
         clientTimeStamp = selectionTrackingItem.getTimeStamp();
         niceTimeStamp = new Date();
         selectedItems = Utils.integerToSting(selectionTrackingItem.getSelectedIds());
         own = selectionTrackingItem.isOwn();
+        startUuid = selectionTrackingItem.getStartUuid();
     }
 
     public SelectionTrackingItem createSelectionTrackingItem() {
-        return new SelectionTrackingItem(Utils.stringToIntegers(selectedItems), clientTimeStamp, own);
+        return new SelectionTrackingItem(startUuid, Utils.stringToIntegers(selectedItems), clientTimeStamp, own);
+    }
+
+    public Date getNiceTimeStamp() {
+        return niceTimeStamp;
     }
 
     @Override
@@ -67,12 +71,12 @@ public class DbSelectionTrackingItem implements Serializable {
 
         DbSelectionTrackingItem that = (DbSelectionTrackingItem) o;
 
-        return !(id != null ? !id.equals(that.id) : that.id != null);
+        return id != null && id.equals(that.id);
 
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 }

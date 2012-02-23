@@ -35,15 +35,10 @@ public class DbScrollTrackingItem implements Serializable {
     private Date timeStamp;
     @Column(nullable = false)
     private long clientTimeStamp;
-    @Column(nullable = false)
-    private String sessionId;
     @Column(name = "leftPos")
     private int left;
     private int top;
-    @Deprecated
-    private int width;
-    @Deprecated
-    private int height;
+    private String startUuid;
 
     /**
      * Used by hibernate
@@ -51,18 +46,20 @@ public class DbScrollTrackingItem implements Serializable {
     public DbScrollTrackingItem() {
     }
 
-    public DbScrollTrackingItem(TerrainScrollTracking terrainScrollTracking, String sessionId) {
-        this.sessionId = sessionId;
+    public DbScrollTrackingItem(TerrainScrollTracking terrainScrollTracking) {
         clientTimeStamp = terrainScrollTracking.getClientTimeStamp();
         left = terrainScrollTracking.getLeft();
         top = terrainScrollTracking.getTop();
-        width = terrainScrollTracking.getWidth();
-        height = terrainScrollTracking.getHeight();
-        timeStamp = new Date();        
+        timeStamp = new Date();
+        startUuid = terrainScrollTracking.getStartUuid();
+    }
+
+    public Date getTimeStamp() {
+        return timeStamp;
     }
 
     public TerrainScrollTracking createScrollTrackingItem() {
-        return new TerrainScrollTracking(left, top, width, height, clientTimeStamp);
+        return new TerrainScrollTracking(startUuid, left, top, clientTimeStamp);
     }
 
     @Override
@@ -72,12 +69,12 @@ public class DbScrollTrackingItem implements Serializable {
 
         DbScrollTrackingItem that = (DbScrollTrackingItem) o;
 
-        return !(id != null ? !id.equals(that.id) : that.id != null);
+        return id != null && id.equals(that.id);
 
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 }

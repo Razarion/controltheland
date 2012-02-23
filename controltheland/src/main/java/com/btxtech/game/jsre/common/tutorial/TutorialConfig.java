@@ -25,7 +25,6 @@ public class TutorialConfig implements Serializable {
     public static enum TYPE {
         TUTORIAL,
         TASK,
-        STEP,
         TUTORIAL_FAILED
     }
 

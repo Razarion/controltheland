@@ -29,9 +29,7 @@ public class PlaybackPage extends MgmtWebPage {
         HttpSession httpSession = ((WebRequest) getRequest()).getHttpServletRequest().getSession();
         Label startupSeqLabel = new Label("info", "");
         startupSeqLabel.add(new SimpleAttributeModifier("id", PlaybackEntry.ID));
-        startupSeqLabel.add(new SimpleAttributeModifier(PlaybackEntry.SESSION_ID, (String)httpSession.getAttribute(PlaybackEntry.SESSION_ID)));
-        startupSeqLabel.add(new SimpleAttributeModifier(PlaybackEntry.START_LIFECYCLE_SERVER, (String)httpSession.getAttribute(PlaybackEntry.START_LIFECYCLE_SERVER)));
-        startupSeqLabel.add(new SimpleAttributeModifier(PlaybackEntry.LEVEL_NAME, (String)httpSession.getAttribute(PlaybackEntry.LEVEL_NAME)));
+        startupSeqLabel.add(new SimpleAttributeModifier(PlaybackEntry.START_UUID, (String)httpSession.getAttribute(PlaybackEntry.START_UUID)));
         add(startupSeqLabel);
     }
 }

@@ -60,7 +60,13 @@ public abstract class AbstractStartupTask {
     }
 
     public StartupTaskInfo createStartupTaskInfo() {
-        return new StartupTaskInfo(taskEnum, startTime, duration);
+        return createStartupTaskInfo(null);
+    }
+
+    public StartupTaskInfo createStartupTaskInfo(String error) {
+        StartupTaskInfo startupTaskInfo = new StartupTaskInfo(taskEnum, startTime, duration);
+        startupTaskInfo.setErrorText(error);
+        return startupTaskInfo;
     }
 
     public void correctDeferredDuration() {

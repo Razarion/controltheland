@@ -77,7 +77,7 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
         if (tutorialConfig.isEventTracking()) {
             ClientUserTracker.getInstance().startEventTracking();
         }
-        if(tutorialConfig.isShowTip()) {
+        if (tutorialConfig.isShowTip()) {
             TipManager.getInstance().activate();
         }
         runNextTask(activeTask);
@@ -126,7 +126,7 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
         }
         processPreparation(taskConfig);
         taskTime = System.currentTimeMillis();
-        activeTask = new Task(taskConfig, simulationInfo.getLevelTaskId());
+        activeTask = new Task(taskConfig);
     }
 
     private void tutorialFinished() {
@@ -143,6 +143,7 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
     public void cleanup() {
         activeTask = null;
         SimulationConditionServiceImpl.getInstance().setConditionServiceListener(null);
+        simulationInfo = null;
     }
 
     @Override
@@ -170,5 +171,13 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
             }
         };
         timer.schedule(1000);
+    }
+
+    public Integer getLevelTaskId() {
+        if (simulationInfo != null) {
+            return simulationInfo.getLevelTaskId();
+        } else {
+            return null;
+        }
     }
 }

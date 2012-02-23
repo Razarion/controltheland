@@ -61,7 +61,7 @@ public class TestUserState extends AbstractServiceTest {
         userService.createUser("U2", "test", "test", "test");
         userService.login("U2", "test");
         int levelTaskId = userGuidanceService.getDefaultLevelTaskId();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, levelTaskId, "", "", 0, 0);
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", levelTaskId, "", 0, 0);
 
         // Verify
         userStates = userService.getAllUserStates();

@@ -23,6 +23,7 @@ public class MathHelper {
     public static double SQRT_OF_2 = Math.sqrt(2.0);
     public static double PRECISION = 0.00001;
     public static double ZERO_DOT_ONE_DEGREE_IN_RAD = gradToRad(0.1);
+    private static final char[] CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 
     /**
      * @param angel input
@@ -148,4 +149,13 @@ public class MathHelper {
         double delta = Math.abs(value1 - value2);
         return delta <= PRECISION;
     }
+
+    public static String generateUuid() {
+        char[] uuid = new char[16];
+        for (int i = 0; i < uuid.length; i++) {
+            uuid[i] = CHARS[(int) (Math.random() * CHARS.length)];
+        }
+        return new String(uuid);
+    }
+
 }

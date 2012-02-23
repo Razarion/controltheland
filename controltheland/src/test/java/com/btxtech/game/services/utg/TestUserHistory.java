@@ -97,7 +97,7 @@ public class TestUserHistory extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, userGuidanceService.getDefaultLevelTaskId(), "", "", 0, 0);
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         getMyBase(); // Setup connection
 
         endHttpRequestAndOpenSessionInViewFilter();
@@ -124,7 +124,7 @@ public class TestUserHistory extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, userGuidanceService.getDefaultLevelTaskId(), "", "", 0, 0);
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         getMyBase(); // Setup connection
         movableService.surrenderBase();
 
@@ -154,7 +154,7 @@ public class TestUserHistory extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, userGuidanceService.getDefaultLevelTaskId(), "", "", 0, 0);
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         SimpleBase target = getMyBase(); // Setup connection
 
         endHttpRequestAndOpenSessionInViewFilter();
@@ -162,7 +162,7 @@ public class TestUserHistory extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, userGuidanceService.getDefaultLevelTaskId(), "", "", 0, 0);
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         SimpleBase actor = getMyBase(); // Setup connection
         sendBuildCommand(getFirstSynItemId(actor, TEST_START_BUILDER_ITEM_ID), new Index(200, 200), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();

@@ -36,7 +36,7 @@ public class ReadonlyCollectionContentProvider<T extends CrudChild> implements C
     public T readDbChild(Serializable id) {
         T t = collection.get(id);
         if (t == null) {
-            throw new NoSuchChildException(id);
+            throw new NoSuchChildException(id, null);
         }
         return t;
     }
