@@ -21,8 +21,8 @@ import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
-import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
+import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
@@ -59,7 +59,7 @@ public interface MovableServiceAsync {
 
     void closeConnection(AsyncCallback<Void> async);
 
-    void sendTutorialProgress(TutorialConfig.TYPE type, int levelTaskId, String name, String parent, long duration, long clientTimeStamp, AsyncCallback<GameFlow> asyncCallback);
+    void sendTutorialProgress(TutorialConfig.TYPE type, String startUuid, int levelTaskId, String name, long duration, long clientTimeStamp, AsyncCallback<GameFlow> asyncCallback);
 
     void sendEventTrackingStart(EventTrackingStart eventTrackingStart, AsyncCallback<Void> asyncCallback);
 
@@ -73,5 +73,5 @@ public interface MovableServiceAsync {
 
     void sellItem(Id id, AsyncCallback<Void> asyncCallback);
 
-    void sendStartupInfo(List<StartupTaskInfo> infos, long totalTime, AsyncCallback<Void> asyncCallback);
+    void sendStartupTask(StartupTaskInfo startupTaskInfo, String startUuid, Integer levelTaskId, AsyncCallback<Void> asyncCallback);
 }

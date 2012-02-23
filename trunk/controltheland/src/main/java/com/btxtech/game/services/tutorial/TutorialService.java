@@ -25,4 +25,6 @@ public interface TutorialService {
     CrudRootServiceHelper<DbTutorialConfig> getDbTutorialCrudRootServiceHelper();
 
     DbTutorialConfig getDbTutorialConfig(int levelTaskId) throws InvalidLevelState;
+
+    DbTutorialConfig getDbTutorialConfig4Tracking(int levelTaskId);
 }

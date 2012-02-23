@@ -58,7 +58,7 @@ public class SyncItemInfo extends Packet {
     private Index targetPosition;
     private Double destinationAngel;
     private Long clientTimeStamp;
-
+    private String startUuid;
 
     public Id getId() {
         return id;
@@ -317,6 +317,14 @@ public class SyncItemInfo extends Packet {
 
     public void setClientTimeStamp() {
         clientTimeStamp = System.currentTimeMillis();
+    }
+
+    public String getStartUuid() {
+        return startUuid;
+    }
+
+    public void setStartUuid(String startUuid) {
+        this.startUuid = startUuid;
     }
 
     @Override

@@ -38,12 +38,9 @@ public class LoadStartupTask extends AbstractStartupTask {
         deferredStartup.setDeferred();
 
         GwtCommon.setUncaughtExceptionHandler();
-        String sessionId = getSessionIdFromHtml();
-        long timeStamp = getTimeStampFromHtml();
-        String level = getLevelFromHtml();
 
         PlaybackAsync playbackAsync = GWT.create(Playback.class);
-        playbackAsync.getPlaybackInfo(sessionId, timeStamp, level, new AsyncCallback<PlaybackInfo>() {
+        playbackAsync.getPlaybackInfo(getStartUuid(), new AsyncCallback<PlaybackInfo>() {
             @Override
             public void onFailure(Throwable caught) {
                 GwtCommon.handleException(caught, true);
@@ -58,31 +55,13 @@ public class LoadStartupTask extends AbstractStartupTask {
         });
     }
 
-    private String getSessionIdFromHtml() {
+    private String getStartUuid() {
         RootPanel div = getStartupInformation();
-        String sessionId = div.getElement().getAttribute(PlaybackEntry.SESSION_ID);
+        String sessionId = div.getElement().getAttribute(PlaybackEntry.START_UUID);
         if (sessionId == null || sessionId.trim().isEmpty()) {
-            throw new IllegalArgumentException(PlaybackEntry.SESSION_ID + " not found in div element as parameter");
+            throw new IllegalArgumentException(PlaybackEntry.START_UUID + " not found in div element as parameter");
         }
         return sessionId;
-    }
-
-    private long getTimeStampFromHtml() {
-        RootPanel div = getStartupInformation();
-        String timeStampString = div.getElement().getAttribute(PlaybackEntry.START_LIFECYCLE_SERVER);
-        if (timeStampString == null || timeStampString.trim().isEmpty()) {
-            throw new IllegalArgumentException(PlaybackEntry.START_LIFECYCLE_SERVER + " not found in div element as parameter");
-        }
-        return Long.parseLong(timeStampString);
-    }
-
-    private String getLevelFromHtml() {
-        RootPanel div = getStartupInformation();
-        String level = div.getElement().getAttribute(PlaybackEntry.LEVEL_NAME);
-        if (level == null || level.trim().isEmpty()) {
-            throw new IllegalArgumentException(PlaybackEntry.LEVEL_NAME + " not found in div element as parameter");
-        }
-        return level;
     }
 
     private RootPanel getStartupInformation() {

@@ -18,9 +18,9 @@ import com.btxtech.game.jsre.playback.PlaybackInfo;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.playback.PlaybackService;
+import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.tracker.DbStartupTask;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -45,6 +45,8 @@ public class TestTracking extends AbstractServiceTest {
     private Session session;
     @Autowired
     private UserGuidanceService userGuidanceService;
+    @Autowired
+    private UserService userService;
 
     @Test
     @DirtiesContext
@@ -254,25 +256,112 @@ public class TestTracking extends AbstractServiceTest {
         endHttpSession();
     }
 
-    @Ignore
-    //@Test
+    @Test
+    @DirtiesContext
+    public void testStartup() throws Exception {
+        configureGameMultipleLevel();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_3_REAL_ID);
+        userTrackingService.onJavaScriptDetected(true);
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        String uuidReal = "00001";
+        String uuidTut = "00002";
+        beginHttpRequestAndOpenSessionInViewFilter();
+        long timeS1 = System.currentTimeMillis();
+        movableService.sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_JAVA_SCRIPT, 1000, 100), uuidReal, null);
+        long timeS2 = System.currentTimeMillis();
+        endHttpRequestAndOpenSessionInViewFilter();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        long timeT1 = System.currentTimeMillis();
+        movableService.sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_JAVA_SCRIPT, 1500, 200), uuidTut, TEST_LEVEL_TASK_3_3_SIM_ID);
+        long timeT2 = System.currentTimeMillis();
+        endHttpRequestAndOpenSessionInViewFilter();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        movableService.sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GAME, 2000, 300), uuidReal, null);
+        endHttpRequestAndOpenSessionInViewFilter();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        movableService.sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GUI, 2500, 110), uuidTut, TEST_LEVEL_TASK_3_3_SIM_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        movableService.sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_UNITS, 3000, 130), uuidReal, null);
+        endHttpRequestAndOpenSessionInViewFilter();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        movableService.sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_MAP, 3500, 150), uuidTut, TEST_LEVEL_TASK_3_3_SIM_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        movableService.sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_MAP, 1900, 60), uuidReal, null);
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        // Verify
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<SessionOverviewDto> sessionOverviewDtos = userTrackingService.getSessionOverviewDtos(UserTrackingFilter.newDefaultFilter());
+        Assert.assertEquals(1, sessionOverviewDtos.size());
+        SessionOverviewDto sessionOverviewDto = sessionOverviewDtos.get(0);
+        Assert.assertEquals(2, sessionOverviewDto.getStartAttempts());
+        Assert.assertFalse(sessionOverviewDto.isStartupFailure());
+
+        SessionDetailDto sessionDetailDto = userTrackingService.getSessionDetailDto(sessionOverviewDto.getSessionId());
+        Assert.assertEquals(2, sessionDetailDto.getLifecycleTrackingInfos().size());
+        // Real game
+        LifecycleTrackingInfo lifecycleTrackingInfo = sessionDetailDto.getLifecycleTrackingInfos().get(0);
+        Assert.assertTrue(lifecycleTrackingInfo.isRealGame());
+        Assert.assertTrue(timeS1 <= lifecycleTrackingInfo.getStartServer());
+        Assert.assertTrue(timeS2 >= lifecycleTrackingInfo.getStartServer());
+        Assert.assertEquals("Base 1", lifecycleTrackingInfo.getBaseName());
+        Assert.assertEquals(TEST_LEVEL_3_REAL, lifecycleTrackingInfo.getLevel());
+        Assert.assertEquals(590, lifecycleTrackingInfo.getStartupDuration());
+        Assert.assertEquals(4, lifecycleTrackingInfo.getGameStartups().size());
+        Assert.assertNull(lifecycleTrackingInfo.getLevelTaskName());
+        Assert.assertEquals("Load JavaScript", lifecycleTrackingInfo.getGameStartups().get(0).getTask());
+        Assert.assertEquals("Load Map", lifecycleTrackingInfo.getGameStartups().get(1).getTask());
+        Assert.assertEquals("Init real Game", lifecycleTrackingInfo.getGameStartups().get(2).getTask());
+        Assert.assertEquals("Load Units", lifecycleTrackingInfo.getGameStartups().get(3).getTask());
+        // Tutorial
+        lifecycleTrackingInfo = sessionDetailDto.getLifecycleTrackingInfos().get(1);
+        Assert.assertFalse(lifecycleTrackingInfo.isRealGame());
+        Assert.assertTrue(timeT1 <= lifecycleTrackingInfo.getStartServer());
+        Assert.assertTrue(timeT2 >= lifecycleTrackingInfo.getStartServer());
+        Assert.assertNull(lifecycleTrackingInfo.getBaseName());
+        Assert.assertEquals(TEST_LEVEL_3_REAL, lifecycleTrackingInfo.getLevel());
+        Assert.assertEquals(TEST_LEVEL_TASK_3_3_SIM_NAME, lifecycleTrackingInfo.getLevelTaskName());
+        Assert.assertEquals(460, lifecycleTrackingInfo.getStartupDuration());
+        Assert.assertEquals(3, lifecycleTrackingInfo.getGameStartups().size());
+        Assert.assertEquals("Load JavaScript", lifecycleTrackingInfo.getGameStartups().get(0).getTask());
+        Assert.assertEquals("Init GUI", lifecycleTrackingInfo.getGameStartups().get(1).getTask());
+        Assert.assertEquals("Load Map", lifecycleTrackingInfo.getGameStartups().get(2).getTask());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
     @DirtiesContext
     public void testTutorialTracking() throws Exception {
         configureGameMultipleLevel();
 
         beginHttpSession();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_3_REAL_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+
         tutorial1();
         tutorial2();
         realGame1();
+        realGame2();
         endHttpSession();
 
         // Verify
         verifyTutorial1();
         verifyTutorial2();
         verifyRealGame1();
+        verifyRealGame2();
     }
 
     private void tutorial1() throws Exception {
+        String uuid = "00002";
         // 0 until 1550 (client time )
         beginHttpRequestAndOpenSessionInViewFilter();
         userTrackingService.pageAccess("Page 1", null);
@@ -280,71 +369,62 @@ public class TestTracking extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<StartupTaskInfo> infos = new ArrayList<StartupTaskInfo>();
-        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_JAVA_SCRIPT, 1000, 100));
-        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GAME, 1100, 150));
-        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GUI, 1250, 50));
-        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_MAP, 1300, 200));
-        movableService.sendStartupInfo(infos, 500);
-        userTrackingService.onJavaScriptDetected(true);
-        endHttpRequestAndOpenSessionInViewFilter();
-
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        int taskLevelId = userGuidanceService.getDefaultLevelTaskId();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.STEP, taskLevelId, "step1", "task1", 1, 1100);
+        movableService.sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_JAVA_SCRIPT, 1000, 100), uuid, TEST_LEVEL_TASK_4_3_SIM_ID);
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TASK, taskLevelId, "task1", "Tutorial1", 1, 1500);
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TASK, uuid, TEST_LEVEL_TASK_4_3_SIM_ID, "task1", 1, 1500);
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
 
         // Tracking start
-        userTrackingService.onEventTrackingStart(new EventTrackingStart(101, 102, 103, 104, 105, 106, 1200));
+        userTrackingService.onEventTrackingStart(new EventTrackingStart(uuid, 101, 102, 103, 104, 105, 106, 1200));
         // Mouse
         Collection<EventTrackingItem> eventTrackingItems = new ArrayList<EventTrackingItem>();
-        eventTrackingItems.add(new EventTrackingItem(1, 1, 1, 1000));
-        eventTrackingItems.add(new EventTrackingItem(1, 10, 2, 1100));
-        eventTrackingItems.add(new EventTrackingItem(1, 10, 3, 1200));
-        eventTrackingItems.add(new EventTrackingItem(1, 10, 4, 1300));
-        eventTrackingItems.add(new EventTrackingItem(1, 10, 5, 1400));
+        eventTrackingItems.add(new EventTrackingItem(uuid, 1, 1, 1, 1000));
+        eventTrackingItems.add(new EventTrackingItem(uuid, 1, 10, 2, 1100));
+        eventTrackingItems.add(new EventTrackingItem(uuid, 1, 10, 3, 1200));
+        eventTrackingItems.add(new EventTrackingItem(uuid, 1, 10, 4, 1300));
+        eventTrackingItems.add(new EventTrackingItem(uuid, 1, 10, 5, 1400));
         // SyncItemInfo                                                                     1
         Collection<SyncItemInfo> itemInfos = new ArrayList<SyncItemInfo>();
         SyncItemInfo syncItemInfo = new SyncItemInfo();
+        syncItemInfo.setStartUuid(uuid);
         syncItemInfo.setAmount(0.5);
         syncItemInfo.setId(new Id(1, 1, 1));
         setPrivateField(SyncItemInfo.class, syncItemInfo, "clientTimeStamp", 1200L);
         itemInfos.add(syncItemInfo);
         // Selection
         Collection<SelectionTrackingItem> selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
-        SelectionTrackingItem selectionTrackingItem = new SelectionTrackingItem();
+        SelectionTrackingItem selectionTrackingItem = new SelectionTrackingItem(uuid);
         setPrivateField(SelectionTrackingItem.class, selectionTrackingItem, "timeStamp", 1300);
         selectionTrackingItems.add(selectionTrackingItem);
         // Terrain scrolling
         Collection<TerrainScrollTracking> terrainScrollTrackings = new ArrayList<TerrainScrollTracking>();
-        terrainScrollTrackings.add(new TerrainScrollTracking(2, 1, 2, 3, 1100));
-        terrainScrollTrackings.add(new TerrainScrollTracking(3, 1, 2, 3, 1150));
-        terrainScrollTrackings.add(new TerrainScrollTracking(1, 1, 2, 3, 1050));
+        terrainScrollTrackings.add(new TerrainScrollTracking(uuid, 2, 1, 1100));
+        terrainScrollTrackings.add(new TerrainScrollTracking(uuid, 3, 1, 1150));
+        terrainScrollTrackings.add(new TerrainScrollTracking(uuid, 1, 1, 1050));
         // Browser window
         Collection<BrowserWindowTracking> browserWindowTrackings = new ArrayList<BrowserWindowTracking>();
-        browserWindowTrackings.add(new BrowserWindowTracking(1, 2, 3, 4, 5, 6, 1100));
-        browserWindowTrackings.add(new BrowserWindowTracking(2, 2, 3, 4, 5, 6, 1200));
-        browserWindowTrackings.add(new BrowserWindowTracking(3, 2, 3, 4, 5, 6, 1300));
-        browserWindowTrackings.add(new BrowserWindowTracking(4, 2, 3, 4, 5, 6, 1400));
+        browserWindowTrackings.add(new BrowserWindowTracking(uuid, 1, 2, 3, 4, 5, 6, 1100));
+        browserWindowTrackings.add(new BrowserWindowTracking(uuid, 2, 2, 3, 4, 5, 6, 1200));
+        browserWindowTrackings.add(new BrowserWindowTracking(uuid, 3, 2, 3, 4, 5, 6, 1300));
+        browserWindowTrackings.add(new BrowserWindowTracking(uuid, 4, 2, 3, 4, 5, 6, 1400));
         // Dialogs
         Collection<DialogTracking> dialogTrackings = new ArrayList<DialogTracking>();
-        dialogTrackings.add(new DialogTracking(1, 2, 3, 4, 1, "dialog1", false, 42, 1100));
-        dialogTrackings.add(new DialogTracking(5, 6, 7, 8, 2, "dialog2", false, 43, 1120));
-        dialogTrackings.add(new DialogTracking(null, null, null, null, null, "dialog3", false, 44, 1140));
+        dialogTrackings.add(new DialogTracking(uuid, 1, 2, 3, 4, 1, "dialog1", false, 42, 1100));
+        dialogTrackings.add(new DialogTracking(uuid, 5, 6, 7, 8, 2, "dialog2", false, 43, 1120));
+        dialogTrackings.add(new DialogTracking(uuid, null, null, null, null, null, "dialog3", false, 44, 1140));
 
         movableService.sendEventTrackerItems(eventTrackingItems, itemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings, dialogTrackings);
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TASK, taskLevelId, "tutorial1", null, 1, 1550);
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TASK, uuid, TEST_LEVEL_TASK_4_3_SIM_ID, "task2", 1, 1550);
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, uuid, TEST_LEVEL_TASK_4_3_SIM_ID, "tutorial1", 1, 1550);
         endHttpRequestAndOpenSessionInViewFilter();
     }
 
     private void tutorial2() throws Exception {
+        String uuid = "00052";
         // 1600 until 3100 (client time )
         beginHttpRequestAndOpenSessionInViewFilter();
         userTrackingService.pageAccess("Page 1", null);
@@ -352,86 +432,79 @@ public class TestTracking extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<StartupTaskInfo> infos = new ArrayList<StartupTaskInfo>();
-        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_JAVA_SCRIPT, 1600, 100));
-        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GAME, 1700, 150));
-        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GUI, 1850, 50));
-        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_MAP, 1900, 200));
-        movableService.sendStartupInfo(infos, 500);
-        userTrackingService.onJavaScriptDetected(true);
+        movableService.sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_JAVA_SCRIPT, 1600, 100), uuid, TEST_LEVEL_TASK_3_3_SIM_ID);
+        movableService.sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GAME, 1700, 150), uuid, TEST_LEVEL_TASK_3_3_SIM_ID);
+        movableService.sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GUI, 1850, 50), uuid, TEST_LEVEL_TASK_3_3_SIM_ID);
+        movableService.sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_MAP, 1900, 200), uuid, TEST_LEVEL_TASK_3_3_SIM_ID);
         endHttpRequestAndOpenSessionInViewFilter();
 
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        int taskLevelId = userGuidanceService.getDefaultLevelTaskId();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.STEP, taskLevelId, "step2", "task2", 1, 2500);
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TASK, taskLevelId, "task2", "Tutorial2", 1, 3000);
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TASK, uuid, TEST_LEVEL_TASK_3_3_SIM_ID, "task3", 1, 3000);
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
 
         // Tracking start
-        userTrackingService.onEventTrackingStart(new EventTrackingStart(201, 202, 203, 204, 205, 206, 1900));
+        userTrackingService.onEventTrackingStart(new EventTrackingStart(uuid, 201, 202, 203, 204, 205, 206, 1900));
         // Mouse
         Collection<EventTrackingItem> eventTrackingItems = new ArrayList<EventTrackingItem>();
-        eventTrackingItems.add(new EventTrackingItem(1, 1, 1, 1910));
-        eventTrackingItems.add(new EventTrackingItem(2, 10, 1, 1920));
-        eventTrackingItems.add(new EventTrackingItem(3, 10, 1, 1930));
-        eventTrackingItems.add(new EventTrackingItem(4, 10, 1, 1940));
-        eventTrackingItems.add(new EventTrackingItem(5, 10, 1, 1950));
+        eventTrackingItems.add(new EventTrackingItem(uuid, 1, 1, 1, 1910));
+        eventTrackingItems.add(new EventTrackingItem(uuid, 2, 10, 1, 1920));
+        eventTrackingItems.add(new EventTrackingItem(uuid, 3, 10, 1, 1930));
+        eventTrackingItems.add(new EventTrackingItem(uuid, 4, 10, 1, 1940));
+        eventTrackingItems.add(new EventTrackingItem(uuid, 5, 10, 1, 1950));
         // SyncItemInfos                                                                     1
         Collection<SyncItemInfo> syncItemInfos = new ArrayList<SyncItemInfo>();
         SyncItemInfo syncItemInfo = new SyncItemInfo();
+        syncItemInfo.setStartUuid(uuid);
         syncItemInfo.setFollowTarget(true);
         syncItemInfo.setId(new Id(2, 2, 2));
         setPrivateField(SyncItemInfo.class, syncItemInfo, "clientTimeStamp", 2000L);
         syncItemInfos.add(syncItemInfo);
         // Selection
         Collection<SelectionTrackingItem> selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
-        SelectionTrackingItem selectionTrackingItem1 = new SelectionTrackingItem();
+        SelectionTrackingItem selectionTrackingItem1 = new SelectionTrackingItem(uuid);
         setPrivateField(SelectionTrackingItem.class, selectionTrackingItem1, "timeStamp", 2050);
         selectionTrackingItems.add(selectionTrackingItem1);
-        SelectionTrackingItem selectionTrackingItem2 = new SelectionTrackingItem();
+        SelectionTrackingItem selectionTrackingItem2 = new SelectionTrackingItem(uuid);
         setPrivateField(SelectionTrackingItem.class, selectionTrackingItem2, "timeStamp", 2100);
         selectionTrackingItems.add(selectionTrackingItem2);
         // Terrain scrolling
         Collection<TerrainScrollTracking> terrainScrollTrackings = new ArrayList<TerrainScrollTracking>();
-        terrainScrollTrackings.add(new TerrainScrollTracking(1, 1, 2, 3, 2100));
-        terrainScrollTrackings.add(new TerrainScrollTracking(1, 2, 2, 3, 2200));
+        terrainScrollTrackings.add(new TerrainScrollTracking(uuid, 1, 1, 2100));
+        terrainScrollTrackings.add(new TerrainScrollTracking(uuid, 1, 2, 2200));
         // Browser window
         Collection<BrowserWindowTracking> browserWindowTrackings = new ArrayList<BrowserWindowTracking>();
-        browserWindowTrackings.add(new BrowserWindowTracking(1, 1, 3, 4, 5, 6, 2100));
-        browserWindowTrackings.add(new BrowserWindowTracking(1, 2, 3, 4, 5, 6, 2120));
-        browserWindowTrackings.add(new BrowserWindowTracking(1, 3, 3, 4, 5, 6, 2130));
-        browserWindowTrackings.add(new BrowserWindowTracking(1, 4, 3, 4, 5, 6, 2140));
-        browserWindowTrackings.add(new BrowserWindowTracking(1, 5, 3, 4, 5, 6, 2150));
+        browserWindowTrackings.add(new BrowserWindowTracking(uuid, 1, 1, 3, 4, 5, 6, 2100));
+        browserWindowTrackings.add(new BrowserWindowTracking(uuid, 1, 2, 3, 4, 5, 6, 2120));
+        browserWindowTrackings.add(new BrowserWindowTracking(uuid, 1, 3, 3, 4, 5, 6, 2130));
+        browserWindowTrackings.add(new BrowserWindowTracking(uuid, 1, 4, 3, 4, 5, 6, 2140));
+        browserWindowTrackings.add(new BrowserWindowTracking(uuid, 1, 5, 3, 4, 5, 6, 2150));
         // Dialogs
         Collection<DialogTracking> dialogTrackings = new ArrayList<DialogTracking>();
-        dialogTrackings.add(new DialogTracking(10, 2, 3, 4, 19, "dialog11", true, 52, 2100));
-        dialogTrackings.add(new DialogTracking(50, 6, 7, 8, 29, "dialog12", true, 53, 2120));
-        dialogTrackings.add(new DialogTracking(90, 10, 11, 12, 39, "dialog13", true, 54, 2140));
-        dialogTrackings.add(new DialogTracking(130, 14, 15, 16, 49, "dialog14", true, 55, 2160));
+        dialogTrackings.add(new DialogTracking(uuid, 10, 2, 3, 4, 19, "dialog11", true, 52, 2100));
+        dialogTrackings.add(new DialogTracking(uuid, 50, 6, 7, 8, 29, "dialog12", true, 53, 2120));
+        dialogTrackings.add(new DialogTracking(uuid, 90, 10, 11, 12, 39, "dialog13", true, 54, 2140));
+        dialogTrackings.add(new DialogTracking(uuid, 130, 14, 15, 16, 49, "dialog14", true, 55, 2160));
 
         movableService.sendEventTrackerItems(eventTrackingItems, syncItemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings, dialogTrackings);
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, taskLevelId, "tutorial2", null, 1, 3100);
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TASK, uuid, TEST_LEVEL_TASK_3_3_SIM_ID, "task4", 1, 3100);
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, uuid, TEST_LEVEL_TASK_3_3_SIM_ID, "tutorial2", 1, 3100);
         endHttpRequestAndOpenSessionInViewFilter();
     }
 
     private void realGame1() throws Exception {
+        String uuid = "00018";
         // 1600 until 3100 (client time )
         beginHttpRequestAndOpenSessionInViewFilter();
         userTrackingService.pageAccess("Page 1", null);
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<StartupTaskInfo> infos = new ArrayList<StartupTaskInfo>();
-        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_JAVA_SCRIPT, 3200, 100));
-        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_MAP, 3300, 400));
-        infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_UNITS, 3700, 500));
-        movableService.sendStartupInfo(infos, 500);
+        movableService.sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_JAVA_SCRIPT, 3200, 100), uuid, null);
+        movableService.sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_MAP, 3300, 400), uuid, null);
+        movableService.sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_UNITS, 3700, 500), uuid, null);
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -444,6 +517,27 @@ public class TestTracking extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
     }
 
+    private void realGame2() throws Exception {
+        String uuid = "00033";
+        // 1600 until 3100 (client time )
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userTrackingService.pageAccess("Page 1", null);
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        movableService.sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GAME, 3200, 100), uuid, null);
+        movableService.sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.DOWNLOAD_GAME_INFO, 3300, 400), uuid, null);
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        SimpleBase simpleBase = getMyBase();
+        sendFactoryCommand(getFirstSynItemId(simpleBase, TEST_FACTORY_ITEM_ID), TEST_CONTAINER_ITEM_ID);
+        waitForActionServiceDone();
+        sendFactoryCommand(getFirstSynItemId(simpleBase, TEST_FACTORY_ITEM_ID), TEST_HARVESTER_ITEM_ID);
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+    }
+
     private void verifyTutorial1() {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -453,24 +547,24 @@ public class TestTracking extends AbstractServiceTest {
         SessionDetailDto sessionDetailDto = userTrackingService.getSessionDetailDto(sessionOverviewDto.getSessionId());
         // Life cycle
         List<LifecycleTrackingInfo> lifecycleTrackingInfos = sessionDetailDto.getLifecycleTrackingInfos();
-        Assert.assertEquals(3, lifecycleTrackingInfos.size());
+        Assert.assertEquals(4, lifecycleTrackingInfos.size());
         // Start ups
         List<DbStartupTask> dbStartupTasks = lifecycleTrackingInfos.get(0).getGameStartups();
-        Assert.assertEquals(4, dbStartupTasks.size());
+        Assert.assertEquals(1, dbStartupTasks.size());
         Assert.assertEquals(ColdRealGameStartupTaskEnum.LOAD_JAVA_SCRIPT.getStartupTaskEnumHtmlHelper().getNiceText(), dbStartupTasks.get(0).getTask());
-        Assert.assertEquals(ColdRealGameStartupTaskEnum.INIT_GAME.getStartupTaskEnumHtmlHelper().getNiceText(), dbStartupTasks.get(1).getTask());
-        Assert.assertEquals(ColdRealGameStartupTaskEnum.INIT_GUI.getStartupTaskEnumHtmlHelper().getNiceText(), dbStartupTasks.get(2).getTask());
-        Assert.assertEquals(ColdRealGameStartupTaskEnum.LOAD_MAP.getStartupTaskEnumHtmlHelper().getNiceText(), dbStartupTasks.get(3).getTask());
         // Tutorial progress
         TutorialTrackingInfo tutorialTrackingInfo = userTrackingService.getTutorialTrackingInfo(lifecycleTrackingInfos.get(0));
         Assert.assertEquals(3, tutorialTrackingInfo.getDbTutorialProgresss().size());
-        Assert.assertEquals("step1", tutorialTrackingInfo.getDbTutorialProgresss().get(0).getName());
-        Assert.assertEquals("task1", tutorialTrackingInfo.getDbTutorialProgresss().get(1).getName());
-        Assert.assertEquals("tutorial1", tutorialTrackingInfo.getDbTutorialProgresss().get(2).getName());
+        Assert.assertEquals("task1", tutorialTrackingInfo.getDbTutorialProgresss().get(0).getTutorialTaskName());
+        Assert.assertEquals("task2", tutorialTrackingInfo.getDbTutorialProgresss().get(1).getTutorialTaskName());
+        Assert.assertEquals("tutorial1", tutorialTrackingInfo.getDbTutorialProgresss().get(2).getTutorialTaskName());
+        Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIM_NAME, tutorialTrackingInfo.getDbTutorialProgresss().get(0).getLevelTaskName());
+        Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIM_NAME, tutorialTrackingInfo.getDbTutorialProgresss().get(1).getLevelTaskName());
+        Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIM_NAME, tutorialTrackingInfo.getDbTutorialProgresss().get(2).getLevelTaskName());
         Assert.assertEquals(101, tutorialTrackingInfo.getDbEventTrackingStart().getClientWidth());
         Assert.assertEquals(102, tutorialTrackingInfo.getDbEventTrackingStart().getClientHeight());
         // Playback
-        PlaybackInfo playbackInfo = playbackService.getPlaybackInfo(sessionOverviewDto.getSessionId(), lifecycleTrackingInfos.get(0).getStartServer(), lifecycleTrackingInfos.get(0).getLevel());
+        PlaybackInfo playbackInfo = playbackService.getPlaybackInfo(lifecycleTrackingInfos.get(0).getStartUuid());
         // Tracking start
         Assert.assertEquals(101, playbackInfo.getEventTrackingStart().getClientWidth());
         Assert.assertEquals(102, playbackInfo.getEventTrackingStart().getClientHeight());
@@ -527,7 +621,7 @@ public class TestTracking extends AbstractServiceTest {
         SessionDetailDto sessionDetailDto = userTrackingService.getSessionDetailDto(sessionOverviewDto.getSessionId());
         // Life cycle
         List<LifecycleTrackingInfo> lifecycleTrackingInfos = sessionDetailDto.getLifecycleTrackingInfos();
-        Assert.assertEquals(3, lifecycleTrackingInfos.size());
+        Assert.assertEquals(4, lifecycleTrackingInfos.size());
         // Start ups
         List<DbStartupTask> dbStartupTasks = lifecycleTrackingInfos.get(1).getGameStartups();
         Assert.assertEquals(4, dbStartupTasks.size());
@@ -538,13 +632,13 @@ public class TestTracking extends AbstractServiceTest {
         // Tutorial progress
         TutorialTrackingInfo tutorialTrackingInfo = userTrackingService.getTutorialTrackingInfo(lifecycleTrackingInfos.get(1));
         Assert.assertEquals(3, tutorialTrackingInfo.getDbTutorialProgresss().size());
-        Assert.assertEquals("step2", tutorialTrackingInfo.getDbTutorialProgresss().get(0).getName());
-        Assert.assertEquals("task2", tutorialTrackingInfo.getDbTutorialProgresss().get(1).getName());
-        Assert.assertEquals("tutorial2", tutorialTrackingInfo.getDbTutorialProgresss().get(2).getName());
+        Assert.assertEquals("task3", tutorialTrackingInfo.getDbTutorialProgresss().get(0).getTutorialTaskName());
+        Assert.assertEquals("task4", tutorialTrackingInfo.getDbTutorialProgresss().get(1).getTutorialTaskName());
+        Assert.assertEquals("tutorial2", tutorialTrackingInfo.getDbTutorialProgresss().get(2).getTutorialTaskName());
         Assert.assertEquals(201, tutorialTrackingInfo.getDbEventTrackingStart().getClientWidth());
         Assert.assertEquals(202, tutorialTrackingInfo.getDbEventTrackingStart().getClientHeight());
         // Playback
-        PlaybackInfo playbackInfo = playbackService.getPlaybackInfo(sessionOverviewDto.getSessionId(), lifecycleTrackingInfos.get(1).getStartServer(), lifecycleTrackingInfos.get(1).getLevel());
+        PlaybackInfo playbackInfo = playbackService.getPlaybackInfo(lifecycleTrackingInfos.get(1).getStartUuid());
         // Tracking start
         Assert.assertEquals(201, playbackInfo.getEventTrackingStart().getClientWidth());
         Assert.assertEquals(202, playbackInfo.getEventTrackingStart().getClientHeight());
@@ -599,7 +693,7 @@ public class TestTracking extends AbstractServiceTest {
         SessionDetailDto sessionDetailDto = userTrackingService.getSessionDetailDto(sessionOverviewDto.getSessionId());
         // Life cycle
         List<LifecycleTrackingInfo> lifecycleTrackingInfos = sessionDetailDto.getLifecycleTrackingInfos();
-        Assert.assertEquals(3, lifecycleTrackingInfos.size());
+        Assert.assertEquals(4, lifecycleTrackingInfos.size());
         // Start ups
         List<DbStartupTask> dbStartupTasks = lifecycleTrackingInfos.get(2).getGameStartups();
         Assert.assertEquals(3, dbStartupTasks.size());
@@ -614,10 +708,39 @@ public class TestTracking extends AbstractServiceTest {
         for (UserCommandHistoryElement userCommandHistoryElement : userCommandHistoryElements) {
             System.out.println(userCommandHistoryElement.getTimeStamp() + "|" + userCommandHistoryElement.getInfo1() + "|" + userCommandHistoryElement.getInfo2());
         }
-        Assert.assertEquals(3, userCommandHistoryElements.size());
+        Assert.assertEquals(2, userCommandHistoryElements.size());
         Assert.assertEquals("Item created: TestFactoryItem", userCommandHistoryElements.get(0).getInfo1());
         Assert.assertEquals("Item created: TestAttackItem", userCommandHistoryElements.get(1).getInfo1());
-        Assert.assertEquals("Level reached: TEST_LEVEL_3_REAL", userCommandHistoryElements.get(2).getInfo1());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    private void verifyRealGame2() {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<SessionOverviewDto> sessionOverviewDtos = userTrackingService.getSessionOverviewDtos(UserTrackingFilter.newDefaultFilter());
+        Assert.assertEquals(1, sessionOverviewDtos.size());
+        SessionOverviewDto sessionOverviewDto = sessionOverviewDtos.get(0);
+        SessionDetailDto sessionDetailDto = userTrackingService.getSessionDetailDto(sessionOverviewDto.getSessionId());
+        // Life cycle
+        List<LifecycleTrackingInfo> lifecycleTrackingInfos = sessionDetailDto.getLifecycleTrackingInfos();
+        Assert.assertEquals(4, lifecycleTrackingInfos.size());
+        // Start ups
+        List<DbStartupTask> dbStartupTasks = lifecycleTrackingInfos.get(3).getGameStartups();
+        Assert.assertEquals(2, dbStartupTasks.size());
+
+        Assert.assertEquals(ColdRealGameStartupTaskEnum.INIT_GAME.getStartupTaskEnumHtmlHelper().getNiceText(), dbStartupTasks.get(0).getTask());
+        Assert.assertEquals(ColdRealGameStartupTaskEnum.DOWNLOAD_GAME_INFO.getStartupTaskEnumHtmlHelper().getNiceText(), dbStartupTasks.get(1).getTask());
+        // Real Game
+        RealGameTrackingInfo realGameTrackingInfo = userTrackingService.getGameTracking(lifecycleTrackingInfos.get(3));
+        List<UserCommandHistoryElement> userCommandHistoryElements = realGameTrackingInfo.getUserCommandHistoryElements();
+        System.out.println("----------History----------");
+        for (UserCommandHistoryElement userCommandHistoryElement : userCommandHistoryElements) {
+            System.out.println(userCommandHistoryElement.getTimeStamp() + "|" + userCommandHistoryElement.getInfo1() + "|" + userCommandHistoryElement.getInfo2());
+        }
+        Assert.assertEquals(2, userCommandHistoryElements.size());
+        Assert.assertEquals("Item created: TestContainerItem", userCommandHistoryElements.get(0).getInfo1());
+        Assert.assertEquals("Item created: TEST_HARVESTER_ITEM", userCommandHistoryElements.get(1).getInfo1());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

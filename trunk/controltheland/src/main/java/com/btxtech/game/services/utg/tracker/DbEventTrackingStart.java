@@ -14,6 +14,7 @@
 package com.btxtech.game.services.utg.tracker;
 
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -43,6 +44,8 @@ public class DbEventTrackingStart implements Serializable {
     private int scrollTop;
     private int scrollWidth;
     private int scrollHeight;
+    @Index(name = "TRACKER_TUTORIAL_INDEX_START_UUID")
+    private String startUuid;
 
     /**
      * Used by Hibernate
@@ -61,11 +64,12 @@ public class DbEventTrackingStart implements Serializable {
         scrollWidth = eventTrackingStart.getScrollWidth();
         scrollHeight = eventTrackingStart.getScrollHeight();
         clientTimeStamp = eventTrackingStart.getClientTimeStamp();
-        timeStamp = new Date();                
+        startUuid = eventTrackingStart.getStartUuid();
+        timeStamp = new Date();
     }
 
     public EventTrackingStart createEventTrackingStart() {
-        return new EventTrackingStart(clientWidth, clientHeight, scrollLeft, scrollTop, scrollWidth, scrollHeight, clientTimeStamp);
+        return new EventTrackingStart(startUuid, clientWidth, clientHeight, scrollLeft, scrollTop, scrollWidth, scrollHeight, clientTimeStamp);
     }
 
     public String getSessionId() {
@@ -88,6 +92,14 @@ public class DbEventTrackingStart implements Serializable {
         return timeStampMs;
     }
 
+    public Date getTimeStamp() {
+        return timeStamp;
+    }
+
+    public String getStartUuid() {
+        return startUuid;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -95,11 +107,11 @@ public class DbEventTrackingStart implements Serializable {
 
         DbEventTrackingStart that = (DbEventTrackingStart) o;
 
-        return !(id != null ? !id.equals(that.id) : that.id != null);
+        return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 }

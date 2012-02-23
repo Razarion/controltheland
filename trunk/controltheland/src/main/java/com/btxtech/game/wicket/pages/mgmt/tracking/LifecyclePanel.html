@@ -13,7 +13,7 @@
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
 <head>
     <title></title>
 </head>
@@ -23,24 +23,20 @@
     <h3>Lifecycle</h3>
     <table border="0">
         <tr>
-            <td bgcolor="#dadada">Time in Game</td>
-            <td _wicket:id="timeInGame">?</td>
-        </tr>
-        <tr>
             <td bgcolor="#dadada">User Name</td>
-            <td _wicket:id="userName">?</td>
+            <td wicket:id="userName"></td>
         </tr>
         <tr>
             <td bgcolor="#dadada">Level</td>
             <td wicket:id="level"/>
         </tr>
         <tr>
-            <td bgcolor="#dadada">Startup Begin</td>
-            <td wicket:id="startTime"/>
+            <td bgcolor="#dadada">LevelTaskName</td>
+            <td wicket:id="levelTaskName"/>
         </tr>
         <tr>
-            <td bgcolor="#dadada">Next Startup Begin</td>
-            <td wicket:id="endTime"/>
+            <td bgcolor="#dadada">Startup Begin</td>
+            <td wicket:id="startTime"/>
         </tr>
     </table>
     <h3>Startup</h3>

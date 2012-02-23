@@ -31,9 +31,10 @@ import java.util.Date;
 public class LifecyclePanel extends Panel {
     public LifecyclePanel(String id, LifecycleTrackingInfo lifecycleTrackingInfo) {
         super(id);
+        add(new Label("userName", lifecycleTrackingInfo.getUserName()));
         add(new Label("level", lifecycleTrackingInfo.getLevel()));
+        add(new Label("levelTaskName", lifecycleTrackingInfo.getLevelTaskName()));
         add(new Label("startTime", DateUtil.formatDateTime(new Date(lifecycleTrackingInfo.getStartServer()))));
-        add(new Label("endTime", DateUtil.formatDateTime(lifecycleTrackingInfo.getNextStartServer() != null ? new Date(lifecycleTrackingInfo.getNextStartServer()) : null)));
         add(new ListView<DbStartupTask>("startup", lifecycleTrackingInfo.getGameStartups()) {
             @Override
             protected void populateItem(ListItem<DbStartupTask> gameStartupListItem) {

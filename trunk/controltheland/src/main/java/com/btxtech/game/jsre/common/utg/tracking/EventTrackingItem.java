@@ -25,6 +25,7 @@ public class EventTrackingItem implements Serializable {
     private int yPos;
     private int eventType;
     private long clientTimeStamp;
+    private String startUuid;
 
     /**
      * Used by GWT
@@ -32,14 +33,16 @@ public class EventTrackingItem implements Serializable {
     public EventTrackingItem() {
     }
 
-    public EventTrackingItem(int xPos, int yPos, int eventType) {
+    public EventTrackingItem(String startUuid, int xPos, int yPos, int eventType) {
+        this.startUuid = startUuid;
         this.xPos = xPos;
         this.yPos = yPos;
         this.eventType = eventType;
         clientTimeStamp = System.currentTimeMillis();
     }
 
-    public EventTrackingItem(int xPos, int yPos, int eventType, long clientTimeStamp) {
+    public EventTrackingItem(String startUuid, int xPos, int yPos, int eventType, long clientTimeStamp) {
+        this.startUuid = startUuid;
         this.xPos = xPos;
         this.yPos = yPos;
         this.eventType = eventType;
@@ -60,5 +63,9 @@ public class EventTrackingItem implements Serializable {
 
     public long getClientTimeStamp() {
         return clientTimeStamp;
+    }
+
+    public String getStartUuid() {
+        return startUuid;
     }
 }

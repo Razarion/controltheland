@@ -21,6 +21,7 @@ import java.io.Serializable;
  * Time: 12:30:41
  */
 public class DialogTracking implements Serializable {
+    private String startUuid;
     private Integer left;
     private Integer top;
     private Integer width;
@@ -37,7 +38,8 @@ public class DialogTracking implements Serializable {
     protected DialogTracking() {
     }
 
-    public DialogTracking(Integer left, Integer top, Integer width, Integer height, Integer zIndex, String description, boolean appearing, int identityHashCode, long clientTimeStamp) {
+    public DialogTracking(String startUuid, Integer left, Integer top, Integer width, Integer height, Integer zIndex, String description, boolean appearing, int identityHashCode, long clientTimeStamp) {
+        this.startUuid = startUuid;
         this.left = left;
         this.top = top;
         this.width = width;
@@ -49,7 +51,8 @@ public class DialogTracking implements Serializable {
         this.identityHashCode = identityHashCode;
     }
 
-    public DialogTracking(int left, int top, int width, int height, Integer zIndex, String description, int identityHashCode) {
+    public DialogTracking(String startUuid, int left, int top, int width, int height, Integer zIndex, String description, int identityHashCode) {
+        this.startUuid = startUuid;
         this.left = left;
         this.top = top;
         this.width = width;
@@ -61,7 +64,8 @@ public class DialogTracking implements Serializable {
         clientTimeStamp = System.currentTimeMillis();
     }
 
-    public DialogTracking(int identityHashCode) {
+    public DialogTracking(String startUuid, int identityHashCode) {
+        this.startUuid = startUuid;
         this.identityHashCode = identityHashCode;
         appearing = false;
         clientTimeStamp = System.currentTimeMillis();
@@ -101,5 +105,9 @@ public class DialogTracking implements Serializable {
 
     public Integer getZIndex() {
         return zIndex;
+    }
+
+    public String getStartUuid() {
+        return startUuid;
     }
 }

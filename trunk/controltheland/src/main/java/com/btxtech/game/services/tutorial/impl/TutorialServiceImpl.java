@@ -19,7 +19,9 @@ import com.btxtech.game.services.common.NoSuchChildException;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
+import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +40,8 @@ public class TutorialServiceImpl implements TutorialService {
     private UserGuidanceService userGuidanceService;
     @Autowired
     private ItemService itemService;
+    @Autowired
+    private SessionFactory sessionFactory;
 
     @PostConstruct
     public void ini() {
@@ -57,4 +61,14 @@ public class TutorialServiceImpl implements TutorialService {
             throw userGuidanceService.createInvalidLevelState();
         }
     }
+
+    @Override
+    public DbTutorialConfig getDbTutorialConfig4Tracking(int levelTaskId) {
+        DbLevelTask dbLevelTask = (DbLevelTask) sessionFactory.getCurrentSession().get(DbLevelTask.class, levelTaskId);
+        if (dbLevelTask == null) {
+            throw new NoSuchChildException(levelTaskId, DbLevelTask.class);
+        }
+        return dbLevelTask.getDbTutorialConfig();
+    }
+
 }

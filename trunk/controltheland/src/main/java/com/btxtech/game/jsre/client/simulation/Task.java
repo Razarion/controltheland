@@ -27,13 +27,10 @@ import java.util.List;
  */
 public class Task {
     private TaskConfig taskConfig;
-    private int levelTaskId;
     private Step activeStep;
-    private long stepTime;
 
-    public Task(TaskConfig taskConfig, int levelTaskId) {
+    public Task(TaskConfig taskConfig) {
         this.taskConfig = taskConfig;
-        this.levelTaskId = levelTaskId;
         start();
     }
 
@@ -69,11 +66,6 @@ public class Task {
     }
 
     private void runNextStep(StepConfig stepConfig) {
-        if (activeStep != null) {
-            long time = System.currentTimeMillis();
-            ClientUserTracker.getInstance().onStepFinished(levelTaskId, activeStep, this, time - stepTime, time);
-        }
-        stepTime = System.currentTimeMillis();
         activeStep = new Step(stepConfig);
     }
 

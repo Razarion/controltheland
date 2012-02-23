@@ -37,10 +37,9 @@ public class DbSyncItemInfo implements Serializable {
     private Date niceTimeStamp;
     @Column(nullable = false)
     private long clientTimeStamp;
-    @Column(nullable = false)
-    private String sessionId;
     @Column(nullable = false, length = 100000)
     private SyncItemInfo syncItemInfo;
+    private String startUuid;
 
     /**
      * Used by hibernate
@@ -48,11 +47,11 @@ public class DbSyncItemInfo implements Serializable {
     public DbSyncItemInfo() {
     }
 
-    public DbSyncItemInfo(SyncItemInfo syncItemInfo, String sessionId) {
-        this.sessionId = sessionId;
+    public DbSyncItemInfo(SyncItemInfo syncItemInfo) {
         clientTimeStamp = syncItemInfo.getClientTimeStamp();
         niceTimeStamp = new Date();
         this.syncItemInfo = syncItemInfo;
+        startUuid = syncItemInfo.getStartUuid();
     }
 
     public Date getNiceTimeStamp() {
@@ -63,12 +62,12 @@ public class DbSyncItemInfo implements Serializable {
         return clientTimeStamp;
     }
 
-    public String getSessionId() {
-        return sessionId;
-    }
-
     public SyncItemInfo getSyncItemInfo() {
         return syncItemInfo;
+    }
+
+    public String getStartUuid() {
+        return startUuid;
     }
 
     @Override

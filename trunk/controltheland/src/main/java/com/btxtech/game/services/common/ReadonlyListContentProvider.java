@@ -59,7 +59,7 @@ public class ReadonlyListContentProvider<T extends CrudChild> implements Content
     public T readDbChild(Serializable id) {
         T t = map.get(id);
         if (t == null) {
-            throw new NoSuchChildException(id);
+            throw new NoSuchChildException(id, null);
         }
         return t;
     }

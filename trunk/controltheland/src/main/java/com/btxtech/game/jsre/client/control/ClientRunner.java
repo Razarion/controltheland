@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client.control;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.DeferredStartup;
+import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public class ClientRunner {
     private List<AbstractStartupTask> finishedTasks = new ArrayList<AbstractStartupTask>();
     private boolean failed;
     private Logger log = Logger.getLogger(ClientRunner.class.getName());
+    private String startUuid;
 
     public void addStartupProgressListener(StartupProgressListener startupProgressListener) {
         listeners.add(startupProgressListener);
@@ -46,6 +48,7 @@ public class ClientRunner {
     }
 
     public void start(StartupSeq startupSeq) {
+        startUuid = MathHelper.generateUuid();
         failed = false;
         for (StartupProgressListener listener : listeners) {
             listener.onStart(startupSeq);
@@ -181,5 +184,9 @@ public class ClientRunner {
         for (StartupTaskEnum startupTaskEnum : startupSeq.getAbstractStartupTaskEnum()) {
             startupList.add(startupTaskEnum.createTask());
         }
+    }
+
+    public String getStartUuid() {
+        return startUuid;
     }
 }

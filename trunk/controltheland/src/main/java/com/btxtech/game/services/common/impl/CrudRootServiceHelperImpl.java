@@ -106,7 +106,7 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
     public T readDbChild(Serializable id) {
         T t = (T) sessionFactory.getCurrentSession().get(childClass, id);
         if (t == null) {
-            throw new NoSuchChildException("Class: " + childClass + " id: " + id);
+            throw new NoSuchChildException(id, childClass);
         }
         return t;
     }

@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.services.utg.tracker.DbStartup;
 import com.btxtech.game.services.utg.tracker.DbStartupTask;
 
 import java.io.Serializable;
@@ -25,78 +24,118 @@ import java.util.List;
  * Date: 08.08.2010
  * Time: 14:03:07
  */
-public class LifecycleTrackingInfo implements Serializable {
+public class LifecycleTrackingInfo implements Serializable, Comparable<LifecycleTrackingInfo> {
     private List<DbStartupTask> dbStartupTasks = new ArrayList<DbStartupTask>();
-    private long startServer;
-    private long startClient;
-    private long startupDuration;
+    private String levelTaskName;
     private String sessionId;
-    private Long nextStartServer;
-    private Long nextStartClient;
-    private String level;
-    private boolean realGame;
-    private String baseName;
-    private Integer baseId;
+    private String startUuid;
+    private LifecycleTrackingInfo nextReaGameLifecycleTrackingInfo;
 
-
-    public LifecycleTrackingInfo(String sessionId, DbStartup startup) {
-        this.sessionId = sessionId;
-        startServer = startup.getServerTimeStamp();
-        startClient = startup.getClientTimeStamp();
-        dbStartupTasks = startup.getGameStartupTasks();
-        startupDuration = startup.getStartupDuration();
-        level = startup.getLevel();
-        realGame = startup.isRealGame();
-        baseName = startup.getBaseName();
-        baseId = startup.getBaseId();
-    }
-
-    public long getStartClient() {
-        return startClient;
-    }
-
-    public long getStartServer() {
-        return startServer;
+    public LifecycleTrackingInfo(List<DbStartupTask> dbStartupTasks, String levelTaskName) {
+        if (dbStartupTasks.isEmpty()) {
+            throw new IllegalStateException("Multiple DbStartupTask expected for: " + startUuid + " startups.size(): " + dbStartupTasks.size());
+        }
+        sessionId = dbStartupTasks.get(0).getSessionId();
+        startUuid = dbStartupTasks.get(0).getStartUuid();
+        this.dbStartupTasks = dbStartupTasks;
+        this.levelTaskName = levelTaskName;
     }
 
     public List<DbStartupTask> getGameStartups() {
         return dbStartupTasks;
     }
 
-    public long getStartupDuration() {
-        return startupDuration;
-    }
-
     public String getSessionId() {
         return sessionId;
     }
 
-    public void setNext(DbStartup nextStartup) {
-        nextStartServer = nextStartup.getServerTimeStamp();
-        nextStartClient = nextStartup.getClientTimeStamp();
-    }
-
-    public Long getNextStartServer() {
-        return nextStartServer;
-    }
-
-    public Long getNextStartClient() {
-        return nextStartClient;
+    public String getStartUuid() {
+        return startUuid;
     }
 
     public String getLevel() {
-        return level;
+        if (dbStartupTasks.isEmpty()) {
+            return "";
+        } else {
+            return dbStartupTasks.get(0).getLevelName();
+        }
     }
 
-    public boolean isRealGame() {
-        return realGame;
+    public long getStartServer() {
+        if (dbStartupTasks.isEmpty()) {
+            return 0;
+        } else {
+            return dbStartupTasks.get(0).getTimeStamp().getTime();
+        }
+    }
+
+    public Long getNextStartServer() {
+        if (nextReaGameLifecycleTrackingInfo != null) {
+            return nextReaGameLifecycleTrackingInfo.getStartServer();
+        } else {
+            return null;
+        }
+    }
+
+    public long getStartupDuration() {
+        long total = 0;
+        for (DbStartupTask dbStartupTask : dbStartupTasks) {
+            total += dbStartupTask.getDuration();
+        }
+        return total;
     }
 
     public String getBaseName() {
-        return baseName;
+        if (dbStartupTasks.isEmpty()) {
+            return null;
+        } else {
+            return dbStartupTasks.get(0).getBaseName();
+        }
+    }
+
+    public boolean isRealGame() {
+        return getLevelTaskId() == null;
+    }
+
+    public String getLevelTaskName() {
+        return levelTaskName;
+    }
+
+    public Integer getLevelTaskId() {
+        for (DbStartupTask dbStartupTask : dbStartupTasks) {
+            if (dbStartupTask.getLevelTaskId() != null) {
+                return dbStartupTask.getLevelTaskId();
+            }
+        }
+        return null;
+    }
+
+    public void setNextReaGameLifecycleTrackingInfo(LifecycleTrackingInfo nextReaGameLifecycleTrackingInfo) {
+        this.nextReaGameLifecycleTrackingInfo = nextReaGameLifecycleTrackingInfo;
+    }
+
+    public LifecycleTrackingInfo getNextReaGameLifecycleTrackingInfo() {
+        return nextReaGameLifecycleTrackingInfo;
     }
 
     public Integer getBaseId() {
-        return baseId;
+        if (dbStartupTasks.isEmpty()) {
+            return null;
+        } else {
+            return dbStartupTasks.get(0).getBaseId();
+        }
+    }
+
+    public String getUserName() {
+        if (dbStartupTasks.isEmpty()) {
+            return null;
+        } else {
+            return dbStartupTasks.get(0).getUserName();
+        }
+    }
+
+    @Override
+    public int compareTo(LifecycleTrackingInfo o) {
+        return (int) (getStartServer() - o.getStartServer());
     }
 }

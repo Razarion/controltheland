@@ -40,7 +40,7 @@ public class CrudChildServiceHelper<T extends CrudChild> implements Serializable
     public Collection<T> readDbChildren() {
         return children;
     }
-    
+
     @Override
     public Collection<T> readDbChildren(ContentSortList contentSortList) {
         return children;
@@ -53,7 +53,7 @@ public class CrudChildServiceHelper<T extends CrudChild> implements Serializable
                 return child;
             }
         }
-        throw new NoSuchChildException("Id: " + id);
+        throw new NoSuchChildException(id, childClass);
     }
 
     @Override

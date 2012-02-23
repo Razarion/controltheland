@@ -42,7 +42,8 @@ public class LoadScriptCommunicationController implements Controller {
         try {
             String message = httpServletRequest.getParameter(Constants.ERROR_KEY);
             if (ClientUserTracker.WINDOW_CLOSE.equals(message)) {
-                userTrackingService.trackWindowsClosed();
+                String startUuid = httpServletRequest.getParameter(ClientUserTracker.START_UUID);
+                userTrackingService.trackWindowsClosed(startUuid);
             } else {
                 log.error("------------------LoadScriptCommunication---------------------------------");
                 log.error("User Agent: " + session.getUserAgent());

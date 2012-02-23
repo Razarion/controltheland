@@ -33,6 +33,7 @@ import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -65,9 +66,9 @@ public interface MovableService extends RemoteService {
 
     void closeConnection();
 
-    void sendStartupInfo(List<StartupTaskInfo> infos, long totalTime);
+    void sendStartupTask(StartupTaskInfo startupTaskInfo, String uuid, Integer levelTaskId);
 
-    GameFlow sendTutorialProgress(TutorialConfig.TYPE type, int levelTaskId, String name, String parent, long duration, long clientTimeStamp);
+    GameFlow sendTutorialProgress(TutorialConfig.TYPE type, String startUuid, int levelTaskId, String name, long duration, long clientTimeStamp);
 
     void sendEventTrackingStart(EventTrackingStart eventTrackingStart);
 

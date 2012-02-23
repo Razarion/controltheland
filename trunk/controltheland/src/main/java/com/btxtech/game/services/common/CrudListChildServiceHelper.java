@@ -71,7 +71,7 @@ public class CrudListChildServiceHelper<T extends CrudChild> implements Serializ
                 return child;
             }
         }
-        throw new NoSuchChildException("Id: " + id);
+        throw new NoSuchChildException(id, childClass);
     }
 
     @Override

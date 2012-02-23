@@ -65,7 +65,7 @@ public class TestHistoryService extends AbstractServiceTest {
         // Finish tutorial
         beginHttpRequestAndOpenSessionInViewFilter();
         int levelTaskId = userGuidanceService.getDefaultLevelTaskId();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, levelTaskId, "xx", "xx", 0, 0);
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", levelTaskId, "xx", 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify

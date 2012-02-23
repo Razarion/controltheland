@@ -15,6 +15,7 @@ public class BrowserWindowTracking implements Serializable {
     private int scrollWidth;
     private int scrollHeight;
     private long clientTimeStamp;
+    private String startUuid;
 
     /**
      * Used by GWT
@@ -22,7 +23,8 @@ public class BrowserWindowTracking implements Serializable {
     protected BrowserWindowTracking() {
     }
 
-    public BrowserWindowTracking(int clientWidth, int clientHeight, int scrollLeft, int scrollTop, int scrollWidth, int scrollHeight) {
+    public BrowserWindowTracking(String startUuid, int clientWidth, int clientHeight, int scrollLeft, int scrollTop, int scrollWidth, int scrollHeight) {
+        this.startUuid = startUuid;
         clientTimeStamp = System.currentTimeMillis();
         this.clientWidth = clientWidth;
         this.clientHeight = clientHeight;
@@ -32,7 +34,8 @@ public class BrowserWindowTracking implements Serializable {
         this.scrollHeight = scrollHeight;
     }
 
-    public BrowserWindowTracking(int clientWidth, int clientHeight, int scrollLeft, int scrollTop, int scrollWidth, int scrollHeight, long clientTimeStamp) {
+    public BrowserWindowTracking(String startUuid, int clientWidth, int clientHeight, int scrollLeft, int scrollTop, int scrollWidth, int scrollHeight, long clientTimeStamp) {
+        this.startUuid = startUuid;
         this.clientTimeStamp = clientTimeStamp;
         this.clientWidth = clientWidth;
         this.clientHeight = clientHeight;
@@ -68,6 +71,10 @@ public class BrowserWindowTracking implements Serializable {
 
     public long getClientTimeStamp() {
         return clientTimeStamp;
+    }
+
+    public String getStartUuid() {
+        return startUuid;
     }
 
     @Override

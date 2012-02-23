@@ -23,11 +23,8 @@ import java.io.Serializable;
 public class TerrainScrollTracking implements Serializable {
     private int left;
     private int top;
-    @Deprecated
-    private int width;
-    @Deprecated
-    private int height;
     private long clientTimeStamp;
+    private String startUuid;
 
     /**
      * Used by GWT
@@ -35,19 +32,17 @@ public class TerrainScrollTracking implements Serializable {
     public TerrainScrollTracking() {
     }
 
-    public TerrainScrollTracking(int left, int top, int width, int height) {
+    public TerrainScrollTracking(String startUuid, int left, int top) {
+        this.startUuid = startUuid;
         this.left = left;
         this.top = top;
-        this.width = width;
-        this.height = height;
         clientTimeStamp = System.currentTimeMillis();
     }
 
-    public TerrainScrollTracking(int left, int top, int width, int height, long clientTimeStamp) {
+    public TerrainScrollTracking(String startUuid, int left, int top, long clientTimeStamp) {
+        this.startUuid = startUuid;
         this.left = left;
         this.top = top;
-        this.width = width;
-        this.height = height;
         this.clientTimeStamp = clientTimeStamp;
     }
 
@@ -59,17 +54,11 @@ public class TerrainScrollTracking implements Serializable {
         return top;
     }
 
-    @Deprecated
-    public int getWidth() {
-        return width;
-    }
-
-    @Deprecated
-    public int getHeight() {
-        return height;
-    }
-
     public long getClientTimeStamp() {
         return clientTimeStamp;
+    }
+
+    public String getStartUuid() {
+        return startUuid;
     }
 }

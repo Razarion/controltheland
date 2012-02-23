@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.utg;
 
+import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
@@ -20,7 +21,6 @@ import com.btxtech.game.jsre.client.ParametrisedRunnable;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
-import com.btxtech.game.jsre.client.simulation.Step;
 import com.btxtech.game.jsre.client.simulation.Task;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
@@ -54,6 +54,7 @@ import java.util.List;
  */
 public class ClientUserTracker implements SelectionListener, TerrainScrollListener {
     public static final String WINDOW_CLOSE = "Window closed -> move to DB";
+    public static final String START_UUID = "uuid";
     private static final int SEND_TIMEOUT = 1000 * 5;
     private static final ClientUserTracker INSTANCE = new ClientUserTracker();
     private List<EventTrackingItem> eventTrackingItems = new ArrayList<EventTrackingItem>();
@@ -81,26 +82,23 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
         Window.addCloseHandler(new CloseHandler<Window>() {
             @Override
             public void onClose(CloseEvent<Window> windowCloseEvent) {
-                GwtCommon.sendLogViaLoadScriptCommunication(WINDOW_CLOSE);
+                // Take care, the uuid parameter is added here. Would be better do add this parameter inside sendLogViaLoadScriptCommunication()
+                GwtCommon.sendLogViaLoadScriptCommunication(WINDOW_CLOSE + "&" + START_UUID + "=" + ClientServices.getInstance().getClientRunner().getStartUuid());
                 sendEventTrackerItems();
             }
         });
     }
 
     public void onTutorialFailed(int levelTaskId, long duration, long clientTimeStamp) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL_FAILED, levelTaskId, null, null, duration, clientTimeStamp, null);
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL_FAILED, levelTaskId, null, duration, clientTimeStamp, null);
     }
 
     public void onTutorialFinished(int levelTaskId, long duration, long clientTimeStamp, ParametrisedRunnable<GameFlow> runnable) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, levelTaskId, null, null, duration, clientTimeStamp, runnable);
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, levelTaskId, null, duration, clientTimeStamp, runnable);
     }
 
     public void onTaskFinished(int levelTaskId, Task task, long duration, long clientTimeStamp) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TASK, levelTaskId, task.getTaskConfig().getName(), null, duration, clientTimeStamp, null);
-    }
-
-    public void onStepFinished(int levelTaskId, Step step, Task task, long duration, long clientTimeStamp) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.STEP, levelTaskId, step.getStepConfig().getName(), task.getTaskConfig().getName(), duration, clientTimeStamp, null);
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TASK, levelTaskId, task.getTaskConfig().getName(), duration, clientTimeStamp, null);
     }
 
     public void startEventTracking() {
@@ -120,7 +118,9 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
         SelectionHandler.getInstance().addSelectionListener(this);
         MapWindow.getInstance().setTrackingEvents(true);
         TerrainView.getInstance().addTerrainScrollListener(this);
-        Connection.getInstance().sendEventTrackingStart(new EventTrackingStart(Window.getClientWidth(),
+        Connection.getInstance().sendEventTrackingStart(new EventTrackingStart(
+                ClientServices.getInstance().getClientRunner().getStartUuid(),
+                Window.getClientWidth(),
                 Window.getClientHeight(),
                 Window.getScrollLeft(),
                 Window.getScrollTop(),
@@ -162,13 +162,15 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
 
     public void addEventTrackingItem(int xPos, int yPos, int eventType) {
         if (isCollecting) {
-            eventTrackingItems.add(new EventTrackingItem(xPos, yPos, eventType));
+            eventTrackingItems.add(new EventTrackingItem(ClientServices.getInstance().getClientRunner().getStartUuid(), xPos, yPos, eventType));
         }
     }
 
     public void addBrowserWindowTracking() {
         if (isCollecting) {
-            BrowserWindowTracking wind = new BrowserWindowTracking(Window.getClientWidth(),
+            BrowserWindowTracking wind = new BrowserWindowTracking(
+                    ClientServices.getInstance().getClientRunner().getStartUuid(),
+                    Window.getClientWidth(),
                     Window.getClientHeight(),
                     Window.getScrollLeft(),
                     Window.getScrollTop(),
@@ -182,6 +184,7 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
     public void trackSyncInfo(SyncItem syncItem) {
         if (isCollecting) {
             SyncItemInfo syncItemInfo = syncItem.getSyncInfo();
+            syncItemInfo.setStartUuid(ClientServices.getInstance().getClientRunner().getStartUuid());
             syncItemInfo.setClientTimeStamp();
             syncItemInfos.add(syncItemInfo);
         }
@@ -212,28 +215,28 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
     @Override
     public void onTargetSelectionChanged(ClientSyncItem selection) {
         if (isCollecting) {
-            selectionTrackingItems.add(new SelectionTrackingItem(selection));
+            selectionTrackingItems.add(new SelectionTrackingItem(ClientServices.getInstance().getClientRunner().getStartUuid(), selection));
         }
     }
 
     @Override
     public void onSelectionCleared() {
         if (isCollecting) {
-            selectionTrackingItems.add(new SelectionTrackingItem());
+            selectionTrackingItems.add(new SelectionTrackingItem(ClientServices.getInstance().getClientRunner().getStartUuid()));
         }
     }
 
     @Override
     public void onOwnSelectionChanged(Group selectedGroup) {
         if (isCollecting) {
-            selectionTrackingItems.add(new SelectionTrackingItem(selectedGroup));
+            selectionTrackingItems.add(new SelectionTrackingItem(ClientServices.getInstance().getClientRunner().getStartUuid(), selectedGroup));
         }
     }
 
     @Override
     public void onScroll(int left, int top, int width, int height, int deltaLeft, int deltaTop) {
         if (isCollecting) {
-            terrainScrollTrackings.add(new TerrainScrollTracking(left, top, width, height));
+            terrainScrollTrackings.add(new TerrainScrollTracking(ClientServices.getInstance().getClientRunner().getStartUuid(), left, top));
         }
     }
 
@@ -246,7 +249,9 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
                 // Ignore
             }
 
-            dialogTrackings.add(new DialogTracking(widget.getAbsoluteLeft(),
+            dialogTrackings.add(new DialogTracking(
+                    ClientServices.getInstance().getClientRunner().getStartUuid(),
+                    widget.getAbsoluteLeft(),
                     widget.getAbsoluteTop(),
                     widget.getOffsetWidth(),
                     widget.getOffsetHeight(),
@@ -258,7 +263,7 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
 
     public void onDialogDisappears(Widget widget) {
         if (isCollecting) {
-            dialogTrackings.add(new DialogTracking(System.identityHashCode(widget)));
+            dialogTrackings.add(new DialogTracking(ClientServices.getInstance().getClientRunner().getStartUuid(), System.identityHashCode(widget)));
         }
     }
 }

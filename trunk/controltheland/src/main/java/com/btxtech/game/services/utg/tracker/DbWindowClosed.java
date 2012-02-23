@@ -34,6 +34,7 @@ public class DbWindowClosed implements Serializable {
     private Date timeStamp;
     private long timeStampMs;
     private String sessionId;
+    private String startUuid;
 
     /**
      * Used by Hibernate
@@ -41,8 +42,9 @@ public class DbWindowClosed implements Serializable {
     public DbWindowClosed() {
     }
 
-    public DbWindowClosed(String sessionId) {
+    public DbWindowClosed(String sessionId, String startUuid) {
         this.sessionId = sessionId;
+        this.startUuid = startUuid;
         timeStamp = new Date();
         timeStampMs = timeStamp.getTime();
     }
@@ -57,6 +59,10 @@ public class DbWindowClosed implements Serializable {
 
     public String getSessionId() {
         return sessionId;
+    }
+
+    public String getStartUuid() {
+        return startUuid;
     }
 
     @Override

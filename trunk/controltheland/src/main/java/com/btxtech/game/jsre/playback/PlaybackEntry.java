@@ -25,9 +25,7 @@ import com.google.gwt.core.client.EntryPoint;
  */
 public class PlaybackEntry implements EntryPoint {
     public static final String ID = "playbackInfo";
-    public static final String SESSION_ID = "sessionId";
-    public static final String START_LIFECYCLE_SERVER = "start";
-    public static final String LEVEL_NAME = "level";
+    public static final String START_UUID = "sessionId";
 
     @Override
     public void onModuleLoad() {
