@@ -1,7 +1,7 @@
 -- CHANGE THIS
-SET @TIME_BEFORE = '2012-01-03 01:00:00'; 
-SET @TIME_AFTER = '2012-01-03 06:00:00';
-SET @CLICKS_ADWORDS = 286;
+SET @TIME_BEFORE = '2012-02-27 02:00:00'; 
+SET @TIME_AFTER = '2012-02-27 06:00:00';
+SET @CLICKS_ADWORDS = 322;
 -- CHANGE THIS
 
 SET SQL_SAFE_UPDATES=0; 
@@ -17,7 +17,7 @@ CREATE TABLE tmp_data_mining (
     gameAttemps INT NULL,
     startups INT NULL,
     startupFails INT NULL,
-    maxLevelIndex INT NULL,
+    maxLevelName VARCHAR(255) NULL,
     userAgent VARCHAR(1000) NULL,
     scrollCount INT NULL,
     syncInfoCount INT NULL,
@@ -44,38 +44,34 @@ INSERT INTO tmp_data_mining (sessionId,pages,userAgent) SELECT
         
 UPDATE tmp_data_mining m SET secondPage = (SELECT page FROM TRACKER_PAGE_ACCESS a WHERE a.sessionId = m.sessionId LIMIT 1,1);
 UPDATE tmp_data_mining m SET gameAttemps = (SELECT COUNT(*) FROM TRACKER_PAGE_ACCESS a WHERE a.sessionId = m.sessionId AND a.page = 'com.btxtech.game.wicket.pages.Game');
-UPDATE tmp_data_mining m SET startups = (SELECT COUNT(*) FROM TRACKER_STARTUP s WHERE s.sessionId = m.sessionId);
-UPDATE tmp_data_mining m SET startupFails = (SELECT COUNT(*) FROM TRACKER_STARTUP s, TRACKER_STARTUP_TASK t WHERE s.sessionId = m.sessionId AND s.id = t.dbStartup AND failureText IS NOT NULL);
-UPDATE tmp_data_mining m SET maxLevelIndex = (SELECT max(l.orderIndex) 
-          FROM GAME_HISTORY h, GUIDANCE_LEVEL l 
+UPDATE tmp_data_mining m SET startups = (SELECT count(Distinct startUuid) FROM TRACKER_STARTUP_TASK where sessionId = m.sessionId);
+UPDATE tmp_data_mining m SET startupFails = (SELECT COUNT(*) FROM TRACKER_STARTUP_TASK t WHERE t.sessionId = m.sessionId AND failureText IS NOT NULL);
+UPDATE tmp_data_mining m SET maxLevelName = (SELECT levelName FROM GAME_HISTORY where id = (
+    SELECT MAX(h.id) FROM GAME_HISTORY h, GUIDANCE_LEVEL l 
           WHERE h.sessionId = m.sessionId 
-          AND l.name = h.levelName
-          AND h.type = 5
-          GROUP BY h.sessionId);
-UPDATE tmp_data_mining m  SET scrollCount = (SELECT COUNT(*) FROM TRACKER_SCROLLING s WHERE m.sessionId = s.sessionId);
-UPDATE tmp_data_mining m  SET syncInfoCount = (SELECT COUNT(*) FROM TRACKER_SYNC_INFOS s WHERE m.sessionId = s.sessionId);
-UPDATE tmp_data_mining m  SET selectionCount = (SELECT COUNT(*) FROM TRACKER_SELECTIONS s WHERE m.sessionId = s.sessionId);
+          AND h.type = 5));
+UPDATE tmp_data_mining m  SET scrollCount = (SELECT COUNT(*) FROM TRACKER_SCROLLING s, TRACKER_STARTUP_TASK t WHERE m.sessionId = t.sessionId AND t.startUuid = s.startUuid);
+UPDATE tmp_data_mining m  SET syncInfoCount = (SELECT COUNT(*) FROM TRACKER_SYNC_INFOS s, TRACKER_STARTUP_TASK t WHERE m.sessionId = t.sessionId AND t.startUuid = s.startUuid);
+UPDATE tmp_data_mining m  SET selectionCount = (SELECT COUNT(*) FROM TRACKER_SELECTIONS s, TRACKER_STARTUP_TASK t WHERE m.sessionId = t.sessionId AND t.startUuid = s.startUuid);
 
 
 DROP TABLE IF EXISTS tmp_data_mining_startup;
-CREATE TABLE tmp_data_mining_startup ( 
-    id INT NOT NULL AUTO_INCREMENT,
-    sessionId VARCHAR(255) NULL,
-    startupId INT NULL,
-    taskCount INT NULL,
-    timeStamp DATETIME,
-    level VARCHAR(255) NULL,   
-    levelIndex INT NULL,
-    task1Duration INT NULL,
-    PRIMARY KEY ( id )
- );
+-- CREATE TABLE tmp_data_mining_startup ( 
+--     id INT NOT NULL AUTO_INCREMENT,
+--     sessionId VARCHAR(255) NULL,
+--     startupId INT NULL,
+--     taskCount INT NULL,
+--     timeStamp DATETIME,
+--     level VARCHAR(255) NULL,   
+--     levelIndex INT NULL,
+--     task1Duration INT NULL,
+--     PRIMARY KEY ( id )
+--  );
  
-INSERT INTO tmp_data_mining_startup (sessionId, startupId, taskCount, timeStamp, level, levelIndex) SELECT m.sessionId, s.id, COUNT(*), s.timeStamp, s.level, l.orderIndex 
-    FROM tmp_data_mining m, TRACKER_STARTUP s, TRACKER_STARTUP_TASK t, GUIDANCE_LEVEL l
-    WHERE m.sessionId = s.sessionId
-    AND t.dbStartup = s.id
-    AND l.name = s.level
-    GROUP BY s.id;
+-- INSERT INTO tmp_data_mining_startup (sessionId, startupId, taskCount, timeStamp, level, levelIndex) SELECT m.sessionId, s.id, COUNT(*), s.timeStamp, s.level, l.orderIndex 
+--     FROM tmp_data_mining m, TRACKER_STARTUP_TASK t, GUIDANCE_LEVEL l
+--     WHERE m.sessionId = t.sessionId
+--     AND l.name = s.level;
 
 -- All
 SELECT * FROM tmp_data_mining;
@@ -114,39 +110,42 @@ SELECT @gameReached := COUNT(*)"Game attemps and reached the game", COUNT(*)/@ga
 SELECT * FROM tmp_data_mining WHERE gameAttemps > 0 AND startups > 0; 
 
 -- Max Levels Promotions all users
-SELECT m.*, l.name FROM tmp_data_mining m, GUIDANCE_LEVEL l where m.maxLevelIndex = l.orderIndex ORDER BY maxLevelIndex DESC;
+-- SELECT m.*, l.name FROM tmp_data_mining m, GUIDANCE_LEVEL l where m.maxLevelIndex = l.orderIndex ORDER BY maxLevelIndex DESC;
 
 -- Max Levels Promotions
-SELECT count(l.orderIndex)"Users", COUNT(l.orderIndex)/@gameReached*100"% Game reached", COUNT(l.orderIndex)/@detectedUsers*100"% all Users" , l.name"Max Level" 
-  FROM tmp_data_mining m, GUIDANCE_LEVEL l 
-    where m.maxLevelIndex = l.orderIndex 
-    GROUP BY l.orderIndex 
-    ORDER BY l.orderIndex DESC, count(l.orderIndex) ASC;
+-- SELECT count(l.orderIndex)"Users", COUNT(l.orderIndex)/@gameReached*100"% Game reached", COUNT(l.orderIndex)/@detectedUsers*100"% all Users" , l.name"Max Level" 
+-- FROM tmp_data_mining m, GUIDANCE_LEVEL l 
+--    where m.maxLevelIndex = l.orderIndex 
+--    GROUP BY l.orderIndex 
+--    ORDER BY l.orderIndex DESC, count(l.orderIndex) ASC;
+
+-- All Promotions
+SELECT * FROM tmp_data_mining WHERE maxLevelName IS NOT NULL;
 
 -- Level promotions
-SELECT sum(maxLevelIndex)"Level promotions" FROM tmp_data_mining WHERE maxLevelIndex > 0;
+SELECT count(*)"Level promotions" FROM tmp_data_mining WHERE maxLevelName IS NOT NULL;
 
 -- Users at least Noob 3 reached
-SELECT count(*)"Users Noob 3 reached", COUNT(*)/@gameReached*100"% Game reached", COUNT(*)/@detectedUsers*100"% all Users" FROM `gamedb`.`tmp_data_mining` WHERE maxLevelIndex > 1;
+-- SELECT count(*)"Users Noob 3 reached", COUNT(*)/@gameReached*100"% Game reached", COUNT(*)/@detectedUsers*100"% all Users" FROM `gamedb`.`tmp_data_mining` WHERE maxLevelIndex > 1;
 
 -- User with at least one level promotions
-SELECT count(*)"User with at least one level promotions", COUNT(*)/@gameReached*100"% Game reached", COUNT(*)/@detectedUsers*100"% all Users" FROM tmp_data_mining WHERE maxLevelIndex > 0;
+-- SELECT count(*)"User with at least one level promotions", COUNT(*)/@gameReached*100"% Game reached", COUNT(*)/@detectedUsers*100"% all Users" FROM tmp_data_mining WHERE maxLevelIndex > 0;
 
 -- User which successfully entered the game but stayed on Noob 1 level
-SELECT count(*)"User witch successfully entered the game but stayed on Noob 1 level", COUNT(*)/@gameReached*100"% Game reached", COUNT(*)/@detectedUsers*100"% all Users"  FROM tmp_data_mining WHERE startups > 0 AND maxLevelIndex IS NULL;
-SELECT * FROM tmp_data_mining WHERE startups > 0 AND maxLevelIndex IS NULL;
+-- SELECT count(*)"User witch successfully entered the game but stayed on Noob 1 level", COUNT(*)/@gameReached*100"% Game reached", COUNT(*)/@detectedUsers*100"% all Users"  FROM tmp_data_mining WHERE startups > 0 AND maxLevelIndex IS NULL;
+-- SELECT * FROM tmp_data_mining WHERE startups > 0 AND maxLevelIndex IS NULL;
 
 -- Startup min max avg of first task
-SELECT MIN(startupDuration) / 1000, MAX(startupDuration)/1000 , AVG(startupDuration)/1000 
-  FROM TRACKER_STARTUP 
-  WHERE id IN (SELECT startupId FROM tmp_data_mining_startup);
+-- SELECT MIN(startupDuration) / 1000, MAX(startupDuration)/1000 , AVG(startupDuration)/1000 
+--  FROM TRACKER_STARTUP_TASK 
+--  WHERE id IN (SELECT startupId FROM tmp_data_mining_startup);
 
 -- Startup min max avg of first task
-SELECT task, MIN(duration) / 1000, MAX(duration)/1000 , AVG(duration)/1000 
-  FROM TRACKER_STARTUP_TASK 
-  WHERE dbStartup IN (SELECT startupId FROM tmp_data_mining_startup) 
-  GROUP BY task 
-  ORDER BY task ASC;
+-- SELECT task, MIN(duration) / 1000, MAX(duration)/1000 , AVG(duration)/1000 
+--  FROM TRACKER_STARTUP_TASK 
+--  WHERE dbStartup IN (SELECT startupId FROM tmp_data_mining_startup) 
+--  GROUP BY task 
+--  ORDER BY task ASC;
 
 SELECT count(*)"MSIE 6", sum(startups)"startup", sum(gameAttemps)"gameAttemps" FROM tmp_data_mining WHERE userAgent like "%MSIE 6%";        
 SELECT count(*)"MSIE 7", sum(startups)"startup", sum(gameAttemps)"gameAttemps" FROM tmp_data_mining WHERE userAgent like "%MSIE 7%";        
@@ -168,5 +167,8 @@ SELECT userAgent, html5Support, sessionId FROM TRACKER_BROWSER_DETAILS WHERE jav
 --       (Select count(*) FROM TRACKER_SYNC_INFOS i WHERE m.sessionId = i.sessionId)"SyncInfos", 
 --       (Select count(*) FROM TRACKER_SCROLLING s WHERE m.sessionId = s.sessionId)"Scrollings",
 --       (Select count(*) FROM TRACKER_SELECTIONS e WHERE m.sessionId = e.sessionId)"Selections" FROM tmp_data_mining m WHERE m.gameAttemps > 0 AND m.startups > 0; 
+
+--  Startup failure
+SELECT t.failureText, t.levelName, t.task, m.userAgent, t.sessionId FROM TRACKER_STARTUP_TASK t, tmp_data_mining m WHERE failureText IS NOT NULL AND m.sessionId = t.sessionId;
 
 SET SQL_SAFE_UPDATES=1;
