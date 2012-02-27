@@ -45,6 +45,8 @@ public interface CommonCollisionService {
 
     Map<TerrainType, Collection<PassableRectangle>> getPassableRectangles();
 
+    List<AttackFormationItem> setupDestinationHints(SyncItemArea target, TerrainType targetTerrainType, List<AttackFormationItem> items);
+
     List<AttackFormationItem> setupDestinationHints(SyncItem target, List<AttackFormationItem> items);
 
     Index getFreeRandomPosition(ItemType itemType, Rectangle region, int itemFreeRange, boolean botFree, boolean ignoreMovable);

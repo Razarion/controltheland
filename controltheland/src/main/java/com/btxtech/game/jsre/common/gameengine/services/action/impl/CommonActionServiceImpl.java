@@ -3,7 +3,6 @@ package com.btxtech.game.jsre.common.gameengine.services.action.impl;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
-import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
@@ -15,8 +14,23 @@ import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededEx
 import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.*;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.*;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemContainer;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderFinalizeCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LaunchCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UpgradeCommand;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -108,7 +122,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         AttackFormationItem format = getServices().getCollisionService().getDestinationHint(syncItem,
                 syncItem.getSyncBuilder().getBuilderType().getRange(),
                 toBeBuilt.getBoundingBox().createSyntheticSyncItemArea(positionToBeBuild),
-                syncItem.getTerrainType());
+                toBeBuilt.getTerrainType());
         if (format.isInRange()) {
             builderCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(syncItem, format.getDestinationHint()));
             builderCommand.setDestinationAngel(format.getDestinationAngel());
@@ -124,6 +138,26 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         }
     }
 
+    @Override
+    public void build(SyncBaseItem syncItem, Index positionToBeBuild, BaseItemType toBeBuilt, Index destinationHint, double destinationAngel) {
+        if (checkCommand(syncItem)) {
+            return;
+        }
+        syncItem.stop();
+        BuilderCommand builderCommand = new BuilderCommand();
+        builderCommand.setId(syncItem.getId());
+        builderCommand.setTimeStamp();
+        builderCommand.setToBeBuilt(toBeBuilt.getId());
+        builderCommand.setPositionToBeBuilt(positionToBeBuild);
+        builderCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(syncItem, destinationHint));
+        builderCommand.setDestinationAngel(destinationAngel);
+
+        try {
+            executeCommand(syncItem, builderCommand);
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "", e);
+        }
+    }
 
     @Override
     public void finalizeBuild(SyncBaseItem builder, SyncBaseItem building, Index destinationHint, double destinationAngel) {
@@ -234,25 +268,23 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         unloadContainerCommand.setTimeStamp();
         unloadContainerCommand.setUnloadPos(unloadPos);
 
-        // TODO this is ugly. Getting the TerrainType only of the first item. Problem: If different Items have different TerrainTypes
-        Id id = CommonJava.getFirst(container.getSyncItemContainer().getContainedItems());
-        TerrainType targetTerrainType;
-        try {
-            targetTerrainType = getServices().getItemService().getItem(id).getTerrainType();
-        } catch (ItemDoesNotExistException e) {
-            throw new RuntimeException(e);
+        TerrainType targetTerrainType = SyncItemContainer.getUglyTerrainType(getServices(), container.getSyncItemContainer());
+
+        if (container.getSyncItemArea().isInRange(container.getSyncItemContainer().getRange(), unloadPos)) {
+            unloadContainerCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(container, container.getSyncItemArea().getPosition()));
+        } else {
+            AttackFormationItem format = getServices().getCollisionService().getDestinationHint(container,
+                    container.getSyncItemContainer().getRange(),
+                    container.getSyncItemArea().getBoundingBox().createSyntheticSyncItemArea(unloadPos),
+                    targetTerrainType);
+            if (format.isInRange()) {
+                unloadContainerCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(container, format.getDestinationHint()));
+            } else {
+                move(container, format.getDestinationHint());
+                return;
+            }
         }
 
-        AttackFormationItem format = getServices().getCollisionService().getDestinationHint(container,
-                container.getSyncItemContainer().getRange(),
-                container.getSyncItemArea().getBoundingBox().createSyntheticSyncItemArea(unloadPos),
-                targetTerrainType);
-        if (format.isInRange()) {
-            unloadContainerCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(container, format.getDestinationHint()));
-        } else {
-            move(container, format.getDestinationHint());
-            return;
-        }
         try {
             executeCommand(container, unloadContainerCommand);
         } catch (Exception e) {

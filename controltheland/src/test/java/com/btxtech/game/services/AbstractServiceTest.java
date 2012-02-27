@@ -485,7 +485,7 @@ abstract public class AbstractServiceTest {
         AttackFormationItem attackFormationItem = collisionService.getDestinationHint(actor,
                 actor.getBaseItemType().getWeaponType().getRange(),
                 target.getSyncItemArea(),
-                actor.getTerrainType());
+                target.getTerrainType());
         if (!attackFormationItem.isInRange()) {
             throw new IllegalStateException("Not in range");
         }
@@ -504,7 +504,7 @@ abstract public class AbstractServiceTest {
         AttackFormationItem attackFormationItem = collisionService.getDestinationHint(harvester,
                 harvester.getBaseItemType().getHarvesterType().getRange(),
                 syncResourceItem.getSyncItemArea(),
-                harvester.getTerrainType());
+                syncResourceItem.getTerrainType());
         if (!attackFormationItem.isInRange()) {
             throw new IllegalStateException("Not in range");
         }
@@ -517,7 +517,7 @@ abstract public class AbstractServiceTest {
         AttackFormationItem attackFormationItem = collisionService.getDestinationHint(syncItem,
                 container.getBaseItemType().getItemContainerType().getRange(),
                 container.getSyncItemArea(),
-                syncItem.getTerrainType());
+                container.getTerrainType());
         if (!attackFormationItem.isInRange()) {
             throw new IllegalStateException("Not in range");
         }
@@ -612,6 +612,35 @@ abstract public class AbstractServiceTest {
         createMoney();
         // Terrain
         setupComplexTerrain();
+        // Setup territory
+        setupComplexTerritory();
+        // QuestHubs
+        setupQuestHubWithOneRealGame(COMPLEX_TERRITORY_ID);
+        // Market
+        //setupMinimalMarket();
+        //setupXpSettings();
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    protected void configureComplexGameOneRealLevel2() throws Exception {
+        System.out.println("---- Configure complex Game 2---");
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        // Item Types
+        createHarvesterItemType();
+        createAttackBaseItemType();
+        createContainerBaseItemType();
+        createFactoryBaseItemType();
+        createBuilderBaseItemType();
+        createSimpleBuilding();
+        finishAttackBaseItemType();
+        finishContainerBaseItemType();
+        createMoney();
+        // Terrain
+        setupComplexTerrain2();
         // Setup territory
         setupComplexTerritory();
         // QuestHubs
@@ -858,6 +887,13 @@ abstract public class AbstractServiceTest {
         return dbTerrainSetting;
     }
 
+    protected DbTerrainSetting setupComplexTerrain2() {
+        setupTerrainImages();
+        DbTerrainSetting dbTerrainSetting = setupComplexRealGameTerrain2();
+        terrainService.activateTerrain();
+        return dbTerrainSetting;
+    }
+
     protected void setupTerrainImages() {
         DbTerrainImageGroup dbTerrainImageGroup = terrainService.getDbTerrainImageGroupCrudServiceHelper().createDbChild();
         DbTerrainImage dbTerrainImage1 = dbTerrainImageGroup.getTerrainImageCrud().createDbChild();
@@ -955,6 +991,33 @@ abstract public class AbstractServiceTest {
 
 
         dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().updateDbChildren(dbTerrainImagePositions);
+
+        terrainService.getDbTerrainSettingCrudServiceHelper().updateDbChild(dbTerrainSetting);
+        return dbTerrainSetting;
+    }
+
+    protected DbTerrainSetting setupComplexRealGameTerrain2() {
+        DbSurfaceImage land = createDbSurfaceImage(SurfaceType.LAND);
+        DbSurfaceImage landCoast = createDbSurfaceImage(SurfaceType.LAND_COAST);
+        DbSurfaceImage waterCoast = createDbSurfaceImage(SurfaceType.WATER_COAST);
+        DbSurfaceImage water = createDbSurfaceImage(SurfaceType.WATER);
+
+        DbTerrainImageGroup dbTerrainImageGroup = terrainService.getDbTerrainImageGroupCrudServiceHelper().readDbChildren().iterator().next();
+
+        DbTerrainSetting dbTerrainSetting = terrainService.getDbTerrainSettingCrudServiceHelper().createDbChild();
+        dbTerrainSetting.setRealGame(true);
+        dbTerrainSetting.setTileXCount(100);
+        dbTerrainSetting.setTileYCount(100);
+        dbTerrainSetting.setTileWidth(100);
+        dbTerrainSetting.setTileHeight(100);
+        // Surface images
+        dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(new Rectangle(0, 0, 25, 40), land), null);
+        dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(new Rectangle(25, 0, 1, 41), landCoast), null);
+        dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(new Rectangle(0, 40, 25, 1), landCoast), null);
+        dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(new Rectangle(0, 41, 27, 1), waterCoast), null);
+        dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(new Rectangle(26, 0, 1, 41), waterCoast), null);
+        dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(new Rectangle(27, 0, 25, 50), water), null);
+        dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(new Rectangle(0, 42, 27, 8), water), null);
 
         terrainService.getDbTerrainSettingCrudServiceHelper().updateDbChild(dbTerrainSetting);
         return dbTerrainSetting;

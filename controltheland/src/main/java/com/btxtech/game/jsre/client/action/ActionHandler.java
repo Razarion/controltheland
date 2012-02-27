@@ -27,7 +27,6 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
-import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.RectangleFormation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
@@ -177,45 +176,71 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
             return;
         }
 
+        List<AttackFormationItem> attackFormationItemList = new ArrayList<AttackFormationItem>();
         for (ClientSyncItem clientSyncItem : clientSyncItems) {
-            if (clientSyncItem.getSyncBaseItem().hasSyncBuilder()) {
-                if (ClientTerritoryService.getInstance().isAllowed(positionToBeBuild, clientSyncItem.getSyncBaseItem())
-                        && ClientTerritoryService.getInstance().isAllowed(positionToBeBuild, toBeBuilt)) {
-
-                    build(clientSyncItem.getSyncBaseItem(), positionToBeBuild, toBeBuilt);
+            int range = clientSyncItem.getSyncBaseItem().getSyncBuilder().getBuilderType().getRange();
+            if (clientSyncItem.getSyncBaseItem().hasSyncBuilder()
+                    && ClientTerritoryService.getInstance().isAllowed(positionToBeBuild, clientSyncItem.getSyncBaseItem())
+                    && ClientTerritoryService.getInstance().isAllowed(positionToBeBuild, toBeBuilt)) {
+                if (clientSyncItem.getSyncBaseItem().getSyncItemArea().isInRange(range, positionToBeBuild)) {
+                    build(clientSyncItem.getSyncBaseItem(),
+                            positionToBeBuild,
+                            toBeBuilt,
+                            clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition(),
+                            clientSyncItem.getSyncBaseItem().getSyncItemArea().getTurnToAngel(positionToBeBuild));
+                    Connection.getInstance().sendCommandQueue();
                     // Just get the first CV to buildBuilding the building
                     // Prevent to buildBuilding multiple buildings
-                    Connection.getInstance().sendCommandQueue();
                     return;
+                } else {
+                    // TODO Target terrain type is wrong.
+                    build(clientSyncItem.getSyncBaseItem(), positionToBeBuild, toBeBuilt);
+                    Connection.getInstance().sendCommandQueue();
+                    // Just get the first CV to buildBuilding the building
+                    // Prevent to buildBuilding multiple buildings
+                    return;
+                    
+                    // attackFormationItemList.add(new AttackFormationItem(clientSyncItem.getSyncBaseItem(), range));
                 }
-            } else {
-                GwtCommon.sendLogToServer("ActionHandler.buildFactory(): can not cast to ConstructionVehicleSyncItem:" + clientSyncItem);
+            }
+        }
+        attackFormationItemList = ClientCollisionService.getInstance().setupDestinationHints(toBeBuilt.getBoundingBox().createSyntheticSyncItemArea(positionToBeBuild), toBeBuilt.getTerrainType(), attackFormationItemList);
+        for (AttackFormationItem item : attackFormationItemList) {
+            if (item.isInRange()) {
+                build(item.getSyncBaseItem(),
+                        positionToBeBuild,
+                        toBeBuilt,
+                        item.getDestinationHint(),
+                        item.getDestinationAngel());
+                Connection.getInstance().sendCommandQueue();
+                // Just get the first CV to buildBuilding the building
+                // Prevent to buildBuilding multiple buildings
                 return;
             }
         }
-        GwtCommon.sendLogToServer("ActionHandler.buildFactory(): can not build on territory: " + clientSyncItems + " " + positionToBeBuild + " " + toBeBuilt);
     }
 
     public void finalizeBuild(Collection<ClientSyncItem> builders, ClientSyncItem building) {
-        List<AttackFormationItem> attackFormationItemList = new ArrayList<AttackFormationItem>();
-        for (ClientSyncItem builder : builders) {
-            if (builder.getSyncBaseItem().hasSyncBuilder()
-                    && ClientTerritoryService.getInstance().isAllowed(building.getSyncItem().getSyncItemArea().getPosition(), builder.getSyncBaseItem())
-                    && ClientTerritoryService.getInstance().isAllowed(building.getSyncItem().getSyncItemArea().getPosition(), building.getSyncBaseItem())
-                    && builder.getSyncBaseItem().getSyncBuilder().getBuilderType().isAbleToBuild(building.getSyncBaseItem().getItemType().getId())) {
-                attackFormationItemList.add(new AttackFormationItem(builder.getSyncBaseItem(), builder.getSyncBaseItem().getSyncBuilder().getBuilderType().getRange()));
-            }
-        }
-        attackFormationItemList = ClientCollisionService.getInstance().setupDestinationHints(building.getSyncBaseItem(), attackFormationItemList);
-        for (AttackFormationItem item : attackFormationItemList) {
-            if (item.isInRange()) {
-                finalizeBuild(item.getSyncBaseItem(), building.getSyncBaseItem(), item.getDestinationHint(), item.getDestinationAngel());
-            } else {
-                move(item.getSyncBaseItem(), item.getDestinationHint());
+        GroupCommandHelper<SyncBaseItem> commandHelper = new GroupCommandHelper<SyncBaseItem>() {
+            @Override
+            protected boolean isCommandPossible(SyncBaseItem syncBaseItem, SyncBaseItem building) {
+                return syncBaseItem.hasSyncBuilder()
+                        && ClientTerritoryService.getInstance().isAllowed(building.getSyncItemArea().getPosition(), syncBaseItem)
+                        && ClientTerritoryService.getInstance().isAllowed(building.getSyncItemArea().getPosition(), building)
+                        && syncBaseItem.getSyncBuilder().getBuilderType().isAbleToBuild(building.getItemType().getId());
             }
 
-        }
-        Connection.getInstance().sendCommandQueue();
+            @Override
+            protected void executeCommand(SyncBaseItem syncBaseItem, SyncBaseItem building, Index destinationHint, double destinationAngel) {
+                finalizeBuild(syncBaseItem, building, destinationHint, destinationAngel);
+            }
+
+            @Override
+            protected int getRange(SyncBaseItem syncBaseItem, SyncBaseItem target) {
+                return syncBaseItem.getSyncWeapon().getWeaponType().getRange();
+            }
+        };
+        commandHelper.process(builders, building.getSyncBaseItem());
     }
 
     public void fabricate(Collection<ClientSyncItem> clientSyncItems, BaseItemType itemTypeToBuild) throws NoSuchItemTypeException {
@@ -237,58 +262,46 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
     }
 
     public void attack(Collection<ClientSyncItem> clientSyncItems, SyncBaseItem target) {
-        List<AttackFormationItem> attackFormationItemList = new ArrayList<AttackFormationItem>();
-        for (ClientSyncItem clientSyncItem : clientSyncItems) {
-            if (clientSyncItem.getSyncBaseItem().hasSyncWeapon()) {
-                if (ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem())
-                        && ClientTerritoryService.getInstance().isAllowed(target.getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem())
-                        && clientSyncItem.getSyncBaseItem().getSyncWeapon().isItemTypeAllowed(target)) {
-                    if (clientSyncItem.getSyncBaseItem().getSyncWeapon().isAttackAllowedWithoutMoving(target)) {
-                        attack(clientSyncItem.getSyncBaseItem(),
-                                target,
-                                clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition(),
-                                clientSyncItem.getSyncBaseItem().getSyncItemArea().getTurnToAngel(target.getSyncItemArea()),
-                                clientSyncItem.getSyncBaseItem().hasSyncMovable());
-                    } else if (clientSyncItem.getSyncBaseItem().hasSyncMovable()) {
-                        attackFormationItemList.add(new AttackFormationItem(clientSyncItem.getSyncBaseItem(),
-                                clientSyncItem.getSyncBaseItem().getSyncWeapon().getWeaponType().getRange()));
-                    }
-                }
-            }
-        }
-        attackFormationItemList = ClientCollisionService.getInstance().setupDestinationHints(target, attackFormationItemList);
-        for (AttackFormationItem item : attackFormationItemList) {
-            if (item.isInRange()) {
-                attack(item.getSyncBaseItem(), target, item.getDestinationHint(), item.getDestinationAngel(), true);
-            } else {
-                move(item.getSyncBaseItem(), item.getDestinationHint());
+        GroupCommandHelper<SyncBaseItem> commandHelper = new GroupCommandHelper<SyncBaseItem>() {
+            @Override
+            protected boolean isCommandPossible(SyncBaseItem syncBaseItem, SyncBaseItem target) {
+                return syncBaseItem.hasSyncWeapon()
+                        && ClientTerritoryService.getInstance().isAllowed(syncBaseItem.getSyncItemArea().getPosition(), syncBaseItem)
+                        && ClientTerritoryService.getInstance().isAllowed(target.getSyncItemArea().getPosition(), syncBaseItem)
+                        && syncBaseItem.getSyncWeapon().isItemTypeAllowed(target);
             }
 
-        }
+            @Override
+            protected void executeCommand(SyncBaseItem syncBaseItem, SyncBaseItem target, Index destinationHint, double destinationAngel) {
+                attack(syncBaseItem, target, destinationHint, destinationAngel, syncBaseItem.hasSyncMovable());
+            }
 
-        Connection.getInstance().sendCommandQueue();
+            @Override
+            protected int getRange(SyncBaseItem syncBaseItem, SyncBaseItem target) {
+                return syncBaseItem.getSyncWeapon().getWeaponType().getRange();
+            }
+        };
+        commandHelper.process(clientSyncItems, target);
     }
 
     public void collect(Collection<ClientSyncItem> clientSyncItems, SyncResourceItem money) {
-        List<AttackFormationItem> attackFormationItemList = new ArrayList<AttackFormationItem>();
-        for (ClientSyncItem clientSyncItem : clientSyncItems) {
-            if (clientSyncItem.getSyncBaseItem().hasSyncHarvester()) {
-                if (ClientTerritoryService.getInstance().isAllowed(money.getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem())) {
-                    attackFormationItemList.add(new AttackFormationItem(clientSyncItem.getSyncBaseItem(), clientSyncItem.getSyncBaseItem().getSyncHarvester().getHarvesterType().getRange()));
-                }
-            }
-        }
-        attackFormationItemList = ClientCollisionService.getInstance().setupDestinationHints(money, attackFormationItemList);
-        for (AttackFormationItem item : attackFormationItemList) {
-            if (item.isInRange()) {
-                collect(item.getSyncBaseItem(), money, item.getDestinationHint(), item.getDestinationAngel());
-            } else {
-                move(item.getSyncBaseItem(), item.getDestinationHint());
+        GroupCommandHelper<SyncResourceItem> commandHelper = new GroupCommandHelper<SyncResourceItem>() {
+            @Override
+            protected boolean isCommandPossible(SyncBaseItem syncBaseItem, SyncResourceItem money) {
+                return syncBaseItem.hasSyncHarvester() && ClientTerritoryService.getInstance().isAllowed(money.getSyncItemArea().getPosition(), syncBaseItem);
             }
 
-        }
+            @Override
+            protected void executeCommand(SyncBaseItem syncBaseItem, SyncResourceItem money, Index destinationHint, double destinationAngel) {
+                collect(syncBaseItem, money, destinationHint, destinationAngel);
+            }
 
-        Connection.getInstance().sendCommandQueue();
+            @Override
+            protected int getRange(SyncBaseItem syncBaseItem, SyncResourceItem money) {
+                return syncBaseItem.getSyncHarvester().getHarvesterType().getRange();
+            }
+        };
+        commandHelper.process(clientSyncItems, money);
     }
 
     public void loadContainer(ClientSyncItem container, Collection<ClientSyncItem> items) {
@@ -296,29 +309,26 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
             GwtCommon.sendLogToServer("ActionHandler.loadContainer(): can not cast to ItemContainer:" + container);
             return;
         }
-        SyncBaseItem syncBaseItem = CommonJava.getFirst(items).getSyncBaseItem();
-        AttackFormationItem attackFormationItem = ClientCollisionService.getInstance().getDestinationHint(syncBaseItem,
-                container.getSyncBaseItem().getSyncItemContainer().getRange(),
-                container.getSyncBaseItem().getSyncItemArea(),
-                container.getSyncBaseItem().getTerrainType());
-
-        if (!attackFormationItem.isInRange()) {
-            move(items, container.getSyncBaseItem().getSyncItemArea().getPosition());
-            return;
-        }
-
-        for (ClientSyncItem item : items) {
-            if (item.getSyncBaseItem().hasSyncMovable()) {
-                if (ClientTerritoryService.getInstance().isAllowed(container.getSyncBaseItem().getSyncItemArea().getPosition(), container.getSyncBaseItem())
-                        && container.getSyncBaseItem().getSyncItemContainer().isAbleToContain(item.getSyncBaseItem())
-                        && item.getSyncBaseItem().getSyncMovable().isLoadPosReachable(container.getSyncBaseItem().getSyncItemContainer())) {
-                    loadContainer(container.getSyncBaseItem(), item.getSyncBaseItem(), attackFormationItem.getDestinationHint());
-                }
-            } else {
-                GwtCommon.sendLogToServer("ActionHandler.loadContainer(): has no movable:" + item);
+        GroupCommandHelper<SyncBaseItem> commandHelper = new GroupCommandHelper<SyncBaseItem>() {
+            @Override
+            protected boolean isCommandPossible(SyncBaseItem syncBaseItem, SyncBaseItem container) {
+                return ClientTerritoryService.getInstance().isAllowed(container.getSyncItemArea().getPosition(), container)
+                        && container.getSyncItemContainer().isAbleToContain(syncBaseItem)
+                        && syncBaseItem.getSyncMovable().isLoadPosReachable(container.getSyncItemContainer())
+                        && syncBaseItem.hasSyncMovable();
             }
-        }
-        Connection.getInstance().sendCommandQueue();
+
+            @Override
+            protected void executeCommand(SyncBaseItem syncBaseItem, SyncBaseItem container, Index destinationHint, double destinationAngel) {
+                loadContainer(container, syncBaseItem, destinationHint);
+            }
+
+            @Override
+            protected int getRange(SyncBaseItem syncBaseItem, SyncBaseItem container) {
+                return container.getSyncItemContainer().getRange();
+            }
+        };
+        commandHelper.process(items, container.getSyncBaseItem());
     }
 
     public void unloadContainer(ClientSyncItem container, Index unloadPos) {

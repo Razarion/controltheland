@@ -2,8 +2,12 @@ package com.btxtech.game.services.collision;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.MathHelper;
+import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.debug.DebugService;
 import com.btxtech.game.services.terrain.TerrainService;
@@ -82,6 +86,19 @@ public class TestPathFinding extends AbstractServiceTest {
         assertPathNotInTerrainImage(path);
         Assert.assertEquals(1, path.size());
         Assert.assertEquals(new Index(800, 3400), path.get(0));
+    }
+
+    @Test
+    @DirtiesContext
+    public void testPathDifferentTerrains() throws Exception {
+        configureComplexGameOneRealLevel2();
+        SyncItemArea target = new BoundingBox(0, 0, 100, 100, ANGELS_24).createSyntheticSyncItemArea(new Index(2750, 350));
+        List<AttackFormationItem> attacker = new ArrayList<AttackFormationItem>();
+        attacker.add(new AttackFormationItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1450, 350), new Id(0, 0, 0)), 250));
+        attacker = collisionService.setupDestinationHints(target, TerrainType.WATER, attacker);
+        Assert.assertEquals(new Index(2412, 349), attacker.get(0).getDestinationHint());
+        Assert.assertEquals(-1.570796326794, attacker.get(0).getDestinationAngel(), 0.001);
+        Assert.assertTrue(attacker.get(0).isInRange());
     }
 
 
