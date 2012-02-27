@@ -412,7 +412,7 @@ public class Rectangle implements Serializable {
             return new Index(point.getX(), endExclusive.getY() - endYCorrection);
         }
 
-        throw new IllegalArgumentException("The point is inside the rectangle");
+        throw new IllegalArgumentException("The point is inside the rectangle. Point: " + point + " rectangel: " + this);
     }
 
     /**

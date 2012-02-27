@@ -28,7 +28,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -107,54 +106,36 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
         }
     }
 
-    private List<Index> setupPathToDifferentTerrainTypeDestination(Index start, TerrainType startTerrainType, Index destination, TerrainType destinationTerrainType, BoundingBox boundingBox) {
+    private Index setupNearestPointOnDifferentTerrainTypeDestination(Index start, TerrainType startTerrainType, Index destination, TerrainType destinationTerrainType, BoundingBox boundingBox) {
         PassableRectangle atomStartRect = getPassableRectangleOfAbsoluteIndex(start, startTerrainType);
         PassableRectangle atomDestRect = PathFinderUtilities.getNearestPassableRectangleDifferentTerrainTypeOfAbsoluteIndex(destination, destinationTerrainType, startTerrainType, passableRectangles4TerrainType, getServices().getTerrainService());
         if (atomStartRect == null || atomDestRect == null) {
             throw new IllegalArgumentException("Illegal atomStartRect or atomDestRect. start: " + start + " destination: " + destination + " terrainType: " + destinationTerrainType);
         }
 
-        if (atomStartRect.equals(atomDestRect)) {
-            return GumPath.toItemAngelSameAtom(start, destination, boundingBox);
-        }
-
-        long time = System.currentTimeMillis();
-        List<Index> positions = null;
-        try {
-            Path path = atomStartRect.findPossiblePassableRectanglePaths(getServices().getTerrainService(), start, atomDestRect, destination);
-            path = PathFinderUtilities.optimizePath(path, getServices().getTerrainService());
-            List<Port> ports = path.getAllPassableBorders(getServices().getTerrainService());
-            GumPath gumPath = new GumPath(start, destination, ports, boundingBox);
-            positions = gumPath.getOptimizedPath();
-            return positions;
-        } finally {
-            if (System.currentTimeMillis() - time > 200 || positions == null) {
-                log.log(Level.SEVERE, "Pathfinding took: " + (System.currentTimeMillis() - time) + "ms start: " + start + " destination: " + destination);
-            }
+        Rectangle absRect = getServices().getTerrainService().convertToAbsolutePosition(atomDestRect.getRectangle());
+        if (absRect.containsExclusive(destination)) {
+            return destination;
+        } else {
+            return absRect.getNearestPoint(destination);
         }
     }
 
     private void setupDestinationHintTerrain(SyncItemArea target, List<AttackFormationItem> items, TerrainType terrainType, TerrainType targetTerrainType) {
         SyncItem actorItem = items.get(0).getSyncBaseItem();
-        List<Index> path;
-        if (terrainType == targetTerrainType) {
-            path = setupPathToDestination(actorItem.getSyncItemArea().getPosition(), target.getPosition(), terrainType, actorItem.getSyncItemArea().getBoundingBox());
-        } else {
-            path = setupPathToDifferentTerrainTypeDestination(actorItem.getSyncItemArea().getPosition(), terrainType, target.getPosition(), targetTerrainType, target.getBoundingBox());
-        }
-
-        path.remove(path.size() - 1); // Target pos
         Index lastPoint;
-        if (path.isEmpty()) {
-            // Start and destination are in the same passable rectangle
-            lastPoint = actorItem.getSyncItemArea().getPosition();
-        } else {
-            lastPoint = path.get(path.size() - 1);
-        }
+        if (terrainType == targetTerrainType) {
+            List<Index> path = setupPathToDestination(actorItem.getSyncItemArea().getPosition(), target.getPosition(), terrainType, actorItem.getSyncItemArea().getBoundingBox());
+            path.remove(path.size() - 1); // Target pos
+            if (path.isEmpty()) {
+                // Start and destination are in the same passable rectangle
+                lastPoint = actorItem.getSyncItemArea().getPosition();
+            } else {
+                lastPoint = path.get(path.size() - 1);
+            }
 
-        Collection<SyncItem> placeAbleItems = new HashSet<SyncItem>();
-        for (AttackFormationItem item : items) {
-            placeAbleItems.add(item.getSyncBaseItem());
+        } else {
+            lastPoint = setupNearestPointOnDifferentTerrainTypeDestination(actorItem.getSyncItemArea().getPosition(), terrainType, target.getPosition(), targetTerrainType, target.getBoundingBox());
         }
 
         double angel;
@@ -162,6 +143,11 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
             angel = 0;
         } else {
             angel = target.getPosition().getAngleToNord(lastPoint);
+        }
+
+        Collection<SyncItem> placeAbleItems = new HashSet<SyncItem>();
+        for (AttackFormationItem item : items) {
+            placeAbleItems.add(item.getSyncBaseItem());
         }
 
         AttackFormation attackFormation = AttackFormationFactory.create(target, angel, items);
@@ -181,7 +167,8 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
         }
     }
 
-    private List<AttackFormationItem> setupDestinationHints(SyncItemArea target, TerrainType targetTerrainType, List<AttackFormationItem> items) {
+    @Override
+    public List<AttackFormationItem> setupDestinationHints(SyncItemArea target, TerrainType targetTerrainType, List<AttackFormationItem> items) {
         Map<TerrainType, List<AttackFormationItem>> terrainTypeCollectionMap = new HashMap<TerrainType, List<AttackFormationItem>>();
         for (AttackFormationItem item : items) {
             TerrainType terrainType = item.getSyncBaseItem().getTerrainType();

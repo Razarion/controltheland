@@ -32,6 +32,8 @@ public interface CommonActionService {
 
     void build(SyncBaseItem builder, Index position, BaseItemType itemTypeToBuild);
 
+    void build(SyncBaseItem syncItem, Index positionToBeBuild, BaseItemType toBeBuilt, Index destinationHint, double destinationAngel);
+
     void finalizeBuild(SyncBaseItem builder, SyncBaseItem building, Index destinationHint, double destinationAngel);
 
     void fabricate(SyncBaseItem builder, BaseItemType itemTypeToBuild);

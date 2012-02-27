@@ -78,7 +78,7 @@ public class SyncWeapon extends SyncBaseAbility {
             if (!isInRange(targetItem)) {
                 if (isNewPathRecalculationAllowed()) {
                     // Destination place was may be taken. Calculate a new one or target has moved away
-                    destinationAngel = recalculateNewPath(weaponType.getRange(), targetItem.getSyncItemArea());
+                    destinationAngel = recalculateNewPath(weaponType.getRange(), targetItem.getSyncItemArea(), targetItem.getTerrainType());
                     getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                     return true;
                 } else {

@@ -51,7 +51,7 @@ public class SyncHarvester extends SyncBaseAbility {
             if (!isInRange(resource)) {
                 if (isNewPathRecalculationAllowed()) {
                     // Destination place was may be taken. Calculate a new one.
-                    destinationAngel = recalculateNewPath(harvesterType.getRange(), resource.getSyncItemArea());
+                    destinationAngel = recalculateNewPath(harvesterType.getRange(), resource.getSyncItemArea(), resource.getTerrainType());
                     getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                     return true;
                 } else {

@@ -18,8 +18,10 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemContainerType;
+import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 
@@ -117,7 +119,8 @@ public class SyncItemContainer extends SyncBaseAbility {
         if (!isInRange(unloadPos)) {
             if (isNewPathRecalculationAllowed()) {
                 // Destination place was may be taken. Calculate a new one.
-                recalculateNewPath(itemContainerType.getRange(), getSyncItemArea().getBoundingBox().createSyntheticSyncItemArea(unloadPos));
+                TerrainType targetTerrainType = getUglyTerrainType(getServices(), this);
+                recalculateNewPath(itemContainerType.getRange(), getSyncItemArea().getBoundingBox().createSyntheticSyncItemArea(unloadPos), targetTerrainType);
                 getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                 return true;
             } else {
@@ -142,8 +145,8 @@ public class SyncItemContainer extends SyncBaseAbility {
             if (allowedUnload(surfaceType, containedItem)) {
                 SyncBaseItem syncItem = (SyncBaseItem) getServices().getItemService().getItem(containedItem);
                 syncItem.clearContained(unloadPos);
-                if(getServices().getConnectionService().getGameEngineMode() == GameEngineMode.MASTER) {
-                   getServices().getConditionService().onSyncItemUnloaded(syncItem); 
+                if (getServices().getConnectionService().getGameEngineMode() == GameEngineMode.MASTER) {
+                    getServices().getConditionService().onSyncItemUnloaded(syncItem);
                 }
                 getServices().getConnectionService().sendSyncInfo(syncItem);
                 iterator.remove();
@@ -217,5 +220,17 @@ public class SyncItemContainer extends SyncBaseAbility {
         } catch (IllegalArgumentException ignore) {
             return false;
         }
+    }
+
+    public static TerrainType getUglyTerrainType(Services services, SyncItemContainer container) {
+        // TODO this is ugly. Getting the TerrainType only of the first item. Problem: If different Items have different TerrainTypes
+        Id id = CommonJava.getFirst(container.getContainedItems());
+        TerrainType targetTerrainType;
+        try {
+            targetTerrainType = services.getItemService().getItem(id).getTerrainType();
+        } catch (ItemDoesNotExistException e) {
+            throw new RuntimeException(e);
+        }
+        return targetTerrainType;
     }
 }
