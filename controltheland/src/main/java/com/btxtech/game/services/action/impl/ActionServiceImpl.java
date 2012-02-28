@@ -23,6 +23,7 @@ import com.btxtech.game.jsre.common.gameengine.services.action.impl.CommonAction
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
+import com.btxtech.game.jsre.common.gameengine.services.collision.PlaceCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.items.BaseDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -137,6 +138,16 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
                             iterator.remove();
                         } catch (PositionTakenException ife) {
                             log.info("PositionTakenException: " + ife.getMessage());
+                            activeItem.stop();
+                            iterator.remove();
+                            connectionService.sendSyncInfo(activeItem);
+                        } catch (PathCanNotBeFoundException e) {
+                            log.info("PathCanNotBeFoundException: " + e.getMessage());
+                            activeItem.stop();
+                            iterator.remove();
+                            connectionService.sendSyncInfo(activeItem);
+                        } catch (PlaceCanNotBeFoundException e) {
+                            log.info("PlaceCanNotBeFoundException: " + e.getMessage());
                             activeItem.stop();
                             iterator.remove();
                             connectionService.sendSyncInfo(activeItem);
