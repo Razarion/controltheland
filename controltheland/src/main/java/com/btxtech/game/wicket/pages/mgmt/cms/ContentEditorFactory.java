@@ -5,6 +5,7 @@ import com.btxtech.game.services.cms.layout.DbContentActionButton;
 import com.btxtech.game.services.cms.layout.DbContentBook;
 import com.btxtech.game.services.cms.layout.DbContentBooleanExpressionImage;
 import com.btxtech.game.services.cms.layout.DbContentContainer;
+import com.btxtech.game.services.cms.layout.DbContentCreateEdit;
 import com.btxtech.game.services.cms.layout.DbContentDetailLink;
 import com.btxtech.game.services.cms.layout.DbContentDynamicHtml;
 import com.btxtech.game.services.cms.layout.DbContentGameLink;
@@ -125,6 +126,12 @@ public class ContentEditorFactory {
             @Override
             MgmtWebPage createContentEditor(DbContent dbContent) {
                 return new ContentStartLevelTaskButtonEditor((DbContentStartLevelTaskButton) dbContent);
+            }},
+        CREATE_EDIT(DbContentCreateEdit.class, "Create Edit Content List Item") {
+
+            @Override
+            MgmtWebPage createContentEditor(DbContent dbContent) {
+                return new ContentCreateEditEditor((DbContentCreateEdit) dbContent);
             }};
 
         private Class<? extends DbContent> createClass;
