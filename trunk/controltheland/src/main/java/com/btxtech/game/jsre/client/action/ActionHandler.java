@@ -39,6 +39,7 @@ import com.btxtech.game.jsre.common.gameengine.services.action.impl.CommonAction
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
+import com.btxtech.game.jsre.common.gameengine.services.collision.PlaceCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -124,6 +125,11 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                     activeItem.stop();
                     ClientServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
                     log.warning("PathCanNotBeFoundException: " + e.getMessage());
+                } catch (PlaceCanNotBeFoundException e) {
+                    iterator.remove();
+                    activeItem.stop();
+                    ClientServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
+                    log.warning("PlaceCanNotBeFoundException: " + e.getMessage());
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);
                     activeItem.stop();
@@ -151,24 +157,29 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
         if (clientSyncItems.isEmpty()) {
             return;
         }
-        RectangleFormation rectangleFormation = new RectangleFormation(destination, clientSyncItems);
-        for (ClientSyncItem clientSyncItem : clientSyncItems) {
-            if (clientSyncItem.getSyncBaseItem().hasSyncMovable()) {
-                Index pos = null;
-                while (pos == null) {
-                    pos = rectangleFormation.calculateNextEntry();
-                    if (pos == null) {
-                        continue;
+        try {
+            RectangleFormation rectangleFormation = new RectangleFormation(destination, clientSyncItems);
+            for (ClientSyncItem clientSyncItem : clientSyncItems) {
+                if (clientSyncItem.getSyncBaseItem().hasSyncMovable()) {
+                    Index pos = null;
+                    while (pos == null) {
+                        pos = rectangleFormation.calculateNextEntry();
+                        if (pos == null) {
+                            continue;
+                        }
+                        SurfaceType surfaceType = TerrainView.getInstance().getTerrainHandler().getSurfaceTypeAbsolute(pos);
+                        if (!clientSyncItem.getSyncBaseItem().getTerrainType().getSurfaceTypes().contains(surfaceType)) {
+                            pos = null;
+                        }
                     }
-                    SurfaceType surfaceType = TerrainView.getInstance().getTerrainHandler().getSurfaceTypeAbsolute(pos);
-                    if (!clientSyncItem.getSyncBaseItem().getTerrainType().getSurfaceTypes().contains(surfaceType)) {
-                        pos = null;
-                    }
+                    System.out.println("Move: " + pos);
+                    move(clientSyncItem.getSyncBaseItem(), pos);
                 }
-                move(clientSyncItem.getSyncBaseItem(), pos);
             }
+            Connection.getInstance().sendCommandQueue();
+        } catch (PathCanNotBeFoundException e) {
+            log.warning("move: " + e.getMessage());
         }
-        Connection.getInstance().sendCommandQueue();
     }
 
     public void build(Collection<ClientSyncItem> clientSyncItems, Index positionToBeBuild, BaseItemType toBeBuilt) throws NoSuchItemTypeException {
@@ -193,31 +204,35 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                     // Prevent to buildBuilding multiple buildings
                     return;
                 } else {
-                    // TODO Target terrain type is wrong.
                     build(clientSyncItem.getSyncBaseItem(), positionToBeBuild, toBeBuilt);
                     Connection.getInstance().sendCommandQueue();
                     // Just get the first CV to buildBuilding the building
                     // Prevent to buildBuilding multiple buildings
                     return;
-                    
+
                     // attackFormationItemList.add(new AttackFormationItem(clientSyncItem.getSyncBaseItem(), range));
                 }
             }
         }
-        attackFormationItemList = ClientCollisionService.getInstance().setupDestinationHints(toBeBuilt.getBoundingBox().createSyntheticSyncItemArea(positionToBeBuild), toBeBuilt.getTerrainType(), attackFormationItemList);
-        for (AttackFormationItem item : attackFormationItemList) {
-            if (item.isInRange()) {
-                build(item.getSyncBaseItem(),
-                        positionToBeBuild,
-                        toBeBuilt,
-                        item.getDestinationHint(),
-                        item.getDestinationAngel());
-                Connection.getInstance().sendCommandQueue();
-                // Just get the first CV to buildBuilding the building
-                // Prevent to buildBuilding multiple buildings
-                return;
+        try {
+            attackFormationItemList = ClientCollisionService.getInstance().setupDestinationHints(toBeBuilt.getBoundingBox().createSyntheticSyncItemArea(positionToBeBuild), toBeBuilt.getTerrainType(), attackFormationItemList);
+            for (AttackFormationItem item : attackFormationItemList) {
+                if (item.isInRange()) {
+                    build(item.getSyncBaseItem(),
+                            positionToBeBuild,
+                            toBeBuilt,
+                            item.getDestinationHint(),
+                            item.getDestinationAngel());
+                    Connection.getInstance().sendCommandQueue();
+                    // Just get the first CV to buildBuilding the building
+                    // Prevent to buildBuilding multiple buildings
+                    return;
+                }
             }
+        } catch (PathCanNotBeFoundException e) {
+            log.warning("GroupCommandHelper.process(): " + e.getMessage());
         }
+
     }
 
     public void finalizeBuild(Collection<ClientSyncItem> builders, ClientSyncItem building) {
@@ -237,7 +252,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
 
             @Override
             protected int getRange(SyncBaseItem syncBaseItem, SyncBaseItem target) {
-                return syncBaseItem.getSyncWeapon().getWeaponType().getRange();
+                return syncBaseItem.getSyncBuilder().getBuilderType().getRange();
             }
         };
         commandHelper.process(builders, building.getSyncBaseItem());
