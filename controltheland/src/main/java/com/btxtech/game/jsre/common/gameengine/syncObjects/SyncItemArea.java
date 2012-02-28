@@ -198,6 +198,12 @@ public class SyncItemArea {
         if (!syncItemArea.hasPosition()) {
             return false;
         }
+        
+        // Increase performance
+        if(getPosition().getDistance(syncItemArea.getPosition()) > (getBoundingBox().getMaxRadiusDouble() + syncItemArea.getBoundingBox().getMaxRadiusDouble())) {
+            return false;
+        }
+
         Collection<Line> otherLines = syncItemArea.getLines();
 
         for (Line line : getLines()) {
