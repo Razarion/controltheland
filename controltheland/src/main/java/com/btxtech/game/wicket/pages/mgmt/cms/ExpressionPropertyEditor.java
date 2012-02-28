@@ -46,7 +46,8 @@ public class ExpressionPropertyEditor extends MgmtWebPage {
         form.add(new TextField("sortHintExpression"));
         form.add(new CheckBox("defaultSortable"));
         form.add(new CheckBox("defaultSortableAsc"));
-        
+        form.add(new TextField("sortLinkCssClass"));
+
 
 
         form.add(new Button("save") {
