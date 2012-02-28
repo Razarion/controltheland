@@ -25,8 +25,9 @@ public class DbExpressionProperty extends DbContent implements DataProviderInfo 
     private String sortHintExpression;
     private boolean defaultSortable = false;
     private boolean defaultSortableAsc = false;
-    private boolean link;
+    private String sortLinkCssClass;
     private String linkCssClass;
+    private boolean link;
 
     @Override
     public String getExpression() {
@@ -110,5 +111,13 @@ public class DbExpressionProperty extends DbContent implements DataProviderInfo 
 
     public void setLinkCssClass(String linkCssClass) {
         this.linkCssClass = linkCssClass;
+    }
+
+    public String getSortLinkCssClass() {
+        return sortLinkCssClass;
+    }
+
+    public void setSortLinkCssClass(String sortLinkCssClass) {
+        this.sortLinkCssClass = sortLinkCssClass;
     }
 }

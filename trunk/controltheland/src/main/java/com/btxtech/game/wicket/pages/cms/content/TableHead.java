@@ -32,7 +32,7 @@ public class TableHead extends Panel {
         for (DbContent dbContent : dbContentList.getColumnsCrud().readDbChildren()) {
             String name = dbContent.getName();
             if (dbContent instanceof DbExpressionProperty && ((DbExpressionProperty) dbContent).isSortable()) {
-                view.add(new TableHeadCell(view.newChildId(), dbContentList.getId(), name, beanIdPathElement, contentContext));
+                view.add(new TableHeadCell(view.newChildId(), dbContentList.getId(), name, beanIdPathElement, contentContext, ((DbExpressionProperty)dbContent).getSortLinkCssClass()));
             } else {
                 view.add(new Label(view.newChildId(), name));
             }
