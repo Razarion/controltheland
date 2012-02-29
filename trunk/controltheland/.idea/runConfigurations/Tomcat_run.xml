@@ -18,7 +18,7 @@
       </option>
       <option name="myRunnerSettings">
         <MavenRunnerSettings>
-          <option name="jreName" value="1.6" />
+          <option name="jreName" value="1.7" />
           <option name="mavenProperties">
             <map />
           </option>
@@ -31,7 +31,7 @@
         <MavenRunnerParameters>
           <option name="goals">
             <list>
-              <option value="org.codehaus.mojo:tomcat-maven-plugin:1.1:run" />
+              <option value="tomcat7:run" />
             </list>
           </option>
           <option name="profiles">
@@ -42,13 +42,11 @@
       </option>
     </MavenSettings>
     <RunnerSettings RunnerId="Debug">
-      <option name="DEBUG_PORT" value="52518" />
+      <option name="DEBUG_PORT" value="59196" />
       <option name="TRANSPORT" value="0" />
       <option name="LOCAL" value="true" />
     </RunnerSettings>
-    <RunnerSettings RunnerId="Run" />
     <ConfigurationWrapper RunnerId="Debug" />
-    <ConfigurationWrapper RunnerId="Run" />
     <method />
   </configuration>
 </component>
