@@ -27,8 +27,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -48,7 +46,6 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
     private HandlerRegistration upRegistration;
     private Canvas canvas;
     private Context2d context2d;
-    private Logger log = Logger.getLogger(MiniMap.class.getName());
     private int xShift = 0;
     private int yShift = 0;
 
@@ -80,18 +77,13 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
         context2d.restore();
         context2d.save();
 
-        try {
-            context2d.scale(scale, scale);
-            if (getTerrainSettings().getTileXCount() > getTerrainSettings().getTileYCount()) {
-                yShift = (int) ((getHeight() / getScale() - getTerrainSettings().getTileYCount()) / 2);
-                getContext2d().translate(0, yShift);
-            } else if (getTerrainSettings().getTileYCount() > getTerrainSettings().getTileXCount()) {
-                xShift = (int) ((getWidth() / getScale() - getTerrainSettings().getTileXCount()) / 2);
-                getContext2d().translate(xShift, 0);
-            }
-        } catch (Exception e) {
-            // Fails during tests
-            log.log(Level.SEVERE, "", e);
+        context2d.scale(scale, scale);
+        if (getTerrainSettings().getTileXCount() > getTerrainSettings().getTileYCount()) {
+            yShift = (int) ((getHeight() / getScale() - getTerrainSettings().getTileYCount()) / 2);
+            getContext2d().translate(0, yShift);
+        } else if (getTerrainSettings().getTileYCount() > getTerrainSettings().getTileXCount()) {
+            xShift = (int) ((getWidth() / getScale() - getTerrainSettings().getTileXCount()) / 2);
+            getContext2d().translate(xShift, 0);
         }
     }
 
