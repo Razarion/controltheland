@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.client.common;
 
 import com.btxtech.game.jsre.client.ClientServices;
+import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupProgressListener;
 import com.btxtech.game.jsre.client.control.StartupSeq;
@@ -9,7 +10,12 @@ import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
+import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.junit.client.GWTTestCase;
+import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.RootPanel;
+import org.junit.Before;
 
 import java.util.List;
 
@@ -32,40 +38,29 @@ public abstract class AbstractGwtTest extends GWTTestCase {
         return "com.btxtech.game.jsre.Game";
     }
 
-    protected void configureMinimalGame(final Runnable runnable) {
-        ClientServices.getInstance().getClientRunner().addStartupProgressListener(new StartupProgressListener() {
-            @Override
-            public void onStart(StartupSeq startupSeq) {
-                System.out.println("onStart: " + startupSeq);
-            }
-
-            @Override
-            public void onNextTask(StartupTaskEnum taskEnum) {
-                System.out.println("onNextTask: " + taskEnum);
-            }
-
-            @Override
-            public void onTaskFinished(AbstractStartupTask task) {
-                System.out.println("onTaskFinished: " + task);
-            }
-
-            @Override
-            public void onTaskFailed(AbstractStartupTask task, String error, Throwable t) {
-                t.printStackTrace();
-                System.out.println("onTaskFailed: " + error);
-            }
-
-            @Override
-            public void onStartupFinished(List<StartupTaskInfo> taskInfo, long totalTime) {
-                runnable.run();
-            }
-
-            @Override
-            public void onStartupFailed(List<StartupTaskInfo> taskInfo, long totalTime) {
-                System.out.println("onStartupFailed");
-            }
-        });
-        ClientServices.getInstance().getClientRunner().start(GameStartupSeq.COLD_SIMULATED);
+    // @Before  -> does not work
+    public void init(GameStartupSeq gameStartupSeq, Integer taskId) {
+        setNativeCtlStartTime();
+        setupStartupSeq(gameStartupSeq, taskId);
+        setupStartScreen();
     }
+
+    private void setupStartScreen() {
+        AbsolutePanel div = new AbsolutePanel();
+        div.getElement().setId("startScreen");
+        RootPanel.get().add(div);
+    }
+
+    private void setupStartupSeq(GameStartupSeq gameStartupSeq, Integer taskId) {
+        AbsolutePanel div = new AbsolutePanel();
+        div.getElement().setId(Game.STARTUP_SEQ_ID);
+        div.getElement().setAttribute(Game.LEVEL_TASK_ID, taskId.toString());
+        div.getElement().setAttribute(Game.STARTUP_SEQ_ID, gameStartupSeq.name());
+        RootPanel.get().add(div);
+    }
+
+    private native double setNativeCtlStartTime() /*-{
+      return $wnd.ctlStartTime = 0;
+    }-*/;
 
 }
