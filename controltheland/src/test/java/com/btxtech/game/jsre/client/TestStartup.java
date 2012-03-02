@@ -17,7 +17,8 @@ import java.util.logging.Logger;
  * -Dgwt.args="-runStyle Manual:1"
  *
  */
-@DoNotRunWith(Platform.HtmlUnitUnknown)
+//@DoNotRunWith(Platform.HtmlUnitUnknown)
+@Ignore
 public class TestStartup extends AbstractGwtTest {
     @Test
     public void testActionHandler() throws Exception {
