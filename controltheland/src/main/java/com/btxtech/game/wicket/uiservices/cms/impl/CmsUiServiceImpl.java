@@ -299,7 +299,8 @@ public class CmsUiServiceImpl implements CmsUiService {
             dbContent = cmsService.getDbContent(pageParameters.getInt(CmsPage.INVOKE_ID));
             beanIdPathElement.setInvokePage(true);
         } else if (pageParameters.containsKey(CmsPage.MESSAGE_ID)) {
-            return new Message(componentId, pageParameters.getString(CmsPage.MESSAGE_ID));
+            Message message = new Message("borderContent", pageParameters.getString(CmsPage.MESSAGE_ID));
+            return new BorderWrapper(componentId, message, "iBorder");
         }
         return getComponent(dbContent, null, componentId, beanIdPathElement, contentContext);
     }
