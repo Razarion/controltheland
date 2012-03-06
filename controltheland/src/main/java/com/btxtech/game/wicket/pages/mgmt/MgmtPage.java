@@ -72,7 +72,8 @@ public class MgmtPage extends MgmtWebPage {
                 setResponsePage(MgmtPage.class);
             }
         });
-
+        add(new MemoryVisualisation("heapMemory", mgmtService.getHeapMemoryUsageHistory(), "Heap Memory Usage|(in Mega Bytes)"));
+        add(new MemoryVisualisation("noHeapMemory", mgmtService.getNoHeapMemoryUsageHistory(), "No Heap Memory Usage|(in Mega Bytes)"));
         setupToolList();
     }
 
