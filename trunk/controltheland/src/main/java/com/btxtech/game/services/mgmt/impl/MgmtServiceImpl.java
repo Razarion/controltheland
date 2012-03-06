@@ -24,6 +24,7 @@ import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.BackupSummary;
 import com.btxtech.game.services.mgmt.DbViewDTO;
+import com.btxtech.game.services.mgmt.MemoryUsageHistory;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.resource.ResourceService;
@@ -48,6 +49,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,6 +62,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -69,6 +74,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * User: beat
@@ -79,6 +87,8 @@ import java.util.List;
 public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     public static final String LOG_DIR_NAME = "logs";
     public static final File LOG_DIR;
+    private static final int MEMORY_SAMPLE_SIZE = 1440;
+    private static final int MEMORY_SAMPLE_DELAY_SECONDS = 60;
     private Date startTime = new Date();
     private JdbcTemplate readonlyJdbcTemplate;
     @Autowired
@@ -107,6 +117,9 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     private boolean testMode;
     private boolean noGameEngine;
     private StartupData startupData;
+    private MemoryUsageContainer heapMemory = new MemoryUsageContainer(MEMORY_SAMPLE_SIZE);
+    private MemoryUsageContainer noHeapMemory = new MemoryUsageContainer(MEMORY_SAMPLE_SIZE);
+    private ScheduledFuture memoryGrabber;
 
     static {
         File tmpLogDir = null;
@@ -118,6 +131,38 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         }
         LOG_DIR = tmpLogDir;
     }
+
+    public MgmtServiceImpl() {
+        ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1, new CustomizableThreadFactory("Memory grabber "));
+        memoryGrabber = scheduledThreadPoolExecutor.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+                    Date date = new Date();
+                    MemoryUsage memoryUsage = memoryMXBean.getHeapMemoryUsage();
+                    heapMemory.addSample(date,
+                            bytesToMega(memoryUsage.getInit()),
+                            bytesToMega(memoryUsage.getUsed()),
+                            bytesToMega(memoryUsage.getCommitted()),
+                            bytesToMega(memoryUsage.getMax()));
+                    memoryUsage = memoryMXBean.getNonHeapMemoryUsage();
+                    noHeapMemory.addSample(date,
+                            bytesToMega(memoryUsage.getInit()),
+                            bytesToMega(memoryUsage.getUsed()),
+                            bytesToMega(memoryUsage.getCommitted()),
+                            bytesToMega(memoryUsage.getMax()));
+                } catch (Throwable t) {
+                    log.error("Memory grabber", t);
+                }
+            }
+        }, 0, MEMORY_SAMPLE_DELAY_SECONDS, TimeUnit.SECONDS);
+    }
+
+    private long bytesToMega(long bytes) {
+        return (long) (bytes / 1000000.0);
+    }
+
 
     @Override
     public Date getStartTime() {
@@ -317,6 +362,10 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         try {
             HibernateUtil.openSession4InternalCall(sessionFactory);
             backup();
+            if (memoryGrabber != null) {
+                memoryGrabber.cancel(false);
+                memoryGrabber = null;
+            }
         } catch (Throwable t) {
             log.error("", t);
         } finally {
@@ -380,6 +429,16 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     @Override
     public boolean isNoGameEngine() {
         return noGameEngine;
+    }
+
+    @Override
+    public MemoryUsageHistory getHeapMemoryUsageHistory() {
+        return heapMemory.generateMemoryUsageHistory();
+    }
+
+    @Override
+    public MemoryUsageHistory getNoHeapMemoryUsageHistory() {
+        return noHeapMemory.generateMemoryUsageHistory();
     }
 }
 

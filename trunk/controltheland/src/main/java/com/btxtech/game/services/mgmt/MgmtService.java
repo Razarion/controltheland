@@ -54,4 +54,8 @@ public interface MgmtService {
     StartupData readStartupData();
 
     void saveStartupData(StartupData startupData);
+
+    MemoryUsageHistory getHeapMemoryUsageHistory();
+
+    MemoryUsageHistory getNoHeapMemoryUsageHistory();
 }
