@@ -87,8 +87,8 @@ import java.util.concurrent.TimeUnit;
 public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     public static final String LOG_DIR_NAME = "logs";
     public static final File LOG_DIR;
-    private static final int MEMORY_SAMPLE_SIZE = 1440;
-    private static final int MEMORY_SAMPLE_DELAY_SECONDS = 60;
+    private static final int MEMORY_SAMPLE_SIZE = 200;
+    private static final int MEMORY_SAMPLE_DELAY_SECONDS = 120;
     private Date startTime = new Date();
     private JdbcTemplate readonlyJdbcTemplate;
     @Autowired
