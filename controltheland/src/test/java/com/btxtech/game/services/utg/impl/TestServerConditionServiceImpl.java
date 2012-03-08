@@ -442,7 +442,8 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         Assert.assertNotNull(itemTypePositionComparison);
         long fulfilledTimeStamp = (Long) getPrivateField(ItemTypePositionComparison.class, itemTypePositionComparison, "fulfilledTimeStamp");
         long fulfilledTime = (System.currentTimeMillis() - fulfilledTimeStamp);
-        Assert.assertTrue(fulfilledTime > 500 && fulfilledTime < 700);
+        System.out.println("fulfilledTime: " + fulfilledTime);
+        Assert.assertTrue("fulfilledTime invalid: " + fulfilledTime, fulfilledTime > 500 && fulfilledTime < 700);
         setPrivateField(ItemTypePositionComparison.class, itemTypePositionComparison, "fulfilledTimeStamp", System.currentTimeMillis() - 60000);
     }
 

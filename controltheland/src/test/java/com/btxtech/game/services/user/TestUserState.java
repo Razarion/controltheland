@@ -1,6 +1,5 @@
 package com.btxtech.game.services.user;
 
-import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -19,8 +18,6 @@ import java.util.List;
 public class TestUserState extends AbstractServiceTest {
     @Autowired
     private UserService userService;
-    @Autowired
-    private MovableService movableService;
     @Autowired
     private UserGuidanceService userGuidanceService;
 
@@ -61,7 +58,7 @@ public class TestUserState extends AbstractServiceTest {
         userService.createUser("U2", "test", "test", "test");
         userService.login("U2", "test");
         int levelTaskId = userGuidanceService.getDefaultLevelTaskId();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", levelTaskId, "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", levelTaskId, "", 0, 0);
 
         // Verify
         userStates = userService.getAllUserStates();
@@ -122,14 +119,14 @@ public class TestUserState extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("U1", "test", "test", "test");
         userService.login("U1", "test");
-        movableService.getRealGameInfo();
+        getMovableService().getRealGameInfo();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Unregistered user
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.getRealGameInfo();
+        getMovableService().getRealGameInfo();
         Assert.assertEquals(2, userService.getAllUserStates().size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

@@ -1,6 +1,5 @@
 package com.btxtech.game.services.item;
 
-import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -19,8 +18,6 @@ import org.springframework.test.annotation.DirtiesContext;
  * Time: 17:10:10
  */
 public class TestItemContainer extends AbstractServiceTest {
-    @Autowired
-    private MovableService movableService;
     @Autowired
     private CollisionService collisionService;
     @Autowired

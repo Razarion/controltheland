@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.jsre.playback.PlaybackInfo;
+import com.btxtech.game.services.gwt.AutowiredRemoteServiceServlet;
 import com.btxtech.game.services.gwt.MovableServiceImpl;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.MgmtService;
@@ -40,7 +41,6 @@ import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 
@@ -49,8 +49,7 @@ import java.util.ArrayList;
  * Date: 04.08.2010
  * Time: 11:11:41
  */
-@Component("playbackService")
-public class PlaybackServiceImpl implements PlaybackService {
+public class PlaybackServiceImpl extends AutowiredRemoteServiceServlet implements PlaybackService {
     @Autowired
     private UserTrackingService userTrackingService;
     @Autowired

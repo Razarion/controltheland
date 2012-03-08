@@ -1,6 +1,5 @@
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
@@ -24,8 +23,6 @@ import java.util.List;
 public class TestUserHistory extends AbstractServiceTest {
     @Autowired
     private UserService userService;
-    @Autowired
-    private MovableService movableService;
     @Autowired
     private UserGuidanceService userGuidanceService;
 
@@ -97,7 +94,7 @@ public class TestUserHistory extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         getMyBase(); // Setup connection
 
         endHttpRequestAndOpenSessionInViewFilter();
@@ -124,9 +121,9 @@ public class TestUserHistory extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         getMyBase(); // Setup connection
-        movableService.surrenderBase();
+        getMovableService().surrenderBase();
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -154,7 +151,7 @@ public class TestUserHistory extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         SimpleBase target = getMyBase(); // Setup connection
 
         endHttpRequestAndOpenSessionInViewFilter();
@@ -162,7 +159,7 @@ public class TestUserHistory extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         SimpleBase actor = getMyBase(); // Setup connection
         sendBuildCommand(getFirstSynItemId(actor, TEST_START_BUILDER_ITEM_ID), new Index(200, 200), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();

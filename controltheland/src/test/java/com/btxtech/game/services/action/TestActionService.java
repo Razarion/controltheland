@@ -1,6 +1,5 @@
 package com.btxtech.game.services.action;
 
-import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.services.AbstractServiceTest;
@@ -18,8 +17,6 @@ import org.springframework.test.annotation.DirtiesContext;
  * Time: 22:57:38
  */
 public class TestActionService extends AbstractServiceTest {
-    @Autowired
-    private MovableService movableService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -45,7 +42,7 @@ public class TestActionService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         waitForActionServiceDone();
-        Assert.assertEquals(2, movableService.getAllSyncInfo().size());
+        Assert.assertEquals(2, getMovableService().getAllSyncInfo().size());
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -69,7 +66,7 @@ public class TestActionService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         waitForActionServiceDone();
-        Assert.assertEquals(2, movableService.getAllSyncInfo().size());
+        Assert.assertEquals(2, getMovableService().getAllSyncInfo().size());
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

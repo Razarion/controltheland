@@ -1,6 +1,5 @@
 package com.btxtech.game.services.cms;
 
-import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
@@ -105,8 +104,6 @@ public class TestCmsService extends AbstractServiceTest {
     private ApplicationContext applicationContext;
     @Autowired
     private UserService userService;
-    @Autowired
-    private MovableService movableService;
     @Autowired
     private XpService xpService;
     @Autowired
@@ -2346,7 +2343,7 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertRenderedPage(CmsPage.class);
         tester.assertLabel("form:content", "-");
         // Enter game
-        movableService.getRealGameInfo();
+        getMovableService().getRealGameInfo();
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
         tester.assertLabel("form:content:link:label", "TEST_LEVEL_2_REAL");
@@ -3599,7 +3596,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         // Set Level and XP
-        movableService.getRealGameInfo(); // Connection is created here. Don't call movableService.getGameInfo() again!
+        getMovableService().getRealGameInfo(); // Connection is created here. Don't call movableService.getGameInfo() again!
 
         tester.startPage(CmsPage.class);
         tester.assertLabel("form:content:container:1", "TEST_LEVEL_2_REAL");

@@ -1,6 +1,5 @@
 package com.btxtech.game.services.item;
 
-import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -35,8 +34,6 @@ import java.util.List;
  * Time: 14:17:18
  */
 public class TestBuilder extends AbstractServiceTest {
-    @Autowired
-    private MovableService movableService;
     @Autowired
     private ActionService actionService;
     @Autowired

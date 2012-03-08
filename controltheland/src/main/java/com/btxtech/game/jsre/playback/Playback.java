@@ -21,7 +21,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * Date: 04.08.2010
  * Time: 11:08:01
  */
-@RemoteServiceRelativePath("gwtrpc/PlaybackServiceService")
+@RemoteServiceRelativePath("playback")
 public interface Playback extends RemoteService {
     PlaybackInfo getPlaybackInfo(String startUuid);
 

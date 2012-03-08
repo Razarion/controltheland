@@ -38,32 +38,53 @@
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
     </listener>
 
-    <!-- GWT Spring integration -->
+    <!-- GWT -->
     <servlet>
-        <servlet-name>gwtrpc-spring-dispatcher</servlet-name>
-        <servlet-class>
-            org.gwtrpcspring.RemoteServiceDispatcher
-        </servlet-class>
+        <servlet-name>mapeditor-dispatcher</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.TerrainEditoImpl</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>gwtrpc-spring-dispatcher</servlet-name>
-        <url-pattern>/mapeditor/gwtrpc/*</url-pattern>
-        <url-pattern>/game/gwtrpc/*</url-pattern>
-        <url-pattern>/pathfinding/gwtrpc/*</url-pattern>
-        <url-pattern>/mapview/gwtrpc/*</url-pattern>
-        <url-pattern>/playback/gwtrpc/*</url-pattern>
-        <url-pattern>/itemtypeeditor/gwtrpc/*</url-pattern>
+        <servlet-name>mapeditor-dispatcher</servlet-name>
+        <url-pattern>/mapeditor/terrainEditor</url-pattern>
+        <url-pattern>/mapview/terrainEditor</url-pattern>
     </servlet-mapping>
 
-    <!-- Spring controller integration -->
     <servlet>
-        <servlet-name>spring-controller</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <load-on-startup>2</load-on-startup>
+        <servlet-name>movable-dispatcher</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.MovableServiceImpl</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>spring-controller</servlet-name>
-        <url-pattern>/spring/*</url-pattern>
+        <servlet-name>movable-dispatcher</servlet-name>
+        <url-pattern>/game/movableService</url-pattern>
+        <url-pattern>/playback/movableService</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>pathfinding-dispatcher</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.PathfindingImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>pathfinding-dispatcher</servlet-name>
+        <url-pattern>/pathfinding/pathfinding</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>playback-dispatcher</servlet-name>
+        <servlet-class>com.btxtech.game.services.playback.impl.PlaybackServiceImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>playback-dispatcher</servlet-name>
+        <url-pattern>/playback/playback</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>itemtypeeditor-dispatcher</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.ItemTypeAccessImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>itemtypeeditor-dispatcher</servlet-name>
+        <url-pattern>/itemtypeeditor/itemTypeAccess</url-pattern>
+        <url-pattern>/pathfinding/itemTypeAccess</url-pattern>
     </servlet-mapping>
 
     <!-- GWT Logging -->
@@ -145,6 +166,17 @@
         <url-pattern>/mapeditor/remote_logging</url-pattern>
     </servlet-mapping>
 
+    <!-- Spring controller integration -->
+    <servlet>
+        <servlet-name>spring-controller</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>spring-controller</servlet-name>
+        <url-pattern>/spring/*</url-pattern>
+    </servlet-mapping>
+   
     <filter>
         <filter-name>spring-security</filter-name>
         <filter-class>org.springframework.security.web.context.SecurityContextPersistenceFilter</filter-class>

@@ -27,7 +27,7 @@ import java.util.Map;
  * Date: 13.02.2010
  * Time: 12:15:56
  */
-@RemoteServiceRelativePath("gwtrpc/TerrainServiceService")
+@RemoteServiceRelativePath("pathfinding")
 public interface Pathfinding extends RemoteService {
     TerrainInfo getTerrainInfo(int terrainId);
 }
