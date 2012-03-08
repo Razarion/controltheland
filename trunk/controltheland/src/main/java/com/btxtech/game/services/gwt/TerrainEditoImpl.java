@@ -26,7 +26,6 @@ import com.btxtech.game.services.territory.TerritoryService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,8 +37,7 @@ import java.util.Map;
  * Date: Sep 2, 2009
  * Time: 8:32:46 PM
  */
-@Component("terrainEditor")
-public class TerrainEditoImpl implements TerrainEditor {
+public class TerrainEditoImpl extends AutowiredRemoteServiceServlet implements TerrainEditor {
     @Autowired
     private TerrainService terrainService;
     @Autowired

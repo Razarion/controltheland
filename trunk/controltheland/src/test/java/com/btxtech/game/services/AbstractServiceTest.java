@@ -36,6 +36,7 @@ import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ServerServices;
+import com.btxtech.game.services.gwt.MovableServiceImpl;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBuilderType;
@@ -47,6 +48,8 @@ import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbMovableType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
+import com.btxtech.game.services.playback.PlaybackService;
+import com.btxtech.game.services.playback.impl.PlaybackServiceImpl;
 import com.btxtech.game.services.resource.DbRegionResource;
 import com.btxtech.game.services.resource.ResourceService;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
@@ -89,7 +92,9 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
@@ -215,8 +220,6 @@ abstract public class AbstractServiceTest {
     @Autowired
     private ActionService actionService;
     @Autowired
-    private MovableService movableService;
-    @Autowired
     private BotService botService;
     @Autowired
     private TerritoryService territoryService;
@@ -236,13 +239,37 @@ abstract public class AbstractServiceTest {
     private CollisionService collisionService;
     @Autowired
     private SessionFactory sessionFactory;
+    @Autowired
+    private ApplicationContext applicationContext;
     private MockHttpServletRequest mockHttpServletRequest;
     private MockHttpServletResponse mockHttpServletResponse;
     private MockHttpSession mockHttpSession;
     private SecurityContext securityContext;
+    private MovableService movableService;
+    private PlaybackService playbackService;
 
     protected PlatformTransactionManager getTransactionManager() {
         return transactionManager;
+    }
+
+    // ---------------------- GWT Servlets -----------------------
+
+    public MovableService getMovableService() {
+        if (movableService == null) {
+            MovableServiceImpl movableServiceImpl = new MovableServiceImpl();
+            applicationContext.getAutowireCapableBeanFactory().autowireBeanProperties(movableServiceImpl, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
+            movableService = movableServiceImpl;
+        }
+        return movableService;
+    }
+
+    public PlaybackService getPlaybackService() {
+        if (playbackService == null) {
+            PlaybackServiceImpl movableServiceImpl = new PlaybackServiceImpl();
+            applicationContext.getAutowireCapableBeanFactory().autowireBeanProperties(movableServiceImpl, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
+            playbackService = movableServiceImpl;
+        }
+        return playbackService;
     }
 
     // ---------------------- Base -----------------------
@@ -294,7 +321,7 @@ abstract public class AbstractServiceTest {
      */
     protected SimpleBase getMyBase() {
         try {
-            return movableService.getRealGameInfo().getBase();
+            return getMovableService().getRealGameInfo().getBase();
         } catch (InvalidLevelState invalidLevelState) {
             throw new RuntimeException(invalidLevelState);
         }
@@ -313,7 +340,7 @@ abstract public class AbstractServiceTest {
     }
 
     protected Id getFirstSynItemId(SimpleBase simpleBase, int itemTypeId, Rectangle region) {
-        for (SyncItemInfo syncItemInfo : movableService.getAllSyncInfo()) {
+        for (SyncItemInfo syncItemInfo : getMovableService().getAllSyncInfo()) {
             if (syncItemInfo.getBase() == null && syncItemInfo.getItemTypeId() == itemTypeId) {
                 if (region != null) {
                     if (region.contains(syncItemInfo.getPosition())) {
@@ -341,7 +368,7 @@ abstract public class AbstractServiceTest {
 
     protected List<Id> getAllSynItemId(SimpleBase simpleBase, int itemTypeId, Rectangle region) {
         List<Id> ids = new ArrayList<Id>();
-        for (SyncItemInfo syncItemInfo : movableService.getAllSyncInfo()) {
+        for (SyncItemInfo syncItemInfo : getMovableService().getAllSyncInfo()) {
             if (syncItemInfo.getBase() == null && syncItemInfo.getItemTypeId() == itemTypeId) {
                 if (region != null) {
                     if (region.contains(syncItemInfo.getPosition())) {
@@ -379,11 +406,11 @@ abstract public class AbstractServiceTest {
     // ------------------- Connection --------------------
 
     protected void clearPackets() throws Exception {
-        movableService.getSyncInfo();
+        getMovableService().getSyncInfo();
     }
 
     protected List<Packet> getPackagesIgnoreSyncItemInfoAndClear() throws Exception {
-        List<Packet> receivedPackets = new ArrayList<Packet>(movableService.getSyncInfo());
+        List<Packet> receivedPackets = new ArrayList<Packet>(getMovableService().getSyncInfo());
         for (Iterator<Packet> iterator = receivedPackets.iterator(); iterator.hasNext();) {
             if (iterator.next() instanceof SyncItemInfo) {
                 iterator.remove();

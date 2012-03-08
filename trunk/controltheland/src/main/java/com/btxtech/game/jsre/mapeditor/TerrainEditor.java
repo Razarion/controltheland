@@ -27,7 +27,7 @@ import java.util.Map;
  * Date: Sep 2, 2009
  * Time: 8:18:09 PM
  */
-@RemoteServiceRelativePath("gwtrpc/TerrainServiceService")
+@RemoteServiceRelativePath("terrainEditor")
 public interface TerrainEditor extends RemoteService {
     TerrainInfo getTerrainInfo(int terrainId);
 

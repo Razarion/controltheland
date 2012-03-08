@@ -56,14 +56,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-@Component("movableService")
-public class MovableServiceImpl implements MovableService {
+public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements MovableService {
     @Autowired
     private TerrainService terrainService;
     @Autowired

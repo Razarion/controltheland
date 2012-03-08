@@ -1,6 +1,5 @@
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
@@ -29,8 +28,6 @@ public class TestXpService extends AbstractServiceTest {
     private UserService userService;
     @Autowired
     private UserGuidanceService userGuidanceService;
-    @Autowired
-    private MovableService movableService;
     @Autowired
     private XpService xpService;
 
@@ -105,7 +102,7 @@ public class TestXpService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         // Create StartItem gets 1 XP
-        movableService.getRealGameInfo();
+        getMovableService().getRealGameInfo();
         Assert.assertEquals(1, userService.getUserState().getXp());
         Id builder = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
         sendBuildCommand(builder, new Index(500, 100), TEST_FACTORY_ITEM_ID);
@@ -136,7 +133,7 @@ public class TestXpService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.getRealGameInfo();
+        getMovableService().getRealGameInfo();
         Id builder = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
         sendBuildCommand(builder, new Index(500, 100), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -165,7 +162,7 @@ public class TestXpService extends AbstractServiceTest {
         for (int i = 0; i < count; i++) {
             beginHttpSession();
             beginHttpRequestAndOpenSessionInViewFilter();
-            movableService.getRealGameInfo();
+            getMovableService().getRealGameInfo();
             Id target = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
             targets.add(target);
             endHttpRequestAndOpenSessionInViewFilter();

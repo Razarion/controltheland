@@ -1,6 +1,5 @@
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
@@ -23,8 +22,6 @@ import org.springframework.test.annotation.DirtiesContext;
  */
 public class TestResurrection extends AbstractServiceTest {
     @Autowired
-    private MovableService movableService;
-    @Autowired
     private BaseService baseService;
     @Autowired
     private UserService userService;
@@ -40,15 +37,15 @@ public class TestResurrection extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase simpleBase = movableService.getRealGameInfo().getBase();
+        SimpleBase simpleBase = getMovableService().getRealGameInfo().getBase();
         Id id = getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID);
         clearPackets();
-        movableService.sellItem(id);
+        getMovableService().sellItem(id);
 
         Assert.assertEquals(0, baseService.getBases().size());
 
         try {
-            movableService.getSyncInfo();
+            getMovableService().getSyncInfo();
             Assert.fail("Disconnection expected");
         } catch (NoConnectionException e) {
             // OK
@@ -56,13 +53,13 @@ public class TestResurrection extends AbstractServiceTest {
 
         // Also second call should fail
         try {
-            movableService.getSyncInfo();
+            getMovableService().getSyncInfo();
             Assert.fail("Disconnection expected");
         } catch (NoConnectionException e) {
             // OK
         }
 
-        SimpleBase newBase = movableService.getRealGameInfo().getBase();
+        SimpleBase newBase = getMovableService().getRealGameInfo().getBase();
         Assert.assertEquals(1, baseService.getBases().size());
         Assert.assertFalse(newBase.equals(simpleBase));
 
@@ -87,7 +84,7 @@ public class TestResurrection extends AbstractServiceTest {
         // Target
         userService.createUser("U1", "test", "test", "");
         userService.login("U1", "test");
-        SimpleBase targetBase = movableService.getRealGameInfo().getBase();
+        SimpleBase targetBase = getMovableService().getRealGameInfo().getBase();
         String targetName = baseService.getBaseName(targetBase);
         Id target = getFirstSynItemId(targetBase, TEST_START_BUILDER_ITEM_ID);
         clearPackets();
@@ -100,7 +97,7 @@ public class TestResurrection extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
 
         // Actor
-        SimpleBase actorBase = movableService.getRealGameInfo().getBase();
+        SimpleBase actorBase = getMovableService().getRealGameInfo().getBase();
         Assert.assertEquals(2, baseService.getBases().size());
         Id actorBuilder = getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID);
         sendBuildCommand(actorBuilder, new Index(100, 100), TEST_FACTORY_ITEM_ID);
@@ -134,7 +131,7 @@ public class TestResurrection extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
 
         userService.login("U1", "test");
-        SimpleBase targetBaseNew = movableService.getRealGameInfo().getBase();
+        SimpleBase targetBaseNew = getMovableService().getRealGameInfo().getBase();
         Assert.assertFalse(targetBaseNew.equals(targetBase));
         Assert.assertEquals(2, baseService.getBases().size());
         Message message2 = new Message();
@@ -155,10 +152,10 @@ public class TestResurrection extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         SimpleBase simpleBase = getMyBase(); // Connection
-        movableService.surrenderBase();
+        getMovableService().surrenderBase();
 
         try {
-            movableService.getSyncInfo();
+            getMovableService().getSyncInfo();
             Assert.fail("Disconnection expected");
         } catch (NoConnectionException e) {
             // OK

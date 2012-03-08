@@ -1,22 +1,10 @@
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.client.MovableService;
-import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
-import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.territory.DbTerritory;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.condition.DbComparisonItemCount;
-import com.btxtech.game.services.utg.condition.DbConditionConfig;
-import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import org.junit.Assert;
 import org.junit.Ignore;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -36,10 +24,9 @@ public class TestCondition extends AbstractServiceTest {
     private UserService userService;
     @Autowired
     private UserGuidanceService userGuidanceService;
-    @Autowired
-    private MovableService movableService;
 
     //@Test
+
     @Ignore
     @DirtiesContext
     public void testCreateOnAllowedTerrain() throws Exception {

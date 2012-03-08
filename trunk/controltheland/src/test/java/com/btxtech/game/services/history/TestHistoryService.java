@@ -1,6 +1,5 @@
 package com.btxtech.game.services.history;
 
-import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -40,8 +39,6 @@ public class TestHistoryService extends AbstractServiceTest {
     @Autowired
     private UserService userService;
     @Autowired
-    private MovableService movableService;
-    @Autowired
     private ItemService itemService;
     @Autowired
     private CollisionService collisionService;
@@ -65,7 +62,7 @@ public class TestHistoryService extends AbstractServiceTest {
         // Finish tutorial
         beginHttpRequestAndOpenSessionInViewFilter();
         int levelTaskId = userGuidanceService.getDefaultLevelTaskId();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", levelTaskId, "xx", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", levelTaskId, "xx", 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
@@ -118,12 +115,12 @@ public class TestHistoryService extends AbstractServiceTest {
 
         beginHttpRequestAndOpenSessionInViewFilter();
         // Establish Connection
-        movableService.getRealGameInfo();
+        getMovableService().getRealGameInfo();
 
         // Build Factory
         System.out.println("---- build unit ---");
         Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
-        sendBuildCommand(movableService.getAllSyncInfo().iterator().next().getId(), buildPos, TEST_FACTORY_ITEM_ID);
+        sendBuildCommand(getMovableService().getAllSyncInfo().iterator().next().getId(), buildPos, TEST_FACTORY_ITEM_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -159,7 +156,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("Target", "test", "test", "test");
         userService.login("Target", "test");
-        SimpleBase targetBase = movableService.getRealGameInfo().getBase();
+        SimpleBase targetBase = getMovableService().getRealGameInfo().getBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -167,7 +164,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("Actor", "test", "test", "test");
         userService.login("Actor", "test");
-        SimpleBase actorBase = movableService.getRealGameInfo().getBase();
+        SimpleBase actorBase = getMovableService().getRealGameInfo().getBase();
         Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
         sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -218,7 +215,7 @@ public class TestHistoryService extends AbstractServiceTest {
         System.out.println("**** testKillAnonymousItem ****");
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase targetBase = movableService.getRealGameInfo().getBase();
+        SimpleBase targetBase = getMovableService().getRealGameInfo().getBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -226,7 +223,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("Actor", "test", "test", "test");
         userService.login("Actor", "test");
-        SimpleBase actorBase = movableService.getRealGameInfo().getBase();
+        SimpleBase actorBase = getMovableService().getRealGameInfo().getBase();
         Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
         sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -266,13 +263,13 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("Target", "test", "test", "test");
         userService.login("Target", "test");
-        SimpleBase targetBase = movableService.getRealGameInfo().getBase();
+        SimpleBase targetBase = getMovableService().getRealGameInfo().getBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase actorBase = movableService.getRealGameInfo().getBase();
+        SimpleBase actorBase = getMovableService().getRealGameInfo().getBase();
         Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
         sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -328,8 +325,8 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("Actor", "test", "test", "test");
         userService.login("Actor", "test");
-        movableService.getRealGameInfo();
-        movableService.surrenderBase();
+        getMovableService().getRealGameInfo();
+        getMovableService().surrenderBase();
 
         getMyBase(); // Connection -> resurrection
 
@@ -371,7 +368,7 @@ public class TestHistoryService extends AbstractServiceTest {
         userService.createUser("Actor", "test", "test", "test");
         userService.login("Actor", "test");
         SimpleBase simpleBase = getMyBase();
-        movableService.sellItem(getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID));
+        getMovableService().sellItem(getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

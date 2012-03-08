@@ -19,15 +19,13 @@ import com.btxtech.game.services.terrain.TerrainService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * User: beat
  * Date: Sep 2, 2009
  * Time: 8:32:46 PM
  */
-@Component("pathfinding")
-public class PathfindingImpl implements Pathfinding {
+public class PathfindingImpl extends AutowiredRemoteServiceServlet implements Pathfinding {
     @Autowired
     private TerrainService terrainService;
     private Log log = LogFactory.getLog(PathfindingImpl.class);

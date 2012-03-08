@@ -1,6 +1,5 @@
 package com.btxtech.game.services.connection;
 
-import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
@@ -23,8 +22,6 @@ import org.springframework.test.annotation.DirtiesContext;
  */
 public class PacketSendingTest extends AbstractServiceTest {
     @Autowired
-    private MovableService movableService;
-    @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
     private UserService userService;
@@ -39,7 +36,7 @@ public class PacketSendingTest extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         System.out.println("----- testSimple -----");
 
-        RealGameInfo realGameInfo = movableService.getRealGameInfo(); // Connection is created here. Don't call movableService.getGameInfo() again!
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(); // Connection is created here. Don't call movableService.getGameInfo() again!
         SimpleBase simpleBase = realGameInfo.getBase();
         // Buy
         sendBuildCommand(getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID), new Index(1000, 100), TEST_FACTORY_ITEM_ID);
@@ -50,7 +47,7 @@ public class PacketSendingTest extends AbstractServiceTest {
         assertPackagesIgnoreSyncItemInfoAndClear(accountBalancePacket);
 
         // Sell
-        movableService.sellItem(getFirstSynItemId(simpleBase, TEST_FACTORY_ITEM_ID));
+        getMovableService().sellItem(getFirstSynItemId(simpleBase, TEST_FACTORY_ITEM_ID));
         waitForActionServiceDone();
         accountBalancePacket = new AccountBalancePacket();
         accountBalancePacket.setAccountBalance(999);

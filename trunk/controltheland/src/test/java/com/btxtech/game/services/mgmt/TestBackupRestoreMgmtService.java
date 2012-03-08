@@ -1,7 +1,6 @@
 package com.btxtech.game.services.mgmt;
 
 import com.btxtech.game.jsre.client.AlreadyUsedException;
-import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -58,8 +57,6 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
     @Autowired
     private UserService userService;
     @Autowired
-    private MovableService movableService;
-    @Autowired
     private BotService botService;
 
     @Test
@@ -81,7 +78,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.getDbLevel();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         SimpleBase unregKillBase = getMyBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -91,7 +88,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("U2", "test", "test", "test");
         userService.login("U2", "test");
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         SimpleBase u2Base = getMyBase();
         Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
         sendBuildCommand(getFirstSynItemId(u2Base, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
@@ -108,7 +105,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("U3", "test", "test", "test");
         userService.login("U3", "test");
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -123,7 +120,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         // Unregistered base, second level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -237,7 +234,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         // Unreg user online, second level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         mgmtService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -343,7 +340,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("U1", "test", "test", "test");
         userService.login("U1", "test");
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         SimpleBase realUser = getMyBase();
         Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
         sendBuildCommand(getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
@@ -409,7 +406,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.login("U1", "test");
         Assert.assertEquals(TEST_LEVEL_1_SIMULATED, userGuidanceService.getDbLevel().getName());
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         Assert.assertEquals(TEST_LEVEL_2_REAL, userGuidanceService.getDbLevel().getName());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -673,7 +670,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("U1", "test", "test", "test");
         userService.login("U1", "test");
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         SimpleBase realUser = getMyBase();
         Id id = getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID);
         SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.getItem(id);

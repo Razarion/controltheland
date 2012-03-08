@@ -1,6 +1,5 @@
 package com.btxtech.game.services.base;
 
-import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
@@ -24,8 +23,6 @@ public class TestBaseService extends AbstractServiceTest {
     @Autowired
     private UserService userService;
     @Autowired
-    private MovableService movableService;
-    @Autowired
     private BaseService baseService;
     @Autowired
     private ItemService itemService;
@@ -47,7 +44,7 @@ public class TestBaseService extends AbstractServiceTest {
         // $998
         waitForActionServiceDone();
         Assert.assertEquals(998, baseService.getBase(simpleBase).getAccountBalance(), 0.1);
-        movableService.sellItem(id);
+        getMovableService().sellItem(id);
         // $999
         AccountBalancePacket accountBalancePacket = new AccountBalancePacket();
         accountBalancePacket.setAccountBalance(998.5);
@@ -70,10 +67,10 @@ public class TestBaseService extends AbstractServiceTest {
         SimpleBase simpleBase = getMyBase(); // Setup connection
         Id id = getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID);
         clearPackets();
-        movableService.sellItem(id);
+        getMovableService().sellItem(id);
 
         try {
-            movableService.getSyncInfo();
+            getMovableService().getSyncInfo();
             Assert.fail("NoConnectionException expected");
         } catch (NoConnectionException e) {
             // OK
@@ -101,7 +98,7 @@ public class TestBaseService extends AbstractServiceTest {
         waitForActionServiceDone();
         Id moneyId = getFirstSynItemId(simpleBase, TEST_RESOURCE_ITEM_ID);
         sendCollectCommand(getFirstSynItemId(simpleBase, TEST_HARVESTER_ITEM_ID), moneyId);
-        movableService.surrenderBase();
+        getMovableService().surrenderBase();
         waitForActionServiceDone();
         try {
             itemService.getItem(moneyId);
@@ -127,7 +124,7 @@ public class TestBaseService extends AbstractServiceTest {
         userService.login("U1", "test");
         SimpleBase simpleBase = getMyBase(); // Setup connection
         Assert.assertEquals("U1", baseService.getBaseName(simpleBase));
-        movableService.surrenderBase();
+        getMovableService().surrenderBase();
         Assert.assertEquals("Base 1", baseService.getBaseName(simpleBase));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

@@ -1,6 +1,5 @@
 package com.btxtech.game.services.utg.impl;
 
-import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
@@ -32,8 +31,6 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
     @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
-    private MovableService movableService;
-    @Autowired
     private BaseService baseService;
     @Autowired
     private ServerConditionService serverConditionService;
@@ -46,7 +43,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         try {
-            movableService.getRealGameInfo();
+            getMovableService().getRealGameInfo();
             Assert.fail("InvalidLevelState expected");
         } catch (InvalidLevelState invalidLevelState) {
 
@@ -66,7 +63,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         Assert.assertFalse(userGuidanceService.isStartRealGame());
         int levelTaskId = userGuidanceService.getDefaultLevelTaskId();
         Assert.assertEquals(TEST_LEVEL_1_SIMULATED_ID, levelTaskId);
-        SimulationInfo simulationInfo = movableService.getSimulationGameInfo(levelTaskId);
+        SimulationInfo simulationInfo = getMovableService().getSimulationGameInfo(levelTaskId);
         Assert.assertNotNull(simulationInfo);
         Assert.assertEquals(TEST_LEVEL_1_SIMULATED, userGuidanceService.getDbLevelCms().getName());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -79,7 +76,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertEquals(TEST_LEVEL_2_REAL, userGuidanceService.getDbLevelCms().getName());
         Assert.assertTrue(userGuidanceService.isStartRealGame());
-        RealGameInfo realGameInfo = movableService.getRealGameInfo();
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo();
         Assert.assertNotNull(realGameInfo);
         Assert.assertEquals(1, baseService.getBases().size());
         List<DbLevelTask> levelTask = new ArrayList<DbLevelTask>(userGuidanceService.getDbLevelCms().getLevelTaskCrud().readDbChildren());

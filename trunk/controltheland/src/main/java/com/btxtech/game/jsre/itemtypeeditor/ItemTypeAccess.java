@@ -28,7 +28,7 @@ import java.util.List;
  * Date: Sep 2, 2009
  * Time: 8:18:09 PM
  */
-@RemoteServiceRelativePath("gwtrpc/ItemTypeAccess")
+@RemoteServiceRelativePath("itemTypeAccess")
 public interface ItemTypeAccess extends RemoteService {
     ItemType getItemType(int itemTypeId) throws NoSuchItemTypeException;
 

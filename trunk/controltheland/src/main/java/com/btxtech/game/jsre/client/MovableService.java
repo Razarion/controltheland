@@ -44,7 +44,7 @@ import java.util.List;
 /**
  * The client side stub for the RPC service.
  */
-@RemoteServiceRelativePath("gwtrpc/movableService")
+@RemoteServiceRelativePath("movableService")
 public interface MovableService extends RemoteService {
     RealGameInfo getRealGameInfo() throws InvalidLevelState;
 

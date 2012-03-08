@@ -17,8 +17,7 @@ import java.util.List;
  * Date: 26.08.2011
  * Time: 13:40:38
  */
-@Component("itemTypeAccess")
-public class ItemTypeAccessImpl implements ItemTypeAccess {
+public class ItemTypeAccessImpl extends AutowiredRemoteServiceServlet implements ItemTypeAccess {
     @Autowired
     private ItemService itemService;
 
