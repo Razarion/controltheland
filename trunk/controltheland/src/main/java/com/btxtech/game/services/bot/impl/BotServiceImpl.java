@@ -90,7 +90,11 @@ public class BotServiceImpl extends CommonBotServiceImpl implements BotService {
     @PreDestroy
     @Override
     public void cleanup() {
-        killAllBots();
+        try {
+            killAllBots();
+        } catch(Throwable t) {
+           log.error("", t);
+        }
     }
 
     @Override

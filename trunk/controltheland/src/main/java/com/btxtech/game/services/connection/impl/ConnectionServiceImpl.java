@@ -80,9 +80,13 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
 
     @PreDestroy
     public void cleanup() {
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
+        try {
+            if (timer != null) {
+                timer.cancel();
+                timer = null;
+            }
+        } catch(Throwable t) {
+           log.error("", t);
         }
     }
 

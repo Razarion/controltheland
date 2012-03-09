@@ -99,9 +99,13 @@ public class XpServiceImpl implements XpService {
 
     @PreDestroy
     public void stop() {
-        if (xpPerKillQueueWorker != null) {
-            xpPerKillQueueWorker.stop();
-            xpPerKillQueueWorker = null;
+        try {
+            if (xpPerKillQueueWorker != null) {
+                xpPerKillQueueWorker.stop();
+                xpPerKillQueueWorker = null;
+            }
+        } catch(Throwable t) {
+           log.error("", t);
         }
     }
 

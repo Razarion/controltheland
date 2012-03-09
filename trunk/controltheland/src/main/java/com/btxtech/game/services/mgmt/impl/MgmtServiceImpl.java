@@ -119,7 +119,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     private StartupData startupData;
     private MemoryUsageContainer heapMemory = new MemoryUsageContainer(MEMORY_SAMPLE_SIZE);
     private MemoryUsageContainer noHeapMemory = new MemoryUsageContainer(MEMORY_SAMPLE_SIZE);
-    private ScheduledFuture memoryGrabber;
+    private ScheduledThreadPoolExecutor memoryGrabberThreadPool;
 
     static {
         File tmpLogDir = null;
@@ -133,8 +133,8 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     }
 
     public MgmtServiceImpl() {
-        ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1, new CustomizableThreadFactory("Memory grabber "));
-        memoryGrabber = scheduledThreadPoolExecutor.scheduleAtFixedRate(new Runnable() {
+        memoryGrabberThreadPool = new ScheduledThreadPoolExecutor(1, new CustomizableThreadFactory("Memory grabber " + getClass().getName() + " "));
+        memoryGrabberThreadPool.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -362,9 +362,9 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         try {
             HibernateUtil.openSession4InternalCall(sessionFactory);
             backup();
-            if (memoryGrabber != null) {
-                memoryGrabber.cancel(false);
-                memoryGrabber = null;
+            if (memoryGrabberThreadPool != null) {
+                memoryGrabberThreadPool.shutdownNow();
+                memoryGrabberThreadPool = null;
             }
         } catch (Throwable t) {
             log.error("", t);
