@@ -271,7 +271,8 @@ public class HistoryServiceImpl implements HistoryService {
                         log.error("Unknown state 2: " + baseId + " " + dbHistoryElement.getActorBaseId() + " " + dbHistoryElement.getTargetBaseId());
                     }
                 } else {
-                    throw new IllegalArgumentException("user and baseId are null");
+                    displayHistoryElement.setMessage("Internal error 5/1");
+                    log.warn("HistoryServiceImpl.convert() " + dbHistoryElement + " user and baseId are null (1)");
                 }
                 break;
             case BASE_SURRENDERED:
@@ -308,7 +309,8 @@ public class HistoryServiceImpl implements HistoryService {
                         log.error("Unknown state 4: " + baseId + " " + dbHistoryElement.getActorBaseId() + " " + dbHistoryElement.getTargetBaseId());
                     }
                 } else {
-                    throw new IllegalArgumentException("user and baseId are null");
+                    displayHistoryElement.setMessage("Internal error 5/2");
+                    log.warn("HistoryServiceImpl.convert() " + dbHistoryElement + " user and baseId are null (2)");
                 }
                 break;
             case LEVEL_PROMOTION:
@@ -318,7 +320,8 @@ public class HistoryServiceImpl implements HistoryService {
                 displayHistoryElement.setMessage("Level Task competed: " + dbHistoryElement.getLevelTaskName());
                 break;
             default:
-                throw new IllegalArgumentException("Unknown: " + dbHistoryElement.getType());
+                displayHistoryElement.setMessage("Internal error 6");
+                log.warn("HistoryServiceImpl.convert() " + dbHistoryElement +" Unknown type: " + dbHistoryElement.getType());
         }
         return displayHistoryElement;
     }
