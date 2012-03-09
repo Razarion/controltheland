@@ -3,6 +3,8 @@ package com.btxtech.game.services.bot.impl;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.bot.impl.BotRunner;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
 import java.util.concurrent.ScheduledFuture;
@@ -19,6 +21,7 @@ public class ServerBotRunner extends BotRunner {
     private ScheduledThreadPoolExecutor botThread;
     private ScheduledThreadPoolExecutor botTimer;
     private ScheduledFuture botThreadScheduledFuture;
+    private Log log = LogFactory.getLog(ServerBotRunner.class);
 
     public ServerBotRunner(BotConfig botConfig, Services services) {
         super(botConfig);
@@ -42,6 +45,10 @@ public class ServerBotRunner extends BotRunner {
 
     @Override
     protected void startBotThread(int actionDelayMs, Runnable runnable) {
+        if (botThreadScheduledFuture != null) {
+            log.warn("Bot is already running: " + getBotConfig());
+            killBotThread();
+        }
         botThreadScheduledFuture = botThread.scheduleAtFixedRate(runnable, 0, actionDelayMs, TimeUnit.MILLISECONDS);
     }
 

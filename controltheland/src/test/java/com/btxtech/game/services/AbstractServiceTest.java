@@ -286,6 +286,9 @@ abstract public class AbstractServiceTest {
         return dbBaseItemType;
     }
 
+    protected void assertBaseCount(int count) {
+        Assert.assertEquals(count, baseService.getAllBaseAttributes().size());
+    }
     // ------------------- Sync Items --------------------
 
     protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id, Services services, SimpleBase simpleBase) throws Exception {

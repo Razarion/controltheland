@@ -74,10 +74,49 @@ public class TestBotService extends AbstractServiceTest {
         } finally {
             HibernateUtil.closeSession4InternalCall(getSessionFactory());
         }
+        // Wait for bot to complete
+        waitForBotToBuildup(botConfig);
+        assertWholeItemCount(4);
 
+        HibernateUtil.openSession4InternalCall(getSessionFactory());
+        try {
+            botService.activate();
+        } finally {
+            HibernateUtil.closeSession4InternalCall(getSessionFactory());
+        }
+        // Wait for bot to complete
+        waitForBotToBuildup(botConfig);
+        assertWholeItemCount(4);
+    }
+
+    @Test
+    @DirtiesContext
+    public void testSystemActivateNoWait() throws Exception {
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        BotConfig botConfig = setupMinimalBot(new Rectangle(1, 1, 5000, 5000)).createBotConfig(itemService);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        HibernateUtil.openSession4InternalCall(getSessionFactory());
+        try {
+            botService.activate();
+            botService.activate();
+            botService.activate();
+            botService.activate();
+            botService.activate();
+            botService.activate();
+            botService.activate();
+            botService.activate();
+        } finally {
+            HibernateUtil.closeSession4InternalCall(getSessionFactory());
+        }
 
         // Wait for bot to complete
         waitForBotToBuildup(botConfig);
+        assertBaseCount(1);
         assertWholeItemCount(4);
     }
 

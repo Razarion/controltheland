@@ -74,7 +74,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
 
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
 
-        botItemContainer.killAllItems();
+        botItemContainer.killAllItems(simpleBase);
         assertWholeItemCount(0);
     }
 
@@ -163,7 +163,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
         Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
 
-        botItemContainer.killAllItems();
+        botItemContainer.killAllItems(simpleBase);
         assertWholeItemCount(0);
     }
 
@@ -226,7 +226,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null).size());
         Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_SIMPLE_BUILDING_ID, null).size());
 
-        botItemContainer.killAllItems();
+        botItemContainer.killAllItems(simpleBase);
         assertWholeItemCount(0);
     }
 
@@ -269,7 +269,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
         Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null).size());
 
-        botItemContainer.killAllItems();
+        botItemContainer.killAllItems(simpleBase);
         assertWholeItemCount(0);
     }
 
@@ -321,7 +321,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Assert.assertEquals(6, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
         Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null).size());
 
-        botItemContainer.killAllItems();
+        botItemContainer.killAllItems(simpleBase);
         assertWholeItemCount(0);
     }
 

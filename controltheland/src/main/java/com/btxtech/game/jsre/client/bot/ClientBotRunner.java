@@ -45,7 +45,7 @@ public class ClientBotRunner extends BotRunner {
     @Override
     protected void startBotThread(int actionDelayMs, final Runnable runnable) {
         if (botThread != null) {
-            log.severe("Bot thread was not stopped before");
+            log.severe("Bot thread was not stopped before: " + getBotConfig());
             killBotThread();
         }
         botThread = new Timer() {

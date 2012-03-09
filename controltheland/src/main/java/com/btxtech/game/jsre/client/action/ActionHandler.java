@@ -172,7 +172,6 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                             pos = null;
                         }
                     }
-                    System.out.println("Move: " + pos);
                     move(clientSyncItem.getSyncBaseItem(), pos);
                 }
             }
