@@ -174,8 +174,12 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
 
     @PreDestroy
     public void stop() {
-        if (timer != null) {
-            timer.cancel();
+        try {
+            if (timer != null) {
+                timer.cancel();
+            }
+        } catch(Throwable t) {
+           log.error("", t);
         }
     }
 

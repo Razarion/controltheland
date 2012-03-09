@@ -72,7 +72,11 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
 
     @PreDestroy
     public void cleanup() {
-        timer.shutdown();
+        try {
+            timer.shutdownNow();
+        } catch(Throwable t) {
+           log.error("", t);
+        }
     }
 
     @Override

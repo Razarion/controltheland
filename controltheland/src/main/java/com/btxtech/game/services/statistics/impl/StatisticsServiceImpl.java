@@ -90,7 +90,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         allTimeStatistics.init(DbStatisticsEntry.class);
         allTimeStatistics.putCriterion(DbStatisticsEntry.Type.ALL_TIME, Restrictions.eq("type", DbStatisticsEntry.Type.ALL_TIME));
         setupNextDay();
-        scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1, new CustomizableThreadFactory("StatisticsServiceImpl Thread "));
+        scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1, new CustomizableThreadFactory("StatisticsServiceImpl Thread " + getClass().getName() + " "));
         scheduleNextEndDayProcessing();
 
     }
@@ -123,8 +123,22 @@ public class StatisticsServiceImpl implements StatisticsService {
     @PreDestroy
     @Transactional
     public void cleanup() {
-        moveCacheToDb();
-        scheduledThreadPoolExecutor.shutdownNow();
+        try {
+            HibernateUtil.openSession4InternalCall(sessionFactory);
+            try {
+                moveCacheToDb();
+            } catch (Throwable t) {
+                log.error("", t);
+            } finally {
+                HibernateUtil.closeSession4InternalCall(sessionFactory);
+            }
+            if (scheduledThreadPoolExecutor != null) {
+                scheduledThreadPoolExecutor.shutdownNow();
+                scheduledThreadPoolExecutor = null;
+            }
+        } catch (Throwable t) {
+            log.error("StatisticsServiceImpl.cleanup() failed", t);
+        }
     }
 
     void moveCacheToDb() {
