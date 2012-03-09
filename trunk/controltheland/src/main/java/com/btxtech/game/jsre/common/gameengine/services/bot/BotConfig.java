@@ -96,4 +96,9 @@ public class BotConfig implements Serializable {
     public int hashCode() {
         return id;
     }
+
+    @Override
+    public String toString() {
+        return "BotConfig: " + name + " realm: " + realm;
+    }
 }

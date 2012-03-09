@@ -66,7 +66,10 @@ public class BotItemContainer {
         return need.getNeedCount() == 0;
     }
 
-    public void killAllItems() {
+    public void killAllItems(SimpleBase simpleBase) {
+        if (simpleBase != null) {
+            updateState(simpleBase);
+        }
         for (SyncBaseItem syncBaseItem : botItems.keySet()) {
             if (syncBaseItem.isAlive()) {
                 services.getItemService().killSyncItem(syncBaseItem, null, true, false);

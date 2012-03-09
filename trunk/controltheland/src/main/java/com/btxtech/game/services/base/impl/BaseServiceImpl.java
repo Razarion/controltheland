@@ -57,9 +57,9 @@ import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.services.utg.condition.ServerConditionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -176,7 +176,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             lastBaseId++;
             Base base = new Base(lastBaseId);
             createBase(base.getSimpleBase(), botConfig.getName(), false);
-            log.debug("Bot Base created: " + base);
+            log.debug("Bot Base created: " + botConfig.getName() + " " + " (" + base + ")");
             bases.put(base.getSimpleBase(), base);
             setBot(base.getSimpleBase(), true);
             sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());
@@ -190,7 +190,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     private void deleteBase(SimpleBase actor, Base base) {
-        log.debug("Base deleted: " + base);
+        log.debug("Base deleted: " + getBaseName(base.getSimpleBase()) + " (" + base + ")");
         boolean isBot = isBot(actor);
         synchronized (bases) {
             if (bases.remove(base.getSimpleBase()) == null) {

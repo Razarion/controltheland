@@ -125,7 +125,7 @@ public abstract class BotRunner {
         synchronized (syncObject) {
             killBotThread();
             if (botItemContainer != null) {
-                botItemContainer.killAllItems();
+                botItemContainer.killAllItems(base);
             }
             botItemContainer = null;
             intruderHandler = null;
@@ -166,5 +166,9 @@ public abstract class BotRunner {
         Random random = new Random();
         long delay = min + (long) (random.nextDouble() * (double) (max - min));
         scheduleTimer(delay, new BotTimer());
+    }
+
+    protected BotConfig getBotConfig() {
+        return botConfig;
     }
 }

@@ -136,7 +136,7 @@ public class GenericItemConverter {
     }
 
     public void restoreBackup(BackupEntry backupEntry) throws NoSuchItemTypeException {
-        botService.cleanup();
+        botService.cleanup(); // Run before items and bases will be cleared
         actionService.pause(true);
         serverEnergyService.pauseService(true);
 
@@ -190,7 +190,7 @@ public class GenericItemConverter {
         serverEnergyService.pauseService(false);
         serverEnergyService.restoreItems(syncItems.values());
         actionService.pause(false);
-        botService.activate();
+        botService.activate(); // Items and bases have been deleted
     }
 
     private Base getBase(Map<DbUserState, UserState> userStates, Map<DbBase, Base> dbBases, DbBase dBbase) {
