@@ -223,6 +223,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
 
     @Override
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
+    @Transactional
     public void removeSavedQuery(final String query) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(SavedQuery.class);
         criteria.add(Restrictions.like("query", query));
