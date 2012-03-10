@@ -37,6 +37,7 @@ public class Game extends WebPage {
     private UserGuidanceService userGuidanceService;
     @SpringBean
     private CmsUiService cmsUiService;
+    private Integer levelTaskId;
 
     public Game(PageParameters parameters) {
         super(parameters);
@@ -47,7 +48,6 @@ public class Game extends WebPage {
 
         GameStartupSeq gameStartupSeq;
 
-        Integer levelTaskId = null;
         if (parameters.containsKey(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID)) {
             levelTaskId = parameters.getInt(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID);
             gameStartupSeq = GameStartupSeq.COLD_SIMULATED;
@@ -73,6 +73,10 @@ public class Game extends WebPage {
     @Override
     protected void onBeforeRender() {
         super.onBeforeRender();
-        userTrackingService.pageAccess(getClass());
+        if (levelTaskId != null) {
+            userTrackingService.pageAccess(getClass().getName(), "LevelTaskId=" + levelTaskId);
+        } else {
+            userTrackingService.pageAccess(getClass().getName(), null);
+        }
     }
 }

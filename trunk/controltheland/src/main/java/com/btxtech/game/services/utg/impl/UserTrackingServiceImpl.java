@@ -109,17 +109,6 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     @Transactional
-    public void pageAccess(Class theClass) {
-        try {
-            DbPageAccess dbPageAccess = new DbPageAccess(session.getSessionId(), theClass.getName(), null);
-            sessionFactory.getCurrentSession().save(dbPageAccess);
-        } catch (NoConnectionException e) {
-            log.error("", e);
-        }
-    }
-
-    @Override
-    @Transactional
     public void pageAccess(String pageName, String additional) {
         try {
             DbPageAccess dbPageAccess = new DbPageAccess(session.getSessionId(), pageName, additional);

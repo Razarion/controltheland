@@ -46,8 +46,6 @@ import java.util.List;
 public interface UserTrackingService {
     void saveBrowserDetails(DbSessionDetail dbSessionDetail);
 
-    void pageAccess(Class theClass);
-
     void pageAccess(String pageName, String additional);
 
     boolean hasCookieToAdd();
