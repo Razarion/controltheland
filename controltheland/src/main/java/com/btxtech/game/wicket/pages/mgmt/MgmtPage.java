@@ -35,6 +35,7 @@ import java.lang.management.MemoryUsage;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * User: beat
@@ -50,6 +51,7 @@ public class MgmtPage extends MgmtWebPage {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DateUtil.DATE_TIME_FORMAT_STRING);
         add(new Label("sysstart", simpleDateFormat.format(mgmtService.getStartTime())));
         add(new Label("systemTime", simpleDateFormat.format(new Date())));
+        add(new Label("timeZone", TimeZone.getDefault().getDisplayName() + " (" + TimeZone.getDefault().getDisplayName(false, TimeZone.SHORT) + ")"));
         MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
         MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
         add(new Label("heapInit", bytesToMega(heapMemoryUsage.getInit())));

@@ -19,11 +19,29 @@
 </head>
 <body>
 <h1>Management</h1>
+<h2>Tools</h2>
+<ul>
+    <li wicket:id="toolLinkList"><a href="" wicket:id="toolLink"><span wicket:id="toolLinkName">toolLinkName</span></a>
+    </li>
+</ul>
+
 <h2>System properties</h2>
-System running since: <span wicket:id="sysstart">sysstart</span>
-<br/>
-System time: <span wicket:id="systemTime">systemTime</span>
-<br/>
+<table border="1">
+    <tr>
+        <td>System running since</td>
+        <td wicket:id="sysstart">sysstart</td>
+    </tr>
+    <tr>
+        <td>System time</td>
+        <td wicket:id="systemTime">systemTime</td>
+    </tr>
+    <tr>
+        <td>Time zone</td>
+        <td wicket:id="timeZone">timeZone</td>
+    </tr>
+</table>
+
+<h2>Memory</h2>
 <table border="1">
     <tr>
         <td rowspan="4" valign="top">Heap [M]</td>
@@ -65,13 +83,6 @@ System time: <span wicket:id="systemTime">systemTime</span>
         </form>
     </tr>
 </table>
-<br/>
-
-<h2>Tools</h2>
-<ul>
-    <li wicket:id="toolLinkList"><a href="" wicket:id="toolLink"><span wicket:id="toolLinkName">toolLinkName</span></a>
-    </li>
-</ul>
 <br>
 <div wicket:id="heapMemory"></div>
 <div wicket:id="noHeapMemory"></div>
