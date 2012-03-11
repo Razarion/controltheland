@@ -32,6 +32,7 @@ public class AbstractConditionTrigger<A, I> {
         this.abstractComparison = abstractComparison;
         if (abstractComparison != null) {
             abstractComparison.setAbstractConditionTrigger(this);
+            fulfilled = abstractComparison.isFulfilled();
         }
     }
 
