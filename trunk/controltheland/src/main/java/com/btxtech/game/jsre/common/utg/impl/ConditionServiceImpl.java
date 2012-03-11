@@ -92,6 +92,10 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
         AbstractConditionTrigger<A, I> abstractConditionTrigger = conditionConfig.getConditionTrigger().createAbstractConditionTrigger(abstractComparison);
         abstractConditionTrigger.setActorAndIdentifier(a, i);
         saveAbstractConditionTrigger(abstractConditionTrigger);
+
+        if(abstractConditionTrigger.isFulfilled()) {
+            conditionPassed(abstractConditionTrigger);
+        }
     }
 
     @Override

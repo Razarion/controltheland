@@ -50,6 +50,7 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
         this.simpleBase = simpleBase;
         if (addExistingItems) {
             addInitail();
+            checkFulfilled();
         }
     }
 
@@ -66,12 +67,16 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
         }
         synchronized (fulfilledItems) {
             fulfilledItems.add(syncItem);
-            if (time == null || time == 0) {
-                verifyFulfilledItems();
-                isFulfilled = areItemsComplete();
-            } else {
-                checkIfTimeFulfilled();
-            }
+            checkFulfilled();
+        }
+    }
+
+    private void checkFulfilled() {
+        if (isTimerNeeded()) {
+            checkIfTimeFulfilled();
+        } else {
+            verifyFulfilledItems();
+            isFulfilled = areItemsComplete();
         }
     }
 
@@ -152,7 +157,6 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
                 tmpItemTypes.remove(fulfilledItemType);
             } else {
                 tmpItemTypes.put(fulfilledItemType, count);
-
             }
         }
         return tmpItemTypes.isEmpty();

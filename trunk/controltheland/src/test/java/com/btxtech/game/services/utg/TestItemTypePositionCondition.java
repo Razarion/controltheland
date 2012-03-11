@@ -663,7 +663,6 @@ public class TestItemTypePositionCondition extends AbstractServiceTest {
         assertActorAndIdentifierAndClear(userState1, 1);
     }
 
-
     @Test
     @DirtiesContext
     public void multipleItemTypeRegionTimeAddExisting4() throws Exception {
@@ -705,4 +704,65 @@ public class TestItemTypePositionCondition extends AbstractServiceTest {
         Thread.sleep(200);
         assertActorAndIdentifierAndClear(userState1, 1);
     }
+
+    @Test
+    @DirtiesContext
+    public void multipleItemTypeRegionAddExistingNoNewItems() throws Exception {
+        ItemService itemServiceMock = EasyMock.createMock(ItemService.class);
+        Collection<SyncBaseItem> syncBaseItems = new ArrayList<SyncBaseItem>();
+        builder1B1.getSyncItemArea().setPosition(new Index(600, 600));
+        syncBaseItems.add(builder1B1);
+        builder2B1.getSyncItemArea().setPosition(new Index(600, 600));
+        syncBaseItems.add(builder2B1);
+        EasyMock.expect(itemServiceMock.getBaseItemsInRectangle(new Rectangle(500, 500, 1000, 1000), base1.getSimpleBase(), null)).andReturn(syncBaseItems);
+        EasyMock.replay(itemServiceMock);
+        setPrivateField(ServerServices.class, serverServices, "itemService", itemServiceMock);
+
+        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        itemTypes.put(builder1B1.getBaseItemType(), 2);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null, true));
+
+        serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
+            @Override
+            public void conditionPassed(UserState actor, Integer identifier) {
+                TestItemTypePositionCondition.this.actor = actor;
+                TestItemTypePositionCondition.this.identifier = identifier;
+            }
+        });
+
+        serverConditionService.activateCondition(conditionConfig, userState1, 1);
+        assertActorAndIdentifierAndClear(userState1, 1);
+    }
+
+    @Test
+    @DirtiesContext
+    public void multipleItemTypeRegionTimeAddExistingNoNewItems() throws Exception {
+        ItemService itemServiceMock = EasyMock.createMock(ItemService.class);
+        Collection<SyncBaseItem> syncBaseItems = new ArrayList<SyncBaseItem>();
+        builder1B1.getSyncItemArea().setPosition(new Index(600, 600));
+        syncBaseItems.add(builder1B1);
+        builder2B1.getSyncItemArea().setPosition(new Index(600, 600));
+        syncBaseItems.add(builder2B1);
+        EasyMock.expect(itemServiceMock.getBaseItemsInRectangle(new Rectangle(500, 500, 1000, 1000), base1.getSimpleBase(), null)).andReturn(syncBaseItems);
+        EasyMock.replay(itemServiceMock);
+        setPrivateField(ServerServices.class, serverServices, "itemService", itemServiceMock);
+
+        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        itemTypes.put(builder1B1.getBaseItemType(), 2);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), 100, true));
+        serverConditionService.activateCondition(conditionConfig, userState1, 1);
+
+        serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
+            @Override
+            public void conditionPassed(UserState actor, Integer identifier) {
+                TestItemTypePositionCondition.this.actor = actor;
+                TestItemTypePositionCondition.this.identifier = identifier;
+            }
+        });
+
+        assertClearActorAndIdentifier();
+        Thread.sleep(150);
+        assertActorAndIdentifierAndClear(userState1, 1);
+    }
+
 }
