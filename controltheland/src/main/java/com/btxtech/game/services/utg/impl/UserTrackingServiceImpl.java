@@ -58,6 +58,7 @@ import com.btxtech.game.services.utg.tracker.DbScrollTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbSelectionTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbSessionDetail;
 import com.btxtech.game.services.utg.tracker.DbStartupTask;
+import com.btxtech.game.services.utg.tracker.DbStartupTerminated;
 import com.btxtech.game.services.utg.tracker.DbSyncItemInfo;
 import com.btxtech.game.services.utg.tracker.DbTutorialProgress;
 import com.btxtech.game.services.utg.tracker.DbUserCommand;
@@ -169,7 +170,8 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
         for (DbSessionDetail browserDetail : browserDetails) {
             int startAttempts = getStartAttempts(browserDetail.getSessionId());
-            boolean failure = hasFailureStarts(browserDetail.getSessionId());
+            int startSuccess = getStartSucceeded(browserDetail.getSessionId());
+            boolean failure = hasFailureStarts(browserDetail.getSessionId()) || startAttempts != startSuccess;
             int enterGameHits = getGameAttempts(browserDetail.getSessionId());
             int commands = getUserCommandCount(browserDetail.getSessionId(), null, null, null);
             int levelPromotions = historyService.getLevelPromotionCount(browserDetail.getSessionId());
@@ -178,6 +180,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                     getPageHits(browserDetail.getSessionId()),
                     enterGameHits,
                     startAttempts,
+                    startSuccess,
                     failure,
                     commands,
                     levelPromotions,
@@ -186,14 +189,22 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         return sessionOverviewDtos;
     }
 
-    private int getStartAttempts(final String sessionId) {
+    private int getStartAttempts(String sessionId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbStartupTask.class);
         criteria.add(Restrictions.eq("sessionId", sessionId));
         criteria.setProjection(Projections.countDistinct("startUuid"));
         return ((Number) criteria.list().get(0)).intValue();
     }
 
-    private boolean hasFailureStarts(final String sessionId) {
+    private int getStartSucceeded(String sessionId) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbStartupTerminated.class);
+        criteria.add(Restrictions.eq("successful", true));
+        criteria.add(Restrictions.eq("sessionId", sessionId));
+        criteria.setProjection(Projections.countDistinct("startUuid"));
+        return ((Number) criteria.list().get(0)).intValue();
+    }
+
+    private boolean hasFailureStarts(String sessionId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbStartupTask.class);
         criteria.add(Restrictions.eq("sessionId", sessionId));
         criteria.add(Restrictions.isNotNull("failureText"));
@@ -201,14 +212,14 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         return ((Number) criteria.list().get(0)).intValue() > 0;
     }
 
-    private int getPageHits(final String sessionId) {
+    private int getPageHits(String sessionId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbPageAccess.class);
         criteria.add(Restrictions.eq("sessionId", sessionId));
         criteria.setProjection(Projections.rowCount());
         return ((Number) criteria.list().get(0)).intValue();
     }
 
-    private int getGameAttempts(final String sessionId) {
+    private int getGameAttempts(String sessionId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbPageAccess.class);
         criteria.add(Restrictions.eq("sessionId", sessionId));
         criteria.add(Restrictions.eq("page", Game.class.getName()));
@@ -279,7 +290,10 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             criteria.addOrder(Order.asc("clientTimeStamp"));
             List<DbStartupTask> dbStartupTasks = criteria.list();
             String levelTaskName = getLevelTaskName(dbStartupTasks);
-            LifecycleTrackingInfo lifecycleTrackingInfo = new LifecycleTrackingInfo(dbStartupTasks, levelTaskName);
+            criteria = sessionFactory.getCurrentSession().createCriteria(DbStartupTerminated.class);
+            criteria.add(Restrictions.eq("startUuid", uuid));
+            List<DbStartupTerminated> startupTerminateds = criteria.list();
+            LifecycleTrackingInfo lifecycleTrackingInfo = new LifecycleTrackingInfo(dbStartupTasks, levelTaskName, startupTerminateds);
             if (lifecycleTrackingInfo.isRealGame()) {
                 if (lastReaGameLifecycleTrackingInfo != null) {
                     lastReaGameLifecycleTrackingInfo.setNextReaGameLifecycleTrackingInfo(lifecycleTrackingInfo);
@@ -311,7 +325,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbStartupTask.class);
         criteria.add(Restrictions.eq("startUuid", startUuid));
         List<DbStartupTask> startups = criteria.list();
-        return new LifecycleTrackingInfo(startups, getLevelTaskName(startups));
+        return new LifecycleTrackingInfo(startups, getLevelTaskName(startups), null);
     }
 
     @Override
@@ -609,6 +623,11 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             // Ignore
         }
         sessionFactory.getCurrentSession().save(new DbStartupTask(session.getSessionId(), startupTaskInfo, startUuid, userGuidanceService.getDbLevel(), levelTaskId, userService.getUser(), baseId, baseName));
+    }
+
+    @Override
+    public void saveStartupTerminated(boolean successful, long totalTime, String startUuid, Integer levelTaskId) {
+        sessionFactory.getCurrentSession().save(new DbStartupTerminated(session.getSessionId(), successful, totalTime, startUuid, levelTaskId));
     }
 
     @Override

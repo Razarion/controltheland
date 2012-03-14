@@ -14,8 +14,6 @@
 package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.utg.ClientUserTracker;
-import com.btxtech.game.jsre.common.tutorial.StepConfig;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 
 import java.util.List;
@@ -27,53 +25,17 @@ import java.util.List;
  */
 public class Task {
     private TaskConfig taskConfig;
-    private Step activeStep;
 
     public Task(TaskConfig taskConfig) {
         this.taskConfig = taskConfig;
-        start();
     }
 
-    private void start() {
+    public void start() {
         ClientBase.getInstance().setAccountBalance(taskConfig.getMoney());
-        runNextStep();
+        SimulationConditionServiceImpl.getInstance().activateCondition(taskConfig.getConditionConfig(), ClientBase.getInstance().getSimpleBase(), null);        
     }
 
     public TaskConfig getTaskConfig() {
         return taskConfig;
-    }
-
-    public void runNextStep() {
-        StepConfig stepConfig;
-        List<StepConfig> stepConfigs = taskConfig.getStepConfigs();
-        if (stepConfigs.isEmpty()) {
-            activeStep = null;
-            return;
-        }
-        if (activeStep != null) {
-            int index = stepConfigs.indexOf(activeStep.getStepConfig());
-            index++;
-            if (stepConfigs.size() > index) {
-                stepConfig = stepConfigs.get(index);
-            } else {
-                activeStep = null;
-                return;
-            }
-        } else {
-            stepConfig = stepConfigs.get(0);
-        }
-        runNextStep(stepConfig);
-    }
-
-    private void runNextStep(StepConfig stepConfig) {
-        activeStep = new Step(stepConfig);
-    }
-
-    public boolean isFulfilled() {
-        return activeStep == null;
-    }
-
-    public void cleanup() {
-        activeStep = null;
     }
 }

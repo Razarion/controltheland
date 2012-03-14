@@ -14,6 +14,7 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.services.utg.tracker.DbStartupTask;
+import com.btxtech.game.services.utg.tracker.DbStartupTerminated;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -30,8 +31,10 @@ public class LifecycleTrackingInfo implements Serializable, Comparable<Lifecycle
     private String sessionId;
     private String startUuid;
     private LifecycleTrackingInfo nextReaGameLifecycleTrackingInfo;
+    private List<DbStartupTerminated> startupTerminateds;
 
-    public LifecycleTrackingInfo(List<DbStartupTask> dbStartupTasks, String levelTaskName) {
+    public LifecycleTrackingInfo(List<DbStartupTask> dbStartupTasks, String levelTaskName, List<DbStartupTerminated> startupTerminateds) {
+        this.startupTerminateds = startupTerminateds;
         if (dbStartupTasks.isEmpty()) {
             throw new IllegalStateException("Multiple DbStartupTask expected for: " + startUuid + " startups.size(): " + dbStartupTasks.size());
         }
@@ -78,11 +81,11 @@ public class LifecycleTrackingInfo implements Serializable, Comparable<Lifecycle
     }
 
     public long getStartupDuration() {
-        long total = 0;
-        for (DbStartupTask dbStartupTask : dbStartupTasks) {
-            total += dbStartupTask.getDuration();
+        if(startupTerminateds != null && startupTerminateds.size() == 1) {
+            return startupTerminateds.get(0).getTotalTime();
+        }  else {
+            return 0;
         }
-        return total;
     }
 
     public String getBaseName() {
@@ -137,5 +140,9 @@ public class LifecycleTrackingInfo implements Serializable, Comparable<Lifecycle
     @Override
     public int compareTo(LifecycleTrackingInfo o) {
         return (int) (getStartServer() - o.getStartServer());
+    }
+
+    public boolean isSuccessFul() {
+        return startupTerminateds != null && startupTerminateds.size() == 1 && startupTerminateds.get(0).isSuccessful();
     }
 }

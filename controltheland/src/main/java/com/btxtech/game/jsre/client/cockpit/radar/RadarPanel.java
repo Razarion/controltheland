@@ -110,7 +110,7 @@ public class RadarPanel {
             radarHintView.getCanvas().setVisible(showMap);
         }
 
-        boolean showUnits = RadarMode.MPA_AND_UNITS.sameOrHigher(mode);
+        boolean showUnits = RadarMode.MAP_AND_UNITS.sameOrHigher(mode);
         if (radarItemView != null) {
             radarItemView.getCanvas().setVisible(showUnits);
         }

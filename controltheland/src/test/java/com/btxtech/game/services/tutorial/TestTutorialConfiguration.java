@@ -25,9 +25,6 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
     private RuServiceHelper<DbTutorialConfig> ruTutorialServiceHelper;
     @Autowired
     private RuServiceHelper<DbTaskConfig> ruTaskServiceHelper;
-    @Autowired
-    private RuServiceHelper<DbStepConfig> ruStepServiceHelper;
-
 
     @Test
     @DirtiesContext
@@ -115,25 +112,4 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
 
         endHttpSession();
     }
-
-    @Test
-    @DirtiesContext
-    public void createStep() {
-        beginHttpSession();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        CrudRootServiceHelper<DbTutorialConfig> tutorialCrud = tutorialService.getDbTutorialCrudRootServiceHelper();
-        DbTutorialConfig dbTutorialConfig = tutorialCrud.createDbChild();
-        DbTaskConfig dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild();
-        DbStepConfig dbStepConfig = dbTaskConfig.getStepConfigCrudServiceHelper().createDbChild();
-        ruTutorialServiceHelper.updateDbEntity(dbTutorialConfig);
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        ruStepServiceHelper.readDbChild(dbStepConfig.getId(), DbStepConfig.class);
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        endHttpSession();
-    }
-
 }

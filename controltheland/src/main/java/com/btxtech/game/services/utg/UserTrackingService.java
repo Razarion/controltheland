@@ -96,6 +96,8 @@ public interface UserTrackingService {
 
     void saveStartupTask(StartupTaskInfo startupTaskInfo, String startUuid, Integer levelTaskId);
 
+    void saveStartupTerminated(boolean successful, long totalTime, String startUuid, Integer levelTaskId);
+
     RealGameTrackingInfo getGameTracking(LifecycleTrackingInfo lifecycleTrackingInfo);
 
     TutorialTrackingInfo getTutorialTrackingInfo(LifecycleTrackingInfo lifecycleTrackingInfo);

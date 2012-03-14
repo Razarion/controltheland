@@ -90,7 +90,8 @@ public class SessionTable extends MgmtWebPage {
                 listItem.add(new Label("date", simpleDateFormat.format(listItem.getModelObject().getDate())));
                 listItem.add(new Label("pageHits", Integer.toString(listItem.getModelObject().getPageHits())));
                 listItem.add(new Label("enterGame", Integer.toString(listItem.getModelObject().getEnterGameHits())));
-                listItem.add(new Label("successfulStarts", Integer.toString(listItem.getModelObject().getStartAttempts())));
+                listItem.add(new Label("startAttempts", Integer.toString(listItem.getModelObject().getStartAttempts())));
+                listItem.add(new Label("successfulStarts", Integer.toString(listItem.getModelObject().getStartSucceeded())));
                 listItem.add(new Label("startupFailure", listItem.getModelObject().isStartupFailure() ? "!" : ""));
                 listItem.add(new Label("commands", Integer.toString(listItem.getModelObject().getCommands())));
                 listItem.add(new Label("levelPromotions", Integer.toString(listItem.getModelObject().getLevelPromotions())));

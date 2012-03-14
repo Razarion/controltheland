@@ -79,10 +79,14 @@ public class SessionDetail extends MgmtWebPage {
         ListView<LifecycleTrackingInfo> gameTrackingInfoList = new ListView<LifecycleTrackingInfo>("detailTrackings", sessionDetailDto.getLifecycleTrackingInfos()) {
             @Override
             protected void populateItem(ListItem<LifecycleTrackingInfo> listItem) {
-                if (listItem.getModelObject().isRealGame()) {
-                    listItem.add(new RealGameTracking("detailTracking", listItem.getModelObject()));
+                if (listItem.getModelObject().isSuccessFul()) {
+                    if (listItem.getModelObject().isRealGame()) {
+                        listItem.add(new RealGameTracking("detailTracking", listItem.getModelObject()));
+                    } else {
+                        listItem.add(new TutorialTracking("detailTracking", listItem.getModelObject()));
+                    }
                 } else {
-                    listItem.add(new TutorialTracking("detailTracking", listItem.getModelObject()));
+                    listItem.add(new FailedTracking("detailTracking", listItem.getModelObject()));
                 }
             }
         };

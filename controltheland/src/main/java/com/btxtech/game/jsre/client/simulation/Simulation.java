@@ -80,7 +80,7 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
         if (tutorialConfig.isShowTip()) {
             TipManager.getInstance().activate();
         }
-        runNextTask(activeTask);
+        runNextTask(null);
     }
 
     private void processPreparation(TaskConfig taskConfig) {
@@ -127,6 +127,7 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
         processPreparation(taskConfig);
         taskTime = System.currentTimeMillis();
         activeTask = new Task(taskConfig);
+        activeTask.start();
     }
 
     private void tutorialFinished() {
@@ -151,13 +152,9 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
         if (!ClientBase.getInstance().isMyOwnBase(actor)) {
             throw new IllegalStateException("Received conditionPassed for unexpected base: " + actor);
         }
-        activeTask.runNextStep();
-        if (activeTask.isFulfilled()) {
-            long time = System.currentTimeMillis();
-            activeTask.cleanup();
-            ClientUserTracker.getInstance().onTaskFinished(simulationInfo.getLevelTaskId(), activeTask, time - taskTime, time);
-            runNextTask(activeTask);
-        }
+        long time = System.currentTimeMillis();
+        ClientUserTracker.getInstance().onTaskFinished(simulationInfo.getLevelTaskId(), activeTask, time - taskTime, time);
+        runNextTask(activeTask);
     }
 
     @Override

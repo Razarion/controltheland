@@ -11,7 +11,7 @@ import java.util.List;
 public enum RadarMode {
     NONE(0),
     MAP(1),
-    MPA_AND_UNITS(2);
+    MAP_AND_UNITS(2);
     private int value;
 
     RadarMode(int value) {

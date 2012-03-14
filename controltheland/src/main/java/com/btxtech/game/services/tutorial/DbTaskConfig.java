@@ -17,7 +17,6 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
-import com.btxtech.game.jsre.common.tutorial.StepConfig;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
@@ -25,6 +24,7 @@ import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.db.IndexUserType;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
@@ -40,6 +40,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -67,11 +68,6 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     @Columns(columns = {@Column(name = "xScroll"), @Column(name = "yScroll")})
     private Index scroll;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @org.hibernate.annotations.IndexColumn(name = "orderIndex", nullable = false, base = 0)
-    @JoinColumn(name = "dbTaskConfig", nullable = false)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-    private List<DbStepConfig> stepConfigs;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "dbTaskConfig", nullable = false)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbTaskAllowedItem> dbTaskAllowedItems;
@@ -88,11 +84,11 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     @JoinColumn(name = "dbTaskConfig", nullable = false)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbTaskBot> dbTaskBots;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private DbConditionConfig conditionConfig;
 
     @Transient
     private CrudChildServiceHelper<DbItemTypeAndPosition> itemTypeAndPositionCrudHelper;
-    @Transient
-    private CrudChildServiceHelper<DbStepConfig> stepConfigCrudHelper;
     @Transient
     private CrudChildServiceHelper<DbTaskAllowedItem> allowedItemHelper;
     @Transient
@@ -116,7 +112,6 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     public void init(UserService userService) {
         items = new HashSet<DbItemTypeAndPosition>();
         scroll = new Index(0, 0);
-        stepConfigs = new ArrayList<DbStepConfig>();
         dbTaskAllowedItems = new HashSet<DbTaskAllowedItem>();
         dbTaskBots = new HashSet<DbTaskBot>();
         radarMode = RadarMode.NONE;
@@ -181,27 +176,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         this.radarMode = radarMode;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DbTaskConfig)) return false;
-
-        DbTaskConfig that = (DbTaskConfig) o;
-
-        return id != null && id.equals(that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : System.identityHashCode(this);
-    }
-
     public TaskConfig createTaskConfig(ItemService itemService) {
-        ArrayList<StepConfig> stepConfigs = new ArrayList<StepConfig>();
-        for (DbStepConfig dBstepConfig : this.stepConfigs) {
-            stepConfigs.add(dBstepConfig.createStepConfig(itemService));
-        }
-
         ArrayList<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<ItemTypeAndPosition>();
         for (DbItemTypeAndPosition dbItemTypeAndPosition : getItemCrudServiceHelper().readDbChildren()) {
             ItemTypeAndPosition itemTypeAndPosition = dbItemTypeAndPosition.createItemTypeAndPosition();
@@ -220,9 +195,10 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
             itemTypeLimitation.put(dbTaskAllowedItem.getDbBaseItemType().getId(), newCount);
         }
 
+
         return new TaskConfig(itemTypeAndPositions,
                 scroll,
-                stepConfigs,
+                conditionConfig != null ? conditionConfig.createConditionConfig(itemService) : null,
                 houseCount,
                 money,
                 maxMoney,
@@ -238,13 +214,6 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
             itemTypeAndPositionCrudHelper = new CrudChildServiceHelper<DbItemTypeAndPosition>(items, DbItemTypeAndPosition.class, this);
         }
         return itemTypeAndPositionCrudHelper;
-    }
-
-    public CrudChildServiceHelper<DbStepConfig> getStepConfigCrudServiceHelper() {
-        if (stepConfigCrudHelper == null) {
-            stepConfigCrudHelper = new CrudChildServiceHelper<DbStepConfig>(stepConfigs, DbStepConfig.class, this);
-        }
-        return stepConfigCrudHelper;
     }
 
     private Collection<BotConfig> convertTaskBots(ItemService itemService) {
@@ -272,5 +241,28 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
             botCrudHelper = new CrudChildServiceHelper<DbTaskBot>(dbTaskBots, DbTaskBot.class, this);
         }
         return botCrudHelper;
+    }
+
+    public DbConditionConfig getConditionConfig() {
+        return conditionConfig;
+    }
+
+    public void setConditionConfig(DbConditionConfig conditionConfig) {
+        this.conditionConfig = conditionConfig;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DbTaskConfig)) return false;
+
+        DbTaskConfig that = (DbTaskConfig) o;
+
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 }
