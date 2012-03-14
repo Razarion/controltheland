@@ -74,4 +74,6 @@ public interface MovableServiceAsync {
     void sellItem(Id id, AsyncCallback<Void> asyncCallback);
 
     void sendStartupTask(StartupTaskInfo startupTaskInfo, String startUuid, Integer levelTaskId, AsyncCallback<Void> asyncCallback);
+
+    void sendStartupTerminated(boolean successful, long totalTime, String startUuid, Integer levelTaskId, AsyncCallback<Void> asyncCallback);
 }

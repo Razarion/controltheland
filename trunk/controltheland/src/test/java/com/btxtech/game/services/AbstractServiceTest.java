@@ -61,7 +61,6 @@ import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.DbTerritory;
 import com.btxtech.game.services.territory.TerritoryService;
-import com.btxtech.game.services.tutorial.DbStepConfig;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
@@ -1239,15 +1238,13 @@ abstract public class AbstractServiceTest {
         dbTutorialConfig.setDbTerrainSetting(dbTerrainSetting);
         // Task
         DbTaskConfig dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild();
-        // Step
-        DbStepConfig dbStepConfig = dbTaskConfig.getStepConfigCrudServiceHelper().createDbChild();
         // Condition
         DbConditionConfig dbConditionConfig = new DbConditionConfig();
         dbConditionConfig.setConditionTrigger(ConditionTrigger.MONEY_INCREASED);
         DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
         dbCountComparisonConfig.setCount(100);
         dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
-        dbStepConfig.setConditionConfig(dbConditionConfig);
+        dbTaskConfig.setConditionConfig(dbConditionConfig);
         tutorialService.getDbTutorialCrudRootServiceHelper().updateDbChild(dbTutorialConfig);
         return dbTutorialConfig;
     }

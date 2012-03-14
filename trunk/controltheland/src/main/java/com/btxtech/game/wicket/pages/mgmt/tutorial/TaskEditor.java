@@ -18,11 +18,11 @@ import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.tutorial.DbItemTypeAndPosition;
-import com.btxtech.game.services.tutorial.DbStepConfig;
 import com.btxtech.game.services.tutorial.DbTaskAllowedItem;
 import com.btxtech.game.services.tutorial.DbTaskBot;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
+import com.btxtech.game.wicket.pages.mgmt.condition.ConditionConfigPanel;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.BotPanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
@@ -69,6 +69,7 @@ public class TaskEditor extends MgmtWebPage {
         form.add(new TextField("houseCount"));
         form.add(new TextField("itemSellFactor"));
         form.add(new DropDownChoice<RadarMode>("radarMode", RadarMode.getList()));
+        form.add(new ConditionConfigPanel("conditionConfig"));        
 
         new CrudChildTableHelper<DbTaskConfig, DbTaskAllowedItem>("allowedItemTable", null, "createAllowedItem", false, form, false) {
             @Override
@@ -139,29 +140,6 @@ public class TaskEditor extends MgmtWebPage {
                 dbTaskBotItem.add(new BotPanel("dbBotConfig"));
             }
         };
-
-        new CrudChildTableHelper<DbTaskConfig, DbStepConfig>("stepTable", null, "createStep", true, form, true) {
-            @Override
-            protected void onEditSubmit(DbStepConfig dbStepConfig) {
-                setResponsePage(new StepEditor(dbStepConfig));
-            }
-
-            @Override
-            protected RuServiceHelper<DbTaskConfig> getRuServiceHelper() {
-                return ruTaskServiceHelper;
-            }
-
-            @Override
-            protected DbTaskConfig getParent() {
-                return (DbTaskConfig) form.getDefaultModelObject();
-            }
-
-            @Override
-            protected CrudChildServiceHelper<DbStepConfig> getCrudChildServiceHelperImpl() {
-                return ((DbTaskConfig) form.getDefaultModelObject()).getStepConfigCrudServiceHelper();
-            }
-        };
-
 
         form.add(new Button("save") {
 

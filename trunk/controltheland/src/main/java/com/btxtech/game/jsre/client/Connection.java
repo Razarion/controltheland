@@ -298,24 +298,24 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
             movableServiceAsync.sendTutorialProgress(type,
                     ClientServices.getInstance().getClientRunner().getStartUuid(),
                     levelTaskId,
-                    name, 
+                    name,
                     duration,
                     clientTimeStamp,
                     new AsyncCallback<GameFlow>() {
-                @Override
-                public void onFailure(Throwable caught) {
-                    if (!handleDisconnection(caught)) {
-                        sendTutorialProgress(type, levelTaskId, name, duration, clientTimeStamp, runnable);
-                    }
-                }
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            if (!handleDisconnection(caught)) {
+                                sendTutorialProgress(type, levelTaskId, name, duration, clientTimeStamp, runnable);
+                            }
+                        }
 
-                @Override
-                public void onSuccess(GameFlow gameFlow) {
-                    if (runnable != null) {
-                        runnable.run(gameFlow);
-                    }
-                }
-            });
+                        @Override
+                        public void onSuccess(GameFlow gameFlow) {
+                            if (runnable != null) {
+                                runnable.run(gameFlow);
+                            }
+                        }
+                    });
         }
     }
 
@@ -487,12 +487,24 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
 
     @Override
     public void onStartupFinished(List<StartupTaskInfo> taskInfo, long totalTime) {
-        // Ignore, see onTaskFinished()
+        if (movableServiceAsync != null) {
+            movableServiceAsync.sendStartupTerminated(true,
+                    totalTime,
+                    ClientServices.getInstance().getClientRunner().getStartUuid(),
+                    Simulation.getInstance().getLevelTaskId(),
+                    this);
+        }
     }
 
     @Override
     public void onStartupFailed(List<StartupTaskInfo> taskInfo, long totalTime) {
-        // Ignore, see onTaskFailed()
+        if (movableServiceAsync != null) {
+            movableServiceAsync.sendStartupTerminated(false,
+                    totalTime,
+                    ClientServices.getInstance().getClientRunner().getStartUuid(),
+                    Simulation.getInstance().getLevelTaskId(),
+                    this);
+        }
     }
 
     public GameEngineMode getGameEngineMode() {

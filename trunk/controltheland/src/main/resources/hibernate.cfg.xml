@@ -74,7 +74,6 @@
         <mapping class="com.btxtech.game.services.tutorial.DbTaskConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.DbTaskAllowedItem"/>
         <mapping class="com.btxtech.game.services.tutorial.DbItemTypeAndPosition"/>
-        <mapping class="com.btxtech.game.services.tutorial.DbStepConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.DbTaskBot"/>
         <!-- User Guidance -->
         <mapping class="com.btxtech.game.services.utg.DbXpSettings"/>
@@ -125,6 +124,7 @@
         <mapping class="com.btxtech.game.services.utg.tracker.DbPageAccess"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbSessionDetail"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbStartupTask"/>
+        <mapping class="com.btxtech.game.services.utg.tracker.DbStartupTerminated"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbUserCommand"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbUserHistory"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbTutorialProgress"/>

@@ -15,26 +15,23 @@
         "http://www.w3.org/TR/html4/loose.dtd">
 <html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
 <head>
-    <title>Tutorial Editor</title>
+    <title></title>
 </head>
 <body>
-<h1>Step Config</h1>
+<wicket:panel>
+    <hr>
+    <h2>Unknown Details</h2>
 
-<span wicket:id="msgs"/>
-
-<form wicket:id="stepForm">
-    <h2>General</h2>
+    <span wicket:id="lifecycle"></span>
+    <br>
+    <span style="color:red;">Startup failed</span>
+    <br>
     <table border="0">
         <tr>
-            <td bgcolor="#dadada">Condition</td>
-            <td wicket:id="conditionConfig"></td>
+            <td bgcolor="#dadada">Base Name</td>
+            <td wicket:id="baseName"></td>
         </tr>
     </table>
-    <br>
-    <br>
-    <input type="submit" wicket:id="save" value="Save">
-    <input type="submit" wicket:id="back" value="Back">
-</form>
-
+</wicket:panel>
 </body>
 </html>

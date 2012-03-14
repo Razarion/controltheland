@@ -707,7 +707,34 @@ public class TestItemTypePositionCondition extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void multipleItemTypeRegionAddExistingNoNewItems() throws Exception {
+    public void multipleItemTypeRegionAddExistingNoNewItems1() throws Exception {
+        ItemService itemServiceMock = EasyMock.createMock(ItemService.class);
+        Collection<SyncBaseItem> syncBaseItems = new ArrayList<SyncBaseItem>();
+        builder1B1.getSyncItemArea().setPosition(new Index(600, 600));
+        syncBaseItems.add(builder1B1);
+        EasyMock.expect(itemServiceMock.getBaseItemsInRectangle(new Rectangle(500, 500, 1000, 1000), base1.getSimpleBase(), null)).andReturn(syncBaseItems);
+        EasyMock.replay(itemServiceMock);
+        setPrivateField(ServerServices.class, serverServices, "itemService", itemServiceMock);
+
+        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        itemTypes.put(builder1B1.getBaseItemType(), 1);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null, true));
+
+        serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
+            @Override
+            public void conditionPassed(UserState actor, Integer identifier) {
+                TestItemTypePositionCondition.this.actor = actor;
+                TestItemTypePositionCondition.this.identifier = identifier;
+            }
+        });
+
+        serverConditionService.activateCondition(conditionConfig, userState1, 1);
+        assertActorAndIdentifierAndClear(userState1, 1);
+    }
+
+    @Test
+    @DirtiesContext
+    public void multipleItemTypeRegionAddExistingNoNewItems2() throws Exception {
         ItemService itemServiceMock = EasyMock.createMock(ItemService.class);
         Collection<SyncBaseItem> syncBaseItems = new ArrayList<SyncBaseItem>();
         builder1B1.getSyncItemArea().setPosition(new Index(600, 600));

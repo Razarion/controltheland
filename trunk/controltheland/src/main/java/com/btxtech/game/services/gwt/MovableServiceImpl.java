@@ -134,6 +134,15 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
+    public void sendStartupTerminated(boolean successful, long totalTime, String startUuid, Integer levelTaskId) {
+        try {
+            userTrackingService.saveStartupTerminated(successful, totalTime, startUuid, levelTaskId);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
     public RealGameInfo getRealGameInfo() throws InvalidLevelState {
         try {
             baseService.continueBase();
