@@ -13,11 +13,9 @@ import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededE
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemContainer;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
@@ -70,7 +68,14 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         MoveCommand moveCommand = new MoveCommand();
         moveCommand.setId(syncBaseItem.getId());
         moveCommand.setTimeStamp();
-        moveCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(syncBaseItem, destination));
+        List<Index> pathToDestination = getServices().getCollisionService().setupPathToDestination(syncBaseItem, destination);
+        moveCommand.setPathToDestination(pathToDestination);
+        if (pathToDestination.size() < 2) {
+            moveCommand.setDestinationAngel(syncBaseItem.getSyncItemArea().getTurnToAngel(destination));
+        } else {
+            int size = pathToDestination.size();
+            moveCommand.setDestinationAngel(pathToDestination.get(size - 2).getAngleToNord(pathToDestination.get(size - 1)));
+        }
         try {
             executeCommand(syncBaseItem, moveCommand);
         } catch (PathCanNotBeFoundException e) {
@@ -235,7 +240,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
     }
 
     @Override
-    public void loadContainer(SyncBaseItem container, SyncBaseItem item, Index destinationHint) {
+    public void loadContainer(SyncBaseItem container, SyncBaseItem item) {
         if (checkCommand(item)) {
             return;
         }
@@ -248,7 +253,6 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         loadContainCommand.setId(item.getId());
         loadContainCommand.setTimeStamp();
         loadContainCommand.setItemContainer(container.getId());
-        loadContainCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(item, destinationHint));
 
         try {
             executeCommand(item, loadContainCommand);
@@ -267,23 +271,6 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         unloadContainerCommand.setId(container.getId());
         unloadContainerCommand.setTimeStamp();
         unloadContainerCommand.setUnloadPos(unloadPos);
-
-        TerrainType targetTerrainType = SyncItemContainer.getUglyTerrainType(getServices(), container.getSyncItemContainer());
-
-        if (container.getSyncItemArea().isInRange(container.getSyncItemContainer().getRange(), unloadPos)) {
-            unloadContainerCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(container, container.getSyncItemArea().getPosition()));
-        } else {
-            AttackFormationItem format = getServices().getCollisionService().getDestinationHint(container,
-                    container.getSyncItemContainer().getRange(),
-                    container.getSyncItemArea().getBoundingBox().createSyntheticSyncItemArea(unloadPos),
-                    targetTerrainType);
-            if (format.isInRange()) {
-                unloadContainerCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(container, format.getDestinationHint()));
-            } else {
-                move(container, format.getDestinationHint());
-                return;
-            }
-        }
 
         try {
             executeCommand(container, unloadContainerCommand);

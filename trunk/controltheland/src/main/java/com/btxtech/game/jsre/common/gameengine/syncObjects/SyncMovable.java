@@ -33,6 +33,7 @@ import java.util.List;
 public class SyncMovable extends SyncBaseAbility {
     private MovableType movableType;
     private List<Index> pathToDestination;
+    private Double destinationAngel;
     private Id targetContainer;
 
     public SyncMovable(MovableType movableType, SyncBaseItem syncBaseItem) {
@@ -49,11 +50,11 @@ public class SyncMovable extends SyncBaseAbility {
      * @return true if more tick are needed to fulfil the job
      */
     public boolean tick(double factor) {
-        return tickMove(factor, null) || targetContainer != null && putInContainer();
+        return tickMove(factor) || targetContainer != null && putInContainer();
 
     }
 
-    boolean tickMove(double factor, Double destinationAngel) {
+    boolean tickMove(double factor) {
         if (pathToDestination == null) {
             return false;
         }
@@ -71,11 +72,7 @@ public class SyncMovable extends SyncBaseAbility {
             pathToDestination.remove(0);
             if (pathToDestination.isEmpty()) {
                 pathToDestination = null;
-                if (destinationAngel != null) {
-                    getSyncItemArea().turnTo(destinationAngel);
-                } else {
-                    getSyncItemArea().turnTo(destination);
-                }
+                getSyncItemArea().turnTo(destinationAngel);
                 getSyncItemArea().setDecimalPosition(decimalPoint);
                 return onFinished();
             }
@@ -86,7 +83,7 @@ public class SyncMovable extends SyncBaseAbility {
         if (factor - relativeDistance > DecimalPosition.FACTOR) {
             getSyncItemArea().turnTo(destination);
             getSyncItemArea().setDecimalPosition(decimalPoint);
-            return tickMove(factor - relativeDistance, destinationAngel);
+            return tickMove(factor - relativeDistance);
         }
 
         getSyncItemArea().turnTo(destination);
@@ -102,6 +99,12 @@ public class SyncMovable extends SyncBaseAbility {
         if (getServices().getItemService().isSyncItemOverlapping(syncBaseItem)) {
             pathToDestination = getServices().getCollisionService().setupPathToSyncMovableRandomPositionIfTaken(syncBaseItem);
             if (pathToDestination != null) {
+                int size = pathToDestination.size();
+                if (pathToDestination.size() < 2) {
+                    destinationAngel = getSyncItemArea().getPosition().getAngleToNord(pathToDestination.get(size - 1));
+                } else {
+                    destinationAngel = pathToDestination.get(size - 2).getAngleToNord(pathToDestination.get(size - 1));
+                }
                 getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                 return true;
             } else {
@@ -122,20 +125,11 @@ public class SyncMovable extends SyncBaseAbility {
             }
         } catch (ItemDoesNotExistException ignore) {
             // Item container may be killed
+        } catch (ItemContainerFullException e) {
+            // Item container full
         }
         stop();
         return false;
-    }
-
-    public boolean isLoadPosReachable(SyncItemContainer syncItemContainer) {
-        try {
-            getServices().getTerrainService().getNearestPoint(getSyncBaseItem().getTerrainType(),
-                    syncItemContainer.getSyncItemArea().getPosition(),
-                    syncItemContainer.getItemContainerType().getRange());
-            return true;
-        } catch (IllegalArgumentException ignore) {
-            return false;
-        }
     }
 
     private double getDistance(double factor) {
@@ -146,17 +140,20 @@ public class SyncMovable extends SyncBaseAbility {
     public void synchronize(SyncItemInfo syncItemInfo) {
         pathToDestination = syncItemInfo.getPathToDestination();
         targetContainer = syncItemInfo.getTargetContainer();
+        destinationAngel = syncItemInfo.getDestinationAngel();
     }
 
     @Override
     public void fillSyncItemInfo(SyncItemInfo syncItemInfo) {
         syncItemInfo.setPathToDestination(CommonJava.saveArrayListCopy(pathToDestination));
+        syncItemInfo.setDestinationAngel(destinationAngel);
         syncItemInfo.setTargetContainer(targetContainer);
     }
 
     public void stop() {
         pathToDestination = null;
         targetContainer = null;
+        destinationAngel = null;
     }
 
     public void executeCommand(PathToDestinationCommand pathToDestinationCommand) {
@@ -164,6 +161,7 @@ public class SyncMovable extends SyncBaseAbility {
             return;
         }
         pathToDestination = pathToDestinationCommand.getPathToDestination();
+        destinationAngel = pathToDestinationCommand.getDestinationAngel();
     }
 
     public void executeCommand(LoadContainCommand loadContainCommand) {
@@ -171,15 +169,21 @@ public class SyncMovable extends SyncBaseAbility {
             throw new IllegalArgumentException("Can not contain oneself: " + getSyncBaseItem());
         }
         targetContainer = loadContainCommand.getItemContainer();
-        pathToDestination = loadContainCommand.getPathToDestination();
+        pathToDestination = null;
+        destinationAngel = null;
     }
 
     public List<Index> getPathToDestination() {
         return pathToDestination;
     }
 
-    public void setPathToDestination(List<Index> pathToDestination) {
+    public Double getDestinationAngel() {
+        return destinationAngel;
+    }
+
+    public void setPathToDestination(List<Index> pathToDestination, Double destinationAngel) {
         this.pathToDestination = pathToDestination;
+        this.destinationAngel = destinationAngel;
     }
 
     public Index getDestination() {

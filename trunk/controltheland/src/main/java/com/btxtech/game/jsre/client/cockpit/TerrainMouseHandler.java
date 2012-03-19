@@ -61,6 +61,7 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
             if (SideCockpit.getInstance().getCockpitMode().isUnloadMode()) {
                 executeUnloadContainerCommand(absoluteX, absoluteY);
                 SideCockpit.getInstance().getCockpitMode().clearUnloadMode();
+                ItemCockpit.getInstance().deActivate();
             } else if (SideCockpit.getInstance().getCockpitMode().isLaunchMode()) {
                 ActionHandler.getInstance().executeLaunchCommand(absoluteX, absoluteY);
             } else {
@@ -83,10 +84,6 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
         SyncBaseItem syncBaseItem = clientSyncItem.getSyncBaseItem();
         Index position = new Index(absoluteX, absoluteY);
         if (!ClientTerritoryService.getInstance().isAllowed(position, syncBaseItem)) {
-            return;
-        }
-
-        if (!syncBaseItem.getSyncItemContainer().isUnloadPosReachable(position)) {
             return;
         }
 

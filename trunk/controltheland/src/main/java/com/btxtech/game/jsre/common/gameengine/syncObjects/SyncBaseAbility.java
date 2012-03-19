@@ -49,9 +49,9 @@ public abstract class SyncBaseAbility {
         return syncBaseItem.getSyncItemArea();
     }
 
-    public void setPathToDestinationIfSyncMovable(List<Index> pathToDestination) {
+    public void setPathToDestinationIfSyncMovable(List<Index> pathToDestination, double destinationAngel) {
         if (syncBaseItem.hasSyncMovable()) {
-            syncBaseItem.getSyncMovable().setPathToDestination(pathToDestination);
+            syncBaseItem.getSyncMovable().setPathToDestination(pathToDestination, destinationAngel);
         }
     }
 
@@ -59,15 +59,14 @@ public abstract class SyncBaseAbility {
         return getServices().getConnectionService().getGameEngineMode() == GameEngineMode.MASTER;
     }
 
-    public double recalculateNewPath(int range, SyncItemArea target, TerrainType targetTerrainType) {
+    public void recalculateNewPath(int range, SyncItemArea target, TerrainType targetTerrainType) {
         SyncBaseItem syncItem = getSyncBaseItem();
         AttackFormationItem format = getServices().getCollisionService().getDestinationHint(syncItem,
                 range,
                 target,
                 targetTerrainType);
         if (format.isInRange()) {
-            setPathToDestinationIfSyncMovable(getServices().getCollisionService().setupPathToDestination(syncItem, format.getDestinationHint()));
-            return format.getDestinationAngel();
+            setPathToDestinationIfSyncMovable(getServices().getCollisionService().setupPathToDestination(syncItem, format.getDestinationHint()), format.getDestinationAngel());
         } else {
             throw new PathCanNotBeFoundException("Can not find path in recalculateNewPath: " + syncItem, syncItem.getSyncItemArea().getPosition(), null);
         }

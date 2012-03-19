@@ -22,10 +22,8 @@ import org.junit.Ignore;
 public class TestSimulation extends AbstractGwtTest {
     // old JUnit @Test
 
-    // Mock the Movable directly and not via Servlet
-    // Test never finished due to ClientLevelHandler Window.open()
-    public void _testUnknown() throws Exception {
-        startColdSimulated(new Runnable() {
+    public void testTwoTaskConditionAddExisting() throws Exception {
+        startColdSimulated(new GwtTestRunnable() {
             @Override
             public void run() {
                 assertEquals(1, ItemContainer.getInstance().getItems().size());

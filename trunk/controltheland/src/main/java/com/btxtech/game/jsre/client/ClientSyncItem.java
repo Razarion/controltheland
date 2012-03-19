@@ -175,4 +175,8 @@ public class ClientSyncItem implements SyncItemListener {
     public void setClientSyncItemListener(ClientSyncItemView clientSyncItemView) {
         this.clientSyncItemView = clientSyncItemView;
     }
+
+    public ClientSyncItemView getClientSyncItemView() {
+        return clientSyncItemView;
+    }
 }

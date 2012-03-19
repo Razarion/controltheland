@@ -26,7 +26,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
 public class SyncWeapon extends SyncBaseAbility {
     private WeaponType weaponType;
     private Id target;
-    private Double destinationAngel;
     private boolean followTarget;
     private double reloadProgress;
 
@@ -65,7 +64,7 @@ public class SyncWeapon extends SyncBaseAbility {
                 throw new IllegalArgumentException("Weapon is followTarget but has now SyncMovable: " + getSyncBaseItem());
             }
 
-            if (followTarget && getSyncBaseItem().hasSyncMovable() && getSyncBaseItem().getSyncMovable().tickMove(factor, destinationAngel)) {
+            if (followTarget && getSyncBaseItem().hasSyncMovable() && getSyncBaseItem().getSyncMovable().tickMove(factor)) {
                 return true;
             }
 
@@ -78,7 +77,7 @@ public class SyncWeapon extends SyncBaseAbility {
             if (!isInRange(targetItem)) {
                 if (isNewPathRecalculationAllowed()) {
                     // Destination place was may be taken. Calculate a new one or target has moved away
-                    destinationAngel = recalculateNewPath(weaponType.getRange(), targetItem.getSyncItemArea(), targetItem.getTerrainType());
+                    recalculateNewPath(weaponType.getRange(), targetItem.getSyncItemArea(), targetItem.getTerrainType());
                     getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                     return true;
                 } else {
@@ -119,7 +118,6 @@ public class SyncWeapon extends SyncBaseAbility {
 
     public void stop() {
         target = null;
-        destinationAngel = null;
         if (getSyncBaseItem().hasSyncMovable()) {
             getSyncBaseItem().getSyncMovable().stop();
         }
@@ -130,7 +128,6 @@ public class SyncWeapon extends SyncBaseAbility {
         target = syncItemInfo.getTarget();
         followTarget = syncItemInfo.isFollowTarget();
         reloadProgress = syncItemInfo.getReloadProgress();
-        destinationAngel = syncItemInfo.getDestinationAngel();
     }
 
     @Override
@@ -138,7 +135,6 @@ public class SyncWeapon extends SyncBaseAbility {
         syncItemInfo.setTarget(target);
         syncItemInfo.setFollowTarget(followTarget);
         syncItemInfo.setReloadProgress(reloadProgress);
-        syncItemInfo.setDestinationAngel(destinationAngel);
     }
 
     public void executeCommand(AttackCommand attackCommand) throws ItemDoesNotExistException {
@@ -156,9 +152,8 @@ public class SyncWeapon extends SyncBaseAbility {
         }
 
         this.target = attackCommand.getTarget();
-        destinationAngel = attackCommand.getDestinationAngel();
         followTarget = attackCommand.isFollowTarget();
-        setPathToDestinationIfSyncMovable(attackCommand.getPathToDestination());
+        setPathToDestinationIfSyncMovable(attackCommand.getPathToDestination(), attackCommand.getDestinationAngel());
     }
 
     public boolean isItemTypeAllowed(SyncBaseItem target) {

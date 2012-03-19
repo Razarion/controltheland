@@ -15,6 +15,7 @@ import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemContainerType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
@@ -59,7 +60,35 @@ import java.util.Map;
  * Time: 21:38:41
  */
 public class MockMovableService extends RemoteServiceServlet implements MovableService {
-    private BaseItemType movableItemType;
+    protected static final BaseItemType MOVABLE_ITEM_TYPE;
+    protected static final BaseItemType MOVABLE_CONTAINER_ITEM_TYPE;
+    protected static final Collection<ItemType> ITEM_TYPES = new ArrayList<ItemType>();
+
+    static {
+        // Simple movable
+        MOVABLE_ITEM_TYPE = new BaseItemType();
+        MOVABLE_ITEM_TYPE.setName("MOVABLE_ITEM_TYPE");
+        MOVABLE_ITEM_TYPE.setId(AbstractGwtTest.ITEM_MOVABLE);
+        MOVABLE_ITEM_TYPE.setHealth(10);
+        MOVABLE_ITEM_TYPE.setTerrainType(TerrainType.LAND);
+        MOVABLE_ITEM_TYPE.setBoundingBox(new BoundingBox(80, 80, 50, 100, AbstractServiceTest.ANGELS_24));
+        MOVABLE_ITEM_TYPE.setMovableType(new MovableType(100));
+        MOVABLE_ITEM_TYPE.setTerrainType(TerrainType.LAND);
+        ITEM_TYPES.add(MOVABLE_ITEM_TYPE);
+        // Item Container
+        MOVABLE_CONTAINER_ITEM_TYPE = new BaseItemType();
+        MOVABLE_CONTAINER_ITEM_TYPE.setName("MOVABLE_CONTAINER_ITEM_TYPE");
+        MOVABLE_CONTAINER_ITEM_TYPE.setId(AbstractGwtTest.ITEM_CONTAINER);
+        MOVABLE_CONTAINER_ITEM_TYPE.setHealth(10);
+        MOVABLE_CONTAINER_ITEM_TYPE.setTerrainType(TerrainType.LAND);
+        MOVABLE_CONTAINER_ITEM_TYPE.setBoundingBox(new BoundingBox(80, 80, 80, 80, AbstractServiceTest.ANGELS_24));
+        MOVABLE_CONTAINER_ITEM_TYPE.setMovableType(new MovableType(100));
+        MOVABLE_CONTAINER_ITEM_TYPE.setTerrainType(TerrainType.WATER_WATER_COAST_LAND_COAST);
+        Collection<Integer> ableToContain = new ArrayList<Integer>();
+        ableToContain.add(MOVABLE_ITEM_TYPE.getId());
+        MOVABLE_CONTAINER_ITEM_TYPE.setItemContainerType(new ItemContainerType(ableToContain, 5, 150));
+        ITEM_TYPES.add(MOVABLE_CONTAINER_ITEM_TYPE);
+    }
 
     @Override
     public RealGameInfo getRealGameInfo() {
@@ -74,22 +103,22 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
         Map<CmsUtil.CmsPredefinedPage, String> predefinedUrls = new HashMap<CmsUtil.CmsPredefinedPage, String>();
         predefinedUrls.put(CmsUtil.CmsPredefinedPage.LEVEL_TASK_DONE, "TestLevelTaskDone");
         simulationInfo.setPredefinedUrls(predefinedUrls);
-        setupSimpleTerrain(simulationInfo);
-        setupItemTypes(simulationInfo);
+        setupTerrain(simulationInfo);
+        simulationInfo.setItemTypes(ITEM_TYPES);
         setupTutorialConfig(simulationInfo);
         return simulationInfo;
     }
 
-    private void setupTutorialConfig(SimulationInfo simulationInfo) {
-        // Condition
+    protected void setupTutorialConfig(SimulationInfo simulationInfo) {
+        // Condition Simulation with two tasks
         Map<ItemType, Integer> conditionItemType = new HashMap<ItemType, Integer>();
-        conditionItemType.put(movableItemType, 1);
+        conditionItemType.put(MOVABLE_ITEM_TYPE, 1);
         ConditionConfig conditionConfig1 = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, conditionItemType, new Rectangle(500, 500, 400, 400), null, true));
         ConditionConfig conditionConfig2 = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, conditionItemType, new Rectangle(500, 500, 400, 400), null, true));
 
         // Setup SimulationInfo
         List<ItemTypeAndPosition> ownItems = new ArrayList<ItemTypeAndPosition>();
-        ownItems.add(new ItemTypeAndPosition(movableItemType.getId(), new Index(100, 100), 0));
+        ownItems.add(new ItemTypeAndPosition(MOVABLE_ITEM_TYPE.getId(), new Index(100, 100), 0));
         Map<Integer, Integer> itemTypeLimitation = new HashMap<Integer, Integer>();
         List<TaskConfig> taskConfigs = new ArrayList<TaskConfig>();
         taskConfigs.add(new TaskConfig(ownItems, null, conditionConfig1, 10, 100, 1000, 0.5, "TestTask1", null, itemTypeLimitation, RadarMode.MAP));
@@ -99,7 +128,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
         simulationInfo.setLevelName("TestLevel");
     }
 
-    protected void setupSimpleTerrain(GameInfo gameInfo) {
+    protected void setupTerrain(GameInfo gameInfo) {
         gameInfo.setTerrainSettings(new TerrainSettings(50, 50, 100, 100));
         gameInfo.setTerrainImagePositions(new ArrayList<TerrainImagePosition>());
         Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
@@ -111,32 +140,13 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
         gameInfo.setTerrainImages(new ArrayList<TerrainImage>());
     }
 
-    protected void setupItemTypes(GameInfo gameInfo) {
-        Collection<ItemType> itemTypes = new ArrayList<ItemType>();
-        itemTypes.add(createMovableItem());
-        itemTypes.add(createAttackItem());
-        itemTypes.add(createDefenseTower());
-        gameInfo.setItemTypes(itemTypes);
-    }
-
-    private BaseItemType createMovableItem() {
-        movableItemType = new BaseItemType();
-        movableItemType.setId(1);
-        movableItemType.setId(AbstractGwtTest.ITEM_MOVABLE);
-        movableItemType.setHealth(10);
-        movableItemType.setTerrainType(TerrainType.LAND);
-        movableItemType.setBoundingBox(new BoundingBox(80, 80, 50, 50, AbstractServiceTest.ANGELS_24));
-        movableItemType.setMovableType(new MovableType(100, SurfaceType.LAND));
-        return movableItemType;
-    }
-
     private BaseItemType createAttackItem() {
         BaseItemType baseItemType = new BaseItemType();
         baseItemType.setId(2);
         baseItemType.setId(AbstractGwtTest.ITEM_ATTACKER);
         baseItemType.setHealth(10);
         baseItemType.setBoundingBox(new BoundingBox(80, 80, 60, 60, AbstractServiceTest.ANGELS_24));
-        baseItemType.setMovableType(new MovableType(100, SurfaceType.LAND));
+        baseItemType.setMovableType(new MovableType(100));
         Collection<Integer> allowedItemTypes = new ArrayList<Integer>();
         allowedItemTypes.add(AbstractGwtTest.ITEM_ATTACKER);
         allowedItemTypes.add(AbstractGwtTest.ITEM_DEFENSE_TOWER);

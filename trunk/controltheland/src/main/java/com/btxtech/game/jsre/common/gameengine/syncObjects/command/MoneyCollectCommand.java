@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects.command;
 
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 
 /**
@@ -23,7 +22,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
  */
 public class MoneyCollectCommand extends PathToDestinationCommand {
     private Id target;
-    private double destinationAngel;
 
     public Id getTarget() {
         return target;
@@ -31,14 +29,6 @@ public class MoneyCollectCommand extends PathToDestinationCommand {
 
     public void setTarget(Id target) {
         this.target = target;
-    }
-
-    public double getDestinationAngel() {
-        return destinationAngel;
-    }
-
-    public void setDestinationAngel(double destinationAngel) {
-        this.destinationAngel = destinationAngel;
     }
 
     @Override

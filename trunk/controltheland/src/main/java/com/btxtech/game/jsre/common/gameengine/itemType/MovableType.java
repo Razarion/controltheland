@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.common.gameengine.itemType;
 
-import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import java.io.Serializable;
 
 /**
@@ -26,7 +25,6 @@ public class MovableType implements Serializable {
      * Pixel per second
      */
     private int speed;
-    private SurfaceType surfaceType;
 
     /**
      * Used by GWT
@@ -34,21 +32,15 @@ public class MovableType implements Serializable {
     MovableType() {
     }
 
-    public MovableType(int speed, SurfaceType surfaceType) {
+    public MovableType(int speed) {
         this.speed = speed;
-        this.surfaceType = surfaceType;
     }
 
     public int getSpeed() {
         return speed;
     }
 
-    public SurfaceType getTerrainType() {
-        return surfaceType;
-    }
-
     public void changeTo(MovableType movableType) {
         speed = movableType.speed;
-        surfaceType = movableType.surfaceType;
     }
 }

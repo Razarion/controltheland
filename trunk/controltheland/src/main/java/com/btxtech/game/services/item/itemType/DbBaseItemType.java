@@ -287,7 +287,7 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
         baseItemType.setBuildup(buildup);
         baseItemType.setBuildupStep(createBuildupStep());
         if (dbMovableType != null) {
-            baseItemType.setMovableType(new MovableType(dbMovableType.getSpeed(), dbMovableType.getTerrainType()));
+            baseItemType.setMovableType(new MovableType(dbMovableType.getSpeed()));
         }
         if (dbWeaponType != null) {
             baseItemType.setWeaponType(dbWeaponType.createWeaponType(getItemTypeImageCrud().readDbChildren().size()));

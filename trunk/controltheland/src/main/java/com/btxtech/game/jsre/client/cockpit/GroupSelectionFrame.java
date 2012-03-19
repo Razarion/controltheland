@@ -32,6 +32,7 @@ import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+
 import java.util.Collection;
 
 /**
@@ -40,6 +41,7 @@ import java.util.Collection;
  * Time: 11:55:18
  */
 public class GroupSelectionFrame extends AbsolutePanel implements MouseMoveHandler, MouseDownHandler, MouseUpHandler {
+    private static GroupSelectionFrame onlyForTestSelectionFrame;
     public static final int MIN_PIXEL_FRAME_SIZE = 10;
     private int originX;
     private int originY;
@@ -60,6 +62,7 @@ public class GroupSelectionFrame extends AbsolutePanel implements MouseMoveHandl
         addMouseMoveHandler(this);
         addMouseDownHandler(this);
         addMouseUpHandler(this);
+        onlyForTestSelectionFrame = this;
     }
 
     private HandlerRegistration addMouseMoveHandler(MouseMoveHandler handler) {
@@ -134,5 +137,7 @@ public class GroupSelectionFrame extends AbsolutePanel implements MouseMoveHandl
         }
     }
 
-
+    public static GroupSelectionFrame getOnlyForTestGroupSelectionFrame() {
+        return onlyForTestSelectionFrame;
+    }
 }

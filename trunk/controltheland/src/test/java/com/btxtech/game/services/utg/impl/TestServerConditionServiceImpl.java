@@ -276,11 +276,15 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         sendFactoryCommand(factory, TEST_CONTAINER_ITEM_ID);
         waitForActionServiceDone();
         Id container = getFirstSynItemId(TEST_CONTAINER_ITEM_ID);
-        sendMoveCommand(container, new Index(400,400)); // Prevent container move over other unit       
+        sendMoveCommand(container, new Index(400, 400)); // Prevent container move over other unit
+        waitForActionServiceDone();
+        sendMoveCommand(builder, new Index(300, 300));
         waitForActionServiceDone();
         sendContainerLoadCommand(builder, container);
         waitForActionServiceDone();
 
+        sendMoveCommand(container, new Index(1100, 1100));
+        waitForActionServiceDone();
         sendUnloadContainerCommand(container, new Index(1000, 1000));
         waitForActionServiceDone();
         assertActorAndIdentifierAndClear(userService.getUserState(), 1);
@@ -516,13 +520,13 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
             Assert.assertFalse(levelQuest.isDone());
         }
-        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID),TEST_ATTACK_ITEM_ID);
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
-        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID),TEST_ATTACK_ITEM_ID);
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
-        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID),TEST_ATTACK_ITEM_ID);
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
-        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID),TEST_ATTACK_ITEM_ID);
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
         Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
@@ -551,7 +555,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
             Assert.assertFalse(levelQuest.isDone());
         }
-        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID),TEST_ATTACK_ITEM_ID);
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
         Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {

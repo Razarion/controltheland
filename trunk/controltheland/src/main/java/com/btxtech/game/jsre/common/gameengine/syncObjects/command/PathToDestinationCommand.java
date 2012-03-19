@@ -12,6 +12,7 @@ import java.util.List;
  */
 public abstract class PathToDestinationCommand extends BaseCommand {
     private List<Index> pathToDestination;
+    private double destinationAngel;
 
     public List<Index> getPathToDestination() {
         return pathToDestination;
@@ -27,6 +28,14 @@ public abstract class PathToDestinationCommand extends BaseCommand {
 
     public boolean hasPathToDestination() {
         return pathToDestination != null && !pathToDestination.isEmpty();
+    }
+
+    public double getDestinationAngel() {
+        return destinationAngel;
+    }
+
+    public void setDestinationAngel(double destinationAngel) {
+        this.destinationAngel = destinationAngel;
     }
 
     @Override
