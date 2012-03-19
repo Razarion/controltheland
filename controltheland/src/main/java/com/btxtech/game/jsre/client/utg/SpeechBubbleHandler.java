@@ -20,6 +20,7 @@ public class SpeechBubbleHandler {
     private SyncItem syncItem;
     private boolean mouseOverSpeechBubble = false;
     private boolean mouseOverItemType = false;
+    public static boolean uglySuppress = false;
 
     public static SpeechBubbleHandler getInstance() {
         return INSTANCE;
@@ -32,6 +33,10 @@ public class SpeechBubbleHandler {
     }
 
     public void show(SyncItem syncItem) {
+        if (uglySuppress) {
+            return;
+        }
+
         if (syncItem.equals(this.syncItem)) {
             mouseOverItemType = true;
             return;

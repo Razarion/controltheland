@@ -51,6 +51,7 @@ public class GenericBaseItem extends GenericItem {
     @Type(type = "path")
     @Column(length = PathUserType.MAX_STRING_LENGTH)
     private List<Index> pathToAbsoluteDestination;
+    private Double destinationAngel;
     @OneToOne(fetch = FetchType.LAZY)
     private GenericBaseItem baseTarget;
     @OneToOne(fetch = FetchType.LAZY)
@@ -116,6 +117,10 @@ public class GenericBaseItem extends GenericItem {
         this.pathToAbsoluteDestination = pathToAbsoluteDestination;
     }
 
+    public void setDestinationAngel(Double destinationAngel) {
+        this.destinationAngel = destinationAngel;
+    }
+
     public void setBaseTarget(GenericBaseItem target) {
         this.baseTarget = target;
     }
@@ -150,6 +155,10 @@ public class GenericBaseItem extends GenericItem {
 
     public List<Index> getPathToAbsoluteDestination() {
         return pathToAbsoluteDestination;
+    }
+
+    public Double getDestinationAngel() {
+        return destinationAngel;
     }
 
     public GenericBaseItem getBaseTarget() {

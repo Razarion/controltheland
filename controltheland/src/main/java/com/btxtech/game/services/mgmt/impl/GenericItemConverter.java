@@ -258,6 +258,7 @@ public class GenericItemConverter {
         genericItem.setUpgradeProgress(item.getUpgradeProgress());
         if (item.hasSyncMovable()) {
             genericItem.setPathToAbsoluteDestination(item.getSyncMovable().getPathToDestination());
+            genericItem.setDestinationAngel(item.getSyncMovable().getDestinationAngel());
         }
         if (item.getItemType().getBoundingBox().isTurnable()) {
             genericItem.setAngel(item.getSyncItemArea().getAngel());
@@ -386,7 +387,7 @@ public class GenericItemConverter {
             item.setUpgradingItemType((BaseItemType) genericItem.getUpgradingItemType().createItemType());
         }
         if (item.hasSyncMovable()) {
-            item.getSyncMovable().setPathToDestination(genericItem.getPathToAbsoluteDestination());
+            item.getSyncMovable().setPathToDestination(genericItem.getPathToAbsoluteDestination(), genericItem.getDestinationAngel());
         }
         if (item.getItemType().getBoundingBox().isTurnable()) {
             item.getSyncItemArea().setAngel(genericItem.getAngel());

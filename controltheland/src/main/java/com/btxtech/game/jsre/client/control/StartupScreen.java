@@ -35,7 +35,7 @@ public class StartupScreen implements StartupProgressListener {
     private static final int SCHEDULE = 50;
     private static final String PROGRESS_TABLE_ID = "progressTable";
     private static final String PROGRESS_BAR_ID = "progressBar";
-    private static final String PROGRESS_TEXT_ID = "progressText";
+    public static final String PROGRESS_TEXT_ID = "progressText";
     private static final int MAX_PROGRESS = 30;
     private final static StartupScreen INSTANCE = new StartupScreen();
     private Timer fadeTimer;

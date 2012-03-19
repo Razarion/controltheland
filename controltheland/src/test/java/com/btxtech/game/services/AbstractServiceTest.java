@@ -543,14 +543,7 @@ abstract public class AbstractServiceTest {
     protected void sendContainerLoadCommand(Id item, Id containerId) throws Exception {
         SyncBaseItem container = (SyncBaseItem) itemService.getItem(containerId);
         SyncBaseItem syncItem = (SyncBaseItem) itemService.getItem(item);
-        AttackFormationItem attackFormationItem = collisionService.getDestinationHint(syncItem,
-                container.getBaseItemType().getItemContainerType().getRange(),
-                container.getSyncItemArea(),
-                container.getTerrainType());
-        if (!attackFormationItem.isInRange()) {
-            throw new IllegalStateException("Not in range");
-        }
-        actionService.loadContainer(container, syncItem, attackFormationItem.getDestinationHint());
+        actionService.loadContainer(container, syncItem);
     }
 
     protected void sendUnloadContainerCommand(Id containerId, Index position) throws Exception {
@@ -704,7 +697,6 @@ abstract public class AbstractServiceTest {
         // DbMovableType
         DbMovableType dbMovableType = new DbMovableType();
         dbMovableType.setSpeed(10000);
-        dbMovableType.setTerrainType(SurfaceType.LAND);
         dbBaseItemType.setDbMovableType(dbMovableType);
 
         itemService.saveDbItemType(dbBaseItemType);
@@ -756,7 +748,6 @@ abstract public class AbstractServiceTest {
         // DbMovableType
         DbMovableType dbMovableType = new DbMovableType();
         dbMovableType.setSpeed(10000);
-        dbMovableType.setTerrainType(SurfaceType.LAND);
         dbBaseItemType.setDbMovableType(dbMovableType);
 
         itemService.saveDbItemType(dbBaseItemType);
@@ -794,7 +785,6 @@ abstract public class AbstractServiceTest {
         // DbMovableType
         DbMovableType dbMovableType = new DbMovableType();
         dbMovableType.setSpeed(10000);
-        dbMovableType.setTerrainType(SurfaceType.LAND);
         dbBaseItemType.setDbMovableType(dbMovableType);
 
         itemService.saveDbItemType(dbBaseItemType);
@@ -822,7 +812,6 @@ abstract public class AbstractServiceTest {
         // DbMovableType
         DbMovableType dbMovableType = new DbMovableType();
         dbMovableType.setSpeed(10000);
-        dbMovableType.setTerrainType(SurfaceType.LAND);
         dbBaseItemType.setDbMovableType(dbMovableType);
 
         itemService.saveDbItemType(dbBaseItemType);
@@ -888,7 +877,6 @@ abstract public class AbstractServiceTest {
         // DbMovableType
         DbMovableType dbMovableType = new DbMovableType();
         dbMovableType.setSpeed(10000);
-        dbMovableType.setTerrainType(SurfaceType.LAND);
         dbBaseItemType.setDbMovableType(dbMovableType);
 
         itemService.saveDbItemType(dbBaseItemType);

@@ -19,17 +19,17 @@ import java.util.logging.Logger;
  * Date: 24.02.2012
  * Time: 12:37:35
  */
-public abstract class GroupCommandHelper<T extends SyncItem> {
-    private Logger log = Logger.getLogger(GroupCommandHelper.class.getName());
+public abstract class GroupCommandHelperItemType<T extends SyncItem> {
+    private Logger log = Logger.getLogger(GroupCommandHelperItemType.class.getName());
 
-    public void process(Collection<ClientSyncItem> clientSyncItems, T target) {
+    public void process(Collection<ClientSyncItem> clientSyncItems, T target, boolean findPathIfNotInRange) {
         try {
             List<AttackFormationItem> attackFormationItemList = new ArrayList<AttackFormationItem>();
             for (ClientSyncItem clientSyncItem : clientSyncItems) {
                 if (isCommandPossible(clientSyncItem.getSyncBaseItem(), target)) {
                     if (isAllowedAllowedWithoutMoving(clientSyncItem.getSyncBaseItem(), target)) {
                         executeCommand(clientSyncItem.getSyncBaseItem(), target, clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem().getSyncItemArea().getTurnToAngel(target.getSyncItemArea()));
-                    } else if (clientSyncItem.getSyncBaseItem().hasSyncMovable()) {
+                    } else if (clientSyncItem.getSyncBaseItem().hasSyncMovable() && findPathIfNotInRange) {
                         attackFormationItemList.add(new AttackFormationItem(clientSyncItem.getSyncBaseItem(), getRange(clientSyncItem.getSyncBaseItem(), target)));
                     }
                 }
@@ -46,7 +46,7 @@ public abstract class GroupCommandHelper<T extends SyncItem> {
 
             Connection.getInstance().sendCommandQueue();
         } catch (PathCanNotBeFoundException e) {
-            log.warning("GroupCommandHelper.process(): " + e.getMessage());
+            log.warning("GroupCommandHelperItemType.process(): " + e.getMessage());
         }
     }
 

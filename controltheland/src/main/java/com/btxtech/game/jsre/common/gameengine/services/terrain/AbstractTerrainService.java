@@ -94,8 +94,6 @@ public interface AbstractTerrainService {
 
     SurfaceType getSurfaceTypeAbsolute(Index absoluteIndex);
 
-    Index getNearestPoint(TerrainType allowedTerrainType, Index absoluteDestination, int maxRadius);
-
     Index correctPosition(SyncItem syncItem, Index position);
 
     Map<TerrainType, boolean[][]> createSurfaceTypeField();

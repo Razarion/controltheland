@@ -3,6 +3,7 @@ package com.btxtech.game.services.mgmt;
 import com.btxtech.game.jsre.client.AlreadyUsedException;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
@@ -679,7 +680,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         for (int i = 0; i < 200; i++) {
             pathToDestination.add(new Index(i, i));
         }
-        syncBaseItem.getSyncMovable().setPathToDestination(pathToDestination);
+        syncBaseItem.getSyncMovable().setPathToDestination(pathToDestination, MathHelper.WEST);
         mgmtService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -706,7 +707,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         for (int i = 0; i < 130; i++) {
             pathToDestination.add(new Index(i, i));
         }
-        syncMovable.setPathToDestination(pathToDestination);
+        syncMovable.setPathToDestination(pathToDestination, MathHelper.WEST);
         mgmtService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

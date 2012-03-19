@@ -26,7 +26,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
 public class SyncHarvester extends SyncBaseAbility {
     private HarvesterType harvesterType;
     private Id target;
-    private Double destinationAngel;
 
     public SyncHarvester(HarvesterType harvesterType, SyncBaseItem syncBaseItem) {
         super(syncBaseItem);
@@ -42,7 +41,7 @@ public class SyncHarvester extends SyncBaseAbility {
             return false;
         }
 
-        if (getSyncBaseItem().getSyncMovable().tickMove(factor, destinationAngel)) {
+        if (getSyncBaseItem().getSyncMovable().tickMove(factor)) {
             return true;
         }
 
@@ -51,7 +50,7 @@ public class SyncHarvester extends SyncBaseAbility {
             if (!isInRange(resource)) {
                 if (isNewPathRecalculationAllowed()) {
                     // Destination place was may be taken. Calculate a new one.
-                    destinationAngel = recalculateNewPath(harvesterType.getRange(), resource.getSyncItemArea(), resource.getTerrainType());
+                    recalculateNewPath(harvesterType.getRange(), resource.getSyncItemArea(), resource.getTerrainType());
                     getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                     return true;
                 } else {
@@ -71,20 +70,17 @@ public class SyncHarvester extends SyncBaseAbility {
 
     public void stop() {
         target = null;
-        destinationAngel = null;
         getSyncBaseItem().getSyncMovable().stop();
     }
 
     @Override
     public void synchronize(SyncItemInfo syncItemInfo) {
         target = syncItemInfo.getTarget();
-        destinationAngel = syncItemInfo.getDestinationAngel();
     }
 
     @Override
     public void fillSyncItemInfo(SyncItemInfo syncItemInfo) {
         syncItemInfo.setTarget(target);
-        syncItemInfo.setDestinationAngel(destinationAngel);
     }
 
     public void executeCommand(MoneyCollectCommand attackCommand) throws ItemDoesNotExistException {
@@ -95,8 +91,7 @@ public class SyncHarvester extends SyncBaseAbility {
         }
 
         this.target = resource.getId();
-        destinationAngel = attackCommand.getDestinationAngel();
-        setPathToDestinationIfSyncMovable(attackCommand.getPathToDestination());
+        setPathToDestinationIfSyncMovable(attackCommand.getPathToDestination(), attackCommand.getDestinationAngel());
     }
 
     public boolean isInRange(SyncResourceItem target) {

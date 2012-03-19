@@ -2,6 +2,7 @@ package com.btxtech.game.services.item;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BuilderType;
@@ -81,7 +82,7 @@ public class TestBuilder extends AbstractServiceTest {
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(5000, 5000), id, servicesMock);
         SyncMovable syncMovable = syncBaseItem.getSyncMovable();
         // Set speed to 100
-        syncMovable.getMovableType().changeTo(new MovableType(100, syncMovable.getMovableType().getTerrainType()));
+        syncMovable.getMovableType().changeTo(new MovableType(100));
         Assert.assertFalse(syncMovable.tick(1.0));
         // Set buildup
         SyncBuilder syncBuilder = syncBaseItem.getSyncBuilder();
@@ -99,7 +100,7 @@ public class TestBuilder extends AbstractServiceTest {
         List<Index> path = new ArrayList<Index>();
         path.add(new Index(5000, 5000));
         path.add(new Index(5000, 5200));
-        syncBaseItem.getSyncMovable().setPathToDestination(path);
+        syncBaseItem.getSyncMovable().setPathToDestination(path, MathHelper.WEST);
         syncBaseItem.getSyncBuilder().setToBeBuildPosition(new Index(5000, 5290));
         syncBaseItem.getSyncBuilder().setToBeBuiltType((BaseItemType) itemService.getItemType(TEST_SIMPLE_BUILDING_ID));
 
@@ -153,7 +154,7 @@ public class TestBuilder extends AbstractServiceTest {
         List<Index> path = new ArrayList<Index>();
         path.add(new Index(5000, 5000));
         path.add(new Index(5000, 5200));
-        syncBaseItem.getSyncMovable().setPathToDestination(path);
+        syncBaseItem.getSyncMovable().setPathToDestination(path, MathHelper.WEST);
         syncBaseItem.getSyncBuilder().setCurrentBuildup(buildupBaseItem);
         syncBaseItem.getSyncBuilder().setToBeBuildPosition(buildupBaseItem.getSyncItemArea().getPosition());
         syncBaseItem.getSyncBuilder().setToBeBuiltType(buildupBaseItem.getBaseItemType());

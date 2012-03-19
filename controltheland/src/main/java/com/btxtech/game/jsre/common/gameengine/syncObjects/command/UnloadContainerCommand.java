@@ -20,7 +20,7 @@ import com.btxtech.game.jsre.client.common.Index;
  * Date: 05.05.2010
  * Time: 12:27:00
  */
-public class UnloadContainerCommand extends PathToDestinationCommand {
+public class UnloadContainerCommand extends BaseCommand {
     private Index unloadPos;
 
     public Index getUnloadPos() {

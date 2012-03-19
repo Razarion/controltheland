@@ -20,7 +20,6 @@ import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainMouseMoveListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
-import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemContainer;
@@ -117,7 +116,7 @@ public class CursorHandler implements TerrainMouseMoveListener {
         Index position = new Index(absoluteLeft, absoluteTop);
 
         if (cursorState.isCanUnload()) {
-            setTerrainCursor(CursorType.UNLOAD, SelectionHandler.getInstance().atLeastOneAllowedOnTerritory4Selection(position) && atLeastOnAllowedForUnload(position));
+            setTerrainCursor(CursorType.UNLOAD, atLeastOnAllowedForUnload(position));
         } else if (cursorState.isCanLaunch()) {
             setTerrainCursor(CursorType.ATTACK, SelectionHandler.getInstance().atLeastOneAllowedToLaunch(position));
         } else if (cursorState.isCanMove()) {
@@ -132,12 +131,8 @@ public class CursorHandler implements TerrainMouseMoveListener {
         for (SyncBaseItem syncBaseItem : SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems()) {
             if (syncBaseItem.hasSyncItemContainer()) {
                 SyncItemContainer syncItemContainer = syncBaseItem.getSyncItemContainer();
-                try {
-                    if (syncItemContainer.atLeastOneAllowedToUnload(position)) {
-                        return true;
-                    }
-                } catch (ItemDoesNotExistException e) {
-                    GwtCommon.handleException(e);
+                if (syncItemContainer.atLeastOneAllowedToUnload(position)) {
+                    return true;
                 }
             }
         }
@@ -165,8 +160,7 @@ public class CursorHandler implements TerrainMouseMoveListener {
         } else if (cursorState.isCanLoad() && cursorItemState.isLoadTarget() && isNotMyself(clientSyncItemView)) {
             SyncItemContainer syncItemContainer = clientSyncItemView.getClientSyncItem().getSyncBaseItem().getSyncItemContainer();
             boolean allowed = ClientTerritoryService.getInstance().isAllowed(position, clientSyncItemView.getClientSyncItem().getSyncBaseItem())
-                    && syncItemContainer.isAbleToContainAtLeastOne(SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems())
-                    && atLeastOneLoadPosReachable(SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems(), syncItemContainer);
+                    && syncItemContainer.isAbleToLoad(SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems());
             setCursor(clientSyncItemView, CursorType.LOAD, allowed);
         } else if (cursorState.isCanFinalizeBuild() && cursorItemState.isFinalizeBuild()) {
             setCursor(clientSyncItemView, CursorType.FINALIZE_BUILD, SelectionHandler.getInstance().atLeastOneItemTypeAllowed2FinalizeBuild(clientSyncItemView.getClientSyncItem().getSyncBaseItem()));
@@ -185,15 +179,6 @@ public class CursorHandler implements TerrainMouseMoveListener {
             }
         }
         return true;
-    }
-
-    private boolean atLeastOneLoadPosReachable(Collection<SyncBaseItem> syncBaseItems, SyncItemContainer syncItemContainer) {
-        for (SyncBaseItem syncBaseItem : syncBaseItems) {
-            if (syncBaseItem.hasSyncMovable() && syncBaseItem.getSyncMovable().isLoadPosReachable(syncItemContainer)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void setTerrainCursor(CursorType cursorType, boolean allowed) {

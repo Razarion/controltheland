@@ -24,7 +24,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 public class BuilderFinalizeCommand extends PathToDestinationCommand {
     private Id toBeBuilt;
     private Index destinationHint;
-    private double destinationAngel;
 
     public Id getToBeBuilt() {
         return toBeBuilt;
@@ -40,14 +39,6 @@ public class BuilderFinalizeCommand extends PathToDestinationCommand {
 
     public void setDestinationHint(Index destinationHint) {
         this.destinationHint = destinationHint;
-    }
-
-    public double getDestinationAngel() {
-        return destinationAngel;
-    }
-
-    public void setDestinationAngel(double destinationAngel) {
-        this.destinationAngel = destinationAngel;
     }
 
     @Override

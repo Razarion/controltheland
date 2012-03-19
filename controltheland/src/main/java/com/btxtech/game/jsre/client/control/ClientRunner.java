@@ -47,6 +47,10 @@ public class ClientRunner {
         listeners.remove(startupProgressListener);
     }
 
+    public void cleanupBeforeTest() {
+        listeners.clear();
+    }
+
     public void start(StartupSeq startupSeq) {
         startUuid = MathHelper.generateUuid();
         failed = false;

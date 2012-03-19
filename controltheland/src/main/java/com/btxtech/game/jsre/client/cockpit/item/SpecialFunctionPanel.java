@@ -84,9 +84,12 @@ public class SpecialFunctionPanel extends VerticalPanel {
         ExtendedCustomButton button = new ExtendedCustomButton("unloadButton", false, ToolTips.TOOL_TIP_UNLOAD, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+                ItemCockpit.getInstance().deActivate();
                 SideCockpit.getInstance().getCockpitMode().setUnloadMode();
             }
         });
+        button.ensureDebugId("unloadButton");
+        button.setEnabled(!syncItemContainer.getContainedItems().isEmpty());
         horizontalPanel.add(button);
         horizontalPanel.add(new HTML("&nbsp;Items: " + syncItemContainer.getContainedItems().size()));
         add(horizontalPanel);

@@ -1,7 +1,6 @@
 package com.btxtech.game.wicket.pages.mgmt.items;
 
 import com.btxtech.game.jsre.client.common.RadarMode;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBuilderType;
@@ -253,7 +252,6 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
                 dbBaseItemType.setDbMovableType(movableType);
             }
             movableType.setSpeed(speed);
-            movableType.setTerrainType(SurfaceType.LAND);
         } else {
             dbBaseItemType.setDbMovableType(null);
         }

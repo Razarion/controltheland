@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
-import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
@@ -38,7 +37,6 @@ public class SyncBuilder extends SyncBaseAbility {
     private Index toBeBuildPosition;
     private BaseItemType toBeBuiltType;
     private int createdChildCount;
-    private Double destinationAngel;
 
     public SyncBuilder(BuilderType builderType, SyncBaseItem syncBaseItem) {
         super(syncBaseItem);
@@ -54,7 +52,7 @@ public class SyncBuilder extends SyncBaseAbility {
             return false;
         }
 
-        if (getSyncBaseItem().getSyncMovable().tickMove(factor, destinationAngel)) {
+        if (getSyncBaseItem().getSyncMovable().tickMove(factor)) {
             return true;
         }
 
@@ -67,7 +65,7 @@ public class SyncBuilder extends SyncBaseAbility {
                 } else {
                     syncItemArea = toBeBuiltType.getBoundingBox().createSyntheticSyncItemArea(toBeBuildPosition);
                 }
-                destinationAngel = recalculateNewPath(builderType.getRange(), syncItemArea, toBeBuiltType.getTerrainType());
+                recalculateNewPath(builderType.getRange(), syncItemArea, toBeBuiltType.getTerrainType());
                 getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                 return true;
             } else {
@@ -103,7 +101,7 @@ public class SyncBuilder extends SyncBaseAbility {
                     stop();
                     return false;
                 }
-                getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS);                                    
+                getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS);
                 return true;
             } catch (InsufficientFundsException e) {
                 return true;
@@ -134,7 +132,6 @@ public class SyncBuilder extends SyncBaseAbility {
         currentBuildup = null;
         toBeBuiltType = null;
         toBeBuildPosition = null;
-        destinationAngel = null;
         getSyncBaseItem().getSyncMovable().stop();
         getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS);
     }
@@ -148,7 +145,6 @@ public class SyncBuilder extends SyncBaseAbility {
             toBeBuiltType = null;
         }
         createdChildCount = syncItemInfo.getCreatedChildCount();
-        destinationAngel = syncItemInfo.getDestinationAngel();
     }
 
     @Override
@@ -158,7 +154,6 @@ public class SyncBuilder extends SyncBaseAbility {
             syncItemInfo.setToBeBuiltTypeId(toBeBuiltType.getId());
         }
         syncItemInfo.setCreatedChildCount(createdChildCount);
-        syncItemInfo.setDestinationAngel(destinationAngel);
     }
 
     public void executeCommand(BuilderCommand builderCommand) throws NoSuchItemTypeException {
@@ -181,8 +176,7 @@ public class SyncBuilder extends SyncBaseAbility {
 
         toBeBuiltType = tmpToBeBuiltType;
         toBeBuildPosition = builderCommand.getPositionToBeBuilt();
-        destinationAngel = builderCommand.getDestinationAngel();
-        setPathToDestinationIfSyncMovable(builderCommand.getPathToDestination());
+        setPathToDestinationIfSyncMovable(builderCommand.getPathToDestination(), builderCommand.getDestinationAngel());
     }
 
     public void executeCommand(BuilderFinalizeCommand builderFinalizeCommand) throws NoSuchItemTypeException, ItemDoesNotExistException {
@@ -202,8 +196,7 @@ public class SyncBuilder extends SyncBaseAbility {
         currentBuildup = syncBaseItem;
         toBeBuiltType = syncBaseItem.getBaseItemType();
         toBeBuildPosition = syncBaseItem.getSyncItemArea().getPosition();
-        destinationAngel = builderFinalizeCommand.getDestinationAngel();
-        setPathToDestinationIfSyncMovable(builderFinalizeCommand.getPathToDestination());
+        setPathToDestinationIfSyncMovable(builderFinalizeCommand.getPathToDestination(), builderFinalizeCommand.getDestinationAngel());
     }
 
     public Index getToBeBuildPosition() {

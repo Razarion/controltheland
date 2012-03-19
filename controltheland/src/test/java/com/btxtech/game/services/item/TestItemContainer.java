@@ -47,6 +47,9 @@ public class TestItemContainer extends AbstractServiceTest {
 
         sendMoveCommand(containerId, new Index(5000, 5000));
         waitForActionServiceDone();
+        sendMoveCommand(builderId, new Index(5100, 5100));
+        waitForActionServiceDone();
+
         Assert.assertEquals(0, syncItemContainer.getContainedItems().size());
         Assert.assertFalse(builder.isContainedIn());
         Assert.assertTrue(builder.getSyncItemArea().hasPosition());
@@ -60,11 +63,13 @@ public class TestItemContainer extends AbstractServiceTest {
         Assert.assertFalse(builder.getSyncItemArea().hasPosition());
 
         // Unload
-        sendUnloadContainerCommand(containerId, new Index(8000, 8000));
+        sendMoveCommand(containerId, new Index(8000, 8000));
+        waitForActionServiceDone();
+        sendUnloadContainerCommand(containerId, new Index(8100, 8100));
         waitForActionServiceDone();
         Assert.assertEquals(0, syncItemContainer.getContainedItems().size());
         Assert.assertFalse(builder.isContainedIn());
-        Assert.assertEquals(new Index(8000, 8000), builder.getSyncItemArea().getPosition());
+        Assert.assertEquals(new Index(8100, 8100), builder.getSyncItemArea().getPosition());
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
