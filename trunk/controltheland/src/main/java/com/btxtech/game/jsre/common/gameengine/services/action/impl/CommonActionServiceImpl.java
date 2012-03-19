@@ -3,6 +3,7 @@ package com.btxtech.game.jsre.common.gameengine.services.action.impl;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
+import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
@@ -73,8 +74,13 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         if (pathToDestination.size() < 2) {
             moveCommand.setDestinationAngel(syncBaseItem.getSyncItemArea().getTurnToAngel(destination));
         } else {
-            int size = pathToDestination.size();
-            moveCommand.setDestinationAngel(pathToDestination.get(size - 2).getAngleToNord(pathToDestination.get(size - 1)));
+            try {
+                int size = pathToDestination.size();
+                moveCommand.setDestinationAngel(pathToDestination.get(size - 2).getAngleToNord(pathToDestination.get(size - 1)));
+            } catch (IllegalArgumentException e) {
+                // TODO remove if bug found
+                throw new RuntimeException("syncBaseItem: " + syncBaseItem + " destination: " + destination + " path: " + CommonJava.pathToDestinationAsString(pathToDestination));
+            }
         }
         try {
             executeCommand(syncBaseItem, moveCommand);
