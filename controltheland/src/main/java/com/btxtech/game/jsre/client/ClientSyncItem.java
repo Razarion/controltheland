@@ -26,6 +26,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncProjectileItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 
+import java.util.logging.Logger;
+
 /**
  * User: beat
  * Date: 14.08.2010
@@ -37,6 +39,7 @@ public class ClientSyncItem implements SyncItemListener {
     private boolean isHidden = false;
     private boolean isSelected;
     private ClientSyncItemView clientSyncItemView;
+    private static Logger log = Logger.getLogger(ClientSyncItem.class.getName());
 
     public ClientSyncItem(SyncItem syncItem) {
         this.syncItem = syncItem;
@@ -45,29 +48,46 @@ public class ClientSyncItem implements SyncItemListener {
 
     @Override
     public void onItemChanged(Change change, SyncItem syncItem) {
+        // TODO Remove if big found
         switch (change) {
             case POSITION:
-                checkVisibility();
-                if (syncItem instanceof SyncBaseItem && Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
-                    ActionHandler.getInstance().interactionGuardingItems((SyncBaseItem) syncItem);
+                try {
+                    checkVisibility();
+                    if (syncItem instanceof SyncBaseItem && Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
+                        ActionHandler.getInstance().interactionGuardingItems((SyncBaseItem) syncItem);
+                    }
+                } catch (Throwable t) {
+                    log.severe("ClientSyncItem.onItemChanged() failed POSITION: " + syncItem);
                 }
                 break;
             case BUILD:
-                if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).isReady()) {
-                    SimulationConditionServiceImpl.getInstance().onSyncItemBuilt(((SyncBaseItem) syncItem));
-                    ClientBase.getInstance().recalculate4FakedHouseSpace((SyncBaseItem) syncItem);
-                    if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
-                        ActionHandler.getInstance().addGuardingBaseItem((SyncBaseItem) syncItem);
-                        ItemContainer.getInstance().checkSpecialChanged(syncItem);
+                try {
+                    if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).isReady()) {
+                        SimulationConditionServiceImpl.getInstance().onSyncItemBuilt(((SyncBaseItem) syncItem));
+                        ClientBase.getInstance().recalculate4FakedHouseSpace((SyncBaseItem) syncItem);
+                        if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
+                            ActionHandler.getInstance().addGuardingBaseItem((SyncBaseItem) syncItem);
+                            ItemContainer.getInstance().checkSpecialChanged(syncItem);
+                        }
                     }
+                } catch (Throwable t) {
+                    log.severe("ClientSyncItem.onItemChanged() failed BUILD: " + syncItem);
                 }
                 break;
             case ITEM_TYPE_CHANGED:
-                RadarPanel.getInstance().onItemTypeChanged(this);
+                try {
+                    RadarPanel.getInstance().onItemTypeChanged(this);
+                } catch (Throwable t) {
+                    log.severe("ClientSyncItem.onItemChanged() failed ITEM_TYPE_CHANGED: " + syncItem);
+                }
                 break;
         }
-        if (clientSyncItemView != null) {
-            clientSyncItemView.onModelChange(change);
+        try {
+            if (clientSyncItemView != null) {
+                clientSyncItemView.onModelChange(change);
+            }
+        } catch (Throwable t) {
+            log.severe("ClientSyncItem.onItemChanged() failed: " + syncItem);
         }
     }
 
