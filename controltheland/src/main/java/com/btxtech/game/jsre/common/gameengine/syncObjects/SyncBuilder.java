@@ -47,7 +47,7 @@ public class SyncBuilder extends SyncBaseAbility {
         return toBeBuildPosition != null && toBeBuiltType != null;
     }
 
-    public boolean tick(double factor) throws NoSuchItemTypeException {
+    public synchronized boolean tick(double factor) throws NoSuchItemTypeException {
         if (toBeBuildPosition == null || toBeBuiltType == null) {
             return false;
         }
@@ -125,7 +125,7 @@ public class SyncBuilder extends SyncBaseAbility {
         return getSyncItemArea().isInRange(builderType.getRange(), toBeBuildPosition, toBeBuiltType);
     }
 
-    public void stop() {
+    public synchronized void stop() {
         if (currentBuildup != null) {
             getServices().getConnectionService().sendSyncInfo(currentBuildup);
         }
@@ -179,7 +179,7 @@ public class SyncBuilder extends SyncBaseAbility {
         setPathToDestinationIfSyncMovable(builderCommand.getPathToDestination(), builderCommand.getDestinationAngel());
     }
 
-    public void executeCommand(BuilderFinalizeCommand builderFinalizeCommand) throws NoSuchItemTypeException, ItemDoesNotExistException {
+    public synchronized void executeCommand(BuilderFinalizeCommand builderFinalizeCommand) throws NoSuchItemTypeException, ItemDoesNotExistException {
         SyncBaseItem syncBaseItem = (SyncBaseItem) getServices().getItemService().getItem(builderFinalizeCommand.getToBeBuilt());
         if (!builderType.isAbleToBuild(syncBaseItem.getItemType().getId())) {
             throw new IllegalArgumentException(this + " can not build: " + builderFinalizeCommand.getToBeBuilt());
@@ -215,7 +215,7 @@ public class SyncBuilder extends SyncBaseAbility {
         return currentBuildup;
     }
 
-    public void setCurrentBuildup(SyncBaseItem syncBaseItem) {
+    public synchronized void setCurrentBuildup(SyncBaseItem syncBaseItem) {
         this.currentBuildup = syncBaseItem;
     }
 
