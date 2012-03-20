@@ -298,7 +298,12 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
 
     @Override
     public DbLevel getDbLevel() {
-        return (DbLevel) sessionFactory.getCurrentSession().get(DbLevel.class, userService.getUserState().getDbLevelId());
+        DbLevel dbLevel = (DbLevel) sessionFactory.getCurrentSession().get(DbLevel.class, userService.getUserState().getDbLevelId());
+        if (dbLevel == null) {
+            log.error("----DbLevel is null----");
+            log.error("session: " + userService.getUserState().getSessionId());
+        }
+        return dbLevel;
     }
 
     @Override
