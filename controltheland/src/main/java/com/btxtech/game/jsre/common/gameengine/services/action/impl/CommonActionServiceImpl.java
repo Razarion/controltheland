@@ -83,7 +83,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
                 moveCommand.setDestinationAngel(pathToDestination.get(size - 2).getAngleToNord(pathToDestination.get(size - 1)));
             } catch (IllegalArgumentException e) {
                 // TODO remove if bug found
-                throw new RuntimeException("syncBaseItem: " + syncBaseItem + " destination: " + destination + " path: " + CommonJava.pathToDestinationAsString(pathToDestination));
+                throw new RuntimeException("syncBaseItem: " + syncBaseItem + " destination: " + destination + " path: " + CommonJava.pathToDestinationAsString(pathToDestination), e);
             }
         }
         try {
