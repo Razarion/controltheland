@@ -26,6 +26,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncProjectileItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -57,7 +58,7 @@ public class ClientSyncItem implements SyncItemListener {
                         ActionHandler.getInstance().interactionGuardingItems((SyncBaseItem) syncItem);
                     }
                 } catch (Throwable t) {
-                    log.severe("ClientSyncItem.onItemChanged() failed POSITION: " + syncItem);
+                    log.log(Level.SEVERE, "ClientSyncItem.onItemChanged() failed POSITION: " + syncItem, t);
                 }
                 break;
             case BUILD:
@@ -71,14 +72,14 @@ public class ClientSyncItem implements SyncItemListener {
                         }
                     }
                 } catch (Throwable t) {
-                    log.severe("ClientSyncItem.onItemChanged() failed BUILD: " + syncItem);
+                    log.log(Level.SEVERE, "ClientSyncItem.onItemChanged() failed BUILD: " + syncItem, t);
                 }
                 break;
             case ITEM_TYPE_CHANGED:
                 try {
                     RadarPanel.getInstance().onItemTypeChanged(this);
                 } catch (Throwable t) {
-                    log.severe("ClientSyncItem.onItemChanged() failed ITEM_TYPE_CHANGED: " + syncItem);
+                    log.log(Level.SEVERE, "ClientSyncItem.onItemChanged() failed ITEM_TYPE_CHANGED: " + syncItem, t);
                 }
                 break;
         }
@@ -87,7 +88,7 @@ public class ClientSyncItem implements SyncItemListener {
                 clientSyncItemView.onModelChange(change);
             }
         } catch (Throwable t) {
-            log.severe("ClientSyncItem.onItemChanged() failed: " + syncItem);
+            log.log(Level.SEVERE, "ClientSyncItem.onItemChanged() failed: " + syncItem, t);
         }
     }
 
