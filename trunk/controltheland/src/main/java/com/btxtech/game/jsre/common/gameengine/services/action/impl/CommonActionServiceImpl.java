@@ -71,7 +71,11 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         moveCommand.setTimeStamp();
         List<Index> pathToDestination = getServices().getCollisionService().setupPathToDestination(syncBaseItem, destination);
         moveCommand.setPathToDestination(pathToDestination);
-        if (pathToDestination.size() < 2) {
+        if (pathToDestination.isEmpty()) {
+            // TODO remove if bug found
+            log.warning("CommonActionServiceImpl.move() -> pathToDestination.isEmpty() syncBaseItem: " + syncBaseItem + " destination: " + destination);
+            moveCommand.setDestinationAngel(syncBaseItem.getSyncItemArea().getTurnToAngel(destination));
+        } else if (pathToDestination.size() < 2) {
             moveCommand.setDestinationAngel(syncBaseItem.getSyncItemArea().getTurnToAngel(destination));
         } else {
             try {
