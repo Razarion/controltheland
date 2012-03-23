@@ -12,8 +12,9 @@
  */
 package com.btxtech.game.wicket.pages.cms;
 
-import com.btxtech.game.services.cms.CmsService;
-import com.btxtech.game.services.cms.DbCmsImage;
+import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.injection.web.InjectorHolder;
 import org.apache.wicket.markup.html.WebResource;
@@ -26,27 +27,27 @@ import org.apache.wicket.util.value.ValueMap;
 /**
  * User: beat Date: 01.06.2011 Time: 10:49:56
  */
-public class CmsImageResource extends WebResource {
-    public static final String CMS_SHARED_IMAGE_RESOURCES = "cmsimg";
-    public static final String PATH = "/cmsimg";
-    public static final String ID = "id";
+public class CmsItemTypeImageResource extends WebResource {
+    public static final String CMS_SHARED_IMAGE_RESOURCES = "cmsitemtypeimg";
+    public static final String PATH = "/cmsitemimg";
+    private static final String ID = "id";
 
     @SpringBean
-    private CmsService cmsService;
+    private ItemService itemService;
 
-    public static Image createImage(String id, DbCmsImage imageId) {
-        return new Image(id, new ResourceReference(CMS_SHARED_IMAGE_RESOURCES), new ValueMap(ID + "=" + imageId.getId()));
+    public static Image createImage(String id, DbItemType dbItemType) {
+        return new Image(id, new ResourceReference(CMS_SHARED_IMAGE_RESOURCES), new ValueMap(ID + "=" + dbItemType.getId()));
     }
 
-    public CmsImageResource() {
+    public CmsItemTypeImageResource() {
         // Inject CmsService
         InjectorHolder.getInjector().inject(this);
     }
 
     @Override
     public IResourceStream getResourceStream() {
-        int imgId = Integer.parseInt(getParameters().getString(ID));
-        DbCmsImage dbCmsImage = cmsService.getDbCmsImage(imgId);
-        return new ByteArrayResource(dbCmsImage.getContentType(), dbCmsImage.getData()).getResourceStream();
+        int itmTypeId = Integer.parseInt(getParameters().getString(ID));
+        DbItemTypeImage dbItemTypeImage = itemService.getCmsDbItemTypeImage(itmTypeId);
+        return new ByteArrayResource(dbItemTypeImage.getContentType(), dbItemTypeImage.getData()).getResourceStream();
     }
 }

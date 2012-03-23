@@ -36,9 +36,8 @@ public class DbItemTypeImage implements Serializable, CrudChild<DbItemType> {
     @ManyToOne
     private DbItemType itemType;
     private int number;
-    @Column(nullable = false)
     private String contentType;
-    @Column(nullable = false, length = 500000)
+    @Column(length = 500000)
     private byte[] data;
     private double angel;
 

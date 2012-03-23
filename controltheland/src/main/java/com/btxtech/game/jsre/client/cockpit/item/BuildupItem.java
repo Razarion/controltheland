@@ -18,8 +18,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * Time: 14:48:13
  */
 public class BuildupItem extends VerticalPanel {
-    private static final int width = 64;
-    private static final int height = 64;
+    private static final int WIDTH = 64;
+    private static final int HEIGHT = 64;
     private EnableState enableState;
     private BaseItemType itemType;
     private PushButton button;
@@ -61,11 +61,10 @@ public class BuildupItem extends VerticalPanel {
     public BuildupItem(BaseItemType itemType, MouseDownHandler mouseDownHandler) {
         this.itemType = itemType;
         discoverEnableState();
-        setWidth(width + "px");
-        Image image = ImageHandler.getItemTypeImage(itemType);
-        image.setPixelSize(width, height);
+        setWidth(WIDTH + "px");
+        Image image = ImageHandler.getItemTypeImage(itemType, WIDTH, HEIGHT);
         button = new PushButton(image);
-        button.setPixelSize(width, height);
+        button.setPixelSize(WIDTH, HEIGHT);
         button.addMouseDownHandler(mouseDownHandler);
         add(button);
         add(new Label("$" + itemType.getPrice()));

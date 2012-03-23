@@ -72,11 +72,6 @@ public class TestCreateModifyItems extends AbstractServiceTest {
         Assert.assertEquals("ccc", resourceType.getDescription());
         Assert.assertEquals("Hallo", resourceType.getName());
 
-        dbItemTypeImage = itemService.getItemTypeImage(dbResourceItemType.getId(), 7);
-        Assert.assertEquals("image/jpg", dbItemTypeImage.getContentType());
-        Assert.assertEquals(7, dbItemTypeImage.getNumber());
-        Assert.assertArrayEquals(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 0}, dbItemTypeImage.getData());
-
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         dbResourceItemType = (DbResourceItemType) itemService.getDbItemTypeCrud().readDbChild(dbResourceItemType.getId());
@@ -133,11 +128,6 @@ public class TestCreateModifyItems extends AbstractServiceTest {
         Assert.assertEquals(15, resourceType.getBoundingBox().getImageHeight());
         Assert.assertEquals("ffff", resourceType.getDescription());
         Assert.assertEquals("Ade", resourceType.getName());
-
-        dbItemTypeImage = itemService.getItemTypeImage(dbResourceItemType.getId(), 7);
-        Assert.assertEquals("image/jpgxxx", dbItemTypeImage.getContentType());
-        Assert.assertEquals(7, dbItemTypeImage.getNumber());
-        Assert.assertArrayEquals(new byte[]{8, 9, 0}, dbItemTypeImage.getData());
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

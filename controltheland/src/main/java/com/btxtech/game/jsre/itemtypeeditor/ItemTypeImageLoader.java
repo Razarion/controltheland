@@ -8,10 +8,8 @@ import com.btxtech.game.jsre.client.ImageHandler;
  * Time: 01:10:40
  */
 public class ItemTypeImageLoader extends ImageLoader {
-    public ItemTypeImageLoader(int itemTypeId, int imageCount, Listener listener) {
+    public ItemTypeImageLoader(int itemTypeId, Listener listener) {
         super(listener);
-        for (int i = 0; i < imageCount; i++) {
-            loadImage(ImageHandler.getItemTypeUrl(itemTypeId, i + 1));
-        }
+        loadImage(ImageHandler.getItemTypeSpriteMapUrl(itemTypeId));
     }
 }

@@ -14,6 +14,7 @@
 package com.btxtech.game.services.item.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -41,6 +42,7 @@ import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
+import com.btxtech.game.services.common.ImageHolder;
 import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.energy.ServerEnergyService;
@@ -66,6 +68,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -73,8 +76,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -118,7 +129,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     private int lastId = 0;
     private final HashMap<Id, SyncItem> items = new HashMap<Id, SyncItem>();
     private Log log = LogFactory.getLog(ItemServiceImpl.class);
-    private HashMap<Integer, HashMap<Integer, DbItemTypeImage>> itemTypeImages = new HashMap<Integer, HashMap<Integer, DbItemTypeImage>>();
+    private HashMap<Integer, ImageHolder> itemTypeSpriteMap = new HashMap<Integer, ImageHolder>();
     private HashMap<Integer, HashMap<Integer, DbBuildupStep>> buildupStepsImages = new HashMap<Integer, HashMap<Integer, DbBuildupStep>>();
     private HashMap<Integer, DbItemTypeImageData> muzzleItemTypeImages = new HashMap<Integer, DbItemTypeImageData>();
     private HashMap<Integer, DbItemTypeSoundData> muzzleItemTypeSounds = new HashMap<Integer, DbItemTypeSoundData>();
@@ -546,7 +557,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     public void activate() {
         Collection<DbItemType> dbItemTypes = getDbItemTypes();
         ArrayList<ItemType> itemTypes = new ArrayList<ItemType>();
-        itemTypeImages.clear();
+        itemTypeSpriteMap.clear();
         buildupStepsImages.clear();
         muzzleItemTypeImages.clear();
         muzzleItemTypeSounds.clear();
@@ -587,17 +598,63 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
 
     private void addItemTypeImages(DbItemType dbItemType) {
-        if (itemTypeImages.containsKey(dbItemType.getId())) {
-            throw new IllegalArgumentException("Item Type Images already exits: " + dbItemType);
+        if (itemTypeSpriteMap.containsKey(dbItemType.getId())) {
+            throw new IllegalArgumentException("Item Type Images Sprite Map already exits: " + dbItemType);
         }
-        HashMap<Integer, DbItemTypeImage> indexImageHashMap = new HashMap<Integer, DbItemTypeImage>();
-        for (DbItemTypeImage itemTypeImage : dbItemType.getItemTypeImageCrud().readDbChildren()) {
-            if (indexImageHashMap.containsKey(itemTypeImage.getNumber())) {
-                throw new IllegalArgumentException("Item Type Image Index already exits: " + dbItemType + " index: " + itemTypeImage.getNumber());
+
+        if (dbItemType.getItemTypeImageCrud().readDbChildren().size() > 1) {
+            addSpriteMapItemTypeImage(dbItemType);
+        } else if (dbItemType.getItemTypeImageCrud().readDbChildren().size() == 1) {
+            addSingleItemTypeImage(dbItemType);
+        } else {
+            log.warn("No item type images for: " + dbItemType);
+        }
+    }
+
+    private void addSpriteMapItemTypeImage(DbItemType dbItemType) {
+        try {
+            List<DbItemTypeImage> sortedImages = new ArrayList<DbItemTypeImage>(dbItemType.getItemTypeImageCrud().readDbChildren());
+            Collections.sort(sortedImages, new Comparator<DbItemTypeImage>() {
+                @Override
+                public int compare(DbItemTypeImage o1, DbItemTypeImage o2) {
+                    return o1.getNumber() - o2.getNumber();
+                }
+            });
+            if (sortedImages.get(0).getData() == null) {
+                // Due to test cases
+                return;
             }
-            indexImageHashMap.put(itemTypeImage.getNumber(), itemTypeImage);
+            BufferedImage masterImage = ImageIO.read(new ByteArrayInputStream(sortedImages.get(0).getData()));
+
+            // Get the format name
+            Iterator<ImageReader> iter = ImageIO.getImageReaders(ImageIO.createImageInputStream(new ByteArrayInputStream(sortedImages.get(0).getData())));
+            if (!iter.hasNext()) {
+                throw new IllegalArgumentException("Can not find image reader: " + dbItemType);
+            }
+            String formatName = iter.next().getFormatName();
+
+            BufferedImage spriteMap = new BufferedImage(dbItemType.getImageWidth() * sortedImages.size(), dbItemType.getImageHeight(), masterImage.getType());
+            int xPos = 0;
+            String contentType = sortedImages.get(0).getContentType();
+            for (DbItemTypeImage itemTypeImage : sortedImages) {
+                BufferedImage image = ImageIO.read(new ByteArrayInputStream(itemTypeImage.getData()));
+                boolean done = spriteMap.createGraphics().drawImage(image, xPos, 0, null);
+                if (!done) {
+                    throw new IllegalStateException("Image could not be drawn: " + dbItemType + " image number: " + itemTypeImage.getNumber());
+                }
+                xPos += dbItemType.getImageWidth();
+            }
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ImageIO.write(spriteMap, formatName, outputStream);
+            itemTypeSpriteMap.put(dbItemType.getId(), new ImageHolder(outputStream.toByteArray(), contentType));
+        } catch (IOException e) {
+            log.error("ItemServiceImpl.addSpriteMapItemTypeImage() error with DbItemType: " + dbItemType, e);
         }
-        itemTypeImages.put(dbItemType.getId(), indexImageHashMap);
+    }
+
+    private void addSingleItemTypeImage(DbItemType dbItemType) {
+        DbItemTypeImage dbItemTypeImage = CommonJava.getFirst(dbItemType.getItemTypeImageCrud().readDbChildren());
+        itemTypeSpriteMap.put(dbItemType.getId(), new ImageHolder(dbItemTypeImage.getData(), dbItemTypeImage.getContentType()));
     }
 
     private void addBuildupSteps(DbItemType dbItemType) {
@@ -659,16 +716,34 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public DbItemTypeImage getItemTypeImage(int itemTypeId, int index) {
-        HashMap<Integer, DbItemTypeImage> indexImages = itemTypeImages.get(itemTypeId);
-        if (indexImages == null) {
-            throw new IllegalArgumentException("Item Type id does not exist: " + itemTypeId);
+    public DbItemTypeImage getCmsDbItemTypeImage(int itemTypeId) {
+        DbItemType dbItemType = getDbItemType(itemTypeId);
+        if (dbItemType == null) {
+            throw new IllegalArgumentException("DbItemType does not exist: " + itemTypeId);
         }
-        DbItemTypeImage itemTypeImage = indexImages.get(index);
-        if (itemTypeImage == null) {
-            throw new IllegalArgumentException("Item Type index does not exist: " + index + ". ItemTypeId: " + itemTypeId);
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbItemTypeImage.class);
+        criteria.add(Restrictions.eq("itemType", dbItemType));
+        criteria.setProjection(Projections.rowCount());
+        int number = BoundingBox.getCosmeticImageIndex(((Number) criteria.list().get(0)).intValue());
+        number++; // Number start with 1
+        criteria = sessionFactory.getCurrentSession().createCriteria(DbItemTypeImage.class);
+        criteria.add(Restrictions.eq("itemType", dbItemType));
+        criteria.add(Restrictions.eq("number", number));
+        List images = criteria.list();
+        if (images.size() != 1) {
+            throw new IllegalStateException("Wrong item type image count for: " + dbItemType + " number: " + number + " received: " + images.size());
         }
-        return itemTypeImage;
+        return (DbItemTypeImage) images.get(0);
+    }
+
+
+    @Override
+    public ImageHolder getItemTypeSpriteMap(int itemTypeId) {
+        ImageHolder imageHolder = itemTypeSpriteMap.get(itemTypeId);
+        if (imageHolder == null) {
+            throw new IllegalArgumentException("Sprite map for item type id does not exist: " + itemTypeId);
+        }
+        return imageHolder;
     }
 
     @Override
