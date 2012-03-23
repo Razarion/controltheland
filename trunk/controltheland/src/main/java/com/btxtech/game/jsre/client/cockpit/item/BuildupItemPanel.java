@@ -140,7 +140,7 @@ public class BuildupItemPanel extends AbsolutePanel {
                     if (buildListener != null) {
                         buildListener.onBuild();
                     }
-                    new PlaceablePreviewSyncItem(ImageHandler.getItemTypeImage(itemType), event, constructionVehicles, itemType);
+                    new PlaceablePreviewSyncItem(ImageHandler.getItemTypeImage(itemType, null, null), event, constructionVehicles, itemType);
                 }
             }));
         }

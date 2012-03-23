@@ -99,15 +99,19 @@ public class BoundingBox implements Serializable {
     }
 
     /**
-     * The cosmetic image index starts with 1.
+     * The cosmetic image index starts with 0.
      *
-     * @return The cosmetic image index starts with 1.
+     * @return The cosmetic image index starts with 0.
      */
     public int getCosmeticImageIndex() {
-        if (isTurnable()) {
-            return angels.length / 8;
+        return getCosmeticImageIndex(angels.length);
+    }
+
+    public static int getCosmeticImageIndex(int angelCount) {
+        if (angelCount > 1) {
+            return angelCount / 8;
         } else {
-            return 1;
+            return 0;
         }
     }
 
@@ -219,6 +223,10 @@ public class BoundingBox implements Serializable {
         return angels;
     }
 
+    public int getAngelCount() {
+        return angels.length;
+    }
+
     /**
      * @param imageNr 0..x
      * @return allowed angel
@@ -241,6 +249,14 @@ public class BoundingBox implements Serializable {
 
         }
         throw new IllegalArgumentException("angelToImageNr angel is unknown:" + angel);
+    }
+
+    /**
+     * @param angel angel
+     * @return offset = ImageNr * image imageWidth
+     */
+    public int angelToImageOffset(double angel) {
+        return angelToImageNr(angel) * imageWidth;
     }
 
     @Override

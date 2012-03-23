@@ -13,8 +13,6 @@
 
 package com.btxtech.game.services.item;
 
-import com.btxtech.game.jsre.client.common.NotYourBaseException;
-import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.BuildupStep;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -24,12 +22,13 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.common.ImageHolder;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBuildupStep;
 import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbItemTypeImageData;
 import com.btxtech.game.services.item.itemType.DbItemTypeSoundData;
-import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 
@@ -82,7 +81,9 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
 
     void deleteItemType(DbItemType dbItemType);
 
-    DbItemTypeImage getItemTypeImage(int itemTypeId, int index);
+    DbItemTypeImage getCmsDbItemTypeImage(int itemTypeId);
+
+    ImageHolder getItemTypeSpriteMap(int itemTypeId);
 
     DbItemTypeImageData getMuzzleFlashImage(int itemTypeId);
 

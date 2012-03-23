@@ -890,7 +890,6 @@ abstract public class AbstractServiceTest {
         for (int i = 0; i < count; i++) {
             DbItemTypeImage dbItemTypeImage = crud.createDbChild();
             dbItemTypeImage.setNumber(i + 1);
-            dbItemTypeImage.setData(new byte[]{1, 2, 3});
             dbItemTypeImage.setContentType("image");
         }
     }

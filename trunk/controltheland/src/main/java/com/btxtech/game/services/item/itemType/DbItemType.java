@@ -235,5 +235,8 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
         return itemTypeImageCrud;
     }
 
-
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " " + name + " id: " + id;
+    }
 }

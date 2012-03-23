@@ -1,11 +1,9 @@
 package com.btxtech.game.wicket.pages.cms;
 
-import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.services.cms.layout.DbExpressionProperty;
 import com.btxtech.game.services.item.itemType.DbItemType;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
-import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Panel;
 
 /**
@@ -14,31 +12,12 @@ import org.apache.wicket.markup.html.panel.Panel;
  * Time: 21:07:07
  */
 public class ItemTypeImage extends Panel {
-    private int imgId;
-    private int imgIndex;
-
     public ItemTypeImage(String id, DbItemType dbItemType, DbExpressionProperty dbExpressionProperty) {
         super(id);
-        imgId = dbItemType.getId();
-        imgIndex = dbItemType.getBoundingBox().getCosmeticImageIndex();
-        add(new Image(dbExpressionProperty));
-    }
-
-    private class Image extends MarkupContainer {
-
-        public Image(DbExpressionProperty dbExpressionProperty) {
-            super("image");
-            if (dbExpressionProperty.getCssClass() != null) {
-                add(new SimpleAttributeModifier("class", dbExpressionProperty.getCssClass()));
-            }
+        Image image = CmsItemTypeImageResource.createImage("image", dbItemType);
+        if (dbExpressionProperty.getCssClass() != null) {
+            image.add(new SimpleAttributeModifier("class", dbExpressionProperty.getCssClass()));
         }
-
-        @Override
-        protected void onComponentTag(ComponentTag tag) {
-            super.onComponentTag(tag);
-            checkComponentTag(tag, "img");
-            tag.put("src", ImageHandler.getItemTypeUrl(imgId, imgIndex));
-        }
-
+        add(image);
     }
 }

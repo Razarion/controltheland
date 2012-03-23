@@ -57,33 +57,48 @@ public class ImageHandler {
 
     }
 
-    public static String getItemTypeImageUrl(SyncItem syncItem) {
-        int imageNr = syncItem.getSyncItemArea().getBoundingBox().angelToImageNr(syncItem.getSyncItemArea().getAngel());
-        imageNr++;// First image start with 1
-        return getItemTypeUrl(syncItem.getItemType().getId(), imageNr);
+    public static String getImageBackgroundUrl(String bgImageUrl) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("url(");
+        builder.append(bgImageUrl);
+        builder.append(") no-repeat 0px 0px");
+        return builder.toString();
     }
 
-    public static Image getItemTypeImage(ItemType itemType) {
-        return getItemTypeImage(itemType.getBoundingBox().getCosmeticImageIndex(), itemType);
+    public static String getItemTypeImageBackgroundUrl(SyncItem syncItem) {
+        int xOffset = syncItem.getSyncItemArea().getBoundingBox().angelToImageOffset(syncItem.getSyncItemArea().getAngel());
+        StringBuilder builder = new StringBuilder();
+        builder.append("url(");
+        builder.append(getItemTypeSpriteMapUrl(syncItem.getItemType().getId()));
+        builder.append(") no-repeat -");
+        builder.append(xOffset);
+        builder.append("px 0px");
+        return builder.toString();
     }
 
-    private static Image getItemTypeImage(int imgIndex, ItemType itemType) {
-        String urlStr = getItemTypeUrl(itemType.getId(), imgIndex);
-        loadImage(urlStr);
-        return createImageIE6TransparencyProblem(urlStr, itemType.getBoundingBox().getImageWidth(), itemType.getBoundingBox().getImageHeight());
+    public static Image getItemTypeImage(ItemType itemType, Integer width, Integer height) {
+        String url = getItemTypeSpriteMapUrl(itemType.getId());
+        Image image;
+        if (width != null && height != null) {
+            int xOffset = itemType.getBoundingBox().getCosmeticImageIndex() * width;
+            image = new Image(url, xOffset, 0, width, height);
+            image.setPixelSize(width, height);
+            String spriteWidth = Integer.toString(width * itemType.getBoundingBox().getAngelCount());
+            image.getElement().getStyle().setProperty("backgroundSize", spriteWidth + "px " + Integer.toString(height) + "px");
+        } else {
+            int xOffset = itemType.getBoundingBox().getCosmeticImageIndex() * itemType.getBoundingBox().getImageWidth();
+            image = new Image(url, xOffset, 0, itemType.getBoundingBox().getImageWidth(), itemType.getBoundingBox().getImageHeight());
+        }
+        return image;
     }
 
-    public static String getItemTypeUrl(int itemId, int imgIndex) {
+    public static String getItemTypeSpriteMapUrl(int itemId) {
         StringBuilder url = new StringBuilder();
         url.append(Constants.ITEM_IMAGE_URL);
         url.append("?");
-        url.append(Constants.ITEM_TYPE_ID);
+        url.append(Constants.ITEM_TYPE_SPRITE_MAP_ID);
         url.append("=");
         url.append(itemId);
-        url.append("&");
-        url.append(Constants.ITEM_IMAGE_INDEX);
-        url.append("=");
-        url.append(imgIndex);
         return url.toString();
     }
 

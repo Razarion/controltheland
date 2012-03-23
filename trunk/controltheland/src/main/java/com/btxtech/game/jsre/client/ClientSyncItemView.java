@@ -39,7 +39,6 @@ import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.widgetideas.client.ProgressBar;
 
@@ -49,7 +48,6 @@ import com.google.gwt.widgetideas.client.ProgressBar;
  * Time: 2:48:36 PM
  */
 public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandler, MouseOverHandler, MouseOutHandler {
-    private Image image;
     private ClientSyncItem clientSyncItem;
     private CursorItemState cursorItemState;
     private ExtendedProgressBar healthBar;
@@ -204,19 +202,6 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
                 clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageHeight());
     }
 
-    public void setupImage() {
-        if (image != null) {
-            remove(image);
-        }
-
-        image = new Image();
-        image.addMouseDownHandler(this);
-        image.sinkEvents(Event.ONMOUSEMOVE);
-        image.getElement().getStyle().setZIndex(1);
-        add(image);
-        setupImageSizeAndPos();
-    }
-
     public void setPosition() {
         if (!clientSyncItem.getSyncItem().getSyncItemArea().hasPosition()) {
             return;
@@ -242,7 +227,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         switch (change) {
             case BUILD:
                 cursorItemState.setFinalizeBuild(!clientSyncItem.getSyncBaseItem().isReady());
-                setupImageSizeAndPos();
+                setupImage();
                 break;
             case ANGEL:
                 setupImage();
@@ -350,30 +335,22 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         setWidgetPosition(marker, 0, clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageHeight() - 13);
     }
 
-
-    private void setupImageSizeAndPos() {
+    private void setupImage() {
         if (clientSyncItem.isSyncBaseItem() && !clientSyncItem.getSyncBaseItem().isReady()) {
             SyncBaseItem syncBaseItem = clientSyncItem.getSyncBaseItem();
             BuildupStep buildupStep = syncBaseItem.getBaseItemType().getBuildupStepData4Progress(syncBaseItem.getBuildup());
             if (buildupStep != null) {
                 if (buildupStep.getBase64ImageData() != null) {
                     // During ItemTypeEditor usage
-                    image.setUrl(buildupStep.getBase64ImageData());
+                    getElement().getStyle().setProperty("background", ImageHandler.getImageBackgroundUrl(buildupStep.getBase64ImageData()));
                 } else {
-                    image.setUrl(ImageHandler.getBuildupStepImageUrl(clientSyncItem.getSyncBaseItem().getBaseItemType(), buildupStep));
+                    getElement().getStyle().setProperty("background", ImageHandler.getImageBackgroundUrl(ImageHandler.getBuildupStepImageUrl(clientSyncItem.getSyncBaseItem().getBaseItemType(), buildupStep)));
                 }
-            } else {
-                image.setUrl(ImageHandler.getItemTypeImageUrl(clientSyncItem.getSyncItem()));
+                return;
             }
-        } else {
-            image.setUrl(ImageHandler.getItemTypeImageUrl(clientSyncItem.getSyncItem()));
         }
-        image.setPixelSize(clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageWidth(),
-                clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageHeight());
-        setWidgetPosition(image, 0, 0);
-
+        getElement().getStyle().setProperty("background", ImageHandler.getItemTypeImageBackgroundUrl(clientSyncItem.getSyncItem()));
     }
-
 
     protected void setHealth() {
         healthBar.setProgress(clientSyncItem.getSyncBaseItem().getHealth());

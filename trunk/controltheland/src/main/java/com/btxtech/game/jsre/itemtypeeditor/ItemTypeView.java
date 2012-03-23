@@ -47,7 +47,7 @@ public class ItemTypeView extends DecoratorPanel {
         canvas.setCoordinateSpaceWidth(canvasWidth);
         canvas.setCoordinateSpaceHeight(canvasHeight);
         context2d = canvas.getContext2d();
-        imageLoader = new ItemTypeImageLoader(itemType.getId(), itemType.getBoundingBox().getAngels().length, new ImageLoader.Listener() {
+        imageLoader = new ItemTypeImageLoader(itemType.getId(), new ImageLoader.Listener() {
             @Override
             public void onLoaded() {
                 draw(0);
@@ -70,7 +70,17 @@ public class ItemTypeView extends DecoratorPanel {
         SyncItemArea syncItemArea = boundingBox.createSyntheticSyncItemArea(ITEM_POSITION, boundingBox.imageNumberToAngel(imageNr));
 
         Index imageOffset = boundingBox.getTopLeftFromImage(ITEM_POSITION);
-        context2d.drawImage(imageLoader.getImage(imageNr), imageOffset.getX(), imageOffset.getY());
+
+        context2d.drawImage(imageLoader.getImage(0),
+                boundingBox.getImageWidth() * imageNr, // the x coordinate of the upper-left corner of the source rectangle
+                0, // the y coordinate of the upper-left corner of the source rectangle
+                boundingBox.getImageWidth(),// the width of the source rectangle
+                boundingBox.getImageHeight(),// sh the width of the source rectangle
+                imageOffset.getX(),// the x coordinate of the upper-left corner of the destination rectangle
+                imageOffset.getY(),// the y coordinate of the upper-left corner of the destination rectangle
+                boundingBox.getImageWidth(),// the width of the destination rectangle
+                boundingBox.getImageHeight()// the height of the destination rectangle
+        );
         // Bounding box
         boundingBoxControl.draw(syncItemArea, context2d);
         muzzleFlashControl.draw(imageNr, context2d);
