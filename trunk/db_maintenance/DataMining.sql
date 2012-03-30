@@ -1,7 +1,7 @@
 -- CHANGE THIS
-SET @TIME_BEFORE = '2012-02-28 02:00:00'; 
-SET @TIME_AFTER = '2012-02-28 12:00:00';
-SET @CLICKS_ADWORDS = 922;
+SET @TIME_BEFORE = '2012-03-24 21:20:00'; 
+SET @TIME_AFTER = '2012-03-25 12:000:00';
+SET @CLICKS_ADWORDS = 1745;
 -- CHANGE THIS
 
 SET SQL_SAFE_UPDATES=0; 
@@ -51,7 +51,7 @@ UPDATE tmp_data_mining m SET maxLevelName = (SELECT levelName FROM GAME_HISTORY 
           WHERE h.sessionId = m.sessionId 
           AND h.type = 5));
 UPDATE tmp_data_mining m  SET scrollCount = (SELECT COUNT(*) FROM TRACKER_SCROLLING s, TRACKER_STARTUP_TASK t WHERE m.sessionId = t.sessionId AND t.startUuid = s.startUuid);
-UPDATE tmp_data_mining m  SET syncInfoCount = (SELECT COUNT(*) FROM TRACKER_SYNC_INFOS s, TRACKER_STARTUP_TASK t WHERE m.sessionId = t.sessionId AND t.startUuid = s.startUuid);
+-- UPDATE tmp_data_mining m  SET syncInfoCount = (SELECT COUNT(*) FROM TRACKER_SYNC_INFOS s, TRACKER_STARTUP_TASK t WHERE m.sessionId = t.sessionId AND t.startUuid = s.startUuid);
 UPDATE tmp_data_mining m  SET selectionCount = (SELECT COUNT(*) FROM TRACKER_SELECTIONS s, TRACKER_STARTUP_TASK t WHERE m.sessionId = t.sessionId AND t.startUuid = s.startUuid);
 
 
@@ -124,6 +124,25 @@ SELECT * FROM tmp_data_mining WHERE maxLevelName IS NOT NULL;
 
 -- Level promotions
 SELECT count(*)"Level promotions" FROM tmp_data_mining WHERE maxLevelName IS NOT NULL;
+
+SELECT levelName, count(*) 
+  FROM GAME_HISTORY 
+    WHERE 
+      TYPE = 5
+      AND timeStamp > @TIME_BEFORE 
+      AND timeStamp < @TIME_AFTER
+    GROUP BY 
+      levelName 
+    ORDER BY 
+      levelName;
+
+SELECT COUNT(*)/@gameAttemps*100"% Finished Tutorial 1" 
+  FROM GAME_HISTORY 
+    WHERE 
+      type = 5
+      AND timeStamp > @TIME_BEFORE 
+      AND timeStamp < @TIME_AFTER
+      AND levelName = "2"
 
 -- Users at least Noob 3 reached
 -- SELECT count(*)"Users Noob 3 reached", COUNT(*)/@gameReached*100"% Game reached", COUNT(*)/@detectedUsers*100"% all Users" FROM `gamedb`.`tmp_data_mining` WHERE maxLevelIndex > 1;
