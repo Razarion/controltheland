@@ -882,6 +882,17 @@ public class TestPathFindingImpl extends AbstractServiceTest {
         Assert.assertEquals(new Index(960, 1551), gumPath.getOptimizedPath().get(7));
     }
 
+    @Test
+    @DirtiesContext
+    public void testGumPath8() throws Exception {
+        List<Port> ports = new ArrayList<Port>();
+        BoundingBox boundingBox = new BoundingBox(0, 0, 0, 0, ANGELS_TANK);
+        GumPath gumPath = new GumPath(new Index(4764, 1229), new Index(4751, 1243), ports, boundingBox);
+
+        Assert.assertEquals(2, gumPath.getOptimizedPath().size());
+        Assert.assertEquals(new Index(4764, 1229), gumPath.getOptimizedPath().get(0));
+        Assert.assertEquals(new Index(4751, 1243), gumPath.getOptimizedPath().get(1));
+    }
 
     private void assertPathInAllBorders(List<Rectangle> borders, GumPath gumPath) {
         Index previousPoint = null;

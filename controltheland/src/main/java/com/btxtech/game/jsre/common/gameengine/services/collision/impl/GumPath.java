@@ -146,7 +146,9 @@ public class GumPath {
         } else {
             setupLastPointMulti(path, allowedAngel, destination);
         }
-        path.add(destination);
+        if (!destination.equals(path.get(path.size() - 1))) {
+            path.add(destination);
+        }
     }
 
     private static void setupLastPointMulti(List<Index> path, double allowedAngel, Index destination) {

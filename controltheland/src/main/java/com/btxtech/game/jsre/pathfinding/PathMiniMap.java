@@ -108,10 +108,12 @@ public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener, Mi
 
     private void displayPath(Index start, List<Index> indexes) {
         clear();
+        pathfindingCockpit.clearPathTable();
         getContext2d().beginPath();
         getContext2d().moveTo(start.getX(), start.getY());
         for (Index index : indexes) {
             getContext2d().lineTo(index.getX(), index.getY());
+            pathfindingCockpit.addPathTable(index);
         }
         getContext2d().stroke();
     }

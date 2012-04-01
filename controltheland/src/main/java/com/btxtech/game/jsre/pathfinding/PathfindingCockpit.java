@@ -25,6 +25,7 @@ public class PathfindingCockpit extends TopMapPanel {
     private TextBox destinationBoxX;
     private TextBox destinationBoxY;
     private PathMiniMap pathMiniMap;
+    private FlexTable pathTable;
 
     public PathfindingCockpit(PathMiniMap pathMiniMap) {
         this.pathMiniMap = pathMiniMap;
@@ -33,6 +34,9 @@ public class PathfindingCockpit extends TopMapPanel {
 
     @Override
     protected Widget createBody() {
+        getElement().getStyle().clearBackgroundImage();
+        getElement().getStyle().setBackgroundColor("#AAAAAA");
+
         FlexTable flexTable = new FlexTable();
 
         flexTable.setText(1, 1, "Mouse X");
@@ -79,6 +83,10 @@ public class PathfindingCockpit extends TopMapPanel {
             }
         }));
 
+        pathTable = new FlexTable();
+        flexTable.setWidget(9, 1, pathTable);
+        flexTable.getFlexCellFormatter().setColSpan(9, 1, 2);
+
         return flexTable;
     }
 
@@ -89,5 +97,15 @@ public class PathfindingCockpit extends TopMapPanel {
     public void showMousePosition(int absX, int absY) {
         mouseX.setText(Integer.toString(absX));
         mouseY.setText(Integer.toString(absY));
+    }
+
+    public void clearPathTable() {
+        pathTable.clear();
+    }
+
+    public void addPathTable(Index index) {
+        int row = pathTable.getRowCount() + 1;
+        pathTable.setWidget(row, 1, new Label(Integer.toString(index.getX())));
+        pathTable.setWidget(row, 2, new Label(Integer.toString(index.getY())));
     }
 }
