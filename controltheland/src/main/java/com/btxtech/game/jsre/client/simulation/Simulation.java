@@ -14,7 +14,6 @@
 package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ParametrisedRunnable;
@@ -22,6 +21,7 @@ import com.btxtech.game.jsre.client.bot.ClientBotService;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
+import com.btxtech.game.jsre.client.control.StartupScreen;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -164,7 +164,7 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
         Timer timer = new Timer() {
             @Override
             public void run() {
-                ClientServices.getInstance().getClientRunner().start(GameStartupSeq.WARM_RESTART_SIMULATED);
+                StartupScreen.getInstance().fadeOutAndStart(GameStartupSeq.WARM_RESTART_SIMULATED);
             }
         };
         timer.schedule(1000);
