@@ -44,7 +44,7 @@ public class NestedNullSafeBeanComparator extends BeanComparator {
         if (property == null) {
             // compare the actual objects
             // noinspection unchecked
-            return this.comparator.compare(o1, o2);
+            return comparator.compare(o1, o2);
         }
 
         Object val1 = null;
@@ -62,7 +62,7 @@ public class NestedNullSafeBeanComparator extends BeanComparator {
             }
 
             if (val1 == val2 || (val1 == null && val2 == null)) {
-                return -1;
+                return 0;
             }
 
             if (val1 == null) {
@@ -74,10 +74,9 @@ public class NestedNullSafeBeanComparator extends BeanComparator {
             }
 
             // noinspection unchecked
-            return this.comparator.compare(val1, val2);
+            return comparator.compare(val1, val2);
         } catch (Exception e) {
-            e.printStackTrace();
-            log.warn(e);
+            log.warn("", e);
             return 0;
         }
     }
