@@ -624,14 +624,6 @@ public class CmsUiServiceImpl implements CmsUiService {
     private ContentSortList generateContentOrderList(int contentId, ContentContext contentContext) {
         DbContentList dbContentList = getDbContent(contentId);
 
-        String sortInfo = contentContext.getContentSortInfoString(contentId);
-        Boolean ascending = null;
-        String sortColumnName = null;
-        if (sortInfo != null) {
-            ascending = sortInfo.charAt(0) == CmsPage.SORT_ASCENDING;
-            sortColumnName = sortInfo.substring(1, sortInfo.length());
-        }
-
         String sortExpression = null;
         String defaultSortExpression = null;
         Boolean defaultSortAsc = null;
@@ -651,7 +643,7 @@ public class CmsUiServiceImpl implements CmsUiService {
                 }
                 defaultSortAsc = dbExpressionProperty.isDefaultSortableAsc();
             }
-            if (sortColumnName != null && dbExpressionProperty.getName().equals(sortColumnName)) {
+            if (contentContext.isSortColumnActive(contentId, dbExpressionProperty)) {
                 if (dbExpressionProperty.getSortHintExpression() != null) {
                     sortExpression = dbExpressionProperty.getSortHintExpression();
                 } else {
@@ -662,30 +654,13 @@ public class CmsUiServiceImpl implements CmsUiService {
         ContentSortList contentSortList = null;
         if (sortExpression != null) {
             contentSortList = new ContentSortList();
-            contentSortList.add(ascending, sortExpression);
+            contentSortList.add(contentContext.isAscSorting(contentId), sortExpression);
         } else if (defaultSortExpression != null) {
             contentSortList = new ContentSortList();
             contentSortList.add(defaultSortAsc, defaultSortExpression);
         }
         return contentSortList;
     }
-
-    @Override
-    public String getSortInfo(String columnName, int contentListId, ContentContext contentContext) {
-        String oldSortInfo = contentContext.getContentSortInfoString(contentListId);
-        String newSortInfo;
-        if (oldSortInfo != null && oldSortInfo.length() > 1 && oldSortInfo.substring(1, oldSortInfo.length()).equals(columnName)) {
-            if (oldSortInfo.charAt(0) == CmsPage.SORT_DESCENDING) {
-                newSortInfo = CmsPage.SORT_ASCENDING + columnName;
-            } else {
-                newSortInfo = CmsPage.SORT_DESCENDING + columnName;
-            }
-        } else {
-            newSortInfo = CmsPage.SORT_DESCENDING + columnName;
-        }
-        return newSortInfo;
-    }
-
 
     private ContentProvider getContentProvider(BeanIdPathElement beanIdPathElement, Object bean) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         return (ContentProvider) PropertyUtils.getProperty(bean, beanIdPathElement.getContentProviderGetter());

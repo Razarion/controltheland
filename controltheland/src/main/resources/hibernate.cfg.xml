@@ -119,7 +119,7 @@
         <mapping class="com.btxtech.game.services.cms.content.DbWikiSection"/>
         <mapping class="com.btxtech.game.services.cms.content.DbHtmlContent"/>
         <!-- Statistics -->
-        <mapping class="com.btxtech.game.services.statistics.DbStatisticsEntry"/>
+        <mapping class="com.btxtech.game.services.statistics.StatisticsEntry"/>
         <!-- Tracking -->
         <mapping class="com.btxtech.game.services.utg.tracker.DbPageAccess"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbSessionDetail"/>

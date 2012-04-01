@@ -3,6 +3,7 @@ package com.btxtech.game.wicket.pages.mgmt.cms;
 import com.btxtech.game.services.cms.layout.DbExpressionProperty;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
+import com.btxtech.game.wicket.uiservices.CmsImageSelector;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -47,7 +48,9 @@ public class ExpressionPropertyEditor extends MgmtWebPage {
         form.add(new CheckBox("defaultSortable"));
         form.add(new CheckBox("defaultSortableAsc"));
         form.add(new TextField("sortLinkCssClass"));
-
+        form.add(new TextField("sortLinkCssClassActive"));
+        form.add(new CmsImageSelector("sortAscActiveImage"));
+        form.add(new CmsImageSelector("sortDescActiveImage"));
 
 
         form.add(new Button("save") {

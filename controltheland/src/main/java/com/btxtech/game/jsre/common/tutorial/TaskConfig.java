@@ -20,7 +20,6 @@ import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -87,8 +86,8 @@ public class TaskConfig implements Serializable {
         return money;
     }
 
-    public LevelScope createLevelScope(String levelName) {
-        return new LevelScope(levelName, maxMoney, itemTypeLimitation, houseCount, itemSellFactor, radarMode);
+    public LevelScope createLevelScope(int levelNumber) {
+        return new LevelScope(levelNumber, maxMoney, itemTypeLimitation, houseCount, itemSellFactor, radarMode);
     }
 
     public ConditionConfig getConditionConfig() {

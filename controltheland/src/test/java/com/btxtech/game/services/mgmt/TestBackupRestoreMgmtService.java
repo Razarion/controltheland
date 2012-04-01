@@ -384,7 +384,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("U1", "test", "test", "test");
         userService.login("U1", "test");
-        Assert.assertEquals(TEST_LEVEL_1_SIMULATED, userGuidanceService.getDbLevel().getName());
+        Assert.assertEquals(TEST_LEVEL_1_SIMULATED, userGuidanceService.getDbLevel().getNumber());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -406,9 +406,9 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.login("U1", "test");
-        Assert.assertEquals(TEST_LEVEL_1_SIMULATED, userGuidanceService.getDbLevel().getName());
+        Assert.assertEquals(TEST_LEVEL_1_SIMULATED, userGuidanceService.getDbLevel().getNumber());
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
-        Assert.assertEquals(TEST_LEVEL_2_REAL, userGuidanceService.getDbLevel().getName());
+        Assert.assertEquals(TEST_LEVEL_2_REAL, userGuidanceService.getDbLevel().getNumber());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -467,12 +467,12 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
             Assert.assertFalse(levelQuest.isDone());
         }
         // Complete tutorial
-        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_3_3_SIM_ID);
+        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_3_3_SIMULATED_ID);
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
             Assert.assertFalse(levelQuest.isDone());
         }
         for (LevelQuest levelQuest : userGuidanceService.getMercenaryMissionCms().readDbChildren()) {
-            Assert.assertEquals(levelQuest.getDbLevelTask().getId().equals(TEST_LEVEL_TASK_3_3_SIM_ID), levelQuest.isDone());
+            Assert.assertEquals(levelQuest.getDbLevelTask().getId().equals(TEST_LEVEL_TASK_3_3_SIMULATED_ID), levelQuest.isDone());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -503,10 +503,10 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
             Assert.assertFalse(levelQuest.isDone());
         }
         for (LevelQuest levelQuest : userGuidanceService.getMercenaryMissionCms().readDbChildren()) {
-            Assert.assertEquals(levelQuest.getDbLevelTask().getId().equals(TEST_LEVEL_TASK_3_3_SIM_ID), levelQuest.isDone());
+            Assert.assertEquals(levelQuest.getDbLevelTask().getId().equals(TEST_LEVEL_TASK_3_3_SIMULATED_ID), levelQuest.isDone());
         }
         // Complete tutorial
-        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_4_3_SIM_ID);
+        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_4_3_SIMULATED_ID);
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
             Assert.assertFalse(levelQuest.isDone());
         }
@@ -602,12 +602,12 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
             Assert.assertFalse(levelQuest.isDone());
         }
         // Complete tutorial
-        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_3_3_SIM_ID);
+        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_3_3_SIMULATED_ID);
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
             Assert.assertFalse(levelQuest.isDone());
         }
         for (LevelQuest levelQuest : userGuidanceService.getMercenaryMissionCms().readDbChildren()) {
-            Assert.assertEquals(levelQuest.getDbLevelTask().getId().equals(TEST_LEVEL_TASK_3_3_SIM_ID), levelQuest.isDone());
+            Assert.assertEquals(levelQuest.getDbLevelTask().getId().equals(TEST_LEVEL_TASK_3_3_SIMULATED_ID), levelQuest.isDone());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -653,7 +653,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
             Assert.assertFalse(levelQuest.isDone());
         }
         for (LevelQuest levelQuest : userGuidanceService.getMercenaryMissionCms().readDbChildren()) {
-            Assert.assertEquals(levelQuest.getDbLevelTask().getId().equals(TEST_LEVEL_TASK_3_3_SIM_ID), levelQuest.isDone());
+            Assert.assertEquals(levelQuest.getDbLevelTask().getId().equals(TEST_LEVEL_TASK_3_3_SIMULATED_ID), levelQuest.isDone());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

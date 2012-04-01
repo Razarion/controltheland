@@ -426,7 +426,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         Thread.sleep(100);
         Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertEquals(TEST_LEVEL_TASK_5_4_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isDone());
+            Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isDone());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -436,10 +436,10 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         // Manipulate the time inside the position comparison to avoid waiting a minute
         Map<UserState, Collection<AbstractConditionTrigger<UserState, Integer>>> triggerMap = (Map<UserState, Collection<AbstractConditionTrigger<UserState, Integer>>>) getPrivateField(ServerConditionServiceImpl.class, serverConditionService, "triggerMap");
         Collection<AbstractConditionTrigger<UserState, Integer>> triggers = triggerMap.get(userService.getUserState());
-        Assert.assertEquals(2, triggers.size());
+        Assert.assertEquals(3, triggers.size());
         ItemTypePositionComparison itemTypePositionComparison = null;
         for (AbstractConditionTrigger<UserState, Integer> trigger : triggers) {
-            if (trigger.getIdentifier() == TEST_LEVEL_TASK_5_4_REAL_ID) {
+            if (trigger.getIdentifier() != null && trigger.getIdentifier() == TEST_LEVEL_TASK_1_4_REAL_ID) {
                 itemTypePositionComparison = (ItemTypePositionComparison) trigger.getAbstractComparison();
             }
         }
@@ -447,7 +447,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         long fulfilledTimeStamp = (Long) getPrivateField(ItemTypePositionComparison.class, itemTypePositionComparison, "fulfilledTimeStamp");
         long fulfilledTime = (System.currentTimeMillis() - fulfilledTimeStamp);
         System.out.println("fulfilledTime: " + fulfilledTime);
-        Assert.assertTrue("fulfilledTime invalid: " + fulfilledTime, fulfilledTime > 500 && fulfilledTime < 700);
+        Assert.assertTrue("fulfilledTime invalid: " + fulfilledTime, fulfilledTime > 500 && fulfilledTime < 800);
         setPrivateField(ItemTypePositionComparison.class, itemTypePositionComparison, "fulfilledTimeStamp", System.currentTimeMillis() - 60000);
     }
 
@@ -559,7 +559,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         waitForActionServiceDone();
         Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertEquals(TEST_LEVEL_TASK_6_4_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isDone());
+            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isDone());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

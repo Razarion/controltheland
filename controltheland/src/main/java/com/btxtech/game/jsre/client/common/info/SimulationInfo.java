@@ -23,7 +23,7 @@ import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 public class SimulationInfo extends GameInfo {
     private TutorialConfig tutorialConfig;
     private int levelTaskId;
-    private String levelName;
+    private int levelNumber;
 
     public void setTutorialConfig(TutorialConfig tutorialConfig) {
         this.tutorialConfig = tutorialConfig;
@@ -41,11 +41,11 @@ public class SimulationInfo extends GameInfo {
         this.levelTaskId = levelTaskId;
     }
 
-    public String getLevelName() {
-        return levelName;
+    public int getLevelNumber() {
+        return levelNumber;
     }
 
-    public void setLevelName(String levelName) {
-        this.levelName = levelName;
+    public void setLevelNumber(int levelNumber) {
+        this.levelNumber = levelNumber;
     }
 }

@@ -15,10 +15,11 @@ package com.btxtech.game.services.statistics;
 
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
+import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.user.UserState;
+
+import java.util.Map;
 
 /**
  * User: beat
@@ -26,24 +27,17 @@ import com.btxtech.game.services.user.UserState;
  * Time: 1:25:35 PM
  */
 public interface StatisticsService {
-
-    void onMoneyEarned(SimpleBase simpleBase, double amount);
-
-    void onMoneySpent(SimpleBase simpleBase, double amount);
-
     void onItemKilled(SyncBaseItem targetItem, SimpleBase actorBase);
 
     void onItemCreated(SyncBaseItem syncBaseItem);
 
     void onBaseKilled(SimpleBase target, SimpleBase actor);
 
-    void onLevelPromotion(UserState userState);
+    ReadonlyListContentProvider<CurrentStatisticEntry> getCmsCurrentStatistics();
 
-    CrudRootServiceHelper<DbStatisticsEntry> getDayStatistics();
+    void restoreBackup(Map<DbUserState, UserState> userStates);
 
-    CrudRootServiceHelper<DbStatisticsEntry> getWeekStatistics();
+    void createAndAddBackup(DbUserState dbUserState, UserState userState);
 
-    CrudRootServiceHelper<DbStatisticsEntry> getAllTimeStatistics();
-
-    ReadonlyListContentProvider<CurrentStatisticEntry> getCurrentStatistics();
+    void onRemoveUserState(UserState userState);
 }

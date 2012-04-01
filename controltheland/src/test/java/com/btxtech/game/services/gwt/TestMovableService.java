@@ -29,7 +29,7 @@ public class TestMovableService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        SimulationInfo simulationInfo = getMovableService().getSimulationGameInfo(TEST_LEVEL_TASK_1_SIMULATED_ID);
+        SimulationInfo simulationInfo = getMovableService().getSimulationGameInfo(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
         Assert.assertNotNull(simulationInfo);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -60,7 +60,7 @@ public class TestMovableService extends AbstractServiceTest {
             getMovableService().getRealGameInfo();
             Assert.fail("InvalidLevelState expected");
         } catch (InvalidLevelState invalidLevelState) {
-            Assert.assertEquals(TEST_LEVEL_TASK_1_SIMULATED_ID, (int) invalidLevelState.getLevelTaskId());
+            Assert.assertEquals(TEST_LEVEL_TASK_1_1_SIMULATED_ID, (int) invalidLevelState.getLevelTaskId());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -75,7 +75,7 @@ public class TestMovableService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
         try {
-            getMovableService().getSimulationGameInfo(TEST_LEVEL_TASK_1_SIMULATED_ID);
+            getMovableService().getSimulationGameInfo(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
             Assert.fail("InvalidLevelState expected");
         } catch (InvalidLevelState invalidLevelState) {
             Assert.assertNull(invalidLevelState.getLevelTaskId());

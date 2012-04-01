@@ -32,6 +32,7 @@ import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -72,6 +73,8 @@ public class GenericItemConverter {
     private UserService userService;
     @Autowired
     private BotService botService;
+    @Autowired
+    private StatisticsService statisticsService;
     private BackupEntry backupEntry;
     private HashMap<Id, GenericItem> genericItems = new HashMap<Id, GenericItem>();
     private HashMap<Id, SyncItem> syncItems = new HashMap<Id, SyncItem>();
@@ -111,6 +114,7 @@ public class GenericItemConverter {
             try {
                 DbUserState dbUserState = createDbUserState(userState);
                 userGuidanceService.createAndAddBackup(dbUserState, userState);
+                statisticsService.createAndAddBackup(dbUserState, userState);
                 dbUserStates.add(dbUserState);
             } catch (Exception e) {
                 log.error("Can not back user: " + userState, e);
@@ -187,6 +191,7 @@ public class GenericItemConverter {
         baseService.restoreBases(dbBases.values());
         itemService.restoreItems(syncItems.values());
         userGuidanceService.restoreBackup(userStates);
+        statisticsService.restoreBackup(userStates);
         serverEnergyService.pauseService(false);
         serverEnergyService.restoreItems(syncItems.values());
         actionService.pause(false);

@@ -85,7 +85,8 @@ public class TestLevel extends AbstractServiceTest {
         dbLevel1.setInternalDescription("internal");
         dbLevel1.setItemSellFactor(0.23);
         dbLevel1.setMaxMoney(200);
-        dbLevel1.setName("dbLevel1");
+        dbLevel1.setNumber(1);
+        dbLevel1.setXp(599);
         DbLevelTask dbLevelTask11 = dbLevel1.getLevelTaskCrud().createDbChild();
         dbLevelTask11.setMoney(16);
         dbLevelTask11.setXp(34);
@@ -118,8 +119,9 @@ public class TestLevel extends AbstractServiceTest {
         Assert.assertEquals("internal", dbLevel1.getInternalDescription());
         Assert.assertEquals(0.23, dbLevel1.getItemSellFactor(), 0.0001);
         Assert.assertEquals(200, dbLevel1.getMaxMoney());
-        Assert.assertEquals("dbLevel1", dbLevel1.getName());
+        Assert.assertEquals(1, dbLevel1.getNumber());
         Assert.assertEquals(2, dbLevel1.getLevelTaskCrud().readDbChildren().size());
+        Assert.assertEquals(599, dbLevel1.getXp());
         dbLevelTask11 = dbLevel1.getLevelTaskCrud().readDbChild(dbLevelTask11.getId());
         Assert.assertEquals(16, dbLevelTask11.getMoney());
         Assert.assertEquals(34, dbLevelTask11.getXp());
@@ -143,7 +145,8 @@ public class TestLevel extends AbstractServiceTest {
         dbLevel2.setInternalDescription("internal2");
         dbLevel2.setItemSellFactor(0.24);
         dbLevel2.setMaxMoney(201);
-        dbLevel2.setName("dbLevel2");
+        dbLevel2.setNumber(2);
+        dbLevel2.setXp(333);
         DbLevelTask dbLevelTask21 = dbLevel2.getLevelTaskCrud().createDbChild();
         dbLevelTask21.setMoney(17);
         dbLevelTask21.setXp(39);
@@ -171,8 +174,9 @@ public class TestLevel extends AbstractServiceTest {
         Assert.assertEquals("internal", dbLevel1.getInternalDescription());
         Assert.assertEquals(0.23, dbLevel1.getItemSellFactor(), 0.0001);
         Assert.assertEquals(200, dbLevel1.getMaxMoney());
-        Assert.assertEquals("dbLevel1", dbLevel1.getName());
+        Assert.assertEquals(1, dbLevel1.getNumber());
         Assert.assertEquals(2, dbLevel1.getLevelTaskCrud().readDbChildren().size());
+        Assert.assertEquals(599, dbLevel1.getXp());
         dbLevelTask11 = dbLevel1.getLevelTaskCrud().readDbChild(dbLevelTask11.getId());
         Assert.assertEquals(16, dbLevelTask11.getMoney());
         Assert.assertEquals(34, dbLevelTask11.getXp());
@@ -188,8 +192,9 @@ public class TestLevel extends AbstractServiceTest {
         Assert.assertEquals("internal2", dbLevel2.getInternalDescription());
         Assert.assertEquals(0.24, dbLevel2.getItemSellFactor(), 0.0001);
         Assert.assertEquals(201, dbLevel2.getMaxMoney());
-        Assert.assertEquals("dbLevel2", dbLevel2.getName());
+        Assert.assertEquals(2, dbLevel2.getNumber());
         Assert.assertEquals(1, dbLevel2.getLevelTaskCrud().readDbChildren().size());
+        Assert.assertEquals(333, dbLevel2.getXp());
         dbLevelTask21 = dbLevel2.getLevelTaskCrud().readDbChild(dbLevelTask21.getId());
         Assert.assertEquals(17, dbLevelTask21.getMoney());
         Assert.assertEquals(39, dbLevelTask21.getXp());
@@ -209,7 +214,8 @@ public class TestLevel extends AbstractServiceTest {
         dbLevel3.setInternalDescription("internal3");
         dbLevel3.setItemSellFactor(3);
         dbLevel3.setMaxMoney(203);
-        dbLevel3.setName("dbLevel3");
+        dbLevel3.setNumber(3);
+        dbLevel3.setXp(74);
         DbLevelTask dbLevelTask31 = dbLevel3.getLevelTaskCrud().createDbChild();
         dbLevelTask31.setMoney(36);
         dbLevelTask31.setXp(87);
@@ -242,8 +248,9 @@ public class TestLevel extends AbstractServiceTest {
         Assert.assertEquals("internal", dbLevel1.getInternalDescription());
         Assert.assertEquals(0.23, dbLevel1.getItemSellFactor(), 0.0001);
         Assert.assertEquals(200, dbLevel1.getMaxMoney());
-        Assert.assertEquals("dbLevel1", dbLevel1.getName());
+        Assert.assertEquals(1, dbLevel1.getNumber());
         Assert.assertEquals(2, dbLevel1.getLevelTaskCrud().readDbChildren().size());
+        Assert.assertEquals(599, dbLevel1.getXp());
         dbLevelTask11 = dbLevel1.getLevelTaskCrud().readDbChild(dbLevelTask11.getId());
         Assert.assertEquals(16, dbLevelTask11.getMoney());
         Assert.assertEquals(34, dbLevelTask11.getXp());
@@ -259,8 +266,9 @@ public class TestLevel extends AbstractServiceTest {
         Assert.assertEquals("internal2", dbLevel2.getInternalDescription());
         Assert.assertEquals(0.24, dbLevel2.getItemSellFactor(), 0.0001);
         Assert.assertEquals(201, dbLevel2.getMaxMoney());
-        Assert.assertEquals("dbLevel2", dbLevel2.getName());
+        Assert.assertEquals(2, dbLevel2.getNumber());
         Assert.assertEquals(1, dbLevel2.getLevelTaskCrud().readDbChildren().size());
+        Assert.assertEquals(333, dbLevel2.getXp());
         dbLevelTask21 = dbLevel2.getLevelTaskCrud().readDbChild(dbLevelTask21.getId());
         Assert.assertEquals(17, dbLevelTask21.getMoney());
         Assert.assertEquals(39, dbLevelTask21.getXp());
@@ -276,8 +284,9 @@ public class TestLevel extends AbstractServiceTest {
         Assert.assertEquals("internal3", dbLevel3.getInternalDescription());
         Assert.assertEquals(3, dbLevel3.getItemSellFactor(), 0.0001);
         Assert.assertEquals(203, dbLevel3.getMaxMoney());
-        Assert.assertEquals("dbLevel3", dbLevel3.getName());
+        Assert.assertEquals(3, dbLevel3.getNumber());
         Assert.assertEquals(2, dbLevel3.getLevelTaskCrud().readDbChildren().size());
+        Assert.assertEquals(74, dbLevel3.getXp());
         dbLevelTask31 = dbLevel3.getLevelTaskCrud().readDbChild(dbLevelTask31.getId());
         Assert.assertEquals(36, dbLevelTask31.getMoney());
         Assert.assertEquals(87, dbLevelTask31.getXp());
@@ -321,8 +330,9 @@ public class TestLevel extends AbstractServiceTest {
         Assert.assertEquals("internal", dbLevel1.getInternalDescription());
         Assert.assertEquals(0.23, dbLevel1.getItemSellFactor(), 0.0001);
         Assert.assertEquals(500, dbLevel1.getMaxMoney());
-        Assert.assertEquals("dbLevel1", dbLevel1.getName());
+        Assert.assertEquals(1, dbLevel1.getNumber());
         Assert.assertEquals(2, dbLevel1.getLevelTaskCrud().readDbChildren().size());
+        Assert.assertEquals(599, dbLevel1.getXp());
         dbLevelTask11 = dbLevel1.getLevelTaskCrud().readDbChild(dbLevelTask11.getId());
         Assert.assertEquals(16, dbLevelTask11.getMoney());
         Assert.assertEquals(34, dbLevelTask11.getXp());
@@ -338,8 +348,9 @@ public class TestLevel extends AbstractServiceTest {
         Assert.assertEquals("internal2", dbLevel2.getInternalDescription());
         Assert.assertEquals(0.24, dbLevel2.getItemSellFactor(), 0.0001);
         Assert.assertEquals(201, dbLevel2.getMaxMoney());
-        Assert.assertEquals("dbLevel2", dbLevel2.getName());
+        Assert.assertEquals(2, dbLevel2.getNumber());
         Assert.assertEquals(1, dbLevel2.getLevelTaskCrud().readDbChildren().size());
+        Assert.assertEquals(333, dbLevel2.getXp());
         dbLevelTask21 = dbLevel2.getLevelTaskCrud().readDbChild(dbLevelTask21.getId());
         Assert.assertEquals(17, dbLevelTask21.getMoney());
         Assert.assertEquals(39, dbLevelTask21.getXp());
@@ -355,8 +366,9 @@ public class TestLevel extends AbstractServiceTest {
         Assert.assertEquals("internal3", dbLevel3.getInternalDescription());
         Assert.assertEquals(3, dbLevel3.getItemSellFactor(), 0.0001);
         Assert.assertEquals(203, dbLevel3.getMaxMoney());
-        Assert.assertEquals("dbLevel3", dbLevel3.getName());
+        Assert.assertEquals(3, dbLevel3.getNumber());
         Assert.assertEquals(2, dbLevel3.getLevelTaskCrud().readDbChildren().size());
+        Assert.assertEquals(74, dbLevel3.getXp());
         dbLevelTask31 = dbLevel3.getLevelTaskCrud().readDbChild(dbLevelTask31.getId());
         Assert.assertEquals(36, dbLevelTask31.getMoney());
         Assert.assertEquals(87, dbLevelTask31.getXp());
@@ -395,8 +407,9 @@ public class TestLevel extends AbstractServiceTest {
         Assert.assertEquals("internal3", dbLevel3.getInternalDescription());
         Assert.assertEquals(3, dbLevel3.getItemSellFactor(), 0.0001);
         Assert.assertEquals(203, dbLevel3.getMaxMoney());
-        Assert.assertEquals("dbLevel3", dbLevel3.getName());
+        Assert.assertEquals(3, dbLevel3.getNumber());
         Assert.assertEquals(2, dbLevel3.getLevelTaskCrud().readDbChildren().size());
+        Assert.assertEquals(74, dbLevel3.getXp());
         dbLevelTask31 = dbLevel3.getLevelTaskCrud().readDbChild(dbLevelTask31.getId());
         Assert.assertEquals(36, dbLevelTask31.getMoney());
         Assert.assertEquals(87, dbLevelTask31.getXp());
@@ -435,8 +448,9 @@ public class TestLevel extends AbstractServiceTest {
         Assert.assertEquals("internal3", dbLevel3.getInternalDescription());
         Assert.assertEquals(3, dbLevel3.getItemSellFactor(), 0.0001);
         Assert.assertEquals(203, dbLevel3.getMaxMoney());
-        Assert.assertEquals("dbLevel3", dbLevel3.getName());
+        Assert.assertEquals(3, dbLevel3.getNumber());
         Assert.assertEquals(1, dbLevel3.getLevelTaskCrud().readDbChildren().size());
+        Assert.assertEquals(74, dbLevel3.getXp());
         dbLevelTask31 = dbLevel3.getLevelTaskCrud().readDbChild(dbLevelTask31.getId());
         Assert.assertEquals(36, dbLevelTask31.getMoney());
         Assert.assertEquals(87, dbLevelTask31.getXp());
@@ -696,228 +710,12 @@ public class TestLevel extends AbstractServiceTest {
         Assert.assertTrue(coi23 < coi32);
         Assert.assertTrue(coi32 < coi31);
         endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();        
+        endHttpSession();
     }
 
     private int readCmsOrderIndex(DbLevel dbLevel) {
         dbLevel = (DbLevel) sessionFactory.getCurrentSession().get(DbLevel.class, dbLevel.getId());
         return dbLevel.getCmsOrderIndex();
-    }
-
-    @Test
-    @DirtiesContext
-    public void condition() {
-        // Setup
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        DbQuestHub dbQuestHub1 = userGuidanceService.getCrudQuestHub().createDbChild();
-        DbLevel dbLevel1 = dbQuestHub1.getLevelCrud().createDbChild();
-        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub1);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Create
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHub1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId());
-        dbLevel1 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel1.getId());
-        DbConditionConfig dbConditionConfig1 = new DbConditionConfig();
-        dbLevel1.setDbConditionConfig(dbConditionConfig1);
-        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub1);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Verify
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHub1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId());
-        dbLevel1 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel1.getId());
-        Assert.assertEquals(dbConditionConfig1.getId(), dbLevel1.getDbConditionConfig().getId());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Verify2
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        List<DbConditionConfig> dbConditionConfigs = HibernateUtil.loadAll(sessionFactory, DbConditionConfig.class);
-        Assert.assertEquals(1, dbConditionConfigs.size());
-        Assert.assertEquals(dbConditionConfig1.getId(), dbConditionConfigs.get(0).getId());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Override DbConditionConfig1
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHub1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId());
-        dbLevel1 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel1.getId());
-        dbLevel1.setDbConditionConfig(null);
-        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub1);
-        DbConditionConfig dbConditionConfig2 = new DbConditionConfig();
-        dbLevel1.setDbConditionConfig(dbConditionConfig2);
-        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub1);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Verify
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHub1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId());
-        dbLevel1 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel1.getId());
-        Assert.assertEquals(dbConditionConfig2.getId(), dbLevel1.getDbConditionConfig().getId());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Verify2
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbConditionConfigs = HibernateUtil.loadAll(sessionFactory, DbConditionConfig.class);
-        Assert.assertEquals(1, dbConditionConfigs.size());
-        Assert.assertEquals(dbConditionConfig2.getId(), dbConditionConfigs.get(0).getId());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Create second level
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHub1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId());
-        DbLevel dbLevel2 = dbQuestHub1.getLevelCrud().createDbChild();
-        DbConditionConfig dbConditionConfig3 = new DbConditionConfig();
-        dbLevel2.setDbConditionConfig(dbConditionConfig3);
-        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub1);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Verify
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHub1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId());
-        dbLevel1 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel1.getId());
-        dbLevel2 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel2.getId());
-        Assert.assertEquals(dbConditionConfig2.getId(), dbLevel1.getDbConditionConfig().getId());
-        Assert.assertEquals(dbConditionConfig3.getId(), dbLevel2.getDbConditionConfig().getId());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Verify2
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbConditionConfigs = HibernateUtil.loadAll(sessionFactory, DbConditionConfig.class);
-        Assert.assertEquals(2, dbConditionConfigs.size());
-        Assert.assertEquals(dbConditionConfig2.getId(), dbConditionConfigs.get(0).getId());
-        Assert.assertEquals(dbConditionConfig3.getId(), dbConditionConfigs.get(1).getId());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Delete DbConditionConfig3
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHub1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId());
-        dbLevel2 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel2.getId());
-        dbLevel2.setDbConditionConfig(null);
-        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub1);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Verify
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHub1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId());
-        dbLevel1 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel1.getId());
-        dbLevel2 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel2.getId());
-        Assert.assertEquals(dbConditionConfig2.getId(), dbLevel1.getDbConditionConfig().getId());
-        Assert.assertNull(dbLevel2.getDbConditionConfig());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Verify2
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbConditionConfigs = HibernateUtil.loadAll(sessionFactory, DbConditionConfig.class);
-        Assert.assertEquals(1, dbConditionConfigs.size());
-        Assert.assertEquals(dbConditionConfig2.getId(), dbConditionConfigs.get(0).getId());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Create TaskLevel and add DbCondition
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHub1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId());
-        dbLevel2 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel2.getId());
-        DbLevelTask dbLevelTask1 = dbLevel2.getLevelTaskCrud().createDbChild();
-        DbConditionConfig dbConditionConfig4 = new DbConditionConfig();
-        dbLevelTask1.setDbConditionConfig(dbConditionConfig4);
-        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub1);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Verify
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHub1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId());
-        dbLevel1 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel1.getId());
-        dbLevel2 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel2.getId());
-        Assert.assertEquals(dbConditionConfig2.getId(), dbLevel1.getDbConditionConfig().getId());
-        Assert.assertNull(dbLevel2.getDbConditionConfig());
-        Assert.assertEquals(dbConditionConfig4.getId(), dbLevel2.getLevelTaskCrud().readDbChild(dbLevelTask1.getId()).getDbConditionConfig().getId());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Verify2
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbConditionConfigs = HibernateUtil.loadAll(sessionFactory, DbConditionConfig.class);
-        Assert.assertEquals(2, dbConditionConfigs.size());
-        Assert.assertEquals(dbConditionConfig2.getId(), dbConditionConfigs.get(0).getId());
-        Assert.assertEquals(dbConditionConfig4.getId(), dbConditionConfigs.get(1).getId());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Delete DbLevel1
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHub1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId());
-        dbLevel1 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel1.getId());
-        dbQuestHub1.getLevelCrud().deleteDbChild(dbLevel1);
-        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub1);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Verify
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHub1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId());
-        dbLevel2 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel2.getId());
-        Assert.assertNull(dbLevel2.getDbConditionConfig());
-        Assert.assertEquals(dbConditionConfig4.getId(), dbLevel2.getLevelTaskCrud().readDbChild(dbLevelTask1.getId()).getDbConditionConfig().getId());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Verify2
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbConditionConfigs = HibernateUtil.loadAll(sessionFactory, DbConditionConfig.class);
-        Assert.assertEquals(1, dbConditionConfigs.size());
-        Assert.assertEquals(dbConditionConfig4.getId(), dbConditionConfigs.get(0).getId());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Delete DbLevel2
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHub1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId());
-        dbLevel2 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel2.getId());
-        dbQuestHub1.getLevelCrud().deleteDbChild(dbLevel2);
-        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub1);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Verify2
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbConditionConfigs = HibernateUtil.loadAll(sessionFactory, DbConditionConfig.class);
-        Assert.assertEquals(0, dbConditionConfigs.size());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
     }
 
     @Test
@@ -940,7 +738,8 @@ public class TestLevel extends AbstractServiceTest {
         dbQuestHub1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId());
         dbLevel1 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel1.getId());
         DbConditionConfig dbConditionConfig1 = new DbConditionConfig();
-        dbLevel1.setDbConditionConfig(dbConditionConfig1);
+        DbLevelTask dbLevelTask = dbLevel1.getLevelTaskCrud().createDbChild();
+        dbLevelTask.setDbConditionConfig(dbConditionConfig1);
         dbConditionConfig1.setConditionTrigger(ConditionTrigger.SYNC_ITEM_POSITION);
         DbItemTypePositionComparisonConfig comparisonConfig = new DbItemTypePositionComparisonConfig();
         DbComparisonItemCount dbComparisonItemCount = comparisonConfig.getCrudDbComparisonItemCount().createDbChild();
@@ -959,7 +758,8 @@ public class TestLevel extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         dbLevel1 = userGuidanceService.getDbLevel(dbLevel1.getId());
-        dbConditionConfig1 = dbLevel1.getDbConditionConfig();
+        dbLevelTask = CommonJava.getFirst(dbLevel1.getLevelTaskCrud().readDbChildren());
+        dbConditionConfig1 = dbLevelTask.getDbConditionConfig();
         ConditionConfig conditionConfig = dbConditionConfig1.createConditionConfig(itemService);
         Assert.assertEquals(ConditionTrigger.SYNC_ITEM_POSITION, conditionConfig.getConditionTrigger());
         ItemTypePositionComparisonConfig itemTypePositionComparisonConfig = (ItemTypePositionComparisonConfig) conditionConfig.getAbstractComparisonConfig();
@@ -978,7 +778,8 @@ public class TestLevel extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         DbQuestHub dbQuestHub = CommonJava.getFirst(userGuidanceService.getCrudQuestHub().readDbChildren());
         dbLevel1 = dbQuestHub.getLevelCrud().readDbChild(dbLevel1.getId());
-        comparisonConfig = (DbItemTypePositionComparisonConfig) dbLevel1.getDbConditionConfig().getDbAbstractComparisonConfig();
+        dbLevelTask = CommonJava.getFirst(dbLevel1.getLevelTaskCrud().readDbChildren());
+        comparisonConfig = (DbItemTypePositionComparisonConfig) dbLevelTask.getDbConditionConfig().getDbAbstractComparisonConfig();
         dbComparisonItemCount = CommonJava.getFirst(comparisonConfig.getCrudDbComparisonItemCount().readDbChildren());
         comparisonConfig.getCrudDbComparisonItemCount().deleteDbChild(dbComparisonItemCount);
         userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub);
@@ -995,7 +796,8 @@ public class TestLevel extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         dbQuestHub = CommonJava.getFirst(userGuidanceService.getCrudQuestHub().readDbChildren());
         dbLevel1 = dbQuestHub.getLevelCrud().readDbChild(dbLevel1.getId());
-        dbLevel1.setDbConditionConfig(null);
+        dbLevelTask = CommonJava.getFirst(dbLevel1.getLevelTaskCrud().readDbChildren());
+        dbLevelTask.setDbConditionConfig(null);
         userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -1027,8 +829,9 @@ public class TestLevel extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         dbQuestHub1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId());
         dbLevel1 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel1.getId());
+        DbLevelTask dbLevelTask = dbLevel1.getLevelTaskCrud().createDbChild();
         DbConditionConfig dbConditionConfig1 = new DbConditionConfig();
-        dbLevel1.setDbConditionConfig(dbConditionConfig1);
+        dbLevelTask.setDbConditionConfig(dbConditionConfig1);
         dbConditionConfig1.setConditionTrigger(ConditionTrigger.SYNC_ITEM_BUILT);
         DbSyncItemTypeComparisonConfig comparisonConfig = new DbSyncItemTypeComparisonConfig();
         DbComparisonItemCount dbComparisonItemCount = comparisonConfig.getCrudDbComparisonItemCount().createDbChild();
@@ -1045,7 +848,8 @@ public class TestLevel extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         dbLevel1 = userGuidanceService.getDbLevel(dbLevel1.getId());
-        dbConditionConfig1 = dbLevel1.getDbConditionConfig();
+        dbLevelTask = CommonJava.getFirst(dbLevel1.getLevelTaskCrud().readDbChildren());
+        dbConditionConfig1 = dbLevelTask.getDbConditionConfig();
         ConditionConfig conditionConfig = dbConditionConfig1.createConditionConfig(itemService);
         Assert.assertEquals(ConditionTrigger.SYNC_ITEM_BUILT, conditionConfig.getConditionTrigger());
         SyncItemTypeComparisonConfig syncItemTypeComparisonConfig = (SyncItemTypeComparisonConfig) conditionConfig.getAbstractComparisonConfig();
@@ -1060,7 +864,8 @@ public class TestLevel extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         DbQuestHub dbQuestHub = CommonJava.getFirst(userGuidanceService.getCrudQuestHub().readDbChildren());
         dbLevel1 = dbQuestHub.getLevelCrud().readDbChild(dbLevel1.getId());
-        comparisonConfig = (DbSyncItemTypeComparisonConfig) dbLevel1.getDbConditionConfig().getDbAbstractComparisonConfig();
+        dbLevelTask = CommonJava.getFirst(dbLevel1.getLevelTaskCrud().readDbChildren());
+        comparisonConfig = (DbSyncItemTypeComparisonConfig) dbLevelTask.getDbConditionConfig().getDbAbstractComparisonConfig();
         dbComparisonItemCount = CommonJava.getFirst(comparisonConfig.getCrudDbComparisonItemCount().readDbChildren());
         comparisonConfig.getCrudDbComparisonItemCount().deleteDbChild(dbComparisonItemCount);
         userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub);
@@ -1077,7 +882,8 @@ public class TestLevel extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         dbQuestHub = CommonJava.getFirst(userGuidanceService.getCrudQuestHub().readDbChildren());
         dbLevel1 = dbQuestHub.getLevelCrud().readDbChild(dbLevel1.getId());
-        dbLevel1.setDbConditionConfig(null);
+        dbLevelTask = CommonJava.getFirst(dbLevel1.getLevelTaskCrud().readDbChildren());
+        dbLevelTask.setDbConditionConfig(null);
         userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

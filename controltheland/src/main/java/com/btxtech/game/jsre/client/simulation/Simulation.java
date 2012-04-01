@@ -84,7 +84,7 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
     }
 
     private void processPreparation(TaskConfig taskConfig) {
-        ClientLevelHandler.getInstance().setLevelScope(taskConfig.createLevelScope(simulationInfo.getLevelName()));
+        ClientLevelHandler.getInstance().setLevelScope(taskConfig.createLevelScope(simulationInfo.getLevelNumber()));
         SideCockpit.getInstance().updateItemLimit();
 
         if (taskConfig.hasBots()) {

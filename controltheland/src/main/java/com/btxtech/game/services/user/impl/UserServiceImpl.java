@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchExc
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.NoConnectionException;
+import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.DbPageAccessControl;
@@ -75,6 +76,8 @@ public class UserServiceImpl implements UserService {
     private PlatformTransactionManager transactionManager;
     @Autowired
     private SessionFactory sessionFactory;
+    @Autowired
+    private StatisticsService statisticsService;
     @Value(value = "${security.md5salt}")
     private String md5HashSalt;
 
@@ -160,6 +163,7 @@ public class UserServiceImpl implements UserService {
                 userStates.remove(userState);
             }
             userGuidanceService.onRemoveUserState(userState);
+            statisticsService.onRemoveUserState(userState);
         }
     }
 

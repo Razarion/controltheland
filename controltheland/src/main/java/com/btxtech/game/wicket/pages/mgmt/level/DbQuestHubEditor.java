@@ -61,7 +61,7 @@ public class DbQuestHubEditor extends MgmtWebPage {
         tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.unlink, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after);
         contentArea.add(new TinyMceBehavior(tinyMCESettings));
         form.add(contentArea);
-        
+
         form.add(new CheckBox("realBaseRequired"));
         form.add(new BaseItemTypePanel("startItemType"));
         form.add(new TextField("startItemFreeRange"));
@@ -87,7 +87,7 @@ public class DbQuestHubEditor extends MgmtWebPage {
             @Override
             protected void extendedPopulateItem(final Item<DbLevel> item) {
                 displayId(item);
-                super.extendedPopulateItem(item);
+                item.add(new TextField("number"));
             }
 
             @Override

@@ -1740,13 +1740,13 @@ public class TestCmsService extends AbstractServiceTest {
         // Click first link (RealGame Level)
         tester.clickLink("form:content:table:rows:2:cells:2:cell:link");
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TEST_QUEST_HUB_2");
-        tester.assertLabel("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:1:cell", "TEST_LEVEL_2_REAL");
+        tester.assertLabel("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:1:cell", "2");
         tester.assertVisible("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:2:cell:link");
-        tester.assertLabel("form:content:table:rows:2:cells:2:cell:table:rows:2:cells:1:cell", "TEST_LEVEL_3_REAL");
+        tester.assertLabel("form:content:table:rows:2:cells:2:cell:table:rows:2:cells:1:cell", "3");
         tester.assertVisible("form:content:table:rows:2:cells:2:cell:table:rows:2:cells:2:cell:link");
         // Click second link
         tester.clickLink("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:2:cell:link");
-        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TEST_LEVEL_2_REAL");
+        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "2");
         // Item limitations list
         // unpredictable order tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:1:cell", "TestAttackItem");
         tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:2:cell", "10");
@@ -1783,7 +1783,7 @@ public class TestCmsService extends AbstractServiceTest {
         tester.clickLink("form:content:table:rows:1:cells:2:cell:link");
         tester.debugComponentTrees();
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TEST_QUEST_HUB_1");
-        tester.assertLabel("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:1:cell", "TEST_LEVEL_1_SIMULATED");
+        tester.assertLabel("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:1:cell", "1");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -2346,11 +2346,11 @@ public class TestCmsService extends AbstractServiceTest {
         getMovableService().getRealGameInfo();
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
-        tester.assertLabel("form:content:link:label", "TEST_LEVEL_2_REAL");
+        tester.assertLabel("form:content:link:label", "2");
         // Click Link
         tester.clickLink("form:content:link");
         tester.assertLabel("form:content:table:rows:1:cells:1:cell", "Name");
-        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TEST_LEVEL_2_REAL");
+        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "2");
 
         tester.debugComponentTrees();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -2446,11 +2446,11 @@ public class TestCmsService extends AbstractServiceTest {
         userGuidanceService.getDbLevel(); // set level for new user
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:link:label", "TEST_LEVEL_TASK_1_SIMULATED_NAME");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell:link:label", TEST_LEVEL_TASK_1_1_SIMULATED_NAME);
         // Click Link
         tester.clickLink("form:content:table:rows:1:cells:1:cell:link");
         tester.assertLabel("form:content:table:rows:1:cells:1:cell", "Name");
-        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TEST_LEVEL_TASK_1_SIMULATED_NAME");
+        tester.assertLabel("form:content:table:rows:1:cells:2:cell", TEST_LEVEL_TASK_1_1_SIMULATED_NAME);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -2511,7 +2511,7 @@ public class TestCmsService extends AbstractServiceTest {
         userGuidanceService.getDbLevel(); // set level for new user
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell", "TEST_LEVEL_TASK_1_SIMULATED_NAME");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell", TEST_LEVEL_TASK_1_1_SIMULATED_NAME);
         tester.assertVisible("form:content:table:rows:1:cells:2:cell:link:linkImage");
         tester.assertBookmarkablePageLink("form:content:table:rows:1:cells:2:cell:link", Game.class, "taskId = 1");
         tester.assertInvisible("form:content:table:rows:1:cells:2:cell:doneImage");
@@ -2520,26 +2520,26 @@ public class TestCmsService extends AbstractServiceTest {
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
         tester.assertVisible("form:content:table:rows:1:cells:2:cell:link:linkImage");
-        tester.assertBookmarkablePageLink("form:content:table:rows:1:cells:2:cell:link", Game.class, "taskId = " + TEST_LEVEL_TASK_3_3_SIM_ID);
+        tester.assertBookmarkablePageLink("form:content:table:rows:1:cells:2:cell:link", Game.class, "taskId = " + TEST_LEVEL_TASK_3_3_SIMULATED_ID);
         tester.assertInvisible("form:content:table:rows:1:cells:2:cell:doneImage");
         tester.assertVisible("form:content:table:rows:2:cells:2:cell:link:linkImage");
-        tester.assertBookmarkablePageLink("form:content:table:rows:2:cells:2:cell:link", Game.class, "taskId = " + TEST_LEVEL_TASK_4_3_SIM_ID);
+        tester.assertBookmarkablePageLink("form:content:table:rows:2:cells:2:cell:link", Game.class, "taskId = " + TEST_LEVEL_TASK_4_3_SIMULATED_ID);
         tester.assertInvisible("form:content:table:rows:2:cells:2:cell:doneImage");
         // Click first level task
         tester.clickLink("form:content:table:rows:1:cells:2:cell:link");
         tester.assertRenderedPage(Game.class);
         tester.debugComponentTrees();
         // Finish first tutorial
-        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_3_3_SIM_ID);
+        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_3_3_SIMULATED_ID);
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
         tester.assertInvisible("form:content:table:rows:1:cells:2:cell:link");
         tester.assertVisible("form:content:table:rows:1:cells:2:cell:doneImage");
         tester.assertVisible("form:content:table:rows:2:cells:2:cell:link:linkImage");
-        tester.assertBookmarkablePageLink("form:content:table:rows:2:cells:2:cell:link", Game.class, "taskId = " + TEST_LEVEL_TASK_4_3_SIM_ID);
+        tester.assertBookmarkablePageLink("form:content:table:rows:2:cells:2:cell:link", Game.class, "taskId = " + TEST_LEVEL_TASK_4_3_SIMULATED_ID);
         tester.assertInvisible("form:content:table:rows:2:cells:2:cell:doneImage");
         // Finish second tutorial
-        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_4_3_SIM_ID);
+        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_4_3_SIMULATED_ID);
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
         tester.assertInvisible("form:content:table:rows:1:cells:2:cell:link");
@@ -3599,7 +3599,7 @@ public class TestCmsService extends AbstractServiceTest {
         getMovableService().getRealGameInfo(); // Connection is created here. Don't call movableService.getGameInfo() again!
 
         tester.startPage(CmsPage.class);
-        tester.assertLabel("form:content:container:1", "TEST_LEVEL_2_REAL");
+        tester.assertLabel("form:content:container:1", "2");
         tester.assertLabel("form:content:container:2", "0");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -3733,6 +3733,19 @@ public class TestCmsService extends AbstractServiceTest {
     @DirtiesContext
     public void testSorting() throws Exception {
         configureGameMultipleLevel();
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbCmsImage> crud = cmsService.getImageCrudRootServiceHelper();
+        DbCmsImage ascImg = crud.createDbChild();
+        ascImg.setData(new byte[50000]);
+        ascImg.setContentType("image");
+        DbCmsImage descImg = crud.createDbChild();
+        descImg.setData(new byte[50000]);
+        descImg.setContentType("image");
+        crud.updateDbChild(ascImg);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
         // Mock statistics service
         List<UserState> userStates = new ArrayList<UserState>();
 
@@ -3770,13 +3783,13 @@ public class TestCmsService extends AbstractServiceTest {
         userStates.add(userState);
 
         UserService userServiceMock = EasyMock.createMock(UserService.class);
-        EasyMock.expect(userServiceMock.getAllUserStates()).andReturn(userStates).times(3);
+        EasyMock.expect(userServiceMock.getAllUserStates()).andReturn(userStates).times(4);
         EasyMock.replay(userServiceMock);
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "userService", userServiceMock);
 
         BaseService baseService = EasyMock.createMock(BaseService.class);
-        EasyMock.expect(baseService.getBaseName(base1.getSimpleBase())).andReturn("Base 1").times(3);
-        EasyMock.expect(baseService.getBaseName(base2.getSimpleBase())).andReturn("RegUser").times(3);
+        EasyMock.expect(baseService.getBaseName(base1.getSimpleBase())).andReturn("Base 1").times(4);
+        EasyMock.expect(baseService.getBaseName(base2.getSimpleBase())).andReturn("RegUser").times(4);
         EasyMock.replay(baseService);
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "baseService", baseService);
 
@@ -3794,32 +3807,49 @@ public class TestCmsService extends AbstractServiceTest {
         dbContentList.setRowsPerPage(5);
         dbContentList.setShowHead(true);
         dbContentList.setSpringBeanName("statisticsService");
-        dbContentList.setContentProviderGetter("currentStatistics");
+        dbContentList.setContentProviderGetter("cmsCurrentStatistics");
 
+        DbExpressionProperty rank = (DbExpressionProperty) dbContentList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
+        rank.setExpression("rank");
+        rank.setName("Rank");
         DbExpressionProperty level = (DbExpressionProperty) dbContentList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
         level.setExpression("level.name");
         level.setName("Level");
         level.setSortable(true);
+        level.setSortLinkCssClass("sortCSS");
+        level.setSortLinkCssClassActive("sortCSSActive");
         DbExpressionProperty userColumn = (DbExpressionProperty) dbContentList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
         userColumn.setExpression("user.username");
         userColumn.setName("User");
         userColumn.setSortable(true);
         userColumn.setSortHintExpression("user.password");
+        userColumn.setSortLinkCssClass("sortCSS");
+        userColumn.setSortLinkCssClassActive("sortCSSActive");
+        userColumn.setSortAscActiveImage(ascImg);
+        userColumn.setSortDescActiveImage(descImg);
         DbExpressionProperty baseUpTime = (DbExpressionProperty) dbContentList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
         baseUpTime.setExpression("baseUpTime");
         baseUpTime.setOptionalType(DbExpressionProperty.Type.DURATION_HH_MM_SS);
         baseUpTime.setName("Time");
         baseUpTime.setSortable(true);
+        baseUpTime.setSortLinkCssClass("sortCSS");
+        baseUpTime.setSortLinkCssClassActive("sortCSSActive");
         DbExpressionProperty baseName = (DbExpressionProperty) dbContentList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
         baseName.setExpression("baseName");
         baseName.setName("Base Name");
         baseName.setSortable(true);
+        baseName.setSortLinkCssClass("sortCSS");
+        baseName.setSortLinkCssClassActive("sortCSSActive");
         DbExpressionProperty itemCount = (DbExpressionProperty) dbContentList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
         itemCount.setExpression("itemCount");
         itemCount.setName("Items");
         itemCount.setSortable(true);
         itemCount.setDefaultSortable(true);
         itemCount.setDefaultSortableAsc(false);
+        itemCount.setSortLinkCssClass("sortCSS");
+        itemCount.setSortLinkCssClassActive("sortCSSActive");
+        itemCount.setSortAscActiveImage(ascImg);
+        itemCount.setSortDescActiveImage(descImg);
         DbExpressionProperty money = (DbExpressionProperty) dbContentList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
         money.setExpression("money");
         money.setName("Money");
@@ -3838,108 +3868,200 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
-        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:1:link", CmsPage.class, "page=1,sort1=dLevel");
-        tester.assertLabel("form:content:table:tHead:cell:1:link:label", "Level");
-        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:2:link", CmsPage.class, "page=1,sort1=dUser");
-        tester.assertLabel("form:content:table:tHead:cell:2:link:label", "User");
-        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:3:link", CmsPage.class, "page=1,sort1=dTime");
-        tester.assertLabel("form:content:table:tHead:cell:3:link:label", "Time");
-        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:4:link", CmsPage.class, "page=1,sort1=dBase Name");
-        tester.assertLabel("form:content:table:tHead:cell:4:link:label", "Base Name");
-        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:5:link", CmsPage.class, "page=1,sort1=dItems");
-        tester.assertLabel("form:content:table:tHead:cell:5:link:label", "Items");
-        tester.assertLabel("form:content:table:tHead:cell:6", "Money");
+        tester.assertLabel("form:content:table:tHead:cell:1", "Rank");
+        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:2:link", CmsPage.class, "page=1,sort1=dLevel");
+        assertCssClass(tester, "form:content:table:tHead:cell:2:link", "sortCSS");
+        tester.assertLabel("form:content:table:tHead:cell:2:link:label", "Level");
+        tester.assertInvisible("form:content:table:tHead:cell:2:link:image");
+        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:3:link", CmsPage.class, "page=1,sort1=dUser");
+        assertCssClass(tester, "form:content:table:tHead:cell:3:link", "sortCSS");
+        tester.assertLabel("form:content:table:tHead:cell:3:link:label", "User");
+        tester.assertInvisible("form:content:table:tHead:cell:3:link:image");
+        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:4:link", CmsPage.class, "page=1,sort1=dTime");
+        assertCssClass(tester, "form:content:table:tHead:cell:4:link", "sortCSS");
+        tester.assertLabel("form:content:table:tHead:cell:4:link:label", "Time");
+        tester.assertInvisible("form:content:table:tHead:cell:4:link:image");
+        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:5:link", CmsPage.class, "page=1,sort1=dBase Name");
+        assertCssClass(tester, "form:content:table:tHead:cell:5:link", "sortCSS");
+        tester.assertLabel("form:content:table:tHead:cell:5:link:label", "Base Name");
+        tester.assertInvisible("form:content:table:tHead:cell:5:link:image");
+        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:6:link", CmsPage.class, "page=1,sort1=aItems");
+        assertCssClass(tester, "form:content:table:tHead:cell:6:link", "sortCSSActive");
+        tester.assertLabel("form:content:table:tHead:cell:6:link:label", "Items");
+        assertCmsImage(tester, "form:content:table:tHead:cell:6:link:image", descImg);
+        tester.assertLabel("form:content:table:tHead:cell:7", "Money");
 
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell", "TEST_LEVEL_2_REAL");
-        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "xxx");
-        tester.assertLabel("form:content:table:rows:1:cells:3:cell", "0:01:00");
-        tester.assertLabel("form:content:table:rows:1:cells:4:cell", "RegUser");
-        tester.assertLabel("form:content:table:rows:1:cells:5:cell", "5");
-        tester.assertLabel("form:content:table:rows:1:cells:6:cell", "90");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell", "1");
+        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "2");
+        tester.assertLabel("form:content:table:rows:1:cells:3:cell", "xxx");
+        tester.assertLabel("form:content:table:rows:1:cells:4:cell", "0:01:00");
+        tester.assertLabel("form:content:table:rows:1:cells:5:cell", "RegUser");
+        tester.assertLabel("form:content:table:rows:1:cells:6:cell", "5");
+        tester.assertLabel("form:content:table:rows:1:cells:7:cell", "90");
 
-        tester.assertLabel("form:content:table:rows:2:cells:1:cell", "TEST_LEVEL_2_REAL");
-        tester.assertLabel("form:content:table:rows:2:cells:2:cell", "aaa");
-        tester.assertLabel("form:content:table:rows:2:cells:3:cell", "1:00:00");
-        tester.assertLabel("form:content:table:rows:2:cells:4:cell", "Base 1");
-        tester.assertLabel("form:content:table:rows:2:cells:5:cell", "2");
-        tester.assertLabel("form:content:table:rows:2:cells:6:cell", "1234");
+        tester.assertLabel("form:content:table:rows:2:cells:1:cell", "2");
+        tester.assertLabel("form:content:table:rows:2:cells:2:cell", "2");
+        tester.assertLabel("form:content:table:rows:2:cells:3:cell", "aaa");
+        tester.assertLabel("form:content:table:rows:2:cells:4:cell", "1:00:00");
+        tester.assertLabel("form:content:table:rows:2:cells:5:cell", "Base 1");
+        tester.assertLabel("form:content:table:rows:2:cells:6:cell", "2");
+        tester.assertLabel("form:content:table:rows:2:cells:7:cell", "1234");
 
-        tester.assertLabel("form:content:table:rows:3:cells:1:cell", "TEST_LEVEL_1_SIMULATED");
-        tester.assertLabel("form:content:table:rows:3:cells:2:cell", "-");
-        tester.assertLabel("form:content:table:rows:3:cells:3:cell", "");
+        tester.assertLabel("form:content:table:rows:3:cells:1:cell", "3");
+        tester.assertLabel("form:content:table:rows:3:cells:2:cell", "1");
+        tester.assertLabel("form:content:table:rows:3:cells:3:cell", "-");
         tester.assertLabel("form:content:table:rows:3:cells:4:cell", "");
         tester.assertLabel("form:content:table:rows:3:cells:5:cell", "");
         tester.assertLabel("form:content:table:rows:3:cells:6:cell", "");
+        tester.assertLabel("form:content:table:rows:3:cells:7:cell", "");
+
+        tester.clickLink("form:content:table:tHead:cell:4:link");
+
+        tester.assertLabel("form:content:table:tHead:cell:1", "Rank");
+        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:2:link", CmsPage.class, "page=1,sort1=dLevel");
+        assertCssClass(tester, "form:content:table:tHead:cell:2:link", "sortCSS");
+        tester.assertLabel("form:content:table:tHead:cell:2:link:label", "Level");
+        tester.assertInvisible("form:content:table:tHead:cell:2:link:image");
+        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:3:link", CmsPage.class, "page=1,sort1=dUser");
+        assertCssClass(tester, "form:content:table:tHead:cell:3:link", "sortCSS");
+        tester.assertLabel("form:content:table:tHead:cell:3:link:label", "User");
+        tester.assertInvisible("form:content:table:tHead:cell:3:link:image");
+        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:4:link", CmsPage.class, "page=1,sort1=aTime");
+        assertCssClass(tester, "form:content:table:tHead:cell:4:link", "sortCSSActive");
+        tester.assertLabel("form:content:table:tHead:cell:4:link:label", "Time");
+        tester.assertInvisible("form:content:table:tHead:cell:4:link:image");
+        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:5:link", CmsPage.class, "page=1,sort1=dBase Name");
+        assertCssClass(tester, "form:content:table:tHead:cell:5:link", "sortCSS");
+        tester.assertLabel("form:content:table:tHead:cell:5:link:label", "Base Name");
+        tester.assertInvisible("form:content:table:tHead:cell:5:link:image");
+        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:6:link", CmsPage.class, "page=1,sort1=dItems");
+        assertCssClass(tester, "form:content:table:tHead:cell:6:link", "sortCSS");
+        tester.assertLabel("form:content:table:tHead:cell:6:link:label", "Items");
+        tester.assertInvisible("form:content:table:tHead:cell:6:link:image");
+        tester.assertLabel("form:content:table:tHead:cell:7", "Money");
+
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell", "1");
+        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "2");
+        tester.assertLabel("form:content:table:rows:1:cells:3:cell", "aaa");
+        // time is  1:00:01 tester.assertLabel("form:content:table:rows:1:cells:4:cell", "1:00:00");
+        tester.assertLabel("form:content:table:rows:1:cells:5:cell", "Base 1");
+        tester.assertLabel("form:content:table:rows:1:cells:6:cell", "2");
+        tester.assertLabel("form:content:table:rows:1:cells:7:cell", "1234");
+
+        tester.assertLabel("form:content:table:rows:2:cells:1:cell", "2");
+        tester.assertLabel("form:content:table:rows:2:cells:2:cell", "2");
+        tester.assertLabel("form:content:table:rows:2:cells:3:cell", "xxx");
+        // time is 0:01:01  tester.assertLabel("form:content:table:rows:2:cells:4:cell", "0:01:00");
+        tester.assertLabel("form:content:table:rows:2:cells:5:cell", "RegUser");
+        tester.assertLabel("form:content:table:rows:2:cells:6:cell", "5");
+        tester.assertLabel("form:content:table:rows:2:cells:7:cell", "90");
+
+        tester.assertLabel("form:content:table:rows:3:cells:1:cell", "3");
+        tester.assertLabel("form:content:table:rows:3:cells:2:cell", "1");
+        tester.assertLabel("form:content:table:rows:3:cells:3:cell", "-");
+        tester.assertLabel("form:content:table:rows:3:cells:4:cell", "");
+        tester.assertLabel("form:content:table:rows:3:cells:5:cell", "");
+        tester.assertLabel("form:content:table:rows:3:cells:6:cell", "");
+        tester.assertLabel("form:content:table:rows:3:cells:7:cell", "");
 
         tester.clickLink("form:content:table:tHead:cell:3:link");
 
-        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:1:link", CmsPage.class, "page=1,sort1=dLevel");
-        tester.assertLabel("form:content:table:tHead:cell:1:link:label", "Level");
-        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:2:link", CmsPage.class, "page=1,sort1=dUser");
-        tester.assertLabel("form:content:table:tHead:cell:2:link:label", "User");
-        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:3:link", CmsPage.class, "page=1,sort1=aTime");
-        tester.assertLabel("form:content:table:tHead:cell:3:link:label", "Time");
-        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:4:link", CmsPage.class, "page=1,sort1=dBase Name");
-        tester.assertLabel("form:content:table:tHead:cell:4:link:label", "Base Name");
-        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:5:link", CmsPage.class, "page=1,sort1=dItems");
-        tester.assertLabel("form:content:table:tHead:cell:5:link:label", "Items");
-        tester.assertLabel("form:content:table:tHead:cell:6", "Money");
+        tester.assertLabel("form:content:table:tHead:cell:1", "Rank");
+        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:2:link", CmsPage.class, "page=1,sort1=dLevel");
+        assertCssClass(tester, "form:content:table:tHead:cell:2:link", "sortCSS");
+        tester.assertLabel("form:content:table:tHead:cell:2:link:label", "Level");
+        tester.assertInvisible("form:content:table:tHead:cell:2:link:image");
+        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:3:link", CmsPage.class, "page=1,sort1=aUser");
+        assertCssClass(tester, "form:content:table:tHead:cell:3:link", "sortCSSActive");
+        tester.assertLabel("form:content:table:tHead:cell:3:link:label", "User");
+        assertCmsImage(tester, "form:content:table:tHead:cell:3:link:image", descImg);
+        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:4:link", CmsPage.class, "page=1,sort1=dTime");
+        assertCssClass(tester, "form:content:table:tHead:cell:4:link", "sortCSS");
+        tester.assertLabel("form:content:table:tHead:cell:4:link:label", "Time");
+        tester.assertInvisible("form:content:table:tHead:cell:4:link:image");
+        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:5:link", CmsPage.class, "page=1,sort1=dBase Name");
+        assertCssClass(tester, "form:content:table:tHead:cell:5:link", "sortCSS");
+        tester.assertLabel("form:content:table:tHead:cell:5:link:label", "Base Name");
+        tester.assertInvisible("form:content:table:tHead:cell:5:link:image");
+        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:6:link", CmsPage.class, "page=1,sort1=dItems");
+        assertCssClass(tester, "form:content:table:tHead:cell:6:link", "sortCSS");
+        tester.assertLabel("form:content:table:tHead:cell:6:link:label", "Items");
+        tester.assertInvisible("form:content:table:tHead:cell:6:link:image");
+        tester.assertLabel("form:content:table:tHead:cell:7", "Money");
 
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell", "TEST_LEVEL_2_REAL");
-        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "aaa");
-        tester.assertLabel("form:content:table:rows:1:cells:3:cell", "1:00:00");
-        tester.assertLabel("form:content:table:rows:1:cells:4:cell", "Base 1");
-        tester.assertLabel("form:content:table:rows:1:cells:5:cell", "2");
-        tester.assertLabel("form:content:table:rows:1:cells:6:cell", "1234");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell", "1");
+        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "2");
+        tester.assertLabel("form:content:table:rows:1:cells:3:cell", "aaa");
+        // Time is 1:00:01 tester.assertLabel("form:content:table:rows:1:cells:3:cell", "1:00:00");
+        tester.assertLabel("form:content:table:rows:1:cells:5:cell", "Base 1");
+        tester.assertLabel("form:content:table:rows:1:cells:6:cell", "2");
+        tester.assertLabel("form:content:table:rows:1:cells:7:cell", "1234");
 
-        tester.assertLabel("form:content:table:rows:2:cells:1:cell", "TEST_LEVEL_2_REAL");
-        tester.assertLabel("form:content:table:rows:2:cells:2:cell", "xxx");
-        tester.assertLabel("form:content:table:rows:2:cells:3:cell", "0:01:00");
-        tester.assertLabel("form:content:table:rows:2:cells:4:cell", "RegUser");
-        tester.assertLabel("form:content:table:rows:2:cells:5:cell", "5");
-        tester.assertLabel("form:content:table:rows:2:cells:6:cell", "90");
+        tester.assertLabel("form:content:table:rows:2:cells:1:cell", "2");
+        tester.assertLabel("form:content:table:rows:2:cells:2:cell", "2");
+        tester.assertLabel("form:content:table:rows:2:cells:3:cell", "xxx");
+        // Time is 0:01:00 tester.assertLabel("form:content:table:rows:2:cells:4:cell", "0:01:00");
+        tester.assertLabel("form:content:table:rows:2:cells:5:cell", "RegUser");
+        tester.assertLabel("form:content:table:rows:2:cells:6:cell", "5");
+        tester.assertLabel("form:content:table:rows:2:cells:7:cell", "90");
 
-        tester.assertLabel("form:content:table:rows:3:cells:1:cell", "TEST_LEVEL_1_SIMULATED");
-        tester.assertLabel("form:content:table:rows:3:cells:2:cell", "-");
-        tester.assertLabel("form:content:table:rows:3:cells:3:cell", "");
+        tester.assertLabel("form:content:table:rows:3:cells:1:cell", "3");
+        tester.assertLabel("form:content:table:rows:3:cells:2:cell", "1");
+        tester.assertLabel("form:content:table:rows:3:cells:3:cell", "-");
         tester.assertLabel("form:content:table:rows:3:cells:4:cell", "");
         tester.assertLabel("form:content:table:rows:3:cells:5:cell", "");
         tester.assertLabel("form:content:table:rows:3:cells:6:cell", "");
+        tester.assertLabel("form:content:table:rows:3:cells:7:cell", "");
 
-        tester.clickLink("form:content:table:tHead:cell:2:link");
+        tester.clickLink("form:content:table:tHead:cell:3:link");
 
-        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:1:link", CmsPage.class, "page=1,sort1=dLevel");
-        tester.assertLabel("form:content:table:tHead:cell:1:link:label", "Level");
-        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:2:link", CmsPage.class, "page=1,sort1=aUser");
-        tester.assertLabel("form:content:table:tHead:cell:2:link:label", "User");
-        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:3:link", CmsPage.class, "page=1,sort1=dTime");
-        tester.assertLabel("form:content:table:tHead:cell:3:link:label", "Time");
-        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:4:link", CmsPage.class, "page=1,sort1=dBase Name");
-        tester.assertLabel("form:content:table:tHead:cell:4:link:label", "Base Name");
-        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:5:link", CmsPage.class, "page=1,sort1=dItems");
-        tester.assertLabel("form:content:table:tHead:cell:5:link:label", "Items");
-        tester.assertLabel("form:content:table:tHead:cell:6", "Money");
+        tester.assertLabel("form:content:table:tHead:cell:1", "Rank");
+        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:2:link", CmsPage.class, "page=1,sort1=dLevel");
+        assertCssClass(tester, "form:content:table:tHead:cell:2:link", "sortCSS");
+        tester.assertLabel("form:content:table:tHead:cell:2:link:label", "Level");
+        tester.assertInvisible("form:content:table:tHead:cell:2:link:image");
+        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:3:link", CmsPage.class, "page=1,sort1=dUser");
+        assertCssClass(tester, "form:content:table:tHead:cell:3:link", "sortCSSActive");
+        tester.assertLabel("form:content:table:tHead:cell:3:link:label", "User");
+        assertCmsImage(tester, "form:content:table:tHead:cell:3:link:image", ascImg);
+        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:4:link", CmsPage.class, "page=1,sort1=dTime");
+        assertCssClass(tester, "form:content:table:tHead:cell:4:link", "sortCSS");
+        tester.assertLabel("form:content:table:tHead:cell:4:link:label", "Time");
+        tester.assertInvisible("form:content:table:tHead:cell:4:link:image");
+        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:5:link", CmsPage.class, "page=1,sort1=dBase Name");
+        assertCssClass(tester, "form:content:table:tHead:cell:5:link", "sortCSS");
+        tester.assertLabel("form:content:table:tHead:cell:5:link:label", "Base Name");
+        tester.assertInvisible("form:content:table:tHead:cell:5:link:image");
+        tester.assertBookmarkablePageLink("form:content:table:tHead:cell:6:link", CmsPage.class, "page=1,sort1=dItems");
+        assertCssClass(tester, "form:content:table:tHead:cell:6:link", "sortCSS");
+        tester.assertLabel("form:content:table:tHead:cell:6:link:label", "Items");
+        tester.assertInvisible("form:content:table:tHead:cell:6:link:image");
+        tester.assertLabel("form:content:table:tHead:cell:7", "Money");
 
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell", "TEST_LEVEL_2_REAL");
-        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "aaa");
-        tester.assertLabel("form:content:table:rows:1:cells:3:cell", "1:00:00");
-        tester.assertLabel("form:content:table:rows:1:cells:4:cell", "Base 1");
-        tester.assertLabel("form:content:table:rows:1:cells:5:cell", "2");
-        tester.assertLabel("form:content:table:rows:1:cells:6:cell", "1234");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell", "3");
+        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "1");
+        tester.assertLabel("form:content:table:rows:1:cells:3:cell", "-");
+        tester.assertLabel("form:content:table:rows:1:cells:4:cell", "");
+        tester.assertLabel("form:content:table:rows:1:cells:5:cell", "");
+        tester.assertLabel("form:content:table:rows:1:cells:6:cell", "");
+        tester.assertLabel("form:content:table:rows:1:cells:7:cell", "");
 
-        tester.assertLabel("form:content:table:rows:2:cells:1:cell", "TEST_LEVEL_2_REAL");
-        tester.assertLabel("form:content:table:rows:2:cells:2:cell", "xxx");
-        tester.assertLabel("form:content:table:rows:2:cells:3:cell", "0:01:00");
-        tester.assertLabel("form:content:table:rows:2:cells:4:cell", "RegUser");
-        tester.assertLabel("form:content:table:rows:2:cells:5:cell", "5");
-        tester.assertLabel("form:content:table:rows:2:cells:6:cell", "90");
+        tester.assertLabel("form:content:table:rows:2:cells:1:cell", "2");
+        tester.assertLabel("form:content:table:rows:2:cells:2:cell", "2");
+        tester.assertLabel("form:content:table:rows:2:cells:3:cell", "xxx");
+        // Time is 0:01:01 tester.assertLabel("form:content:table:rows:2:cells:4:cell", "0:01:00");
+        tester.assertLabel("form:content:table:rows:2:cells:5:cell", "RegUser");
+        tester.assertLabel("form:content:table:rows:2:cells:6:cell", "5");
+        tester.assertLabel("form:content:table:rows:2:cells:7:cell", "90");
 
-        tester.assertLabel("form:content:table:rows:3:cells:1:cell", "TEST_LEVEL_1_SIMULATED");
-        tester.assertLabel("form:content:table:rows:3:cells:2:cell", "-");
-        tester.assertLabel("form:content:table:rows:3:cells:3:cell", "");
-        tester.assertLabel("form:content:table:rows:3:cells:4:cell", "");
-        tester.assertLabel("form:content:table:rows:3:cells:5:cell", "");
-        tester.assertLabel("form:content:table:rows:3:cells:6:cell", "");
+        tester.assertLabel("form:content:table:rows:3:cells:1:cell", "1");
+        tester.assertLabel("form:content:table:rows:3:cells:2:cell", "2");
+        tester.assertLabel("form:content:table:rows:3:cells:3:cell", "aaa");
+        // Time is 1:00:01 tester.assertLabel("form:content:table:rows:3:cells:3:cell", "1:00:00");
+        tester.assertLabel("form:content:table:rows:3:cells:5:cell", "Base 1");
+        tester.assertLabel("form:content:table:rows:3:cells:6:cell", "2");
+        tester.assertLabel("form:content:table:rows:3:cells:7:cell", "1234");
+
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -4011,7 +4133,7 @@ public class TestCmsService extends AbstractServiceTest {
         DbContentList dbContentList = (DbContentList) dbContentContainer.getContentCrud().createDbChild(DbContentList.class);
         dbContentList.setRowsPerPage(2);
         dbContentList.setSpringBeanName("statisticsService");
-        dbContentList.setContentProviderGetter("currentStatistics");
+        dbContentList.setContentProviderGetter("cmsCurrentStatistics");
         DbExpressionProperty level = (DbExpressionProperty) dbContentList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
         level.setExpression("level.name");
         level.setName("Level1");
@@ -4035,7 +4157,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbContentList = (DbContentList) dbContentContainer.getContentCrud().createDbChild(DbContentList.class);
         dbContentList.setRowsPerPage(2);
         dbContentList.setSpringBeanName("statisticsService");
-        dbContentList.setContentProviderGetter("currentStatistics");
+        dbContentList.setContentProviderGetter("cmsCurrentStatistics");
         level = (DbExpressionProperty) dbContentList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
         level.setExpression("level.name");
         level.setName("Level2");
@@ -4096,8 +4218,8 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertEnabled("form:content:container:1:navigator:last");
         assertBookmarkablePageLink(tester, "form:content:container:1:navigator:last", CmsPage.class, pageParameters);
 
-        tester.assertLabel("form:content:container:1:table:rows:1:cells:1:cell", "TEST_LEVEL_1_SIMULATED");
-        tester.assertLabel("form:content:container:1:table:rows:2:cells:1:cell", "TEST_LEVEL_2_REAL");
+        tester.assertLabel("form:content:container:1:table:rows:1:cells:1:cell", "1");
+        tester.assertLabel("form:content:container:1:table:rows:2:cells:1:cell", "2");
 
         pageParameters = new PageParameters("page=1");
         pageParameters.put("paging9", 0);
@@ -4105,8 +4227,8 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertDisabled("form:content:container:2:navigator:navigation:0:pageLink");
         tester.assertLabel("form:content:container:2:navigator:navigation:0:pageLink:pageNumber", "1");
 
-        tester.assertLabel("form:content:container:2:table:rows:1:cells:1:cell", "TEST_LEVEL_1_SIMULATED");
-        tester.assertLabel("form:content:container:2:table:rows:2:cells:1:cell", "TEST_LEVEL_2_REAL");
+        tester.assertLabel("form:content:container:2:table:rows:1:cells:1:cell", "1");
+        tester.assertLabel("form:content:container:2:table:rows:2:cells:1:cell", "2");
 
         tester.clickLink("form:content:container:1:navigator:next");
 
@@ -4137,7 +4259,7 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertDisabled("form:content:container:1:navigator:last");
         assertBookmarkablePageLink(tester, "form:content:container:1:navigator:last", CmsPage.class, pageParameters);
 
-        tester.assertLabel("form:content:container:1:table:rows:1:cells:1:cell", "TEST_LEVEL_2_REAL");
+        tester.assertLabel("form:content:container:1:table:rows:1:cells:1:cell", "2");
 
         pageParameters = new PageParameters("page=1");
         pageParameters.put("paging9", 0);
@@ -4145,13 +4267,13 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertDisabled("form:content:container:2:navigator:navigation:0:pageLink");
         tester.assertLabel("form:content:container:2:navigator:navigation:0:pageLink:pageNumber", "1");
 
-        tester.assertLabel("form:content:container:2:table:rows:1:cells:1:cell", "TEST_LEVEL_1_SIMULATED");
-        tester.assertLabel("form:content:container:2:table:rows:2:cells:1:cell", "TEST_LEVEL_2_REAL");
+        tester.assertLabel("form:content:container:2:table:rows:1:cells:1:cell", "1");
+        tester.assertLabel("form:content:container:2:table:rows:2:cells:1:cell", "2");
 
         tester.clickLink("form:content:container:2:navigator:next");
 
-        tester.assertLabel("form:content:container:1:table:rows:1:cells:1:cell", "TEST_LEVEL_1_SIMULATED");
-        tester.assertLabel("form:content:container:1:table:rows:2:cells:1:cell", "TEST_LEVEL_2_REAL");
+        tester.assertLabel("form:content:container:1:table:rows:1:cells:1:cell", "1");
+        tester.assertLabel("form:content:container:1:table:rows:2:cells:1:cell", "2");
 
         pageParameters = new PageParameters("page=1");
         pageParameters.put("paging9", 0);
@@ -4159,7 +4281,7 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertEnabled("form:content:container:2:navigator:navigation:0:pageLink");
         tester.assertLabel("form:content:container:2:navigator:navigation:0:pageLink:pageNumber", "1");
 
-        tester.assertLabel("form:content:container:2:table:rows:1:cells:1:cell", "TEST_LEVEL_2_REAL");
+        tester.assertLabel("form:content:container:2:table:rows:1:cells:1:cell", "2");
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -4169,7 +4291,7 @@ public class TestCmsService extends AbstractServiceTest {
     @DirtiesContext
     public void borderWrapper() throws Exception {
         configureItemTypes();
-        
+
         // Setup CMS content
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -4257,7 +4379,7 @@ public class TestCmsService extends AbstractServiceTest {
         expressionProperty.setSpringBeanName("testCmsBean");
         expressionProperty.setExpression("integer2");
         expressionProperty.setOptionalType(DbExpressionProperty.Type.ROUNDED_DOWN_INTEGER);
-        
+
         pageCrud.updateDbChild(dbPage);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -4361,10 +4483,10 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertRenderedPage(CmsPage.class);
         PageParameters parameters = new PageParameters();
         parameters.add(CmsUtil.SECTION_ID, CmsUtil.LEVEL_TASK_SECTION);
-        parameters.add(CmsUtil.CHILD_ID, Integer.toString(TEST_LEVEL_TASK_4_3_SIM_ID));
+        parameters.add(CmsUtil.CHILD_ID, Integer.toString(TEST_LEVEL_TASK_4_3_SIMULATED_ID));
         tester.startPage(CmsPage.class, parameters);
         tester.assertRenderedPage(CmsPage.class);
-        tester.assertLabel("form:content:table:rows:1:cells:2:cell", TEST_LEVEL_TASK_4_3_SIM_NAME);
+        tester.assertLabel("form:content:table:rows:1:cells:2:cell", TEST_LEVEL_TASK_4_3_SIMULATED_NAME);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
