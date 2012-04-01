@@ -20,7 +20,6 @@ import com.btxtech.game.services.utg.DbItemTypeLimitation;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
-import com.btxtech.game.wicket.pages.mgmt.condition.ConditionConfigPanel;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
 import com.btxtech.game.wicket.uiservices.RuModel;
@@ -64,13 +63,13 @@ public class DbLevelEditor extends MgmtWebPage {
         contentArea.add(new TinyMceBehavior(tinyMCESettings));
         form.add(contentArea);
 
-        form.add(new ConditionConfigPanel("dbConditionConfig"));
+        form.add(new TextField("xp"));
         // Scope
         form.add(new TextField("houseSpace"));
         form.add(new TextField("itemSellFactor"));
         form.add(new TextField("maxMoney"));
         form.add(new DropDownChoice<RadarMode>("radarMode", RadarMode.getList()));
-       
+
         new CrudChildTableHelper<DbLevel, DbItemTypeLimitation>("itemTypeLimitation", null, "createItemTypeLimitation", false, form, false) {
 
             @Override

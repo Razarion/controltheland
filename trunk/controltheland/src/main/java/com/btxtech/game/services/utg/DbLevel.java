@@ -20,7 +20,6 @@ import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
@@ -32,7 +31,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,7 +50,7 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
     @Id
     @GeneratedValue
     private Integer id;
-    private String name;
+    private int number;
     @Column(length = 50000)
     private String html;
     @Column(length = 1000)
@@ -76,9 +74,7 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "dbLevel", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbItemTypeLimitation> itemTypeLimitation;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-    private DbConditionConfig dbConditionConfig;
+    private int xp;
 
     @Transient
     private CrudChildServiceHelper<DbItemTypeLimitation> itemTypeLimitationCrud;
@@ -91,18 +87,20 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
     public DbLevel() {
     }
 
-    public DbLevel(DbLevel copyFrom) {
-        name = COPY + copyFrom.name;
-        html = copyFrom.html;
-        internalDescription = copyFrom.internalDescription;
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
     }
 
     public String getName() {
-        return name;
+        return Integer.toString(number);
     }
 
     public void setName(String name) {
-        this.name = name;
+        throw new UnsupportedOperationException();
     }
 
     public String getHtml() {
@@ -227,15 +225,15 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
         for (DbItemTypeLimitation dbItemTypeLimitation : this.itemTypeLimitation) {
             itemTypeLimitation.put(dbItemTypeLimitation.getDbBaseItemType().getId(), dbItemTypeLimitation.getCount());
         }
-        return new LevelScope(name, maxMoney, itemTypeLimitation, houseSpace, itemSellFactor, radarMode);
+        return new LevelScope(number, maxMoney, itemTypeLimitation, houseSpace, itemSellFactor, radarMode);
     }
 
-    public DbConditionConfig getDbConditionConfig() {
-        return dbConditionConfig;
+    public int getXp() {
+        return xp;
     }
 
-    public void setDbConditionConfig(DbConditionConfig dbConditionConfig) {
-        this.dbConditionConfig = dbConditionConfig;
+    public void setXp(int xp) {
+        this.xp = xp;
     }
 
     public DbLevelTask getFirstTutorialLevelTask() {
@@ -249,7 +247,7 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
 
 
     public int getCmsOrderIndex() {
-       return dbQuestHub.getOrderIndex() * 1000 + orderIndex; 
+        return dbQuestHub.getOrderIndex() * 1000 + orderIndex;
     }
 
 }

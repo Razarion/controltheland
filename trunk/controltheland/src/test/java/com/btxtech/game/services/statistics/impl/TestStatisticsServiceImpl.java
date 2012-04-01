@@ -2,17 +2,17 @@ package com.btxtech.game.services.statistics.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.common.ContentSortList;
-import com.btxtech.game.services.common.DateUtil;
-import com.btxtech.game.services.common.HibernateUtil;
+import com.btxtech.game.services.common.NestedNullSafeBeanComparator;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
+import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.mgmt.BackupSummary;
+import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.statistics.CurrentStatisticEntry;
-import com.btxtech.game.services.statistics.DbStatisticsEntry;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
@@ -21,19 +21,11 @@ import com.btxtech.game.services.utg.UserGuidanceService;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.aop.framework.Advised;
-import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -46,18 +38,20 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
     private StatisticsService statisticsService;
     @Autowired
     private UserGuidanceService userGuidanceService;
-
-    private StatisticsServiceImpl getImpl() throws Exception {
-        if (AopUtils.isJdkDynamicProxy(statisticsService)) {
-            return (StatisticsServiceImpl) ((Advised) statisticsService).getTargetSource().getTarget();
-        } else {
-            return (StatisticsServiceImpl) statisticsService;
-        }
-    }
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private BaseService baseService;
+    @Autowired
+    private ItemService itemService;
+    @Autowired
+    private MgmtService mgmtService;
 
     @Test
     @DirtiesContext
-    public void simpleSave() throws Exception {
+    public void simple() throws Exception {
+        configureGameMultipleLevel();
+
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
 
@@ -66,27 +60,38 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         getSessionFactory().getCurrentSession().save(user);
 
         SimpleBase unregBase = new SimpleBase(1);
-        UserState userState1 = new UserState();
+        UserState unregUserState = new UserState();
+        unregUserState.setDbLevelId(TEST_LEVEL_1_SIMULATED);
         SimpleBase regBase = new SimpleBase(2);
-        UserState userState2 = new UserState();
-        userState2.setUser(user);
+        UserState regUserState = new UserState();
+        regUserState.setDbLevelId(TEST_LEVEL_1_SIMULATED);
+        regUserState.setUser(user);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
 
         BaseService baseService = EasyMock.createNiceMock(BaseService.class);
-        EasyMock.expect(baseService.getUserState(unregBase)).andReturn(userState1).anyTimes();
-        EasyMock.expect(baseService.getUserState(regBase)).andReturn(userState2).anyTimes();
-        EasyMock.replay(baseService);
+        EasyMock.expect(baseService.getUserState(unregBase)).andReturn(unregUserState).anyTimes();
+        EasyMock.expect(baseService.getUserState(regBase)).andReturn(regUserState).anyTimes();
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "baseService", baseService);
 
-        Date date = new Date();
-        statisticsService.onMoneyEarned(unregBase, 0.5);
-        statisticsService.onMoneyEarned(regBase, 0.8);
-        Assert.assertTrue(HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).isEmpty());
-        getImpl().moveCacheToDb();
+        UserService userService = EasyMock.createNiceMock(UserService.class);
+        EasyMock.expect(userService.getAllUserStates()).andReturn(Arrays.asList(regUserState, unregUserState));
+        setPrivateField(StatisticsServiceImpl.class, statisticsService, "userService", userService);
 
-        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
-        Assert.assertEquals(0.8, dbStatisticsEntry.getMoneyEarned(), 0.0001);
-        Assert.assertEquals(DateUtil.dayStart(date), dbStatisticsEntry.getDate());
+        SyncBaseItem item1RegBase = EasyMock.createNiceMock(SyncBaseItem.class);
+        EasyMock.expect(item1RegBase.getBase()).andReturn(regBase).anyTimes();
+
+        EasyMock.replay(baseService, userService, item1RegBase);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        ReadonlyListContentProvider<CurrentStatisticEntry> provider = statisticsService.getCmsCurrentStatistics();
+        List<CurrentStatisticEntry> entries = provider.readDbChildren();
+        Assert.assertEquals(2, entries.size());
+        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, user, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, null, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -94,1151 +99,628 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void sumUpSimpleSave() throws Exception {
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        User user = new User();
-        user.registerUser("xxx", "", "");
-        getSessionFactory().getCurrentSession().save(user);
-
-        SimpleBase regBase = new SimpleBase(2);
-        UserState userState2 = new UserState();
-        userState2.setUser(user);
-
-        BaseService baseService = EasyMock.createNiceMock(BaseService.class);
-        EasyMock.expect(baseService.getUserState(regBase)).andReturn(userState2).anyTimes();
-        EasyMock.replay(baseService);
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "baseService", baseService);
-
-        Date date = new Date();
-        statisticsService.onMoneyEarned(regBase, 0.8);
-        statisticsService.onMoneyEarned(regBase, 1.2);
-        statisticsService.onMoneyEarned(regBase, 2.0);
-        Assert.assertTrue(HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).isEmpty());
-        getImpl().moveCacheToDb();
-
-        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
-        Assert.assertEquals(4.0, dbStatisticsEntry.getMoneyEarned(), 0.0001);
-        Assert.assertEquals(DateUtil.dayStart(date), dbStatisticsEntry.getDate());
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void threeUsers() throws Exception {
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        User user1 = new User();
-        user1.registerUser("xxx", "", "");
-        getSessionFactory().getCurrentSession().save(user1);
-
-        User user2 = new User();
-        user2.registerUser("yyy", "", "");
-        getSessionFactory().getCurrentSession().save(user2);
-
-        User user3 = new User();
-        user3.registerUser("zzz", "", "");
-        getSessionFactory().getCurrentSession().save(user3);
-
-        SimpleBase base1 = new SimpleBase(1);
-        UserState userState1 = new UserState();
-        userState1.setUser(user1);
-
-        SimpleBase base2 = new SimpleBase(2);
-        UserState userState2 = new UserState();
-        userState2.setUser(user2);
-
-        SimpleBase base3 = new SimpleBase(3);
-        UserState userState3 = new UserState();
-        userState3.setUser(user3);
-
-        BaseService baseService = EasyMock.createNiceMock(BaseService.class);
-        EasyMock.expect(baseService.getUserState(base1)).andReturn(userState1).anyTimes();
-        EasyMock.expect(baseService.getUserState(base2)).andReturn(userState2).anyTimes();
-        EasyMock.expect(baseService.getUserState(base3)).andReturn(userState3).anyTimes();
-        EasyMock.replay(baseService);
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "baseService", baseService);
-
-        Date date = new Date();
-        statisticsService.onMoneyEarned(base1, 0.8);
-        statisticsService.onMoneyEarned(base2, 0.3);
-        statisticsService.onMoneyEarned(base1, 1.2);
-        statisticsService.onMoneyEarned(base3, 2.1);
-        statisticsService.onMoneyEarned(base2, 10.1);
-        Assert.assertTrue(HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).isEmpty());
-        getImpl().moveCacheToDb();
-
-        Assert.assertEquals(3, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry1 = null;
-        DbStatisticsEntry dbStatisticsEntry2 = null;
-        DbStatisticsEntry dbStatisticsEntry3 = null;
-
-        for (DbStatisticsEntry dbStatisticsEntry : HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class)) {
-            if (dbStatisticsEntry.getUser().equals(user1)) {
-                dbStatisticsEntry1 = dbStatisticsEntry;
-            } else if (dbStatisticsEntry.getUser().equals(user2)) {
-                dbStatisticsEntry2 = dbStatisticsEntry;
-            } else if (dbStatisticsEntry.getUser().equals(user3)) {
-                dbStatisticsEntry3 = dbStatisticsEntry;
-            } else {
-                Assert.fail("Unexpected user: " + dbStatisticsEntry.getUser());
-            }
-        }
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        Assert.assertNotNull(dbStatisticsEntry1);
-        Assert.assertNotNull(dbStatisticsEntry2);
-        Assert.assertNotNull(dbStatisticsEntry3);
-
-        Assert.assertEquals(2.0, dbStatisticsEntry1.getMoneyEarned(), 0.0001);
-        Assert.assertEquals(DateUtil.dayStart(date), dbStatisticsEntry1.getDate());
-        Assert.assertEquals(10.4, dbStatisticsEntry2.getMoneyEarned(), 0.0001);
-        Assert.assertEquals(DateUtil.dayStart(date), dbStatisticsEntry2.getDate());
-        Assert.assertEquals(2.1, dbStatisticsEntry3.getMoneyEarned(), 0.0001);
-        Assert.assertEquals(DateUtil.dayStart(date), dbStatisticsEntry3.getDate());
-    }
-
-    @Test
-    @DirtiesContext
-    public void killedStructureBot() throws Exception {
-        configureRealGame();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        User user = new User();
-        user.registerUser("xxx", "", "");
-        getSessionFactory().getCurrentSession().save(user);
-
-        SimpleBase botBase = new SimpleBase(1);
-        SimpleBase actorBase = new SimpleBase(2);
-        UserState actorUserState = new UserState();
-        actorUserState.setUser(user);
-
-        BaseService baseService = EasyMock.createNiceMock(BaseService.class);
-        EasyMock.expect(baseService.isBot(botBase)).andReturn(true).anyTimes();
-        EasyMock.expect(baseService.isBot(actorBase)).andReturn(false).anyTimes();
-        EasyMock.expect(baseService.getUserState(actorBase)).andReturn(actorUserState).anyTimes();
-        EasyMock.replay(baseService);
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "baseService", baseService);
-
-        SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(500, 500), new Id(1, 1, 1), botBase);
-        statisticsService.onItemKilled(target, actorBase);
-
-        getImpl().moveCacheToDb();
-        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
-        Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedPlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getOwnBaseLost());
-        Assert.assertEquals(0, dbStatisticsEntry.getBuiltStructures());
-        Assert.assertEquals(0, dbStatisticsEntry.getBuiltUnits());
-        Assert.assertEquals(1, dbStatisticsEntry.getKilledStructureBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledStructurePlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledUnitsBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledUnitsPlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getLevelCompleted());
-        Assert.assertEquals(0, dbStatisticsEntry.getMoneyEarned(), 0.00001);
-        Assert.assertEquals(0, dbStatisticsEntry.getMoneySpent(), 0.00001);
-
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void killedUnitsBot() throws Exception {
-        configureRealGame();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        User user = new User();
-        user.registerUser("xxx", "", "");
-        getSessionFactory().getCurrentSession().save(user);
-
-        SimpleBase botBase = new SimpleBase(1);
-        SimpleBase actorBase = new SimpleBase(2);
-        UserState actorUserState = new UserState();
-        actorUserState.setUser(user);
-
-        BaseService baseService = EasyMock.createNiceMock(BaseService.class);
-        EasyMock.expect(baseService.isBot(botBase)).andReturn(true).anyTimes();
-        EasyMock.expect(baseService.isBot(actorBase)).andReturn(false).anyTimes();
-        EasyMock.expect(baseService.getUserState(actorBase)).andReturn(actorUserState).anyTimes();
-        EasyMock.replay(baseService);
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "baseService", baseService);
-
-        SyncBaseItem target = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(500, 500), new Id(1, 1, 1), botBase);
-        statisticsService.onItemKilled(target, actorBase);
-
-        getImpl().moveCacheToDb();
-        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
-        Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedPlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getOwnBaseLost());
-        Assert.assertEquals(0, dbStatisticsEntry.getBuiltStructures());
-        Assert.assertEquals(0, dbStatisticsEntry.getBuiltUnits());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledStructureBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledStructurePlayer());
-        Assert.assertEquals(1, dbStatisticsEntry.getKilledUnitsBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledUnitsPlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getLevelCompleted());
-        Assert.assertEquals(0, dbStatisticsEntry.getMoneyEarned(), 0.00001);
-        Assert.assertEquals(0, dbStatisticsEntry.getMoneySpent(), 0.00001);
-
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void killedStructurePlayer() throws Exception {
-        configureRealGame();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        User actorUser = new User();
-        actorUser.registerUser("xxx", "", "");
-        getSessionFactory().getCurrentSession().save(actorUser);
-        User targetUser = new User();
-        targetUser.registerUser("yyy", "", "");
-        getSessionFactory().getCurrentSession().save(targetUser);
-
-        SimpleBase targetBase = new SimpleBase(1);
-        UserState targetUserState = new UserState();
-        targetUserState.setUser(targetUser);
-        SimpleBase actorBase = new SimpleBase(2);
-        UserState actorUserState = new UserState();
-        actorUserState.setUser(actorUser);
-
-        BaseService baseService = EasyMock.createNiceMock(BaseService.class);
-        EasyMock.expect(baseService.isBot(targetBase)).andReturn(false).anyTimes();
-        EasyMock.expect(baseService.isBot(actorBase)).andReturn(false).anyTimes();
-        EasyMock.expect(baseService.getUserState(actorBase)).andReturn(actorUserState).anyTimes();
-        EasyMock.expect(baseService.getUserState(targetBase)).andReturn(targetUserState).anyTimes();
-        EasyMock.replay(baseService);
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "baseService", baseService);
-
-        SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(500, 500), new Id(1, 1, 1), targetBase);
-        statisticsService.onItemKilled(target, actorBase);
-
-        getImpl().moveCacheToDb();
-        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
-        Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedPlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getOwnBaseLost());
-        Assert.assertEquals(0, dbStatisticsEntry.getBuiltStructures());
-        Assert.assertEquals(0, dbStatisticsEntry.getBuiltUnits());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledStructureBot());
-        Assert.assertEquals(1, dbStatisticsEntry.getKilledStructurePlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledUnitsBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledUnitsPlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getLevelCompleted());
-        Assert.assertEquals(0, dbStatisticsEntry.getMoneyEarned(), 0.00001);
-        Assert.assertEquals(0, dbStatisticsEntry.getMoneySpent(), 0.00001);
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void killedUnitsPlayer() throws Exception {
-        configureRealGame();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        User actorUser = new User();
-        actorUser.registerUser("xxx", "", "");
-        getSessionFactory().getCurrentSession().save(actorUser);
-        User targetUser = new User();
-        targetUser.registerUser("yyy", "", "");
-        getSessionFactory().getCurrentSession().save(targetUser);
-
-        SimpleBase targetBase = new SimpleBase(1);
-        UserState targetUserState = new UserState();
-        targetUserState.setUser(targetUser);
-        SimpleBase actorBase = new SimpleBase(2);
-        UserState actorUserState = new UserState();
-        actorUserState.setUser(actorUser);
-
-        BaseService baseService = EasyMock.createNiceMock(BaseService.class);
-        EasyMock.expect(baseService.isBot(targetBase)).andReturn(false).anyTimes();
-        EasyMock.expect(baseService.isBot(actorBase)).andReturn(false).anyTimes();
-        EasyMock.expect(baseService.getUserState(actorBase)).andReturn(actorUserState).anyTimes();
-        EasyMock.expect(baseService.getUserState(targetBase)).andReturn(targetUserState).anyTimes();
-        EasyMock.replay(baseService);
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "baseService", baseService);
-
-        SyncBaseItem target = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(500, 500), new Id(1, 1, 1), targetBase);
-        statisticsService.onItemKilled(target, actorBase);
-
-        getImpl().moveCacheToDb();
-        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
-        Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedPlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getOwnBaseLost());
-        Assert.assertEquals(0, dbStatisticsEntry.getBuiltStructures());
-        Assert.assertEquals(0, dbStatisticsEntry.getBuiltUnits());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledStructureBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledStructurePlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledUnitsBot());
-        Assert.assertEquals(1, dbStatisticsEntry.getKilledUnitsPlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getLevelCompleted());
-        Assert.assertEquals(0, dbStatisticsEntry.getMoneyEarned(), 0.00001);
-        Assert.assertEquals(0, dbStatisticsEntry.getMoneySpent(), 0.00001);
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void builtStructures() throws Exception {
-        configureRealGame();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        User actorUser = new User();
-        actorUser.registerUser("xxx", "", "");
-        getSessionFactory().getCurrentSession().save(actorUser);
-
-        SimpleBase actorBase = new SimpleBase(2);
-        UserState actorUserState = new UserState();
-        actorUserState.setUser(actorUser);
-
-        BaseService baseService = EasyMock.createNiceMock(BaseService.class);
-        EasyMock.expect(baseService.isBot(actorBase)).andReturn(false).anyTimes();
-        EasyMock.expect(baseService.getUserState(actorBase)).andReturn(actorUserState).anyTimes();
-        EasyMock.replay(baseService);
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "baseService", baseService);
-
-        SyncBaseItem createdItem = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(500, 500), new Id(1, 1, 1), actorBase);
-        statisticsService.onItemCreated(createdItem);
-
-        getImpl().moveCacheToDb();
-        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
-        Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedPlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getOwnBaseLost());
-        Assert.assertEquals(0, dbStatisticsEntry.getBuiltStructures());
-        Assert.assertEquals(1, dbStatisticsEntry.getBuiltUnits());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledStructureBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledStructurePlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledUnitsBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledUnitsPlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getLevelCompleted());
-        Assert.assertEquals(0, dbStatisticsEntry.getMoneyEarned(), 0.00001);
-        Assert.assertEquals(0, dbStatisticsEntry.getMoneySpent(), 0.00001);
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void baseLostPlayer() throws Exception {
-        configureRealGame();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        User actorUser = new User();
-        actorUser.registerUser("xxx", "", "");
-        getSessionFactory().getCurrentSession().save(actorUser);
-        User targetUser = new User();
-        targetUser.registerUser("yyy", "", "");
-        getSessionFactory().getCurrentSession().save(targetUser);
-
-        SimpleBase targetBase = new SimpleBase(1);
-        UserState targetUserState = new UserState();
-        targetUserState.setUser(targetUser);
-        SimpleBase actorBase = new SimpleBase(2);
-        UserState actorUserState = new UserState();
-        actorUserState.setUser(actorUser);
-
-        BaseService baseService = EasyMock.createNiceMock(BaseService.class);
-        EasyMock.expect(baseService.isBot(targetBase)).andReturn(false).anyTimes();
-        EasyMock.expect(baseService.isBot(actorBase)).andReturn(false).anyTimes();
-        EasyMock.expect(baseService.getUserState(actorBase)).andReturn(actorUserState).anyTimes();
-        EasyMock.expect(baseService.getUserState(targetBase)).andReturn(targetUserState).anyTimes();
-        EasyMock.replay(baseService);
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "baseService", baseService);
-
-        statisticsService.onBaseKilled(targetBase, actorBase);
-
-        getImpl().moveCacheToDb();
-        Assert.assertEquals(2, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-
-        Iterator<DbStatisticsEntry> iterator = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).iterator();
-        DbStatisticsEntry entry1 = iterator.next();
-        DbStatisticsEntry entry2 = iterator.next();
-        DbStatisticsEntry actorEntry;
-        DbStatisticsEntry targetEntry;
-        if (entry1.getUser().getUsername().equals(actorUser.getUsername())) {
-            actorEntry = entry1;
-            targetEntry = entry2;
-        } else {
-            actorEntry = entry2;
-            targetEntry = entry1;
-        }
-        // Actor
-        Assert.assertEquals(0, actorEntry.getBasesDestroyedBot());
-        Assert.assertEquals(1, actorEntry.getBasesDestroyedPlayer());
-        Assert.assertEquals(0, actorEntry.getOwnBaseLost());
-        Assert.assertEquals(0, actorEntry.getBuiltStructures());
-        Assert.assertEquals(0, actorEntry.getBuiltUnits());
-        Assert.assertEquals(0, actorEntry.getKilledStructureBot());
-        Assert.assertEquals(0, actorEntry.getKilledStructurePlayer());
-        Assert.assertEquals(0, actorEntry.getKilledUnitsBot());
-        Assert.assertEquals(0, actorEntry.getKilledUnitsPlayer());
-        Assert.assertEquals(0, actorEntry.getLevelCompleted());
-        Assert.assertEquals(0, actorEntry.getMoneyEarned(), 0.00001);
-        Assert.assertEquals(0, actorEntry.getMoneySpent(), 0.00001);
-        // Target
-        Assert.assertEquals(0, targetEntry.getBasesDestroyedBot());
-        Assert.assertEquals(0, targetEntry.getBasesDestroyedPlayer());
-        Assert.assertEquals(1, targetEntry.getOwnBaseLost());
-        Assert.assertEquals(0, targetEntry.getBuiltStructures());
-        Assert.assertEquals(0, targetEntry.getBuiltUnits());
-        Assert.assertEquals(0, targetEntry.getKilledStructureBot());
-        Assert.assertEquals(0, targetEntry.getKilledStructurePlayer());
-        Assert.assertEquals(0, targetEntry.getKilledUnitsBot());
-        Assert.assertEquals(0, targetEntry.getKilledUnitsPlayer());
-        Assert.assertEquals(0, targetEntry.getLevelCompleted());
-        Assert.assertEquals(0, targetEntry.getMoneyEarned(), 0.00001);
-        Assert.assertEquals(0, targetEntry.getMoneySpent(), 0.00001);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void baseLostBot() throws Exception {
-        configureRealGame();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        User user = new User();
-        user.registerUser("xxx", "", "");
-        getSessionFactory().getCurrentSession().save(user);
-
-        SimpleBase botBase = new SimpleBase(1);
-        SimpleBase actorBase = new SimpleBase(2);
-        UserState actorUserState = new UserState();
-        actorUserState.setUser(user);
-
-        BaseService baseService = EasyMock.createNiceMock(BaseService.class);
-        EasyMock.expect(baseService.isBot(botBase)).andReturn(true).anyTimes();
-        EasyMock.expect(baseService.isBot(actorBase)).andReturn(false).anyTimes();
-        EasyMock.expect(baseService.getUserState(actorBase)).andReturn(actorUserState).anyTimes();
-        EasyMock.replay(baseService);
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "baseService", baseService);
-
-        statisticsService.onBaseKilled(botBase, actorBase);
-
-        getImpl().moveCacheToDb();
-        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
-        Assert.assertEquals(1, dbStatisticsEntry.getBasesDestroyedBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedPlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getOwnBaseLost());
-        Assert.assertEquals(0, dbStatisticsEntry.getBuiltStructures());
-        Assert.assertEquals(0, dbStatisticsEntry.getBuiltUnits());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledStructureBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledStructurePlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledUnitsBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledUnitsPlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getLevelCompleted());
-        Assert.assertEquals(0, dbStatisticsEntry.getMoneyEarned(), 0.00001);
-        Assert.assertEquals(0, dbStatisticsEntry.getMoneySpent(), 0.00001);
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void builtUnits() throws Exception {
-        configureRealGame();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        User actorUser = new User();
-        actorUser.registerUser("xxx", "", "");
-        getSessionFactory().getCurrentSession().save(actorUser);
-
-        SimpleBase actorBase = new SimpleBase(2);
-        UserState actorUserState = new UserState();
-        actorUserState.setUser(actorUser);
-
-        BaseService baseService = EasyMock.createNiceMock(BaseService.class);
-        EasyMock.expect(baseService.isBot(actorBase)).andReturn(false).anyTimes();
-        EasyMock.expect(baseService.getUserState(actorBase)).andReturn(actorUserState).anyTimes();
-        EasyMock.replay(baseService);
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "baseService", baseService);
-
-        SyncBaseItem createdItem = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(500, 500), new Id(1, 1, 1), actorBase);
-        statisticsService.onItemCreated(createdItem);
-
-        getImpl().moveCacheToDb();
-        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
-        Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedPlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getOwnBaseLost());
-        Assert.assertEquals(0, dbStatisticsEntry.getBuiltStructures());
-        Assert.assertEquals(1, dbStatisticsEntry.getBuiltUnits());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledStructureBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledStructurePlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledUnitsBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledUnitsPlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getLevelCompleted());
-        Assert.assertEquals(0, dbStatisticsEntry.getMoneyEarned(), 0.00001);
-        Assert.assertEquals(0, dbStatisticsEntry.getMoneySpent(), 0.00001);
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void moneySpent() throws Exception {
-        configureRealGame();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        User actorUser = new User();
-        actorUser.registerUser("xxx", "", "");
-        getSessionFactory().getCurrentSession().save(actorUser);
-
-        SimpleBase actorBase = new SimpleBase(1);
-        UserState actorUserState = new UserState();
-        actorUserState.setUser(actorUser);
-
-        BaseService baseService = EasyMock.createNiceMock(BaseService.class);
-        EasyMock.expect(baseService.getUserState(actorBase)).andReturn(actorUserState).anyTimes();
-        EasyMock.replay(baseService);
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "baseService", baseService);
-
-        statisticsService.onMoneySpent(actorBase, 0.5);
-
-        getImpl().moveCacheToDb();
-        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
-        Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedPlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getOwnBaseLost());
-        Assert.assertEquals(0, dbStatisticsEntry.getBuiltStructures());
-        Assert.assertEquals(0, dbStatisticsEntry.getBuiltUnits());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledStructureBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledStructurePlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledUnitsBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledUnitsPlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getLevelCompleted());
-        Assert.assertEquals(0, dbStatisticsEntry.getMoneyEarned(), 0.00001);
-        Assert.assertEquals(0.5, dbStatisticsEntry.getMoneySpent(), 0.00001);
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void levelCompleted() throws Exception {
-        configureRealGame();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        User actorUser = new User();
-        actorUser.registerUser("xxx", "", "");
-        getSessionFactory().getCurrentSession().save(actorUser);
-
-        UserState actorUserState = new UserState();
-        actorUserState.setUser(actorUser);
-
-        statisticsService.onLevelPromotion(actorUserState);
-
-        getImpl().moveCacheToDb();
-        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-        DbStatisticsEntry dbStatisticsEntry = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
-        Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getBasesDestroyedPlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getOwnBaseLost());
-        Assert.assertEquals(0, dbStatisticsEntry.getBuiltStructures());
-        Assert.assertEquals(0, dbStatisticsEntry.getBuiltUnits());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledStructureBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledStructurePlayer());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledUnitsBot());
-        Assert.assertEquals(0, dbStatisticsEntry.getKilledUnitsPlayer());
-        Assert.assertEquals(1, dbStatisticsEntry.getLevelCompleted());
-        Assert.assertEquals(0, dbStatisticsEntry.getMoneyEarned(), 0.00001);
-        Assert.assertEquals(0, dbStatisticsEntry.getMoneySpent(), 0.00001);
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void multipleMoveCacheToDb() throws Exception {
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        User user1 = new User();
-        user1.registerUser("xxx", "", "");
-        getSessionFactory().getCurrentSession().save(user1);
-
-        SimpleBase base1 = new SimpleBase(1);
-        UserState userState1 = new UserState();
-        userState1.setUser(user1);
-
-        BaseService baseService = EasyMock.createNiceMock(BaseService.class);
-        EasyMock.expect(baseService.getUserState(base1)).andReturn(userState1).anyTimes();
-        EasyMock.replay(baseService);
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "baseService", baseService);
-
-        Date date = new Date();
-        statisticsService.onMoneyEarned(base1, 0.7);
-        Assert.assertTrue(HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).isEmpty());
-        getImpl().moveCacheToDb();
-        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-
-        DbStatisticsEntry entry1 = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
-        Assert.assertEquals(0.7, entry1.getMoneyEarned(), 0.0001);
-        Assert.assertEquals(DateUtil.dayStart(date), entry1.getDate());
-        Assert.assertEquals(user1.getUsername(), entry1.getUser().getUsername());
-
-        statisticsService.onMoneyEarned(base1, 1.5);
-        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-        getImpl().moveCacheToDb();
-        Assert.assertEquals(2, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-
-        entry1 = HibernateUtil.get(getSessionFactory(), DbStatisticsEntry.class, entry1.getId());
-        List<DbStatisticsEntry> entries = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class);
-        entries.remove(entry1);
-        Assert.assertEquals(1, entries.size());
-        DbStatisticsEntry entry2 = entries.get(0);
-        Assert.assertEquals(DateUtil.dayStart(date), entry1.getDate());
-        Assert.assertEquals(DateUtil.dayStart(date), entry2.getDate());
-        Assert.assertEquals(user1.getUsername(), entry1.getUser().getUsername());
-        Assert.assertEquals(user1.getUsername(), entry2.getUser().getUsername());
-        Assert.assertEquals(0.7, entry1.getMoneyEarned(), 0.0001);
-        Assert.assertEquals(1.5, entry2.getMoneyEarned(), 0.0001);
-
-        statisticsService.onMoneyEarned(base1, 2.2);
-        Assert.assertEquals(2, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-        getImpl().moveCacheToDb();
-        Assert.assertEquals(3, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-
-        entry1 = HibernateUtil.get(getSessionFactory(), DbStatisticsEntry.class, entry1.getId());
-        entry2 = HibernateUtil.get(getSessionFactory(), DbStatisticsEntry.class, entry2.getId());
-        entries = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class);
-        entries.remove(entry1);
-        entries.remove(entry2);
-        Assert.assertEquals(1, entries.size());
-        DbStatisticsEntry entry3 = entries.get(0);
-        Assert.assertEquals(DateUtil.dayStart(date), entry1.getDate());
-        Assert.assertEquals(DateUtil.dayStart(date), entry2.getDate());
-        Assert.assertEquals(DateUtil.dayStart(date), entry3.getDate());
-        Assert.assertEquals(user1.getUsername(), entry1.getUser().getUsername());
-        Assert.assertEquals(user1.getUsername(), entry2.getUser().getUsername());
-        Assert.assertEquals(user1.getUsername(), entry3.getUser().getUsername());
-        Assert.assertEquals(0.7, entry1.getMoneyEarned(), 0.0001);
-        Assert.assertEquals(1.5, entry2.getMoneyEarned(), 0.0001);
-        Assert.assertEquals(2.2, entry3.getMoneyEarned(), 0.0001);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void closeDayIfNecessary() throws Exception {
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        User user1 = new User();
-        user1.registerUser("xxx", "", "");
-        getSessionFactory().getCurrentSession().save(user1);
-
-        SimpleBase base1 = new SimpleBase(1);
-        UserState userState1 = new UserState();
-        userState1.setUser(user1);
-
-        BaseService baseService = EasyMock.createNiceMock(BaseService.class);
-        EasyMock.expect(baseService.getUserState(base1)).andReturn(userState1).anyTimes();
-        EasyMock.replay(baseService);
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "baseService", baseService);
-
-        Date date = new Date();
-        statisticsService.onMoneyEarned(base1, 3.4);
-        Assert.assertTrue(HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).isEmpty());
-        statisticsService.onMoneyEarned(base1, 5.6);
-        Assert.assertTrue(HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).isEmpty());
-
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.dayStart(date).getTime());
-        statisticsService.onMoneyEarned(base1, 1.2);
-        Assert.assertEquals(1, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-
-        DbStatisticsEntry entry1 = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).get(0);
-        Assert.assertEquals(9.0, entry1.getMoneyEarned(), 0.0001);
-        Assert.assertEquals(DateUtil.removeOneDay(DateUtil.dayStart(date)), entry1.getDate());
-
-        getImpl().moveCacheToDb();
-        Assert.assertEquals(2, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-        List<DbStatisticsEntry> entries = HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class);
-        entries.remove(entry1);
-        Assert.assertEquals(1, entries.size());
-        DbStatisticsEntry entry2 = entries.get(0);
-        Assert.assertEquals(9.0, entry1.getMoneyEarned(), 0.0001);
-        Assert.assertEquals(DateUtil.removeOneDay(DateUtil.dayStart(date)), entry1.getDate());
-        Assert.assertEquals(1.2, entry2.getMoneyEarned(), 0.0001);
-        Assert.assertEquals(DateUtil.dayStart(date), entry2.getDate());
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void endOfDayProcessingEmpty() throws Exception {
-        getImpl().endOfDayProcessing(DateUtil.createDate(2011, Calendar.SEPTEMBER, 2));
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertTrue(HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).isEmpty());
-        Assert.assertTrue(statisticsService.getDayStatistics().readDbChildren().isEmpty());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void endOfDayProcessingMakeWholeDays() throws Exception {
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        User user1 = new User();
-        user1.registerUser("xxx", "", "");
-        getSessionFactory().getCurrentSession().save(user1);
-
-        Date date = DateUtil.createDate(2011, Calendar.SEPTEMBER, 2);
-
-        createSaveDbStatisticsEntry(date, user1, 3.8, DbStatisticsEntry.Type.DAY);
-        createSaveDbStatisticsEntry(date, user1, 42.7, DbStatisticsEntry.Type.DAY);
-        createSaveDbStatisticsEntry(date, user1, 19.5, DbStatisticsEntry.Type.DAY);
-        Assert.assertEquals(3, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        getImpl().endOfDayProcessing(date);
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        Assert.assertEquals(2, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.addOneDay(date).getTime());
-        Collection<DbStatisticsEntry> collection = statisticsService.getDayStatistics().readDbChildren();
-        Assert.assertEquals(1, collection.size());
-        DbStatisticsEntry dbStatisticsEntry = collection.iterator().next();
-        Assert.assertEquals(date, dbStatisticsEntry.getDate());
-        Assert.assertEquals(user1.getUsername(), dbStatisticsEntry.getUser().getUsername());
-        Assert.assertEquals(66.0, dbStatisticsEntry.getMoneyEarned(), 0.0001);
-        Assert.assertEquals(DbStatisticsEntry.Type.DAY, dbStatisticsEntry.getType());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void endOfDayProcessingMakeWholeDaysTwoUsers() throws Exception {
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        User user1 = new User();
-        user1.registerUser("xxx", "", "");
-        getSessionFactory().getCurrentSession().save(user1);
-        User user2 = new User();
-        user2.registerUser("yyy", "", "");
-        getSessionFactory().getCurrentSession().save(user2);
-
-        Date date = DateUtil.createDate(2011, Calendar.AUGUST, 18);
-
-        createSaveDbStatisticsEntry(date, user1, 3.8, DbStatisticsEntry.Type.DAY);
-        createSaveDbStatisticsEntry(date, user1, 42.7, DbStatisticsEntry.Type.DAY);
-        createSaveDbStatisticsEntry(date, user2, 17, DbStatisticsEntry.Type.DAY);
-        createSaveDbStatisticsEntry(date, user2, 18, DbStatisticsEntry.Type.DAY);
-        Assert.assertEquals(4, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        getImpl().endOfDayProcessing(date);
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        Assert.assertEquals(4, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.addOneDay(date).getTime());
-        ContentSortList contentSortList = new ContentSortList();
-        contentSortList.addDesc("moneyEarned");
-        Collection<DbStatisticsEntry> collection = statisticsService.getDayStatistics().readDbChildren(contentSortList);
-
-        Assert.assertEquals(2, collection.size());
-        Iterator<DbStatisticsEntry> iterator = collection.iterator();
-        DbStatisticsEntry dbStatisticsEntry1 = iterator.next();
-        Assert.assertEquals(date, dbStatisticsEntry1.getDate());
-        Assert.assertEquals(user1.getUsername(), dbStatisticsEntry1.getUser().getUsername());
-        Assert.assertEquals(46.5, dbStatisticsEntry1.getMoneyEarned(), 0.0001);
-        Assert.assertEquals(DbStatisticsEntry.Type.DAY, dbStatisticsEntry1.getType());
-
-        DbStatisticsEntry dbStatisticsEntry2 = iterator.next();
-        Assert.assertEquals(date, dbStatisticsEntry2.getDate());
-        Assert.assertEquals(user2.getUsername(), dbStatisticsEntry2.getUser().getUsername());
-        Assert.assertEquals(35.0, dbStatisticsEntry2.getMoneyEarned(), 0.0001);
-        Assert.assertEquals(DbStatisticsEntry.Type.DAY, dbStatisticsEntry2.getType());
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void endOfDayProcessingMakeWholeDaysTwoDates() throws Exception {
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        User user1 = new User();
-        user1.registerUser("xxx", "", "");
-        getSessionFactory().getCurrentSession().save(user1);
-
-        Date date1 = DateUtil.createDate(2011, Calendar.AUGUST, 18);
-        Date date2 = DateUtil.createDate(2011, Calendar.AUGUST, 19);
-
-        createSaveDbStatisticsEntry(date1, user1, 3.8, DbStatisticsEntry.Type.DAY);
-        createSaveDbStatisticsEntry(date1, user1, 42.7, DbStatisticsEntry.Type.DAY);
-        createSaveDbStatisticsEntry(date2, user1, 17, DbStatisticsEntry.Type.DAY);
-        createSaveDbStatisticsEntry(date2, user1, 18, DbStatisticsEntry.Type.DAY);
-        Assert.assertEquals(4, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        getImpl().endOfDayProcessing(date2);
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(3, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.addOneDay(date2).getTime());
-        ContentSortList contentSortList = new ContentSortList();
-        contentSortList.addDesc("moneyEarned");
-        Collection<DbStatisticsEntry> collection = statisticsService.getDayStatistics().readDbChildren(contentSortList);
-
-        Assert.assertEquals(1, collection.size());
-        Iterator<DbStatisticsEntry> iterator = collection.iterator();
-        DbStatisticsEntry dbStatisticsEntry1 = iterator.next();
-        Assert.assertEquals(date2, dbStatisticsEntry1.getDate());
-        Assert.assertEquals(user1.getUsername(), dbStatisticsEntry1.getUser().getUsername());
-        Assert.assertEquals(35, dbStatisticsEntry1.getMoneyEarned(), 0.0001);
-        Assert.assertEquals(DbStatisticsEntry.Type.DAY, dbStatisticsEntry1.getType());
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void endOfDayProcessingWeek() throws Exception {
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        User user1 = new User();
-        user1.registerUser("xxx", "", "");
-        getSessionFactory().getCurrentSession().save(user1);
-
-        createSaveDbStatisticsEntry(DateUtil.createDate(2011, Calendar.SEPTEMBER, 12), user1, 1.0, DbStatisticsEntry.Type.DAY);
-        createSaveDbStatisticsEntry(DateUtil.createDate(2011, Calendar.SEPTEMBER, 13), user1, 2.0, DbStatisticsEntry.Type.DAY);
-        createSaveDbStatisticsEntry(DateUtil.createDate(2011, Calendar.SEPTEMBER, 14), user1, 4.0, DbStatisticsEntry.Type.DAY);
-        createSaveDbStatisticsEntry(DateUtil.createDate(2011, Calendar.SEPTEMBER, 15), user1, 8.0, DbStatisticsEntry.Type.DAY);
-        createSaveDbStatisticsEntry(DateUtil.createDate(2011, Calendar.SEPTEMBER, 16), user1, 16.0, DbStatisticsEntry.Type.DAY);
-        createSaveDbStatisticsEntry(DateUtil.createDate(2011, Calendar.SEPTEMBER, 17), user1, 32.0, DbStatisticsEntry.Type.DAY);
-        createSaveDbStatisticsEntry(DateUtil.createDate(2011, Calendar.SEPTEMBER, 18), user1, 64.0, DbStatisticsEntry.Type.DAY);
-        // Will be ignored, not processing week
-        createSaveDbStatisticsEntry(DateUtil.createDate(2011, Calendar.SEPTEMBER, 19), user1, 128.0, DbStatisticsEntry.Type.DAY);
-
-        Assert.assertEquals(8, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        getImpl().endOfDayProcessing(DateUtil.createDate(2011, Calendar.SEPTEMBER, 19));
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        Assert.assertEquals(10, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 20).getTime());
-        ContentSortList contentSortList = new ContentSortList();
-        contentSortList.addDesc("moneyEarned");
-        Collection<DbStatisticsEntry> collection = statisticsService.getWeekStatistics().readDbChildren(contentSortList);
-
-        Assert.assertEquals(1, collection.size());
-        Iterator<DbStatisticsEntry> iterator = collection.iterator();
-        DbStatisticsEntry dbStatisticsEntry1 = iterator.next();
-        Assert.assertEquals(DateUtil.createDate(2011, Calendar.SEPTEMBER, 12), dbStatisticsEntry1.getDate());
-        Assert.assertEquals(user1.getUsername(), dbStatisticsEntry1.getUser().getUsername());
-        Assert.assertEquals(127, dbStatisticsEntry1.getMoneyEarned(), 0.0001);
-        Assert.assertEquals(DbStatisticsEntry.Type.WEEK, dbStatisticsEntry1.getType());
-
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 19).getTime());
-        Assert.assertEquals(0, statisticsService.getWeekStatistics().readDbChildren(contentSortList).size());
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 20).getTime());
-        Assert.assertEquals(1, statisticsService.getWeekStatistics().readDbChildren(contentSortList).size());
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 21).getTime());
-        Assert.assertEquals(1, statisticsService.getWeekStatistics().readDbChildren(contentSortList).size());
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 22).getTime());
-        Assert.assertEquals(1, statisticsService.getWeekStatistics().readDbChildren(contentSortList).size());
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 23).getTime());
-        Assert.assertEquals(1, statisticsService.getWeekStatistics().readDbChildren(contentSortList).size());
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 24).getTime());
-        Assert.assertEquals(1, statisticsService.getWeekStatistics().readDbChildren(contentSortList).size());
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 25).getTime());
-        Assert.assertEquals(1, statisticsService.getWeekStatistics().readDbChildren(contentSortList).size());
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 26).getTime());
-        Assert.assertEquals(1, statisticsService.getWeekStatistics().readDbChildren(contentSortList).size());
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 27).getTime());
-        Assert.assertEquals(0, statisticsService.getWeekStatistics().readDbChildren(contentSortList).size());
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void endOfDayProcessingAllTime() throws Exception {
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        User user1 = new User();
-        user1.registerUser("xxx", "", "");
-        getSessionFactory().getCurrentSession().save(user1);
-
-        createSaveDbStatisticsEntry(DateUtil.createDate(2011, Calendar.SEPTEMBER, 1), user1, 2.0, DbStatisticsEntry.Type.DAY);
-        createSaveDbStatisticsEntry(DateUtil.createDate(2011, Calendar.SEPTEMBER, 2), user1, 2.0, DbStatisticsEntry.Type.DAY);
-        createSaveDbStatisticsEntry(DateUtil.createDate(2011, Calendar.SEPTEMBER, 3), user1, 2.0, DbStatisticsEntry.Type.DAY);
-        Assert.assertEquals(3, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        getImpl().endOfDayProcessing(DateUtil.createDate(2011, Calendar.SEPTEMBER, 4));
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        Assert.assertEquals(4, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 20).getTime());
-        ContentSortList contentSortList = new ContentSortList();
-        contentSortList.addDesc("moneyEarned");
-        Collection<DbStatisticsEntry> collection = statisticsService.getAllTimeStatistics().readDbChildren(contentSortList);
-        Assert.assertEquals(1, collection.size());
-        Iterator<DbStatisticsEntry> iterator = collection.iterator();
-        DbStatisticsEntry dbStatisticsEntry1 = iterator.next();
-        Assert.assertEquals(DateUtil.createDate(2011, Calendar.SEPTEMBER, 4), dbStatisticsEntry1.getDate());
-        Assert.assertEquals(user1.getUsername(), dbStatisticsEntry1.getUser().getUsername());
-        Assert.assertEquals(6, dbStatisticsEntry1.getMoneyEarned(), 0.0001);
-        Assert.assertEquals(DbStatisticsEntry.Type.ALL_TIME, dbStatisticsEntry1.getType());
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        getImpl().endOfDayProcessing(DateUtil.createDate(2011, Calendar.SEPTEMBER, 4));
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        Assert.assertEquals(4, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 20).getTime());
-        contentSortList = new ContentSortList();
-        contentSortList.addDesc("moneyEarned");
-        collection = statisticsService.getAllTimeStatistics().readDbChildren(contentSortList);
-        Assert.assertEquals(1, collection.size());
-        iterator = collection.iterator();
-        dbStatisticsEntry1 = iterator.next();
-        Assert.assertEquals(DateUtil.createDate(2011, Calendar.SEPTEMBER, 4), dbStatisticsEntry1.getDate());
-        Assert.assertEquals(user1.getUsername(), dbStatisticsEntry1.getUser().getUsername());
-        Assert.assertEquals(6, dbStatisticsEntry1.getMoneyEarned(), 0.0001);
-        Assert.assertEquals(DbStatisticsEntry.Type.ALL_TIME, dbStatisticsEntry1.getType());
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        getImpl().endOfDayProcessing(DateUtil.createDate(2011, Calendar.SEPTEMBER, 5));
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        Assert.assertEquals(5, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 20).getTime());
-        contentSortList = new ContentSortList();
-        contentSortList.addDesc("moneyEarned");
-        collection = statisticsService.getAllTimeStatistics().readDbChildren(contentSortList);
-        Assert.assertEquals(1, collection.size());
-        iterator = collection.iterator();
-        dbStatisticsEntry1 = iterator.next();
-        Assert.assertEquals(DateUtil.createDate(2011, Calendar.SEPTEMBER, 5), dbStatisticsEntry1.getDate());
-        Assert.assertEquals(user1.getUsername(), dbStatisticsEntry1.getUser().getUsername());
-        Assert.assertEquals(6, dbStatisticsEntry1.getMoneyEarned(), 0.0001);
-        Assert.assertEquals(DbStatisticsEntry.Type.ALL_TIME, dbStatisticsEntry1.getType());
-
-        createSaveDbStatisticsEntry(DateUtil.createDate(2011, Calendar.SEPTEMBER, 6), user1, 2.0, DbStatisticsEntry.Type.DAY);
-        Assert.assertEquals(6, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        getImpl().endOfDayProcessing(DateUtil.createDate(2011, Calendar.SEPTEMBER, 6));
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(6, HibernateUtil.loadAll(getSessionFactory(), DbStatisticsEntry.class).size());
-
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 20).getTime());
-        contentSortList = new ContentSortList();
-        contentSortList.addDesc("moneyEarned");
-        collection = statisticsService.getAllTimeStatistics().readDbChildren(contentSortList);
-        Assert.assertEquals(1, collection.size());
-        iterator = collection.iterator();
-        dbStatisticsEntry1 = iterator.next();
-        Assert.assertEquals(DateUtil.createDate(2011, Calendar.SEPTEMBER, 6), dbStatisticsEntry1.getDate());
-        Assert.assertEquals(user1.getUsername(), dbStatisticsEntry1.getUser().getUsername());
-        Assert.assertEquals(8, dbStatisticsEntry1.getMoneyEarned(), 0.0001);
-        Assert.assertEquals(DbStatisticsEntry.Type.ALL_TIME, dbStatisticsEntry1.getType());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    private DbStatisticsEntry createSaveDbStatisticsEntry(final Date date, final User user, final double moneyEarned, final DbStatisticsEntry.Type type) {
-        TransactionTemplate transactionTemplate = new TransactionTemplate(getTransactionManager());
-        return transactionTemplate.execute(new TransactionCallback<DbStatisticsEntry>() {
-
-            @Override
-            public DbStatisticsEntry doInTransaction(TransactionStatus status) {
-                DbStatisticsEntry entry = new DbStatisticsEntry();
-                entry.setDate(date);
-                entry.setUser(user);
-                entry.setMoneyEarned(moneyEarned);
-                entry.setType(type);
-                getSessionFactory().getCurrentSession().save(entry);
-                return entry;
-            }
-        });
-    }
-
-    @Test
-    @DirtiesContext
-    public void currentStatisticsEmpty() throws Exception {
-        List<UserState> userStates = new ArrayList<UserState>();
-
-        UserService userServiceMock = EasyMock.createMock(UserService.class);
-        EasyMock.expect(userServiceMock.getAllUserStates()).andReturn(userStates).once();
-        EasyMock.replay(userServiceMock);
-
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "userService", userServiceMock);
-
-        ReadonlyListContentProvider<CurrentStatisticEntry> current = statisticsService.getCurrentStatistics();
-        Assert.assertEquals(0, current.readDbChildren().size());
-    }
-
-    @Test
-    @DirtiesContext
-    public void currentStatistics() throws Exception {
+    public void normalFight() throws Exception {
         configureGameMultipleLevel();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-
-        List<UserState> userStates = new ArrayList<UserState>();
-        UserState userState = new UserState();
-        userState.setDbLevelId(TEST_LEVEL_1_SIMULATED_ID);
-        userStates.add(userState);
-
-        userState = new UserState();
-        Base base1 = new Base(userState, 1);
-        base1.setAccountBalance(1234);
-        setPrivateField(Base.class, base1, "startTime", new Date(System.currentTimeMillis() - DateUtil.MILLIS_IN_HOUR));
-        base1.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1, 1)));
-        base1.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(2, 1, 1)));
-        userState.setBase(base1);
-        userState.setDbLevelId(TEST_LEVEL_2_REAL_ID);
-        userStates.add(userState);
-
-        User user = new User();
-        user.registerUser("xxx", "", "");
-        userState = new UserState();
-        userState.setUser(user);
-        Base base2 = new Base(userState, 2);
-        base2.setAccountBalance(90);
-        setPrivateField(Base.class, base2, "startTime", new Date(System.currentTimeMillis() - DateUtil.MILLIS_IN_MINUTE));
-        base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1, 1)));
-        base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(2, 1, 1)));
-        base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(3, 1, 1)));
-        base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(4, 1, 1)));
-        base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(5, 1, 1)));
-        userState.setBase(base2);
-        userState.setDbLevelId(TEST_LEVEL_2_REAL_ID);
-        userStates.add(userState);
-
-        UserService userServiceMock = EasyMock.createMock(UserService.class);
-        EasyMock.expect(userServiceMock.getAllUserStates()).andReturn(userStates).once();
-        EasyMock.replay(userServiceMock);
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "userService", userServiceMock);
-
-        BaseService baseService = EasyMock.createMock(BaseService.class);
-        EasyMock.expect(baseService.getBaseName(base1.getSimpleBase())).andReturn("Base 1").once();
-        EasyMock.expect(baseService.getBaseName(base2.getSimpleBase())).andReturn("RegUser").once();
-        EasyMock.replay(baseService);
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "baseService", baseService);
-
-        ReadonlyListContentProvider<CurrentStatisticEntry> current = statisticsService.getCurrentStatistics();
-        Assert.assertEquals(3, current.readDbChildren().size());
-
-        CurrentStatisticEntry entry = current.readDbChildren().get(0);
-        Assert.assertEquals(TEST_LEVEL_1_SIMULATED, entry.getLevel().getName());
-        Assert.assertEquals(null, entry.getUser());
-        Assert.assertEquals(null, entry.getMoney());
-        Assert.assertEquals(null, entry.getBaseName());
-        Assert.assertEquals(null, entry.getBaseUpTime());
-        Assert.assertEquals(null, entry.getItemCount());
-        entry = current.readDbChildren().get(1);
-        Assert.assertEquals(TEST_LEVEL_2_REAL, entry.getLevel().getName());
-        Assert.assertEquals(null, entry.getUser());
-        Assert.assertEquals(1234, (int) entry.getMoney());
-        Assert.assertEquals("Base 1", entry.getBaseName());
-        Assert.assertEquals(DateUtil.MILLIS_IN_HOUR, DateUtil.stripOfMillis(entry.getBaseUpTime()));
-        Assert.assertEquals(2, (int) entry.getItemCount());
-        entry = current.readDbChildren().get(2);
-        Assert.assertEquals(TEST_LEVEL_2_REAL, entry.getLevel().getName());
-        Assert.assertEquals("xxx", entry.getUser().getUsername());
-        Assert.assertEquals(90, (int) entry.getMoney());
-        Assert.assertEquals("RegUser", entry.getBaseName());
-        Assert.assertEquals(DateUtil.MILLIS_IN_MINUTE, DateUtil.stripOfMillis(entry.getBaseUpTime()));
-        Assert.assertEquals(5, (int) entry.getItemCount());
-
+        userService.createUser("u1", "xxx", "xxx", "");
+        userService.login("u1", "xxx");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("u2", "xxx", "xxx", "");
+        userService.login("u2", "xxx");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        ReadonlyListContentProvider<CurrentStatisticEntry> provider = statisticsService.getCmsCurrentStatistics();
+        List<CurrentStatisticEntry> entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(2, entries.size());
+        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, userService.getUser("u1"), null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, userService.getUser("u2"), null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("u1", "xxx");
+        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(2, entries.size());
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, userService.getUser("u1"), "u1", (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, userService.getUser("u2"), null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Build items
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("u2", "xxx");
+        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(2, entries.size());
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, userService.getUser("u1"), "u1", (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, userService.getUser("u2"), "u2", (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Test unregistered user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.getUserState(); // unregistered user
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(3, entries.size());
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, userService.getUser("u1"), "u1", (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, userService.getUser("u2"), "u2", (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        assertEntry(2, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, null, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Test unregistered user expired
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(2, entries.size());
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, userService.getUser("u1"), "u1", (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, userService.getUser("u2"), "u2", (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Build
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("u1", "xxx");
+        Id u1Builder = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
+        sendBuildCommand(u1Builder, new Index(3000, 3000), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        Id u1Factory = getFirstSynItemId(TEST_FACTORY_ITEM_ID);
+        sendFactoryCommand(u1Factory, TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(2, entries.size());
+        assertEntry(0, entries, 3000, TEST_LEVEL_3_REAL, 0, userService.getUser("u1"), "u1", (long) 1, 3, 1085, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0);
+        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, userService.getUser("u2"), "u2", (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // move away
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("u2", "xxx");
+        Id target1 = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
+        Id target2 = getFirstSynItemId(TEST_FACTORY_ITEM_ID);
+        sendMoveCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 3000));
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Kill builder
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("u1", "xxx");
+        sendAttackCommand(getFirstSynItemId(TEST_ATTACK_ITEM_ID), target1);
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Thread.sleep(40); // Wait for XpService thread
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(2, entries.size());
+        assertEntry(0, entries, 3002, TEST_LEVEL_3_REAL, 1, userService.getUser("u1"), "u1", (long) 1, 3, 1085, 0, 0, 0, 1, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0);
+        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, userService.getUser("u2"), "u2", (long) 1, 1, 998, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Kill factory
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("u1", "xxx");
+        sendAttackCommand(getFirstSynItemId(TEST_ATTACK_ITEM_ID), target2);
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Thread.sleep(40);
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(2, entries.size());
+        assertEntry(0, entries, 3007, TEST_LEVEL_3_REAL, 3, userService.getUser("u1"), "u1", (long) 1, 3, 1085, 0, 0, 1, 1, 0, 0, 0, 0, 1, 2, 0, 1, 0, 0);
+        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, userService.getUser("u2"), null, null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Fake a bot factory
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        SimpleBase botBase = baseService.createBotBase(new BotConfig(1, 1, null, null, "bot", null, null, null, null));
+        Id targetBotFactory = itemService.createSyncObject(itemService.getItemType(TEST_FACTORY_ITEM), new Index(3000, 1000), null, botBase, 0).getId();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Kill bot factory
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("u1", "xxx");
+        sendAttackCommand(getFirstSynItemId(TEST_ATTACK_ITEM_ID), targetBotFactory);
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Thread.sleep(40);
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(2, entries.size());
+        assertEntry(0, entries, 3012, TEST_LEVEL_3_REAL, 5, userService.getUser("u1"), "u1", (long) 1, 3, 1085, 1, 0, 1, 1, 0, 0, 0, 0, 1, 2, 1, 1, 0, 0);
+        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, userService.getUser("u2"), null, null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Fake a bot unit
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        botBase = baseService.createBotBase(new BotConfig(1, 1, null, null, "bot", null, null, null, null));
+        Id targetBotUnit = itemService.createSyncObject(itemService.getItemType(TEST_START_BUILDER_ITEM_ID), new Index(3000, 2000), null, botBase, 0).getId();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Kill bot unit
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("u1", "xxx");
+        Id u1AttackerId = getFirstSynItemId(TEST_ATTACK_ITEM_ID);
+        sendAttackCommand(getFirstSynItemId(TEST_ATTACK_ITEM_ID), targetBotUnit);
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Thread.sleep(40);
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(2, entries.size());
+        assertEntry(0, entries, 3015, TEST_LEVEL_3_REAL, 6, userService.getUser("u1"), "u1", (long) 1, 3, 1085, 1, 1, 1, 1, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0);
+        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, userService.getUser("u2"), null, null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Move away
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("u1", "xxx");
+        sendMoveCommand(u1AttackerId, new Index(1000, 4000));
+        sendMoveCommand(u1Builder, new Index(2000, 4000));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Fake a bot unit and attack unit
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        botBase = baseService.createBotBase(new BotConfig(1, 1, null, null, "bot", null, null, null, null));
+        SyncBaseItem botAttackUnit = (SyncBaseItem) itemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), new Index(3000, 2000), null, botBase, 0);
+        botAttackUnit.setHealth(Integer.MAX_VALUE);
+        sendAttackCommand(botAttackUnit.getId(), u1AttackerId);
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Thread.sleep(40);
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(2, entries.size());
+        assertEntry(0, entries, 3015, TEST_LEVEL_3_REAL, 6, userService.getUser("u1"), "u1", (long) 1, 2, 1085, 1, 1, 1, 1, 0, 1, 0, 0, 1, 2, 2, 1, 0, 0);
+        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, userService.getUser("u2"), null, null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Bot attack factory
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        sendAttackCommand(botAttackUnit.getId(), u1Builder);
+        waitForActionServiceDone();
+        sendAttackCommand(botAttackUnit.getId(), u1Factory);
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Thread.sleep(40);
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(2, entries.size());
+        assertEntry(0, entries, 3015, TEST_LEVEL_3_REAL, 6, userService.getUser("u1"), null, null, null, null, 1, 1, 1, 1, 1, 2, 0, 0, 1, 2, 2, 1, 1, 0);
+        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, userService.getUser("u2"), null, null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void sellItemsAndLoseBase() throws Exception {
+        configureGameMultipleLevel();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("u1", "xxx", "xxx", "");
+        userService.login("u1", "xxx");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        ReadonlyListContentProvider<CurrentStatisticEntry> provider = statisticsService.getCmsCurrentStatistics();
+        List<CurrentStatisticEntry> entries = provider.readDbChildren();
+        Assert.assertEquals(1, entries.size());
+        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, userService.getUser("u1"), null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("u1", "xxx");
+        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        Assert.assertEquals(1, entries.size());
+        assertEntry(0, entries, 2004, TEST_LEVEL_2_REAL, 1, userService.getUser("u1"), "u1", (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Sell
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("u1", "xxx");
+        itemService.sellItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        Assert.assertEquals(1, entries.size());
+        assertEntry(0, entries, 2004, TEST_LEVEL_2_REAL, 1, userService.getUser("u1"), "u1", (long) 1, 1, 999, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Sell last unit
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("u1", "xxx");
+        itemService.sellItem(getFirstSynItemId(TEST_FACTORY_ITEM_ID));
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        Assert.assertEquals(1, entries.size());
+        assertEntry(0, entries, 2004, TEST_LEVEL_2_REAL, 1, userService.getUser("u1"), null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+    }
+
+    @Test
+    @DirtiesContext
+    public void saverRestore() throws Exception {
+        configureGameMultipleLevel();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("u1", "xxx", "xxx", "");
+        userService.login("u1", "xxx");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("u2", "xxx", "xxx", "");
+        userService.login("u2", "xxx");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        ReadonlyListContentProvider<CurrentStatisticEntry> provider = statisticsService.getCmsCurrentStatistics();
+        List<CurrentStatisticEntry> entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(2, entries.size());
+        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, userService.getUser("u1"), null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, userService.getUser("u2"), null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        //Backup
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Restore
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(2, entries.size());
+        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, userService.getUser("u1"), null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, userService.getUser("u2"), null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("u1", "xxx");
+        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        //Backup
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Restore
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(2, entries.size());
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, userService.getUser("u1"), "u1", (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, userService.getUser("u2"), null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Build items
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("u2", "xxx");
+        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(2, entries.size());
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, userService.getUser("u1"), "u1", (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, userService.getUser("u2"), "u2", (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Test unregistered user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.getUserState(); // unregistered user
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(3, entries.size());
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, userService.getUser("u1"), "u1", (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, userService.getUser("u2"), "u2", (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        assertEntry(2, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, null, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Restore
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Test unregistered user expired
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(2, entries.size());
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, userService.getUser("u1"), "u1", (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, userService.getUser("u2"), "u2", (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Build
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("u1", "xxx");
+        Id u1Builder = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
+        sendBuildCommand(u1Builder, new Index(3000, 3000), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        Id u1Factory = getFirstSynItemId(TEST_FACTORY_ITEM_ID);
+        sendFactoryCommand(u1Factory, TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        //Backup
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Restore
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(2, entries.size());
+        assertEntry(0, entries, 3000, TEST_LEVEL_3_REAL, 0, userService.getUser("u1"), "u1", (long) 1, 3, 1085, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0);
+        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, userService.getUser("u2"), "u2", (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Restore to previous date
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(3).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(2, entries.size());
+        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, userService.getUser("u1"), null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, userService.getUser("u2"), null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Restore to previous date
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(2).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(2, entries.size());
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, userService.getUser("u1"), "u1", (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, userService.getUser("u2"), null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Restore to previous date
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(1).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        provider = statisticsService.getCmsCurrentStatistics();
+        entries = provider.readDbChildren();
+        orderByUserName(entries);
+        Assert.assertEquals(2, entries.size());
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, userService.getUser("u1"), "u1", (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, userService.getUser("u2"), "u2", (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void orderByUserName(List<CurrentStatisticEntry> entries) {
+        Collections.sort(entries, new NestedNullSafeBeanComparator("user.username", true));
+    }
+
+    private void assertEntry(int index, List<CurrentStatisticEntry> entries,
+                             int score, int dbLevelId, int xp, User user,
+                             String baseName, Long baseUpTime, Integer itemCount, Integer money,
+                             int killedStructureBot, int killedUnitsBot, int killedStructurePlayer, int killedUnitsPlayer,
+                             int lostStructureBot, int lostUnitsBot, int lostStructurePlayer, int lostUnitsPlayer,
+                             int builtStructures, int builtUnits,
+                             int basesDestroyedBot, int basesDestroyedPlayer,
+                             int baseLostBot, int baseLostPlayer) {
+        CurrentStatisticEntry currentStatisticEntry = entries.get(index);
+        Assert.assertEquals(userGuidanceService.getDbLevel(dbLevelId), currentStatisticEntry.getLevel());
+        Assert.assertEquals(score, currentStatisticEntry.getScore());
+        Assert.assertEquals(xp, currentStatisticEntry.getXp());
+        Assert.assertEquals(user, currentStatisticEntry.getUser());
+        Assert.assertEquals(baseName, currentStatisticEntry.getBaseName());
+        if (baseUpTime == null) {
+            Assert.assertNull(currentStatisticEntry.getBaseUpTime());
+        } else {
+            Assert.assertNotNull(currentStatisticEntry.getBaseUpTime());
+        }
+        Assert.assertEquals(itemCount, currentStatisticEntry.getItemCount());
+        Assert.assertEquals(money, currentStatisticEntry.getMoney());
+        Assert.assertEquals(killedStructureBot, currentStatisticEntry.getKilledStructureBot());
+        Assert.assertEquals(killedUnitsBot, currentStatisticEntry.getKilledUnitsBot());
+        Assert.assertEquals(killedStructurePlayer, currentStatisticEntry.getKilledStructurePlayer());
+        Assert.assertEquals(killedUnitsPlayer, currentStatisticEntry.getKilledUnitsPlayer());
+        Assert.assertEquals(lostStructureBot, currentStatisticEntry.getLostStructureBot());
+        Assert.assertEquals(lostUnitsBot, currentStatisticEntry.getLostUnitsBot());
+        Assert.assertEquals(lostStructurePlayer, currentStatisticEntry.getLostStructurePlayer());
+        Assert.assertEquals(lostUnitsPlayer, currentStatisticEntry.getLostUnitsPlayer());
+        Assert.assertEquals(builtStructures, currentStatisticEntry.getBuiltStructures());
+        Assert.assertEquals(builtUnits, currentStatisticEntry.getBuiltUnits());
+        Assert.assertEquals(basesDestroyedBot, currentStatisticEntry.getBasesDestroyedBot());
+        Assert.assertEquals(basesDestroyedPlayer, currentStatisticEntry.getBasesDestroyedPlayer());
+        Assert.assertEquals(baseLostBot, currentStatisticEntry.getBasesLostBot());
+        Assert.assertEquals(baseLostPlayer, currentStatisticEntry.getBasesLostPlayer());
     }
 }

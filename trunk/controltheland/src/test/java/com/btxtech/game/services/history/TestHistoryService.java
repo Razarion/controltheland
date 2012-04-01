@@ -87,7 +87,7 @@ public class TestHistoryService extends AbstractServiceTest {
         Assert.assertEquals("Level reached: " + TEST_LEVEL_2_REAL, displayHistoryElements.get(2).getMessage());
 
         Assert.assertTrue(displayHistoryElements.get(2).getTimeStamp() >= displayHistoryElements.get(3).getTimeStamp());
-        Assert.assertEquals("Level Task competed: " + TEST_LEVEL_TASK_1_SIMULATED_NAME, displayHistoryElements.get(3).getMessage());
+        Assert.assertEquals("Level Task competed: " + TEST_LEVEL_TASK_1_1_SIMULATED_NAME, displayHistoryElements.get(3).getMessage());
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

@@ -177,7 +177,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             setCommonInfo(simulationInfo, userService, itemService, mgmtService, cmsUiService);
             simulationInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(itemService));
             simulationInfo.setLevelTaskId(levelTaskId);
-            simulationInfo.setLevelName(userGuidanceService.getDbLevel().getName());
+            simulationInfo.setLevelNumber(userGuidanceService.getDbLevel().getNumber());
             // Terrain
             terrainService.setupTerrainTutorial(simulationInfo, dbTutorialConfig);
             return simulationInfo;

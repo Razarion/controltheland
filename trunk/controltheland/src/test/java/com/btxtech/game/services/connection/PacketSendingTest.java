@@ -66,7 +66,7 @@ public class PacketSendingTest extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.getDbLevel();
-        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_SIMULATED_ID);
+        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
         // Enter real game
         Assert.assertEquals(TEST_LEVEL_2_REAL_ID, (int) userGuidanceService.getDbLevel().getId());
         SimpleBase simpleBase = getMyBase(); // Connection

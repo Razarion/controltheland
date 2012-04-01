@@ -32,6 +32,7 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.bot.DbBotItemConfig;
+import com.btxtech.game.services.cms.DbCmsImage;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
@@ -77,10 +78,17 @@ import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
+import com.btxtech.game.wicket.pages.cms.CmsImageResource;
+import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.behavior.IBehavior;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.image.resource.LocalizedImageResource;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.util.tester.WicketTester;
+import org.apache.wicket.util.value.ValueMap;
 import org.easymock.EasyMock;
 import org.hibernate.SessionFactory;
 import org.junit.Assert;
@@ -143,35 +151,33 @@ abstract public class AbstractServiceTest {
     protected static int TEST_RESOURCE_ITEM_ID = -1;
     protected static final String TEST_HARVESTER_ITEM = "TEST_HARVESTER_ITEM";
     protected static int TEST_HARVESTER_ITEM_ID = -1;
+    // Quest Hubs
     protected static final String TEST_QUEST_HUB_1 = "TEST_QUEST_HUB_1";
     protected static final String TEST_QUEST_HUB_2 = "TEST_QUEST_HUB_2";
-    protected static final String TEST_QUEST_HUB_3 = "TEST_QUEST_HUB_3";
-    protected static final String TEST_LEVEL_1_SIMULATED = "TEST_LEVEL_1_SIMULATED";
+    // Level ID
     protected static int TEST_LEVEL_1_SIMULATED_ID = -1;
-    protected static int TEST_LEVEL_TASK_1_SIMULATED_ID = -1;
-    protected static String TEST_LEVEL_TASK_1_SIMULATED_NAME = "TEST_LEVEL_TASK_1_SIMULATED_NAME";
-    protected static final String TEST_LEVEL_2_REAL = "TEST_LEVEL_2_REAL";
     protected static int TEST_LEVEL_2_REAL_ID = -1;
+    protected static int TEST_LEVEL_3_REAL_ID = -1;
+    protected static int TEST_LEVEL_4_REAL_ID = -1;
+    // Level numbers
+    protected static final int TEST_LEVEL_1_SIMULATED = 1;
+    protected static final int TEST_LEVEL_2_REAL = 2;
+    protected static final int TEST_LEVEL_3_REAL = 3;
+    protected static final int TEST_LEVEL_4_REAL = 4;
+    // Level Task ID
+    protected static int TEST_LEVEL_TASK_1_1_SIMULATED_ID = -1;
     protected static int TEST_LEVEL_TASK_1_2_REAL_ID = -1;
     protected static int TEST_LEVEL_TASK_2_2_REAL_ID = -1;
     protected static int TEST_LEVEL_TASK_1_3_REAL_ID = -1;
     protected static int TEST_LEVEL_TASK_2_3_REAL_ID = -1;
-    protected static int TEST_LEVEL_TASK_3_3_SIM_ID = -1;
-    protected static String TEST_LEVEL_TASK_3_3_SIM_NAME = "TEST_LEVEL_TASK_3_3_SIM_NAME";
-    protected static int TEST_LEVEL_TASK_4_3_SIM_ID = -1;
-    protected static String TEST_LEVEL_TASK_4_3_SIM_NAME = "TEST_LEVEL_TASK_4_3_SIM_NAME";
-    protected static final String TEST_LEVEL_3_REAL = "TEST_LEVEL_3_REAL";
-    protected static int TEST_LEVEL_3_REAL_ID = -1;
-    protected static int TEST_LEVEL_TASK_5_4_REAL_ID = -1;
-    protected static int TEST_LEVEL_TASK_6_4_REAL_ID = -1;
-    protected static final String TEST_LEVEL_4_SIMULATED = "TEST_LEVEL_4_SIMULATED";
-    protected static int TEST_LEVEL_4_SIMULATED_ID = -1;
-    protected static final String TEST_LEVEL_5_REAL = "TEST_LEVEL_5_REAL";
-    protected static int TEST_LEVEL_5_REAL_ID = -1;
-    protected static int TEST_LEVEL_4_REAL_ID = -1;
-    protected static String TEST_LEVEL_4_REAL = "TEST_LEVEL_4_REAL";
-    protected static final String TEST_NOOB_TERRITORY = "TEST_NOOB_TERRITORY";
-    protected static int TEST_NOOB_TERRITORY_ID = -1;
+    protected static int TEST_LEVEL_TASK_3_3_SIMULATED_ID = -1;
+    protected static int TEST_LEVEL_TASK_4_3_SIMULATED_ID = -1;
+    protected static int TEST_LEVEL_TASK_1_4_REAL_ID = -1;
+    protected static int TEST_LEVEL_TASK_2_4_REAL_ID = -1;
+    // Level task name
+    protected static String TEST_LEVEL_TASK_1_1_SIMULATED_NAME = "TEST_LEVEL_TASK_1_1_SIMULATED_NAME";
+    protected static String TEST_LEVEL_TASK_3_3_SIMULATED_NAME = "TEST_LEVEL_TASK_3_3_SIMULATED_NAME";
+    protected static String TEST_LEVEL_TASK_4_3_SIMULATED_NAME = "TEST_LEVEL_TASK_4_3_SIMULATED_NAME";
     // Terrain
     protected static int TERRAIN_IMAGE_4x10 = -1;
     protected static int TERRAIN_IMAGE_10x4 = -1;
@@ -203,6 +209,8 @@ abstract public class AbstractServiceTest {
     // Territories
     protected static String COMPLEX_TERRITORY = "ComplexTerritory";
     protected static int COMPLEX_TERRITORY_ID = -1;
+    protected static final String TEST_NOOB_TERRITORY = "TEST_NOOB_TERRITORY";
+    protected static int TEST_NOOB_TERRITORY_ID = -1;
 
     @Autowired
     private UserGuidanceService userGuidanceService;
@@ -1049,7 +1057,8 @@ abstract public class AbstractServiceTest {
         realGameQuestHub.setStartTerritory(territoryService.getDbTerritoryCrudServiceHelper().readDbChild(territoryId));
         realGameQuestHub.setStartItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
         DbLevel dbLevel = createDbLevel2(realGameQuestHub);
-        dbLevel.setName(TEST_LEVEL_2_REAL);
+        dbLevel.setXp(Integer.MAX_VALUE);
+        dbLevel.setNumber(TEST_LEVEL_2_REAL);
         // Limitation
         DbItemTypeLimitation builder = dbLevel.getItemTypeLimitationCrud().createDbChild();
         builder.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
@@ -1082,20 +1091,15 @@ abstract public class AbstractServiceTest {
         startQuestHub.setName(TEST_QUEST_HUB_1);
         startQuestHub.setRealBaseRequired(false);
         DbLevel dbSimLevel = startQuestHub.getLevelCrud().createDbChild();
-        dbSimLevel.setName(TEST_LEVEL_1_SIMULATED);
+        dbSimLevel.setNumber(TEST_LEVEL_1_SIMULATED);
+        dbSimLevel.setXp(1);
         DbLevelTask dbSimLevelTask = dbSimLevel.getLevelTaskCrud().createDbChild();
         dbSimLevelTask.setDbTutorialConfig(tut1);
-        dbSimLevelTask.setName(TEST_LEVEL_TASK_1_SIMULATED_NAME);
+        dbSimLevelTask.setName(TEST_LEVEL_TASK_1_1_SIMULATED_NAME);
         dbSimLevelTask.setXp(1);
         userGuidanceService.getCrudQuestHub().updateDbChild(startQuestHub);
         TEST_LEVEL_1_SIMULATED_ID = dbSimLevel.getId();
-        TEST_LEVEL_TASK_1_SIMULATED_ID = dbSimLevelTask.getId();
-        DbConditionConfig tutorialCondition = new DbConditionConfig();
-        tutorialCondition.setConditionTrigger(ConditionTrigger.XP_INCREASED);
-        DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
-        dbCountComparisonConfig.setCount(1);
-        tutorialCondition.setDbAbstractComparisonConfig(dbCountComparisonConfig);
-        dbSimLevel.setDbConditionConfig(tutorialCondition);
+        TEST_LEVEL_TASK_1_1_SIMULATED_ID = dbSimLevelTask.getId();
 
         // Setup QuestHub1 - Level1 - 2*LevelTask
         DbQuestHub realGameQuestHub1 = userGuidanceService.getCrudQuestHub().createDbChild();
@@ -1107,28 +1111,18 @@ abstract public class AbstractServiceTest {
 
         DbLevel dbLevel1 = createDbLevel2(realGameQuestHub1);
         dbLevel1.setHouseSpace(5);
-        dbLevel1.setName(TEST_LEVEL_2_REAL);
+        dbLevel1.setNumber(TEST_LEVEL_2_REAL);
+        dbLevel1.setXp(220);
         setLimitation(dbLevel1);
-        DbConditionConfig levelCondition = new DbConditionConfig();
-        levelCondition.setConditionTrigger(ConditionTrigger.XP_INCREASED);
-        dbCountComparisonConfig = new DbCountComparisonConfig();
-        dbCountComparisonConfig.setCount(220);
-        levelCondition.setDbAbstractComparisonConfig(dbCountComparisonConfig);
-        dbLevel1.setDbConditionConfig(levelCondition);
         DbLevelTask dbLevelTask1 = setupCreateLevelTask1RealGameLevel(dbLevel1);
         DbLevelTask dbLevelTask2 = setupCreateLevelTask2RealGameLevel(dbLevel1);
 
         DbLevel dbLevel2 = realGameQuestHub1.getLevelCrud().createDbChild();
         dbLevel2.setHouseSpace(5);
-        dbLevel2.setName(TEST_LEVEL_3_REAL);
+        dbLevel2.setNumber(TEST_LEVEL_3_REAL);
         dbLevel2.setMaxMoney(10000);
         setLimitation(dbLevel2);
-        levelCondition = new DbConditionConfig();
-        levelCondition.setConditionTrigger(ConditionTrigger.XP_INCREASED);
-        dbCountComparisonConfig = new DbCountComparisonConfig();
-        dbCountComparisonConfig.setCount(400);
-        levelCondition.setDbAbstractComparisonConfig(dbCountComparisonConfig);
-        dbLevel2.setDbConditionConfig(levelCondition);
+        dbLevel2.setXp(400);
         DbLevelTask dbLevelTask3 = setupCreateLevelTask3RealGameLevel(dbLevel2);
         DbLevelTask dbLevelTask4 = setupCreateLevelTask4RealGameLevel(dbLevel2);
         DbTutorialConfig tut2 = createTutorial1();
@@ -1136,16 +1130,17 @@ abstract public class AbstractServiceTest {
         DbLevelTask dbSimLevelTask2 = dbLevel2.getLevelTaskCrud().createDbChild();
         dbSimLevelTask2.setDbTutorialConfig(tut2);
         dbSimLevelTask2.setXp(2);
-        dbSimLevelTask2.setName(TEST_LEVEL_TASK_3_3_SIM_NAME);
+        dbSimLevelTask2.setName(TEST_LEVEL_TASK_3_3_SIMULATED_NAME);
         DbLevelTask dbSimLevelTask3 = dbLevel2.getLevelTaskCrud().createDbChild();
         dbSimLevelTask3.setDbTutorialConfig(tut3);
         dbSimLevelTask3.setXp(3);
-        dbSimLevelTask3.setName(TEST_LEVEL_TASK_4_3_SIM_NAME);
+        dbSimLevelTask3.setName(TEST_LEVEL_TASK_4_3_SIMULATED_NAME);
 
         DbLevel dbLevel3 = realGameQuestHub1.getLevelCrud().createDbChild();
+        dbLevel3.setXp(Integer.MAX_VALUE);
         dbLevel3.setMaxMoney(10000);
         dbLevel3.setHouseSpace(10);
-        dbLevel3.setName(TEST_LEVEL_4_REAL);
+        dbLevel3.setNumber(TEST_LEVEL_4_REAL);
         setLimitation(dbLevel3);
         DbLevelTask dbLevelTask5 = setupCreateLevelTask5RealGameLevel(dbLevel3);
         DbLevelTask dbLevelTask6 = setupCreateLevelTask6RealGameLevel(dbLevel3);
@@ -1158,11 +1153,11 @@ abstract public class AbstractServiceTest {
         TEST_LEVEL_3_REAL_ID = dbLevel2.getId();
         TEST_LEVEL_TASK_1_3_REAL_ID = dbLevelTask3.getId();
         TEST_LEVEL_TASK_2_3_REAL_ID = dbLevelTask4.getId();
-        TEST_LEVEL_TASK_3_3_SIM_ID = dbSimLevelTask2.getId();
-        TEST_LEVEL_TASK_4_3_SIM_ID = dbSimLevelTask3.getId();
+        TEST_LEVEL_TASK_3_3_SIMULATED_ID = dbSimLevelTask2.getId();
+        TEST_LEVEL_TASK_4_3_SIMULATED_ID = dbSimLevelTask3.getId();
         TEST_LEVEL_4_REAL_ID = dbLevel3.getId();
-        TEST_LEVEL_TASK_5_4_REAL_ID = dbLevelTask5.getId();
-        TEST_LEVEL_TASK_6_4_REAL_ID = dbLevelTask6.getId();
+        TEST_LEVEL_TASK_1_4_REAL_ID = dbLevelTask5.getId();
+        TEST_LEVEL_TASK_2_4_REAL_ID = dbLevelTask6.getId();
 
         userGuidanceService.activateLevels();
     }
@@ -1193,7 +1188,7 @@ abstract public class AbstractServiceTest {
         dbLevel1.setHouseSpace(20);
         dbLevel1.setMaxMoney(10000);
         dbLevel1.setItemSellFactor(0.5);
-        dbLevel1.setName(TEST_LEVEL_2_REAL);
+        dbLevel1.setNumber(TEST_LEVEL_2_REAL);
         // Limitation
         DbItemTypeLimitation builder = dbLevel1.getItemTypeLimitationCrud().createDbChild();
         builder.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
@@ -1439,7 +1434,7 @@ abstract public class AbstractServiceTest {
     protected DbXpSettings setupXpSettings() {
         DbXpSettings dbXpSettings = xpServic.getXpPointSettings();
         dbXpSettings.setKillPriceFactor(1);
-        dbXpSettings.setKillQueuePeriod(2000);
+        dbXpSettings.setKillQueuePeriod(20);
         dbXpSettings.setKillQueueSize(10000);
         dbXpSettings.setBuiltPriceFactor(0.5);
         xpServic.saveXpPointSettings(dbXpSettings);
@@ -1565,7 +1560,7 @@ abstract public class AbstractServiceTest {
         });
     }
 
-    // ------------------- Div --------------------
+    // ------------------- Wicket --------------------
 
     /**
      * Asserts that that the BookmarkablePageLink identified by "id" points to the page as expected
@@ -1592,6 +1587,29 @@ abstract public class AbstractServiceTest {
         junit.framework.Assert.assertEquals(
                 "One or more of the parameters associated with the BookmarkablePageLink: " + id +
                         " do not match", parameters, pageLink.getPageParameters());
+    }
+
+    public void assertCssClass(WicketTester tester, String path, String cssClass) {
+        Component component = tester.getComponentFromLastRenderedPage(path);
+        Assert.assertNotNull("No such component: " + path, component);
+        for (IBehavior iBehavior : component.getBehaviors()) {
+            if (iBehavior instanceof SimpleAttributeModifier) {
+                SimpleAttributeModifier simpleAttributeModifier = (SimpleAttributeModifier) iBehavior;
+                if (simpleAttributeModifier.getAttribute().equals("class") && simpleAttributeModifier.getValue().equals(cssClass)) {
+                    return;
+                }
+            }
+        }
+        Assert.fail("No such CSS class: " + cssClass);
+    }
+
+    public void assertCmsImage(WicketTester tester, String path, DbCmsImage descImg) throws Exception {
+        Component component = tester.getComponentFromLastRenderedPage(path);
+        Assert.assertNotNull("No such component: " + path, component);
+        Image image = (Image) component;
+        LocalizedImageResource localizedImageResource = (LocalizedImageResource) getPrivateField(Image.class, image, "localizedImageResource");
+        ValueMap valueMap = (ValueMap) getPrivateField(LocalizedImageResource.class, localizedImageResource, "resourceParameters");
+        Assert.assertEquals((int) descImg.getId(), valueMap.getInt(CmsImageResource.ID));
     }
 
 

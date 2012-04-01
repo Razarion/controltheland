@@ -22,7 +22,7 @@ import java.util.Map;
  * Time: 18:48:18
  */
 public class LevelScope implements Serializable {
-    private String levelName;
+    private int number;
     private int maxMoney;
     private Map<Integer, Integer> itemTypeLimitation;
     private int houseSpace;
@@ -35,8 +35,8 @@ public class LevelScope implements Serializable {
     public LevelScope() {
     }
 
-    public LevelScope(String levelName, int maxMoney, Map<Integer, Integer> itemTypeLimitation, int houseSpace, double itemSellFactor, RadarMode radarMode) {
-        this.levelName = levelName;
+    public LevelScope(int number, int maxMoney, Map<Integer, Integer> itemTypeLimitation, int houseSpace, double itemSellFactor, RadarMode radarMode) {
+        this.number = number;
         this.maxMoney = maxMoney;
         this.itemTypeLimitation = itemTypeLimitation;
         this.houseSpace = houseSpace;
@@ -44,8 +44,8 @@ public class LevelScope implements Serializable {
         this.radarMode = radarMode;
     }
 
-    public String getLevelName() {
-        return levelName;
+    public int getNumber() {
+        return number;
     }
 
     public int getMaxMoney() {

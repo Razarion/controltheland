@@ -270,23 +270,23 @@ public class TestTracking extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         beginHttpRequestAndOpenSessionInViewFilter();
         long timeT1 = System.currentTimeMillis();
-        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_JAVA_SCRIPT, 1500, 200), uuidTut, TEST_LEVEL_TASK_3_3_SIM_ID);
+        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_JAVA_SCRIPT, 1500, 200), uuidTut, TEST_LEVEL_TASK_3_3_SIMULATED_ID);
         long timeT2 = System.currentTimeMillis();
         endHttpRequestAndOpenSessionInViewFilter();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GAME, 2000, 300), uuidReal, null);
         endHttpRequestAndOpenSessionInViewFilter();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GUI, 2500, 110), uuidTut, TEST_LEVEL_TASK_3_3_SIM_ID);
+        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GUI, 2500, 110), uuidTut, TEST_LEVEL_TASK_3_3_SIMULATED_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_UNITS, 3000, 130), uuidReal, null);
         endHttpRequestAndOpenSessionInViewFilter();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_MAP, 3500, 150), uuidTut, TEST_LEVEL_TASK_3_3_SIM_ID);
+        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_MAP, 3500, 150), uuidTut, TEST_LEVEL_TASK_3_3_SIMULATED_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().sendStartupTerminated(true, 2000, uuidTut, TEST_LEVEL_TASK_3_3_SIM_ID);
+        getMovableService().sendStartupTerminated(true, 2000, uuidTut, TEST_LEVEL_TASK_3_3_SIMULATED_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_MAP, 1900, 60), uuidReal, null);
@@ -312,7 +312,7 @@ public class TestTracking extends AbstractServiceTest {
         Assert.assertTrue(timeS1 <= lifecycleTrackingInfo.getStartServer());
         Assert.assertTrue(timeS2 >= lifecycleTrackingInfo.getStartServer());
         Assert.assertEquals("Base 1", lifecycleTrackingInfo.getBaseName());
-        Assert.assertEquals(TEST_LEVEL_3_REAL, lifecycleTrackingInfo.getLevel());
+        Assert.assertEquals(Integer.toString(TEST_LEVEL_3_REAL), lifecycleTrackingInfo.getLevel());
         Assert.assertEquals(1000, lifecycleTrackingInfo.getStartupDuration());
         Assert.assertEquals(4, lifecycleTrackingInfo.getGameStartups().size());
         Assert.assertNull(lifecycleTrackingInfo.getLevelTaskName());
@@ -326,8 +326,8 @@ public class TestTracking extends AbstractServiceTest {
         Assert.assertTrue(timeT1 <= lifecycleTrackingInfo.getStartServer());
         Assert.assertTrue(timeT2 >= lifecycleTrackingInfo.getStartServer());
         Assert.assertNull(lifecycleTrackingInfo.getBaseName());
-        Assert.assertEquals(TEST_LEVEL_3_REAL, lifecycleTrackingInfo.getLevel());
-        Assert.assertEquals(TEST_LEVEL_TASK_3_3_SIM_NAME, lifecycleTrackingInfo.getLevelTaskName());
+        Assert.assertEquals(Integer.toString(TEST_LEVEL_3_REAL), lifecycleTrackingInfo.getLevel());
+        Assert.assertEquals(TEST_LEVEL_TASK_3_3_SIMULATED_NAME, lifecycleTrackingInfo.getLevelTaskName());
         Assert.assertEquals(2000, lifecycleTrackingInfo.getStartupDuration());
         Assert.assertEquals(3, lifecycleTrackingInfo.getGameStartups().size());
         Assert.assertEquals("Load JavaScript", lifecycleTrackingInfo.getGameStartups().get(0).getTask());
@@ -357,23 +357,23 @@ public class TestTracking extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         beginHttpRequestAndOpenSessionInViewFilter();
         long timeT1 = System.currentTimeMillis();
-        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_JAVA_SCRIPT, 1500, 200), uuidTut, TEST_LEVEL_TASK_3_3_SIM_ID);
+        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_JAVA_SCRIPT, 1500, 200), uuidTut, TEST_LEVEL_TASK_3_3_SIMULATED_ID);
         long timeT2 = System.currentTimeMillis();
         endHttpRequestAndOpenSessionInViewFilter();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GAME, 2000, 300), uuidReal, null);
         endHttpRequestAndOpenSessionInViewFilter();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GUI, 2500, 110), uuidTut, TEST_LEVEL_TASK_3_3_SIM_ID);
+        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GUI, 2500, 110), uuidTut, TEST_LEVEL_TASK_3_3_SIMULATED_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_UNITS, 3000, 130), uuidReal, null);
         endHttpRequestAndOpenSessionInViewFilter();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_MAP, 3500, 150), uuidTut, TEST_LEVEL_TASK_3_3_SIM_ID);
+        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_MAP, 3500, 150), uuidTut, TEST_LEVEL_TASK_3_3_SIMULATED_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().sendStartupTerminated(false, 2000, uuidTut, TEST_LEVEL_TASK_3_3_SIM_ID);
+        getMovableService().sendStartupTerminated(false, 2000, uuidTut, TEST_LEVEL_TASK_3_3_SIMULATED_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_MAP, 1900, 60), uuidReal, null);
@@ -396,7 +396,7 @@ public class TestTracking extends AbstractServiceTest {
         Assert.assertTrue(timeS1 <= lifecycleTrackingInfo.getStartServer());
         Assert.assertTrue(timeS2 >= lifecycleTrackingInfo.getStartServer());
         Assert.assertEquals("Base 1", lifecycleTrackingInfo.getBaseName());
-        Assert.assertEquals(TEST_LEVEL_3_REAL, lifecycleTrackingInfo.getLevel());
+        Assert.assertEquals(Integer.toString(TEST_LEVEL_3_REAL), lifecycleTrackingInfo.getLevel());
         Assert.assertEquals(0, lifecycleTrackingInfo.getStartupDuration());
         Assert.assertEquals(4, lifecycleTrackingInfo.getGameStartups().size());
         Assert.assertNull(lifecycleTrackingInfo.getLevelTaskName());
@@ -410,8 +410,8 @@ public class TestTracking extends AbstractServiceTest {
         Assert.assertTrue(timeT1 <= lifecycleTrackingInfo.getStartServer());
         Assert.assertTrue(timeT2 >= lifecycleTrackingInfo.getStartServer());
         Assert.assertNull(lifecycleTrackingInfo.getBaseName());
-        Assert.assertEquals(TEST_LEVEL_3_REAL, lifecycleTrackingInfo.getLevel());
-        Assert.assertEquals(TEST_LEVEL_TASK_3_3_SIM_NAME, lifecycleTrackingInfo.getLevelTaskName());
+        Assert.assertEquals(Integer.toString(TEST_LEVEL_3_REAL), lifecycleTrackingInfo.getLevel());
+        Assert.assertEquals(TEST_LEVEL_TASK_3_3_SIMULATED_NAME, lifecycleTrackingInfo.getLevelTaskName());
         Assert.assertEquals(2000, lifecycleTrackingInfo.getStartupDuration());
         Assert.assertEquals(3, lifecycleTrackingInfo.getGameStartups().size());
         Assert.assertEquals("Load JavaScript", lifecycleTrackingInfo.getGameStartups().get(0).getTask());
@@ -454,11 +454,11 @@ public class TestTracking extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_JAVA_SCRIPT, 1000, 100), uuid, TEST_LEVEL_TASK_4_3_SIM_ID);
+        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_JAVA_SCRIPT, 1000, 100), uuid, TEST_LEVEL_TASK_4_3_SIMULATED_ID);
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, uuid, TEST_LEVEL_TASK_4_3_SIM_ID, "task1", 1, 1500);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, uuid, TEST_LEVEL_TASK_4_3_SIMULATED_ID, "task1", 1, 1500);
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -503,8 +503,8 @@ public class TestTracking extends AbstractServiceTest {
         dialogTrackings.add(new DialogTracking(uuid, null, null, null, null, null, "dialog3", false, 44, 1140));
 
         getMovableService().sendEventTrackerItems(eventTrackingItems, itemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings, dialogTrackings);
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, uuid, TEST_LEVEL_TASK_4_3_SIM_ID, "task2", 1, 1550);
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, uuid, TEST_LEVEL_TASK_4_3_SIM_ID, "tutorial1", 1, 1550);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, uuid, TEST_LEVEL_TASK_4_3_SIMULATED_ID, "task2", 1, 1550);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, uuid, TEST_LEVEL_TASK_4_3_SIMULATED_ID, "tutorial1", 1, 1550);
         endHttpRequestAndOpenSessionInViewFilter();
     }
 
@@ -517,15 +517,15 @@ public class TestTracking extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_JAVA_SCRIPT, 1600, 100), uuid, TEST_LEVEL_TASK_3_3_SIM_ID);
-        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GAME, 1700, 150), uuid, TEST_LEVEL_TASK_3_3_SIM_ID);
-        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GUI, 1850, 50), uuid, TEST_LEVEL_TASK_3_3_SIM_ID);
-        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_MAP, 1900, 200), uuid, TEST_LEVEL_TASK_3_3_SIM_ID);
+        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_JAVA_SCRIPT, 1600, 100), uuid, TEST_LEVEL_TASK_3_3_SIMULATED_ID);
+        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GAME, 1700, 150), uuid, TEST_LEVEL_TASK_3_3_SIMULATED_ID);
+        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GUI, 1850, 50), uuid, TEST_LEVEL_TASK_3_3_SIMULATED_ID);
+        getMovableService().sendStartupTask(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_MAP, 1900, 200), uuid, TEST_LEVEL_TASK_3_3_SIMULATED_ID);
         endHttpRequestAndOpenSessionInViewFilter();
 
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, uuid, TEST_LEVEL_TASK_3_3_SIM_ID, "task3", 1, 3000);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, uuid, TEST_LEVEL_TASK_3_3_SIMULATED_ID, "task3", 1, 3000);
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -574,8 +574,8 @@ public class TestTracking extends AbstractServiceTest {
         dialogTrackings.add(new DialogTracking(uuid, 130, 14, 15, 16, 49, "dialog14", true, 55, 2160));
 
         getMovableService().sendEventTrackerItems(eventTrackingItems, syncItemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings, dialogTrackings);
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, uuid, TEST_LEVEL_TASK_3_3_SIM_ID, "task4", 1, 3100);
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, uuid, TEST_LEVEL_TASK_3_3_SIM_ID, "tutorial2", 1, 3100);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TASK, uuid, TEST_LEVEL_TASK_3_3_SIMULATED_ID, "task4", 1, 3100);
+        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, uuid, TEST_LEVEL_TASK_3_3_SIMULATED_ID, "tutorial2", 1, 3100);
         endHttpRequestAndOpenSessionInViewFilter();
     }
 
@@ -643,9 +643,9 @@ public class TestTracking extends AbstractServiceTest {
         Assert.assertEquals("task1", tutorialTrackingInfo.getDbTutorialProgresss().get(0).getTutorialTaskName());
         Assert.assertEquals("task2", tutorialTrackingInfo.getDbTutorialProgresss().get(1).getTutorialTaskName());
         Assert.assertEquals("tutorial1", tutorialTrackingInfo.getDbTutorialProgresss().get(2).getTutorialTaskName());
-        Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIM_NAME, tutorialTrackingInfo.getDbTutorialProgresss().get(0).getLevelTaskName());
-        Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIM_NAME, tutorialTrackingInfo.getDbTutorialProgresss().get(1).getLevelTaskName());
-        Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIM_NAME, tutorialTrackingInfo.getDbTutorialProgresss().get(2).getLevelTaskName());
+        Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIMULATED_NAME, tutorialTrackingInfo.getDbTutorialProgresss().get(0).getLevelTaskName());
+        Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIMULATED_NAME, tutorialTrackingInfo.getDbTutorialProgresss().get(1).getLevelTaskName());
+        Assert.assertEquals(TEST_LEVEL_TASK_4_3_SIMULATED_NAME, tutorialTrackingInfo.getDbTutorialProgresss().get(2).getLevelTaskName());
         Assert.assertEquals(101, tutorialTrackingInfo.getDbEventTrackingStart().getClientWidth());
         Assert.assertEquals(102, tutorialTrackingInfo.getDbEventTrackingStart().getClientHeight());
         // Playback

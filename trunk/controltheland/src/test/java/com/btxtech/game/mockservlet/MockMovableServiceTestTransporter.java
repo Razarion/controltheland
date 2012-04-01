@@ -46,7 +46,7 @@ public class MockMovableServiceTestTransporter extends MockMovableService {
         taskConfigs.add(new TaskConfig(ownItems, null, null, 10, 100, 1000, 0.5, "TestTask1", null, itemTypeLimitation, RadarMode.MAP));
         TutorialConfig tutorialConfig = new TutorialConfig(taskConfigs, "MyTestBase", 500, 500, false, "", false);
         simulationInfo.setTutorialConfig(tutorialConfig);
-        simulationInfo.setLevelName("TestLevel");
+        simulationInfo.setLevelNumber(1);
     }
 
     protected void setupTerrain(GameInfo gameInfo) {

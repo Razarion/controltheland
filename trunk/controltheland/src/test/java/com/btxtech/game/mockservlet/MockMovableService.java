@@ -125,7 +125,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
         taskConfigs.add(new TaskConfig(ownItems, null, conditionConfig2, 10, 100, 1000, 0.5, "TestTask2", null, itemTypeLimitation, RadarMode.MAP));
         TutorialConfig tutorialConfig = new TutorialConfig(taskConfigs, "MyTestBase", 500, 500, false, "", false);
         simulationInfo.setTutorialConfig(tutorialConfig);
-        simulationInfo.setLevelName("TestLevel");
+        simulationInfo.setLevelNumber(1);
     }
 
     protected void setupTerrain(GameInfo gameInfo) {

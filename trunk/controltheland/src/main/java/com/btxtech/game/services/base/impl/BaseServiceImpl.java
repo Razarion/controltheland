@@ -415,10 +415,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             } else if (money + price > levelScope.getMaxMoney()) {
                 double amount = levelScope.getMaxMoney() - money;
                 base.depositMoney(amount);
-                statisticsService.onMoneyEarned(simpleBase, amount);
             } else {
                 base.depositMoney(price);
-                statisticsService.onMoneyEarned(simpleBase, price);
             }
             serverConditionService.onMoneyIncrease(base.getSimpleBase(), price);
         }
@@ -429,7 +427,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         Base base = getBase(simpleBase);
         if (!isBot(simpleBase)) {
             base.withdrawalMoney(price);
-            statisticsService.onMoneySpent(simpleBase, price);
         }
     }
 

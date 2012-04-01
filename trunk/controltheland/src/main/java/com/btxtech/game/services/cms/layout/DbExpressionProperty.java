@@ -1,7 +1,11 @@
 package com.btxtech.game.services.cms.layout;
 
+import com.btxtech.game.services.cms.DbCmsImage;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 
 /**
  * User: beat
@@ -26,6 +30,11 @@ public class DbExpressionProperty extends DbContent implements DataProviderInfo 
     private boolean defaultSortable = false;
     private boolean defaultSortableAsc = false;
     private String sortLinkCssClass;
+    private String sortLinkCssClassActive;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbCmsImage sortAscActiveImage;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbCmsImage sortDescActiveImage;
     private String linkCssClass;
     private boolean link;
 
@@ -119,5 +128,29 @@ public class DbExpressionProperty extends DbContent implements DataProviderInfo 
 
     public void setSortLinkCssClass(String sortLinkCssClass) {
         this.sortLinkCssClass = sortLinkCssClass;
+    }
+
+    public String getSortLinkCssClassActive() {
+        return sortLinkCssClassActive;
+    }
+
+    public void setSortLinkCssClassActive(String sortLinkCssClassActive) {
+        this.sortLinkCssClassActive = sortLinkCssClassActive;
+    }
+
+    public DbCmsImage getSortAscActiveImage() {
+        return sortAscActiveImage;
+    }
+
+    public void setSortAscActiveImage(DbCmsImage sortAscActiveImage) {
+        this.sortAscActiveImage = sortAscActiveImage;
+    }
+
+    public DbCmsImage getSortDescActiveImage() {
+        return sortDescActiveImage;
+    }
+
+    public void setSortDescActiveImage(DbCmsImage sortDescActiveImage) {
+        this.sortDescActiveImage = sortDescActiveImage;
     }
 }

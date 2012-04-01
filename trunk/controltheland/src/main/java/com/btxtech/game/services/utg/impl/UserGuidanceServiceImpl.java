@@ -23,6 +23,8 @@ import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
+import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
+import com.btxtech.game.jsre.common.utg.config.CountComparisonConfig;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.ContentProvider;
@@ -148,7 +150,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         userState.setDbLevelId(dbNextLevel.getId());
         // Tracking
         historyService.addLevelPromotionEntry(userState, dbNextLevel);
-        statisticsService.onLevelPromotion(userState);
         log.debug("User: " + userState + " has been promoted: " + dbOldLevel + " to " + dbNextLevel);
         // Create base if needed
         if (baseService.getBase(userState) == null && dbNextLevel.getParent().isRealBaseRequired()) {
@@ -213,10 +214,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     }
 
     private void activateConditions(UserState userState, DbLevel dbLevel, Collection<DbLevelTask> levelTaskDone) {
-        if (dbLevel.getDbConditionConfig() != null) {
-            ConditionConfig levelCondition = dbLevel.getDbConditionConfig().createConditionConfig(itemService);
-            serverConditionService.activateCondition(levelCondition, userState, null);
-        }
+        ConditionConfig levelCondition = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(null, dbLevel.getXp()));
+        serverConditionService.activateCondition(levelCondition, userState, null);
         for (DbLevelTask dbLevelTask : dbLevel.getLevelTaskCrud().readDbChildren()) {
             if (levelTaskDone != null && levelTaskDone.contains(dbLevelTask)) {
                 continue;

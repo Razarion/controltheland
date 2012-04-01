@@ -54,7 +54,7 @@ public class LevelPanel extends AbsolutePanel {
     }
 
     public void onLevelUp(LevelScope levelScope) {
-        levelName.setText(levelScope.getLevelName());
+        levelName.setText(Integer.toString(levelScope.getNumber()));
         startBlink();
     }
 

@@ -1,14 +1,15 @@
 package com.btxtech.game.services.mgmt.impl;
 
+import com.btxtech.game.services.statistics.StatisticsEntry;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
-import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.condition.DbGenericComparisonValue;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -51,6 +52,8 @@ public class DbUserState {
     @JoinColumn(name = "dbUserState")
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Collection<DbGenericComparisonValue> dbGenericComparisonValues;
+    @Embedded
+    private StatisticsEntry statisticsEntry;
 
     /**
      * Used by hibernate
@@ -88,8 +91,8 @@ public class DbUserState {
     }
 
     public void addDbGenericComparisonValue(DbGenericComparisonValue dbGenericComparisonValue) {
-        if(dbGenericComparisonValues == null) {
-           dbGenericComparisonValues = new ArrayList<DbGenericComparisonValue>();
+        if (dbGenericComparisonValues == null) {
+            dbGenericComparisonValues = new ArrayList<DbGenericComparisonValue>();
         }
         dbGenericComparisonValues.add(dbGenericComparisonValue);
     }
@@ -104,6 +107,14 @@ public class DbUserState {
 
     public void setLevelTasksDone(Collection<DbLevelTask> levelTasksDone) {
         this.levelTasksDone = levelTasksDone;
+    }
+
+    public StatisticsEntry getStatisticsEntry() {
+        return statisticsEntry;
+    }
+
+    public void setStatisticsEntry(StatisticsEntry statisticsEntry) {
+        this.statisticsEntry = statisticsEntry;
     }
 
     @Override

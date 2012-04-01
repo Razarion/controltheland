@@ -8,6 +8,8 @@ import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.impl.BackupEntry;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
+import com.btxtech.game.services.statistics.StatisticsEntry;
+import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.condition.DbGenericComparisonValue;
 import org.hibernate.SessionFactory;
@@ -36,6 +38,8 @@ public class TestGenericComparisonValueContainer extends AbstractServiceTest {
     private PlatformTransactionManager transactionManager;
     @Autowired
     private ItemService itemService;
+    @Autowired
+    private StatisticsService statisticsService;
 
     @Test
     @DirtiesContext
@@ -135,8 +139,11 @@ public class TestGenericComparisonValueContainer extends AbstractServiceTest {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 BackupEntry backupEntry = new BackupEntry();
-                DbUserState dbUserState = new DbUserState(backupEntry, new UserState(), null);
+                UserState userState = new UserState();
+                DbUserState dbUserState = new DbUserState(backupEntry, userState, null);
                 dbUserState.addDbGenericComparisonValue(new DbGenericComparisonValue(1, save, itemService));
+                statisticsService.createAndAddBackup(dbUserState, userState);
+                dbUserState.setStatisticsEntry(new StatisticsEntry());
                 Set<DbUserState> dbUserStates = new HashSet<DbUserState>();
                 dbUserStates.add(dbUserState);
                 backupEntry.setUserStates(dbUserStates);

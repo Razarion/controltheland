@@ -29,10 +29,13 @@ public class TableHead extends Panel {
         visible = true;
 
         RepeatingView view = new RepeatingView("cell");
+        if (!contentContext.isSorting(dbContentList.getId())) {
+            contentContext.setDefaultSort(dbContentList);
+        }
         for (DbContent dbContent : dbContentList.getColumnsCrud().readDbChildren()) {
             String name = dbContent.getName();
             if (dbContent instanceof DbExpressionProperty && ((DbExpressionProperty) dbContent).isSortable()) {
-                view.add(new TableHeadCell(view.newChildId(), dbContentList.getId(), name, beanIdPathElement, contentContext, ((DbExpressionProperty)dbContent).getSortLinkCssClass()));
+                view.add(new TableHeadCell(view.newChildId(), dbContentList.getId(), (DbExpressionProperty) dbContent, beanIdPathElement, contentContext));
             } else {
                 view.add(new Label(view.newChildId(), name));
             }

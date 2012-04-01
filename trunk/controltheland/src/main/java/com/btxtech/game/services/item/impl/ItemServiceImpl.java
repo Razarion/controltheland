@@ -247,6 +247,14 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             throw new IllegalStateException("SyncItem is still alive: " + killedItem);
         }
 
+        if (killedItem instanceof SyncBaseItem) {
+            // Call before base is deleted
+            if (actor != null) {
+                statisticsService.onItemKilled((SyncBaseItem) killedItem, actor);
+            }
+        }
+
+
         synchronized (items) {
             if (items.remove(killedItem.getId()) == null) {
                 throw new IllegalStateException("Id does not exist: " + killedItem);
@@ -266,7 +274,6 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             actionService.removeGuardingBaseItem((SyncBaseItem) killedItem);
             if (actor != null) {
                 Base actorBase = baseService.getBase(actor);
-                statisticsService.onItemKilled((SyncBaseItem) killedItem, actorBase.getSimpleBase());
                 xpService.onItemKilled(actorBase, (SyncBaseItem) killedItem);
                 serverConditionService.onSyncItemKilled(actor, (SyncBaseItem) killedItem);
             }
