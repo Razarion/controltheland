@@ -54,16 +54,16 @@ public class TestCrud {
         sort = new ContentSortList();
         sort.addAsc("n.i");
         sorted = (List<TestSortClass>) provider.readDbChildren(sort);
-        Assert.assertEquals(2, (int) sorted.get(0).getId());
-        Assert.assertEquals(1, (int) sorted.get(1).getId());
+        Assert.assertEquals(1, (int) sorted.get(0).getId());
+        Assert.assertEquals(2, (int) sorted.get(1).getId());
         Assert.assertEquals(3, (int) sorted.get(2).getId());
 
         sort = new ContentSortList();
         sort.addDesc("n.i");
         sorted = (List<TestSortClass>) provider.readDbChildren(sort);
         Assert.assertEquals(3, (int) sorted.get(0).getId());
-        Assert.assertEquals(2, (int) sorted.get(1).getId());
-        Assert.assertEquals(1, (int) sorted.get(2).getId());
+        Assert.assertEquals(1, (int) sorted.get(1).getId());
+        Assert.assertEquals(2, (int) sorted.get(2).getId());
     }
 
     public class TestSortClass extends SimpleCrudChild {
