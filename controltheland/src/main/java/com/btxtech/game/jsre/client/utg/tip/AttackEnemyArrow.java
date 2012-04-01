@@ -41,7 +41,12 @@ public class AttackEnemyArrow {
         } else if (crossPoints.size() == 0) {
             arrowHead = enemyBaseItem.getSyncItemArea().getPosition();
         } else {
-            throw new IllegalArgumentException("AttackEnemyArrow can not calculate arrow head point");
+            throw new IllegalArgumentException("AttackEnemyArrow can not calculate arrow head point: crossPoints.size() " + crossPoints.size()
+                    + " rectangle: " + rectangle
+                    + " rectangle.getCenter(): " + rectangle.getCenter()
+                    + " enemyBaseItem: " + enemyBaseItem
+                    + " enemyBaseItem.getSyncItemArea().getPosition(): " + enemyBaseItem.getSyncItemArea().getPosition()
+                    + " line: " + line);
         }
         if (rectangle.getCenter().equals(arrowHead)) {
             angel = 0;
