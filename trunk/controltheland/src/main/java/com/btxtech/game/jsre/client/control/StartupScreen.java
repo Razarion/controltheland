@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.control;
 
+import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.google.gwt.dom.client.Element;
@@ -31,13 +32,13 @@ import java.util.TreeSet;
  * Time: 18:19:28
  */
 public class StartupScreen implements StartupProgressListener {
+    private final static StartupScreen INSTANCE = new StartupScreen();
     private static final double FADE_STEP = 0.15;
     private static final int SCHEDULE = 50;
     private static final String PROGRESS_TABLE_ID = "progressTable";
     private static final String PROGRESS_BAR_ID = "progressBar";
     public static final String PROGRESS_TEXT_ID = "progressText";
     private static final int MAX_PROGRESS = 30;
-    private final static StartupScreen INSTANCE = new StartupScreen();
     private Timer fadeTimer;
     private double currentFade;
     private Runnable afterFade;
@@ -95,6 +96,7 @@ public class StartupScreen implements StartupProgressListener {
                     setOpacity(1.0);
                     if (afterFade != null) {
                         afterFade.run();
+                        afterFade = null;
                     }
                 } else {
                     setOpacity(currentFade);
@@ -128,8 +130,14 @@ public class StartupScreen implements StartupProgressListener {
         startScreen.getStyle().setProperty("opacity", Double.toString(opacity));
     }
 
-    public void fadeOut(Runnable afterFade) {
-        this.afterFade = afterFade;
+
+    public void fadeOutAndStart(final GameStartupSeq startupSeq) {
+        this.afterFade = new Runnable() {
+            @Override
+            public void run() {
+                ClientServices.getInstance().getClientRunner().start(startupSeq);
+            }
+        };
         attachStartScreen();
         startFadeOut();
     }

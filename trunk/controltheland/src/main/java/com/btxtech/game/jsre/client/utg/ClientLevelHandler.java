@@ -13,13 +13,13 @@
 
 package com.btxtech.game.jsre.client.utg;
 
-import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
+import com.btxtech.game.jsre.client.control.StartupScreen;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
@@ -96,10 +96,10 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
         switch (gameFlow.getType()) {
             case START_NEXT_LEVEL_TASK_TUTORIAL:
                 nextTaskId = gameFlow.getNextTutorialLevelTaskId();
-                ClientServices.getInstance().getClientRunner().start(GameStartupSeq.WARM_SIMULATED);
+                StartupScreen.getInstance().fadeOutAndStart(GameStartupSeq.WARM_SIMULATED);
                 return;
             case START_REAL_GAME:
-                ClientServices.getInstance().getClientRunner().start(GameStartupSeq.WARM_REAL);
+                StartupScreen.getInstance().fadeOutAndStart(GameStartupSeq.WARM_REAL);
                 return;
             case SHOW_LEVEL_TASK_DONE_PAGE:
                 Window.open(Connection.getInstance().getGameInfo().getPredefinedUrls().get(CmsUtil.CmsPredefinedPage.LEVEL_TASK_DONE), CmsUtil.TARGET_SELF, "");
