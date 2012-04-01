@@ -21,19 +21,18 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.user.client.Timer;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  * User: beat
  * Date: 06.04.2010
  * Time: 21:23:04
  */
 public class RadarItemView extends MiniMap {
-    public static final int BASE_ITEM_SIZE = 10;
-    public static final int RESOURCE_ITEM_SIZE = 30;
-    public static final double WHOLE_RADIUS = 2 * Math.PI;
-    private Logger log = Logger.getLogger(RadarItemView.class.getName());
+    public static final int BASE_ITEM_SIZE_SMALL_MAP = 4;
+    public static final int OWN_BASE_ITEM_SIZE_SMALL_MAP = 6;
+    public static final int RESOURCE_ITEM_SIZE_SMALL_MAP = 2;
+    public static final int BASE_ITEM_SIZE = 2;
+    public static final int OWN_BASE_ITEM_SIZE = 3;
+    public static final int RESOURCE_ITEM_SIZE = 1;
 
     public RadarItemView(int width, int height) {
         super(width, height);
@@ -42,9 +41,6 @@ public class RadarItemView extends MiniMap {
     @Override
     public void onTerrainSettings(TerrainSettings terrainSettings) {
         super.onTerrainSettings(terrainSettings);
-        double scale = Math.min((double) getWidth() / (double) getTerrainSettings().getPlayFieldXSize(),
-                (double) getHeight() / (double) getTerrainSettings().getPlayFieldYSize()) / getScale();
-        getContext2d().setLineWidth(1.0 / scale);
         Timer timer = new Timer() {
 
             @Override
@@ -56,30 +52,42 @@ public class RadarItemView extends MiniMap {
     }
 
     private void refreshItems() {
-        getContext2d().save();
+        getContext2d().setTransform(1, 0, 0, 1, 0, 0); // No transformation
         double scale = Math.min((double) getWidth() / (double) getTerrainSettings().getPlayFieldXSize(),
-                (double) getHeight() / (double) getTerrainSettings().getPlayFieldYSize()) / getScale();
+                (double) getHeight() / (double) getTerrainSettings().getPlayFieldYSize());
         getContext2d().clearRect(0, 0, getTerrainSettings().getPlayFieldXSize(), getTerrainSettings().getPlayFieldYSize());
-        try {
-            getContext2d().scale(scale, scale);
-        } catch (Exception e) {
-            // Fails during tests
-            log.log(Level.SEVERE, "", e);
+        getContext2d().scale(scale, scale);
+
+        double ownSize;
+        double baseItemSize;
+        double resourceItemSize;
+        if (scale > 0.01) {
+            ownSize = OWN_BASE_ITEM_SIZE_SMALL_MAP / scale;
+            baseItemSize = BASE_ITEM_SIZE_SMALL_MAP / scale;
+            resourceItemSize = RESOURCE_ITEM_SIZE_SMALL_MAP / scale;
+        } else {
+            ownSize = OWN_BASE_ITEM_SIZE / scale;
+            baseItemSize = BASE_ITEM_SIZE / scale;
+            resourceItemSize = RESOURCE_ITEM_SIZE / scale;
         }
+
         for (ClientSyncItem clientSyncItem : ItemContainer.getInstance().getItems()) {
             if (clientSyncItem.isSyncBaseItem()) {
                 Index pos = clientSyncItem.getSyncItem().getSyncItemArea().getPosition();
                 if (pos == null) {
                     continue;
                 }
-                getContext2d().setStrokeStyle(ClientBase.getInstance().getBaseHtmlColor(clientSyncItem.getSyncBaseItem().getBase()));
-                getContext2d().strokeRect(pos.getX(), pos.getY(), BASE_ITEM_SIZE, BASE_ITEM_SIZE);
+                getContext2d().setFillStyle(ClientBase.getInstance().getBaseHtmlColor(clientSyncItem.getSyncBaseItem().getBase()));
+                if (clientSyncItem.isMyOwnProperty()) {
+                    getContext2d().fillRect(pos.getX(), pos.getY(), ownSize, ownSize);
+                } else {
+                    getContext2d().fillRect(pos.getX(), pos.getY(), baseItemSize, baseItemSize);
+                }
             } else if (clientSyncItem.isSyncResourceItem()) {
                 Index pos = clientSyncItem.getSyncItem().getSyncItemArea().getPosition();
-                getContext2d().setStrokeStyle(ColorConstants.WHITE);
-                getContext2d().strokeRect(pos.getX(), pos.getY(), RESOURCE_ITEM_SIZE, RESOURCE_ITEM_SIZE);
+                getContext2d().setFillStyle(ColorConstants.WHITE);
+                getContext2d().fillRect(pos.getX(), pos.getY(), resourceItemSize, resourceItemSize);
             }
         }
-        getContext2d().restore();
     }
 }
