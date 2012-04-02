@@ -461,19 +461,24 @@ abstract public class AbstractItemService implements ItemService {
 
     @Override
     public void sellItem(Id id) throws ItemDoesNotExistException, NotYourBaseException {
-        SyncBaseItem syncBaseItem = (SyncBaseItem) getItem(id);
-        getServices().getBaseService().checkBaseAccess(syncBaseItem);
-        double health = syncBaseItem.getHealth();
-        double fullHealth = syncBaseItem.getBaseItemType().getHealth();
-        double price = syncBaseItem.getBaseItemType().getPrice();
-        double buildup = syncBaseItem.getBuildup();
-        killSyncItem(syncBaseItem, null, true, false);
-        SimpleBase simpleBase = syncBaseItem.getBase();
-        // May last item sold
-        if (getServices().getBaseService().isAlive(simpleBase)) {
-            double money = health / fullHealth * buildup * price * getServices().getCommonUserGuidanceService().getLevelScope().getItemSellFactor();
-            getServices().getBaseService().depositResource(money, simpleBase);
-            getServices().getBaseService().sendAccountBaseUpdate(simpleBase);
+        try {
+            SyncBaseItem syncBaseItem = (SyncBaseItem) getItem(id);
+            getServices().getBaseService().checkBaseAccess(syncBaseItem);
+            double health = syncBaseItem.getHealth();
+            double fullHealth = syncBaseItem.getBaseItemType().getHealth();
+            double price = syncBaseItem.getBaseItemType().getPrice();
+            double buildup = syncBaseItem.getBuildup();
+            killSyncItem(syncBaseItem, null, true, false);
+            SimpleBase simpleBase = syncBaseItem.getBase();
+            // May last item sold
+            if (getServices().getBaseService().isAlive(simpleBase)) {
+                double money = health / fullHealth * buildup * price * getServices().getCommonUserGuidanceService().getLevelScope().getItemSellFactor();
+                getServices().getBaseService().depositResource(money, simpleBase);
+                getServices().getBaseService().sendAccountBaseUpdate(simpleBase);
+            }
+        } catch (ItemDoesNotExistException ignore) {
+            // Ignore
+            // Item may have been killed
         }
     }
 
