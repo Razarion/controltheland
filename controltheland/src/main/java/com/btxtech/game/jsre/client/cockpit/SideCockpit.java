@@ -296,6 +296,7 @@ public class SideCockpit {
             @Override
             public void onMouseUp(MouseUpEvent event) {
                 GwtCommon.preventDefault(event);
+                ChatCockpit.getInstance().blurFocus();
             }
         }, MouseUpEvent.getType());
 
@@ -304,12 +305,7 @@ public class SideCockpit {
             public void onMouseDown(MouseDownEvent event) {
                 ItemCockpit.getInstance().deActivate();
                 GwtCommon.preventDefault(event);
-            }
-        }, MouseDownEvent.getType());
-        widget.addDomHandler(new MouseDownHandler() {
-            @Override
-            public void onMouseDown(MouseDownEvent event) {
-                GwtCommon.preventDefault(event);
+                ChatCockpit.getInstance().blurFocus();
             }
         }, MouseDownEvent.getType());
     }

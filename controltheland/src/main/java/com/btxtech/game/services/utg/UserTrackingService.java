@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.client.common.UserMessage;
+import com.btxtech.game.jsre.client.common.ChatMessage;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
@@ -74,7 +74,7 @@ public interface UserTrackingService {
 
     void onUserLeftGame(User user);
 
-    void trackUserMessage(UserMessage userMessage);
+    void trackChatMessage(ChatMessage chatMessage);
 
     void trackWindowsClosed(String startUUid);
 

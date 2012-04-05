@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.AbstractControlPanel;
+import com.btxtech.game.jsre.client.cockpit.ChatCockpit;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -78,7 +79,7 @@ public class ItemCockpit extends AbstractControlPanel implements BuildupItemPane
         }
 
         panel.setWidgetPosition(this, relPosition.getX(), relPosition.getY());
-        
+
         ClientUserTracker.getInstance().onDialogAppears(this, "ItemCockpit");
         SpeechBubbleHandler.getInstance().hide();
 
@@ -117,6 +118,7 @@ public class ItemCockpit extends AbstractControlPanel implements BuildupItemPane
             @Override
             public void onMouseUp(MouseUpEvent event) {
                 GwtCommon.preventDefault(event);
+                ChatCockpit.getInstance().blurFocus();
             }
         }, MouseUpEvent.getType());
 
@@ -124,12 +126,7 @@ public class ItemCockpit extends AbstractControlPanel implements BuildupItemPane
             @Override
             public void onMouseDown(MouseDownEvent event) {
                 GwtCommon.preventDefault(event);
-            }
-        }, MouseDownEvent.getType());
-        addDomHandler(new MouseDownHandler() {
-            @Override
-            public void onMouseDown(MouseDownEvent event) {
-                GwtCommon.preventDefault(event);
+                ChatCockpit.getInstance().blurFocus();
             }
         }, MouseDownEvent.getType());
     }

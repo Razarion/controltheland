@@ -53,6 +53,7 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
             SelectionHandler.getInstance().clearSelection();
         }
         GwtCommon.preventDefault(mouseDownEvent);
+        ChatCockpit.getInstance().blurFocus();
     }
 
     @Override

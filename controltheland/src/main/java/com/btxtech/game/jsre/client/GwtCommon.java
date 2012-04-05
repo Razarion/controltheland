@@ -47,9 +47,9 @@ public class GwtCommon {
         });
     }
 
-    public static boolean checkAndReportHttpStatusCode0(Throwable t) {
+    public static boolean checkAndReportHttpStatusCode0(String message, Throwable t) {
         if (t instanceof StatusCodeException && ((StatusCodeException) t).getStatusCode() == 0) {
-            sendLogViaLoadScriptCommunication("HTTP status code 0 detected");
+            sendLogViaLoadScriptCommunication("HTTP status code 0 detected: " + message);
             return true;
         } else {
             return false;

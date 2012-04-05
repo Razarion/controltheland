@@ -15,7 +15,7 @@ package com.btxtech.game.services.gwt;
 
 
 import com.btxtech.game.jsre.client.MovableService;
-import com.btxtech.game.jsre.client.common.UserMessage;
+import com.btxtech.game.jsre.client.common.ChatMessage;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
@@ -226,11 +226,21 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public void sendUserMessage(UserMessage userMessage) {
+    public void sendChatMessage(ChatMessage chatMessage) {
         try {
-            connectionService.sendUserMessage(userMessage);
+            connectionService.sendChatMessage(chatMessage);
         } catch (Throwable t) {
             log.error("", t);
+        }
+    }
+
+    @Override
+    public List<ChatMessage> pollChatMessages(Integer lastMessageId) {
+        try {
+            return connectionService.pollChatMessages(lastMessageId);
+        } catch (Throwable t) {
+            log.error("", t);
+            return null;
         }
     }
 

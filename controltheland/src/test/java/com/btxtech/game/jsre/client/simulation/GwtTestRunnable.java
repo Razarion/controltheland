@@ -6,5 +6,5 @@ package com.btxtech.game.jsre.client.simulation;
  * Time: 12:28:16
  */
 public interface GwtTestRunnable {
-    void run() throws Exception;
+    void run() throws Throwable;
 }

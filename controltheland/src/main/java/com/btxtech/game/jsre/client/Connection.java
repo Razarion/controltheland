@@ -15,9 +15,9 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.SplashManager;
+import com.btxtech.game.jsre.client.common.ChatMessage;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
-import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
@@ -65,6 +65,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -72,7 +73,7 @@ import java.util.logging.Logger;
  * Date: Jul 4, 2009
  * Time: 11:23:52 AM
  */
-public class Connection implements AsyncCallback<Void>, StartupProgressListener {
+public class Connection implements StartupProgressListener, ConnectionI {
     public static final int MAX_DISCONNECTION_COUNT = 20;
     public static final int MIN_DELAY_BETWEEN_POLL = 200;
     public static final int STATISTIC_DELAY = 10000;
@@ -216,7 +217,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
         movableServiceAsync.getSyncInfo(new AsyncCallback<Collection<Packet>>() {
             @Override
             public void onFailure(Throwable throwable) {
-                if (!handleDisconnection(throwable)) {
+                if (!handleDisconnection("pollSyncInfo", throwable)) {
                     scheduleTimer();
                 }
             }
@@ -257,8 +258,8 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
                     ClientBase.getInstance().setAccountBalance(balancePacket.getAccountBalance());
                 } else if (packet instanceof EnergyPacket) {
                     ClientEnergyService.getInstance().onEnergyPacket((EnergyPacket) packet);
-                } else if (packet instanceof UserMessage) {
-                    // TODO Chat
+                } else if (packet instanceof ChatMessage) {
+                    ClientChatHandler.getInstance().onMessageReceived((ChatMessage) packet);
                 } else if (packet instanceof LevelTaskDonePacket) {
                     SplashManager.getInstance().onLevelTaskCone();
                     SideCockpit.getInstance().onLevelTaskDone();
@@ -288,7 +289,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
 
     public void sendCommandQueue() {
         if (movableServiceAsync != null && !commandQueue.isEmpty() && gameEngineMode == GameEngineMode.SLAVE) {
-            movableServiceAsync.sendCommands(commandQueue, this);
+            movableServiceAsync.sendCommands(commandQueue, new VoidAsyncCallback("sendCommandQueue"));
         }
         commandQueue.clear();
     }
@@ -304,7 +305,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
                     new AsyncCallback<GameFlow>() {
                         @Override
                         public void onFailure(Throwable caught) {
-                            if (!handleDisconnection(caught)) {
+                            if (!handleDisconnection("sendTutorialProgress", caught)) {
                                 sendTutorialProgress(type, levelTaskId, name, duration, clientTimeStamp, runnable);
                             }
                         }
@@ -319,24 +320,49 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
         }
     }
 
-    public void sendUserMessage(String text) {
+    @Override
+    public void sendChatMessage(ChatMessage chatMessage) {
         if (movableServiceAsync != null) {
-            UserMessage userMessage = new UserMessage();
-            userMessage.setBaseName(ClientBase.getInstance().getOwnBaseName());
-            userMessage.setMessage(text);
-            movableServiceAsync.sendUserMessage(userMessage, this);
+            movableServiceAsync.sendChatMessage(chatMessage, new AsyncCallback<Void>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    log.log(Level.SEVERE, "Chat message sending failed", caught);
+                }
+
+                @Override
+                public void onSuccess(Void result) {
+                    ClientChatHandler.getInstance().pollMessagesIfInPollMode();
+                }
+            });
+        }
+    }
+
+    @Override
+    public void pollChatMessages(Integer lastMessageId) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.pollChatMessages(lastMessageId, new AsyncCallback<List<ChatMessage>>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    log.log(Level.SEVERE, "Chat message polling failed", caught);
+                }
+
+                @Override
+                public void onSuccess(List<ChatMessage> chatMessages) {
+                    ClientChatHandler.getInstance().onMessageReceived(chatMessages);
+                }
+            });
         }
     }
 
     public void sendEventTrackingStart(EventTrackingStart eventTrackingStart) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.sendEventTrackingStart(eventTrackingStart, this);
+            movableServiceAsync.sendEventTrackingStart(eventTrackingStart, new VoidAsyncCallback("sendEventTrackingStart"));
         }
     }
 
     public void sendEventTrackerItems(List<EventTrackingItem> eventTrackingItems, List<SyncItemInfo> syncItemInfos, List<SelectionTrackingItem> selectionTrackingItems, List<TerrainScrollTracking> terrainScrollTrackings, List<BrowserWindowTracking> browserWindowTrackings, List<DialogTracking> dialogTrackings) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.sendEventTrackerItems(eventTrackingItems, syncItemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings, dialogTrackings, this);
+            movableServiceAsync.sendEventTrackerItems(eventTrackingItems, syncItemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings, dialogTrackings, new VoidAsyncCallback("sendEventTrackerItems"));
         }
     }
 
@@ -346,7 +372,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
                 return;
             }
             if (movableServiceAsync != null) {
-                movableServiceAsync.sellItem(syncItem.getId(), this);
+                movableServiceAsync.sellItem(syncItem.getId(), new VoidAsyncCallback("sellItem"));
             }
         } else if (gameEngineMode == GameEngineMode.MASTER) {
             try {
@@ -359,21 +385,21 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
 
     public void surrenderBase() {
         if (movableServiceAsync != null) {
-            movableServiceAsync.surrenderBase(this);
+            movableServiceAsync.surrenderBase(new VoidAsyncCallback("surrenderBase"));
             movableServiceAsync = null;
         }
     }
 
     public void closeConnection() {
         if (movableServiceAsync != null) {
-            movableServiceAsync.closeConnection(this);
+            movableServiceAsync.closeConnection(new VoidAsyncCallback("closeConnection"));
             movableServiceAsync = null;
         }
     }
 
     public void log(String logMessage, Date date) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.log(logMessage, date, this);
+            movableServiceAsync.log(logMessage, date, new VoidAsyncCallback("log"));
         }
     }
 
@@ -381,39 +407,29 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
         return INSTANCE.movableServiceAsync;
     }
 
-    @Override
-    public void onFailure(Throwable caught) {
-        handleDisconnection(caught);
-    }
-
-    @Override
-    public void onSuccess(Void result) {
-        disconnectionCount = 0;
-    }
-
-    private boolean handleDisconnection(Throwable throwable) {
-        if (GwtCommon.checkAndReportHttpStatusCode0(throwable)) {
+    private boolean handleDisconnection(String message, Throwable throwable) {
+        if (GwtCommon.checkAndReportHttpStatusCode0(message, throwable)) {
             disconnectionCount++;
             if (disconnectionCount < MAX_DISCONNECTION_COUNT) {
                 return false;
             }
             movableServiceAsync = null;
-            GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to HTTP status code 0");
+            GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to HTTP status code 0: " + message);
             DialogManager.showDialog(new MessageDialog(CONNECTION_DIALOG), DialogManager.Type.PROMPTLY);
             return true;
         }
 
         if (throwable instanceof NotYourBaseException) {
             movableServiceAsync = null;
-            GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to NotYourBaseException");
+            GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to NotYourBaseException: " + message);
             DialogManager.showDialog(new MessageDialog("Not your Base: Most likely you start another<br />base in another browser window"), DialogManager.Type.PROMPTLY);
             return true;
         } else if (throwable instanceof NoConnectionException) {
-            GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to NoConnectionException");
+            GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to NoConnectionException: " + message);
             ClientServices.getInstance().getClientRunner().start(GameStartupSeq.WARM_REAL);
             return true;
         } else {
-            GwtCommon.sendLogViaLoadScriptCommunication("Unknown Error (See GWT log for stack trace): " + throwable.getMessage());
+            GwtCommon.sendLogViaLoadScriptCommunication("Unknown Error (See GWT log for stack trace): " + message + " " + throwable.getMessage());
             GwtCommon.handleException(throwable);
             return false;
         }
@@ -460,7 +476,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
             movableServiceAsync.sendStartupTask(task.createStartupTaskInfo(),
                     ClientServices.getInstance().getClientRunner().getStartUuid(),
                     Simulation.getInstance().getLevelTaskId(),
-                    this);
+                    new VoidAsyncCallback("onTaskFinished"));
         }
     }
 
@@ -470,14 +486,14 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
             movableServiceAsync.sendStartupTask(task.createStartupTaskInfo(error),
                     ClientServices.getInstance().getClientRunner().getStartUuid(),
                     Simulation.getInstance().getLevelTaskId(),
-                    this);
+                    new VoidAsyncCallback("onTaskFailed"));
         }
 
         @SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})
         Throwable cause = CommonJava.getMostInnerThrowable(t);
         if (cause instanceof Html5NotSupportedException) {
             Window.Location.assign(CmsUtil.PREDEFINED_PAGE_URL_NO_HTML_5);
-        } else if (GwtCommon.checkAndReportHttpStatusCode0(cause)) {
+        } else if (GwtCommon.checkAndReportHttpStatusCode0("onTaskFailed", cause)) {
             // Reload whole browser
             Window.Location.reload();
         } else {
@@ -492,7 +508,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
                     totalTime,
                     ClientServices.getInstance().getClientRunner().getStartUuid(),
                     Simulation.getInstance().getLevelTaskId(),
-                    this);
+                    new VoidAsyncCallback("onStartupFinished"));
         }
     }
 
@@ -503,14 +519,33 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
                     totalTime,
                     ClientServices.getInstance().getClientRunner().getStartUuid(),
                     Simulation.getInstance().getLevelTaskId(),
-                    this);
+                    new VoidAsyncCallback("onStartupFailed"));
         }
     }
 
+    @Override
     public GameEngineMode getGameEngineMode() {
         if (gameEngineMode == null) {
             throw new NullPointerException("GameEngineMode is null");
         }
         return gameEngineMode;
+    }
+
+    class VoidAsyncCallback implements AsyncCallback<Void> {
+        private String message;
+
+        VoidAsyncCallback(String message) {
+            this.message = message;
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            handleDisconnection(message, caught);
+        }
+
+        @Override
+        public void onSuccess(Void result) {
+            disconnectionCount = 0;
+        }
     }
 }
