@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.common.UserMessage;
+import com.btxtech.game.jsre.client.common.ChatMessage;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.common.Packet;
@@ -53,7 +53,9 @@ public interface MovableServiceAsync {
 
     void register(String userName, String password, String confirmPassword, String email, AsyncCallback<Void> asyncCallback);
 
-    void sendUserMessage(UserMessage userMessage, AsyncCallback<Void> asyncCallback);
+    void sendChatMessage(ChatMessage chatMessage, AsyncCallback<Void> asyncCallback);
+
+    void pollChatMessages(Integer lastMessageId, AsyncCallback<List<ChatMessage>> asyncCallback);
 
     void surrenderBase(AsyncCallback<Void> asyncCallback);
 

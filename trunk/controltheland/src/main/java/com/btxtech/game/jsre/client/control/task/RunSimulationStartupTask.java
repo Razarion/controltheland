@@ -13,6 +13,9 @@
 
 package com.btxtech.game.jsre.client.control.task;
 
+import com.btxtech.game.jsre.client.ClientChatHandler;
+import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.cockpit.ChatCockpit;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
@@ -36,5 +39,6 @@ public class RunSimulationStartupTask extends AbstractStartupTask {
         Simulation.getInstance().start();
         MapWindow.getInstance().displayVisibleItems();
         SideCockpit.getInstance().updateItemLimit();
+        ClientChatHandler.getInstance().runSimulatedGame(Connection.getInstance(), ChatCockpit.getInstance(), ClientChatHandler.START_DELAY, ClientChatHandler.POLL_DELAY);
     }
 }

@@ -27,6 +27,7 @@ import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.logging.client.LogConfiguration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
@@ -186,6 +187,20 @@ public abstract class AbstractGwtTest extends GWTTestCase implements StartupProg
                 }
             }
         }, 500);
+    }
+
+    public void sleep(int sleepTime, final GwtTestRunnable runnable) {
+        Timer timer = new Timer() {
+            @Override
+            public void run() {
+                try {
+                    runnable.run();
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
+            }
+        };
+        timer.schedule(sleepTime);
     }
 
     // ---------- StartupProgressListener ----------

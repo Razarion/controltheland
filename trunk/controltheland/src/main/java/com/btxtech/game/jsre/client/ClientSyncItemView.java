@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.action.ActionHandler;
+import com.btxtech.game.jsre.client.cockpit.ChatCockpit;
 import com.btxtech.game.jsre.client.cockpit.CursorHandler;
 import com.btxtech.game.jsre.client.cockpit.CursorItemState;
 import com.btxtech.game.jsre.client.cockpit.Group;
@@ -65,6 +66,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
             @Override
             public void onMouseUp(MouseUpEvent event) {
                 GwtCommon.preventDefault(event);
+                ChatCockpit.getInstance().blurFocus();
             }
         }, MouseUpEvent.getType());
         GwtCommon.preventNativeSelection(this);
@@ -290,6 +292,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
             }
         }
         GwtCommon.preventDefault(mouseDownEvent);
+        ChatCockpit.getInstance().blurFocus();
     }
 
     private void setupHealthBar() {

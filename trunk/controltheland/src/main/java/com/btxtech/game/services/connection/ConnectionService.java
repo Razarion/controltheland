@@ -13,16 +13,16 @@
 
 package com.btxtech.game.services.connection;
 
-import com.btxtech.game.jsre.client.common.UserMessage;
+import com.btxtech.game.jsre.client.common.ChatMessage;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.user.UserState;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * User: beat
@@ -50,7 +50,9 @@ public interface ConnectionService extends com.btxtech.game.jsre.common.gameengi
 
     void sendSyncInfos(Collection<SyncBaseItem> syncItem);
 
-    void sendUserMessage(UserMessage userMessage);
+    void sendChatMessage(ChatMessage chatMessage);
+
+    List<ChatMessage> pollChatMessages(Integer lastMessageId);
 
     Collection<SimpleBase> getOnlineBases();
 }

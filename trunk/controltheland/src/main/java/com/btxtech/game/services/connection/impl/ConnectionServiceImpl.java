@@ -14,7 +14,7 @@
 package com.btxtech.game.services.connection.impl;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
-import com.btxtech.game.jsre.client.common.UserMessage;
+import com.btxtech.game.jsre.client.common.ChatMessage;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -44,6 +44,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -54,7 +55,8 @@ import java.util.TimerTask;
  */
 @Component("connectionService")
 public class ConnectionServiceImpl extends TimerTask implements ConnectionService {
-    public static final long USER_TRACKING_PERIODE = 10 * 1000;
+    private static final long USER_TRACKING_PERIODE = 10 * 1000;
+    private static final int MAX_NO_TICK_COUNT = 20;
     @Autowired
     private Session session;
     @Autowired
@@ -70,7 +72,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     private Timer timer;
     private Log log = LogFactory.getLog(ConnectionServiceImpl.class);
     private final ArrayList<Connection> onlineConnection = new ArrayList<Connection>();
-    private static final int MAX_NO_TICK_COUNT = 20;
+    private ChatMessageQueue chatMessageQueue = new ChatMessageQueue();
 
     @PostConstruct
     public void init() {
@@ -85,8 +87,8 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
                 timer.cancel();
                 timer = null;
             }
-        } catch(Throwable t) {
-           log.error("", t);
+        } catch (Throwable t) {
+            log.error("", t);
         }
     }
 
@@ -140,9 +142,15 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     }
 
     @Override
-    public void sendUserMessage(UserMessage userMessage) {
-        sendPacket(userMessage);
-        userTrackingService.trackUserMessage(userMessage);
+    public void sendChatMessage(ChatMessage chatMessage) {
+        chatMessageQueue.putMessagesAndSetId(chatMessage);
+        sendPacket(chatMessage);
+        userTrackingService.trackChatMessage(chatMessage);
+    }
+
+    @Override
+    public List<ChatMessage> pollChatMessages(Integer lastMessageId) {
+        return chatMessageQueue.peekMessages(lastMessageId);
     }
 
     @Override

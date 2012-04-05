@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.control.task;
 
+import com.btxtech.game.jsre.client.ClientChatHandler;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameCommon;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
@@ -36,6 +37,7 @@ public class ClearGame extends AbstractStartupTask {
 
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
+        ClientChatHandler.getInstance().stop();
         ClientUserTracker.getInstance().stopEventTracking();
         Connection.getInstance().stopSyncInfoPoll();
         GameCommon.clearGame();

@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.common.UserMessage;
+import com.btxtech.game.jsre.client.common.ChatMessage;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
@@ -59,7 +59,9 @@ public interface MovableService extends RemoteService {
 
     void register(String userName, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException;
 
-    void sendUserMessage(UserMessage userMessage);
+    void sendChatMessage(ChatMessage chatMessage);
+
+    List<ChatMessage> pollChatMessages(Integer lastMessageId);
 
     void surrenderBase();
 

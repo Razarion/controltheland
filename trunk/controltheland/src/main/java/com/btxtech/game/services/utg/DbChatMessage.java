@@ -13,53 +13,60 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.client.common.UserMessage;
-import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.Column;
+import com.btxtech.game.jsre.client.common.ChatMessage;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * User: beat
  * Date: 13.03.2010
  * Time: 13:17:24
  */
-@Entity(name = "TRACKER_USER_MESSAGE")
-public class DbUserMessage implements Serializable {
+@Entity(name = "TRACKER_CHAT_MESSAGE")
+public class DbChatMessage implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-    @Column(nullable = false)
     private Date timeStamp;
-    @Column(nullable = false)
-    private String base;
-    @Column(nullable = false)
+    private String sessionId;
+    private String name;
     private String message;
 
     /**
      * Used by Hibernate
      */
-    public DbUserMessage() {
+    public DbChatMessage() {
     }
 
-    public DbUserMessage(UserMessage userMessage) {
+    public DbChatMessage(String sessionId, ChatMessage chatMessage) {
+        this.sessionId = sessionId;
         timeStamp = new Date();
-        base = userMessage.getBaseName();
-        message = userMessage.getMessage();
+        name = chatMessage.getName();
+        message = chatMessage.getMessage();
     }
 
     public Date getTimeStamp() {
         return timeStamp;
     }
 
-    public String getBase() {
-        return base;
+    public String getSessionId() {
+        return sessionId;
     }
 
-    public void setBase(String base) {
-        this.base = base;
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getMessage() {
@@ -75,15 +82,13 @@ public class DbUserMessage implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        DbUserMessage that = (DbUserMessage) o;
+        DbChatMessage that = (DbChatMessage) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-
-        return true;
+        return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 }

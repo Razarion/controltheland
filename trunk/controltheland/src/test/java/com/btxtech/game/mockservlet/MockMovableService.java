@@ -2,10 +2,10 @@ package com.btxtech.game.mockservlet;
 
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.AbstractGwtTest;
+import com.btxtech.game.jsre.client.common.ChatMessage;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
@@ -194,8 +194,13 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public void sendUserMessage(UserMessage userMessage) {
+    public void sendChatMessage(ChatMessage chatMessage) {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public List<ChatMessage> pollChatMessages(Integer lastMessageId) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override

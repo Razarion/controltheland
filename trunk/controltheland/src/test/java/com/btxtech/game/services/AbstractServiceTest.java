@@ -1,6 +1,7 @@
 package com.btxtech.game.services;
 
 import com.btxtech.game.jsre.client.MovableService;
+import com.btxtech.game.jsre.client.common.ChatMessage;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.Rectangle;
@@ -484,6 +485,12 @@ abstract public class AbstractServiceTest {
             Assert.assertEquals(expected.getBaseAttributes().getName(), received.getBaseAttributes().getName());
             Assert.assertEquals(expected.getBaseAttributes().isBot(), received.getBaseAttributes().isBot());
             Assert.assertEquals(expected.getBaseAttributes().isAbandoned(), received.getBaseAttributes().isAbandoned());
+        } else if (expectedPacket instanceof ChatMessage) {
+            ChatMessage expected = (ChatMessage) expectedPacket;
+            ChatMessage received = (ChatMessage) receivedPacket;
+            Assert.assertEquals(expected.getMessage(), received.getMessage());
+            Assert.assertEquals(expected.getName(), received.getName());
+            Assert.assertEquals(expected.getMessageId(), received.getMessageId());
         } else {
             Assert.fail("Unhandled packet: " + expectedPacket);
         }

@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.utg.impl;
 
-import com.btxtech.game.jsre.client.common.UserMessage;
+import com.btxtech.game.jsre.client.common.ChatMessage;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
@@ -38,8 +38,8 @@ import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.DbChatMessage;
 import com.btxtech.game.services.utg.DbLevelTask;
-import com.btxtech.game.services.utg.DbUserMessage;
 import com.btxtech.game.services.utg.LifecycleTrackingInfo;
 import com.btxtech.game.services.utg.RealGameTrackingInfo;
 import com.btxtech.game.services.utg.SessionDetailDto;
@@ -486,9 +486,9 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     @Transactional
-    public void trackUserMessage(UserMessage userMessage) {
+    public void trackChatMessage(ChatMessage chatMessage) {
         try {
-            sessionFactory.getCurrentSession().saveOrUpdate(new DbUserMessage(userMessage));
+            sessionFactory.getCurrentSession().saveOrUpdate(new DbChatMessage(session.getSessionId(), chatMessage));
         } catch (Throwable t) {
             log.error("", t);
         }

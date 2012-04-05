@@ -20,16 +20,17 @@ import com.btxtech.game.jsre.common.Packet;
  * Date: 12.03.2010
  * Time: 23:42:44
  */
-public class UserMessage extends Packet {
-    private String baseName;
+public class ChatMessage extends Packet {
+    private String name;
     private String message;
+    private int messageId;
 
-    public String getBaseName() {
-        return baseName;
+    public String getName() {
+        return name;
     }
 
-    public void setBaseName(String baseName) {
-        this.baseName = baseName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getMessage() {
@@ -38,5 +39,29 @@ public class UserMessage extends Packet {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public int getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(int messageId) {
+        this.messageId = messageId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ChatMessage that = (ChatMessage) o;
+
+        return messageId == that.messageId;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return messageId;
     }
 }
