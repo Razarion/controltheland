@@ -19,12 +19,12 @@ import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
+import com.btxtech.game.jsre.playback.Playback;
 import com.btxtech.game.jsre.playback.PlaybackInfo;
 import com.btxtech.game.services.gwt.AutowiredRemoteServiceServlet;
 import com.btxtech.game.services.gwt.MovableServiceImpl;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.MgmtService;
-import com.btxtech.game.services.playback.PlaybackService;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
@@ -49,7 +49,7 @@ import java.util.ArrayList;
  * Date: 04.08.2010
  * Time: 11:11:41
  */
-public class PlaybackServiceImpl extends AutowiredRemoteServiceServlet implements PlaybackService {
+public class PlaybackServiceImpl extends AutowiredRemoteServiceServlet implements Playback {
     @Autowired
     private UserTrackingService userTrackingService;
     @Autowired

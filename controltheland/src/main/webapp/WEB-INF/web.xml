@@ -11,13 +11,11 @@
   ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~   GNU General Public License for more details.
   -->
-
-<!DOCTYPE web-app
-        PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
-        "http://java.sun.com/dtd/web-app_2_3.dtd">
-
-<web-app xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-         version="2.5">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+              http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5"
+         xmlns="http://java.sun.com/xml/ns/javaee">
     <display-name>Strategy Game</display-name>
     <description>Game</description>
 
@@ -46,6 +44,9 @@
     <servlet-mapping>
         <servlet-name>mapeditor-dispatcher</servlet-name>
         <url-pattern>/mapeditor/terrainEditor</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>mapeditor-dispatcher</servlet-name>
         <url-pattern>/mapview/terrainEditor</url-pattern>
     </servlet-mapping>
 
@@ -56,6 +57,9 @@
     <servlet-mapping>
         <servlet-name>movable-dispatcher</servlet-name>
         <url-pattern>/game/movableService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>movable-dispatcher</servlet-name>
         <url-pattern>/playback/movableService</url-pattern>
     </servlet-mapping>
 
@@ -84,6 +88,9 @@
     <servlet-mapping>
         <servlet-name>itemtypeeditor-dispatcher</servlet-name>
         <url-pattern>/itemtypeeditor/itemTypeAccess</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>itemtypeeditor-dispatcher</servlet-name>
         <url-pattern>/pathfinding/itemTypeAccess</url-pattern>
     </servlet-mapping>
 
