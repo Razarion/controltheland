@@ -50,7 +50,6 @@ import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbMovableType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
-import com.btxtech.game.services.playback.PlaybackService;
 import com.btxtech.game.services.playback.impl.PlaybackServiceImpl;
 import com.btxtech.game.services.resource.DbRegionResource;
 import com.btxtech.game.services.resource.ResourceService;
@@ -256,7 +255,7 @@ abstract public class AbstractServiceTest {
     private MockHttpSession mockHttpSession;
     private SecurityContext securityContext;
     private MovableService movableService;
-    private PlaybackService playbackService;
+    private PlaybackServiceImpl playbackService;
 
     protected PlatformTransactionManager getTransactionManager() {
         return transactionManager;
@@ -273,7 +272,7 @@ abstract public class AbstractServiceTest {
         return movableService;
     }
 
-    public PlaybackService getPlaybackService() {
+    public PlaybackServiceImpl getPlaybackService() {
         if (playbackService == null) {
             PlaybackServiceImpl movableServiceImpl = new PlaybackServiceImpl();
             applicationContext.getAutowireCapableBeanFactory().autowireBeanProperties(movableServiceImpl, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
