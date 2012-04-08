@@ -612,7 +612,8 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     @Override
     @Transactional
     public void saveStartupTask(StartupTaskInfo startupTaskInfo, String startUuid, Integer levelTaskId) {
-        String baseName = null;
+        session.onJavaScriptDetected(null);
+    	String baseName = null;
         Integer baseId = null;
         try {
             if (levelTaskId == null) {
@@ -627,6 +628,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     public void saveStartupTerminated(boolean successful, long totalTime, String startUuid, Integer levelTaskId) {
+        session.onJavaScriptDetected(null);
         sessionFactory.getCurrentSession().save(new DbStartupTerminated(session.getSessionId(), successful, totalTime, startUuid, levelTaskId));
     }
 
