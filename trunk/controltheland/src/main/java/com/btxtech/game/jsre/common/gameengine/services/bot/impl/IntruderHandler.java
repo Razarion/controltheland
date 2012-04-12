@@ -101,6 +101,8 @@ public class IntruderHandler {
                 if (attackFormationItem.isInRange()) {
                     attacker.attack(intruder, attackFormationItem.getDestinationHint(), attackFormationItem.getDestinationAngel());
                     intruders.put(intruder, attacker);
+                } else {
+                    log.warning("Bot is unable to find position to attack item. Bot attacker: " + attacker.getSyncBaseItem() + " Target: " + intruder);
                 }
             } catch (Exception e) {
                 log.log(Level.SEVERE, "", e);
