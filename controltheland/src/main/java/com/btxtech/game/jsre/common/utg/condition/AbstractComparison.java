@@ -18,8 +18,11 @@ package com.btxtech.game.jsre.common.utg.condition;
  * Date: 27.12.2010
  * Time: 17:25:49
  */
-public abstract interface AbstractComparison {
-    abstract boolean isFulfilled();
+public interface AbstractComparison {
+    static final char TEMPLATE_PARAMETER_COUNT = 'C';
+    static final char TEMPLATE_PARAMETER_TIME = 'T';
+
+    boolean isFulfilled();
 
     <A, I> AbstractConditionTrigger<A, I> getAbstractConditionTrigger();
 
@@ -28,4 +31,6 @@ public abstract interface AbstractComparison {
     void fillGenericComparisonValues(GenericComparisonValueContainer genericComparisonValueContainer);
 
     void restoreFromGenericComparisonValue(GenericComparisonValueContainer genericComparisonValueContainer);
+
+    String createProgressHtml();
 }

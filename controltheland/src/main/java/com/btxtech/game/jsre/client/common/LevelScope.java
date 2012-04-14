@@ -72,4 +72,32 @@ public class LevelScope implements Serializable {
     public RadarMode getRadarMode() {
         return radarMode;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LevelScope that = (LevelScope) o;
+
+        return houseSpace == that.houseSpace
+                && Double.compare(that.itemSellFactor, itemSellFactor) == 0
+                && maxMoney == that.maxMoney
+                && number == that.number
+                && !(itemTypeLimitation != null ? !itemTypeLimitation.equals(that.itemTypeLimitation) : that.itemTypeLimitation != null)
+                && radarMode == that.radarMode;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        result = number;
+        result = 31 * result + maxMoney;
+        result = 31 * result + (itemTypeLimitation != null ? itemTypeLimitation.hashCode() : 0);
+        result = 31 * result + houseSpace;
+        long temp = (long) itemSellFactor;
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (radarMode != null ? radarMode.hashCode() : 0);
+        return result;
+    }
 }

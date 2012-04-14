@@ -15,6 +15,7 @@ package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
+import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
@@ -72,4 +73,10 @@ public interface UserGuidanceService extends CommonUserGuidanceService {
     void createAndAddBackup(DbUserState dbUserState, UserState userState);
 
     InvalidLevelState createInvalidLevelState();
+
+    void activateLevelTaskCms(int dbLevelTaskId);
+
+    void deactivateLevelTaskCms(int dbLevelTaskId);
+
+    void fillRealGameInfo(RealGameInfo realGameInfo);
 }

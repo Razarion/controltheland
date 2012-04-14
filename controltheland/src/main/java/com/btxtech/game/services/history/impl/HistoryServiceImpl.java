@@ -181,6 +181,36 @@ public class HistoryServiceImpl implements HistoryService {
                 DbHistoryElement.Source.HUMAN));
     }
 
+    @Override
+    public void addLevelTaskActivated(UserState userState, DbLevelTask dbLevelTask) {
+        save(new DbHistoryElement(DbHistoryElement.Type.LEVEL_TASK_ACTIVATED,
+                userState.getUser(),
+                null,
+                null,
+                null,              // TODO
+                null,
+                null,
+                dbLevelTask,
+                baseService,
+                userState.getSessionId(),
+                DbHistoryElement.Source.HUMAN));
+    }
+
+    @Override
+    public void addLevelTaskDeactivated(UserState userState, DbLevelTask dbLevelTask) {
+        save(new DbHistoryElement(DbHistoryElement.Type.LEVEL_TASK_DEACTIVATED,
+                userState.getUser(),
+                null,
+                null,
+                null,              // TODO
+                null,
+                null,
+                dbLevelTask,
+                baseService,
+                userState.getSessionId(),
+                DbHistoryElement.Source.HUMAN));
+    }
+
     private String getSessionId(SimpleBase simpleBase) {
         UserState userState = baseService.getUserState(simpleBase);
         if (userState != null && userState.getSessionId() != null) {
@@ -319,9 +349,15 @@ public class HistoryServiceImpl implements HistoryService {
             case LEVEL_TASK_COMPLETED:
                 displayHistoryElement.setMessage("Level Task competed: " + dbHistoryElement.getLevelTaskName());
                 break;
+            case LEVEL_TASK_ACTIVATED:
+                displayHistoryElement.setMessage("Level Task activated: " + dbHistoryElement.getLevelTaskName());
+                break;
+            case LEVEL_TASK_DEACTIVATED:
+                displayHistoryElement.setMessage("Level Task deactivated: " + dbHistoryElement.getLevelTaskName());
+                break;
             default:
                 displayHistoryElement.setMessage("Internal error 6");
-                log.warn("HistoryServiceImpl.convert() " + dbHistoryElement +" Unknown type: " + dbHistoryElement.getType());
+                log.warn("HistoryServiceImpl.convert() " + dbHistoryElement + " Unknown type: " + dbHistoryElement.getType());
         }
         return displayHistoryElement;
     }

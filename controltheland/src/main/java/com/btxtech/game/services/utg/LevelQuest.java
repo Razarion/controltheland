@@ -12,10 +12,14 @@ import java.io.Serializable;
 public class LevelQuest extends SimpleCrudChild {
     private DbLevelTask dbLevelTask;
     private boolean done;
+    private boolean active;
+    private boolean blocked;
 
-    public LevelQuest(DbLevelTask dbLevelTask, boolean done) {
+    public LevelQuest(DbLevelTask dbLevelTask, boolean done, boolean active, boolean blocked) {
         this.dbLevelTask = dbLevelTask;
         this.done = done;
+        this.active = active;
+        this.blocked = blocked;
     }
 
     @Override
@@ -30,4 +34,13 @@ public class LevelQuest extends SimpleCrudChild {
     public boolean isDone() {
         return done;
     }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public boolean isBlocked() {
+        return blocked;
+    }
+
 }

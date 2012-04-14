@@ -14,7 +14,7 @@
 package com.btxtech.game.controllers;
 
 import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.services.common.DateUtil;
+import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.services.common.ImageHolder;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBuildupStep;
@@ -68,7 +68,7 @@ public class ItemImageController implements Controller {
             }
             httpServletResponse.setContentLength(imageData.length);
             httpServletResponse.setContentType(contentType);
-            httpServletResponse.addDateHeader("Expires", System.currentTimeMillis() + DateUtil.MILLIS_IN_DAY);
+            httpServletResponse.addDateHeader("Expires", System.currentTimeMillis() + ClientDateUtil.MILLIS_IN_DAY);
             OutputStream out = httpServletResponse.getOutputStream();
             out.write(imageData);
             out.close();

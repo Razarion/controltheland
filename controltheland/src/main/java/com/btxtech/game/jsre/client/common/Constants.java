@@ -73,8 +73,4 @@ public class Constants {
 
     // Error
     public static final String ERROR_KEY = "e";
-
-    // Div
-    public static final String REAL_GAME_MISSION_TEXT = "Gain XP to level up!. Complete quests or attack other players or kill bots.";
-
 }

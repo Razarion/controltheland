@@ -8,6 +8,7 @@ import com.btxtech.game.services.cms.EditMode;
 import com.btxtech.game.services.cms.layout.DataProviderInfo;
 import com.btxtech.game.services.cms.layout.DbContent;
 import com.btxtech.game.services.cms.layout.DbContentActionButton;
+import com.btxtech.game.services.cms.layout.DbContentActivateQuestButton;
 import com.btxtech.game.services.cms.layout.DbContentBook;
 import com.btxtech.game.services.cms.layout.DbContentBooleanExpressionImage;
 import com.btxtech.game.services.cms.layout.DbContentContainer;
@@ -21,7 +22,7 @@ import com.btxtech.game.services.cms.layout.DbContentList;
 import com.btxtech.game.services.cms.layout.DbContentPageLink;
 import com.btxtech.game.services.cms.layout.DbContentPlugin;
 import com.btxtech.game.services.cms.layout.DbContentSmartPageLink;
-import com.btxtech.game.services.cms.layout.DbContentStartLevelTaskButton;
+import com.btxtech.game.services.cms.layout.DbContentStartMissionButton;
 import com.btxtech.game.services.cms.layout.DbContentStaticHtml;
 import com.btxtech.game.services.cms.layout.DbExpressionProperty;
 import com.btxtech.game.services.cms.page.DbPage;
@@ -36,6 +37,7 @@ import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.DbPageAccessControl;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.DbLevelTask;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.pages.cms.BorderWrapper;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
@@ -43,6 +45,7 @@ import com.btxtech.game.wicket.pages.cms.ItemTypeImage;
 import com.btxtech.game.wicket.pages.cms.Message;
 import com.btxtech.game.wicket.pages.cms.WritePanel;
 import com.btxtech.game.wicket.pages.cms.content.ContentActionButton;
+import com.btxtech.game.wicket.pages.cms.content.ContentActivateQuestButton;
 import com.btxtech.game.wicket.pages.cms.content.ContentBook;
 import com.btxtech.game.wicket.pages.cms.content.ContentBooleanExpressionImage;
 import com.btxtech.game.wicket.pages.cms.content.ContentContainer;
@@ -55,7 +58,7 @@ import com.btxtech.game.wicket.pages.cms.content.ContentInvokerButton;
 import com.btxtech.game.wicket.pages.cms.content.ContentList;
 import com.btxtech.game.wicket.pages.cms.content.ContentPageLink;
 import com.btxtech.game.wicket.pages.cms.content.ContentSmartPageLink;
-import com.btxtech.game.wicket.pages.cms.content.ContentStartLevelTaskButton;
+import com.btxtech.game.wicket.pages.cms.content.ContentStartMissionButton;
 import com.btxtech.game.wicket.pages.cms.content.SectionLink;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
@@ -111,6 +114,8 @@ public class CmsUiServiceImpl implements CmsUiService {
     private SecurityCmsUiService securityCmsUiService;
     @Autowired
     private SessionFactory sessionFactory;
+    @Autowired
+    private UserGuidanceService guidanceService;
     private Log log = LogFactory.getLog(CmsUiServiceImpl.class);
     private Map<CmsUtil.CmsPredefinedPage, String> predefinedUrls = new HashMap<CmsUtil.CmsPredefinedPage, String>();
 
@@ -301,6 +306,12 @@ public class CmsUiServiceImpl implements CmsUiService {
         } else if (pageParameters.containsKey(CmsPage.MESSAGE_ID)) {
             Message message = new Message("borderContent", pageParameters.getString(CmsPage.MESSAGE_ID));
             return new BorderWrapper(componentId, message, "iBorder");
+        } else if (pageParameters.containsKey(CmsPage.QUEST_ACTIVATE_ID)) {
+            int dbLevelTaskId = pageParameters.getInt(CmsPage.QUEST_ACTIVATE_ID);
+            guidanceService.activateLevelTaskCms(dbLevelTaskId);
+        } else if (pageParameters.containsKey(CmsPage.QUEST_DEACTIVATE_ID)) {
+            int dbLevelTaskId = pageParameters.getInt(CmsPage.QUEST_DEACTIVATE_ID);
+            guidanceService.deactivateLevelTaskCms(dbLevelTaskId);
         }
         return getComponent(dbContent, null, componentId, beanIdPathElement, contentContext);
     }
@@ -410,8 +421,10 @@ public class CmsUiServiceImpl implements CmsUiService {
                 return new ContentInvokerButton(componentId, (DbContentInvokerButton) dbContent, beanIdPathElement);
             } else if (dbContent instanceof DbContentInvoker) {
                 return new ContentInvoker(componentId, (DbContentInvoker) dbContent, beanIdPathElement);
-            } else if (dbContent instanceof DbContentStartLevelTaskButton) {
-                return new ContentStartLevelTaskButton(componentId, (DbContentStartLevelTaskButton) dbContent, bean);
+            } else if (dbContent instanceof DbContentStartMissionButton) {
+                return new ContentStartMissionButton(componentId, (DbContentStartMissionButton) dbContent, bean);
+            } else if (dbContent instanceof DbContentActivateQuestButton) {
+                return new ContentActivateQuestButton(componentId, (DbContentActivateQuestButton) dbContent, bean);
             } else {
                 log.warn("CmsUiServiceImpl: No Wicket Component for content: " + dbContent);
                 return new Label(componentId, "No content");

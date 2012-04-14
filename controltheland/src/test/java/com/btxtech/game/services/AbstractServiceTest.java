@@ -9,8 +9,7 @@ import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.HouseSpacePacket;
-import com.btxtech.game.jsre.common.LevelPacket;
-import com.btxtech.game.jsre.common.LevelTaskDonePacket;
+import com.btxtech.game.jsre.common.LevelStatePacket;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
@@ -180,6 +179,8 @@ abstract public class AbstractServiceTest {
     protected static String TEST_LEVEL_TASK_1_1_SIMULATED_NAME = "TEST_LEVEL_TASK_1_1_SIMULATED_NAME";
     protected static String TEST_LEVEL_TASK_3_3_SIMULATED_NAME = "TEST_LEVEL_TASK_3_3_SIMULATED_NAME";
     protected static String TEST_LEVEL_TASK_4_3_SIMULATED_NAME = "TEST_LEVEL_TASK_4_3_SIMULATED_NAME";
+    protected static String TEST_LEVEL_TASK_1_2_REAL_NAME = "TEST_LEVEL_TASK_1_2_REAL_NAME";
+    protected static String TEST_LEVEL_TASK_2_2_REAL_NAME = "TEST_LEVEL_TASK_2_2_REAL_NAME";
     // Terrain
     protected static int TERRAIN_IMAGE_4x10 = -1;
     protected static int TERRAIN_IMAGE_10x4 = -1;
@@ -423,7 +424,7 @@ abstract public class AbstractServiceTest {
 
     protected List<Packet> getPackagesIgnoreSyncItemInfoAndClear() throws Exception {
         List<Packet> receivedPackets = new ArrayList<Packet>(getMovableService().getSyncInfo());
-        for (Iterator<Packet> iterator = receivedPackets.iterator(); iterator.hasNext();) {
+        for (Iterator<Packet> iterator = receivedPackets.iterator(); iterator.hasNext(); ) {
             if (iterator.next() instanceof SyncItemInfo) {
                 iterator.remove();
             }
@@ -461,12 +462,21 @@ abstract public class AbstractServiceTest {
             AccountBalancePacket expected = (AccountBalancePacket) expectedPacket;
             AccountBalancePacket received = (AccountBalancePacket) receivedPacket;
             Assert.assertEquals(expected.getAccountBalance(), received.getAccountBalance(), 0.1);
-        } else if (expectedPacket instanceof LevelPacket) {
-            LevelPacket expected = (LevelPacket) expectedPacket;
-            LevelPacket received = (LevelPacket) receivedPacket;
+        } else if (expectedPacket instanceof LevelStatePacket) {
+            LevelStatePacket expected = (LevelStatePacket) expectedPacket;
+            LevelStatePacket received = (LevelStatePacket) receivedPacket;
+            Assert.assertEquals(expected.getXp(), received.getXp());
+            Assert.assertEquals(expected.getXp2LevelUp(), received.getXp2LevelUp());
+            Assert.assertEquals(expected.getActiveQuestTitle(), received.getActiveQuestTitle());
+            Assert.assertEquals(expected.getActiveQuestProgress(), received.getActiveQuestProgress());
+            Assert.assertEquals(expected.getActiveQuestLevelTaskId(), received.getActiveQuestLevelTaskId());
+            Assert.assertEquals(expected.isQuestDeactivated(), received.isQuestDeactivated());
+            Assert.assertEquals(expected.getQuestsDone(), received.getQuestsDone());
+            Assert.assertEquals(expected.getTotalQuests(), received.getTotalQuests());
+            Assert.assertEquals(expected.getMissionsDone(), received.getMissionsDone());
+            Assert.assertEquals(expected.getTotalMissions(), received.getTotalMissions());
+            Assert.assertEquals(expected.isMissionQuestCompleted(), received.isMissionQuestCompleted());
             Assert.assertEquals(expected.getLevel(), received.getLevel());
-        } else if (expectedPacket instanceof LevelTaskDonePacket) {
-            // Do nothing here
         } else if (expectedPacket instanceof HouseSpacePacket) {
             HouseSpacePacket expected = (HouseSpacePacket) expectedPacket;
             HouseSpacePacket received = (HouseSpacePacket) receivedPacket;
@@ -1147,7 +1157,7 @@ abstract public class AbstractServiceTest {
         DbLevel dbLevel3 = realGameQuestHub1.getLevelCrud().createDbChild();
         dbLevel3.setXp(Integer.MAX_VALUE);
         dbLevel3.setMaxMoney(10000);
-        dbLevel3.setHouseSpace(10);
+        dbLevel3.setHouseSpace(20);
         dbLevel3.setNumber(TEST_LEVEL_4_REAL);
         setLimitation(dbLevel3);
         DbLevelTask dbLevelTask5 = setupCreateLevelTask5RealGameLevel(dbLevel3);
@@ -1241,6 +1251,7 @@ abstract public class AbstractServiceTest {
 
     private DbLevelTask setupCreateLevelTask1RealGameLevel(DbLevel dbLevel) {
         DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().createDbChild();
+        dbLevelTask.setName(TEST_LEVEL_TASK_1_2_REAL_NAME);
         // Rewards
         dbLevelTask.setMoney(10);
         dbLevelTask.setXp(100);
@@ -1249,6 +1260,7 @@ abstract public class AbstractServiceTest {
         dbConditionConfig.setConditionTrigger(ConditionTrigger.MONEY_INCREASED);
         DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
         dbCountComparisonConfig.setCount(3);
+        dbCountComparisonConfig.setHtmlProgressTemplate("Money: #C of 3");
         dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
         dbLevelTask.setDbConditionConfig(dbConditionConfig);
         return dbLevelTask;
@@ -1287,6 +1299,7 @@ abstract public class AbstractServiceTest {
 
     private DbLevelTask setupCreateLevelTask2RealGameLevel(DbLevel dbLevel) {
         DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().createDbChild();
+        dbLevelTask.setName(TEST_LEVEL_TASK_2_2_REAL_NAME);
         // Rewards
         dbLevelTask.setMoney(80);
         dbLevelTask.setXp(120);
@@ -1295,6 +1308,7 @@ abstract public class AbstractServiceTest {
         dbConditionConfig.setConditionTrigger(ConditionTrigger.SYNC_ITEM_BUILT);
         DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
         dbCountComparisonConfig.setCount(2);
+        dbCountComparisonConfig.setHtmlProgressTemplate("build #C");
         dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
         dbLevelTask.setDbConditionConfig(dbConditionConfig);
         return dbLevelTask;
@@ -1583,8 +1597,7 @@ abstract public class AbstractServiceTest {
         BookmarkablePageLink<?> pageLink = null;
         try {
             pageLink = (BookmarkablePageLink<?>) wicketTester.getComponentFromLastRenderedPage(id);
-        }
-        catch (ClassCastException e) {
+        } catch (ClassCastException e) {
             throw new IllegalArgumentException("Component with id:" + id +
                     " is not a BookmarkablePageLink");
         }
@@ -1638,6 +1651,13 @@ abstract public class AbstractServiceTest {
         Field field = clazz.getDeclaredField(fieldName);
         field.setAccessible(true);
         field.set(object, value);
+        field.setAccessible(false);
+    }
+
+    public static void setPrivateStaticField(Class clazz, String fieldName, Object value) throws Exception {
+        Field field = clazz.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(null, value);
         field.setAccessible(false);
     }
 

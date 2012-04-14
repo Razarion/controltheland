@@ -80,16 +80,19 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         RealGameInfo realGameInfo = getMovableService().getRealGameInfo();
         Assert.assertNotNull(realGameInfo);
         Assert.assertEquals(1, baseService.getBases().size());
-        List<DbLevelTask> levelTask = new ArrayList<DbLevelTask>(userGuidanceService.getDbLevelCms().getLevelTaskCrud().readDbChildren());
+        List<DbLevelTask> levelTask = new ArrayList<>(userGuidanceService.getDbLevelCms().getLevelTaskCrud().readDbChildren());
         Assert.assertEquals(2, levelTask.size());
         endHttpRequestAndOpenSessionInViewFilter();
         // Level Up
         beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.activateLevelTaskCms(TEST_LEVEL_TASK_2_2_REAL_ID);
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(200, 200), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_HARVESTER_ITEM_ID);
         waitForActionServiceDone();
+        userGuidanceService.activateLevelTaskCms(TEST_LEVEL_TASK_1_2_REAL_ID);
         sendCollectCommand(getFirstSynItemId(TEST_HARVESTER_ITEM_ID), getFirstSynItemId(TEST_RESOURCE_ITEM_ID));
+        waitForActionServiceDone();
         endHttpRequestAndOpenSessionInViewFilter();
         // Verify third level
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -174,8 +177,8 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         // Verify first level
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<LevelQuest> levelQuests = new ArrayList<LevelQuest>(userGuidanceService.getQuestsCms().readDbChildren());
-        List<LevelQuest> mercenaryMissionQuests = new ArrayList<LevelQuest>(userGuidanceService.getMercenaryMissionCms().readDbChildren());
+        List<LevelQuest> levelQuests = new ArrayList<>(userGuidanceService.getQuestsCms().readDbChildren());
+        List<LevelQuest> mercenaryMissionQuests = new ArrayList<>(userGuidanceService.getMercenaryMissionCms().readDbChildren());
         Assert.assertEquals(1, mercenaryMissionQuests.size());
         DbLevelTask dbLevelTask = mercenaryMissionQuests.get(0).getDbLevelTask();
         Assert.assertEquals(TEST_LEVEL_TASK_1_1_SIMULATED_ID, (int) dbLevelTask.getId());
@@ -185,8 +188,8 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
 
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.onTutorialFinished(dbLevelTask.getId());
-        levelQuests = new ArrayList<LevelQuest>(userGuidanceService.getQuestsCms().readDbChildren());
-        mercenaryMissionQuests = new ArrayList<LevelQuest>(userGuidanceService.getMercenaryMissionCms().readDbChildren());
+        levelQuests = new ArrayList<>(userGuidanceService.getQuestsCms().readDbChildren());
+        mercenaryMissionQuests = new ArrayList<>(userGuidanceService.getMercenaryMissionCms().readDbChildren());
         Assert.assertEquals(0, mercenaryMissionQuests.size());
         Assert.assertEquals(2, levelQuests.size());
         DbLevelTask dbLevelTask1 = levelQuests.get(0).getDbLevelTask();
@@ -198,9 +201,10 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.activateLevelTaskCms(TEST_LEVEL_TASK_1_2_REAL_ID);
         serverConditionService.onMoneyIncrease(getMyBase(), 3);
-        levelQuests = new ArrayList<LevelQuest>(userGuidanceService.getQuestsCms().readDbChildren());
-        mercenaryMissionQuests = new ArrayList<LevelQuest>(userGuidanceService.getMercenaryMissionCms().readDbChildren());
+        levelQuests = new ArrayList<>(userGuidanceService.getQuestsCms().readDbChildren());
+        mercenaryMissionQuests = new ArrayList<>(userGuidanceService.getMercenaryMissionCms().readDbChildren());
         Assert.assertEquals(0, mercenaryMissionQuests.size());
         Assert.assertEquals(2, levelQuests.size());
         dbLevelTask1 = levelQuests.get(0).getDbLevelTask();
@@ -212,10 +216,11 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.activateLevelTaskCms(TEST_LEVEL_TASK_2_2_REAL_ID);
         serverConditionService.onSyncItemBuilt(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(0, 0, 0), createMockServices(), getMyBase()));
         serverConditionService.onSyncItemBuilt(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(300, 300), new Id(1, 0, 0), createMockServices(), getMyBase()));
-        levelQuests = new ArrayList<LevelQuest>(userGuidanceService.getQuestsCms().readDbChildren());
-        mercenaryMissionQuests = new ArrayList<LevelQuest>(userGuidanceService.getMercenaryMissionCms().readDbChildren());
+        levelQuests = new ArrayList<>(userGuidanceService.getQuestsCms().readDbChildren());
+        mercenaryMissionQuests = new ArrayList<>(userGuidanceService.getMercenaryMissionCms().readDbChildren());
         Assert.assertEquals(2, mercenaryMissionQuests.size());
         DbLevelTask dbLevelTask3 = mercenaryMissionQuests.get(0).getDbLevelTask();
         dbLevelTask2 = mercenaryMissionQuests.get(1).getDbLevelTask();
@@ -234,8 +239,8 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
 
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.onTutorialFinished(dbLevelTask3.getId());
-        levelQuests = new ArrayList<LevelQuest>(userGuidanceService.getQuestsCms().readDbChildren());
-        mercenaryMissionQuests = new ArrayList<LevelQuest>(userGuidanceService.getMercenaryMissionCms().readDbChildren());
+        levelQuests = new ArrayList<>(userGuidanceService.getQuestsCms().readDbChildren());
+        mercenaryMissionQuests = new ArrayList<>(userGuidanceService.getMercenaryMissionCms().readDbChildren());
         Assert.assertEquals(2, mercenaryMissionQuests.size());
         dbLevelTask1 = mercenaryMissionQuests.get(0).getDbLevelTask();
         dbLevelTask2 = mercenaryMissionQuests.get(1).getDbLevelTask();
@@ -253,9 +258,10 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.activateLevelTaskCms(TEST_LEVEL_TASK_1_3_REAL_ID);
         serverConditionService.onMoneyIncrease(getMyBase(), 200);
-        levelQuests = new ArrayList<LevelQuest>(userGuidanceService.getQuestsCms().readDbChildren());
-        mercenaryMissionQuests = new ArrayList<LevelQuest>(userGuidanceService.getMercenaryMissionCms().readDbChildren());
+        levelQuests = new ArrayList<>(userGuidanceService.getQuestsCms().readDbChildren());
+        mercenaryMissionQuests = new ArrayList<>(userGuidanceService.getMercenaryMissionCms().readDbChildren());
         Assert.assertEquals(2, mercenaryMissionQuests.size());
         dbLevelTask1 = mercenaryMissionQuests.get(0).getDbLevelTask();
         dbLevelTask2 = mercenaryMissionQuests.get(1).getDbLevelTask();

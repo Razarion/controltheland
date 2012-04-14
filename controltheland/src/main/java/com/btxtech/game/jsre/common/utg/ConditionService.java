@@ -35,6 +35,10 @@ public interface ConditionService<A, I> {
 
     void deactivateAll();
 
+    void sendProgressUpdate(A a, I i);
+
+    String getProgressHtml(A a, I i);
+
     void onSyncItemKilled(SimpleBase actor, SyncBaseItem killedItem);
 
     void onSyncItemBuilt(SyncBaseItem syncBaseItem);

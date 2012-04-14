@@ -88,5 +88,6 @@ public class ItemTypePositionComparisonConfigPanel extends Panel {
         add(new TextField("timeInMinutes"));
         add(new CheckBox("addExistingItems"));
         add(new TerritoryPanel("excludedDbTerritory"));
+        add(new HtmlProgressTemplatePanel("progressText"));
     }
 }

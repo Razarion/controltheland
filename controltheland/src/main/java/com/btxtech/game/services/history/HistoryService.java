@@ -43,6 +43,10 @@ public interface HistoryService {
 
     void addLevelTaskCompletedEntry(UserState userState, DbLevelTask levelTask);
 
+    void addLevelTaskActivated(UserState userState, DbLevelTask dbLevelTask);
+
+    void addLevelTaskDeactivated(UserState userState, DbLevelTask dbLevelTask);
+
     List<DisplayHistoryElement> getNewestHistoryElements(User user, int count);
 
     List<DisplayHistoryElement> getHistoryElements(Long from, Long to, String sessionId, Integer baseId);

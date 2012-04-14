@@ -112,7 +112,8 @@
         <mapping class="com.btxtech.game.services.cms.layout.DbContentBooleanExpressionImage"/>
         <mapping class="com.btxtech.game.services.cms.layout.DbContentInvoker"/>
         <mapping class="com.btxtech.game.services.cms.layout.DbContentInvokerButton"/>
-        <mapping class="com.btxtech.game.services.cms.layout.DbContentStartLevelTaskButton"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentStartMissionButton"/>
+        <mapping class="com.btxtech.game.services.cms.layout.DbContentActivateQuestButton"/>
         <mapping class="com.btxtech.game.services.cms.page.DbAds"/>
         <!-- Content -->
         <mapping class="com.btxtech.game.services.cms.content.DbBlogEntry"/>

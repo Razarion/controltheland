@@ -13,14 +13,17 @@
 
 package com.btxtech.game.services.utg.condition.impl;
 
+import com.btxtech.game.jsre.common.LevelStatePacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.GenericComparisonValueContainer;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.ServerServices;
+import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.user.UserService;
@@ -46,9 +49,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * User: beat
- * Date: 28.12.2010
- * Time: 18:16:33
+ * User: beat Date: 28.12.2010 Time: 18:16:33
  */
 @Component("serverConditionService")
 public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, Integer> implements ServerConditionService {
@@ -64,6 +65,8 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
     private ServerServices serverServices;
     @Autowired
     private SessionFactory sessionFactory;
+    @Autowired
+    private ConnectionService connectionService;
     private long rate = 10000;
     private final Map<UserState, Collection<AbstractConditionTrigger<UserState, Integer>>> triggerMap = new HashMap<UserState, Collection<AbstractConditionTrigger<UserState, Integer>>>();
     private ScheduledThreadPoolExecutor timer = new ScheduledThreadPoolExecutor(1, new CustomizableThreadFactory("ServerConditionServiceImpl timer "));
@@ -74,8 +77,8 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
     public void cleanup() {
         try {
             timer.shutdownNow();
-        } catch(Throwable t) {
-           log.error("", t);
+        } catch (Throwable t) {
+            log.error("", t);
         }
     }
 
@@ -92,13 +95,32 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
     }
 
     @Override
+    protected AbstractConditionTrigger<UserState, Integer> getActorConditionsPrivate(UserState userState, Integer identifier) {
+        synchronized (triggerMap) {
+            Collection<AbstractConditionTrigger<UserState, Integer>> conditions = triggerMap.get(userState);
+            if (conditions == null) {
+                throw new IllegalArgumentException("No such condition trigger. userState: " + userState + " identifier: " + identifier);
+            }
+            for (AbstractConditionTrigger<UserState, Integer> condition : conditions) {
+                Integer conditionIdentifier = condition.getIdentifier();
+                if (conditionIdentifier == null && identifier == null) {
+                    return condition;
+                } else if (identifier != null && identifier.equals(conditionIdentifier)) {
+                    return condition;
+                }
+            }
+        }
+        throw new IllegalArgumentException("No such condition trigger. userState: " + userState + " identifier: " + identifier);
+    }
+
+    @Override
     protected AbstractConditionTrigger<UserState, Integer> removeActorConditionsPrivate(UserState userState, Integer identifier) {
         synchronized (triggerMap) {
             Collection<AbstractConditionTrigger<UserState, Integer>> conditions = triggerMap.get(userState);
             if (conditions == null) {
                 return null;
             }
-            for (Iterator<AbstractConditionTrigger<UserState, Integer>> iterator = conditions.iterator(); iterator.hasNext();) {
+            for (Iterator<AbstractConditionTrigger<UserState, Integer>> iterator = conditions.iterator(); iterator.hasNext(); ) {
                 AbstractConditionTrigger<UserState, Integer> condition = iterator.next();
                 Integer conditionIdentifier = condition.getIdentifier();
                 if (conditionIdentifier == null && identifier == null) {
@@ -163,7 +185,7 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
         if (result == null) {
             return null;
         }
-        for (Iterator<AbstractConditionTrigger<UserState, Integer>> iterator = result.iterator(); iterator.hasNext();) {
+        for (Iterator<AbstractConditionTrigger<UserState, Integer>> iterator = result.iterator(); iterator.hasNext(); ) {
             AbstractConditionTrigger<UserState, Integer> condition = iterator.next();
             if (condition.getIdentifier() == null || condition.getIdentifier() != taskId) {
                 iterator.remove();
@@ -307,6 +329,16 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
         if (scheduledFuture != null) {
             scheduledFuture.cancel(true);
             scheduledFuture = null;
+        }
+    }
+
+    @Override
+    public void sendProgressUpdate(UserState actor, Integer identifier) {
+        AbstractComparison abstractComparison = getActorConditionsPrivate(actor, identifier).getAbstractComparison();
+        if (abstractComparison != null && actor.getBase() != null) {
+            LevelStatePacket levelStatePacket = new LevelStatePacket();
+            levelStatePacket.setActiveQuestProgress(abstractComparison.createProgressHtml());
+            connectionService.sendPacket(actor.getBase().getSimpleBase(), levelStatePacket);
         }
     }
 }

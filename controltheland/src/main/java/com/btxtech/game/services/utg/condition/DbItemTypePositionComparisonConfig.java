@@ -14,12 +14,12 @@
 package com.btxtech.game.services.utg.condition;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.ItemTypePositionComparisonConfig;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
-import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.common.db.RectangleUserType;
 import com.btxtech.game.services.item.ItemService;
 import org.hibernate.annotations.Cascade;
@@ -100,8 +100,8 @@ public class DbItemTypePositionComparisonConfig extends DbAbstractComparisonConf
         for (DbComparisonItemCount dbComparisonItemCount : getCrudDbComparisonItemCount().readDbChildren()) {
             itemTypeCount.put(itemService.getItemType(dbComparisonItemCount.getItemType()), dbComparisonItemCount.getCount());
         }
-        Integer timeInMs = timeInMinutes == null ? null : (int) (timeInMinutes * DateUtil.MILLIS_IN_MINUTE);
-        return new ItemTypePositionComparisonConfig(getExcludedTerritoryId(), itemTypeCount, region, timeInMs, addExistingItems);
+        Integer timeInMs = timeInMinutes == null ? null : (int) (timeInMinutes * ClientDateUtil.MILLIS_IN_MINUTE);
+        return new ItemTypePositionComparisonConfig(getExcludedTerritoryId(), itemTypeCount, region, timeInMs, addExistingItems, getHtmlProgressTemplate());
     }
 
     @Override

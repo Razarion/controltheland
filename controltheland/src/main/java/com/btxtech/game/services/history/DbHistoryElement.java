@@ -42,7 +42,9 @@ public class DbHistoryElement implements Serializable {
         ITEM_CREATED,
         ITEM_DESTROYED,
         LEVEL_PROMOTION,
-        LEVEL_TASK_COMPLETED
+        LEVEL_TASK_COMPLETED,
+        LEVEL_TASK_ACTIVATED,
+        LEVEL_TASK_DEACTIVATED
     }
 
     public enum Source {

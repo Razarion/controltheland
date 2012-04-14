@@ -1,6 +1,6 @@
 package com.btxtech.game.wicket.pages.cms.content;
 
-import com.btxtech.game.services.cms.layout.DbContentStartLevelTaskButton;
+import com.btxtech.game.services.cms.layout.DbContentStartMissionButton;
 import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsImageResource;
@@ -20,25 +20,25 @@ import java.lang.reflect.InvocationTargetException;
  * Date: 25.07.2011
  * Time: 14:01:19
  */
-public class ContentStartLevelTaskButton extends Panel {
+public class ContentStartMissionButton extends Panel {
     @SpringBean
     private CmsUiService cmsUiService;
 
-    public ContentStartLevelTaskButton(String id, DbContentStartLevelTaskButton dbContentStartLevelTaskButton, Object bean) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    public ContentStartMissionButton(String id, DbContentStartMissionButton dbContentStartMissionButton, Object bean) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         super(id);
-        DbLevelTask dbLevelTask = (DbLevelTask) PropertyUtils.getProperty(bean, dbContentStartLevelTaskButton.getExpression());
-        boolean isDone = (Boolean) PropertyUtils.getProperty(bean, dbContentStartLevelTaskButton.getDoneExpression());
+        DbLevelTask dbLevelTask = (DbLevelTask) PropertyUtils.getProperty(bean, dbContentStartMissionButton.getExpression());
+        boolean isDone = (Boolean) PropertyUtils.getProperty(bean, dbContentStartMissionButton.getDoneExpression());
 
         BookmarkablePageLink<Game> link = new BookmarkablePageLink<Game>("link", Game.class);
         Image doneImage;
         if (isDone) {
             link.setVisible(false);
-            doneImage = new Image("doneImage", new ResourceReference(CmsImageResource.CMS_SHARED_IMAGE_RESOURCES), new ValueMap(CmsImageResource.ID + "=" + Integer.toString(dbContentStartLevelTaskButton.getDoneImage().getId())));
+            doneImage = new Image("doneImage", new ResourceReference(CmsImageResource.CMS_SHARED_IMAGE_RESOURCES), new ValueMap(CmsImageResource.ID + "=" + Integer.toString(dbContentStartMissionButton.getDoneImage().getId())));
         } else {
             link.setParameter(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, Integer.toString(dbLevelTask.getId()));
             doneImage = new Image("doneImage");
             doneImage.setVisible(false);
-            link.add(new Image("linkImage", new ResourceReference(CmsImageResource.CMS_SHARED_IMAGE_RESOURCES), new ValueMap(CmsImageResource.ID + "=" + Integer.toString(dbContentStartLevelTaskButton.getStartImage().getId()))));
+            link.add(new Image("linkImage", new ResourceReference(CmsImageResource.CMS_SHARED_IMAGE_RESOURCES), new ValueMap(CmsImageResource.ID + "=" + Integer.toString(dbContentStartMissionButton.getStartImage().getId()))));
         }
         add(link);
         add(doneImage);

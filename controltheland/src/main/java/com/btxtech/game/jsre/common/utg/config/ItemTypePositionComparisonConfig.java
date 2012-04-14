@@ -33,6 +33,7 @@ public class ItemTypePositionComparisonConfig implements AbstractComparisonConfi
     private Rectangle region;
     private Integer time;
     private boolean addExistingItems;
+    private String htmlProgressTamplate;
 
     /**
      * Used by GWT
@@ -40,16 +41,17 @@ public class ItemTypePositionComparisonConfig implements AbstractComparisonConfi
     public ItemTypePositionComparisonConfig() {
     }
 
-    public ItemTypePositionComparisonConfig(Integer excludedTerritoryId, Map<ItemType, Integer> itemTypes, Rectangle region, Integer time, boolean addExistingItems) {
+    public ItemTypePositionComparisonConfig(Integer excludedTerritoryId, Map<ItemType, Integer> itemTypes, Rectangle region, Integer time, boolean addExistingItems, String htmlProgressTamplate) {
         this.excludedTerritoryId = excludedTerritoryId;
         this.itemTypes = itemTypes;
         this.region = region;
         this.time = time;
         this.addExistingItems = addExistingItems;
+        this.htmlProgressTamplate = htmlProgressTamplate;
     }
 
     @Override
     public AbstractComparison createAbstractComparison(Services services, SimpleBase simpleBase) {
-        return new ItemTypePositionComparison(excludedTerritoryId, itemTypes, region, time, addExistingItems, services, simpleBase);
+        return new ItemTypePositionComparison(excludedTerritoryId, itemTypes, region, time, addExistingItems, services, simpleBase, htmlProgressTamplate);
     }
 }

@@ -10,6 +10,7 @@ import com.btxtech.game.jsre.client.common.ChatMessage;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
+import com.btxtech.game.jsre.common.LevelStatePacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import org.junit.Ignore;
@@ -33,7 +34,9 @@ public class TestClientChatHandler extends AbstractGwtTest implements Connection
 
     public void testSimulatedToReal() throws Exception {
         lastMessageId = null;
-        ClientLevelHandler.getInstance().setLevelScope(new LevelScope(1, 0, null, 0, 0, RadarMode.NONE));
+        LevelStatePacket levelStatePacket = new LevelStatePacket();
+        levelStatePacket.setLevel(new LevelScope(1, 0, null, 0, 0, RadarMode.NONE));
+        ClientLevelHandler.getInstance().setLevelScope(levelStatePacket);
         gameEngineMode = GameEngineMode.MASTER;
         assertEquals(0, sentMessages.size());
         assertNull(lastMessageId);

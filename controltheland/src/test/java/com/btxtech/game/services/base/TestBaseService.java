@@ -2,6 +2,7 @@ package com.btxtech.game.services.base;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
+import com.btxtech.game.jsre.common.LevelStatePacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
@@ -48,7 +49,9 @@ public class TestBaseService extends AbstractServiceTest {
         // $999
         AccountBalancePacket accountBalancePacket = new AccountBalancePacket();
         accountBalancePacket.setAccountBalance(998.5);
-        assertPackagesIgnoreSyncItemInfoAndClear(accountBalancePacket);
+        LevelStatePacket levelStatePacket = new LevelStatePacket();
+        levelStatePacket.setXp(1);
+        assertPackagesIgnoreSyncItemInfoAndClear(accountBalancePacket, levelStatePacket);
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

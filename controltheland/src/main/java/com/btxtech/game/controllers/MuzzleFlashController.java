@@ -14,7 +14,7 @@
 package com.btxtech.game.controllers;
 
 import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.services.common.DateUtil;
+import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbItemTypeImageData;
 import com.btxtech.game.services.item.itemType.DbItemTypeSoundData;
@@ -53,7 +53,7 @@ public class MuzzleFlashController implements Controller {
                 }
                 httpServletResponse.setContentLength(image.getData().length);
                 httpServletResponse.setContentType(image.getContentType());
-                httpServletResponse.addDateHeader("Expires", System.currentTimeMillis() + DateUtil.MILLIS_IN_DAY);
+                httpServletResponse.addDateHeader("Expires", System.currentTimeMillis() + ClientDateUtil.MILLIS_IN_DAY);
                 OutputStream out = httpServletResponse.getOutputStream();
                 out.write(image.getData());
                 out.close();
@@ -73,7 +73,7 @@ public class MuzzleFlashController implements Controller {
                 }
                 httpServletResponse.setContentLength(data.length);
                 httpServletResponse.setContentType(contentType);
-                httpServletResponse.addDateHeader("Expires", System.currentTimeMillis() + DateUtil.MILLIS_IN_DAY);
+                httpServletResponse.addDateHeader("Expires", System.currentTimeMillis() + ClientDateUtil.MILLIS_IN_DAY);
                 httpServletResponse.addHeader("Content-Range", "bytes 0-" + (data.length - 1) + "/" + data.length);
                 httpServletResponse.addHeader("Accept-Ranges", "bytes");
                 OutputStream out = httpServletResponse.getOutputStream();

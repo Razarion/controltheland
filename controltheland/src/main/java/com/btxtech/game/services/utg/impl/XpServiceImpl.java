@@ -13,12 +13,14 @@
 
 package com.btxtech.game.services.utg.impl;
 
+import com.btxtech.game.jsre.common.LevelStatePacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.QueueWorker;
+import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbXpSettings;
 import com.btxtech.game.services.utg.XpService;
@@ -37,9 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * User: beat
- * Date: 18.12.2009
- * Time: 21:11:36
+ * User: beat Date: 18.12.2009 Time: 21:11:36
  */
 @Component("xpService")
 public class XpServiceImpl implements XpService {
@@ -49,6 +49,8 @@ public class XpServiceImpl implements XpService {
     private ServerConditionService serverConditionService;
     @Autowired
     SessionFactory sessionFactory;
+    @Autowired
+    private ConnectionService connectionService;
     private DbXpSettings dbXpSettings;
     private Log log = LogFactory.getLog(XpServiceImpl.class);
     private XpPerKillQueueWorker xpPerKillQueueWorker;
@@ -104,8 +106,8 @@ public class XpServiceImpl implements XpService {
                 xpPerKillQueueWorker.stop();
                 xpPerKillQueueWorker = null;
             }
-        } catch(Throwable t) {
-           log.error("", t);
+        } catch (Throwable t) {
+            log.error("", t);
         }
     }
 
@@ -136,6 +138,12 @@ public class XpServiceImpl implements XpService {
 
     private void increaseXpPerUserState(UserState userState, int deltaXp) {
         userState.increaseXp(deltaXp);
+        Base base = baseService.getBase(userState);
+        if (base != null) {
+            LevelStatePacket levelPacket = new LevelStatePacket();
+            levelPacket.setXp(userState.getXp());
+            connectionService.sendPacket(base.getSimpleBase(), levelPacket);
+        }
         serverConditionService.onIncreaseXp(userState, deltaXp);
     }
 

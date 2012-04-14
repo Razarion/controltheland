@@ -3,6 +3,7 @@ package com.btxtech.game.services.utg;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
+import com.btxtech.game.jsre.common.LevelStatePacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
@@ -119,10 +120,11 @@ public class TestResurrection extends AbstractServiceTest {
         BaseChangedPacket baseChangedPacket = new BaseChangedPacket();
         baseChangedPacket.setType(BaseChangedPacket.Type.REMOVED);
         baseChangedPacket.setBaseAttributes(new BaseAttributes(targetBase, targetName, false));
-
+        LevelStatePacket levelStatePacket = new LevelStatePacket();
+        levelStatePacket.setXp(3);
         Thread.sleep(3000);
 
-        assertPackagesIgnoreSyncItemInfoAndClear(message, baseChangedPacket);
+        assertPackagesIgnoreSyncItemInfoAndClear(message, baseChangedPacket, levelStatePacket);
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.client.common.info;
 
-import com.btxtech.game.jsre.client.common.LevelScope;
+import com.btxtech.game.jsre.common.LevelStatePacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
@@ -33,7 +33,7 @@ public class RealGameInfo extends GameInfo {
     private Collection<BaseAttributes> allBases;
     private int houseSpace;
     private Collection<Territory> territories;
-    private LevelScope levelScope;
+    private LevelStatePacket levelStatePacket;
 
     public SimpleBase getBase() {
         return base;
@@ -91,11 +91,11 @@ public class RealGameInfo extends GameInfo {
         this.territories = territories;
     }
 
-    public LevelScope getLevelScope() {
-        return levelScope;
+    public LevelStatePacket getLevelStatePacket() {
+        return levelStatePacket;
     }
 
-    public void setLevelScope(LevelScope levelScope) {
-        this.levelScope = levelScope;
-    }    
+    public void setLevelStatePacket(LevelStatePacket levelStatePacket) {
+        this.levelStatePacket = levelStatePacket;
+    }
 }

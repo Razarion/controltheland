@@ -156,38 +156,40 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     @Override
     public void run() {
         try {
-            for (Iterator<Connection> it = onlineConnection.iterator(); it.hasNext();) {
-                Connection connection = it.next();
-                try {
-                    int tickCount = connection.resetAndGetTickCount();
-                    if (connection.getNoTickCount() > MAX_NO_TICK_COUNT) {
-                        log.info("User kicked due timeout: " + baseService.getBaseName(connection.getBase().getSimpleBase()));
-                        if (connection.getBase() != null && connection.getBase().getUserState() != null && connection.getBase().getUserState().getUser() != null) {
-                            HibernateUtil.openSession4InternalCall(sessionFactory);
-                            try {
-                                userTrackingService.onUserLeftGame(connection.getBase().getUserState().getUser());
-                            } finally {
-                                HibernateUtil.closeSession4InternalCall(sessionFactory);
-                            }
+            synchronized (onlineConnection) {
+                for (Iterator<Connection> it = onlineConnection.iterator(); it.hasNext(); ) {
+                    Connection connection = it.next();
+                    try {
+                        int tickCount = connection.resetAndGetTickCount();
+                        if (connection.getNoTickCount() > MAX_NO_TICK_COUNT) {
+                            log.info("User kicked due timeout: " + baseService.getBaseName(connection.getBase().getSimpleBase()));
+                            if (connection.getBase() != null && connection.getBase().getUserState() != null && connection.getBase().getUserState().getUser() != null) {
+                                HibernateUtil.openSession4InternalCall(sessionFactory);
+                                try {
+                                    userTrackingService.onUserLeftGame(connection.getBase().getUserState().getUser());
+                                } finally {
+                                    HibernateUtil.closeSession4InternalCall(sessionFactory);
+                                }
 
-                        }
-                        connection.setClosed();
-                        it.remove();
-                    } else {
-                        double ticksPerSecond = (double) tickCount / (double) (USER_TRACKING_PERIODE / 1000);
-                        if (!Double.isInfinite(ticksPerSecond) && !Double.isNaN(ticksPerSecond)) {
-                            String baseName = baseService.getBaseName(connection.getBase().getSimpleBase());
-                            ConnectionStatistics connectionStatistics = new ConnectionStatistics(baseName, connection.getSessionId(), ticksPerSecond);
-                            HibernateUtil.openSession4InternalCall(sessionFactory);
-                            try {
-                                sessionFactory.getCurrentSession().saveOrUpdate(connectionStatistics);
-                            } finally {
-                                HibernateUtil.closeSession4InternalCall(sessionFactory);
+                            }
+                            connection.setClosed();
+                            it.remove();
+                        } else {
+                            double ticksPerSecond = (double) tickCount / (double) (USER_TRACKING_PERIODE / 1000);
+                            if (!Double.isInfinite(ticksPerSecond) && !Double.isNaN(ticksPerSecond)) {
+                                String baseName = baseService.getBaseName(connection.getBase().getSimpleBase());
+                                ConnectionStatistics connectionStatistics = new ConnectionStatistics(baseName, connection.getSessionId(), ticksPerSecond);
+                                HibernateUtil.openSession4InternalCall(sessionFactory);
+                                try {
+                                    sessionFactory.getCurrentSession().saveOrUpdate(connectionStatistics);
+                                } finally {
+                                    HibernateUtil.closeSession4InternalCall(sessionFactory);
+                                }
                             }
                         }
+                    } catch (Throwable t) {
+                        log.error("", t);
                     }
-                } catch (Throwable t) {
-                    log.error("", t);
                 }
             }
         } catch (Throwable t) {
@@ -252,7 +254,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     public void closeConnection(SimpleBase simpleBase) {
         Connection connection = null;
         synchronized (onlineConnection) {
-            for (Iterator<Connection> iterator = onlineConnection.iterator(); iterator.hasNext();) {
+            for (Iterator<Connection> iterator = onlineConnection.iterator(); iterator.hasNext(); ) {
                 Connection online = iterator.next();
                 if (online.getBase().getSimpleBase().equals(simpleBase)) {
                     connection = online;

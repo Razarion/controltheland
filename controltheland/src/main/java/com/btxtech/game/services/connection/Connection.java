@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.connection;
 
+import com.btxtech.game.jsre.common.LevelStatePacket;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
@@ -23,9 +24,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 /**
- * User: beat
- * Date: May 31, 2009
- * Time: 8:16:32 PM
+ * User: beat Date: May 31, 2009 Time: 8:16:32 PM
  */
 public class Connection implements Serializable {
     private Base base;
@@ -35,7 +34,8 @@ public class Connection implements Serializable {
     private String sessionId;
     private int noTickCount = 0;
     private boolean closed = false;
-    //private Log log = LogFactory.getLog(Connection.class);
+
+    // private Log log = LogFactory.getLog(Connection.class);
 
     public Connection(String sessionId) {
         this.sessionId = sessionId;
@@ -63,7 +63,8 @@ public class Connection implements Serializable {
             }
             for (SyncItem syncItem : pendingSyncItem) {
                 SyncItemInfo syncInfo = syncItem.getSyncInfo();
-                //log.debug("Send to client: " + base.getName() + " | " + syncInfo);
+                // log.debug("Send to client: " + base.getName() + " | " +
+                // syncInfo);
                 packets.add(syncInfo);
             }
             pendingSyncItem.clear();
@@ -79,8 +80,23 @@ public class Connection implements Serializable {
 
     public void sendPacket(Packet packet) {
         synchronized (pendingPackets) {
-            pendingPackets.remove(packet);
-            pendingPackets.add(packet);
+            if (packet instanceof LevelStatePacket) {
+                if (pendingPackets.contains(packet)) {
+                    for (Packet previous : pendingPackets) {
+                        if (previous instanceof LevelStatePacket) {
+                            pendingPackets.remove(previous);
+                            ((LevelStatePacket) packet).merge((LevelStatePacket) previous);
+                            pendingPackets.add(packet);
+                            break;
+                        }
+                    }
+                } else {
+                    pendingPackets.add(packet);
+                }
+            } else {
+                pendingPackets.remove(packet);
+                pendingPackets.add(packet);
+            }
         }
     }
 

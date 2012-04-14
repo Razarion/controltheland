@@ -112,7 +112,7 @@ public class CmsUtil {
         builder.append(CHILD_ID);
         builder.append('/');
         builder.append(levelTaskId);
-        builder.append("\" target=\"_blank\" style=\"color: white\">");
+        builder.append("\" target=\"_blank\" style=\"color: #FFFFAA; text-decoration: none;\">");
         builder.append(text);
         builder.append("</a>");
         return builder.toString();

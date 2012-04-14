@@ -48,6 +48,11 @@ public class DbUserState {
             joinColumns = {@JoinColumn(name = "userState")},
             inverseJoinColumns = {@JoinColumn(name = "levelTask")})
     private Collection<DbLevelTask> levelTasksDone;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "BACKUP_USER_STATUS_LEVEL_TASK_ACTIVE",
+            joinColumns = {@JoinColumn(name = "userState")},
+            inverseJoinColumns = {@JoinColumn(name = "levelTask")})
+    private Collection<DbLevelTask> levelTasksActive;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "dbUserState")
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
@@ -92,7 +97,7 @@ public class DbUserState {
 
     public void addDbGenericComparisonValue(DbGenericComparisonValue dbGenericComparisonValue) {
         if (dbGenericComparisonValues == null) {
-            dbGenericComparisonValues = new ArrayList<DbGenericComparisonValue>();
+            dbGenericComparisonValues = new ArrayList<>();
         }
         dbGenericComparisonValues.add(dbGenericComparisonValue);
     }
@@ -107,6 +112,14 @@ public class DbUserState {
 
     public void setLevelTasksDone(Collection<DbLevelTask> levelTasksDone) {
         this.levelTasksDone = levelTasksDone;
+    }
+
+    public Collection<DbLevelTask> getLevelTasksActive() {
+        return levelTasksActive;
+    }
+
+    public void setLevelTasksActive(Collection<DbLevelTask> levelTasksActive) {
+        this.levelTasksActive = levelTasksActive;
     }
 
     public StatisticsEntry getStatisticsEntry() {

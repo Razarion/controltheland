@@ -1,6 +1,6 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
-import com.btxtech.game.services.cms.layout.DbContentStartLevelTaskButton;
+import com.btxtech.game.services.cms.layout.DbContentStartMissionButton;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CmsImageSelector;
@@ -17,16 +17,16 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 25.07.2011
  * Time: 17:51:24
  */
-public class ContentStartLevelTaskButtonEditor extends MgmtWebPage {
+public class ContentStartMissionButtonEditor extends MgmtWebPage {
     @SpringBean
-    private RuServiceHelper<DbContentStartLevelTaskButton> ruServiceHelper;
+    private RuServiceHelper<DbContentStartMissionButton> ruServiceHelper;
 
-    public ContentStartLevelTaskButtonEditor(DbContentStartLevelTaskButton dbContentStartLevelTaskButton) {
+    public ContentStartMissionButtonEditor(DbContentStartMissionButton dbContentStartLevelTaskButton) {
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbContentStartLevelTaskButton> form = new Form<DbContentStartLevelTaskButton>("form", new CompoundPropertyModel<DbContentStartLevelTaskButton>(new RuModel<DbContentStartLevelTaskButton>(dbContentStartLevelTaskButton, DbContentStartLevelTaskButton.class) {
+        final Form<DbContentStartMissionButton> form = new Form<DbContentStartMissionButton>("form", new CompoundPropertyModel<DbContentStartMissionButton>(new RuModel<DbContentStartMissionButton>(dbContentStartLevelTaskButton, DbContentStartMissionButton.class) {
             @Override
-            protected RuServiceHelper<DbContentStartLevelTaskButton> getRuServiceHelper() {
+            protected RuServiceHelper<DbContentStartMissionButton> getRuServiceHelper() {
                 return ruServiceHelper;
             }
         }));
