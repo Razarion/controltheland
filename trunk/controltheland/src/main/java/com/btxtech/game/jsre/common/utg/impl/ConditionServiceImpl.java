@@ -34,12 +34,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * User: beat
- * Date: 27.12.2010
- * Time: 17:21:24
+ * User: beat Date: 27.12.2010 Time: 17:21:24
  * <p/>
- * A: Actor
- * I: Identifier
+ * A: Actor I: Identifier
  */
 public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, I> {
     private ConditionServiceListener<A, I> conditionServiceListener;
@@ -49,6 +46,8 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
     protected abstract void saveAbstractConditionTrigger(AbstractConditionTrigger<A, I> abstractConditionTrigger);
 
     protected abstract AbstractConditionTrigger<A, I> removeActorConditionsPrivate(A actor, I identifier);
+
+    protected abstract AbstractConditionTrigger<A, I> getActorConditionsPrivate(A actor, I identifier);
 
     protected abstract Collection<AbstractConditionTrigger<A, I>> removeAllActorConditionsPrivate(A a);
 
@@ -93,7 +92,7 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
         abstractConditionTrigger.setActorAndIdentifier(a, i);
         saveAbstractConditionTrigger(abstractConditionTrigger);
 
-        if(abstractConditionTrigger.isFulfilled()) {
+        if (abstractConditionTrigger.isFulfilled()) {
             conditionPassed(abstractConditionTrigger);
         }
     }
@@ -119,6 +118,12 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
         stopTimer();
         timeAwareList.clear();
         removeAllConditionsPrivate();
+    }
+
+    @Override
+    public String getProgressHtml(A a, I i) {
+        AbstractConditionTrigger<A, I> abstractConditionTrigger = getActorConditionsPrivate(a, i);
+        return abstractConditionTrigger.getAbstractComparison().createProgressHtml();
     }
 
     private void handleTimerRemoval(AbstractConditionTrigger<A, I> abstractConditionTrigger) {

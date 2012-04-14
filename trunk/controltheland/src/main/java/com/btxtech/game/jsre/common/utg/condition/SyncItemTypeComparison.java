@@ -14,22 +14,23 @@
 package com.btxtech.game.jsre.common.utg.condition;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * User: beat
- * Date: 18.07.2010
- * Time: 21:06:41
+ * User: beat Date: 18.07.2010 Time: 21:06:41
  */
 public class SyncItemTypeComparison extends AbstractSyncItemComparison {
     private Map<ItemType, Integer> remaining;
+    private Map<ItemType, Integer> total;
 
-    public SyncItemTypeComparison(Integer excludedTerritoryId, Map<ItemType, Integer> itemType) {
-        super(excludedTerritoryId);
+    public SyncItemTypeComparison(Integer excludedTerritoryId, Map<ItemType, Integer> itemType, String htmlProgressTamplate) {
+        super(excludedTerritoryId, htmlProgressTamplate);
         remaining = new HashMap<ItemType, Integer>(itemType);
+        total = new HashMap<ItemType, Integer>(itemType);
     }
 
     @Override
@@ -44,6 +45,7 @@ public class SyncItemTypeComparison extends AbstractSyncItemComparison {
         } else {
             remaining.put(syncItem.getItemType(), remainingCount);
         }
+        onProgressChanged();
     }
 
     @Override
@@ -72,7 +74,33 @@ public class SyncItemTypeComparison extends AbstractSyncItemComparison {
         remaining.clear();
         GenericComparisonValueContainer itemCounts = genericComparisonValueContainer.getChildContainer(GenericComparisonValueContainer.Key.REMAINING_ITEM_TYPES);
         for (Map.Entry entry : itemCounts.getEntries()) {
-           remaining.put((ItemType)entry.getKey(), ((Number) entry.getValue()).intValue());
+            remaining.put((ItemType) entry.getKey(), ((Number) entry.getValue()).intValue());
+        }
+    }
+
+    @Override
+    protected String getValue(char parameter, Integer number) {
+        if (parameter != TEMPLATE_PARAMETER_COUNT) {
+            throw new IllegalArgumentException("SyncItemTypeComparison.getValue() parameter is not known: " + parameter);
+        }
+        if (number == null) {
+            throw new IllegalArgumentException("SyncItemTypeComparison.getValue() number is null");
+        }
+        ItemType itemType;
+        try {
+            itemType = getServices().getItemService().getItemType(number);
+        } catch (NoSuchItemTypeException e) {
+            throw new IllegalArgumentException("SyncItemTypeComparison.getValue() no such item type id: " + number);
+        }
+        Integer totalCount = total.get(itemType);
+        if (totalCount == null) {
+            throw new IllegalArgumentException("SyncItemTypeComparison.getValue() item type is unknown in the comparision: " + itemType);
+        }
+        Integer remainingCount = remaining.get(itemType);
+        if (remainingCount == null) {
+            return totalCount.toString();
+        } else {
+            return Integer.toString(totalCount - remainingCount);
         }
     }
 }

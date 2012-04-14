@@ -22,19 +22,23 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
  */
 public class CountComparison extends AbstractSyncItemComparison {
     private double count;
+    private double countTotal;
 
-    public CountComparison(Integer excludedTerritoryId, int count) {
-        super(excludedTerritoryId);
+    public CountComparison(Integer excludedTerritoryId, int count, String htmlProgressTamplate) {
+        super(excludedTerritoryId, htmlProgressTamplate);
         this.count = count;
+        countTotal = count;
     }
 
     @Override
     protected void privateOnSyncItem(SyncItem syncItem) {
         count -= 1.0;
+        onProgressChanged();
     }
 
     public void onValue(double value) {
         count -= value;
+        onProgressChanged();
     }
 
     @Override
@@ -58,5 +62,14 @@ public class CountComparison extends AbstractSyncItemComparison {
     @Override
     public void restoreFromGenericComparisonValue(GenericComparisonValueContainer genericComparisonValueContainer) {
         count = (Double) genericComparisonValueContainer.getValue(GenericComparisonValueContainer.Key.REMAINING_COUNT);
+    }
+
+    @Override
+    protected String getValue(char parameter, Integer number) {
+        if (parameter == TEMPLATE_PARAMETER_COUNT) {
+            return Integer.toString((int) (countTotal - count));
+        } else {
+            throw new IllegalArgumentException("CountComparison.getValue() parameter is not known: " + parameter);
+        }
     }
 }

@@ -40,9 +40,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * User: beat
- * Date: 13.05.2010
- * Time: 12:20:32
+ * User: beat Date: 13.05.2010 Time: 12:20:32
  */
 @Entity(name = "GUIDANCE_LEVEL")
 public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
@@ -64,7 +62,6 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
     private DbQuestHub dbQuestHub;
     // Only used in CMS for sorting
     @Column(insertable = false, updatable = false)
-    @SuppressWarnings({"UnusedDeclaration"})
     private int orderIndex;
     // ----- Scope -----
     private int maxMoney;
@@ -184,8 +181,10 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DbLevel)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof DbLevel))
+            return false;
 
         DbLevel dbLevel = (DbLevel) o;
 
@@ -228,6 +227,26 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
         return new LevelScope(number, maxMoney, itemTypeLimitation, houseSpace, itemSellFactor, radarMode);
     }
 
+    public int getMissionCount() {
+        int count = 0;
+        for (DbLevelTask dbLevelTask : getLevelTaskCrud().readDbChildren()) {
+            if (dbLevelTask.getDbTutorialConfig() != null) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public int getQuestCount() {
+        int count = 0;
+        for (DbLevelTask dbLevelTask : getLevelTaskCrud().readDbChildren()) {
+            if (dbLevelTask.getDbTutorialConfig() == null) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     public int getXp() {
         return xp;
     }
@@ -244,7 +263,6 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
         }
         throw new IllegalStateException("No Tutorial Level Task configured for: " + this);
     }
-
 
     public int getCmsOrderIndex() {
         return dbQuestHub.getOrderIndex() * 1000 + orderIndex;

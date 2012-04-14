@@ -1,5 +1,7 @@
 package com.btxtech.game.services.common;
 
+import com.btxtech.game.jsre.common.ClientDateUtil;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -10,11 +12,6 @@ import java.util.Date;
  * Time: 22:49:13
  */
 public class DateUtil {
-    public static final long MILLIS_IN_SECOND = 1000;
-    public static final long MILLIS_IN_MINUTE = MILLIS_IN_SECOND * 60;
-    public static final long MILLIS_IN_HOUR = MILLIS_IN_MINUTE * 60;
-    public static final long MILLIS_IN_DAY = MILLIS_IN_HOUR * 24;
-    public static final long MILLIS_IN_WEEK = MILLIS_IN_DAY * 7;
     public static final String DATE_TIME_FORMAT_STRING = "dd.MM.yyyy HH:mm:ss";
     public static final String DATE_TIME_FORMAT_STRING_MILIS = "dd.MM.yyyy HH:mm:ss.SSS";
     public static final String TIME_FORMAT_STRING = "HH:mm:ss";
@@ -65,19 +62,19 @@ public class DateUtil {
     }
 
     public static Date addOneDay(Date date) {
-        return new Date(date.getTime() + MILLIS_IN_DAY);
+        return new Date(date.getTime() + ClientDateUtil.MILLIS_IN_DAY);
     }
 
     public static Date removeOneDay(Date date) {
-        return new Date(date.getTime() - MILLIS_IN_DAY);
+        return new Date(date.getTime() - ClientDateUtil.MILLIS_IN_DAY);
     }
 
     public static Date addOneWeek(Date date) {
-        return new Date(date.getTime() + MILLIS_IN_WEEK);
+        return new Date(date.getTime() + ClientDateUtil.MILLIS_IN_WEEK);
     }
 
     public static Date removeOneWeek(Date date) {
-        return new Date(date.getTime() - MILLIS_IN_WEEK);
+        return new Date(date.getTime() - ClientDateUtil.MILLIS_IN_WEEK);
     }
 
     public static Date createDate(int year, int month, int day) {

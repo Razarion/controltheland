@@ -74,7 +74,7 @@ public class DbSyncItemTypeComparisonConfig extends DbAbstractComparisonConfig i
             itemTypeCount.put(itemService.getItemType(dbComparisonItemCount.getItemType()), dbComparisonItemCount.getCount());
         }
 
-        return new SyncItemTypeComparisonConfig(getExcludedTerritoryId(), itemTypeCount);
+        return new SyncItemTypeComparisonConfig(getExcludedTerritoryId(), itemTypeCount, getHtmlProgressTemplate());
     }
 
     @Override

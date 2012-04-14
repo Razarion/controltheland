@@ -36,6 +36,8 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class CmsPage extends WebPage implements IHeaderContributor {
     public static final String DETAIL_CONTENT_ID = "detailId";
     public static final String CREATE_CONTENT_ID = "createId";
+    public static final String QUEST_ACTIVATE_ID = "activateId";
+    public static final String QUEST_DEACTIVATE_ID = "deactivateId";
     public static final String INVOKE_ID = "invokeId";
     public static final String MESSAGE_ID = "messageId";
     public static final String PAGING_NUMBER = "paging";

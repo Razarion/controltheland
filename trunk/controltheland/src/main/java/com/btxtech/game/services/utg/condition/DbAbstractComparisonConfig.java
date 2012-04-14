@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.territory.DbTerritory;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
@@ -41,6 +42,8 @@ public abstract class DbAbstractComparisonConfig implements Serializable {
     private Integer id;
     @ManyToOne
     private DbTerritory excludedDbTerritory;
+    @Column(length = 1000)
+    private String htmlProgressTemplate;
 
     public abstract AbstractComparisonConfig createComparisonConfig(ItemService itemService);
 
@@ -82,6 +85,14 @@ public abstract class DbAbstractComparisonConfig implements Serializable {
         DbAbstractComparisonConfig copy = createCopy();
         copy.setExcludedDbTerritory(excludedDbTerritory);
         return copy;
+    }
+
+    public String getHtmlProgressTemplate() {
+        return htmlProgressTemplate;
+    }
+
+    public void setHtmlProgressTemplate(String htmlProgressTamplate) {
+        this.htmlProgressTemplate = htmlProgressTamplate;
     }
 
     protected abstract DbAbstractComparisonConfig createCopy();

@@ -1,6 +1,7 @@
 package com.btxtech.game.services.cms;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
@@ -12,6 +13,7 @@ import com.btxtech.game.services.cms.content.DbBlogEntry;
 import com.btxtech.game.services.cms.content.DbWikiSection;
 import com.btxtech.game.services.cms.impl.CmsServiceImpl;
 import com.btxtech.game.services.cms.layout.DbContent;
+import com.btxtech.game.services.cms.layout.DbContentActivateQuestButton;
 import com.btxtech.game.services.cms.layout.DbContentBook;
 import com.btxtech.game.services.cms.layout.DbContentBooleanExpressionImage;
 import com.btxtech.game.services.cms.layout.DbContentContainer;
@@ -26,7 +28,7 @@ import com.btxtech.game.services.cms.layout.DbContentPageLink;
 import com.btxtech.game.services.cms.layout.DbContentPlugin;
 import com.btxtech.game.services.cms.layout.DbContentRow;
 import com.btxtech.game.services.cms.layout.DbContentSmartPageLink;
-import com.btxtech.game.services.cms.layout.DbContentStartLevelTaskButton;
+import com.btxtech.game.services.cms.layout.DbContentStartMissionButton;
 import com.btxtech.game.services.cms.layout.DbContentStaticHtml;
 import com.btxtech.game.services.cms.layout.DbExpressionProperty;
 import com.btxtech.game.services.cms.page.DbAds;
@@ -56,7 +58,7 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.services.utg.XpService;
+import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.CmsStringGenerator;
@@ -105,8 +107,6 @@ public class TestCmsService extends AbstractServiceTest {
     @Autowired
     private UserService userService;
     @Autowired
-    private XpService xpService;
-    @Autowired
     private ForumService forumService;
     @Autowired
     private MessengerService messengerService;
@@ -116,6 +116,8 @@ public class TestCmsService extends AbstractServiceTest {
     private StatisticsService statisticsService;
     @Autowired
     private ItemService itemService;
+    @Autowired
+    private ServerConditionService serverConditionService;
 
     private WicketTester tester;
 
@@ -2457,7 +2459,7 @@ public class TestCmsService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testStartLevelTaskButton() throws Exception {
+    public void testContentStartMissionButton() throws Exception {
         configureGameMultipleLevel();
 
         // Add cms image
@@ -2489,7 +2491,7 @@ public class TestCmsService extends AbstractServiceTest {
         taskList.setContentProviderGetter("mercenaryMissionCms");
         DbExpressionProperty dbExpressionProperty = (DbExpressionProperty) taskList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
         dbExpressionProperty.setExpression("dbLevelTask.name");
-        DbContentStartLevelTaskButton taskButton = (DbContentStartLevelTaskButton) taskList.getColumnsCrud().createDbChild(DbContentStartLevelTaskButton.class);
+        DbContentStartMissionButton taskButton = (DbContentStartMissionButton) taskList.getColumnsCrud().createDbChild(DbContentStartMissionButton.class);
         taskButton.setExpression("dbLevelTask");
         taskButton.setDoneExpression("done");
         taskButton.setStartImage(dbCmsImage1);
@@ -2546,6 +2548,119 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertVisible("form:content:table:rows:1:cells:2:cell:doneImage");
         tester.assertInvisible("form:content:table:rows:2:cells:2:cell:link");
         tester.assertVisible("form:content:table:rows:2:cells:2:cell:doneImage");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testDbContentActivateQuestButton() throws Exception {
+        configureGameMultipleLevel();
+
+        // Add cms image
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbCmsImage> crud = cmsService.getImageCrudRootServiceHelper();
+        DbCmsImage startImage = crud.createDbChild();
+        startImage.setData(new byte[50000]);
+        startImage.setContentType("startImage");
+        crud.updateDbChild(startImage);
+        DbCmsImage abortImage = crud.createDbChild();
+        abortImage.setData(new byte[10000]);
+        abortImage.setContentType("abortImage");
+        crud.updateDbChild(abortImage);
+        DbCmsImage blockedImage = crud.createDbChild();
+        blockedImage.setData(new byte[7000]);
+        blockedImage.setContentType("blockedImage");
+        crud.updateDbChild(blockedImage);
+        DbCmsImage doneImage = crud.createDbChild();
+        doneImage.setData(new byte[600]);
+        doneImage.setContentType("doneImage");
+        crud.updateDbChild(doneImage);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        DbContentList taskList = new DbContentList();
+        taskList.init(userService);
+        dbPage.setContentAndAccessWrites(taskList);
+        taskList.setSpringBeanName("userGuidanceService");
+        taskList.setContentProviderGetter("questsCms");
+        DbExpressionProperty dbExpressionProperty = (DbExpressionProperty) taskList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
+        dbExpressionProperty.setExpression("dbLevelTask.name");
+        DbContentActivateQuestButton taskButton = (DbContentActivateQuestButton) taskList.getColumnsCrud().createDbChild(DbContentActivateQuestButton.class);
+        taskButton.setExpression("dbLevelTask");
+        taskButton.setStartImage(startImage);
+        taskButton.setDoneExpression("done");
+        taskButton.setDoneImage(doneImage);
+        taskButton.setActiveExpression("active");
+        taskButton.setAbortImage(abortImage);
+        taskButton.setBlockedExpression("blocked");
+        taskButton.setBlockedImage(blockedImage);
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
+        userGuidanceService.getDbLevel(); // set level for new user
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell", TEST_LEVEL_TASK_1_2_REAL_NAME);
+        tester.assertVisible("form:content:table:rows:1:cells:2:cell:link:linkImage");
+        tester.assertBookmarkablePageLink("form:content:table:rows:1:cells:2:cell:link", CmsPage.class, "activateId = 2");
+        tester.assertInvisible("form:content:table:rows:1:cells:2:cell:image");
+        tester.assertLabel("form:content:table:rows:2:cells:1:cell", TEST_LEVEL_TASK_2_2_REAL_NAME);
+        tester.assertVisible("form:content:table:rows:2:cells:2:cell:link:linkImage");
+        tester.assertBookmarkablePageLink("form:content:table:rows:2:cells:2:cell:link", CmsPage.class, "activateId = 3");
+        tester.assertInvisible("form:content:table:rows:2:cells:2:cell:image");
+        // Activate first task
+        tester.clickLink("form:content:table:rows:1:cells:2:cell:link");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell", TEST_LEVEL_TASK_1_2_REAL_NAME);
+        tester.assertVisible("form:content:table:rows:1:cells:2:cell:link:linkImage");
+        tester.assertBookmarkablePageLink("form:content:table:rows:1:cells:2:cell:link", CmsPage.class, "deactivateId = 2");
+        tester.assertInvisible("form:content:table:rows:1:cells:2:cell:image");
+        tester.assertLabel("form:content:table:rows:2:cells:1:cell", TEST_LEVEL_TASK_2_2_REAL_NAME);
+        tester.assertInvisible("form:content:table:rows:2:cells:2:cell:link");
+        tester.assertVisible("form:content:table:rows:2:cells:2:cell:image");
+        // Deactivate first task
+        tester.clickLink("form:content:table:rows:1:cells:2:cell:link");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell", TEST_LEVEL_TASK_1_2_REAL_NAME);
+        tester.assertVisible("form:content:table:rows:1:cells:2:cell:link:linkImage");
+        tester.assertBookmarkablePageLink("form:content:table:rows:1:cells:2:cell:link", CmsPage.class, "activateId = 2");
+        tester.assertInvisible("form:content:table:rows:1:cells:2:cell:image");
+        tester.assertLabel("form:content:table:rows:2:cells:1:cell", TEST_LEVEL_TASK_2_2_REAL_NAME);
+        tester.assertVisible("form:content:table:rows:2:cells:2:cell:link:linkImage");
+        tester.assertBookmarkablePageLink("form:content:table:rows:2:cells:2:cell:link", CmsPage.class, "activateId = 3");
+        tester.assertInvisible("form:content:table:rows:2:cells:2:cell:image");
+        // ActivateFailedException and finish first task
+        tester.clickLink("form:content:table:rows:1:cells:2:cell:link");
+        serverConditionService.onMoneyIncrease(getMyBase(), 4);
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell", TEST_LEVEL_TASK_1_2_REAL_NAME);
+        tester.assertInvisible("form:content:table:rows:1:cells:2:cell:link");
+        tester.assertVisible("form:content:table:rows:1:cells:2:cell:image");
+        tester.assertLabel("form:content:table:rows:2:cells:1:cell", TEST_LEVEL_TASK_2_2_REAL_NAME);
+        tester.assertVisible("form:content:table:rows:2:cells:2:cell:link:linkImage");
+        tester.assertBookmarkablePageLink("form:content:table:rows:2:cells:2:cell:link", CmsPage.class, "activateId = 3");
+        tester.assertInvisible("form:content:table:rows:2:cells:2:cell:image");
+
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -3759,7 +3874,7 @@ public class TestCmsService extends AbstractServiceTest {
         userState.setUser(user);
         Base base1 = new Base(userState, 1);
         base1.setAccountBalance(1234);
-        setPrivateField(Base.class, base1, "startTime", new Date(System.currentTimeMillis() - DateUtil.MILLIS_IN_HOUR));
+        setPrivateField(Base.class, base1, "startTime", new Date(System.currentTimeMillis() - ClientDateUtil.MILLIS_IN_HOUR));
         base1.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1, 1)));
         base1.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(2, 1, 1)));
         userState.setBase(base1);
@@ -3772,7 +3887,7 @@ public class TestCmsService extends AbstractServiceTest {
         userState.setUser(user);
         Base base2 = new Base(userState, 2);
         base2.setAccountBalance(90);
-        setPrivateField(Base.class, base2, "startTime", new Date(System.currentTimeMillis() - DateUtil.MILLIS_IN_MINUTE));
+        setPrivateField(Base.class, base2, "startTime", new Date(System.currentTimeMillis() - ClientDateUtil.MILLIS_IN_MINUTE));
         base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1, 1)));
         base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(2, 1, 1)));
         base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(3, 1, 1)));
@@ -4084,7 +4199,7 @@ public class TestCmsService extends AbstractServiceTest {
         userState.setUser(user);
         Base base1 = new Base(userState, 1);
         base1.setAccountBalance(1234);
-        setPrivateField(Base.class, base1, "startTime", new Date(System.currentTimeMillis() - DateUtil.MILLIS_IN_HOUR));
+        setPrivateField(Base.class, base1, "startTime", new Date(System.currentTimeMillis() - ClientDateUtil.MILLIS_IN_HOUR));
         base1.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1, 1)));
         base1.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(2, 1, 1)));
         userState.setBase(base1);
@@ -4097,7 +4212,7 @@ public class TestCmsService extends AbstractServiceTest {
         userState.setUser(user);
         Base base2 = new Base(userState, 2);
         base2.setAccountBalance(90);
-        setPrivateField(Base.class, base2, "startTime", new Date(System.currentTimeMillis() - DateUtil.MILLIS_IN_MINUTE));
+        setPrivateField(Base.class, base2, "startTime", new Date(System.currentTimeMillis() - ClientDateUtil.MILLIS_IN_MINUTE));
         base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1, 1)));
         base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(2, 1, 1)));
         base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(3, 1, 1)));

@@ -391,6 +391,41 @@ public class TestHistoryService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
+    public void activateDeactivateLevelTask() throws Exception {
+        configureGameMultipleLevel();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("Actor", "test", "test", "test");
+        userService.login("Actor", "test");
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
+        getMyBase(); // Connection
+        userGuidanceService.activateLevelTaskCms(TEST_LEVEL_TASK_1_2_REAL_ID);
+        userGuidanceService.deactivateLevelTaskCms(TEST_LEVEL_TASK_1_2_REAL_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("Actor"), 1000);
+        System.out.println("----- Actor Target-----");
+        for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
+            System.out.println(displayHistoryElement);
+        }
+        System.out.println("----- Actor End -----");
+        Assert.assertEquals(5, displayHistoryElements.size());
+        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
+        Assert.assertEquals("Level Task deactivated: " + TEST_LEVEL_TASK_1_2_REAL_NAME, displayHistoryElements.get(0).getMessage());
+        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
+        Assert.assertEquals("Level Task activated: " + TEST_LEVEL_TASK_1_2_REAL_NAME, displayHistoryElements.get(1).getMessage());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
     public void dbHistoryElementBaseSurrenderedHuman() throws Exception {
         configureRealGame();
 

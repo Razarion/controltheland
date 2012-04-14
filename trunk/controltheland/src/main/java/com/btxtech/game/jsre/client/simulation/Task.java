@@ -14,9 +14,9 @@
 package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
+import com.btxtech.game.jsre.common.LevelStatePacket;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
-
-import java.util.List;
 
 /**
  * User: beat
@@ -32,7 +32,10 @@ public class Task {
 
     public void start() {
         ClientBase.getInstance().setAccountBalance(taskConfig.getMoney());
-        SimulationConditionServiceImpl.getInstance().activateCondition(taskConfig.getConditionConfig(), ClientBase.getInstance().getSimpleBase(), null);        
+        SimulationConditionServiceImpl.getInstance().activateCondition(taskConfig.getConditionConfig(), ClientBase.getInstance().getSimpleBase(), null);
+        LevelStatePacket levelStatePacket = new LevelStatePacket();
+        levelStatePacket.setActiveQuestProgress(SimulationConditionServiceImpl.getInstance().getProgressHtml(ClientBase.getInstance().getSimpleBase(), null));
+        ClientLevelHandler.getInstance().onLevelChanged(levelStatePacket);
     }
 
     public TaskConfig getTaskConfig() {

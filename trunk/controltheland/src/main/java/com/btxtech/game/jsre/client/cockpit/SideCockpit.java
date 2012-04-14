@@ -4,7 +4,6 @@ import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.SoundHandler;
 import com.btxtech.game.jsre.client.WebBrowserCustomButton;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
@@ -24,7 +23,6 @@ import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -40,20 +38,29 @@ public class SideCockpit {
     private static final int MAIN_PANEL_W = 227;
     private static final int MAIN_PANEL_H = 240;
     private static final int MISSION_PANEL_X = 218;
-    private static final int MISSION_PANEL_W = 789;
-    private static final int MISSION_PANEL_H = 42;
+    private static final int MISSION_PANEL_W = 150;
+    private static final int MISSION_PANEL_H = 110;
     // Level
-    private static final int LEVEL_X = 6;
+    private static final int LEVEL_X = 10;
     private static final int LEVEL_Y = 1;
+    // Planet
+    private static final int PLANET_X = 10;
+    private static final int PLANET_Y = 20;
+    // Quest overview
+    private static final int QUEST_OVERVIEW_X = 10;
+    private static final int QUEST_OVERVIEW_Y = 40;
+    // Mission overview
+    private static final int MISSION_OVERVIEW_X = 10;
+    private static final int MISSION_OVERVIEW_Y = 60;
+    // XP overview
+    private static final int XP_OVERVIEW_X = 10;
+    private static final int XP_OVERVIEW_Y = 80;
     // Money
     private static final int MONEY_X = 75;
     private static final int MONEY_Y = 4;
     // Item limit
     private static final int ITEM_LIMIT_X = 157;
     private static final int ITEM_LIMIT_Y = 4;
-    // Mission
-    private static final int MISSION_X = 20;
-    private static final int MISSION_Y = 5;
     // Energy
     private static final int ENERGY_X = 122;
     private static final int ENERGY_Y = 31;
@@ -83,16 +90,20 @@ public class SideCockpit {
     private static final int DEBUG_Y = 213;
 
     private AbsolutePanel mainPanel;
-    private AbsolutePanel missionPanel;
-    private LevelPanel levelPanel;
+    private AbsolutePanel levelPanel;
+    private Label level;
+    private Label planet;
+    private Label questOverview;
+    private Label missionOverview;
+    private Label xpOverview;
     private Label money;
     private Label itemLimit;
-    private HTML mission;
     private ProgressBar energyBar;
     private Label energyText;
     private ExtendedCustomButton sellButton;
     private Label debugPosition;
     private CockpitMode cockpitMode;
+    private QuestProgressCockpit questProgressCockpit;
 
     public static SideCockpit getInstance() {
         return INSTANCE;
@@ -102,13 +113,13 @@ public class SideCockpit {
      * Singleton
      */
     private SideCockpit() {
+        questProgressCockpit = new QuestProgressCockpit();
         setupPanels();
+        setupLevelPart();
         setupMoney();
         setupItemLimit();
         setDebugPanel();
-        setupLevelPanel();
         setupEnergy();
-        setupMission();
         setupRadar();
         setupButtonPanel();
         cockpitMode = new CockpitMode();
@@ -120,11 +131,36 @@ public class SideCockpit {
         preventEvents(mainPanel);
         mainPanel.setPixelSize(MAIN_PANEL_W, MAIN_PANEL_H);
 
-        missionPanel = new AbsolutePanel();
-        missionPanel.getElement().getStyle().setBackgroundImage("url(" + ImageHandler.getCockpitImageUrl("cockpit.png") + ")");
-        missionPanel.getElement().getStyle().setProperty("backgroundPosition", "-" + Integer.toString(MISSION_PANEL_X) + "px 0");
-        preventEvents(missionPanel);
-        missionPanel.setPixelSize(MISSION_PANEL_W, MISSION_PANEL_H);
+        levelPanel = new AbsolutePanel();
+        //levelPanel.getElement().getStyle().setBackgroundImage("url(" + ImageHandler.getCockpitImageUrl("cockpit.png") + ")");
+        //levelPanel.getElement().getStyle().setProperty("backgroundPosition", "-" + Integer.toString(MISSION_PANEL_X) + "px 0");
+        levelPanel.getElement().getStyle().setBackgroundColor("#000000");
+        preventEvents(levelPanel);
+        levelPanel.setPixelSize(MISSION_PANEL_W, MISSION_PANEL_H);
+    }
+
+    private void setupLevelPart() {
+        level = new Label();
+        level.setTitle("???");
+        level.getElement().getStyle().setColor(TEXT_COLOR);
+        levelPanel.add(level, LEVEL_X, LEVEL_Y);
+        planet = new Label();
+        planet.setTitle("???");
+        planet.getElement().getStyle().setColor(TEXT_COLOR);
+        planet.setText("Planet: UNKNOWN");
+        levelPanel.add(planet, PLANET_X, PLANET_Y);
+        questOverview = new Label();
+        questOverview.setTitle("???");
+        questOverview.getElement().getStyle().setColor(TEXT_COLOR);
+        levelPanel.add(questOverview, QUEST_OVERVIEW_X, QUEST_OVERVIEW_Y);
+        missionOverview = new Label();
+        missionOverview.setTitle("???");
+        missionOverview.getElement().getStyle().setColor(TEXT_COLOR);
+        levelPanel.add(missionOverview, MISSION_OVERVIEW_X, MISSION_OVERVIEW_Y);
+        xpOverview = new Label();
+        xpOverview.setTitle("???");
+        xpOverview.getElement().getStyle().setColor(TEXT_COLOR);
+        levelPanel.add(xpOverview, XP_OVERVIEW_X, XP_OVERVIEW_Y);
     }
 
     private void setupMoney() {
@@ -147,18 +183,6 @@ public class SideCockpit {
             debugPosition.getElement().getStyle().setBackgroundColor("#FFFFFF");
             mainPanel.add(debugPosition, DEBUG_X, DEBUG_Y);
         }
-    }
-
-    private void setupLevelPanel() {
-        levelPanel = new LevelPanel();
-        mainPanel.add(levelPanel, LEVEL_X, LEVEL_Y);
-    }
-
-    private void setupMission() {
-        mission = new HTML();
-        mission.setTitle(ToolTips.TOOL_TIP_MISSION);
-        mission.getElement().getStyle().setColor(TEXT_COLOR);
-        missionPanel.add(mission, MISSION_X, MISSION_Y);
     }
 
     private void setupEnergy() {
@@ -242,31 +266,45 @@ public class SideCockpit {
     }
 
     public void setLevel(LevelScope levelScope) {
-        if (levelPanel != null) {
-            levelPanel.onLevelUp(levelScope);
-        }
+        level.setText("Level: " + levelScope.getNumber());
         onStateChanged();
     }
 
-    public void onLevelTaskDone() {
-        if (levelPanel != null) {
-            levelPanel.onLevelTaskDone();
-        }
+    public void setActiveQuest(String activeQuestTitle, String activeQuestProgress, Integer activeQuestLevelTaskId) {
+        questProgressCockpit.setActiveQuest(activeQuestTitle, activeQuestProgress, activeQuestLevelTaskId);
+    }
+
+    public void setNoActiveQuest() {
+        questProgressCockpit.setNoActiveQuest();
+    }
+
+    public void setXp(int xp, int xp2LevelUp) {
+        xpOverview.setText("XP: " + xp + " / " + xp2LevelUp);
+    }
+
+    public void hideXp() {
+        xpOverview.setText("");
+    }
+
+    public void setQuestOverview(int questsDone, int totalQuests) {
+        questOverview.setText("Quests: " + questsDone + " / " + totalQuests);
+    }
+
+    public void hideQuestOverview() {
+        questOverview.setText("");
+    }
+
+    public void setMissionOverview(int missionsDone, int totalMissions) {
+        missionOverview.setText("Missions: " + missionsDone + " / " + totalMissions);
+    }
+
+    public void hideMissionOverview() {
+        missionOverview.setText("");
     }
 
     public void onStateChanged() {
         if (ItemCockpit.getInstance().isActive()) {
             ItemCockpit.getInstance().onStateChanged();
-        }
-    }
-
-    public void setMissionHtml(String missionHtml, String link) {
-        if (mission != null) {
-            if (link != null) {
-                mission.setHTML(missionHtml + " " + link);
-            } else {
-                mission.setHTML(missionHtml);
-            }
         }
     }
 
@@ -286,8 +324,9 @@ public class SideCockpit {
     public void addToParent(AbsolutePanel parent) {
         parent.add(mainPanel, 0, 0);
         mainPanel.getElement().getStyle().setZIndex(Constants.Z_INDEX_TOP_MAP_PANEL);
-        parent.add(missionPanel, MISSION_PANEL_X, 0);
-        missionPanel.getElement().getStyle().setZIndex(Constants.Z_INDEX_TOP_MAP_PANEL);
+        parent.add(levelPanel, MISSION_PANEL_X, 0);
+        levelPanel.getElement().getStyle().setZIndex(Constants.Z_INDEX_TOP_MAP_PANEL);
+        questProgressCockpit.addToParent(parent);
     }
 
     private void preventEvents(Widget widget) {

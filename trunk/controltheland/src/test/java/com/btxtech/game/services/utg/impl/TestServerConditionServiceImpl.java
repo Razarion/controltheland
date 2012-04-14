@@ -87,8 +87,8 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         setPrivateField(ServerConditionServiceImpl.class, serverConditionService, "baseService", baseServiceMock);
 
         ConditionConfig conditionTutorial = new ConditionConfig(ConditionTrigger.TUTORIAL, null);
-        ConditionConfig conditionXp = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(null, 30));
-        ConditionConfig conditionMoney = new ConditionConfig(ConditionTrigger.MONEY_INCREASED, new CountComparisonConfig(null, 80));
+        ConditionConfig conditionXp = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(null, 30, null));
+        ConditionConfig conditionMoney = new ConditionConfig(ConditionTrigger.MONEY_INCREASED, new CountComparisonConfig(null, 80, null));
 
         serverConditionService.activateCondition(conditionXp, userState1, null);
         serverConditionService.activateCondition(conditionTutorial, userState1, 1);
@@ -186,7 +186,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         });
         serverConditionService.onBaseDeleted(simpleBase1);
         Assert.assertFalse(passed);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.BASE_KILLED, new CountComparisonConfig(null, 1));
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.BASE_KILLED, new CountComparisonConfig(null, 1, null));
         serverConditionService.activateCondition(conditionConfig, userState, 1);
         serverConditionService.onBaseDeleted(simpleBase2);
         Assert.assertFalse(passed);
@@ -219,7 +219,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         });
         serverConditionService.onBaseDeleted(simpleBase1);
         Assert.assertFalse(passed);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.BASE_KILLED, new CountComparisonConfig(null, 2));
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.BASE_KILLED, new CountComparisonConfig(null, 2, null));
         serverConditionService.activateCondition(conditionConfig, userState, 1);
         Assert.assertFalse(passed);
         serverConditionService.onBaseDeleted(simpleBase1);
@@ -248,7 +248,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         identifier = null;
         Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
         itemTypes.put(itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 1);
-        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null, false)), userService.getUserState(), 1);
+        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null, false, null)), userService.getUserState(), 1);
         assertClearActorAndIdentifier();
         sendMoveCommand(builder, new Index(700, 700));
         waitForActionServiceDone();
@@ -256,14 +256,14 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
 
         itemTypes = new HashMap<ItemType, Integer>();
         itemTypes.put(itemService.getItemType(TEST_FACTORY_ITEM_ID), 1);
-        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null, false)), userService.getUserState(), 1);
+        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null, false, null)), userService.getUserState(), 1);
         sendBuildCommand(builder, new Index(900, 900), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         assertActorAndIdentifierAndClear(userService.getUserState(), 1);
 
         itemTypes = new HashMap<ItemType, Integer>();
         itemTypes.put(itemService.getItemType(TEST_ATTACK_ITEM_ID), 1);
-        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null, false)), userService.getUserState(), 1);
+        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null, false, null)), userService.getUserState(), 1);
         Id factory = getFirstSynItemId(TEST_FACTORY_ITEM_ID);
         sendFactoryCommand(factory, TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
@@ -271,7 +271,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
 
         itemTypes = new HashMap<ItemType, Integer>();
         itemTypes.put(itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 1);
-        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null, false)), userService.getUserState(), 1);
+        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null, false, null)), userService.getUserState(), 1);
 
         sendFactoryCommand(factory, TEST_CONTAINER_ITEM_ID);
         waitForActionServiceDone();
@@ -304,7 +304,33 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         UserState userState1 = userService.getUserState();
         userGuidanceService.promote(userState1, TEST_LEVEL_2_REAL_ID);
         SimpleBase simpleBase1 = getMyBase();
+
+        // Verify the QuestsCms
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertFalse(levelQuest.isDone());
+            Assert.assertFalse(levelQuest.isActive());
+            Assert.assertFalse(levelQuest.isBlocked());
+        }
+        userGuidanceService.activateLevelTaskCms(TEST_LEVEL_TASK_1_2_REAL_ID);
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertFalse(levelQuest.isDone());
+            Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isActive());
+            Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID != levelQuest.getDbLevelTask().getId(), levelQuest.isBlocked());
+        }
+        userGuidanceService.deactivateLevelTaskCms(TEST_LEVEL_TASK_1_2_REAL_ID);
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertFalse(levelQuest.isDone());
+            Assert.assertFalse(levelQuest.isActive());
+            Assert.assertFalse(levelQuest.isBlocked());
+        }
+        userGuidanceService.activateLevelTaskCms(TEST_LEVEL_TASK_1_2_REAL_ID);
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertFalse(levelQuest.isDone());
+            Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isActive());
+            Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID != levelQuest.getDbLevelTask().getId(), levelQuest.isBlocked());
+        }
         serverConditionService.onMoneyIncrease(simpleBase1, 2.0);
+
         serverConditionService.onIncreaseXp(userState1, 10);
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(100, 100), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -330,6 +356,8 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
             Assert.assertFalse(levelQuest.isDone());
+            Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isActive());
+            Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID != levelQuest.getDbLevelTask().getId(), levelQuest.isBlocked());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -342,6 +370,8 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         serverConditionService.onMoneyIncrease(simpleBase1, 1.0);
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
             Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isDone());
+            Assert.assertFalse(levelQuest.isActive());
+            Assert.assertFalse(levelQuest.isBlocked());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -366,10 +396,27 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
             Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isDone());
+            Assert.assertFalse(levelQuest.isActive());
+            Assert.assertFalse(levelQuest.isBlocked());
         }
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
+        // activate last task
+        userGuidanceService.activateLevelTaskCms(TEST_LEVEL_TASK_2_2_REAL_ID);
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isDone());
+            Assert.assertEquals(TEST_LEVEL_TASK_2_2_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isActive());
+        }
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(5000, 5000), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
         Assert.assertEquals(TEST_LEVEL_3_REAL_ID, (int) userGuidanceService.getDbLevel().getId());
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertFalse(levelQuest.isDone());
+            Assert.assertFalse(levelQuest.isActive());
+            Assert.assertFalse(levelQuest.isBlocked());
+        }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -387,6 +434,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         userService.login("U1", "test");
         UserState userState1 = userService.getUserState();
         userGuidanceService.promote(userState1, TEST_LEVEL_4_REAL_ID);
+        userGuidanceService.activateLevelTaskCms(TEST_LEVEL_TASK_1_4_REAL_ID);
         Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
             Assert.assertFalse(levelQuest.isDone());
@@ -436,7 +484,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         // Manipulate the time inside the position comparison to avoid waiting a minute
         Map<UserState, Collection<AbstractConditionTrigger<UserState, Integer>>> triggerMap = (Map<UserState, Collection<AbstractConditionTrigger<UserState, Integer>>>) getPrivateField(ServerConditionServiceImpl.class, serverConditionService, "triggerMap");
         Collection<AbstractConditionTrigger<UserState, Integer>> triggers = triggerMap.get(userService.getUserState());
-        Assert.assertEquals(3, triggers.size());
+        Assert.assertEquals(2, triggers.size());
         ItemTypePositionComparison itemTypePositionComparison = null;
         for (AbstractConditionTrigger<UserState, Integer> trigger : triggers) {
             if (trigger.getIdentifier() != null && trigger.getIdentifier() == TEST_LEVEL_TASK_1_4_REAL_ID) {
@@ -466,6 +514,8 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
             Assert.assertFalse(levelQuest.isDone());
+            Assert.assertFalse(levelQuest.isActive());
+            Assert.assertFalse(levelQuest.isBlocked());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -483,19 +533,23 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         mgmtService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-        // Proceed task
+        // Proceed task but do not activate
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.login("U1", "test");
         Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
             Assert.assertFalse(levelQuest.isDone());
+            Assert.assertFalse(levelQuest.isActive());
+            Assert.assertFalse(levelQuest.isBlocked());
         }
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(2000, 2000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
             Assert.assertFalse(levelQuest.isDone());
+            Assert.assertFalse(levelQuest.isActive());
+            Assert.assertFalse(levelQuest.isBlocked());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -519,6 +573,8 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
             Assert.assertFalse(levelQuest.isDone());
+            Assert.assertFalse(levelQuest.isActive());
+            Assert.assertFalse(levelQuest.isBlocked());
         }
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
@@ -531,6 +587,101 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
             Assert.assertFalse(levelQuest.isDone());
+            Assert.assertFalse(levelQuest.isActive());
+            Assert.assertFalse(levelQuest.isBlocked());
+        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        //Backup
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Restore
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Complete task but inactive
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertFalse(levelQuest.isDone());
+            Assert.assertFalse(levelQuest.isActive());
+            Assert.assertFalse(levelQuest.isBlocked());
+        }
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            // Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isDone());
+            Assert.assertFalse(levelQuest.isDone());
+            Assert.assertFalse(levelQuest.isActive());
+            Assert.assertFalse(levelQuest.isBlocked());
+        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Activate task
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        userGuidanceService.activateLevelTaskCms(TEST_LEVEL_TASK_2_4_REAL_ID);
+        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertFalse(levelQuest.isDone());
+            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isActive());
+            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID != levelQuest.getDbLevelTask().getId(), levelQuest.isBlocked());
+        }
+        waitForActionServiceDone();
+        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertFalse(levelQuest.isDone());
+            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isActive());
+            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID != levelQuest.getDbLevelTask().getId(), levelQuest.isBlocked());
+        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        //Backup
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Restore
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Proceed task
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertFalse(levelQuest.isDone());
+            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isActive());
+            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID != levelQuest.getDbLevelTask().getId(), levelQuest.isBlocked());
+        }
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
+        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
+            Assert.assertFalse(levelQuest.isDone());
+            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isActive());
+            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID != levelQuest.getDbLevelTask().getId(), levelQuest.isBlocked());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -554,15 +705,21 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
             Assert.assertFalse(levelQuest.isDone());
+            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isActive());
+            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID != levelQuest.getDbLevelTask().getId(), levelQuest.isBlocked());
         }
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(5000, 5000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
         for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
             Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isDone());
+            Assert.assertFalse(levelQuest.isActive());
+            Assert.assertFalse(levelQuest.isBlocked());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+
     }
 
 }

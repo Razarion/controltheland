@@ -14,7 +14,6 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
-import com.btxtech.game.jsre.client.cockpit.SplashManager;
 import com.btxtech.game.jsre.client.common.ChatMessage;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
@@ -40,8 +39,7 @@ import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.EnergyPacket;
 import com.btxtech.game.jsre.common.HouseSpacePacket;
 import com.btxtech.game.jsre.common.Html5NotSupportedException;
-import com.btxtech.game.jsre.common.LevelPacket;
-import com.btxtech.game.jsre.common.LevelTaskDonePacket;
+import com.btxtech.game.jsre.common.LevelStatePacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
@@ -260,12 +258,8 @@ public class Connection implements StartupProgressListener, ConnectionI {
                     ClientEnergyService.getInstance().onEnergyPacket((EnergyPacket) packet);
                 } else if (packet instanceof ChatMessage) {
                     ClientChatHandler.getInstance().onMessageReceived((ChatMessage) packet);
-                } else if (packet instanceof LevelTaskDonePacket) {
-                    SplashManager.getInstance().onLevelTaskCone();
-                    SideCockpit.getInstance().onLevelTaskDone();
-                } else if (packet instanceof LevelPacket) {
-                    SplashManager.getInstance().onLevelUp();
-                    ClientLevelHandler.getInstance().onLevelChanged(((LevelPacket) packet).getLevel());
+                } else if (packet instanceof LevelStatePacket) {
+                    ClientLevelHandler.getInstance().onLevelChanged((LevelStatePacket) packet);
                 } else if (packet instanceof HouseSpacePacket) {
                     HouseSpacePacket houseSpacePacket = (HouseSpacePacket) packet;
                     ClientBase.getInstance().setHouseSpace(houseSpacePacket.getHouseSpace());

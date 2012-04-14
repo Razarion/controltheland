@@ -26,6 +26,7 @@ import com.btxtech.game.jsre.common.utg.condition.CountComparison;
 public class CountComparisonConfig implements AbstractComparisonConfig {
     private Integer excludedTerritoryId;
     private int count;
+    private String htmlProgressTamplate;
 
     /**
      * Used by GWT
@@ -33,13 +34,14 @@ public class CountComparisonConfig implements AbstractComparisonConfig {
     protected CountComparisonConfig() {
     }
 
-    public CountComparisonConfig(Integer excludedTerritoryId, int count) {
+    public CountComparisonConfig(Integer excludedTerritoryId, int count, String htmlProgressTamplate) {
         this.excludedTerritoryId = excludedTerritoryId;
         this.count = count;
+        this.htmlProgressTamplate = htmlProgressTamplate;
     }
 
     @Override
     public AbstractComparison createAbstractComparison(Services services, SimpleBase simpleBase) {
-        return new CountComparison(excludedTerritoryId, count);
+        return new CountComparison(excludedTerritoryId, count, htmlProgressTamplate);
     }
 }

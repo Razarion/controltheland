@@ -42,7 +42,7 @@ public class DbCountComparisonConfig extends DbAbstractComparisonConfig {
 
     @Override
     public AbstractComparisonConfig createComparisonConfig(ItemService itemService) {
-        return new CountComparisonConfig(getExcludedTerritoryId(), count);
+        return new CountComparisonConfig(getExcludedTerritoryId(), count, getHtmlProgressTemplate());
     }
 
     @Override

@@ -83,5 +83,6 @@ public class SyncItemTypeComparisonConfigPanel extends Panel {
             }
         };
         add(new TerritoryPanel("excludedDbTerritory"));
+        add(new HtmlProgressTemplatePanel("progressText"));
     }
 }

@@ -14,9 +14,11 @@
 package com.btxtech.game.jsre.common.utg.condition;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
@@ -27,9 +29,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * User: beat
- * Date: 18.07.2010
- * Time: 21:06:41
+ * User: beat Date: 18.07.2010 Time: 21:06:41
  */
 public class ItemTypePositionComparison extends AbstractSyncItemComparison implements TimeAware {
     private Map<ItemType, Integer> itemTypes;
@@ -41,8 +41,9 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
     private final Collection<SyncItem> fulfilledItems = new HashSet<SyncItem>();
     private Long fulfilledTimeStamp;
 
-    public ItemTypePositionComparison(Integer excludedTerritoryId, Map<ItemType, Integer> itemTypes, Rectangle region, Integer time, boolean addExistingItems, Services services, SimpleBase simpleBase) {
-        super(excludedTerritoryId);
+    public ItemTypePositionComparison(Integer excludedTerritoryId, Map<ItemType, Integer> itemTypes, Rectangle region, Integer time, boolean addExistingItems, Services services,
+                                      SimpleBase simpleBase, String htmlProgressTamplate) {
+        super(excludedTerritoryId, htmlProgressTamplate);
         this.itemTypes = itemTypes;
         this.region = region;
         this.time = time;
@@ -59,10 +60,11 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
         if (isFulfilled) {
             return;
         }
-        if (itemTypes != null && !itemTypes.containsKey(syncItem.getItemType())) {
+        if (itemTypes == null || !itemTypes.containsKey(syncItem.getItemType())) {
             return;
         }
         if (!checkRegion(syncItem)) {
+            onProgressChanged();
             return;
         }
         synchronized (fulfilledItems) {
@@ -77,6 +79,7 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
         } else {
             verifyFulfilledItems();
             isFulfilled = areItemsComplete();
+            onProgressChanged();
         }
     }
 
@@ -113,7 +116,7 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
     }
 
     private void verifyFulfilledItems() {
-        for (Iterator<SyncItem> iterator = fulfilledItems.iterator(); iterator.hasNext();) {
+        for (Iterator<SyncItem> iterator = fulfilledItems.iterator(); iterator.hasNext(); ) {
             SyncItem fulfilledItem = iterator.next();
             if (!fulfilledItem.isAlive()) {
                 iterator.remove();
@@ -135,6 +138,7 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
         } else {
             fulfilledTimeStamp = null;
         }
+        onProgressChanged();
     }
 
     private boolean checkRegion(SyncItem syncItem) {
@@ -180,4 +184,48 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
             fulfilledTimeStamp = remainingTime + System.currentTimeMillis() - time;
         }
     }
+
+    @Override
+    protected String getValue(char parameter, Integer number) {
+        if (parameter == TEMPLATE_PARAMETER_COUNT) {
+            if (number == null) {
+                throw new IllegalArgumentException("ItemTypePositionComparison.getValue() number is null");
+            }
+            ItemType itemType;
+            try {
+                itemType = getServices().getItemService().getItemType(number);
+            } catch (NoSuchItemTypeException e) {
+                throw new IllegalArgumentException("ItemTypePositionComparison.getValue() no such item type id: " + number);
+            }
+            if (!itemTypes.containsKey(itemType)) {
+                throw new IllegalArgumentException("ItemTypePositionComparison.getValue() item type is unknown in the comparision: " + itemType);
+            }
+            int count = 0;
+            synchronized (fulfilledItems) {
+                verifyFulfilledItems();
+                for (SyncItem fulfilledItem : fulfilledItems) {
+                    if (fulfilledItem.getItemType().equals(itemType)) {
+                        count++;
+                    }
+                }
+            }
+            return Integer.toString(count);
+        } else if (parameter == TEMPLATE_PARAMETER_TIME) {
+            if (fulfilledTimeStamp != null) {
+                long remainingTime = time - (System.currentTimeMillis() - fulfilledTimeStamp);
+                if (remainingTime <= 0) {
+                    return "0";
+                } else if (remainingTime < ClientDateUtil.MILLIS_IN_MINUTE) {
+                    return "1";
+                } else {
+                    return ClientDateUtil.dateToMinuteString(remainingTime);
+                }
+            } else {
+                return "-";
+            }
+        } else {
+            throw new IllegalArgumentException("SyncItemTypeComparison.getValue() parameter is not known: " + parameter);
+        }
+    }
+
 }

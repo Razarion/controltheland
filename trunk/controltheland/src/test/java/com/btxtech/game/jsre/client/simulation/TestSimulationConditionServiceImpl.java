@@ -72,7 +72,7 @@ public class TestSimulationConditionServiceImpl {
     public void moneyEarned() throws Exception {
         SimulationConditionServiceImpl conditionService = SimulationConditionServiceImpl.getInstance();
 
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.MONEY_INCREASED, new CountComparisonConfig(null, 100));
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.MONEY_INCREASED, new CountComparisonConfig(null, 100, null));
         conditionService.activateCondition(conditionConfig, myBase, null);
         passed = false;
         conditionService.setConditionServiceListener(new ConditionServiceListener<SimpleBase, Void>() {
@@ -96,7 +96,7 @@ public class TestSimulationConditionServiceImpl {
     public void syncItemKilled() throws Exception {
         SimulationConditionServiceImpl conditionService = SimulationConditionServiceImpl.getInstance();
 
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new CountComparisonConfig(null, 2));
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new CountComparisonConfig(null, 2, null));
         conditionService.activateCondition(conditionConfig, myBase, null);
         passed = false;
         conditionService.setConditionServiceListener(new ConditionServiceListener<SimpleBase, Void>() {
@@ -124,7 +124,7 @@ public class TestSimulationConditionServiceImpl {
 
         Map<ItemType, Integer> itemTypeMap = new HashMap<ItemType, Integer>();
         itemTypeMap.put(itemType2, 2);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new SyncItemTypeComparisonConfig(null, itemTypeMap));
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new SyncItemTypeComparisonConfig(null, itemTypeMap, null));
         conditionService.activateCondition(conditionConfig, myBase, null);
         passed = false;
         conditionService.setConditionServiceListener(new ConditionServiceListener<SimpleBase, Void>() {
@@ -153,7 +153,7 @@ public class TestSimulationConditionServiceImpl {
     public void syncItemBuilt() throws Exception {
         SimulationConditionServiceImpl conditionService = SimulationConditionServiceImpl.getInstance();
 
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new CountComparisonConfig(null, 2));
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new CountComparisonConfig(null, 2, null));
         conditionService.activateCondition(conditionConfig, myBase, null);
         passed = false;
         conditionService.setConditionServiceListener(new ConditionServiceListener<SimpleBase, Void>() {
@@ -182,7 +182,7 @@ public class TestSimulationConditionServiceImpl {
 
         Map<ItemType, Integer> itemTypeMap = new HashMap<ItemType, Integer>();
         itemTypeMap.put(itemType2, 2);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new SyncItemTypeComparisonConfig(null, itemTypeMap));
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new SyncItemTypeComparisonConfig(null, itemTypeMap, null));
         conditionService.activateCondition(conditionConfig, myBase, null);
         passed = false;
         conditionService.setConditionServiceListener(new ConditionServiceListener<SimpleBase, Void>() {
@@ -215,7 +215,7 @@ public class TestSimulationConditionServiceImpl {
 
         SimulationConditionServiceImpl conditionService = SimulationConditionServiceImpl.getInstance();
 
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.BASE_KILLED, new CountComparisonConfig(null, 1));
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.BASE_KILLED, new CountComparisonConfig(null, 1, null));
         conditionService.activateCondition(conditionConfig, myBase, null);
         passed = false;
         conditionService.setConditionServiceListener(new ConditionServiceListener<SimpleBase, Void>() {

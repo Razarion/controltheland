@@ -153,10 +153,10 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             realGameInfo.setEnergyConsuming(serverEnergyService.getConsuming());
             realGameInfo.setEnergyGenerating(serverEnergyService.getGenerating());
             terrainService.setupTerrainRealGame(realGameInfo);
-            realGameInfo.setLevelScope(userGuidanceService.getLevelScope());
             realGameInfo.setTerritories(territoryService.getTerritories());
             realGameInfo.setAllBases(baseService.getAllBaseAttributes());
             realGameInfo.setHouseSpace(baseService.getBase().getHouseSpace());
+            userGuidanceService.fillRealGameInfo(realGameInfo);
             return realGameInfo;
         } catch (InvalidLevelState invalidLevelState) {
             throw invalidLevelState;
@@ -177,6 +177,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             setCommonInfo(simulationInfo, userService, itemService, mgmtService, cmsUiService);
             simulationInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(itemService));
             simulationInfo.setLevelTaskId(levelTaskId);
+            simulationInfo.setLevelTaskTitel(userGuidanceService.getDbLevel().getLevelTaskCrud().readDbChild(levelTaskId).getName());
             simulationInfo.setLevelNumber(userGuidanceService.getDbLevel().getNumber());
             // Terrain
             terrainService.setupTerrainTutorial(simulationInfo, dbTutorialConfig);

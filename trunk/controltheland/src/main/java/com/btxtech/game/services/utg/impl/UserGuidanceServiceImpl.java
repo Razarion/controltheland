@@ -16,8 +16,8 @@ package com.btxtech.game.services.utg.impl;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
-import com.btxtech.game.jsre.common.LevelPacket;
-import com.btxtech.game.jsre.common.LevelTaskDonePacket;
+import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.common.LevelStatePacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
@@ -35,7 +35,6 @@ import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
-import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
@@ -61,9 +60,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * User: beat
- * Date: 29.01.2010
- * Time: 22:04:02
+ * User: beat Date: 29.01.2010 Time: 22:04:02
  */
 @Component("userGuidanceService")
 public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionServiceListener<UserState, Integer> {
@@ -83,15 +80,15 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     @Autowired
     private TerritoryService territoryService;
     @Autowired
-    private StatisticsService statisticsService;
-    @Autowired
     private SessionFactory sessionFactory;
     @Autowired
     private ItemService itemService;
     @Autowired
     private XpService xpService;
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
-    private Map<Integer, LevelScope> levelScopes = new HashMap<Integer, LevelScope>();
+    private Map<Integer, LevelScope> levelScopes = new HashMap<>();
+    private final Map<UserState, Collection<Integer>> levelTaskDone = new HashMap<>();
+    private final Map<UserState, Collection<Integer>> levelTaskActive = new HashMap<>();
 
     @PostConstruct
     public void init() {
@@ -160,12 +157,18 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
             }
         }
         // Prepare next level
-        activateConditions(userState, dbNextLevel, null);
+        activateConditions4Level(userState, dbNextLevel);
         // Send level update packet
         if (baseService.getBase(userState) != null) {
             Base base = baseService.getBase(userState);
-            LevelPacket levelPacket = new LevelPacket();
+            LevelStatePacket levelPacket = new LevelStatePacket();
             levelPacket.setLevel(getLevelScope(dbNextLevel.getId()));
+            levelPacket.setXp(0);
+            levelPacket.setXp2LevelUp(dbNextLevel.getXp());
+            levelPacket.setQuestsDone(0);
+            levelPacket.setTotalQuests(dbNextLevel.getQuestCount());
+            levelPacket.setMissionsDone(0);
+            levelPacket.setTotalMissions(dbNextLevel.getMissionCount());
             connectionService.sendPacket(base.getSimpleBase(), levelPacket);
         }
         // Post processing
@@ -213,30 +216,43 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         }
     }
 
-    private void activateConditions(UserState userState, DbLevel dbLevel, Collection<DbLevelTask> levelTaskDone) {
-        ConditionConfig levelCondition = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(null, dbLevel.getXp()));
+    private void activateConditions4Level(UserState userState, DbLevel dbLevel) {
+        ConditionConfig levelCondition = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(null, dbLevel.getXp(), null));
         serverConditionService.activateCondition(levelCondition, userState, null);
         for (DbLevelTask dbLevelTask : dbLevel.getLevelTaskCrud().readDbChildren()) {
-            if (levelTaskDone != null && levelTaskDone.contains(dbLevelTask)) {
-                continue;
+            if (dbLevelTask.getDbTutorialConfig() != null && (!levelTaskDone.containsKey(userState) || levelTaskDone.get(userState).contains(dbLevelTask))) {
+                serverConditionService.activateCondition(dbLevelTask.createConditionConfig(itemService), userState, dbLevelTask.getId());
+                addLevelTaskActive(userState, dbLevelTask);
             }
-            serverConditionService.activateCondition(dbLevelTask.createConditionConfig(itemService), userState, dbLevelTask.getId());
         }
     }
 
     private void cleanupConditions(UserState userState) {
         serverConditionService.deactivateAllActorConditions(userState);
+        synchronized (levelTaskDone) {
+            levelTaskDone.remove(userState);
+        }
+        synchronized (levelTaskActive) {
+            levelTaskActive.remove(userState);
+        }
     }
 
     private void handleLevelTaskCompletion(UserState userState, int levelTaskId) {
         DbLevelTask dbLevelTask = (DbLevelTask) sessionFactory.getCurrentSession().get(DbLevelTask.class, levelTaskId);
+        synchronized (levelTaskDone) {
+            addLevelTaskDone(userState, dbLevelTask);
+        }
+        removeLevelTaskActive(userState, dbLevelTask);
+
         // Communication
         log.debug("Level Task completed. userState: " + userState + " " + dbLevelTask);
         historyService.addLevelTaskCompletedEntry(userState, dbLevelTask);
         Base base = baseService.getBase(userState);
         if (base != null) {
-            LevelTaskDonePacket levelTaskDonePacket = new LevelTaskDonePacket();
-            connectionService.sendPacket(base.getSimpleBase(), levelTaskDonePacket);
+            LevelStatePacket levelPacket = new LevelStatePacket();
+            addMissionQuestCount(levelPacket, userState, dbLevelTask.getParent());
+            levelPacket.setMissionQuestCompleted(true);
+            connectionService.sendPacket(base.getSimpleBase(), levelPacket);
         }
         // Rewards
         if (dbLevelTask.getXp() > 0) {
@@ -248,6 +264,61 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         }
     }
 
+    private void addMissionQuestCount(LevelStatePacket levelPacket, UserState userState, DbLevel dbLevel) {
+        int missionCount = 0;
+        int questCount = 0;
+        synchronized (levelTaskDone) {
+            Collection<Integer> levelTaskIds = levelTaskDone.get(userState);
+            if (levelTaskIds != null) {
+                for (Integer taskDoneId : levelTaskIds) {
+                    if (dbLevel.getLevelTaskCrud().readDbChild(taskDoneId).getDbTutorialConfig() != null) {
+                        missionCount++;
+                    } else {
+                        questCount++;
+                    }
+                }
+            }
+        }
+        levelPacket.setQuestsDone(questCount);
+        levelPacket.setTotalQuests(dbLevel.getQuestCount());
+        levelPacket.setMissionsDone(missionCount);
+        levelPacket.setTotalMissions(dbLevel.getMissionCount());
+    }
+
+    private void addLevelTaskDone(UserState userState, DbLevelTask dbLevelTask) {
+        Collection<Integer> tasks = levelTaskDone.get(userState);
+        if (tasks == null) {
+            tasks = new ArrayList<>();
+            levelTaskDone.put(userState, tasks);
+        }
+        tasks.add(dbLevelTask.getId());
+    }
+
+    private void addLevelTaskActive(UserState userState, DbLevelTask dbLevelTask) {
+        synchronized (levelTaskActive) {
+            Collection<Integer> tasks = levelTaskActive.get(userState);
+            if (tasks == null) {
+                tasks = new ArrayList<>();
+                levelTaskActive.put(userState, tasks);
+            }
+            tasks.add(dbLevelTask.getId());
+        }
+    }
+
+    private void removeLevelTaskActive(UserState userState, DbLevelTask dbLevelTask) {
+        synchronized (levelTaskActive) {
+            Collection<Integer> tasks = levelTaskActive.get(userState);
+            if (tasks == null) {
+                log.warn("Level task was not on the active list " + dbLevelTask + " userState: " + userState);
+                return;
+            }
+            tasks.remove(dbLevelTask.getId());
+            if (tasks.isEmpty()) {
+                levelTaskActive.remove(userState);
+            }
+        }
+    }
+
     @Override
     public void onRemoveUserState(UserState userState) {
         cleanupConditions(userState);
@@ -255,9 +326,9 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
 
     @Override
     public void setLevelForNewUser(UserState userState) {
-        DbLevel dbLevel = new ArrayList<DbQuestHub>(crudQuestHub.readDbChildren()).get(0).getLevelCrud().readDbChildren().get(0);
+        DbLevel dbLevel = new ArrayList<>(crudQuestHub.readDbChildren()).get(0).getLevelCrud().readDbChildren().get(0);
         userState.setDbLevelId(dbLevel.getId());
-        activateConditions(userState, dbLevel, null);
+        activateConditions4Level(userState, dbLevel);
     }
 
     private DbLevel getNextDbLevel(DbLevel dbLevel) {
@@ -271,7 +342,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         if (dbLevels.size() > index) {
             return dbLevels.get(index);
         } else {
-            List<DbQuestHub> dbQuestHubs = new ArrayList<DbQuestHub>(crudQuestHub.readDbChildren());
+            List<DbQuestHub> dbQuestHubs = new ArrayList<>(crudQuestHub.readDbChildren());
             index = dbQuestHubs.indexOf(dbQuestHub);
             if (index < 0) {
                 throw new IllegalArgumentException("DbLevel can not be found in own DbQuestHub: " + dbLevel);
@@ -365,54 +436,102 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
 
     @Override
     public ContentProvider<LevelQuest> getQuestsCms() {
-        List<LevelQuest> levelQuests = new ArrayList<LevelQuest>();
+        List<LevelQuest> levelQuests = new ArrayList<>();
         UserState userState = userService.getUserState();
+        DbLevelTask activeTask = null;
+        Collection<Integer> activeTaskIds = levelTaskActive.get(userState);
+        if (activeTaskIds != null)
+            for (DbLevelTask dbLevelTask : getDbLevel().getLevelTaskCrud().readDbChildren()) {
+                if (dbLevelTask.getDbTutorialConfig() == null && activeTaskIds.contains(dbLevelTask.getId())) {
+                    activeTask = dbLevelTask;
+                }
+            }
+
+        Collection<Integer> userLevelTaskDone = levelTaskDone.get(userState);
         for (DbLevelTask dbLevelTask : getDbLevel().getLevelTaskCrud().readDbChildren()) {
             if (dbLevelTask.getDbTutorialConfig() == null) {
-                levelQuests.add(new LevelQuest(dbLevelTask, !serverConditionService.hasConditionTrigger(userState, dbLevelTask.getId())));
+                levelQuests.add(new LevelQuest(dbLevelTask,
+                        userLevelTaskDone != null && userLevelTaskDone.contains(dbLevelTask.getId()),
+                        activeTask != null && dbLevelTask.equals(activeTask),
+                        activeTask != null && !dbLevelTask.equals(activeTask)));
             }
         }
-        return new ReadonlyListContentProvider<LevelQuest>(levelQuests);
+
+        return new ReadonlyListContentProvider<>(levelQuests);
     }
 
     @Override
     public ContentProvider<LevelQuest> getMercenaryMissionCms() {
-        List<LevelQuest> levelQuests = new ArrayList<LevelQuest>();
+        List<LevelQuest> levelQuests = new ArrayList<>();
         UserState userState = userService.getUserState();
+        Collection<Integer> userLevelTaskDone = levelTaskDone.get(userState);
         for (DbLevelTask dbLevelTask : getDbLevel().getLevelTaskCrud().readDbChildren()) {
             if (dbLevelTask.getDbTutorialConfig() != null) {
-                levelQuests.add(new LevelQuest(dbLevelTask, !serverConditionService.hasConditionTrigger(userState, dbLevelTask.getId())));
+                levelQuests.add(new LevelQuest(dbLevelTask, userLevelTaskDone != null && userLevelTaskDone.contains(dbLevelTask.getId()), false, false));
             }
         }
-        return new ReadonlyListContentProvider<LevelQuest>(levelQuests);
+        return new ReadonlyListContentProvider<>(levelQuests);
     }
 
     @Override
     public void createAndAddBackup(DbUserState dbUserState, UserState userState) {
         DbLevel dbLevel = getDbLevel(userState);
-        Collection<DbLevelTask> levelTaskDone = new ArrayList<DbLevelTask>();
-        for (DbLevelTask dbLevelTask : dbLevel.getLevelTaskCrud().readDbChildren()) {
-            if (!serverConditionService.hasConditionTrigger(userState, dbLevelTask.getId())) {
-                levelTaskDone.add(dbLevelTask);
+        Collection<DbLevelTask> tasksDone = new ArrayList<>();
+        synchronized (levelTaskDone) {
+            Collection<Integer> taskIds = levelTaskDone.get(userState);
+            if (taskIds != null) {
+                for (Integer taskId : taskIds) {
+                    tasksDone.add(dbLevel.getLevelTaskCrud().readDbChild(taskId));
+                }
             }
         }
-        dbUserState.setLevelTasksDone(levelTaskDone);
+        dbUserState.setLevelTasksDone(tasksDone);
+        Collection<DbLevelTask> tasksActive = new ArrayList<>();
+        synchronized (levelTaskActive) {
+            Collection<Integer> taskIds = levelTaskActive.get(userState);
+            if (taskIds != null) {
+                for (Integer taskId : taskIds) {
+                    tasksActive.add(dbLevel.getLevelTaskCrud().readDbChild(taskId));
+                }
+            }
+        }
+        dbUserState.setLevelTasksActive(tasksActive);
         serverConditionService.createBackup(dbUserState, userState);
     }
 
     @Override
     public void restoreBackup(Map<DbUserState, UserState> userStates) {
         serverConditionService.deactivateAll();
-        for (Map.Entry<DbUserState, UserState> entry : userStates.entrySet()) {
-            try {
-                DbLevel dbLevel = getDbLevel(entry.getValue());
-                activateConditions(entry.getValue(), dbLevel, entry.getKey().getLevelTasksDone());
-                serverConditionService.restoreBackup(entry.getKey(), entry.getValue());
-            } catch (Exception e) {
-                log.error("Can not restore user: " + userStates, e);
+        synchronized (levelTaskDone) {
+            levelTaskDone.clear();
+            for (Map.Entry<DbUserState, UserState> entry : userStates.entrySet()) {
+                try {
+                    if (entry.getKey().getLevelTasksDone() != null) {
+                        for (DbLevelTask taskDone : entry.getKey().getLevelTasksDone()) {
+                            addLevelTaskDone(entry.getValue(), taskDone);
+                        }
+                    }
+                    activateConditionsRestore(entry.getValue(), getDbLevel(entry.getValue()), entry.getKey().getLevelTasksActive());
+                    serverConditionService.restoreBackup(entry.getKey(), entry.getValue());
+                } catch (Exception e) {
+                    log.error("Can not restore user: " + userStates, e);
+                }
             }
         }
     }
+
+    private void activateConditionsRestore(UserState userState, DbLevel dbLevel, Collection<DbLevelTask> levelTasksActive) {
+        ConditionConfig levelCondition = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(null, dbLevel.getXp(), null));
+        serverConditionService.activateCondition(levelCondition, userState, null);
+
+        if (levelTasksActive != null) {
+            for (DbLevelTask dbLevelTask : levelTasksActive) {
+                serverConditionService.activateCondition(dbLevelTask.createConditionConfig(itemService), userState, dbLevelTask.getId());
+                addLevelTaskActive(userState, dbLevelTask);
+            }
+        }
+    }
+
 
     @Override
     public InvalidLevelState createInvalidLevelState() {
@@ -421,5 +540,84 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         } else {
             return new InvalidLevelState(getDefaultLevelTaskId());
         }
+    }
+
+    @Override
+    public void activateLevelTaskCms(int dbLevelTaskId) {
+        DbLevel dbLevel = getDbLevel();
+        DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().readDbChild(dbLevelTaskId);
+        if (dbLevelTask.getDbTutorialConfig() != null) {
+            return;
+        }
+        UserState userState = userService.getUserState();
+        if (levelTaskDone.containsKey(userState) && levelTaskDone.get(userState).contains(dbLevelTaskId)) {
+            return;
+        }
+        if (levelTaskActive.containsKey(userState) && levelTaskActive.get(userState).contains(dbLevelTaskId)) {
+            return;
+        }
+        serverConditionService.activateCondition(dbLevelTask.createConditionConfig(itemService), userState, dbLevelTaskId);
+        addLevelTaskActive(userState, dbLevelTask);
+        historyService.addLevelTaskActivated(userState, dbLevelTask);
+        if (baseService.getBase(userState) != null) {
+            Base base = baseService.getBase(userState);
+            LevelStatePacket levelPacket = new LevelStatePacket();
+            levelPacket.setActiveQuestLevelTaskId(dbLevelTask.getId());
+            levelPacket.setActiveQuestTitle(dbLevelTask.getName());
+            levelPacket.setActiveQuestProgress(serverConditionService.getProgressHtml(userState, dbLevelTaskId));
+            connectionService.sendPacket(base.getSimpleBase(), levelPacket);
+        }
+    }
+
+    @Override
+    public void deactivateLevelTaskCms(int dbLevelTaskId) {
+        DbLevel dbLevel = getDbLevel();
+        DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().readDbChild(dbLevelTaskId);
+        if (dbLevelTask.getDbTutorialConfig() != null) {
+            return;
+        }
+        UserState userState = userService.getUserState();
+        if (levelTaskDone.containsKey(userState) && levelTaskDone.get(userState).contains(dbLevelTaskId)) {
+            return;
+        }
+        if (!levelTaskActive.containsKey(userState) || !levelTaskActive.get(userState).contains(dbLevelTaskId)) {
+            return;
+        }
+        serverConditionService.deactivateActorConditions(userState, dbLevelTaskId);
+        removeLevelTaskActive(userState, dbLevelTask);
+        historyService.addLevelTaskDeactivated(userState, dbLevelTask);
+        if (baseService.getBase(userState) != null) {
+            Base base = baseService.getBase(userState);
+            LevelStatePacket levelPacket = new LevelStatePacket();
+            levelPacket.setQuestDeactivated(true);
+            connectionService.sendPacket(base.getSimpleBase(), levelPacket);
+        }
+    }
+
+    @Override
+    public void fillRealGameInfo(RealGameInfo realGameInfo) {
+        DbLevel dbLevel = getDbLevel();
+        UserState userState = userService.getUserState();
+        LevelStatePacket levelStatePacket = new LevelStatePacket();
+        levelStatePacket.setXp(userState.getXp());
+        levelStatePacket.setXp2LevelUp(dbLevel.getXp());
+        DbLevelTask activeTask = getActiveQuestTask(userState, dbLevel);
+        if (activeTask != null) {
+            levelStatePacket.setActiveQuestLevelTaskId(activeTask.getId());
+            levelStatePacket.setActiveQuestTitle(activeTask.getName());
+            levelStatePacket.setActiveQuestProgress(serverConditionService.getProgressHtml(userState, activeTask.getId()));
+        }
+        addMissionQuestCount(levelStatePacket, userState, dbLevel);
+        levelStatePacket.setLevel(getLevelScope());
+        realGameInfo.setLevelStatePacket(levelStatePacket);
+    }
+
+    private DbLevelTask getActiveQuestTask(UserState userState, DbLevel dbLevel) {
+        for (DbLevelTask dbLevelTask : dbLevel.getLevelTaskCrud().readDbChildren()) {
+            if (dbLevelTask.getDbTutorialConfig() == null && serverConditionService.hasConditionTrigger(userState, dbLevelTask.getId())) {
+                return dbLevelTask;
+            }
+        }
+        return null;
     }
 }
