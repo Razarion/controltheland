@@ -21,14 +21,13 @@
     <option name="historyRevisionsNumber" value="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" readonly="true" id="aa425869-f3f3-412e-b776-9f3eeb27573b" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
+    <list default="true" readonly="true" id="aa425869-f3f3-412e-b776-9f3eeb27573b" name="Default" comment="" />
+    <list id="04c9a439-6c9d-4c0f-8ba4-a6e9dd14d371" name="IDEA" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/runConfigurations/GWT_Hosted.xml" afterPath="$PROJECT_DIR$/.idea/runConfigurations/GWT_Hosted.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/runConfigurations/Tomcat_run.xml" afterPath="$PROJECT_DIR$/.idea/runConfigurations/Tomcat_run.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controltheland.iml" afterPath="$PROJECT_DIR$/controltheland.iml" />
     </list>
-    <list id="04c9a439-6c9d-4c0f-8ba4-a6e9dd14d371" name="IDEA" comment="" />
     <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/preview/" />
     <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/common/info/" />
     <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advhr/css/" />
@@ -336,6 +335,7 @@
     <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/utg/" />
     <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/spellchecker/" />
     <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/visualchars/" />
+    <file path="$PROJECT_DIR$/.idea/workspace.xml" changelist="aa425869-f3f3-412e-b776-9f3eeb27573b" time="1334255980960" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -406,11 +406,11 @@
     <SUITE FILE_PATH="coverage/controltheland$TestClientRunner_runSimple.ic" NAME="TestClientRunner.runSimple Coverage Results" MODIFIED="1298159372644" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>com.btxtech.game.jsre.client.control.*</FILTER>
     </SUITE>
-    <SUITE FILE_PATH="coverage/controltheland$TestClientRunner.ic" NAME="TestClientRunner Coverage Results" MODIFIED="1298222722595" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="emma" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" MERGE_SUITE="TestClientRunner Coverage Results">
-      <FILTER>com.btxtech.game.jsre.client.control.ClientRunner</FILTER>
-    </SUITE>
     <SUITE FILE_PATH="coverage/controltheland$TestClientRunner_runSimple..es" NAME="TestClientRunner.runSimple Coverage Results" MODIFIED="1298158986781" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="emma" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>com.btxtech.game.jsre.client.control.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/controltheland$TestClientRunner.ic" NAME="TestClientRunner Coverage Results" MODIFIED="1298222722595" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="emma" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" MERGE_SUITE="TestClientRunner Coverage Results">
+      <FILTER>com.btxtech.game.jsre.client.control.ClientRunner</FILTER>
     </SUITE>
     <SUITE FILE_PATH="coverage/controltheland$TestClientRunner_runDeferredBackgroundFinished.ic" NAME="TestClientRunner.runDeferredBackgroundFinished Coverage Results" MODIFIED="1298162479925" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="true">
       <FILTER>com.btxtech.game.jsre.client.control.*</FILTER>
@@ -424,6 +424,10 @@
   </component>
   <component name="DaemonCodeAnalyzer">
     <disable_hints />
+  </component>
+  <component name="DatabaseView">
+    <flatten value="false" />
+    <groupTables value="false" />
   </component>
   <component name="DebuggerManager">
     <line_breakpoints>
@@ -488,8 +492,8 @@
       <property name="field_breakpoints_groupByClasses" value="true" />
       <property name="method_breakpoints_groupByClasses" value="true" />
       <property name="exception_breakpoints_viewId" value="TABLE" />
-      <property name="exception_breakpoints_groupByClasses" value="true" />
       <property name="field_breakpoints_viewId" value="TABLE" />
+      <property name="exception_breakpoints_groupByClasses" value="true" />
       <property name="method_breakpoints_groupByMethods" value="false" />
     </ui_properties>
   </component>
@@ -498,92 +502,96 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Connection.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/Connection.java">
+      <file leaf-file-name="ClientLevelHandler.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/utg/ClientLevelHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="495" column="72" selection-start="20360" selection-end="20360" vertical-scroll-proportion="0.0">
+            <state line="48" column="143" selection-start="1887" selection-end="1887" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CommonCollisionServiceImpl.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/common/gameengine/services/collision/impl/CommonCollisionServiceImpl.java">
+      <file leaf-file-name="UserGuidanceServiceImpl.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/impl/UserGuidanceServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="196" column="0" selection-start="10651" selection-end="10651" vertical-scroll-proportion="0.0">
+            <state line="575" column="56" selection-start="24343" selection-end="24343" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="IntruderHandler.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/common/gameengine/services/bot/impl/IntruderHandler.java">
+      <file leaf-file-name="SideCockpit.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/SideCockpit.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="104" column="149" selection-start="4419" selection-end="4419" vertical-scroll-proportion="0.0">
+            <state line="40" column="49" selection-start="1790" selection-end="1790" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="QuestProgressCockpit.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/QuestProgressCockpit.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="70" column="21" selection-start="2754" selection-end="2754" vertical-scroll-proportion="-16.76">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Project_Default.xml" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml">
+      <file leaf-file-name="HistoryServiceImpl.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/history/impl/HistoryServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="204" column="38" selection-start="7073" selection-end="7073" vertical-scroll-proportion="0.43035713">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BotSyncBaseItem.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/common/gameengine/services/bot/impl/BotSyncBaseItem.java">
+      <file leaf-file-name="CmsUtil.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/common/CmsUtil.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="45" column="16" selection-start="1647" selection-end="1647" vertical-scroll-proportion="0.0">
+            <state line="102" column="25" selection-start="3251" selection-end="3251" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BotItemConfig.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/common/gameengine/services/bot/BotItemConfig.java">
+      <file leaf-file-name="ItemTypePositionComparisonConfigPanel.html" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/pages/mgmt/condition/ItemTypePositionComparisonConfigPanel.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="12" column="13" selection-start="291" selection-end="291" vertical-scroll-proportion="0.0">
+            <state line="40" column="12" selection-start="1527" selection-end="1527" vertical-scroll-proportion="-14.115385">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GwtCommon.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/GwtCommon.java">
+      <file leaf-file-name="PacketSendingTest.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/services/connection/PacketSendingTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="51" column="87" selection-start="2144" selection-end="2144" vertical-scroll-proportion="0.0">
+            <state line="23" column="107" selection-start="937" selection-end="937" vertical-scroll-proportion="-5.8">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SafeHtmlUtils.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-servlet/2.4.0/gwt-servlet-2.4.0-sources.jar!/com/google/gwt/safehtml/shared/SafeHtmlUtils.java">
+      <file leaf-file-name="ItemTypePositionComparisonConfigPanel.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/pages/mgmt/condition/ItemTypePositionComparisonConfigPanel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="170" column="141" selection-start="5679" selection-end="5679" vertical-scroll-proportion="0.0">
+            <state line="37" column="13" selection-start="1565" selection-end="1565" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Constants.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/common/Constants.java">
+      <file leaf-file-name="DbItemTypePositionComparisonConfig.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/DbItemTypePositionComparisonConfig.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="72" column="148" selection-start="3129" selection-end="3129" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ChatMessage.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/common/ChatMessage.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="35" column="18" selection-start="922" selection-end="922" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="49" column="13" selection-start="1814" selection-end="1814" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -605,22 +613,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/common/AbstractGwtTest.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/simulation/GwtTestRunnable.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/task/RunSimulationStartupTask.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/task/GuiStartupTask.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/terrain/MapWindow.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/TerrainMouseHandler.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/common/utg/condition/AbstractSyncItemComparison.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/pages/mgmt/condition/SyncItemTypeComparisonConfigPanel.html" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/pages/mgmt/condition/ItemTypePositionComparisonConfigPanel.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/pages/mgmt/condition/CountComparisonConfigPanel.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/pages/mgmt/condition/CountComparisonConfigPanel.html" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/common/info/SimulationInfo.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/gwt/MovableServiceImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/simulation/Simulation.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/simulation/Task.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/simulation/SimulationConditionServiceImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/pages/mgmt/condition/ItemTypePositionComparisonConfigPanel.html" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/utg/ClientLevelHandler.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/impl/UserGuidanceServiceImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/common/CmsUtil.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/SideCockpit.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/item/ItemCockpit.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/ClientSyncItemView.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/ClientChatHandler.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/simulation/TestClientChatHandler.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/common/Constants.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/ChatCockpit.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/GwtCommon.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/Connection.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/common/gameengine/services/bot/impl/IntruderHandler.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/QuestProgressCockpit.java" />
       </list>
     </option>
   </component>
@@ -644,50 +652,7 @@
     </option>
   </component>
   <component name="MavenProjectNavigator">
-    <treeState>
-      <PATH>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="Control the land" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
-        </PATH_ELEMENT>
-      </PATH>
-      <PATH>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="Control the land" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="Plugins" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$PluginsNode" />
-        </PATH_ELEMENT>
-      </PATH>
-      <PATH>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="Control the land" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="Plugins" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$PluginsNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="surefire" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$PluginNode" />
-        </PATH_ELEMENT>
-      </PATH>
-    </treeState>
+    <treeState />
   </component>
   <component name="MavenRunner">
     <option name="jreName" value="#JAVA_INTERNAL" />
@@ -707,241 +672,49 @@
       <profile-state>
         <expanded-state>
           <State>
-            <id>AOP</id>
-          </State>
-          <State>
-            <id>Abstraction issues</id>
-          </State>
-          <State>
-            <id>Android</id>
-          </State>
-          <State>
-            <id>Annotations verifying</id>
-          </State>
-          <State>
-            <id>Ant inspections</id>
-          </State>
-          <State>
-            <id>Application Server Specific Inspections</id>
-          </State>
-          <State>
-            <id>Assignment issues</id>
-          </State>
-          <State>
-            <id>Bean Validation issues</id>
-          </State>
-          <State>
-            <id>Bitwise operation issues</id>
-          </State>
-          <State>
-            <id>CSS</id>
-          </State>
-          <State>
-            <id>Class metrics</id>
+            <id />
           </State>
           <State>
             <id>Class structure</id>
           </State>
           <State>
-            <id>Cloning issues</id>
-          </State>
-          <State>
-            <id>Code maturity issues</id>
-          </State>
-          <State>
             <id>Code style issues</id>
           </State>
           <State>
-            <id>Concurrency annotation issues</id>
-          </State>
-          <State>
-            <id>Control Flow</id>
-          </State>
-          <State>
-            <id>Control flow issues</id>
-          </State>
-          <State>
-            <id>DOM issues</id>
-          </State>
-          <State>
-            <id>Data Flow Issues</id>
-          </State>
-          <State>
-            <id>Data flow issues</id>
-          </State>
-          <State>
-            <id>Declaration Redundancy</id>
-          </State>
-          <State>
-            <id>Dependency issues</id>
-          </State>
-          <State>
-            <id>Encapsulation issues</id>
+            <id>Compiler issues</id>
           </State>
           <State>
             <id>Error handling</id>
           </State>
           <State>
-            <id>Facelet format detection</id>
-          </State>
-          <State>
-            <id>Faces Model</id>
-          </State>
-          <State>
             <id>Finalization issues</id>
-          </State>
-          <State>
-            <id>FlexUnit inspections</id>
-          </State>
-          <State>
-            <id>FreeMarker inspections</id>
-          </State>
-          <State>
-            <id>GPath inspections</id>
           </State>
           <State>
             <id>General</id>
           </State>
           <State>
-            <id>Google App Engine</id>
-          </State>
-          <State>
-            <id>Google Web Toolkit issues</id>
-          </State>
-          <State>
-            <id>Groovy</id>
-          </State>
-          <State>
-            <id>Guice Inspections</id>
-          </State>
-          <State>
-            <id>HTML</id>
-          </State>
-          <State>
-            <id>Hibernate Issues</id>
-          </State>
-          <State>
-            <id>Imports</id>
-          </State>
-          <State>
             <id>Inheritance issues</id>
-          </State>
-          <State>
-            <id>Initialization issues</id>
-          </State>
-          <State>
-            <id>Internationalization issues</id>
-          </State>
-          <State>
-            <id>J2ME Plugin</id>
           </State>
           <State>
             <id>J2ME issues</id>
           </State>
           <State>
-            <id>J2SDK5.0 specific issues and migration aids</id>
-          </State>
-          <State>
-            <id>JBoss Seam issues</id>
-          </State>
-          <State>
-            <id>JSF annotated elements errors</id>
-          </State>
-          <State>
             <id>JSP Inspections</id>
           </State>
           <State>
-            <id>JUnit issues</id>
-          </State>
-          <State>
-            <id>Java EE issues</id>
-          </State>
-          <State>
-            <id>Java language level issues</id>
+            <id>Java language level migration aids</id>
           </State>
           <State>
             <id>JavaBeans issues</id>
           </State>
           <State>
-            <id>JavaScript</id>
-          </State>
-          <State>
-            <id>JavaScript function metrics</id>
-          </State>
-          <State>
-            <id>JavaScript validity issues</id>
-          </State>
-          <State>
-            <id>Language Injection</id>
-          </State>
-          <State>
-            <id>Logging issues</id>
-          </State>
-          <State>
-            <id>Maven</id>
-          </State>
-          <State>
-            <id>Memory issues</id>
-          </State>
-          <State>
-            <id>Method Metrics</id>
-          </State>
-          <State>
-            <id>Method metrics</id>
-          </State>
-          <State>
-            <id>Modularization issues</id>
-          </State>
-          <State>
-            <id>Naming Conventions</id>
-          </State>
-          <State>
-            <id>Naming conventions</id>
-          </State>
-          <State>
             <id>Numeric issues</id>
-          </State>
-          <State>
-            <id>OSGi</id>
-          </State>
-          <State>
-            <id>PHP Inspections</id>
-          </State>
-          <State>
-            <id>Packaging issues</id>
-          </State>
-          <State>
-            <id>Pages Navigation Model</id>
-          </State>
-          <State>
-            <id>Pattern Validation</id>
           </State>
           <State>
             <id>Performance issues</id>
           </State>
           <State>
-            <id>Plugin DevKit</id>
-          </State>
-          <State>
-            <id>Portability issues</id>
-          </State>
-          <State>
-            <id>Potentially confusing code constructs</id>
-          </State>
-          <State>
-            <id>Probable Bugs</id>
-          </State>
-          <State>
             <id>Probable bugs</id>
-          </State>
-          <State>
-            <id>Properties Files</id>
-          </State>
-          <State>
-            <id>Resource management issues</id>
-          </State>
-          <State>
-            <id>SQL Inspections</id>
           </State>
           <State>
             <id>Security issues</id>
@@ -950,74 +723,9 @@
             <id>Serialization issues</id>
           </State>
           <State>
-            <id>Spelling</id>
-          </State>
-          <State>
-            <id>Spring Model</id>
-          </State>
-          <State>
-            <id>Struts</id>
-          </State>
-          <State>
-            <id>Struts 1</id>
-          </State>
-          <State>
-            <id>Struts 2</id>
-          </State>
-          <State>
-            <id>Tapestry inspections</id>
-          </State>
-          <State>
-            <id>TestNG</id>
-          </State>
-          <State>
-            <id>Threading issues</id>
-          </State>
-          <State>
-            <id>UI Form Problems</id>
-          </State>
-          <State>
-            <id>Validity issues</id>
-          </State>
-          <State>
-            <id>Velocity inspections</id>
-          </State>
-          <State>
             <id>Verbose or redundant code constructs</id>
           </State>
-          <State>
-            <id>Visibility issues</id>
-          </State>
-          <State>
-            <id>Web Beans issues</id>
-          </State>
-          <State>
-            <id>Web Services Inspections</id>
-          </State>
-          <State>
-            <id>Webflow Model</id>
-          </State>
-          <State>
-            <id>WicketForge</id>
-          </State>
-          <State>
-            <id>XML</id>
-          </State>
-          <State>
-            <id>XPath</id>
-          </State>
-          <State>
-            <id>XSLT</id>
-          </State>
-          <State>
-            <id>toString() issues</id>
-          </State>
         </expanded-state>
-        <selected-state>
-          <State>
-            <id>NonJREEmulationClassesInClientCode</id>
-          </State>
-        </selected-state>
       </profile-state>
     </entry>
   </component>
@@ -1057,6 +765,462 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="External Libraries" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Maven: junit:junit:4.8.1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="junit-4.8.1.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Maven: junit:junit:4.8.1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="junit-4.8.1.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="org" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="junit" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Maven: junit:junit:4.8.1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="junit-4.8.1.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="org" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="junit" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="internal" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Maven: junit:junit:4.8.1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="junit-4.8.1.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="org" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="junit" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="internal" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="runners" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Maven: junit:junit:4.8.1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="junit-4.8.1.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="org" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="junit" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="internal" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="runners" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="model" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Maven: junit:junit:4.8.1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="junit-4.8.1.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="org" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Maven: com.google.gwt:gwt-servlet:2.4.0" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt-servlet-2.4.0.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Maven: com.google.gwt:gwt-servlet:2.4.0" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt-servlet-2.4.0.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="google" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Maven: com.google.gwt:gwt-servlet:2.4.0" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt-servlet-2.4.0.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="google" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Maven: com.google.gwt:gwt-servlet:2.4.0" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt-servlet-2.4.0.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="google" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="safehtml" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="shared" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Maven: com.google.gwt:gwt-servlet:2.4.0" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt-servlet-2.4.0.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="google" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="safehtml" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Maven: com.google.gwt:gwt-servlet:2.4.0" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt-servlet-2.4.0.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="google" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="&lt; 1.7 &gt;" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="&lt; 1.7 &gt;" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rt.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="&lt; 1.7 &gt;" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rt.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sun" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="&lt; 1.7 &gt;" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rt.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sun" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="reflect" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="&lt; 1.7 &gt;" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rt.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="util" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="&lt; 1.7 &gt;" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rt.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -1114,6 +1278,40 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="services" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="services" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="utg" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1191,146 +1389,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="game" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="game" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="game" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="simulation" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="game" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="common" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="main" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -1382,34 +1440,8 @@
               <option name="myItemId" value="game" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-          </PATH>
-          <PATH>
             <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="game" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
+              <option name="myItemId" value="wicket" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1439,49 +1471,11 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
+              <option name="myItemId" value="wicket" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="common" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="game" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="common" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gameengine" />
+              <option name="myItemId" value="pages" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1511,15 +1505,193 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
+              <option name="myItemId" value="wicket" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="common" />
+              <option name="myItemId" value="pages" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="gameengine" />
+              <option name="myItemId" value="mgmt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="wicket" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pages" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="mgmt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="condition" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="services" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="utg" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="services" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="utg" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impl" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="services" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="utg" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="condition" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -1553,23 +1725,11 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="common" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gameengine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="services" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="collision" />
+              <option name="myItemId" value="history" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1599,23 +1759,11 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="common" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gameengine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="services" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="collision" />
+              <option name="myItemId" value="history" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -1652,22 +1800,6 @@
               <option name="myItemId" value="jsre" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="common" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gameengine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="services" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bot" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -1700,118 +1832,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="common" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gameengine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="services" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bot" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impl" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="game" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="common" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gameengine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="services" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="base" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="game" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="common" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gameengine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="services" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="base" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impl" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1921,200 +1941,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="terrain" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="game" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="dialogs" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="game" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="control" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="game" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="control" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="task" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="game" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="common" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="game" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="cockpit" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -2142,96 +1968,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="game" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="cockpit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="radar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="game" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="cockpit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="item" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value=".idea" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value=".idea" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="inspectionProfiles" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -2265,20 +2001,73 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="Scope">
+        <subPane subId="Project Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+        <subPane subId="All">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="controltheland">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="controltheland">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="src">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="controltheland">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="src">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="main">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
       <pane id="Favorites" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth1" value="309" />
-    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth0" value="286" />
     <property name="project.structure.last.edited" value="Modules" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth0" value="286" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth3" value="34" />
-    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth2" value="311" />
-    <property name="OverrideImplement.combined" value="true" />
     <property name="project.structure.proportion" value="0.15" />
-    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder1" value="1" />
+    <property name="OverrideImplement.combined" value="true" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth2" value="311" />
     <property name="options.splitter.main.proportions" value="0.3" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder1" value="1" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder0" value="0" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder3" value="3" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder2" value="2" />
@@ -2298,16 +2087,16 @@
     <property name="GoToClass.includeLibraries" value="false" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="GoToFile.includeJavaFiles" value="false" />
-    <property name="options.lastSelected" value="preferences.sourceCode.Imports" />
+    <property name="options.lastSelected" value="reference.projectsettings.compiler.annotationProcessors" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder3" value="3" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder4" value="4" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder1" value="1" />
-    <property name="project.structure.side.proportion" value="0.34744844" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder2" value="2" />
-    <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="project.structure.side.proportion" value="0.34744844" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder0" value="0" />
-    <property name="options.searchVisible" value="true" />
+    <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="dynamic.classpath" value="false" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
@@ -2318,11 +2107,11 @@
       <recent name="com.btxtech.game.wicket.pages.mgmt.tracking" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\dev\projects\game\controltheland\src\main\java\com\btxtech\game\wicket\pages\mgmt\condition" />
+      <recent name="C:\dev\projects\game\controltheland\src\main\java\com\btxtech\game\wicket\pages\mgmt\cms" />
       <recent name="C:\dev\projects\game\controltheland\src\test\java\com\btxtech\game\jsre\client\simulation" />
       <recent name="C:\dev\projects\game\controltheland\src\main\java\com\btxtech\game\wicket\pages\mgmt\tracking" />
       <recent name="C:\dev\projects\game\controltheland\src\main\java\com\btxtech\game\wicket\uiservices" />
-      <recent name="C:\dev\projects\game\controltheland\src\main\java\com\btxtech\game\wicket\pages\mgmt\level" />
-      <recent name="C:\dev\projects\game\controltheland\src\main\java\com\btxtech\game\wicket\pages\cms\content" />
     </key>
     <key name="ExtractSuperBase.RECENT_KEYS">
       <recent name="com.btxtech.game.jsre.common.gameengine.formation" />
@@ -2340,11 +2129,11 @@
       <recent name="com.btxtech.game.jsre.common.CmsUtil" />
     </key>
     <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.btxtech.game.wicket.pages.mgmt.cms" />
       <recent name="com.btxtech.game.jsre.client" />
       <recent name="com.btxtech.game.jsre.client.cockpit" />
       <recent name="com.btxtech.game.wicket.pages.mgmt" />
       <recent name="com.btxtech.game.wicket.uiservices" />
-      <recent name="com.btxtech.game.jsre.common.gameengine.formation" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="com.btxtech.game.services.utg.impl" />
@@ -2361,11 +2150,73 @@
       <recent name="C:\dev\projects\game\controltheland\src\main\java\com\btxtech\game\jsre\common\gameengine\syncObjects" />
     </key>
   </component>
-  <component name="RunManager" selected="Maven.Tomcat run">
-    <configuration default="false" name="TestChatMessageQueue.xxx" type="JUnit" factoryName="JUnit" temporary="true">
+  <component name="RunManager" selected="Maven.Clean Package">
+    <configuration default="false" name="TestBaseService.testSellBaseItem" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="emma">
+        <pattern>
+          <option name="PATTERN" value="com.btxtech.game.services.base.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <extension name="snapshooter" />
+      <module name="controltheland" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" value="C:/Program Files/Java/jdk1.7.0" />
+      <option name="PACKAGE_NAME" value="com.btxtech.game.services.base" />
+      <option name="MAIN_CLASS_NAME" value="com.btxtech.game.services.base.TestBaseService" />
+      <option name="METHOD_NAME" value="testSellBaseItem" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-Dtestmode=true -Xms1000M -Xmx1000M" />
+      <option name="PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="TestResurrection.testOffline" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="emma">
+        <pattern>
+          <option name="PATTERN" value="com.btxtech.game.services.utg.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <extension name="snapshooter" />
+      <module name="controltheland" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" value="C:/Program Files/Java/jdk1.7.0" />
+      <option name="PACKAGE_NAME" value="com.btxtech.game.services.utg" />
+      <option name="MAIN_CLASS_NAME" value="com.btxtech.game.services.utg.TestResurrection" />
+      <option name="METHOD_NAME" value="testOffline" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-Dtestmode=true -Xms1000M -Xmx1000M" />
+      <option name="PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <ConfigurationWrapper RunnerId="Debug" />
+      <method />
+    </configuration>
+    <configuration default="false" name="TestHistoryService.activateDeactivateLevelTask" type="JUnit" factoryName="JUnit" temporary="true">
       <extension name="coverage" enabled="false" merge="false" runner="emma">
         <pattern>
-          <option name="PATTERN" value="com.btxtech.game.services.connection.*" />
+          <option name="PATTERN" value="com.btxtech.game.services.history.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -2373,9 +2224,9 @@
       <module name="controltheland" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.btxtech.game.services.connection" />
-      <option name="MAIN_CLASS_NAME" value="com.btxtech.game.services.connection.TestChatMessageQueue" />
-      <option name="METHOD_NAME" value="xxx" />
+      <option name="PACKAGE_NAME" value="com.btxtech.game.services.history" />
+      <option name="MAIN_CLASS_NAME" value="com.btxtech.game.services.history.TestHistoryService" />
+      <option name="METHOD_NAME" value="activateDeactivateLevelTask" />
       <option name="TEST_OBJECT" value="method" />
       <option name="VM_PARAMETERS" />
       <option name="PARAMETERS" />
@@ -2391,10 +2242,10 @@
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="TestChatMessageQueue.multipleMessages" type="JUnit" factoryName="JUnit" temporary="true">
+    <configuration default="false" name="TestItemTypePositionComparison" type="JUnit" factoryName="JUnit" temporary="true">
       <extension name="coverage" enabled="false" merge="false" runner="emma">
         <pattern>
-          <option name="PATTERN" value="com.btxtech.game.services.connection.*" />
+          <option name="PATTERN" value="com.btxtech.game.services.utg.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -2402,10 +2253,10 @@
       <module name="controltheland" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.btxtech.game.services.connection" />
-      <option name="MAIN_CLASS_NAME" value="com.btxtech.game.services.connection.TestChatMessageQueue" />
-      <option name="METHOD_NAME" value="multipleMessages" />
-      <option name="TEST_OBJECT" value="method" />
+      <option name="PACKAGE_NAME" value="com.btxtech.game.services.utg" />
+      <option name="MAIN_CLASS_NAME" value="com.btxtech.game.services.utg.TestItemTypePositionComparison" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
       <option name="VM_PARAMETERS" />
       <option name="PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -2420,10 +2271,10 @@
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="TestChat.testRealGame" type="JUnit" factoryName="JUnit" temporary="true">
+    <configuration default="false" name="TestItemTypePositionComparison.multipleItemTypeRegion1" type="JUnit" factoryName="JUnit" temporary="true">
       <extension name="coverage" enabled="false" merge="false" runner="emma">
         <pattern>
-          <option name="PATTERN" value="com.btxtech.game.services.connection.*" />
+          <option name="PATTERN" value="com.btxtech.game.services.utg.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -2431,9 +2282,9 @@
       <module name="controltheland" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.btxtech.game.services.connection" />
-      <option name="MAIN_CLASS_NAME" value="com.btxtech.game.services.connection.TestChat" />
-      <option name="METHOD_NAME" value="testRealGame" />
+      <option name="PACKAGE_NAME" value="com.btxtech.game.services.utg" />
+      <option name="MAIN_CLASS_NAME" value="com.btxtech.game.services.utg.TestItemTypePositionComparison" />
+      <option name="METHOD_NAME" value="multipleItemTypeRegion1" />
       <option name="TEST_OBJECT" value="method" />
       <option name="VM_PARAMETERS" />
       <option name="PARAMETERS" />
@@ -2446,76 +2297,12 @@
       <envs />
       <patterns />
       <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="61267" />
+        <option name="DEBUG_PORT" value="" />
         <option name="TRANSPORT" value="0" />
         <option name="LOCAL" value="true" />
       </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Debug" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="TestClientChatHandler.testTwoTaskConditionAddExisting" type="JUnit" factoryName="JUnit" temporary="true">
-      <extension name="coverage" enabled="false" merge="false" runner="emma">
-        <pattern>
-          <option name="PATTERN" value="com.btxtech.game.jsre.client.simulation.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <extension name="snapshooter" />
-      <module name="controltheland" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.btxtech.game.jsre.client.simulation" />
-      <option name="MAIN_CLASS_NAME" value="com.btxtech.game.jsre.client.simulation.TestClientChatHandler" />
-      <option name="METHOD_NAME" value="testTwoTaskConditionAddExisting" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <patterns />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="63633" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="TestClientChatHandler.testSimulatedToReal" type="JUnit" factoryName="JUnit" temporary="true">
-      <extension name="coverage" enabled="false" merge="false" runner="emma">
-        <pattern>
-          <option name="PATTERN" value="com.btxtech.game.jsre.client.simulation.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <extension name="snapshooter" />
-      <module name="controltheland" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.btxtech.game.jsre.client.simulation" />
-      <option name="MAIN_CLASS_NAME" value="com.btxtech.game.jsre.client.simulation.TestClientChatHandler" />
-      <option name="METHOD_NAME" value="testSimulatedToReal" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <patterns />
-      <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
@@ -2599,24 +2386,6 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <method>
-        <option name="AntTarget" enabled="false" />
-        <option name="BuildArtifacts" enabled="false" />
-        <option name="Make" enabled="true" />
-        <option name="Maven.BeforeRunTask" enabled="false" />
-      </method>
-    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <extension name="coverage" enabled="false" merge="false" runner="idea" />
       <extension name="snapshooter" />
@@ -2651,6 +2420,24 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
     <configuration default="true" type="Application" factoryName="Application">
       <extension name="coverage" enabled="false" merge="false" runner="emma" />
       <option name="MAIN_CLASS_NAME" />
@@ -2668,6 +2455,17 @@
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
         <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JavascriptDebugSession" factoryName="Local">
+      <JSDebuggerConfigurationSettings>
+        <option name="engineId" value="embedded" />
+        <option name="fileUrl" />
+      </JSDebuggerConfigurationSettings>
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
@@ -2698,22 +2496,22 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
-    <configuration default="true" type="JavascriptDebugSession" factoryName="Local">
-      <JSDebuggerConfigurationSettings>
-        <option name="engineId" value="embedded" />
-        <option name="fileUrl" />
-      </JSDebuggerConfigurationSettings>
-      <method>
-        <option name="AntTarget" enabled="false" />
-        <option name="BuildArtifacts" enabled="false" />
-        <option name="Maven.BeforeRunTask" enabled="false" />
-      </method>
-    </configuration>
     <configuration default="true" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local">
       <deployment />
       <server-settings />
       <predefined_log_file id="TOMCAT_LOCALHOST_LOG_ID" enabled="true" />
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="com.intellij.persistence.run.ConsoleRunConfigurationType" factoryName="Query Language Console">
+      <option name="VM_PARAMETERS" value="" />
+      <option name="USER_CFG_CLASS" />
+      <option name="CONTEXT_PROVIDER" />
       <method>
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
@@ -3384,7 +3182,7 @@
       <extension name="snapshooter" />
       <module name="controltheland" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="ALTERNATIVE_JRE_PATH" value="C:/Program Files/Java/jdk1.7.0" />
       <option name="PACKAGE_NAME" value="com.btxtech.game" />
       <option name="MAIN_CLASS_NAME" value="" />
       <option name="METHOD_NAME" value="" />
@@ -3827,45 +3625,45 @@
       <method />
     </configuration>
     <list size="39">
-      <item index="0" class="java.lang.String" itemvalue="JUnit.TestChatMessageQueue.xxx" />
-      <item index="1" class="java.lang.String" itemvalue="JUnit.TestChatMessageQueue.multipleMessages" />
-      <item index="2" class="java.lang.String" itemvalue="JUnit.TestChat.testRealGame" />
-      <item index="3" class="java.lang.String" itemvalue="JUnit.TestClientChatHandler.testTwoTaskConditionAddExisting" />
-      <item index="4" class="java.lang.String" itemvalue="JUnit.TestClientChatHandler.testSimulatedToReal" />
-      <item index="5" class="java.lang.String" itemvalue="Application.Test" />
-      <item index="6" class="java.lang.String" itemvalue="JUnit.TestCmsService" />
-      <item index="7" class="java.lang.String" itemvalue="JUnit.TestUserService" />
-      <item index="8" class="java.lang.String" itemvalue="JUnit.TestHistoryService" />
-      <item index="9" class="java.lang.String" itemvalue="JUnit.TestTutorialConfiguration" />
-      <item index="10" class="java.lang.String" itemvalue="JUnit.TestBackupRestoreMgmtService" />
-      <item index="11" class="java.lang.String" itemvalue="JUnit.TestUserState" />
-      <item index="12" class="java.lang.String" itemvalue="JUnit.TestTutorialConditions" />
-      <item index="13" class="java.lang.String" itemvalue="JUnit.TestCondition" />
-      <item index="14" class="java.lang.String" itemvalue="JUnit.PacketSendingTest" />
-      <item index="15" class="java.lang.String" itemvalue="JUnit.TestBaseService" />
-      <item index="16" class="java.lang.String" itemvalue="JUnit.TestBotService" />
-      <item index="17" class="java.lang.String" itemvalue="JUnit.TestResurrection" />
-      <item index="18" class="java.lang.String" itemvalue="JUnit.TestServerMarketService" />
-      <item index="19" class="java.lang.String" itemvalue="JUnit.TestTerritoryService" />
-      <item index="20" class="java.lang.String" itemvalue="JUnit.TestPathFindingImpl" />
-      <item index="21" class="java.lang.String" itemvalue="JUnit.TestActionService" />
-      <item index="22" class="java.lang.String" itemvalue="JUnit.TestMove" />
-      <item index="23" class="java.lang.String" itemvalue="JUnit.TestPathFinding" />
-      <item index="24" class="java.lang.String" itemvalue="JUnit.All Bot" />
-      <item index="25" class="java.lang.String" itemvalue="JUnit.TestBotRunner" />
-      <item index="26" class="java.lang.String" itemvalue="JUnit.All" />
-      <item index="27" class="java.lang.String" itemvalue="JUnit.TestStatisticsServiceImpl" />
-      <item index="28" class="java.lang.String" itemvalue="JUnit.TestTracking" />
-      <item index="29" class="java.lang.String" itemvalue="JUnit.TestGeometricalUtil" />
-      <item index="30" class="java.lang.String" itemvalue="Maven.GWT Compile" />
-      <item index="31" class="java.lang.String" itemvalue="Maven.Clean Package" />
-      <item index="32" class="java.lang.String" itemvalue="Maven.Clean Compile War" />
-      <item index="33" class="java.lang.String" itemvalue="Maven.GWT Single Compile" />
-      <item index="34" class="java.lang.String" itemvalue="Maven.GWT Hosted Debug" />
-      <item index="35" class="java.lang.String" itemvalue="Maven.Test Single" />
-      <item index="36" class="java.lang.String" itemvalue="Remote.Debug" />
-      <item index="37" class="java.lang.String" itemvalue="Maven.GWT Hosted" />
-      <item index="38" class="java.lang.String" itemvalue="Maven.Tomcat run" />
+      <item index="0" class="java.lang.String" itemvalue="Application.Test" />
+      <item index="1" class="java.lang.String" itemvalue="JUnit.TestCmsService" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.TestUserService" />
+      <item index="3" class="java.lang.String" itemvalue="JUnit.TestHistoryService" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.TestTutorialConfiguration" />
+      <item index="5" class="java.lang.String" itemvalue="JUnit.TestBackupRestoreMgmtService" />
+      <item index="6" class="java.lang.String" itemvalue="JUnit.TestUserState" />
+      <item index="7" class="java.lang.String" itemvalue="JUnit.TestTutorialConditions" />
+      <item index="8" class="java.lang.String" itemvalue="JUnit.TestCondition" />
+      <item index="9" class="java.lang.String" itemvalue="JUnit.PacketSendingTest" />
+      <item index="10" class="java.lang.String" itemvalue="JUnit.TestBaseService" />
+      <item index="11" class="java.lang.String" itemvalue="JUnit.TestBotService" />
+      <item index="12" class="java.lang.String" itemvalue="JUnit.TestResurrection" />
+      <item index="13" class="java.lang.String" itemvalue="JUnit.TestServerMarketService" />
+      <item index="14" class="java.lang.String" itemvalue="JUnit.TestTerritoryService" />
+      <item index="15" class="java.lang.String" itemvalue="JUnit.TestPathFindingImpl" />
+      <item index="16" class="java.lang.String" itemvalue="JUnit.TestActionService" />
+      <item index="17" class="java.lang.String" itemvalue="JUnit.TestMove" />
+      <item index="18" class="java.lang.String" itemvalue="JUnit.TestPathFinding" />
+      <item index="19" class="java.lang.String" itemvalue="JUnit.All Bot" />
+      <item index="20" class="java.lang.String" itemvalue="JUnit.TestBotRunner" />
+      <item index="21" class="java.lang.String" itemvalue="JUnit.All" />
+      <item index="22" class="java.lang.String" itemvalue="JUnit.TestStatisticsServiceImpl" />
+      <item index="23" class="java.lang.String" itemvalue="JUnit.TestTracking" />
+      <item index="24" class="java.lang.String" itemvalue="JUnit.TestGeometricalUtil" />
+      <item index="25" class="java.lang.String" itemvalue="Maven.GWT Compile" />
+      <item index="26" class="java.lang.String" itemvalue="Maven.Clean Package" />
+      <item index="27" class="java.lang.String" itemvalue="Maven.Clean Compile War" />
+      <item index="28" class="java.lang.String" itemvalue="Maven.GWT Single Compile" />
+      <item index="29" class="java.lang.String" itemvalue="Maven.GWT Hosted Debug" />
+      <item index="30" class="java.lang.String" itemvalue="Maven.Test Single" />
+      <item index="31" class="java.lang.String" itemvalue="Maven.GWT Hosted" />
+      <item index="32" class="java.lang.String" itemvalue="Maven.Tomcat run" />
+      <item index="33" class="java.lang.String" itemvalue="Remote.Debug" />
+      <item index="34" class="java.lang.String" itemvalue="JUnit.TestBaseService.testSellBaseItem" />
+      <item index="35" class="java.lang.String" itemvalue="JUnit.TestResurrection.testOffline" />
+      <item index="36" class="java.lang.String" itemvalue="JUnit.TestHistoryService.activateDeactivateLevelTask" />
+      <item index="37" class="java.lang.String" itemvalue="JUnit.TestItemTypePositionComparison" />
+      <item index="38" class="java.lang.String" itemvalue="JUnit.TestItemTypePositionComparison.multipleItemTypeRegion1" />
     </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
@@ -3945,7 +3743,19 @@
       <created>1334237718168</created>
       <updated>1334237718168</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="To IDEA 11.11 migrated">
+      <created>1334237751100</created>
+      <updated>1334237751100</updated>
+    </task>
+    <task id="LOCAL-00020" summary="To IDEA 11.11 migrated">
+      <created>1334237780100</created>
+      <updated>1334237780100</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Quest activate and deactivate&#10;Quest progress visualization">
+      <created>1334403777151</created>
+      <updated>1334403777151</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TodoView" selected-index="0">
@@ -3972,32 +3782,33 @@
     <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.43208662" sideWeight="0.0" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21283422" sideWeight="0.7096457" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.40452754" sideWeight="0.0" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32994652" sideWeight="0.7096457" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Persistence" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21176471" sideWeight="0.66124403" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24973261" sideWeight="0.6131244" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5651322" sideWeight="0.0" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39271653" sideWeight="0.49786097" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24973261" sideWeight="0.7096457" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.371063" sideWeight="0.0" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
-      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32994652" sideWeight="0.49569377" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4573111" sideWeight="0.0" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6229187" sideWeight="0.0" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29035434" sideWeight="0.4983957" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32994652" sideWeight="0.7096457" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4566929" sideWeight="0.0" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30905512" sideWeight="0.32834226" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38021392" sideWeight="0.24094026" order="5" side_tool="true" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24387854" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24311024" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.1973262" sideWeight="0.19882469" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26096258" sideWeight="0.6131244" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.52057415" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23743315" sideWeight="0.5679134" order="0" side_tool="false" content_ui="combo" x="678" y="69" width="564" height="1021" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39666992" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26096258" sideWeight="0.7096457" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.7096457" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2593583" sideWeight="0.59547246" order="0" side_tool="false" content_ui="combo" x="678" y="69" width="564" height="1021" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34055117" sideWeight="0.49786097" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2802139" sideWeight="0.6483839" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Test Runs" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Database Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3297244" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.43486777" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="IntelliHeap" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32344496" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4946131" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Duplicates" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2102161" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -4041,7 +3852,7 @@
     <option name="SHOW_VCS_ERROR_NOTIFICATIONS" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="To IDEA 11.11 migrated" />
+    <option name="LAST_COMMIT_MESSAGE" value="Quest activate and deactivate&#10;Quest progress visualization" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -4054,7 +3865,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.8076923" />
-    <MESSAGE value="Bugfix Bot" />
     <MESSAGE value="Tomcat shutdown memory leak" />
     <MESSAGE value="Tracking improved" />
     <MESSAGE value="MGMT page improved" />
@@ -4079,6 +3889,7 @@
     <MESSAGE value="Chat added" />
     <MESSAGE value="Logging improved" />
     <MESSAGE value="To IDEA 11.11 migrated" />
+    <MESSAGE value="Quest activate and deactivate&#10;Quest progress visualization" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -4088,86 +3899,118 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/radar/MiniMapMouseDownListener.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/common/info/SimulationInfo.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="11" selection-start="724" selection-end="724" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/ClientChatHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="128" column="23" selection-start="3755" selection-end="3755" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/simulation/TestClientChatHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="67" column="48" selection-start="3362" selection-end="3362" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/radar/RadarFrameView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="102" column="0" selection-start="3554" selection-end="3554" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-servlet/2.4.0/gwt-servlet-2.4.0-sources.jar!/com/google/gwt/event/dom/client/MouseEvent.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="116" selection-start="857" selection-end="857" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/ChatCockpit.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="187" column="52" selection-start="7228" selection-end="7228" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/Connection.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="495" column="72" selection-start="20360" selection-end="20360" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/common/gameengine/services/collision/impl/CommonCollisionServiceImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="196" column="0" selection-start="10651" selection-end="10651" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/common/gameengine/services/bot/impl/BotSyncBaseItem.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="16" selection-start="1647" selection-end="1647" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/common/gameengine/services/bot/BotItemConfig.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="13" selection-start="291" selection-end="291" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/GwtCommon.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="87" selection-start="2144" selection-end="2144" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-servlet/2.4.0/gwt-servlet-2.4.0-sources.jar!/com/google/gwt/safehtml/shared/SafeHtmlUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="170" column="141" selection-start="5679" selection-end="5679" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/common/Constants.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="72" column="148" selection-start="3129" selection-end="3129" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/common/ChatMessage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="18" selection-start="922" selection-end="922" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/common/gameengine/services/bot/impl/IntruderHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="104" column="149" selection-start="4419" selection-end="4419" vertical-scroll-proportion="0.0">
+        <state line="24" column="33" selection-start="796" selection-end="796" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/simulation/Simulation.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+        <state line="50" column="13" selection-start="2252" selection-end="2252" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/common/utg/impl/ConditionServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="123" column="18" selection-start="5249" selection-end="5249" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/simulation/Task.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="34" column="29" selection-start="1102" selection-end="1102" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/simulation/SimulationConditionServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="110" column="54" selection-start="4251" selection-end="4251" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/pages/mgmt/condition/SyncItemTypeComparisonConfigPanel.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="4.9615383">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/DbItemTypePositionComparisonConfig.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="49" column="13" selection-start="1814" selection-end="1814" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/pages/mgmt/condition/ItemTypePositionComparisonConfigPanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="37" column="13" selection-start="1565" selection-end="1565" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/pages/mgmt/condition/ItemTypePositionComparisonConfigPanel.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="40" column="12" selection-start="1527" selection-end="1527" vertical-scroll-proportion="-14.115385">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/services/connection/PacketSendingTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="107" selection-start="937" selection-end="937" vertical-scroll-proportion="-5.8">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/utg/ClientLevelHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="48" column="143" selection-start="1887" selection-end="1887" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/impl/UserGuidanceServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="575" column="56" selection-start="24343" selection-end="24343" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/common/CmsUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="102" column="25" selection-start="3251" selection-end="3251" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/SideCockpit.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="40" column="49" selection-start="1790" selection-end="1790" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/QuestProgressCockpit.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="70" column="21" selection-start="2754" selection-end="2754" vertical-scroll-proportion="-16.76">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/history/impl/HistoryServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="204" column="38" selection-start="7073" selection-end="7073" vertical-scroll-proportion="0.43035713">
           <folding />
         </state>
       </provider>
@@ -4176,50 +4019,81 @@
   <component name="masterDetails">
     <states>
       <state key="ArtifactsStructureConfigurable.UI">
-        <UIState>
-          <splitter-proportions>
-            <SplitterProportionsDataImpl>
-              <option name="proportions">
-                <list>
-                  <option value="0.34744844" />
-                  <option value="0.5" />
-                </list>
-              </option>
-            </SplitterProportionsDataImpl>
-          </splitter-proportions>
+        <settings>
+          <artifact-editor />
           <last-edited>controltheland:war</last-edited>
-          <settings />
-        </UIState>
-      </state>
-      <state key="Copyright.UI">
-        <UIState>
           <splitter-proportions>
-            <SplitterProportionsDataImpl />
+            <option name="proportions">
+              <list>
+                <option value="0.34744844" />
+                <option value="0.5" />
+              </list>
+            </option>
           </splitter-proportions>
-        </UIState>
+        </settings>
       </state>
-      <state key="ProjectJDKs.UI">
-        <UIState>
+      <state key="Copyright.UI" />
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>GWT (controltheland)|GWT</last-edited>
           <splitter-proportions>
-            <SplitterProportionsDataImpl>
-              <option name="proportions">
-                <list>
-                  <option value="0.2" />
-                </list>
-              </option>
-            </SplitterProportionsDataImpl>
+            <option name="proportions">
+              <list>
+                <option value="0.34744844" />
+              </list>
+            </option>
           </splitter-proportions>
-          <last-edited>1.5</last-edited>
-        </UIState>
+        </settings>
       </state>
-      <state key="ScopeChooserConfigurable.UI">
-        <UIState>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
           <splitter-proportions>
-            <SplitterProportionsDataImpl />
+            <option name="proportions">
+              <list>
+                <option value="0.34744844" />
+              </list>
+            </option>
           </splitter-proportions>
-          <settings />
-        </UIState>
+        </settings>
       </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>1.7</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.34744844" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>GWT|controltheland</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.34744844" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectJDKs.UI" />
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>Maven: antlr:antlr:2.7.7</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.34744844" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ScopeChooserConfigurable.UI" />
     </states>
   </component>
 </project>
