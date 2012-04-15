@@ -13,6 +13,9 @@ public class ToolTips {
     public static final String TOOL_TIP_MONEY = "Your money";
     public static final String TOOL_TIP_UNITS = "Units amount / max";
     public static final String TOOL_TIP_ENERGY = "Base energy consuming / producing";
+    public static final String TOOL_TIP_QUEST_OVERVIEW = "Available quests";
+    public static final String TOOL_TIP_MISSION_OVERVIEW = "Available missions";
+    public static final String TOOL_TIP_XP_OVERVIEW = "XP and XP to level up";
     // Buttons
     public static final String TOOL_TIP_SCROLL_HOME = "Scroll home";
     public static final String TOOL_TIP_SELL = "Activate sell mode for selling units and structures";
