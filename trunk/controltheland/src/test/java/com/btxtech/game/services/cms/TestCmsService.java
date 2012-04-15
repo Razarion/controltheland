@@ -66,6 +66,7 @@ import com.btxtech.game.wicket.pages.cms.content.plugin.PluginEnum;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import com.btxtech.game.wicket.uiservices.cms.SecurityCmsUiService;
 import com.btxtech.game.wicket.uiservices.cms.impl.CmsUiServiceImpl;
+import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.markup.html.form.Button;
@@ -2928,7 +2929,7 @@ public class TestCmsService extends AbstractServiceTest {
     }
 
     private void prepare4RegisterCheck() throws Exception {
-        configureRealGame();
+        configureGameMultipleLevel();
 
         // Setup CMS content
         beginHttpSession();
@@ -2962,7 +2963,7 @@ public class TestCmsService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testRegister() throws Exception {
+    public void testRegisterSimulated() throws Exception {
         SecurityCmsUiService securityCmsUiServiceMock = EasyMock.createMock(SecurityCmsUiService.class);
         securityCmsUiServiceMock.signIn("U1", "test");
         EasyMock.replay(securityCmsUiServiceMock);
@@ -2985,7 +2986,42 @@ public class TestCmsService extends AbstractServiceTest {
         formTester.setValue("content:newUserForm:password", "test");
         formTester.setValue("content:newUserForm:confirmPassword", "test");
         formTester.submit();
+        tester.assertRenderedPage(Game.class);
+        Page page = tester.getLastRenderedPage();
+        Assert.assertEquals(TEST_LEVEL_TASK_1_1_SIMULATED_ID, page.getPageParameters().getInt(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testRegisterReal() throws Exception {
+        SecurityCmsUiService securityCmsUiServiceMock = EasyMock.createMock(SecurityCmsUiService.class);
+        securityCmsUiServiceMock.signIn("U1", "test");
+        EasyMock.replay(securityCmsUiServiceMock);
+        ReflectionTestUtils.setField(cmsUiService, "securityCmsUiService", securityCmsUiServiceMock);
+
+        prepare4RegisterCheck();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
+        tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
+        tester.assertVisible("form:content:newUserForm:name");
+        tester.assertVisible("form:content:newUserForm:email");
+        tester.assertVisible("form:content:newUserForm:password");
+        tester.assertVisible("form:content:newUserForm:confirmPassword");
+        FormTester formTester = tester.newFormTester("form");
+        formTester.setValue("content:newUserForm:name", "U1");
+        formTester.setValue("content:newUserForm:email", "u1email");
+        formTester.setValue("content:newUserForm:password", "test");
+        formTester.setValue("content:newUserForm:confirmPassword", "test");
+        formTester.submit();
+        tester.assertRenderedPage(Game.class);
+        Page page = tester.getLastRenderedPage();
+        Assert.assertFalse(page.getPageParameters().containsKey(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
