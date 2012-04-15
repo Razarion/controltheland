@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -29,6 +30,7 @@ public class QuestProgressCockpit extends VerticalPanel {
         getElement().getStyle().setPaddingBottom(10, Style.Unit.PX);
         getElement().getStyle().setPaddingLeft(10, Style.Unit.PX);
         getElement().getStyle().setPaddingRight(10, Style.Unit.PX);
+        getElement().getStyle().setProperty("maxWidth", "20%");
 
         questTitle = new HTML();
         questTitle.getElement().getStyle().setColor("#FFFFAA");
@@ -41,6 +43,7 @@ public class QuestProgressCockpit extends VerticalPanel {
         add(questProgress);
 
         preventEvents(this);
+        ClientUserTracker.getInstance().onDialogAppears(this, "QuestProgressCockpit");
     }
 
     public void addToParent(AbsolutePanel parent) {
@@ -64,6 +67,8 @@ public class QuestProgressCockpit extends VerticalPanel {
         if (activeQuestProgress != null) {
             questProgress.setHTML(activeQuestProgress);
         }
+        ClientUserTracker.getInstance().onDialogDisappears(this);
+        ClientUserTracker.getInstance().onDialogAppears(this, activeQuestTitle);
     }
 
     public void setNoActiveQuest() {
@@ -77,6 +82,8 @@ public class QuestProgressCockpit extends VerticalPanel {
         builder.append(Connection.getInstance().getGameInfo().getPredefinedUrls().get(CmsUtil.CmsPredefinedPage.USER_PAGE));
         builder.append("' target='_blank' style='color: #C7C4BB; text-decoration: none;'>Click here to activate a quest or mission</a>");
         questProgress.setHTML(builder.toString());
+        ClientUserTracker.getInstance().onDialogDisappears(this);
+        ClientUserTracker.getInstance().onDialogAppears(this, "No active quest");
     }
 
     private void preventEvents(Widget widget) {
