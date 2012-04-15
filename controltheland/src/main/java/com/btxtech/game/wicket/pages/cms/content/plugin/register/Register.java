@@ -13,12 +13,14 @@
 
 package com.btxtech.game.wicket.pages.cms.content.plugin.register;
 
-import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.StatelessForm;
 import org.apache.wicket.markup.html.form.TextField;
@@ -31,6 +33,8 @@ public class Register extends Panel {
     private UserService userService;
     @SpringBean
     private CmsUiService cmsUiService;
+    @SpringBean
+    private UserGuidanceService userGuidanceService;
     private String name;
     private String password;
     private String confirmPassword;
@@ -49,7 +53,11 @@ public class Register extends Panel {
                 try {
                     userService.createUser(name, password, confirmPassword, email);
                     cmsUiService.getSecurityCmsUiService().signIn(name, password);
-                    cmsUiService.setPredefinedResponsePage(this, CmsUtil.CmsPredefinedPage.USER_PAGE);
+                    PageParameters parameters = new PageParameters();
+                    if (!userGuidanceService.isStartRealGame()) {
+                        parameters.put(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, userGuidanceService.getDefaultLevelTaskId());
+                    }
+                    setResponsePage(Game.class, parameters);
                 } catch (AlreadyLoggedInException e) {
                     cmsUiService.setMessageResponsePage(this, e.getMessage());
                 } catch (UserAlreadyExistsException e) {
