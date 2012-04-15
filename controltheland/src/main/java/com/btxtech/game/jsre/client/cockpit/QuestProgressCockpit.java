@@ -12,8 +12,8 @@ import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -21,7 +21,8 @@ import com.google.gwt.user.client.ui.Widget;
  * Date: 13.04.12
  * Time: 21:32
  */
-public class QuestProgressCockpit extends VerticalPanel {
+public class QuestProgressCockpit extends FlowPanel {
+    private static final String WIDTH = "20%";
     private HTML questTitle;
     private HTML questProgress;
 
@@ -30,16 +31,14 @@ public class QuestProgressCockpit extends VerticalPanel {
         getElement().getStyle().setPaddingBottom(10, Style.Unit.PX);
         getElement().getStyle().setPaddingLeft(10, Style.Unit.PX);
         getElement().getStyle().setPaddingRight(10, Style.Unit.PX);
-        getElement().getStyle().setProperty("maxWidth", "20%");
+        getElement().getStyle().setProperty("maxWidth", WIDTH);
 
         questTitle = new HTML();
         questTitle.getElement().getStyle().setColor("#FFFFAA");
-        questTitle.getElement().getStyle().setOpacity(1.0);
         add(questTitle);
 
         questProgress = new HTML();
         questProgress.getElement().getStyle().setColor("#C7C4BB");
-        questProgress.getElement().getStyle().setOpacity(1.0);
         add(questProgress);
 
         preventEvents(this);
