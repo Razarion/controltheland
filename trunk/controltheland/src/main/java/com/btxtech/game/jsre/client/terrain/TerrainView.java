@@ -26,7 +26,6 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
@@ -255,10 +254,6 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
 
     public Rectangle getViewRect() {
         return new Rectangle(viewOriginLeft, viewOriginTop, viewWidth, viewHeight);
-    }
-
-    public boolean isItemVisible(SyncItem syncItem) {
-        return syncItem.getSyncItemArea().contains(getViewRect());
     }
 
     public Index toAbsoluteIndex(Index relative) {

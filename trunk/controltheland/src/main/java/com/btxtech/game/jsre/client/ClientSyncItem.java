@@ -15,6 +15,8 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
+import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemViewContainer;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
@@ -53,7 +55,7 @@ public class ClientSyncItem implements SyncItemListener {
         switch (change) {
             case POSITION:
                 try {
-                    checkVisibility();
+                    checkVisibility(TerrainView.getInstance().getViewRect());
                     if (syncItem instanceof SyncBaseItem && Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
                         ActionHandler.getInstance().interactionGuardingItems((SyncBaseItem) syncItem);
                     }
@@ -92,12 +94,28 @@ public class ClientSyncItem implements SyncItemListener {
         }
     }
 
-    public void checkVisibility() {
+    public void checkVisibility(Rectangle viewRect) {
         boolean isContainedIn = false;
         if (isSyncBaseItem()) {
             isContainedIn = getSyncBaseItem().isContainedIn();
         }
-        boolean tmpIsVisible = !isHidden && !isContainedIn && TerrainView.getInstance().isItemVisible(syncItem);
+        Index middle = syncItem.getSyncItemArea().getPosition();
+        int maxRadius = syncItem.getSyncItemArea().getBoundingBox().getMaxRadius();
+        Rectangle fullRect = viewRect.copy();
+        boolean isInVisibleRect = false;
+        if (fullRect.contains(middle)) {
+            isInVisibleRect = true;
+        } else {
+            fullRect.growEast(maxRadius);
+            fullRect.growNorth(maxRadius);
+            fullRect.growWest(maxRadius);
+            fullRect.growSouth(maxRadius);
+            if (fullRect.contains(middle)) {
+                isInVisibleRect = syncItem.getSyncItemArea().contains(viewRect);
+            }
+        }
+
+        boolean tmpIsVisible = !isHidden && !isContainedIn && isInVisibleRect;
         if (tmpIsVisible != isVisible) {
             if (tmpIsVisible) {
                 ItemViewContainer.getInstance().onSyncItemVisible(this);
@@ -139,7 +157,7 @@ public class ClientSyncItem implements SyncItemListener {
     public void setHidden(boolean hidden) {
         if (hidden != isHidden) {
             isHidden = hidden;
-            checkVisibility();
+            checkVisibility(TerrainView.getInstance().getViewRect());
         }
     }
 

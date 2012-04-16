@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.CockpitUtil;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemViewContainer;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
@@ -336,9 +337,10 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler {
     }
 
     public void displayVisibleItems() {
+        Rectangle viewRect = TerrainView.getInstance().getViewRect();
         for (ClientSyncItem clientSyncItem : ItemContainer.getInstance().getItems()) {
             try {
-                clientSyncItem.checkVisibility();
+                clientSyncItem.checkVisibility(viewRect);
             } catch (Throwable t) {
                 GwtCommon.handleException("Unable display sync item: " + clientSyncItem, t);
             }

@@ -26,6 +26,7 @@ import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.effects.ExplosionHandler;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.SpeechBubbleHandler;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
@@ -73,7 +74,7 @@ public class ItemContainer extends AbstractItemService {
         Timer timer = new Timer() {
             @Override
             public void run() {
-                for (Iterator<Map.Entry<Id, ClientSyncItem>> it = orphanItems.entrySet().iterator(); it.hasNext();) {
+                for (Iterator<Map.Entry<Id, ClientSyncItem>> it = orphanItems.entrySet().iterator(); it.hasNext(); ) {
                     Map.Entry<Id, ClientSyncItem> entry = it.next();
                     long insertTime = entry.getKey().getUserTimeStamp();
                     if (insertTime + CLEANUP_INTERVALL < System.currentTimeMillis()) {
@@ -82,7 +83,7 @@ public class ItemContainer extends AbstractItemService {
                         GwtCommon.sendLogToServer("Orphan item removed due timeout: " + entry.getValue().getSyncItem());
                     }
                 }
-                for (Iterator<Map.Entry<Id, ClientSyncItem>> it = seeminglyDeadItems.entrySet().iterator(); it.hasNext();) {
+                for (Iterator<Map.Entry<Id, ClientSyncItem>> it = seeminglyDeadItems.entrySet().iterator(); it.hasNext(); ) {
                     Map.Entry<Id, ClientSyncItem> entry = it.next();
                     long insertTime = entry.getKey().getUserTimeStamp();
                     if (insertTime + CLEANUP_INTERVALL < System.currentTimeMillis()) {
@@ -126,7 +127,7 @@ public class ItemContainer extends AbstractItemService {
             }
             clientSyncItem.getSyncItem().synchronize(syncItemInfo);
             checkSpecialChanged(clientSyncItem.getSyncItem());
-            clientSyncItem.checkVisibility();
+            clientSyncItem.checkVisibility(TerrainView.getInstance().getViewRect());
             clientSyncItem.update();
             if (clientSyncItem.isSyncTickItem()) {
                 ActionHandler.getInstance().syncItemActivated(clientSyncItem.getSyncTickItem());
@@ -178,7 +179,7 @@ public class ItemContainer extends AbstractItemService {
             orphanItems.put(id, itemView);
             itemView.setHidden(true);
         }
-        itemView.checkVisibility();
+        itemView.checkVisibility(TerrainView.getInstance().getViewRect());
         itemView.update();
         return itemView.getSyncItem();
     }
@@ -215,7 +216,7 @@ public class ItemContainer extends AbstractItemService {
             syncBaseItem.fireItemChanged(SyncItemListener.Change.ANGEL);
             ClientBase.getInstance().onItemCreated(syncBaseItem);
         }
-        itemView.checkVisibility();
+        itemView.checkVisibility(TerrainView.getInstance().getViewRect());
         itemView.update();
         ClientServices.getInstance().getConnectionService().sendSyncInfo(itemView.getSyncItem());
         return itemView.getSyncItem();
@@ -232,7 +233,7 @@ public class ItemContainer extends AbstractItemService {
             SyncBaseItem syncBaseItem = (SyncBaseItem) itemView.getSyncItem();
             syncBaseItem.setBuildup(1.0);
         }
-        itemView.checkVisibility();
+        itemView.checkVisibility(TerrainView.getInstance().getViewRect());
         itemView.update();
         return itemView.getSyncItem();
     }
