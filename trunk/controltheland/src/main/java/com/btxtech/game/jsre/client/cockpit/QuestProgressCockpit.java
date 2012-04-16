@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.google.gwt.dom.client.Style;
@@ -103,5 +104,9 @@ public class QuestProgressCockpit extends FlowPanel {
                 ChatCockpit.getInstance().blurFocus();
             }
         }, MouseDownEvent.getType());
+    }
+
+    public Rectangle getArea() {
+        return new Rectangle(getAbsoluteLeft(), getAbsoluteTop(), getOffsetWidth(), getOffsetHeight());
     }
 }

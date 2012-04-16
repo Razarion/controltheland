@@ -348,11 +348,19 @@ public class SideCockpit {
         }, MouseDownEvent.getType());
     }
 
-    public Rectangle getArea() {
+    public Rectangle getAreaMainPanel() {
         return new Rectangle(mainPanel.getAbsoluteLeft(), mainPanel.getAbsoluteTop(), mainPanel.getOffsetWidth(), mainPanel.getOffsetHeight());
+    }
+
+    public Rectangle getAreaLevelPanel() {
+        return new Rectangle(levelPanel.getAbsoluteLeft(), levelPanel.getAbsoluteTop(), levelPanel.getOffsetWidth(), levelPanel.getOffsetHeight());
     }
 
     public CockpitMode getCockpitMode() {
         return cockpitMode;
+    }
+
+    public QuestProgressCockpit getQuestProgressCockpit() {
+        return questProgressCockpit;
     }
 }
