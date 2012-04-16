@@ -129,7 +129,7 @@ public class SideCockpit {
         mainPanel = new AbsolutePanel();
         mainPanel.getElement().getStyle().setBackgroundImage("url(" + ImageHandler.getCockpitImageUrl("cockpit.png") + ")");
         mainPanel.getElement().getStyle().setCursor(Style.Cursor.DEFAULT);
-        preventEvents(mainPanel, false);
+        preventEvents(mainPanel);
         mainPanel.setPixelSize(MAIN_PANEL_W, MAIN_PANEL_H);
 
         levelPanel = new AbsolutePanel();
@@ -137,7 +137,14 @@ public class SideCockpit {
         levelPanel.getElement().getStyle().setProperty("backgroundPosition", "-" + Integer.toString(LEVEL_PANEL_X) + "px 0");
         levelPanel.getElement().getStyle().setFontSize(11, Style.Unit.PX);
         levelPanel.getElement().getStyle().setCursor(Style.Cursor.POINTER);
-        preventEvents(levelPanel, true);
+        preventEvents(levelPanel);
+        levelPanel.addDomHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                Window.open(Connection.getInstance().getGameInfo().getPredefinedUrls().get(CmsUtil.CmsPredefinedPage.USER_PAGE), CmsUtil.TARGET_BLANK, "");
+            }
+        }, ClickEvent.getType());
+
         levelPanel.setPixelSize(LEVEL_PANEL_W, LEVEL_PANEL_H);
     }
 
@@ -326,7 +333,7 @@ public class SideCockpit {
         questProgressCockpit.addToParent(parent);
     }
 
-    private void preventEvents(Widget widget, final boolean openMyGame) {
+    private void preventEvents(Widget widget) {
         widget.addDomHandler(new MouseUpHandler() {
             @Override
             public void onMouseUp(MouseUpEvent event) {
@@ -341,9 +348,6 @@ public class SideCockpit {
                 ItemCockpit.getInstance().deActivate();
                 GwtCommon.preventDefault(event);
                 ChatCockpit.getInstance().blurFocus();
-                if (openMyGame) {
-                    Window.open(Connection.getInstance().getGameInfo().getPredefinedUrls().get(CmsUtil.CmsPredefinedPage.USER_PAGE), CmsUtil.TARGET_BLANK, "");
-                }
             }
         }, MouseDownEvent.getType());
     }
