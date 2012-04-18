@@ -42,7 +42,7 @@ public class MiniTerritoryView extends MiniMap implements MiniMapMouseMoveListen
     private Territory territory;
 
     public MiniTerritoryView(int width, int height) {
-        super(width, height);
+        super(width, height, true);
         addMouseMoveListener(this);
         addMouseDownListener(this);
         addMouseUpListener(this);

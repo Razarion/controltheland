@@ -22,7 +22,6 @@ import com.btxtech.game.jsre.client.collision.ClientCollisionService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.itemtypeeditor.ItemTypeAccess;
 import com.btxtech.game.jsre.itemtypeeditor.ItemTypeAccessAsync;
@@ -46,7 +45,7 @@ public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener, Mi
     private BoundingBox boundingBox;
 
     public PathMiniMap(int width, int height) {
-        super(width, height);
+        super(width, height, false);
         addMouseDownListener(this);
         addMouseMoveListener(this);
         loadBoundingBox(1);
@@ -66,19 +65,6 @@ public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener, Mi
             }
         });
 
-    }
-
-    @Override
-    public void onTerrainSettings(TerrainSettings terrainSettings) {
-        super.onTerrainSettings(terrainSettings);
-        double scale = Math.min((double) getWidth() / (double) terrainSettings.getPlayFieldXSize(),
-                (double) getHeight() / (double) terrainSettings.getPlayFieldYSize());
-        getContext2d().restore();
-        getContext2d().save();
-        getContext2d().scale(scale, scale);
-        getContext2d().setLineWidth(2.0 / scale);
-        getContext2d().setStrokeStyle(ColorConstants.WHITE);
-        setScale(scale);
     }
 
     @Override
@@ -108,6 +94,8 @@ public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener, Mi
 
     private void displayPath(Index start, List<Index> indexes) {
         clear();
+        getContext2d().setLineWidth(2.0 / getScale());
+        getContext2d().setStrokeStyle(ColorConstants.WHITE);
         pathfindingCockpit.clearPathTable();
         getContext2d().beginPath();
         getContext2d().moveTo(start.getX(), start.getY());

@@ -35,7 +35,7 @@ public class RadarItemView extends MiniMap {
     public static final int RESOURCE_ITEM_SIZE = 1;
 
     public RadarItemView(int width, int height) {
-        super(width, height);
+        super(width, height, false);
     }
 
     @Override
@@ -52,23 +52,19 @@ public class RadarItemView extends MiniMap {
     }
 
     private void refreshItems() {
-        getContext2d().setTransform(1, 0, 0, 1, 0, 0); // No transformation
-        double scale = Math.min((double) getWidth() / (double) getTerrainSettings().getPlayFieldXSize(),
-                (double) getHeight() / (double) getTerrainSettings().getPlayFieldYSize());
-        getContext2d().clearRect(0, 0, getTerrainSettings().getPlayFieldXSize(), getTerrainSettings().getPlayFieldYSize());
-        getContext2d().scale(scale, scale);
+        clear();
 
         double ownSize;
         double baseItemSize;
         double resourceItemSize;
-        if (scale > 0.01) {
-            ownSize = OWN_BASE_ITEM_SIZE_SMALL_MAP / scale;
-            baseItemSize = BASE_ITEM_SIZE_SMALL_MAP / scale;
-            resourceItemSize = RESOURCE_ITEM_SIZE_SMALL_MAP / scale;
+        if (getScale() > 0.01) {
+            ownSize = OWN_BASE_ITEM_SIZE_SMALL_MAP / getScale();
+            baseItemSize = BASE_ITEM_SIZE_SMALL_MAP / getScale();
+            resourceItemSize = RESOURCE_ITEM_SIZE_SMALL_MAP / getScale();
         } else {
-            ownSize = OWN_BASE_ITEM_SIZE / scale;
-            baseItemSize = BASE_ITEM_SIZE / scale;
-            resourceItemSize = RESOURCE_ITEM_SIZE / scale;
+            ownSize = OWN_BASE_ITEM_SIZE / getScale();
+            baseItemSize = BASE_ITEM_SIZE / getScale();
+            resourceItemSize = RESOURCE_ITEM_SIZE / getScale();
         }
 
         for (ClientSyncItem clientSyncItem : ItemContainer.getInstance().getItems()) {

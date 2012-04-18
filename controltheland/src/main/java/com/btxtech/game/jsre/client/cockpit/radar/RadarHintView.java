@@ -16,9 +16,6 @@ package com.btxtech.game.jsre.client.cockpit.radar;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  * User: beat
  * Date: 22.12.2009
@@ -26,12 +23,11 @@ import java.util.logging.Logger;
  */
 public class RadarHintView extends MiniMap {
     private static final int EDGE_LENGTH = 200;
-    private Logger log = Logger.getLogger(RadarHintView.class.getName());
     private boolean visible = true;
     private SyncBaseItem enemyBaseItem;
 
     public RadarHintView(int width, int height) {
-        super(width, height);
+        super(width, height, false);
     }
 
     public void showHint(SyncBaseItem enemyBaseItem) {
@@ -48,17 +44,7 @@ public class RadarHintView extends MiniMap {
     }
 
     private void showCross() {
-        getContext2d().save();
-        double scale = Math.min((double) getWidth() / (double) getTerrainSettings().getPlayFieldXSize(),
-                (double) getHeight() / (double) getTerrainSettings().getPlayFieldYSize()) / getScale();
-        getContext2d().clearRect(0, 0, getTerrainSettings().getPlayFieldXSize(), getTerrainSettings().getPlayFieldYSize());
-        try {
-            getContext2d().scale(scale, scale);
-        } catch (Exception e) {
-            // Fails during tests
-            log.log(Level.SEVERE, "", e);
-        }
-        getContext2d().setLineWidth(0.4 / scale);
+        getContext2d().setLineWidth(1.5 / getScale());
         getContext2d().setStrokeStyle("#FF0000");
 
         int x = enemyBaseItem.getSyncItemArea().getPosition().getX();
@@ -74,8 +60,6 @@ public class RadarHintView extends MiniMap {
         getContext2d().beginPath();
         getContext2d().arc(x, y, EDGE_LENGTH * 0.6, 0, MathHelper.ONE_RADIANT);
         getContext2d().stroke();
-
-        getContext2d().restore();
     }
 
     public void hideHint() {
