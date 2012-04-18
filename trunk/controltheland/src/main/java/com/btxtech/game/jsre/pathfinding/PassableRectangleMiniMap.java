@@ -20,7 +20,6 @@ import com.btxtech.game.jsre.client.common.Line;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.services.collision.PassableRectangle;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.google.gwt.canvas.dom.client.CssColor;
 import com.google.gwt.user.client.Random;
@@ -35,20 +34,7 @@ import java.util.Map;
  */
 public class PassableRectangleMiniMap extends MiniMap {
     public PassableRectangleMiniMap(int width, int height) {
-        super(width, height);
-    }
-
-    @Override
-    public void onTerrainSettings(TerrainSettings terrainSettings) {
-        super.onTerrainSettings(terrainSettings);
-        double scale = Math.min((double) getWidth() / (double) terrainSettings.getPlayFieldXSize(),
-                (double) getHeight() / (double) terrainSettings.getPlayFieldYSize());
-        getContext2d().restore();
-        getContext2d().save();
-        getContext2d().scale(scale, scale);
-        getContext2d().setLineWidth(2.0 / scale);
-        getContext2d().setStrokeStyle(ColorConstants.WHITE);
-        setScale(scale);
+        super(width, height, false);
     }
 
     public void showPassableRectangles() {

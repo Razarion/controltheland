@@ -48,8 +48,10 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
     private Context2d context2d;
     private int xShift = 0;
     private int yShift = 0;
+    private boolean scaleToTile;
 
-    public MiniMap(int width, int height) {
+    public MiniMap(int width, int height, boolean scaleToTile) {
+        this.scaleToTile = scaleToTile;
         canvas = Canvas.createIfSupported();
         if (canvas == null) {
             throw new Html5NotSupportedException("MiniMap: Canvas not supported.");
@@ -71,18 +73,37 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
 
     public void onTerrainSettings(TerrainSettings terrainSettings) {
         this.terrainSettings = terrainSettings;
+        if (scaleToTile) {
+            scaleToTile();
+        } else {
+            scaleToAbsolute();
+        }
+    }
+
+    protected void scaleToTile() {
+        context2d.setTransform(1, 0, 0, 1, 0, 0); // No transformation
         scale = Math.min((double) width / (double) terrainSettings.getTileXCount(),
                 (double) height / (double) terrainSettings.getTileYCount());
-        // Restore & save to get old state before scale
-        context2d.restore();
-        context2d.save();
-
         context2d.scale(scale, scale);
         if (getTerrainSettings().getTileXCount() > getTerrainSettings().getTileYCount()) {
             yShift = (int) ((getHeight() / getScale() - getTerrainSettings().getTileYCount()) / 2);
             getContext2d().translate(0, yShift);
         } else if (getTerrainSettings().getTileYCount() > getTerrainSettings().getTileXCount()) {
             xShift = (int) ((getWidth() / getScale() - getTerrainSettings().getTileXCount()) / 2);
+            getContext2d().translate(xShift, 0);
+        }
+    }
+
+    protected void scaleToAbsolute() {
+        context2d.setTransform(1, 0, 0, 1, 0, 0); // No transformation
+        scale = Math.min((double) width / (double) terrainSettings.getPlayFieldXSize(),
+                (double) height / (double) terrainSettings.getPlayFieldYSize());
+        context2d.scale(scale, scale);
+        if (getTerrainSettings().getPlayFieldXSize() > getTerrainSettings().getPlayFieldYSize()) {
+            yShift = (int) ((getHeight() / getScale() - getTerrainSettings().getPlayFieldYSize()) / 2);
+            getContext2d().translate(0, yShift);
+        } else if (getTerrainSettings().getPlayFieldYSize() > getTerrainSettings().getPlayFieldXSize()) {
+            xShift = (int) ((getWidth() / getScale() - getTerrainSettings().getPlayFieldXSize()) / 2);
             getContext2d().translate(xShift, 0);
         }
     }

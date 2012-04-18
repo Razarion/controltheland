@@ -21,29 +21,32 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  * User: beat
  * Date: 22.12.2009
  * Time: 21:52:27
  */
 public class RadarFrameView extends MiniMap implements TerrainScrollListener, MiniMapMouseDownListener {
-    private Logger log = Logger.getLogger(RadarFrameView.class.getName());
+    private static final String COLOR_1 = ColorConstants.LIGHTGREY;
+    private static final String COLOR_2 = ColorConstants.RED;
     private int left;
     private int top;
     private int width;
     private int height;
-    private boolean colorToggle;
+    private String color = COLOR_1;
 
     public RadarFrameView(int width, int height) {
-        super(width, height);
+        super(width, height, true);
         TerrainView.getInstance().addTerrainScrollListener(this);
         addMouseDownListener(this);
         Scheduler.get().scheduleFixedPeriod(new Scheduler.RepeatingCommand() {
             @Override
             public boolean execute() {
+                if (color.equals(COLOR_1)) {
+                    color = COLOR_2;
+                } else {
+                    color = COLOR_1;
+                }
                 drawFrame();
                 return true;
             }
@@ -65,24 +68,13 @@ public class RadarFrameView extends MiniMap implements TerrainScrollListener, Mi
         }
 
         clear();
-        if (colorToggle) {
-            getContext2d().setStrokeStyle(ColorConstants.LIGHTGREY);
-        } else {
-            getContext2d().setStrokeStyle(ColorConstants.RED);
-        }
-        colorToggle = !colorToggle;
+        getContext2d().setStrokeStyle(color);
         getContext2d().beginPath();
         double leftDouble = (double) left / (double) getTerrainSettings().getTileWidth();
         double topDouble = (double) top / (double) getTerrainSettings().getTileHeight();
         double widthDouble = (double) width / (double) getTerrainSettings().getTileWidth();
         double heightDouble = (double) height / (double) getTerrainSettings().getTileHeight();
-        try {
-            getContext2d().rect(leftDouble, topDouble, widthDouble, heightDouble);
-        } catch (Exception e) {
-            // Fails during tests
-            log.log(Level.SEVERE, "", e);
-        }
-
+        getContext2d().rect(leftDouble, topDouble, widthDouble, heightDouble);
         getContext2d().stroke();
 
     }
@@ -90,7 +82,7 @@ public class RadarFrameView extends MiniMap implements TerrainScrollListener, Mi
     @Override
     public void onTerrainSettings(TerrainSettings terrainSettings) {
         super.onTerrainSettings(terrainSettings);
-        getContext2d().setLineWidth(1.0 / getScale());
+        getContext2d().setLineWidth(2.0 / getScale());
         onScroll(TerrainView.getInstance().getViewOriginLeft(),
                 TerrainView.getInstance().getViewOriginTop(),
                 TerrainView.getInstance().getViewWidth(),
