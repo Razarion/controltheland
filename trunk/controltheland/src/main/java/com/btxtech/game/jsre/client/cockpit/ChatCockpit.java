@@ -22,6 +22,10 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -53,6 +57,7 @@ public class ChatCockpit extends AbsolutePanel implements ChatListener {
     private static final int RESIZE_CURSOR_AREA = 10;
     private HTML receiving;
     private TextBox send;
+    private boolean hasFocus;
 
     public static ChatCockpit getInstance() {
         return INSTANCE;
@@ -153,6 +158,18 @@ public class ChatCockpit extends AbsolutePanel implements ChatListener {
                 }
             }
         });
+        send.addFocusHandler(new FocusHandler() {
+            @Override
+            public void onFocus(FocusEvent event) {
+                hasFocus = true;
+            }
+        });
+        send.addBlurHandler(new BlurHandler() {
+            @Override
+            public void onBlur(BlurEvent event) {
+                hasFocus = false;
+            }
+        });
         contentPanel.add(send);
     }
 
@@ -237,5 +254,10 @@ public class ChatCockpit extends AbsolutePanel implements ChatListener {
 
     public Rectangle getArea() {
         return new Rectangle(getAbsoluteLeft(), getAbsoluteTop(), getOffsetWidth(), getOffsetHeight());
+    }
+
+    public boolean hasFocus() {
+
+        return hasFocus;
     }
 }
