@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.ExtendedAbsolutePanel;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.cockpit.ChatCockpit;
 import com.btxtech.game.jsre.client.cockpit.CockpitUtil;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Index;
@@ -124,30 +125,38 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler {
                 case 'A':
                 case 'a':
                 case KeyCodes.KEY_LEFT: {
-                    executeAutoScrollKey(ScrollDirection.WEST, null);
-                    event.cancel(); // Prevent from scrolling the browser window
-                    break;
+                    if (!ChatCockpit.getInstance().hasFocus()) {
+                        executeAutoScrollKey(ScrollDirection.WEST, null);
+                        event.cancel(); // Prevent from scrolling the browser window
+                        break;
+                    }
                 }
                 case 'D':
                 case 'd':
                 case KeyCodes.KEY_RIGHT: {
-                    executeAutoScrollKey(ScrollDirection.EAST, null);
-                    event.cancel();
-                    break;
+                    if (!ChatCockpit.getInstance().hasFocus()) {
+                        executeAutoScrollKey(ScrollDirection.EAST, null);
+                        event.cancel();
+                        break;
+                    }
                 }
                 case 'W':
                 case 'w':
                 case KeyCodes.KEY_UP: {
-                    executeAutoScrollKey(null, ScrollDirection.NORTH);
-                    event.cancel();
-                    break;
+                    if (!ChatCockpit.getInstance().hasFocus()) {
+                        executeAutoScrollKey(null, ScrollDirection.NORTH);
+                        event.cancel();
+                        break;
+                    }
                 }
                 case 'S':
                 case 's':
                 case KeyCodes.KEY_DOWN: {
-                    executeAutoScrollKey(null, ScrollDirection.SOUTH);
-                    event.cancel();
-                    break;
+                    if (!ChatCockpit.getInstance().hasFocus()) {
+                        executeAutoScrollKey(null, ScrollDirection.SOUTH);
+                        event.cancel();
+                        break;
+                    }
                 }
             }
         } else if (event.getTypeInt() == Event.ONKEYUP) {
@@ -155,30 +164,38 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler {
                 case 'A':
                 case 'a':
                 case KeyCodes.KEY_LEFT: {
-                    executeAutoScrollKey(ScrollDirection.STOP, null);
-                    event.cancel(); // Prevent from scrolling the browser window
-                    break;
+                    if (!ChatCockpit.getInstance().hasFocus()) {
+                        executeAutoScrollKey(ScrollDirection.STOP, null);
+                        event.cancel(); // Prevent from scrolling the browser window
+                        break;
+                    }
                 }
                 case 'D':
                 case 'd':
                 case KeyCodes.KEY_RIGHT: {
-                    executeAutoScrollKey(ScrollDirection.STOP, null);
-                    event.cancel();
-                    break;
+                    if (!ChatCockpit.getInstance().hasFocus()) {
+                        executeAutoScrollKey(ScrollDirection.STOP, null);
+                        event.cancel();
+                        break;
+                    }
                 }
                 case 'W':
                 case 'w':
                 case KeyCodes.KEY_UP: {
-                    executeAutoScrollKey(null, ScrollDirection.STOP);
-                    event.cancel();
-                    break;
+                    if (!ChatCockpit.getInstance().hasFocus()) {
+                        executeAutoScrollKey(null, ScrollDirection.STOP);
+                        event.cancel();
+                        break;
+                    }
                 }
                 case 'S':
                 case 's':
                 case KeyCodes.KEY_DOWN: {
-                    executeAutoScrollKey(null, ScrollDirection.STOP);
-                    event.cancel();
-                    break;
+                    if (!ChatCockpit.getInstance().hasFocus()) {
+                        executeAutoScrollKey(null, ScrollDirection.STOP);
+                        event.cancel();
+                        break;
+                    }
                 }
             }
         }
