@@ -75,26 +75,95 @@ public class TestTracking extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testSimplePageHits() throws Exception {
+    public void testPageHits() throws Exception {
         configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userTrackingService.onJavaScriptDetected(true);
         endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
 
+        beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        userTrackingService.onJavaScriptDetected(true);
         userTrackingService.pageAccess("Page 1", null);
         endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
 
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userTrackingService.onJavaScriptDetected(true);
+        userTrackingService.pageAccess("Page 1", null);
+        userTrackingService.pageAccess("Page 2", null);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userTrackingService.onJavaScriptDetected(true);
+        userTrackingService.pageAccess("Page 1", null);
+        userTrackingService.pageAccess("Page 2", null);
+        userTrackingService.pageAccess("Page 3", null);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userTrackingService.onJavaScriptDetected(true);
+        userTrackingService.pageAccess("Page 1", null);
+        userTrackingService.pageAccess("Page 2", null);
+        userTrackingService.pageAccess("Page 3", null);
+        userTrackingService.pageAccess("Page 4", null);
+        endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         List<SessionOverviewDto> sessionOverviewDto = userTrackingService.getSessionOverviewDtos(UserTrackingFilter.newDefaultFilter());
+        Assert.assertEquals(5, sessionOverviewDto.size());
+        Assert.assertEquals(4, sessionOverviewDto.get(0).getPageHits());
+        Assert.assertEquals(3, sessionOverviewDto.get(1).getPageHits());
+        Assert.assertEquals(2, sessionOverviewDto.get(2).getPageHits());
+        Assert.assertEquals(1, sessionOverviewDto.get(3).getPageHits());
+        Assert.assertEquals(0, sessionOverviewDto.get(4).getPageHits());
+
+        UserTrackingFilter filter = UserTrackingFilter.newDefaultFilter();
+        filter.setHits(1);
+        sessionOverviewDto = userTrackingService.getSessionOverviewDtos(filter);
+        Assert.assertEquals(4, sessionOverviewDto.size());
+        Assert.assertEquals(4, sessionOverviewDto.get(0).getPageHits());
+        Assert.assertEquals(3, sessionOverviewDto.get(1).getPageHits());
+        Assert.assertEquals(2, sessionOverviewDto.get(2).getPageHits());
+        Assert.assertEquals(1, sessionOverviewDto.get(3).getPageHits());
+
+        filter = UserTrackingFilter.newDefaultFilter();
+        filter.setHits(2);
+        sessionOverviewDto = userTrackingService.getSessionOverviewDtos(filter);
+        Assert.assertEquals(3, sessionOverviewDto.size());
+        Assert.assertEquals(4, sessionOverviewDto.get(0).getPageHits());
+        Assert.assertEquals(3, sessionOverviewDto.get(1).getPageHits());
+        Assert.assertEquals(2, sessionOverviewDto.get(2).getPageHits());
+
+        filter = UserTrackingFilter.newDefaultFilter();
+        filter.setHits(3);
+        sessionOverviewDto = userTrackingService.getSessionOverviewDtos(filter);
+        Assert.assertEquals(2, sessionOverviewDto.size());
+        Assert.assertEquals(4, sessionOverviewDto.get(0).getPageHits());
+        Assert.assertEquals(3, sessionOverviewDto.get(1).getPageHits());
+
+        filter = UserTrackingFilter.newDefaultFilter();
+        filter.setHits(4);
+        sessionOverviewDto = userTrackingService.getSessionOverviewDtos(filter);
         Assert.assertEquals(1, sessionOverviewDto.size());
-        Assert.assertEquals(1, sessionOverviewDto.get(0).getPageHits());
+        Assert.assertEquals(4, sessionOverviewDto.get(0).getPageHits());
+
+        filter = UserTrackingFilter.newDefaultFilter();
+        filter.setHits(5);
+        sessionOverviewDto = userTrackingService.getSessionOverviewDtos(filter);
+        Assert.assertEquals(0, sessionOverviewDto.size());
+
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -192,7 +261,7 @@ public class TestTracking extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void tesSessionFilter() throws Exception {
+    public void testSessionFilter() throws Exception {
         configureRealGame();
 
         beginHttpSession();

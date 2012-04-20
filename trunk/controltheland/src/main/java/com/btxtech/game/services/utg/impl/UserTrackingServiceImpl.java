@@ -169,6 +169,10 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         List<DbSessionDetail> browserDetails = criteria.list();
 
         for (DbSessionDetail browserDetail : browserDetails) {
+            int hits = getPageHits(browserDetail.getSessionId());
+            if (filter.getHits() != null && filter.getHits() > hits) {
+                continue;
+            }
             int startAttempts = getStartAttempts(browserDetail.getSessionId());
             int startSuccess = getStartSucceeded(browserDetail.getSessionId());
             boolean failure = hasFailureStarts(browserDetail.getSessionId()) || startAttempts != startSuccess;
@@ -177,7 +181,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             int levelPromotions = historyService.getLevelPromotionCount(browserDetail.getSessionId());
             sessionOverviewDtos.add(new SessionOverviewDto(browserDetail.getTimeStamp(),
                     browserDetail.getSessionId(),
-                    getPageHits(browserDetail.getSessionId()),
+                    hits,
                     enterGameHits,
                     startAttempts,
                     startSuccess,
@@ -613,7 +617,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     @Transactional
     public void saveStartupTask(StartupTaskInfo startupTaskInfo, String startUuid, Integer levelTaskId) {
         session.onJavaScriptDetected(null);
-    	String baseName = null;
+        String baseName = null;
         Integer baseId = null;
         try {
             if (levelTaskId == null) {
