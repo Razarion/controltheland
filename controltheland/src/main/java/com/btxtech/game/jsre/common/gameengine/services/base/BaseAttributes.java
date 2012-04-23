@@ -14,7 +14,10 @@
 package com.btxtech.game.jsre.common.gameengine.services.base;
 
 import com.btxtech.game.jsre.common.SimpleBase;
+
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * User: beat
@@ -26,6 +29,7 @@ public class BaseAttributes implements Serializable {
     private String name;
     private boolean bot = false;
     private boolean abandoned;
+    private Set<BaseAttributes> alliances = new HashSet<BaseAttributes>();
 
     /**
      * Used by GWT
@@ -65,6 +69,14 @@ public class BaseAttributes implements Serializable {
 
     public void setAbandoned(boolean abandoned) {
         this.abandoned = abandoned;
+    }
+
+    public boolean isAlliance(BaseAttributes other) {
+        return alliances.contains(other);
+    }
+
+    public void setAlliances(Set<BaseAttributes> alliances) {
+        this.alliances = alliances;
     }
 
     @Override

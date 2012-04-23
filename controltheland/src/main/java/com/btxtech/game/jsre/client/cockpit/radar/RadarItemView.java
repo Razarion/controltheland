@@ -76,8 +76,10 @@ public class RadarItemView extends MiniMap {
                 getContext2d().setFillStyle(ClientBase.getInstance().getBaseHtmlColor(clientSyncItem.getSyncBaseItem().getBase()));
                 if (clientSyncItem.isMyOwnProperty()) {
                     getContext2d().fillRect(pos.getX(), pos.getY(), ownSize, ownSize);
-                } else {
+                } else if (clientSyncItem.isEnemy()) {
                     getContext2d().fillRect(pos.getX(), pos.getY(), baseItemSize, baseItemSize);
+                } else {
+                    getContext2d().fillRect(pos.getX(), pos.getY(), ownSize, ownSize);
                 }
             } else if (clientSyncItem.isSyncResourceItem()) {
                 Index pos = clientSyncItem.getSyncItem().getSyncItemArea().getPosition();

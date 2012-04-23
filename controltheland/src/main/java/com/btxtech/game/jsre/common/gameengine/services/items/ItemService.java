@@ -65,7 +65,7 @@ public interface ItemService {
 
     Collection<? extends SyncItem> getItems(ItemType itemType, SimpleBase simpleBase);
 
-    Collection<SyncBaseItem> getEnemyItems(SimpleBase base, Rectangle region, boolean ignoreBot);
+    Collection<SyncBaseItem> getEnemyItems(SimpleBase base, Rectangle region);
 
     boolean hasStandingItemsInRect(Rectangle rectangle, SyncItem exceptThat);
 
@@ -85,7 +85,7 @@ public interface ItemService {
 
     void killSyncItems(Collection<SyncItem> syncItems);
 
-    SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem, boolean ignoreBot);
+    SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem);
 
     void sellItem(Id id) throws ItemDoesNotExistException, NotYourBaseException;
 }

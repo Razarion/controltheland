@@ -51,6 +51,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     }
 
     private final static String OWN_BASE_COLOR = "#ffd800";
+    private final static String ALLIANCE_BASE_COLOR = "#00FF00";
     private final static String ENEMY_BASE_COLOR = "#FF0000";
     private final static String BOT_BASE_COLOR = "#000000";
     private final static String UNKNOWN_BASE_COLOR = "#888888";
@@ -107,6 +108,14 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         return this.simpleBase != null && this.simpleBase.equals(simpleBase);
     }
 
+    public boolean isEnemy(SyncBaseItem syncItem) {
+        return this.simpleBase == null || isEnemy(simpleBase, syncItem.getBase());
+    }
+
+    public boolean isEnemy(SimpleBase other) {
+        return this.simpleBase == null || isEnemy(simpleBase, other);
+    }
+
     @Override
     public void depositResource(double price, SimpleBase simpleBase) {
         if (this.simpleBase != null && this.simpleBase.equals(simpleBase)) {
@@ -148,6 +157,8 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     public String getBaseHtmlColor(SimpleBase base) {
         if (isMyOwnBase(base)) {
             return getOwnBaseHtmlColor();
+        } else if (!isEnemy(base)) {
+            return getAllianceBaseHtmlColor();
         }
         BaseAttributes baseAttributes = getBaseAttributes(base);
         if (baseAttributes == null) {
@@ -163,6 +174,10 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
 
     public String getOwnBaseHtmlColor() {
         return OWN_BASE_COLOR;
+    }
+
+    public String getAllianceBaseHtmlColor() {
+        return ALLIANCE_BASE_COLOR;
     }
 
     public void onBaseChangedPacket(BaseChangedPacket baseChangedPacket) {

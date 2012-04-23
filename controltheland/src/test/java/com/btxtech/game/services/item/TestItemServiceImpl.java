@@ -7,6 +7,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.ImageHolder;
@@ -47,7 +48,10 @@ public class TestItemServiceImpl extends AbstractServiceTest {
         EasyMock.expect(baseService.isAlive(EasyMock.<SimpleBase>anyObject())).andReturn(true).anyTimes();
         setPrivateField(ItemServiceImpl.class, itemService, "baseService", baseService);
 
-        EasyMock.replay(baseService);
+        ActionService actionService = EasyMock.createNiceMock(ActionService.class);
+        setPrivateField(ItemServiceImpl.class, itemService, "actionService", actionService);
+
+        EasyMock.replay(baseService, actionService);
 
 
         ItemType itemType1 = itemService.getItemType(TEST_HARVESTER_ITEM_ID);
@@ -75,7 +79,10 @@ public class TestItemServiceImpl extends AbstractServiceTest {
         EasyMock.expect(baseService.isAlive(EasyMock.<SimpleBase>anyObject())).andReturn(true).anyTimes();
         setPrivateField(ItemServiceImpl.class, itemService, "baseService", baseService);
 
-        EasyMock.replay(baseService);
+        ActionService actionService = EasyMock.createNiceMock(ActionService.class);
+        setPrivateField(ItemServiceImpl.class, itemService, "actionService", actionService);
+
+        EasyMock.replay(baseService, actionService);
 
 
         ItemType itemType1 = itemService.getItemType(TEST_HARVESTER_ITEM_ID);

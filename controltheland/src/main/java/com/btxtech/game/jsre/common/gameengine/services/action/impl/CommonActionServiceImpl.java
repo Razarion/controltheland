@@ -370,15 +370,16 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         if (target.isContainedIn()) {
             return;
         }
-        boolean isTargetBot = getServices().getBaseService().isBot(target.getBase());
         // Prevent ConcurrentModificationException
         List<SyncBaseItem> attackers = new ArrayList<SyncBaseItem>();
         synchronized (guardingItems) {
             for (SyncBaseItem attacker : guardingItems) {
+                if (attacker == target) {
+                    continue;
+                }
                 if (attacker.isEnemy(target)
                         && attacker.getSyncWeapon().isAttackAllowedWithoutMoving(target)
-                        && attacker.getSyncWeapon().isItemTypeAllowed(target)
-                        && !(isTargetBot && getServices().getBaseService().isBot(attacker.getBase()))) {
+                        && attacker.getSyncWeapon().isItemTypeAllowed(target)) {
                     attackers.add(attacker);
                 }
             }
@@ -389,8 +390,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
     }
 
     private boolean checkGuardingItemHasEnemiesInRange(SyncBaseItem guardingItem) {
-        boolean isBot = getServices().getBaseService().isBot(guardingItem.getBase());
-        SyncBaseItem target = getServices().getItemService().getFirstEnemyItemInRange(guardingItem, isBot);
+        SyncBaseItem target = getServices().getItemService().getFirstEnemyItemInRange(guardingItem);
         if (target != null) {
             defend(guardingItem, target);
             return true;

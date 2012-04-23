@@ -16,6 +16,7 @@ import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeExce
 import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
@@ -40,7 +41,7 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
     public void defenseMaster() throws Exception {
         configureRealGame();
 
-        final List<BaseCommand> commands = new ArrayList<BaseCommand>();
+        final List<BaseCommand> commands = new ArrayList<>();
         final TestServices testServices = new TestServices();
 
         SimpleBase simpleBase1 = new SimpleBase(1);
@@ -48,15 +49,17 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
 
         SimpleBase simpleBase2 = new SimpleBase(2);
         SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(2, 0, 0), simpleBase2);
+        setPrivateField(SyncItem.class, defender, "services", testServices);
         SyncBaseItem defender2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(3, 0, 0), simpleBase2);
+        setPrivateField(SyncItem.class, defender2, "services", testServices);
 
         AbstractTerritoryService territoryServiceMock = EasyMock.createStrictMock(AbstractTerritoryService.class);
         EasyMock.expect(territoryServiceMock.isAllowed(EasyMock.<Index>anyObject(), EasyMock.eq(defender))).andReturn(true).times(3);
         testServices.setTerritoryService(territoryServiceMock);
 
         ItemService itemServiceMock = EasyMock.createStrictMock(ItemService.class);
-        EasyMock.expect(itemServiceMock.getFirstEnemyItemInRange(defender, false)).andReturn(intruder);
-        EasyMock.expect(itemServiceMock.getFirstEnemyItemInRange(defender, false)).andReturn(null).times(2);
+        EasyMock.expect(itemServiceMock.getFirstEnemyItemInRange(defender)).andReturn(intruder);
+        EasyMock.expect(itemServiceMock.getFirstEnemyItemInRange(defender)).andReturn(null).times(2);
         testServices.setItemService(itemServiceMock);
 
         ConnectionService connectionServiceMock = EasyMock.createStrictMock(ConnectionService.class);
@@ -64,8 +67,11 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
         testServices.setConnectionService(connectionServiceMock);
 
         AbstractBaseService baseService = EasyMock.createMock(AbstractBaseService.class);
-        EasyMock.expect(baseService.isBot(simpleBase1)).andReturn(false).anyTimes();
-        EasyMock.expect(baseService.isBot(simpleBase2)).andReturn(false).anyTimes();
+        EasyMock.expect(baseService.isEnemy(defender, intruder)).andReturn(true).anyTimes();
+        EasyMock.expect(baseService.isEnemy(defender2, intruder)).andReturn(true).anyTimes();
+        EasyMock.expect(baseService.isEnemy(intruder, defender)).andReturn(true).anyTimes();
+        EasyMock.expect(baseService.isEnemy(intruder, defender2)).andReturn(true).anyTimes();
+        EasyMock.expect(baseService.isEnemy(defender, defender2)).andReturn(false).anyTimes();
         testServices.setBaseService(baseService);
 
         CommonActionServiceImpl actionService = new CommonActionServiceImpl() {
@@ -222,18 +228,21 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
 
         SimpleBase simpleBotBase1 = new SimpleBase(1);
         SyncBaseItem intruderBot = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1000, 1000), new Id(1, 0, 0), simpleBotBase1);
+        setPrivateField(SyncItem.class, intruderBot, "services", testServices);
 
         SimpleBase simpleBase2 = new SimpleBase(2);
         SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(2, 0, 0), simpleBase2);
+        setPrivateField(SyncItem.class, defender, "services", testServices);
         SyncBaseItem defender2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(3, 0, 0), simpleBase2);
+        setPrivateField(SyncItem.class, defender2, "services", testServices);
 
         AbstractTerritoryService territoryServiceMock = EasyMock.createStrictMock(AbstractTerritoryService.class);
         EasyMock.expect(territoryServiceMock.isAllowed(EasyMock.<Index>anyObject(), EasyMock.eq(defender))).andReturn(true).times(3);
         testServices.setTerritoryService(territoryServiceMock);
 
         ItemService itemServiceMock = EasyMock.createStrictMock(ItemService.class);
-        EasyMock.expect(itemServiceMock.getFirstEnemyItemInRange(defender, false)).andReturn(intruderBot);
-        EasyMock.expect(itemServiceMock.getFirstEnemyItemInRange(defender, false)).andReturn(null).times(2);
+        EasyMock.expect(itemServiceMock.getFirstEnemyItemInRange(defender)).andReturn(intruderBot);
+        EasyMock.expect(itemServiceMock.getFirstEnemyItemInRange(defender)).andReturn(null).times(2);
         testServices.setItemService(itemServiceMock);
 
         ConnectionService connectionServiceMock = EasyMock.createStrictMock(ConnectionService.class);
@@ -241,8 +250,11 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
         testServices.setConnectionService(connectionServiceMock);
 
         AbstractBaseService baseService = EasyMock.createMock(AbstractBaseService.class);
-        EasyMock.expect(baseService.isBot(simpleBotBase1)).andReturn(true).anyTimes();
-        EasyMock.expect(baseService.isBot(simpleBase2)).andReturn(false).anyTimes();
+        EasyMock.expect(baseService.isEnemy(defender, intruderBot)).andReturn(true).anyTimes();
+        EasyMock.expect(baseService.isEnemy(defender2, intruderBot)).andReturn(true).anyTimes();
+        EasyMock.expect(baseService.isEnemy(intruderBot, defender)).andReturn(true).anyTimes();
+        EasyMock.expect(baseService.isEnemy(intruderBot, defender2)).andReturn(true).anyTimes();
+        EasyMock.expect(baseService.isEnemy(defender, defender2)).andReturn(false).anyTimes();
         testServices.setBaseService(baseService);
 
         CommonActionServiceImpl actionService = new CommonActionServiceImpl() {
@@ -314,18 +326,21 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
 
         SimpleBase simpleBase1 = new SimpleBase(1);
         SyncBaseItem intruder = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1000, 1000), new Id(1, 0, 0), simpleBase1);
+        setPrivateField(SyncItem.class, intruder, "services", testServices);
 
         SimpleBase simpleBotBase2 = new SimpleBase(2);
         SyncBaseItem defenderBot = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(2, 0, 0), simpleBotBase2);
+        setPrivateField(SyncItem.class, defenderBot, "services", testServices);
         SyncBaseItem defenderBot2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(3, 0, 0), simpleBotBase2);
+        setPrivateField(SyncItem.class, defenderBot2, "services", testServices);
 
         AbstractTerritoryService territoryServiceMock = EasyMock.createStrictMock(AbstractTerritoryService.class);
         EasyMock.expect(territoryServiceMock.isAllowed(EasyMock.<Index>anyObject(), EasyMock.eq(defenderBot))).andReturn(true).times(3);
         testServices.setTerritoryService(territoryServiceMock);
 
         ItemService itemServiceMock = EasyMock.createStrictMock(ItemService.class);
-        EasyMock.expect(itemServiceMock.getFirstEnemyItemInRange(defenderBot, true)).andReturn(intruder);
-        EasyMock.expect(itemServiceMock.getFirstEnemyItemInRange(defenderBot, true)).andReturn(null).times(2);
+        EasyMock.expect(itemServiceMock.getFirstEnemyItemInRange(defenderBot)).andReturn(intruder);
+        EasyMock.expect(itemServiceMock.getFirstEnemyItemInRange(defenderBot)).andReturn(null).times(2);
         testServices.setItemService(itemServiceMock);
 
         ConnectionService connectionServiceMock = EasyMock.createStrictMock(ConnectionService.class);
@@ -333,8 +348,11 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
         testServices.setConnectionService(connectionServiceMock);
 
         AbstractBaseService baseService = EasyMock.createMock(AbstractBaseService.class);
-        EasyMock.expect(baseService.isBot(simpleBase1)).andReturn(false).anyTimes();
-        EasyMock.expect(baseService.isBot(simpleBotBase2)).andReturn(true).anyTimes();
+        EasyMock.expect(baseService.isEnemy(defenderBot, intruder)).andReturn(true).anyTimes();
+        EasyMock.expect(baseService.isEnemy(defenderBot2, intruder)).andReturn(true).anyTimes();
+        EasyMock.expect(baseService.isEnemy(intruder, defenderBot)).andReturn(true).anyTimes();
+        EasyMock.expect(baseService.isEnemy(intruder, defenderBot2)).andReturn(true).anyTimes();
+        EasyMock.expect(baseService.isEnemy(defenderBot, defenderBot2)).andReturn(false).anyTimes();
         testServices.setBaseService(baseService);
 
         CommonActionServiceImpl actionService = new CommonActionServiceImpl() {
@@ -406,17 +424,20 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
 
         SimpleBase simpleBotBase1 = new SimpleBase(1);
         SyncBaseItem intruderBot = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1000, 1000), new Id(1, 0, 0), simpleBotBase1);
+        setPrivateField(SyncItem.class, intruderBot, "services", testServices);
 
         SimpleBase simpleBotBase2 = new SimpleBase(2);
         SyncBaseItem defenderBot = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(2, 0, 0), simpleBotBase2);
+        setPrivateField(SyncItem.class, defenderBot, "services", testServices);
         SyncBaseItem defenderBot2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(3, 0, 0), simpleBotBase2);
+        setPrivateField(SyncItem.class, defenderBot2, "services", testServices);
 
         AbstractTerritoryService territoryServiceMock = EasyMock.createStrictMock(AbstractTerritoryService.class);
         EasyMock.expect(territoryServiceMock.isAllowed(EasyMock.<Index>anyObject(), EasyMock.eq(defenderBot))).andReturn(true).times(3);
         testServices.setTerritoryService(territoryServiceMock);
 
         ItemService itemServiceMock = EasyMock.createStrictMock(ItemService.class);
-        EasyMock.expect(itemServiceMock.getFirstEnemyItemInRange(defenderBot, true)).andReturn(null).times(3);
+        EasyMock.expect(itemServiceMock.getFirstEnemyItemInRange(defenderBot)).andReturn(null).times(3);
         testServices.setItemService(itemServiceMock);
 
         ConnectionService connectionServiceMock = EasyMock.createStrictMock(ConnectionService.class);
@@ -424,8 +445,11 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
         testServices.setConnectionService(connectionServiceMock);
 
         AbstractBaseService baseService = EasyMock.createMock(AbstractBaseService.class);
-        EasyMock.expect(baseService.isBot(simpleBotBase1)).andReturn(true).anyTimes();
-        EasyMock.expect(baseService.isBot(simpleBotBase2)).andReturn(true).anyTimes();
+        EasyMock.expect(baseService.isEnemy(defenderBot, intruderBot)).andReturn(false).anyTimes();
+        EasyMock.expect(baseService.isEnemy(defenderBot2, intruderBot)).andReturn(false).anyTimes();
+        EasyMock.expect(baseService.isEnemy(intruderBot, defenderBot)).andReturn(false).anyTimes();
+        EasyMock.expect(baseService.isEnemy(intruderBot, defenderBot2)).andReturn(false).anyTimes();
+        EasyMock.expect(baseService.isEnemy(defenderBot, defenderBot2)).andReturn(false).anyTimes();
         testServices.setBaseService(baseService);
 
         CommonActionServiceImpl actionService = new CommonActionServiceImpl() {

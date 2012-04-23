@@ -51,7 +51,7 @@ public class IntruderHandler {
 
     public void handleIntruders(SimpleBase simpleBase) {
         removeDeadAttackers();
-        Collection<SyncBaseItem> items = services.getItemService().getEnemyItems(simpleBase, region, true);
+        Collection<SyncBaseItem> items = services.getItemService().getEnemyItems(simpleBase, region);
         Map<SyncBaseItem, BotSyncBaseItem> oldIntruders = intruders;
         intruders = new HashMap<SyncBaseItem, BotSyncBaseItem>();
         Collection<SyncBaseItem> newIntruders = new ArrayList<SyncBaseItem>();
@@ -74,7 +74,7 @@ public class IntruderHandler {
     }
 
     private void removeDeadAttackers() {
-        for (Iterator<BotSyncBaseItem> attackerIterator = intruders.values().iterator(); attackerIterator.hasNext();) {
+        for (Iterator<BotSyncBaseItem> attackerIterator = intruders.values().iterator(); attackerIterator.hasNext(); ) {
             BotSyncBaseItem attacker = attackerIterator.next();
             if (!attacker.isAlive() || attacker.isIdle()) {
                 attackerIterator.remove();
