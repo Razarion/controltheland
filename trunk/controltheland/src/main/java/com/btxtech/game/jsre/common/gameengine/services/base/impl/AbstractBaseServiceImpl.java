@@ -21,10 +21,14 @@ import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -34,6 +38,7 @@ import java.util.HashMap;
 abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
     private static final String UNDEFINED_NAME = "undefined";
     final private HashMap<SimpleBase, BaseAttributes> bases = new HashMap<SimpleBase, BaseAttributes>();
+    private Logger log = Logger.getLogger(AbstractBaseServiceImpl.class.getName());
 
     @Override
     public String getBaseName(SimpleBase simpleBase) {
@@ -116,6 +121,23 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         bases.put(baseAttributes.getSimpleBase(), baseAttributes);
     }
 
+    protected void updateBaseAlliance(SimpleBase simpleBase, Collection<SimpleBase> alliances) {
+        BaseAttributes baseAttributes = getBaseAttributes(simpleBase);
+        if (baseAttributes == null) {
+            throw new IllegalArgumentException(this + " base does not exits " + simpleBase);
+        }
+        Set<BaseAttributes> allianceSet = new HashSet<BaseAttributes>();
+        for (SimpleBase alliance : alliances) {
+            BaseAttributes allianceBase = getBaseAttributes(alliance);
+            if (allianceBase != null) {
+                allianceSet.add(allianceBase);
+            } else {
+                log.warning("Base does not exist: " + alliance);
+            }
+        }
+        baseAttributes.setAlliances(allianceSet);
+    }
+
     protected void setBaseAbandoned(SimpleBase simpleBase, boolean abandoned) {
         BaseAttributes baseAttributes = getBaseAttributes(simpleBase);
         if (baseAttributes == null) {
@@ -167,5 +189,22 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         return bases.containsKey(simpleBase);
     }
 
+    @Override
+    public boolean isEnemy(SyncBaseItem syncBaseItem1, SyncBaseItem syncBaseItem2) {
+        SimpleBase simpleBase1 = syncBaseItem1.getBase();
+        SimpleBase simpleBase2 = syncBaseItem2.getBase();
+        return isEnemy(simpleBase1, simpleBase2);
+    }
 
+    @Override
+    public boolean isEnemy(SimpleBase simpleBase1, SimpleBase simpleBase2) {
+        if (simpleBase1.equals(simpleBase2)) {
+            return false;
+        }
+        BaseAttributes baseAttributes1 = getBaseAttributes(simpleBase1);
+        BaseAttributes baseAttributes2 = getBaseAttributes(simpleBase2);
+
+        return !(baseAttributes1.isBot() && baseAttributes2.isBot())
+                && (baseAttributes1.isBot() != baseAttributes2.isBot() || !baseAttributes1.isAlliance(baseAttributes2));
+    }
 }

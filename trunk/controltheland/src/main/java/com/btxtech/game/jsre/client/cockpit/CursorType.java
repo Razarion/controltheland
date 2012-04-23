@@ -27,7 +27,8 @@ public enum CursorType {
     LOAD("/images/cursors/load.cur", Style.Cursor.S_RESIZE, "/images/cursors/noload.cur", Style.Cursor.POINTER),
     UNLOAD("/images/cursors/unload.cur", Style.Cursor.N_RESIZE, "/images/cursors/nounload.cur", Style.Cursor.POINTER),
     SELL("/images/cursors/sell.cur", Style.Cursor.POINTER, "/images/cursors/nosell.cur", Style.Cursor.DEFAULT),
-    FINALIZE_BUILD("/images/cursors/finalizebuild.cur", Style.Cursor.POINTER, "/images/cursors/nofinalizebuild.cur", Style.Cursor.DEFAULT);
+    FINALIZE_BUILD("/images/cursors/finalizebuild.cur", Style.Cursor.POINTER, "/images/cursors/nofinalizebuild.cur", Style.Cursor.DEFAULT),
+    ALLIANCE("/images/cursors/alliance.cur", Style.Cursor.POINTER, null, null);
     private String url;
     private Style.Cursor alternativeDefault;
     private String noUrl;

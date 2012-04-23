@@ -23,7 +23,17 @@ import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.*;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderFinalizeCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LaunchCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UpgradeCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 
 /**
@@ -531,7 +541,11 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
     }
 
     public boolean isEnemy(SyncBaseItem syncBaseItem) {
-        return !getBase().equals(syncBaseItem.getBase());
+        return getServices().getBaseService().isEnemy(this, syncBaseItem);
+    }
+
+    public boolean isEnemy(SimpleBase simpleBase) {
+        return getServices().getBaseService().isEnemy(getBase(), simpleBase);
     }
 
     public void decreaseHealth(double progress, SimpleBase actor) {
@@ -697,6 +711,4 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
             getServices().getActionService().defend(this, syncBaseItem);
         }
     }
-
-
 }

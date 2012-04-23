@@ -198,7 +198,7 @@ abstract public class AbstractItemService implements ItemService {
     @Override
     public Collection<SyncBaseItem> getBaseItemsInRadius(Index position, int radius, SimpleBase simpleBase, Collection<BaseItemType> baseItemTypeFilter) {
         Collection<SyncBaseItem> syncBaseItems = getBaseItemsInRectangle(position.getRegion(2 * radius, 2 * radius), simpleBase, baseItemTypeFilter);
-        for (Iterator<SyncBaseItem> iterator = syncBaseItems.iterator(); iterator.hasNext();) {
+        for (Iterator<SyncBaseItem> iterator = syncBaseItems.iterator(); iterator.hasNext(); ) {
             SyncBaseItem syncBaseItem = iterator.next();
             if (!syncBaseItem.getSyncItemArea().isInRange(radius, position)) {
                 iterator.remove();
@@ -364,7 +364,7 @@ abstract public class AbstractItemService implements ItemService {
     }
 
     @Override
-    public Collection<SyncBaseItem> getEnemyItems(final SimpleBase simpleBase, final Rectangle region, final boolean ignoreBot) {
+    public Collection<SyncBaseItem> getEnemyItems(final SimpleBase simpleBase, final Rectangle region) {
         final Collection<SyncBaseItem> enemyItems = new ArrayList<SyncBaseItem>();
         iterateOverItems(new ItemHandler<Void>() {
             @Override
@@ -374,9 +374,8 @@ abstract public class AbstractItemService implements ItemService {
                 }
 
                 if (syncItem instanceof SyncBaseItem
-                        && !((SyncBaseItem) syncItem).getBase().equals(simpleBase)
-                        && region.contains(syncItem.getSyncItemArea().getPosition())
-                        && (!ignoreBot || !getServices().getBaseService().isBot(((SyncBaseItem) syncItem).getBase()))) {
+                        && ((SyncBaseItem) syncItem).isEnemy(simpleBase)
+                        && region.contains(syncItem.getSyncItemArea().getPosition())) {
                     enemyItems.add((SyncBaseItem) syncItem);
                 }
 
@@ -387,7 +386,7 @@ abstract public class AbstractItemService implements ItemService {
     }
 
     @Override
-    public SyncBaseItem getFirstEnemyItemInRange(final SyncBaseItem baseSyncItem, final boolean ignoreBot) {
+    public SyncBaseItem getFirstEnemyItemInRange(final SyncBaseItem baseSyncItem) {
         return iterateOverItems(new ItemHandler<SyncBaseItem>() {
             @Override
             public SyncBaseItem handleItem(SyncItem syncItem) {
@@ -397,8 +396,7 @@ abstract public class AbstractItemService implements ItemService {
 
                 if (syncItem instanceof SyncBaseItem
                         && baseSyncItem.isEnemy((SyncBaseItem) syncItem)
-                        && baseSyncItem.getSyncWeapon().isAttackAllowedWithoutMoving(syncItem)
-                        && (!ignoreBot || !getServices().getBaseService().isBot(((SyncBaseItem) syncItem).getBase()))) {
+                        && baseSyncItem.getSyncWeapon().isAttackAllowedWithoutMoving(syncItem)) {
                     return (SyncBaseItem) syncItem;
                 }
                 return null;

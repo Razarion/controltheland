@@ -84,4 +84,6 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
     void onSessionTimedOut(UserState userState);
 
     ContentProvider<BaseItemTypeCount> getBaseItems();
+
+    void setAlliances(SimpleBase simpleBase, Collection<SimpleBase> alliances);
 }

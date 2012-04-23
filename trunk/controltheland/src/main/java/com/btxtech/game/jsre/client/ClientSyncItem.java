@@ -177,6 +177,10 @@ public class ClientSyncItem implements SyncItemListener {
         return isSyncBaseItem() && ClientBase.getInstance().isMyOwnProperty(getSyncBaseItem());
     }
 
+    public boolean isEnemy() {
+        return isSyncBaseItem() && ClientBase.getInstance().isEnemy(getSyncBaseItem());
+    }
+
     public boolean isSyncBaseItem() {
         return syncItem instanceof SyncBaseItem;
     }

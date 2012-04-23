@@ -22,7 +22,7 @@ public class AttackEnemyTipEntry extends TipEntry {
     public void show() {
         close();
         SyncBaseItem enemyBaseItem = getEnemyItem();
-        if(enemyBaseItem == null) {
+        if (enemyBaseItem == null) {
             return;
         }
         attackEnemyArrow = new AttackEnemyArrow(enemyBaseItem);
@@ -53,10 +53,7 @@ public class AttackEnemyTipEntry extends TipEntry {
     private SyncBaseItem getEnemyItem() {
         SyncBaseItem enemy = null;
         for (ClientSyncItem item : ItemContainer.getInstance().getItems()) {
-            if (item.isMyOwnProperty()) {
-                continue;
-            }
-            if (!item.isSyncBaseItem()) {
+            if (!item.isEnemy()) {
                 continue;
             }
             SyncBaseItem enemyItem = item.getSyncBaseItem();

@@ -23,6 +23,7 @@ public class CursorItemState {
     private boolean isCollectTarget = false;
     private boolean isLoadTarget = false;
     private boolean isFinalizeBuild = false;
+    private boolean isAlliance = false;
 
     public boolean isAttackTarget() {
         return isAttackTarget;
@@ -54,5 +55,13 @@ public class CursorItemState {
 
     public void setFinalizeBuild(boolean finalizeBuild) {
         isFinalizeBuild = finalizeBuild;
+    }
+
+    public void setAlliance() {
+        isAlliance = true;
+    }
+
+    public boolean isAlliance() {
+        return isAlliance;
     }
 }

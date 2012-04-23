@@ -194,8 +194,10 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
                 cursorItemState.setLoadTarget();
             }
             cursorItemState.setFinalizeBuild(!clientSyncItem.getSyncBaseItem().isReady());
-        } else {
+        } else if (clientSyncItem.isEnemy()) {
             cursorItemState.setAttackTarget();
+        } else {
+            cursorItemState.setAlliance();
         }
     }
 
@@ -272,7 +274,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
                 Connection.getInstance().sellItem(clientSyncItem.getSyncItem());
                 SelectionHandler.getInstance().setSellMode(false);
             }
-        } else if (SideCockpit.getInstance().getCockpitMode().isLaunchMode() && !clientSyncItem.isMyOwnProperty()) {
+        } else if (SideCockpit.getInstance().getCockpitMode().isLaunchMode() && clientSyncItem.isEnemy()) {
             int x = mouseDownEvent.getRelativeX(TerrainView.getInstance().getCanvas().getElement()) + TerrainView.getInstance().getViewOriginLeft();
             int y = mouseDownEvent.getRelativeY(TerrainView.getInstance().getCanvas().getElement()) + TerrainView.getInstance().getViewOriginTop();
             ActionHandler.getInstance().executeLaunchCommand(x, y);
@@ -284,7 +286,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
                     Group group = new Group();
                     group.addItem(clientSyncItem);
                     SelectionHandler.getInstance().setItemGroupSelected(group);
-                } else {
+                } else if (clientSyncItem.isEnemy()) {
                     SelectionHandler.getInstance().setTargetSelected(this, mouseDownEvent);
                 }
             } else {

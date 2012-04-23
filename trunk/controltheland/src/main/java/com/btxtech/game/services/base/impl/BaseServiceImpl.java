@@ -41,7 +41,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseItemTypeCount;
 import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.common.ReadonlyCollectionContentProvider;
@@ -53,7 +52,6 @@ import com.btxtech.game.services.energy.impl.BaseEnergy;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
@@ -100,14 +98,10 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
-    private MgmtService mgmtService;
-    @Autowired
-    private BotService botService;
-    @Autowired
     private ServerConditionService serverConditionService;
     @Autowired
     private StatisticsService statisticsService;
-    private final HashMap<SimpleBase, Base> bases = new HashMap<SimpleBase, Base>();
+    private final HashMap<SimpleBase, Base> bases = new HashMap<>();
     private int lastBaseId = 0;
 
     @Override
@@ -119,7 +113,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
 
     @Override
     public void checkCanBeAttack(SyncBaseItem victim) {
-        if (victim.getBase().equals(getBase().getSimpleBase())) {
+        if (!victim.isEnemy(getBase().getSimpleBase())) {
             throw new IllegalArgumentException("The Item: " + victim + " can not be attacked be the base: " + getBase());
         }
     }
@@ -365,12 +359,12 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
 
     @Override
     public List<Base> getBases() {
-        return new ArrayList<Base>(bases.values());
+        return new ArrayList<>(bases.values());
     }
 
     @Override
     public List<SimpleBase> getSimpleBases() {
-        ArrayList<SimpleBase> simpleBases = new ArrayList<SimpleBase>();
+        ArrayList<SimpleBase> simpleBases = new ArrayList<>();
         for (Base base : bases.values()) {
             simpleBases.add(base.getSimpleBase());
         }
@@ -528,7 +522,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     @Override
     public ContentProvider<BaseItemTypeCount> getBaseItems() {
         if (userService.hasUserState() && hasBase()) {
-            Map<BaseItemType, BaseItemTypeCount> items = new HashMap<BaseItemType, BaseItemTypeCount>();
+            Map<BaseItemType, BaseItemTypeCount> items = new HashMap<>();
             for (SyncBaseItem syncBaseItem : getBase().getItems()) {
                 BaseItemType baseItemType = syncBaseItem.getBaseItemType();
                 BaseItemTypeCount baseItemTypeCount = items.get(baseItemType);
@@ -538,9 +532,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
                 }
                 baseItemTypeCount.increaseCount();
             }
-            return new ReadonlyCollectionContentProvider<BaseItemTypeCount>(items.values());
+            return new ReadonlyCollectionContentProvider<>(items.values());
         } else {
-            return new ReadonlyCollectionContentProvider<BaseItemTypeCount>(Collections.<BaseItemTypeCount>emptyList());
+            return new ReadonlyCollectionContentProvider<>(Collections.<BaseItemTypeCount>emptyList());
         }
     }
 
@@ -558,5 +552,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         return isBot(simpleBase) || isAbandoned(simpleBase) || (!isLevelLimitation4ItemTypeExceeded(newItemType, simpleBase) && !isHouseSpaceExceeded(simpleBase));
     }
 
-
+    @Override
+    public void setAlliances(SimpleBase simpleBase, Collection<SimpleBase> alliances) {
+        updateBaseAlliance(simpleBase, alliances);
+    }
 }
