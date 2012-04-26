@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.common.Packet;
  */
 public class Message extends Packet {
     private String message;
+    private boolean showRegisterDialog;
 
     public String getMessage() {
         return message;
@@ -31,8 +32,34 @@ public class Message extends Packet {
         this.message = message;
     }
 
+    public boolean isShowRegisterDialog() {
+        return showRegisterDialog;
+    }
+
+    public void setShowRegisterDialog(boolean showRegisterDialog) {
+        this.showRegisterDialog = showRegisterDialog;
+    }
+
     @Override
     public String toString() {
-        return getClass().getName() + " " + message;
+        return getClass().getName() + " " + message + " showRegisterDialog: " + showRegisterDialog;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Message message1 = (Message) o;
+
+        return showRegisterDialog == message1.showRegisterDialog && message != null ? message.equals(message1.message) : message1.message == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 31 * (message != null ? message.hashCode() : 0);
+        result = 31 * result + (showRegisterDialog ? 1 : 0);
+        return result;
     }
 }

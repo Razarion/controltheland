@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
@@ -83,4 +84,12 @@ public interface MovableService extends RemoteService {
                                Collection<DialogTracking> dialogTrackings);
 
     void sellItem(Id id);
+
+    void proposeAlliance(SimpleBase partner);
+
+    void acceptAllianceOffer(String partnerUserName);
+
+    void rejectAllianceOffer(String partnerUserName);
+
+    void breakAlliance(String partnerUserName);
 }

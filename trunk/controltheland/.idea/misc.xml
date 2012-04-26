@@ -6,6 +6,10 @@
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
+  <component name="ExportToHTMLSettings">
+    <option name="OPEN_IN_BROWSER" value="true" />
+    <option name="OUTPUT_DIRECTORY" value="C:\dev\projects\game\Analyse" />
+  </component>
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="gwt" url="file://$PROJECT_DIR$" />
     <file type="web" url="file://$PROJECT_DIR$" />

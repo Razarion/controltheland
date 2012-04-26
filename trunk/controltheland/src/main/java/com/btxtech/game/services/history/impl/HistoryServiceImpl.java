@@ -153,7 +153,7 @@ public class HistoryServiceImpl implements HistoryService {
     @Transactional
     public void addLevelPromotionEntry(UserState userState, DbLevel level) {
         save(new DbHistoryElement(DbHistoryElement.Type.LEVEL_PROMOTION,
-                userState.getUser(),
+                userService.getUser(userState.getUser()),
                 null,
                 null,
                 null,              // TODO
@@ -169,7 +169,7 @@ public class HistoryServiceImpl implements HistoryService {
     @Transactional
     public void addLevelTaskCompletedEntry(UserState userState, DbLevelTask levelTask) {
         save(new DbHistoryElement(DbHistoryElement.Type.LEVEL_TASK_COMPLETED,
-                userState.getUser(),
+                userService.getUser(userState.getUser()),
                 null,
                 null,
                 null,              // TODO
@@ -184,7 +184,7 @@ public class HistoryServiceImpl implements HistoryService {
     @Override
     public void addLevelTaskActivated(UserState userState, DbLevelTask dbLevelTask) {
         save(new DbHistoryElement(DbHistoryElement.Type.LEVEL_TASK_ACTIVATED,
-                userState.getUser(),
+                userService.getUser(userState.getUser()),
                 null,
                 null,
                 null,              // TODO
@@ -199,7 +199,7 @@ public class HistoryServiceImpl implements HistoryService {
     @Override
     public void addLevelTaskDeactivated(UserState userState, DbLevelTask dbLevelTask) {
         save(new DbHistoryElement(DbHistoryElement.Type.LEVEL_TASK_DEACTIVATED,
-                userState.getUser(),
+                userService.getUser(userState.getUser()),
                 null,
                 null,
                 null,              // TODO
@@ -208,6 +208,66 @@ public class HistoryServiceImpl implements HistoryService {
                 dbLevelTask,
                 baseService,
                 userState.getSessionId(),
+                DbHistoryElement.Source.HUMAN));
+    }
+
+    @Override
+    public void addAllianceOffered(User actor, User target) {
+        save(new DbHistoryElement(DbHistoryElement.Type.ALLIANCE_OFFERED,
+                actor,
+                target,
+                null,
+                null,              // TODO
+                null,
+                null,
+                null,
+                null,
+                userService.getUserState().getSessionId(),
+                DbHistoryElement.Source.HUMAN));
+    }
+
+    @Override
+    public void addAllianceOfferAccepted(User actor, User target) {
+        save(new DbHistoryElement(DbHistoryElement.Type.ALLIANCE_OFFER_ACCEPTED,
+                actor,
+                target,
+                null,
+                null,              // TODO
+                null,
+                null,
+                null,
+                null,
+                userService.getUserState().getSessionId(),
+                DbHistoryElement.Source.HUMAN));
+    }
+
+    @Override
+    public void addAllianceOfferRejected(User actor, User target) {
+        save(new DbHistoryElement(DbHistoryElement.Type.ALLIANCE_OFFER_REJECTED,
+                actor,
+                target,
+                null,
+                null,              // TODO
+                null,
+                null,
+                null,
+                null,
+                userService.getUserState().getSessionId(),
+                DbHistoryElement.Source.HUMAN));
+    }
+
+    @Override
+    public void addAllianceBroken(User actor, User target) {
+        save(new DbHistoryElement(DbHistoryElement.Type.ALLIANCE_BROKEN,
+                actor,
+                target,
+                null,
+                null,              // TODO
+                null,
+                null,
+                null,
+                null,
+                userService.getUserState().getSessionId(),
                 DbHistoryElement.Source.HUMAN));
     }
 
@@ -355,8 +415,48 @@ public class HistoryServiceImpl implements HistoryService {
             case LEVEL_TASK_DEACTIVATED:
                 displayHistoryElement.setMessage("Level Task deactivated: " + dbHistoryElement.getLevelTaskName());
                 break;
+            case ALLIANCE_OFFERED:
+                if (userName.equals(dbHistoryElement.getActorUserName())) {
+                    displayHistoryElement.setMessage("You offered " + dbHistoryElement.getTargetUserName() + " an alliance");
+                } else if (userName.equals(dbHistoryElement.getTargetUserName())) {
+                    displayHistoryElement.setMessage(dbHistoryElement.getActorUserName() + " offered you an alliance");
+                } else {
+                    displayHistoryElement.setMessage("Internal error 6");
+                    log.error("Unknown state 6: " + userName + " " + dbHistoryElement.getActorUserName() + " " + dbHistoryElement.getTargetUserName());
+                }
+                break;
+            case ALLIANCE_OFFER_ACCEPTED:
+                if (userName.equals(dbHistoryElement.getActorUserName())) {
+                    displayHistoryElement.setMessage("You accepted an alliance with " + dbHistoryElement.getTargetUserName());
+                } else if (userName.equals(dbHistoryElement.getTargetUserName())) {
+                    displayHistoryElement.setMessage("Your alliance offer has been accepted by " + dbHistoryElement.getActorUserName());
+                } else {
+                    displayHistoryElement.setMessage("Internal error 7");
+                    log.error("Unknown state 7: " + userName + " " + dbHistoryElement.getActorUserName() + " " + dbHistoryElement.getTargetUserName());
+                }
+                break;
+            case ALLIANCE_OFFER_REJECTED:
+                if (userName.equals(dbHistoryElement.getActorUserName())) {
+                    displayHistoryElement.setMessage("You rejected an alliance with " + dbHistoryElement.getTargetUserName());
+                } else if (userName.equals(dbHistoryElement.getTargetUserName())) {
+                    displayHistoryElement.setMessage("Your alliance offer has been rejected by " + dbHistoryElement.getActorUserName());
+                } else {
+                    displayHistoryElement.setMessage("Internal error 8");
+                    log.error("Unknown state 8: " + userName + " " + dbHistoryElement.getActorUserName() + " " + dbHistoryElement.getTargetUserName());
+                }
+                break;
+            case ALLIANCE_BROKEN:
+                if (userName.equals(dbHistoryElement.getActorUserName())) {
+                    displayHistoryElement.setMessage("You broke the alliance with " + dbHistoryElement.getTargetUserName());
+                } else if (userName.equals(dbHistoryElement.getTargetUserName())) {
+                    displayHistoryElement.setMessage("Your alliance has been broken by " + dbHistoryElement.getActorUserName());
+                } else {
+                    displayHistoryElement.setMessage("Internal error 9");
+                    log.error("Unknown state 9: " + userName + " " + dbHistoryElement.getActorUserName() + " " + dbHistoryElement.getTargetUserName());
+                }
+                break;
             default:
-                displayHistoryElement.setMessage("Internal error 6");
+                displayHistoryElement.setMessage("Internal error 10");
                 log.warn("HistoryServiceImpl.convert() " + dbHistoryElement + " Unknown type: " + dbHistoryElement.getType());
         }
         return displayHistoryElement;

@@ -79,6 +79,10 @@ public class BaseAttributes implements Serializable {
         this.alliances = alliances;
     }
 
+    public Set<BaseAttributes> getAlliances() {
+        return alliances;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

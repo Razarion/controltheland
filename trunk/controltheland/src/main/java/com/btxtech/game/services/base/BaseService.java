@@ -28,6 +28,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.energy.impl.BaseEnergy;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserState;
 
 import java.util.Collection;
@@ -81,9 +82,13 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     Base getBase(UserState userState);
 
+    SimpleBase getSimpleBase(User user);
+
     void onSessionTimedOut(UserState userState);
 
     ContentProvider<BaseItemTypeCount> getBaseItems();
 
     void setAlliances(SimpleBase simpleBase, Collection<SimpleBase> alliances);
+
+    void sendAlliancesChanged(SimpleBase simpleBase);
 }

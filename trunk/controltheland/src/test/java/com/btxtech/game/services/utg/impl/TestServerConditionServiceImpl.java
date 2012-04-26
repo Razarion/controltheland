@@ -15,20 +15,16 @@ import com.btxtech.game.jsre.common.utg.config.ItemTypePositionComparisonConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.BackupSummary;
 import com.btxtech.game.services.mgmt.MgmtService;
-import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.LevelQuest;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.services.utg.condition.DbGenericComparisonValue;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.services.utg.condition.impl.ServerConditionServiceImpl;
 import org.easymock.EasyMock;
-import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +51,6 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
     private UserGuidanceService userGuidanceService;
     @Autowired
     private MgmtService mgmtService;
-    @Autowired
-    private SessionFactory sessionFactory;
     private UserState actor;
     private Integer identifier;
     private boolean passed = false;
@@ -68,15 +62,11 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         configureRealGame();
 
         UserState userState1 = new UserState();
-        User user1 = new User();
-        user1.registerUser("TestUser1", "", "");
-        userState1.setUser(user1);
+        userState1.setUser("TestUser1");
         Base base1 = new Base(userState1, 1);
 
         UserState userState2 = new UserState();
-        User user2 = new User();
-        user2.registerUser("TestUser2", "", "");
-        userState2.setUser(user2);
+        userState2.setUser("TestUser2");
         Base base2 = new Base(userState2, 2);
 
         BaseService baseServiceMock = EasyMock.createNiceMock(BaseService.class);
@@ -246,7 +236,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         });
         actor = null;
         identifier = null;
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 1);
         serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null, false, null)), userService.getUserState(), 1);
         assertClearActorAndIdentifier();
@@ -254,14 +244,14 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         waitForActionServiceDone();
         assertActorAndIdentifierAndClear(userService.getUserState(), 1);
 
-        itemTypes = new HashMap<ItemType, Integer>();
+        itemTypes = new HashMap<>();
         itemTypes.put(itemService.getItemType(TEST_FACTORY_ITEM_ID), 1);
         serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null, false, null)), userService.getUserState(), 1);
         sendBuildCommand(builder, new Index(900, 900), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         assertActorAndIdentifierAndClear(userService.getUserState(), 1);
 
-        itemTypes = new HashMap<ItemType, Integer>();
+        itemTypes = new HashMap<>();
         itemTypes.put(itemService.getItemType(TEST_ATTACK_ITEM_ID), 1);
         serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null, false, null)), userService.getUserState(), 1);
         Id factory = getFirstSynItemId(TEST_FACTORY_ITEM_ID);
@@ -269,7 +259,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         waitForActionServiceDone();
         assertActorAndIdentifierAndClear(userService.getUserState(), 1);
 
-        itemTypes = new HashMap<ItemType, Integer>();
+        itemTypes = new HashMap<>();
         itemTypes.put(itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 1);
         serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null, false, null)), userService.getUserState(), 1);
 
@@ -528,7 +518,6 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         // Restore
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<DbGenericComparisonValue> list = HibernateUtil.loadAll(sessionFactory, DbGenericComparisonValue.class);
         List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();

@@ -47,7 +47,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     private UserService userService;
     @Autowired
     private UserGuidanceService userGuidanceService;
-    private final Map<UserState, StatisticsEntry> userStateStatisticsEntryMap = new HashMap<UserState, StatisticsEntry>();
+    private final Map<UserState, StatisticsEntry> userStateStatisticsEntryMap = new HashMap<>();
     private Log log = LogFactory.getLog(StatisticsServiceImpl.class);
 
     @Override
@@ -190,20 +190,19 @@ public class StatisticsServiceImpl implements StatisticsService {
     public ReadonlyListContentProvider<CurrentStatisticEntry> getCmsCurrentStatistics() {
         List<CurrentStatisticEntry> entries = new ArrayList<CurrentStatisticEntry>();
         for (UserState userState : userService.getAllUserStates()) {
-            String baseName = null;
+            String userName = null;
             Integer money = null;
             Integer itemCount = null;
             Long upTime = null;
             if (userState.getBase() != null) {
-                baseName = baseService.getBaseName(userState.getBase().getSimpleBase());
+                userName = baseService.getBaseName(userState.getBase().getSimpleBase());
                 upTime = userState.getBase().getUptime();
                 itemCount = userState.getBase().getItemCount();
                 money = (int) Math.round(userState.getBase().getAccountBalance());
             }
             entries.add(new CurrentStatisticEntry(userGuidanceService.getDbLevel(userState),
                     userState.getXp(),
-                    userState.getUser(),
-                    baseName,
+                    userName,
                     upTime,
                     itemCount,
                     money,

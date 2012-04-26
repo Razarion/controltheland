@@ -12,6 +12,7 @@ import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.history.impl.HistoryServiceImpl;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.user.AllianceService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import org.easymock.EasyMock;
@@ -46,6 +47,8 @@ public class TestHistoryService extends AbstractServiceTest {
     private PlatformTransactionManager platformTransactionManager;
     @Autowired
     private UserGuidanceService userGuidanceService;
+    @Autowired
+    private AllianceService allianceService;
 
     @Test
     @DirtiesContext
@@ -515,5 +518,86 @@ public class TestHistoryService extends AbstractServiceTest {
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void alliances() throws Exception {
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("u1", "xxx", "xxx", "");
+        userService.login("u1", "xxx");
+        SimpleBase simpleBase1 = getMyBase();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("u2", "xxx", "xxx", "");
+        userService.login("u2", "xxx");
+        SimpleBase simpleBase2 = getMyBase();
+        allianceService.proposeAlliance(simpleBase1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("u1", "xxx");
+        allianceService.acceptAllianceOffer("u2");
+        allianceService.breakAlliance("u2");
+        allianceService.proposeAlliance(simpleBase2);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("u2", "xxx");
+        allianceService.rejectAllianceOffer("u1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // verify u1
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("u1"), 1000);
+        System.out.println("----- u1 Target-----");
+        for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
+            System.out.println(displayHistoryElement);
+        }
+        Assert.assertEquals(7, displayHistoryElements.size());
+        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
+        Assert.assertEquals("Your alliance offer has been rejected by u2", displayHistoryElements.get(0).getMessage());
+        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
+        Assert.assertEquals("You offered u2 an alliance", displayHistoryElements.get(1).getMessage());
+        Assert.assertTrue(displayHistoryElements.get(2).getTimeStamp() >= displayHistoryElements.get(3).getTimeStamp());
+        Assert.assertEquals("You broke the alliance with u2", displayHistoryElements.get(2).getMessage());
+        Assert.assertTrue(displayHistoryElements.get(3).getTimeStamp() >= displayHistoryElements.get(4).getTimeStamp());
+        Assert.assertEquals("You accepted an alliance with u2", displayHistoryElements.get(3).getMessage());
+        Assert.assertTrue(displayHistoryElements.get(4).getTimeStamp() >= displayHistoryElements.get(5).getTimeStamp());
+        Assert.assertEquals("u2 offered you an alliance", displayHistoryElements.get(4).getMessage());
+        // verify u2
+        displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("u2"), 1000);
+        System.out.println("----- u2 Target-----");
+        for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
+            System.out.println(displayHistoryElement);
+        }
+        Assert.assertEquals(7, displayHistoryElements.size());
+        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
+        Assert.assertEquals("You rejected an alliance with u1", displayHistoryElements.get(0).getMessage());
+        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
+        Assert.assertEquals("u1 offered you an alliance", displayHistoryElements.get(1).getMessage());
+        Assert.assertTrue(displayHistoryElements.get(2).getTimeStamp() >= displayHistoryElements.get(3).getTimeStamp());
+        Assert.assertEquals("Your alliance has been broken by u1", displayHistoryElements.get(2).getMessage());
+        Assert.assertTrue(displayHistoryElements.get(3).getTimeStamp() >= displayHistoryElements.get(4).getTimeStamp());
+        Assert.assertEquals("Your alliance offer has been accepted by u1", displayHistoryElements.get(3).getMessage());
+        Assert.assertTrue(displayHistoryElements.get(4).getTimeStamp() >= displayHistoryElements.get(5).getTimeStamp());
+        Assert.assertEquals("You offered u1 an alliance", displayHistoryElements.get(4).getMessage());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
     }
 }

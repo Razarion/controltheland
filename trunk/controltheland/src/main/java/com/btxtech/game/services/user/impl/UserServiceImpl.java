@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
@@ -81,13 +82,13 @@ public class UserServiceImpl implements UserService {
     @Value(value = "${security.md5salt}")
     private String md5HashSalt;
 
-    private final Collection<UserState> userStates = new ArrayList<UserState>();
+    private final Collection<UserState> userStates = new ArrayList<>();
     private Log log = LogFactory.getLog(UserServiceImpl.class);
 
     @Override
     public boolean login(String userName, String password) throws AlreadyLoggedInException {
-        if (getUser() != null) {
-            throw new AlreadyLoggedInException(getUser());
+        if (getUserFromSecurityContext() != null) {
+            throw new AlreadyLoggedInException(getUserFromSecurityContext());
         }
 
         try {
@@ -181,8 +182,8 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void createUser(String name, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, AlreadyLoggedInException {
-        if (getUser() != null) {
-            throw new AlreadyLoggedInException(getUser());
+        if (getUserFromSecurityContext() != null) {
+            throw new AlreadyLoggedInException(getUserFromSecurityContext());
         }
 
         if (getUser(name) != null) {
@@ -199,7 +200,7 @@ public class UserServiceImpl implements UserService {
         privateSave(user);
         userTrackingService.onUserCreated(user);
 
-        getUserState().setUser(user);
+        getUserState().setUser(name);
         baseService.onUserRegistered();
     }
 
@@ -210,26 +211,80 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
+        String userName = getUserName();
+        if (userName == null) {
             return null;
         }
-        return (User) authentication.getPrincipal();
+        return loadUserFromDb(userName);
+    }
+
+    @Override
+    public String getUserName() {
+        return getUserState().getUser();
+    }
+
+    @Override
+    public User getUser(UserState userState) {
+        if (!userState.isRegistered()) {
+            return null;
+        }
+        return loadUserFromDb(userState.getUser());
+    }
+
+    @Override
+    public User getUser(String name) {
+        return loadUserFromDb(name);
+    }
+
+    @Override
+    public User getUser(SimpleBase simpleBase) {
+        UserState userState = baseService.getUserState(simpleBase);
+        if (userState == null) {
+            return null;
+        }
+        return getUser(userState);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-        User user = getUser(username);
+        User user = loadUserFromDb(username);
         if (user != null) {
+            loadDependencies(user);
             return user;
         } else {
             throw new UsernameNotFoundException("User does not exist: " + username);
         }
     }
 
-    @Override
+    private void loadDependencies(User user) {
+        Hibernate.initialize(user.getAlliances());
+        Hibernate.initialize(user.getAllianceOffers());
+        Hibernate.initialize(user.getContentCrud().readDbChildren());
+        for (DbContentAccessControl dbContentAccessControl : user.getContentCrud().readDbChildren()) {
+            Hibernate.initialize(dbContentAccessControl.getDbContent());
+        }
+        Hibernate.initialize(user.getPageCrud().readDbChildren());
+        for (DbPageAccessControl dbPageAccessControl : user.getPageCrud().readDbChildren()) {
+            Hibernate.initialize(dbPageAccessControl.getDbPage());
+        }
+    }
+
+    private User loadUserFromDb(String name) {
+        if (HibernateUtil.hasOpenSession(sessionFactory)) {
+            return loadUserFromDbInSession(name);
+        } else {
+            HibernateUtil.openSession4InternalCall(sessionFactory);
+            try {
+                return loadUserFromDbInSession(name);
+            } finally {
+                HibernateUtil.closeSession4InternalCall(sessionFactory);
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
-    public User getUser(final String name) {
+    private User loadUserFromDbInSession(final String name) {
+        // Get user from DB
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         criteria.add(Restrictions.eq("name", name));
@@ -237,22 +292,16 @@ public class UserServiceImpl implements UserService {
         if (users == null || users.isEmpty()) {
             return null;
         } else {
-            User user = users.get(0);
-            Hibernate.initialize(user.getContentCrud().readDbChildren());
-            for (DbContentAccessControl dbContentAccessControl : user.getContentCrud().readDbChildren()) {
-                Hibernate.initialize(dbContentAccessControl.getDbContent());
-            }
-            Hibernate.initialize(user.getPageCrud().readDbChildren());
-            for (DbPageAccessControl dbPageAccessControl : user.getPageCrud().readDbChildren()) {
-                Hibernate.initialize(dbPageAccessControl.getDbPage());
-            }
-            return user;
+            return users.get(0);
         }
     }
 
-    @Override
-    public User getUser(UserState userState) {
-        return userState.getUser();
+    private String getUserFromSecurityContext() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return null;
+        }
+        return ((User) authentication.getPrincipal()).getUsername();
     }
 
     @Override
@@ -263,15 +312,6 @@ public class UserServiceImpl implements UserService {
             }
         }
         throw new IllegalArgumentException("No UserState for hash: " + userStateHash);
-    }
-
-    @Override
-    public User getUser(SimpleBase simpleBase) {
-        UserState userState = baseService.getUserState(simpleBase);
-        if (userState == null) {
-            return null;
-        }
-        return userState.getUser();
     }
 
     @Override
@@ -286,7 +326,7 @@ public class UserServiceImpl implements UserService {
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             public void doInTransactionWithoutResult(TransactionStatus status) {
-                sessionFactory.getCurrentSession().saveOrUpdate(user);
+                save(user);
             }
         });
     }
@@ -336,7 +376,7 @@ public class UserServiceImpl implements UserService {
         if (session.getUserState() == null) {
             UserState userState = new UserState();
             userState.setSessionId(session.getSessionId());
-            userState.setUser(getUser());
+            userState.setUser(getUserFromSecurityContext());
             session.setUserState(userState);
             synchronized (userStates) {
                 userStates.add(userState);
@@ -365,7 +405,7 @@ public class UserServiceImpl implements UserService {
     public UserState getUserState(User user) {
         synchronized (userStates) {
             for (UserState userState : userStates) {
-                if (user.equals(userState.getUser())) {
+                if (user.getUsername().equals(userState.getUser())) {
                     return userState;
                 }
             }
@@ -377,7 +417,7 @@ public class UserServiceImpl implements UserService {
     public List<UserState> getAllUserStates() {
         ArrayList<UserState> userStateCopy;
         synchronized (userStates) {
-            userStateCopy = new ArrayList<UserState>(userStates);
+            userStateCopy = new ArrayList<>(userStates);
         }
         return userStateCopy;
     }

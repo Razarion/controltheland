@@ -12,6 +12,7 @@ import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
@@ -244,6 +245,26 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
 
     @Override
     public void sellItem(Id id) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void proposeAlliance(SimpleBase partner) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void acceptAllianceOffer(String partnerUserName) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void rejectAllianceOffer(String partnerUserName) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void breakAlliance(String partnerUserName) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 }

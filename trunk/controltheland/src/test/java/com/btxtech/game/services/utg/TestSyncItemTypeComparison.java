@@ -21,7 +21,6 @@ import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.ConnectionService;
-import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.services.utg.condition.impl.ServerConditionServiceImpl;
@@ -46,14 +45,10 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements C
     private ServerConditionService serverConditionService;
     private Integer identifier;
     private UserState actor;
-
     private UserState userState1;
-    private User user1;
     private Base base1;
     private SyncBaseItem builder1B1;
     private SyncBaseItem attacker1B1;
-    private UserState userState2;
-    private User user2;
     private Base base2;
     private SyncBaseItem builder1B2;
     private SimpleBase progressBase;
@@ -70,18 +65,14 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements C
 
         // Mock objects
         userState1 = new UserState();
-        user1 = new User();
-        user1.registerUser("TestUser1", "", "");
-        userState1.setUser(user1);
+        userState1.setUser("TestUser1");
         base1 = new Base(userState1, 1);
         int itemId = 0;
         builder1B1 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockServices(), base1.getSimpleBase());
         attacker1B1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockServices(), base1.getSimpleBase());
 
-        userState2 = new UserState();
-        user2 = new User();
-        user2.registerUser("TestUser2", "", "");
-        userState2.setUser(user2);
+        UserState userState2 = new UserState();
+        userState2.setUser("TestUser2");
         base2 = new Base(userState2, 2);
         builder1B2 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockServices(), base2.getSimpleBase());
 
@@ -123,7 +114,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements C
     @Test
     @DirtiesContext
     public void build1Item() throws Exception {
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 1);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new SyncItemTypeComparisonConfig(null, itemTypes, "Item #C" + builder1B1.getBaseItemType().getId()));
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
@@ -149,7 +140,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements C
     @Test
     @DirtiesContext
     public void build3Item() throws Exception {
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new SyncItemTypeComparisonConfig(null, itemTypes, "Item #C" + builder1B1.getBaseItemType().getId()));
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
@@ -181,7 +172,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements C
     @Test
     @DirtiesContext
     public void buildMultipeItems() throws Exception {
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 2);
         itemTypes.put(attacker1B1.getBaseItemType(), 1);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new SyncItemTypeComparisonConfig(null, itemTypes, "Item #C" + builder1B1.getBaseItemType().getId()
@@ -215,7 +206,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements C
     @Test
     @DirtiesContext
     public void killed1Item() throws Exception {
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 1);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new SyncItemTypeComparisonConfig(null, itemTypes, "Kill #C" + builder1B2.getBaseItemType().getId()));
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
@@ -241,7 +232,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements C
     @Test
     @DirtiesContext
     public void killed3Item() throws Exception {
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new SyncItemTypeComparisonConfig(null, itemTypes, "Kill #C" + builder1B2.getBaseItemType().getId()));
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
@@ -273,7 +264,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements C
     @Test
     @DirtiesContext
     public void killedMultipleItem() throws Exception {
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         itemTypes.put(attacker1B1.getBaseItemType(), 1);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new SyncItemTypeComparisonConfig(null, itemTypes, "Kill #C" + builder1B2.getBaseItemType().getId()

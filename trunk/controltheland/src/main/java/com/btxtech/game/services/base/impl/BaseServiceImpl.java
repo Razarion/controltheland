@@ -53,6 +53,8 @@ import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.statistics.StatisticsService;
+import com.btxtech.game.services.user.AllianceService;
+import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -101,6 +103,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     private ServerConditionService serverConditionService;
     @Autowired
     private StatisticsService statisticsService;
+    @Autowired
+    private AllianceService allianceService;
     private final HashMap<SimpleBase, Base> bases = new HashMap<>();
     private int lastBaseId = 0;
 
@@ -135,8 +139,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(startItem, startPoint, null, base.getSimpleBase(), 0);
         syncBaseItem.setBuildup(1.0);
         syncBaseItem.getSyncItemArea().setCosmeticsAngel();
-        if (userService.getUser() != null) {
+        if (userService.getUserName() != null) {
             userTrackingService.onBaseCreated(userService.getUser(), setupBaseName(base));
+            allianceService.onBaseCreatedOrDeleted(userService.getUserName());
         }
         return base;
     }
@@ -258,6 +263,16 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
+    public SimpleBase getSimpleBase(User user) {
+        UserState userState = userService.getUserState(user);
+        if (userState == null) {
+            return null;
+        }
+        Base base = getBase(userState);
+        return base != null ? base.getSimpleBase() : null;
+    }
+
+    @Override
     public UserState getUserState(SimpleBase simpleBase) {
         Base base = getBase(simpleBase);
         if (base == null) {
@@ -284,14 +299,19 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
                 historyService.addBaseDefeatedEntry(actor, base.getSimpleBase());
                 sendDefeatedMessage(syncItem, actor);
             }
+            String userName = null;
             if (base.getUserState() != null && base.getUserState().getUser() != null) {
-                userTrackingService.onBaseDefeated(base.getUserState().getUser(), base);
+                userName = base.getUserState().getUser();
+                userTrackingService.onBaseDefeated(userService.getUser(base.getUserState().getUser()), base);
             }
             statisticsService.onBaseKilled(base.getSimpleBase(), actor);
             deleteBase(actor, base);
             if (!base.isAbandoned() && base.getUserState() != null) {
                 base.getUserState().setBase(null);
                 base.getUserState().setSendResurrectionMessage();
+            }
+            if (userName != null) {
+                allianceService.onBaseCreatedOrDeleted(userName);
             }
         } else {
             if (syncItem.hasSyncHouse()) {
@@ -386,11 +406,12 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
                 newBase.updateHouseSpace();
             }
         }
+        allianceService.restoreAlliances();
     }
 
     private String setupBaseName(Base base) {
         if (!base.isAbandoned() && base.getUserState() != null && base.getUserState().isRegistered()) {
-            return userService.getUser(base.getUserState()).getUsername();
+            return base.getUserState().getUser();
         } else {
             return DEFAULT_BASE_NAME_PREFIX + base.getBaseId();
         }
@@ -450,6 +471,19 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     public void changeBotBaseName(Base base, String name) {
         setBaseName(base.getSimpleBase(), name);
         sendBaseChangedPacket(BaseChangedPacket.Type.CHANGED, base.getSimpleBase());
+    }
+
+    @Override
+    public void sendAlliancesChanged(SimpleBase simpleBase) {
+        BaseAttributes baseAttributes = getBaseAttributes(simpleBase);
+        if (baseAttributes != null) {
+            BaseChangedPacket baseChangedPacket = new BaseChangedPacket();
+            baseChangedPacket.setType(BaseChangedPacket.Type.CHANGED);
+            baseChangedPacket.setBaseAttributes(baseAttributes);
+            connectionService.sendPacket(simpleBase, baseChangedPacket);
+        } else {
+            log.error("Base does not exist: " + simpleBase);
+        }
     }
 
     @Override
