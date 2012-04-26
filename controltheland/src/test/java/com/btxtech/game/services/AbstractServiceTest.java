@@ -505,6 +505,12 @@ abstract public class AbstractServiceTest {
         }
     }
 
+    protected Message createMessage(String message, boolean showRegisterDialog) {
+        Message messagePacket = new Message();
+        messagePacket.setMessage(message);
+        messagePacket.setShowRegisterDialog(showRegisterDialog);
+        return messagePacket;
+    }
     // ------------------- Action Service --------------------
 
     protected void waitForActionServiceDone() throws TimeoutException, InterruptedException {

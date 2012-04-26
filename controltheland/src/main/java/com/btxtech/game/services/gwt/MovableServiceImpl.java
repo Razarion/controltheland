@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
@@ -48,6 +49,7 @@ import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
+import com.btxtech.game.services.user.AllianceService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -90,6 +92,8 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     private Session session;
     @Autowired
     private CmsUiService cmsUiService;
+    @Autowired
+    private AllianceService allianceService;
 
     private Log log = LogFactory.getLog(MovableServiceImpl.class);
 
@@ -157,6 +161,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             realGameInfo.setAllBases(baseService.getAllBaseAttributes());
             realGameInfo.setHouseSpace(baseService.getBase().getHouseSpace());
             userGuidanceService.fillRealGameInfo(realGameInfo);
+            realGameInfo.setAllianceOffers(allianceService.getPendingAllianceOffers());
             return realGameInfo;
         } catch (InvalidLevelState invalidLevelState) {
             throw invalidLevelState;
@@ -306,6 +311,42 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     public void sellItem(Id id) {
         try {
             itemService.sellItem(id);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public void proposeAlliance(SimpleBase partner) {
+        try {
+            allianceService.proposeAlliance(partner);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public void acceptAllianceOffer(String partnerUserName) {
+        try {
+            allianceService.acceptAllianceOffer(partnerUserName);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public void rejectAllianceOffer(String partnerUserName) {
+        try {
+            allianceService.rejectAllianceOffer(partnerUserName);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public void breakAlliance(String partnerUserName) {
+        try {
+            allianceService.breakAlliance(partnerUserName);
         } catch (Throwable t) {
             log.error("", t);
         }

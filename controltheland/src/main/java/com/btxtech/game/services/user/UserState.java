@@ -23,7 +23,7 @@ import java.io.Serializable;
  * Time: 10:42:00
  */
 public class UserState implements Serializable {
-    private User user;
+    private String userName;
     private Base base;
     private int dbLevelId;
     private int xp;
@@ -31,7 +31,7 @@ public class UserState implements Serializable {
     private boolean sendResurrectionMessage = false;
 
     public boolean isRegistered() {
-        return user != null;
+        return userName != null;
     }
 
     public void setBase(Base base) {
@@ -74,17 +74,17 @@ public class UserState implements Serializable {
         return sessionId != null;
     }
 
-    public User getUser() {
-        return user;
+    public String getUser() {
+        return userName;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(String userName) {
+        this.userName = userName;
     }
 
     @Override
     public String toString() {
-        return "UserState: user=" + user;
+        return "UserState: user=" + userName;
     }
 
     public void setSendResurrectionMessage() {

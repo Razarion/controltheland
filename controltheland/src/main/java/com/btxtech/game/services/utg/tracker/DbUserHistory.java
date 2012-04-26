@@ -14,11 +14,12 @@
 package com.btxtech.game.services.utg.tracker;
 
 import com.btxtech.game.services.user.User;
-import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import java.util.Date;
 
 /**
  * User: beat
@@ -153,14 +154,12 @@ public class DbUserHistory {
 
         DbUserHistory that = (DbUserHistory) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-
-        return true;
+        return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 
 }

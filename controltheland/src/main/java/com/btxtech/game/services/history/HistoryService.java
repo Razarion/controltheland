@@ -47,6 +47,14 @@ public interface HistoryService {
 
     void addLevelTaskDeactivated(UserState userState, DbLevelTask dbLevelTask);
 
+    void addAllianceOffered(User actor, User target);
+
+    void addAllianceOfferAccepted(User actor, User target);
+
+    void addAllianceOfferRejected(User actor, User target);
+
+    void addAllianceBroken(User actor, User target);
+
     List<DisplayHistoryElement> getNewestHistoryElements(User user, int count);
 
     List<DisplayHistoryElement> getHistoryElements(Long from, Long to, String sessionId, Integer baseId);

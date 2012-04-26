@@ -24,7 +24,6 @@ import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.services.utg.condition.impl.ServerConditionServiceImpl;
@@ -53,7 +52,6 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     private Integer identifier;
     private UserState actor;
     private UserState userState1;
-    private User user1;
     private Base base1;
     private SyncBaseItem builder1B1;
     private SyncBaseItem builder2B1;
@@ -61,9 +59,6 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     private SyncBaseItem attacker1B1;
     private SyncBaseItem attacker2B1;
     private SyncBaseItem building1B1;
-    private UserState userState2;
-    private User user2;
-    private Base base2;
     private SyncBaseItem builder1B2;
     private SimpleBase progressBase;
     private String progressString;
@@ -79,9 +74,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
 
         // Mock objects
         userState1 = new UserState();
-        user1 = new User();
-        user1.registerUser("TestUser1", "", "");
-        userState1.setUser(user1);
+        userState1.setUser("TestUser1");
         base1 = new Base(userState1, 1);
         int itemId = 0;
         builder1B1 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockServices(), base1.getSimpleBase());
@@ -91,11 +84,9 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         attacker2B1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockServices(), base1.getSimpleBase());
         building1B1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockServices(), base1.getSimpleBase());
 
-        userState2 = new UserState();
-        user2 = new User();
-        user2.registerUser("TestUser2", "", "");
-        userState2.setUser(user2);
-        base2 = new Base(userState2, 2);
+        UserState userState2 = new UserState();
+        userState2.setUser("TestUser2");
+        Base base2 = new Base(userState2, 2);
         builder1B2 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockServices(), base2.getSimpleBase());
 
         BaseService baseServiceMock = EasyMock.createNiceMock(BaseService.class);
@@ -160,7 +151,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Test
     @DirtiesContext
     public void singleItemType() throws Exception {
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 1);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, null, null, false, "Move no #C"
                 + builder1B1.getBaseItemType().getId() + " item"));
@@ -186,7 +177,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Test
     @DirtiesContext
     public void multipleItemTypes1() throws Exception {
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, null, null, false, "#C"
                 + builder1B1.getBaseItemType().getId()));
@@ -228,7 +219,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Test
     @DirtiesContext
     public void multipleItemTypes2() throws Exception {
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
@@ -284,7 +275,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Test
     @DirtiesContext
     public void singleItemTypeRegion() throws Exception {
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 1);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null,
                 false, "#C" + builder1B1.getBaseItemType().getId() + "  lll yyyy"));
@@ -312,7 +303,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Test
     @DirtiesContext
     public void multipleItemTypeRegion1() throws Exception {
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 2);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null,
@@ -361,7 +352,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Test
     @DirtiesContext
     public void multipleItemTypeRegionItemKilled() throws Exception {
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 2);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null,
@@ -404,7 +395,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Test
     @DirtiesContext
     public void singleItemTypeRegionTime() throws Exception {
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 1);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), 100,
                 false, "xxx #T yyy #C" + builder1B1.getBaseItemType().getId()));
@@ -432,7 +423,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Test
     @DirtiesContext
     public void multipleItemTypeRegionTime1() throws Exception {
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
@@ -482,7 +473,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Test
     @DirtiesContext
     public void multipleItemTypeRegionTime2() throws Exception {
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
@@ -536,7 +527,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Test
     @DirtiesContext
     public void multipleItemTypeRegionTime3() throws Exception {
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
@@ -593,7 +584,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @DirtiesContext
     public void multipleItemTypeRegionTimeAddExisting1() throws Exception {
         ItemService itemServiceMock = EasyMock.createMock(ItemService.class);
-        Collection<SyncBaseItem> syncBaseItems = new ArrayList<SyncBaseItem>();
+        Collection<SyncBaseItem> syncBaseItems = new ArrayList<>();
         EasyMock.expect(itemServiceMock.getBaseItemsInRectangle(new Rectangle(500, 500, 1000, 1000), base1.getSimpleBase(), null)).andReturn(syncBaseItems);
         EasyMock.expect(itemServiceMock.getItemType(builder1B1.getBaseItemType().getId())).andReturn(builder1B1.getBaseItemType()).anyTimes();
         EasyMock.expect(itemServiceMock.getItemType(attacker1B1.getBaseItemType().getId())).andReturn(attacker1B1.getBaseItemType()).anyTimes();
@@ -601,7 +592,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         EasyMock.replay(itemServiceMock);
         setPrivateField(ServerServices.class, serverServices, "itemService", itemServiceMock);
 
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
@@ -659,7 +650,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @DirtiesContext
     public void multipleItemTypeRegionTimeAddExisting2() throws Exception {
         ItemService itemServiceMock = EasyMock.createMock(ItemService.class);
-        Collection<SyncBaseItem> syncBaseItems = new ArrayList<SyncBaseItem>();
+        Collection<SyncBaseItem> syncBaseItems = new ArrayList<>();
         builder1B1.getSyncItemArea().setPosition(new Index(600, 600));
         syncBaseItems.add(builder1B1);
         EasyMock.expect(itemServiceMock.getBaseItemsInRectangle(new Rectangle(500, 500, 1000, 1000), base1.getSimpleBase(), null)).andReturn(syncBaseItems);
@@ -669,7 +660,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         EasyMock.replay(itemServiceMock);
         setPrivateField(ServerServices.class, serverServices, "itemService", itemServiceMock);
 
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
@@ -724,7 +715,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @DirtiesContext
     public void multipleItemTypeRegionTimeAddExisting3() throws Exception {
         ItemService itemServiceMock = EasyMock.createMock(ItemService.class);
-        Collection<SyncBaseItem> syncBaseItems = new ArrayList<SyncBaseItem>();
+        Collection<SyncBaseItem> syncBaseItems = new ArrayList<>();
         builder1B1.getSyncItemArea().setPosition(new Index(600, 600));
         syncBaseItems.add(builder1B1);
         builder2B1.getSyncItemArea().setPosition(new Index(600, 600));
@@ -736,7 +727,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         EasyMock.replay(itemServiceMock);
         setPrivateField(ServerServices.class, serverServices, "itemService", itemServiceMock);
 
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
@@ -772,14 +763,14 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @DirtiesContext
     public void multipleItemTypeRegionTimeAddExisting4() throws Exception {
         ItemService itemServiceMock = EasyMock.createMock(ItemService.class);
-        Collection<SyncBaseItem> syncBaseItems = new ArrayList<SyncBaseItem>();
+        Collection<SyncBaseItem> syncBaseItems = new ArrayList<>();
         syncBaseItems.add(builder1B1);
         syncBaseItems.add(builder2B1);
         EasyMock.expect(itemServiceMock.getItems4Base(base1.getSimpleBase())).andReturn(syncBaseItems);
         EasyMock.replay(itemServiceMock);
         setPrivateField(ServerServices.class, serverServices, "itemService", itemServiceMock);
 
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
@@ -814,14 +805,14 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @DirtiesContext
     public void multipleItemTypeRegionAddExistingNoNewItems1() throws Exception {
         ItemService itemServiceMock = EasyMock.createMock(ItemService.class);
-        Collection<SyncBaseItem> syncBaseItems = new ArrayList<SyncBaseItem>();
+        Collection<SyncBaseItem> syncBaseItems = new ArrayList<>();
         builder1B1.getSyncItemArea().setPosition(new Index(600, 600));
         syncBaseItems.add(builder1B1);
         EasyMock.expect(itemServiceMock.getBaseItemsInRectangle(new Rectangle(500, 500, 1000, 1000), base1.getSimpleBase(), null)).andReturn(syncBaseItems);
         EasyMock.replay(itemServiceMock);
         setPrivateField(ServerServices.class, serverServices, "itemService", itemServiceMock);
 
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 1);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null,
                 true, null));
@@ -842,7 +833,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @DirtiesContext
     public void multipleItemTypeRegionAddExistingNoNewItems2() throws Exception {
         ItemService itemServiceMock = EasyMock.createMock(ItemService.class);
-        Collection<SyncBaseItem> syncBaseItems = new ArrayList<SyncBaseItem>();
+        Collection<SyncBaseItem> syncBaseItems = new ArrayList<>();
         builder1B1.getSyncItemArea().setPosition(new Index(600, 600));
         syncBaseItems.add(builder1B1);
         builder2B1.getSyncItemArea().setPosition(new Index(600, 600));
@@ -851,7 +842,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         EasyMock.replay(itemServiceMock);
         setPrivateField(ServerServices.class, serverServices, "itemService", itemServiceMock);
 
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 2);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null,
                 true, null));
@@ -872,7 +863,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @DirtiesContext
     public void multipleItemTypeRegionTimeAddExistingNoNewItems() throws Exception {
         ItemService itemServiceMock = EasyMock.createMock(ItemService.class);
-        Collection<SyncBaseItem> syncBaseItems = new ArrayList<SyncBaseItem>();
+        Collection<SyncBaseItem> syncBaseItems = new ArrayList<>();
         builder1B1.getSyncItemArea().setPosition(new Index(600, 600));
         syncBaseItems.add(builder1B1);
         builder2B1.getSyncItemArea().setPosition(new Index(600, 600));
@@ -881,7 +872,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         EasyMock.replay(itemServiceMock);
         setPrivateField(ServerServices.class, serverServices, "itemService", itemServiceMock);
 
-        Map<ItemType, Integer> itemTypes = new HashMap<ItemType, Integer>();
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 2);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), 100,
                 true, null));

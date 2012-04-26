@@ -17,7 +17,6 @@ package com.btxtech.game.services.user;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
-import com.btxtech.game.services.bot.DbBotConfig;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -32,9 +31,11 @@ public interface UserService extends UserDetailsService {
 
     User getUser();
 
-    void logout();
+    String getUserName();
 
     User getUser(String name);
+
+    void logout();
 
     void save(User user);
 

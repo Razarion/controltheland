@@ -166,7 +166,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
                             if (connection.getBase() != null && connection.getBase().getUserState() != null && connection.getBase().getUserState().getUser() != null) {
                                 HibernateUtil.openSession4InternalCall(sessionFactory);
                                 try {
-                                    userTrackingService.onUserLeftGame(connection.getBase().getUserState().getUser());
+                                    userTrackingService.onUserLeftGame(userService.getUser(connection.getBase().getUserState().getUser()));
                                 } finally {
                                     HibernateUtil.closeSession4InternalCall(sessionFactory);
                                 }
@@ -229,7 +229,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
             onlineConnection.add(connection);
         }
         if (base.getUserState() != null && base.getUserState().getUser() != null) {
-            userTrackingService.onUserEnterGame(base.getUserState().getUser());
+            userTrackingService.onUserEnterGame(userService.getUser(base.getUserState().getUser()));
         }
     }
 
@@ -240,7 +240,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
             throw new IllegalStateException("Connection does not exist");
         }
         if (connection.getBase() != null && connection.getBase().getUserState() != null && connection.getBase().getUserState().getUser() != null) {
-            userTrackingService.onUserLeftGame(connection.getBase().getUserState().getUser());
+            userTrackingService.onUserLeftGame(userService.getUser(connection.getBase().getUserState().getUser()));
         }
         connection.setClosed();
         session.setConnection(null);

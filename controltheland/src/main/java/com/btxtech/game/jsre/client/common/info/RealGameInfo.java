@@ -13,11 +13,13 @@
 
 package com.btxtech.game.jsre.client.common.info;
 
+import com.btxtech.game.jsre.common.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.LevelStatePacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -34,6 +36,7 @@ public class RealGameInfo extends GameInfo {
     private int houseSpace;
     private Collection<Territory> territories;
     private LevelStatePacket levelStatePacket;
+    private Collection<AllianceOfferPacket> allianceOffers = new ArrayList<AllianceOfferPacket>();
 
     public SimpleBase getBase() {
         return base;
@@ -97,5 +100,13 @@ public class RealGameInfo extends GameInfo {
 
     public void setLevelStatePacket(LevelStatePacket levelStatePacket) {
         this.levelStatePacket = levelStatePacket;
+    }
+
+    public Collection<AllianceOfferPacket> getAllianceOffers() {
+        return allianceOffers;
+    }
+
+    public void setAllianceOffers(Collection<AllianceOfferPacket> allianceOffers) {
+        this.allianceOffers = allianceOffers;
     }
 }

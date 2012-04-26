@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.ChatMessage;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.common.Packet;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
@@ -78,4 +79,12 @@ public interface MovableServiceAsync {
     void sendStartupTask(StartupTaskInfo startupTaskInfo, String startUuid, Integer levelTaskId, AsyncCallback<Void> asyncCallback);
 
     void sendStartupTerminated(boolean successful, long totalTime, String startUuid, Integer levelTaskId, AsyncCallback<Void> asyncCallback);
+
+    void acceptAllianceOffer(String partnerUserName, AsyncCallback<Void> asyncCallback);
+
+    void breakAlliance(String partnerUserName, AsyncCallback<Void> asyncCallback);
+
+    void proposeAlliance(SimpleBase partner, AsyncCallback<Void> asyncCallback);
+
+    void rejectAllianceOffer(String partnerUserName, AsyncCallback<Void> asyncCallback);
 }

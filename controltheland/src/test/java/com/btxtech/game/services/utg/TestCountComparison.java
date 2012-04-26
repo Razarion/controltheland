@@ -20,7 +20,6 @@ import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.ConnectionService;
-import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.services.utg.condition.impl.ServerConditionServiceImpl;
@@ -43,9 +42,7 @@ public class TestCountComparison extends AbstractServiceTest implements Connecti
     private ServerConditionService serverConditionService;
     private Integer identifier;
     private UserState actor;
-
     private UserState userState1;
-    private User user1;
     private Base base1;
     private SyncBaseItem building1B1;
     private SimpleBase progressBase;
@@ -62,9 +59,7 @@ public class TestCountComparison extends AbstractServiceTest implements Connecti
 
         // Mock objects
         userState1 = new UserState();
-        user1 = new User();
-        user1.registerUser("TestUser1", "", "");
-        userState1.setUser(user1);
+        userState1.setUser("TestUser1");
         base1 = new Base(userState1, 1);
         int itemId = 0;
         building1B1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockServices(), base1.getSimpleBase());

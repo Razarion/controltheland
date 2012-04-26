@@ -22,7 +22,6 @@ import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.terrain.TerrainService;
-import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.LevelQuest;
@@ -736,9 +735,9 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
     private void verifyUserStates(List<UserState> newUserStates, List<UserState> oldUserStates) {
         Assert.assertEquals(oldUserStates.size(), newUserStates.size());
         for (UserState oldUserState : oldUserStates) {
-            User oldUser = oldUserState.getUser();
+            String oldUser = oldUserState.getUser();
             UserState newUserState = findUserState(oldUserState, newUserStates);
-            User newUser = newUserState.getUser();
+            String newUser = newUserState.getUser();
             Assert.assertEquals(oldUser, newUser);
             Assert.assertEquals(oldUserState.getXp(), newUserState.getXp());
             Assert.assertEquals(oldUserState.getDbLevelId(), newUserState.getDbLevelId());
@@ -752,9 +751,9 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
     private UserState findUserState(UserState oldUserState, List<UserState> newUserStates) {
         UserState foundUserState = null;
-        User oldUsr = oldUserState.getUser();
+        String oldUsr = oldUserState.getUser();
         for (UserState newUserState : newUserStates) {
-            User newUsr = newUserState.getUser();
+            String newUsr = newUserState.getUser();
             if (newUsr != null && newUsr.equals(oldUsr)) {
                 if (foundUserState != null) {
                     Assert.fail("Second matching UserState found: " + newUserState + " fist matching base: " + foundUserState);

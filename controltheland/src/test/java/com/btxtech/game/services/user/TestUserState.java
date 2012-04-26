@@ -300,7 +300,7 @@ public class TestUserState extends AbstractServiceTest {
 
     private UserState getRegUserState(String userName) {
         for (UserState userState : userService.getAllUserStates()) {
-            if (userState.isRegistered() && userState.getUser().getUsername().equals(userName)) {
+            if (userState.isRegistered() && userState.getUser().equals(userName)) {
                 return userState;
             }
         }

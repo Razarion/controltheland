@@ -66,9 +66,9 @@ public class DbUserState {
     protected DbUserState() {
     }
 
-    public DbUserState(BackupEntry backupEntry, UserState userState, DbLevel dbLevel) {
+    public DbUserState(BackupEntry backupEntry, User user, UserState userState, DbLevel dbLevel) {
         this.backupEntry = backupEntry;
-        user = userState.getUser();
+        this.user = user;
         xp = userState.getXp();
         currentLevel = dbLevel;
         sendResurrectionMessage = userState.isSendResurrectionMessage();
@@ -76,7 +76,9 @@ public class DbUserState {
 
     public UserState createUserState() {
         UserState userState = new UserState();
-        userState.setUser(user);
+        if (user != null) {
+            userState.setUser(user.getUsername());
+        }
         userState.setXp(xp);
         if (sendResurrectionMessage) {
             userState.setSendResurrectionMessage();

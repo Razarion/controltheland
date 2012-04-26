@@ -1,7 +1,6 @@
 package com.btxtech.game.services.statistics;
 
 import com.btxtech.game.services.common.SimpleCrudChild;
-import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.utg.DbLevel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,8 +17,7 @@ public class CurrentStatisticEntry extends SimpleCrudChild {
     private int score;
     private DbLevel level;
     private int xp;
-    private User user;
-    private String baseName;
+    private String userName;
     private Long baseUpTime;
     private Integer itemCount;
     private Integer money;
@@ -39,12 +37,11 @@ public class CurrentStatisticEntry extends SimpleCrudChild {
     private int basesLostPlayer;
     private Log log = LogFactory.getLog(CurrentStatisticEntry.class);
 
-    public CurrentStatisticEntry(DbLevel level, int xp, User user, String baseName, Long baseUpTime, Integer itemCount, Integer money, StatisticsEntry statisticsEntry) {
+    public CurrentStatisticEntry(DbLevel level, int xp, String userName, Long baseUpTime, Integer itemCount, Integer money, StatisticsEntry statisticsEntry) {
         this.level = level;
         this.xp = xp;
-        score = calculateScore(level, xp, user, baseName);
-        this.user = user;
-        this.baseName = baseName;
+        score = calculateScore(level, xp, userName);
+        this.userName = userName;
         this.baseUpTime = baseUpTime;
         this.itemCount = itemCount;
         this.money = money;
@@ -72,10 +69,10 @@ public class CurrentStatisticEntry extends SimpleCrudChild {
         this.rank = rank;
     }
 
-    private int calculateScore(DbLevel level, int xp, User user, String baseName) {
+    private int calculateScore(DbLevel level, int xp, String userName) {
         int xpPart = (int) ((double) xp / (double) level.getXp() * 1000);
         if (xpPart > 999) {
-            log.warn("XP part in score calculation to height: " + xpPart + " xp:" + xp + " xp in level: " + level.getXp() + " level: " + level + " user: " + user + " baseName: " + baseName);
+            log.warn("XP part in score calculation to height: " + xpPart + " xp:" + xp + " xp in level: " + level.getXp() + " level: " + level + " user: " + userName);
             xpPart = 999;
         }
         return level.getNumber() * 1000 + xpPart;
@@ -93,12 +90,8 @@ public class CurrentStatisticEntry extends SimpleCrudChild {
         return xp;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public String getBaseName() {
-        return baseName;
+    public String getUserName() {
+        return userName;
     }
 
     public Long getBaseUpTime() {

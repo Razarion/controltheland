@@ -44,7 +44,11 @@ public class DbHistoryElement implements Serializable {
         LEVEL_PROMOTION,
         LEVEL_TASK_COMPLETED,
         LEVEL_TASK_ACTIVATED,
-        LEVEL_TASK_DEACTIVATED
+        LEVEL_TASK_DEACTIVATED,
+        ALLIANCE_OFFERED,
+        ALLIANCE_OFFER_ACCEPTED,
+        ALLIANCE_OFFER_REJECTED,
+        ALLIANCE_BROKEN
     }
 
     public enum Source {
@@ -120,10 +124,6 @@ public class DbHistoryElement implements Serializable {
 
     public String getTargetBaseName() {
         return targetBaseName;
-    }
-
-    public String getTargetUser() {
-        return targetUserName;
     }
 
     public long getTimeStampMs() {

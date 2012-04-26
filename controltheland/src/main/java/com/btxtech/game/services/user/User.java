@@ -55,6 +55,12 @@ public class User implements UserDetails, Serializable, CrudParent {
     private Collection<DbContentAccessControl> dbContentAccessControls;
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "user")
     private Collection<DbPageAccessControl> dbPageAccessControls;
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "USER_ALLIANCES")
+    private Collection<User> alliances;
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "USER_ALLIANCE_OFFERS")
+    private Collection<User> allianceOffers;
     @Transient
     private CrudChildServiceHelper<DbContentAccessControl> contentCrud;
     @Transient
@@ -145,6 +151,28 @@ public class User implements UserDetails, Serializable, CrudParent {
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public Collection<User> getAlliances() {
+        if (alliances == null) {
+            alliances = new ArrayList<>();
+        }
+        return alliances;
+    }
+
+    public void setAlliances(Collection<User> alliances) {
+        this.alliances = alliances;
+    }
+
+    public Collection<User> getAllianceOffers() {
+        if (allianceOffers == null) {
+            allianceOffers = new ArrayList<>();
+        }
+        return allianceOffers;
+    }
+
+    public void setAllianceOffers(Collection<User> allianceOffers) {
+        this.allianceOffers = allianceOffers;
     }
 
     public CrudChildServiceHelper<DbContentAccessControl> getContentCrud() {

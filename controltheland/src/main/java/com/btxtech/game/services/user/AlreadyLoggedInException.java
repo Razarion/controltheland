@@ -6,7 +6,7 @@ package com.btxtech.game.services.user;
  * Time: 00:57:57
  */
 public class AlreadyLoggedInException extends RuntimeException {
-    public AlreadyLoggedInException(User user) {
-        super("Already logged in as: " + user.getUsername());
+    public AlreadyLoggedInException(String userName) {
+        super("Already logged in as: " + userName);
     }
 }
