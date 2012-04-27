@@ -194,8 +194,13 @@ public class StatisticsServiceImpl implements StatisticsService {
             Integer money = null;
             Integer itemCount = null;
             Long upTime = null;
+            if (userState.isRegistered()) {
+                userName = userState.getUser();
+            }
             if (userState.getBase() != null) {
-                userName = baseService.getBaseName(userState.getBase().getSimpleBase());
+                if (!userState.isRegistered()) {
+                    userName = baseService.getBaseName(userState.getBase().getSimpleBase());
+                }
                 upTime = userState.getBase().getUptime();
                 itemCount = userState.getBase().getItemCount();
                 money = (int) Math.round(userState.getBase().getAccountBalance());
