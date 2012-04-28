@@ -23,5 +23,7 @@ public interface AllianceService {
 
     Collection<AllianceOfferPacket> getPendingAllianceOffers();
 
+    Collection<String> getAllAlliances();
+
     void onBaseCreatedOrDeleted(String userName);
 }

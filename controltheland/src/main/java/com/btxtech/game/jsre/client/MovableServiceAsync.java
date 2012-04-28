@@ -87,4 +87,6 @@ public interface MovableServiceAsync {
     void proposeAlliance(SimpleBase partner, AsyncCallback<Void> asyncCallback);
 
     void rejectAllianceOffer(String partnerUserName, AsyncCallback<Void> asyncCallback);
+
+    void getAllAlliances(AsyncCallback<Collection<String>> asyncCallback);
 }

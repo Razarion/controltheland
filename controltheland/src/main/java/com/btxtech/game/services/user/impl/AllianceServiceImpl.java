@@ -159,6 +159,19 @@ public class AllianceServiceImpl implements AllianceService {
         }
     }
 
+    @Override
+    public Collection<String> getAllAlliances() {
+        User user = userService.getUser();
+        if (user == null) {
+            throw new IllegalStateException("User is not registered");
+        }
+        Collection<String> alliances = new ArrayList<>();
+        for (User allianceUser : user.getAlliances()) {
+            alliances.add(allianceUser.getUsername());
+        }
+        return alliances;
+    }
+
     private void onBaseCreatedOrDeletedInSession(User user) {
         updateBaseService(user);
         sendAllianceChanged(user);

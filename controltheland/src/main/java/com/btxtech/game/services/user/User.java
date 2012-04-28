@@ -26,6 +26,9 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.io.Serializable;
@@ -55,11 +58,19 @@ public class User implements UserDetails, Serializable, CrudParent {
     private Collection<DbContentAccessControl> dbContentAccessControls;
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "user")
     private Collection<DbPageAccessControl> dbPageAccessControls;
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "USER_ALLIANCES")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "USER_ALLIANCES",
+            joinColumns = @JoinColumn(name = "theUser"),
+            inverseJoinColumns = @JoinColumn(name = "allianceUser")
+    )
     private Collection<User> alliances;
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "USER_ALLIANCE_OFFERS")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "USER_ALLIANCE_OFFERS",
+            joinColumns = @JoinColumn(name = "receiver"),
+            inverseJoinColumns = @JoinColumn(name = "allianceOffer")
+    )
     private Collection<User> allianceOffers;
     @Transient
     private CrudChildServiceHelper<DbContentAccessControl> contentCrud;

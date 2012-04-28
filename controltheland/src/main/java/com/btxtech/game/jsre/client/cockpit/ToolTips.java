@@ -17,6 +17,7 @@ public class ToolTips {
     public static final String TOOL_TIP_MISSION_OVERVIEW = "Available missions";
     public static final String TOOL_TIP_XP_OVERVIEW = "XP and XP to level up";
     // Buttons
+    public static final String TOOL_TIP_ALLIANCE = "Alliances with other players";
     public static final String TOOL_TIP_SCROLL_HOME = "Scroll home";
     public static final String TOOL_TIP_SELL = "Activate sell mode for selling units and structures";
     public static final String TOOL_TIP_MUTE = "Mute sound";

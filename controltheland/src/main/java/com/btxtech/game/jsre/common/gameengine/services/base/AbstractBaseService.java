@@ -75,4 +75,6 @@ public interface AbstractBaseService {
     boolean isEnemy(SyncBaseItem syncBaseItem1, SyncBaseItem syncBaseItem2);
 
     boolean isEnemy(SimpleBase simpleBase1, SimpleBase simpleBase2);
+
+    SimpleBase getSimpleBase4Id(int baseId);
 }
