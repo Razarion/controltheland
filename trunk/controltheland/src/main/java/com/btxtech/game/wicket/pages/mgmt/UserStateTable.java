@@ -66,7 +66,7 @@ public class UserStateTable extends MgmtWebPage {
                 item.add(new LevelReadonlyPanel("dbLevelId"));
                 item.add(new Label("sessionId"));
                 item.add(new Label("online"));
-                item.add(new Label("user.name"));
+                item.add(new Label("user"));
                 Base base = baseService.getBase(item.getModelObject());
                 if (base != null && connectionService.hasConnection(base.getSimpleBase())) {
                     item.add(new Label("inGame", "yes"));
