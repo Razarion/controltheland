@@ -59,6 +59,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -349,6 +350,16 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             allianceService.breakAlliance(partnerUserName);
         } catch (Throwable t) {
             log.error("", t);
+        }
+    }
+
+    @Override
+    public Collection<String> getAllAlliances() {
+        try {
+            return allianceService.getAllAlliances();
+        } catch (Throwable t) {
+            log.error("", t);
+            return new ArrayList<>();
         }
     }
 }

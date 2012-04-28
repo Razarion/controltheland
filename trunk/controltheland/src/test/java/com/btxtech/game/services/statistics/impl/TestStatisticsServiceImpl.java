@@ -85,7 +85,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         ReadonlyListContentProvider<CurrentStatisticEntry> provider = statisticsService.getCmsCurrentStatistics();
         List<CurrentStatisticEntry> entries = provider.readDbChildren();
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "xxx", null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
         endHttpRequestAndOpenSessionInViewFilter();
@@ -117,8 +117,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         List<CurrentStatisticEntry> entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u1", null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u2", null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -136,7 +136,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
         assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "u1", (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
-        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u2", null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -263,7 +263,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
         assertEntry(0, entries, 3007, TEST_LEVEL_3_REAL, 3, "u1", (long) 1, 3, 1088, 0, 0, 1, 1, 0, 0, 0, 0, 1, 2, 0, 1, 0, 0);
-        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, null, null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
+        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, "u2", null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -292,7 +292,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
         assertEntry(0, entries, 3012, TEST_LEVEL_3_REAL, 5, "u1", (long) 1, 3, 1088, 1, 0, 1, 1, 0, 0, 0, 0, 1, 2, 1, 1, 0, 0);
-        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, null, null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
+        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, "u2", null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -322,7 +322,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
         assertEntry(0, entries, 3015, TEST_LEVEL_3_REAL, 6, "u1", (long) 1, 3, 1088, 1, 1, 1, 1, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0);
-        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, null, null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
+        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, "u2", null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -354,7 +354,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
         assertEntry(0, entries, 3015, TEST_LEVEL_3_REAL, 6, "u1", (long) 1, 2, 1088, 1, 1, 1, 1, 0, 1, 0, 0, 1, 2, 2, 1, 0, 0);
-        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, null, null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
+        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, "u2", null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -375,8 +375,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 3015, TEST_LEVEL_3_REAL, 6, null, null, null, null, 1, 1, 1, 1, 1, 2, 0, 0, 1, 2, 2, 1, 1, 0);
-        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, null, null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
+        assertEntry(0, entries, 3015, TEST_LEVEL_3_REAL, 6, "u1", null, null, null, 1, 1, 1, 1, 1, 2, 0, 0, 1, 2, 2, 1, 1, 0);
+        assertEntry(1, entries, 2004, TEST_LEVEL_2_REAL, 1, "u2", null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -398,7 +398,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         ReadonlyListContentProvider<CurrentStatisticEntry> provider = statisticsService.getCmsCurrentStatistics();
         List<CurrentStatisticEntry> entries = provider.readDbChildren();
         Assert.assertEquals(1, entries.size());
-        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u1", null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -438,7 +438,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         provider = statisticsService.getCmsCurrentStatistics();
         entries = provider.readDbChildren();
         Assert.assertEquals(1, entries.size());
-        assertEntry(0, entries, 2004, TEST_LEVEL_2_REAL, 1, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        assertEntry(0, entries, 2004, TEST_LEVEL_2_REAL, 1, "u1", null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -469,8 +469,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         List<CurrentStatisticEntry> entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u1", null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u2", null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         //Backup
@@ -493,8 +493,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u1", null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u2", null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -525,7 +525,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
         assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "u1", (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
-        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u2", null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -639,8 +639,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u1", null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u2", null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -659,7 +659,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
         assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "u1", (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
-        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u2", null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

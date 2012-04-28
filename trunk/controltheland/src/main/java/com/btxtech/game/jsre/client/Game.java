@@ -28,6 +28,7 @@ public class Game implements EntryPoint {
     public void onModuleLoad() {
         try {
             GwtCommon.setUncaughtExceptionHandler();
+            ClientAllianceHandler.exportStaticMethod();
             ClientUserTracker.getInstance().registerWindowsCloseHandler();
             isDebug = Boolean.parseBoolean(Window.Location.getParameter(DEBUG_PARAM));
             ClientServices.getInstance().connectStartupListeners();

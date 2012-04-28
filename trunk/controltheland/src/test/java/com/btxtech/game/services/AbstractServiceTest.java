@@ -101,6 +101,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
@@ -113,7 +115,11 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.ServletRequest;
+import javax.sql.DataSource;
 import java.lang.reflect.Field;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -257,6 +263,7 @@ abstract public class AbstractServiceTest {
     private SecurityContext securityContext;
     private MovableService movableService;
     private PlaybackServiceImpl playbackService;
+    private JdbcTemplate jdbcTemplate;
 
     protected PlatformTransactionManager getTransactionManager() {
         return transactionManager;
@@ -1685,4 +1692,39 @@ abstract public class AbstractServiceTest {
             return object;
         }
     }
+
+    // ---------- DB Helper -------
+    @Autowired
+    public void setSessionFactory(DataSource dataSource) {
+        jdbcTemplate = new JdbcTemplate(dataSource);
+    }
+
+    public void printQueryDb(String sql) {
+        System.out.println("------------------------------------------------------------------------------------------");
+        System.out.println("SQL: " + sql);
+        System.out.println("------------------------------------------------------------------------------------------");
+        final StringBuilder header = new StringBuilder();
+        final StringBuilder data = new StringBuilder();
+        jdbcTemplate.query(sql, new RowMapper<Void>() {
+            @Override
+            public Void mapRow(ResultSet resultSet, int i) throws SQLException {
+                ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+                int columnCount = resultSetMetaData.getColumnCount();
+                for (int column = 0; column < columnCount; column++) {
+                    if (i == 0) {
+                        header.append(resultSetMetaData.getColumnName(column + 1));
+                    }
+                    data.append(resultSet.getString(column + 1));
+                    header.append("\t");
+                    data.append("\t");
+                }
+                data.append("\n");
+                return null;
+            }
+        });
+        System.out.println(header.toString());
+        System.out.print(data.toString());
+        System.out.println("------------------------------------------------------------------------------------------");
+    }
+
 }

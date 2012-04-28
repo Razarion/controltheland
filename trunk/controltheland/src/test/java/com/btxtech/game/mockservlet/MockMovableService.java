@@ -267,4 +267,9 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     public void breakAlliance(String partnerUserName) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    @Override
+    public Collection<String> getAllAlliances() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

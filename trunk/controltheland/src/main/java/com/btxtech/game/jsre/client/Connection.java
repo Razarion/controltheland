@@ -27,12 +27,14 @@ import com.btxtech.game.jsre.client.control.StartupSeq;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.DeferredStartup;
+import com.btxtech.game.jsre.client.dialogs.AllianceDialog;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
+import com.btxtech.game.jsre.common.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.CommonJava;
@@ -42,6 +44,7 @@ import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.LevelStatePacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
@@ -264,6 +267,8 @@ public class Connection implements StartupProgressListener, ConnectionI {
                     HouseSpacePacket houseSpacePacket = (HouseSpacePacket) packet;
                     ClientBase.getInstance().setHouseSpace(houseSpacePacket.getHouseSpace());
                     SideCockpit.getInstance().updateItemLimit();
+                } else if (packet instanceof AllianceOfferPacket) {
+                    ClientAllianceHandler.getInstance().handleAllianceOfferPacket((AllianceOfferPacket) packet);
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }
@@ -542,4 +547,45 @@ public class Connection implements StartupProgressListener, ConnectionI {
             disconnectionCount = 0;
         }
     }
+
+    public void acceptAllianceOffer(String partnerUserName) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.acceptAllianceOffer(partnerUserName, new VoidAsyncCallback("acceptAllianceOffer"));
+        }
+    }
+
+    public void breakAlliance(String partnerUserName) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.breakAlliance(partnerUserName, new VoidAsyncCallback("breakAlliance"));
+        }
+    }
+
+    public void proposeAlliance(SimpleBase partner) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.proposeAlliance(partner, new VoidAsyncCallback("proposeAlliance"));
+        }
+    }
+
+    public void rejectAllianceOffer(String partnerUserName) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.rejectAllianceOffer(partnerUserName, new VoidAsyncCallback("rejectAllianceOffer"));
+        }
+    }
+
+    public void getAllAlliances(final AllianceDialog allianceDialog) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.getAllAlliances(new AsyncCallback<Collection<String>>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    handleDisconnection("getAllAlliances", caught);
+                }
+
+                @Override
+                public void onSuccess(Collection<String> alliances) {
+                    allianceDialog.onAlliancesReceived(alliances);
+                }
+            });
+        }
+    }
+
 }

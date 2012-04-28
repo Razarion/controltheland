@@ -66,8 +66,10 @@ public class SpeechBubbleHandler {
             SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
             if (ClientBase.getInstance().isMyOwnProperty(syncBaseItem)) {
                 return "#b2ffb2";
+            } else if (ClientBase.getInstance().isEnemy(syncBaseItem)) {
+                return "#b2ffb2";
             } else {
-                return "#ffa6a6";
+                return "#AAFFAA";
             }
         } else {
             return "#FFFFFF";
@@ -85,8 +87,21 @@ public class SpeechBubbleHandler {
                 if (ItemCockpit.hasItemCockpit(syncBaseItem) || syncBaseItem.hasSyncMovable()) {
                     builder.append("</br><b>Click on it!</b>");
                 }
-            } else {
+            } else if (ClientBase.getInstance().isBot(syncBaseItem.getBase())) {
                 builder.append("Attack this <b>enemy</b> ");
+                CmsUtil.getUrl4ItemTypePage(builder, syncItem.getItemType(), "unit!");
+                builder.append("</br>");
+                builder.append(ClientBase.getInstance().getBaseName(syncBaseItem.getBase()));
+            } else if (ClientBase.getInstance().isEnemy(syncBaseItem)) {
+                builder.append("Attack this <b>enemy</b> ");
+                CmsUtil.getUrl4ItemTypePage(builder, syncItem.getItemType(), "unit!");
+                builder.append("</br>");
+                builder.append(ClientBase.getInstance().getBaseName(syncBaseItem.getBase()));
+                builder.append("<br /><a href=\"javascript:offerAlliance(");
+                builder.append(syncBaseItem.getBase().getId());
+                builder.append(");\">Offer alliance</a>");
+            } else {
+                builder.append("This is in your <b>alliance</b> ");
                 CmsUtil.getUrl4ItemTypePage(builder, syncItem.getItemType(), "unit!");
                 builder.append("</br>");
                 builder.append(ClientBase.getInstance().getBaseName(syncBaseItem.getBase()));

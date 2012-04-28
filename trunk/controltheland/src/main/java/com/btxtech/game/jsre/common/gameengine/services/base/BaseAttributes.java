@@ -30,6 +30,7 @@ public class BaseAttributes implements Serializable {
     private boolean bot = false;
     private boolean abandoned;
     private Set<BaseAttributes> alliances = new HashSet<BaseAttributes>();
+    private int id; // Due to GWT deserializing problem
 
     /**
      * Used by GWT
@@ -41,6 +42,7 @@ public class BaseAttributes implements Serializable {
         this.simpleBase = simpleBase;
         this.name = name;
         this.abandoned = abandoned;
+        id = simpleBase.getId();
     }
 
     public String getName() {
@@ -90,12 +92,12 @@ public class BaseAttributes implements Serializable {
 
         BaseAttributes that = (BaseAttributes) o;
 
-        return simpleBase.equals(that.simpleBase);
+        return id == that.id;
 
     }
 
     @Override
     public int hashCode() {
-        return simpleBase.hashCode();
+        return id;
     }
 }

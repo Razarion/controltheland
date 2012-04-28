@@ -92,4 +92,6 @@ public interface MovableService extends RemoteService {
     void rejectAllianceOffer(String partnerUserName);
 
     void breakAlliance(String partnerUserName);
+
+    Collection<String> getAllAlliances();
 }

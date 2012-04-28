@@ -84,6 +84,18 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         }
     }
 
+    @Override
+    public SimpleBase getSimpleBase4Id(int baseId) {
+        synchronized (bases) {
+            for (SimpleBase simpleBase : bases.keySet()) {
+                if (simpleBase.getId() == baseId) {
+                    return simpleBase;
+                }
+            }
+        }
+        throw new IllegalArgumentException("No such base: " + baseId);
+    }
+
     protected void createBase(SimpleBase simpleBase, String name, boolean abandoned) {
         createBase(new BaseAttributes(simpleBase, name, abandoned));
     }

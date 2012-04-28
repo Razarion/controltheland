@@ -13,6 +13,8 @@ import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.dialogs.AllianceDialog;
+import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.CmsUtil;
@@ -77,9 +79,11 @@ public class SideCockpit {
     // Buttons
     private static final int BNT_X = 181;
     private static final int BNT_Y = 73;
-    private static final int BNT_Y_SPACE = 35;
+    private static final int BNT_Y_SPACE = 28;
+    private static final int BNT_ALLIANCE_X = BNT_X;
+    private static final int BNT_ALLIANCE_Y = BNT_Y;
     private static final int BNT_SCROLL_X = BNT_X;
-    private static final int BNT_SCROLL_Y = BNT_Y;
+    private static final int BNT_SCROLL_Y = BNT_ALLIANCE_Y + BNT_Y_SPACE;
     private static final int BNT_SELL_X = BNT_X;
     private static final int BNT_SELL_Y = BNT_SCROLL_Y + BNT_Y_SPACE;
     private static final int BNT_MUTE_X = BNT_X;
@@ -212,6 +216,15 @@ public class SideCockpit {
     }
 
     private void setupButtonPanel() {
+        //Scroll home
+        ExtendedCustomButton alliance = new ExtendedCustomButton("scrollHomeButton", false, ToolTips.TOOL_TIP_ALLIANCE, new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                DialogManager.showDialog(new AllianceDialog(), DialogManager.Type.QUEUE_ABLE);
+            }
+        });
+        mainPanel.add(alliance, BNT_ALLIANCE_X, BNT_ALLIANCE_Y);
+
         //Scroll home
         ExtendedCustomButton scrollHome = new ExtendedCustomButton("scrollHomeButton", false, ToolTips.TOOL_TIP_SCROLL_HOME, new ClickHandler() {
             @Override

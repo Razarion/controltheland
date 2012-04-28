@@ -58,6 +58,7 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u1", "xxx");
         verifyAllianceOffers();
         verifyAlliances();
+        verifyAlliancesFromUser();
         SimpleBase simpleBase1 = getMyBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -68,6 +69,7 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u2", "xxx");
         verifyAllianceOffers();
         verifyAlliances();
+        verifyAlliancesFromUser();
         connectionServiceTestHelper.clearReceivedPackets();
         allianceService.proposeAlliance(simpleBase1);
         verifyAllianceOffers();
@@ -82,10 +84,12 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u1", "xxx");
         verifyAllianceOffers("u2");
         verifyAlliances();
+        verifyAlliancesFromUser();
         connectionServiceTestHelper.clearReceivedPackets();
         allianceService.acceptAllianceOffer("u2");
         verifyAllianceOffers();
         verifyAlliances("u2");
+        verifyAlliancesFromUser("u2");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -98,8 +102,10 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u1", "xxx");
         verifyAllianceOffers();
         verifyAlliances("u2");
+        verifyAlliancesFromUser("u2");
         allianceService.breakAlliance("u2");
         verifyAlliances();
+        verifyAlliancesFromUser();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -111,6 +117,7 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u2", "xxx");
         verifyAllianceOffers();
         verifyAlliances();
+        verifyAlliancesFromUser();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -119,6 +126,7 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u1", "xxx");
         verifyAllianceOffers();
         verifyAlliances();
+        verifyAlliancesFromUser();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -143,6 +151,7 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u1", "xxx");
         verifyAllianceOffers();
         verifyAlliances();
+        verifyAlliancesFromUser();
         SimpleBase simpleBase1 = getMyBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -153,6 +162,7 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u2", "xxx");
         verifyAllianceOffers();
         verifyAlliances();
+        verifyAlliancesFromUser();
         connectionServiceTestHelper.clearReceivedPackets();
         allianceService.proposeAlliance(simpleBase1);
         verifyAllianceOffers();
@@ -167,9 +177,11 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u1", "xxx");
         verifyAllianceOffers("u2");
         verifyAlliances();
+        verifyAlliancesFromUser();
         connectionServiceTestHelper.clearReceivedPackets();
         allianceService.rejectAllianceOffer("u2");
         verifyAllianceOffers();
+        verifyAlliancesFromUser();
         verifyAlliances();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -182,6 +194,7 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u1", "xxx");
         verifyAllianceOffers();
         verifyAlliances();
+        verifyAlliancesFromUser();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -190,6 +203,7 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u2", "xxx");
         verifyAllianceOffers();
         verifyAlliances();
+        verifyAlliancesFromUser();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -219,6 +233,12 @@ public class TestAllianceService extends AbstractServiceTest {
         }
         verifyAllianceOffers();
         verifyAlliances();
+        try {
+            verifyAlliancesFromUser();
+            Assert.fail("IllegalStateException expected");
+        } catch (IllegalStateException e) {
+            // Expected
+        }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -244,6 +264,7 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u1", "xxx");
         verifyAllianceOffers();
         verifyAlliances();
+        verifyAlliancesFromUser();
         SimpleBase simpleBase1 = getMyBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -254,6 +275,7 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u2", "xxx");
         verifyAllianceOffers();
         verifyAlliances();
+        verifyAlliancesFromUser();
         allianceService.proposeAlliance(simpleBase1);
         verifyAllianceOffers();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -264,9 +286,11 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u1", "xxx");
         verifyAllianceOffers("u2");
         verifyAlliances();
+        verifyAlliancesFromUser();
         allianceService.acceptAllianceOffer("u2");
         verifyAllianceOffers();
         verifyAlliances("u2");
+        verifyAlliancesFromUser("u2");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -275,6 +299,7 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u2", "xxx");
         verifyAllianceOffers();
         verifyAlliances("u1");
+        verifyAlliancesFromUser("u1");
         connectionServiceTestHelper.clearReceivedPackets();
         getMovableService().sellItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
         endHttpRequestAndOpenSessionInViewFilter();
@@ -288,6 +313,7 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u1", "xxx");
         verifyAllianceOffers();
         verifyAlliances();
+        verifyAlliancesFromUser("u2");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -296,6 +322,7 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u2", "xxx");
         verifyAllianceOffers();
         verifyAlliances("u1");
+        verifyAlliancesFromUser("u1");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -307,6 +334,7 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u1", "xxx");
         verifyAllianceOffers();
         verifyAlliances("u2");
+        verifyAlliancesFromUser("u2");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -336,6 +364,7 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u2", "xxx");
         verifyAllianceOffers();
         verifyAlliances();
+        verifyAlliancesFromUser();
         allianceService.proposeAlliance(simpleBase1);
         verifyAllianceOffers();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -353,6 +382,7 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u1", "xxx");
         verifyAllianceOffers();
         verifyAlliances();
+        verifyAlliancesFromUser();
         SimpleBase simpleBase1 = getMyBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -363,6 +393,7 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u2", "xxx");
         verifyAllianceOffers();
         verifyAlliances();
+        verifyAlliancesFromUser();
         allianceService.proposeAlliance(simpleBase1);
         verifyAllianceOffers();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -384,9 +415,11 @@ public class TestAllianceService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.login("u1", "xxx");
         verifyAllianceOffers("u2");
+        verifyAlliancesFromUser();
         verifyAlliances();
         allianceService.acceptAllianceOffer("u2");
         verifyAllianceOffers();
+        verifyAlliancesFromUser("u2");
         verifyAlliances("u2");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -408,8 +441,10 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u1", "xxx");
         verifyAllianceOffers();
         verifyAlliances("u2");
+        verifyAlliancesFromUser("u2");
         allianceService.breakAlliance("u2");
         verifyAlliances();
+        verifyAlliancesFromUser();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -430,6 +465,7 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u2", "xxx");
         verifyAllianceOffers();
         verifyAlliances();
+        verifyAlliancesFromUser();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -450,8 +486,18 @@ public class TestAllianceService extends AbstractServiceTest {
         userService.login("u1", "xxx");
         verifyAllianceOffers();
         verifyAlliances();
+        verifyAlliancesFromUser();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+    }
+
+    private void verifyAlliancesFromUser(String... allianceNames) throws InvalidLevelState {
+        Assert.assertEquals(allianceNames.length, allianceService.getAllAlliances().size());
+        for (String alliance : allianceService.getAllAlliances()) {
+            if (Arrays.binarySearch(allianceNames, alliance) == -1) {
+                Assert.fail("Alliance does not exits: " + alliance);
+            }
+        }
     }
 
     private void verifyAlliances(String... allianceNames) throws InvalidLevelState {
