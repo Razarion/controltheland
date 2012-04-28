@@ -13,9 +13,10 @@
 
 package com.btxtech.game.jsre.client.dialogs;
 
-import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
@@ -25,13 +26,31 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  */
 public class MessageDialog extends Dialog {
     private String message;
+    private boolean showRegisterDialogButton;
 
     public MessageDialog(String message) {
         this.message = message;
     }
 
+    public MessageDialog(String message, boolean showRegisterDialogButton) {
+        this.message = message;
+        this.showRegisterDialogButton = showRegisterDialogButton;
+    }
+
     @Override
     protected void setupPanel(VerticalPanel dialogVPanel) {
-        dialogVPanel.add(new HTML(message, false));
+        if (showRegisterDialogButton) {
+            VerticalPanel verticalPanel = new VerticalPanel();
+            verticalPanel.add(new HTML(message, false));
+            verticalPanel.add(new Button("Register", new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    DialogManager.showDialog(new RegisterDialog(), DialogManager.Type.PROMPTLY);
+                }
+            }));
+            dialogVPanel.add(verticalPanel);
+        } else {
+            dialogVPanel.add(new HTML(message, false));
+        }
     }
 }

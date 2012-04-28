@@ -253,7 +253,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
                     ItemContainer.getInstance().sychronize((SyncItemInfo) packet);
                 } else if (packet instanceof Message) {
                     Message message = (Message) packet;
-                    DialogManager.showDialog(new MessageDialog("<h1>" + message.getMessage() + "</h1>"), DialogManager.Type.QUEUE_ABLE);
+                    DialogManager.showDialog(new MessageDialog("<h1>" + message.getMessage() + "</h1>", message.isShowRegisterDialog()), DialogManager.Type.QUEUE_ABLE);
                 } else if (packet instanceof AccountBalancePacket) {
                     AccountBalancePacket balancePacket = (AccountBalancePacket) packet;
                     ClientBase.getInstance().setAccountBalance(balancePacket.getAccountBalance());

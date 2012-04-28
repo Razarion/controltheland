@@ -78,8 +78,8 @@ public class SideCockpit {
     private static final int RADAR_H = 150;
     // Buttons
     private static final int BNT_X = 181;
-    private static final int BNT_Y = 73;
-    private static final int BNT_Y_SPACE = 28;
+    private static final int BNT_Y = 74;
+    private static final int BNT_Y_SPACE = 26;
     private static final int BNT_ALLIANCE_X = BNT_X;
     private static final int BNT_ALLIANCE_Y = BNT_Y;
     private static final int BNT_SCROLL_X = BNT_X;
@@ -217,7 +217,7 @@ public class SideCockpit {
 
     private void setupButtonPanel() {
         //Scroll home
-        ExtendedCustomButton alliance = new ExtendedCustomButton("scrollHomeButton", false, ToolTips.TOOL_TIP_ALLIANCE, new ClickHandler() {
+        ExtendedCustomButton alliance = new ExtendedCustomButton("allianceButton", false, ToolTips.TOOL_TIP_ALLIANCE, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 DialogManager.showDialog(new AllianceDialog(), DialogManager.Type.QUEUE_ABLE);

@@ -67,9 +67,9 @@ public class SpeechBubbleHandler {
             if (ClientBase.getInstance().isMyOwnProperty(syncBaseItem)) {
                 return "#b2ffb2";
             } else if (ClientBase.getInstance().isEnemy(syncBaseItem)) {
-                return "#b2ffb2";
+                return "#ffa6a6";
             } else {
-                return "#AAFFAA";
+                return "#b2ffb2";
             }
         } else {
             return "#FFFFFF";

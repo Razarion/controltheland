@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.dialogs;
 
 import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -37,7 +38,11 @@ public class AllianceDialog extends Dialog {
     @Override
     protected void setupPanel(VerticalPanel dialogVPanel) {
         VerticalPanel verticalPanel = new VerticalPanel();
-        verticalPanel.add(new HTML("All alliances you have formed with other players. New alliances can be formed in the speech bubble of enemy units/structures"));
+        if (Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE) {
+            verticalPanel.add(new HTML("All alliances you have formed with other players.<br />New alliances can be formed in the speech<br />bubble of enemy units/structures."));
+        } else {
+            verticalPanel.add(new HTML("All alliances you have formed with other players.<br /><b>Only available an this planet.</b>"));
+        }
         allianceTable = new FlexTable();
         verticalPanel.add(allianceTable);
         dialogVPanel.add(verticalPanel);

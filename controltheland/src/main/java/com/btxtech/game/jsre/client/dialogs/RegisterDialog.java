@@ -50,7 +50,7 @@ public class RegisterDialog extends Dialog {
     private PasswordTextBox password;
     private PasswordTextBox confirmPassword;
 
-    private RegisterDialog() {
+    public RegisterDialog() {
         setShowCloseButton(false);
         getElement().getStyle().setWidth(300, Style.Unit.PX);
     }
