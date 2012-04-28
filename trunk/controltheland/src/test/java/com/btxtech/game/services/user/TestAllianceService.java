@@ -211,6 +211,12 @@ public class TestAllianceService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void addAllianceBothUnregistered() throws Exception {
+        ConnectionService mockAllianceConnectionService = EasyMock.createStrictMock(ConnectionService.class);
+        mockAllianceConnectionService.sendPacket(new SimpleBase(2), createMessage("Only registered user can form alliances.", true));
+        setPrivateField(AllianceServiceImpl.class, allianceService, "connectionService", mockAllianceConnectionService);
+        EasyMock.replay(mockAllianceConnectionService);
+
+
         configureRealGame();
 
         beginHttpSession();
@@ -225,12 +231,7 @@ public class TestAllianceService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         verifyAllianceOffers();
         verifyAlliances();
-        try {
-            allianceService.proposeAlliance(simpleBase1);
-            Assert.fail("IllegalStateException expected");
-        } catch (IllegalStateException e) {
-            // Expected
-        }
+        allianceService.proposeAlliance(simpleBase1);
         verifyAllianceOffers();
         verifyAlliances();
         try {

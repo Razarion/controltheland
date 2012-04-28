@@ -39,7 +39,8 @@ public class AllianceServiceImpl implements AllianceService {
     public void proposeAlliance(SimpleBase partner) {
         User user = userService.getUser();
         if (user == null) {
-            throw new IllegalStateException("Can not make alliance with unregistered user: " + partner);
+            sendMessage(baseService.getBase().getSimpleBase(), "Only registered user can form alliances.", true);
+            return;
         }
         User partnerUser = userService.getUser(partner);
         if (partnerUser == null) {

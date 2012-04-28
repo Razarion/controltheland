@@ -1,9 +1,9 @@
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.dialogs.AllianceOfferDialog;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
+import com.btxtech.game.jsre.client.utg.SpeechBubbleHandler;
 import com.btxtech.game.jsre.common.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 
@@ -33,7 +33,7 @@ public class ClientAllianceHandler {
         try {
             SimpleBase simpleBase = ClientBase.getInstance().getSimpleBase4Id(baseId);
             Connection.getInstance().proposeAlliance(simpleBase);
-            ItemCockpit.getInstance().deActivate();
+            SpeechBubbleHandler.getInstance().hide();
         } catch (Throwable t) {
             log.log(Level.SEVERE, "Exception in offerAlliance");
         }

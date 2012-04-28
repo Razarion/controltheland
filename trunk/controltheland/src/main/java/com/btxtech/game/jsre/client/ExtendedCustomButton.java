@@ -34,7 +34,7 @@ public class ExtendedCustomButton extends CustomButton {
         super(ImageHandler.getButtonUpImage(imageName), ImageHandler.getButtonDownImage(imageName));
         this.toggle = toggle;
         getElement().getStyle().setCursor(Style.Cursor.POINTER);
-        setTitle(toolTip);
+        setTooltip(toolTip);
     }
 
     @Override
@@ -73,4 +73,7 @@ public class ExtendedCustomButton extends CustomButton {
         }
     }
 
+    public void setTooltip(String toolTip) {
+        setTitle(toolTip);
+    }
 }
