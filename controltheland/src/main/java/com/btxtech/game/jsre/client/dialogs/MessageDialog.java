@@ -13,10 +13,12 @@
 
 package com.btxtech.game.jsre.client.dialogs;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
@@ -28,29 +30,35 @@ public class MessageDialog extends Dialog {
     private String message;
     private boolean showRegisterDialogButton;
 
-    public MessageDialog(String message) {
-        this.message = message;
+    public MessageDialog(String title, String message) {
+        this(title, message, false);
     }
 
-    public MessageDialog(String message, boolean showRegisterDialogButton) {
+    public MessageDialog(String title, String message, boolean showRegisterDialogButton) {
+        super(title);
         this.message = message;
         this.showRegisterDialogButton = showRegisterDialogButton;
     }
 
     @Override
     protected void setupPanel(VerticalPanel dialogVPanel) {
+        HTML messageWidget = new HTML(message, true);
+        messageWidget.getElement().getStyle().setWidth(17, Style.Unit.EM);
         if (showRegisterDialogButton) {
             VerticalPanel verticalPanel = new VerticalPanel();
-            verticalPanel.add(new HTML(message, false));
-            verticalPanel.add(new Button("Register", new ClickHandler() {
+            verticalPanel.add(messageWidget);
+            Button button = new Button("Register", new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
                     DialogManager.showDialog(new RegisterDialog(), DialogManager.Type.PROMPTLY);
                 }
-            }));
+            });
+            button.getElement().getStyle().setMarginTop(20, Style.Unit.PX);
+            verticalPanel.add(button);
             dialogVPanel.add(verticalPanel);
+            verticalPanel.setCellHorizontalAlignment(button, HasHorizontalAlignment.ALIGN_CENTER);
         } else {
-            dialogVPanel.add(new HTML(message, false));
+            dialogVPanel.add(messageWidget);
         }
     }
 }

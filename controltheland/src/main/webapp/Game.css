@@ -229,89 +229,128 @@ td.box {
     color: darkorange;
 }
 
-/* Dialog box */
-.ctl-DialogBox .Caption {
-    background: url(/images/gwtdialog/border_t.png) repeat-x 0px 0px;
-    height: 30px;
+/* -------------- Dialog ----------------- */
+.dialogBox {
+    font-size: 11px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.dialogBox input {
+    padding: 2px 3px;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0d2238), color-stop(1, #4095eb));
+    background: -moz-linear-gradient(center top, #0d2238 5%, #4095eb 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#0d2238', endColorstr = '#4095eb');
+    background: -o-linear-gradient(#0d2238, #4095eb);
+    background-color: #4095eb;
+    border: 1px solid #1e3a57;
+    width: 11em;
+    display: inline-block;
+    color: #C7C4BB;
+    text-decoration: none;
+    text-shadow: 1px 1px 0px #0a131c;
+}
+
+.dialogBox input:hover {
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#0d2238', endColorstr = '#4095eb');
+    background-color: #0d2238;
+}
+
+.dialogBox input:active {
+    position: relative;
+    top: 1px;
+}
+
+.dialogBox button {
+    padding: 2px 3px;
+    -moz-box-shadow: inset 0px 1px 0px 0px #9ec8f0;
+    -webkit-box-shadow: inset 0px 1px 0px 0px #9ec8f0;
+    box-shadow: inset 0px 1px 0px 0px #9ec8f0;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #4095eb), color-stop(1, #0d2238));
+    background: -moz-linear-gradient(center top, #4095eb 5%, #0d2238 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#4095eb', endColorstr = '#0d2238');
+    background: -o-linear-gradient(#4095eb, #0d2238);
+    background-color: #4095eb;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    border: 1px solid #1e3a57;
+    width: 6em;
+    display: inline-block;
+    color: #C7C4BB;
+    text-decoration: none;
+    text-shadow: 1px 1px 0px #0a131c;
+}
+
+.dialogBox button:hover {
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0d2238), color-stop(1, #4095eb));
+    background: -moz-linear-gradient(center top, #0d2238 5%, #4095eb 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#0d2238', endColorstr = '#4095eb');
+    background: -o-linear-gradient(#0d2238, #4095eb);
+    background-color: #0d2238;
+}
+
+.dialogBox button:active {
+    position: relative;
+    top: 1px;
+}
+
+.dialogBox .Caption {
+    color: #e2ded4;
+    text-decoration: none;
+    text-shadow: 1px 1px 0px #0a131c;
+    font-size: 13px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
     cursor: default;
 }
 
-.ctl-DialogBox .dialogContent {
+.dialogBox .dialogMiddleCenter {
+    background-color: #001420;
 }
 
-.ctl-DialogBox .dialogMiddleCenter {
-    background-color: #969696;
+.dialogBox .dialogTopCenter {
+    vertical-align: top;
+    padding-top: 3px;
+    height: 23px;
+    background: url(/images/dialog/topbottom.png) repeat-x 0px 0px;
 }
 
-.ctl-DialogBox .dialogBottomCenter {
-    height: 40px;
-    background: url(/images/gwtdialog/border_b.png) repeat-x 0px 0px;
+.dialogBox .dialogBottomCenter {
+    height: 17px;
+    background: url(/images/dialog/topbottom.png) 0px 17px;
 }
 
-.ctl-DialogBox .dialogMiddleLeft {
-    background: url(/images/gwtdialog/border_l.png) repeat-y 0px 0px;
-    width: 33px;
+.dialogBox .dialogMiddleLeft {
+    background: url(/images/dialog/leftright.png) 0px 0px;
+    width: 9px;
 }
 
-.ctl-DialogBox .dialogMiddleRight {
-    background: url(/images/gwtdialog/border_r.png) repeat-y 0px 0px;
-    width: 41px;
+.dialogBox .dialogMiddleRight {
+    width: 18px;
+    background: url(/images/dialog/leftright.png) 18px 0px;
 }
 
-.ctl-DialogBox .dialogTopLeftInner {
-    width: 33px;
-    height: 30px;
+.dialogBox .dialogTopLeft {
+    background: url(/images/dialog/corners.png) no-repeat 0px 0px;
 }
 
-.ctl-DialogBox .dialogTopRightInner {
-    width: 41px;
-    height: 30px;
+.dialogBox .dialogTopRight {
+    background: url(/images/dialog/corners.png) -9px 0px;
 }
 
-.ctl-DialogBox .dialogBottomLeftInner {
-    width: 33px;
-    height: 40px;
+.dialogBox .dialogBottomLeft {
+    background: url(/images/dialog/corners.png) 0px 17px;
 }
 
-.ctl-DialogBox .dialogBottomRightInner {
-    width: 41px;
-    height: 40px;
+.dialogBox .dialogBottomRight {
+    background: url(/images/dialog/corners.png) 18px 17px;
 }
 
-.ctl-DialogBox .dialogTopLeft {
-    background: url(/images/gwtdialog/corner_t_l.png) no-repeat 0px 0px;
+.dialogMiddleCenterInner {
+    font-size: 12px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #C7C4BB;
+    padding: 8px;
 }
 
-.ctl-DialogBox .dialogTopRight {
-    background: url(/images/gwtdialog/corner_t_r.png) no-repeat 0px 0px;
-}
-
-.ctl-DialogBox .dialogBottomLeft {
-    background: url(/images/gwtdialog/corner_b_l.png) no-repeat 0px 0px;
-}
-
-.ctl-DialogBox .dialogBottomRight {
-    background: url(/images/gwtdialog/corner_b_r.png) no-repeat 0px 0px;
-}
-
-* html .ctl-DialogBox .dialogTopLeftInner {
-    width: 5px;
-    overflow: hidden;
-}
-
-* html .ctl-DialogBox .dialogTopRightInner {
-    width: 8px;
-    overflow: hidden;
-}
-
-* html .ctl-DialogBox .dialogBottomLeftInner {
-    width: 5px;
-    height: 8px;
-    overflow: hidden;
-}
-
-* html .ctl-DialogBox .dialogBottomRightInner {
-    width: 8px;
-    height: 8px;
-    overflow: hidden;
-}
+/* -------------- Dialog ends----------------- */

@@ -94,7 +94,7 @@ public class BoundingBoxControl extends DecoratorPanel {
                     public void onFailure(Throwable caught) {
                         button.setEnabled(true);
                         log.log(Level.SEVERE, "saveBoundingBox call failed", caught);
-                        DialogManager.showDialog(new MessageDialog("Save failed!"), DialogManager.Type.PROMPTLY);
+                        DialogManager.showDialog(new MessageDialog("Failure", "Save failed!"), DialogManager.Type.PROMPTLY);
                     }
 
                     @Override

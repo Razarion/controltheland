@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client.dialogs;
 
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -33,16 +34,21 @@ public class AllianceDialog extends Dialog {
     private FlexTable allianceTable;
 
     public AllianceDialog() {
+        super("Alliance");
     }
 
     @Override
     protected void setupPanel(VerticalPanel dialogVPanel) {
         VerticalPanel verticalPanel = new VerticalPanel();
+        HTML html;
         if (Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE) {
-            verticalPanel.add(new HTML("All alliances you have formed with other players.<br />New alliances can be formed in the speech<br />bubble of enemy units/structures."));
+            html = new HTML("All alliances you have formed with other players. New alliances can be formed in the speech bubble of enemy units/structures.");
         } else {
-            verticalPanel.add(new HTML("All alliances you have formed with other players.<br /><b>Only available an this planet.</b>"));
+            html = new HTML("All alliances you have formed with other players. <b>Not available on this planet.</b>");
         }
+        html.getElement().getStyle().setWidth(17, Style.Unit.EM);
+        verticalPanel.add(html);
+
         allianceTable = new FlexTable();
         verticalPanel.add(allianceTable);
         dialogVPanel.add(verticalPanel);
@@ -53,16 +59,24 @@ public class AllianceDialog extends Dialog {
         if (allianceTable == null || !isVisible()) {
             return;
         }
-        for (final String alliance : alliances) {
-            int row = allianceTable.getRowCount() + 1;
-            allianceTable.setText(row, 1, alliance);
-            allianceTable.setWidget(row, 2, new Button("Break", new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    Connection.getInstance().breakAlliance(alliance);
-                    close();
-                }
-            }));
+        if (alliances == null || alliances.isEmpty()) {
+            allianceTable.setText(1, 1, "You have no alliances");
+        } else {
+            for (final String alliance : alliances) {
+                int row = allianceTable.getRowCount() + 1;
+                allianceTable.setText(row, 1, alliance);
+                Button breakButton = new Button("Break", new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        Connection.getInstance().breakAlliance(alliance);
+                        close();
+                    }
+                });
+                breakButton.getElement().getStyle().setPaddingLeft(3, Style.Unit.PX);
+                breakButton.getElement().getStyle().setPaddingRight(3, Style.Unit.PX);
+                breakButton.setWidth("auto");
+                allianceTable.setWidget(row, 2, breakButton);
+            }
         }
     }
 }

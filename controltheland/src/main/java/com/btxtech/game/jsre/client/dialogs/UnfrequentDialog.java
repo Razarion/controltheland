@@ -13,8 +13,6 @@
 
 package com.btxtech.game.jsre.client.dialogs;
 
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import java.util.HashMap;
 
 /**
@@ -22,31 +20,27 @@ import java.util.HashMap;
  * Date: Jul 2, 2009
  * Time: 3:23:47 PM
  */
-public class UnfrequentDialog extends Dialog {
+public class UnfrequentDialog extends MessageDialog {
     public enum Type {
-        NO_MONEY("You do not have enough money. You have to Collect more money", 60 * 1000),
-        ITEM_LIMIT("You have to many items. Level up to get a bigger limit", 60 * 1000),
-        SPACE_LIMIT("Space Limit Exceeded!. Build more houses to get more space", 60 * 1000);
+        NO_MONEY("No money", "You do not have enough money. You have to Collect more money.", 60 * 1000),
+        ITEM_LIMIT("Limitation", "You have to many items. Level up to get a bigger limit.", 60 * 1000),
+        SPACE_LIMIT("House space", "Space Limit Exceeded!. Build more houses to get more space.", 60 * 1000);
+        private String title;
         private String message;
         private int delay;
 
-        Type(String message, int delay) {
+        Type(String title, String message, int delay) {
+            this.title = title;
             this.message = message;
             this.delay = delay;
         }
     }
 
     private static HashMap<Type, UnfrequentDialog> dialogHashMap = new HashMap<Type, UnfrequentDialog>();
-    private String message;
     private long lastShowTimeStamp = 0;  // Can not be converted to local variable
 
     private UnfrequentDialog(Type type) {
-        this.message = type.message;
-    }
-
-    @Override
-    protected void setupPanel(VerticalPanel dialogVPanel) {
-        dialogVPanel.add(new HTML(message, false));
+        super(type.title, type.message);
     }
 
     public static void open(Type type) {

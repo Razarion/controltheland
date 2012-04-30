@@ -51,6 +51,7 @@ public class RegisterDialog extends Dialog {
     private PasswordTextBox confirmPassword;
 
     public RegisterDialog() {
+        super("Register");
         setShowCloseButton(false);
         getElement().getStyle().setWidth(300, Style.Unit.PX);
     }
@@ -107,12 +108,12 @@ public class RegisterDialog extends Dialog {
 
     private void register() {
         if (userName.getText().isEmpty() || password.getText().isEmpty() || confirmPassword.getText().isEmpty()) {
-            DialogManager.showDialog(new MessageDialog(REGISTRATION_FILLED), DialogManager.Type.STACK_ABLE);
+            DialogManager.showDialog(new MessageDialog("Registration failed", REGISTRATION_FILLED), DialogManager.Type.STACK_ABLE);
             return;
         }
 
         if (!password.getText().equals(confirmPassword.getText())) {
-            DialogManager.showDialog(new MessageDialog(REGISTRATION_MATCH), DialogManager.Type.STACK_ABLE);
+            DialogManager.showDialog(new MessageDialog("Registration failed", REGISTRATION_MATCH), DialogManager.Type.STACK_ABLE);
             return;
         }
 
@@ -120,9 +121,9 @@ public class RegisterDialog extends Dialog {
             @Override
             public void onFailure(Throwable throwable) {
                 if (throwable instanceof UserAlreadyExistsException) {
-                    DialogManager.showDialog(new MessageDialog(REGISTRATION_EXISTS), DialogManager.Type.STACK_ABLE);
+                    DialogManager.showDialog(new MessageDialog("Registration failed", REGISTRATION_EXISTS), DialogManager.Type.STACK_ABLE);
                 } else if (throwable instanceof PasswordNotMatchException) {
-                    DialogManager.showDialog(new MessageDialog(REGISTRATION_MATCH), DialogManager.Type.STACK_ABLE);
+                    DialogManager.showDialog(new MessageDialog("Registration failed", REGISTRATION_MATCH), DialogManager.Type.STACK_ABLE);
                 } else {
                     GwtCommon.handleException(throwable);
                 }

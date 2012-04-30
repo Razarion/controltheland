@@ -13,10 +13,11 @@
 
 package com.btxtech.game.jsre.client.dialogs;
 
-import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.common.Constants;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -30,9 +31,10 @@ public abstract class Dialog extends DialogBox {
     private static final String TOOL_TIP_CLOSE = "Close dialog";
     private boolean showCloseButton = true;
 
-    protected Dialog() {
+    protected Dialog(String title) {
         super(false, false);
-        setStyleName("ctl-DialogBox");
+        setText(title);
+        setStyleName("dialogBox");
     }
 
     protected void setShowCloseButton(boolean showCloseButton) {
@@ -46,15 +48,17 @@ public abstract class Dialog extends DialogBox {
         dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
         setWidget(dialogVPanel);
         if (showCloseButton) {
-            final ExtendedCustomButton closeButton = new ExtendedCustomButton("closeButton", false, TOOL_TIP_CLOSE, new ClickHandler() {
+            Button button = new Button("Close", new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
                     close();
                 }
             });
-            dialogVPanel.add(closeButton);
-            dialogVPanel.setCellHorizontalAlignment(closeButton, HasHorizontalAlignment.ALIGN_CENTER);
-            closeButton.setFocus(true);
+            button.getElement().getStyle().setMarginTop(20, Style.Unit.PX);
+            button.setTitle(TOOL_TIP_CLOSE);
+            dialogVPanel.add(button);
+            dialogVPanel.setCellHorizontalAlignment(button, HasHorizontalAlignment.ALIGN_CENTER);
+            button.setFocus(true);
         }
         center();
         getElement().getStyle().setZIndex(getZIndex());

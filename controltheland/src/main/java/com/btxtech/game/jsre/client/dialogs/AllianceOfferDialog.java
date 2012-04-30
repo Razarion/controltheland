@@ -14,10 +14,12 @@
 package com.btxtech.game.jsre.client.dialogs;
 
 import com.btxtech.game.jsre.client.Connection;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -30,6 +32,7 @@ public class AllianceOfferDialog extends Dialog {
     private String userName;
 
     public AllianceOfferDialog(String userName) {
+        super("Alliance offer");
         this.userName = userName;
         setShowCloseButton(false);
     }
@@ -41,9 +44,12 @@ public class AllianceOfferDialog extends Dialog {
         builder.append("The user <b>");
         builder.append(userName);
         builder.append("</b> has offered you an alliance.");
-        verticalPanel.add(new HTML(builder.toString()));
+        HTML html = new HTML(builder.toString());
+        html.getElement().getStyle().setWidth(17, Style.Unit.EM);
+        verticalPanel.add(html);
         HorizontalPanel buttonPanel = new HorizontalPanel();
         verticalPanel.add(buttonPanel);
+        buttonPanel.getElement().getStyle().setMarginTop(20, Style.Unit.PX);
         buttonPanel.add(new Button("Accept", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -51,6 +57,7 @@ public class AllianceOfferDialog extends Dialog {
                 close();
             }
         }));
+        buttonPanel.add(new HTML("&nbsp;&nbsp;&nbsp;"));  // Make gab between buttons
         buttonPanel.add(new Button("Reject", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -58,6 +65,7 @@ public class AllianceOfferDialog extends Dialog {
                 close();
             }
         }));
+        verticalPanel.setCellHorizontalAlignment(buttonPanel, HasHorizontalAlignment.ALIGN_CENTER);
         dialogVPanel.add(verticalPanel);
     }
 }
