@@ -78,7 +78,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
     public static final int MAX_DISCONNECTION_COUNT = 20;
     public static final int MIN_DELAY_BETWEEN_POLL = 200;
     public static final int STATISTIC_DELAY = 10000;
-    private static final String CONNECTION_DIALOG = "Lost connection to game server.<br />Try to reload the page.<br />You may have to login again.";
+    private static final String CONNECTION_DIALOG = "Lost connection to game server. Try to reload the page. You may have to login again.";
     public static final Connection INSTANCE = new Connection();
     private boolean isRegistered;
     private GameInfo gameInfo;
@@ -253,7 +253,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
                     ItemContainer.getInstance().sychronize((SyncItemInfo) packet);
                 } else if (packet instanceof Message) {
                     Message message = (Message) packet;
-                    DialogManager.showDialog(new MessageDialog("<h1>" + message.getMessage() + "</h1>", message.isShowRegisterDialog()), DialogManager.Type.QUEUE_ABLE);
+                    DialogManager.showDialog(new MessageDialog("Message", message.getMessage(), message.isShowRegisterDialog()), DialogManager.Type.QUEUE_ABLE);
                 } else if (packet instanceof AccountBalancePacket) {
                     AccountBalancePacket balancePacket = (AccountBalancePacket) packet;
                     ClientBase.getInstance().setAccountBalance(balancePacket.getAccountBalance());
@@ -414,14 +414,14 @@ public class Connection implements StartupProgressListener, ConnectionI {
             }
             movableServiceAsync = null;
             GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to HTTP status code 0: " + message);
-            DialogManager.showDialog(new MessageDialog(CONNECTION_DIALOG), DialogManager.Type.PROMPTLY);
+            DialogManager.showDialog(new MessageDialog("Connection failed", CONNECTION_DIALOG), DialogManager.Type.PROMPTLY);
             return true;
         }
 
         if (throwable instanceof NotYourBaseException) {
             movableServiceAsync = null;
             GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to NotYourBaseException: " + message);
-            DialogManager.showDialog(new MessageDialog("Not your Base: Most likely you start another<br />base in another browser window"), DialogManager.Type.PROMPTLY);
+            DialogManager.showDialog(new MessageDialog("Wrong base", "Not your Base: Most likely you start another base in another browser window"), DialogManager.Type.PROMPTLY);
             return true;
         } else if (throwable instanceof NoConnectionException) {
             GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to NoConnectionException: " + message);
@@ -573,7 +573,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
     }
 
     public void getAllAlliances(final AllianceDialog allianceDialog) {
-        if (movableServiceAsync != null) {
+        if (movableServiceAsync != null && isRegistered) {
             movableServiceAsync.getAllAlliances(new AsyncCallback<Collection<String>>() {
                 @Override
                 public void onFailure(Throwable caught) {

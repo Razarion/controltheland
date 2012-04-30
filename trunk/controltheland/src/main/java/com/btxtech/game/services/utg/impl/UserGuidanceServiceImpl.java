@@ -64,7 +64,7 @@ import java.util.Map;
  */
 @Component("userGuidanceService")
 public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionServiceListener<UserState, Integer> {
-    public static final String NO_MISSION_TARGET = "<center>There are no new mission targets.<br><h1>Please check back later</h1></center>";
+    public static final String NO_MISSION_TARGET = "<center>There are no new mission targets.<br /><h1>Please check back later</h1></center>";
     @Autowired
     private BaseService baseService;
     @Autowired

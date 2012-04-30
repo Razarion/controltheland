@@ -344,8 +344,8 @@ public class TestAllianceService extends AbstractServiceTest {
     @DirtiesContext
     public void addAlliancePartnerUnregistered() throws Exception {
         ConnectionService mockConnectionService = EasyMock.createStrictMock(ConnectionService.class);
-        mockConnectionService.sendPacket(new SimpleBase(1), createMessage("u2 offers you an alliance.<br />Only registered user can form alliances.", true));
-        mockConnectionService.sendPacket(new SimpleBase(2), createMessage("The player Base 1 is not registered.<br />Only registered user can form alliances.<br />Use the chat to persuade him to register!", false));
+        mockConnectionService.sendPacket(new SimpleBase(1), createMessage("u2 offers you an alliance. Only registered user can form alliances.", true));
+        mockConnectionService.sendPacket(new SimpleBase(2), createMessage("The player 'Base 1' is not registered. Only registered user can form alliances. Use the chat to persuade him to register!", false));
         EasyMock.replay(mockConnectionService);
         setPrivateField(AllianceServiceImpl.class, allianceService, "connectionService", mockConnectionService);
 

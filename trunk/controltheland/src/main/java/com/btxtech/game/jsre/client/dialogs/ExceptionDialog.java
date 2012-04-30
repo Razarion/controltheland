@@ -22,6 +22,7 @@ public class ExceptionDialog extends Dialog {
     private Throwable throwable;
 
     public ExceptionDialog(Throwable throwable) {
+        super("Exception");
         this.throwable = throwable;
     }
 
@@ -35,10 +36,10 @@ public class ExceptionDialog extends Dialog {
         exceptionPanel.add(new HTML("<b>" + throwable.getMessage() + "</b>", false));
         boolean isCause = false;
         Throwable tmpThrowable = throwable;
-        while(true) {
+        while (true) {
             addStackTrace(exceptionPanel, tmpThrowable, isCause);
             Throwable inner = tmpThrowable.getCause();
-            if(inner == null || inner == tmpThrowable) {
+            if (inner == null || inner == tmpThrowable) {
                 break;
             }
             tmpThrowable = inner;

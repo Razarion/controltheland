@@ -44,8 +44,8 @@ public class AllianceServiceImpl implements AllianceService {
         }
         User partnerUser = userService.getUser(partner);
         if (partnerUser == null) {
-            sendMessage(partner, user.getUsername() + " offers you an alliance.<br />Only registered user can form alliances.", true);
-            sendMessage(user, "The player " + baseService.getBaseName(partner) + " is not registered.<br />Only registered user can form alliances.<br />Use the chat to persuade him to register!", false);
+            sendMessage(partner, user.getUsername() + " offers you an alliance. Only registered user can form alliances.", true);
+            sendMessage(user, "The player '" + baseService.getBaseName(partner) + "' is not registered. Only registered user can form alliances. Use the chat to persuade him to register!", false);
             return;
         }
         if (partnerUser.getAlliances().contains(user)) {
