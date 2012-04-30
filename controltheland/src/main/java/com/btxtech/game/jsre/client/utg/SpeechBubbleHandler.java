@@ -82,29 +82,29 @@ public class SpeechBubbleHandler {
             SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
             if (ClientBase.getInstance().isMyOwnProperty(syncBaseItem)) {
                 builder.append(syncBaseItem.getBaseItemType().getDescription());
-                builder.append("</br>");
+                builder.append("<br />");
                 CmsUtil.getUrl4ItemTypePage(builder, syncItem.getItemType(), "Details");
                 if (ItemCockpit.hasItemCockpit(syncBaseItem) || syncBaseItem.hasSyncMovable()) {
-                    builder.append("</br><b>Click on it!</b>");
+                    builder.append("<br /><b>Click on it!</b>");
                 }
             } else if (ClientBase.getInstance().isBot(syncBaseItem.getBase())) {
                 builder.append("Attack this <b>enemy</b> ");
                 CmsUtil.getUrl4ItemTypePage(builder, syncItem.getItemType(), "unit!");
-                builder.append("</br>");
+                builder.append("<br />");
                 builder.append(ClientBase.getInstance().getBaseName(syncBaseItem.getBase()));
             } else if (ClientBase.getInstance().isEnemy(syncBaseItem)) {
                 builder.append("Attack this <b>enemy</b> ");
                 CmsUtil.getUrl4ItemTypePage(builder, syncItem.getItemType(), "unit!");
-                builder.append("</br>");
+                builder.append("<br />");
                 builder.append(ClientBase.getInstance().getBaseName(syncBaseItem.getBase()));
                 builder.append("<br /><a href=\"javascript:offerAlliance(");
                 builder.append(syncBaseItem.getBase().getId());
                 builder.append(");\">Offer alliance</a>");
             } else {
-                builder.append("This is in your <b>alliance</b> ");
-                CmsUtil.getUrl4ItemTypePage(builder, syncItem.getItemType(), "unit!");
-                builder.append("</br>");
+                builder.append("Alliance member ");
                 builder.append(ClientBase.getInstance().getBaseName(syncBaseItem.getBase()));
+                builder.append("<br />");
+                CmsUtil.getUrl4ItemTypePage(builder, syncItem.getItemType(), "unit");
             }
         } else {
             builder.append("Gather <b>money</b> from this ");
