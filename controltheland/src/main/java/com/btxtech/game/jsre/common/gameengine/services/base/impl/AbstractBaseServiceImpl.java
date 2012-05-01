@@ -216,6 +216,16 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         BaseAttributes baseAttributes1 = getBaseAttributes(simpleBase1);
         BaseAttributes baseAttributes2 = getBaseAttributes(simpleBase2);
 
+        if (baseAttributes1 == null) {
+            log.warning("AbstractBaseServiceImpl.isEnemy() baseAttributes1 == null for base: " + simpleBase1);
+            return true;
+        }
+
+        if (baseAttributes2 == null) {
+            log.warning("AbstractBaseServiceImpl.isEnemy() baseAttributes2 == null for base: " + simpleBase2);
+            return true;
+        }
+
         return !(baseAttributes1.isBot() && baseAttributes2.isBot())
                 && (baseAttributes1.isBot() != baseAttributes2.isBot() || !baseAttributes1.isAlliance(baseAttributes2));
     }

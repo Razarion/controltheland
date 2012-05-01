@@ -21,6 +21,9 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.user.client.Timer;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * User: beat
  * Date: 06.04.2010
@@ -33,6 +36,7 @@ public class RadarItemView extends MiniMap {
     public static final int BASE_ITEM_SIZE = 2;
     public static final int OWN_BASE_ITEM_SIZE = 3;
     public static final int RESOURCE_ITEM_SIZE = 1;
+    private Logger log = Logger.getLogger(RadarItemView.class.getName());
 
     public RadarItemView(int width, int height) {
         super(width, height, false);
@@ -45,7 +49,11 @@ public class RadarItemView extends MiniMap {
 
             @Override
             public void run() {
-                refreshItems();
+                try {
+                    refreshItems();
+                } catch (Throwable t) {
+                    log.log(Level.SEVERE, "Exception in RadarItemView Timer", t);
+                }
             }
         };
         timer.scheduleRepeating(1000);
