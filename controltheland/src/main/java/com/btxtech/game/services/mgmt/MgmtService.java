@@ -45,10 +45,6 @@ public interface MgmtService {
 
     void deleteBackupEntry(final Date date) throws NoSuchItemTypeException;
 
-    boolean isTestMode();
-
-    boolean isNoGameEngine();
-
     StartupData getStartupData();
 
     StartupData readStartupData();

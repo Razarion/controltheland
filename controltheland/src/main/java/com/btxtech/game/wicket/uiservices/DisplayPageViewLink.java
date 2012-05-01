@@ -1,12 +1,11 @@
 package com.btxtech.game.wicket.uiservices;
 
-import com.btxtech.game.services.mgmt.MgmtService;
+import com.btxtech.game.services.common.Utils;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.debug.PageView;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
  * User: beat
@@ -14,8 +13,6 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Time: 14:54:17
  */
 public class DisplayPageViewLink extends Panel {
-    @SpringBean
-    private MgmtService mgmtService;
 
     public DisplayPageViewLink(String id, final Page page) {
         super(id);
@@ -34,6 +31,6 @@ public class DisplayPageViewLink extends Panel {
 
     @Override
     public boolean isVisible() {
-        return mgmtService.isTestMode();
+        return Utils.isTestModeStatic();
     }
 }

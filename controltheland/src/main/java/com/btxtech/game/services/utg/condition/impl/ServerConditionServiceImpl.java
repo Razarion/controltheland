@@ -28,12 +28,10 @@ import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.condition.DbGenericComparisonValue;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.stereotype.Component;
@@ -56,19 +54,15 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
     @Autowired
     private BaseService baseService;
     @Autowired
-    private UserGuidanceService userGuidanceService;
-    @Autowired
     private UserService userService;
     @Autowired
     private ItemService itemService;
     @Autowired
     private ServerServices serverServices;
     @Autowired
-    private SessionFactory sessionFactory;
-    @Autowired
     private ConnectionService connectionService;
     private long rate = 10000;
-    private final Map<UserState, Collection<AbstractConditionTrigger<UserState, Integer>>> triggerMap = new HashMap<UserState, Collection<AbstractConditionTrigger<UserState, Integer>>>();
+    private final Map<UserState, Collection<AbstractConditionTrigger<UserState, Integer>>> triggerMap = new HashMap<>();
     private ScheduledThreadPoolExecutor timer = new ScheduledThreadPoolExecutor(1, new CustomizableThreadFactory("ServerConditionServiceImpl timer "));
     private static Log log = LogFactory.getLog(ServerConditionServiceImpl.class);
     private ScheduledFuture scheduledFuture;
@@ -87,7 +81,7 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
         synchronized (triggerMap) {
             Collection<AbstractConditionTrigger<UserState, Integer>> conditions = triggerMap.get(abstractConditionTrigger.getActor());
             if (conditions == null) {
-                conditions = new ArrayList<AbstractConditionTrigger<UserState, Integer>>();
+                conditions = new ArrayList<>();
                 triggerMap.put(abstractConditionTrigger.getActor(), conditions);
             }
             conditions.add(abstractConditionTrigger);
@@ -139,7 +133,7 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
 
     @Override
     protected Collection<AbstractConditionTrigger<UserState, Integer>> removeAllActorConditionsPrivate(UserState userState) {
-        Collection<AbstractConditionTrigger<UserState, Integer>> removed = new ArrayList<AbstractConditionTrigger<UserState, Integer>>();
+        Collection<AbstractConditionTrigger<UserState, Integer>> removed = new ArrayList<>();
         synchronized (triggerMap) {
             Collection<AbstractConditionTrigger<UserState, Integer>> conditions = triggerMap.remove(userState);
             if (conditions != null) {
@@ -171,7 +165,7 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
         if (abstractConditionTrigger == null) {
             return null;
         }
-        Collection<AbstractConditionTrigger<UserState, Integer>> result = new ArrayList<AbstractConditionTrigger<UserState, Integer>>();
+        Collection<AbstractConditionTrigger<UserState, Integer>> result = new ArrayList<>();
         for (AbstractConditionTrigger<UserState, Integer> condition : abstractConditionTrigger) {
             if (condition.getConditionTrigger() == conditionTrigger) {
                 result.add(condition);
@@ -288,7 +282,7 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
                     }
                 }
             } catch (Exception e) {
-                log.error("Can not restore user: " + userState, e);
+                log.error("Can not backup user: " + userState, e);
             }
 
         }

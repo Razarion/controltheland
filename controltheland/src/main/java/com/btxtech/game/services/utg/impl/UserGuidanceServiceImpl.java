@@ -94,14 +94,13 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     public void init() {
         crudQuestHub.init(DbQuestHub.class, "orderIndex", true, true, null);
         serverConditionService.setConditionServiceListener(this);
-    }
-
-    @Override
-    public void init2() {
         try {
+            HibernateUtil.openSession4InternalCall(sessionFactory);
             activateLevels();
         } catch (Throwable t) {
             log.error("", t);
+        } finally {
+            HibernateUtil.closeSession4InternalCall(sessionFactory);
         }
     }
 
@@ -220,7 +219,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         ConditionConfig levelCondition = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(null, dbLevel.getXp(), null));
         serverConditionService.activateCondition(levelCondition, userState, null);
         for (DbLevelTask dbLevelTask : dbLevel.getLevelTaskCrud().readDbChildren()) {
-            if (dbLevelTask.getDbTutorialConfig() != null && (!levelTaskDone.containsKey(userState) || levelTaskDone.get(userState).contains(dbLevelTask))) {
+            if (dbLevelTask.getDbTutorialConfig() != null && (!levelTaskDone.containsKey(userState) || levelTaskDone.get(userState).contains(dbLevelTask.getId()))) {
                 serverConditionService.activateCondition(dbLevelTask.createConditionConfig(itemService), userState, dbLevelTask.getId());
                 addLevelTaskActive(userState, dbLevelTask);
             }
@@ -502,8 +501,12 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     @Override
     public void restoreBackup(Map<DbUserState, UserState> userStates) {
         serverConditionService.deactivateAll();
+        synchronized (levelTaskActive) {
+            levelTaskActive.clear();
+        }
         synchronized (levelTaskDone) {
             levelTaskDone.clear();
+            levelTaskActive.clear();
             for (Map.Entry<DbUserState, UserState> entry : userStates.entrySet()) {
                 try {
                     if (entry.getKey().getLevelTasksDone() != null) {
@@ -514,7 +517,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
                     activateConditionsRestore(entry.getValue(), getDbLevel(entry.getValue()), entry.getKey().getLevelTasksActive());
                     serverConditionService.restoreBackup(entry.getKey(), entry.getValue());
                 } catch (Exception e) {
-                    log.error("Can not restore user: " + userStates, e);
+                    log.error("Can not restore user: " + entry.getValue().getUser(), e);
                 }
             }
         }

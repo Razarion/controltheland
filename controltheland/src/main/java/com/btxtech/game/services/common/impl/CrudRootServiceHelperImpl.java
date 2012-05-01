@@ -26,6 +26,7 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +45,7 @@ import java.util.Map;
  */
 @Component(value = "crudRootServiceHelper")
 @Scope("prototype")
+@DependsOn("userService")
 public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootServiceHelper<T> {
     private Class<T> childClass;
     private String orderColumn;
