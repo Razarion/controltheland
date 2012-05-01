@@ -2,7 +2,6 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.ChatListener;
 import com.btxtech.game.jsre.client.common.ChatMessage;
-import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.google.gwt.user.client.Timer;
 
 import java.util.List;
@@ -122,14 +121,7 @@ public class ClientChatHandler {
     }
 
     public void sendMessage(String text) {
-        String name;
-        if (connection.getGameEngineMode() == GameEngineMode.SLAVE) {
-            name = ClientBase.getInstance().getOwnBaseName();
-        } else {
-            name = "lvl" + ClientLevelHandler.getInstance().getLevelScope().getNumber();
-        }
         ChatMessage chatMessage = new ChatMessage();
-        chatMessage.setName(name);
         chatMessage.setMessage(text);
         connection.sendChatMessage(chatMessage);
     }

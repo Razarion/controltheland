@@ -142,8 +142,7 @@ public class TestChatMessageQueue {
     private void addMessage(String message, String name, ChatMessageQueue chatMessageQueue) {
         ChatMessage m1 = new ChatMessage();
         m1.setMessage(message);
-        m1.setName(name);
-        chatMessageQueue.putMessagesAndSetId(m1);
+        chatMessageQueue.initAndPutMessage(name, m1);
     }
 
     public static void assertMessage(String message, String name, ChatMessage chatMessage) {

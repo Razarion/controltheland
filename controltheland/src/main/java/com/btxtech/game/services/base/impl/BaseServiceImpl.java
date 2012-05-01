@@ -231,7 +231,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         return base;
     }
 
-    private boolean hasBase() {
+    @Override
+    public boolean hasBase() {
         return userService.getUserState().getBase() != null;
     }
 
