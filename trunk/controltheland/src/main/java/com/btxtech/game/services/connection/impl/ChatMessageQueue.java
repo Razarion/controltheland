@@ -34,11 +34,12 @@ public class ChatMessageQueue {
         }
     }
 
-    public void putMessagesAndSetId(ChatMessage chatMessage) {
+    public void initAndPutMessage(String name, ChatMessage chatMessage) {
         synchronized (queue) {
             while (queue.size() >= OFFLINE_CHAT_QUEUE_SIZE) {
                 queue.removeLast();
             }
+            chatMessage.setName(name);
             chatMessage.setMessageId(lastMessageId);
             queue.addFirst(chatMessage);
             lastMessageId++;

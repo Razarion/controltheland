@@ -50,6 +50,8 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     Base getBase();
 
+    boolean hasBase();
+
     Base getBaseCms();
 
     Base createNewBase(UserState userState, DbBaseItemType dbBaseItemType, Territory territory, int startItemFreeRange) throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException;

@@ -29,6 +29,7 @@ import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.ConnectionStatistics;
 import com.btxtech.game.services.connection.Session;
+import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import org.apache.commons.logging.Log;
@@ -143,7 +144,16 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
 
     @Override
     public void sendChatMessage(ChatMessage chatMessage) {
-        chatMessageQueue.putMessagesAndSetId(chatMessage);
+        User user = userService.getUser();
+        String name;
+        if (user != null) {
+            name = user.getUsername();
+        } else if (baseService.hasBase()) {
+            name = baseService.getBaseName(baseService.getBase().getSimpleBase());
+        } else {
+            name = "Guest";
+        }
+        chatMessageQueue.initAndPutMessage(name, chatMessage);
         sendPacket(chatMessage);
         userTrackingService.trackChatMessage(chatMessage);
     }
