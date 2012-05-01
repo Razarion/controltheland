@@ -4,17 +4,23 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.DbQuestHub;
 import com.btxtech.game.services.utg.LevelQuest;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.XpService;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
+import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +41,10 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
     private BaseService baseService;
     @Autowired
     private ServerConditionService serverConditionService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private XpService xpService;
 
     @Test
     @DirtiesContext
@@ -100,6 +110,70 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         Assert.assertTrue(userGuidanceService.isStartRealGame());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void levelUpUserOfflinePassivelyAttacksOtherUnit() throws Exception {
+        BaseItemType mockBaseItemType = EasyMock.createStrictMock(BaseItemType.class);
+        EasyMock.expect(mockBaseItemType.getPrice()).andReturn(1000);
+
+        SyncBaseItem mockSyncBaseItem = EasyMock.createStrictMock(SyncBaseItem.class);
+        EasyMock.expect(mockSyncBaseItem.getBaseItemType()).andReturn(mockBaseItemType);
+        EasyMock.replay(mockBaseItemType, mockSyncBaseItem);
+
+        configureGameMultipleLevel();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("u1", "xxx", "xxx", "");
+        userService.login("u1", "xxx");
+        UserState userState = userService.getUserState();
+        userGuidanceService.promote(userState, TEST_LEVEL_2_REAL_ID);
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(2000, 2000), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        sendMoveCommand(getFirstSynItemId(TEST_ATTACK_ITEM_ID), new Index(500, 500));
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Condition: 220 XP
+        Assert.assertEquals(TEST_LEVEL_2_REAL_ID, userState.getDbLevelId());
+        xpService.onItemKilled(baseService.getBase(userState), mockSyncBaseItem);
+        Thread.sleep(100);
+        Assert.assertEquals(TEST_LEVEL_3_REAL_ID, userState.getDbLevelId());
+    }
+
+    @Test
+    @DirtiesContext
+    public void levelUpUserOfflineReward() throws Exception {
+        configureGameMultipleLevel();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("u1", "xxx", "xxx", "");
+        userService.login("u1", "xxx");
+        UserState userState = userService.getUserState();
+        userGuidanceService.promote(userState, TEST_LEVEL_2_REAL_ID);
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(2000, 2000), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        sendMoveCommand(getFirstSynItemId(TEST_ATTACK_ITEM_ID), new Index(500, 500));
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Condition: 220 XP
+        Assert.assertEquals(TEST_LEVEL_2_REAL_ID, userState.getDbLevelId());
+        xpService.onReward(userState, 200);
+        Assert.assertEquals(TEST_LEVEL_2_REAL_ID, userState.getDbLevelId());
+        xpService.onReward(userState, 17);
+        Assert.assertEquals(TEST_LEVEL_2_REAL_ID, userState.getDbLevelId());
+        xpService.onReward(userState, 1);
+        Assert.assertEquals(TEST_LEVEL_3_REAL_ID, userState.getDbLevelId());
     }
 
     @Test

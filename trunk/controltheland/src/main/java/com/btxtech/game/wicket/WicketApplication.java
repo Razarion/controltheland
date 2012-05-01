@@ -14,8 +14,8 @@
 package com.btxtech.game.wicket;
 
 import com.btxtech.game.jsre.common.CmsUtil;
+import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.connection.Session;
-import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsCssResource;
 import com.btxtech.game.wicket.pages.cms.CmsImageResource;
@@ -49,8 +49,6 @@ import org.springframework.stereotype.Component;
 public class WicketApplication extends AuthenticatedWebApplication {
     @Autowired
     private Session session;
-    @Autowired
-    private MgmtService mgmtService;
     private String configurationType;
     private Log log = LogFactory.getLog(WicketApplication.class);
     @Autowired
@@ -87,7 +85,7 @@ public class WicketApplication extends AuthenticatedWebApplication {
     @Override
     public String getConfigurationType() {
         if (configurationType == null) {
-            if (mgmtService.isTestMode()) {
+            if (Utils.isTestModeStatic()) {
                 configurationType = Application.DEVELOPMENT;
             } else {
                 configurationType = Application.DEPLOYMENT;
@@ -97,7 +95,7 @@ public class WicketApplication extends AuthenticatedWebApplication {
     }
 
     public final RequestCycle newRequestCycle(final Request request, final Response response) {
-        if (mgmtService.isTestMode()) {
+        if (Utils.isTestModeStatic()) {
             return super.newRequestCycle(request, response);
         } else {
             return new MyRequestCycle(this, (WebRequest) request, response);

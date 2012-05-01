@@ -46,8 +46,6 @@ public interface UserGuidanceService extends CommonUserGuidanceService {
 
     void activateLevels() throws LevelActivationException;
 
-    void init2();
-
     void createBaseInQuestHub(UserState userState) throws InvalidLevelState;
 
     void sendResurrectionMessage(SimpleBase simpleBase);

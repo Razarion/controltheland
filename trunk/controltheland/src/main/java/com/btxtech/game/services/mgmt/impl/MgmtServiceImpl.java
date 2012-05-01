@@ -14,14 +14,9 @@
 package com.btxtech.game.services.mgmt.impl;
 
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.services.action.ActionService;
-import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.common.HibernateUtil;
-import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.common.Utils;
-import com.btxtech.game.services.energy.ServerEnergyService;
-import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.BackupSummary;
 import com.btxtech.game.services.mgmt.DbViewDTO;
 import com.btxtech.game.services.mgmt.MemoryUsageHistory;
@@ -29,7 +24,6 @@ import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.resource.ResourceService;
 import com.btxtech.game.services.user.SecurityRoles;
-import com.btxtech.game.services.utg.UserGuidanceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Level;
@@ -42,11 +36,7 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.SmartLifecycle;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
@@ -74,7 +64,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -84,7 +73,7 @@ import java.util.concurrent.TimeUnit;
  * Time: 1:59:59 PM
  */
 @Component("mgmtService")
-public class MgmtServiceImpl implements MgmtService, ApplicationListener {
+public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
     public static final String LOG_DIR_NAME = "logs";
     public static final File LOG_DIR;
     private static final int MEMORY_SAMPLE_SIZE = 200;
@@ -92,34 +81,19 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     private Date startTime = new Date();
     private JdbcTemplate readonlyJdbcTemplate;
     @Autowired
-    private ItemService itemService;
-    @Autowired
-    private BaseService baseService;
-    @Autowired
-    private ServerServices services;
-    @Autowired
-    private ActionService actionService;
-    @Autowired
-    private ServerEnergyService serverEnergyService;
-    @Autowired
     private BotService botService;
     @Autowired
     private ResourceService resourceService;
-    @Autowired
-    private UserGuidanceService userGuidanceService;
-    @Autowired
-    private ApplicationContext applicationContext;
     @Autowired
     private GenericItemConverter genericItemConverter;
     @Autowired
     private SessionFactory sessionFactory;
     private static Log log = LogFactory.getLog(MgmtServiceImpl.class);
-    private boolean testMode;
-    private boolean noGameEngine;
     private StartupData startupData;
     private MemoryUsageContainer heapMemory = new MemoryUsageContainer(MEMORY_SAMPLE_SIZE);
     private MemoryUsageContainer noHeapMemory = new MemoryUsageContainer(MEMORY_SAMPLE_SIZE);
     private ScheduledThreadPoolExecutor memoryGrabberThreadPool;
+    private boolean isRunning = false;
 
     static {
         File tmpLogDir = null;
@@ -214,7 +188,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     public List<String> getSavedQueris() {
         @SuppressWarnings("unchecked")
         List<SavedQuery> list = HibernateUtil.loadAll(sessionFactory, SavedQuery.class);
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
         for (SavedQuery savedQuery : list) {
             result.add(savedQuery.getQuery());
         }
@@ -267,7 +241,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         criteriaEntries.setProjection(entryProjectionList);
         criteriaEntries.addOrder(Order.desc("timeStamp"));
 
-        ArrayList<BackupSummary> result = new ArrayList<BackupSummary>();
+        ArrayList<BackupSummary> result = new ArrayList<>();
         for (Object[] objects : (Collection<Object[]>) criteriaEntries.list()) {
             Date date = new Date(((Timestamp) objects[0]).getTime());
             result.add(new BackupSummary(date, (Long) objects[1], (Long) objects[2], (Long) objects[3]));
@@ -328,49 +302,16 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         }
     }
 
-    @Override
-    public void onApplicationEvent(ApplicationEvent applicationEvent) {
-        if (noGameEngine) {
-            return;
-        }
-        if (applicationEvent instanceof ContextRefreshedEvent &&
-                applicationEvent.getSource() instanceof AbstractApplicationContext &&
-                ((AbstractApplicationContext) applicationEvent.getSource()).getParent() == null) {
-            HibernateUtil.openSession4InternalCall(sessionFactory);
-            try {
-                userGuidanceService.init2();
-                List<BackupSummary> backupSummaries = getBackupSummary();
-                if (!backupSummaries.isEmpty()) {
-                    try {
-                        restore(backupSummaries.get(0).getDate());
-                    } catch (Exception e) {
-                        log.error("", e);
-                    }
-                }
-                resourceService.activate();
-                botService.activate();
-            } catch (Throwable t) {
-                log.error("", t);
-            } finally {
-                HibernateUtil.closeSession4InternalCall(sessionFactory);
-            }
-        }
-    }
-
     @PreDestroy
     @Transactional
     public void shutdown() {
         try {
-            HibernateUtil.openSession4InternalCall(sessionFactory);
-            backup();
             if (memoryGrabberThreadPool != null) {
                 memoryGrabberThreadPool.shutdownNow();
                 memoryGrabberThreadPool = null;
             }
         } catch (Throwable t) {
             log.error("", t);
-        } finally {
-            HibernateUtil.closeSession4InternalCall(sessionFactory);
         }
     }
 
@@ -378,11 +319,9 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     public void startup() {
         HibernateUtil.openSession4InternalCall(sessionFactory);
         try {
-            testMode = Utils.isTestModeStatic();
-            if (!testMode) {
+            if (!Utils.isTestModeStatic()) {
                 LogManager.getLogger("com.btxtech").setLevel(Level.INFO);
             }
-            noGameEngine = System.getProperty(Utils.TEST_MODE_NO_GAME_ENGINE) != null && Boolean.parseBoolean(System.getProperty(Utils.TEST_MODE_NO_GAME_ENGINE));
             startupData = readStartupData();
         } catch (Throwable t) {
             log.error("", t);
@@ -423,16 +362,6 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     }
 
     @Override
-    public boolean isTestMode() {
-        return testMode;
-    }
-
-    @Override
-    public boolean isNoGameEngine() {
-        return noGameEngine;
-    }
-
-    @Override
     public MemoryUsageHistory getHeapMemoryUsageHistory() {
         return heapMemory.generateMemoryUsageHistory();
     }
@@ -440,6 +369,70 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     @Override
     public MemoryUsageHistory getNoHeapMemoryUsageHistory() {
         return noHeapMemory.generateMemoryUsageHistory();
+    }
+
+    @Override
+    public boolean isAutoStartup() {
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public void stop(Runnable callback) {
+        // Stop can have already an session open
+        try {
+            if (HibernateUtil.hasOpenSession(sessionFactory)) {
+                backup();
+            } else {
+                HibernateUtil.openSession4InternalCall(sessionFactory);
+                try {
+                    backup();
+                } finally {
+                    HibernateUtil.closeSession4InternalCall(sessionFactory);
+                }
+            }
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+        isRunning = false;
+        callback.run();
+    }
+
+    @Override
+    public void start() {
+        HibernateUtil.openSession4InternalCall(sessionFactory);
+        try {
+            List<BackupSummary> backupSummaries = getBackupSummary();
+            if (!backupSummaries.isEmpty()) {
+                try {
+                    restore(backupSummaries.get(0).getDate());
+                } catch (Exception e) {
+                    log.error("", e);
+                }
+            }
+            resourceService.activate();
+            botService.activate();
+            isRunning = true;
+        } catch (Throwable t) {
+            log.error("", t);
+        } finally {
+            HibernateUtil.closeSession4InternalCall(sessionFactory);
+        }
+    }
+
+    @Override
+    public void stop() {
+        // Is not called because it is an SmartLifecycle implementation
+    }
+
+    @Override
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    @Override
+    public int getPhase() {
+        return Integer.MAX_VALUE;
     }
 }
 

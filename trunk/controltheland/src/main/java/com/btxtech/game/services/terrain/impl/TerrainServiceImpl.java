@@ -14,16 +14,14 @@
 package com.btxtech.game.services.terrain.impl;
 
 import com.btxtech.game.jsre.client.common.info.GameInfo;
-import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImageBackground;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
-import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
-import com.btxtech.game.services.mgmt.MgmtService;
+import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbSurfaceRect;
 import com.btxtech.game.services.terrain.DbTerrainImage;
@@ -33,7 +31,6 @@ import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.user.SecurityRoles;
-import com.btxtech.game.services.utg.UserGuidanceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
@@ -58,30 +55,22 @@ import java.util.Map;
 @Component
 public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements TerrainService {
     @Autowired
-    private UserGuidanceService userGuidanceService;
-    @Autowired
-    private CollisionService collisionService;
-    @Autowired
-    private ItemService itemService;
-    @Autowired
     private CrudRootServiceHelper<DbTerrainSetting> dbTerrainSettingCrudServiceHelper;
     @Autowired
     private CrudRootServiceHelper<DbTerrainImageGroup> dbTerrainImageGroupCrudRootServiceHelper;
     @Autowired
     private CrudRootServiceHelper<DbSurfaceImage> dbSurfaceImageCrudServiceHelper;
     @Autowired
-    private MgmtService mgmtService;
-    @Autowired
     private SessionFactory sessionFactory;
 
-    private HashMap<Integer, DbTerrainImage> dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
-    private HashMap<Integer, DbSurfaceImage> dbSurfaceImages = new HashMap<Integer, DbSurfaceImage>();
+    private HashMap<Integer, DbTerrainImage> dbTerrainImages = new HashMap<>();
+    private HashMap<Integer, DbSurfaceImage> dbSurfaceImages = new HashMap<>();
     private Log log = LogFactory.getLog(TerrainServiceImpl.class);
     private TerrainImageBackground terrainImageBackground;
 
     @PostConstruct
     public void init() {
-        if (mgmtService.isNoGameEngine()) {
+        if (Utils.NO_GAME_ENGINE) {
             return;
         }
         dbTerrainImageGroupCrudRootServiceHelper.init(DbTerrainImageGroup.class);
@@ -135,7 +124,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         terrainImageBackground = new TerrainImageBackground();
         Collection<DbTerrainImageGroup> imageGroupList = dbTerrainImageGroupCrudRootServiceHelper.readDbChildren();
         clearTerrainImages();
-        dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
+        dbTerrainImages = new HashMap<>();
         for (DbTerrainImageGroup dbTerrainImageGroup : imageGroupList) {
             Collection<DbTerrainImage> imageList = dbTerrainImageGroup.getTerrainImageCrud().readDbChildren();
             for (DbTerrainImage dbTerrainImage : imageList) {
@@ -148,7 +137,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         // Surface images
         Collection<DbSurfaceImage> surfaceList = dbSurfaceImageCrudServiceHelper.readDbChildren();
         clearSurfaceImages();
-        dbSurfaceImages = new HashMap<Integer, DbSurfaceImage>();
+        dbSurfaceImages = new HashMap<>();
         for (DbSurfaceImage dbSurfaceImage : surfaceList) {
             dbSurfaceImages.put(dbSurfaceImage.getId(), dbSurfaceImage);
             putSurfaceImage(dbSurfaceImage.createSurfaceImage());
@@ -212,13 +201,13 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         DbTerrainSetting dbTerrainSetting = dbTerrainSettingCrudServiceHelper.readDbChild(terrainId);
 
         // Terrain Image Position
-        Map<ImagePositionKey, TerrainImagePosition> newImagePosition = new HashMap<ImagePositionKey, TerrainImagePosition>(terrainImagePositions.size());
+        Map<ImagePositionKey, TerrainImagePosition> newImagePosition = new HashMap<>(terrainImagePositions.size());
         for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
             newImagePosition.put(new ImagePositionKey(terrainImagePosition), terrainImagePosition);
         }
         Collection<DbTerrainImagePosition> dbTerrainImagePositions = dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().readDbChildren();
         // Remove Same
-        for (Iterator<DbTerrainImagePosition> iterator = dbTerrainImagePositions.iterator(); iterator.hasNext();) {
+        for (Iterator<DbTerrainImagePosition> iterator = dbTerrainImagePositions.iterator(); iterator.hasNext(); ) {
             DbTerrainImagePosition dbTerrainImagePosition = iterator.next();
             ImagePositionKey key = new ImagePositionKey(dbTerrainImagePosition);
             if (newImagePosition.containsKey(key)) {
@@ -234,13 +223,13 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         }
 
         // Surface Rects
-        Map<SurfaceRectKey, SurfaceRect> newSurfaceRect = new HashMap<SurfaceRectKey, SurfaceRect>(surfaceRects.size());
+        Map<SurfaceRectKey, SurfaceRect> newSurfaceRect = new HashMap<>(surfaceRects.size());
         for (SurfaceRect surfaceRect : surfaceRects) {
             newSurfaceRect.put(new SurfaceRectKey(surfaceRect), surfaceRect);
         }
         Collection<DbSurfaceRect> dbSurfaceRects = dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().readDbChildren();
         // Remove Same
-        for (Iterator<DbSurfaceRect> iterator = dbSurfaceRects.iterator(); iterator.hasNext();) {
+        for (Iterator<DbSurfaceRect> iterator = dbSurfaceRects.iterator(); iterator.hasNext(); ) {
             DbSurfaceRect dbSurfaceRect = iterator.next();
             SurfaceRectKey key = new SurfaceRectKey(dbSurfaceRect);
             if (newSurfaceRect.containsKey(key)) {
@@ -290,7 +279,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     }
 
     private Collection<TerrainImagePosition> getTerrainImagePositions(DbTerrainSetting dbTerrainSetting) {
-        ArrayList<TerrainImagePosition> result = new ArrayList<TerrainImagePosition>();
+        ArrayList<TerrainImagePosition> result = new ArrayList<>();
         for (DbTerrainImagePosition dbTerrainImagePosition : dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().readDbChildren()) {
             result.add(dbTerrainImagePosition.createTerrainImagePosition());
         }
@@ -298,7 +287,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     }
 
     private Collection<SurfaceRect> getSurfaceRects(DbTerrainSetting dbTerrainSetting) {
-        ArrayList<SurfaceRect> result = new ArrayList<SurfaceRect>();
+        ArrayList<SurfaceRect> result = new ArrayList<>();
         for (DbSurfaceRect dbSurfaceRect : dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().readDbChildren()) {
             result.add(dbSurfaceRect.createSurfaceRect());
         }

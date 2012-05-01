@@ -24,8 +24,8 @@ import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.collision.CollisionServiceChangedListener;
 import com.btxtech.game.services.common.ServerServices;
+import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.terrain.TerrainService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,17 +49,15 @@ public class CollisionServiceImpl extends CommonCollisionServiceImpl implements 
     @Autowired
     private ItemService itemService;
     @Autowired
-    private MgmtService mgmtService;
-    @Autowired
     private BotService botService;
     @Autowired
     private ServerServices serverServices;
     private Log log = LogFactory.getLog(CollisionServiceImpl.class);
-    private ArrayList<CollisionServiceChangedListener> collisionServiceChangedListeners = new ArrayList<CollisionServiceChangedListener>();
+    private ArrayList<CollisionServiceChangedListener> collisionServiceChangedListeners = new ArrayList<>();
 
     @PostConstruct
     public void init() {
-        if (mgmtService.isNoGameEngine()) {
+        if (Utils.NO_GAME_ENGINE) {
             return;
         }
         try {
@@ -88,7 +86,7 @@ public class CollisionServiceImpl extends CommonCollisionServiceImpl implements 
         }
 
         Random random = new Random();
-        List<Rectangle> territoryRectangles = new ArrayList<Rectangle>(territory.getTerritoryTileRegions());
+        List<Rectangle> territoryRectangles = new ArrayList<>(territory.getTerritoryTileRegions());
 
         for (int i = 0; i < MAX_TRIES; i++) {
             int territoryRectIndex = random.nextInt(territoryRectangles.size());

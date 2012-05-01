@@ -34,7 +34,7 @@ public class Utils {
     // VM parameters
     public static final String TEST_MODE_PROPERTY = "testmode";
     public static final String TEST_MODE_NO_GAME_ENGINE = "noGameEngine";
-
+    public static final boolean NO_GAME_ENGINE = System.getProperty(Utils.TEST_MODE_NO_GAME_ENGINE) != null && Boolean.parseBoolean(System.getProperty(Utils.TEST_MODE_NO_GAME_ENGINE));
     public static final String DELIMITER = ";";
 
     private static Log log = LogFactory.getLog(Utils.class);
@@ -43,7 +43,7 @@ public class Utils {
         if (s == null) {
             return Collections.emptyList();
         }
-        Collection<Integer> result = new ArrayList<Integer>();
+        Collection<Integer> result = new ArrayList<>();
         StringTokenizer st = new StringTokenizer(s, DELIMITER);
         while (st.hasMoreTokens()) {
             int id = Integer.parseInt(st.nextToken());
@@ -57,7 +57,7 @@ public class Utils {
             return "";
         }
         StringBuilder builder = new StringBuilder();
-        for (Iterator<Integer> iterator = integers.iterator(); iterator.hasNext();) {
+        for (Iterator<Integer> iterator = integers.iterator(); iterator.hasNext(); ) {
             Integer integer = iterator.next();
             builder.append(integer);
             if (iterator.hasNext()) {
@@ -77,7 +77,7 @@ public class Utils {
     }
 
     public static Collection<Integer> dbBaseItemTypesToInts(Collection<DbBaseItemType> items) {
-        ArrayList<Integer> ints = new ArrayList<Integer>();
+        ArrayList<Integer> ints = new ArrayList<>();
         if (items == null) {
             return ints;
         }
@@ -95,5 +95,5 @@ public class Utils {
             e.printStackTrace();
         }
     }
-    
+
 }
