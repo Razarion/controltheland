@@ -42,7 +42,7 @@ public class GwtCommon {
     public static void setUncaughtExceptionHandler() {
         GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
             public void onUncaughtException(Throwable t) {
-                handleException(t);
+                handleException("GWT uncaught exception handler", t);
             }
         });
     }
@@ -165,7 +165,9 @@ public class GwtCommon {
     }
 
     public static native void disableBrowserContextMenuJSNI() /*-{
-        $doc.oncontextmenu = function() { return false; };
+        $doc.oncontextmenu = function () {
+            return false;
+        };
     }-*/;
 
     /*
@@ -177,7 +179,7 @@ public class GwtCommon {
     }
 
     native public static void closeWindow()/*-{
-        $wnd.close(); 
+        $wnd.close();
     }-*/;
 
 
