@@ -286,7 +286,7 @@ public class HistoryServiceImpl implements HistoryService {
     @Override
     @SuppressWarnings("unchecked")
     public List<DisplayHistoryElement> getNewestHistoryElements(final User user, final int count) {
-        ArrayList<DisplayHistoryElement> displayHistoryElements = new ArrayList<DisplayHistoryElement>();
+        ArrayList<DisplayHistoryElement> displayHistoryElements = new ArrayList<>();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbHistoryElement.class);
         criteria.setMaxResults(count);
         criteria.add(Restrictions.or(Restrictions.eq("actorUserName", user.getUsername()), Restrictions.eq("targetUserName", user.getUsername())));
@@ -301,7 +301,7 @@ public class HistoryServiceImpl implements HistoryService {
     @Override
     @SuppressWarnings("unchecked")
     public List<DisplayHistoryElement> getHistoryElements(final Long from, final Long to, final String sessionId, final Integer baseId) {
-        ArrayList<DisplayHistoryElement> displayHistoryElements = new ArrayList<DisplayHistoryElement>();
+        ArrayList<DisplayHistoryElement> displayHistoryElements = new ArrayList<>();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbHistoryElement.class);
         if (baseId != null) {
             criteria.add(Restrictions.or(Restrictions.eq("sessionId", sessionId), Restrictions.or(Restrictions.eq("actorBaseId", baseId), Restrictions.eq("targetBaseId", baseId))));
@@ -416,44 +416,63 @@ public class HistoryServiceImpl implements HistoryService {
                 displayHistoryElement.setMessage("Level Task deactivated: " + dbHistoryElement.getLevelTaskName());
                 break;
             case ALLIANCE_OFFERED:
-                if (userName.equals(dbHistoryElement.getActorUserName())) {
-                    displayHistoryElement.setMessage("You offered " + dbHistoryElement.getTargetUserName() + " an alliance");
-                } else if (userName.equals(dbHistoryElement.getTargetUserName())) {
-                    displayHistoryElement.setMessage(dbHistoryElement.getActorUserName() + " offered you an alliance");
+                if (userName != null) {
+                    if (userName.equals(dbHistoryElement.getActorUserName())) {
+                        displayHistoryElement.setMessage("You offered " + dbHistoryElement.getTargetUserName() + " an alliance");
+                    } else if (userName.equals(dbHistoryElement.getTargetUserName())) {
+                        displayHistoryElement.setMessage(dbHistoryElement.getActorUserName() + " offered you an alliance");
+                    } else {
+                        displayHistoryElement.setMessage("Internal error 6");
+                        log.error("Unknown state 6: " + userName + " " + dbHistoryElement.getActorUserName() + " " + dbHistoryElement.getTargetUserName());
+                    }
                 } else {
-                    displayHistoryElement.setMessage("Internal error 6");
-                    log.error("Unknown state 6: " + userName + " " + dbHistoryElement.getActorUserName() + " " + dbHistoryElement.getTargetUserName());
+                    displayHistoryElement.setMessage("Alliance offered. From " + dbHistoryElement.getActorUserName() + " to " + dbHistoryElement.getTargetUserName());
                 }
                 break;
             case ALLIANCE_OFFER_ACCEPTED:
-                if (userName.equals(dbHistoryElement.getActorUserName())) {
-                    displayHistoryElement.setMessage("You accepted an alliance with " + dbHistoryElement.getTargetUserName());
-                } else if (userName.equals(dbHistoryElement.getTargetUserName())) {
-                    displayHistoryElement.setMessage("Your alliance offer has been accepted by " + dbHistoryElement.getActorUserName());
+                if (userName != null) {
+                    if (userName.equals(dbHistoryElement.getActorUserName())) {
+                        displayHistoryElement.setMessage("You accepted an alliance with " + dbHistoryElement.getTargetUserName());
+                    } else if (userName.equals(dbHistoryElement.getTargetUserName())) {
+                        displayHistoryElement.setMessage("Your alliance offer has been accepted by " + dbHistoryElement.getActorUserName());
+                    } else {
+                        displayHistoryElement.setMessage("Internal error 7");
+                        log.error("Unknown state 7: " + userName + " " + dbHistoryElement.getActorUserName() + " " + dbHistoryElement.getTargetUserName());
+                    }
                 } else {
-                    displayHistoryElement.setMessage("Internal error 7");
-                    log.error("Unknown state 7: " + userName + " " + dbHistoryElement.getActorUserName() + " " + dbHistoryElement.getTargetUserName());
+                    displayHistoryElement.setMessage("Alliance offer accepted by " + dbHistoryElement.getActorUserName() + " offered by " + dbHistoryElement.getTargetUserName());
                 }
+
                 break;
             case ALLIANCE_OFFER_REJECTED:
-                if (userName.equals(dbHistoryElement.getActorUserName())) {
-                    displayHistoryElement.setMessage("You rejected an alliance with " + dbHistoryElement.getTargetUserName());
-                } else if (userName.equals(dbHistoryElement.getTargetUserName())) {
-                    displayHistoryElement.setMessage("Your alliance offer has been rejected by " + dbHistoryElement.getActorUserName());
+                if (userName != null) {
+                    if (userName.equals(dbHistoryElement.getActorUserName())) {
+                        displayHistoryElement.setMessage("You rejected an alliance with " + dbHistoryElement.getTargetUserName());
+                    } else if (userName.equals(dbHistoryElement.getTargetUserName())) {
+                        displayHistoryElement.setMessage("Your alliance offer has been rejected by " + dbHistoryElement.getActorUserName());
+                    } else {
+                        displayHistoryElement.setMessage("Internal error 8");
+                        log.error("Unknown state 8: " + userName + " " + dbHistoryElement.getActorUserName() + " " + dbHistoryElement.getTargetUserName());
+                    }
                 } else {
-                    displayHistoryElement.setMessage("Internal error 8");
-                    log.error("Unknown state 8: " + userName + " " + dbHistoryElement.getActorUserName() + " " + dbHistoryElement.getTargetUserName());
+                    displayHistoryElement.setMessage("Alliance offer rejected by " + dbHistoryElement.getActorUserName() + " offered by " + dbHistoryElement.getTargetUserName());
                 }
+
                 break;
             case ALLIANCE_BROKEN:
-                if (userName.equals(dbHistoryElement.getActorUserName())) {
-                    displayHistoryElement.setMessage("You broke the alliance with " + dbHistoryElement.getTargetUserName());
-                } else if (userName.equals(dbHistoryElement.getTargetUserName())) {
-                    displayHistoryElement.setMessage("Your alliance has been broken by " + dbHistoryElement.getActorUserName());
+                if (userName != null) {
+                    if (userName.equals(dbHistoryElement.getActorUserName())) {
+                        displayHistoryElement.setMessage("You broke the alliance with " + dbHistoryElement.getTargetUserName());
+                    } else if (userName.equals(dbHistoryElement.getTargetUserName())) {
+                        displayHistoryElement.setMessage("Your alliance has been broken by " + dbHistoryElement.getActorUserName());
+                    } else {
+                        displayHistoryElement.setMessage("Internal error 9");
+                        log.error("Unknown state 9: " + userName + " " + dbHistoryElement.getActorUserName() + " " + dbHistoryElement.getTargetUserName());
+                    }
                 } else {
-                    displayHistoryElement.setMessage("Internal error 9");
-                    log.error("Unknown state 9: " + userName + " " + dbHistoryElement.getActorUserName() + " " + dbHistoryElement.getTargetUserName());
+                    displayHistoryElement.setMessage("Alliance broken by " + dbHistoryElement.getActorUserName() + " ex partner " + dbHistoryElement.getTargetUserName());
                 }
+
                 break;
             default:
                 displayHistoryElement.setMessage("Internal error 10");
@@ -474,11 +493,11 @@ public class HistoryServiceImpl implements HistoryService {
     public ReadonlyListContentProvider<DisplayHistoryElement> getNewestHistoryElements() {
         User user = userService.getUser();
         if (user != null) {
-            return new ReadonlyListContentProvider<DisplayHistoryElement>(getNewestHistoryElements(user, NEWEST_HISTORY_ELEMENT_COUNT));
+            return new ReadonlyListContentProvider<>(getNewestHistoryElements(user, NEWEST_HISTORY_ELEMENT_COUNT));
         } else {
             DisplayHistoryElement displayHistoryElement = new DisplayHistoryElement(System.currentTimeMillis(), 0);
             displayHistoryElement.setMessage("History only visible to registered users");
-            return new ReadonlyListContentProvider<DisplayHistoryElement>(Collections.singletonList(displayHistoryElement));
+            return new ReadonlyListContentProvider<>(Collections.singletonList(displayHistoryElement));
         }
     }
 }
