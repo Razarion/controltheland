@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.mapeditor;
 
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.TopMapPanel;
+import com.btxtech.game.jsre.client.cockpit.CockpitUtil;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -34,6 +35,7 @@ public class MainTerrainEditor implements EntryPoint {
     public void onModuleLoad() {
         // Setup common
         GwtCommon.setUncaughtExceptionHandler();
+        CockpitUtil.hideCockpit();
         GwtCommon.disableBrowserContextMenuJSNI();
 
         int terrainId = Integer.parseInt(Window.Location.getParameter(TerrainEditorAsync.TERRAIN_SETTING_ID));
