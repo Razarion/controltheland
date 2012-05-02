@@ -30,6 +30,7 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
+import com.btxtech.game.services.common.NoSuchChildException;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.history.HistoryService;
@@ -548,7 +549,13 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     @Override
     public void activateLevelTaskCms(int dbLevelTaskId) {
         DbLevel dbLevel = getDbLevel();
-        DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().readDbChild(dbLevelTaskId);
+        DbLevelTask dbLevelTask;
+        try {
+            dbLevelTask = dbLevel.getLevelTaskCrud().readDbChild(dbLevelTaskId);
+        } catch (NoSuchChildException e) {
+            // It is may possible, that an old window from the previous level is still open or it's a crawler
+            return;
+        }
         if (dbLevelTask.getDbTutorialConfig() != null) {
             return;
         }
@@ -575,7 +582,13 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     @Override
     public void deactivateLevelTaskCms(int dbLevelTaskId) {
         DbLevel dbLevel = getDbLevel();
-        DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().readDbChild(dbLevelTaskId);
+        DbLevelTask dbLevelTask;
+        try {
+            dbLevelTask = dbLevel.getLevelTaskCrud().readDbChild(dbLevelTaskId);
+        } catch (NoSuchChildException e) {
+            // It is may possible, that an old window from the previous level is still open or it's a crawler
+            return;
+        }
         if (dbLevelTask.getDbTutorialConfig() != null) {
             return;
         }
