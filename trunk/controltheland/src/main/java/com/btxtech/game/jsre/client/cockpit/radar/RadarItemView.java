@@ -37,6 +37,7 @@ public class RadarItemView extends MiniMap {
     public static final int OWN_BASE_ITEM_SIZE = 3;
     public static final int RESOURCE_ITEM_SIZE = 1;
     private Logger log = Logger.getLogger(RadarItemView.class.getName());
+    private Timer timer;
 
     public RadarItemView(int width, int height) {
         super(width, height, false);
@@ -45,18 +46,20 @@ public class RadarItemView extends MiniMap {
     @Override
     public void onTerrainSettings(TerrainSettings terrainSettings) {
         super.onTerrainSettings(terrainSettings);
-        Timer timer = new Timer() {
+        if (timer == null) {
+            timer = new Timer() {
 
-            @Override
-            public void run() {
-                try {
-                    refreshItems();
-                } catch (Throwable t) {
-                    log.log(Level.SEVERE, "Exception in RadarItemView Timer", t);
+                @Override
+                public void run() {
+                    try {
+                        refreshItems();
+                    } catch (Throwable t) {
+                        log.log(Level.SEVERE, "Exception in RadarItemView Timer", t);
+                    }
                 }
-            }
-        };
-        timer.scheduleRepeating(1000);
+            };
+            timer.scheduleRepeating(1000);
+        }
     }
 
     private void refreshItems() {
@@ -94,6 +97,14 @@ public class RadarItemView extends MiniMap {
                 getContext2d().setFillStyle(ColorConstants.WHITE);
                 getContext2d().fillRect(pos.getX(), pos.getY(), resourceItemSize, resourceItemSize);
             }
+        }
+    }
+
+    @Override
+    public void cleanup() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
         }
     }
 }

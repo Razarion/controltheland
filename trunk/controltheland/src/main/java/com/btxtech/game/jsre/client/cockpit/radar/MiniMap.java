@@ -242,4 +242,8 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
     public Canvas getCanvas() {
         return canvas;
     }
+
+    public void cleanup() {
+
+    }
 }

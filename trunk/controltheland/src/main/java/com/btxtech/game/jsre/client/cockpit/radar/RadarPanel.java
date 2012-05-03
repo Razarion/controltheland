@@ -179,10 +179,20 @@ public class RadarPanel {
         handleRadarState();
     }
 
-    public void clearRadarMode() {
+    public void cleanup() {
         radarModeItems.clear();
         itemRadarMode = RadarMode.NONE;
         levelRadarMode = RadarMode.NONE;
+
+        if (radarFrameView != null) {
+            radarFrameView.cleanup();
+        }
+        if (radarHintView != null) {
+            radarHintView.cleanup();
+        }
+        if (radarItemView != null) {
+            radarItemView.cleanup();
+        }
     }
 
     private RadarMode findHighestRadarMode() {
