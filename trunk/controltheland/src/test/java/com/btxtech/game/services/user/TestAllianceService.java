@@ -277,6 +277,7 @@ public class TestAllianceService extends AbstractServiceTest {
         verifyAllianceOffers();
         verifyAlliances();
         verifyAlliancesFromUser();
+        SimpleBase simpleBase2 = getMyBase();
         allianceService.proposeAlliance(simpleBase1);
         verifyAllianceOffers();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -306,7 +307,8 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(1));
+        assertAlliancesInPackets(connectionServiceTestHelper, simpleBase1);
+        assertBaseDeletedPacket(connectionServiceTestHelper, simpleBase2);
         connectionServiceTestHelper.clearReceivedPackets();
 
         beginHttpSession();
@@ -324,11 +326,13 @@ public class TestAllianceService extends AbstractServiceTest {
         verifyAllianceOffers();
         verifyAlliances("u1");
         verifyAlliancesFromUser("u1");
+        SimpleBase simpleBase3 = getMyBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         assertAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(1), "u2");
         assertAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(3), "u1");
+        assertBaseCreatedPacket(connectionServiceTestHelper, simpleBase3);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -549,6 +553,22 @@ public class TestAllianceService extends AbstractServiceTest {
                 Assert.fail("Alliance does not exits: " + baseAttributes.getName());
             }
         }
+    }
+
+    private void assertBaseDeletedPacket(ConnectionServiceTestHelper connectionServiceTestHelper, SimpleBase deletedBase) {
+        List<ConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelper.getPacketEntriesToAllBases(BaseChangedPacket.class);
+        Assert.assertEquals(1, packets.size());
+        BaseChangedPacket baseChangedPacket = (BaseChangedPacket) packets.get(0).getPacket();
+        Assert.assertEquals(BaseChangedPacket.Type.REMOVED, baseChangedPacket.getType());
+        Assert.assertEquals(deletedBase, baseChangedPacket.getBaseAttributes().getSimpleBase());
+    }
+
+    private void assertBaseCreatedPacket(ConnectionServiceTestHelper connectionServiceTestHelper, SimpleBase createdBase) {
+        List<ConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelper.getPacketEntriesToAllBases(BaseChangedPacket.class);
+        Assert.assertEquals(1, packets.size());
+        BaseChangedPacket baseChangedPacket = (BaseChangedPacket) packets.get(0).getPacket();
+        Assert.assertEquals(BaseChangedPacket.Type.CREATED, baseChangedPacket.getType());
+        Assert.assertEquals(createdBase, baseChangedPacket.getBaseAttributes().getSimpleBase());
     }
 
     private void assertNoAlliancesInPackets(ConnectionServiceTestHelper connectionServiceTestHelper, SimpleBase myBase) {

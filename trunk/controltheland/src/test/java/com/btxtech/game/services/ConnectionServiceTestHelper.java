@@ -119,6 +119,16 @@ public class ConnectionServiceTestHelper implements ConnectionService {
         return result;
     }
 
+    public List<PacketEntry> getPacketEntriesToAllBases(Class<? extends Packet> filter) {
+        List<PacketEntry> result = new ArrayList<>();
+        for (PacketEntry packetEntry : packetEntries) {
+            if (filter.isAssignableFrom(packetEntry.getPacket().getClass()) && packetEntry.getSimpleBase() == null) {
+                result.add(packetEntry);
+            }
+        }
+        return result;
+    }
+
     public class PacketEntry {
         private SimpleBase simpleBase;
         private Packet packet;
