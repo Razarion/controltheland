@@ -44,26 +44,8 @@ public class RadarFrameView extends MiniMap implements TerrainScrollListener, Mi
         super(width, height, true);
         TerrainView.getInstance().addTerrainScrollListener(this);
         addMouseDownListener(this);
-        if (timer == null) {
-            timer = new Timer() {
-
-                @Override
-                public void run() {
-                    try {
-                        if (color.equals(COLOR_1)) {
-                            color = COLOR_2;
-                        } else {
-                            color = COLOR_1;
-                        }
-                        drawFrame();
-                    } catch (Throwable t) {
-                        log.log(Level.SEVERE, "Exception in RadarItemView Timer", t);
-                    }
-                }
-            };
-            timer.scheduleRepeating(1000);
-        }
     }
+
 
     @Override
     public void onScroll(int left, int top, int width, int height, int deltaLeft, int deltaTop) {
@@ -101,6 +83,25 @@ public class RadarFrameView extends MiniMap implements TerrainScrollListener, Mi
                 TerrainView.getInstance().getViewHeight(),
                 0,
                 0);
+        if (timer == null) {
+            timer = new Timer() {
+
+                @Override
+                public void run() {
+                    try {
+                        if (color.equals(COLOR_1)) {
+                            color = COLOR_2;
+                        } else {
+                            color = COLOR_1;
+                        }
+                        drawFrame();
+                    } catch (Throwable t) {
+                        log.log(Level.SEVERE, "Exception in RadarItemView Timer", t);
+                    }
+                }
+            };
+            timer.scheduleRepeating(1000);
+        }
     }
 
     @Override
