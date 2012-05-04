@@ -429,29 +429,39 @@ abstract public class AbstractServiceTest {
         getMovableService().getSyncInfo();
     }
 
-    protected List<Packet> getPackagesIgnoreSyncItemInfoAndClear() throws Exception {
+    protected List<Packet> getPackagesIgnoreSyncItemInfoAndClear(boolean ignoreAccountBalancePackets) throws Exception {
         List<Packet> receivedPackets = new ArrayList<Packet>(getMovableService().getSyncInfo());
         for (Iterator<Packet> iterator = receivedPackets.iterator(); iterator.hasNext(); ) {
-            if (iterator.next() instanceof SyncItemInfo) {
+            Packet packet = iterator.next();
+            if (packet instanceof SyncItemInfo) {
+                iterator.remove();
+            } else if (ignoreAccountBalancePackets && packet instanceof AccountBalancePacket) {
                 iterator.remove();
             }
-
         }
         return receivedPackets;
     }
 
     protected void assertPackagesIgnoreSyncItemInfoAndClear(Packet... expectedPackets) throws Exception {
-        List<Packet> receivedPackets = getPackagesIgnoreSyncItemInfoAndClear();
+        assertPackagesIgnoreSyncItemInfoAndClear(false, expectedPackets);
+    }
 
-        if (expectedPackets.length != receivedPackets.size()) {
-            StringBuilder expectedBuilder = new StringBuilder();
-            for (Packet expectedPacket : expectedPackets) {
-                expectedBuilder.append("[");
-                expectedBuilder.append(expectedPacket);
-                expectedBuilder.append("] ");
+    protected void assertPackagesIgnoreSyncItemInfoAndClear(boolean ignoreAccountBalance, Packet... expectedPackets) throws Exception {
+        List<Packet> receivedPackets = getPackagesIgnoreSyncItemInfoAndClear(ignoreAccountBalance);
+
+        StringBuilder expectedBuilder = new StringBuilder();
+        expectedBuilder.append("[");
+        for (int i = 0, expectedPacketsLength = expectedPackets.length; i < expectedPacketsLength; i++) {
+            Packet expectedPacket = expectedPackets[i];
+            expectedBuilder.append(expectedPacket);
+            if (i + 1 < expectedPacketsLength) {
+                expectedBuilder.append(", ");
             }
-            System.out.println("Expected: " + expectedBuilder);
-            System.out.println("Received: " + receivedPackets);
+        }
+        expectedBuilder.append("]");
+        System.out.println("Expected: " + expectedBuilder);
+        System.out.println("Received: " + receivedPackets);
+        if (expectedPackets.length != receivedPackets.size()) {
             Assert.assertEquals(expectedPackets.length, receivedPackets.size());
         }
 

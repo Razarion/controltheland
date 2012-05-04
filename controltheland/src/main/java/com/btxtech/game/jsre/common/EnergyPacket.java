@@ -42,4 +42,22 @@ public class EnergyPacket extends Packet {
     public String toString() {
         return "EnergyPacket: consuming: " + consuming + " generating: " + generating;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EnergyPacket that = (EnergyPacket) o;
+
+        return consuming == that.consuming && generating == that.generating;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = generating;
+        result = 31 * result + consuming;
+        return result;
+    }
 }

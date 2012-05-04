@@ -33,7 +33,7 @@ public class TestChat extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         getMyBase(); // Setup connection
         Thread.sleep(1000); // Wait for the account balance package
-        getPackagesIgnoreSyncItemInfoAndClear();
+        getPackagesIgnoreSyncItemInfoAndClear(false);
         sendMessage("m1");
         assertPackagesIgnoreSyncItemInfoAndClear(createMessage("m1", "Base 1", 0));
         sendMessage("m2");
@@ -70,7 +70,7 @@ public class TestChat extends AbstractServiceTest {
         userService.login("User 1", "xxx");
         getMyBase(); // Setup connection
         Thread.sleep(1000); // Wait for the account balance package
-        getPackagesIgnoreSyncItemInfoAndClear();
+        getPackagesIgnoreSyncItemInfoAndClear(false);
         sendMessage("m1");
         assertPackagesIgnoreSyncItemInfoAndClear(createMessage("m1", "User 1", 0));
         sendMessage("m2");

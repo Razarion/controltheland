@@ -79,6 +79,7 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         synchronized (bases) {
             bases.clear();
             for (BaseAttributes baseAttributes : allBaseAttributes) {
+                baseAttributes.resetAlliancesDueToStrangeGwtBehavior();
                 bases.put(baseAttributes.getSimpleBase(), baseAttributes);
             }
         }

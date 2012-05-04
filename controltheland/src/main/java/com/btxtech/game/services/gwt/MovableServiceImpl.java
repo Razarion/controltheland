@@ -108,7 +108,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public Collection<Packet> getSyncInfo() throws NoConnectionException {
+    public List<Packet> getSyncInfo() throws NoConnectionException {
         try {
             return connectionService.getConnection().getAndRemovePendingPackets();
         } catch (NoConnectionException e) {

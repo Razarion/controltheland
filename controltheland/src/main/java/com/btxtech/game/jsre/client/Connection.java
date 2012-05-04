@@ -215,7 +215,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
         if (movableServiceAsync == null) {
             return;
         }
-        movableServiceAsync.getSyncInfo(new AsyncCallback<Collection<Packet>>() {
+        movableServiceAsync.getSyncInfo(new AsyncCallback<List<Packet>>() {
             @Override
             public void onFailure(Throwable throwable) {
                 if (!handleDisconnection("pollSyncInfo", throwable)) {
@@ -224,7 +224,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
             }
 
             @Override
-            public void onSuccess(Collection<Packet> packets) {
+            public void onSuccess(List<Packet> packets) {
                 try {
                     disconnectionCount = 0;
                     handlePackets(packets);
@@ -241,7 +241,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
         }
     }
 
-    private void handlePackets(Collection<Packet> packets) {
+    private void handlePackets(List<Packet> packets) {
         if (packets == null) {
             return;
         }

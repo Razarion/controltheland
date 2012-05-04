@@ -22,7 +22,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.connection.ClientLogEntry;
 import com.btxtech.game.services.connection.Connection;
@@ -62,8 +61,6 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     private Session session;
     @Autowired
     private UserTrackingService userTrackingService;
-    @Autowired
-    private BotService botService;
     @Autowired
     private BaseService baseService;
     @Autowired

@@ -20,16 +20,17 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
 import com.btxtech.game.services.base.Base;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * User: beat Date: May 31, 2009 Time: 8:16:32 PM
  */
 public class Connection implements Serializable {
     private Base base;
-    private final HashSet<SyncItem> pendingSyncItem = new HashSet<SyncItem>();
-    private final HashSet<Packet> pendingPackets = new HashSet<Packet>();
+    private final HashSet<SyncItem> pendingSyncItem = new HashSet<>();
+    private final List<Packet> pendingPackets = new ArrayList<>();
     private int tickCount = 0;
     private String sessionId;
     private int noTickCount = 0;
@@ -49,12 +50,12 @@ public class Connection implements Serializable {
         this.base = base;
     }
 
-    public Collection<Packet> getAndRemovePendingPackets() {
+    public List<Packet> getAndRemovePendingPackets() {
         tickCount++;
-        HashSet<Packet> packets;
+        List<Packet> packets;
 
         synchronized (pendingPackets) {
-            packets = new HashSet<Packet>(pendingPackets);
+            packets = new ArrayList<>(pendingPackets);
             pendingPackets.clear();
         }
         synchronized (pendingSyncItem) {
@@ -81,22 +82,15 @@ public class Connection implements Serializable {
     public void sendPacket(Packet packet) {
         synchronized (pendingPackets) {
             if (packet instanceof LevelStatePacket) {
-                if (pendingPackets.contains(packet)) {
-                    for (Packet previous : pendingPackets) {
-                        if (previous instanceof LevelStatePacket) {
-                            pendingPackets.remove(previous);
-                            ((LevelStatePacket) packet).merge((LevelStatePacket) previous);
-                            pendingPackets.add(packet);
-                            break;
-                        }
+                for (Packet previous : pendingPackets) {
+                    if (previous instanceof LevelStatePacket) {
+                        pendingPackets.remove(previous);
+                        ((LevelStatePacket) packet).merge((LevelStatePacket) previous);
+                        break;
                     }
-                } else {
-                    pendingPackets.add(packet);
                 }
-            } else {
-                pendingPackets.remove(packet);
-                pendingPackets.add(packet);
             }
+            pendingPackets.add(packet);
         }
     }
 

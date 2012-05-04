@@ -21,14 +21,4 @@ import java.io.Serializable;
  * Time: 2:19:22 PM
  */
 public class Packet implements Serializable {
-    @Override
-    public boolean equals(Object o) {
-        return this == o || !(o == null || getClass() != o.getClass());
-    }
-
-    @Override
-    public int hashCode() {
-        return  getClass().hashCode();
-    }
-
 }
