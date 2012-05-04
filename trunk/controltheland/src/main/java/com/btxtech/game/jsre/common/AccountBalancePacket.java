@@ -18,7 +18,7 @@ package com.btxtech.game.jsre.common;
  * Date: Sep 10, 2009
  * Time: 11:35:20 AM
  */
-public class AccountBalancePacket extends Packet{
+public class AccountBalancePacket extends Packet {
     private double accountBalance;
 
     public double getAccountBalance() {
@@ -27,5 +27,26 @@ public class AccountBalancePacket extends Packet{
 
     public void setAccountBalance(double accountBalance) {
         this.accountBalance = accountBalance;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        AccountBalancePacket that = (AccountBalancePacket) o;
+
+        return Double.compare(that.accountBalance, accountBalance) == 0;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) accountBalance;
+    }
+
+    @Override
+    public String toString() {
+        return "AccountBalancePacket{accountBalance=" + accountBalance + '}';
     }
 }

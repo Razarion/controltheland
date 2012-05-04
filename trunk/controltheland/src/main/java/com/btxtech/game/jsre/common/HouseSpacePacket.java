@@ -13,8 +13,6 @@
 
 package com.btxtech.game.jsre.common;
 
-import com.btxtech.game.jsre.common.Packet;
-
 /**
  * User: beat
  * Date: 24.12.2009
@@ -34,5 +32,20 @@ public class HouseSpacePacket extends Packet {
     @Override
     public String toString() {
         return "HouseSpacePacket: houseSpace: " + houseSpace;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HouseSpacePacket that = (HouseSpacePacket) o;
+
+        return houseSpace == that.houseSpace;
+    }
+
+    @Override
+    public int hashCode() {
+        return houseSpace;
     }
 }

@@ -85,6 +85,12 @@ public class BaseAttributes implements Serializable {
         return alliances;
     }
 
+    public void resetAlliancesDueToStrangeGwtBehavior() {
+        // Contains does not work properly in GWT, so force reload of HasSet
+        alliances = new HashSet<BaseAttributes>(alliances);
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -99,5 +105,29 @@ public class BaseAttributes implements Serializable {
     @Override
     public int hashCode() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder allianceString = new StringBuilder();
+        if (alliances != null) {
+            for (BaseAttributes alliance : alliances) {
+                allianceString.append(alliance.getName());
+                allianceString.append("(");
+                allianceString.append(alliance.getSimpleBase().getId());
+                allianceString.append(",");
+                allianceString.append(alliance.id);
+                allianceString.append(")");
+                allianceString.append(":");
+            }
+        }
+        return "BaseAttributes{" +
+                "simpleBase=" + simpleBase +
+                ", name='" + name + '\'' +
+                ", bot=" + bot +
+                ", abandoned=" + abandoned +
+                ", alliances=" + allianceString +
+                ", id=" + id +
+                '}';
     }
 }

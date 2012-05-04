@@ -203,9 +203,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             if (actor != null) {
                 serverConditionService.onBaseDeleted(actor);
             }
-            if (connectionService.hasConnection(base.getSimpleBase())) {
-                connectionService.closeConnection(base.getSimpleBase());
-            }
+        }
+        if (connectionService.hasConnection(base.getSimpleBase())) {
+            connectionService.closeConnection(base.getSimpleBase());
         }
     }
 

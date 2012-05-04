@@ -45,4 +45,27 @@ public class BaseChangedPacket extends Packet {
     public void setBaseAttributes(BaseAttributes baseAttributes) {
         this.baseAttributes = baseAttributes;
     }
+
+    @Override
+    public String toString() {
+        return "BaseChangedPacket{type=" + type + ", baseAttributes=" + baseAttributes + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BaseChangedPacket that = (BaseChangedPacket) o;
+
+        return baseAttributes.equals(that.baseAttributes) && type == that.type;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = type.hashCode();
+        result = 31 * result + baseAttributes.hashCode();
+        return result;
+    }
 }

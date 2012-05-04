@@ -166,4 +166,42 @@ public class LevelStatePacket extends Packet {
             levelScope = previous.levelScope;
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LevelStatePacket that = (LevelStatePacket) o;
+
+        return missionQuestCompleted == that.missionQuestCompleted
+                && questDeactivated == that.questDeactivated
+                && !(activeQuestLevelTaskId != null ? !activeQuestLevelTaskId.equals(that.activeQuestLevelTaskId) : that.activeQuestLevelTaskId != null)
+                && !(activeQuestProgress != null ? !activeQuestProgress.equals(that.activeQuestProgress) : that.activeQuestProgress != null)
+                && !(activeQuestTitle != null ? !activeQuestTitle.equals(that.activeQuestTitle) : that.activeQuestTitle != null)
+                && !(levelScope != null ? !levelScope.equals(that.levelScope) : that.levelScope != null)
+                && !(missionsDone != null ? !missionsDone.equals(that.missionsDone) : that.missionsDone != null)
+                && !(questsDone != null ? !questsDone.equals(that.questsDone) : that.questsDone != null)
+                && !(totalMissions != null ? !totalMissions.equals(that.totalMissions) : that.totalMissions != null)
+                && !(totalQuests != null ? !totalQuests.equals(that.totalQuests) : that.totalQuests != null)
+                && !(xp != null ? !xp.equals(that.xp) : that.xp != null)
+                && !(xp2LevelUp != null ? !xp2LevelUp.equals(that.xp2LevelUp) : that.xp2LevelUp != null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = xp != null ? xp.hashCode() : 0;
+        result = 31 * result + (xp2LevelUp != null ? xp2LevelUp.hashCode() : 0);
+        result = 31 * result + (activeQuestTitle != null ? activeQuestTitle.hashCode() : 0);
+        result = 31 * result + (activeQuestProgress != null ? activeQuestProgress.hashCode() : 0);
+        result = 31 * result + (activeQuestLevelTaskId != null ? activeQuestLevelTaskId.hashCode() : 0);
+        result = 31 * result + (questDeactivated ? 1 : 0);
+        result = 31 * result + (questsDone != null ? questsDone.hashCode() : 0);
+        result = 31 * result + (totalQuests != null ? totalQuests.hashCode() : 0);
+        result = 31 * result + (missionsDone != null ? missionsDone.hashCode() : 0);
+        result = 31 * result + (totalMissions != null ? totalMissions.hashCode() : 0);
+        result = 31 * result + (missionQuestCompleted ? 1 : 0);
+        result = 31 * result + (levelScope != null ? levelScope.hashCode() : 0);
+        return result;
+    }
 }

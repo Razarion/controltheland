@@ -28,6 +28,11 @@ public class AllianceOfferPacket extends Packet {
     }
 
     @Override
+    public String toString() {
+        return "AllianceOfferPacket{actorUserName='" + actorUserName + "\'}";
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -35,16 +40,10 @@ public class AllianceOfferPacket extends Packet {
         AllianceOfferPacket that = (AllianceOfferPacket) o;
 
         return actorUserName.equals(that.actorUserName);
-
     }
 
     @Override
     public int hashCode() {
         return actorUserName.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "AllianceOfferPacket{actorUserName='" + actorUserName + "\'}";
     }
 }

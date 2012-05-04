@@ -52,13 +52,14 @@ public class Message extends Packet {
 
         Message message1 = (Message) o;
 
-        return showRegisterDialog == message1.showRegisterDialog && message != null ? message.equals(message1.message) : message1.message == null;
+        return showRegisterDialog == message1.showRegisterDialog
+                && !(message != null ? !message.equals(message1.message) : message1.message != null);
 
     }
 
     @Override
     public int hashCode() {
-        int result = 31 * (message != null ? message.hashCode() : 0);
+        int result = message != null ? message.hashCode() : 0;
         result = 31 * result + (showRegisterDialog ? 1 : 0);
         return result;
     }

@@ -56,12 +56,15 @@ public class ChatMessage extends Packet {
 
         ChatMessage that = (ChatMessage) o;
 
-        return messageId == that.messageId;
+        return messageId == that.messageId && !(message != null ? !message.equals(that.message) : that.message != null) && name.equals(that.name);
 
     }
 
     @Override
     public int hashCode() {
-        return messageId;
+        int result = name.hashCode();
+        result = 31 * result + (message != null ? message.hashCode() : 0);
+        result = 31 * result + messageId;
+        return result;
     }
 }

@@ -48,7 +48,7 @@ public interface MovableServiceAsync {
 
     void sendCommands(List<BaseCommand> baseCommands, AsyncCallback async);
 
-    void getSyncInfo(AsyncCallback<Collection<Packet>> async);
+    void getSyncInfo(AsyncCallback<List<Packet>> async);
 
     void getAllSyncInfo(AsyncCallback<Collection<SyncItemInfo>> async);
 

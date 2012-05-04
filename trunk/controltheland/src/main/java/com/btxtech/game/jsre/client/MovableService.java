@@ -54,7 +54,7 @@ public interface MovableService extends RemoteService {
 
     void sendCommands(List<BaseCommand> baseCommands);
 
-    Collection<Packet> getSyncInfo() throws NoConnectionException;
+    List<Packet> getSyncInfo() throws NoConnectionException;
 
     Collection<SyncItemInfo> getAllSyncInfo();
 
