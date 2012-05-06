@@ -43,6 +43,9 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.widgetideas.client.ProgressBar;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * User: beat
  * Date: May 20, 2009
@@ -56,6 +59,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
     private ProgressBar projectileBar;
     private SimplePanel marker;
     private boolean mouseOver = false;
+    private Logger log = Logger.getLogger(ClientSyncItemView.class.getName());
 
     public ClientSyncItemView() {
         sinkEvents(Event.ONMOUSEMOVE);
@@ -74,7 +78,12 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
 
     public void transform(ClientSyncItem clientSyncItem) {
         if (clientSyncItem == null && this.clientSyncItem != null) {
-            MapWindow.getAbsolutePanel().remove(this);
+            try {
+                // Remove try catch if error is fixed
+                MapWindow.getAbsolutePanel().remove(this);
+            } catch (Exception e) {
+                log.log(Level.SEVERE, "Unable to remove widget from parent. " + this + " | " + clientSyncItem);
+            }
             this.clientSyncItem.setClientSyncItemListener(null);
             this.clientSyncItem = null;
         } else if (clientSyncItem != null && this.clientSyncItem == null) {
