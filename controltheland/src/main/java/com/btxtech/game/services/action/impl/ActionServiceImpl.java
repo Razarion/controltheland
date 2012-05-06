@@ -111,6 +111,10 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
                     double factor = calculateFactor(time);
                     while (iterator.hasNext()) {
                         SyncTickItem activeItem = iterator.next();
+                        if (!activeItem.isAlive()) {
+                            iterator.remove();
+                            continue;
+                        }
                         try {
                             if (!activeItem.tick(factor)) {
                                 iterator.remove();
@@ -178,8 +182,8 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
             if (timer != null) {
                 timer.cancel();
             }
-        } catch(Throwable t) {
-           log.error("", t);
+        } catch (Throwable t) {
+            log.error("", t);
         }
     }
 
