@@ -23,6 +23,7 @@ import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupProgressListener;
+import com.btxtech.game.jsre.client.control.StartupScreen;
 import com.btxtech.game.jsre.client.control.StartupSeq;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
@@ -425,7 +426,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
             return true;
         } else if (throwable instanceof NoConnectionException) {
             GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to NoConnectionException: " + message);
-            ClientServices.getInstance().getClientRunner().start(GameStartupSeq.WARM_REAL);
+            StartupScreen.getInstance().fadeOutAndStart(GameStartupSeq.WARM_REAL);
             return true;
         } else {
             GwtCommon.sendLogViaLoadScriptCommunication("Unknown Error (See GWT log for stack trace): " + message + " " + throwable.getMessage());
