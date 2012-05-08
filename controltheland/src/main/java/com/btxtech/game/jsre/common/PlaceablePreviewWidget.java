@@ -69,7 +69,6 @@ public abstract class PlaceablePreviewWidget extends AbsolutePanel implements Mo
         }
         image.getElement().getStyle().setProperty("opacity", "0.5");
         image.getElement().getStyle().setProperty("cursor", "move");
-        setupMarker();
         addEscKeyHandler();
     }
 
@@ -127,6 +126,10 @@ public abstract class PlaceablePreviewWidget extends AbsolutePanel implements Mo
         DOM.setCapture(this.getElement()); //IE6 need this to prevent losing of image
         getElement().getStyle().setProperty("cursor", "move");//IE6
         MapWindow.getInstance().onMouseMove(event);
+        if (marker == null) {
+            // Due to image size is not known. Image mus be loaded before
+            setupMarker();
+        }
         if (allowedToPlace(x, y)) {
             marker.setVisible(false);
         } else {
@@ -169,7 +172,7 @@ public abstract class PlaceablePreviewWidget extends AbsolutePanel implements Mo
     public void onMouseUp(MouseUpEvent event) {
         if (minimalTime > System.currentTimeMillis()) {
             return;
-        }        
+        }
         int x = event.getRelativeX(MapWindow.getAbsolutePanel().getElement());
         int y = event.getRelativeY(MapWindow.getAbsolutePanel().getElement());
         x = specialMoveX(x);

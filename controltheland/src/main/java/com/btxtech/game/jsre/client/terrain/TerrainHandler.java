@@ -24,13 +24,12 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.widgetideas.graphics.client.ImageLoader;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.TreeSet;
 
 /**
@@ -67,7 +66,7 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
         TreeSet<Integer> addedIds = new TreeSet<Integer>();
         // Surface images
         for (SurfaceRect surfaceRect : getSurfaceRects()) {
-            if(surfaceImageElements.containsKey(surfaceRect.getSurfaceImageId())) {
+            if (surfaceImageElements.containsKey(surfaceRect.getSurfaceImageId())) {
                 continue;
             }
             if (!addedIds.contains(surfaceRect.getSurfaceImageId())) {
@@ -80,7 +79,7 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
         // Terrain images
         addedIds.clear();
         for (TerrainImagePosition terrainImagePosition : getTerrainImagePositions()) {
-            if(surfaceImageElements.containsKey(terrainImagePosition.getImageId())) {
+            if (surfaceImageElements.containsKey(terrainImagePosition.getImageId())) {
                 continue;
             }
             if (!addedIds.contains(terrainImagePosition.getImageId())) {
@@ -116,9 +115,9 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
 
     }
 
-    public void addNewTerrainImage(int absX, int absY, TerrainImage terrainImage) {
+    public void addNewTerrainImage(int absX, int absY, TerrainImage terrainImage, TerrainImagePosition.ZIndex zIndex) {
         Index index = getTerrainTileIndexForAbsPosition(absX, absY);
-        addTerrainImagePosition(new TerrainImagePosition(index, terrainImage.getId()));
+        addTerrainImagePosition(new TerrainImagePosition(index, terrainImage.getId(), zIndex));
         fireTerrainChanged();
     }
 

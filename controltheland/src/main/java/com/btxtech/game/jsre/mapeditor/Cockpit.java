@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -27,6 +28,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
@@ -54,6 +56,7 @@ public class Cockpit extends TopMapPanel {
     private Map<Integer, FlexTable> imageGroup = new HashMap<Integer, FlexTable>();
     private FlexTable controlPanel;
     private int selectorRow;
+    private ListBox zIndexSelector;
 
     public Cockpit(TerrainEditorAsync terrainEditor, int terrainId) {
         this.terrainEditor = terrainEditor;
@@ -112,8 +115,16 @@ public class Cockpit extends TopMapPanel {
                 for (Map.Entry<String, Collection<Integer>> entry : result.entrySet()) {
                     setupImageSelector(entry);
                 }
+                // Z Index
+                zIndexSelector = new ListBox();
+                zIndexSelector.addItem("Layer 1", TerrainImagePosition.ZIndex.LAYER_1.name());
+                zIndexSelector.addItem("Layer 2", TerrainImagePosition.ZIndex.LAYER_2.name());
+                zIndexSelector.setSelectedIndex(0);
+                zIndexSelector.setEnabled(false);
+                controlPanel.setWidget(controlPanel.getRowCount(), 0, zIndexSelector);
+
                 selectorRow = controlPanel.getRowCount();
-                
+
                 terrainEditor.getTerrainInfo(terrainId, new AsyncCallback<TerrainInfo>() {
                     @Override
                     public void onFailure(Throwable throwable) {
@@ -155,6 +166,7 @@ public class Cockpit extends TopMapPanel {
             public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
                 MapWindow.getInstance().setTerrainMouseMoveListener(terrainImageModifier);
                 controlPanel.setWidget(selectorRow, 0, imageScroll);
+                zIndexSelector.setEnabled(true);
             }
         });
 
@@ -176,6 +188,7 @@ public class Cockpit extends TopMapPanel {
             public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
                 MapWindow.getInstance().setTerrainMouseMoveListener(surfaceModifier);
                 controlPanel.setWidget(selectorRow, 0, surfaceScroll);
+                zIndexSelector.setEnabled(false);
             }
         });
         controlPanel.setWidget(controlPanel.getRowCount(), 0, surfaceButton);
@@ -187,7 +200,7 @@ public class Cockpit extends TopMapPanel {
             if (terrainImageSelector == null) {
                 throw new IllegalArgumentException("No group for terrain image: " + terrainImage.getId());
             }
-            terrainImageSelector.setWidget(terrainImageSelector.getRowCount(), 0, new TerrainImageSelectorItem(terrainImage));
+            terrainImageSelector.setWidget(terrainImageSelector.getRowCount(), 0, new TerrainImageSelectorItem(terrainImage, this));
         }
     }
 
@@ -211,5 +224,9 @@ public class Cockpit extends TopMapPanel {
 
     public boolean isDeleteModus() {
         return deleteButton.isDown();
+    }
+
+    public TerrainImagePosition.ZIndex getSelectedZIndex() {
+        return TerrainImagePosition.ZIndex.valueOf(zIndexSelector.getValue(zIndexSelector.getSelectedIndex()));
     }
 }

@@ -52,7 +52,7 @@ public class TestRuServiceHelper extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
-        terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), dbTerrainImage.getId()));
+        terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_1));
         terrainService.saveTerrain(terrainImagePositions, new ArrayList<SurfaceRect>(), dbTerrainSetting.getId());
         terrainService.activateTerrain();
         endHttpRequestAndOpenSessionInViewFilter();

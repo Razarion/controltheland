@@ -31,9 +31,11 @@ import com.google.gwt.user.client.ui.Image;
 public class TerrainImageSelectorItem extends FlowPanel implements MouseDownHandler {
     private static final int MAX_EDGE_LENGTH = 100;
     private TerrainImage terrainImage;
+    private Cockpit cockpit;
 
-    public TerrainImageSelectorItem(TerrainImage terrainImage) {
+    public TerrainImageSelectorItem(TerrainImage terrainImage, Cockpit cockpit) {
         this.terrainImage = terrainImage;
+        this.cockpit = cockpit;
         Image image = new Image();
         image.addLoadHandler(new LoadHandler() {
             @Override
@@ -61,7 +63,7 @@ public class TerrainImageSelectorItem extends FlowPanel implements MouseDownHand
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
         GwtCommon.preventDefault(mouseDownEvent);
-        new PlaceablePreviewTerrainImagePoition(terrainImage, mouseDownEvent);
+        new PlaceablePreviewTerrainImagePoition(terrainImage, cockpit.getSelectedZIndex(), mouseDownEvent); // TODO
     }
 
     public void setSelected(boolean selected) {

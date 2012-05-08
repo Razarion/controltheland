@@ -49,13 +49,13 @@ public class TestAbstractTerrainServiceImpl {
 
         abstractTerrainService.putSurfaceImage(new SurfaceImage(SurfaceType.LAND, 0, ""));
 
-        List<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
-        terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), 0));
-        terrainImagePositions.add(new TerrainImagePosition(new Index(20, 20), 0));
-        terrainImagePositions.add(new TerrainImagePosition(new Index(99, 99), 0));
+        List<TerrainImagePosition> terrainImagePositions = new ArrayList<>();
+        terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), 0, TerrainImagePosition.ZIndex.LAYER_1));
+        terrainImagePositions.add(new TerrainImagePosition(new Index(20, 20), 0, TerrainImagePosition.ZIndex.LAYER_1));
+        terrainImagePositions.add(new TerrainImagePosition(new Index(99, 99), 0, TerrainImagePosition.ZIndex.LAYER_1));
         abstractTerrainService.setTerrainImagePositions(terrainImagePositions);
 
-        List<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
+        List<SurfaceRect> surfaceRects = new ArrayList<>();
         surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 10, 10), 0));
         surfaceRects.add(new SurfaceRect(new Rectangle(30, 40, 10, 50), 0));
         surfaceRects.add(new SurfaceRect(new Rectangle(90, 90, 20, 20), 0)); // Overbooked

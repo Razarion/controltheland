@@ -7,15 +7,18 @@ import com.btxtech.game.services.terrain.DbTerrainImagePosition;
 class ImagePositionKey {
     private Index position;
     private int imageId;
+    private TerrainImagePosition.ZIndex zIndex;
 
     ImagePositionKey(TerrainImagePosition terrainImagePosition) {
         position = terrainImagePosition.getTileIndex();
         imageId = terrainImagePosition.getImageId();
+        zIndex = terrainImagePosition.getzIndex();
     }
 
     public ImagePositionKey(DbTerrainImagePosition dbTerrainImagePosition) {
         position = new Index(dbTerrainImagePosition.getTileX(), dbTerrainImagePosition.getTileY());
         imageId = dbTerrainImagePosition.getTerrainImage().getId();
+        zIndex = dbTerrainImagePosition.getzIndex();
     }
 
     public Index getPosition() {
@@ -28,19 +31,21 @@ class ImagePositionKey {
 
     @Override
     public boolean equals(Object o) {
-        if (null == o) return true;
-        if (!(o instanceof ImagePositionKey)) return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         ImagePositionKey that = (ImagePositionKey) o;
 
-        return imageId == that.imageId && !(position != null ? !position.equals(that.position) : that.position != null);
-
+        return imageId == that.imageId
+                && !(position != null ? !position.equals(that.position) : that.position != null)
+                && zIndex == that.zIndex;
     }
 
     @Override
     public int hashCode() {
         int result = position != null ? position.hashCode() : 0;
         result = 31 * result + imageId;
+        result = 31 * result + (zIndex != null ? zIndex.hashCode() : 0);
         return result;
     }
 }

@@ -43,6 +43,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -64,6 +65,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
     private AbsolutePanel parent;
     private TerrainHandler terrainHandler = new TerrainHandler();
     public static boolean uglySuppressRadar = false;
+    private Logger log = Logger.getLogger(TerrainView.class.getName());
 
     /**
      * Singleton
@@ -165,25 +167,42 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
 
     private void drawImages() {
         List<TerrainImagePosition> terrainImagePositions = terrainHandler.getTerrainImagesInRegion(new Rectangle(viewOriginLeft, viewOriginTop, viewWidth, viewHeight));
+        List<TerrainImagePosition> terrainImagePositionsLayer2 = new ArrayList<TerrainImagePosition>();
         if (terrainImagePositions.isEmpty() || terrainHandler.getTerrainImageElements().isEmpty()) {
             return;
         }
 
         for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
-            Index absolutePos = terrainHandler.getAbsolutIndexForTerrainTileIndex(terrainImagePosition.getTileIndex());
-            int relXStart = absolutePos.getX() - viewOriginLeft;
-            int relYStart = absolutePos.getY() - viewOriginTop;
-            ImageElement imageElement = terrainHandler.getTerrainImageElement(terrainImagePosition.getImageId());
-            if (imageElement == null) {
-                terrainHandler.loadImagesAndDrawMap(new SimpleDeferredStartup());
-                continue;
+            switch (terrainImagePosition.getzIndex()) {
+                case LAYER_1:
+                    drawLayerImages(terrainImagePosition);
+                    break;
+                case LAYER_2:
+                    terrainImagePositionsLayer2.add(terrainImagePosition);
+                    break;
+                default:
+                    log.warning("TerrainView.drawImages() z Index not supported: " + terrainImagePosition.getzIndex());
             }
-            try {
-                context2d.drawImage(imageElement, relXStart, relYStart);
-            } catch (Throwable t) {
-                GwtCommon.handleException(t);
-                sendErrorInfoToServer("drawImages", imageElement, relXStart, relYStart, 0, 0, 0, 0);
-            }
+        }
+        for (TerrainImagePosition terrainImagePosition : terrainImagePositionsLayer2) {
+            drawLayerImages(terrainImagePosition);
+        }
+    }
+
+    private void drawLayerImages(TerrainImagePosition terrainImagePosition) {
+        Index absolutePos = terrainHandler.getAbsolutIndexForTerrainTileIndex(terrainImagePosition.getTileIndex());
+        int relXStart = absolutePos.getX() - viewOriginLeft;
+        int relYStart = absolutePos.getY() - viewOriginTop;
+        ImageElement imageElement = terrainHandler.getTerrainImageElement(terrainImagePosition.getImageId());
+        if (imageElement == null) {
+            terrainHandler.loadImagesAndDrawMap(new SimpleDeferredStartup());
+            return;
+        }
+        try {
+            context2d.drawImage(imageElement, relXStart, relYStart);
+        } catch (Throwable t) {
+            GwtCommon.handleException(t);
+            sendErrorInfoToServer("drawImages", imageElement, relXStart, relYStart, 0, 0, 0, 0);
         }
     }
 
@@ -386,11 +405,11 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         drawImages();
     }
 
-    public void addNewTerrainImagePosition(int relX, int relY, TerrainImage terrainImage) {
+    public void addNewTerrainImagePosition(int relX, int relY, TerrainImage terrainImage, TerrainImagePosition.ZIndex zIndex) {
         int absX = relX + viewOriginLeft;
         int absY = relY + viewOriginTop;
 
-        terrainHandler.addNewTerrainImage(absX, absY, terrainImage);
+        terrainHandler.addNewTerrainImage(absX, absY, terrainImage, zIndex);
     }
 
     public void addNewSurfaceRect(int relX, int relY, int width, int height, SurfaceImage surfaceImage) {

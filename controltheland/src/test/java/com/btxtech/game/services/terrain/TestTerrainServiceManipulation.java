@@ -65,8 +65,8 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         DbTerrainImage dbTerrainImage = createDbTerrainImage(2, 2);
         Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
-        terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), dbTerrainImage.getId()));
-        terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), dbTerrainImage.getId()));
+        terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_1));
+        terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_1));
         Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
         terrainService.saveTerrain(terrainImagePositions, surfaceRects, dbTerrainSetting.getId());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -125,7 +125,7 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         DbTerrainImage dbTerrainImage = createDbTerrainImage(1, 1);
         Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
-        terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), dbTerrainImage.getId()));
+        terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_1));
         Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
         surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 100, 100), 1));
         terrainService.saveTerrain(terrainImagePositions, surfaceRects, dbTerrainSetting.getId());
@@ -158,7 +158,7 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
         Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
         for (int x = 0; x < 40; x++) {
             for (int y = 0; y < 40; y++) {
-                terrainImagePositions.add(new TerrainImagePosition(new Index(x, y), dbTerrainImage.getId()));
+                terrainImagePositions.add(new TerrainImagePosition(new Index(x, y), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_1));
             }
         }
         Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
@@ -180,7 +180,7 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
         terrainImagePositions = new ArrayList<TerrainImagePosition>();
         for (int x = 0; x < 40; x++) {
             for (int y = 0; y < 40; y++) {
-                terrainImagePositions.add(new TerrainImagePosition(new Index(x, y), dbTerrainImage.getId()));
+                terrainImagePositions.add(new TerrainImagePosition(new Index(x, y), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_1));
             }
         }
         terrainService.saveTerrain(terrainImagePositions, surfaceRects, dbTerrainSetting.getId());
@@ -201,7 +201,7 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
         terrainImagePositions = new ArrayList<TerrainImagePosition>();
         for (int x = 20; x < 60; x++) {
             for (int y = 20; y < 60; y++) {
-                terrainImagePositions.add(new TerrainImagePosition(new Index(x, y), dbTerrainImage.getId()));
+                terrainImagePositions.add(new TerrainImagePosition(new Index(x, y), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_1));
             }
         }
         terrainService.saveTerrain(terrainImagePositions, surfaceRects, dbTerrainSetting.getId());

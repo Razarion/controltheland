@@ -66,7 +66,7 @@ public class TerrainImageModifier implements TerrainMouseMoveListener, MouseDown
         marker.setVisible(false);
         int absoluteX = relX + TerrainView.getInstance().getViewOriginLeft();
         int absoluteY = relY + TerrainView.getInstance().getViewOriginTop();
-        TerrainImagePosition terrainImagePosition = TerrainView.getInstance().getTerrainHandler().getTerrainImagePosition(absoluteX, absoluteY);
+        TerrainImagePosition terrainImagePosition = TerrainView.getInstance().getTerrainHandler().getTerrainImagePosition(cockpit.getSelectedZIndex(), absoluteX, absoluteY);
         GwtCommon.preventDefault(mouseDownEvent);
         if (terrainImagePosition == null) {
             return;
@@ -86,7 +86,7 @@ public class TerrainImageModifier implements TerrainMouseMoveListener, MouseDown
             return;
         }
 
-        TerrainImagePosition terrainImagePosition = TerrainView.getInstance().getTerrainHandler().getTerrainImagePosition(absoluteLeft, absoluteTop);
+        TerrainImagePosition terrainImagePosition = TerrainView.getInstance().getTerrainHandler().getTerrainImagePosition(cockpit.getSelectedZIndex(), absoluteLeft, absoluteTop);
         if (terrainImagePosition != null) {
             marker.setVisible(true);
             TerrainImage terrainImage = TerrainView.getInstance().getTerrainHandler().getTerrainImage(terrainImagePosition);
