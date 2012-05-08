@@ -29,12 +29,19 @@ import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+
 /**
  * User: beat
  * Date: 22.12.2009
  * Time: 12:43:55
  */
 public class MiniTerrain extends MiniMap implements TerrainListener {
+    public static boolean UGLY_SUPPRESS_CANVAS_BUFFER_DUE_TO_ANTI_ALIASING_ARTIFACTS = false;
+    private Logger log = Logger.getLogger(MiniTerrain.class.getName());
+
     public MiniTerrain(int width, int height) {
         super(width, height, true);
         getCanvas().getElement().getStyle().setBackgroundColor("#000000");
@@ -49,6 +56,14 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
             return;
         }
         clear();
+        if (UGLY_SUPPRESS_CANVAS_BUFFER_DUE_TO_ANTI_ALIASING_ARTIFACTS) {
+            drawUnBuffered();
+        } else {
+            drawBuffered();
+        }
+    }
+
+    private void drawBuffered() {
         // Due to the canvas antialiasing artifact problem
         Canvas bufferCanvas = Canvas.createIfSupported();
         if (getTerrainSettings().getTileXCount() > 100) {
@@ -65,6 +80,18 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
             terrainWithImages(bufferCanvas.getContext2d());
         }
         getContext2d().drawImage(bufferCanvas.getCanvasElement(), 0, 0);
+    }
+
+    private void drawUnBuffered() {
+        if (getTerrainSettings().getTileXCount() > 100) {
+            scaleToTile();
+            drawTileSurfaces(getContext2d());
+            terrainWithoutImages(getContext2d());
+        } else {
+            scaleToAbsolute();
+            drawAbsoluteSurfaces(getContext2d());
+            terrainWithImages(getContext2d());
+        }
     }
 
     @Override
@@ -111,17 +138,34 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
             return;
         }
         TerrainImageBackground terrainImageBackground = Connection.getInstance().getGameInfo().getTerrainImageBackground();
+        List<TerrainImagePosition> terrainImagePositionsLayer2 = new ArrayList<TerrainImagePosition>();
         for (TerrainImagePosition terrainImagePosition : TerrainView.getInstance().getTerrainHandler().getTerrainImagePositions()) {
-            TerrainImage terrainImage = TerrainView.getInstance().getTerrainHandler().getTerrainImage(terrainImagePosition);
-            String bgColor = terrainImageBackground.get(terrainImage.getId());
-            bufferContext.setFillStyle(bgColor);
+            switch (terrainImagePosition.getzIndex()) {
+                case LAYER_1:
+                    terrainWithoutImagesLayer(bufferContext, terrainImageBackground, terrainImagePosition);
+                    break;
+                case LAYER_2:
+                    terrainImagePositionsLayer2.add(terrainImagePosition);
+                    break;
+                default:
+                    log.warning("MiniTerrain.terrainWithoutImages() z Index not supported: " + terrainImagePosition.getzIndex());
+            }
+        }
+        for (TerrainImagePosition terrainImagePosition : terrainImagePositionsLayer2) {
+            terrainWithoutImagesLayer(bufferContext, terrainImageBackground, terrainImagePosition);
+        }
+    }
 
-            for (int x = 0; x < terrainImage.getTileWidth(); x++) {
-                for (int y = 0; y < terrainImage.getTileHeight(); y++) {
-                    int startX = terrainImagePosition.getTileIndex().getX() + x;
-                    int startY = terrainImagePosition.getTileIndex().getY() + y;
-                    bufferContext.fillRect(startX, startY, 1, 1);
-                }
+    private void terrainWithoutImagesLayer(Context2d bufferContext, TerrainImageBackground terrainImageBackground, TerrainImagePosition terrainImagePosition) {
+        TerrainImage terrainImage = TerrainView.getInstance().getTerrainHandler().getTerrainImage(terrainImagePosition);
+        String bgColor = terrainImageBackground.get(terrainImage.getId());
+        bufferContext.setFillStyle(bgColor);
+
+        for (int x = 0; x < terrainImage.getTileWidth(); x++) {
+            for (int y = 0; y < terrainImage.getTileHeight(); y++) {
+                int startX = terrainImagePosition.getTileIndex().getX() + x;
+                int startY = terrainImagePosition.getTileIndex().getY() + y;
+                bufferContext.fillRect(startX, startY, 1, 1);
             }
         }
     }

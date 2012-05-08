@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.common.gameengine.services.terrain;
 
 import com.btxtech.game.jsre.client.common.Index;
+
 import java.io.Serializable;
 
 /**
@@ -22,8 +23,14 @@ import java.io.Serializable;
  * Time: 22:25:25
  */
 public class TerrainImagePosition implements Serializable {
+    public enum ZIndex {
+        LAYER_1,
+        LAYER_2
+    }
+
     private Index tileIndex;
     private int imageId;
+    private ZIndex zIndex;
 
     /**
      * Used by GWT
@@ -31,9 +38,10 @@ public class TerrainImagePosition implements Serializable {
     public TerrainImagePosition() {
     }
 
-    public TerrainImagePosition(Index tileIndex, int imageId) {
+    public TerrainImagePosition(Index tileIndex, int imageId, ZIndex zIndex) {
         this.tileIndex = tileIndex;
         this.imageId = imageId;
+        this.zIndex = zIndex;
     }
 
     public Index getTileIndex() {
@@ -46,5 +54,9 @@ public class TerrainImagePosition implements Serializable {
 
     public int getImageId() {
         return imageId;
+    }
+
+    public ZIndex getzIndex() {
+        return zIndex;
     }
 }

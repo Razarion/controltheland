@@ -219,7 +219,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         // Add new
         for (TerrainImagePosition terrainImagePosition : newImagePosition.values()) {
             DbTerrainImage dbTerrainImage = getDbTerrainImage(terrainImagePosition.getImageId());
-            dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().addChild(new DbTerrainImagePosition(terrainImagePosition.getTileIndex(), dbTerrainImage), null);
+            dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().addChild(new DbTerrainImagePosition(terrainImagePosition.getTileIndex(), dbTerrainImage, terrainImagePosition.getzIndex()), null);
         }
 
         // Surface Rects

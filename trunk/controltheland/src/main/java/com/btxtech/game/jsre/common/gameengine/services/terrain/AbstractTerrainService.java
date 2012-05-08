@@ -49,9 +49,11 @@ public interface AbstractTerrainService {
 
     TerrainImage getTerrainImage(TerrainImagePosition terrainImagePosition);
 
-    TerrainImagePosition getTerrainImagePosition(int absoluteX, int absoluteY);
-
     TerrainImagePosition getTerrainImagePosition(Index tileIndex);
+
+    TerrainImagePosition getTerrainImagePosition(TerrainImagePosition.ZIndex zIndex, int absoluteX, int absoluteY);
+
+    TerrainImagePosition getTerrainImagePosition(TerrainImagePosition.ZIndex zIndex, Index tileIndex);
 
     SurfaceRect getSurfaceRect(int absoluteX, int absoluteY);
 
@@ -86,9 +88,6 @@ public interface AbstractTerrainService {
     boolean isFree(Index middlePoint, int itemFreeWidth, int itemFreeHeight, Collection<SurfaceType> allowedSurfaces);
 
     boolean isFree(Index middlePoint, ItemType itemType);
-
-    @Deprecated
-    boolean isTerrainPassable(Index posititon);
 
     SurfaceType getSurfaceType(Index tileIndex);
 
