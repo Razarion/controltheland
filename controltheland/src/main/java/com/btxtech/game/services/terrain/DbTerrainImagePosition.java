@@ -128,7 +128,7 @@ public class DbTerrainImagePosition implements Serializable, CrudChild<DbTerrain
 
     @Override
     public void init(UserService userService) {
-        zIndex = TerrainImagePosition.ZIndex.LAYER_1;
+        // DO not use if parameters are passed via constructor
     }
 
     @Override
