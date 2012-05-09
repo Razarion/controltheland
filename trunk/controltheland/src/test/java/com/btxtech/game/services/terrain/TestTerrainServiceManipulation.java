@@ -13,6 +13,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * User: beat
@@ -36,8 +37,8 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
-        Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
+        Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<>();
+        Collection<SurfaceRect> surfaceRects = new ArrayList<>();
         terrainService.saveTerrain(terrainImagePositions, surfaceRects, dbTerrainSetting.getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -64,10 +65,10 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbTerrainImage dbTerrainImage = createDbTerrainImage(2, 2);
-        Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
+        Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<>();
         terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_1));
         terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_1));
-        Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
+        Collection<SurfaceRect> surfaceRects = new ArrayList<>();
         terrainService.saveTerrain(terrainImagePositions, surfaceRects, dbTerrainSetting.getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -76,6 +77,47 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertEquals(1, getTerrainTileCount(dbTerrainSetting));
         Assert.assertEquals(0, getSurfaceRectCount(dbTerrainSetting));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testLayer1_2() {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbTerrainSetting dbTerrainSetting = setupMinimalTerrain();
+        Assert.assertEquals(0, getTerrainTileCount(dbTerrainSetting));
+        Assert.assertEquals(1, getSurfaceRectCount(dbTerrainSetting));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbTerrainImage dbTerrainImage = createDbTerrainImage(2, 2);
+        Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<>();
+        terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_1));
+        terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_2));
+        terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_1));
+        terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_2));
+        Collection<SurfaceRect> surfaceRects = new ArrayList<>();
+        terrainService.saveTerrain(terrainImagePositions, surfaceRects, dbTerrainSetting.getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(2, getTerrainTileCount(dbTerrainSetting));
+        Assert.assertEquals(0, getSurfaceRectCount(dbTerrainSetting));
+
+        Collection<DbTerrainImagePosition> dbTerrainImagePositions = terrainService.getDbTerrainSettingCrudServiceHelper().readDbChild(dbTerrainSetting.getId()).getDbTerrainImagePositionCrudServiceHelper().readDbChildren();
+        List<DbTerrainImagePosition> list = new ArrayList<>(dbTerrainImagePositions);
+        if (list.get(0).getzIndex() == TerrainImagePosition.ZIndex.LAYER_1) {
+            Assert.assertEquals(TerrainImagePosition.ZIndex.LAYER_2, list.get(1).getzIndex());
+        } else {
+            Assert.assertEquals(TerrainImagePosition.ZIndex.LAYER_1, list.get(1).getzIndex());
+        }
+
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -94,8 +136,8 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbSurfaceImage dbSurfaceImage = createDbSurfaceImage(SurfaceType.LAND);
-        Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
-        Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
+        Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<>();
+        Collection<SurfaceRect> surfaceRects = new ArrayList<>();
         surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 100, 100), dbSurfaceImage.getId()));
         surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 100, 100), dbSurfaceImage.getId()));
         terrainService.saveTerrain(terrainImagePositions, surfaceRects, dbTerrainSetting.getId());
@@ -124,9 +166,9 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbTerrainImage dbTerrainImage = createDbTerrainImage(1, 1);
-        Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
+        Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<>();
         terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_1));
-        Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
+        Collection<SurfaceRect> surfaceRects = new ArrayList<>();
         surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 100, 100), 1));
         terrainService.saveTerrain(terrainImagePositions, surfaceRects, dbTerrainSetting.getId());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -155,13 +197,13 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         DbTerrainImage dbTerrainImage = createDbTerrainImage(1, 1);
         // Fill with 1600 tiles. Override the original first tile
-        Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
+        Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<>();
         for (int x = 0; x < 40; x++) {
             for (int y = 0; y < 40; y++) {
                 terrainImagePositions.add(new TerrainImagePosition(new Index(x, y), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_1));
             }
         }
-        Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
+        Collection<SurfaceRect> surfaceRects = new ArrayList<>();
         terrainService.saveTerrain(terrainImagePositions, surfaceRects, dbTerrainSetting.getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -177,7 +219,7 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         // Override all 1600 first tile
-        terrainImagePositions = new ArrayList<TerrainImagePosition>();
+        terrainImagePositions = new ArrayList<>();
         for (int x = 0; x < 40; x++) {
             for (int y = 0; y < 40; y++) {
                 terrainImagePositions.add(new TerrainImagePosition(new Index(x, y), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_1));
@@ -198,7 +240,7 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         // Override 1600
-        terrainImagePositions = new ArrayList<TerrainImagePosition>();
+        terrainImagePositions = new ArrayList<>();
         for (int x = 20; x < 60; x++) {
             for (int y = 20; y < 60; y++) {
                 terrainImagePositions.add(new TerrainImagePosition(new Index(x, y), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_1));
@@ -231,13 +273,13 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         // Fill with 1600 tiles. Override the original first tile
-        Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
+        Collection<SurfaceRect> surfaceRects = new ArrayList<>();
         for (int x = 0; x < 40; x++) {
             for (int y = 0; y < 40; y++) {
                 surfaceRects.add(new SurfaceRect(new Rectangle(x, y, 1, 1), 1));
             }
         }
-        Collection<TerrainImagePosition> imagePositions = new ArrayList<TerrainImagePosition>();
+        Collection<TerrainImagePosition> imagePositions = new ArrayList<>();
         terrainService.saveTerrain(imagePositions, surfaceRects, dbTerrainSetting.getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -253,7 +295,7 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         // Override all 1600 first tile
-        surfaceRects = new ArrayList<SurfaceRect>();
+        surfaceRects = new ArrayList<>();
         for (int x = 0; x < 40; x++) {
             for (int y = 0; y < 40; y++) {
                 surfaceRects.add(new SurfaceRect(new Rectangle(x, y, 1, 1), 1));
@@ -274,7 +316,7 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         // Override 1600
-        surfaceRects = new ArrayList<SurfaceRect>();
+        surfaceRects = new ArrayList<>();
         for (int x = 20; x < 60; x++) {
             for (int y = 20; y < 60; y++) {
                 surfaceRects.add(new SurfaceRect(new Rectangle(x, y, 1, 1), 1));
