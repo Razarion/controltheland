@@ -30,6 +30,8 @@ import com.google.gwt.user.client.rpc.StatusCodeException;
 import com.google.gwt.user.client.ui.Widget;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,6 +40,7 @@ public class GwtCommon {
     private static Boolean isIe6;
     private static Boolean isOpera;
     private static Logger log = Logger.getLogger(GwtCommon.class.getName());
+    private static final Set<String> sentIntCheckErrors = new HashSet<String>();
 
     public static void setUncaughtExceptionHandler() {
         GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
@@ -208,4 +211,34 @@ public class GwtCommon {
         style.setProperty("OUserSelect", "none");
         style.setProperty("UserSelect", "none");
     }
+
+    /**
+     * If an int has a decimal value e.g. 4.333 this leads to error in de-serialization on the server
+     * <br /><br />
+     * &nbsp;&nbsp;public native int getNativeInt() &#47;*-{<br />
+     * &nbsp;&nbsp;&nbsp;&nbsp;return 4.333; // leads error during de-serialization on the server<br />
+     * &nbsp;&nbsp;}-*&#47;;<br /><br />
+     *
+     * @param intObject Integer to check
+     * @return Integer in case of decimal floor will be called
+     */
+    public static Integer checkInt(Integer intObject, String message) {
+        if (intObject == null) {
+            return null;
+        }
+        try {
+            if (Math.floor(intObject) == intObject) {
+                return intObject;
+            } else {
+                if (!sentIntCheckErrors.contains(message)) {
+                    sentIntCheckErrors.add(message);
+                    throw new NumberFormatException("Integer expected but received: " + intObject);
+                }
+            }
+        } catch (NumberFormatException numberFormatException) {
+            log.log(Level.WARNING, message, numberFormatException);
+        }
+        return (int) Math.floor(intObject);
+    }
+
 }

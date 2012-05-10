@@ -14,8 +14,10 @@
 package com.btxtech.game.jsre.common.utg.tracking;
 
 import com.btxtech.game.jsre.client.ClientSyncItem;
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,11 +43,11 @@ public class SelectionTrackingItem implements Serializable {
         this.startUuid = startUuid;
         own = null;
     }
-    
+
     public SelectionTrackingItem(String startUuid, ClientSyncItem selection) {
         this.startUuid = startUuid;
         selectedIds = new ArrayList<Integer>();
-        selectedIds.add(selection.getSyncItem().getId().getId());
+        selectedIds.add(GwtCommon.checkInt(selection.getSyncItem().getId().getId(), "SelectionTrackingItem (selection) selection.getSyncItem().getId().getId()"));
         own = false;
     }
 
@@ -53,7 +55,7 @@ public class SelectionTrackingItem implements Serializable {
         this.startUuid = startUuid;
         selectedIds = new ArrayList<Integer>();
         for (SyncBaseItem syncBaseItem : selectedGroup.getSyncBaseItems()) {
-            selectedIds.add(syncBaseItem.getId().getId());
+            selectedIds.add(GwtCommon.checkInt(syncBaseItem.getId().getId(), "SelectionTrackingItem (selectedGroup) syncBaseItem.getId().getId()"));
         }
         own = true;
     }

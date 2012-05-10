@@ -120,12 +120,12 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
         TerrainView.getInstance().addTerrainScrollListener(this);
         Connection.getInstance().sendEventTrackingStart(new EventTrackingStart(
                 ClientServices.getInstance().getClientRunner().getStartUuid(),
-                Window.getClientWidth(),
-                Window.getClientHeight(),
-                Window.getScrollLeft(),
-                Window.getScrollTop(),
-                MapWindow.getAbsolutePanel().getOffsetWidth(),
-                MapWindow.getAbsolutePanel().getOffsetHeight()));
+                GwtCommon.checkInt(Window.getClientWidth(), "startEventTracking Window.getClientWidth()"),
+                GwtCommon.checkInt(Window.getClientHeight(), "startEventTracking Window.getClientHeight()"),
+                GwtCommon.checkInt(Window.getScrollLeft(), "startEventTracking Window.getScrollLeft()"),
+                GwtCommon.checkInt(Window.getScrollTop(), "startEventTracking Window.getScrollTop()"),
+                GwtCommon.checkInt(MapWindow.getAbsolutePanel().getOffsetWidth(), "startEventTracking MapWindow.getAbsolutePanel().getOffsetWidth()"),
+                GwtCommon.checkInt(MapWindow.getAbsolutePanel().getOffsetHeight(), "startEventTracking MapWindow.getAbsolutePanel().getOffsetHeight(")));
         scrollHandlerRegistration = Window.addWindowScrollHandler(new Window.ScrollHandler() {
             @Override
             public void onWindowScroll(Window.ScrollEvent event) {
@@ -162,7 +162,10 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
 
     public void addEventTrackingItem(int xPos, int yPos, int eventType) {
         if (isCollecting) {
-            eventTrackingItems.add(new EventTrackingItem(ClientServices.getInstance().getClientRunner().getStartUuid(), xPos, yPos, eventType));
+            eventTrackingItems.add(new EventTrackingItem(ClientServices.getInstance().getClientRunner().getStartUuid(),
+                    GwtCommon.checkInt(xPos, "addEventTrackingItem xPos"),
+                    GwtCommon.checkInt(yPos, "addEventTrackingItem yPos"),
+                    GwtCommon.checkInt(eventType, "addEventTrackingItem eventType")));
         }
     }
 
@@ -170,13 +173,12 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
         if (isCollecting) {
             BrowserWindowTracking wind = new BrowserWindowTracking(
                     ClientServices.getInstance().getClientRunner().getStartUuid(),
-                    Window.getClientWidth(),
-                    Window.getClientHeight(),
-                    Window.getScrollLeft(),
-                    Window.getScrollTop(),
-                    MapWindow.getAbsolutePanel().getOffsetWidth(),
-                    MapWindow.getAbsolutePanel().getOffsetHeight());
-
+                    GwtCommon.checkInt(Window.getClientWidth(), "addBrowserWindowTracking Window.getClientWidth()"),
+                    GwtCommon.checkInt(Window.getClientHeight(), "addBrowserWindowTracking Window.getClientHeight()"),
+                    GwtCommon.checkInt(Window.getScrollLeft(), "addBrowserWindowTracking Window.getScrollLeft()"),
+                    GwtCommon.checkInt(Window.getScrollTop(), "addBrowserWindowTracking Window.getScrollTop()"),
+                    GwtCommon.checkInt(MapWindow.getAbsolutePanel().getOffsetWidth(), "addBrowserWindowTracking MapWindow.getAbsolutePanel().getOffsetWidth()"),
+                    GwtCommon.checkInt(MapWindow.getAbsolutePanel().getOffsetHeight(), "addBrowserWindowTracking MapWindow.getAbsolutePanel().getOffsetHeight()"));
             browserWindowTrackings.add(wind);
         }
     }
@@ -236,7 +238,9 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
     @Override
     public void onScroll(int left, int top, int width, int height, int deltaLeft, int deltaTop) {
         if (isCollecting) {
-            terrainScrollTrackings.add(new TerrainScrollTracking(ClientServices.getInstance().getClientRunner().getStartUuid(), left, top));
+            terrainScrollTrackings.add(new TerrainScrollTracking(ClientServices.getInstance().getClientRunner().getStartUuid(),
+                    GwtCommon.checkInt(left, "onScroll left"),
+                    GwtCommon.checkInt(top, "onScroll top")));
         }
     }
 
@@ -251,19 +255,21 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
 
             dialogTrackings.add(new DialogTracking(
                     ClientServices.getInstance().getClientRunner().getStartUuid(),
-                    widget.getAbsoluteLeft(),
-                    widget.getAbsoluteTop(),
-                    widget.getOffsetWidth(),
-                    widget.getOffsetHeight(),
-                    zIndex,
+                    GwtCommon.checkInt(widget.getAbsoluteLeft(), "onDialogAppears widget.getAbsoluteLeft()"),
+                    GwtCommon.checkInt(widget.getAbsoluteTop(), "onDialogAppears widget.getAbsoluteTop()"),
+                    GwtCommon.checkInt(widget.getOffsetWidth(), "onDialogAppears widget.getOffsetWidth()"),
+                    GwtCommon.checkInt(widget.getOffsetHeight(), "onDialogAppears widget.getOffsetHeight()"),
+                    GwtCommon.checkInt(zIndex, "onDialogAppears zIndex"),
                     description,
-                    System.identityHashCode(widget)));
+                    GwtCommon.checkInt(System.identityHashCode(widget), "onDialogAppears System.identityHashCode(widget)")
+            ));
         }
     }
 
     public void onDialogDisappears(Widget widget) {
         if (isCollecting) {
-            dialogTrackings.add(new DialogTracking(ClientServices.getInstance().getClientRunner().getStartUuid(), System.identityHashCode(widget)));
+            dialogTrackings.add(new DialogTracking(ClientServices.getInstance().getClientRunner().getStartUuid(),
+                    GwtCommon.checkInt(System.identityHashCode(widget), "onDialogDisappears System.identityHashCode(widget)")));
         }
     }
 }
