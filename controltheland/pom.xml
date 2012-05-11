@@ -300,6 +300,12 @@
             <version>1.0.0.GA</version>
         </dependency>
         <!-- Some how required ends -->
+        <!-- jsoup HTML parser library @ http://jsoup.org/ -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.6.2</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>ROOT</finalName>

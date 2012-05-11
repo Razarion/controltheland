@@ -14,7 +14,7 @@ import javax.persistence.Entity;
 public class DbContentStaticHtml extends DbContent {
     @Column(length = 500000)
     private String html;
-    private boolean escapeMarkup = true;
+    private DbExpressionProperty.EditorType editorType = DbExpressionProperty.EditorType.PLAIN_TEXT_FILED;
 
     public String getHtml() {
         return html;
@@ -24,11 +24,11 @@ public class DbContentStaticHtml extends DbContent {
         this.html = html;
     }
 
-    public void setEscapeMarkup(boolean escapeMarkup) {
-        this.escapeMarkup = escapeMarkup;
+    public DbExpressionProperty.EditorType getEditorType() {
+        return editorType;
     }
 
-    public boolean getEscapeMarkup() {
-        return escapeMarkup;
+    public void setEditorType(DbExpressionProperty.EditorType editorType) {
+        this.editorType = editorType;
     }
 }

@@ -21,9 +21,25 @@ public class DbExpressionProperty extends DbContent implements DataProviderInfo 
         ROUNDED_DOWN_INTEGER
     }
 
+    public enum EditorType {
+        PLAIN_TEXT_FILED(true),
+        PLAIN_TEXT_AREA(true),
+        HTML_AREA(false);
+
+        private boolean escapeHtml;
+
+        private EditorType(boolean escapeHtml) {
+            this.escapeHtml = escapeHtml;
+        }
+
+        public boolean isEscapeHtml() {
+            return escapeHtml;
+        }
+    }
+
     private String expression;
     private String springBeanName;
-    private boolean escapeMarkup = true;
+    private EditorType editorType = EditorType.PLAIN_TEXT_FILED;
     private Type optionalType;
     private boolean sortable = false;
     private String sortHintExpression;
@@ -58,12 +74,12 @@ public class DbExpressionProperty extends DbContent implements DataProviderInfo 
         this.springBeanName = springBeanName;
     }
 
-    public void setEscapeMarkup(boolean escapeMarkup) {
-        this.escapeMarkup = escapeMarkup;
+    public EditorType getEditorType() {
+        return editorType;
     }
 
-    public boolean getEscapeMarkup() {
-        return escapeMarkup;
+    public void setEditorType(EditorType editorType) {
+        this.editorType = editorType;
     }
 
     public Type getOptionalType() {

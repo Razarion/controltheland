@@ -568,7 +568,7 @@ public class TestCmsService extends AbstractServiceTest {
         date.setOptionalType(DbExpressionProperty.Type.DATE_DDMMYYYY_HH_MM_SS);
         DbExpressionProperty html = (DbExpressionProperty) dbContentContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
         html.setExpression("html");
-        html.setEscapeMarkup(false);
+        html.setEditorType(DbExpressionProperty.EditorType.HTML_AREA);
 
         pageCrud.updateDbChild(dbPage1);
         int id = dbPage1.getId();
@@ -669,7 +669,7 @@ public class TestCmsService extends AbstractServiceTest {
         date.setOptionalType(DbExpressionProperty.Type.DATE_DDMMYYYY_HH_MM_SS);
         DbExpressionProperty html = (DbExpressionProperty) dbContentContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
         html.setExpression("html");
-        html.setEscapeMarkup(false);
+        html.setEditorType(DbExpressionProperty.EditorType.HTML_AREA);
 
         pageCrud.updateDbChild(dbPage1);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -713,8 +713,9 @@ public class TestCmsService extends AbstractServiceTest {
 
         beginHttpRequestAndOpenSessionInViewFilter();
         formTester = tester.newFormTester("form");
-        formTester.setValue("content:table:rows:1:cells:1:cell:container:1:field", "Blog 1");
-        formTester.setValue("content:table:rows:1:cells:1:cell:container:3:textArea", "Bla Bla");
+        tester.debugComponentTrees();
+        formTester.setValue("content:table:rows:1:cells:1:cell:container:1:editor:field", "Blog 1");
+        formTester.setValue("content:table:rows:1:cells:1:cell:container:3:editor:editor", "Bla Bla");
         formTester.submit("content:edit:save");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -756,7 +757,7 @@ public class TestCmsService extends AbstractServiceTest {
         date.setOptionalType(DbExpressionProperty.Type.DATE_DDMMYYYY_HH_MM_SS);
         DbExpressionProperty html = (DbExpressionProperty) dbContentContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
         html.setExpression("html");
-        html.setEscapeMarkup(false);
+        html.setEditorType(DbExpressionProperty.EditorType.HTML_AREA);
 
         pageCrud.updateDbChild(dbPage1);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -835,7 +836,7 @@ public class TestCmsService extends AbstractServiceTest {
         DbExpressionProperty expProperty = new DbExpressionProperty();
         expProperty.setParent(dbContentRow);
         expProperty.setExpression("html");
-        expProperty.setEscapeMarkup(false);
+        expProperty.setEditorType(DbExpressionProperty.EditorType.HTML_AREA);
         dbContentRow.setDbContent(expProperty);
 
         pageCrud.updateDbChild(dbPage1);
@@ -871,7 +872,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         beginHttpRequestAndOpenSessionInViewFilter();
         formTester = tester.newFormTester("form");
-        formTester.setValue("content:table:rows:1:cells:1:cell:field", "TEST 1");
+        formTester.setValue("content:table:rows:1:cells:1:cell:editor:field", "TEST 1");
         formTester.submit("content:edit:save");
         endHttpRequestAndOpenSessionInViewFilter();
 
@@ -880,8 +881,9 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
+        tester.debugComponentTrees();
         formTester = tester.newFormTester("form");
-        formTester.setValue("content:table:rows:1:cells:2:cell:textArea", "Content Content Content");
+        formTester.setValue("content:table:rows:1:cells:2:cell:editor:editor", "Content Content Content");
         formTester.submit("content:edit:save");
         endHttpRequestAndOpenSessionInViewFilter();
 
@@ -990,7 +992,8 @@ public class TestCmsService extends AbstractServiceTest {
 
         beginHttpRequestAndOpenSessionInViewFilter();
         formTester = tester.newFormTester("form");
-        formTester.setValue("content:htmlTextArea", "qaywsxedc");
+        tester.debugComponentTrees();
+        formTester.setValue("content:htmlTextArea:editor", "qaywsxedc");
         formTester.submit("content:edit:save");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -1016,9 +1019,9 @@ public class TestCmsService extends AbstractServiceTest {
         dbPage.setContentAndAccessWrites(dbContentContainer);
         dbContentContainer.setWriteRestricted(DbContent.Access.ALLOWED);
         DbContentDynamicHtml dynamicHtml1 = (DbContentDynamicHtml) dbContentContainer.getContentCrud().createDbChild(DbContentDynamicHtml.class);
-        dynamicHtml1.setEscapeMarkup(false);
+        dynamicHtml1.setEditorType(DbExpressionProperty.EditorType.HTML_AREA);
         DbContentDynamicHtml dynamicHtml2 = (DbContentDynamicHtml) dbContentContainer.getContentCrud().createDbChild(DbContentDynamicHtml.class);
-        dynamicHtml2.setEscapeMarkup(false);
+        dynamicHtml2.setEditorType(DbExpressionProperty.EditorType.PLAIN_TEXT_AREA);
 
         pageCrud.updateDbChild(dbPage);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -1046,8 +1049,8 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertInvisible("form:content:container:1:edit:edit");
         // tester.assertInvisible("form:content:container:2:edit:edit");
         tester.assertInvisible("form:content:container:2:edit:save");
-        tester.assertVisible("form:content:container:1:htmlTextArea");
-        formTester.setValue("content:container:1:htmlTextArea", "qaywsxedc");
+        tester.assertVisible("form:content:container:1:htmlTextArea:editor");
+        formTester.setValue("content:container:1:htmlTextArea:editor", "qaywsxedc");
         formTester.submit("content:container:1:edit:save");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -1067,8 +1070,8 @@ public class TestCmsService extends AbstractServiceTest {
 //        tester.assertInvisible("form:content:container:1:edit:edit");
         tester.assertInvisible("form:content:container:2:edit:edit");
         tester.assertInvisible("form:content:container:1:edit:save");
-        tester.assertVisible("form:content:container:2:htmlTextArea");
-        formTester.setValue("content:container:2:htmlTextArea", "qaywsxedc2");
+        tester.assertVisible("form:content:container:2:htmlTextArea:editor");
+        formTester.setValue("content:container:2:htmlTextArea:editor", "qaywsxedc2");
         formTester.submit("content:container:2:edit:save");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -1160,7 +1163,7 @@ public class TestCmsService extends AbstractServiceTest {
         createName.setWriteRestricted(DbContent.Access.REGISTERED_USER);
         DbExpressionProperty createContent = threadCreateEdit.getValueCrud().createDbChild(DbExpressionProperty.class);
         createContent.setExpression("content");
-        createContent.setEscapeMarkup(false);
+        createContent.setEditorType(DbExpressionProperty.EditorType.HTML_AREA);
         createContent.setWriteRestricted(DbContent.Access.REGISTERED_USER);
 
         DbContentRow postsNameRow = threadContentBook.getRowCrud().createDbChild();
@@ -1171,7 +1174,7 @@ public class TestCmsService extends AbstractServiceTest {
         postsNameRow.setDbContent(postList);
         DbExpressionProperty postContent = (DbExpressionProperty) postList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
         postContent.setExpression("content");
-        postContent.setEscapeMarkup(false);
+        postContent.setEditorType(DbExpressionProperty.EditorType.HTML_AREA);
 
         pageCrud.updateDbChild(dbPage1);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -1317,9 +1320,10 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertVisible("form:content:edit:cancelEdit");
         // Fill invalues and press save
         formTester = tester.newFormTester("form");
-        formTester.setValue("content:table:rows:2:cells:1:cell:container:1:field", "SubForumName2");
-        formTester.setValue("content:table:rows:2:cells:1:cell:container:2:field", "SubForumContent2");
-        formTester.setValue("content:table:rows:2:cells:1:cell:container:3:table:rows:1:cells:1:cell:field", "CategoryName2");
+        tester.debugComponentTrees();
+        formTester.setValue("content:table:rows:2:cells:1:cell:container:1:editor:field", "SubForumName2");
+        formTester.setValue("content:table:rows:2:cells:1:cell:container:2:editor:field", "SubForumContent2");
+        formTester.setValue("content:table:rows:2:cells:1:cell:container:3:table:rows:1:cells:1:cell:editor:field", "CategoryName2");
         formTester.submit("content:edit:save");
         tester.newFormTester("form").submit("content:edit:cancelEdit");
         tester.assertVisible("form:content:edit:edit");
@@ -1371,8 +1375,8 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertVisible("form:content:edit:cancelEdit");
         // Fill in values and press save
         FormTester formTester = tester.newFormTester("form");
-        formTester.setValue("content:table:rows:1:cells:2:cell:field", "CategoryName2");
-        formTester.setValue("content:table:rows:2:cells:2:cell:table:rows:1:cells:1:cell:field", "ForumThreadName2");
+        formTester.setValue("content:table:rows:1:cells:2:cell:editor:field", "CategoryName2");
+        formTester.setValue("content:table:rows:2:cells:2:cell:table:rows:1:cells:1:cell:editor:field", "ForumThreadName2");
         formTester.submit("content:edit:save");
         tester.newFormTester("form").submit("content:edit:cancelEdit");
         tester.assertVisible("form:content:edit:edit");
@@ -1424,8 +1428,8 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertVisible("form:content:edit:cancelEdit");
         // Fill in values and press save
         FormTester formTester = tester.newFormTester("form");
-        formTester.setValue("content:table:rows:3:cells:2:cell:field", "CategoryName2");
-        formTester.setValue("content:table:rows:4:cells:2:cell:table:rows:1:cells:1:cell:field", "ForumThreadName2");
+        formTester.setValue("content:table:rows:3:cells:2:cell:editor:field", "CategoryName2");
+        formTester.setValue("content:table:rows:4:cells:2:cell:table:rows:1:cells:1:cell:editor:field", "ForumThreadName2");
         formTester.submit("content:edit:save");
         tester.newFormTester("form").submit("content:edit:cancelEdit");
         tester.assertVisible("form:content:edit:edit");
@@ -1480,7 +1484,8 @@ public class TestCmsService extends AbstractServiceTest {
         // Fill in values and press save
         FormTester formTester = tester.newFormTester("form");
         //formTester.setValue("content:table:rows:3:cells:2:cell:textArea", "ForumThreadName5");
-        formTester.setValue("content:table:rows:4:cells:2:cell:table:rows:1:cells:1:cell:textArea", "PostContent6");
+        tester.debugComponentTrees();
+        formTester.setValue("content:table:rows:4:cells:2:cell:table:rows:1:cells:1:cell:editor:editor", "PostContent6");
         formTester.submit("content:edit:save");
         tester.newFormTester("form").submit("content:edit:cancelEdit");
         tester.assertVisible("form:content:edit:edit");
@@ -1554,8 +1559,8 @@ public class TestCmsService extends AbstractServiceTest {
         // Click the New Thread Button
         tester.newFormTester("form").submit("content:table:rows:2:cells:2:cell:edit:createEdit");
         FormTester formTester = tester.newFormTester("form");
-        formTester.setValue("content:listView:0:content:field", "Title");
-        formTester.setValue("content:listView:1:content:textArea", "Content Content");
+        formTester.setValue("content:listView:0:content:editor:field", "Title");
+        formTester.setValue("content:listView:1:content:editor:editor", "Content Content");
         // Cancel -> back to page before
         formTester.submit("content:cancel");
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "CategoryName1");
@@ -1609,8 +1614,8 @@ public class TestCmsService extends AbstractServiceTest {
         // Click the New Thread Button
         tester.newFormTester("form").submit("content:table:rows:2:cells:2:cell:edit:createEdit");
         FormTester formTester = tester.newFormTester("form");
-        formTester.setValue("content:listView:0:content:field", "ForumThreadName2");
-        formTester.setValue("content:listView:1:content:textArea", "Content Content");
+        formTester.setValue("content:listView:0:content:editor:field", "ForumThreadName2");
+        formTester.setValue("content:listView:1:content:editor:editor", "Content Content");
         // Submit -> back to page before
         formTester.submit("content:submit");
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "CategoryName1");
@@ -1713,7 +1718,7 @@ public class TestCmsService extends AbstractServiceTest {
         expProperty = new DbExpressionProperty();
         expProperty.setParent(dbContentRow);
         expProperty.setExpression("html");
-        expProperty.setEscapeMarkup(false);
+        expProperty.setEditorType(DbExpressionProperty.EditorType.HTML_AREA);
         dbContentRow.setDbContent(expProperty);
 
         dbContentRow = rowCrud.createDbChild();
@@ -1868,7 +1873,7 @@ public class TestCmsService extends AbstractServiceTest {
         expProperty = new DbExpressionProperty();
         expProperty.setParent(dbContentRow);
         expProperty.setExpression("html");
-        expProperty.setEscapeMarkup(false);
+        expProperty.setEditorType(DbExpressionProperty.EditorType.HTML_AREA);
         dbContentRow.setDbContent(expProperty);
 
         dbContentRow = rowCrud.createDbChild();
@@ -2336,7 +2341,7 @@ public class TestCmsService extends AbstractServiceTest {
         DbExpressionProperty expProperty = new DbExpressionProperty();
         expProperty.setParent(dbContentRow);
         expProperty.setExpression("name");
-        expProperty.setEscapeMarkup(false);
+        expProperty.setEditorType(DbExpressionProperty.EditorType.PLAIN_TEXT_AREA);
         dbContentRow.setDbContent(expProperty);
         pageCrud.updateDbChild(dbLevelPage);
 
@@ -2439,7 +2444,6 @@ public class TestCmsService extends AbstractServiceTest {
         DbExpressionProperty expProperty = new DbExpressionProperty();
         expProperty.setParent(dbContentRow);
         expProperty.setExpression("name");
-        expProperty.setEscapeMarkup(false);
         dbContentRow.setDbContent(expProperty);
 
         pageCrud.updateDbChild(dbLevelPage);
@@ -3472,9 +3476,10 @@ public class TestCmsService extends AbstractServiceTest {
         DbExpressionProperty subject = dbContentInvoker.getValueCrud().createDbChild();
         subject.setName("subject");
         subject.setExpression("subject");
+        subject.setEditorType(DbExpressionProperty.EditorType.PLAIN_TEXT_FILED);
         DbExpressionProperty body = dbContentInvoker.getValueCrud().createDbChild();
         body.setName("Message");
-        body.setEscapeMarkup(false);
+        body.setEditorType(DbExpressionProperty.EditorType.HTML_AREA);
         body.setExpression("body");
 
         pageCrud.updateDbChild(dbPage);
@@ -3509,13 +3514,13 @@ public class TestCmsService extends AbstractServiceTest {
         tester.startPage(CmsPage.class);
         tester.assertVisible("form:content:container:1:button");
         tester.newFormTester("form").submit("content:container:1:button");
-        tester.assertVisible("form:content:listView:0:field");
-        tester.assertVisible("form:content:listView:1:field");
-        tester.assertVisible("form:content:listView:2:textArea");
+        tester.assertVisible("form:content:listView:0:editor:field");
+        tester.assertVisible("form:content:listView:1:editor:field");
+        tester.assertVisible("form:content:listView:2:editor:editor");
         FormTester formTester = tester.newFormTester("form");
-        formTester.setValue("content:listView:0:field", "U2");
-        formTester.setValue("content:listView:1:field", "subject2");
-        formTester.setValue("content:listView:2:textArea", "message message");
+        formTester.setValue("content:listView:0:editor:field", "U2");
+        formTester.setValue("content:listView:1:editor:field", "subject2");
+        formTester.setValue("content:listView:2:editor:editor", "message message");
         formTester.submit("content:invoke");
         tester.assertVisible("form:content:container:1:button");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -3546,13 +3551,13 @@ public class TestCmsService extends AbstractServiceTest {
         tester.startPage(CmsPage.class);
         tester.assertVisible("form:content:container:1:button");
         tester.newFormTester("form").submit("content:container:1:button");
-        tester.assertVisible("form:content:listView:0:field");
-        tester.assertVisible("form:content:listView:1:field");
-        tester.assertVisible("form:content:listView:2:textArea");
+        tester.assertVisible("form:content:listView:0:editor:field");
+        tester.assertVisible("form:content:listView:1:editor:field");
+        tester.assertVisible("form:content:listView:2:editor:editor");
         FormTester formTester = tester.newFormTester("form");
-        formTester.setValue("content:listView:0:field", "U5");
-        formTester.setValue("content:listView:1:field", "subject2");
-        formTester.setValue("content:listView:2:textArea", "message message");
+        formTester.setValue("content:listView:0:editor:field", "U5");
+        formTester.setValue("content:listView:1:editor:field", "subject2");
+        formTester.setValue("content:listView:2:editor:editor", "message message");
         formTester.submit("content:invoke");
         tester.assertLabel("form:content:border:borderContent:message", "Unknown user: U5");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -3572,13 +3577,13 @@ public class TestCmsService extends AbstractServiceTest {
         tester.startPage(CmsPage.class);
         tester.assertVisible("form:content:container:1:button");
         tester.newFormTester("form").submit("content:container:1:button");
-        tester.assertVisible("form:content:listView:0:field");
-        tester.assertVisible("form:content:listView:1:field");
-        tester.assertVisible("form:content:listView:2:textArea");
+        tester.assertVisible("form:content:listView:0:editor:field");
+        tester.assertVisible("form:content:listView:1:editor:field");
+        tester.assertVisible("form:content:listView:2:editor:editor");
         FormTester formTester = tester.newFormTester("form");
-        formTester.setValue("content:listView:0:field", "U5");
-        formTester.setValue("content:listView:1:field", "subject2");
-        formTester.setValue("content:listView:2:textArea", "message message");
+        formTester.setValue("content:listView:0:editor:field", "U5");
+        formTester.setValue("content:listView:1:editor:field", "subject2");
+        formTester.setValue("content:listView:2:editor:editor", "message message");
         formTester.submit("content:cancel");
         tester.assertVisible("form:content:container:1:button");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -3915,7 +3920,7 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpSession();
 
         // Mock statistics service
-        List<UserState> userStates = new ArrayList<UserState>();
+        List<UserState> userStates = new ArrayList<>();
 
         UserState userState = new UserState();
         userState.setDbLevelId(TEST_LEVEL_1_SIMULATED_ID);
@@ -4201,7 +4206,7 @@ public class TestCmsService extends AbstractServiceTest {
     public void testPaging() throws Exception {
         configureGameMultipleLevel();
         // Mock statistics service
-        List<UserState> userStates = new ArrayList<UserState>();
+        List<UserState> userStates = new ArrayList<>();
 
         UserState userState = new UserState();
         userState.setDbLevelId(TEST_LEVEL_1_SIMULATED_ID);
@@ -4587,7 +4592,7 @@ public class TestCmsService extends AbstractServiceTest {
         DbExpressionProperty expProperty = new DbExpressionProperty();
         expProperty.setParent(dbContentRow);
         expProperty.setExpression("name");
-        expProperty.setEscapeMarkup(false);
+        expProperty.setEditorType(DbExpressionProperty.EditorType.HTML_AREA);
         dbContentRow.setDbContent(expProperty);
 
         pageCrud.updateDbChild(dbLevelPage);
