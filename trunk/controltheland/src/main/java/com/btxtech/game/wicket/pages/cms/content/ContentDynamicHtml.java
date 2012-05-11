@@ -3,15 +3,13 @@ package com.btxtech.game.wicket.pages.cms.content;
 import com.btxtech.game.services.cms.ContentService;
 import com.btxtech.game.services.cms.layout.DbContentDynamicHtml;
 import com.btxtech.game.wicket.pages.cms.EditPanel;
+import com.btxtech.game.wicket.uiservices.WysiwygEditor;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import wicket.contrib.tinymce.TinyMceBehavior;
-import wicket.contrib.tinymce.settings.TinyMCESettings;
 
 /**
  * User: beat
@@ -41,9 +39,9 @@ public class ContentDynamicHtml extends Panel {
             public boolean isVisible() {
                 return cmsUiService.getEditMode(contentId) == null;
             }
-        }.setEscapeModelStrings(dbContentDynamicHtml.getEscapeMarkup()));
+        }.setEscapeModelStrings(dbContentDynamicHtml.getEditorType().isEscapeHtml()));
 
-        TextArea<String> contentArea = new TextArea<String>("htmlTextArea", new LoadableDetachableModel<String>() {
+        WysiwygEditor wysiwygEditor = new WysiwygEditor("htmlTextArea", new LoadableDetachableModel<String>() {
             @Override
             public void setObject(String s) {
                 super.setObject(s);
@@ -60,11 +58,7 @@ public class ContentDynamicHtml extends Panel {
                 return cmsUiService.getEditMode(contentId) != null;
             }
         };
-        TinyMCESettings tinyMCESettings = new TinyMCESettings(TinyMCESettings.Theme.advanced);
-        tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.link, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after);
-        tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.unlink, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after);
-        contentArea.add(new TinyMceBehavior(tinyMCESettings));
-        add(contentArea);
+        add(wysiwygEditor);
 
         if (dbContentDynamicHtml.getCssClass() != null) {
             add(new SimpleAttributeModifier("class", dbContentDynamicHtml.getCssClass()));

@@ -39,8 +39,8 @@ public class ExpressionPropertyEditor extends MgmtWebPage {
         form.add(new ContentCommonPanel("commonPanel", true, true, false, false));
         form.add(new TextField("springBeanName"));
         form.add(new TextField("expression"));
-        form.add(new CheckBox("escapeMarkup"));
-        form.add(new DropDownChoice<DbExpressionProperty.Type>("optionalType", Arrays.asList(DbExpressionProperty.Type.values())));
+        form.add(new DropDownChoice<>("editorType", Arrays.asList(DbExpressionProperty.EditorType.values())));
+        form.add(new DropDownChoice<>("optionalType", Arrays.asList(DbExpressionProperty.Type.values())));
         form.add(new CheckBox("link"));
         form.add(new TextField("linkCssClass"));
         form.add(new CheckBox("sortable"));

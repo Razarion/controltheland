@@ -23,17 +23,15 @@ import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
 import com.btxtech.game.wicket.uiservices.RuModel;
+import com.btxtech.game.wicket.uiservices.WysiwygEditor;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import wicket.contrib.tinymce.TinyMceBehavior;
-import wicket.contrib.tinymce.settings.TinyMCESettings;
 
 /**
  * User: beat
@@ -56,13 +54,7 @@ public class DbLevelEditor extends MgmtWebPage {
         }));
         add(form);
 
-        TextArea<String> contentArea = new TextArea<String>("html");
-        TinyMCESettings tinyMCESettings = new TinyMCESettings(TinyMCESettings.Theme.advanced);
-        tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.link, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after);
-        tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.unlink, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after);
-        contentArea.add(new TinyMceBehavior(tinyMCESettings));
-        form.add(contentArea);
-
+        form.add(new WysiwygEditor("html"));
         form.add(new TextField("xp"));
         // Scope
         form.add(new TextField("houseSpace"));

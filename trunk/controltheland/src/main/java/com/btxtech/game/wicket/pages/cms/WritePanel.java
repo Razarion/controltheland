@@ -2,15 +2,14 @@ package com.btxtech.game.wicket.pages.cms;
 
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.layout.DbExpressionProperty;
+import com.btxtech.game.wicket.pages.cms.content.PlainTextArea;
+import com.btxtech.game.wicket.pages.cms.content.PlainTextField;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
+import com.btxtech.game.wicket.uiservices.WysiwygEditor;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import wicket.contrib.tinymce.TinyMceBehavior;
-import wicket.contrib.tinymce.settings.TinyMCESettings;
 
 /**
  * User: beat
@@ -22,51 +21,58 @@ public class WritePanel extends Panel {
     private CmsUiService cmsUiService;
     @SpringBean
     private CmsService cmsService;
-    private TextArea contentArea2;
 
     public WritePanel(String id, Object value, final BeanIdPathElement beanIdPathElement, DbExpressionProperty dbExpressionProperty) {
         super(id);
         final int contentId = dbExpressionProperty.getId();
-        add(new TextField("field", new LoadableDetachableModel(value) {
+        switch (dbExpressionProperty.getEditorType()) {
+            case PLAIN_TEXT_FILED:
+                add(new PlainTextField("editor", new LoadableDetachableModel<Object>(value) {
 
-            @Override
-            public void setObject(Object object) {
-                super.setObject(object);
-                cmsUiService.setDataProviderBean(object, beanIdPathElement, contentId);
-            }
+                    @Override
+                    public void setObject(Object object) {
+                        super.setObject(object);
+                        cmsUiService.setDataProviderBean(object, beanIdPathElement, contentId);
+                    }
 
-            @Override
-            protected Object load() {
-                return cmsUiService.getDataProviderBean(beanIdPathElement);
-            }
-        }) {
-            @Override
-            public boolean isVisible() {
-                return ((DbExpressionProperty) cmsService.getDbContent(contentId)).getEscapeMarkup();
-            }
-        });
-        TextArea contentArea = new TextArea("textArea", new LoadableDetachableModel() {
-            @Override
-            public void setObject(Object s) {
-                super.setObject(s);
-                cmsUiService.setDataProviderBean(s, beanIdPathElement, contentId);
-            }
+                    @Override
+                    protected Object load() {
+                        return cmsUiService.getDataProviderBean(beanIdPathElement);
+                    }
+                }));
+                break;
+            case PLAIN_TEXT_AREA:
+                add(new PlainTextArea("editor", new LoadableDetachableModel<Object>(value) {
 
-            @Override
-            protected Object load() {
-                return cmsUiService.getDataProviderBean(beanIdPathElement);
-            }
-        }) {
-            @Override
-            public boolean isVisible() {
-                return !((DbExpressionProperty) cmsService.getDbContent(contentId)).getEscapeMarkup();
-            }
-        };
-        contentArea2 = contentArea;
-        TinyMCESettings tinyMCESettings = new TinyMCESettings(TinyMCESettings.Theme.advanced);
-        tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.link, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after);
-        tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.unlink, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after);
-        contentArea.add(new TinyMceBehavior(tinyMCESettings));
-        add(contentArea);
+                    @Override
+                    public void setObject(Object object) {
+                        super.setObject(object);
+                        cmsUiService.setDataProviderBean(object, beanIdPathElement, contentId);
+                    }
+
+                    @Override
+                    protected Object load() {
+                        return cmsUiService.getDataProviderBean(beanIdPathElement);
+                    }
+                }));
+                break;
+            case HTML_AREA:
+                add(new WysiwygEditor("editor", new LoadableDetachableModel<String>((String) value) {
+
+                    @Override
+                    public void setObject(String object) {
+                        super.setObject(object);
+                        cmsUiService.setDataProviderBean(object, beanIdPathElement, contentId);
+                    }
+
+                    @Override
+                    protected String load() {
+                        return (String) cmsUiService.getDataProviderBean(beanIdPathElement);
+                    }
+                }));
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported EditorType: " + dbExpressionProperty.getEditorType());
+        }
     }
 }

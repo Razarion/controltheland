@@ -11,14 +11,14 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("DYNAMIC_HTML")
 public class DbContentDynamicHtml extends DbContent {
-    private boolean escapeMarkup = true;
+    private DbExpressionProperty.EditorType editorType = DbExpressionProperty.EditorType.PLAIN_TEXT_FILED;
 
-    public void setEscapeMarkup(boolean escapeMarkup) {
-        this.escapeMarkup = escapeMarkup;
+    public DbExpressionProperty.EditorType getEditorType() {
+        return editorType;
     }
 
-    public boolean getEscapeMarkup() {
-        return escapeMarkup;
+    public void setEditorType(DbExpressionProperty.EditorType editorType) {
+        this.editorType = editorType;
     }
 
     @Override

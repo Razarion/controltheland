@@ -392,7 +392,7 @@ public class CmsUiServiceImpl implements CmsUiService {
                 return new ContentBook(componentId, (DbContentBook) dbContent, beanIdPathElement, contentContext);
             } else if (dbContent instanceof DbContentStaticHtml) {
                 DbContentStaticHtml dbContentStaticHtml = (DbContentStaticHtml) dbContent;
-                Component label = new Label(componentId, dbContentStaticHtml.getHtml()).setEscapeModelStrings(dbContentStaticHtml.getEscapeMarkup());
+                Component label = new Label(componentId, dbContentStaticHtml.getHtml()).setEscapeModelStrings(dbContentStaticHtml.getEditorType().isEscapeHtml());
                 if (dbContent.getCssClass() != null) {
                     label.add(new SimpleAttributeModifier("class", dbContent.getCssClass()));
                 }
@@ -502,7 +502,7 @@ public class CmsUiServiceImpl implements CmsUiService {
                     } else {
                         component = new Label(id, stringValue);
                         component.setVisible(isReadAllowed(dbExpressionProperty.getId()));
-                        component.setEscapeModelStrings(dbExpressionProperty.getEscapeMarkup());
+                        component.setEscapeModelStrings(dbExpressionProperty.getEditorType().isEscapeHtml());
                     }
                 } else {
                     component = new Label(id, "");
