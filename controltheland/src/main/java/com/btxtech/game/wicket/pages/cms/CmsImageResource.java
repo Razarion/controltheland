@@ -14,6 +14,7 @@ package com.btxtech.game.wicket.pages.cms;
 
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbCmsImage;
+import com.btxtech.game.services.common.Utils;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.injection.web.InjectorHolder;
 import org.apache.wicket.markup.html.WebResource;
@@ -45,7 +46,7 @@ public class CmsImageResource extends WebResource {
 
     @Override
     public IResourceStream getResourceStream() {
-        int imgId = Integer.parseInt(getParameters().getString(ID));
+        int imgId = Utils.parseIntSave(getParameters().getString(ID));
         DbCmsImage dbCmsImage = cmsService.getDbCmsImage(imgId);
         return new ByteArrayResource(dbCmsImage.getContentType(), dbCmsImage.getData()).getResourceStream();
     }
