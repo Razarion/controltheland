@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * User: beat
@@ -115,6 +116,16 @@ public class TestRectangle2 {
         rectangles.add(new Rectangle(0, 0, 10, 10));
         rectangles.add(new Rectangle(10, 10, 5, 5));
         Assert.assertFalse(Rectangle.adjoinsExclusive(rectangles));
+    }
+
+    @Test
+    public void testGetCrossPointsExclusive1() {
+        Rectangle rectangle = new Rectangle(523, 313, 247, 248);
+        Line line = new Line(new Index(646, 437), new Index(803, 594));
+        // Line is on the corner
+        List<Index> crossSections = rectangle.getCrossPointsExclusive(line);
+        Assert.assertEquals(1, crossSections.size());
+        Assert.assertEquals(new Index(769, 560), crossSections.get(0));
     }
 
 }
