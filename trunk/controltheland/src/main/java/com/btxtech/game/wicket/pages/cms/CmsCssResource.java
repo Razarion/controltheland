@@ -14,6 +14,7 @@ package com.btxtech.game.wicket.pages.cms;
 
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.page.DbPage;
+import com.btxtech.game.services.common.Utils;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.injection.web.InjectorHolder;
@@ -50,7 +51,7 @@ public class CmsCssResource extends WebResource {
 
     @Override
     public IResourceStream getResourceStream() {
-        int pageId = Integer.parseInt(getParameters().getString(ID));
+        int pageId = Utils.parseIntSave(getParameters().getString(ID));
         return new StringResourceStream(cmsService.getPage(pageId).getStyle().getCss(), "text/css");
     }
 }

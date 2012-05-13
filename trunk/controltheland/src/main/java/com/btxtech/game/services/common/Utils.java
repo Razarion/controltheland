@@ -96,4 +96,12 @@ public class Utils {
         }
     }
 
+    public static int parseIntSave(String string) {
+        int index = string.indexOf(';');
+        if (index > 0) {
+            string = string.substring(0, index);
+        }
+        return Integer.parseInt(string);
+    }
+
 }
