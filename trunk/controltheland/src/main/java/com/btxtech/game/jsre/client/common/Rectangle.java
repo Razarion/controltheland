@@ -227,15 +227,15 @@ public class Rectangle implements Serializable {
             crossPoints.add(crossPoint);
         }
         crossPoint = getLine23Exclusive().getCross(line);
-        if (crossPoint != null) {
+        if (crossPoint != null && !crossPoints.contains(crossPoint)) {
             crossPoints.add(crossPoint);
         }
         crossPoint = getLine34Exclusive().getCross(line);
-        if (crossPoint != null) {
+        if (crossPoint != null && !crossPoints.contains(crossPoint)) {
             crossPoints.add(crossPoint);
         }
         crossPoint = getLine41().getCross(line);
-        if (crossPoint != null) {
+        if (crossPoint != null && !crossPoints.contains(crossPoint)) {
             crossPoints.add(crossPoint);
         }
         if (crossPoints.size() > 2) {
