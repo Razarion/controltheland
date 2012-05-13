@@ -276,7 +276,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         sendMoveCommand(container, new Index(1100, 1100));
         waitForActionServiceDone();
         sendUnloadContainerCommand(container, new Index(1000, 1000));
-        waitForActionServiceDone();
+        waitForActionServiceDone(); // TODO crashed here (Count 1)
         assertActorAndIdentifierAndClear(userService.getUserState(), 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
