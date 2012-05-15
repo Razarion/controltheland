@@ -137,6 +137,9 @@
         <mapping class="com.btxtech.game.services.utg.tracker.DbScrollTrackingItem"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbDialogTracking"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbWindowClosed"/>
-
+        <!-- Inventory -->
+        <mapping class="com.btxtech.game.services.inventory.DbInventoryItem"/>
+        <mapping class="com.btxtech.game.services.inventory.DbInventoryArtifact"/>
+        <mapping class="com.btxtech.game.services.inventory.DbInventoryArtifactCount"/>
     </session-factory>
 </hibernate-configuration>
