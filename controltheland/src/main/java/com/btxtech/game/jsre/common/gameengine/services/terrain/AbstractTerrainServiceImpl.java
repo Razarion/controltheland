@@ -38,6 +38,7 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
     private Map<Integer, TerrainImage> terrainImages = new HashMap<Integer, TerrainImage>();
     private Map<Integer, SurfaceImage> surfaceImages = new HashMap<Integer, SurfaceImage>();
     private ArrayList<TerrainListener> terrainListeners = new ArrayList<TerrainListener>();
+    private TerrainImageBackground terrainImageBackground;
     private TerrainSettings terrainSettings;
     private Logger log = Logger.getLogger(AbstractTerrainServiceImpl.class.getName());
 
@@ -65,6 +66,14 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
 
     public void addSurfaceRect(SurfaceRect surfaceRect) {
         surfaceRects.add(surfaceRect);
+    }
+
+    public TerrainImageBackground getTerrainImageBackground() {
+        return terrainImageBackground;
+    }
+
+    public void setTerrainImageBackground(TerrainImageBackground terrainImageBackground) {
+        this.terrainImageBackground = terrainImageBackground;
     }
 
     protected void removeTerrainImagePosition(TerrainImagePosition terrainImagePosition) {

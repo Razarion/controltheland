@@ -276,6 +276,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         terrainInfo.setTerrainImages(getTerrainImages());
         terrainInfo.setSurfaceRects(getSurfaceRects(dbTerrainSetting));
         terrainInfo.setSurfaceImages(getSurfaceImages());
+        terrainInfo.setTerrainImageBackground(terrainImageBackground);
     }
 
     private Collection<TerrainImagePosition> getTerrainImagePositions(DbTerrainSetting dbTerrainSetting) {

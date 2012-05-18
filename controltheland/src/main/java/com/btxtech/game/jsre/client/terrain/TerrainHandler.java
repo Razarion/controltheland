@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainS
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImageBackground;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.dom.client.ImageElement;
@@ -45,9 +46,11 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
                              Collection<TerrainImagePosition> terrainImagePositions,
                              Collection<SurfaceRect> surfaceRects,
                              Collection<SurfaceImage> surfaceImages,
-                             Collection<TerrainImage> terrainImages) {
+                             Collection<TerrainImage> terrainImages,
+                             TerrainImageBackground terrainImageBackground) {
         setTerrainSettings(terrainSettings);
         setTerrainImagePositions(terrainImagePositions);
+        setTerrainImageBackground(terrainImageBackground);
         setSurfaceRects(surfaceRects);
         setupImages(surfaceImages, terrainImages);
     }

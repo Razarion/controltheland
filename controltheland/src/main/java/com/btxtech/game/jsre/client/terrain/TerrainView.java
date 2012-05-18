@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImageBackground;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.canvas.client.Canvas;
@@ -83,25 +84,27 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
                              Collection<TerrainImagePosition> terrainImagePositions,
                              Collection<SurfaceRect> surfaceRects,
                              Collection<SurfaceImage> surfaceImages,
-                             Collection<TerrainImage> terrainImages) {
+                             Collection<TerrainImage> terrainImages,
+                             TerrainImageBackground terrainImageBackground) {
         if (terrainSettings == null) {
             GwtCommon.sendLogToServer("Invalid terrain settings");
             return;
         }
         terrainHandler.addTerrainListener(this);
-        deltaSetupTerrain(terrainSettings, terrainImagePositions, surfaceRects, surfaceImages, terrainImages);
+        deltaSetupTerrain(terrainSettings, terrainImagePositions, surfaceRects, surfaceImages, terrainImages, terrainImageBackground);
     }
 
     public void deltaSetupTerrain(TerrainSettings terrainSettings,
                                   Collection<TerrainImagePosition> terrainImagePositions,
                                   Collection<SurfaceRect> surfaceRects,
                                   Collection<SurfaceImage> surfaceImages,
-                                  Collection<TerrainImage> terrainImages) {
+                                  Collection<TerrainImage> terrainImages,
+                                  TerrainImageBackground terrainImageBackground) {
         if (terrainSettings == null) {
             GwtCommon.sendLogToServer("Invalid terrain settings for delta");
             return;
         }
-        terrainHandler.setupTerrain(terrainSettings, terrainImagePositions, surfaceRects, surfaceImages, terrainImages);
+        terrainHandler.setupTerrain(terrainSettings, terrainImagePositions, surfaceRects, surfaceImages, terrainImages, terrainImageBackground);
         if (!uglySuppressRadar) {
             RadarPanel.getInstance().onTerrainSettings(terrainSettings);
         }
