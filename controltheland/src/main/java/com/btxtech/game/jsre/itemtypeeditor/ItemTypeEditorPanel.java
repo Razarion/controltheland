@@ -15,6 +15,7 @@ import com.btxtech.game.jsre.common.LevelStatePacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
@@ -83,6 +84,11 @@ public class ItemTypeEditorPanel extends FlexTable {
                     ItemContainer.getInstance().setItemTypes(itemTypes);
                     ///--- Setup Base
                     ClientBase.getInstance().setBase(MY_BASE);
+                    Collection<BaseAttributes> allBaseAttributes = new ArrayList<BaseAttributes>();
+                    allBaseAttributes.add(new BaseAttributes(MY_BASE, "MyBase", false));
+                    allBaseAttributes.add(new BaseAttributes(ENEMY_BASE, "Enemy", false));
+                    ClientBase.getInstance().setAllBaseAttributes(allBaseAttributes);
+
                     setupGui(itemType);
                     if (itemType instanceof BaseItemType) {
                         itemTypeSimulation.createSyncItem();
