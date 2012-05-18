@@ -137,7 +137,8 @@ public class Cockpit extends TopMapPanel {
                                 terrainInfo.getTerrainImagePositions(),
                                 terrainInfo.getSurfaceRects(),
                                 terrainInfo.getSurfaceImages(),
-                                terrainInfo.getTerrainImages());
+                                terrainInfo.getTerrainImages(),
+                                terrainInfo.getTerrainImageBackground());
                         TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
                         fillTerrainImages(terrainInfo.getTerrainImages());
                         fillSurfaces(terrainInfo.getSurfaceImages());

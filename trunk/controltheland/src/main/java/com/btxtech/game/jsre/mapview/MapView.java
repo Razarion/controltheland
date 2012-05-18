@@ -32,6 +32,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.RootPanel;
+
 import java.util.Collection;
 
 /**
@@ -84,7 +85,8 @@ public class MapView implements EntryPoint {
                         terrainInfo.getTerrainImagePositions(),
                         terrainInfo.getSurfaceRects(),
                         terrainInfo.getSurfaceImages(),
-                        terrainInfo.getTerrainImages());
+                        terrainInfo.getTerrainImages(),
+                        terrainInfo.getTerrainImageBackground());
                 TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
                 miniTerrain.onTerrainSettings(terrainInfo.getTerrainSettings());
                 miniTerritoryView.onTerrainSettings(terrainInfo.getTerrainSettings());

@@ -72,7 +72,8 @@ public class ItemTypeEditorPanel extends FlexTable {
                             new ArrayList<TerrainImagePosition>(),
                             surfaceRects,
                             surfaceImages,
-                            new ArrayList<TerrainImage>());
+                            new ArrayList<TerrainImage>(),
+                            null);
                     TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
                     TerrainView.getInstance().addToParent(MapWindow.getAbsolutePanel());
                     ClientCollisionService.getInstance().setup();

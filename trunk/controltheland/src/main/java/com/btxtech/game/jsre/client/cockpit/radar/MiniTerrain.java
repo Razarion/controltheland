@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.client.cockpit.radar;
 
-import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
@@ -22,9 +21,7 @@ import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImageBackground;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
@@ -94,12 +91,6 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
         }
     }
 
-    @Override
-    public void onTerrainSettings(TerrainSettings terrainSettings) {
-        super.onTerrainSettings(terrainSettings);
-        onTerrainChanged();
-    }
-
     private void drawTileSurfaces(Context2d bufferContext) {
         for (SurfaceRect surfaceRect : TerrainView.getInstance().getTerrainHandler().getSurfaceRects()) {
             Rectangle tileRectangle = surfaceRect.getTileRectangle();
@@ -133,16 +124,11 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
     }
 
     private void terrainWithoutImages(Context2d bufferContext) {
-        if (Connection.getInstance().getGameInfo() == null) {
-            // Does not work in map editor
-            return;
-        }
-        TerrainImageBackground terrainImageBackground = Connection.getInstance().getGameInfo().getTerrainImageBackground();
         List<TerrainImagePosition> terrainImagePositionsLayer2 = new ArrayList<TerrainImagePosition>();
         for (TerrainImagePosition terrainImagePosition : TerrainView.getInstance().getTerrainHandler().getTerrainImagePositions()) {
             switch (terrainImagePosition.getzIndex()) {
                 case LAYER_1:
-                    terrainWithoutImagesLayer(bufferContext, terrainImageBackground, terrainImagePosition);
+                    terrainWithoutImagesLayer(bufferContext, terrainImagePosition);
                     break;
                 case LAYER_2:
                     terrainImagePositionsLayer2.add(terrainImagePosition);
@@ -152,13 +138,13 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
             }
         }
         for (TerrainImagePosition terrainImagePosition : terrainImagePositionsLayer2) {
-            terrainWithoutImagesLayer(bufferContext, terrainImageBackground, terrainImagePosition);
+            terrainWithoutImagesLayer(bufferContext, terrainImagePosition);
         }
     }
 
-    private void terrainWithoutImagesLayer(Context2d bufferContext, TerrainImageBackground terrainImageBackground, TerrainImagePosition terrainImagePosition) {
+    private void terrainWithoutImagesLayer(Context2d bufferContext, TerrainImagePosition terrainImagePosition) {
         TerrainImage terrainImage = TerrainView.getInstance().getTerrainHandler().getTerrainImage(terrainImagePosition);
-        String bgColor = terrainImageBackground.get(terrainImage.getId());
+        String bgColor = TerrainView.getInstance().getTerrainHandler().getTerrainImageBackground().get(terrainImage.getId());
         bufferContext.setFillStyle(bgColor);
 
         for (int x = 0; x < terrainImage.getTileWidth(); x++) {
