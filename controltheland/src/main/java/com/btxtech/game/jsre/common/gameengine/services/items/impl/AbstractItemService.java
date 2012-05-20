@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.BoxItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ProjectileItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
@@ -30,6 +31,7 @@ import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncProjectileItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
@@ -81,6 +83,11 @@ abstract public class AbstractItemService implements ItemService {
                 throw new NullPointerException(this + " base must be set for a ProjectileItemType");
             }
             syncItem = new SyncProjectileItem(id, position, (ProjectileItemType) itemType, services, base);
+        } else if (itemType instanceof BoxItemType) {
+            if (base != null) {
+                throw new IllegalArgumentException(this + " BoxItemType does not have a base");
+            }
+            syncItem = new SyncBoxItem(id, position, (BoxItemType) itemType, services);
         } else {
             throw new IllegalArgumentException(this + " ItemType not supported: " + itemType);
         }

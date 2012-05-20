@@ -13,8 +13,10 @@
 
 package com.btxtech.game.services.history;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserState;
@@ -54,6 +56,12 @@ public interface HistoryService {
     void addAllianceOfferRejected(User actor, User target);
 
     void addAllianceBroken(User actor, User target);
+
+    void addBoxExpired(SyncBoxItem boxItem);
+
+    void addBoxDropped(SyncBoxItem boxItem, Index position, SyncBaseItem dropper);
+
+    void addBoxPicked(SyncBoxItem boxItem, SyncBaseItem picker);
 
     List<DisplayHistoryElement> getNewestHistoryElements(User user, int count);
 

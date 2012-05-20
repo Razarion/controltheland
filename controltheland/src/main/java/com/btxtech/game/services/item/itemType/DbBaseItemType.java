@@ -35,6 +35,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
@@ -56,6 +57,9 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
     private int health;
     private int price;
     private int buildup;
+    private double dropBoxPossibility;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbBoxItemType dbBoxItemType;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbMovableType dbMovableType;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -115,6 +119,14 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
     @Override
     public void setBuildup(int buildup) {
         this.buildup = buildup;
+    }
+
+    public DbBoxItemType getDbBoxItemType() {
+        return dbBoxItemType;
+    }
+
+    public void setDbBoxItemType(DbBoxItemType dbBoxItemType) {
+        this.dbBoxItemType = dbBoxItemType;
     }
 
     @Override
@@ -250,13 +262,14 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
     @Override
     public void init(UserService userService) {
         super.init(userService);
-        dbBuildupSteps = new HashSet<DbBuildupStep>();
+        dbBuildupSteps = new HashSet<>();
+        dropBoxPossibility = 0.0;
     }
 
     @Override
     public CrudChildServiceHelper<DbBuildupStep> getBuildupStepCrud() {
         if (buildupStepCrud == null) {
-            buildupStepCrud = new CrudChildServiceHelper<DbBuildupStep>(dbBuildupSteps, DbBuildupStep.class, this);
+            buildupStepCrud = new CrudChildServiceHelper<>(dbBuildupSteps, DbBuildupStep.class, this);
         }
         return buildupStepCrud;
     }
@@ -265,7 +278,7 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
         if (dbBuildupSteps == null || dbBuildupSteps.isEmpty()) {
             return null;
         }
-        List<BuildupStep> buildupSteps = new ArrayList<BuildupStep>();
+        List<BuildupStep> buildupSteps = new ArrayList<>();
         for (DbBuildupStep dbBuildupStep : getBuildupStepCrud().readDbChildren()) {
             buildupSteps.add(dbBuildupStep.createBuildupStep());
         }
@@ -286,6 +299,7 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
         baseItemType.setHealth(health);
         baseItemType.setBuildup(buildup);
         baseItemType.setBuildupStep(createBuildupStep());
+        baseItemType.setDropBoxPossibility(dropBoxPossibility);
         if (dbMovableType != null) {
             baseItemType.setMovableType(new MovableType(dbMovableType.getSpeed()));
         }

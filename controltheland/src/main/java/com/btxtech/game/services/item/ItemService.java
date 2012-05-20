@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.ImageHolder;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbBuildupStep;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
@@ -78,6 +79,8 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
     DbBaseItemType getDbBaseItemType(int itemBaseTypeId);
 
     DbResourceItemType getDbResourceItemType(int resourceItemType);
+
+    DbBoxItemType getDbBoxItemType(int boxItemType);
 
     void deleteItemType(DbItemType dbItemType);
 

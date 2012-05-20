@@ -1,5 +1,6 @@
 package com.btxtech.game.services.inventory;
 
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.item.ItemService;
@@ -274,5 +275,159 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertEquals(0, dbInventoryArtifactCountFromDb.size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+    }
+
+    @Test
+    public void boxRegionCrud() throws Exception {
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createDbBoxItemType1();
+        createDbBoxItemType2();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(0, inventoryService.getBoxRegionCrud().readDbChildren().size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBoxRegion dbBoxRegion1 = inventoryService.getBoxRegionCrud().createDbChild();
+        dbBoxRegion1.setItemFreeRange(111);
+        dbBoxRegion1.setMaxInterval(22);
+        dbBoxRegion1.setMinInterval(3);
+        dbBoxRegion1.setName("DbBoxRegion1");
+        dbBoxRegion1.setRegion(new Rectangle(1, 2, 10, 20));
+        DbBoxRegionCount dbBoxRegionCount1 = dbBoxRegion1.getBoxRegionCountCrud().createDbChild();
+        dbBoxRegionCount1.setDbBoxItemType(itemService.getDbBoxItemType(TEST_BOX_ITEM_1_ID));
+        dbBoxRegionCount1.setCount(10);
+        inventoryService.getBoxRegionCrud().updateDbChild(dbBoxRegion1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<DbBoxRegion> itemList = (List<DbBoxRegion>) inventoryService.getBoxRegionCrud().readDbChildren();
+        Assert.assertEquals(1, itemList.size());
+        Assert.assertEquals(111, itemList.get(0).getItemFreeRange());
+        Assert.assertEquals(22, itemList.get(0).getMaxInterval());
+        Assert.assertEquals(3, itemList.get(0).getMinInterval());
+        Assert.assertEquals("DbBoxRegion1", itemList.get(0).getName());
+        Assert.assertEquals(new Rectangle(1, 2, 10, 20), itemList.get(0).getRegion());
+        List<DbBoxRegionCount> dbBoxRegionCounts = new ArrayList<>(itemList.get(0).getBoxRegionCountCrud().readDbChildren());
+        Assert.assertEquals(1, dbBoxRegionCounts.size());
+        Assert.assertEquals(10, dbBoxRegionCounts.get(0).getCount());
+        Assert.assertEquals(TEST_BOX_ITEM_1_ID, (int)dbBoxRegionCounts.get(0).getDbBoxItemType().getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBoxRegion dbBoxRegion2 = inventoryService.getBoxRegionCrud().createDbChild();
+        dbBoxRegion2.setItemFreeRange(222);
+        dbBoxRegion2.setMaxInterval(33);
+        dbBoxRegion2.setMinInterval(4);
+        dbBoxRegion2.setName("DbBoxRegion2");
+        dbBoxRegion2.setRegion(new Rectangle(4, 7, 30, 199));
+        DbBoxRegionCount dbBoxRegionCount2 = dbBoxRegion2.getBoxRegionCountCrud().createDbChild();
+        dbBoxRegionCount2.setDbBoxItemType(itemService.getDbBoxItemType(TEST_BOX_ITEM_1_ID));
+        dbBoxRegionCount2.setCount(5);
+        DbBoxRegionCount dbBoxRegionCount3 = dbBoxRegion2.getBoxRegionCountCrud().createDbChild();
+        dbBoxRegionCount3.setDbBoxItemType(itemService.getDbBoxItemType(TEST_BOX_ITEM_2_ID));
+        dbBoxRegionCount3.setCount(6);
+        inventoryService.getBoxRegionCrud().updateDbChild(dbBoxRegion2);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        itemList = (List<DbBoxRegion>) inventoryService.getBoxRegionCrud().readDbChildren();
+        Assert.assertEquals(2, itemList.size());
+        Assert.assertEquals(111, itemList.get(0).getItemFreeRange());
+        Assert.assertEquals(22, itemList.get(0).getMaxInterval());
+        Assert.assertEquals(3, itemList.get(0).getMinInterval());
+        Assert.assertEquals("DbBoxRegion1", itemList.get(0).getName());
+        Assert.assertEquals(new Rectangle(1, 2, 10, 20), itemList.get(0).getRegion());
+        dbBoxRegionCounts = new ArrayList<>(itemList.get(0).getBoxRegionCountCrud().readDbChildren());
+        Assert.assertEquals(1, dbBoxRegionCounts.size());
+        Assert.assertEquals(10, dbBoxRegionCounts.get(0).getCount());
+        Assert.assertEquals(TEST_BOX_ITEM_1_ID, (int)dbBoxRegionCounts.get(0).getDbBoxItemType().getId());
+
+        Assert.assertEquals(222, itemList.get(1).getItemFreeRange());
+        Assert.assertEquals(33, itemList.get(1).getMaxInterval());
+        Assert.assertEquals(4, itemList.get(1).getMinInterval());
+        Assert.assertEquals("DbBoxRegion2", itemList.get(1).getName());
+        Assert.assertEquals(new Rectangle(4, 7, 30, 199), itemList.get(1).getRegion());
+        dbBoxRegionCounts = new ArrayList<>(itemList.get(1).getBoxRegionCountCrud().readDbChildren());
+        Assert.assertEquals(2, dbBoxRegionCounts.size());
+        Assert.assertEquals(5, dbBoxRegionCounts.get(0).getCount());
+        Assert.assertEquals(TEST_BOX_ITEM_1_ID, (int)dbBoxRegionCounts.get(0).getDbBoxItemType().getId());
+        Assert.assertEquals(6, dbBoxRegionCounts.get(1).getCount());
+        Assert.assertEquals(TEST_BOX_ITEM_2_ID, (int)dbBoxRegionCounts.get(1).getDbBoxItemType().getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBoxRegion dbBoxRegion1FromDb = inventoryService.getBoxRegionCrud().readDbChild(dbBoxRegion1.getId());
+        dbBoxRegion1FromDb.getBoxRegionCountCrud().deleteDbChild(dbBoxRegionCount1);
+        inventoryService.getBoxRegionCrud().updateDbChild(dbBoxRegion1FromDb);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        itemList = (List<DbBoxRegion>) inventoryService.getBoxRegionCrud().readDbChildren();
+        Assert.assertEquals(2, itemList.size());
+        Assert.assertEquals(111, itemList.get(0).getItemFreeRange());
+        Assert.assertEquals(22, itemList.get(0).getMaxInterval());
+        Assert.assertEquals(3, itemList.get(0).getMinInterval());
+        Assert.assertEquals("DbBoxRegion1", itemList.get(0).getName());
+        Assert.assertEquals(new Rectangle(1, 2, 10, 20), itemList.get(0).getRegion());
+        dbBoxRegionCounts = new ArrayList<>(itemList.get(0).getBoxRegionCountCrud().readDbChildren());
+        Assert.assertEquals(0, dbBoxRegionCounts.size());
+
+        Assert.assertEquals(222, itemList.get(1).getItemFreeRange());
+        Assert.assertEquals(33, itemList.get(1).getMaxInterval());
+        Assert.assertEquals(4, itemList.get(1).getMinInterval());
+        Assert.assertEquals("DbBoxRegion2", itemList.get(1).getName());
+        Assert.assertEquals(new Rectangle(4, 7, 30, 199), itemList.get(1).getRegion());
+        dbBoxRegionCounts = new ArrayList<>(itemList.get(1).getBoxRegionCountCrud().readDbChildren());
+        Assert.assertEquals(2, dbBoxRegionCounts.size());
+        Assert.assertEquals(5, dbBoxRegionCounts.get(0).getCount());
+        Assert.assertEquals(TEST_BOX_ITEM_1_ID, (int)dbBoxRegionCounts.get(0).getDbBoxItemType().getId());
+        Assert.assertEquals(6, dbBoxRegionCounts.get(1).getCount());
+        Assert.assertEquals(TEST_BOX_ITEM_2_ID, (int)dbBoxRegionCounts.get(1).getDbBoxItemType().getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        inventoryService.getBoxRegionCrud().deleteDbChild(inventoryService.getBoxRegionCrud().readDbChild(dbBoxRegion1.getId()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        itemList = (List<DbBoxRegion>) inventoryService.getBoxRegionCrud().readDbChildren();
+        Assert.assertEquals(1, itemList.size());
+        Assert.assertEquals(222, itemList.get(0).getItemFreeRange());
+        Assert.assertEquals(33, itemList.get(0).getMaxInterval());
+        Assert.assertEquals(4, itemList.get(0).getMinInterval());
+        Assert.assertEquals("DbBoxRegion2", itemList.get(0).getName());
+        Assert.assertEquals(new Rectangle(4, 7, 30, 199), itemList.get(0).getRegion());
+        dbBoxRegionCounts = new ArrayList<>(itemList.get(0).getBoxRegionCountCrud().readDbChildren());
+        Assert.assertEquals(2, dbBoxRegionCounts.size());
+        Assert.assertEquals(5, dbBoxRegionCounts.get(0).getCount());
+        Assert.assertEquals(TEST_BOX_ITEM_1_ID, (int)dbBoxRegionCounts.get(0).getDbBoxItemType().getId());
+        Assert.assertEquals(6, dbBoxRegionCounts.get(1).getCount());
+        Assert.assertEquals(TEST_BOX_ITEM_2_ID, (int)dbBoxRegionCounts.get(1).getDbBoxItemType().getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
     }
 }

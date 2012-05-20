@@ -158,4 +158,18 @@ public class MathHelper {
         return new String(uuid);
     }
 
+    /**
+     * Randomly get true or false relaying on the given possibility
+     *
+     * @param possibility 0..1 (0..100%)
+     * @return true ore false randomly
+     */
+    public static boolean isRandomPossibility(double possibility) {
+        if (possibility > 1.0) {
+            possibility = 1.0;
+        } else if (possibility < 0.0) {
+            possibility = 0.0;
+        }
+        return compareWithPrecision(possibility, 1.0) || !MathHelper.compareWithPrecision(possibility, 0.0) && Math.random() <= possibility;
+    }
 }
