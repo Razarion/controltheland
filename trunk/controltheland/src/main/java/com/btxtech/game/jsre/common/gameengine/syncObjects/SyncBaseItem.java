@@ -692,6 +692,10 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
         return isMoneyEarningOrConsuming;
     }
 
+    public double getDropBoxPossibility() {
+        return getBaseItemType().getDropBoxPossibility();
+    }
+
     public void onAttacked(SyncBaseItem syncBaseItem) {
         if (getServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
             return;

@@ -41,6 +41,7 @@ import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.gwt.MovableServiceImpl;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbBuilderType;
 import com.btxtech.game.services.item.itemType.DbFactoryType;
 import com.btxtech.game.services.item.itemType.DbHarvesterType;
@@ -159,6 +160,10 @@ abstract public class AbstractServiceTest {
     protected static int TEST_RESOURCE_ITEM_ID = -1;
     protected static final String TEST_HARVESTER_ITEM = "TEST_HARVESTER_ITEM";
     protected static int TEST_HARVESTER_ITEM_ID = -1;
+    protected static final String TEST_BOX_ITEM_1 = "TEST_BOX_ITEM_1";
+    protected static int TEST_BOX_ITEM_1_ID = -1;
+    protected static final String TEST_BOX_ITEM_2 = "TEST_BOX_ITEM_2";
+    protected static int TEST_BOX_ITEM_2_ID = -2;
     // Quest Hubs
     protected static final String TEST_QUEST_HUB_1 = "TEST_QUEST_HUB_1";
     protected static final String TEST_QUEST_HUB_2 = "TEST_QUEST_HUB_2";
@@ -942,6 +947,34 @@ abstract public class AbstractServiceTest {
             dbItemTypeImage.setNumber(i + 1);
             dbItemTypeImage.setContentType("image");
         }
+    }
+
+    protected DbBoxItemType createDbBoxItemType1() {
+        DbBoxItemType dbBoxItemType = (DbBoxItemType) itemService.getDbItemTypeCrud().createDbChild(DbBoxItemType.class);
+        setupImages(dbBoxItemType, 1);
+        dbBoxItemType.setName(TEST_BOX_ITEM_1);
+        dbBoxItemType.setTerrainType(TerrainType.LAND);
+        dbBoxItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_1));
+        dbBoxItemType.setTtl(100);
+
+        itemService.saveDbItemType(dbBoxItemType);
+        itemService.activate();
+        TEST_BOX_ITEM_1_ID = dbBoxItemType.getId();
+        return dbBoxItemType;
+    }
+
+    protected DbBoxItemType createDbBoxItemType2() {
+        DbBoxItemType dbBoxItemType = (DbBoxItemType) itemService.getDbItemTypeCrud().createDbChild(DbBoxItemType.class);
+        setupImages(dbBoxItemType, 1);
+        dbBoxItemType.setName(TEST_BOX_ITEM_2);
+        dbBoxItemType.setTerrainType(TerrainType.LAND);
+        dbBoxItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_1));
+        dbBoxItemType.setTtl(50);
+
+        itemService.saveDbItemType(dbBoxItemType);
+        itemService.activate();
+        TEST_BOX_ITEM_2_ID = dbBoxItemType.getId();
+        return dbBoxItemType;
     }
 
     // ------------------- Setup Terrain --------------------

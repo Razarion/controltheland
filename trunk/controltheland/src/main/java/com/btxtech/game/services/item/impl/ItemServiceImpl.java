@@ -33,6 +33,7 @@ import com.btxtech.game.jsre.common.gameengine.services.items.impl.ItemHandler;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
@@ -47,8 +48,10 @@ import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.history.HistoryService;
+import com.btxtech.game.services.inventory.InventoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbBuildupStep;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
@@ -56,7 +59,6 @@ import com.btxtech.game.services.item.itemType.DbItemTypeImageData;
 import com.btxtech.game.services.item.itemType.DbItemTypeSoundData;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
-import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.resource.ResourceService;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.SecurityRoles;
@@ -117,7 +119,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
-    private MgmtService mgmtService;
+    private InventoryService inventoryService;
     @Autowired
     private ServerConditionService serverConditionService;
     @Autowired
@@ -240,6 +242,8 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
                 ((SyncBaseItem) killedItem).setHealth(0);
             } else if (killedItem instanceof SyncResourceItem) {
                 ((SyncResourceItem) killedItem).setAmount(0);
+            } else if (killedItem instanceof SyncBoxItem) {
+                ((SyncBoxItem) killedItem).kill();
             }
         }
 
@@ -279,6 +283,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             }
             serverEnergyService.onBaseItemKilled((SyncBaseItem) killedItem);
             killContainedItems((SyncBaseItem) killedItem, actor);
+            inventoryService.onSyncBaseItemKilled((SyncBaseItem) killedItem);
         } else if (killedItem instanceof SyncResourceItem) {
             resourceService.resourceItemDeleted((SyncResourceItem) killedItem);
         }
@@ -518,7 +523,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     private void moveList(Collection<DbBuildupStep> removeList, Collection<DbBuildupStep> addList, int imageId) {
-        for (Iterator<DbBuildupStep> iterator = removeList.iterator(); iterator.hasNext();) {
+        for (Iterator<DbBuildupStep> iterator = removeList.iterator(); iterator.hasNext(); ) {
             DbBuildupStep dbBuildupStep = iterator.next();
             if (dbBuildupStep.getId() == imageId) {
                 iterator.remove();
@@ -713,6 +718,11 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     @Override
     public DbResourceItemType getDbResourceItemType(int resourceItemType) {
         return HibernateUtil.get(sessionFactory, DbResourceItemType.class, resourceItemType);
+    }
+
+    @Override
+    public DbBoxItemType getDbBoxItemType(int boxItemType) {
+        return HibernateUtil.get(sessionFactory, DbBoxItemType.class, boxItemType);
     }
 
     @Override

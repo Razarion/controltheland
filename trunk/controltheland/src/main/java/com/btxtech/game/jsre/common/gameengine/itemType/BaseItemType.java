@@ -38,6 +38,7 @@ public class BaseItemType extends ItemType {
     private Integer upgradeable;
     private int upgradeProgress;
     private List<BuildupStep> buildupStep;
+    private double dropBoxPossibility;
 
     public int getHealth() {
         return health;
@@ -53,6 +54,14 @@ public class BaseItemType extends ItemType {
 
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    public double getDropBoxPossibility() {
+        return dropBoxPossibility;
+    }
+
+    public void setDropBoxPossibility(double dropBoxPossibility) {
+        this.dropBoxPossibility = dropBoxPossibility;
     }
 
     public MovableType getMovableType() {
@@ -201,6 +210,7 @@ public class BaseItemType extends ItemType {
         upgradeable = baseItemType.upgradeable;
         upgradeProgress = baseItemType.upgradeProgress;
         buildupStep = baseItemType.getBuildupStep();
+        dropBoxPossibility = baseItemType.dropBoxPossibility;
 
         if (movableType != null) {
             movableType.changeTo(baseItemType.movableType);

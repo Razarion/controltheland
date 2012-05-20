@@ -14,12 +14,15 @@
 package com.btxtech.game.services.history;
 
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.common.db.IndexUserType;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
+import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,6 +37,7 @@ import java.util.Date;
  * Time: 7:28:46 PM
  */
 @Entity(name = "GAME_HISTORY")
+@TypeDef(name = "index", typeClass = IndexUserType.class)
 public class DbHistoryElement implements Serializable {
     public enum Type {
         BASE_STARTED,
@@ -48,7 +52,10 @@ public class DbHistoryElement implements Serializable {
         ALLIANCE_OFFERED,
         ALLIANCE_OFFER_ACCEPTED,
         ALLIANCE_OFFER_REJECTED,
-        ALLIANCE_BROKEN
+        ALLIANCE_BROKEN,
+        BOX_DROPPER,
+        BOX_EXPIRED,
+        BOX_PICKED
     }
 
     public enum Source {
@@ -78,6 +85,9 @@ public class DbHistoryElement implements Serializable {
     @Index(name = "GAME_HISTORY_INDEX_SESSION")
     private String sessionId;
     private Source source;
+    @org.hibernate.annotations.Type(type = "index")
+    @Columns(columns = {@Column(name = "xPos"), @Column(name = "yPos")})
+    private com.btxtech.game.jsre.client.common.Index position;
 
     /**
      * Used by hibernate
@@ -85,7 +95,7 @@ public class DbHistoryElement implements Serializable {
     protected DbHistoryElement() {
     }
 
-    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncBaseItem syncBaseItem, DbLevel level, DbLevelTask levelTask, BaseService baseService, String sessionId, Source source) {
+    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncItem syncItem, DbLevel level, DbLevelTask levelTask, BaseService baseService, String sessionId, Source source, com.btxtech.game.jsre.client.common.Index position) {
         this.sessionId = sessionId;
         timeStamp = new Date();
         timeStampMs = timeStamp.getTime();
@@ -96,10 +106,11 @@ public class DbHistoryElement implements Serializable {
         actorBaseName = actorBase != null ? baseService.getBaseName(actorBase) : null;
         targetBaseId = targetBase != null ? targetBase.getId() : null;
         targetBaseName = targetBase != null ? baseService.getBaseName(targetBase) : null;
-        itemTypeName = syncBaseItem != null ? syncBaseItem.getBaseItemType().getName() : null;
+        itemTypeName = syncItem != null ? syncItem.getItemType().getName() : null;
         levelName = level != null ? level.getName() : null;
         levelTaskName = levelTask != null ? levelTask.getName() : null;
         this.source = source;
+        this.position = position;
     }
 
     public Integer getId() {
@@ -156,6 +167,10 @@ public class DbHistoryElement implements Serializable {
 
     public Source getSource() {
         return source;
+    }
+
+    public com.btxtech.game.jsre.client.common.Index getPosition() {
+        return position;
     }
 
     @Override

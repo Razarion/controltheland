@@ -13,8 +13,10 @@
 
 package com.btxtech.game.services.history.impl;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.history.DbHistoryElement;
@@ -82,7 +84,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 baseService,
                 getSessionId(simpleBase),
-                determineSource(simpleBase, null)));
+                determineSource(simpleBase, null), null));
     }
 
     @Override
@@ -98,7 +100,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 baseService,
                 getSessionId(actor),
-                determineSource(actor, target)));
+                determineSource(actor, target), null));
     }
 
     @Override
@@ -114,7 +116,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 baseService,
                 getSessionId(simpleBase),
-                determineSource(simpleBase, null)));
+                determineSource(simpleBase, null), null));
     }
 
     @Override
@@ -130,7 +132,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 baseService,
                 getSessionId(syncBaseItem.getBase()),
-                determineSource(syncBaseItem.getBase(), null)));
+                determineSource(syncBaseItem.getBase(), null), null));
     }
 
     @Override
@@ -146,7 +148,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 baseService,
                 getSessionId(actor),
-                determineSource(actor, target.getBase())));
+                determineSource(actor, target.getBase()), null));
     }
 
     @Override
@@ -162,7 +164,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 baseService,
                 userState.getSessionId(),
-                DbHistoryElement.Source.HUMAN));
+                DbHistoryElement.Source.HUMAN, null));
     }
 
     @Override
@@ -178,7 +180,7 @@ public class HistoryServiceImpl implements HistoryService {
                 levelTask,
                 baseService,
                 userState.getSessionId(),
-                DbHistoryElement.Source.HUMAN));
+                DbHistoryElement.Source.HUMAN, null));
     }
 
     @Override
@@ -193,7 +195,7 @@ public class HistoryServiceImpl implements HistoryService {
                 dbLevelTask,
                 baseService,
                 userState.getSessionId(),
-                DbHistoryElement.Source.HUMAN));
+                DbHistoryElement.Source.HUMAN, null));
     }
 
     @Override
@@ -208,7 +210,7 @@ public class HistoryServiceImpl implements HistoryService {
                 dbLevelTask,
                 baseService,
                 userState.getSessionId(),
-                DbHistoryElement.Source.HUMAN));
+                DbHistoryElement.Source.HUMAN, null));
     }
 
     @Override
@@ -223,7 +225,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 userService.getUserState().getSessionId(),
-                DbHistoryElement.Source.HUMAN));
+                DbHistoryElement.Source.HUMAN, null));
     }
 
     @Override
@@ -238,7 +240,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 userService.getUserState().getSessionId(),
-                DbHistoryElement.Source.HUMAN));
+                DbHistoryElement.Source.HUMAN, null));
     }
 
     @Override
@@ -253,7 +255,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 userService.getUserState().getSessionId(),
-                DbHistoryElement.Source.HUMAN));
+                DbHistoryElement.Source.HUMAN, null));
     }
 
     @Override
@@ -268,7 +270,59 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 userService.getUserState().getSessionId(),
-                DbHistoryElement.Source.HUMAN));
+                DbHistoryElement.Source.HUMAN, null));
+    }
+
+    @Override
+    public void addBoxExpired(SyncBoxItem boxItem) {
+        save(new DbHistoryElement(DbHistoryElement.Type.BOX_EXPIRED,
+                null,
+                null,
+                null,
+                null,
+                boxItem,
+                null,
+                null,
+                null,
+                null,
+                DbHistoryElement.Source.BOT,
+                boxItem.getSyncItemArea().getPosition()));
+    }
+
+    @Override
+    public void addBoxDropped(SyncBoxItem boxItem, Index position, SyncBaseItem dropper) {
+        SimpleBase dropperBase = null;
+        if(dropper != null) {
+            dropperBase = dropper.getBase();
+        }
+        save(new DbHistoryElement(DbHistoryElement.Type.BOX_DROPPER,
+                null,
+                null,
+                dropperBase,
+                null,
+                boxItem,
+                null,
+                null,
+                baseService,
+                null,
+                DbHistoryElement.Source.BOT,
+                position));
+    }
+
+    @Override
+    public void addBoxPicked(SyncBoxItem boxItem, SyncBaseItem picker) {
+        save(new DbHistoryElement(DbHistoryElement.Type.BOX_DROPPER,
+                userService.getUser(picker.getBase()),
+                null,
+                picker.getBase(),
+                null,
+                boxItem,
+                null,
+                null,
+                baseService,
+                getSessionId(picker.getBase()),
+                DbHistoryElement.Source.BOT,
+                boxItem.getSyncItemArea().getPosition()));
     }
 
     private String getSessionId(SimpleBase simpleBase) {

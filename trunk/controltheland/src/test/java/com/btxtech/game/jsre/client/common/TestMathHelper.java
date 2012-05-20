@@ -108,4 +108,37 @@ public class TestMathHelper {
         Assert.assertFalse(MathHelper.compareWithPrecision(Double.POSITIVE_INFINITY, 100));
         Assert.assertFalse(MathHelper.compareWithPrecision(Double.NEGATIVE_INFINITY, 100));
     }
+
+    @Test
+    public void isRandomPossibility() {
+        testIsRandomPossibility(0.0, 0.0);
+        testIsRandomPossibility(0.1, 0.1);
+        testIsRandomPossibility(0.2, 0.2);
+        testIsRandomPossibility(0.3, 0.3);
+        testIsRandomPossibility(0.4, 0.4);
+        testIsRandomPossibility(0.5, 0.5);
+        testIsRandomPossibility(0.6, 0.6);
+        testIsRandomPossibility(0.7, 0.7);
+        testIsRandomPossibility(0.8, 0.8);
+        testIsRandomPossibility(0.9, 0.9);
+        testIsRandomPossibility(1.0, 1.0);
+
+        testIsRandomPossibility(2.0, 1.0);
+        testIsRandomPossibility(1.1, 1.0);
+        testIsRandomPossibility(-2.0, 0.0);
+        testIsRandomPossibility(-5.0, 0.0);
+    }
+
+    private void testIsRandomPossibility(double possibilityParameter, double expectedPossibility) {
+        int yesCount = 0;
+        int count = 100000;
+        for (int i = 0; i < count; i++) {
+            if (MathHelper.isRandomPossibility(possibilityParameter)) {
+                yesCount++;
+            }
+        }
+        System.out.println("Possibility: " + ((double) yesCount / (double) count));
+        System.out.println("Diff: " + Math.abs(((double) yesCount / (double) count) - expectedPossibility));
+        Assert.assertEquals(expectedPossibility, ((double) yesCount / (double) count), 0.01);
+    }
 }
