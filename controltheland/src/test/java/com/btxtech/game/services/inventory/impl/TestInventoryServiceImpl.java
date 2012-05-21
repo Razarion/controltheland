@@ -20,8 +20,6 @@ import com.btxtech.game.services.inventory.InventoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.easymock.EasyMock;
 import org.hibernate.SessionFactory;
 import org.junit.Assert;
@@ -42,7 +40,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     private ItemService itemService;
     @Autowired
     private SessionFactory sessionFactory;
-    private Log log = LogFactory.getLog(TestInventoryServiceImpl.class);
+    //private Log log = LogFactory.getLog(TestInventoryServiceImpl.class);
 
     @Test
     public void testDbBoxRegionReal() throws Exception {
@@ -523,9 +521,6 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         createDbBoxItemType1();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-
-        SimpleBase simpleBase = new SimpleBase(1);
-
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
