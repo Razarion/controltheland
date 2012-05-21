@@ -3,10 +3,14 @@ package com.btxtech.game.services.inventory.impl;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoxItemType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.history.DbHistoryElement;
 import com.btxtech.game.services.history.HistoryService;
@@ -14,6 +18,7 @@ import com.btxtech.game.services.inventory.DbBoxRegion;
 import com.btxtech.game.services.inventory.DbBoxRegionCount;
 import com.btxtech.game.services.inventory.InventoryService;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -358,7 +363,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     }
 
     @Test
-    public void testDbPickupReal() throws Exception {
+    public void testPickupReal() throws Exception {
         InventoryServiceImpl.SCHEDULE_RATE = 25;
         configureRealGame();
 
@@ -401,7 +406,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     }
 
     @Test
-    public void testDbPickupMock() throws Exception {
+    public void testPickupMock() throws Exception {
         InventoryServiceImpl.SCHEDULE_RATE = 25;
         configureRealGame();
 
@@ -462,6 +467,108 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         inventoryService.onSyncBoxItemPicked(mockSyncBoxItem1, mockPicker);
 
         EasyMock.verify(mockHistoryService, mockItemService, mockSyncBoxItem1, mockPicker);
+    }
+
+    @Test
+    public void testDropBoxOnKillReal() throws Exception {
+        InventoryServiceImpl.SCHEDULE_RATE = 25;
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createDbBoxItemType1();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBaseItemType startupItem = itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID);
+        startupItem.setDropBoxPossibility(1.0);
+        startupItem.setDbBoxItemType(itemService.getDbBoxItemType(TEST_BOX_ITEM_1_ID));
+        itemService.saveDbItemType(startupItem);
+        itemService.activate();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // Target item
+        Id targetId = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
+        sendMoveCommand(targetId, new Index(1000, 1000));
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // Actor item
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(5000, 5000), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
+        assertNoHistoryType(DbHistoryElement.Type.BOX_DROPPED);
+        waitForActionServiceDone();
+        sendAttackCommand(getFirstSynItemId(TEST_ATTACK_ITEM_ID), targetId);
+        waitForHistoryType(DbHistoryElement.Type.BOX_DROPPED);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    public void testDropBoxOnKillMock() throws Exception {
+        InventoryServiceImpl.SCHEDULE_RATE = 25;
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createDbBoxItemType1();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        SimpleBase simpleBase = new SimpleBase(1);
+
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBoxItemType dbBoxItemType1 = itemService.getDbBoxItemType(TEST_BOX_ITEM_1_ID);
+
+        // SyncBoxItem
+        SyncBoxItem mockSyncBoxItem1 = EasyMock.createStrictMock(SyncBoxItem.class);
+        EasyMock.expect(mockSyncBoxItem1.isInTTL()).andReturn(true).anyTimes();
+        // Dropper
+        DbBaseItemType dbDropperType = EasyMock.createStrictMock(DbBaseItemType.class);
+        EasyMock.expect(dbDropperType.getDbBoxItemType()).andReturn(dbBoxItemType1);
+        BaseItemType dropperType = EasyMock.createStrictMock(BaseItemType.class);
+        EasyMock.expect(dropperType.getId()).andReturn(1);
+        SyncBaseItem mockDropper = EasyMock.createStrictMock(SyncBaseItem.class);
+        EasyMock.expect(mockDropper.getDropBoxPossibility()).andReturn(1.0);
+        EasyMock.expect(mockDropper.getBaseItemType()).andReturn(dropperType);
+        SyncItemArea dropperArea = new SyncItemArea(new BoundingBox(10, 10, 10, 10, new double[]{}), new Index(100, 100));
+        EasyMock.expect(mockDropper.getSyncItemArea()).andReturn(dropperArea);
+        // History Service
+        HistoryService mockHistoryService = EasyMock.createStrictMock(HistoryService.class);
+        mockHistoryService.addBoxDropped(mockSyncBoxItem1, new Index(100, 100), mockDropper);
+        // ItemService
+        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
+        EasyMock.expect(mockItemService.getDbBaseItemType(1)).andReturn(dbDropperType);
+        BoxItemType boxItemType1 = (BoxItemType) itemService.getItemType(TEST_BOX_ITEM_1_ID);
+        EasyMock.expect(mockItemService.getItemType(dbBoxItemType1)).andReturn(boxItemType1);
+        EasyMock.expect(mockItemService.createSyncObject(boxItemType1, new Index(100, 100), null, null, 0)).andReturn(mockSyncBoxItem1);
+
+        EasyMock.replay(mockHistoryService, mockItemService, mockSyncBoxItem1, mockDropper, dropperType, dbDropperType);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        setPrivateField(InventoryServiceImpl.class, inventoryService, "historyService", mockHistoryService);
+        setPrivateField(InventoryServiceImpl.class, inventoryService, "itemService", mockItemService);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        inventoryService.activate();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        inventoryService.onSyncBaseItemKilled(mockDropper);
+
+        EasyMock.verify(mockHistoryService, mockItemService, mockSyncBoxItem1, mockDropper, dropperType, dbDropperType);
     }
 
 }
