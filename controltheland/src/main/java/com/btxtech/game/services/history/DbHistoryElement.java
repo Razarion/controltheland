@@ -53,7 +53,7 @@ public class DbHistoryElement implements Serializable {
         ALLIANCE_OFFER_ACCEPTED,
         ALLIANCE_OFFER_REJECTED,
         ALLIANCE_BROKEN,
-        BOX_DROPPER,
+        BOX_DROPPED,
         BOX_EXPIRED,
         BOX_PICKED
     }

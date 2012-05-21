@@ -295,7 +295,7 @@ public class HistoryServiceImpl implements HistoryService {
         if(dropper != null) {
             dropperBase = dropper.getBase();
         }
-        save(new DbHistoryElement(DbHistoryElement.Type.BOX_DROPPER,
+        save(new DbHistoryElement(DbHistoryElement.Type.BOX_DROPPED,
                 null,
                 null,
                 dropperBase,
