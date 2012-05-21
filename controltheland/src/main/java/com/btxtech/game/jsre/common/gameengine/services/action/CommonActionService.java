@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 
@@ -42,6 +43,8 @@ public interface CommonActionService {
 
     void attack(SyncBaseItem syncBaseItem, SyncBaseItem target, Index destinationHint, double destinationAngel, boolean followTarget);
 
+    void pickupBox(SyncBaseItem picker, SyncBoxItem box);
+
     void defend(SyncBaseItem attacker, SyncBaseItem target);
 
     void upgrade(SyncBaseItem item) throws InsufficientFundsException;
@@ -55,5 +58,4 @@ public interface CommonActionService {
     void interactionGuardingItems(SyncBaseItem target);
 
     void removeGuardingBaseItem(SyncBaseItem syncItem);
-
 }

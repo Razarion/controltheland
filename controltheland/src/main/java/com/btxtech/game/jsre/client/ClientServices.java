@@ -31,10 +31,13 @@ import com.btxtech.game.jsre.common.gameengine.services.bot.CommonBotService;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService;
 import com.btxtech.game.jsre.common.gameengine.services.energy.EnergyService;
+import com.btxtech.game.jsre.common.gameengine.services.inventory.CommonInventoryService;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.utg.ConditionService;
 
@@ -55,6 +58,12 @@ public class ClientServices implements Services {
         @Override
         public GameEngineMode getGameEngineMode() {
             return Connection.getInstance().getGameEngineMode();
+        }
+    };
+    private CommonInventoryService dummyInventoryService = new CommonInventoryService() {
+        @Override
+        public void onSyncBoxItemPicked(SyncBoxItem box, SyncBaseItem picker) {
+            // Do nothing here
         }
     };
 
@@ -126,6 +135,11 @@ public class ClientServices implements Services {
     @Override
     public ConditionService getConditionService() {
         return SimulationConditionServiceImpl.getInstance();
+    }
+
+    @Override
+    public CommonInventoryService getInventoryService() {
+        return dummyInventoryService;
     }
 
     public ClientRunner getClientRunner() {

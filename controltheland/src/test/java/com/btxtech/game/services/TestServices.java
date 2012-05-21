@@ -7,6 +7,7 @@ import com.btxtech.game.jsre.common.gameengine.services.bot.CommonBotService;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService;
 import com.btxtech.game.jsre.common.gameengine.services.energy.EnergyService;
+import com.btxtech.game.jsre.common.gameengine.services.inventory.CommonInventoryService;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
@@ -32,6 +33,7 @@ public class TestServices implements Services {
     private CommonBotService botService;
     private CommonUserGuidanceService commonUserGuidanceService;
     private ConditionService conditionService;
+    private CommonInventoryService inventoryService;
 
     @Override
     public ItemService getItemService() {
@@ -130,5 +132,14 @@ public class TestServices implements Services {
 
     public void setConditionService(ConditionService conditionService) {
         this.conditionService = conditionService;
+    }
+
+    @Override
+    public CommonInventoryService getInventoryService() {
+        return inventoryService;
+    }
+
+    public void setInventoryService(CommonInventoryService inventoryService) {
+        this.inventoryService = inventoryService;
     }
 }

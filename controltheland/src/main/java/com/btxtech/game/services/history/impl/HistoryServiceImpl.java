@@ -311,7 +311,7 @@ public class HistoryServiceImpl implements HistoryService {
 
     @Override
     public void addBoxPicked(SyncBoxItem boxItem, SyncBaseItem picker) {
-        save(new DbHistoryElement(DbHistoryElement.Type.BOX_DROPPER,
+        save(new DbHistoryElement(DbHistoryElement.Type.BOX_PICKED,
                 userService.getUser(picker.getBase()),
                 null,
                 picker.getBase(),

@@ -16,6 +16,7 @@ import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFo
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
@@ -28,6 +29,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LaunchCommand
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.PickupBoxCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UpgradeCommand;
 
@@ -284,6 +286,38 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
 
         try {
             executeCommand(container, unloadContainerCommand);
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "", e);
+        }
+    }
+
+    @Override
+    public void pickupBox(SyncBaseItem picker, SyncBoxItem box) {
+        if (checkCommand(picker)) {
+            return;
+        }
+        if (checkCommand(box)) {
+            return;
+        }
+
+        PickupBoxCommand pickupBoxCommand = new PickupBoxCommand();
+        pickupBoxCommand.setId(picker.getId());
+        pickupBoxCommand.setBox(box.getId());
+        pickupBoxCommand.setTimeStamp();
+        AttackFormationItem format = getServices().getCollisionService().getDestinationHint(picker,
+                picker.getBaseItemType().getBoxPickupRange(),
+                box.getSyncItemArea(),
+                box.getTerrainType());
+        if (format.isInRange()) {
+            pickupBoxCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(picker, format.getDestinationHint()));
+            pickupBoxCommand.setDestinationAngel(format.getDestinationAngel());
+        } else {
+            move(picker, format.getDestinationHint());
+            return;
+        }
+
+        try {
+            executeCommand(picker, pickupBoxCommand);
         } catch (Exception e) {
             log.log(Level.SEVERE, "", e);
         }

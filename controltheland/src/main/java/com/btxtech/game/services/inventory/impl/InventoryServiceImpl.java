@@ -40,6 +40,10 @@ import java.util.concurrent.TimeUnit;
  * Date: 15.05.12
  * Time: 12:48
  */
+
+// TODO backup restore
+// TODO history convert()
+
 @Component(value = "inventoryService")
 public class InventoryServiceImpl implements InventoryService, Runnable {
     protected static long SCHEDULE_RATE = 60 * 1000;
@@ -114,7 +118,7 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
         return boxRegionCrud;
     }
 
-    // TODO call
+    @Override
     public void onSyncBoxItemPicked(SyncBoxItem box, SyncBaseItem picker) {
         itemService.killSyncItem(box, picker.getBase(), true, false);
         synchronized (syncBoxItems) {

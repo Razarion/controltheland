@@ -39,6 +39,7 @@ public class BaseItemType extends ItemType {
     private int upgradeProgress;
     private List<BuildupStep> buildupStep;
     private double dropBoxPossibility;
+    private int boxPickupRange;
 
     public int getHealth() {
         return health;
@@ -62,6 +63,14 @@ public class BaseItemType extends ItemType {
 
     public void setDropBoxPossibility(double dropBoxPossibility) {
         this.dropBoxPossibility = dropBoxPossibility;
+    }
+
+    public int getBoxPickupRange() {
+        return boxPickupRange;
+    }
+
+    public void setBoxPickupRange(int boxPickupRange) {
+        this.boxPickupRange = boxPickupRange;
     }
 
     public MovableType getMovableType() {
@@ -211,6 +220,7 @@ public class BaseItemType extends ItemType {
         upgradeProgress = baseItemType.upgradeProgress;
         buildupStep = baseItemType.getBuildupStep();
         dropBoxPossibility = baseItemType.dropBoxPossibility;
+        boxPickupRange = baseItemType.getBoxPickupRange();
 
         if (movableType != null) {
             movableType.changeTo(baseItemType.movableType);

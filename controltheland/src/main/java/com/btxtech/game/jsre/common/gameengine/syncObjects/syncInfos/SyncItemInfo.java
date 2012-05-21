@@ -59,6 +59,7 @@ public class SyncItemInfo extends Packet {
     private Double destinationAngel;
     private Long clientTimeStamp;
     private String startUuid;
+    private Id syncBoxItemId;
 
     public Id getId() {
         return id;
@@ -327,6 +328,14 @@ public class SyncItemInfo extends Packet {
         this.startUuid = startUuid;
     }
 
+    public Id getSyncBoxItemId() {
+        return syncBoxItemId;
+    }
+
+    public void setSyncBoxItemId(Id syncBoxItemId) {
+        this.syncBoxItemId = syncBoxItemId;
+    }
+
     @Override
     public String toString() {
         return "SyncItemInfo: " + id +
@@ -355,6 +364,7 @@ public class SyncItemInfo extends Packet {
                 " unloadPos:" + unloadPos +
                 " targetPosition:" + targetPosition +
                 " destinationAngel:" + destinationAngel +
-                " clientTimeStamp:" + clientTimeStamp;
+                " clientTimeStamp:" + clientTimeStamp +
+                " syncBoxItemId:" + syncBoxItemId;
     }
 }

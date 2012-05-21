@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.common.gameengine.services.bot.CommonBotService;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService;
 import com.btxtech.game.jsre.common.gameengine.services.energy.EnergyService;
+import com.btxtech.game.jsre.common.gameengine.services.inventory.CommonInventoryService;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
@@ -29,6 +30,7 @@ import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.energy.ServerEnergyService;
+import com.btxtech.game.services.inventory.InventoryService;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -65,6 +67,8 @@ public class ServerServices implements Services {
     private UserGuidanceService userGuidanceService;
     @Autowired
     private ServerConditionService serverConditionService;
+    @Autowired
+    private InventoryService inventoryService;
 
     @Override
     public ItemService getItemService() {
@@ -119,5 +123,10 @@ public class ServerServices implements Services {
     @Override
     public ConditionService getConditionService() {
         return serverConditionService;
+    }
+
+    @Override
+    public CommonInventoryService getInventoryService() {
+        return inventoryService;
     }
 }

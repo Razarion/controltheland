@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosi
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
@@ -39,6 +40,7 @@ import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.gwt.MovableServiceImpl;
+import com.btxtech.game.services.history.DbHistoryElement;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
@@ -163,7 +165,7 @@ abstract public class AbstractServiceTest {
     protected static final String TEST_BOX_ITEM_1 = "TEST_BOX_ITEM_1";
     protected static int TEST_BOX_ITEM_1_ID = -1;
     protected static final String TEST_BOX_ITEM_2 = "TEST_BOX_ITEM_2";
-    protected static int TEST_BOX_ITEM_2_ID = -2;
+    protected static int TEST_BOX_ITEM_2_ID = -1;
     // Quest Hubs
     protected static final String TEST_QUEST_HUB_1 = "TEST_QUEST_HUB_1";
     protected static final String TEST_QUEST_HUB_2 = "TEST_QUEST_HUB_2";
@@ -606,6 +608,12 @@ abstract public class AbstractServiceTest {
         actionService.unloadContainer(container, position);
     }
 
+    protected void sendPickupBoxCommand(Id picker, Id box) throws Exception {
+        SyncBaseItem container = (SyncBaseItem) itemService.getItem(picker);
+        SyncBoxItem boxItem = (SyncBoxItem) itemService.getItem(box);
+        actionService.pickupBox(container, boxItem);
+    }
+
     // -------------------  Game Config --------------------
 
     protected void configureItemTypes() throws Exception {
@@ -969,7 +977,7 @@ abstract public class AbstractServiceTest {
         dbBoxItemType.setName(TEST_BOX_ITEM_2);
         dbBoxItemType.setTerrainType(TerrainType.LAND);
         dbBoxItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_1));
-        dbBoxItemType.setTtl(50);
+        dbBoxItemType.setTtl(5000);
 
         itemService.saveDbItemType(dbBoxItemType);
         itemService.activate();
@@ -1532,6 +1540,34 @@ abstract public class AbstractServiceTest {
         resourceService.getDbRegionResourceCrudServiceHelper().updateDbChild(dbRegionResource);
         resourceService.activate();
         return dbRegionResource;
+    }
+
+    // ------------------- History helpers --------------------
+
+    protected void waitForHistoryType(DbHistoryElement.Type type) throws Exception {
+        long maxTime = System.currentTimeMillis() + 100000;
+
+        while (true) {
+            List<DbHistoryElement> dbHistoryElements = HibernateUtil.loadAll(sessionFactory, DbHistoryElement.class);
+            for (DbHistoryElement dbHistoryElement : dbHistoryElements) {
+                if (dbHistoryElement.getType() == type) {
+                    return;
+                }
+            }
+            if (System.currentTimeMillis() > maxTime) {
+                throw new TimeoutException();
+            }
+            Thread.sleep(100);
+        }
+    }
+
+    protected void assertNoHistoryType(DbHistoryElement.Type type) throws Exception {
+        List<DbHistoryElement> dbHistoryElements = HibernateUtil.loadAll(sessionFactory, DbHistoryElement.class);
+        for (DbHistoryElement dbHistoryElement : dbHistoryElements) {
+            if (dbHistoryElement.getType() == type) {
+                Assert.fail("Unexpected history entry found: " + type);
+            }
+        }
     }
 
     // ------------------- Session Config --------------------

@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.PathToDestinationCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.PickupBoxCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 
 import java.util.List;
@@ -35,6 +36,7 @@ public class SyncMovable extends SyncBaseAbility {
     private List<Index> pathToDestination;
     private Double destinationAngel;
     private Id targetContainer;
+    private Id syncBoxItemId;
 
     public SyncMovable(MovableType movableType, SyncBaseItem syncBaseItem) {
         super(syncBaseItem);
@@ -42,7 +44,7 @@ public class SyncMovable extends SyncBaseAbility {
     }
 
     public boolean isActive() {
-        return getSyncBaseItem().isAlive() && (targetContainer != null || (pathToDestination != null && !pathToDestination.isEmpty()));
+        return getSyncBaseItem().isAlive() && (targetContainer != null || syncBoxItemId != null || (pathToDestination != null && !pathToDestination.isEmpty()));
     }
 
     /**
@@ -50,7 +52,7 @@ public class SyncMovable extends SyncBaseAbility {
      * @return true if more tick are needed to fulfil the job
      */
     public boolean tick(double factor) {
-        return tickMove(factor) || targetContainer != null && putInContainer();
+        return tickMove(factor) || targetContainer != null && putInContainer() || syncBoxItemId != null && pickupBox(factor);
 
     }
 
@@ -132,6 +134,35 @@ public class SyncMovable extends SyncBaseAbility {
         return false;
     }
 
+    private boolean pickupBox(double factor) {
+        try {
+            if (tickMove(factor)) {
+                return true;
+            }
+
+            SyncBoxItem syncBoxItem = (SyncBoxItem) getServices().getItemService().getItem(syncBoxItemId);
+            if (getSyncItemArea().isInRange(getSyncBaseItem().getBaseItemType().getBoxPickupRange(), syncBoxItem)) {
+                getSyncItemArea().turnTo(syncBoxItem);
+                getServices().getInventoryService().onSyncBoxItemPicked(syncBoxItem, getSyncBaseItem());
+                stop();
+                return false;
+            } else {
+                if (isNewPathRecalculationAllowed()) {
+                    // Destination place was may be taken. Calculate a new one or target has moved away
+                    recalculateNewPath(getSyncBaseItem().getBaseItemType().getBoxPickupRange(), syncBoxItem.getSyncItemArea(), syncBoxItem.getTerrainType());
+                    getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        } catch (ItemDoesNotExistException ignore) {
+            // Item container may be killed
+            stop();
+            return false;
+        }
+    }
+
     private double getDistance(double factor) {
         return (double) movableType.getSpeed() * factor;
     }
@@ -140,6 +171,7 @@ public class SyncMovable extends SyncBaseAbility {
     public void synchronize(SyncItemInfo syncItemInfo) {
         pathToDestination = syncItemInfo.getPathToDestination();
         targetContainer = syncItemInfo.getTargetContainer();
+        syncBoxItemId = syncItemInfo.getSyncBoxItemId();
         destinationAngel = syncItemInfo.getDestinationAngel();
     }
 
@@ -148,12 +180,14 @@ public class SyncMovable extends SyncBaseAbility {
         syncItemInfo.setPathToDestination(CommonJava.saveArrayListCopy(pathToDestination));
         syncItemInfo.setDestinationAngel(destinationAngel);
         syncItemInfo.setTargetContainer(targetContainer);
+        syncItemInfo.setSyncBoxItemId(targetContainer);
     }
 
     public void stop() {
         pathToDestination = null;
         targetContainer = null;
         destinationAngel = null;
+        syncBoxItemId = null;
     }
 
     public void executeCommand(PathToDestinationCommand pathToDestinationCommand) {
@@ -171,6 +205,12 @@ public class SyncMovable extends SyncBaseAbility {
         targetContainer = loadContainCommand.getItemContainer();
         pathToDestination = null;
         destinationAngel = null;
+    }
+
+    public void executeCommand(PickupBoxCommand pickupBoxCommand) {
+        syncBoxItemId = pickupBoxCommand.getBox();
+        pathToDestination = pickupBoxCommand.getPathToDestination();
+        destinationAngel = pickupBoxCommand.getDestinationAngel();
     }
 
     public List<Index> getPathToDestination() {
