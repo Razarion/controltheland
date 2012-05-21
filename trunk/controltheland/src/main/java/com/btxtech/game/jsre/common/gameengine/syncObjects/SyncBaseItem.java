@@ -32,6 +32,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LaunchCommand
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.PickupBoxCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UpgradeCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
@@ -407,6 +408,11 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
 
         if (baseCommand instanceof LaunchCommand) {
             getSyncLauncher().executeCommand((LaunchCommand) baseCommand);
+            return;
+        }
+
+        if (baseCommand instanceof PickupBoxCommand) {
+            getSyncMovable().executeCommand((PickupBoxCommand) baseCommand);
             return;
         }
 

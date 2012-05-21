@@ -73,4 +73,16 @@ public interface DbBaseItemTypeI extends DbItemTypeI {
     void setDbLauncherType(DbLauncherType dbLauncherType);
 
     CrudChildServiceHelper<DbBuildupStep> getBuildupStepCrud();
+
+    DbBoxItemType getDbBoxItemType();
+
+    void setDbBoxItemType(DbBoxItemType dbBoxItemType);
+
+    double getDropBoxPossibility();
+
+    void setDropBoxPossibility(double dropBoxPossibility);
+
+    int getBoxPickupRange();
+
+    void setBoxPickupRange(int boxPickupRange);
 }

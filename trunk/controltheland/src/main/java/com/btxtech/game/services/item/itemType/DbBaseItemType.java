@@ -58,6 +58,7 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
     private int price;
     private int buildup;
     private double dropBoxPossibility;
+    private int boxPickupRange;
     @ManyToOne(fetch = FetchType.LAZY)
     private DbBoxItemType dbBoxItemType;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -121,12 +122,34 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
         this.buildup = buildup;
     }
 
+    @Override
     public DbBoxItemType getDbBoxItemType() {
         return dbBoxItemType;
     }
 
+    @Override
     public void setDbBoxItemType(DbBoxItemType dbBoxItemType) {
         this.dbBoxItemType = dbBoxItemType;
+    }
+
+    @Override
+    public double getDropBoxPossibility() {
+        return dropBoxPossibility;
+    }
+
+    @Override
+    public void setDropBoxPossibility(double dropBoxPossibility) {
+        this.dropBoxPossibility = dropBoxPossibility;
+    }
+
+    @Override
+    public int getBoxPickupRange() {
+        return boxPickupRange;
+    }
+
+    @Override
+    public void setBoxPickupRange(int boxPickupRange) {
+        this.boxPickupRange = boxPickupRange;
     }
 
     @Override
@@ -264,6 +287,7 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
         super.init(userService);
         dbBuildupSteps = new HashSet<>();
         dropBoxPossibility = 0.0;
+        boxPickupRange = 100;
     }
 
     @Override
@@ -300,6 +324,7 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
         baseItemType.setBuildup(buildup);
         baseItemType.setBuildupStep(createBuildupStep());
         baseItemType.setDropBoxPossibility(dropBoxPossibility);
+        baseItemType.setBoxPickupRange(boxPickupRange);
         if (dbMovableType != null) {
             baseItemType.setMovableType(new MovableType(dbMovableType.getSpeed()));
         }
