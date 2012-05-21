@@ -18,7 +18,6 @@ import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.terrain.TerrainService;
@@ -55,8 +54,6 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
     private UserGuidanceService userGuidanceService;
     @Autowired
     private UserService userService;
-    @Autowired
-    private BotService botService;
 
     @Test
     @DirtiesContext
@@ -387,7 +384,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         Id id = getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID);
         SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.getItem(id);
         // Fill artificial path to long
-        List<Index> pathToDestination = new ArrayList<Index>();
+        List<Index> pathToDestination = new ArrayList<>();
         for (int i = 0; i < 200; i++) {
             pathToDestination.add(new Index(i, i));
         }
@@ -414,7 +411,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         SyncMovable syncMovable = syncBaseItem.getSyncMovable();
         Assert.assertTrue(syncMovable.getPathToDestination() == null || syncMovable.getPathToDestination().isEmpty());
         // Fill artificial path ca. 820 cahracters
-        pathToDestination = new ArrayList<Index>();
+        pathToDestination = new ArrayList<>();
         for (int i = 0; i < 130; i++) {
             pathToDestination.add(new Index(i, i));
         }
@@ -573,15 +570,5 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
     public ItemType getRandomItemType() {
         int index = (int) (Math.random() * itemService.getItemTypes().size());
         return itemService.getItemTypes().get(index);
-    }
-
-
-    private void assertBackupSummery(int backupCount, int itemCount, int baseCount, int userStateCount) {
-        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
-        Assert.assertEquals("backupCount", backupCount, backupSummaries.size());
-        BackupSummary backupSummary = backupSummaries.get(0);
-        Assert.assertEquals("itemCount", itemCount, backupSummary.getItemCount());
-        Assert.assertEquals("baseCount", baseCount, backupSummary.getBaseCount());
-        Assert.assertEquals("userStateCount", userStateCount, backupSummary.getUserStateCount());
     }
 }

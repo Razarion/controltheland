@@ -325,7 +325,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public Collection<SyncItem> getItemsCopyNoBot() {
+    public Collection<SyncItem> getItems4Backup() {
         Collection<SyncItem> result = new ArrayList<SyncItem>();
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
@@ -334,6 +334,8 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
                     if (!baseService.isBot(syncBaseItem.getBase())) {
                         result.add(syncItem);
                     }
+                } else if (syncItem instanceof SyncBoxItem) {
+                    // Do nothing
                 } else {
                     result.add(syncItem);
                 }

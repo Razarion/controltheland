@@ -178,6 +178,15 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
     }
 
     @Override
+    public void restore() {
+        stopTimer();
+        synchronized (syncBoxItems) {
+            syncBoxItems.clear();
+        }
+        activate();
+    }
+
+    @Override
     public void run() {
         try {
             synchronized (boxRegions) {

@@ -29,6 +29,7 @@ import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.energy.ServerEnergyService;
+import com.btxtech.game.services.inventory.InventoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
@@ -75,11 +76,13 @@ public class GenericItemConverter {
     private BotService botService;
     @Autowired
     private StatisticsService statisticsService;
+    @Autowired
+    private InventoryService inventoryService;
     private BackupEntry backupEntry;
-    private HashMap<Id, GenericItem> genericItems = new HashMap<Id, GenericItem>();
-    private HashMap<Id, SyncItem> syncItems = new HashMap<Id, SyncItem>();
-    private HashMap<Integer, DbItemType> dbItemTypeCache = new HashMap<Integer, DbItemType>();
-    private HashMap<Base, DbBase> bases = new HashMap<Base, DbBase>();
+    private HashMap<Id, GenericItem> genericItems = new HashMap<>();
+    private HashMap<Id, SyncItem> syncItems = new HashMap<>();
+    private HashMap<Integer, DbItemType> dbItemTypeCache = new HashMap<>();
+    private HashMap<Base, DbBase> bases = new HashMap<>();
     private Log log = LogFactory.getLog(GenericItemConverter.class);
 
     public void clear() {
@@ -93,7 +96,7 @@ public class GenericItemConverter {
     public BackupEntry generateBackupEntry() {
         backupEntry = new BackupEntry();
         fillHelperCache();
-        Collection<SyncItem> syncItems = itemService.getItemsCopyNoBot();
+        Collection<SyncItem> syncItems = itemService.getItems4Backup();
         backupEntry.setTimeStamp(new Date());
 
         for (SyncItem item : syncItems) {
@@ -103,10 +106,10 @@ public class GenericItemConverter {
         for (SyncItem item : syncItems) {
             postProcessBackup(item);
         }
-        backupEntry.setItems(new HashSet<GenericItem>(genericItems.values()));
+        backupEntry.setItems(new HashSet<>(genericItems.values()));
 
         // User state
-        Set<DbUserState> dbUserStates = new HashSet<DbUserState>();
+        Set<DbUserState> dbUserStates = new HashSet<>();
         for (UserState userState : userService.getAllUserStates()) {
             if (!userState.isRegistered()) {
                 continue;
@@ -144,15 +147,15 @@ public class GenericItemConverter {
         actionService.pause(true);
         serverEnergyService.pauseService(true);
 
-        Map<DbUserState, UserState> userStates = new HashMap<DbUserState, UserState>();
+        Map<DbUserState, UserState> userStates = new HashMap<>();
         for (DbUserState dbUserState : backupEntry.getUserStates()) {
             UserState userState = dbUserState.createUserState();
             userStates.put(dbUserState, userState);
         }
 
         Collection<GenericItem> genericItems = backupEntry.getItems();
-        Collection<UserState> userStateAbandoned = new ArrayList<UserState>();
-        Map<DbBase, Base> dbBases = new HashMap<DbBase, Base>();
+        Collection<UserState> userStateAbandoned = new ArrayList<>();
+        Map<DbBase, Base> dbBases = new HashMap<>();
         for (GenericItem genericItem : genericItems) {
             try {
                 if (genericItem instanceof GenericBaseItem) {
@@ -196,6 +199,7 @@ public class GenericItemConverter {
         serverEnergyService.restoreItems(syncItems.values());
         actionService.pause(false);
         botService.activate(); // Items and bases have been deleted
+        inventoryService.restore();
     }
 
     private Base getBase(Map<DbUserState, UserState> userStates, Map<DbBase, Base> dbBases, DbBase dBbase) {
@@ -487,7 +491,7 @@ public class GenericItemConverter {
 
         if (syncItem.hasSyncItemContainer()) {
             if (genericItem.getContainedItems() != null && !genericItem.getContainedItems().isEmpty()) {
-                ArrayList<Id> containedItems = new ArrayList<Id>();
+                ArrayList<Id> containedItems = new ArrayList<>();
                 for (GenericBaseItem genericBaseItem : genericItem.getContainedItems()) {
                     SyncBaseItem child = (SyncBaseItem) syncItems.get(genericBaseItem.getItemId());
                     if (child != null) {
