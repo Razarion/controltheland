@@ -38,8 +38,6 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     private InventoryService inventoryService;
     @Autowired
     private ItemService itemService;
-    @Autowired
-    private SessionFactory sessionFactory;
     //private Log log = LogFactory.getLog(TestInventoryServiceImpl.class);
 
     @Test
