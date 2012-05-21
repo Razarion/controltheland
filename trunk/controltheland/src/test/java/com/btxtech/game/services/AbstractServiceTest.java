@@ -53,6 +53,8 @@ import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbMovableType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
+import com.btxtech.game.services.mgmt.BackupSummary;
+import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.playback.impl.PlaybackServiceImpl;
 import com.btxtech.game.services.resource.DbRegionResource;
 import com.btxtech.game.services.resource.ResourceService;
@@ -256,7 +258,7 @@ abstract public class AbstractServiceTest {
     @Autowired
     private BaseService baseService;
     @Autowired
-    private UserService userService;
+    private MgmtService mgmtService;
     @Autowired
     private PlatformTransactionManager transactionManager;
     @Autowired
@@ -1568,6 +1570,17 @@ abstract public class AbstractServiceTest {
                 Assert.fail("Unexpected history entry found: " + type);
             }
         }
+    }
+
+    // ------------------- Mgmt helpers --------------------
+
+    protected void  assertBackupSummery(int backupCount, int itemCount, int baseCount, int userStateCount) {
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        Assert.assertEquals("backupCount", backupCount, backupSummaries.size());
+        BackupSummary backupSummary = backupSummaries.get(0);
+        Assert.assertEquals("itemCount", itemCount, backupSummary.getItemCount());
+        Assert.assertEquals("baseCount", baseCount, backupSummary.getBaseCount());
+        Assert.assertEquals("userStateCount", userStateCount, backupSummary.getUserStateCount());
     }
 
     // ------------------- Session Config --------------------

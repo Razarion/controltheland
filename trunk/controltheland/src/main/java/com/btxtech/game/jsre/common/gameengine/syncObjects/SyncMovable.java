@@ -244,4 +244,8 @@ public class SyncMovable extends SyncBaseAbility {
     public MovableType getMovableType() {
         return movableType;
     }
+
+    public Id getSyncBoxItemId() {
+        return syncBoxItemId;
+    }
 }

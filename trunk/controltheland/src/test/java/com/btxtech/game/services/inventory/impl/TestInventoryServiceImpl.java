@@ -20,10 +20,14 @@ import com.btxtech.game.services.inventory.InventoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
+import com.btxtech.game.services.mgmt.BackupSummary;
+import com.btxtech.game.services.mgmt.MgmtService;
+import com.btxtech.game.services.user.UserService;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 
@@ -37,6 +41,10 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     private InventoryService inventoryService;
     @Autowired
     private ItemService itemService;
+    @Autowired
+    private MgmtService mgmtService;
+    @Autowired
+    private UserService userService;
     //private Log log = LogFactory.getLog(TestInventoryServiceImpl.class);
 
     @Test
@@ -562,5 +570,142 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
 
         EasyMock.verify(mockHistoryService, mockItemService, mockSyncBoxItem1, mockDropper, dropperType, dbDropperType);
     }
+
+    @Test
+    @DirtiesContext
+    public void backupRestoreSyncBoxItems() throws Exception {
+        InventoryServiceImpl.SCHEDULE_RATE = 25;
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createDbBoxItemType2();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        assertWholeItemCount(0);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBoxRegion dbBoxRegion = inventoryService.getBoxRegionCrud().createDbChild();
+        dbBoxRegion.setItemFreeRange(100);
+        dbBoxRegion.setMinInterval(200);
+        dbBoxRegion.setMaxInterval(200);
+        dbBoxRegion.setName("DbBoxRegion1");
+        dbBoxRegion.setRegion(new Rectangle(100, 100, 1000, 1000));
+        DbBoxRegionCount dbBoxRegionCount = dbBoxRegion.getBoxRegionCountCrud().createDbChild();
+        dbBoxRegionCount.setDbBoxItemType(itemService.getDbBoxItemType(TEST_BOX_ITEM_2_ID));
+        dbBoxRegionCount.setCount(1);
+        inventoryService.getBoxRegionCrud().updateDbChild(dbBoxRegion);
+        inventoryService.activate();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        Thread.sleep(230);
+        List<SyncItem> syncItems = itemService.getItemsCopy();
+        Assert.assertEquals(1, syncItems.size());
+        Assert.assertTrue(syncItems.get(0) instanceof SyncBoxItem);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        assertBackupSummery(1, 0, 0, 0);
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        assertWholeItemCount(0);
+
+        Thread.sleep(230);
+        syncItems = itemService.getItemsCopy();
+        Assert.assertEquals(1, syncItems.size());
+        Assert.assertTrue(syncItems.get(0) instanceof SyncBoxItem);
+    }
+
+    @Test
+    @DirtiesContext
+    public void backupRestoreSyncBoxItemsAsTarget() throws Exception {
+        InventoryServiceImpl.SCHEDULE_RATE = 25;
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createDbBoxItemType2();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        assertWholeItemCount(0);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "xxx", "xxx", "");
+        userService.login("U1", "xxx");
+        Id target = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
+        sendMoveCommand(target, new Index(5000, 5000));
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBoxRegion dbBoxRegion = inventoryService.getBoxRegionCrud().createDbChild();
+        dbBoxRegion.setItemFreeRange(100);
+        dbBoxRegion.setMinInterval(200);
+        dbBoxRegion.setMaxInterval(200);
+        dbBoxRegion.setName("DbBoxRegion1");
+        dbBoxRegion.setRegion(new Rectangle(100, 100, 100, 100));
+        DbBoxRegionCount dbBoxRegionCount = dbBoxRegion.getBoxRegionCountCrud().createDbChild();
+        dbBoxRegionCount.setDbBoxItemType(itemService.getDbBoxItemType(TEST_BOX_ITEM_2_ID));
+        dbBoxRegionCount.setCount(1);
+        inventoryService.getBoxRegionCrud().updateDbChild(dbBoxRegion);
+        inventoryService.activate();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        Thread.sleep(230);
+        List<SyncItem> syncItems = itemService.getItemsCopy();
+        Assert.assertEquals(2, syncItems.size());
+        SyncBoxItem syncBoxItem = null;
+        for (SyncItem syncItem : syncItems) {
+            if(syncItem instanceof SyncBoxItem) {
+                syncBoxItem = (SyncBoxItem) syncItem;
+                break;
+            }
+        }
+
+        Assert.assertNotNull(syncBoxItem);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "xxx");
+        sendPickupBoxCommand(target, syncBoxItem.getId());
+        Assert.assertNotNull(((SyncBaseItem)itemService.getItem(target)).getSyncMovable().getSyncBoxItemId());
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        assertBackupSummery(1, 1, 1, 1);
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        assertWholeItemCount(1);
+        Assert.assertNull(((SyncBaseItem)itemService.getItemsCopy().get(0)).getSyncMovable().getSyncBoxItemId());
+
+        Thread.sleep(230);
+        syncItems = itemService.getItemsCopy();
+        Assert.assertEquals(2, syncItems.size());
+        Assert.assertTrue(syncItems.get(0) instanceof SyncBoxItem);
+    }
+
 
 }

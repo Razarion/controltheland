@@ -19,4 +19,6 @@ public interface InventoryService extends CommonInventoryService {
     void onSyncBaseItemKilled(SyncBaseItem syncBaseItem);
 
     void activate();
+
+    void restore();
 }
