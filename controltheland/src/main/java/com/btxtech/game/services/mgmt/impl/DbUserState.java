@@ -1,5 +1,7 @@
 package com.btxtech.game.services.mgmt.impl;
 
+import com.btxtech.game.services.inventory.DbInventoryArtifact;
+import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.statistics.StatisticsEntry;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserState;
@@ -59,6 +61,17 @@ public class DbUserState {
     private Collection<DbGenericComparisonValue> dbGenericComparisonValues;
     @Embedded
     private StatisticsEntry statisticsEntry;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "BACKUP_USER_STATUS_INVENTORY_ITEM",
+            joinColumns = {@JoinColumn(name = "userState")},
+            inverseJoinColumns = {@JoinColumn(name = "inventoryItem")})
+    private Collection<DbInventoryItem> inventoryItems;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "BACKUP_USER_STATUS_INVENTORY_ARTIFACT",
+            joinColumns = {@JoinColumn(name = "userState")},
+            inverseJoinColumns = {@JoinColumn(name = "inventoryArtifact")})
+    private Collection<DbInventoryArtifact> inventoryArtifacts;
+    private int razarion;
 
     /**
      * Used by hibernate
@@ -66,12 +79,15 @@ public class DbUserState {
     protected DbUserState() {
     }
 
-    public DbUserState(BackupEntry backupEntry, User user, UserState userState, DbLevel dbLevel) {
+    public DbUserState(BackupEntry backupEntry, User user, UserState userState, DbLevel dbLevel, Collection<DbInventoryItem> inventoryItems, Collection<DbInventoryArtifact> inventoryArtifacts) {
         this.backupEntry = backupEntry;
         this.user = user;
         xp = userState.getXp();
+        razarion = userState.getRazarion();
         currentLevel = dbLevel;
         sendResurrectionMessage = userState.isSendResurrectionMessage();
+        this.inventoryItems = inventoryItems;
+        this.inventoryArtifacts = inventoryArtifacts;
     }
 
     public UserState createUserState() {
@@ -80,11 +96,18 @@ public class DbUserState {
             userState.setUser(user.getUsername());
         }
         userState.setXp(xp);
+        userState.setRazarion(razarion);
         if (sendResurrectionMessage) {
             userState.setSendResurrectionMessage();
         }
         if (currentLevel != null) {
             userState.setDbLevelId(currentLevel.getId());
+        }
+        for (DbInventoryItem inventoryItem : inventoryItems) {
+            userState.addInventoryItem((Integer) inventoryItem.getId());
+        }
+        for (DbInventoryArtifact inventoryArtifact : inventoryArtifacts) {
+            userState.addInventoryArtifact((Integer) inventoryArtifact.getId());
         }
         return userState;
     }

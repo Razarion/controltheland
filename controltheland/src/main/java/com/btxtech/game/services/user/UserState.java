@@ -16,6 +16,8 @@ package com.btxtech.game.services.user;
 import com.btxtech.game.services.base.Base;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -29,6 +31,9 @@ public class UserState implements Serializable {
     private int xp;
     private String sessionId;
     private boolean sendResurrectionMessage = false;
+    private int razarion;
+    private Collection<Integer> inventoryItemIds = new ArrayList<>();
+    private Collection<Integer> inventoryArtifactIds = new ArrayList<>();
 
     public boolean isRegistered() {
         return userName != null;
@@ -97,5 +102,37 @@ public class UserState implements Serializable {
 
     public boolean isSendResurrectionMessage() {
         return sendResurrectionMessage;
+    }
+
+    public int getRazarion() {
+        return razarion;
+    }
+
+    public void setRazarion(int razarion) {
+        this.razarion = razarion;
+    }
+
+    public void addRazarion(int value) {
+        razarion += value;
+    }
+
+    public void subRazarion(int value) {
+        razarion -= value;
+    }
+
+    public void addInventoryItem(int inventoryItemId) {
+        inventoryItemIds.add(inventoryItemId);
+    }
+
+    public void addInventoryArtifact(int inventoryArtifactId) {
+        inventoryArtifactIds.add(inventoryArtifactId);
+    }
+
+    public Collection<Integer> getInventoryItemIds() {
+        return inventoryItemIds;
+    }
+
+    public Collection<Integer> getInventoryArtifactIds() {
+        return inventoryArtifactIds;
     }
 }

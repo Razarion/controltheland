@@ -29,6 +29,8 @@ import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.energy.ServerEnergyService;
+import com.btxtech.game.services.inventory.DbInventoryArtifact;
+import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.inventory.InventoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
@@ -129,7 +131,20 @@ public class GenericItemConverter {
     }
 
     private DbUserState createDbUserState(UserState userState) {
-        DbUserState dbUserState = new DbUserState(backupEntry, userService.getUser(userState.getUser()), userState, userGuidanceService.getDbLevel(userState));
+        Collection<DbInventoryItem> inventoryItems = new ArrayList<>();
+        for (Integer inventoryItemId : userState.getInventoryItemIds()) {
+            inventoryItems.add(inventoryService.getItemCrud().readDbChild(inventoryItemId));
+        }
+        Collection<DbInventoryArtifact> inventoryArtifacts = new ArrayList<>();
+        for (Integer inventoryArtifactId : userState.getInventoryArtifactIds()) {
+            inventoryArtifacts.add(inventoryService.getArtifactCrud().readDbChild(inventoryArtifactId));
+        }
+        DbUserState dbUserState = new DbUserState(backupEntry,
+                userService.getUser(userState.getUser()),
+                userState,
+                userGuidanceService.getDbLevel(userState),
+                inventoryItems,
+                inventoryArtifacts);
         if (userState.getBase() != null) {
             DbBase dbBase = bases.get(userState.getBase());
             if (dbBase != null) {

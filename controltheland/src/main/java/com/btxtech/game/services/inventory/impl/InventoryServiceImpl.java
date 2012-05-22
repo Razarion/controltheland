@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoxItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
+import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
@@ -16,6 +17,8 @@ import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.inventory.InventoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.itemType.DbBoxItemType;
+import com.btxtech.game.services.item.itemType.DbBoxItemTypePossibility;
 import com.btxtech.game.services.user.UserState;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,9 +31,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -41,7 +42,7 @@ import java.util.concurrent.TimeUnit;
  * Time: 12:48
  */
 
-// TODO backup restore
+// TODO backup restore razarion, Artifact inventory items
 // TODO history convert()
 
 @Component(value = "inventoryService")
@@ -61,8 +62,9 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
     private CollisionService collisionService;
     @Autowired
     private HistoryService historyService;
+    @Autowired
+    private BaseService baseService;
     private final Collection<SyncBoxItem> syncBoxItems = new ArrayList<>();
-    private final Map<UserState, Collection<Integer>> userArtifacts = new HashMap<>();
     private ScheduledThreadPoolExecutor boxRegionExecutor;
     private ScheduledFuture boxRegionFuture;
     private Log log = LogFactory.getLog(InventoryServiceImpl.class);
@@ -124,13 +126,36 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
         synchronized (syncBoxItems) {
             syncBoxItems.remove(box);
         }
+        if (baseService.isAbandoned(picker.getBase())) {
+            return;
+        }
         HibernateUtil.openSession4InternalCall(sessionFactory);
         try {
             historyService.addBoxPicked(box, picker);
+            DbBoxItemType dbBoxItemType = itemService.getDbBoxItemType(box.getItemType().getId());
+            UserState userState = baseService.getUserState(picker.getBase());
+            for (DbBoxItemTypePossibility dbBoxItemTypePossibility : dbBoxItemType.getBoxPossibilityCrud().readDbChildren()) {
+                addBoxContentToUser(dbBoxItemTypePossibility, userState);
+            }
         } finally {
             HibernateUtil.closeSession4InternalCall(sessionFactory);
         }
-        // TODO add artifacts to user
+
+    }
+
+    private void addBoxContentToUser(DbBoxItemTypePossibility dbBoxItemTypePossibility, UserState userState) {
+        if (dbBoxItemTypePossibility.getDbInventoryItem() != null) {
+            userState.addInventoryItem(dbBoxItemTypePossibility.getDbInventoryItem().getId());
+            historyService.addInventoryItemFromBox(userState, dbBoxItemTypePossibility.getDbInventoryItem().getName());
+        } else if (dbBoxItemTypePossibility.getDbInventoryArtifact() != null) {
+            userState.addInventoryArtifact(dbBoxItemTypePossibility.getDbInventoryArtifact().getId());
+            historyService.addInventoryArtifactFromBox(userState, dbBoxItemTypePossibility.getDbInventoryArtifact().getName());
+        } else if (dbBoxItemTypePossibility.getRazarion() != null) {
+            userState.addRazarion(dbBoxItemTypePossibility.getRazarion());
+            historyService.addRazarionFromBox(userState, dbBoxItemTypePossibility.getRazarion());
+        } else {
+            log.warn("No content defined for box: " + dbBoxItemTypePossibility.getParent() + " " + dbBoxItemTypePossibility);
+        }
     }
 
     @Override

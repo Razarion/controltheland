@@ -63,6 +63,12 @@ public interface HistoryService {
 
     void addBoxPicked(SyncBoxItem boxItem, SyncBaseItem picker);
 
+    void addRazarionFromBox(UserState userState, int razarion);
+
+    void addInventoryItemFromBox(UserState userState, String inventoryItemName);
+
+    void addInventoryArtifactFromBox(UserState userState, String inventoryArtifactName);
+
     List<DisplayHistoryElement> getNewestHistoryElements(User user, int count);
 
     List<DisplayHistoryElement> getHistoryElements(Long from, Long to, String sessionId, Integer baseId);

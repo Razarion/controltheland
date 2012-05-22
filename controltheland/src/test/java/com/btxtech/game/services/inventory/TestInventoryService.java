@@ -5,6 +5,8 @@ import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.itemType.DbBoxItemType;
+import com.btxtech.game.services.item.itemType.DbBoxItemTypePossibility;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -321,7 +323,7 @@ public class TestInventoryService extends AbstractServiceTest {
         List<DbBoxRegionCount> dbBoxRegionCounts = new ArrayList<>(itemList.get(0).getBoxRegionCountCrud().readDbChildren());
         Assert.assertEquals(1, dbBoxRegionCounts.size());
         Assert.assertEquals(10, dbBoxRegionCounts.get(0).getCount());
-        Assert.assertEquals(TEST_BOX_ITEM_1_ID, (int)dbBoxRegionCounts.get(0).getDbBoxItemType().getId());
+        Assert.assertEquals(TEST_BOX_ITEM_1_ID, (int) dbBoxRegionCounts.get(0).getDbBoxItemType().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -355,7 +357,7 @@ public class TestInventoryService extends AbstractServiceTest {
         dbBoxRegionCounts = new ArrayList<>(itemList.get(0).getBoxRegionCountCrud().readDbChildren());
         Assert.assertEquals(1, dbBoxRegionCounts.size());
         Assert.assertEquals(10, dbBoxRegionCounts.get(0).getCount());
-        Assert.assertEquals(TEST_BOX_ITEM_1_ID, (int)dbBoxRegionCounts.get(0).getDbBoxItemType().getId());
+        Assert.assertEquals(TEST_BOX_ITEM_1_ID, (int) dbBoxRegionCounts.get(0).getDbBoxItemType().getId());
 
         Assert.assertEquals(222, itemList.get(1).getItemFreeRange());
         Assert.assertEquals(33, itemList.get(1).getMaxInterval());
@@ -365,9 +367,9 @@ public class TestInventoryService extends AbstractServiceTest {
         dbBoxRegionCounts = new ArrayList<>(itemList.get(1).getBoxRegionCountCrud().readDbChildren());
         Assert.assertEquals(2, dbBoxRegionCounts.size());
         Assert.assertEquals(5, dbBoxRegionCounts.get(0).getCount());
-        Assert.assertEquals(TEST_BOX_ITEM_1_ID, (int)dbBoxRegionCounts.get(0).getDbBoxItemType().getId());
+        Assert.assertEquals(TEST_BOX_ITEM_1_ID, (int) dbBoxRegionCounts.get(0).getDbBoxItemType().getId());
         Assert.assertEquals(6, dbBoxRegionCounts.get(1).getCount());
-        Assert.assertEquals(TEST_BOX_ITEM_2_ID, (int)dbBoxRegionCounts.get(1).getDbBoxItemType().getId());
+        Assert.assertEquals(TEST_BOX_ITEM_2_ID, (int) dbBoxRegionCounts.get(1).getDbBoxItemType().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -399,9 +401,9 @@ public class TestInventoryService extends AbstractServiceTest {
         dbBoxRegionCounts = new ArrayList<>(itemList.get(1).getBoxRegionCountCrud().readDbChildren());
         Assert.assertEquals(2, dbBoxRegionCounts.size());
         Assert.assertEquals(5, dbBoxRegionCounts.get(0).getCount());
-        Assert.assertEquals(TEST_BOX_ITEM_1_ID, (int)dbBoxRegionCounts.get(0).getDbBoxItemType().getId());
+        Assert.assertEquals(TEST_BOX_ITEM_1_ID, (int) dbBoxRegionCounts.get(0).getDbBoxItemType().getId());
         Assert.assertEquals(6, dbBoxRegionCounts.get(1).getCount());
-        Assert.assertEquals(TEST_BOX_ITEM_2_ID, (int)dbBoxRegionCounts.get(1).getDbBoxItemType().getId());
+        Assert.assertEquals(TEST_BOX_ITEM_2_ID, (int) dbBoxRegionCounts.get(1).getDbBoxItemType().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -423,11 +425,113 @@ public class TestInventoryService extends AbstractServiceTest {
         dbBoxRegionCounts = new ArrayList<>(itemList.get(0).getBoxRegionCountCrud().readDbChildren());
         Assert.assertEquals(2, dbBoxRegionCounts.size());
         Assert.assertEquals(5, dbBoxRegionCounts.get(0).getCount());
-        Assert.assertEquals(TEST_BOX_ITEM_1_ID, (int)dbBoxRegionCounts.get(0).getDbBoxItemType().getId());
+        Assert.assertEquals(TEST_BOX_ITEM_1_ID, (int) dbBoxRegionCounts.get(0).getDbBoxItemType().getId());
         Assert.assertEquals(6, dbBoxRegionCounts.get(1).getCount());
-        Assert.assertEquals(TEST_BOX_ITEM_2_ID, (int)dbBoxRegionCounts.get(1).getDbBoxItemType().getId());
+        Assert.assertEquals(TEST_BOX_ITEM_2_ID, (int) dbBoxRegionCounts.get(1).getDbBoxItemType().getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    public void dbBoxItemType() throws Exception {
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbInventoryItem dbInventoryItem = inventoryService.getItemCrud().createDbChild();
+        DbInventoryArtifact dbInventoryArtifact = inventoryService.getArtifactCrud().createDbChild();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBoxItemType dbBoxItemType = (DbBoxItemType) itemService.getDbItemTypeCrud().createDbChild(DbBoxItemType.class);
+        itemService.saveDbItemType(dbBoxItemType);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbBoxItemType = (DbBoxItemType) itemService.getDbItemTypeCrud().readDbChild(dbBoxItemType.getId());
+        DbBoxItemTypePossibility dbBoxItemTypePossibility1 = dbBoxItemType.getBoxPossibilityCrud().createDbChild();
+        dbBoxItemTypePossibility1.setPossibility(0.1);
+        dbBoxItemTypePossibility1.setDbInventoryItem(dbInventoryItem);
+        itemService.getDbItemTypeCrud().updateDbChild(dbBoxItemType);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbBoxItemType = (DbBoxItemType) itemService.getDbItemTypeCrud().readDbChild(dbBoxItemType.getId());
+        Assert.assertEquals(1, dbBoxItemType.getBoxPossibilityCrud().readDbChildren().size());
+        dbBoxItemTypePossibility1 = dbBoxItemType.getBoxPossibilityCrud().readDbChild(dbBoxItemTypePossibility1.getId());
+        Assert.assertEquals(0.1, dbBoxItemTypePossibility1.getPossibility(), 0.001);
+        Assert.assertEquals(dbInventoryItem.getId(), dbBoxItemTypePossibility1.getDbInventoryItem().getId());
+        Assert.assertNull(dbBoxItemTypePossibility1.getDbInventoryArtifact());
+        Assert.assertNull(dbBoxItemTypePossibility1.getRazarion());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbBoxItemType = (DbBoxItemType) itemService.getDbItemTypeCrud().readDbChild(dbBoxItemType.getId());
+        DbBoxItemTypePossibility dbBoxItemTypePossibility2 = dbBoxItemType.getBoxPossibilityCrud().createDbChild();
+        dbBoxItemTypePossibility2.setPossibility(0.2);
+        dbBoxItemTypePossibility2.setDbInventoryArtifact(dbInventoryArtifact);
+        itemService.getDbItemTypeCrud().updateDbChild(dbBoxItemType);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbBoxItemType = (DbBoxItemType) itemService.getDbItemTypeCrud().readDbChild(dbBoxItemType.getId());
+        Assert.assertEquals(2, dbBoxItemType.getBoxPossibilityCrud().readDbChildren().size());
+        dbBoxItemTypePossibility1 = dbBoxItemType.getBoxPossibilityCrud().readDbChild(dbBoxItemTypePossibility1.getId());
+        Assert.assertEquals(0.1, dbBoxItemTypePossibility1.getPossibility(), 0.001);
+        Assert.assertEquals(dbInventoryItem.getId(), dbBoxItemTypePossibility1.getDbInventoryItem().getId());
+        Assert.assertNull(dbBoxItemTypePossibility1.getDbInventoryArtifact());
+        Assert.assertNull(dbBoxItemTypePossibility1.getRazarion());
+        dbBoxItemTypePossibility2 = dbBoxItemType.getBoxPossibilityCrud().readDbChild(dbBoxItemTypePossibility2.getId());
+        Assert.assertEquals(0.2, dbBoxItemTypePossibility2.getPossibility(), 0.001);
+        Assert.assertNull(dbBoxItemTypePossibility2.getDbInventoryItem());
+        Assert.assertEquals(dbInventoryArtifact.getId(), dbBoxItemTypePossibility2.getDbInventoryArtifact().getId());
+        Assert.assertNull(dbBoxItemTypePossibility2.getRazarion());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbBoxItemType = (DbBoxItemType) itemService.getDbItemTypeCrud().readDbChild(dbBoxItemType.getId());
+        DbBoxItemTypePossibility dbBoxItemTypePossibility3 = dbBoxItemType.getBoxPossibilityCrud().createDbChild();
+        dbBoxItemTypePossibility3.setPossibility(0.3);
+        dbBoxItemTypePossibility3.setRazarion(253000);
+        itemService.getDbItemTypeCrud().updateDbChild(dbBoxItemType);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbBoxItemType = (DbBoxItemType) itemService.getDbItemTypeCrud().readDbChild(dbBoxItemType.getId());
+        Assert.assertEquals(3, dbBoxItemType.getBoxPossibilityCrud().readDbChildren().size());
+        dbBoxItemTypePossibility1 = dbBoxItemType.getBoxPossibilityCrud().readDbChild(dbBoxItemTypePossibility1.getId());
+        Assert.assertEquals(0.1, dbBoxItemTypePossibility1.getPossibility(), 0.001);
+        Assert.assertEquals(dbInventoryItem.getId(), dbBoxItemTypePossibility1.getDbInventoryItem().getId());
+        Assert.assertNull(dbBoxItemTypePossibility1.getDbInventoryArtifact());
+        Assert.assertNull(dbBoxItemTypePossibility1.getRazarion());
+        dbBoxItemTypePossibility2 = dbBoxItemType.getBoxPossibilityCrud().readDbChild(dbBoxItemTypePossibility2.getId());
+        Assert.assertEquals(0.2, dbBoxItemTypePossibility2.getPossibility(), 0.001);
+        Assert.assertNull(dbBoxItemTypePossibility2.getDbInventoryItem());
+        Assert.assertEquals(dbInventoryArtifact.getId(), dbBoxItemTypePossibility2.getDbInventoryArtifact().getId());
+        Assert.assertNull(dbBoxItemTypePossibility2.getRazarion());
+        dbBoxItemTypePossibility3 = dbBoxItemType.getBoxPossibilityCrud().readDbChild(dbBoxItemTypePossibility3.getId());
+        Assert.assertEquals(0.3, dbBoxItemTypePossibility3.getPossibility(), 0.001);
+        Assert.assertNull(dbBoxItemTypePossibility3.getDbInventoryItem());
+        Assert.assertNull(dbBoxItemTypePossibility3.getDbInventoryArtifact());
+        Assert.assertEquals(253000, (int)dbBoxItemTypePossibility3.getRazarion());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 }

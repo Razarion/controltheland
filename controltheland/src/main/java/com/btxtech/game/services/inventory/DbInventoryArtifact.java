@@ -34,7 +34,7 @@ public class DbInventoryArtifact implements CrudChild {
     private byte[] imageData;
 
     @Override
-    public Serializable getId() {
+    public Integer getId() {
         return id;
     }
 

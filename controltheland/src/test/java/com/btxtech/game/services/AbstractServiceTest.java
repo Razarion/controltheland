@@ -70,7 +70,6 @@ import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
-import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.DbItemTypeLimitation;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
@@ -316,6 +315,14 @@ abstract public class AbstractServiceTest {
     protected void assertBaseCount(int count) {
         Assert.assertEquals(count, baseService.getAllBaseAttributes().size());
     }
+
+    // ------------------- DbItemType helpers --------------------
+
+    protected void setupDbItemTypeId(DbItemType dbItemType, int id) throws Exception {
+        setPrivateField(DbItemType.class, dbItemType, "id", id);
+        dbItemType.init(null);
+    }
+
     // ------------------- Sync Items --------------------
 
     protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id, Services services, SimpleBase simpleBase) throws Exception {
@@ -950,7 +957,7 @@ abstract public class AbstractServiceTest {
         return dbBaseItemType;
     }
 
-    private void setupImages(DbItemType dbItemType, int count) {
+    protected void setupImages(DbItemType dbItemType, int count) {
         CrudChildServiceHelper<DbItemTypeImage> crud = dbItemType.getItemTypeImageCrud();
         for (int i = 0; i < count; i++) {
             DbItemTypeImage dbItemTypeImage = crud.createDbChild();
@@ -1574,7 +1581,7 @@ abstract public class AbstractServiceTest {
 
     // ------------------- Mgmt helpers --------------------
 
-    protected void  assertBackupSummery(int backupCount, int itemCount, int baseCount, int userStateCount) {
+    protected void assertBackupSummery(int backupCount, int itemCount, int baseCount, int userStateCount) {
         List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
         Assert.assertEquals("backupCount", backupCount, backupSummaries.size());
         BackupSummary backupSummary = backupSummaries.get(0);
