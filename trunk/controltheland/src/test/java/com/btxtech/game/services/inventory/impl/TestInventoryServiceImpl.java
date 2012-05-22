@@ -6,29 +6,38 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoxItemType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.history.DbHistoryElement;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.inventory.DbBoxRegion;
 import com.btxtech.game.services.inventory.DbBoxRegionCount;
+import com.btxtech.game.services.inventory.DbInventoryArtifact;
+import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.inventory.InventoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
+import com.btxtech.game.services.item.itemType.DbBoxItemTypePossibility;
 import com.btxtech.game.services.mgmt.BackupSummary;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.user.UserState;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -673,7 +682,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(2, syncItems.size());
         SyncBoxItem syncBoxItem = null;
         for (SyncItem syncItem : syncItems) {
-            if(syncItem instanceof SyncBoxItem) {
+            if (syncItem instanceof SyncBoxItem) {
                 syncBoxItem = (SyncBoxItem) syncItem;
                 break;
             }
@@ -685,7 +694,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.login("U1", "xxx");
         sendPickupBoxCommand(target, syncBoxItem.getId());
-        Assert.assertNotNull(((SyncBaseItem)itemService.getItem(target)).getSyncMovable().getSyncBoxItemId());
+        Assert.assertNotNull(((SyncBaseItem) itemService.getItem(target)).getSyncMovable().getSyncBoxItemId());
         mgmtService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -699,7 +708,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         endHttpSession();
 
         assertWholeItemCount(1);
-        Assert.assertNull(((SyncBaseItem)itemService.getItemsCopy().get(0)).getSyncMovable().getSyncBoxItemId());
+        Assert.assertNull(((SyncBaseItem) itemService.getItemsCopy().get(0)).getSyncMovable().getSyncBoxItemId());
 
         Thread.sleep(230);
         syncItems = itemService.getItemsCopy();
@@ -707,5 +716,224 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         Assert.assertTrue(syncItems.get(0) instanceof SyncBoxItem);
     }
 
+    @Test
+    @DirtiesContext
+    public void pickupInventoryItemReal() throws Exception {
+        InventoryServiceImpl.SCHEDULE_RATE = 25;
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbInventoryItem dbInventoryItem = inventoryService.getItemCrud().createDbChild();
+        DbInventoryArtifact dbInventoryArtifact = inventoryService.getArtifactCrud().createDbChild();
+        DbBoxItemType dbBoxItemType = (DbBoxItemType) itemService.getDbItemTypeCrud().createDbChild(DbBoxItemType.class);
+        dbBoxItemType.setTerrainType(TerrainType.LAND);
+        setupImages(dbBoxItemType, 1);
+        dbBoxItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_1));
+        dbBoxItemType.setTtl(5000);
+        DbBoxItemTypePossibility dbBoxItemTypePossibility1 = dbBoxItemType.getBoxPossibilityCrud().createDbChild();
+        dbBoxItemTypePossibility1.setPossibility(1.0);
+        dbBoxItemTypePossibility1.setDbInventoryItem(dbInventoryItem);
+        DbBoxItemTypePossibility dbBoxItemTypePossibility2 = dbBoxItemType.getBoxPossibilityCrud().createDbChild();
+        dbBoxItemTypePossibility2.setPossibility(1.0);
+        dbBoxItemTypePossibility2.setDbInventoryArtifact(dbInventoryArtifact);
+        DbBoxItemTypePossibility dbBoxItemTypePossibility3 = dbBoxItemType.getBoxPossibilityCrud().createDbChild();
+        dbBoxItemTypePossibility3.setPossibility(1.0);
+        dbBoxItemTypePossibility3.setRazarion(100);
+        itemService.saveDbItemType(dbBoxItemType);
+        itemService.activate();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        assertWholeItemCount(0);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBoxRegion dbBoxRegion = inventoryService.getBoxRegionCrud().createDbChild();
+        dbBoxRegion.setItemFreeRange(100);
+        dbBoxRegion.setMinInterval(200);
+        dbBoxRegion.setMaxInterval(200);
+        dbBoxRegion.setName("DbBoxRegion1");
+        dbBoxRegion.setRegion(new Rectangle(100, 100, 1000, 1000));
+        DbBoxRegionCount dbBoxRegionCount = dbBoxRegion.getBoxRegionCountCrud().createDbChild();
+        dbBoxRegionCount.setDbBoxItemType(dbBoxItemType);
+        dbBoxRegionCount.setCount(1);
+        inventoryService.getBoxRegionCrud().updateDbChild(dbBoxRegion);
+        inventoryService.activate();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        Thread.sleep(230);
+        List<SyncItem> syncItems = itemService.getItemsCopy();
+        Assert.assertEquals(1, syncItems.size());
+        SyncBoxItem boxItem = (SyncBoxItem) syncItems.get(0);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        assertNoHistoryType(DbHistoryElement.Type.INVENTORY_ITEM_FROM_BOX);
+        assertNoHistoryType(DbHistoryElement.Type.INVENTORY_ARTIFACT_FROM_BOX);
+        assertNoHistoryType(DbHistoryElement.Type.RAZARION_FROM_BOX);
+        sendPickupBoxCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), boxItem.getId());
+        waitForActionServiceDone();
+        waitForHistoryType(DbHistoryElement.Type.INVENTORY_ITEM_FROM_BOX);
+        waitForHistoryType(DbHistoryElement.Type.INVENTORY_ARTIFACT_FROM_BOX);
+        waitForHistoryType(DbHistoryElement.Type.RAZARION_FROM_BOX);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void pickupInventoryItemMock() throws Exception {
+        InventoryServiceImpl.SCHEDULE_RATE = 25;
+        configureRealGame();
+
+        SimpleBase simpleBase = new SimpleBase(1);
+        DbBoxItemType dbBoxItemType1 = new DbBoxItemType();
+        setupDbItemTypeId(dbBoxItemType1, 1);
+        DbBoxItemTypePossibility dbBoxItemTypePossibility = dbBoxItemType1.getBoxPossibilityCrud().createDbChild();
+        dbBoxItemTypePossibility.setPossibility(1.0);
+        dbBoxItemTypePossibility.setRazarion(100);
+        DbBoxItemType dbBoxItemType2 = new DbBoxItemType();
+        setupDbItemTypeId(dbBoxItemType2, 2);
+        dbBoxItemTypePossibility = dbBoxItemType2.getBoxPossibilityCrud().createDbChild();
+        dbBoxItemTypePossibility.setPossibility(1.0);
+        DbInventoryItem dbInventoryItem = new DbInventoryItem();
+        dbInventoryItem.setName("InventoryItem");
+        setPrivateField(DbInventoryItem.class, dbInventoryItem, "id", 33);
+        dbBoxItemTypePossibility.setDbInventoryItem(dbInventoryItem);
+        DbBoxItemType dbBoxItemType3 = new DbBoxItemType();
+        setupDbItemTypeId(dbBoxItemType3, 3);
+        dbBoxItemTypePossibility = dbBoxItemType3.getBoxPossibilityCrud().createDbChild();
+        dbBoxItemTypePossibility.setPossibility(1.0);
+        DbInventoryArtifact dbInventoryArtifact = new DbInventoryArtifact();
+        dbInventoryArtifact.setName("InventoryArtifact");
+        setPrivateField(DbInventoryArtifact.class, dbInventoryArtifact, "id", 44);
+        dbBoxItemTypePossibility.setDbInventoryArtifact(dbInventoryArtifact);
+        // BoxItemType
+        BoxItemType boxItemType = EasyMock.createStrictMock(BoxItemType.class);
+        EasyMock.expect(boxItemType.getId()).andReturn(1);
+        EasyMock.expect(boxItemType.getId()).andReturn(2);
+        EasyMock.expect(boxItemType.getId()).andReturn(3);
+        // SyncBoxItems
+        SyncBoxItem mockSyncBoxItem1 = EasyMock.createStrictMock(SyncBoxItem.class);
+        EasyMock.expect(mockSyncBoxItem1.getItemType()).andReturn(boxItemType).times(3);
+        // ItemService
+        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
+        mockItemService.killSyncItem(mockSyncBoxItem1, simpleBase, true, false);
+        EasyMock.expect(mockItemService.getDbBoxItemType(1)).andReturn(dbBoxItemType1);
+        mockItemService.killSyncItem(mockSyncBoxItem1, simpleBase, true, false);
+        EasyMock.expect(mockItemService.getDbBoxItemType(2)).andReturn(dbBoxItemType2);
+        mockItemService.killSyncItem(mockSyncBoxItem1, simpleBase, true, false);
+        EasyMock.expect(mockItemService.getDbBoxItemType(3)).andReturn(dbBoxItemType3);
+        // Picker
+        SyncBaseItem picker = EasyMock.createStrictMock(SyncBaseItem.class);
+        EasyMock.expect(picker.getBase()).andReturn(simpleBase).times(9);
+        // SyncBoxItems
+        UserState mockUserState = EasyMock.createStrictMock(UserState.class);
+        mockUserState.addRazarion(100);
+        mockUserState.addInventoryItem(33);
+        mockUserState.addInventoryArtifact(44);
+        // SyncBoxItems
+        BaseService mockBaseService = EasyMock.createStrictMock(BaseService.class);
+        EasyMock.expect(mockBaseService.isAbandoned(simpleBase)).andReturn(false);
+        EasyMock.expect(mockBaseService.getUserState(simpleBase)).andReturn(mockUserState);
+        EasyMock.expect(mockBaseService.isAbandoned(simpleBase)).andReturn(false);
+        EasyMock.expect(mockBaseService.getUserState(simpleBase)).andReturn(mockUserState);
+        EasyMock.expect(mockBaseService.isAbandoned(simpleBase)).andReturn(false);
+        EasyMock.expect(mockBaseService.getUserState(simpleBase)).andReturn(mockUserState);
+        // History Service
+        HistoryService mockHistoryService = EasyMock.createStrictMock(HistoryService.class);
+        mockHistoryService.addBoxPicked(mockSyncBoxItem1, picker);
+        mockHistoryService.addRazarionFromBox(mockUserState, 100);
+        mockHistoryService.addBoxPicked(mockSyncBoxItem1, picker);
+        mockHistoryService.addInventoryItemFromBox(mockUserState, "InventoryItem");
+        mockHistoryService.addBoxPicked(mockSyncBoxItem1, picker);
+        mockHistoryService.addInventoryArtifactFromBox(mockUserState, "InventoryArtifact");
+
+        EasyMock.replay(mockHistoryService, mockItemService, mockSyncBoxItem1, picker, mockBaseService, boxItemType, mockUserState);
+
+        setPrivateField(InventoryServiceImpl.class, inventoryService, "historyService", mockHistoryService);
+        setPrivateField(InventoryServiceImpl.class, inventoryService, "itemService", mockItemService);
+        setPrivateField(InventoryServiceImpl.class, inventoryService, "baseService", mockBaseService);
+
+        inventoryService.onSyncBoxItemPicked(mockSyncBoxItem1, picker);
+        inventoryService.onSyncBoxItemPicked(mockSyncBoxItem1, picker);
+        inventoryService.onSyncBoxItemPicked(mockSyncBoxItem1, picker);
+
+        EasyMock.verify(mockHistoryService, mockItemService, mockSyncBoxItem1, picker, mockBaseService, boxItemType, mockUserState);
+    }
+
+    @Test
+    @DirtiesContext
+    public void backupRestoreUserState() throws Exception {
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbInventoryArtifact dbInventoryArtifact1 = inventoryService.getArtifactCrud().createDbChild();
+        DbInventoryArtifact dbInventoryArtifact2 = inventoryService.getArtifactCrud().createDbChild();
+        DbInventoryArtifact dbInventoryArtifact3 = inventoryService.getArtifactCrud().createDbChild();
+        DbInventoryItem dbInventoryItem1 = inventoryService.getItemCrud().createDbChild();
+        DbInventoryItem dbInventoryItem2 = inventoryService.getItemCrud().createDbChild();
+        DbInventoryItem dbInventoryItem3 = inventoryService.getItemCrud().createDbChild();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "xxx", "xxx", "");
+        userService.login("U1", "xxx");
+        getMyBase(); // Create Base
+        UserState userState = userService.getUserState();
+        userState.setRazarion(111);
+        userState.addInventoryItem(dbInventoryArtifact1.getId());
+        userState.addInventoryItem(dbInventoryArtifact2.getId());
+        userState.addInventoryItem(dbInventoryArtifact3.getId());
+        userState.addInventoryItem(dbInventoryArtifact3.getId());
+
+        userState.addInventoryArtifact(dbInventoryItem1.getId());
+        userState.addInventoryArtifact(dbInventoryItem1.getId());
+        userState.addInventoryArtifact(dbInventoryItem2.getId());
+        userState.addInventoryArtifact(dbInventoryItem2.getId());
+        userState.addInventoryArtifact(dbInventoryItem3.getId());
+        userState.addInventoryArtifact(dbInventoryItem3.getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        assertBackupSummery(1, 1, 1, 1);
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "xxx");
+        getMyBase(); // Create Base
+        userState = userService.getUserState();
+        Assert.assertEquals(111, userState.getRazarion());
+
+        Collection<Integer> numbers = new ArrayList<>(userState.getInventoryItemIds());
+        Assert.assertEquals(4, numbers.size());
+        numbers.removeAll(Arrays.asList(dbInventoryArtifact1.getId(), dbInventoryArtifact2.getId(), dbInventoryArtifact3.getId(), dbInventoryArtifact3.getId()));
+        Assert.assertTrue(numbers.isEmpty());
+
+        numbers = new ArrayList<>(userState.getInventoryArtifactIds());
+        Assert.assertEquals(6, numbers.size());
+        numbers.removeAll(Arrays.asList(dbInventoryItem1.getId(), dbInventoryItem1.getId(), dbInventoryItem2.getId(), dbInventoryItem2.getId(), dbInventoryItem3.getId(), dbInventoryItem3.getId()));
+        Assert.assertTrue(numbers.isEmpty());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+    }
 
 }

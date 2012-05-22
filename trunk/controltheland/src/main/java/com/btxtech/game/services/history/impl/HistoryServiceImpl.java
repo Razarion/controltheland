@@ -84,7 +84,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 baseService,
                 getSessionId(simpleBase),
-                determineSource(simpleBase, null), null));
+                determineSource(simpleBase, null), null, null, null, null));
     }
 
     @Override
@@ -100,7 +100,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 baseService,
                 getSessionId(actor),
-                determineSource(actor, target), null));
+                determineSource(actor, target), null, null, null, null));
     }
 
     @Override
@@ -116,7 +116,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 baseService,
                 getSessionId(simpleBase),
-                determineSource(simpleBase, null), null));
+                determineSource(simpleBase, null), null, null, null, null));
     }
 
     @Override
@@ -132,7 +132,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 baseService,
                 getSessionId(syncBaseItem.getBase()),
-                determineSource(syncBaseItem.getBase(), null), null));
+                determineSource(syncBaseItem.getBase(), null), null, null, null, null));
     }
 
     @Override
@@ -148,7 +148,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 baseService,
                 getSessionId(actor),
-                determineSource(actor, target.getBase()), null));
+                determineSource(actor, target.getBase()), null, null, null, null));
     }
 
     @Override
@@ -164,7 +164,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 baseService,
                 userState.getSessionId(),
-                DbHistoryElement.Source.HUMAN, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null));
     }
 
     @Override
@@ -180,7 +180,7 @@ public class HistoryServiceImpl implements HistoryService {
                 levelTask,
                 baseService,
                 userState.getSessionId(),
-                DbHistoryElement.Source.HUMAN, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null));
     }
 
     @Override
@@ -195,7 +195,7 @@ public class HistoryServiceImpl implements HistoryService {
                 dbLevelTask,
                 baseService,
                 userState.getSessionId(),
-                DbHistoryElement.Source.HUMAN, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null));
     }
 
     @Override
@@ -210,7 +210,7 @@ public class HistoryServiceImpl implements HistoryService {
                 dbLevelTask,
                 baseService,
                 userState.getSessionId(),
-                DbHistoryElement.Source.HUMAN, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null));
     }
 
     @Override
@@ -225,7 +225,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 userService.getUserState().getSessionId(),
-                DbHistoryElement.Source.HUMAN, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null));
     }
 
     @Override
@@ -240,7 +240,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 userService.getUserState().getSessionId(),
-                DbHistoryElement.Source.HUMAN, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null));
     }
 
     @Override
@@ -255,7 +255,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 userService.getUserState().getSessionId(),
-                DbHistoryElement.Source.HUMAN, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null));
     }
 
     @Override
@@ -270,7 +270,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 userService.getUserState().getSessionId(),
-                DbHistoryElement.Source.HUMAN, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null));
     }
 
     @Override
@@ -286,13 +286,13 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 DbHistoryElement.Source.BOT,
-                boxItem.getSyncItemArea().getPosition()));
+                boxItem.getSyncItemArea().getPosition(), null, null, null));
     }
 
     @Override
     public void addBoxDropped(SyncBoxItem boxItem, Index position, SyncBaseItem dropper) {
         SimpleBase dropperBase = null;
-        if(dropper != null) {
+        if (dropper != null) {
             dropperBase = dropper.getBase();
         }
         save(new DbHistoryElement(DbHistoryElement.Type.BOX_DROPPED,
@@ -306,7 +306,7 @@ public class HistoryServiceImpl implements HistoryService {
                 baseService,
                 null,
                 DbHistoryElement.Source.BOT,
-                position));
+                position, null, null, null));
     }
 
     @Override
@@ -322,7 +322,63 @@ public class HistoryServiceImpl implements HistoryService {
                 baseService,
                 getSessionId(picker.getBase()),
                 DbHistoryElement.Source.BOT,
-                boxItem.getSyncItemArea().getPosition()));
+                boxItem.getSyncItemArea().getPosition(), null, null, null));
+    }
+
+    @Override
+    public void addRazarionFromBox(UserState userState, int razarion) {
+        save(new DbHistoryElement(DbHistoryElement.Type.RAZARION_FROM_BOX,
+                userService.getUser(userState),
+                null,
+                baseService.getBase(userState).getSimpleBase(),
+                null,
+                null,
+                null,
+                null,
+                baseService,
+                null,
+                DbHistoryElement.Source.HUMAN,
+                null,
+                razarion,
+                userState.getRazarion(), null));
+    }
+
+    @Override
+    public void addInventoryItemFromBox(UserState userState, String inventoryItemName) {
+        save(new DbHistoryElement(DbHistoryElement.Type.INVENTORY_ITEM_FROM_BOX,
+                userService.getUser(userState),
+                null,
+                baseService.getBase(userState).getSimpleBase(),
+                null,
+                null,
+                null,
+                null,
+                baseService,
+                null,
+                DbHistoryElement.Source.HUMAN,
+                null,
+                null,
+                userState.getRazarion(),
+                inventoryItemName));
+    }
+
+    @Override
+    public void addInventoryArtifactFromBox(UserState userState, String inventoryArtifactName) {
+        save(new DbHistoryElement(DbHistoryElement.Type.INVENTORY_ARTIFACT_FROM_BOX,
+                userService.getUser(userState),
+                null,
+                baseService.getBase(userState).getSimpleBase(),
+                null,
+                null,
+                null,
+                null,
+                baseService,
+                null,
+                DbHistoryElement.Source.HUMAN,
+                null,
+                null,
+                userState.getRazarion(),
+                inventoryArtifactName));
     }
 
     private String getSessionId(SimpleBase simpleBase) {

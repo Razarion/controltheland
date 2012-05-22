@@ -178,7 +178,7 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
     }
 
     private List<DbItemTypeImage> imagesAsList() {
-        List<DbItemTypeImage> list = new ArrayList<DbItemTypeImage>(itemTypeImages);
+        List<DbItemTypeImage> list = new ArrayList<>(itemTypeImages);
         Collections.sort(list, new Comparator<DbItemTypeImage>() {
             @Override
             public int compare(DbItemTypeImage o1, DbItemTypeImage o2) {
@@ -215,7 +215,7 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
 
     @Override
     public void init(UserService userService) {
-        itemTypeImages = new HashSet<DbItemTypeImage>();
+        itemTypeImages = new HashSet<>();
     }
 
     @Override
@@ -230,7 +230,7 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
 
     public CrudChildServiceHelper<DbItemTypeImage> getItemTypeImageCrud() {
         if (itemTypeImageCrud == null) {
-            itemTypeImageCrud = new CrudChildServiceHelper<DbItemTypeImage>(itemTypeImages, DbItemTypeImage.class, this);
+            itemTypeImageCrud = new CrudChildServiceHelper<>(itemTypeImages, DbItemTypeImage.class, this);
         }
         return itemTypeImageCrud;
     }

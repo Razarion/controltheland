@@ -56,7 +56,7 @@ public class DbInventoryItem implements CrudChild, CrudParent {
     private CrudChildServiceHelper<DbInventoryArtifactCount> artifactCountCrud;
 
     @Override
-    public Serializable getId() {
+    public Integer getId() {
         return id;
     }
 

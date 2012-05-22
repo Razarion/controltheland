@@ -26,6 +26,8 @@ import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.io.Serializable;
@@ -55,7 +57,12 @@ public class DbHistoryElement implements Serializable {
         ALLIANCE_BROKEN,
         BOX_DROPPED,
         BOX_EXPIRED,
-        BOX_PICKED
+        BOX_PICKED,
+        RAZARION_FROM_BOX,
+        RAZARION_BOUGHT,
+        RAZARION_SPENT,
+        INVENTORY_ITEM_FROM_BOX,
+        INVENTORY_ARTIFACT_FROM_BOX
     }
 
     public enum Source {
@@ -70,6 +77,7 @@ public class DbHistoryElement implements Serializable {
     private Date timeStamp;
     private long timeStampMs;
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Type type;
     @Index(name = "GAME_HISTORY_INDEX_ACTOR_USER")
     private String actorUserName;
@@ -88,6 +96,9 @@ public class DbHistoryElement implements Serializable {
     @org.hibernate.annotations.Type(type = "index")
     @Columns(columns = {@Column(name = "xPos"), @Column(name = "yPos")})
     private com.btxtech.game.jsre.client.common.Index position;
+    private Integer deltaRazarion;
+    private Integer razarion;
+    private String inventory;
 
     /**
      * Used by hibernate
@@ -95,8 +106,10 @@ public class DbHistoryElement implements Serializable {
     protected DbHistoryElement() {
     }
 
-    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncItem syncItem, DbLevel level, DbLevelTask levelTask, BaseService baseService, String sessionId, Source source, com.btxtech.game.jsre.client.common.Index position) {
+    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncItem syncItem, DbLevel level, DbLevelTask levelTask, BaseService baseService, String sessionId, Source source, com.btxtech.game.jsre.client.common.Index position, Integer deltaRazarion, Integer razarion, String inventory) {
         this.sessionId = sessionId;
+        this.deltaRazarion = deltaRazarion;
+        this.razarion = razarion;
         timeStamp = new Date();
         timeStampMs = timeStamp.getTime();
         this.type = type;
@@ -111,6 +124,7 @@ public class DbHistoryElement implements Serializable {
         levelTaskName = levelTask != null ? levelTask.getName() : null;
         this.source = source;
         this.position = position;
+        this.inventory = inventory;
     }
 
     public Integer getId() {
@@ -171,6 +185,18 @@ public class DbHistoryElement implements Serializable {
 
     public com.btxtech.game.jsre.client.common.Index getPosition() {
         return position;
+    }
+
+    public Integer getDeltaRazarion() {
+        return deltaRazarion;
+    }
+
+    public Integer getRazarion() {
+        return razarion;
+    }
+
+    public String getInventory() {
+        return inventory;
     }
 
     @Override
