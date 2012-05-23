@@ -19,7 +19,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -155,4 +154,8 @@ public class DbInventoryItem implements CrudChild, CrudParent {
         return id != null ? id : System.identityHashCode(this);
     }
 
+    @Override
+    public String toString() {
+        return "DbInventoryItem{id=" + id + ", name='" + name + '\'' + '}';
+    }
 }

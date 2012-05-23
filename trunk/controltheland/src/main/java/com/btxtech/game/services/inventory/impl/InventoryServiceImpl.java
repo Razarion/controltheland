@@ -44,7 +44,6 @@ import java.util.concurrent.TimeUnit;
  * Time: 12:48
  */
 
-// TODO backup restore razarion, Artifact inventory items
 // TODO history convert()
 
 @Component(value = "inventoryService")
@@ -254,6 +253,16 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
             throw new IllegalArgumentException("Can not assemble inventory item: " + dbInventoryItem + " user: " + userState + ". Some inventory artifacts are mission");
         }
         userState.addInventoryItem(dbInventoryItem.getId());
+    }
+
+    @Override
+    public void useInventoryItem(int inventoryItemId, Index position) {
+        DbInventoryItem dbInventoryItem = itemCrud.readDbChild(inventoryItemId);
+        UserState userState = userService.getUserState();
+        if (userState.hasInventoryItemId(inventoryItemId)) {
+            throw new IllegalArgumentException("User does not have inventory item: " + dbInventoryItem + " user: " + userState);
+        }
+        // TODO Formation
     }
 
     private void dropRegionBoxes(BoxRegion boxRegion) {
