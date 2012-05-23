@@ -21,4 +21,6 @@ public interface InventoryService extends CommonInventoryService {
     void activate();
 
     void restore();
+
+    void assembleInventoryItem(int inventoryItemId);
 }

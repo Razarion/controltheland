@@ -13,12 +13,14 @@ import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.inventory.DbBoxRegion;
 import com.btxtech.game.services.inventory.DbBoxRegionCount;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
+import com.btxtech.game.services.inventory.DbInventoryArtifactCount;
 import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.inventory.InventoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemTypePossibility;
+import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -64,6 +66,8 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
     private HistoryService historyService;
     @Autowired
     private BaseService baseService;
+    @Autowired
+    private UserService userService;
     private final Collection<SyncBoxItem> syncBoxItems = new ArrayList<>();
     private ScheduledThreadPoolExecutor boxRegionExecutor;
     private ScheduledFuture boxRegionFuture;
@@ -234,6 +238,22 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
         } catch (Throwable throwable) {
             log.error("", throwable);
         }
+    }
+
+    @Override
+    public void assembleInventoryItem(int inventoryItemId) {
+        UserState userState = userService.getUserState();
+        DbInventoryItem dbInventoryItem = itemCrud.readDbChild(inventoryItemId);
+        Collection<Integer> artifactIds = new ArrayList<>();
+        for (DbInventoryArtifactCount dbInventoryArtifactCount : dbInventoryItem.getArtifactCountCrud().readDbChildren()) {
+            for (int count = 0; count < dbInventoryArtifactCount.getCount(); count++) {
+                artifactIds.add(dbInventoryArtifactCount.getDbInventoryArtifact().getId());
+            }
+        }
+        if (!userState.removeArtifactIds(artifactIds)) {
+            throw new IllegalArgumentException("Can not assemble inventory item: " + dbInventoryItem + " user: " + userState + ". Some inventory artifacts are mission");
+        }
+        userState.addInventoryItem(dbInventoryItem.getId());
     }
 
     private void dropRegionBoxes(BoxRegion boxRegion) {
