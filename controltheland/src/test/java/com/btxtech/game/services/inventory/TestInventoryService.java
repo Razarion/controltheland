@@ -11,6 +11,7 @@ import com.btxtech.game.services.utg.UserGuidanceService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,7 @@ public class TestInventoryService extends AbstractServiceTest {
     private UserGuidanceService userGuidanceService;
 
     @Test
+    @DirtiesContext
     public void crudArtifacts() throws Exception {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -104,6 +106,7 @@ public class TestInventoryService extends AbstractServiceTest {
     }
 
     @Test
+    @DirtiesContext
     public void crudItems() throws Exception {
         configureRealGame();
 
@@ -280,6 +283,7 @@ public class TestInventoryService extends AbstractServiceTest {
     }
 
     @Test
+    @DirtiesContext
     public void boxRegionCrud() throws Exception {
         configureRealGame();
 
@@ -433,6 +437,7 @@ public class TestInventoryService extends AbstractServiceTest {
     }
 
     @Test
+    @DirtiesContext
     public void dbBoxItemType() throws Exception {
         configureRealGame();
 
@@ -530,7 +535,7 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertEquals(0.3, dbBoxItemTypePossibility3.getPossibility(), 0.001);
         Assert.assertNull(dbBoxItemTypePossibility3.getDbInventoryItem());
         Assert.assertNull(dbBoxItemTypePossibility3.getDbInventoryArtifact());
-        Assert.assertEquals(253000, (int)dbBoxItemTypePossibility3.getRazarion());
+        Assert.assertEquals(253000, (int) dbBoxItemTypePossibility3.getRazarion());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
