@@ -19,6 +19,7 @@ import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.inventory.DbBoxRegion;
 import com.btxtech.game.services.inventory.DbBoxRegionCount;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
+import com.btxtech.game.services.inventory.DbInventoryArtifactCount;
 import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.inventory.InventoryService;
 import com.btxtech.game.services.item.ItemService;
@@ -934,6 +935,105 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
+    }
+
+    @Test
+    @DirtiesContext
+    public void assembleInventoryItem() throws Exception {
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbInventoryArtifact dbInventoryArtifact1 = inventoryService.getArtifactCrud().createDbChild();
+        DbInventoryArtifact dbInventoryArtifact2 = inventoryService.getArtifactCrud().createDbChild();
+        DbInventoryArtifact dbInventoryArtifact3 = inventoryService.getArtifactCrud().createDbChild();
+        DbInventoryItem dbInventoryItem1 = inventoryService.getItemCrud().createDbChild();
+        DbInventoryArtifactCount dbInventoryArtifactCount = dbInventoryItem1.getArtifactCountCrud().createDbChild();
+        dbInventoryArtifactCount.setCount(1);
+        dbInventoryArtifactCount.setDbInventoryArtifact(dbInventoryArtifact1);
+        dbInventoryArtifactCount = dbInventoryItem1.getArtifactCountCrud().createDbChild();
+        dbInventoryArtifactCount.setCount(2);
+        dbInventoryArtifactCount.setDbInventoryArtifact(dbInventoryArtifact2);
+        dbInventoryArtifactCount = dbInventoryItem1.getArtifactCountCrud().createDbChild();
+        dbInventoryArtifactCount.setCount(3);
+        dbInventoryArtifactCount.setDbInventoryArtifact(dbInventoryArtifact3);
+        inventoryService.getItemCrud().updateDbChild(dbInventoryItem1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        try {
+            inventoryService.assembleInventoryItem(dbInventoryItem1.getId());
+            Assert.fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException e) {
+            // Expected
+        }
+        UserState userState = userService.getUserState();
+        assertInventoryItemCount(userState, dbInventoryItem1, 0);
+
+        userState.addInventoryArtifact(dbInventoryArtifact1.getId());
+        userState.addInventoryArtifact(dbInventoryArtifact2.getId());
+        userState.addInventoryArtifact(dbInventoryArtifact3.getId());
+        try {
+            inventoryService.assembleInventoryItem(dbInventoryItem1.getId());
+            Assert.fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException e) {
+            // Expected
+        }
+        assertInventoryItemCount(userState, dbInventoryItem1, 0);
+        userState.addInventoryArtifact(dbInventoryArtifact2.getId());
+        userState.addInventoryArtifact(dbInventoryArtifact3.getId());
+        try {
+            inventoryService.assembleInventoryItem(dbInventoryItem1.getId());
+            Assert.fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException e) {
+            // Expected
+        }
+        assertInventoryItemCount(userState, dbInventoryItem1, 0);
+        userState.addInventoryArtifact(dbInventoryArtifact3.getId());
+        inventoryService.assembleInventoryItem(dbInventoryItem1.getId());
+        Assert.assertTrue(userState.getInventoryArtifactIds().isEmpty());
+        assertInventoryItemCount(userState, dbInventoryItem1, 1);
+
+        userState.addInventoryArtifact(dbInventoryArtifact1.getId());
+        userState.addInventoryArtifact(dbInventoryArtifact1.getId());
+        userState.addInventoryArtifact(dbInventoryArtifact1.getId());
+        userState.addInventoryArtifact(dbInventoryArtifact2.getId());
+        userState.addInventoryArtifact(dbInventoryArtifact2.getId());
+        userState.addInventoryArtifact(dbInventoryArtifact2.getId());
+        userState.addInventoryArtifact(dbInventoryArtifact3.getId());
+        userState.addInventoryArtifact(dbInventoryArtifact3.getId());
+        userState.addInventoryArtifact(dbInventoryArtifact3.getId());
+        inventoryService.assembleInventoryItem(dbInventoryItem1.getId());
+        Assert.assertEquals(3, userState.getInventoryArtifactIds().size());
+        assertInventoryArtifactCount(userState, dbInventoryArtifact1, 2);
+        assertInventoryArtifactCount(userState, dbInventoryArtifact2, 1);
+        assertInventoryArtifactCount(userState, dbInventoryArtifact3, 0);
+        assertInventoryItemCount(userState, dbInventoryItem1, 2);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+    }
+
+    private void assertInventoryArtifactCount(UserState userState, DbInventoryArtifact dbInventoryArtifact, int count) {
+        int currentCount = 0;
+        for (Integer artifactId : userState.getInventoryArtifactIds()) {
+            if (dbInventoryArtifact.getId().equals(artifactId)) {
+                currentCount++;
+            }
+        }
+        Assert.assertEquals(count, currentCount);
+    }
+
+    private void assertInventoryItemCount(UserState userState, DbInventoryItem dbInventoryItem, int count) {
+        int currentCount = 0;
+        for (Integer itemId : userState.getInventoryItemIds()) {
+            if (dbInventoryItem.getId().equals(itemId)) {
+                currentCount++;
+            }
+        }
+        Assert.assertEquals(count, currentCount);
     }
 
 }

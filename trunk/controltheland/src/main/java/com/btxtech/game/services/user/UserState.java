@@ -128,6 +128,17 @@ public class UserState implements Serializable {
         inventoryArtifactIds.add(inventoryArtifactId);
     }
 
+    public boolean removeArtifactIds(Collection<Integer> artifactIds) {
+        Collection<Integer> copy = new ArrayList<>(inventoryArtifactIds);
+        for (Integer artifactId : artifactIds) {
+            if (!copy.remove(artifactId)) {
+                return false;
+            }
+        }
+        inventoryArtifactIds = copy;
+        return true;
+    }
+
     public Collection<Integer> getInventoryItemIds() {
         return inventoryItemIds;
     }
