@@ -16,6 +16,7 @@ package com.btxtech.game.wicket.pages.mgmt;
 import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.wicket.pages.mgmt.cms.Cms;
+import com.btxtech.game.wicket.pages.mgmt.inventory.InventoryEditor;
 import com.btxtech.game.wicket.pages.mgmt.items.ItemTypeTable;
 import com.btxtech.game.wicket.pages.mgmt.level.DbQuestHubTable;
 import com.btxtech.game.wicket.pages.mgmt.tracking.SessionTable;
@@ -140,5 +141,6 @@ public class MgmtPage extends MgmtWebPage {
         toolPages.add(new LinkAndName("Tutorial", TutorialTable.class));
         toolPages.add(new LinkAndName("User States", UserStateTable.class));
         toolPages.add(new LinkAndName("CMS", Cms.class));
+        toolPages.add(new LinkAndName("Inventory", InventoryEditor.class));
     }
 }

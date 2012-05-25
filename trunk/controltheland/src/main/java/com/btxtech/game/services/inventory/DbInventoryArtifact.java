@@ -9,7 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.io.Serializable;
 
 /**
  * User: beat
@@ -19,8 +18,20 @@ import java.io.Serializable;
 @Entity(name = "INVENTORY_ARTIFACT")
 public class DbInventoryArtifact implements CrudChild {
     public enum Rareness {
-        FIRST,
-        SECOND
+        COMMON("#FFFFFF"),
+        UN_COMMON("#FFFFFF"),
+        RARE("#FFFFFF"),
+        EPIC("#FFFFFF"),
+        LEGENDARY("#FFFFFF");
+        private String htmlColor;
+
+        Rareness(String htmlColor) {
+            this.htmlColor = htmlColor;
+        }
+
+        public String getHtmlColor() {
+            return htmlColor;
+        }
     }
 
     @Id
@@ -50,7 +61,7 @@ public class DbInventoryArtifact implements CrudChild {
 
     @Override
     public void init(UserService userService) {
-        rareness = Rareness.FIRST;
+        rareness = Rareness.COMMON;
     }
 
     @Override

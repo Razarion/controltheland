@@ -16,11 +16,10 @@ package com.btxtech.game.wicket.pages.mgmt.items;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
-import java.util.Iterator;
-
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -32,6 +31,8 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import java.util.Iterator;
 
 /**
  * User: beat
@@ -63,6 +64,8 @@ public class ItemTypeTable extends MgmtWebPage {
                             setResponsePage(new BaseItemTypeEditor((DbBaseItemType) item.getModelObject()));
                         } else if (item.getModelObject() instanceof DbResourceItemType) {
                             setResponsePage(new ResourceItemTypeEditor((DbResourceItemType) item.getModelObject()));
+                        } else if (item.getModelObject() instanceof DbBoxItemType) {
+                            setResponsePage(new BoxItemTypeEditor((DbBoxItemType) item.getModelObject()));
                         } else if (item.getModelObject() instanceof DbProjectileItemType) {
                             setResponsePage(new ProjectileItemTypeEditor((DbProjectileItemType) item.getModelObject()));
                         }
@@ -102,6 +105,14 @@ public class ItemTypeTable extends MgmtWebPage {
                 DbResourceItemType dbResourceItemType = (DbResourceItemType) itemService.getDbItemTypeCrud().createDbChild(DbResourceItemType.class);
                 itemService.saveDbItemType(dbResourceItemType);
                 setResponsePage(new ResourceItemTypeEditor(dbResourceItemType));
+            }
+        });
+        form.add(new Button("addBoxItemType") {
+            @Override
+            public void onSubmit() {
+                DbBoxItemType dbBoxItemType = (DbBoxItemType) itemService.getDbItemTypeCrud().createDbChild(DbBoxItemType.class);
+                itemService.saveDbItemType(dbBoxItemType);
+                setResponsePage(new BoxItemTypeEditor(dbBoxItemType));
             }
         });
         form.add(new Button("addProjectileItemType") {

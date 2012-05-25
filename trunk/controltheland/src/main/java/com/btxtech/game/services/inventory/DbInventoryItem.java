@@ -33,11 +33,11 @@ public class DbInventoryItem implements CrudChild, CrudParent {
     @GeneratedValue
     private Integer id;
     private String name;
-    // Gold
-    private String goldImageContentType;
+    private String imageContentType;
     @Column(length = 500000)
     @Basic(fetch = FetchType.LAZY)
-    private byte[] goldImageData;
+    private byte[] imageData;
+    // Gold
     private int goldAmount;
     @OneToOne(fetch = FetchType.LAZY)
     private DbLevel goldLevel;
@@ -84,20 +84,20 @@ public class DbInventoryItem implements CrudChild, CrudParent {
         throw new UnsupportedOperationException();
     }
 
-    public String getGoldImageContentType() {
-        return goldImageContentType;
+    public String getImageContentType() {
+        return imageContentType;
     }
 
-    public void setGoldImageContentType(String goldImageContentType) {
-        this.goldImageContentType = goldImageContentType;
+    public void setImageContentType(String imageContentType) {
+        this.imageContentType = imageContentType;
     }
 
-    public byte[] getGoldImageData() {
-        return goldImageData;
+    public byte[] getImageData() {
+        return imageData;
     }
 
-    public void setGoldImageData(byte[] goldImageData) {
-        this.goldImageData = goldImageData;
+    public void setImageData(byte[] imageData) {
+        this.imageData = imageData;
     }
 
     public int getGoldAmount() {
