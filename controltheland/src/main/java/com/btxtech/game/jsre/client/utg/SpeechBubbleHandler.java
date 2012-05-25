@@ -7,6 +7,7 @@ import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.google.gwt.user.client.Timer;
 
 /**
@@ -107,8 +108,9 @@ public class SpeechBubbleHandler {
                 CmsUtil.getUrl4ItemTypePage(builder, syncItem.getItemType(), "unit");
             }
         } else {
-            builder.append("Gather <b>money</b> from this ");
-            CmsUtil.getUrl4ItemTypePage(builder, syncItem.getItemType(), "gold");
+            builder.append(syncItem.getItemType().getDescription());
+            builder.append("<br />");
+            CmsUtil.getUrl4ItemTypePage(builder, syncItem.getItemType(), "Details");
         }
         return builder.toString();
     }

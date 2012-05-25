@@ -618,9 +618,17 @@ abstract public class AbstractServiceTest {
     }
 
     protected void sendPickupBoxCommand(Id picker, Id box) throws Exception {
-        SyncBaseItem container = (SyncBaseItem) itemService.getItem(picker);
+        SyncBaseItem baseItem = (SyncBaseItem) itemService.getItem(picker);
         SyncBoxItem boxItem = (SyncBoxItem) itemService.getItem(box);
-        actionService.pickupBox(container, boxItem);
+        AttackFormationItem attackFormationItem = collisionService.getDestinationHint(baseItem,
+                baseItem.getBaseItemType().getBoxPickupRange(),
+                boxItem.getSyncItemArea(),
+                boxItem.getTerrainType());
+        if (!attackFormationItem.isInRange()) {
+            throw new IllegalStateException("Not in range");
+        }
+
+        actionService.pickupBox(baseItem, boxItem, attackFormationItem.getDestinationHint(), attackFormationItem.getDestinationAngel());
     }
 
     // -------------------  Game Config --------------------

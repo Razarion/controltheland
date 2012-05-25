@@ -292,7 +292,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
     }
 
     @Override
-    public void pickupBox(SyncBaseItem picker, SyncBoxItem box) {
+    public void pickupBox(SyncBaseItem picker, SyncBoxItem box, Index destinationHint, double destinationAngel) {
         if (checkCommand(picker)) {
             return;
         }
@@ -304,17 +304,8 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         pickupBoxCommand.setId(picker.getId());
         pickupBoxCommand.setBox(box.getId());
         pickupBoxCommand.setTimeStamp();
-        AttackFormationItem format = getServices().getCollisionService().getDestinationHint(picker,
-                picker.getBaseItemType().getBoxPickupRange(),
-                box.getSyncItemArea(),
-                box.getTerrainType());
-        if (format.isInRange()) {
-            pickupBoxCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(picker, format.getDestinationHint()));
-            pickupBoxCommand.setDestinationAngel(format.getDestinationAngel());
-        } else {
-            move(picker, format.getDestinationHint());
-            return;
-        }
+        pickupBoxCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(picker, destinationHint));
+        pickupBoxCommand.setDestinationAngel(destinationAngel);
 
         try {
             executeCommand(picker, pickupBoxCommand);

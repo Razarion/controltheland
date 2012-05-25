@@ -168,6 +168,8 @@ public class CursorHandler implements TerrainMouseMoveListener {
             setCursor(clientSyncItemView, CursorType.FINALIZE_BUILD, SelectionHandler.getInstance().atLeastOneItemTypeAllowed2FinalizeBuild(clientSyncItemView.getClientSyncItem().getSyncBaseItem()));
         } else if (cursorState.isCanLaunch() && cursorItemState.isAttackTarget()) {
             setCursor(clientSyncItemView, CursorType.ATTACK, SelectionHandler.getInstance().atLeastOneAllowedToLaunch(position));
+        } else if (cursorItemState.isBoxTarget()) {
+            setCursor(clientSyncItemView, CursorType.PICKUP, SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection());
         } else {
             setCursor(clientSyncItemView, Style.Cursor.POINTER);
         }

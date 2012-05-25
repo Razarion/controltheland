@@ -108,6 +108,8 @@ public class SelectionHandler {
                     ActionHandler.getInstance().attack(selectedGroup.getItems(), selectedTargetClientSyncItem.getClientSyncItem().getSyncBaseItem());
                 } else if (selectedGroup.canCollect() && selectedTargetClientSyncItem.getClientSyncItem().isSyncResourceItem()) {
                     ActionHandler.getInstance().collect(selectedGroup.getItems(), selectedTargetClientSyncItem.getClientSyncItem().getSyncResourceItem());
+                } else if (selectedTargetClientSyncItem.getClientSyncItem().isSyncBoxItem()) {
+                    ActionHandler.getInstance().pickupBox(selectedGroup.getItems(), selectedTargetClientSyncItem.getClientSyncItem().getSyncBoxItem());
                 }
             } else {
                 this.selectedTargetClientSyncItem = selectedTargetClientSyncItem.getClientSyncItem();
