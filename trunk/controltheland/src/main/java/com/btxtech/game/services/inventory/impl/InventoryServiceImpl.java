@@ -1,6 +1,7 @@
 package com.btxtech.game.services.inventory.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.BoxPickedPacket;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoxItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -9,6 +10,7 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
+import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.inventory.DbBoxRegion;
 import com.btxtech.game.services.inventory.DbBoxRegionCount;
@@ -67,6 +69,8 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
     private BaseService baseService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ConnectionService connectionService;
     private final Collection<SyncBoxItem> syncBoxItems = new ArrayList<>();
     private ScheduledThreadPoolExecutor boxRegionExecutor;
     private ScheduledFuture boxRegionFuture;
@@ -132,33 +136,46 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
         if (baseService.isAbandoned(picker.getBase())) {
             return;
         }
+        StringBuilder builder = new StringBuilder();
+        builder.append("You picked up a box! Items added to your Inventory:");
+        builder.append("<ul>");
         HibernateUtil.openSession4InternalCall(sessionFactory);
         try {
             historyService.addBoxPicked(box, picker);
             DbBoxItemType dbBoxItemType = itemService.getDbBoxItemType(box.getItemType().getId());
             UserState userState = baseService.getUserState(picker.getBase());
             for (DbBoxItemTypePossibility dbBoxItemTypePossibility : dbBoxItemType.getBoxPossibilityCrud().readDbChildren()) {
-                addBoxContentToUser(dbBoxItemTypePossibility, userState);
+                if (MathHelper.isRandomPossibility(dbBoxItemTypePossibility.getPossibility())) {
+                    addBoxContentToUser(dbBoxItemTypePossibility, userState, builder);
+                }
             }
         } finally {
             HibernateUtil.closeSession4InternalCall(sessionFactory);
         }
-
+        builder.append("</ul>");
+        BoxPickedPacket boxPickedPacket = new BoxPickedPacket();
+        boxPickedPacket.setHtml(builder.toString());
+        connectionService.sendPacket(picker.getBase(), boxPickedPacket);
     }
 
-    private void addBoxContentToUser(DbBoxItemTypePossibility dbBoxItemTypePossibility, UserState userState) {
+    private void addBoxContentToUser(DbBoxItemTypePossibility dbBoxItemTypePossibility, UserState userState, StringBuilder builder) {
+        builder.append("<li>");
         if (dbBoxItemTypePossibility.getDbInventoryItem() != null) {
             userState.addInventoryItem(dbBoxItemTypePossibility.getDbInventoryItem().getId());
             historyService.addInventoryItemFromBox(userState, dbBoxItemTypePossibility.getDbInventoryItem().getName());
+            builder.append("Item: ").append(dbBoxItemTypePossibility.getDbInventoryItem().getName());
         } else if (dbBoxItemTypePossibility.getDbInventoryArtifact() != null) {
             userState.addInventoryArtifact(dbBoxItemTypePossibility.getDbInventoryArtifact().getId());
             historyService.addInventoryArtifactFromBox(userState, dbBoxItemTypePossibility.getDbInventoryArtifact().getName());
+            builder.append("Artifact: ").append(dbBoxItemTypePossibility.getDbInventoryArtifact().getName());
         } else if (dbBoxItemTypePossibility.getRazarion() != null) {
             userState.addRazarion(dbBoxItemTypePossibility.getRazarion());
             historyService.addRazarionFromBox(userState, dbBoxItemTypePossibility.getRazarion());
+            builder.append("Razarion: ").append(dbBoxItemTypePossibility.getRazarion());
         } else {
             log.warn("No content defined for box: " + dbBoxItemTypePossibility.getParent() + " " + dbBoxItemTypePossibility);
         }
+        builder.append("</li>");
     }
 
     @Override

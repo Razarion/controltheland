@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.dialogs.AllianceDialog;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
+import com.btxtech.game.jsre.common.BoxPickedPacket;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.ProgressBar;
 import com.google.gwt.dom.client.Style;
@@ -46,6 +47,9 @@ public class SideCockpit {
     private static final int LEVEL_PANEL_X = 215;
     private static final int LEVEL_PANEL_W = 116;
     private static final int LEVEL_PANEL_H = 77;
+    // Information panel
+    public static final int INFORMATION_COCKPIT_X = LEVEL_PANEL_X + LEVEL_PANEL_W + 10;
+    public static final int INFORMATION_COCKPIT_Y = 10;
     // Level
     private static final int LEVEL_X = 2;
     private static final int LEVEL_Y = 4;
@@ -108,6 +112,7 @@ public class SideCockpit {
     private Label debugPosition;
     private CockpitMode cockpitMode;
     private QuestProgressCockpit questProgressCockpit;
+    private InformationCockpit informationCockpit;
 
     public static SideCockpit getInstance() {
         return INSTANCE;
@@ -127,6 +132,7 @@ public class SideCockpit {
         setupRadar();
         setupButtonPanel();
         cockpitMode = new CockpitMode();
+        informationCockpit = new InformationCockpit();
     }
 
     private void setupPanels() {
@@ -344,6 +350,7 @@ public class SideCockpit {
         parent.add(levelPanel, LEVEL_PANEL_X, 0);
         levelPanel.getElement().getStyle().setZIndex(Constants.Z_INDEX_TOP_MAP_PANEL);
         questProgressCockpit.addToParent(parent);
+        informationCockpit.setPatent(parent);
     }
 
     private void preventEvents(Widget widget) {
@@ -379,5 +386,9 @@ public class SideCockpit {
 
     public QuestProgressCockpit getQuestProgressCockpit() {
         return questProgressCockpit;
+    }
+
+    public void onBoxPicked(BoxPickedPacket boxPickedPacket) {
+        informationCockpit.showBoxPicked(boxPickedPacket.getHtml());
     }
 }
