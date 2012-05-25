@@ -37,6 +37,7 @@ import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
+import com.btxtech.game.jsre.common.BoxPickedPacket;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.EnergyPacket;
@@ -270,6 +271,8 @@ public class Connection implements StartupProgressListener, ConnectionI {
                     SideCockpit.getInstance().updateItemLimit();
                 } else if (packet instanceof AllianceOfferPacket) {
                     ClientAllianceHandler.getInstance().handleAllianceOfferPacket((AllianceOfferPacket) packet);
+                } else if (packet instanceof BoxPickedPacket) {
+                    SideCockpit.getInstance().onBoxPicked((BoxPickedPacket)packet);
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }
