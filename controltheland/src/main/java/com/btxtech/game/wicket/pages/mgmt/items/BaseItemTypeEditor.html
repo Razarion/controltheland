@@ -116,6 +116,9 @@
             <td colspan="2" valign="top">Terrain type</td>
             <td valign="top"><select wicket:id="terrainType" name="top5" size="1"></select></td>
         </tr>
+        <tr bgcolor="#BBBBBB">
+            <td colspan="3" valign="top">Upgradeable</td>
+        </tr>
         <tr bgcolor="#DDDDDD">
             <td colspan="2" valign="top">Upgradeable</td>
             <td wicket:id="upgradable"/>
@@ -123,6 +126,21 @@
         <tr bgcolor="#DDDDDD">
             <td colspan="2" valign="top">Upgrade progress</td>
             <td valign="top"><input wicket:id="upgradeProgress" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#BBBBBB">
+            <td colspan="3" valign="top">Boxes</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Box Pickup Range</td>
+            <td valign="top"><input wicket:id="boxPickupRange" type="text" size="6"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Drop Box Possibility[0..100%]</td>
+            <td wicket:id="dropBoxPossibility"/>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Drop Box Item Type Id</td>
+            <td wicket:id="dbBoxItemType"/>
         </tr>
     </table>
     <br>

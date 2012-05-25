@@ -20,6 +20,8 @@ import com.btxtech.game.wicket.pages.mgmt.BoundingBoxEditor;
 import com.btxtech.game.wicket.pages.mgmt.Html5ImagesUploadConverter;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
+import com.btxtech.game.wicket.uiservices.BoxItemTypePanel;
+import com.btxtech.game.wicket.uiservices.PercentPanel;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -47,7 +49,7 @@ public class BaseItemTypeEditor extends MgmtWebPage {
     public BaseItemTypeEditor(DbBaseItemType dbBaseItemType) {
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbBaseItemType> form = new Form<DbBaseItemType>("itemTypeForm", new CompoundPropertyModel<DbBaseItemType>(new RuModel<DbBaseItemType>(dbBaseItemType, DbBaseItemType.class) {
+        final Form<DbBaseItemType> form = new Form<>("itemTypeForm", new CompoundPropertyModel<DbBaseItemType>(new RuModel<DbBaseItemType>(dbBaseItemType, DbBaseItemType.class) {
             @Override
             protected RuServiceHelper<DbBaseItemType> getRuServiceHelper() {
                 return ruServiceHelper;
@@ -63,10 +65,13 @@ public class BaseItemTypeEditor extends MgmtWebPage {
         form.add(new TextField<String>("health"));
         form.add(new TextField<String>("price"));
         form.add(new TextField<Double>("buildup"));
-        form.add(new DropDownChoice<TerrainType>("terrainType", Arrays.asList(TerrainType.values())));
+        form.add(new DropDownChoice<>("terrainType", Arrays.asList(TerrainType.values())));
         form.add(new BaseItemTypePanel("upgradable"));
         form.add(new TextField<String>("upgradeProgress"));
-        form.add(new HiddenField<String>("imageFileField", new IModel<String>() {
+        form.add(new TextField<Integer>("boxPickupRange"));
+        form.add(new PercentPanel("dropBoxPossibility"));
+        form.add(new BoxItemTypePanel("dbBoxItemType"));
+        form.add(new HiddenField<>("imageFileField", new IModel<String>() {
             @Override
             public String getObject() {
                 return null;

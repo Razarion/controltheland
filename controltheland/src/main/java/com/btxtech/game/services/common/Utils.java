@@ -104,4 +104,12 @@ public class Utils {
         return Integer.parseInt(string);
     }
 
+    public static String parseStringSave(String string) {
+        int index = string.indexOf(';');
+        if (index > 0) {
+            string = string.substring(0, index);
+        }
+        return string;
+    }
+
 }

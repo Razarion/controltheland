@@ -177,7 +177,6 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
         }
     }
 
-    // TODO call from GUI
     @Override
     public void activate() {
         stopTimer();

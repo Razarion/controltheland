@@ -39,7 +39,7 @@ public class TestInventoryService extends AbstractServiceTest {
 
         DbInventoryArtifact dbInventoryArtifact1 = inventoryService.getArtifactCrud().createDbChild();
         dbInventoryArtifact1.setName("Artifact1");
-        dbInventoryArtifact1.setRareness(DbInventoryArtifact.Rareness.SECOND);
+        dbInventoryArtifact1.setRareness(DbInventoryArtifact.Rareness.UN_COMMON);
         dbInventoryArtifact1.setImageContentType("imageContent");
         dbInventoryArtifact1.setImageData(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9});
         inventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact1);
@@ -59,12 +59,12 @@ public class TestInventoryService extends AbstractServiceTest {
 
         List<DbInventoryArtifact> artifactList = (List<DbInventoryArtifact>) inventoryService.getArtifactCrud().readDbChildren();
         Assert.assertEquals("Artifact1", artifactList.get(0).getName());
-        Assert.assertEquals(DbInventoryArtifact.Rareness.SECOND, artifactList.get(0).getRareness());
+        Assert.assertEquals(DbInventoryArtifact.Rareness.UN_COMMON, artifactList.get(0).getRareness());
         Assert.assertEquals("imageContent", artifactList.get(0).getImageContentType());
         Assert.assertArrayEquals(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9}, artifactList.get(0).getImageData());
 
         Assert.assertEquals("Artifact2", artifactList.get(1).getName());
-        Assert.assertEquals(DbInventoryArtifact.Rareness.FIRST, artifactList.get(1).getRareness());
+        Assert.assertEquals(DbInventoryArtifact.Rareness.COMMON, artifactList.get(1).getRareness());
         Assert.assertEquals("imageContent2", artifactList.get(1).getImageContentType());
         Assert.assertArrayEquals(new byte[]{7, 8, 9}, artifactList.get(1).getImageData());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -84,7 +84,7 @@ public class TestInventoryService extends AbstractServiceTest {
 
         artifactList = (List<DbInventoryArtifact>) inventoryService.getArtifactCrud().readDbChildren();
         Assert.assertEquals("Artifact2", artifactList.get(0).getName());
-        Assert.assertEquals(DbInventoryArtifact.Rareness.FIRST, artifactList.get(0).getRareness());
+        Assert.assertEquals(DbInventoryArtifact.Rareness.COMMON, artifactList.get(0).getRareness());
         Assert.assertEquals("imageContent2", artifactList.get(0).getImageContentType());
         Assert.assertArrayEquals(new byte[]{7, 8, 9}, artifactList.get(0).getImageData());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -134,8 +134,8 @@ public class TestInventoryService extends AbstractServiceTest {
         DbInventoryItem dbInventoryItem1 = inventoryService.getItemCrud().createDbChild();
         dbInventoryItem1.setName("GoldItem1");
         dbInventoryItem1.setGoldAmount(100);
-        dbInventoryItem1.setGoldImageContentType("imageData22");
-        dbInventoryItem1.setGoldImageData(new byte[]{1, 3, 4, 6, 7, 9});
+        dbInventoryItem1.setImageContentType("imageData22");
+        dbInventoryItem1.setImageData(new byte[]{1, 3, 4, 6, 7, 9});
         dbInventoryItem1.setGoldLevel(userGuidanceService.getDbLevel(TEST_LEVEL_1_SIMULATED_ID));
         DbInventoryArtifactCount dbInventoryArtifactCount = dbInventoryItem1.getArtifactCountCrud().createDbChild();
         dbInventoryArtifactCount.setCount(2);
@@ -148,8 +148,8 @@ public class TestInventoryService extends AbstractServiceTest {
         DbInventoryItem dbInventoryItem2 = inventoryService.getItemCrud().createDbChild();
         dbInventoryItem2.setName("GoldItem2");
         dbInventoryItem2.setGoldAmount(10);
-        dbInventoryItem2.setGoldImageContentType("imageData33");
-        dbInventoryItem2.setGoldImageData(new byte[]{6, 7, 9});
+        dbInventoryItem2.setImageContentType("imageData33");
+        dbInventoryItem2.setImageData(new byte[]{6, 7, 9});
         dbInventoryItem2.setGoldLevel(userGuidanceService.getDbLevel(TEST_LEVEL_2_REAL_ID));
         dbInventoryArtifactCount = dbInventoryItem2.getArtifactCountCrud().createDbChild();
         dbInventoryArtifactCount.setCount(3);
@@ -191,8 +191,8 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertEquals(4, itemList.size());
         Assert.assertEquals("GoldItem1", itemList.get(0).getName());
         Assert.assertEquals(100, itemList.get(0).getGoldAmount());
-        Assert.assertEquals("imageData22", itemList.get(0).getGoldImageContentType());
-        Assert.assertArrayEquals(new byte[]{1, 3, 4, 6, 7, 9}, itemList.get(0).getGoldImageData());
+        Assert.assertEquals("imageData22", itemList.get(0).getImageContentType());
+        Assert.assertArrayEquals(new byte[]{1, 3, 4, 6, 7, 9}, itemList.get(0).getImageData());
         Assert.assertEquals(userGuidanceService.getDbLevel(TEST_LEVEL_1_SIMULATED_ID), itemList.get(0).getGoldLevel());
         List<DbInventoryArtifactCount> dbInventoryArtifactCountFromDb = new ArrayList<>(itemList.get(0).getArtifactCountCrud().readDbChildren());
         Assert.assertEquals(2, dbInventoryArtifactCountFromDb.size());
@@ -203,8 +203,8 @@ public class TestInventoryService extends AbstractServiceTest {
 
         Assert.assertEquals("GoldItem2", itemList.get(1).getName());
         Assert.assertEquals(10, itemList.get(1).getGoldAmount());
-        Assert.assertEquals("imageData33", itemList.get(1).getGoldImageContentType());
-        Assert.assertArrayEquals(new byte[]{6, 7, 9}, itemList.get(1).getGoldImageData());
+        Assert.assertEquals("imageData33", itemList.get(1).getImageContentType());
+        Assert.assertArrayEquals(new byte[]{6, 7, 9}, itemList.get(1).getImageData());
         Assert.assertEquals(userGuidanceService.getDbLevel(TEST_LEVEL_2_REAL_ID), itemList.get(1).getGoldLevel());
         dbInventoryArtifactCountFromDb = new ArrayList<>(itemList.get(1).getArtifactCountCrud().readDbChildren());
         Assert.assertEquals(1, dbInventoryArtifactCountFromDb.size());
@@ -248,8 +248,8 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertEquals(3, itemList.size());
         Assert.assertEquals("GoldItem2", itemList.get(0).getName());
         Assert.assertEquals(10, itemList.get(0).getGoldAmount());
-        Assert.assertEquals("imageData33", itemList.get(0).getGoldImageContentType());
-        Assert.assertArrayEquals(new byte[]{6, 7, 9}, itemList.get(0).getGoldImageData());
+        Assert.assertEquals("imageData33", itemList.get(0).getImageContentType());
+        Assert.assertArrayEquals(new byte[]{6, 7, 9}, itemList.get(0).getImageData());
         Assert.assertEquals(userGuidanceService.getDbLevel(TEST_LEVEL_2_REAL_ID), itemList.get(0).getGoldLevel());
         dbInventoryArtifactCountFromDb = new ArrayList<>(itemList.get(0).getArtifactCountCrud().readDbChildren());
         Assert.assertEquals(1, dbInventoryArtifactCountFromDb.size());
@@ -273,8 +273,8 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertEquals(3, itemList.size());
         Assert.assertEquals("GoldItem2", itemList.get(0).getName());
         Assert.assertEquals(10, itemList.get(0).getGoldAmount());
-        Assert.assertEquals("imageData33", itemList.get(0).getGoldImageContentType());
-        Assert.assertArrayEquals(new byte[]{6, 7, 9}, itemList.get(0).getGoldImageData());
+        Assert.assertEquals("imageData33", itemList.get(0).getImageContentType());
+        Assert.assertArrayEquals(new byte[]{6, 7, 9}, itemList.get(0).getImageData());
         Assert.assertEquals(userGuidanceService.getDbLevel(TEST_LEVEL_2_REAL_ID), itemList.get(0).getGoldLevel());
         dbInventoryArtifactCountFromDb = new ArrayList<>(itemList.get(0).getArtifactCountCrud().readDbChildren());
         Assert.assertEquals(0, dbInventoryArtifactCountFromDb.size());

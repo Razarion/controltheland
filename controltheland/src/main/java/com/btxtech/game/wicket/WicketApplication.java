@@ -21,6 +21,7 @@ import com.btxtech.game.wicket.pages.cms.CmsCssResource;
 import com.btxtech.game.wicket.pages.cms.CmsImageResource;
 import com.btxtech.game.wicket.pages.cms.CmsItemTypeImageResource;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
+import com.btxtech.game.wicket.uiservices.InventoryImageResource;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -62,8 +63,10 @@ public class WicketApplication extends AuthenticatedWebApplication {
         getSharedResources().add(CmsCssResource.CMS_SHARED_CSS_RESOURCES, new CmsCssResource());
         getSharedResources().add(CmsImageResource.CMS_SHARED_IMAGE_RESOURCES, new CmsImageResource());
         getSharedResources().add(CmsItemTypeImageResource.CMS_SHARED_IMAGE_RESOURCES, new CmsItemTypeImageResource());
+        getSharedResources().add(InventoryImageResource.SHARED_IMAGE_RESOURCES, new InventoryImageResource());
         mountSharedResource(CmsImageResource.PATH, Application.class.getName() + "/" + CmsImageResource.CMS_SHARED_IMAGE_RESOURCES);
         mountSharedResource(CmsItemTypeImageResource.PATH, Application.class.getName() + "/" + CmsItemTypeImageResource.CMS_SHARED_IMAGE_RESOURCES);
+        mountSharedResource(InventoryImageResource.PATH, Application.class.getName() + "/" + InventoryImageResource.SHARED_IMAGE_RESOURCES);
         mountBookmarkablePage(CmsUtil.MOUNT_GAME_CMS, CmsPage.class);
         mountBookmarkablePage(CmsUtil.MOUNT_GAME, Game.class);
     }
