@@ -43,7 +43,7 @@ public interface CommonActionService {
 
     void attack(SyncBaseItem syncBaseItem, SyncBaseItem target, Index destinationHint, double destinationAngel, boolean followTarget);
 
-    void pickupBox(SyncBaseItem picker, SyncBoxItem box);
+    void pickupBox(SyncBaseItem picker, SyncBoxItem box, Index destinationHint, double destinationAngel);
 
     void defend(SyncBaseItem attacker, SyncBaseItem target);
 

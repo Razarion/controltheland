@@ -24,6 +24,7 @@ public class CursorItemState {
     private boolean isLoadTarget = false;
     private boolean isFinalizeBuild = false;
     private boolean isAlliance = false;
+    private boolean isBoxTarget = false;
 
     public boolean isAttackTarget() {
         return isAttackTarget;
@@ -47,6 +48,14 @@ public class CursorItemState {
 
     public void setLoadTarget() {
         isLoadTarget = true;
+    }
+
+    public void setBoxTarget() {
+        isBoxTarget = true;
+    }
+
+    public boolean isBoxTarget() {
+        return isBoxTarget;
     }
 
     public boolean isFinalizeBuild() {

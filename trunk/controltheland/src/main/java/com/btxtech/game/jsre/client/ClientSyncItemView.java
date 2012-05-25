@@ -115,6 +115,10 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
             if (oldClientSyncItem == null || !oldClientSyncItem.isSyncProjectileItem()) {
                 pupateToSyncProjectileItem();
             }
+        } else if (clientSyncItem.isSyncBoxItem()) {
+            if (oldClientSyncItem == null || !oldClientSyncItem.isSyncBoxItem()) {
+                pupateToSyncBoxItem();
+            }
         } else {
             throw new IllegalArgumentException(this + " transformTo(): SyncItem not supported: " + clientSyncItem);
         }
@@ -210,6 +214,25 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         }
     }
 
+    private void pupateToSyncBoxItem() {
+        pupateCommon();
+        cursorItemState = new CursorItemState();
+        cursorItemState.setBoxTarget();
+        getElement().getStyle().setZIndex(Constants.Z_INDEX_BOX);
+        if (healthBar != null) {
+            healthBar.setVisible(false);
+        }
+        if (factorizeBar != null) {
+            factorizeBar.setVisible(false);
+        }
+        if (projectileBar != null) {
+            projectileBar.setVisible(false);
+        }
+        if (marker != null) {
+            marker.setVisible(false);
+        }
+    }
+
     private void setupSize() {
         setPixelSize(clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageWidth(),
                 clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageHeight());
@@ -298,6 +321,8 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
                 } else if (clientSyncItem.isEnemy()) {
                     SelectionHandler.getInstance().setTargetSelected(this, mouseDownEvent);
                 }
+            } else if (clientSyncItem.isSyncBoxItem()) {
+                SelectionHandler.getInstance().setTargetSelected(this, mouseDownEvent);
             } else {
                 throw new IllegalArgumentException(this + " onMouseDown: SyncItem not supported: " + clientSyncItem);
             }

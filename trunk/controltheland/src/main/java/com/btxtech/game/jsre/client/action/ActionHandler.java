@@ -44,6 +44,7 @@ import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeExce
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
@@ -288,6 +289,26 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
             }
         };
         commandHelperItemType.process(clientSyncItems, money, true);
+    }
+
+    public void pickupBox(Collection<ClientSyncItem> clientSyncItems, SyncBoxItem box) {
+        GroupCommandHelperItemType<SyncBoxItem> commandHelperItemType = new GroupCommandHelperItemType<SyncBoxItem>() {
+            @Override
+            protected boolean isCommandPossible(SyncBaseItem syncBaseItem, SyncBoxItem box) {
+                return ClientTerritoryService.getInstance().isAllowed(box.getSyncItemArea().getPosition(), syncBaseItem);
+            }
+
+            @Override
+            protected void executeCommand(SyncBaseItem picker, SyncBoxItem box, Index destinationHint, double destinationAngel) {
+                pickupBox(picker, box, destinationHint, destinationAngel);
+            }
+
+            @Override
+            protected int getRange(SyncBaseItem syncBaseItem, SyncBoxItem box) {
+                return syncBaseItem.getBaseItemType().getBoxPickupRange();
+            }
+        };
+        commandHelperItemType.process(clientSyncItems, box, true);
     }
 
     public void loadContainer(ClientSyncItem container, Collection<ClientSyncItem> items) {

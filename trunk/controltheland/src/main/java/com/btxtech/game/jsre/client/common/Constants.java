@@ -66,6 +66,7 @@ public class Constants {
     public static final int Z_INDEX_ABOVE_MOVABLE = 7;
     public static final int Z_INDEX_MOVABLE = 6;
     public static final int Z_INDEX_MONEY = 5;
+    public static final int Z_INDEX_BOX = 5;
     public static final int Z_INDEX_BUILDING = 4;
     public static final int Z_INDEX_BELOW_BUILDING = 3;
     public static final int Z_INDEX_TERRAIN = 2;

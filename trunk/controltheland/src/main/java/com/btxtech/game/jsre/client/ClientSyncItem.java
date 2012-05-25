@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.client.item.ItemViewContainer;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncProjectileItem;
@@ -142,6 +143,10 @@ public class ClientSyncItem implements SyncItemListener {
         return (SyncProjectileItem) syncItem;
     }
 
+    public SyncBoxItem getSyncBoxItem() {
+        return (SyncBoxItem) syncItem;
+    }
+
     public SyncTickItem getSyncTickItem() {
         return (SyncTickItem) syncItem;
     }
@@ -191,6 +196,10 @@ public class ClientSyncItem implements SyncItemListener {
 
     public boolean isSyncProjectileItem() {
         return syncItem instanceof SyncProjectileItem;
+    }
+
+    public boolean isSyncBoxItem() {
+        return syncItem instanceof SyncBoxItem;
     }
 
     public boolean isSyncTickItem() {
