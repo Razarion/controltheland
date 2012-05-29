@@ -376,4 +376,15 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             return null;
         }
     }
+
+    @Override
+    public InventoryInfo assembleInventoryItem(int inventoryItemId) {
+        try {
+            inventoryService.assembleInventoryItem(inventoryItemId);
+            return inventoryService.getInventory();
+        } catch (Throwable t) {
+            log.error("", t);
+            return null;
+        }
+    }
 }

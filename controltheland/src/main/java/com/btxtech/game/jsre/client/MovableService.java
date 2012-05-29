@@ -98,4 +98,6 @@ public interface MovableService extends RemoteService {
     Collection<String> getAllAlliances();
 
     InventoryInfo getInventory();
+
+    InventoryInfo assembleInventoryItem(int inventoryItemId);
 }

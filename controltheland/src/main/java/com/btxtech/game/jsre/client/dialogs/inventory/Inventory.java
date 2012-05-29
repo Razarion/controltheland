@@ -49,8 +49,16 @@ public class Inventory extends Composite implements HasText {
         itemPlates.add(new ItemPlate(inventoryItemInfo, ownCount));
     }
 
-    public void addGroundPlate(InventoryItemInfo inventoryItemInfo, Map<InventoryArtifactInfo, Integer> ownArtifact) {
-        groundPlates.add(new GroundPlate(inventoryItemInfo, ownArtifact));
+    public void clearAllItemPlates() {
+        itemPlates.clear();
+    }
+
+    public void addGroundPlate(InventoryItemInfo inventoryItemInfo, Map<InventoryArtifactInfo, Integer> ownArtifact, InventoryDialog inventoryDialog) {
+        groundPlates.add(new GroundPlate(inventoryItemInfo, ownArtifact, inventoryDialog));
+    }
+
+    public void clearAllGroundPlates() {
+        groundPlates.clear();
     }
 
     @UiHandler("button")

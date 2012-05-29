@@ -265,6 +265,9 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
     public void assembleInventoryItem(int inventoryItemId) {
         UserState userState = userService.getUserState();
         DbInventoryItem dbInventoryItem = itemCrud.readDbChild(inventoryItemId);
+        if (dbInventoryItem.getArtifactCountCrud().readDbChildren().isEmpty()) {
+            throw new IllegalArgumentException("Can not assemble item with no artifacts: " + dbInventoryItem);
+        }
         Collection<Integer> artifactIds = new ArrayList<>();
         for (DbInventoryArtifactCount dbInventoryArtifactCount : dbInventoryItem.getArtifactCountCrud().readDbChildren()) {
             for (int count = 0; count < dbInventoryArtifactCount.getCount(); count++) {
