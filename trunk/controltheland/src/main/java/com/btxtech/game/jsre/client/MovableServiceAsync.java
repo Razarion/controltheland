@@ -92,4 +92,6 @@ public interface MovableServiceAsync {
     void getAllAlliances(AsyncCallback<Collection<String>> asyncCallback);
 
     void getInventory(AsyncCallback<InventoryInfo> asyncCallback);
+
+    void assembleInventoryItem(int inventoryItemId, AsyncCallback<InventoryInfo> asyncCallback);
 }

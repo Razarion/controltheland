@@ -28,7 +28,7 @@
 					<g:Image width="100px" height="100px" ui:field="image"/>
 				</g:Cell>
 				<g:Cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-					<g:Button text="Assemble"/>
+					<g:Button text="Assemble" ui:field="assembleButton"/>
 				</g:Cell>
 			</g:VerticalPanel>
 			<g:Cell verticalAlignment="ALIGN_MIDDLE">

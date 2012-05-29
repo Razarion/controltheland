@@ -294,6 +294,28 @@ td.box {
     top: 1px;
 }
 
+.dialogBox button[disabled], .dialogBox button[disabled]:active, .dialogBox button[disabled]:hover {
+    padding: 2px 3px;
+    -moz-box-shadow: inset 0px 1px 0px 0px #ebebeb;
+    -webkit-box-shadow: inset 0px 1px 0px 0px #ebebeb;
+    box-shadow: inset 0px 1px 0px 0px #ebebeb;
+    background-image: linear-gradient(bottom, rgb(92,99,99) 42%, rgb(184,184,184) 73%);
+    background-image: -o-linear-gradient(bottom, rgb(92,99,99) 42%, rgb(184,184,184) 73%);
+    background-image: -moz-linear-gradient(bottom, rgb(92,99,99) 42%, rgb(184,184,184) 73%);
+    background-image: -webkit-linear-gradient(bottom, rgb(92,99,99) 42%, rgb(184,184,184) 73%);
+    background-image: -ms-linear-gradient(bottom, rgb(92,99,99) 42%, rgb(184,184,184) 73%);
+    background-color: #575757;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    border: 1px solid #575757;
+    width: 6em;
+    display: inline-block;
+    color: #C7C4BB;
+    text-decoration: none;
+    text-shadow: 1px 1px 0px #0a131c;
+}
+
 .dialogBox .Caption {
     color: #e2ded4;
     text-decoration: none;

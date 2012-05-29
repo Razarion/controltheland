@@ -610,4 +610,20 @@ public class Connection implements StartupProgressListener, ConnectionI {
         }
     }
 
+    public void assembleInventoryItem(int inventoryItemId, final InventoryDialog inventoryDialog) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.assembleInventoryItem(inventoryItemId, new AsyncCallback<InventoryInfo>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    handleDisconnection("loadInventory", caught);
+                }
+
+                @Override
+                public void onSuccess(InventoryInfo inventoryInfo) {
+                    inventoryDialog.onItemsReceived(inventoryInfo);
+                }
+            });
+        }
+    }
+
 }
