@@ -9,6 +9,7 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
@@ -270,6 +271,11 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
 
     @Override
     public Collection<String> getAllAlliances() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public InventoryInfo getInventory() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

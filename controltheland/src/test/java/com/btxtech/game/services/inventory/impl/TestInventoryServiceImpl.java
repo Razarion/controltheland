@@ -2,6 +2,8 @@ package com.btxtech.game.services.inventory.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryArtifactInfo;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.common.BoxPickedPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -41,7 +43,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -1068,4 +1072,93 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(count, currentCount);
     }
 
+    @Test
+    @DirtiesContext
+    public void getInventory() throws Exception {
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Map<Integer, InventoryArtifactInfo> allArtifacts = new HashMap<>();
+        DbInventoryArtifact dbInventoryArtifact1 = inventoryService.getArtifactCrud().createDbChild();
+        DbInventoryArtifact dbInventoryArtifact2 = inventoryService.getArtifactCrud().createDbChild();
+        DbInventoryArtifact dbInventoryArtifact3 = inventoryService.getArtifactCrud().createDbChild();
+        allArtifacts.put(dbInventoryArtifact1.getId(), dbInventoryArtifact1.generateInventoryArtifactInfo());
+        allArtifacts.put(dbInventoryArtifact2.getId(), dbInventoryArtifact2.generateInventoryArtifactInfo());
+        allArtifacts.put(dbInventoryArtifact3.getId(), dbInventoryArtifact3.generateInventoryArtifactInfo());
+        DbInventoryItem dbInventoryItem1 = inventoryService.getItemCrud().createDbChild();
+        DbInventoryArtifactCount dbInventoryArtifactCount = dbInventoryItem1.getArtifactCountCrud().createDbChild();
+        dbInventoryArtifactCount.setCount(1);
+        dbInventoryArtifactCount.setDbInventoryArtifact(dbInventoryArtifact1);
+        dbInventoryArtifactCount = dbInventoryItem1.getArtifactCountCrud().createDbChild();
+        dbInventoryArtifactCount.setCount(2);
+        dbInventoryArtifactCount.setDbInventoryArtifact(dbInventoryArtifact2);
+        dbInventoryArtifactCount = dbInventoryItem1.getArtifactCountCrud().createDbChild();
+        dbInventoryArtifactCount.setCount(3);
+        dbInventoryArtifactCount.setDbInventoryArtifact(dbInventoryArtifact3);
+        inventoryService.getItemCrud().updateDbChild(dbInventoryItem1);
+        DbInventoryItem dbInventoryItem2 = inventoryService.getItemCrud().createDbChild();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // Verify new
+        InventoryInfo inventoryInfo = inventoryService.getInventory();
+        Assert.assertEquals(0, inventoryInfo.getRazarion());
+        Assert.assertTrue(inventoryInfo.getOwnInventoryArtifacts().isEmpty());
+        Assert.assertTrue(inventoryInfo.getOwnInventoryItems().isEmpty());
+        Assert.assertEquals(2, inventoryInfo.getAllInventoryItemInfos().size());
+        // Add one artifact
+        UserState userState = userService.getUserState();
+        userState.setRazarion(15);
+        userState.addInventoryArtifact(dbInventoryArtifact1.getId());
+        // Verify
+        inventoryInfo = inventoryService.getInventory();
+        Assert.assertEquals(15, inventoryInfo.getRazarion());
+        Assert.assertEquals(1, inventoryInfo.getOwnInventoryArtifacts().size());
+        Assert.assertEquals(1, (int) inventoryInfo.getOwnInventoryArtifacts().get(dbInventoryArtifact1.generateInventoryArtifactInfo()));
+        Assert.assertTrue(inventoryInfo.getOwnInventoryItems().isEmpty());
+        Assert.assertEquals(2, inventoryInfo.getAllInventoryItemInfos().size());
+        // Add artifacts
+        userState = userService.getUserState();
+        userState.addInventoryArtifact(dbInventoryArtifact1.getId());
+        userState.addInventoryArtifact(dbInventoryArtifact2.getId());
+        // Verify
+        inventoryInfo = inventoryService.getInventory();
+        Assert.assertEquals(15, inventoryInfo.getRazarion());
+        Assert.assertEquals(2, inventoryInfo.getOwnInventoryArtifacts().size());
+        Assert.assertEquals(2, (int)inventoryInfo.getOwnInventoryArtifacts().get(dbInventoryArtifact1.generateInventoryArtifactInfo()));
+        Assert.assertEquals(1, (int)inventoryInfo.getOwnInventoryArtifacts().get(dbInventoryArtifact2.generateInventoryArtifactInfo()));
+        Assert.assertTrue(inventoryInfo.getOwnInventoryItems().isEmpty());
+        Assert.assertEquals(2, inventoryInfo.getAllInventoryItemInfos().size());
+        // Add items
+        userState = userService.getUserState();
+        userState.addInventoryItem(dbInventoryItem2.getId());
+        // Verify
+        inventoryInfo = inventoryService.getInventory();
+        Assert.assertEquals(15, inventoryInfo.getRazarion());
+        Assert.assertEquals(2, inventoryInfo.getOwnInventoryArtifacts().size());
+        Assert.assertEquals(2, (int)inventoryInfo.getOwnInventoryArtifacts().get(dbInventoryArtifact1.generateInventoryArtifactInfo()));
+        Assert.assertEquals(1, (int)inventoryInfo.getOwnInventoryArtifacts().get(dbInventoryArtifact2.generateInventoryArtifactInfo()));
+        Assert.assertEquals(1, inventoryInfo.getOwnInventoryItems().size());
+        Assert.assertEquals(1, (int)inventoryInfo.getOwnInventoryItems().get(dbInventoryItem2.generateInventoryItemInfo(allArtifacts)));
+        Assert.assertEquals(2, inventoryInfo.getAllInventoryItemInfos().size());
+        // Add items
+        userState = userService.getUserState();
+        userState.addInventoryItem(dbInventoryItem2.getId());
+        userState.addInventoryItem(dbInventoryItem1.getId());
+        // Verify
+        inventoryInfo = inventoryService.getInventory();
+        Assert.assertEquals(15, inventoryInfo.getRazarion());
+        Assert.assertEquals(2, inventoryInfo.getOwnInventoryArtifacts().size());
+        Assert.assertEquals(2, (int)inventoryInfo.getOwnInventoryArtifacts().get(dbInventoryArtifact1.generateInventoryArtifactInfo()));
+        Assert.assertEquals(1, (int)inventoryInfo.getOwnInventoryArtifacts().get(dbInventoryArtifact2.generateInventoryArtifactInfo()));
+        Assert.assertEquals(2, inventoryInfo.getOwnInventoryItems().size());
+        Assert.assertEquals(2, (int)inventoryInfo.getOwnInventoryItems().get(dbInventoryItem2.generateInventoryItemInfo(allArtifacts)));
+        Assert.assertEquals(1, (int)inventoryInfo.getOwnInventoryItems().get(dbInventoryItem1.generateInventoryItemInfo(allArtifacts)));
+        Assert.assertEquals(2, inventoryInfo.getAllInventoryItemInfos().size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
 }

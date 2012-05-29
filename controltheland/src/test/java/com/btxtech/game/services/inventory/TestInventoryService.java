@@ -1,6 +1,8 @@
 package com.btxtech.game.services.inventory;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryArtifactInfo;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryItemInfo;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.item.ItemService;
@@ -14,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -536,6 +540,156 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertNull(dbBoxItemTypePossibility3.getDbInventoryItem());
         Assert.assertNull(dbBoxItemTypePossibility3.getDbInventoryArtifact());
         Assert.assertEquals(253000, (int) dbBoxItemTypePossibility3.getRazarion());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void generateItemAndArtifact() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbInventoryArtifact dbInventoryArtifact1 = inventoryService.getArtifactCrud().createDbChild();
+        dbInventoryArtifact1.setName("Artifact1");
+        dbInventoryArtifact1.setRareness(DbInventoryArtifact.Rareness.UN_COMMON);
+        dbInventoryArtifact1.setImageContentType("imageContent");
+        dbInventoryArtifact1.setImageData(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9});
+        inventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact1);
+
+        DbInventoryArtifact dbInventoryArtifact2 = inventoryService.getArtifactCrud().createDbChild();
+        dbInventoryArtifact2.setName("Artifact2");
+        dbInventoryArtifact2.setRareness(DbInventoryArtifact.Rareness.COMMON);
+        dbInventoryArtifact2.setImageContentType("imageContent2");
+        dbInventoryArtifact2.setImageData(new byte[]{7, 8, 9});
+        inventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact2);
+
+        DbInventoryArtifact dbInventoryArtifact3 = inventoryService.getArtifactCrud().createDbChild();
+        dbInventoryArtifact3.setName("Artifact3");
+        dbInventoryArtifact3.setRareness(DbInventoryArtifact.Rareness.EPIC);
+        dbInventoryArtifact3.setImageContentType("imageContent2");
+        dbInventoryArtifact3.setImageData(new byte[]{7, 8, 9});
+        inventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact3);
+
+        DbInventoryArtifact dbInventoryArtifact4 = inventoryService.getArtifactCrud().createDbChild();
+        dbInventoryArtifact4.setName("Artifact4");
+        dbInventoryArtifact4.setRareness(DbInventoryArtifact.Rareness.LEGENDARY);
+        dbInventoryArtifact4.setImageContentType("imageContent2");
+        dbInventoryArtifact4.setImageData(new byte[]{7, 8, 9});
+        inventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact4);
+
+        DbInventoryItem dbInventoryItem1 = inventoryService.getItemCrud().createDbChild();
+        dbInventoryItem1.setName("GoldItem1");
+        dbInventoryItem1.setGoldAmount(100);
+        dbInventoryItem1.setImageContentType("imageData22");
+        dbInventoryItem1.setImageData(new byte[]{1, 3, 4, 6, 7, 9});
+        dbInventoryItem1.setGoldLevel(userGuidanceService.getDbLevel(TEST_LEVEL_1_SIMULATED_ID));
+        inventoryService.getItemCrud().updateDbChild(dbInventoryItem1);
+
+        DbInventoryItem dbInventoryItem2 = inventoryService.getItemCrud().createDbChild();
+        dbInventoryItem2.setName("GoldItem2");
+        dbInventoryItem2.setGoldAmount(10);
+        dbInventoryItem2.setImageContentType("imageData33");
+        dbInventoryItem2.setImageData(new byte[]{6, 7, 9});
+        dbInventoryItem2.setGoldLevel(userGuidanceService.getDbLevel(TEST_LEVEL_2_REAL_ID));
+        DbInventoryArtifactCount dbInventoryArtifactCount = dbInventoryItem2.getArtifactCountCrud().createDbChild();
+        dbInventoryArtifactCount.setCount(3);
+        dbInventoryArtifactCount.setDbInventoryArtifact(dbInventoryArtifact1);
+        inventoryService.getItemCrud().updateDbChild(dbInventoryItem2);
+
+        DbInventoryItem dbInventoryItem3 = inventoryService.getItemCrud().createDbChild();
+        dbInventoryItem3.setName("ItemType1");
+        dbInventoryItem3.setBaseItemTypeCount(2);
+        dbInventoryItem3.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
+        dbInventoryArtifactCount = dbInventoryItem3.getArtifactCountCrud().createDbChild();
+        dbInventoryArtifactCount.setCount(1);
+        dbInventoryArtifactCount.setDbInventoryArtifact(dbInventoryArtifact3);
+        dbInventoryArtifactCount = dbInventoryItem3.getArtifactCountCrud().createDbChild();
+        dbInventoryArtifactCount.setCount(2);
+        dbInventoryArtifactCount.setDbInventoryArtifact(dbInventoryArtifact1);
+        inventoryService.getItemCrud().updateDbChild(dbInventoryItem3);
+
+        DbInventoryItem dbInventoryItem4 = inventoryService.getItemCrud().createDbChild();
+        dbInventoryItem4.setName("ItemType2");
+        dbInventoryItem4.setBaseItemTypeCount(1);
+        dbInventoryItem4.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_FACTORY_ITEM_ID));
+        dbInventoryArtifactCount = dbInventoryItem4.getArtifactCountCrud().createDbChild();
+        dbInventoryArtifactCount.setCount(1);
+        dbInventoryArtifactCount.setDbInventoryArtifact(dbInventoryArtifact1);
+        dbInventoryArtifactCount = dbInventoryItem4.getArtifactCountCrud().createDbChild();
+        dbInventoryArtifactCount.setCount(2);
+        dbInventoryArtifactCount.setDbInventoryArtifact(dbInventoryArtifact2);
+        dbInventoryArtifactCount = dbInventoryItem4.getArtifactCountCrud().createDbChild();
+        dbInventoryArtifactCount.setCount(3);
+        dbInventoryArtifactCount.setDbInventoryArtifact(dbInventoryArtifact3);
+        inventoryService.getItemCrud().updateDbChild(dbInventoryItem4);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbInventoryArtifact1 = inventoryService.getArtifactCrud().readDbChild(dbInventoryArtifact1.getId());
+        dbInventoryArtifact2 = inventoryService.getArtifactCrud().readDbChild(dbInventoryArtifact2.getId());
+        dbInventoryArtifact3 = inventoryService.getArtifactCrud().readDbChild(dbInventoryArtifact3.getId());
+        dbInventoryArtifact4 = inventoryService.getArtifactCrud().readDbChild(dbInventoryArtifact4.getId());
+
+        Map<Integer, InventoryArtifactInfo> allArtifacts = new HashMap<>();
+        InventoryArtifactInfo inventoryArtifactInfo1 = dbInventoryArtifact1.generateInventoryArtifactInfo();
+        allArtifacts.put(inventoryArtifactInfo1.getInventoryArtifactId(), inventoryArtifactInfo1);
+        InventoryArtifactInfo inventoryArtifactInfo2 = dbInventoryArtifact2.generateInventoryArtifactInfo();
+        allArtifacts.put(inventoryArtifactInfo2.getInventoryArtifactId(), inventoryArtifactInfo2);
+        InventoryArtifactInfo inventoryArtifactInfo3 = dbInventoryArtifact3.generateInventoryArtifactInfo();
+        allArtifacts.put(inventoryArtifactInfo3.getInventoryArtifactId(), inventoryArtifactInfo3);
+        InventoryArtifactInfo inventoryArtifactInfo4 = dbInventoryArtifact4.generateInventoryArtifactInfo();
+        allArtifacts.put(inventoryArtifactInfo4.getInventoryArtifactId(), inventoryArtifactInfo4);
+
+        Assert.assertEquals((int)dbInventoryArtifact1.getId(), inventoryArtifactInfo1.getInventoryArtifactId());
+        Assert.assertEquals("Artifact1", inventoryArtifactInfo1.getInventoryArtifactName());
+        Assert.assertEquals("#FFFF02", inventoryArtifactInfo1.getHtmlRarenessColor());
+
+        Assert.assertEquals((int)dbInventoryArtifact2.getId(), inventoryArtifactInfo2.getInventoryArtifactId());
+        Assert.assertEquals("Artifact2", inventoryArtifactInfo2.getInventoryArtifactName());
+        Assert.assertEquals("#FFFF01", inventoryArtifactInfo2.getHtmlRarenessColor());
+
+        Assert.assertEquals((int)dbInventoryArtifact3.getId(), inventoryArtifactInfo3.getInventoryArtifactId());
+        Assert.assertEquals("Artifact3", inventoryArtifactInfo3.getInventoryArtifactName());
+        Assert.assertEquals("#FFFF04", inventoryArtifactInfo3.getHtmlRarenessColor());
+
+        Assert.assertEquals((int)dbInventoryArtifact4.getId(), inventoryArtifactInfo4.getInventoryArtifactId());
+        Assert.assertEquals("Artifact4", inventoryArtifactInfo4.getInventoryArtifactName());
+        Assert.assertEquals("#FFFF05", inventoryArtifactInfo4.getHtmlRarenessColor());
+
+        dbInventoryItem1 = inventoryService.getItemCrud().readDbChild(dbInventoryItem1.getId());
+        dbInventoryItem2 = inventoryService.getItemCrud().readDbChild(dbInventoryItem2.getId());
+        dbInventoryItem3 = inventoryService.getItemCrud().readDbChild(dbInventoryItem3.getId());
+        dbInventoryItem4 = inventoryService.getItemCrud().readDbChild(dbInventoryItem4.getId());
+
+        InventoryItemInfo inventoryItemInfo1 = dbInventoryItem1.generateInventoryItemInfo(allArtifacts);
+        InventoryItemInfo inventoryItemInfo2 = dbInventoryItem2.generateInventoryItemInfo(allArtifacts);
+        InventoryItemInfo inventoryItemInfo3 = dbInventoryItem3.generateInventoryItemInfo(allArtifacts);
+        InventoryItemInfo inventoryItemInfo4 = dbInventoryItem4.generateInventoryItemInfo(allArtifacts);
+
+        Assert.assertEquals((int)dbInventoryItem1.getId(), inventoryItemInfo1.getInventoryItemId());
+        Assert.assertEquals("GoldItem1", inventoryItemInfo1.getInventoryItemName());
+        Assert.assertEquals(0, inventoryItemInfo1.getArtifacts().size());
+
+        Assert.assertEquals((int)dbInventoryItem2.getId(), inventoryItemInfo2.getInventoryItemId());
+        Assert.assertEquals("GoldItem2", inventoryItemInfo2.getInventoryItemName());
+        Assert.assertEquals(1, inventoryItemInfo2.getArtifacts().size());
+        Assert.assertEquals(3, (int)inventoryItemInfo2.getArtifacts().get(inventoryArtifactInfo1));
+
+        Assert.assertEquals((int)dbInventoryItem3.getId(), inventoryItemInfo3.getInventoryItemId());
+        Assert.assertEquals("ItemType1", inventoryItemInfo3.getInventoryItemName());
+        Assert.assertEquals(2, inventoryItemInfo3.getArtifacts().size());
+        Assert.assertEquals(2, (int)inventoryItemInfo3.getArtifacts().get(inventoryArtifactInfo1));
+        Assert.assertEquals(1, (int)inventoryItemInfo3.getArtifacts().get(inventoryArtifactInfo3));
+
+        Assert.assertEquals((int)dbInventoryItem4.getId(), inventoryItemInfo4.getInventoryItemId());
+        Assert.assertEquals("ItemType2", inventoryItemInfo4.getInventoryItemName());
+        Assert.assertEquals(3, inventoryItemInfo4.getArtifacts().size());
+        Assert.assertEquals(1, (int)inventoryItemInfo4.getArtifacts().get(inventoryArtifactInfo1));
+        Assert.assertEquals(2, (int)inventoryItemInfo4.getArtifacts().get(inventoryArtifactInfo2));
+        Assert.assertEquals(3, (int)inventoryItemInfo4.getArtifacts().get(inventoryArtifactInfo3));
+
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

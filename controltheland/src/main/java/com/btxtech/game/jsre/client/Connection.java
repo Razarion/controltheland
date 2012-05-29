@@ -31,6 +31,8 @@ import com.btxtech.game.jsre.client.control.task.DeferredStartup;
 import com.btxtech.game.jsre.client.dialogs.AllianceDialog;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
@@ -272,7 +274,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
                 } else if (packet instanceof AllianceOfferPacket) {
                     ClientAllianceHandler.getInstance().handleAllianceOfferPacket((AllianceOfferPacket) packet);
                 } else if (packet instanceof BoxPickedPacket) {
-                    SideCockpit.getInstance().onBoxPicked((BoxPickedPacket)packet);
+                    SideCockpit.getInstance().onBoxPicked((BoxPickedPacket) packet);
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }
@@ -587,6 +589,22 @@ public class Connection implements StartupProgressListener, ConnectionI {
                 @Override
                 public void onSuccess(Collection<String> alliances) {
                     allianceDialog.onAlliancesReceived(alliances);
+                }
+            });
+        }
+    }
+
+    public void loadInventory(final InventoryDialog inventoryDialog) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.getInventory(new AsyncCallback<InventoryInfo>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    handleDisconnection("loadInventory", caught);
+                }
+
+                @Override
+                public void onSuccess(InventoryInfo inventoryInfo) {
+                    inventoryDialog.onItemsReceived(inventoryInfo);
                 }
             });
         }

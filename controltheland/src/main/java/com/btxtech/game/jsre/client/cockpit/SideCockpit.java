@@ -15,6 +15,7 @@ import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.dialogs.AllianceDialog;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.BoxPickedPacket;
@@ -82,10 +83,12 @@ public class SideCockpit {
     private static final int RADAR_H = 150;
     // Buttons
     private static final int BNT_X = 181;
-    private static final int BNT_Y = 74;
+    private static final int BNT_Y = 61;
     private static final int BNT_Y_SPACE = 26;
+    private static final int BNT_INVENTORY_X = BNT_X;
+    private static final int BNT_INVENTORY_Y = BNT_Y;
     private static final int BNT_ALLIANCE_X = BNT_X;
-    private static final int BNT_ALLIANCE_Y = BNT_Y;
+    private static final int BNT_ALLIANCE_Y = BNT_INVENTORY_Y + BNT_Y_SPACE;
     private static final int BNT_SCROLL_X = BNT_X;
     private static final int BNT_SCROLL_Y = BNT_ALLIANCE_Y + BNT_Y_SPACE;
     private static final int BNT_SELL_X = BNT_X;
@@ -222,7 +225,16 @@ public class SideCockpit {
     }
 
     private void setupButtonPanel() {
-        //Scroll home
+        // Inventory
+        ExtendedCustomButton inventory = new ExtendedCustomButton("inventoryButton", false, ToolTips.TOOL_TIP_INVENTORY, new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                DialogManager.showDialog(new InventoryDialog(), DialogManager.Type.QUEUE_ABLE);
+            }
+        });
+        mainPanel.add(inventory, BNT_INVENTORY_X, BNT_INVENTORY_Y);
+
+        //Alliance
         ExtendedCustomButton alliance = new ExtendedCustomButton("allianceButton", false, ToolTips.TOOL_TIP_ALLIANCE, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

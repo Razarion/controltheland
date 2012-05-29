@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -42,6 +43,7 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.energy.ServerEnergyService;
+import com.btxtech.game.services.inventory.InventoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
@@ -95,6 +97,8 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     private CmsUiService cmsUiService;
     @Autowired
     private AllianceService allianceService;
+    @Autowired
+    private InventoryService inventoryService;
 
     private Log log = LogFactory.getLog(MovableServiceImpl.class);
 
@@ -360,6 +364,16 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         } catch (Throwable t) {
             log.error("", t);
             return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public InventoryInfo getInventory() {
+        try {
+            return inventoryService.getInventory();
+        } catch (Throwable t) {
+            log.error("", t);
+            return null;
         }
     }
 }

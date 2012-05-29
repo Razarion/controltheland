@@ -162,6 +162,34 @@ public class ImageHandler {
         return url.toString();
     }
 
+    public static String getInventoryItemUrl(int id) {
+        StringBuilder url = new StringBuilder();
+        url.append(Constants.INVENTORY_PATH);
+        url.append("?");
+        url.append(Constants.INVENTORY_TYPE);
+        url.append("=");
+        url.append(Constants.INVENTORY_TYPE_ITEM);
+        url.append("&");
+        url.append(Constants.INVENTORY_ID);
+        url.append("=");
+        url.append(Integer.toString(id));
+        return url.toString();
+    }
+
+    public static String getInventoryArtifactUrl(int id) {
+        StringBuilder url = new StringBuilder();
+        url.append(Constants.INVENTORY_PATH);
+        url.append("?");
+        url.append(Constants.INVENTORY_TYPE);
+        url.append("=");
+        url.append(Constants.INVENTORY_TYPE_ARTIFACT);
+        url.append("&");
+        url.append(Constants.INVENTORY_ID);
+        url.append("=");
+        url.append(Integer.toString(id));
+        return url.toString();
+    }
+
     public static Image getButtonUpImage(String name) {
         return new Image(BTN_IMAGE_PATH + name + BTN_UP_IMAGE);
     }

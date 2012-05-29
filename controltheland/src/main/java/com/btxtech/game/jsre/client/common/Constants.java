@@ -75,4 +75,11 @@ public class Constants {
 
     // Error
     public static final String ERROR_KEY = "e";
+
+    // Inventory Items
+    public static final String INVENTORY_PATH = "/inventoryImg";
+    public static final String INVENTORY_ID = "id";
+    public static final String INVENTORY_TYPE = "type";
+    public static final String INVENTORY_TYPE_ARTIFACT = "art";
+    public static final String INVENTORY_TYPE_ITEM = "item";
 }

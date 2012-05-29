@@ -13,6 +13,7 @@
 
 package com.btxtech.game.wicket;
 
+import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.connection.Session;
@@ -66,7 +67,7 @@ public class WicketApplication extends AuthenticatedWebApplication {
         getSharedResources().add(InventoryImageResource.SHARED_IMAGE_RESOURCES, new InventoryImageResource());
         mountSharedResource(CmsImageResource.PATH, Application.class.getName() + "/" + CmsImageResource.CMS_SHARED_IMAGE_RESOURCES);
         mountSharedResource(CmsItemTypeImageResource.PATH, Application.class.getName() + "/" + CmsItemTypeImageResource.CMS_SHARED_IMAGE_RESOURCES);
-        mountSharedResource(InventoryImageResource.PATH, Application.class.getName() + "/" + InventoryImageResource.SHARED_IMAGE_RESOURCES);
+        mountSharedResource(Constants.INVENTORY_PATH, Application.class.getName() + "/" + InventoryImageResource.SHARED_IMAGE_RESOURCES);
         mountBookmarkablePage(CmsUtil.MOUNT_GAME_CMS, CmsPage.class);
         mountBookmarkablePage(CmsUtil.MOUNT_GAME, Game.class);
     }

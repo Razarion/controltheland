@@ -1,5 +1,7 @@
 package com.btxtech.game.services.inventory;
 
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryArtifactInfo;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryItemInfo;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
@@ -21,6 +23,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: beat
@@ -137,6 +141,18 @@ public class DbInventoryItem implements CrudChild, CrudParent {
             artifactCountCrud = new CrudChildServiceHelper<>(artifactCounts, DbInventoryArtifactCount.class, this);
         }
         return artifactCountCrud;
+    }
+
+    public InventoryItemInfo generateInventoryItemInfo(Map<Integer, InventoryArtifactInfo> allArtifacts) {
+        Map<InventoryArtifactInfo, Integer> artifacts = new HashMap<>();
+        for (DbInventoryArtifactCount dbInventoryArtifactCount : getArtifactCountCrud().readDbChildren()) {
+            InventoryArtifactInfo inventoryArtifactInfo = allArtifacts.get(dbInventoryArtifactCount.getDbInventoryArtifact().getId());
+            if (inventoryArtifactInfo == null) {
+                throw new IllegalStateException("InventoryArtifactInfo does not exist: " + dbInventoryArtifactCount.getDbInventoryArtifact().getId());
+            }
+            artifacts.put(inventoryArtifactInfo, dbInventoryArtifactCount.getCount());
+        }
+        return new InventoryItemInfo(name, id, artifacts);
     }
 
     @Override

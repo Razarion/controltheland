@@ -1,5 +1,6 @@
 package com.btxtech.game.services.inventory;
 
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryArtifactInfo;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.user.UserService;
 
@@ -18,11 +19,11 @@ import javax.persistence.Id;
 @Entity(name = "INVENTORY_ARTIFACT")
 public class DbInventoryArtifact implements CrudChild {
     public enum Rareness {
-        COMMON("#FFFFFF"),
-        UN_COMMON("#FFFFFF"),
-        RARE("#FFFFFF"),
-        EPIC("#FFFFFF"),
-        LEGENDARY("#FFFFFF");
+        COMMON("#FFFF01"),
+        UN_COMMON("#FFFF02"),
+        RARE("#FFFF03"),
+        EPIC("#FFFF04"),
+        LEGENDARY("#FFFF05");
         private String htmlColor;
 
         Rareness(String htmlColor) {
@@ -96,6 +97,10 @@ public class DbInventoryArtifact implements CrudChild {
 
     public void setImageData(byte[] imageData) {
         this.imageData = imageData;
+    }
+
+    public InventoryArtifactInfo generateInventoryArtifactInfo() {
+        return new InventoryArtifactInfo(name, id, rareness.getHtmlColor());
     }
 
     @Override

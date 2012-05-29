@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.ChatMessage;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -34,6 +35,7 @@ import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -94,4 +96,6 @@ public interface MovableService extends RemoteService {
     void breakAlliance(String partnerUserName);
 
     Collection<String> getAllAlliances();
+
+    InventoryInfo getInventory();
 }
