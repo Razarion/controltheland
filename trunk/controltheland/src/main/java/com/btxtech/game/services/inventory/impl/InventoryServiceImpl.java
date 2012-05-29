@@ -1,6 +1,9 @@
 package com.btxtech.game.services.inventory.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryArtifactInfo;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryItemInfo;
 import com.btxtech.game.jsre.common.BoxPickedPacket;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoxItemType;
@@ -35,7 +38,10 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -281,6 +287,47 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
         // TODO Formation
     }
 
+    @Override
+    public InventoryInfo getInventory() {
+        InventoryInfo inventoryInfo = new InventoryInfo();
+        UserState userState = userService.getUserState();
+        Map<Integer, InventoryArtifactInfo> allArtifacts = getAllInventoryArtifactInfoFromDb();
+        Map<Integer, InventoryItemInfo> allItems = getAllInventoryItemsInfoFromDb(allArtifacts);
+
+        // Set razarion
+        inventoryInfo.setRazarion(userState.getRazarion());
+        // Set all items
+        inventoryInfo.setAllInventoryItemInfos(new ArrayList<>(allItems.values())); // new ArrayList() due to GWT problems
+        // Set own artifacts
+        Map<InventoryArtifactInfo, Integer> ownInventoryArtifacts = new HashMap<>();
+        for (Integer artifactId : userState.getInventoryArtifactIds()) {
+            InventoryArtifactInfo inventoryArtifactInfo = allArtifacts.get(artifactId);
+            if (inventoryArtifactInfo == null) {
+                throw new IllegalStateException("InventoryArtifactInfo does not exist: " + artifactId);
+            }
+            if (ownInventoryArtifacts.containsKey(inventoryArtifactInfo)) {
+                continue;
+            }
+            ownInventoryArtifacts.put(inventoryArtifactInfo, Collections.frequency(userState.getInventoryArtifactIds(), artifactId));
+        }
+        inventoryInfo.setOwnInventoryArtifacts(ownInventoryArtifacts);
+        // Set own items
+        Map<InventoryItemInfo, Integer> ownInventoryItems = new HashMap<>();
+        for (Integer itemId : userState.getInventoryItemIds()) {
+            InventoryItemInfo inventoryItemInfo = allItems.get(itemId);
+            if (inventoryItemInfo == null) {
+                throw new IllegalStateException("InventoryItemInfo does not exist: " + itemId);
+            }
+            if (ownInventoryItems.containsKey(inventoryItemInfo)) {
+                continue;
+            }
+            ownInventoryItems.put(inventoryItemInfo, Collections.frequency(userState.getInventoryItemIds(), itemId));
+        }
+        inventoryInfo.setOwnInventoryItems(ownInventoryItems);
+
+        return inventoryInfo;
+    }
+
     private void dropRegionBoxes(BoxRegion boxRegion) {
         HibernateUtil.openSession4InternalCall(sessionFactory);
         try {
@@ -311,11 +358,31 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
 
     private void expireBox(SyncBoxItem syncBoxItem) {
         itemService.killSyncItem(syncBoxItem, null, true, false);
-        HibernateUtil.openSession4InternalCall(sessionFactory);
-        try {
+        if (HibernateUtil.hasOpenSession(sessionFactory)) {
             historyService.addBoxExpired(syncBoxItem);
-        } finally {
-            HibernateUtil.closeSession4InternalCall(sessionFactory);
+        } else {
+            HibernateUtil.openSession4InternalCall(sessionFactory);
+            try {
+                historyService.addBoxExpired(syncBoxItem);
+            } finally {
+                HibernateUtil.closeSession4InternalCall(sessionFactory);
+            }
         }
+    }
+
+    private Map<Integer, InventoryArtifactInfo> getAllInventoryArtifactInfoFromDb() {
+        Map<Integer, InventoryArtifactInfo> result = new HashMap<>();
+        for (DbInventoryArtifact dbInventoryArtifact : artifactCrud.readDbChildren()) {
+            result.put(dbInventoryArtifact.getId(), dbInventoryArtifact.generateInventoryArtifactInfo());
+        }
+        return result;
+    }
+
+    private Map<Integer, InventoryItemInfo> getAllInventoryItemsInfoFromDb(Map<Integer, InventoryArtifactInfo> allArtifacts) {
+        Map<Integer, InventoryItemInfo> result = new HashMap<>();
+        for (DbInventoryItem dbInventoryItem : itemCrud.readDbChildren()) {
+            result.put(dbInventoryItem.getId(), dbInventoryItem.generateInventoryItemInfo(allArtifacts));
+        }
+        return result;
     }
 }

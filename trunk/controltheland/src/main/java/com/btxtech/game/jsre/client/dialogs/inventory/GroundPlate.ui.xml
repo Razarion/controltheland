@@ -1,0 +1,41 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.important {
+			font-weight: bold;
+		}
+		.artifactplate {
+            box-shadow: inset 2px 2px 5px 1px #000000;
+			background-color: ButtonShadow;
+		}
+		.groundplate {
+			background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgba(245, 246, 246, 1) ), color-stop(21%, rgba(219, 220, 226, 1) ),	color-stop(49%, rgba(184, 186, 198, 1) ),color-stop(80%, rgba(221, 223, 227, 1) ),	color-stop(100%, rgba(245, 246, 246, 1) ) );
+			background: -webkit-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%,rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%,rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100% );
+			margin-bottom: 2px;
+			padding: 10px;
+			border-top: 1px solid #ddd;
+			border-right: 2px solid #888;
+			border-bottom: 2px solid #888;
+			border-left: 1px solid #ccc;
+			border-radius: 4px;
+		}
+	</ui:style>
+	<g:HTMLPanel>
+		<g:HorizontalPanel styleName="{style.groundplate}">
+			<g:VerticalPanel>
+				<g:Cell horizontalAlignment="ALIGN_CENTER">
+					<g:Image width="100px" height="100px" ui:field="image"/>
+				</g:Cell>
+				<g:Cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+					<g:Button text="Assemble"/>
+				</g:Cell>
+			</g:VerticalPanel>
+			<g:Cell verticalAlignment="ALIGN_MIDDLE">
+				<g:ScrollPanel height="" width="480px">
+				<g:HorizontalPanel width="" height="" styleName="{style.artifactplate}" spacing="5" ui:field="artifacts"/>
+			</g:ScrollPanel>
+			</g:Cell>
+		</g:HorizontalPanel>
+	</g:HTMLPanel>
+</ui:UiBinder> 

@@ -12,6 +12,7 @@
  */
 package com.btxtech.game.wicket.uiservices;
 
+import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryItem;
@@ -30,26 +31,21 @@ import org.apache.wicket.util.value.ValueMap;
  */
 public class InventoryImageResource extends WebResource {
     public static final String SHARED_IMAGE_RESOURCES = "inventoryImage";
-    public static final String PATH = "/inventoryImg";
-    private static final String ID = "id";
-    private static final String TYPE = "type";
-    private static final String TYPE_ARTIFACT = "art";
-    private static final String TYPE_ITEM = "item";
 
     @SpringBean
     private InventoryService inventoryService;
 
     public static Image createArtifactImage(String id, DbInventoryArtifact dbInventoryArtifact) {
         ValueMap valueMap = new ValueMap();
-        valueMap.put(TYPE, TYPE_ARTIFACT);
-        valueMap.put(ID, dbInventoryArtifact.getId());
+        valueMap.put(Constants.INVENTORY_TYPE, Constants.INVENTORY_TYPE_ARTIFACT);
+        valueMap.put(Constants.INVENTORY_ID, dbInventoryArtifact.getId());
         return new Image(id, new ResourceReference(SHARED_IMAGE_RESOURCES), valueMap);
     }
 
     public static Image createItemImage(String id, DbInventoryItem dbInventoryItem) {
         ValueMap valueMap = new ValueMap();
-        valueMap.put(TYPE, TYPE_ITEM);
-        valueMap.put(ID, dbInventoryItem.getId());
+        valueMap.put(Constants.INVENTORY_TYPE, Constants.INVENTORY_TYPE_ITEM);
+        valueMap.put(Constants.INVENTORY_ID, dbInventoryItem.getId());
         return new Image(id, new ResourceReference(SHARED_IMAGE_RESOURCES), valueMap);
     }
 
@@ -63,10 +59,10 @@ public class InventoryImageResource extends WebResource {
         String contentType = null;
         byte[] contentData = null;
 
-        int id = Utils.parseIntSave(getParameters().getString(ID));
-        String type = Utils.parseStringSave(getParameters().getString(TYPE));
+        int id = Utils.parseIntSave(getParameters().getString(Constants.INVENTORY_ID));
+        String type = Utils.parseStringSave(getParameters().getString(Constants.INVENTORY_TYPE));
         switch (type) {
-            case TYPE_ARTIFACT: {
+            case Constants.INVENTORY_TYPE_ARTIFACT: {
                 DbInventoryArtifact dbInventoryArtifact = inventoryService.getArtifactCrud().readDbChild(id);
                 if (dbInventoryArtifact.getImageData() != null) {
                     contentType = dbInventoryArtifact.getImageContentType();
@@ -74,7 +70,7 @@ public class InventoryImageResource extends WebResource {
                 }
                 break;
             }
-            case TYPE_ITEM: {
+            case Constants.INVENTORY_TYPE_ITEM: {
                 DbInventoryItem dbInventoryItem = inventoryService.getItemCrud().readDbChild(id);
                 if (dbInventoryItem.getImageData() != null) {
                     contentType = dbInventoryItem.getImageContentType();

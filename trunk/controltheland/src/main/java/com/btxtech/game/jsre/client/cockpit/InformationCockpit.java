@@ -3,6 +3,8 @@ package com.btxtech.game.jsre.client.cockpit;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.dialogs.DialogManager;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -56,7 +58,7 @@ public class InformationCockpit extends VerticalPanel {
         inventoryLink.addHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                // TODO System.out.println("Open invntory Dialog");
+                DialogManager.showDialog(new InventoryDialog(), DialogManager.Type.QUEUE_ABLE);
             }
         }, ClickEvent.getType());
         preventEvents(inventoryLink);

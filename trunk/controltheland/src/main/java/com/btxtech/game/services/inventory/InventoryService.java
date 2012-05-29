@@ -1,6 +1,7 @@
 package com.btxtech.game.services.inventory;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.common.gameengine.services.inventory.CommonInventoryService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
@@ -26,4 +27,6 @@ public interface InventoryService extends CommonInventoryService {
     void assembleInventoryItem(int inventoryItemId);
 
     void useInventoryItem(int inventoryItemId, Index position);
+
+    InventoryInfo getInventory();
 }

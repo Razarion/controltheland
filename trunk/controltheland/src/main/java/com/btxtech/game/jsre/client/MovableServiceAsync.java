@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client;
 import com.btxtech.game.jsre.client.common.ChatMessage;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
@@ -89,4 +90,6 @@ public interface MovableServiceAsync {
     void rejectAllianceOffer(String partnerUserName, AsyncCallback<Void> asyncCallback);
 
     void getAllAlliances(AsyncCallback<Collection<String>> asyncCallback);
+
+    void getInventory(AsyncCallback<InventoryInfo> asyncCallback);
 }
