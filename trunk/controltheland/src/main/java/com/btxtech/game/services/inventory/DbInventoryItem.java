@@ -49,6 +49,7 @@ public class DbInventoryItem implements CrudChild, CrudParent {
     @OneToOne(fetch = FetchType.LAZY)
     private DbBaseItemType dbBaseItemType;
     private int baseItemTypeCount;
+    private int itemFreeRange;
     // Artifact
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
@@ -136,6 +137,14 @@ public class DbInventoryItem implements CrudChild, CrudParent {
         this.baseItemTypeCount = baseItemTypeCount;
     }
 
+    public int getItemFreeRange() {
+        return itemFreeRange;
+    }
+
+    public void setItemFreeRange(int itemFreeRange) {
+        this.itemFreeRange = itemFreeRange;
+    }
+
     public CrudChildServiceHelper<DbInventoryArtifactCount> getArtifactCountCrud() {
         if (artifactCountCrud == null) {
             artifactCountCrud = new CrudChildServiceHelper<>(artifactCounts, DbInventoryArtifactCount.class, this);
@@ -152,7 +161,13 @@ public class DbInventoryItem implements CrudChild, CrudParent {
             }
             artifacts.put(inventoryArtifactInfo, dbInventoryArtifactCount.getCount());
         }
-        return new InventoryItemInfo(name, id, artifacts);
+        return new InventoryItemInfo(name,
+                id,
+                artifacts,
+                dbBaseItemType != null ? dbBaseItemType.getId() : null,
+                baseItemTypeCount,
+                itemFreeRange,
+                goldAmount);
     }
 
     @Override

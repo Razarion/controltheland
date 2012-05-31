@@ -14,6 +14,8 @@
 package com.btxtech.game.jsre.client.common;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -236,6 +238,14 @@ public class Index implements Serializable {
         } else {
             return null;
         }
+    }
+
+    public static Collection<Index> add(Collection<Index> positions, Index delta) {
+        Collection<Index> result = new ArrayList<Index>();
+        for (Index position : positions) {
+            result.add(position.add(delta));
+        }
+        return result;
     }
 
 }

@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.itemtypeeditor;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.ImageLoader;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;

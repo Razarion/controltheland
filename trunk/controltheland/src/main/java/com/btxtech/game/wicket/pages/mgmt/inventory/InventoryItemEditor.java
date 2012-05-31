@@ -56,6 +56,7 @@ public class InventoryItemEditor extends MgmtWebPage {
         form.add(new LevelPanel("goldLevel"));
         form.add(new BaseItemTypePanel("dbBaseItemType"));
         form.add(new TextField("baseItemTypeCount"));
+        form.add(new TextField("itemFreeRange"));
 
         new CrudChildTableHelper<DbInventoryItem, DbInventoryArtifactCount>("artifacts", null, "createArtifact", false, form, false) {
             @Override

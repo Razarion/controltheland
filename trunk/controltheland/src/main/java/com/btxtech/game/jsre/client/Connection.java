@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.ChatMessage;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
@@ -615,7 +616,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
             movableServiceAsync.assembleInventoryItem(inventoryItemId, new AsyncCallback<InventoryInfo>() {
                 @Override
                 public void onFailure(Throwable caught) {
-                    handleDisconnection("loadInventory", caught);
+                    handleDisconnection("assembleInventoryItem", caught);
                 }
 
                 @Override
@@ -626,4 +627,19 @@ public class Connection implements StartupProgressListener, ConnectionI {
         }
     }
 
+    public void useInventoryItem(int inventoryItemId, Collection<Index> positionToBePlaced) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.useInventoryItem(inventoryItemId, positionToBePlaced, new AsyncCallback<Void>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    handleDisconnection("useInventoryItem", caught);
+                }
+
+                @Override
+                public void onSuccess(Void aVoid) {
+                    // Do nothing
+                }
+            });
+        }
+    }
 }

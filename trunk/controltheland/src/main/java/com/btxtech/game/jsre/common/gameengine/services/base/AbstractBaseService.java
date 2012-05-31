@@ -54,7 +54,11 @@ public interface AbstractBaseService {
 
     boolean isLevelLimitation4ItemTypeExceeded(BaseItemType newItemType, SimpleBase simpleBase) throws NoSuchItemTypeException;
 
-    boolean isHouseSpaceExceeded(SimpleBase simpleBase) throws NoSuchItemTypeException;
+    boolean isLevelLimitation4ItemTypeExceeded(BaseItemType newItemType, int toAddCount, SimpleBase simpleBase) throws NoSuchItemTypeException;
+
+    boolean isHouseSpaceExceeded(SimpleBase simpleBase);
+
+    boolean isHouseSpaceExceeded(SimpleBase simpleBase, int itemCountToAdd);
 
     LevelScope getLevel(SimpleBase simpleBase);
 

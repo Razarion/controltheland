@@ -412,6 +412,26 @@ abstract public class AbstractItemService implements ItemService {
     }
 
     @Override
+    public boolean hasEnemyInRange(final SimpleBase simpleBase, final Index middlePoint, final int range) {
+        return iterateOverItems(new ItemHandler<Boolean>() {
+            @Override
+            public Boolean handleItem(SyncItem syncItem) {
+                if (!syncItem.getSyncItemArea().hasPosition()) {
+                    return null;
+                }
+
+                if (syncItem instanceof SyncBaseItem
+                        && ((SyncBaseItem) syncItem).isEnemy(simpleBase)
+                        && syncItem.getSyncItemArea().getDistance(middlePoint) <= range) {
+                    return true;
+                }
+
+                return null;
+            }
+        }, false);
+    }
+
+    @Override
     public Collection<SyncBaseItem> getBaseItemsInRectangle(final Rectangle rectangle, final SimpleBase simpleBase, final Collection<BaseItemType> baseItemTypeFilter) {
         final Collection<SyncBaseItem> itemsInBase = new ArrayList<SyncBaseItem>();
         iterateOverItems(new ItemHandler<Void>() {

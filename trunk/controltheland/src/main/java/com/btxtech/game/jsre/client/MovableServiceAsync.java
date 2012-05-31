@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.ChatMessage;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
@@ -94,4 +95,6 @@ public interface MovableServiceAsync {
     void getInventory(AsyncCallback<InventoryInfo> asyncCallback);
 
     void assembleInventoryItem(int inventoryItemId, AsyncCallback<InventoryInfo> asyncCallback);
+
+    void useInventoryItem(int inventoryItemId, Collection<Index> positionToBePlaced, AsyncCallback<Void> asyncCallback);
 }

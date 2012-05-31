@@ -358,9 +358,9 @@ public class SideCockpit {
 
     public void addToParent(AbsolutePanel parent) {
         parent.add(mainPanel, 0, 0);
-        mainPanel.getElement().getStyle().setZIndex(Constants.Z_INDEX_TOP_MAP_PANEL);
+        mainPanel.getElement().getStyle().setZIndex(Constants.Z_INDEX_SIDE_COCKPIT);
         parent.add(levelPanel, LEVEL_PANEL_X, 0);
-        levelPanel.getElement().getStyle().setZIndex(Constants.Z_INDEX_TOP_MAP_PANEL);
+        levelPanel.getElement().getStyle().setZIndex(Constants.Z_INDEX_SIDE_COCKPIT);
         questProgressCockpit.addToParent(parent);
         informationCockpit.setPatent(parent);
     }

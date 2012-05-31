@@ -4,10 +4,15 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
+import com.btxtech.game.services.common.db.RectangleUserType;
 import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -25,6 +30,7 @@ import java.util.Collection;
  * Time: 22:03
  */
 @Entity(name = "BOX_REGION")
+@TypeDef(name = "rectangle", typeClass = RectangleUserType.class)
 public class DbBoxRegion implements CrudChild, CrudParent {
     @Id
     @GeneratedValue
@@ -36,6 +42,8 @@ public class DbBoxRegion implements CrudChild, CrudParent {
     private Collection<DbBoxRegionCount> dbBoxRegionCounts;
     private long minInterval;
     private long maxInterval;
+    @Type(type = "rectangle")
+    @Columns(columns = {@Column(name = "regionX"), @Column(name = "regionY"), @Column(name = "regionWidth"), @Column(name = "regionHeight")})
     private Rectangle region;
     private int itemFreeRange;
 

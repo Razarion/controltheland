@@ -381,6 +381,25 @@ public class HistoryServiceImpl implements HistoryService {
                 inventoryArtifactName));
     }
 
+    @Override
+    public void addInventoryItemUsed(UserState userState, String inventoryItemName) {
+        save(new DbHistoryElement(DbHistoryElement.Type.INVENTORY_ITEM_USED,
+                userService.getUser(userState),
+                null,
+                baseService.getBase(userState).getSimpleBase(),
+                null,
+                null,
+                null,
+                null,
+                baseService,
+                null,
+                DbHistoryElement.Source.HUMAN,
+                null,
+                null,
+                null,
+                inventoryItemName));
+    }
+
     private String getSessionId(SimpleBase simpleBase) {
         UserState userState = baseService.getUserState(simpleBase);
         if (userState != null && userState.getSessionId() != null) {

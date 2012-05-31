@@ -69,7 +69,7 @@
 								<g:Label text="???" styleName="{style.youown}" ui:field="countLabel"/>
 							</g:Cell>
 							<g:Cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-								<g:Button text="Use_Item"/>
+								<g:Button text="Use Item" ui:field="useItemButton"/>
 							</g:Cell>
 					</g:VerticalPanel>
 					</g:Cell>

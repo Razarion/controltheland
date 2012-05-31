@@ -192,9 +192,21 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
     }
 
     @Override
-    public boolean isHouseSpaceExceeded(SimpleBase simpleBase) throws NoSuchItemTypeException {
+    public boolean isLevelLimitation4ItemTypeExceeded(BaseItemType newItemType, int toAddCount, SimpleBase simpleBase) throws NoSuchItemTypeException {
+        LevelScope levelScope = getLevel(simpleBase);
+        return getItemCount(simpleBase, newItemType.getId()) + toAddCount > levelScope.getLimitation4ItemType(newItemType.getId());
+    }
+
+    @Override
+    public boolean isHouseSpaceExceeded(SimpleBase simpleBase) {
         LevelScope levelScope = getLevel(simpleBase);
         return getItemCount(simpleBase) >= getHouseSpace(simpleBase) + levelScope.getHouseSpace();
+    }
+
+    @Override
+    public boolean isHouseSpaceExceeded(SimpleBase simpleBase, int itemCountToAdd) {
+        LevelScope levelScope = getLevel(simpleBase);
+        return getItemCount(simpleBase) + itemCountToAdd > getHouseSpace(simpleBase) + levelScope.getHouseSpace();
     }
 
     @Override

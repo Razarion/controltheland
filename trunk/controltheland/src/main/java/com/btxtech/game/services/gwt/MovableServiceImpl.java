@@ -16,6 +16,7 @@ package com.btxtech.game.services.gwt;
 
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.ChatMessage;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
@@ -385,6 +386,15 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         } catch (Throwable t) {
             log.error("", t);
             return null;
+        }
+    }
+
+    @Override
+    public void useInventoryItem(int inventoryItemId, Collection<Index> positionToBePlaced) {
+        try {
+            inventoryService.useInventoryItem(inventoryItemId, positionToBePlaced);
+        } catch (Throwable t) {
+            log.error("", t);
         }
     }
 }

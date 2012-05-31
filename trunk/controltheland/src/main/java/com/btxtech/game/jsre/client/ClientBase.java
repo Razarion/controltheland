@@ -132,6 +132,14 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         }
     }
 
+    public boolean isDepositResourceAllowed(double amount) {
+        if (Connection.getInstance().getGameInfo() instanceof RealGameInfo) {
+            return ClientLevelHandler.getInstance().getLevelScope().getMaxMoney() >= accountBalance + amount;
+        } else {
+            return true;
+        }
+    }
+
     @Override
     public void withdrawalMoney(double price, SimpleBase simpleBase) throws InsufficientFundsException {
         if (this.simpleBase == null || !this.simpleBase.equals(simpleBase)) {

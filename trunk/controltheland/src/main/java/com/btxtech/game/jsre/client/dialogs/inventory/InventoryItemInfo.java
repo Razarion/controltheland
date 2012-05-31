@@ -12,6 +12,10 @@ public class InventoryItemInfo implements Serializable {
     private String inventoryItemName;
     private int inventoryItemId;
     private Map<InventoryArtifactInfo, Integer> artifacts;
+    private Integer baseItemTypeId;
+    private int itemCount;
+    private int itemFreeRange;
+    private int goldAmount;
 
     /**
      * Used by GWT
@@ -19,10 +23,14 @@ public class InventoryItemInfo implements Serializable {
     InventoryItemInfo() {
     }
 
-    public InventoryItemInfo(String inventoryItemName, int inventoryItemId, Map<InventoryArtifactInfo, Integer> artifacts) {
+    public InventoryItemInfo(String inventoryItemName, int inventoryItemId, Map<InventoryArtifactInfo, Integer> artifacts, Integer baseItemTypeId, int itemCount, int itemFreeRange, int goldAmount) {
         this.inventoryItemName = inventoryItemName;
         this.inventoryItemId = inventoryItemId;
         this.artifacts = artifacts;
+        this.baseItemTypeId = baseItemTypeId;
+        this.itemCount = itemCount;
+        this.itemFreeRange = itemFreeRange;
+        this.goldAmount = goldAmount;
     }
 
     public String getInventoryItemName() {
@@ -39,6 +47,26 @@ public class InventoryItemInfo implements Serializable {
 
     public Map<InventoryArtifactInfo, Integer> getArtifacts() {
         return artifacts;
+    }
+
+    public int getBaseItemTypeId() {
+        return baseItemTypeId;
+    }
+
+    public boolean hasBaseItemTypeId() {
+        return baseItemTypeId != null;
+    }
+
+    public int getItemCount() {
+        return itemCount;
+    }
+
+    public int getItemFreeRange() {
+        return itemFreeRange;
+    }
+
+    public int getGoldAmount() {
+        return goldAmount;
     }
 
     @Override
