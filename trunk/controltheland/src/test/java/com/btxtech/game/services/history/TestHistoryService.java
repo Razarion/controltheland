@@ -3,15 +3,23 @@ package com.btxtech.game.services.history;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.history.impl.HistoryServiceImpl;
+import com.btxtech.game.services.inventory.DbInventoryArtifact;
+import com.btxtech.game.services.inventory.DbInventoryArtifactCount;
+import com.btxtech.game.services.inventory.DbInventoryItem;
+import com.btxtech.game.services.inventory.InventoryService;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.user.AllianceService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -49,6 +57,8 @@ public class TestHistoryService extends AbstractServiceTest {
     private UserGuidanceService userGuidanceService;
     @Autowired
     private AllianceService allianceService;
+    @Autowired
+    private InventoryService inventoryService;
 
     @Test
     @DirtiesContext
@@ -595,6 +605,73 @@ public class TestHistoryService extends AbstractServiceTest {
         Assert.assertEquals("Your alliance offer has been accepted by u1", displayHistoryElements.get(3).getMessage());
         Assert.assertTrue(displayHistoryElements.get(4).getTimeStamp() >= displayHistoryElements.get(5).getTimeStamp());
         Assert.assertEquals("You offered u1 an alliance", displayHistoryElements.get(4).getMessage());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void inventory() throws Exception {
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbInventoryArtifact dbInventoryArtifact = inventoryService.getArtifactCrud().createDbChild();
+        dbInventoryArtifact.setName("dbInventoryArtifact");
+        inventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact);
+        DbInventoryItem dbInventoryItem = inventoryService.getItemCrud().createDbChild();
+        dbInventoryItem.setName("dbInventoryItem");
+        DbInventoryArtifactCount dbInventoryArtifactCount = dbInventoryItem.getArtifactCountCrud().createDbChild();
+        dbInventoryArtifactCount.setCount(1);
+        dbInventoryArtifactCount.setDbInventoryArtifact(dbInventoryArtifact);
+        inventoryService.getItemCrud().updateDbChild(dbInventoryItem);
+
+        DbBoxItemType dbBoxItemType = (DbBoxItemType) itemService.getDbItemTypeCrud().createDbChild(DbBoxItemType.class);
+        setupImages(dbBoxItemType, 1);
+        dbBoxItemType.setName("Box Item");
+        dbBoxItemType.setTerrainType(TerrainType.LAND);
+        dbBoxItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_1));
+        dbBoxItemType.setTtl(5000);
+        itemService.saveDbItemType(dbBoxItemType);
+        itemService.activate();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("u1", "xxx", "xxx", "");
+        userService.login("u1", "xxx");
+        SimpleBase simpleBase = getMyBase();
+        SyncBoxItem syncBoxItem = createSyncBoxItem(dbBoxItemType.getId(), new Index(1000, 1000), new Id(1, 1, 1));
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(2000, 2000), new Id(2, 2, 2), simpleBase);
+
+        // System entry historyService.addBoxDropped(syncBoxItem, new Index(1000, 1000), null);
+        // System entry historyService.addBoxDropped(syncBoxItem, new Index(1000, 1000), syncBaseItem);
+        // System entry historyService.addBoxExpired(SyncBoxItem boxItem);
+        historyService.addBoxPicked(syncBoxItem, syncBaseItem);
+        historyService.addRazarionFromBox(userService.getUserState(), 100);
+        historyService.addInventoryItemFromBox(userService.getUserState(), "inventoryItemName");
+        historyService.addInventoryArtifactFromBox(userService.getUserState(), "inventoryArtifactName");
+        historyService.addInventoryItemUsed(userService.getUserState(), "inventoryItemName");
+
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("u1"), 1000);
+        System.out.println("----- u1 Target-----");
+        for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
+            System.out.println(displayHistoryElement);
+        }
+        Assert.assertEquals(7, displayHistoryElements.size());
+        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
+        Assert.assertEquals("Inventory used inventoryItemName", displayHistoryElements.get(0).getMessage());
+        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
+        Assert.assertEquals("Found inventory artifact inventoryArtifactName", displayHistoryElements.get(1).getMessage());
+        Assert.assertTrue(displayHistoryElements.get(2).getTimeStamp() >= displayHistoryElements.get(3).getTimeStamp());
+        Assert.assertEquals("Found inventory item inventoryItemName", displayHistoryElements.get(2).getMessage());
+        Assert.assertTrue(displayHistoryElements.get(3).getTimeStamp() >= displayHistoryElements.get(4).getTimeStamp());
+        Assert.assertEquals("Found razarion 100", displayHistoryElements.get(3).getMessage());
+        Assert.assertTrue(displayHistoryElements.get(4).getTimeStamp() >= displayHistoryElements.get(5).getTimeStamp());
+        Assert.assertEquals("Box picked", displayHistoryElements.get(4).getMessage());
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
