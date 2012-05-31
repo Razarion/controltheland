@@ -62,7 +62,8 @@ public class DbHistoryElement implements Serializable {
         RAZARION_BOUGHT,
         RAZARION_SPENT,
         INVENTORY_ITEM_FROM_BOX,
-        INVENTORY_ARTIFACT_FROM_BOX
+        INVENTORY_ARTIFACT_FROM_BOX,
+        INVENTORY_ITEM_USED
     }
 
     public enum Source {

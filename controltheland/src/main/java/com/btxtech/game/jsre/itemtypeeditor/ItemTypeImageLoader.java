@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.itemtypeeditor;
 
 import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.common.ImageLoader;
 
 /**
  * User: beat

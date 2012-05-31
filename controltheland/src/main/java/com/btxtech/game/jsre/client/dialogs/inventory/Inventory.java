@@ -45,8 +45,8 @@ public class Inventory extends Composite implements HasText {
         razarionAmount.setText("Razarion: " + amount);
     }
 
-    public void addItemPlate(InventoryItemInfo inventoryItemInfo, int ownCount) {
-        itemPlates.add(new ItemPlate(inventoryItemInfo, ownCount));
+    public void addItemPlate(InventoryItemInfo inventoryItemInfo, int ownCount, InventoryDialog inventoryDialog) {
+        itemPlates.add(new ItemPlate(inventoryItemInfo, ownCount, inventoryDialog));
     }
 
     public void clearAllItemPlates() {

@@ -39,7 +39,7 @@ public class InventoryDialog extends Dialog {
         inventory.setRazarionAmount(inventoryInfo.getRazarion());
         inventory.clearAllItemPlates();
         for (Map.Entry<InventoryItemInfo, Integer> entry : inventoryInfo.getOwnInventoryItems().entrySet()) {
-            inventory.addItemPlate(entry.getKey(), entry.getValue());
+            inventory.addItemPlate(entry.getKey(), entry.getValue(), this);
         }
         inventory.clearAllGroundPlates();
         for (InventoryItemInfo inventoryItemInfo : inventoryInfo.getAllInventoryItemInfos()) {

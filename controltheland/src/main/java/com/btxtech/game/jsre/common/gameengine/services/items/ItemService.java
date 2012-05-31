@@ -67,6 +67,8 @@ public interface ItemService {
 
     Collection<SyncBaseItem> getEnemyItems(SimpleBase base, Rectangle region);
 
+    boolean hasEnemyInRange(SimpleBase simpleBase, Index middlePoint, int range);
+
     boolean hasStandingItemsInRect(Rectangle rectangle, SyncItem exceptThat);
 
     boolean isSyncItemOverlapping(SyncItem syncItem);

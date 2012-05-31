@@ -33,9 +33,9 @@ public class SvgCockpit {
         active = true;
         if (svgWidget == null) {
             svgWidget = new SvgWidget("/images/cockpit/gui.svg", WIDTH, HEIGHT);
-            svgWidget.getElement().getStyle().setZIndex(Constants.Z_INDEX_TOP_MAP_PANEL);
+            svgWidget.getElement().getStyle().setZIndex(Constants.Z_INDEX_SIDE_COCKPIT);
             absolutePanel = new AbsolutePanel();
-            absolutePanel.getElement().getStyle().setZIndex(Constants.Z_INDEX_TOP_MAP_PANEL + 1);
+            absolutePanel.getElement().getStyle().setZIndex(Constants.Z_INDEX_SIDE_COCKPIT + 1);
             absolutePanel.setPixelSize(WIDTH, HEIGHT);
             preventEvents();
         }

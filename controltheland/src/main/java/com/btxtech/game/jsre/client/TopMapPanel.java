@@ -55,7 +55,7 @@ public abstract class TopMapPanel extends DecoratorPanel {
         content.getElement().getStyle().setBackgroundImage("url(/images/transparentimg.png)");
 
         setWidget(content);
-        getElement().getStyle().setZIndex(Constants.Z_INDEX_TOP_MAP_PANEL);
+        getElement().getStyle().setZIndex(Constants.Z_INDEX_SIDE_COCKPIT);
 
         preventEvents();
     }
@@ -174,7 +174,7 @@ public abstract class TopMapPanel extends DecoratorPanel {
                     expand();
                 }
             });
-            expandImage.getElement().getStyle().setZIndex(Constants.Z_INDEX_TOP_MAP_PANEL);
+            expandImage.getElement().getStyle().setZIndex(Constants.Z_INDEX_SIDE_COCKPIT);
         }
     }
 

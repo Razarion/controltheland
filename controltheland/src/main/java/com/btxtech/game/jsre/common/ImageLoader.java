@@ -1,10 +1,9 @@
-package com.btxtech.game.jsre.itemtypeeditor;
+package com.btxtech.game.jsre.common;
 
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.RootPanel;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +18,14 @@ public abstract class ImageLoader {
     private int imageCount = 0;
     private Listener listener;
 
+    public ImageLoader() {
+    }
+
     public ImageLoader(Listener listener) {
+        this.listener = listener;
+    }
+
+    public void setListener(Listener listener) {
         this.listener = listener;
     }
 
@@ -35,7 +41,7 @@ public abstract class ImageLoader {
         final int imageNr = imageCount;
         imageCount++;
         // init image
-        final Image image = new Image(url);
+        final Image image = new Image();
         image.addLoadHandler(new LoadHandler() {
             public void onLoad(LoadEvent event) {
                 ImageElement imageElement = (ImageElement) image.getElement().cast();
@@ -45,8 +51,16 @@ public abstract class ImageLoader {
                 }
             }
         });
-        image.setVisible(false);
-        RootPanel.get().add(image); // image must be on page to fire load
+        image.setUrl(url);
+
+        if(image.getHeight() > 0) {
+            // TODO if more than one image -> this will call the listener too early
+            ImageElement imageElement = (ImageElement) image.getElement().cast();
+            images.put(imageNr, imageElement);
+            if (isLoaded() && listener != null) {
+                listener.onLoaded();
+            }
+        }
     }
 
     public interface Listener {

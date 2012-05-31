@@ -69,6 +69,8 @@ public interface HistoryService {
 
     void addInventoryArtifactFromBox(UserState userState, String inventoryArtifactName);
 
+    void addInventoryItemUsed(UserState userState, String inventoryItemName);
+
     List<DisplayHistoryElement> getNewestHistoryElements(User user, int count);
 
     List<DisplayHistoryElement> getHistoryElements(Long from, Long to, String sessionId, Integer baseId);

@@ -128,6 +128,10 @@ public class UserState implements Serializable {
         return inventoryItemIds.contains(inventoryItemId);
     }
 
+    public void removeInventoryItemId(int inventoryItemId) {
+        inventoryItemIds.remove(inventoryItemId);
+    }
+
     public void addInventoryArtifact(int inventoryArtifactId) {
         inventoryArtifactIds.add(inventoryArtifactId);
     }

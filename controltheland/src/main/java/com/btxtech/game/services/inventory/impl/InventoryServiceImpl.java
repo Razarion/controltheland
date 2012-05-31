@@ -1,14 +1,20 @@
 package com.btxtech.game.services.inventory.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryArtifactInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryItemInfo;
 import com.btxtech.game.jsre.common.BoxPickedPacket;
 import com.btxtech.game.jsre.common.MathHelper;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoxItemType;
+import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
+import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
@@ -25,6 +31,8 @@ import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemTypePossibility;
+import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import org.apache.commons.logging.Log;
@@ -52,8 +60,6 @@ import java.util.concurrent.TimeUnit;
  * Time: 12:48
  */
 
-// TODO history convert()
-
 @Component(value = "inventoryService")
 public class InventoryServiceImpl implements InventoryService, Runnable {
     protected static long SCHEDULE_RATE = 60 * 1000;
@@ -77,6 +83,10 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
     private UserService userService;
     @Autowired
     private ConnectionService connectionService;
+    @Autowired
+    private TerrainService terrainService;
+    @Autowired
+    private TerritoryService territoryService;
     private final Collection<SyncBoxItem> syncBoxItems = new ArrayList<>();
     private ScheduledThreadPoolExecutor boxRegionExecutor;
     private ScheduledFuture boxRegionFuture;
@@ -281,13 +291,45 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
     }
 
     @Override
-    public void useInventoryItem(int inventoryItemId, Index position) {
+    public void useInventoryItem(int inventoryItemId, Collection<Index> positionToBePlaced) throws ItemLimitExceededException, HouseSpaceExceededException, NoSuchItemTypeException {
         DbInventoryItem dbInventoryItem = itemCrud.readDbChild(inventoryItemId);
         UserState userState = userService.getUserState();
-        if (userState.hasInventoryItemId(inventoryItemId)) {
+        if (!userState.hasInventoryItemId(inventoryItemId)) {
             throw new IllegalArgumentException("User does not have inventory item: " + dbInventoryItem + " user: " + userState);
         }
-        // TODO Formation
+        Base base = baseService.getBase(userState);
+        if (base == null) {
+            throw new IllegalStateException("User does not have a base: " + userState);
+        }
+        if (dbInventoryItem.getDbBaseItemType() != null) {
+            if (positionToBePlaced.size() != dbInventoryItem.getBaseItemTypeCount()) {
+                throw new IllegalArgumentException("positionToBePlaced.size() != dbInventoryItem.getBaseItemTypeCount() " + positionToBePlaced.size() + " " + dbInventoryItem.getBaseItemTypeCount());
+            }
+            BaseItemType baseItemType = (BaseItemType) itemService.getItemType(dbInventoryItem.getDbBaseItemType());
+            for (Index position : positionToBePlaced) {
+                if (!terrainService.isFree(position, baseItemType)) {
+                    throw new IllegalArgumentException("Terrain is not free " + position + " " + baseItemType + " " + userState);
+                }
+                if (!territoryService.isAllowed(position, baseItemType)) {
+                    throw new IllegalArgumentException("Item not allowed on territory " + position + " " + baseItemType + " " + userState);
+                }
+                Rectangle itemRect = baseItemType.getBoundingBox().getRectangle(position);
+                if (itemService.hasItemsInRectangle(itemRect)) {
+                    throw new IllegalArgumentException("Can not place over other items " + position + " " + baseItemType + " " + userState);
+                }
+                if (itemService.hasEnemyInRange(base.getSimpleBase(), position, (int) baseItemType.getBoundingBox().getMaxRadiusDouble() + dbInventoryItem.getItemFreeRange())) {
+                    throw new IllegalArgumentException("Enemy items too near " + position + " " + baseItemType + " " + userState);
+                }
+            }
+            for (Index position : positionToBePlaced) {
+                itemService.createSyncObject(baseItemType, position, null, base.getSimpleBase(), 0);
+            }
+        } else {
+            baseService.depositResource(dbInventoryItem.getGoldAmount(), base.getSimpleBase());
+            baseService.sendAccountBaseUpdate(base.getSimpleBase());
+        }
+        userState.removeInventoryItemId(inventoryItemId);
+        historyService.addInventoryItemUsed(userState, dbInventoryItem.getName());
     }
 
     @Override

@@ -48,7 +48,7 @@ public class QuestProgressCockpit extends FlowPanel {
 
     public void addToParent(AbsolutePanel parent) {
         parent.add(this, 0, 0);
-        getElement().getStyle().setZIndex(Constants.Z_INDEX_TOP_MAP_PANEL);
+        getElement().getStyle().setZIndex(Constants.Z_INDEX_SIDE_COCKPIT);
         getElement().getStyle().clearBottom();
         getElement().getStyle().clearLeft();
         getElement().getStyle().setTop(0, Style.Unit.PX);

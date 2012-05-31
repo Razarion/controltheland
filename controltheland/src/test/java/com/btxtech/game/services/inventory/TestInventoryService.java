@@ -599,6 +599,7 @@ public class TestInventoryService extends AbstractServiceTest {
         DbInventoryItem dbInventoryItem3 = inventoryService.getItemCrud().createDbChild();
         dbInventoryItem3.setName("ItemType1");
         dbInventoryItem3.setBaseItemTypeCount(2);
+        dbInventoryItem3.setItemFreeRange(111);
         dbInventoryItem3.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
         dbInventoryArtifactCount = dbInventoryItem3.getArtifactCountCrud().createDbChild();
         dbInventoryArtifactCount.setCount(1);
@@ -611,6 +612,7 @@ public class TestInventoryService extends AbstractServiceTest {
         DbInventoryItem dbInventoryItem4 = inventoryService.getItemCrud().createDbChild();
         dbInventoryItem4.setName("ItemType2");
         dbInventoryItem4.setBaseItemTypeCount(1);
+        dbInventoryItem4.setItemFreeRange(222);
         dbInventoryItem4.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_FACTORY_ITEM_ID));
         dbInventoryArtifactCount = dbInventoryItem4.getArtifactCountCrud().createDbChild();
         dbInventoryArtifactCount.setCount(1);
@@ -669,22 +671,28 @@ public class TestInventoryService extends AbstractServiceTest {
         InventoryItemInfo inventoryItemInfo4 = dbInventoryItem4.generateInventoryItemInfo(allArtifacts);
 
         Assert.assertEquals((int)dbInventoryItem1.getId(), inventoryItemInfo1.getInventoryItemId());
+        Assert.assertEquals(100, inventoryItemInfo1.getGoldAmount());
         Assert.assertEquals("GoldItem1", inventoryItemInfo1.getInventoryItemName());
         Assert.assertEquals(0, inventoryItemInfo1.getArtifacts().size());
 
         Assert.assertEquals((int)dbInventoryItem2.getId(), inventoryItemInfo2.getInventoryItemId());
+        Assert.assertEquals(10, inventoryItemInfo2.getGoldAmount());
         Assert.assertEquals("GoldItem2", inventoryItemInfo2.getInventoryItemName());
         Assert.assertEquals(1, inventoryItemInfo2.getArtifacts().size());
         Assert.assertEquals(3, (int)inventoryItemInfo2.getArtifacts().get(inventoryArtifactInfo1));
 
         Assert.assertEquals((int)dbInventoryItem3.getId(), inventoryItemInfo3.getInventoryItemId());
         Assert.assertEquals("ItemType1", inventoryItemInfo3.getInventoryItemName());
+        Assert.assertEquals(2, inventoryItemInfo3.getItemCount());
+        Assert.assertEquals(111, inventoryItemInfo3.getItemFreeRange());
         Assert.assertEquals(2, inventoryItemInfo3.getArtifacts().size());
         Assert.assertEquals(2, (int)inventoryItemInfo3.getArtifacts().get(inventoryArtifactInfo1));
         Assert.assertEquals(1, (int)inventoryItemInfo3.getArtifacts().get(inventoryArtifactInfo3));
 
         Assert.assertEquals((int)dbInventoryItem4.getId(), inventoryItemInfo4.getInventoryItemId());
         Assert.assertEquals("ItemType2", inventoryItemInfo4.getInventoryItemName());
+        Assert.assertEquals(1, inventoryItemInfo4.getItemCount());
+        Assert.assertEquals(222, inventoryItemInfo4.getItemFreeRange());
         Assert.assertEquals(3, inventoryItemInfo4.getArtifacts().size());
         Assert.assertEquals(1, (int)inventoryItemInfo4.getArtifacts().get(inventoryArtifactInfo1));
         Assert.assertEquals(2, (int)inventoryItemInfo4.getArtifacts().get(inventoryArtifactInfo2));

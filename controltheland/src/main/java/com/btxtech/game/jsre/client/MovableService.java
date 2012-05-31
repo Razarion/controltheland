@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.ChatMessage;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
@@ -100,4 +101,6 @@ public interface MovableService extends RemoteService {
     InventoryInfo getInventory();
 
     InventoryInfo assembleInventoryItem(int inventoryItemId);
+
+    void useInventoryItem(int inventoryItemId, Collection<Index> positionToBePlaced);
 }
