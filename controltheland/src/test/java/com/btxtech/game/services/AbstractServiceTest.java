@@ -15,6 +15,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.BoxItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
@@ -349,6 +350,10 @@ abstract public class AbstractServiceTest {
         SyncResourceItem syncResourceItem = new SyncResourceItem(id, null, (ResourceType) itemService.getItemType(itemTypeId), createMockServices());
         syncResourceItem.getSyncItemArea().setPosition(position);
         return syncResourceItem;
+    }
+
+    protected SyncBoxItem createSyncBoxItem(int itemTypeId, Index position, Id id) throws Exception {
+        return new SyncBoxItem(id, position, (BoxItemType) itemService.getItemType(itemTypeId), createMockServices());
     }
 
     /**

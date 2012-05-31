@@ -601,7 +601,21 @@ public class HistoryServiceImpl implements HistoryService {
                 } else {
                     displayHistoryElement.setMessage("Alliance broken by " + dbHistoryElement.getActorUserName() + " ex partner " + dbHistoryElement.getTargetUserName());
                 }
-
+                break;
+            case INVENTORY_ITEM_USED:
+                displayHistoryElement.setMessage("Inventory used " + dbHistoryElement.getInventory());
+                break;
+            case INVENTORY_ARTIFACT_FROM_BOX:
+                displayHistoryElement.setMessage("Found inventory artifact " + dbHistoryElement.getInventory());
+                break;
+            case INVENTORY_ITEM_FROM_BOX:
+                displayHistoryElement.setMessage("Found inventory item " + dbHistoryElement.getInventory());
+                break;
+            case RAZARION_FROM_BOX:
+                displayHistoryElement.setMessage("Found razarion " + dbHistoryElement.getDeltaRazarion());
+                break;
+            case BOX_PICKED:
+                displayHistoryElement.setMessage("Box picked");
                 break;
             default:
                 displayHistoryElement.setMessage("Internal error 10");

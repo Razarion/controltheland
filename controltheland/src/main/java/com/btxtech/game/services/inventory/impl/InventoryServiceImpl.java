@@ -379,8 +379,8 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
             DbBoxRegion dbBoxRegion = boxRegionCrud.readDbChild(boxRegion.getDbBoxRegionId());
             for (DbBoxRegionCount dbBoxRegionCount : dbBoxRegion.getBoxRegionCountCrud().readDbChildren()) {
                 BoxItemType boxItemType = (BoxItemType) itemService.getItemType(dbBoxRegionCount.getDbBoxItemType());
-                Index position = collisionService.getFreeRandomPosition(boxItemType, dbBoxRegion.getRegion(), dbBoxRegion.getItemFreeRange(), true, false);
                 for (int i = 0; i < dbBoxRegionCount.getCount(); i++) {
+                    Index position = collisionService.getFreeRandomPosition(boxItemType, dbBoxRegion.getRegion(), dbBoxRegion.getItemFreeRange(), true, false);
                     dropBox(position, boxItemType, null);
                 }
             }
