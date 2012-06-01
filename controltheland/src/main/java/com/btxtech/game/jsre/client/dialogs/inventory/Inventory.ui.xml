@@ -33,8 +33,8 @@
 					<g:Button text="Market" ui:field="button"/>
 				</g:Cell>
 			</g:HorizontalPanel>
-			<g:FlowPanel ui:field="itemPlates" width="100%" height="100%" />
-			<g:FlowPanel ui:field="groundPlates" width="100%" height="100%"/>
+			<g:FlowPanel ui:field="itemPlates" width="480px" height="100%" />
+			<g:FlowPanel ui:field="groundPlates" width="480px" height="100%"/>
 		</g:VerticalPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

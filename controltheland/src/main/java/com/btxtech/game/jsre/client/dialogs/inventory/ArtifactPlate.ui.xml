@@ -1,26 +1,26 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style>
-		.important {
-			font-weight: bold;
-		}
-		.statustext {
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+    <ui:style>
+        .important {
+            font-weight: bold;
+        }
+
+        .statustext {
             color: black;
-		    font-size: 11px;
-			font-family: Arial,Helvetica,sans-serif;
-			font-weight: bold;
+            font-size: 11px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
             text-shadow: 1px 1px 1px #000000;
-			z-index: 2;
-		}
-		.imagestyle {
-			z-index: 1;
-		}
-	</ui:style>
-	<g:HTMLPanel>
-		<g:VerticalPanel width="40px" height="" ui:field="panel">
-			<g:Label text="???" ui:field="label" styleName="{style.statustext}" width="40px" height=""/>
-			<g:Image ui:field="image" styleName="{style.imagestyle}" width="40px" height="40px"/>
-		</g:VerticalPanel>
-	</g:HTMLPanel>
-</ui:UiBinder> 
+            z-index: 2;
+        }
+
+        .imagestyle {
+            z-index: 1;
+        }
+    </ui:style>
+    <g:VerticalPanel width="40px" height="" ui:field="panel">
+        <g:Label text="???" ui:field="label" styleName="{style.statustext}" width="40px" height=""/>
+        <g:Image ui:field="image" styleName="{style.imagestyle}" width="40px" height="40px"/>
+    </g:VerticalPanel>
+</ui:UiBinder>
