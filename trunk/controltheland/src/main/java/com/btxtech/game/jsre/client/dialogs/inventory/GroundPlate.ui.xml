@@ -11,7 +11,10 @@
 		}
 		.groundplate {
 			background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgba(245, 246, 246, 1) ), color-stop(21%, rgba(219, 220, 226, 1) ),	color-stop(49%, rgba(184, 186, 198, 1) ),color-stop(80%, rgba(221, 223, 227, 1) ),	color-stop(100%, rgba(245, 246, 246, 1) ) );
-			background: -webkit-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%,rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%,rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100% );
+            background: -webkit-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%,rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%,rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100% );
+            background: -moz-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%,rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%,rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100% );
+            background: -o-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%,rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%,rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100% );
+            filter: literal("progid:DXImageTransform.Microsoft.gradient(startColorstr = '#F8F8F8', endColorstr = '#A0A0A0')");
             margin-right: 2px;
             margin-bottom: 2px;
             float: left;
@@ -22,6 +25,9 @@
 			border-left: 1px solid #ccc;
 			border-radius: 4px;
 		}
+
+        div-with-literal {  top: literal("expression(document.compatMode==\"CSS1Compat\" ? documentElement.scrollTop : document.body.scrollTop \\ 2)");}
+
 
 	</ui:style>
 		<g:HorizontalPanel title="Assemble an inventory item here. Press the Assemble button if the artifacts are fuldilled." styleName="{style.groundplate}" spacing="5">

@@ -64,7 +64,7 @@ public class ItemPlate extends Composite implements HasText {
             try {
                 baseItemType = (BaseItemType) ItemContainer.getInstance().getItemType(inventoryItemInfo.getBaseItemTypeId());
                 if (ClientBase.getInstance().isLevelLimitation4ItemTypeExceeded(baseItemType, inventoryItemInfo.getItemCount(), ClientBase.getInstance().getSimpleBase())) {
-                    DialogManager.showDialog(new MessageDialog("Use Item", "In this level, you are not allowed to use " + inventoryItemInfo.getItemCount() + " " + baseItemType.getName()), DialogManager.Type.STACK_ABLE);
+                    DialogManager.showDialog(new MessageDialog("Use Item", baseItemType.getName() + " item limit is is exceeded."), DialogManager.Type.STACK_ABLE);
                 } else if (ClientBase.getInstance().isHouseSpaceExceeded(ClientBase.getInstance().getSimpleBase(), inventoryItemInfo.getItemCount())) {
                     DialogManager.showDialog(new MessageDialog("Use Item", "You do not have enough houses to  add new units or structures."), DialogManager.Type.STACK_ABLE);
                 } else {

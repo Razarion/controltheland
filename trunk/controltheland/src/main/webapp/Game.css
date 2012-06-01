@@ -304,6 +304,7 @@ td.box {
     background-image: -moz-linear-gradient(bottom, rgb(92,99,99) 42%, rgb(184,184,184) 73%);
     background-image: -webkit-linear-gradient(bottom, rgb(92,99,99) 42%, rgb(184,184,184) 73%);
     background-image: -ms-linear-gradient(bottom, rgb(92,99,99) 42%, rgb(184,184,184) 73%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#404040', endColorstr = '#808080');
     background-color: #575757;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
