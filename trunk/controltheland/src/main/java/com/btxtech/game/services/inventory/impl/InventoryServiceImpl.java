@@ -70,6 +70,8 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
     @Autowired
     private CrudRootServiceHelper<DbBoxRegion> boxRegionCrud;
     @Autowired
+    private CrudRootServiceHelper<DbInventoryNewUser> newUserCrud;
+    @Autowired
     private ItemService itemService;
     @Autowired
     private SessionFactory sessionFactory;
@@ -98,6 +100,7 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
         artifactCrud.init(DbInventoryArtifact.class);
         itemCrud.init(DbInventoryItem.class);
         boxRegionCrud.init(DbBoxRegion.class);
+        newUserCrud.init(DbInventoryNewUser.class);
         runTimer();
         HibernateUtil.openSession4InternalCall(sessionFactory);
         try {
@@ -141,6 +144,11 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
     @Override
     public CrudRootServiceHelper<DbBoxRegion> getBoxRegionCrud() {
         return boxRegionCrud;
+    }
+
+    @Override
+    public CrudRootServiceHelper<DbInventoryNewUser> getNewUserCrud() {
+        return newUserCrud;
     }
 
     @Override
@@ -371,6 +379,25 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
         inventoryInfo.setOwnInventoryItems(ownInventoryItems);
 
         return inventoryInfo;
+    }
+
+    @Override
+    public void setupNewUserState(UserState userState) {
+        for (DbInventoryNewUser dbInventoryNewUser : newUserCrud.readDbChildren()) {
+            if (dbInventoryNewUser.getRazarion() != null) {
+                userState.addRazarion(dbInventoryNewUser.getRazarion());
+            }
+            if (dbInventoryNewUser.getDbInventoryItem() != null) {
+                for (int i = 0; i < dbInventoryNewUser.getCount(); i++) {
+                    userState.addInventoryItem(dbInventoryNewUser.getDbInventoryItem().getId());
+                }
+            }
+            if (dbInventoryNewUser.getDbInventoryArtifact() != null) {
+                for (int i = 0; i < dbInventoryNewUser.getCount(); i++) {
+                    userState.addInventoryArtifact(dbInventoryNewUser.getDbInventoryArtifact().getId());
+                }
+            }
+        }
     }
 
     private void dropRegionBoxes(BoxRegion boxRegion) {

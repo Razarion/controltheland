@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsEx
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.connection.NoConnectionException;
+import com.btxtech.game.services.inventory.InventoryService;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.DbContentAccessControl;
@@ -79,6 +80,8 @@ public class UserServiceImpl implements UserService {
     private SessionFactory sessionFactory;
     @Autowired
     private StatisticsService statisticsService;
+    @Autowired
+    private InventoryService inventoryService;
     @Value(value = "${security.md5salt}")
     private String md5HashSalt;
 
@@ -382,6 +385,7 @@ public class UserServiceImpl implements UserService {
                 userStates.add(userState);
             }
             userGuidanceService.setLevelForNewUser(userState);
+            inventoryService.setupNewUserState(userState);
         }
         return session.getUserState();
     }

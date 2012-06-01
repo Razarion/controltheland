@@ -5,10 +5,13 @@ import com.btxtech.game.jsre.client.dialogs.inventory.InventoryArtifactInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryItemInfo;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.inventory.impl.DbInventoryNewUser;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemTypePossibility;
+import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +36,8 @@ public class TestInventoryService extends AbstractServiceTest {
     private ItemService itemService;
     @Autowired
     private UserGuidanceService userGuidanceService;
+    @Autowired
+    private UserService userService;
 
     @Test
     @DirtiesContext
@@ -644,19 +650,19 @@ public class TestInventoryService extends AbstractServiceTest {
         InventoryArtifactInfo inventoryArtifactInfo4 = dbInventoryArtifact4.generateInventoryArtifactInfo();
         allArtifacts.put(inventoryArtifactInfo4.getInventoryArtifactId(), inventoryArtifactInfo4);
 
-        Assert.assertEquals((int)dbInventoryArtifact1.getId(), inventoryArtifactInfo1.getInventoryArtifactId());
+        Assert.assertEquals((int) dbInventoryArtifact1.getId(), inventoryArtifactInfo1.getInventoryArtifactId());
         Assert.assertEquals("Artifact1", inventoryArtifactInfo1.getInventoryArtifactName());
         Assert.assertEquals("#FFFF02", inventoryArtifactInfo1.getHtmlRarenessColor());
 
-        Assert.assertEquals((int)dbInventoryArtifact2.getId(), inventoryArtifactInfo2.getInventoryArtifactId());
+        Assert.assertEquals((int) dbInventoryArtifact2.getId(), inventoryArtifactInfo2.getInventoryArtifactId());
         Assert.assertEquals("Artifact2", inventoryArtifactInfo2.getInventoryArtifactName());
         Assert.assertEquals("#FFFF01", inventoryArtifactInfo2.getHtmlRarenessColor());
 
-        Assert.assertEquals((int)dbInventoryArtifact3.getId(), inventoryArtifactInfo3.getInventoryArtifactId());
+        Assert.assertEquals((int) dbInventoryArtifact3.getId(), inventoryArtifactInfo3.getInventoryArtifactId());
         Assert.assertEquals("Artifact3", inventoryArtifactInfo3.getInventoryArtifactName());
         Assert.assertEquals("#FFFF04", inventoryArtifactInfo3.getHtmlRarenessColor());
 
-        Assert.assertEquals((int)dbInventoryArtifact4.getId(), inventoryArtifactInfo4.getInventoryArtifactId());
+        Assert.assertEquals((int) dbInventoryArtifact4.getId(), inventoryArtifactInfo4.getInventoryArtifactId());
         Assert.assertEquals("Artifact4", inventoryArtifactInfo4.getInventoryArtifactName());
         Assert.assertEquals("#FFFF05", inventoryArtifactInfo4.getHtmlRarenessColor());
 
@@ -670,35 +676,110 @@ public class TestInventoryService extends AbstractServiceTest {
         InventoryItemInfo inventoryItemInfo3 = dbInventoryItem3.generateInventoryItemInfo(allArtifacts);
         InventoryItemInfo inventoryItemInfo4 = dbInventoryItem4.generateInventoryItemInfo(allArtifacts);
 
-        Assert.assertEquals((int)dbInventoryItem1.getId(), inventoryItemInfo1.getInventoryItemId());
+        Assert.assertEquals((int) dbInventoryItem1.getId(), inventoryItemInfo1.getInventoryItemId());
         Assert.assertEquals(100, inventoryItemInfo1.getGoldAmount());
         Assert.assertEquals("GoldItem1", inventoryItemInfo1.getInventoryItemName());
         Assert.assertEquals(0, inventoryItemInfo1.getArtifacts().size());
 
-        Assert.assertEquals((int)dbInventoryItem2.getId(), inventoryItemInfo2.getInventoryItemId());
+        Assert.assertEquals((int) dbInventoryItem2.getId(), inventoryItemInfo2.getInventoryItemId());
         Assert.assertEquals(10, inventoryItemInfo2.getGoldAmount());
         Assert.assertEquals("GoldItem2", inventoryItemInfo2.getInventoryItemName());
         Assert.assertEquals(1, inventoryItemInfo2.getArtifacts().size());
-        Assert.assertEquals(3, (int)inventoryItemInfo2.getArtifacts().get(inventoryArtifactInfo1));
+        Assert.assertEquals(3, (int) inventoryItemInfo2.getArtifacts().get(inventoryArtifactInfo1));
 
-        Assert.assertEquals((int)dbInventoryItem3.getId(), inventoryItemInfo3.getInventoryItemId());
+        Assert.assertEquals((int) dbInventoryItem3.getId(), inventoryItemInfo3.getInventoryItemId());
         Assert.assertEquals("ItemType1", inventoryItemInfo3.getInventoryItemName());
         Assert.assertEquals(2, inventoryItemInfo3.getItemCount());
         Assert.assertEquals(111, inventoryItemInfo3.getItemFreeRange());
         Assert.assertEquals(2, inventoryItemInfo3.getArtifacts().size());
-        Assert.assertEquals(2, (int)inventoryItemInfo3.getArtifacts().get(inventoryArtifactInfo1));
-        Assert.assertEquals(1, (int)inventoryItemInfo3.getArtifacts().get(inventoryArtifactInfo3));
+        Assert.assertEquals(2, (int) inventoryItemInfo3.getArtifacts().get(inventoryArtifactInfo1));
+        Assert.assertEquals(1, (int) inventoryItemInfo3.getArtifacts().get(inventoryArtifactInfo3));
 
-        Assert.assertEquals((int)dbInventoryItem4.getId(), inventoryItemInfo4.getInventoryItemId());
+        Assert.assertEquals((int) dbInventoryItem4.getId(), inventoryItemInfo4.getInventoryItemId());
         Assert.assertEquals("ItemType2", inventoryItemInfo4.getInventoryItemName());
         Assert.assertEquals(1, inventoryItemInfo4.getItemCount());
         Assert.assertEquals(222, inventoryItemInfo4.getItemFreeRange());
         Assert.assertEquals(3, inventoryItemInfo4.getArtifacts().size());
-        Assert.assertEquals(1, (int)inventoryItemInfo4.getArtifacts().get(inventoryArtifactInfo1));
-        Assert.assertEquals(2, (int)inventoryItemInfo4.getArtifacts().get(inventoryArtifactInfo2));
-        Assert.assertEquals(3, (int)inventoryItemInfo4.getArtifacts().get(inventoryArtifactInfo3));
+        Assert.assertEquals(1, (int) inventoryItemInfo4.getArtifacts().get(inventoryArtifactInfo1));
+        Assert.assertEquals(2, (int) inventoryItemInfo4.getArtifacts().get(inventoryArtifactInfo2));
+        Assert.assertEquals(3, (int) inventoryItemInfo4.getArtifacts().get(inventoryArtifactInfo3));
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void setupNewUser() throws Exception {
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbInventoryArtifact dbInventoryArtifact1 = inventoryService.getArtifactCrud().createDbChild();
+        dbInventoryArtifact1.setName("Artifact1");
+        dbInventoryArtifact1.setRareness(DbInventoryArtifact.Rareness.UN_COMMON);
+        dbInventoryArtifact1.setImageContentType("imageContent");
+        dbInventoryArtifact1.setImageData(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9});
+        inventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact1);
+
+        DbInventoryArtifact dbInventoryArtifact2 = inventoryService.getArtifactCrud().createDbChild();
+        dbInventoryArtifact2.setName("Artifact2");
+        dbInventoryArtifact2.setRareness(DbInventoryArtifact.Rareness.COMMON);
+        dbInventoryArtifact2.setImageContentType("imageContent2");
+        dbInventoryArtifact2.setImageData(new byte[]{7, 8, 9});
+        inventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact2);
+
+        DbInventoryItem dbInventoryItem1 = inventoryService.getItemCrud().createDbChild();
+        dbInventoryItem1.setName("ItemType1");
+        dbInventoryItem1.setBaseItemTypeCount(2);
+        dbInventoryItem1.setItemFreeRange(111);
+        dbInventoryItem1.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
+        inventoryService.getItemCrud().updateDbChild(dbInventoryItem1);
+
+        DbInventoryNewUser inventoryNewUser1 = inventoryService.getNewUserCrud().createDbChild();
+        inventoryNewUser1.setRazarion(33);
+        inventoryService.getNewUserCrud().updateDbChild(inventoryNewUser1);
+        DbInventoryNewUser inventoryNewUser2 = inventoryService.getNewUserCrud().createDbChild();
+        inventoryNewUser2.setDbInventoryItem(dbInventoryItem1);
+        inventoryNewUser2.setCount(2);
+        inventoryService.getNewUserCrud().updateDbChild(inventoryNewUser2);
+        DbInventoryNewUser inventoryNewUser3 = inventoryService.getNewUserCrud().createDbChild();
+        inventoryNewUser3.setDbInventoryArtifact(dbInventoryArtifact1);
+        inventoryNewUser3.setCount(1);
+        inventoryService.getNewUserCrud().updateDbChild(inventoryNewUser3);
+        DbInventoryNewUser inventoryNewUser4 = inventoryService.getNewUserCrud().createDbChild();
+        inventoryNewUser4.setDbInventoryArtifact(dbInventoryArtifact2);
+        inventoryNewUser4.setCount(3);
+        inventoryService.getNewUserCrud().updateDbChild(inventoryNewUser4);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getMyBase();
+        UserState userState = userService.getUserState();
+        Assert.assertEquals(33, userState.getRazarion());
+
+        Assert.assertEquals(2, userState.getInventoryItemIds().size());
+        Assert.assertTrue(userState.hasInventoryItemId(dbInventoryItem1.getId()));
+        userState.removeInventoryItemId(dbInventoryItem1.getId());
+        Assert.assertTrue(userState.hasInventoryItemId(dbInventoryItem1.getId()));
+        userState.removeInventoryItemId(dbInventoryItem1.getId());
+        Assert.assertFalse(userState.hasInventoryItemId(dbInventoryItem1.getId()));
+        Assert.assertTrue(userState.getInventoryItemIds().isEmpty());
+
+        Assert.assertEquals(4, userState.getInventoryArtifactIds().size());
+        Collection<Integer> artifacts = new ArrayList<>();
+        artifacts.add(dbInventoryArtifact1.getId());
+        artifacts.add(dbInventoryArtifact2.getId());
+        artifacts.add(dbInventoryArtifact2.getId());
+        artifacts.add(dbInventoryArtifact2.getId());
+        Assert.assertTrue(userState.removeArtifactIds(artifacts));
+        Assert.assertTrue(userState.getInventoryArtifactIds().isEmpty());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 }

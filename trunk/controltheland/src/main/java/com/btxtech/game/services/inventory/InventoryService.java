@@ -8,6 +8,8 @@ import com.btxtech.game.jsre.common.gameengine.services.inventory.CommonInventor
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.inventory.impl.DbInventoryNewUser;
+import com.btxtech.game.services.user.UserState;
 
 import java.util.Collection;
 
@@ -23,6 +25,8 @@ public interface InventoryService extends CommonInventoryService {
 
     CrudRootServiceHelper<DbBoxRegion> getBoxRegionCrud();
 
+    CrudRootServiceHelper<DbInventoryNewUser> getNewUserCrud();
+
     void onSyncBaseItemKilled(SyncBaseItem syncBaseItem);
 
     void activate();
@@ -34,4 +38,6 @@ public interface InventoryService extends CommonInventoryService {
     void useInventoryItem(int inventoryItemId, Collection<Index> positionToBePlaced) throws ItemLimitExceededException, HouseSpaceExceededException, NoSuchItemTypeException;
 
     InventoryInfo getInventory();
+
+    void setupNewUserState(UserState userState);
 }
