@@ -23,9 +23,8 @@
 			border-left: 1px solid #ccc;
 		}
 	</ui:style>
-	<g:HTMLPanel width="100%"
-		height="100%">
-		<g:VerticalPanel width="100%" height="" spacing="2">
+	<g:HTMLPanel width="100%" height="100%">
+		<g:VerticalPanel title="Use this inventory item directly in game by pressing the Use Item button" width="100%" spacing="2">
 			<g:HorizontalPanel styleName="{style.razarionplate}" width="100%">
 				<g:Cell verticalAlignment="ALIGN_MIDDLE">
 					<g:Label text="???" styleName="{style.razarionlabel}" ui:field="razarionAmount" />
@@ -35,7 +34,7 @@
 				</g:Cell>
 			</g:HorizontalPanel>
 			<g:FlowPanel ui:field="itemPlates" width="100%" height="100%" />
-			<g:VerticalPanel ui:field="groundPlates"/>
+			<g:FlowPanel ui:field="groundPlates" width="100%" height="100%"/>
 		</g:VerticalPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 
