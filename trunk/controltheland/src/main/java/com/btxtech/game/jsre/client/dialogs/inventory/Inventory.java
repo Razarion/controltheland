@@ -25,7 +25,7 @@ public class Inventory extends Composite implements HasText {
     @UiField
     FlowPanel itemPlates;
     @UiField
-    VerticalPanel groundPlates;
+    FlowPanel groundPlates;
 
     interface InventoryUiBinder extends UiBinder<Widget, Inventory> {
     }

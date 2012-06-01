@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ArtifactPlate extends Composite implements HasText {
 
@@ -18,7 +19,7 @@ public class ArtifactPlate extends Composite implements HasText {
     Label label;
     @UiField
     Image image;
-    @UiField AbsolutePanel panel;
+    @UiField VerticalPanel panel;
 
     interface ArtifactPlateUiBinder extends UiBinder<Widget, ArtifactPlate> {
     }

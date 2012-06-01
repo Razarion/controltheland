@@ -15,14 +15,15 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 import java.util.Map;
+import com.google.gwt.user.client.ui.FlexTable;
 
 public class GroundPlate extends Composite implements HasText {
-
     private static GroundPlateUiBinder uiBinder = GWT.create(GroundPlateUiBinder.class);
+    private static final int ARTIFACT_ROWS = 2;
     @UiField
     Image image;
     @UiField
-    HorizontalPanel artifacts;
+    FlexTable artifacts;
     @UiField
     Button assembleButton;
     private int inventoryItemId;
@@ -37,6 +38,7 @@ public class GroundPlate extends Composite implements HasText {
         image.setUrl(ImageHandler.getInventoryItemUrl(inventoryItemInfo.getInventoryItemId()));
         inventoryItemId = inventoryItemInfo.getInventoryItemId();
         boolean isReadyForAssemble = true;
+        int artifactNumber = 0;
         for (Map.Entry<InventoryArtifactInfo, Integer> entry : inventoryItemInfo.getArtifacts().entrySet()) {
             Integer ownCount = ownArtifact.get(entry.getKey());
             if (ownCount == null) {
@@ -45,10 +47,15 @@ public class GroundPlate extends Composite implements HasText {
             if (ownCount < entry.getValue()) {
                 isReadyForAssemble = false;
             }
-            artifacts.add(new ArtifactPlate(ImageHandler.getInventoryArtifactUrl(entry.getKey().getInventoryArtifactId()),
+            
+            int row = artifactNumber % 2;
+            int column = artifactNumber / 2;
+            
+            artifacts.setWidget(row, column, new ArtifactPlate(ImageHandler.getInventoryArtifactUrl(entry.getKey().getInventoryArtifactId()),
                     ownCount,
                     entry.getValue(),
                     entry.getKey().getHtmlRarenessColor()));
+            artifactNumber++;
         }
         assembleButton.setEnabled(isReadyForAssemble);
     }

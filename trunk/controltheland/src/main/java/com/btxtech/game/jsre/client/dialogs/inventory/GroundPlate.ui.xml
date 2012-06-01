@@ -22,7 +22,7 @@
 		}
 	</ui:style>
 	<g:HTMLPanel>
-		<g:HorizontalPanel styleName="{style.groundplate}">
+		<g:HorizontalPanel title="Assemble an inventory item here. Press the Assemble button if the artifacts are fuldilled." styleName="{style.groundplate}" spacing="5">
 			<g:VerticalPanel>
 				<g:Cell horizontalAlignment="ALIGN_CENTER">
 					<g:Image width="100px" height="100px" ui:field="image"/>
@@ -32,8 +32,8 @@
 				</g:Cell>
 			</g:VerticalPanel>
 			<g:Cell verticalAlignment="ALIGN_MIDDLE">
-				<g:ScrollPanel height="" width="480px">
-				<g:HorizontalPanel width="" height="" styleName="{style.artifactplate}" spacing="5" ui:field="artifacts"/>
+				<g:ScrollPanel height="" width="100px">
+				<g:FlexTable width="" height="" styleName="{style.artifactplate}" ui:field="artifacts"/>
 			</g:ScrollPanel>
 			</g:Cell>
 		</g:HorizontalPanel>

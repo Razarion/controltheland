@@ -18,13 +18,9 @@
 		}
 	</ui:style>
 	<g:HTMLPanel>
-		<g:AbsolutePanel width="100px" height="100px" ui:field="panel">
-			<g:at left="0" top="0">
-				<g:Label text="???" ui:field="label" styleName="{style.statustext}"/>
-			</g:at>
-			<g:at left="0" top="0">
-				<g:Image ui:field="image" styleName="{style.imagestyle}"/>
-			</g:at>
-		</g:AbsolutePanel>
+		<g:VerticalPanel width="40px" height="" ui:field="panel">
+			<g:Label text="???" ui:field="label" styleName="{style.statustext}" width="40px" height=""/>
+			<g:Image ui:field="image" styleName="{style.imagestyle}" width="40px" height="40px"/>
+		</g:VerticalPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 
