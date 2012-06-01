@@ -66,6 +66,7 @@ public class TestResurrection extends AbstractServiceTest {
 
         Message message = new Message();
         message.setMessage("You lost your base. A new base was created.");
+        // TODO failed: 02.06.2012
         assertPackagesIgnoreSyncItemInfoAndClear(message);
 
         endHttpRequestAndOpenSessionInViewFilter();
