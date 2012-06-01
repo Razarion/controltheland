@@ -108,6 +108,7 @@ public class InventoryItemPlacer {
             log.log(Level.SEVERE, "InventoryItemPlacer() ", e);
         }
         calculateNormalizedPlacePositions(itemCount, itemFreeRange);
+        canvas.setTabIndex(1); // IE9 need this to receive the focus
         canvas.setFocus(true);
         canvas.addKeyDownHandler(new KeyDownHandler() {
             @Override
