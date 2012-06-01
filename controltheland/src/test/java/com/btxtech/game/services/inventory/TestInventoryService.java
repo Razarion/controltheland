@@ -652,19 +652,19 @@ public class TestInventoryService extends AbstractServiceTest {
 
         Assert.assertEquals((int) dbInventoryArtifact1.getId(), inventoryArtifactInfo1.getInventoryArtifactId());
         Assert.assertEquals("Artifact1", inventoryArtifactInfo1.getInventoryArtifactName());
-        Assert.assertEquals("#FFFF02", inventoryArtifactInfo1.getHtmlRarenessColor());
+        Assert.assertEquals("#70d460", inventoryArtifactInfo1.getHtmlRarenessColor());
 
         Assert.assertEquals((int) dbInventoryArtifact2.getId(), inventoryArtifactInfo2.getInventoryArtifactId());
         Assert.assertEquals("Artifact2", inventoryArtifactInfo2.getInventoryArtifactName());
-        Assert.assertEquals("#FFFF01", inventoryArtifactInfo2.getHtmlRarenessColor());
+        Assert.assertEquals("#d6f6ff", inventoryArtifactInfo2.getHtmlRarenessColor());
 
         Assert.assertEquals((int) dbInventoryArtifact3.getId(), inventoryArtifactInfo3.getInventoryArtifactId());
         Assert.assertEquals("Artifact3", inventoryArtifactInfo3.getInventoryArtifactName());
-        Assert.assertEquals("#FFFF04", inventoryArtifactInfo3.getHtmlRarenessColor());
+        Assert.assertEquals("#a042cc", inventoryArtifactInfo3.getHtmlRarenessColor());
 
         Assert.assertEquals((int) dbInventoryArtifact4.getId(), inventoryArtifactInfo4.getInventoryArtifactId());
         Assert.assertEquals("Artifact4", inventoryArtifactInfo4.getInventoryArtifactName());
-        Assert.assertEquals("#FFFF05", inventoryArtifactInfo4.getHtmlRarenessColor());
+        Assert.assertEquals("#f07d4e", inventoryArtifactInfo4.getHtmlRarenessColor());
 
         dbInventoryItem1 = inventoryService.getItemCrud().readDbChild(dbInventoryItem1.getId());
         dbInventoryItem2 = inventoryService.getItemCrud().readDbChild(dbInventoryItem2.getId());
