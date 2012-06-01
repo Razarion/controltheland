@@ -19,11 +19,11 @@ import javax.persistence.Id;
 @Entity(name = "INVENTORY_ARTIFACT")
 public class DbInventoryArtifact implements CrudChild {
     public enum Rareness {
-        COMMON("#FFFF01"),
-        UN_COMMON("#FFFF02"),
-        RARE("#FFFF03"),
-        EPIC("#FFFF04"),
-        LEGENDARY("#FFFF05");
+        COMMON("#d6f6ff"),
+        UN_COMMON("#70d460"),
+        RARE("#1273d2"),
+        EPIC("#a042cc"),
+        LEGENDARY("#f07d4e");
         private String htmlColor;
 
         Rareness(String htmlColor) {
