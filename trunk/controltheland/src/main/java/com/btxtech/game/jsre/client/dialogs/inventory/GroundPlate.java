@@ -51,7 +51,8 @@ public class GroundPlate extends Composite implements HasText {
             int row = artifactNumber % 2;
             int column = artifactNumber / 2;
             
-            artifacts.setWidget(row, column, new ArtifactPlate(ImageHandler.getInventoryArtifactUrl(entry.getKey().getInventoryArtifactId()),
+            artifacts.setWidget(row, column, new ArtifactPlate(entry.getKey().getInventoryArtifactName(),
+                    ImageHandler.getInventoryArtifactUrl(entry.getKey().getInventoryArtifactId()),
                     ownCount,
                     entry.getValue(),
                     entry.getKey().getHtmlRarenessColor()));

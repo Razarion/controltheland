@@ -24,11 +24,12 @@ public class ArtifactPlate extends Composite implements HasText {
     interface ArtifactPlateUiBinder extends UiBinder<Widget, ArtifactPlate> {
     }
 
-    public ArtifactPlate(String url, int available, int needed, String bgColor) {
+    public ArtifactPlate(String artifactName, String url, int available, int needed, String bgColor) {
         initWidget(uiBinder.createAndBindUi(this));
         image.setUrl(url);
         setStatus(available, needed);
         panel.getElement().getStyle().setBackgroundColor(bgColor);
+        panel.setTitle("Artifact: " + artifactName);
     }
 
     public void setText(String text) {

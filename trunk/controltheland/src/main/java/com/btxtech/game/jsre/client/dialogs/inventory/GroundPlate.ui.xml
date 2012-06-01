@@ -12,7 +12,9 @@
 		.groundplate {
 			background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgba(245, 246, 246, 1) ), color-stop(21%, rgba(219, 220, 226, 1) ),	color-stop(49%, rgba(184, 186, 198, 1) ),color-stop(80%, rgba(221, 223, 227, 1) ),	color-stop(100%, rgba(245, 246, 246, 1) ) );
 			background: -webkit-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%,rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%,rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100% );
-			margin-bottom: 2px;
+            margin-right: 2px;
+            margin-bottom: 2px;
+            float: left;
 			padding: 10px;
 			border-top: 1px solid #ddd;
 			border-right: 2px solid #888;
@@ -20,8 +22,8 @@
 			border-left: 1px solid #ccc;
 			border-radius: 4px;
 		}
+
 	</ui:style>
-	<g:HTMLPanel>
 		<g:HorizontalPanel title="Assemble an inventory item here. Press the Assemble button if the artifacts are fuldilled." styleName="{style.groundplate}" spacing="5">
 			<g:VerticalPanel>
 				<g:Cell horizontalAlignment="ALIGN_CENTER">
@@ -37,5 +39,4 @@
 			</g:ScrollPanel>
 			</g:Cell>
 		</g:HorizontalPanel>
-	</g:HTMLPanel>
-</ui:UiBinder> 
+</ui:UiBinder>

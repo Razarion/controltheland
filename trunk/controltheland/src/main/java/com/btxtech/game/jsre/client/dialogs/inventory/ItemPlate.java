@@ -1,6 +1,6 @@
 package com.btxtech.game.jsre.client.dialogs.inventory;
 
-//import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
