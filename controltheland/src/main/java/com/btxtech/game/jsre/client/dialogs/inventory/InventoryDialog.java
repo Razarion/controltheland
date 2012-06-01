@@ -47,5 +47,6 @@ public class InventoryDialog extends Dialog {
                 inventory.addGroundPlate(inventoryItemInfo, inventoryInfo.getOwnInventoryArtifacts(), this);
             }
         }
+        center();
     }
 }
