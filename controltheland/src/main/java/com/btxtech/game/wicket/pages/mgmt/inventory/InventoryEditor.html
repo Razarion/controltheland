@@ -98,6 +98,30 @@
     <input type="submit" value="Save" wicket:id="saveBoxRegions"/>
     <input type="submit" value="Create" wicket:id="createBoxRegion"/>
     <input type="submit" value="Activate" wicket:id="activateBoxRegion"/>
+    <br/>
+    <br/>
+
+    <h2>Inventory for new Users</h2>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Razarion</th>
+            <th bgcolor="#dadada">Count (Item & Artifact)</th>
+            <th bgcolor="#dadada">Item Id</th>
+            <th bgcolor="#dadada">Artifact Id</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+        <tr wicket:id="newUserItems">
+            <td><input wicket:id="razarion" type="text" size="6"></td>
+            <td><input wicket:id="count" type="text" size="6"></td>
+            <td wicket:id="dbInventoryItem"/>
+            <td wicket:id="dbInventoryArtifact"/>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" value="Save" wicket:id="saveNewUserItems"/>
+    <input type="submit" value="Create" wicket:id="createNewUserItem"/>
 </form>
 
 </body>

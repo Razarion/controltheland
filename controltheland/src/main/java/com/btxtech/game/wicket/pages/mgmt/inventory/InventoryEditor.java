@@ -5,9 +5,12 @@ import com.btxtech.game.services.inventory.DbBoxRegion;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.inventory.InventoryService;
+import com.btxtech.game.services.inventory.impl.DbInventoryNewUser;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
+import com.btxtech.game.wicket.uiservices.InventoryArtifactPanel;
 import com.btxtech.game.wicket.uiservices.InventoryImageResource;
+import com.btxtech.game.wicket.uiservices.InventoryItemPanel;
 import com.btxtech.game.wicket.uiservices.MinutePanel;
 import com.btxtech.game.wicket.uiservices.RectanglePanel;
 import org.apache.wicket.markup.html.form.Button;
@@ -150,5 +153,21 @@ public class InventoryEditor extends MgmtWebPage {
                 inventoryService.activate();
             }
         });
+
+        new CrudRootTableHelper<DbInventoryNewUser>("newUserItems", "saveNewUserItems", "createNewUserItem", false, form, false) {
+
+            @Override
+            protected void extendedPopulateItem(final Item<DbInventoryNewUser> dbInventoryNewUserItem) {
+                dbInventoryNewUserItem.add(new TextField("razarion"));
+                dbInventoryNewUserItem.add(new TextField("count"));
+                dbInventoryNewUserItem.add(new InventoryItemPanel("dbInventoryItem"));
+                dbInventoryNewUserItem.add(new InventoryArtifactPanel("dbInventoryArtifact"));
+            }
+
+            @Override
+            protected CrudRootServiceHelper<DbInventoryNewUser> getCrudRootServiceHelperImpl() {
+                return inventoryService.getNewUserCrud();
+            }
+        };
     }
 }

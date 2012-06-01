@@ -145,5 +145,6 @@
         <mapping class="com.btxtech.game.services.inventory.DbInventoryArtifactCount"/>
         <mapping class="com.btxtech.game.services.inventory.DbBoxRegion"/>
         <mapping class="com.btxtech.game.services.inventory.DbBoxRegionCount"/>
+        <mapping class="com.btxtech.game.services.inventory.impl.DbInventoryNewUser"/>
     </session-factory>
 </hibernate-configuration>
