@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.Game;
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.SoundHandler;
@@ -15,6 +16,7 @@ import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.dialogs.AllianceDialog;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
+import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
@@ -229,7 +231,11 @@ public class SideCockpit {
         ExtendedCustomButton inventory = new ExtendedCustomButton("inventoryButton", false, ToolTips.TOOL_TIP_INVENTORY, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                DialogManager.showDialog(new InventoryDialog(), DialogManager.Type.QUEUE_ABLE);
+                if (Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE) {
+                    DialogManager.showDialog(new InventoryDialog(), DialogManager.Type.QUEUE_ABLE);
+                } else {
+                    DialogManager.showDialog(new MessageDialog("Inventory", "Inventory is not available on this planet."), DialogManager.Type.QUEUE_ABLE);
+                }
             }
         });
         mainPanel.add(inventory, BNT_INVENTORY_X, BNT_INVENTORY_Y);

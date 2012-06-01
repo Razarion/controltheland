@@ -13,11 +13,13 @@ import java.util.logging.Logger;
  * Time: 00:05
  */
 public class InventoryDialog extends Dialog {
+    private static InventoryDialog staticInstance;
     private Inventory inventory;
     private Logger log = Logger.getLogger(InventoryDialog.class.getName());
 
     public InventoryDialog() {
         super("Inventory");
+        staticInstance = this;
     }
 
     @Override
@@ -48,5 +50,17 @@ public class InventoryDialog extends Dialog {
             }
         }
         center();
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        staticInstance = null;
+    }
+
+    public static void onBoxPicket() {
+        if (staticInstance != null) {
+            Connection.getInstance().loadInventory(staticInstance);
+        }
     }
 }

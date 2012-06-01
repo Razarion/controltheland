@@ -276,6 +276,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
                     ClientAllianceHandler.getInstance().handleAllianceOfferPacket((AllianceOfferPacket) packet);
                 } else if (packet instanceof BoxPickedPacket) {
                     SideCockpit.getInstance().onBoxPicked((BoxPickedPacket) packet);
+                    InventoryDialog.onBoxPicket();
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }
