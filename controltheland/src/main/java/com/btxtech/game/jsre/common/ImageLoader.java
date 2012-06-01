@@ -4,66 +4,71 @@ import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.RootPanel;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: beat
  * Date: 16.08.2011
  * Time: 12:37:09
  */
-public abstract class ImageLoader {
-    private Map<Integer, ImageElement> images = new HashMap<Integer, ImageElement>();
-    private int imageCount = 0;
-    private Listener listener;
+public class ImageLoader {
+    public interface Listener {
+        void onLoaded(ImageElement[] imageElements);
+    }
+
+    private ImageElement[] loadedImages;
+    private int loadedImageCount;
+    private List<String> urls = new ArrayList<String>();
 
     public ImageLoader() {
     }
 
-    public ImageLoader(Listener listener) {
-        this.listener = listener;
-    }
-
-    public void setListener(Listener listener) {
-        this.listener = listener;
-    }
-
     public boolean isLoaded() {
-        return images.size() >= imageCount;
+        return loadedImageCount >= urls.size();
     }
 
     public ImageElement getImage(int imageNr) {
-        return images.get(imageNr);
+        return loadedImages[imageNr];
     }
 
-    protected void loadImage(String url) {
-        final int imageNr = imageCount;
-        imageCount++;
-        // init image
-        final Image image = new Image();
-        image.addLoadHandler(new LoadHandler() {
-            public void onLoad(LoadEvent event) {
+    public void addImageUrl(String url) {
+        urls.add(url);
+    }
+
+    public void startLoading(final Listener listener) {
+        int imageCount = 0;
+        loadedImages = new ImageElement[urls.size()];
+        for (String url : urls) {
+            final int imageIndex = imageCount++;
+            final Image image = new Image();
+            // init image
+            image.addLoadHandler(new LoadHandler() {
+                public void onLoad(LoadEvent event) {
+                    ImageElement imageElement = (ImageElement) image.getElement().cast();
+                    loadedImages[imageIndex] = imageElement;
+                    loadedImageCount++;
+                    if (listener != null && isLoaded()) {
+                        listener.onLoaded(loadedImages);
+                    }
+                }
+            });
+
+            image.setUrl(url);
+            image.setVisible(false);
+            RootPanel.get().add(image); // image must be on page to fire load
+
+            // Image was already loaded
+            if (image.getHeight() > 0) {
                 ImageElement imageElement = (ImageElement) image.getElement().cast();
-                images.put(imageNr, imageElement);
+                loadedImages[imageIndex] = imageElement;
+                loadedImageCount++;
                 if (isLoaded() && listener != null) {
-                    listener.onLoaded();
+                    listener.onLoaded(loadedImages);
                 }
             }
-        });
-        image.setUrl(url);
-
-        if(image.getHeight() > 0) {
-            // TODO if more than one image -> this will call the listener too early
-            ImageElement imageElement = (ImageElement) image.getElement().cast();
-            images.put(imageNr, imageElement);
-            if (isLoaded() && listener != null) {
-                listener.onLoaded();
-            }
         }
-    }
-
-    public interface Listener {
-        void onLoaded();
     }
 }

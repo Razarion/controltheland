@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.itemtypeeditor;
 
+import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.ImageLoader;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
@@ -8,6 +9,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
+import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.user.client.ui.DecoratorPanel;
@@ -20,7 +22,7 @@ import com.google.gwt.user.client.ui.DecoratorPanel;
 public class ItemTypeView extends DecoratorPanel {
     public static final Index ITEM_POSITION = new Index(150, 150);
     private Context2d context2d;
-    private ItemTypeImageLoader imageLoader;
+    private ImageLoader imageLoader;
     private CssColor redrawColor = CssColor.make(255, 255, 255);
     private int canvasWidth;
     private int canvasHeight;
@@ -48,9 +50,11 @@ public class ItemTypeView extends DecoratorPanel {
         canvas.setCoordinateSpaceWidth(canvasWidth);
         canvas.setCoordinateSpaceHeight(canvasHeight);
         context2d = canvas.getContext2d();
-        imageLoader = new ItemTypeImageLoader(itemType.getId(), new ImageLoader.Listener() {
+        imageLoader = new ImageLoader();
+        imageLoader.addImageUrl(ImageHandler.getItemTypeSpriteMapUrl(itemType.getId()));
+        imageLoader.startLoading(new ImageLoader.Listener() {
             @Override
-            public void onLoaded() {
+            public void onLoaded(ImageElement[] imageElements) {
                 draw(0);
             }
         });

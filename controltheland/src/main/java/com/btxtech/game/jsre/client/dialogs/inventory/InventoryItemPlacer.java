@@ -11,6 +11,7 @@ import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.Html5NotSupportedException;
+import com.btxtech.game.jsre.common.ImageLoader;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -132,7 +133,15 @@ public class InventoryItemPlacer {
                 }
             }
         });
-        new ImageLoader();
+        ImageLoader imageLoader = new ImageLoader();
+        imageLoader.addImageUrl(ImageHandler.getItemTypeSpriteMapUrl(baseItemType.getId()));
+        imageLoader.startLoading(new ImageLoader.Listener() {
+            @Override
+            public void onLoaded(ImageElement[] imageElements) {
+                imageElement = imageElements[0];
+                draw();
+            }
+        });
         draw();
     }
 
@@ -244,19 +253,6 @@ public class InventoryItemPlacer {
             context2d.setShadowOffsetX(0);
             context2d.setShadowOffsetY(0);
             context2d.setShadowBlur(0);
-        }
-    }
-
-    class ImageLoader extends com.btxtech.game.jsre.common.ImageLoader {
-        ImageLoader() {
-            setListener(new com.btxtech.game.jsre.common.ImageLoader.Listener() {
-                @Override
-                public void onLoaded() {
-                    imageElement = getImage(0);
-                    draw();
-                }
-            });
-            loadImage(ImageHandler.getItemTypeSpriteMapUrl(baseItemType.getId()));
         }
     }
 }
