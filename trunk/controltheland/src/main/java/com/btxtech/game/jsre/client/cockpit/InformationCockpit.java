@@ -55,12 +55,12 @@ public class InformationCockpit extends VerticalPanel {
         Label inventoryLink = new Label("Open Inventory");
         inventoryLink.getElement().getStyle().setCursor(Style.Cursor.POINTER);
         inventoryLink.getElement().getStyle().setColor("#FF6666");
-        inventoryLink.addHandler(new ClickHandler() {
+        inventoryLink.addMouseDownHandler(new MouseDownHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onMouseDown(MouseDownEvent event) {
                 DialogManager.showDialog(new InventoryDialog(), DialogManager.Type.QUEUE_ABLE);
             }
-        }, ClickEvent.getType());
+        });
         preventEvents(inventoryLink);
         add(inventoryLink);
     }
