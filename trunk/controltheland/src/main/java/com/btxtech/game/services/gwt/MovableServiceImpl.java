@@ -397,4 +397,34 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             log.error("", t);
         }
     }
+
+    @Override
+    public int buyInventoryItem(int inventoryItemId) {
+        try {
+            return inventoryService.buyInventoryItem(inventoryItemId);
+        } catch (Throwable t) {
+            log.error("", t);
+            return userService.getUserState().getRazarion();
+        }
+    }
+
+    @Override
+    public int buyInventoryArtifact(int inventoryArtifactId) {
+        try {
+            return inventoryService.buyInventoryArtifact(inventoryArtifactId);
+        } catch (Throwable t) {
+            log.error("", t);
+            return 0;
+        }
+    }
+
+    @Override
+    public int loadRazarion() {
+        try {
+            return userService.getUserState().getRazarion();
+        } catch (Throwable t) {
+            log.error("", t);
+            return 0;
+        }
+    }
 }

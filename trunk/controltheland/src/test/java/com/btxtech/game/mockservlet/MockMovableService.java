@@ -288,4 +288,19 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     public void useInventoryItem(int inventoryItemId, Collection<Index> positionToBePlaced) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    @Override
+    public int buyInventoryItem(int inventoryItemId) {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public int buyInventoryArtifact(int inventoryArtifactId) {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public int loadRazarion() {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

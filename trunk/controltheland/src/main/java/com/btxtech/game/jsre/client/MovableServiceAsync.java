@@ -97,4 +97,10 @@ public interface MovableServiceAsync {
     void assembleInventoryItem(int inventoryItemId, AsyncCallback<InventoryInfo> asyncCallback);
 
     void useInventoryItem(int inventoryItemId, Collection<Index> positionToBePlaced, AsyncCallback<Void> asyncCallback);
+
+    void buyInventoryItem(int inventoryItemId, AsyncCallback<Integer> asyncCallback);
+
+    void buyInventoryArtifact(int inventoryArtifactId, AsyncCallback<Integer> asyncCallback);
+
+    void loadRazarion(AsyncCallback<Integer> asyncCallback);
 }

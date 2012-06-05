@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.dialogs.inventory;
 
+import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -10,7 +11,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import java.util.Map;
@@ -26,11 +26,13 @@ public class Inventory extends Composite implements HasText {
     FlowPanel itemPlates;
     @UiField
     FlowPanel groundPlates;
+    private InventoryDialog inventoryDialog;
 
     interface InventoryUiBinder extends UiBinder<Widget, Inventory> {
     }
 
-    public Inventory() {
+    public Inventory(InventoryDialog inventoryDialog) {
+        this.inventoryDialog = inventoryDialog;
         initWidget(uiBinder.createAndBindUi(this));
     }
 
@@ -45,7 +47,7 @@ public class Inventory extends Composite implements HasText {
         razarionAmount.setText("Razarion: " + amount);
     }
 
-    public void addItemPlate(InventoryItemInfo inventoryItemInfo, int ownCount, InventoryDialog inventoryDialog) {
+    public void addItemPlate(InventoryItemInfo inventoryItemInfo, int ownCount) {
         itemPlates.add(new ItemPlate(inventoryItemInfo, ownCount, inventoryDialog));
     }
 
@@ -53,7 +55,7 @@ public class Inventory extends Composite implements HasText {
         itemPlates.clear();
     }
 
-    public void addGroundPlate(InventoryItemInfo inventoryItemInfo, Map<InventoryArtifactInfo, Integer> ownArtifact, InventoryDialog inventoryDialog) {
+    public void addGroundPlate(InventoryItemInfo inventoryItemInfo, Map<InventoryArtifactInfo, Integer> ownArtifact) {
         groundPlates.add(new GroundPlate(inventoryItemInfo, ownArtifact, inventoryDialog));
     }
 
@@ -63,6 +65,7 @@ public class Inventory extends Composite implements HasText {
 
     @UiHandler("button")
     void onButtonClick(ClickEvent event) {
-        // TODO hier
+        inventoryDialog.close();
+        DialogManager.showDialog(new MarketDialog(inventoryDialog.getInventoryInfo()), DialogManager.Type.QUEUE_ABLE);
     }
 }

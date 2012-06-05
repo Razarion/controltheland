@@ -55,6 +55,7 @@ public class DbInventoryItem implements CrudChild, CrudParent {
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     @JoinColumn(name = "dbInventoryItem", nullable = false)
     private Collection<DbInventoryArtifactCount> artifactCounts;
+    private Integer razarionCoast;
 
     @Transient
     private CrudChildServiceHelper<DbInventoryArtifactCount> artifactCountCrud;
@@ -145,6 +146,14 @@ public class DbInventoryItem implements CrudChild, CrudParent {
         this.itemFreeRange = itemFreeRange;
     }
 
+    public Integer getRazarionCoast() {
+        return razarionCoast;
+    }
+
+    public void setRazarionCoast(Integer razarionCoast) {
+        this.razarionCoast = razarionCoast;
+    }
+
     public CrudChildServiceHelper<DbInventoryArtifactCount> getArtifactCountCrud() {
         if (artifactCountCrud == null) {
             artifactCountCrud = new CrudChildServiceHelper<>(artifactCounts, DbInventoryArtifactCount.class, this);
@@ -167,7 +176,8 @@ public class DbInventoryItem implements CrudChild, CrudParent {
                 dbBaseItemType != null ? dbBaseItemType.getId() : null,
                 baseItemTypeCount,
                 itemFreeRange,
-                goldAmount);
+                goldAmount,
+                razarionCoast);
     }
 
     @Override

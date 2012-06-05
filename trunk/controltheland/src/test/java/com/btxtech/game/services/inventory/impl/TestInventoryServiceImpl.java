@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryArtifactInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.common.BoxPickedPacket;
+import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
@@ -1115,6 +1116,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         Assert.assertTrue(inventoryInfo.getOwnInventoryArtifacts().isEmpty());
         Assert.assertTrue(inventoryInfo.getOwnInventoryItems().isEmpty());
         Assert.assertEquals(2, inventoryInfo.getAllInventoryItemInfos().size());
+        Assert.assertEquals(3, inventoryInfo.getAllInventoryArtifactInfos().size());
         // Add one artifact
         UserState userState = userService.getUserState();
         userState.setRazarion(15);
@@ -1126,6 +1128,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(1, (int) inventoryInfo.getOwnInventoryArtifacts().get(dbInventoryArtifact1.generateInventoryArtifactInfo()));
         Assert.assertTrue(inventoryInfo.getOwnInventoryItems().isEmpty());
         Assert.assertEquals(2, inventoryInfo.getAllInventoryItemInfos().size());
+        Assert.assertEquals(3, inventoryInfo.getAllInventoryArtifactInfos().size());
         // Add artifacts
         userState = userService.getUserState();
         userState.addInventoryArtifact(dbInventoryArtifact1.getId());
@@ -1138,6 +1141,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(1, (int) inventoryInfo.getOwnInventoryArtifacts().get(dbInventoryArtifact2.generateInventoryArtifactInfo()));
         Assert.assertTrue(inventoryInfo.getOwnInventoryItems().isEmpty());
         Assert.assertEquals(2, inventoryInfo.getAllInventoryItemInfos().size());
+        Assert.assertEquals(3, inventoryInfo.getAllInventoryArtifactInfos().size());
         // Add items
         userState = userService.getUserState();
         userState.addInventoryItem(dbInventoryItem2.getId());
@@ -1150,6 +1154,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(1, inventoryInfo.getOwnInventoryItems().size());
         Assert.assertEquals(1, (int) inventoryInfo.getOwnInventoryItems().get(dbInventoryItem2.generateInventoryItemInfo(allArtifacts)));
         Assert.assertEquals(2, inventoryInfo.getAllInventoryItemInfos().size());
+        Assert.assertEquals(3, inventoryInfo.getAllInventoryArtifactInfos().size());
         // Add items
         userState = userService.getUserState();
         userState.addInventoryItem(dbInventoryItem2.getId());
@@ -1164,6 +1169,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(2, (int) inventoryInfo.getOwnInventoryItems().get(dbInventoryItem2.generateInventoryItemInfo(allArtifacts)));
         Assert.assertEquals(1, (int) inventoryInfo.getOwnInventoryItems().get(dbInventoryItem1.generateInventoryItemInfo(allArtifacts)));
         Assert.assertEquals(2, inventoryInfo.getAllInventoryItemInfos().size());
+        Assert.assertEquals(3, inventoryInfo.getAllInventoryArtifactInfos().size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -1391,4 +1397,116 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         EasyMock.verify(mockItemService, mockTerrainService, mockTerritoryService, mockHistoryService);
     }
 
+    @Test
+    @DirtiesContext
+    public void buyInventoryItem() throws Exception {
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbInventoryItem dbInventoryItem1 = inventoryService.getItemCrud().createDbChild();
+        dbInventoryItem1.setName("GoldItem1");
+        dbInventoryItem1.setGoldAmount(100);
+        dbInventoryItem1.setImageContentType("imageData22");
+        dbInventoryItem1.setImageData(new byte[]{1, 3, 4, 6, 7, 9});
+        dbInventoryItem1.setRazarionCoast(66);
+        inventoryService.getItemCrud().updateDbChild(dbInventoryItem1);
+
+        DbInventoryItem dbInventoryItem2 = inventoryService.getItemCrud().createDbChild();
+        dbInventoryItem2.setName("GoldItem2");
+        dbInventoryItem2.setGoldAmount(10);
+        dbInventoryItem2.setImageContentType("imageData33");
+        dbInventoryItem2.setImageData(new byte[]{6, 7, 9});
+        inventoryService.getItemCrud().updateDbChild(dbInventoryItem2);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // History Service
+        HistoryService mockHistoryService = EasyMock.createStrictMock(HistoryService.class);
+        mockHistoryService.addInventoryItemBought(userService.getUserState(), "GoldItem1", 66);
+        setPrivateField(InventoryServiceImpl.class, inventoryService, "historyService", mockHistoryService);
+        EasyMock.replay(mockHistoryService);
+
+        try {
+            inventoryService.buyInventoryItem(dbInventoryItem2.getId());
+            Assert.fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals("The InventoryItem can not be bought: UserState: user=null dbInventoryItem: DbInventoryItem{id=2, name='GoldItem2'}", e.getMessage());
+        }
+        try {
+            inventoryService.buyInventoryItem(dbInventoryItem1.getId());
+            Assert.fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals("The user does not have enough razarion to buy the inventory item. User: UserState: user=null dbInventoryItem: DbInventoryItem{id=1, name='GoldItem1'} Razarion: 0", e.getMessage());
+        }
+        Assert.assertFalse(userService.getUserState().hasInventoryItemId(dbInventoryItem1.getId()));
+        userService.getUserState().addRazarion(100);
+        int razarion = inventoryService.buyInventoryItem(dbInventoryItem1.getId());
+        Assert.assertEquals(34, razarion);
+        Assert.assertEquals(34, userService.getUserState().getRazarion());
+        Assert.assertEquals(1, userService.getUserState().getInventoryItemIds().size());
+        Assert.assertTrue(userService.getUserState().hasInventoryItemId(dbInventoryItem1.getId()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        EasyMock.verify(mockHistoryService);
+    }
+
+    @Test
+    @DirtiesContext
+    public void buyInventoryArtifact() throws Exception {
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbInventoryArtifact dbInventoryArtifact1 = inventoryService.getArtifactCrud().createDbChild();
+        dbInventoryArtifact1.setName("Artifact1");
+        dbInventoryArtifact1.setRareness(DbInventoryArtifact.Rareness.UN_COMMON);
+        dbInventoryArtifact1.setImageContentType("imageContent");
+        dbInventoryArtifact1.setImageData(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9});
+        dbInventoryArtifact1.setRazarionCoast(12);
+        inventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact1);
+
+        DbInventoryArtifact dbInventoryArtifact2 = inventoryService.getArtifactCrud().createDbChild();
+        dbInventoryArtifact2.setName("Artifact2");
+        dbInventoryArtifact2.setImageContentType("imageContent2");
+        dbInventoryArtifact2.setImageData(new byte[]{7, 8, 9});
+        inventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact2);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // History Service
+        HistoryService mockHistoryService = EasyMock.createStrictMock(HistoryService.class);
+        mockHistoryService.addInventoryArtifactBought(userService.getUserState(), "Artifact1", 12);
+        setPrivateField(InventoryServiceImpl.class, inventoryService, "historyService", mockHistoryService);
+        EasyMock.replay(mockHistoryService);
+
+        try {
+            inventoryService.buyInventoryArtifact(dbInventoryArtifact2.getId());
+            Assert.fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals("The InventoryArtifact can not be bought: UserState: user=null dbInventoryItem: DbInventoryArtifact{id=2, name='Artifact2'}", e.getMessage());
+        }
+        try {
+            inventoryService.buyInventoryArtifact(dbInventoryArtifact1.getId());
+            Assert.fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals("The user does not have enough razarion to buy the inventory artifact. User: UserState: user=null dbInventoryArtifact: DbInventoryArtifact{id=1, name='Artifact1'} Razarion: 0", e.getMessage());
+        }
+        Assert.assertTrue(userService.getUserState().getInventoryArtifactIds().isEmpty());
+        userService.getUserState().addRazarion(24);
+        int razarion = inventoryService.buyInventoryArtifact(dbInventoryArtifact1.getId());
+        Assert.assertEquals(12, razarion);
+        Assert.assertEquals(12, userService.getUserState().getRazarion());
+        Assert.assertEquals(1, userService.getUserState().getInventoryArtifactIds().size());
+        Assert.assertEquals(dbInventoryArtifact1.getId(), CommonJava.getFirst(userService.getUserState().getInventoryArtifactIds()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        EasyMock.verify(mockHistoryService);
+    }
 }
