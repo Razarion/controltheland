@@ -18,8 +18,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * Time: 14:48:13
  */
 public class BuildupItem extends VerticalPanel {
-    private static final int WIDTH = 64;
-    private static final int HEIGHT = 64;
+    private static final int WIDTH = 40;
+    private static final int HEIGHT = 40;
     private EnableState enableState;
     private BaseItemType itemType;
     private PushButton button;
