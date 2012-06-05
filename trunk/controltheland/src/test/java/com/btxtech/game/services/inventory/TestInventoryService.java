@@ -99,7 +99,7 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertEquals("Artifact2", artifactList.get(0).getName());
         Assert.assertEquals(DbInventoryArtifact.Rareness.COMMON, artifactList.get(0).getRareness());
         Assert.assertEquals("imageContent2", artifactList.get(0).getImageContentType());
-        Assert.assertNull(artifactList.get(1).getRazarionCoast());
+        Assert.assertNull(artifactList.get(0).getRazarionCoast());
         Assert.assertArrayEquals(new byte[]{7, 8, 9}, artifactList.get(0).getImageData());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
