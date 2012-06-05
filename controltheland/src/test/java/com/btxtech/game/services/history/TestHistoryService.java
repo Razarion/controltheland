@@ -650,6 +650,8 @@ public class TestHistoryService extends AbstractServiceTest {
         // System entry historyService.addBoxDropped(syncBoxItem, new Index(1000, 1000), null);
         // System entry historyService.addBoxDropped(syncBoxItem, new Index(1000, 1000), syncBaseItem);
         // System entry historyService.addBoxExpired(SyncBoxItem boxItem);
+        historyService.addInventoryItemBought(userService.getUserState(), "inventoryItemName", 12);
+        historyService.addInventoryArtifactBought(userService.getUserState(), "inventoryArtifactName", 33);
         historyService.addBoxPicked(syncBoxItem, syncBaseItem);
         historyService.addRazarionFromBox(userService.getUserState(), 100);
         historyService.addInventoryItemFromBox(userService.getUserState(), "inventoryItemName");
@@ -661,7 +663,7 @@ public class TestHistoryService extends AbstractServiceTest {
         for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
             System.out.println(displayHistoryElement);
         }
-        Assert.assertEquals(7, displayHistoryElements.size());
+        Assert.assertEquals(9, displayHistoryElements.size());
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
         Assert.assertEquals("Inventory used inventoryItemName", displayHistoryElements.get(0).getMessage());
         Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
@@ -672,7 +674,10 @@ public class TestHistoryService extends AbstractServiceTest {
         Assert.assertEquals("Found razarion 100", displayHistoryElements.get(3).getMessage());
         Assert.assertTrue(displayHistoryElements.get(4).getTimeStamp() >= displayHistoryElements.get(5).getTimeStamp());
         Assert.assertEquals("Box picked", displayHistoryElements.get(4).getMessage());
-
+        Assert.assertTrue(displayHistoryElements.get(5).getTimeStamp() >= displayHistoryElements.get(6).getTimeStamp());
+        Assert.assertEquals("Inventory artifact bought: inventoryArtifactName", displayHistoryElements.get(5).getMessage());
+        Assert.assertTrue(displayHistoryElements.get(6).getTimeStamp() >= displayHistoryElements.get(7).getTimeStamp());
+        Assert.assertEquals("Inventory item bought: inventoryItemName", displayHistoryElements.get(6).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

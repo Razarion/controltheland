@@ -44,6 +44,7 @@ public class DbInventoryArtifact implements CrudChild {
     @Column(length = 500000)
     @Basic(fetch = FetchType.LAZY)
     private byte[] imageData;
+    private Integer razarionCoast;
 
     @Override
     public Integer getId() {
@@ -100,7 +101,15 @@ public class DbInventoryArtifact implements CrudChild {
     }
 
     public InventoryArtifactInfo generateInventoryArtifactInfo() {
-        return new InventoryArtifactInfo(name, id, rareness.getHtmlColor());
+        return new InventoryArtifactInfo(name, id, rareness.getHtmlColor(), razarionCoast);
+    }
+
+    public Integer getRazarionCoast() {
+        return razarionCoast;
+    }
+
+    public void setRazarionCoast(Integer razarionCoast) {
+        this.razarionCoast = razarionCoast;
     }
 
     @Override
@@ -116,5 +125,10 @@ public class DbInventoryArtifact implements CrudChild {
     @Override
     public int hashCode() {
         return id != null ? id : System.identityHashCode(this);
+    }
+
+    @Override
+    public String toString() {
+        return "DbInventoryArtifact{id=" + id + ", name='" + name + "\'}";
     }
 }

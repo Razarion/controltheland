@@ -46,6 +46,7 @@ public class InventoryEditor extends MgmtWebPage {
             @Override
             protected void extendedPopulateItem(final Item<DbInventoryArtifact> dbInventoryArtifactItem) {
                 displayId(dbInventoryArtifactItem);
+                dbInventoryArtifactItem.add(new TextField("razarionCoast"));
                 dbInventoryArtifactItem.add(InventoryImageResource.createArtifactImage("image", dbInventoryArtifactItem.getModelObject()));
                 super.extendedPopulateItem(dbInventoryArtifactItem);
                 dbInventoryArtifactItem.add(new DropDownChoice<>("rareness", Arrays.asList(DbInventoryArtifact.Rareness.values())));
@@ -85,6 +86,7 @@ public class InventoryEditor extends MgmtWebPage {
             @Override
             protected void extendedPopulateItem(final Item<DbInventoryItem> dbInventoryItemItem) {
                 displayId(dbInventoryItemItem);
+                dbInventoryItemItem.add(new TextField("razarionCoast"));
                 dbInventoryItemItem.add(InventoryImageResource.createItemImage("image", dbInventoryItemItem.getModelObject()));
                 super.extendedPopulateItem(dbInventoryItemItem);
                 dbInventoryItemItem.add(new FileUploadField("upload", new IModel<FileUpload>() {

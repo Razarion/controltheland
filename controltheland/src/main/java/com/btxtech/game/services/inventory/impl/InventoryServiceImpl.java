@@ -341,6 +341,38 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
     }
 
     @Override
+    public int buyInventoryItem(int inventoryItemId) {
+        DbInventoryItem dbInventoryItem = itemCrud.readDbChild(inventoryItemId);
+        UserState userState = userService.getUserState();
+        if (dbInventoryItem.getRazarionCoast() == null) {
+            throw new IllegalArgumentException("The InventoryItem can not be bought: " + userState + " dbInventoryItem: " + dbInventoryItem);
+        }
+        if (dbInventoryItem.getRazarionCoast() > userState.getRazarion()) {
+            throw new IllegalArgumentException("The user does not have enough razarion to buy the inventory item. User: " + userState + " dbInventoryItem: " + dbInventoryItem + " Razarion: " + userState.getRazarion());
+        }
+        userState.subRazarion(dbInventoryItem.getRazarionCoast());
+        userState.addInventoryItem(dbInventoryItem.getId());
+        historyService.addInventoryItemBought(userState, dbInventoryItem.getName(), dbInventoryItem.getRazarionCoast());
+        return userState.getRazarion();
+    }
+
+    @Override
+    public int buyInventoryArtifact(int inventoryArtifactId) {
+        DbInventoryArtifact dbInventoryArtifact = artifactCrud.readDbChild(inventoryArtifactId);
+        UserState userState = userService.getUserState();
+        if (dbInventoryArtifact.getRazarionCoast() == null) {
+            throw new IllegalArgumentException("The InventoryArtifact can not be bought: " + userState + " dbInventoryItem: " + dbInventoryArtifact);
+        }
+        if (dbInventoryArtifact.getRazarionCoast() > userState.getRazarion()) {
+            throw new IllegalArgumentException("The user does not have enough razarion to buy the inventory artifact. User: " + userState + " dbInventoryArtifact: " + dbInventoryArtifact + " Razarion: " + userState.getRazarion());
+        }
+        userState.subRazarion(dbInventoryArtifact.getRazarionCoast());
+        userState.addInventoryArtifact(dbInventoryArtifact.getId());
+        historyService.addInventoryArtifactBought(userState, dbInventoryArtifact.getName(), dbInventoryArtifact.getRazarionCoast());
+        return userState.getRazarion();
+    }
+
+    @Override
     public InventoryInfo getInventory() {
         InventoryInfo inventoryInfo = new InventoryInfo();
         UserState userState = userService.getUserState();
@@ -351,6 +383,8 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
         inventoryInfo.setRazarion(userState.getRazarion());
         // Set all items
         inventoryInfo.setAllInventoryItemInfos(new ArrayList<>(allItems.values())); // new ArrayList() due to GWT problems
+        // Set all artifacts
+        inventoryInfo.setAllInventoryArtifactInfos(new ArrayList<>(allArtifacts.values())); // new ArrayList() due to GWT problems
         // Set own artifacts
         Map<InventoryArtifactInfo, Integer> ownInventoryArtifacts = new HashMap<>();
         for (Integer artifactId : userState.getInventoryArtifactIds()) {

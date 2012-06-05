@@ -36,7 +36,6 @@ import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -103,4 +102,10 @@ public interface MovableService extends RemoteService {
     InventoryInfo assembleInventoryItem(int inventoryItemId);
 
     void useInventoryItem(int inventoryItemId, Collection<Index> positionToBePlaced);
+
+    int buyInventoryItem(int inventoryItemId);
+
+    int buyInventoryArtifact(int inventoryArtifactId);
+
+    int loadRazarion();
 }

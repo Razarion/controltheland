@@ -400,6 +400,44 @@ public class HistoryServiceImpl implements HistoryService {
                 inventoryItemName));
     }
 
+    @Override
+    public void addInventoryItemBought(UserState userState, String inventoryItemName, int razarion) {
+        save(new DbHistoryElement(DbHistoryElement.Type.INVENTORY_ITEM_BOUGHT,
+                userService.getUser(userState),
+                null,
+                baseService.getBase(userState) != null ? baseService.getBase(userState).getSimpleBase() : null,
+                null,
+                null,
+                null,
+                null,
+                baseService,
+                null,
+                DbHistoryElement.Source.HUMAN,
+                null,
+                razarion,
+                userState.getRazarion(),
+                inventoryItemName));
+    }
+
+    @Override
+    public void addInventoryArtifactBought(UserState userState, String inventoryArtifactName, int razarion) {
+        save(new DbHistoryElement(DbHistoryElement.Type.INVENTORY_ARTIFACT_BOUGHT,
+                userService.getUser(userState),
+                null,
+                baseService.getBase(userState) != null ? baseService.getBase(userState).getSimpleBase() : null,
+                null,
+                null,
+                null,
+                null,
+                baseService,
+                null,
+                DbHistoryElement.Source.HUMAN,
+                null,
+                razarion,
+                userState.getRazarion(),
+                inventoryArtifactName));
+    }
+
     private String getSessionId(SimpleBase simpleBase) {
         UserState userState = baseService.getUserState(simpleBase);
         if (userState != null && userState.getSessionId() != null) {
@@ -616,6 +654,12 @@ public class HistoryServiceImpl implements HistoryService {
                 break;
             case BOX_PICKED:
                 displayHistoryElement.setMessage("Box picked");
+                break;
+            case INVENTORY_ITEM_BOUGHT:
+                displayHistoryElement.setMessage("Inventory item bought: " + dbHistoryElement.getInventory());
+                break;
+            case INVENTORY_ARTIFACT_BOUGHT:
+                displayHistoryElement.setMessage("Inventory artifact bought: " + dbHistoryElement.getInventory());
                 break;
             default:
                 displayHistoryElement.setMessage("Internal error 10");

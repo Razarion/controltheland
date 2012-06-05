@@ -1,42 +1,54 @@
 package com.btxtech.game.jsre.client.dialogs.inventory;
 
+import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasText;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
 public class MarketArtifact extends Composite implements HasText {
     private static MarketArtifactUiBinder uiBinder = GWT.create(MarketArtifactUiBinder.class);
-    @UiField 
+    @UiField
     Image image;
-    @UiField 
+    @UiField
     Label artifactNameLabel;
-    @UiField 
+    @UiField
     Label coastLabel;
-    @UiField 
-    Button buyItemButton;
+    @UiField
+    Button buyArtifactButton;
+    private int inventoryArtifactId;
+    private InventoryArtifactInfo inventoryArtifactInfo;
+    private MarketDialog marketDialog;
 
     interface MarketArtifactUiBinder extends UiBinder<Widget, MarketArtifact> {
     }
 
-    public MarketArtifact(InventoryArtifactInfo inventoryArtifactInfo) {
+    public MarketArtifact(InventoryArtifactInfo inventoryArtifactInfo, int razarion, MarketDialog marketDialog) {
+        this.inventoryArtifactInfo = inventoryArtifactInfo;
+        this.marketDialog = marketDialog;
         initWidget(uiBinder.createAndBindUi(this));
         coastLabel.setText("Coast: " + inventoryArtifactInfo.getRazarionCoast());
         artifactNameLabel.setText(inventoryArtifactInfo.getInventoryArtifactName());
-        image.setUrl(ImageHandler.getInventoryArtifactUrl(inventoryArtifactInfo.getInventoryArtifactId()));
-}
+        inventoryArtifactId = inventoryArtifactInfo.getInventoryArtifactId();
+        image.setUrl(ImageHandler.getInventoryArtifactUrl(inventoryArtifactId));
+        handleButtonState(razarion);
+    }
 
-    @UiHandler("buyItemButton")
+    public void handleButtonState(int razarion) {
+        buyArtifactButton.setEnabled(razarion >= inventoryArtifactInfo.getRazarionCoast());
+    }
+
+    @UiHandler("buyArtifactButton")
     void onClick(ClickEvent e) {
+        Connection.getInstance().buyInventoryArtifact(inventoryArtifactId, marketDialog);
     }
 
     public void setText(String text) {

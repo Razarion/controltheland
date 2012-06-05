@@ -37,6 +37,10 @@ public interface InventoryService extends CommonInventoryService {
 
     void useInventoryItem(int inventoryItemId, Collection<Index> positionToBePlaced) throws ItemLimitExceededException, HouseSpaceExceededException, NoSuchItemTypeException;
 
+    int buyInventoryItem(int inventoryItemId);
+
+    int buyInventoryArtifact(int inventoryArtifactId);
+
     InventoryInfo getInventory();
 
     void setupNewUserState(UserState userState);

@@ -34,6 +34,7 @@ import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
+import com.btxtech.game.jsre.client.dialogs.inventory.MarketDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
@@ -277,6 +278,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
                 } else if (packet instanceof BoxPickedPacket) {
                     SideCockpit.getInstance().onBoxPicked((BoxPickedPacket) packet);
                     InventoryDialog.onBoxPicket();
+                    MarketDialog.onBoxPicket();
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }
@@ -639,6 +641,52 @@ public class Connection implements StartupProgressListener, ConnectionI {
                 @Override
                 public void onSuccess(Void aVoid) {
                     // Do nothing
+                }
+            });
+        }
+    }
+
+    public void buyInventoryItem(int inventoryItemId, final MarketDialog marketDialog) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.buyInventoryItem(inventoryItemId, new AsyncCallback<Integer>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                }
+
+                @Override
+                public void onSuccess(Integer razarion) {
+                    marketDialog.updateRazarion(razarion);
+                }
+            });
+        }
+    }
+
+    public void buyInventoryArtifact(int inventoryArtifactId, final MarketDialog marketDialog) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.buyInventoryArtifact(inventoryArtifactId, new AsyncCallback<Integer>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                }
+
+                @Override
+                public void onSuccess(Integer razarion) {
+                    marketDialog.updateRazarion(razarion);
+                }
+            });
+        }
+    }
+
+
+    public void loadRazarion(final MarketDialog marketDialog) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.loadRazarion(new AsyncCallback<Integer>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                }
+
+                @Override
+                public void onSuccess(Integer razarion) {
+                    marketDialog.updateRazarion(razarion);
                 }
             });
         }
