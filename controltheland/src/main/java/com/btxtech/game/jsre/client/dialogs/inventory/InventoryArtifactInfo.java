@@ -11,6 +11,7 @@ public class InventoryArtifactInfo implements Serializable {
     private String inventoryArtifactName;
     private int inventoryArtifactId;
     private String htmlRarenessColor;
+    private Integer razarionCoast;
 
     /**
      * Used by GWT
@@ -18,11 +19,12 @@ public class InventoryArtifactInfo implements Serializable {
     InventoryArtifactInfo() {
     }
 
-    public InventoryArtifactInfo(String inventoryArtifactName, int inventoryArtifactId, String htmlRarenessColor) {
+    public InventoryArtifactInfo(String inventoryArtifactName, int inventoryArtifactId, String htmlRarenessColor, Integer razarionCoast) {
         this.inventoryArtifactId = inventoryArtifactId;
         this.inventoryArtifactName = inventoryArtifactName;
         this.htmlRarenessColor = htmlRarenessColor;
-    }
+        this.razarionCoast = razarionCoast;
+   }
 
     public int getInventoryArtifactId() {
         return inventoryArtifactId;
@@ -34,6 +36,14 @@ public class InventoryArtifactInfo implements Serializable {
 
     public String getHtmlRarenessColor() {
         return htmlRarenessColor;
+    }
+
+    public boolean hasRazarionCoast() {
+        return razarionCoast != null;
+    }
+    
+    public int getRazarionCoast() {
+        return razarionCoast;
     }
 
     @Override

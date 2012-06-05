@@ -16,6 +16,7 @@ public class InventoryItemInfo implements Serializable {
     private int itemCount;
     private int itemFreeRange;
     private int goldAmount;
+    private Integer razarionCoast;
 
     /**
      * Used by GWT
@@ -23,7 +24,7 @@ public class InventoryItemInfo implements Serializable {
     InventoryItemInfo() {
     }
 
-    public InventoryItemInfo(String inventoryItemName, int inventoryItemId, Map<InventoryArtifactInfo, Integer> artifacts, Integer baseItemTypeId, int itemCount, int itemFreeRange, int goldAmount) {
+    public InventoryItemInfo(String inventoryItemName, int inventoryItemId, Map<InventoryArtifactInfo, Integer> artifacts, Integer baseItemTypeId, int itemCount, int itemFreeRange, int goldAmount, Integer razarionCoast) {
         this.inventoryItemName = inventoryItemName;
         this.inventoryItemId = inventoryItemId;
         this.artifacts = artifacts;
@@ -31,6 +32,7 @@ public class InventoryItemInfo implements Serializable {
         this.itemCount = itemCount;
         this.itemFreeRange = itemFreeRange;
         this.goldAmount = goldAmount;
+        this.razarionCoast = razarionCoast;
     }
 
     public String getInventoryItemName() {
@@ -67,6 +69,14 @@ public class InventoryItemInfo implements Serializable {
 
     public int getGoldAmount() {
         return goldAmount;
+    }
+    
+    public boolean hasRazarionCoast() {
+        return razarionCoast != null;
+    }
+
+    public int getRazarionCoast() {
+        return razarionCoast;
     }
 
     @Override
