@@ -57,9 +57,9 @@ public class BuildupItemPanel extends AbsolutePanel {
     private static final int ARROW_R_LEFT = 300;
     private static final int ARROW_R_TOP = 20;
     private static final int SCROLL_LEFT = 50;
-    private static final int SCROLL_TOP = 20;
+    private static final int SCROLL_TOP = 30;
     private static final int SCROLL_LENGTH = 250;
-    private static final int SCROLL_HEIGHT = 100;
+    private static final int SCROLL_HEIGHT = 70;
     private ScrollPanel scrollPanel;
     private Map<Integer, BuildupItem> buildupItem = new HashMap<Integer, BuildupItem>();
     private BuildListener buildListener;

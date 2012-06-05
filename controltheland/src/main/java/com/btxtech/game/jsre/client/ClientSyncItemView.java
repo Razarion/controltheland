@@ -336,7 +336,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
             healthBar = new ExtendedProgressBar(1.0, clientSyncItem.getSyncBaseItem().getBaseItemType().getHealth());
             healthBar.setTextVisible(false);
             healthBar.getElement().getStyle().setZIndex(2);
-            healthBar.getElement().getStyle().setHeight(3, Style.Unit.PX);
+            healthBar.getElement().getStyle().setHeight(2, Style.Unit.PX);
             healthBar.getElement().getStyle().setFontSize(0, Style.Unit.PX);
             add(healthBar);
         } else {
@@ -355,7 +355,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         if (marker == null) {
             marker = new SimplePanel();
             add(marker);
-            marker.setPixelSize(10, 10);
+            marker.setPixelSize(4, 4);
             marker.getElement().getStyle().setZIndex(2);
         } else {
             marker.setVisible(true);
@@ -371,7 +371,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
     }
 
     private void setupMarkerPos() {
-        setWidgetPosition(marker, 0, clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageHeight() - 13);
+        setWidgetPosition(marker, 0, clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageHeight() - 7);
     }
 
     private void setupImage() {
@@ -401,7 +401,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
             factorizeBar.setTextVisible(false);
             factorizeBar.setStyleName("gwt-DeviceBuildBar-shell");
             factorizeBar.getElement().getStyle().setZIndex(2);
-            factorizeBar.getElement().getStyle().setHeight(4, Style.Unit.PX);
+            factorizeBar.getElement().getStyle().setHeight(3, Style.Unit.PX);
             factorizeBar.getElement().getStyle().setFontSize(0, Style.Unit.PX);
             add(factorizeBar);
         } else {
@@ -433,7 +433,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
             projectileBar.setTextVisible(false);
             projectileBar.setStyleName("gwt-ProjectileBar-shell");
             projectileBar.getElement().getStyle().setZIndex(2);
-            projectileBar.getElement().getStyle().setHeight(4, Style.Unit.PX);
+            projectileBar.getElement().getStyle().setHeight(3, Style.Unit.PX);
             projectileBar.getElement().getStyle().setFontSize(0, Style.Unit.PX);
             add(projectileBar);
         } else {
