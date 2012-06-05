@@ -14,6 +14,7 @@ import java.util.Map;
 public class InventoryInfo implements Serializable {
     private int razarion;
     private Collection<InventoryItemInfo> allInventoryItemInfos;
+    private Collection<InventoryArtifactInfo> allInventoryArtifactInfos;
     private Map<InventoryItemInfo, Integer> ownInventoryItems;
     private Map<InventoryArtifactInfo, Integer> ownInventoryArtifacts;
 
@@ -49,5 +50,11 @@ public class InventoryInfo implements Serializable {
         return ownInventoryArtifacts;
     }
 
+    public Collection<InventoryArtifactInfo> getAllInventoryArtifactInfos() {
+        return allInventoryArtifactInfos;
+    }
 
+    public void setAllInventoryArtifactInfos(Collection<InventoryArtifactInfo> allInventoryArtifactInfos) {
+        this.allInventoryArtifactInfos = allInventoryArtifactInfos;
+    }
 }
