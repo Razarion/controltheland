@@ -222,19 +222,19 @@ public class Rectangle implements Serializable {
 
     public List<Index> getCrossPointsExclusive(Line line) {
         List<Index> crossPoints = new ArrayList<Index>();
-        Index crossPoint = getLine12().getCross(line);
+        Index crossPoint = getLineW().getCross(line);
         if (crossPoint != null) {
             crossPoints.add(crossPoint);
         }
-        crossPoint = getLine23Exclusive().getCross(line);
+        crossPoint = getLineSExclusive().getCross(line);
         if (crossPoint != null && !crossPoints.contains(crossPoint)) {
             crossPoints.add(crossPoint);
         }
-        crossPoint = getLine34Exclusive().getCross(line);
+        crossPoint = getLineEExclusive().getCross(line);
         if (crossPoint != null && !crossPoints.contains(crossPoint)) {
             crossPoints.add(crossPoint);
         }
-        crossPoint = getLine41().getCross(line);
+        crossPoint = getLineN().getCross(line);
         if (crossPoint != null && !crossPoints.contains(crossPoint)) {
             crossPoints.add(crossPoint);
         }
@@ -502,44 +502,44 @@ public class Rectangle implements Serializable {
         return generateRectangleFromAnyPoints(newP1, newP2, newP3, newP4);
     }
 
-    public Index getCorner1() {
+    public Index getCornerNW() {
         return start;
     }
 
-    public Index getCorner2() {
+    public Index getCornerSW() {
         return start.add(0, getHeight());
     }
 
-    public Index getCorner3() {
+    public Index getCornerSE() {
         return endExclusive;
     }
 
-    public Index getCorner4() {
+    public Index getCornerNE() {
         return start.add(getWidth(), 0);
     }
 
-    public Line getLine12() {
-        return new Line(getCorner1(), getCorner2());
+    public Line getLineW() {
+        return new Line(getCornerNW(), getCornerSW());
     }
 
-    public Line getLine23() {
-        return new Line(getCorner2(), getCorner3());
+    public Line getLineS() {
+        return new Line(getCornerSW(), getCornerSE());
     }
 
-    public Line getLine23Exclusive() {
-        return new Line(getCorner2().sub(0, 1), getCorner3().sub(1, 1));
+    public Line getLineSExclusive() {
+        return new Line(getCornerSW().sub(0, 1), getCornerSE().sub(1, 1));
     }
 
-    public Line getLine34() {
-        return new Line(getCorner3(), getCorner4());
+    public Line getLineE() {
+        return new Line(getCornerSE(), getCornerNE());
     }
 
-    public Line getLine34Exclusive() {
-        return new Line(getCorner3().sub(1, 1), getCorner4().sub(1, 0));
+    public Line getLineEExclusive() {
+        return new Line(getCornerSE().sub(1, 1), getCornerNE().sub(1, 0));
     }
 
-    public Line getLine41() {
-        return new Line(getCorner4(), getCorner1());
+    public Line getLineN() {
+        return new Line(getCornerNE(), getCornerNW());
     }
 
     public int getArea() {
@@ -548,11 +548,24 @@ public class Rectangle implements Serializable {
 
     public Collection<Line> getLines() {
         Collection<Line> lines = new ArrayList<Line>();
-        lines.add(new Line(getCorner1(), getCorner2()));
-        lines.add(new Line(getCorner2(), getCorner3()));
-        lines.add(new Line(getCorner3(), getCorner4()));
-        lines.add(new Line(getCorner4(), getCorner1()));
+        lines.add(new Line(getCornerNW(), getCornerSW()));
+        lines.add(new Line(getCornerSW(), getCornerSE()));
+        lines.add(new Line(getCornerSE(), getCornerNE()));
+        lines.add(new Line(getCornerNE(), getCornerNW()));
         return lines;
+    }
+
+    public Line getNearestLine(Index point) {
+        double bestDistance = Double.MAX_VALUE;
+        Line bestLine = null;
+        for (Line line : getLines()) {
+            double distance = line.getShortestDistance(point);
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                bestLine = line;
+            }
+        }
+        return bestLine;
     }
 
     public static Rectangle generateRectangleFromAnyPoints(Index point1, Index point2) {

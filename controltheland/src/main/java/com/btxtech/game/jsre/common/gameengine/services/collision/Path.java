@@ -14,10 +14,11 @@
 package com.btxtech.game.jsre.common.gameengine.services.collision;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
+import com.btxtech.game.jsre.common.CommonJava;
+import com.btxtech.game.jsre.common.MathHelper;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -26,96 +27,99 @@ import java.util.List;
  * Date: May 27, 2009
  * Time: 6:29:22 PM
  */
-public class Path {
-    private List<PathElement> pathElements = new ArrayList<PathElement>();
+public class Path implements Serializable {
+    private Index start;
+    private Index destination;
+    private Index alternativeDestination;
+    private boolean destinationReachable;
+    private List<Index> path;
+    private Double destinationAngel;
 
-    private Path() {
+    /**
+     * Used by GWT
+     */
+    protected Path() {
     }
 
-    public Path(PassableRectangle startPassableRectangle) {
-        add(new PathElement(startPassableRectangle, 0));
+    public Path(Index start, Index destination, boolean destinationReachable) {
+        this.start = start;
+        this.destination = destination;
+        this.destinationReachable = destinationReachable;
     }
 
-    public void add(PathElement pathElement) {
-        pathElements.add(pathElement);
+    public void makeSameStartAndDestination() {
+        path = new ArrayList<Index>();
+        path.add(destination);
+        destinationAngel = 0.0;
     }
 
-    public Path add(Path path) {
-        for (PathElement element : path.getPathElements()) {
-            add(element);
+    public Index getAlternativeDestination() {
+        return alternativeDestination;
+    }
+
+    public void setAlternativeDestination(Index alternativeDestination) {
+        this.alternativeDestination = alternativeDestination;
+    }
+
+    public void setPath(List<Index> path) {
+        if (path == null || path.isEmpty()) {
+            throw new IllegalStateException("Path: empty path not allowed");
         }
-        return this;
+        if (path.size() == 1) {
+            throw new IllegalStateException("Path: more than one entry expected");
+        }
+
+        this.path = path;
     }
 
-    public PathElement getLast() {
-        return pathElements.get(pathElements.size() - 1);
+    public Index getStart() {
+        return start;
     }
 
-    public PassableRectangle getSecondLastPassableRectangle() {
-        if (pathElements.size() > 1) {
-            return pathElements.get(pathElements.size() - 2).getPassableRectangle();
+    public Index getDestination() {
+        return destination;
+    }
+
+    public boolean isDestinationReachable() {
+        return destinationReachable;
+    }
+
+    public List<Index> getPath() {
+        return path;
+    }
+
+    public void setDestinationAngel(double destinationAngel) {
+        this.destinationAngel = destinationAngel;
+    }
+
+    public Index getActualDestination() {
+        if (destinationReachable) {
+            return destination;
         } else {
-            return null;
+            return alternativeDestination;
         }
     }
 
-    public List<Port> getAllPassableBorders(AbstractTerrainService terrainService) {
-        PathElement previous = null;
-        ArrayList<Port> allPorts = new ArrayList<Port>();
-        for (PathElement pathElement : pathElements) {
-            if (previous != null) {
-                allPorts.add(previous.getPassableRectangle().getBorder(pathElement.getPassableRectangle(), terrainService));
-            }
-            previous = pathElement;
+    public double getActualDestinationAngel() {
+        if (destinationAngel != null) {
+            return destinationAngel;
+        } else if (destinationReachable) {
+            Index secondLastPoint = path.get(path.size() - 2);
+            return secondLastPoint.getAngleToNord(getActualDestination());
+        } else {
+            return alternativeDestination.getAngleToNord(destination);
         }
-        return allPorts;
     }
 
-    public List<PathElement> getPathElements() {
-        return pathElements;
-    }
-
-    public int length() {
-        return pathElements.size();
-    }
-
-    public boolean containsPassableRectangle(PassableRectangle passableRectangle) {
-        for (PathElement pathElement : pathElements) {
-            if (pathElement.getPassableRectangle().equals(passableRectangle)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    public boolean containsPassableRectangle(PathElement bestPathElement) {
-        for (PathElement pathElement : pathElements) {
-            if (pathElement.equalsTo(bestPathElement.getPassableRectangle())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public int backToElementWithAlternatives(Index absStart, Index absDestination) {
-        while (!pathElements.isEmpty()) {
-            PathElement removed = pathElements.remove(pathElements.size() - 1);
-            if (removed.isHasAlternativeSiblings()) {
-                return removed.getRank();
-            }
-        }
-        throw new PathCanNotBeFoundException("Path can not be backtracked", absStart, absDestination);
-    }
-
-    public void reverse() {
-        Collections.reverse(pathElements);
-    }
-
-    public Path subPath(int start, int endInclusive) {
-        List<PathElement> newPathElements = new ArrayList<PathElement>(pathElements.subList(start, endInclusive + 1));
-        Path newPath = new Path();
-        newPath.pathElements = newPathElements;
-        return newPath;
+    @Override
+    public String toString() {
+        return "Path{" +
+                "start=" + start +
+                ", destination=" + destination +
+                ", alternativeDestination=" + alternativeDestination +
+                ", destinationReachable=" + destinationReachable +
+                ", path=" + CommonJava.pathToDestinationAsString(path) +
+                ", destinationAngel=" + destinationAngel +
+                '}';
     }
 }

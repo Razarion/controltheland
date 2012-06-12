@@ -2,7 +2,6 @@ package com.btxtech.game.jsre.itemtypeeditor;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.Connection;
-import com.btxtech.game.jsre.client.collision.ClientCollisionService;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.client.common.Rectangle;
@@ -28,6 +27,7 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -77,7 +77,7 @@ public class ItemTypeEditorPanel extends FlexTable {
                             null);
                     TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
                     TerrainView.getInstance().addToParent(MapWindow.getAbsolutePanel());
-                    ClientCollisionService.getInstance().setup();
+                    TerrainView.getInstance().getTerrainHandler().createTerrainTileField(Collections.<TerrainImagePosition>emptyList(), surfaceRects);
                     ///--- Setup Item Container
                     Collection<ItemType> itemTypes = new ArrayList<ItemType>();
                     itemTypes.add(itemType);

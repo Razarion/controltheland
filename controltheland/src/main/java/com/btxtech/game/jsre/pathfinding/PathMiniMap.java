@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.pathfinding;
 
-import com.btxtech.game.jsre.client.ColorConstants;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniMap;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniMapMouseDownListener;
@@ -22,14 +21,15 @@ import com.btxtech.game.jsre.client.collision.ClientCollisionService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.itemtypeeditor.ItemTypeAccess;
 import com.btxtech.game.jsre.itemtypeeditor.ItemTypeAccessAsync;
+import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,6 +40,7 @@ import java.util.logging.Logger;
  */
 public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener, MiniMapMouseMoveListener {
     private Index start;
+    private Index destination;
     private PathfindingCockpit pathfindingCockpit;
     private Logger log = Logger.getLogger(PathMiniMap.class.getName());
     private BoundingBox boundingBox;
@@ -69,46 +70,64 @@ public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener, Mi
 
     @Override
     public void onMouseDown(int absX, int absY, MouseDownEvent mouseDownEvent) {
+        clear();
         if (start == null) {
             start = new Index(absX, absY);
+            destination = null;
+            drawStartAndDestination();
         } else {
-            findPath(start, new Index(absX, absY));
+            destination = new Index(absX, absY);
+            drawStartAndDestination();
+            findPathAbsolutePath(start, destination);
             start = null;
         }
     }
 
-    public void findPath(final Index start, Index destination) {
+    public void findPath(Index start, Index destination) {
+        clear();
+        this.start = start;
+        this.destination = destination;
+        drawStartAndDestination();
+        findPathAbsolutePath(start, destination);
+    }
+
+    private void drawStartAndDestination() {
+        Context2d context2d = getContext2d();
+
+        if (start != null) {
+            context2d.setFillStyle("#ff69ff");
+            context2d.beginPath();
+            context2d.arc(start.getX(), start.getY(), 20, 0, 2 * Math.PI, false);
+            context2d.fill();
+        }
+
+        if (destination != null) {
+            context2d.setFillStyle("#ff6969");
+            context2d.beginPath();
+            context2d.arc(destination.getX(), destination.getY(), 20, 0, 2 * Math.PI, false);
+            context2d.fill();
+        }
+    }
+
+    public void findPathAbsolutePath(final Index start, Index destination) {
         if (boundingBox == null) {
             return;
         }
         try {
-            List<Index> indexes = ClientCollisionService.getInstance().setupPathToDestination(start, destination, TerrainType.LAND, boundingBox);
-            if (indexes == null) {
-                return;
+            Path path = ClientCollisionService.getInstance().setupPathToDestination(start, destination, TerrainType.LAND, boundingBox);
+            getContext2d().setLineWidth(2.0 / getScale());
+            getContext2d().setStrokeStyle("#FFFFFF");
+            pathfindingCockpit.clearPathTable();
+            getContext2d().beginPath();
+            getContext2d().moveTo(start.getX(), start.getY());
+            for (Index index : path.getPath()) {
+                getContext2d().lineTo(index.getX(), index.getY());
+                //pathfindingCockpit.addPathTable(index);
             }
-            displayPath(start, indexes);
+            getContext2d().stroke();
         } catch (Throwable t) {
             GwtCommon.handleException(t);
         }
-    }
-
-    private void displayPath(Index start, List<Index> indexes) {
-        clear();
-        getContext2d().setLineWidth(2.0 / getScale());
-        getContext2d().setStrokeStyle(ColorConstants.WHITE);
-        pathfindingCockpit.clearPathTable();
-        getContext2d().beginPath();
-        getContext2d().moveTo(start.getX(), start.getY());
-        for (Index index : indexes) {
-            getContext2d().lineTo(index.getX(), index.getY());
-            pathfindingCockpit.addPathTable(index);
-        }
-        getContext2d().stroke();
-    }
-
-    @Override
-    protected void clear() {
-        getContext2d().clearRect(0, 0, getTerrainSettings().getPlayFieldXSize(), getTerrainSettings().getPlayFieldYSize());
     }
 
     @Override

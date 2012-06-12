@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.playback;
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.control.ClientRunner;
+import com.btxtech.game.jsre.client.control.StartupScreen;
 import com.google.gwt.core.client.EntryPoint;
 
 /**
@@ -30,6 +31,7 @@ public class PlaybackEntry implements EntryPoint {
     @Override
     public void onModuleLoad() {
         try {
+            ClientServices.getInstance().getClientRunner().addStartupProgressListener(StartupScreen.getInstance());
             ClientServices.getInstance().getClientRunner().start(PlaybackStartupSeq.COLD_PLAYBACK);
         } catch (Throwable t) {
             GwtCommon.handleException(t);

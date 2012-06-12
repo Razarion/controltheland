@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.common;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.google.gwt.i18n.shared.DateTimeFormat;
 
 import java.util.ArrayList;

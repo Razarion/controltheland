@@ -14,16 +14,14 @@
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
-
-import java.util.List;
 
 /**
  * User: beat
@@ -49,9 +47,9 @@ public abstract class SyncBaseAbility {
         return syncBaseItem.getSyncItemArea();
     }
 
-    public void setPathToDestinationIfSyncMovable(List<Index> pathToDestination, double destinationAngel) {
-        if (syncBaseItem.hasSyncMovable()) {
-            syncBaseItem.getSyncMovable().setPathToDestination(pathToDestination, destinationAngel);
+    public void setPathToDestinationIfSyncMovable(Path path) {
+        if (path != null && syncBaseItem.hasSyncMovable()) {
+            syncBaseItem.getSyncMovable().setPathToDestination(path.getPath(), path.getActualDestinationAngel());
         }
     }
 
@@ -66,9 +64,13 @@ public abstract class SyncBaseAbility {
                 target,
                 targetTerrainType);
         if (format.isInRange()) {
-            setPathToDestinationIfSyncMovable(getServices().getCollisionService().setupPathToDestination(syncItem, format.getDestinationHint()), format.getDestinationAngel());
+            Path path = getServices().getCollisionService().setupPathToDestination(syncItem, format.getDestinationHint());
+            if (!path.isDestinationReachable()) {
+                throw new PathCanNotBeFoundException("Can not find path in recalculateNewPath: " + syncItem, syncItem.getSyncItemArea().getPosition(), null);
+            }
+            setPathToDestinationIfSyncMovable(path);
         } else {
-            throw new PathCanNotBeFoundException("Can not find path in recalculateNewPath: " + syncItem, syncItem.getSyncItemArea().getPosition(), null);
+            throw new PathCanNotBeFoundException("Not in range recalculateNewPath: " + syncItem, syncItem.getSyncItemArea().getPosition(), null);
         }
     }
 

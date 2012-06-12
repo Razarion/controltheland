@@ -66,16 +66,16 @@ public class TerrainImageModifier implements TerrainMouseMoveListener, MouseDown
         marker.setVisible(false);
         int absoluteX = relX + TerrainView.getInstance().getViewOriginLeft();
         int absoluteY = relY + TerrainView.getInstance().getViewOriginTop();
-        TerrainImagePosition terrainImagePosition = TerrainView.getInstance().getTerrainHandler().getTerrainImagePosition(cockpit.getSelectedZIndex(), absoluteX, absoluteY);
+        TerrainImagePosition terrainImagePosition = cockpit.getTerrainData().getTerrainImagePosition(cockpit.getSelectedZIndex(), absoluteX, absoluteY);
         GwtCommon.preventDefault(mouseDownEvent);
         if (terrainImagePosition == null) {
             return;
         }
 
         if (cockpit.isDeleteModus()) {
-            TerrainView.getInstance().getTerrainHandler().removeTerrainImagePosition(terrainImagePosition);
+            cockpit.getTerrainData().removeTerrainImagePosition(terrainImagePosition);
         } else {
-            new PlaceablePreviewTerrainImagePoition(terrainImagePosition, mouseDownEvent);
+            new PlaceablePreviewTerrainImagePoition(cockpit.getTerrainData(), terrainImagePosition, mouseDownEvent);
         }
     }
 
@@ -86,10 +86,10 @@ public class TerrainImageModifier implements TerrainMouseMoveListener, MouseDown
             return;
         }
 
-        TerrainImagePosition terrainImagePosition = TerrainView.getInstance().getTerrainHandler().getTerrainImagePosition(cockpit.getSelectedZIndex(), absoluteLeft, absoluteTop);
+        TerrainImagePosition terrainImagePosition = cockpit.getTerrainData().getTerrainImagePosition(cockpit.getSelectedZIndex(), absoluteLeft, absoluteTop);
         if (terrainImagePosition != null) {
             marker.setVisible(true);
-            TerrainImage terrainImage = TerrainView.getInstance().getTerrainHandler().getTerrainImage(terrainImagePosition);
+            TerrainImage terrainImage = TerrainView.getInstance().getTerrainHandler().getTerrainImage(terrainImagePosition.getImageId());
             Index absolute = TerrainView.getInstance().getTerrainHandler().getAbsolutIndexForTerrainTileIndex(terrainImagePosition.getTileIndex());
             MapWindow.getAbsolutePanel().setWidgetPosition(marker,
                     absolute.getX() - TerrainView.getInstance().getViewOriginLeft(),

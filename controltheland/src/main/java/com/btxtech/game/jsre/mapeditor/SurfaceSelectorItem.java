@@ -27,9 +27,11 @@ import com.google.gwt.user.client.ui.Image;
  * Time: 11:20:39
  */
 public class SurfaceSelectorItem extends FlowPanel implements MouseDownHandler {
+    private TerrainData terrainData;
     private SurfaceImage surfaceImage;
 
-    public SurfaceSelectorItem(SurfaceImage surfaceImage) {
+    public SurfaceSelectorItem(TerrainData terrainData, SurfaceImage surfaceImage) {
+        this.terrainData = terrainData;
         this.surfaceImage = surfaceImage;
         Image image = ImageHandler.getSurfaceImage(surfaceImage.getImageId());
         add(image);
@@ -41,7 +43,7 @@ public class SurfaceSelectorItem extends FlowPanel implements MouseDownHandler {
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
         GwtCommon.preventDefault(mouseDownEvent);
-        new PlaceablePreviewSurfaceRect(surfaceImage, mouseDownEvent);
+        new PlaceablePreviewSurfaceRect(terrainData, surfaceImage, mouseDownEvent);
     }
 
     public void setSelected(boolean selected) {

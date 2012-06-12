@@ -66,7 +66,9 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     private HashMap<Integer, DbTerrainImage> dbTerrainImages = new HashMap<>();
     private HashMap<Integer, DbSurfaceImage> dbSurfaceImages = new HashMap<>();
     private Log log = LogFactory.getLog(TerrainServiceImpl.class);
-    private TerrainImageBackground terrainImageBackground;
+    private Collection<TerrainImagePosition> terrainImagePositions;
+    private Collection<SurfaceRect> surfaceRects;
+
 
     @PostConstruct
     public void init() {
@@ -109,19 +111,20 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         setTerrainSettings(dbTerrainSetting.createTerrainSettings());
 
         // Terrain image position
-        setTerrainImagePositions(new ArrayList<TerrainImagePosition>());
+        terrainImagePositions = new ArrayList<TerrainImagePosition>();
         for (DbTerrainImagePosition dbTerrainImagePosition : dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().readDbChildren()) {
-            addTerrainImagePosition(dbTerrainImagePosition.createTerrainImagePosition());
+            terrainImagePositions.add(dbTerrainImagePosition.createTerrainImagePosition());
         }
 
         // Surface rectangles
-        setSurfaceRects(new ArrayList<SurfaceRect>());
+        surfaceRects = new ArrayList<SurfaceRect>();
         for (DbSurfaceRect dbSurfaceRect : dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().readDbChildren()) {
-            addSurfaceRect(dbSurfaceRect.createSurfaceRect());
+            surfaceRects.add(dbSurfaceRect.createSurfaceRect());
         }
 
         // Terrain images
-        terrainImageBackground = new TerrainImageBackground();
+        TerrainImageBackground terrainImageBackground = new TerrainImageBackground();
+        setTerrainImageBackground(terrainImageBackground);
         Collection<DbTerrainImageGroup> imageGroupList = dbTerrainImageGroupCrudRootServiceHelper.readDbChildren();
         clearTerrainImages();
         dbTerrainImages = new HashMap<>();
@@ -130,7 +133,14 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
             for (DbTerrainImage dbTerrainImage : imageList) {
                 dbTerrainImages.put(dbTerrainImage.getId(), dbTerrainImage);
                 putTerrainImage(dbTerrainImage.createTerrainImage());
-                terrainImageBackground.put(dbTerrainImage.getId(), dbTerrainImageGroup.getHtmlBackgroundColor());
+                terrainImageBackground.put(dbTerrainImage.getId(),
+                        dbTerrainImageGroup.getId(),
+                        dbTerrainImageGroup.getHtmlBackgroundColorNone(),
+                        dbTerrainImageGroup.getHtmlBackgroundColorWater(),
+                        dbTerrainImageGroup.getHtmlBackgroundColorLand(),
+                        dbTerrainImageGroup.getHtmlBackgroundColorWaterCoast(),
+                        dbTerrainImageGroup.getHtmlBackgroundColorLandCoast()
+                );
             }
         }
 
@@ -142,6 +152,9 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
             dbSurfaceImages.put(dbSurfaceImage.getId(), dbSurfaceImage);
             putSurfaceImage(dbSurfaceImage.createSurfaceImage());
         }
+
+        createTerrainTileField(terrainImagePositions, surfaceRects);
+
         fireTerrainChanged();
     }
 
@@ -249,17 +262,17 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
 
     @Override
     public void setupTerrainRealGame(GameInfo gameInfo) {
-        gameInfo.setTerrainImageBackground(terrainImageBackground);
+        gameInfo.setTerrainImageBackground(getTerrainImageBackground());
         gameInfo.setTerrainSettings(getTerrainSettings());
-        gameInfo.setTerrainImagePositions(getTerrainImagePositions());
+        gameInfo.setTerrainImagePositions(terrainImagePositions);
         gameInfo.setTerrainImages(getTerrainImages());
-        gameInfo.setSurfaceRects(getSurfaceRects());
+        gameInfo.setSurfaceRects(surfaceRects);
         gameInfo.setSurfaceImages(getSurfaceImages());
     }
 
     @Override
     public void setupTerrainTutorial(GameInfo gameInfo, DbTutorialConfig dbTutorialConfig) {
-        gameInfo.setTerrainImageBackground(terrainImageBackground);
+        gameInfo.setTerrainImageBackground(getTerrainImageBackground());
         DbTerrainSetting terrainSetting = ((DbTutorialConfig) sessionFactory.getCurrentSession().get(DbTutorialConfig.class, dbTutorialConfig.getId())).getDbTerrainSetting();
         gameInfo.setTerrainSettings(terrainSetting.createTerrainSettings());
         gameInfo.setTerrainImagePositions(getTerrainImagePositions(terrainSetting));
@@ -276,7 +289,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         terrainInfo.setTerrainImages(getTerrainImages());
         terrainInfo.setSurfaceRects(getSurfaceRects(dbTerrainSetting));
         terrainInfo.setSurfaceImages(getSurfaceImages());
-        terrainInfo.setTerrainImageBackground(terrainImageBackground);
+        terrainInfo.setTerrainImageBackground(getTerrainImageBackground());
     }
 
     private Collection<TerrainImagePosition> getTerrainImagePositions(DbTerrainSetting dbTerrainSetting) {

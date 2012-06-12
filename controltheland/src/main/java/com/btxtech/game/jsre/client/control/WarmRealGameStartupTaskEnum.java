@@ -21,7 +21,6 @@ import com.btxtech.game.jsre.client.control.task.LoadRealGameInfoStartupTask;
 import com.btxtech.game.jsre.client.control.task.LoadSyncInfoStartupTask;
 import com.btxtech.game.jsre.client.control.task.RealDeltaStartupTask;
 import com.btxtech.game.jsre.client.control.task.RunRealGameStartupTask;
-import com.btxtech.game.jsre.client.control.task.SetupPathFindingStartupTask;
 
 /**
  * User: beat
@@ -43,11 +42,6 @@ public enum WarmRealGameStartupTaskEnum implements StartupTaskEnum {
         @Override
         public AbstractStartupTask createTask() {
             return new RealDeltaStartupTask(this);
-        }},
-    SETUP_PATH_FINDING("Setup path finding") {
-        @Override
-        public AbstractStartupTask createTask() {
-            return new SetupPathFindingStartupTask(this);
         }},
     LOAD_MAP("Load delta Map") {
         @Override

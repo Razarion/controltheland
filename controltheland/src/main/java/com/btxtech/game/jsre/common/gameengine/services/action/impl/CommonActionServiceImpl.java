@@ -3,7 +3,6 @@ package com.btxtech.game.jsre.common.gameengine.services.action.impl;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
-import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
@@ -12,6 +11,7 @@ import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -65,29 +65,23 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         return false;
     }
 
+
+    protected boolean moveIfPathTargetUnreachable(SyncBaseItem syncBaseItem, Path path) {
+        if (path.isDestinationReachable()) {
+            return false;
+        } else {
+            move(syncBaseItem, path.getAlternativeDestination());
+            return true;
+        }
+    }
+
     @Override
     public void move(SyncBaseItem syncBaseItem, Index destination) {
         syncBaseItem.stop();
         MoveCommand moveCommand = new MoveCommand();
         moveCommand.setId(syncBaseItem.getId());
         moveCommand.setTimeStamp();
-        List<Index> pathToDestination = getServices().getCollisionService().setupPathToDestination(syncBaseItem, destination);
-        moveCommand.setPathToDestination(pathToDestination);
-        if (pathToDestination.isEmpty()) {
-            // TODO remove if bug found
-            log.warning("CommonActionServiceImpl.move() -> pathToDestination.isEmpty() syncBaseItem: " + syncBaseItem + " destination: " + destination);
-            moveCommand.setDestinationAngel(syncBaseItem.getSyncItemArea().getTurnToAngel(destination));
-        } else if (pathToDestination.size() < 2) {
-            moveCommand.setDestinationAngel(syncBaseItem.getSyncItemArea().getTurnToAngel(destination));
-        } else {
-            try {
-                int size = pathToDestination.size();
-                moveCommand.setDestinationAngel(pathToDestination.get(size - 2).getAngleToNord(pathToDestination.get(size - 1)));
-            } catch (IllegalArgumentException e) {
-                // TODO remove if bug found
-                throw new RuntimeException("syncBaseItem: " + syncBaseItem + " destination: " + destination + " path: " + CommonJava.pathToDestinationAsString(pathToDestination), e);
-            }
-        }
+        moveCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(syncBaseItem, destination));
         try {
             executeCommand(syncBaseItem, moveCommand);
         } catch (PathCanNotBeFoundException e) {
@@ -103,15 +97,19 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
             return;
         }
         syncBaseItem.stop();
+        Path path;
         AttackCommand attackCommand = new AttackCommand();
+        if (followTarget) {
+            path = getServices().getCollisionService().setupPathToDestination(syncBaseItem, destinationHint);
+            if (moveIfPathTargetUnreachable(syncBaseItem, path)) {
+                return;
+            }
+            attackCommand.setPathToDestination(path);
+        }
         attackCommand.setId(syncBaseItem.getId());
         attackCommand.setTimeStamp();
         attackCommand.setTarget(target.getId());
         attackCommand.setFollowTarget(followTarget);
-        if (followTarget) {
-            attackCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(syncBaseItem, destinationHint));
-            attackCommand.setDestinationAngel(destinationAngel);
-        }
 
         try {
             executeCommand(syncBaseItem, attackCommand);
@@ -141,8 +139,12 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
                 toBeBuilt.getBoundingBox().createSyntheticSyncItemArea(positionToBeBuild),
                 toBeBuilt.getTerrainType());
         if (format.isInRange()) {
-            builderCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(syncItem, format.getDestinationHint()));
-            builderCommand.setDestinationAngel(format.getDestinationAngel());
+            Path path = getServices().getCollisionService().setupPathToDestination(syncItem, format.getDestinationHint());
+            if (moveIfPathTargetUnreachable(syncItem, path)) {
+                return;
+            }
+            path.setDestinationAngel(format.getDestinationAngel());
+            builderCommand.setPathToDestination(path);
         } else {
             move(syncItem, format.getDestinationHint());
             return;
@@ -166,9 +168,12 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         builderCommand.setTimeStamp();
         builderCommand.setToBeBuilt(toBeBuilt.getId());
         builderCommand.setPositionToBeBuilt(positionToBeBuild);
-        builderCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(syncItem, destinationHint));
-        builderCommand.setDestinationAngel(destinationAngel);
-
+        Path path = getServices().getCollisionService().setupPathToDestination(syncItem, destinationHint);
+        if (moveIfPathTargetUnreachable(syncItem, path)) {
+            return;
+        }
+        path.setDestinationAngel(destinationAngel);
+        builderCommand.setPathToDestination(path);
         try {
             executeCommand(syncItem, builderCommand);
         } catch (Exception e) {
@@ -189,8 +194,12 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         builderFinalizeCommand.setId(builder.getId());
         builderFinalizeCommand.setTimeStamp();
         builderFinalizeCommand.setToBeBuilt(building.getId());
-        builderFinalizeCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(builder, destinationHint));
-        builderFinalizeCommand.setDestinationAngel(destinationAngel);
+        Path path = getServices().getCollisionService().setupPathToDestination(builder, destinationHint);
+        if (moveIfPathTargetUnreachable(builder, path)) {
+            return;
+        }
+        path.setDestinationAngel(destinationAngel);
+        builderFinalizeCommand.setPathToDestination(path);
         try {
             executeCommand(builder, builderFinalizeCommand);
         } catch (Exception e) {
@@ -225,9 +234,12 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         collectCommand.setId(collector.getId());
         collectCommand.setTimeStamp();
         collectCommand.setTarget(money.getId());
-        collectCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(collector, destinationHint));
-        collectCommand.setDestinationAngel(destinationAngel);
-
+        Path path = getServices().getCollisionService().setupPathToDestination(collector, destinationHint);
+        if (moveIfPathTargetUnreachable(collector, path)) {
+            return;
+        }
+        collectCommand.setPathToDestination(path);
+        path.setDestinationAngel(destinationAngel);
         try {
             executeCommand(collector, collectCommand);
         } catch (Exception e) {
@@ -304,9 +316,12 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         pickupBoxCommand.setId(picker.getId());
         pickupBoxCommand.setBox(box.getId());
         pickupBoxCommand.setTimeStamp();
-        pickupBoxCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(picker, destinationHint));
-        pickupBoxCommand.setDestinationAngel(destinationAngel);
-
+        Path path = getServices().getCollisionService().setupPathToDestination(picker, destinationHint);
+        if (moveIfPathTargetUnreachable(picker, path)) {
+            return;
+        }
+        pickupBoxCommand.setPathToDestination(path);
+        path.setDestinationAngel(destinationAngel);
         try {
             executeCommand(picker, pickupBoxCommand);
         } catch (Exception e) {

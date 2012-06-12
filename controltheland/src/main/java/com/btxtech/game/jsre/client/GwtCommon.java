@@ -240,5 +240,4 @@ public class GwtCommon {
         }
         return (int) Math.floor(intObject);
     }
-
 }

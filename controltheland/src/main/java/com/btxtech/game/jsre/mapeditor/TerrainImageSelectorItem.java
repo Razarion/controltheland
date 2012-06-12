@@ -63,7 +63,7 @@ public class TerrainImageSelectorItem extends FlowPanel implements MouseDownHand
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
         GwtCommon.preventDefault(mouseDownEvent);
-        new PlaceablePreviewTerrainImagePoition(terrainImage, cockpit.getSelectedZIndex(), mouseDownEvent); // TODO
+        new PlaceablePreviewTerrainImagePoition(cockpit.getTerrainData(), terrainImage, cockpit.getSelectedZIndex(), mouseDownEvent);
     }
 
     public void setSelected(boolean selected) {

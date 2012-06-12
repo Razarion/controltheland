@@ -37,7 +37,7 @@ public class MainTerrainEditor implements EntryPoint {
         // Setup common
         GwtCommon.setUncaughtExceptionHandler();
         CockpitUtil.hideCockpit();
-        MiniTerrain.UGLY_SUPPRESS_CANVAS_BUFFER_DUE_TO_ANTI_ALIASING_ARTIFACTS = true;
+        TerrainView.uglySuppressRadar = true;
         GwtCommon.disableBrowserContextMenuJSNI();
 
         int terrainId = Integer.parseInt(Window.Location.getParameter(TerrainEditorAsync.TERRAIN_SETTING_ID));

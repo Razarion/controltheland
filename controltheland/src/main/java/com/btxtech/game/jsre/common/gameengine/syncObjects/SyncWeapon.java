@@ -153,7 +153,7 @@ public class SyncWeapon extends SyncBaseAbility {
 
         this.target = attackCommand.getTarget();
         followTarget = attackCommand.isFollowTarget();
-        setPathToDestinationIfSyncMovable(attackCommand.getPathToDestination(), attackCommand.getDestinationAngel());
+        setPathToDestinationIfSyncMovable(attackCommand.getPathToDestination());
     }
 
     public boolean isItemTypeAllowed(SyncBaseItem target) {

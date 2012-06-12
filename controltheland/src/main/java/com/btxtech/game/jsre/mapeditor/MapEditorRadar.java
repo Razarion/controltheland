@@ -13,13 +13,18 @@
 
 package com.btxtech.game.jsre.mapeditor;
 
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.RadarMode;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -33,7 +38,14 @@ public class MapEditorRadar extends TopMapPanel {
 
     @Override
     protected Widget createBody() {
-        Widget widget = RadarPanel.getInstance().createWidget(RADAR_WIDTH, RADAR_HEIGHT);
+        VerticalPanel verticalPanel = new VerticalPanel();
+        verticalPanel.add(new Button("Update Radar", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                RadarPanel.getInstance().getMiniTerrain().onTerrainChanged();
+            }
+        }));
+        verticalPanel.add(RadarPanel.getInstance().createWidget(RADAR_WIDTH, RADAR_HEIGHT));
         RadarPanel.getInstance().setLevelRadarMode(RadarMode.MAP);
         RadarPanel.getInstance().getRadarFrameView().getCanvas().addMouseDownHandler(new MouseDownHandler() {
             @Override
@@ -47,6 +59,6 @@ public class MapEditorRadar extends TopMapPanel {
                 event.stopPropagation();
             }
         });
-        return widget;
+        return verticalPanel;
     }
 }

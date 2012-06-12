@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
+import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.PathToDestinationCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.PickupBoxCommand;
@@ -52,7 +53,7 @@ public class SyncMovable extends SyncBaseAbility {
      * @return true if more tick are needed to fulfil the job
      */
     public boolean tick(double factor) {
-        return tickMove(factor) || targetContainer != null && putInContainer() || syncBoxItemId != null && pickupBox(factor);
+        return tickMove(factor) || targetContainer != null && putInContainer() || syncBoxItemId != null && pickupBox();
 
     }
 
@@ -99,21 +100,14 @@ public class SyncMovable extends SyncBaseAbility {
         }
         SyncBaseItem syncBaseItem = getSyncBaseItem();
         if (getServices().getItemService().isSyncItemOverlapping(syncBaseItem)) {
-            pathToDestination = getServices().getCollisionService().setupPathToSyncMovableRandomPositionIfTaken(syncBaseItem);
-            if (pathToDestination != null) {
-                int size = pathToDestination.size();
-                if (pathToDestination.size() < 2) {
-                    destinationAngel = getSyncItemArea().getPosition().getAngleToNord(pathToDestination.get(size - 1));
-                } else {
-                    destinationAngel = pathToDestination.get(size - 2).getAngleToNord(pathToDestination.get(size - 1));
-                }
-                getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
-                return true;
-            } else {
-                throw new NullPointerException("Position is null " + getSyncBaseItem());
-            }
+            Path path = getServices().getCollisionService().setupPathToSyncMovableRandomPositionIfTaken(syncBaseItem);
+            pathToDestination = path.getPath();
+            destinationAngel = path.getActualDestinationAngel();
+            getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+            return true;
+        }  else {
+            return false;
         }
-        return false;
     }
 
     private boolean putInContainer() {
@@ -134,12 +128,8 @@ public class SyncMovable extends SyncBaseAbility {
         return false;
     }
 
-    private boolean pickupBox(double factor) {
+    private boolean pickupBox() {
         try {
-            if (tickMove(factor)) {
-                return true;
-            }
-
             SyncBoxItem syncBoxItem = (SyncBoxItem) getServices().getItemService().getItem(syncBoxItemId);
             if (getSyncItemArea().isInRange(getSyncBaseItem().getBaseItemType().getBoxPickupRange(), syncBoxItem)) {
                 getSyncItemArea().turnTo(syncBoxItem);
@@ -191,11 +181,11 @@ public class SyncMovable extends SyncBaseAbility {
     }
 
     public void executeCommand(PathToDestinationCommand pathToDestinationCommand) {
-        if (getSyncBaseItem().getSyncItemArea().positionReached(pathToDestinationCommand.getDestination())) {
+        if (getSyncBaseItem().getSyncItemArea().positionReached(pathToDestinationCommand.getPathToDestination().getActualDestination())) {
             return;
         }
-        pathToDestination = pathToDestinationCommand.getPathToDestination();
-        destinationAngel = pathToDestinationCommand.getDestinationAngel();
+        pathToDestination = pathToDestinationCommand.getPathToDestination().getPath();
+        destinationAngel = pathToDestinationCommand.getPathToDestination().getActualDestinationAngel();
     }
 
     public void executeCommand(LoadContainCommand loadContainCommand) {
@@ -209,8 +199,8 @@ public class SyncMovable extends SyncBaseAbility {
 
     public void executeCommand(PickupBoxCommand pickupBoxCommand) {
         syncBoxItemId = pickupBoxCommand.getBox();
-        pathToDestination = pickupBoxCommand.getPathToDestination();
-        destinationAngel = pickupBoxCommand.getDestinationAngel();
+        pathToDestination = pickupBoxCommand.getPathToDestination().getPath();
+        destinationAngel = pickupBoxCommand.getPathToDestination().getActualDestinationAngel();
     }
 
     public List<Index> getPathToDestination() {

@@ -91,7 +91,7 @@ public class SyncHarvester extends SyncBaseAbility {
         }
 
         this.target = resource.getId();
-        setPathToDestinationIfSyncMovable(attackCommand.getPathToDestination(), attackCommand.getDestinationAngel());
+        setPathToDestinationIfSyncMovable(attackCommand.getPathToDestination());
     }
 
     public boolean isInRange(SyncResourceItem target) {

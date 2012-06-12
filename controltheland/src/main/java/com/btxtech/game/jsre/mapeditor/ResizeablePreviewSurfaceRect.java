@@ -26,17 +26,19 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
  */
 public class ResizeablePreviewSurfaceRect extends ResizeablePreviewWidget {
     private SurfaceRect surfaceRect;
+    private TerrainData terrainData;
 
-    public ResizeablePreviewSurfaceRect(SurfaceRect surfaceRect, Direction direction) {
+    public ResizeablePreviewSurfaceRect(TerrainData terrainData, SurfaceRect surfaceRect, Direction direction) {
         super(ImageHandler.getSurfaceImage(surfaceRect.getSurfaceImageId()),
                 direction,
                 TerrainView.getInstance().getTerrainHandler().convertToAbsolutePosition(surfaceRect.getTileRectangle()));
+        this.terrainData = terrainData;
         this.surfaceRect = surfaceRect;
     }
 
     @Override
     protected void execute(Rectangle rectangle) {
-        TerrainView.getInstance().getTerrainHandler().moveSurfaceRect(rectangle, surfaceRect);
+        terrainData.moveSurfaceRect(rectangle, surfaceRect);
     }
 
     @Override

@@ -11,10 +11,13 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.wicket.pages.mgmt;
+package com.btxtech.game.wicket.pages.mgmt.tracking;
 
 import com.btxtech.game.jsre.playback.PlaybackEntry;
 import javax.servlet.http.HttpSession;
+
+import com.btxtech.game.jsre.playback.PlaybackStartupSeq;
+import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.protocol.http.WebRequest;
@@ -31,5 +34,7 @@ public class PlaybackPage extends MgmtWebPage {
         startupSeqLabel.add(new SimpleAttributeModifier("id", PlaybackEntry.ID));
         startupSeqLabel.add(new SimpleAttributeModifier(PlaybackEntry.START_UUID, (String)httpSession.getAttribute(PlaybackEntry.START_UUID)));
         add(startupSeqLabel);
+        add(new Label("startupTaskText", PlaybackStartupSeq.COLD_PLAYBACK.getAbstractStartupTaskEnum()[0].getStartupTaskEnumHtmlHelper().getNiceText()));
+
     }
 }

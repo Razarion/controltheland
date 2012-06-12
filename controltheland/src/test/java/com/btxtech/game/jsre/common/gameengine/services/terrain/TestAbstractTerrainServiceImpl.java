@@ -6,8 +6,12 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+
+import static com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType.LAND;
+import static com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType.LAND_COAST;
+import static com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType.WATER;
 
 /**
  * User: beat
@@ -21,15 +25,13 @@ public class TestAbstractTerrainServiceImpl {
         AbstractTerrainServiceImpl abstractTerrainService = new AbstractTerrainServiceImpl() {
         };
         abstractTerrainService.setTerrainSettings(new TerrainSettings(100, 200, 100, 100));
-        Map<TerrainType, boolean[][]> terrainTypes = abstractTerrainService.createSurfaceTypeField();
-        Assert.assertEquals(TerrainType.values().length, terrainTypes.size());
-        for (boolean[][] boolX : terrainTypes.values()) {
-            Assert.assertEquals(100, boolX.length);
-            for (boolean[] boolY : boolX) {
-                Assert.assertEquals(200, boolY.length);
-                for (boolean b : boolY) {
-                    Assert.assertFalse(b);
-                }
+        abstractTerrainService.createTerrainTileField(Collections.<TerrainImagePosition>emptyList(), Collections.<SurfaceRect>emptyList());
+        TerrainTile[][] terrainTile = abstractTerrainService.getTerrainTileField();
+        Assert.assertEquals(100, terrainTile.length);
+        for (int x = 0; x < 100; x++) {
+            Assert.assertEquals(200, terrainTile[x].length);
+            for (int y = 0; y < 200; y++) {
+                Assert.assertNull(terrainTile[x][y]);
             }
         }
     }
@@ -38,7 +40,7 @@ public class TestAbstractTerrainServiceImpl {
     public void createSurfaceTypeField2() {
         AbstractTerrainServiceImpl abstractTerrainService = new AbstractTerrainServiceImpl() {
         };
-        abstractTerrainService.setTerrainSettings(new TerrainSettings(100, 100, 100, 100));
+        abstractTerrainService.setTerrainSettings(new TerrainSettings(20, 20, 100, 100));
 
         SurfaceType[][] tileSurfaceTypes = new SurfaceType[2][2];
         tileSurfaceTypes[0][0] = SurfaceType.LAND;
@@ -48,98 +50,56 @@ public class TestAbstractTerrainServiceImpl {
         abstractTerrainService.putTerrainImage(new TerrainImage(0, 2, 2, tileSurfaceTypes));
 
         abstractTerrainService.putSurfaceImage(new SurfaceImage(SurfaceType.LAND, 0, ""));
+        abstractTerrainService.putSurfaceImage(new SurfaceImage(SurfaceType.WATER, 1, ""));
 
         List<TerrainImagePosition> terrainImagePositions = new ArrayList<>();
         terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), 0, TerrainImagePosition.ZIndex.LAYER_1));
-        terrainImagePositions.add(new TerrainImagePosition(new Index(20, 20), 0, TerrainImagePosition.ZIndex.LAYER_1));
-        terrainImagePositions.add(new TerrainImagePosition(new Index(99, 99), 0, TerrainImagePosition.ZIndex.LAYER_1));
-        abstractTerrainService.setTerrainImagePositions(terrainImagePositions);
+        terrainImagePositions.add(new TerrainImagePosition(new Index(1, 1), 0, TerrainImagePosition.ZIndex.LAYER_2));
+        terrainImagePositions.add(new TerrainImagePosition(new Index(5, 0), 0, TerrainImagePosition.ZIndex.LAYER_1));
+        terrainImagePositions.add(new TerrainImagePosition(new Index(19, 10), 0, TerrainImagePosition.ZIndex.LAYER_1)); // Overbooked
 
         List<SurfaceRect> surfaceRects = new ArrayList<>();
         surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 10, 10), 0));
-        surfaceRects.add(new SurfaceRect(new Rectangle(30, 40, 10, 50), 0));
-        surfaceRects.add(new SurfaceRect(new Rectangle(90, 90, 20, 20), 0)); // Overbooked
-        abstractTerrainService.setSurfaceRects(surfaceRects);
+        surfaceRects.add(new SurfaceRect(new Rectangle(10, 12, 10, 10), 0));
+        surfaceRects.add(new SurfaceRect(new Rectangle(15, 15, 7, 7), 1)); // Overbooked
 
-        Map<TerrainType, boolean[][]> terrainTypes = abstractTerrainService.createSurfaceTypeField();
-        assertLand(terrainTypes.get(TerrainType.LAND));
-        assertWater(terrainTypes.get(TerrainType.WATER));
+        abstractTerrainService.createTerrainTileField(terrainImagePositions, surfaceRects);
+        TerrainTile[][] terrainTile = abstractTerrainService.getTerrainTileField();
+
+        assertLine(terrainTile, 0, LAND, LAND_COAST, LAND, LAND, LAND, LAND, LAND_COAST, LAND, LAND, LAND, null, null, null, null, null, null, null, null, null, null);
+        assertLine(terrainTile, 1, WATER, LAND, LAND_COAST, LAND, LAND, WATER, LAND, LAND, LAND, LAND, null, null, null, null, null, null, null, null, null, null);
+        assertLine(terrainTile, 2, LAND, WATER, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, null, null, null, null, null, null, null, null, null, null);
+        assertLine(terrainTile, 3, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, null, null, null, null, null, null, null, null, null, null);
+        assertLine(terrainTile, 4, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, null, null, null, null, null, null, null, null, null, null);
+        assertLine(terrainTile, 5, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, null, null, null, null, null, null, null, null, null, null);
+        assertLine(terrainTile, 6, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, null, null, null, null, null, null, null, null, null, null);
+        assertLine(terrainTile, 7, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, null, null, null, null, null, null, null, null, null, null);
+        assertLine(terrainTile, 8, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, null, null, null, null, null, null, null, null, null, null);
+        assertLine(terrainTile, 9, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, null, null, null, null, null, null, null, null, null, null);
+        assertLine(terrainTile, 10, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, LAND);
+        assertLine(terrainTile, 11, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, WATER);
+        assertLine(terrainTile, 12, null, null, null, null, null, null, null, null, null, null, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND);
+        assertLine(terrainTile, 13, null, null, null, null, null, null, null, null, null, null, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND);
+        assertLine(terrainTile, 14, null, null, null, null, null, null, null, null, null, null, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND, LAND);
+        assertLine(terrainTile, 15, null, null, null, null, null, null, null, null, null, null, LAND, LAND, LAND, LAND, LAND, WATER, WATER, WATER, WATER, WATER);
+        assertLine(terrainTile, 16, null, null, null, null, null, null, null, null, null, null, LAND, LAND, LAND, LAND, LAND, WATER, WATER, WATER, WATER, WATER);
+        assertLine(terrainTile, 17, null, null, null, null, null, null, null, null, null, null, LAND, LAND, LAND, LAND, LAND, WATER, WATER, WATER, WATER, WATER);
+        assertLine(terrainTile, 18, null, null, null, null, null, null, null, null, null, null, LAND, LAND, LAND, LAND, LAND, WATER, WATER, WATER, WATER, WATER);
+        assertLine(terrainTile, 19, null, null, null, null, null, null, null, null, null, null, LAND, LAND, LAND, LAND, LAND, WATER, WATER, WATER, WATER, WATER);
     }
 
-    private void assertWater(boolean[][] field) {
-        Assert.assertEquals(100, field.length);
-        Assert.assertEquals(100, field[0].length);
-
-        Assert.assertFalse(field[0][0]);
-        Assert.assertTrue(field[0][1]);
-        Assert.assertFalse(field[1][0]);
-        Assert.assertFalse(field[1][1]);
-        Assert.assertFalse(field[2][2]);
-        Assert.assertFalse(field[1][9]);
-        Assert.assertFalse(field[9][1]);
-        Assert.assertFalse(field[10][1]);
-        Assert.assertFalse(field[1][10]);
-        Assert.assertFalse(field[10][10]);
-
-        Assert.assertFalse(field[20][20]);
-        Assert.assertTrue(field[20][21]);
-        Assert.assertFalse(field[21][20]);
-        Assert.assertFalse(field[21][21]);
-        Assert.assertFalse(field[19][19]);
-        Assert.assertFalse(field[20][19]);
-        Assert.assertFalse(field[19][20]);
-        Assert.assertFalse(field[22][22]);
-        Assert.assertFalse(field[22][21]);
-        Assert.assertFalse(field[21][22]);
-
-        Assert.assertFalse(field[30][40]);
-        Assert.assertFalse(field[30][89]);
-        Assert.assertFalse(field[39][40]);
-        Assert.assertFalse(field[39][89]);
-        Assert.assertFalse(field[29][39]);
-        Assert.assertFalse(field[29][90]);
-        Assert.assertFalse(field[90][39]);
-
-        Assert.assertFalse(field[90][90]);
-    }
-
-    private void assertLand(boolean[][] field) {
-        Assert.assertEquals(100, field.length);
-        Assert.assertEquals(100, field[0].length);
-
-        Assert.assertTrue(field[0][0]);
-        Assert.assertFalse(field[0][1]);
-        Assert.assertFalse(field[1][0]);
-        Assert.assertTrue(field[1][1]);
-        Assert.assertTrue(field[2][2]);
-        Assert.assertTrue(field[1][9]);
-        Assert.assertTrue(field[9][1]);
-
-        Assert.assertFalse(field[10][1]);
-        Assert.assertFalse(field[1][10]);
-        Assert.assertFalse(field[10][10]);
-
-        Assert.assertTrue(field[20][20]);
-        Assert.assertFalse(field[20][21]);
-        Assert.assertFalse(field[21][20]);
-
-        Assert.assertTrue(field[21][21]);
-        Assert.assertFalse(field[19][19]);
-        Assert.assertFalse(field[20][19]);
-        Assert.assertFalse(field[19][20]);
-        Assert.assertFalse(field[22][22]);
-        Assert.assertFalse(field[22][21]);
-        Assert.assertFalse(field[21][22]);
-
-        Assert.assertTrue(field[30][40]);
-        Assert.assertTrue(field[30][89]);
-        Assert.assertTrue(field[39][40]);
-        Assert.assertTrue(field[39][89]);
-        Assert.assertFalse(field[29][39]);
-        Assert.assertFalse(field[29][90]);
-        Assert.assertFalse(field[90][39]);
-
-        Assert.assertTrue(field[90][90]);
+    private void assertLine(TerrainTile[][] terrainTile, int y, SurfaceType... surfaceTypes) {
+        Assert.assertEquals(20, terrainTile.length);
+        for (int x = 0; x < surfaceTypes.length; x++) {
+            Assert.assertEquals(20, terrainTile[x].length);
+            SurfaceType surfaceTypesExpected = surfaceTypes[x];
+            if (surfaceTypesExpected == null) {
+                Assert.assertNull("Null expected at " + x + ":" + y, terrainTile[x][y]);
+            } else {
+                Assert.assertNotNull("Not null expected at " + x + ":" + y, terrainTile[x][y]);
+                Assert.assertEquals("Wrong surface type at " + x + ":" + y, surfaceTypesExpected, terrainTile[x][y].getSurfaceType());
+            }
+        }
     }
 
 }

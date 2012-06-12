@@ -40,6 +40,7 @@ public abstract class GameEngineStartupTask extends AbstractStartupTask {
                 gameInfo.getSurfaceImages(),
                 gameInfo.getTerrainImages(),
                 gameInfo.getTerrainImageBackground());
+        gameInfo.freePositionAndRects();
         ItemContainer.getInstance().setItemTypes(gameInfo.getItemTypes());
     }
 
@@ -52,6 +53,7 @@ public abstract class GameEngineStartupTask extends AbstractStartupTask {
                 gameInfo.getSurfaceImages(),
                 gameInfo.getTerrainImages(),
                 gameInfo.getTerrainImageBackground());
+        gameInfo.freePositionAndRects();
         ItemContainer.getInstance().addDeltaItemTypes(gameInfo.getItemTypes());
     }
 }
