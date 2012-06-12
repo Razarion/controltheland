@@ -32,7 +32,11 @@ public class DbTerrainImageGroup implements CrudChild, CrudParent {
     @JoinColumn(name = "parent_id")
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Collection<DbTerrainImage> dbTerrainImages;
-    private String htmlBackgroundColor;
+    private String htmlBackgroundColorNone;
+    private String htmlBackgroundColorWater;
+    private String htmlBackgroundColorLand;
+    private String htmlBackgroundColorLandCoast;
+    private String htmlBackgroundColorWaterCoast;
     @Transient
     private CrudChildServiceHelper<DbTerrainImage> terrainImageCrud;
 
@@ -51,18 +55,54 @@ public class DbTerrainImageGroup implements CrudChild, CrudParent {
         this.name = name;
     }
 
-    public String getHtmlBackgroundColor() {
-        return htmlBackgroundColor;
+    public String getHtmlBackgroundColorNone() {
+        return htmlBackgroundColorNone;
     }
 
-    public void setHtmlBackgroundColor(String htmlBackgroundColor) {
-        this.htmlBackgroundColor = htmlBackgroundColor;
+    public void setHtmlBackgroundColorNone(String htmlBackgroundColorNone) {
+        this.htmlBackgroundColorNone = htmlBackgroundColorNone;
+    }
+
+    public String getHtmlBackgroundColorWater() {
+        return htmlBackgroundColorWater;
+    }
+
+    public void setHtmlBackgroundColorWater(String htmlBackgroundColorWater) {
+        this.htmlBackgroundColorWater = htmlBackgroundColorWater;
+    }
+
+    public String getHtmlBackgroundColorLand() {
+        return htmlBackgroundColorLand;
+    }
+
+    public void setHtmlBackgroundColorLand(String htmlBackgroundColorLand) {
+        this.htmlBackgroundColorLand = htmlBackgroundColorLand;
+    }
+
+    public String getHtmlBackgroundColorLandCoast() {
+        return htmlBackgroundColorLandCoast;
+    }
+
+    public void setHtmlBackgroundColorLandCoast(String htmlBackgroundColorLandCoast) {
+        this.htmlBackgroundColorLandCoast = htmlBackgroundColorLandCoast;
+    }
+
+    public String getHtmlBackgroundColorWaterCoast() {
+        return htmlBackgroundColorWaterCoast;
+    }
+
+    public void setHtmlBackgroundColorWaterCoast(String htmlBackgroundColorWaterCoast) {
+        this.htmlBackgroundColorWaterCoast = htmlBackgroundColorWaterCoast;
     }
 
     @Override
     public void init(UserService userService) {
         dbTerrainImages = new ArrayList<DbTerrainImage>();
-        htmlBackgroundColor = "#FFFFFF";
+        htmlBackgroundColorNone = "#FFFFFF";
+        htmlBackgroundColorWater = "#FFFFFF";
+        htmlBackgroundColorLand = "#FFFFFF";
+        htmlBackgroundColorLandCoast = "#FFFFFF";
+        htmlBackgroundColorWaterCoast = "#FFFFFF";
     }
 
     public CrudChildServiceHelper<DbTerrainImage> getTerrainImageCrud() {

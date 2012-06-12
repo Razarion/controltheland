@@ -16,8 +16,8 @@ package com.btxtech.game.jsre.pathfinding;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniTerrain;
-import com.btxtech.game.jsre.client.collision.ClientCollisionService;
 import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
+import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.mapeditor.TerrainEditorAsync;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
@@ -52,10 +52,6 @@ public class PathfindingEntry implements EntryPoint {
         miniTerrain.getCanvas().getElement().getStyle().setZIndex(1);
         absolutePanel.add(miniTerrain.getCanvas(), 0, 0);
 
-        final PassableRectangleMiniMap passableRectangleMiniMap = new PassableRectangleMiniMap(RootPanel.get().getOffsetWidth(), RootPanel.get().getOffsetHeight());
-        passableRectangleMiniMap.getCanvas().getElement().getStyle().setZIndex(2);
-        absolutePanel.add(passableRectangleMiniMap.getCanvas(), 0, 0);
-
         PathfindingAsync pathfinding = GWT.create(Pathfinding.class);
         final PathMiniMap pathMiniMap = new PathMiniMap(RootPanel.get().getOffsetWidth(), RootPanel.get().getOffsetHeight());
         pathMiniMap.getCanvas().getElement().getStyle().setZIndex(3);
@@ -79,12 +75,17 @@ public class PathfindingEntry implements EntryPoint {
                         terrainInfo.getSurfaceImages(),
                         terrainInfo.getTerrainImages(),
                         terrainInfo.getTerrainImageBackground());
+                // If the images get loaded after miniTerrain.onTerrainChanged() has been called
+                TerrainView.getInstance().getTerrainHandler().addTerrainListener(new TerrainListener() {
+                    @Override
+                    public void onTerrainChanged() {
+                        miniTerrain.onTerrainChanged();
+                    }
+                });
                 TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
                 miniTerrain.onTerrainSettings(terrainInfo.getTerrainSettings());
+                miniTerrain.onTerrainChanged();
                 pathMiniMap.onTerrainSettings(terrainInfo.getTerrainSettings());
-                passableRectangleMiniMap.onTerrainSettings(terrainInfo.getTerrainSettings());
-                ClientCollisionService.getInstance().setup();
-                passableRectangleMiniMap.showPassableRectangles();
             }
         });
     }

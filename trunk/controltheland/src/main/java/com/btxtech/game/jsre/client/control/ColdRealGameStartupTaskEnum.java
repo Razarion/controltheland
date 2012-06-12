@@ -22,7 +22,6 @@ import com.btxtech.game.jsre.client.control.task.LoadStartJsAbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.LoadSyncInfoStartupTask;
 import com.btxtech.game.jsre.client.control.task.RealStartupTask;
 import com.btxtech.game.jsre.client.control.task.RunRealGameStartupTask;
-import com.btxtech.game.jsre.client.control.task.SetupPathFindingStartupTask;
 
 /**
  * User: beat
@@ -49,11 +48,6 @@ public enum ColdRealGameStartupTaskEnum implements StartupTaskEnum {
         @Override
         public AbstractStartupTask createTask() {
             return new RealStartupTask(this);
-        }},
-    SETUP_PATH_FINDING("Setup path finding") {
-        @Override
-        public AbstractStartupTask createTask() {
-            return new SetupPathFindingStartupTask(this);
         }},
     LOAD_MAP("Load Map") {
         @Override

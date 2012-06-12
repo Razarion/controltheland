@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
@@ -72,7 +73,7 @@ public class TestPathFinding extends AbstractServiceTest {
     @DirtiesContext
     public void testPath1() throws Exception {
         configureComplexGameOneRealLevel();
-        List<Index> path = collisionService.setupPathToDestination(new Index(800, 3400), new Index(2000, 2700), TerrainType.LAND, new BoundingBox(0, 0, 0, 0, ANGELS_24));
+        Path path = collisionService.setupPathToDestination(new Index(800, 3400), new Index(2000, 2700), TerrainType.LAND, new BoundingBox(0, 0, 0, 0, ANGELS_24));
         assertPathNotInTerrainImage(path);
         // assertPathCanBeReduced(path); Do this may later
     }
@@ -81,10 +82,10 @@ public class TestPathFinding extends AbstractServiceTest {
     @DirtiesContext
     public void testPathSameStartAndDest() throws Exception {
         configureComplexGameOneRealLevel();
-        List<Index> path = collisionService.setupPathToDestination(new Index(800, 3400), new Index(800, 3400), TerrainType.LAND, new BoundingBox(0, 0, 0, 0, ANGELS_24));
+        Path path = collisionService.setupPathToDestination(new Index(800, 3400), new Index(800, 3400), TerrainType.LAND, new BoundingBox(0, 0, 0, 0, ANGELS_24));
         assertPathNotInTerrainImage(path);
-        Assert.assertEquals(1, path.size());
-        Assert.assertEquals(new Index(800, 3400), path.get(0));
+        Assert.assertEquals(1, path.getPath().size());
+        Assert.assertEquals(new Index(800, 3400), path.getPath().get(0));
     }
 
     @Test
@@ -95,15 +96,15 @@ public class TestPathFinding extends AbstractServiceTest {
         List<AttackFormationItem> attacker = new ArrayList<AttackFormationItem>();
         attacker.add(new AttackFormationItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1450, 350), new Id(0, 0, 0)), 250));
         attacker = collisionService.setupDestinationHints(target, TerrainType.WATER, attacker);
-        Assert.assertEquals(new Index(2412, 349), attacker.get(0).getDestinationHint());
+        Assert.assertEquals(new Index(2412, 306), attacker.get(0).getDestinationHint());
         Assert.assertEquals(-1.570796326794, attacker.get(0).getDestinationAngel(), 0.001);
         Assert.assertTrue(attacker.get(0).isInRange());
     }
 
 
-    private void assertPathNotInTerrainImage(List<Index> path) {
+    private void assertPathNotInTerrainImage(Path path) {
         Index previous = null;
-        for (Index index : path) {
+        for (Index index : path.getPath()) {
             if (previous != null) {
                 assertLineNotInTerrainImage(previous, index);
             }

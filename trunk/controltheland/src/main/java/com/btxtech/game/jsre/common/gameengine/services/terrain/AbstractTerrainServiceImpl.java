@@ -23,7 +23,6 @@ import com.google.gwt.user.client.ui.Widget;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -33,8 +32,7 @@ import java.util.logging.Logger;
  * Time: 22:28:01
  */
 public abstract class AbstractTerrainServiceImpl implements AbstractTerrainService {
-    private Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
-    private Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
+    private TerrainTile[][] terrainTileField;
     private Map<Integer, TerrainImage> terrainImages = new HashMap<Integer, TerrainImage>();
     private Map<Integer, SurfaceImage> surfaceImages = new HashMap<Integer, SurfaceImage>();
     private ArrayList<TerrainListener> terrainListeners = new ArrayList<TerrainListener>();
@@ -43,29 +41,24 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
     private Logger log = Logger.getLogger(AbstractTerrainServiceImpl.class.getName());
 
     @Override
-    public Collection<TerrainImagePosition> getTerrainImagePositions() {
-        return terrainImagePositions;
-    }
-
-    public void setTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions) {
-        this.terrainImagePositions = terrainImagePositions;
-    }
-
-    protected void addTerrainImagePosition(TerrainImagePosition terrainImagePosition) {
-        terrainImagePositions.add(terrainImagePosition);
+    public TerrainTile[][] getTerrainTileField() {
+        return terrainTileField;
     }
 
     @Override
-    public Collection<SurfaceRect> getSurfaceRects() {
-        return surfaceRects;
-    }
+    public void iteratorOverAllTerrainTiles(Rectangle tileRect, TerrainTileEvaluator terrainTileEvaluator) {
+        if (terrainSettings == null || terrainTileField == null) {
+            return;
+        }
+        if (tileRect == null) {
+            tileRect = new Rectangle(0, 0, terrainSettings.getTileXCount(), terrainSettings.getTileYCount());
+        }
+        for (int x = tileRect.getX(); x < tileRect.getEndX(); x++) {
+            for (int y = tileRect.getY(); y < tileRect.getEndY(); y++) {
+                terrainTileEvaluator.evaluate(x, y, terrainTileField[x][y]);
+            }
+        }
 
-    public void setSurfaceRects(Collection<SurfaceRect> surfaceRects) {
-        this.surfaceRects = surfaceRects;
-    }
-
-    public void addSurfaceRect(SurfaceRect surfaceRect) {
-        surfaceRects.add(surfaceRect);
     }
 
     public TerrainImageBackground getTerrainImageBackground() {
@@ -74,14 +67,6 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
 
     public void setTerrainImageBackground(TerrainImageBackground terrainImageBackground) {
         this.terrainImageBackground = terrainImageBackground;
-    }
-
-    protected void removeTerrainImagePosition(TerrainImagePosition terrainImagePosition) {
-        terrainImagePositions.remove(terrainImagePosition);
-    }
-
-    protected void removeSurfaceRect(SurfaceRect surfaceRect) {
-        surfaceRects.remove(surfaceRect);
     }
 
     public void setTerrainSettings(TerrainSettings terrainSettings) {
@@ -98,7 +83,7 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
         terrainListeners.add(terrainListener);
     }
 
-    protected void fireTerrainChanged() {
+    public void fireTerrainChanged() {
         for (TerrainListener terrainListener : terrainListeners) {
             terrainListener.onTerrainChanged();
         }
@@ -137,12 +122,12 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
     }
 
     @Override
-    public SurfaceImage getSurfaceImage(SurfaceRect surfaceRect) {
-        SurfaceImage getSurfaceImage = surfaceImages.get(surfaceRect.getSurfaceImageId());
-        if (getSurfaceImage == null) {
-            throw new IllegalArgumentException(this + " getSurfaceImage(): image id does not exit: " + surfaceRect.getSurfaceImageId());
+    public SurfaceImage getSurfaceImage(int surfaceImageId) {
+        SurfaceImage surfaceImage = surfaceImages.get(surfaceImageId);
+        if (surfaceImage == null) {
+            throw new IllegalArgumentException(this + " getSurfaceImage(): image id does not exit: " + surfaceImageId);
         }
-        return getSurfaceImage;
+        return surfaceImage;
     }
 
     @Override
@@ -164,109 +149,13 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
     }
 
     @Override
-    public List<TerrainImagePosition> getTerrainImagesInRegion(Rectangle absRectangle) {
-        ArrayList<TerrainImagePosition> result = new ArrayList<TerrainImagePosition>();
-        if (terrainSettings == null || terrainImagePositions == null) {
-            return result;
-        }
-        Rectangle tileRect = convertToTilePositionRoundUp(absRectangle);
-        for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
-            if (tileRect.adjoinsEclusive(getTerrainImagePositionRectangle(terrainImagePosition))) {
-                result.add(terrainImagePosition);
-            }
-        }
-        return result;
-    }
-
-    @Override
-    public TerrainImagePosition getTerrainImagePosition(TerrainImagePosition.ZIndex zIndex, int absoluteX, int absoluteY) {
-        if (terrainSettings == null || terrainImagePositions == null) {
-            return null;
-        }
-        Index tileIndex = getTerrainTileIndexForAbsPosition(absoluteX, absoluteY);
-        return getTerrainImagePosition(zIndex, tileIndex);
-    }
-
-    @Override
-    public TerrainImagePosition getTerrainImagePosition(TerrainImagePosition.ZIndex zIndex, Index tileIndex) {
-        // TODO slow!!!
-        for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
-            if (getTerrainImagePositionRectangle(terrainImagePosition).containsExclusive(tileIndex)) {
-                if (terrainImagePosition.getzIndex() == zIndex) {
-                    return terrainImagePosition;
-                }
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public TerrainImagePosition getTerrainImagePosition(Index tileIndex) {
-        // TODO slow!!!
-        TerrainImagePosition layer2Image = null;
-        for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
-            if (getTerrainImagePositionRectangle(terrainImagePosition).containsExclusive(tileIndex)) {
-                if (terrainImagePosition.getzIndex() == TerrainImagePosition.ZIndex.LAYER_2) {
-                    return terrainImagePosition;
-                }
-                layer2Image = terrainImagePosition;
-            }
-        }
-        return layer2Image;
-    }
-
-    @Override
-    public Rectangle getTerrainImagePositionRectangle(TerrainImagePosition terrainImagePosition) {
-        TerrainImage terrainImage = getTerrainImage(terrainImagePosition);
-        return new Rectangle(terrainImagePosition.getTileIndex().getX(),
-                terrainImagePosition.getTileIndex().getY(),
-                terrainImage.getTileWidth(),
-                terrainImage.getTileHeight());
-    }
-
-    @Override
-    public TerrainImage getTerrainImage(TerrainImagePosition terrainImagePosition) {
-        TerrainImage terrainImage = terrainImages.get(terrainImagePosition.getImageId());
+    public TerrainImage getTerrainImage(int terrainImageId) {
+        TerrainImage terrainImage = terrainImages.get(terrainImageId);
         if (terrainImage == null) {
-            throw new IllegalArgumentException(this + " getTerrainImagePosRect(): image id does not exit: " + terrainImagePosition.getImageId());
+            throw new IllegalArgumentException(this + " getTerrainImagePosRect(): image id does not exit: " + terrainImageId);
         }
         return terrainImage;
     }
-
-    @Override
-    public SurfaceRect getSurfaceRect(int absoluteX, int absoluteY) {
-        if (terrainSettings == null || surfaceRects == null) {
-            return null;
-        }
-        Index tileIndex = getTerrainTileIndexForAbsPosition(absoluteX, absoluteY);
-        return getSurfaceRect(tileIndex);
-    }
-
-    @Override
-    public SurfaceRect getSurfaceRect(Index tileIndex) {
-        // TODO slow!!!
-        for (SurfaceRect surfaceRect : surfaceRects) {
-            if (surfaceRect.getTileRectangle().containsExclusive(tileIndex)) {
-                return surfaceRect;
-            }
-        }
-        return null;
-    }
-
-    public List<SurfaceRect> getSurfaceRectsInRegion(Rectangle absRectangle) {
-        ArrayList<SurfaceRect> result = new ArrayList<SurfaceRect>();
-        if (terrainSettings == null || surfaceRects == null) {
-            return result;
-        }
-        Rectangle tileRect = convertToTilePositionRoundUp(absRectangle);
-        for (SurfaceRect surfaceRect : surfaceRects) {
-            if (tileRect.adjoinsEclusive(surfaceRect.getTileRectangle())) {
-                result.add(surfaceRect);
-            }
-        }
-        return result;
-    }
-
 
     @Override
     public Index getTerrainTileIndexForAbsPosition(int x, int y) {
@@ -378,18 +267,11 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
         if (tileIndex == null || tileIndex.getX() >= terrainSettings.getPlayFieldXSize() || tileIndex.getY() >= terrainSettings.getPlayFieldYSize()) {
             return null;
         }
-        TerrainImagePosition terrainImagePosition = getTerrainImagePosition(tileIndex);
-        if (terrainImagePosition != null) {
-            TerrainImage terrainImage = getTerrainImage(terrainImagePosition);
-            Index imgPosIndex = tileIndex.sub(terrainImagePosition.getTileIndex());
-            return terrainImage.getSurfaceType(imgPosIndex.getX(), imgPosIndex.getY());
+        TerrainTile terrainTile = terrainTileField[tileIndex.getX()][tileIndex.getY()];
+        if (terrainTile == null) {
+            return SurfaceType.NONE;
         } else {
-            SurfaceRect surfaceRect = getSurfaceRect(tileIndex);
-            if (surfaceRect != null) {
-                return getSurfaceImage(surfaceRect).getSurfaceType();
-            } else {
-                return SurfaceType.NONE;
-            }
+            return terrainTile.getSurfaceType();
         }
     }
 
@@ -425,32 +307,32 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
     }
 
     @Override
-    public Map<TerrainType, boolean[][]> createSurfaceTypeField() {
+    public void createTerrainTileField(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects) {
         if (terrainSettings == null) {
             throw new IllegalStateException("terrainSettings == null");
         }
+        log.info("Starting setup collision service");
+        long time = System.currentTimeMillis();
 
-        Map<TerrainType, boolean[][]> terrainTypeMap = new HashMap<TerrainType, boolean[][]>();
-        for (TerrainType terrainType : TerrainType.values()) {
-            terrainTypeMap.put(terrainType, new boolean[terrainSettings.getTileXCount()][terrainSettings.getTileYCount()]);
-        }
+        terrainTileField = new TerrainTile[terrainSettings.getTileXCount()][terrainSettings.getTileYCount()];
 
         for (SurfaceRect surfaceRect : surfaceRects) {
-            SurfaceType surfaceType = surfaceImages.get(surfaceRect.getSurfaceImageId()).getSurfaceType();
-            Collection<TerrainType> allowedTerrainTypes = TerrainType.getAllowedTerrainType(surfaceType);
-            for (TerrainType terrainType : allowedTerrainTypes) {
-                int endX = surfaceRect.getTileWidth() + surfaceRect.getTileIndex().getX();
-                for (int x = surfaceRect.getTileIndex().getX(); x < endX; x++) {
-                    if (x > terrainSettings.getTileXCount() - 1) {
+            if (surfaceRect.getTileWidth() == 0 || surfaceRect.getTileHeight() == 0) {
+                continue;
+            }
+            SurfaceImage surfaceImage = surfaceImages.get(surfaceRect.getSurfaceImageId());
+            SurfaceType surfaceType = surfaceImage.getSurfaceType();
+            int endX = surfaceRect.getTileWidth() + surfaceRect.getTileIndex().getX();
+            for (int x = surfaceRect.getTileIndex().getX(); x < endX; x++) {
+                if (x > terrainSettings.getTileXCount() - 1) {
+                    continue;
+                }
+                int endY = surfaceRect.getTileHeight() + surfaceRect.getTileIndex().getY();
+                for (int y = surfaceRect.getTileIndex().getY(); y < endY; y++) {
+                    if (y > terrainSettings.getTileYCount() - 1) {
                         continue;
                     }
-                    int endY = surfaceRect.getTileHeight() + surfaceRect.getTileIndex().getY();
-                    for (int y = surfaceRect.getTileIndex().getY(); y < endY; y++) {
-                        if (y > terrainSettings.getTileYCount() - 1) {
-                            continue;
-                        }
-                        terrainTypeMap.get(terrainType)[x][y] = true;
-                    }
+                    terrainTileField[x][y] = new TerrainTile(surfaceType, true, surfaceRect.getSurfaceImageId(), x, y);
                 }
             }
         }
@@ -458,24 +340,23 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
         for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
             switch (terrainImagePosition.getzIndex()) {
                 case LAYER_1:
-                    fillTerrainTypeMap(terrainTypeMap, terrainImagePosition);
+                    fillTerrainTypeMap(terrainTileField, terrainImagePosition);
                     break;
                 case LAYER_2:
                     layer2.add(terrainImagePosition);
                     break;
                 default:
-                    log.warning("AbstractTerrainServiceImpl.createSurfaceTypeField() z Index not supported: " + terrainImagePosition.getzIndex());
+                    log.warning("AbstractTerrainServiceImpl.createTerrainTileField() z Index not supported: " + terrainImagePosition.getzIndex());
             }
         }
 
         for (TerrainImagePosition terrainImagePosition : layer2) {
-            fillTerrainTypeMap(terrainTypeMap, terrainImagePosition);
+            fillTerrainTypeMap(terrainTileField, terrainImagePosition);
         }
-
-        return terrainTypeMap;
+        log.info("Time needed to setup terrain field: " + (System.currentTimeMillis() - time) + "ms");
     }
 
-    private void fillTerrainTypeMap(Map<TerrainType, boolean[][]> terrainTypeMap, TerrainImagePosition terrainImagePosition) {
+    private void fillTerrainTypeMap(TerrainTile[][] terrainTileField, TerrainImagePosition terrainImagePosition) {
         TerrainImage terrainImage = terrainImages.get(terrainImagePosition.getImageId());
         Index imageIndex = terrainImagePosition.getTileIndex();
         SurfaceType[][] surfaceTypes = terrainImage.getSurfaceTypes();
@@ -489,12 +370,15 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
                 if (absY > terrainSettings.getTileYCount() - 1) {
                     continue;
                 }
-
-                for (TerrainType terrainType : TerrainType.values()) {
-                    terrainTypeMap.get(terrainType)[absX][absY] = terrainType.allowSurfaceType(surfaceTypes[x][y]);
-
+                TerrainTile terrainTile = terrainTileField[absX][absY];
+                if (terrainTile != null) {
+                    terrainTile.setSurfaceType(surfaceTypes[x][y], false, terrainImage.getId(), x, y);
+                } else {
+                    terrainTileField[absX][absY] = new TerrainTile(surfaceTypes[x][y], false, terrainImage.getId(), x, y);
                 }
             }
         }
     }
+
+
 }

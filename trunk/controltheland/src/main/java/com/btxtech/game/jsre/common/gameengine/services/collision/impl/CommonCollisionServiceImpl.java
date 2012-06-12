@@ -2,7 +2,7 @@ package com.btxtech.game.jsre.common.gameengine.services.collision.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.common.GeometricalUtil;
+import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormation;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationFactory;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
@@ -10,11 +10,8 @@ import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
-import com.btxtech.game.jsre.common.gameengine.services.collision.PassableRectangle;
 import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
-import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.collision.PlaceCanNotBeFoundException;
-import com.btxtech.game.jsre.common.gameengine.services.collision.Port;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -40,117 +37,56 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
     protected static final int STEPS_DISTANCE = 50;
     protected static final int MAX_TRIES = 10000;
     private static final int MAX_RANGE_RALLY_POINT = 300;
-    private Map<TerrainType, Collection<PassableRectangle>> passableRectangles4TerrainType = new HashMap<TerrainType, Collection<PassableRectangle>>();
     private Logger log = Logger.getLogger(CommonCollisionServiceImpl.class.getName());
 
     protected abstract Services getServices();
 
-    protected void setupPassableTerrain() {
-        log.info("Starting setup collision service");
-        long time = System.currentTimeMillis();
-        Map<TerrainType, boolean[][]> terrainTypeMap = getServices().getTerrainService().createSurfaceTypeField();
-        log.info("Collision service flatten to field: " + (System.currentTimeMillis() - time));
-        passableRectangles4TerrainType = GeometricalUtil.setupPassableRectangle(terrainTypeMap);
-        ////
-        // Check field
-        //for (TerrainType terrainType : terrainTypeMap.keySet()) {
-        //    GeometricalUtil.checkField(terrainTypeMap.get(terrainType), passableRectangles4TerrainType.get(terrainType), getServices().getTerrainService());
-        //}
-        ////
-        log.info("Time needed to start up collision service: " + (System.currentTimeMillis() - time) + "ms");
-    }
-
     @Override
-    public List<Index> setupPathToDestination(SyncBaseItem syncItem, Index destination) {
+    public Path setupPathToDestination(SyncBaseItem syncItem, Index destination) {
         return setupPathToDestination(syncItem.getSyncItemArea().getPosition(), destination, syncItem.getTerrainType(), syncItem.getSyncItemArea().getBoundingBox());
     }
 
     @Override
-    public List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType, BoundingBox boundingBox) {
-        PassableRectangle atomStartRect = getPassableRectangleOfAbsoluteIndex(start, terrainType);
-        PassableRectangle atomDestRect = getPassableRectangleOfAbsoluteIndex(destination, terrainType);
-        if (atomStartRect == null || atomDestRect == null) {
-            if (atomStartRect == null) {
-                throw new PathCanNotBeFoundException("Illegal atomStartRect. TerrainType: " + terrainType, start, destination);
-            } else {
-                throw new PathCanNotBeFoundException("Illegal atomDestRect. TerrainType: " + terrainType, start, destination);
-            }
+    public Path setupPathToDestination(Index start, Index destination, TerrainType terrainType, BoundingBox boundingBox) {
+        if(start.equals(destination)) {
+            Path path = new Path(start, destination, true);
+            path.makeSameStartAndDestination();
+            return path;
         }
 
-        if (atomStartRect.equals(atomDestRect)) {
-            if (start.equals(destination)) {
-                List<Index> newPath = new ArrayList<Index>();
-                newPath.add(destination);
-                return newPath;
-            } else {
-                return GumPath.toItemAngelSameAtom(start, destination, boundingBox);
-            }
-        }
+        Index tileStart = getServices().getTerrainService().getTerrainTileIndexForAbsPosition(start);
+        Index tileDestination = getServices().getTerrainService().getTerrainTileIndexForAbsPosition(destination);
 
-        long time = System.currentTimeMillis();
-        List<Index> positions = null;
-        try {
-            Path path = atomStartRect.findPossiblePassableRectanglePaths(getServices().getTerrainService(), start, atomDestRect, destination);
-            path = PathFinderUtilities.optimizePath(path, getServices().getTerrainService());
-            List<Port> ports = path.getAllPassableBorders(getServices().getTerrainService());
-            GumPath gumPath = new GumPath(start, destination, ports, boundingBox);
-            positions = gumPath.getOptimizedPath();
-            return positions;
-        } catch (PathCanNotBeFoundException e) {
-            log.severe("PathCanNotBeFoundException: " + e.getMessage());
-            throw e;
-        } finally {
-            if (System.currentTimeMillis() - time > 200 || positions == null) {
-                log.severe("Pathfinding took: " + (System.currentTimeMillis() - time) + "ms start: " + start + " destination: " + destination);
-            }
-        }
-    }
-
-    private Index setupNearestPointOnDifferentTerrainTypeDestination(Index start, TerrainType startTerrainType, Index destination, TerrainType destinationTerrainType, BoundingBox boundingBox) {
-        PassableRectangle atomStartRect = getPassableRectangleOfAbsoluteIndex(start, startTerrainType);
-        PassableRectangle atomDestRect = PathFinderUtilities.getNearestPassableRectangleDifferentTerrainTypeOfAbsoluteIndex(destination, destinationTerrainType, startTerrainType, passableRectangles4TerrainType, getServices().getTerrainService());
-        if (atomStartRect == null || atomDestRect == null) {
-            throw new IllegalArgumentException("Illegal atomStartRect or atomDestRect. start: " + start + " destination: " + destination + " terrainType: " + destinationTerrainType);
-        }
-
-        Rectangle absRect = getServices().getTerrainService().convertToAbsolutePosition(atomDestRect.getRectangle());
-        if (absRect.containsExclusive(destination)) {
-            return destination;
+        AStar aStar = AStar.findTilePath(getServices().getTerrainService().getTerrainTileField(), tileStart, tileDestination, terrainType.getSurfaceTypes());
+        Path path = new Path(start, destination, aStar.isPathFound());
+        FunnelAlgorithm funnelAlgorithm;
+        if (aStar.isPathFound()) {
+            funnelAlgorithm = new FunnelAlgorithm(start, destination);
         } else {
-            return absRect.getNearestPoint(destination);
+            Index bestFitTile = aStar.getBestFitTile();
+            Index alternativeDestination = getServices().getTerrainService().getAbsolutIndexForTerrainTileIndex(bestFitTile);
+            alternativeDestination.add(getServices().getTerrainService().getTerrainSettings().getTileWidth() / 2, getServices().getTerrainService().getTerrainSettings().getTileHeight() / 2);
+            path.setAlternativeDestination(alternativeDestination);
+            funnelAlgorithm = new FunnelAlgorithm(start, alternativeDestination);
         }
+
+        funnelAlgorithm.setTilePath(aStar.getTilePath(), getServices().getTerrainService());
+        List<Index> rawPath = funnelAlgorithm.stringPull();
+
+        path.setPath(AngelCorrection.toItemAngel(rawPath, boundingBox));
+        return path;
     }
 
     private void setupDestinationHintTerrain(SyncItemArea target, List<AttackFormationItem> items, TerrainType terrainType, TerrainType targetTerrainType) {
         SyncItem actorItem = items.get(0).getSyncBaseItem();
-        Index lastPoint;
-        if (terrainType == targetTerrainType) {
-            List<Index> path = setupPathToDestination(actorItem.getSyncItemArea().getPosition(), target.getPosition(), terrainType, actorItem.getSyncItemArea().getBoundingBox());
-            path.remove(path.size() - 1); // Target pos
-            if (path.isEmpty()) {
-                // Start and destination are in the same passable rectangle
-                lastPoint = actorItem.getSyncItemArea().getPosition();
-            } else {
-                lastPoint = path.get(path.size() - 1);
-            }
-
-        } else {
-            lastPoint = setupNearestPointOnDifferentTerrainTypeDestination(actorItem.getSyncItemArea().getPosition(), terrainType, target.getPosition(), targetTerrainType, target.getBoundingBox());
-        }
-
-        double angel;
-        if (target.getPosition().equals(lastPoint)) {
-            angel = 0;
-        } else {
-            angel = target.getPosition().getAngleToNord(lastPoint);
-        }
+        Path path = setupPathToDestination(actorItem.getSyncItemArea().getPosition(), target.getPosition(), terrainType, actorItem.getSyncItemArea().getBoundingBox());
 
         Collection<SyncItem> placeAbleItems = new HashSet<SyncItem>();
         for (AttackFormationItem item : items) {
             placeAbleItems.add(item.getSyncBaseItem());
         }
 
-        AttackFormation attackFormation = AttackFormationFactory.create(target, angel, items);
+        AttackFormation attackFormation = AttackFormationFactory.create(target, MathHelper.HALF_RADIANT + path.getActualDestinationAngel(), items);
         while (attackFormation.hasNext()) {
             AttackFormationItem attackFormationItem = attackFormation.calculateNextEntry();
             SyncBaseItem syncBaseItem = attackFormationItem.getSyncBaseItem();
@@ -186,10 +122,6 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
         return items;
     }
 
-    protected PassableRectangle getPassableRectangleOfAbsoluteIndex(Index absoluteIndex, TerrainType terrainType) {
-        return PathFinderUtilities.getPassableRectangleOfAbsoluteIndex(absoluteIndex, terrainType, passableRectangles4TerrainType, getServices().getTerrainService());
-    }
-
     @Override
     public AttackFormationItem getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItemArea target, TerrainType targetTerrainType) {
         List<AttackFormationItem> formationItems = new ArrayList<AttackFormationItem>();
@@ -204,14 +136,9 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
     }
 
     @Override
-    public List<Index> setupPathToSyncMovableRandomPositionIfTaken(SyncItem syncItem) {
+    public Path setupPathToSyncMovableRandomPositionIfTaken(SyncItem syncItem) {
         Index position = getFreeRandomPosition(syncItem.getItemType(), Rectangle.generateRectangleFromMiddlePoint(syncItem.getSyncItemArea().getPosition(), 500, 500), 0, false, false);
         return setupPathToDestination(syncItem.getSyncItemArea().getPosition(), position, syncItem.getTerrainType(), syncItem.getSyncItemArea().getBoundingBox());
-    }
-
-    @Override
-    public Map<TerrainType, Collection<PassableRectangle>> getPassableRectangles() {
-        return passableRectangles4TerrainType;
     }
 
     @Override

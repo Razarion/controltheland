@@ -46,7 +46,11 @@ public class TerrainImageGroupEditor extends MgmtWebPage {
             }
         }));
         add(form);
-        form.add(new TextField("htmlBackgroundColor"));
+        form.add(new TextField("htmlBackgroundColorNone"));
+        form.add(new TextField("htmlBackgroundColorWater"));
+        form.add(new TextField("htmlBackgroundColorLand"));
+        form.add(new TextField("htmlBackgroundColorWaterCoast"));
+        form.add(new TextField("htmlBackgroundColorLandCoast"));
 
         new CrudChildTableHelper<DbTerrainImageGroup, DbTerrainImage>("terrainImages", null, "createTerrainImage", true, form, false) {
             @Override

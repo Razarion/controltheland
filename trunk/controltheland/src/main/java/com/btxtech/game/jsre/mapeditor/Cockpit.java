@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.mapeditor;
 
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.TopMapPanel;
+import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -57,6 +58,7 @@ public class Cockpit extends TopMapPanel {
     private FlexTable controlPanel;
     private int selectorRow;
     private ListBox zIndexSelector;
+    private TerrainData terrainData = new TerrainData();
 
     public Cockpit(TerrainEditorAsync terrainEditor, int terrainId) {
         this.terrainEditor = terrainEditor;
@@ -79,8 +81,8 @@ public class Cockpit extends TopMapPanel {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 saveButton.setEnabled(false);
-                terrainEditor.saveTerrainImagePositions(TerrainView.getInstance().getTerrainHandler().getTerrainImagePositions(),
-                        TerrainView.getInstance().getTerrainHandler().getSurfaceRects(),
+                terrainEditor.saveTerrainImagePositions(terrainData.getTerrainImagePositions(),
+                        terrainData.getSurfaceRects(),
                         terrainId,
                         new AsyncCallback<Void>() {
                             @Override
@@ -133,6 +135,8 @@ public class Cockpit extends TopMapPanel {
 
                     @Override
                     public void onSuccess(TerrainInfo terrainInfo) {
+                        terrainData.setSurfaceRects(terrainInfo.getSurfaceRects());
+                        terrainData.setTerrainImagePositions(terrainInfo.getTerrainImagePositions());
                         TerrainView.getInstance().setupTerrain(terrainInfo.getTerrainSettings(),
                                 terrainInfo.getTerrainImagePositions(),
                                 terrainInfo.getSurfaceRects(),
@@ -142,6 +146,7 @@ public class Cockpit extends TopMapPanel {
                         TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
                         fillTerrainImages(terrainInfo.getTerrainImages());
                         fillSurfaces(terrainInfo.getSurfaceImages());
+                        RadarPanel.getInstance().onTerrainSettings(terrainInfo.getTerrainSettings());
                     }
                 });
 
@@ -207,7 +212,7 @@ public class Cockpit extends TopMapPanel {
 
     private void fillSurfaces(Collection<SurfaceImage> surfaceImages) {
         for (SurfaceImage surfaceImage : surfaceImages) {
-            surfaceSelector.setWidget(surfaceSelector.getRowCount(), 0, new SurfaceSelectorItem(surfaceImage));
+            surfaceSelector.setWidget(surfaceSelector.getRowCount(), 0, new SurfaceSelectorItem(terrainData, surfaceImage));
         }
     }
 
@@ -229,5 +234,9 @@ public class Cockpit extends TopMapPanel {
 
     public TerrainImagePosition.ZIndex getSelectedZIndex() {
         return TerrainImagePosition.ZIndex.valueOf(zIndexSelector.getValue(zIndexSelector.getSelectedIndex()));
+    }
+
+    public TerrainData getTerrainData() {
+        return terrainData;
     }
 }

@@ -25,7 +25,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * User: beat
@@ -37,13 +36,11 @@ public interface CommonCollisionService {
 
     AttackFormationItem getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItemArea target, TerrainType targetTerrainType);
 
-    List<Index> setupPathToSyncMovableRandomPositionIfTaken(SyncItem syncItem);
+    Path setupPathToSyncMovableRandomPositionIfTaken(SyncItem syncItem);
 
-    List<Index> setupPathToDestination(SyncBaseItem syncItem, Index destination);
+    Path setupPathToDestination(SyncBaseItem syncItem, Index destination);
 
-    List<Index> setupPathToDestination(Index position, Index destinationHint, TerrainType terrainType, BoundingBox boundingBox);
-
-    Map<TerrainType, Collection<PassableRectangle>> getPassableRectangles();
+    Path setupPathToDestination(Index position, Index destinationHint, TerrainType terrainType, BoundingBox boundingBox);
 
     List<AttackFormationItem> setupDestinationHints(SyncItemArea target, TerrainType targetTerrainType, List<AttackFormationItem> items);
 

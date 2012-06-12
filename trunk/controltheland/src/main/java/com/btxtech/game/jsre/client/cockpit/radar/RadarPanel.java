@@ -219,4 +219,8 @@ public class RadarPanel {
     public void blinkHint() {
         radarHintView.blinkHint();
     }
+
+    public MiniTerrain getMiniTerrain() {
+        return miniTerrain;
+    }
 }

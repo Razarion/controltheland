@@ -23,6 +23,17 @@ import java.util.Collection;
  * Time: 11:56:58 AM
  */
 public class Index implements Serializable {
+    public enum Direction {
+        N,
+        NE,
+        E,
+        SE,
+        S,
+        SW,
+        W,
+        NW
+    }
+
     private int x;
     private int y;
 
@@ -212,6 +223,39 @@ public class Index implements Serializable {
         double sinus = Math.sin(angel);
         double cosines = Math.cos(angel);
         return rotateCounterClock(center, sinus, cosines);
+    }
+
+    public Direction getDirection(Index other) {
+        if (equals(other)) {
+            throw new IllegalArgumentException("Can not determine direction if points are equals: " + this);
+        }
+        if (x == other.x) {
+            if (other.y > y) {
+                return Direction.S;
+            } else {
+                return Direction.N;
+            }
+        }
+        if (y == other.y) {
+            if (other.x > x) {
+                return Direction.E;
+            } else {
+                return Direction.W;
+            }
+        }
+        if (other.y > y) {
+            if (other.x > x) {
+                return Direction.SE;
+            } else {
+                return Direction.SW;
+            }
+        } else {
+            if (other.x > x) {
+                return Direction.NE;
+            } else {
+                return Direction.NW;
+            }
+        }
     }
 
     public String testString() {

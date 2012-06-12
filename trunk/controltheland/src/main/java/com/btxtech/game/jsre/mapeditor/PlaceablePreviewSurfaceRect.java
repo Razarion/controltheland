@@ -28,16 +28,19 @@ import com.google.gwt.event.dom.client.MouseEvent;
  * Time: 12:02:23
  */
 public class PlaceablePreviewSurfaceRect extends PlaceablePreviewWidget {
+    private TerrainData terrainData;
     private SurfaceImage surfaceImage;
     private SurfaceRect surfaceRect;
 
-    public PlaceablePreviewSurfaceRect(SurfaceImage surfaceImage, MouseEvent mouseEvent) {
+    public PlaceablePreviewSurfaceRect(TerrainData terrainData, SurfaceImage surfaceImage, MouseEvent mouseEvent) {
         super(ImageHandler.getSurfaceImage(surfaceImage.getImageId()), mouseEvent);
+        this.terrainData = terrainData;
         this.surfaceImage = surfaceImage;
     }
 
-    public PlaceablePreviewSurfaceRect(SurfaceRect surfaceRect, MouseDownEvent mouseEvent) {
+    public PlaceablePreviewSurfaceRect(TerrainData terrainData, SurfaceRect surfaceRect, MouseDownEvent mouseEvent) {
         super(ImageHandler.getSurfaceImage(surfaceRect.getSurfaceImageId()), mouseEvent);
+        this.terrainData = terrainData;
         this.surfaceRect = surfaceRect;
     }
 
@@ -49,9 +52,9 @@ public class PlaceablePreviewSurfaceRect extends PlaceablePreviewWidget {
             return;
         }
         if (surfaceRect != null) {
-            TerrainView.getInstance().moveSurfaceRect(relX, relY, surfaceRect);
+            terrainData.moveSurfaceRect(relX, relY, surfaceRect);
         } else {
-            TerrainView.getInstance().addNewSurfaceRect(relX, relY, 100, 100, surfaceImage); // TODO remove 100 100
+            terrainData.addNewSurfaceRect(relX, relY, 100, 100, surfaceImage); // TODO remove 100 100
         }
     }
 }

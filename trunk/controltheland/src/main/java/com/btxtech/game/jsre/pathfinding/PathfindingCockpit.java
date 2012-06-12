@@ -78,7 +78,6 @@ public class PathfindingCockpit extends TopMapPanel {
         flexTable.setWidget(8, 2, new Button("Go!", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-
                 pathMiniMap.findPath(getIndex(startBoxX, startBoxY), getIndex(destinationBoxX, destinationBoxY));
             }
         }));

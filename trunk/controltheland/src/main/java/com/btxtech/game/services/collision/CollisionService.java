@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
+import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
@@ -37,5 +38,5 @@ public interface CollisionService extends CommonCollisionService {
 
     void removeCollisionServiceChangedListener(CollisionServiceChangedListener collisionServiceChangedListener);
 
-    boolean checkIfPathValid(List<Index> pathToDestination);
+    boolean checkIfPathValid(Path path);
 }

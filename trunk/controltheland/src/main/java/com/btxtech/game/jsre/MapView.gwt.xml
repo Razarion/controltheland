@@ -12,10 +12,10 @@
   ~   GNU General Public License for more details.
   -->
 <module rename-to='mapview'>
+    <source path="mapview "/>
     <source path="client"/>
     <source path="mapeditor"/>
     <source path="common"/>
-    <source path="mapview "/>
 
     <!-- Inherit the core Web Toolkit stuff.                        -->
     <inherits name='com.google.gwt.user.User'/>

@@ -29,35 +29,21 @@ import java.util.Map;
  * Time: 14:23:09
  */
 public interface AbstractTerrainService {
-    Collection<TerrainImagePosition> getTerrainImagePositions();
-
-    Collection<SurfaceRect> getSurfaceRects();
+    public interface TerrainTileEvaluator {
+        void evaluate(int x, int y, TerrainTile terrainTile);
+    }
 
     TerrainSettings getTerrainSettings();
 
     void addTerrainListener(TerrainListener terrainListener);
 
-    List<TerrainImagePosition> getTerrainImagesInRegion(Rectangle absolutePxRectangle);
-
-    SurfaceImage getSurfaceImage(SurfaceRect surfaceRect);
+    SurfaceImage getSurfaceImage(int surfaceImageId);
 
     Collection<TerrainImage> getTerrainImages();
 
     Collection<SurfaceImage> getSurfaceImages();
 
-    Rectangle getTerrainImagePositionRectangle(TerrainImagePosition terrainImagePosition);
-
-    TerrainImage getTerrainImage(TerrainImagePosition terrainImagePosition);
-
-    TerrainImagePosition getTerrainImagePosition(Index tileIndex);
-
-    TerrainImagePosition getTerrainImagePosition(TerrainImagePosition.ZIndex zIndex, int absoluteX, int absoluteY);
-
-    TerrainImagePosition getTerrainImagePosition(TerrainImagePosition.ZIndex zIndex, Index tileIndex);
-
-    SurfaceRect getSurfaceRect(int absoluteX, int absoluteY);
-
-    SurfaceRect getSurfaceRect(Index tileIndex);
+    TerrainImage getTerrainImage(int terrainImageId);
 
     Index getTerrainTileIndexForAbsPosition(int x, int y);
 
@@ -95,5 +81,9 @@ public interface AbstractTerrainService {
 
     Index correctPosition(SyncItem syncItem, Index position);
 
-    Map<TerrainType, boolean[][]> createSurfaceTypeField();
+    void createTerrainTileField(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects);
+
+    TerrainTile[][] getTerrainTileField();
+
+    void iteratorOverAllTerrainTiles(Rectangle tileRect, TerrainTileEvaluator terrainTileEvaluator);
 }

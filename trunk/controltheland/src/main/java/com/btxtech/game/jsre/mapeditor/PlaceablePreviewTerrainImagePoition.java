@@ -24,6 +24,7 @@ import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseEvent;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -31,18 +32,22 @@ import java.util.List;
  * Time: 19:37:39
  */
 public class PlaceablePreviewTerrainImagePoition extends PlaceablePreviewWidget {
+    private TerrainData terrainData;
     private TerrainImage terrainImage;
     private TerrainImagePosition terrainImagePosition;
     private TerrainImagePosition.ZIndex zIndex;
+    private Logger log = Logger.getLogger(PlaceablePreviewTerrainImagePoition.class.getName());
 
-    public PlaceablePreviewTerrainImagePoition(TerrainImagePosition terrainImagePosition, MouseEvent mouseEvent) {
+    public PlaceablePreviewTerrainImagePoition(TerrainData terrainData, TerrainImagePosition terrainImagePosition, MouseEvent mouseEvent) {
         super(ImageHandler.getTerrainImage(terrainImagePosition.getImageId()), mouseEvent);
+        this.terrainData = terrainData;
         this.terrainImagePosition = terrainImagePosition;
         zIndex = terrainImagePosition.getzIndex();
     }
 
-    public PlaceablePreviewTerrainImagePoition(TerrainImage terrainImage, TerrainImagePosition.ZIndex zIndex, MouseDownEvent mouseDownEvent) {
+    public PlaceablePreviewTerrainImagePoition(TerrainData terrainData, TerrainImage terrainImage, TerrainImagePosition.ZIndex zIndex, MouseDownEvent mouseDownEvent) {
         super(ImageHandler.getTerrainImage(terrainImage.getId()), mouseDownEvent);
+        this.terrainData = terrainData;
         this.terrainImage = terrainImage;
         this.zIndex = zIndex;
     }
@@ -55,9 +60,9 @@ public class PlaceablePreviewTerrainImagePoition extends PlaceablePreviewWidget 
             return;
         }
         if (terrainImagePosition != null) {
-            TerrainView.getInstance().moveTerrainImagePosition(relX, relY, terrainImagePosition);
+            terrainData.moveTerrainImagePosition(relX, relY, terrainImagePosition);
         } else {
-            TerrainView.getInstance().addNewTerrainImagePosition(relX, relY, terrainImage, zIndex);
+            terrainData.addNewTerrainImagePosition(relX, relY, terrainImage, zIndex);
         }
     }
 
@@ -83,14 +88,14 @@ public class PlaceablePreviewTerrainImagePoition extends PlaceablePreviewWidget 
         if (terrainImage != null) {
             tmpTerrainImage = terrainImage;
         } else {
-            tmpTerrainImage = TerrainView.getInstance().getTerrainHandler().getTerrainImage(terrainImagePosition);
+            tmpTerrainImage = TerrainView.getInstance().getTerrainHandler().getTerrainImage(terrainImagePosition.getImageId());
         }
         if (tileX < 0 || tileY < 0) {
             return false;
         }
         Rectangle rectangle = new Rectangle(tileX, tileY, tmpTerrainImage.getTileWidth(), tmpTerrainImage.getTileHeight());
         rectangle = TerrainView.getInstance().getTerrainHandler().convertToAbsolutePosition(rectangle);
-        List<TerrainImagePosition> terrainImagePositions = TerrainView.getInstance().getTerrainHandler().getTerrainImagesInRegion(rectangle);
+        List<TerrainImagePosition> terrainImagePositions = terrainData.getTerrainImagesInRegion(rectangle);
         if (terrainImagePositions.isEmpty()) {
             return true;
         }

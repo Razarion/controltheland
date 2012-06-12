@@ -26,8 +26,4 @@ public class ClientCollisionService extends CommonCollisionServiceImpl {
     protected Services getServices() {
         return ClientServices.getInstance();
     }
-
-    public void setup() {
-        setupPassableTerrain();
-    }
 }

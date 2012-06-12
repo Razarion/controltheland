@@ -68,7 +68,7 @@ public class SurfaceModifier implements TerrainMouseMoveListener, MouseDownHandl
             return;
         }
 
-        SurfaceRect surfaceRect = TerrainView.getInstance().getTerrainHandler().getSurfaceRect(absoluteLeft, absoluteTop);
+        SurfaceRect surfaceRect = cockpit.getTerrainData().getSurfaceRect(absoluteLeft, absoluteTop);
         if (surfaceRect != null) {
             marker.setVisible(true);
             Index size = TerrainView.getInstance().getTerrainHandler().getAbsolutIndexForTerrainTileIndex(surfaceRect.getTileWidth(), surfaceRect.getTileHeight());
@@ -138,26 +138,26 @@ public class SurfaceModifier implements TerrainMouseMoveListener, MouseDownHandl
         int absoluteX = relX + TerrainView.getInstance().getViewOriginLeft();
         int absoluteY = relY + TerrainView.getInstance().getViewOriginTop();
         GwtCommon.preventDefault(mouseDownEvent);
-        SurfaceRect surfaceRect = TerrainView.getInstance().getTerrainHandler().getSurfaceRect(absoluteX, absoluteY);
+        SurfaceRect surfaceRect = cockpit.getTerrainData().getSurfaceRect(absoluteX, absoluteY);
         if (surfaceRect == null) {
             return;
         }
         if (nr && er) {
-            new ResizeablePreviewSurfaceRect(surfaceRect, ResizeablePreviewWidget.Direction.NORTH_EAST);
+            new ResizeablePreviewSurfaceRect(cockpit.getTerrainData(), surfaceRect, ResizeablePreviewWidget.Direction.NORTH_EAST);
         } else if (er && sr) {
-            new ResizeablePreviewSurfaceRect(surfaceRect, ResizeablePreviewWidget.Direction.SOUTH_EAST);
+            new ResizeablePreviewSurfaceRect(cockpit.getTerrainData(), surfaceRect, ResizeablePreviewWidget.Direction.SOUTH_EAST);
         } else if (sr && wr) {
-            new ResizeablePreviewSurfaceRect(surfaceRect, ResizeablePreviewWidget.Direction.SOUTH_WEST);
+            new ResizeablePreviewSurfaceRect(cockpit.getTerrainData(), surfaceRect, ResizeablePreviewWidget.Direction.SOUTH_WEST);
         } else if (wr && nr) {
-            new ResizeablePreviewSurfaceRect(surfaceRect, ResizeablePreviewWidget.Direction.NORTH_WEST);
+            new ResizeablePreviewSurfaceRect(cockpit.getTerrainData(), surfaceRect, ResizeablePreviewWidget.Direction.NORTH_WEST);
         } else if (nr) {
-            new ResizeablePreviewSurfaceRect(surfaceRect, ResizeablePreviewWidget.Direction.NORTH);
+            new ResizeablePreviewSurfaceRect(cockpit.getTerrainData(), surfaceRect, ResizeablePreviewWidget.Direction.NORTH);
         } else if (er) {
-            new ResizeablePreviewSurfaceRect(surfaceRect, ResizeablePreviewWidget.Direction.EAST);
+            new ResizeablePreviewSurfaceRect(cockpit.getTerrainData(), surfaceRect, ResizeablePreviewWidget.Direction.EAST);
         } else if (sr) {
-            new ResizeablePreviewSurfaceRect(surfaceRect, ResizeablePreviewWidget.Direction.SOUTH);
+            new ResizeablePreviewSurfaceRect(cockpit.getTerrainData(), surfaceRect, ResizeablePreviewWidget.Direction.SOUTH);
         } else if (wr) {
-            new ResizeablePreviewSurfaceRect(surfaceRect, ResizeablePreviewWidget.Direction.WEST);
+            new ResizeablePreviewSurfaceRect(cockpit.getTerrainData(), surfaceRect, ResizeablePreviewWidget.Direction.WEST);
         } else {
             move(surfaceRect, mouseDownEvent);
         }
@@ -167,9 +167,9 @@ public class SurfaceModifier implements TerrainMouseMoveListener, MouseDownHandl
         marker.setVisible(false);
 
         if (cockpit.isDeleteModus()) {
-            TerrainView.getInstance().getTerrainHandler().removeSurfaceRect(surfaceRect);
+            cockpit.getTerrainData().removeSurfaceRect(surfaceRect);
         } else {
-            new PlaceablePreviewSurfaceRect(surfaceRect, mouseDownEvent);
+            new PlaceablePreviewSurfaceRect(cockpit.getTerrainData(), surfaceRect, mouseDownEvent);
         }
     }
 

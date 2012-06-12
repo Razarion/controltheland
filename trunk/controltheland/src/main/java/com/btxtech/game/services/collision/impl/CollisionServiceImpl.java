@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.btxtech.game.jsre.common.gameengine.services.collision.impl.CommonCollisionServiceImpl;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.collision.CollisionService;
@@ -63,7 +64,6 @@ public class CollisionServiceImpl extends CommonCollisionServiceImpl implements 
         try {
             terrainService.addTerrainListener(this);
             if (terrainService.getTerrainSettings() != null) {
-                setupPassableTerrain();
                 fireCollisionChangeEvent();
             } else {
                 log.error("No terrain settings for real game");
@@ -114,16 +114,15 @@ public class CollisionServiceImpl extends CommonCollisionServiceImpl implements 
 
     @Override
     public void onTerrainChanged() {
-        setupPassableTerrain();
         fireCollisionChangeEvent();
     }
 
     @Override
     public void addCollisionServiceChangedListener(CollisionServiceChangedListener collisionServiceChangedListener) {
         collisionServiceChangedListeners.add(collisionServiceChangedListener);
-        if (!getPassableRectangles().isEmpty()) {
+        //if (!getPassableRectangles().isEmpty()) {
             collisionServiceChangedListener.collisionServiceChanged();
-        }
+        //}
     }
 
     @Override
@@ -137,7 +136,7 @@ public class CollisionServiceImpl extends CommonCollisionServiceImpl implements 
     }
 
     @Override
-    public boolean checkIfPathValid(List<Index> pathToDestination) {
+    public boolean checkIfPathValid(Path path) {
         return true;
     }
 }

@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniTerrain;
 import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
+import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.Territory;
@@ -87,8 +88,16 @@ public class MapView implements EntryPoint {
                         terrainInfo.getSurfaceImages(),
                         terrainInfo.getTerrainImages(),
                         terrainInfo.getTerrainImageBackground());
+                // If the images get loaded after miniTerrain.onTerrainChanged() has been called
+                TerrainView.getInstance().getTerrainHandler().addTerrainListener(new TerrainListener() {
+                    @Override
+                    public void onTerrainChanged() {
+                        miniTerrain.onTerrainChanged();
+                    }
+                });
                 TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
                 miniTerrain.onTerrainSettings(terrainInfo.getTerrainSettings());
+                miniTerrain.onTerrainChanged();
                 miniTerritoryView.onTerrainSettings(terrainInfo.getTerrainSettings());
                 miniTerritoryView.drawTiles();
             }

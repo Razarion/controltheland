@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.client.common.info;
 
-import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
@@ -70,6 +69,11 @@ public abstract class GameInfo implements Serializable {
 
     public Collection<SurfaceImage> getSurfaceImages() {
         return surfaceImages;
+    }
+
+    public void freePositionAndRects() {
+        surfaceRects.clear();
+        terrainImagePositions.clear();
     }
 
     public void setSurfaceImages(Collection<SurfaceImage> surfaceImages) {

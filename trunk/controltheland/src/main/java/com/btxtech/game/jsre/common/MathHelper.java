@@ -7,23 +7,23 @@ package com.btxtech.game.jsre.common;
  */
 public class MathHelper {
     // Constants
-    public static double ONE_RADIANT = 2.0 * Math.PI;
-    public static double HALF_RADIANT = Math.PI;
-    public static double QUARTER_RADIANT = Math.PI / 2.0;
-    public static double THREE_QUARTER_RADIANT = 3.0 * Math.PI / 2.0;
-    public static double EIGHTH_RADIANT = Math.PI / 4.0;
-    public static double NORTH = 0;
-    public static double NORTH_EAST = 1.75 * Math.PI;
-    public static double EAST = 1.5 * Math.PI;
-    public static double SOUTH_EAST = 1.25 * Math.PI;
-    public static double SOUTH = Math.PI;
-    public static double SOUTH_WEST = 0.75 * Math.PI;
-    public static double WEST = 0.5 * Math.PI;
-    public static double NORTH_WEST = 0.25 * Math.PI;
-    public static double SQRT_OF_2 = Math.sqrt(2.0);
-    public static double PRECISION = 0.00001;
-    public static double ZERO_DOT_ONE_DEGREE_IN_RAD = gradToRad(0.1);
-    private static final char[] CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+    public final static double ONE_RADIANT = 2.0 * Math.PI;
+    public final static double HALF_RADIANT = Math.PI;
+    public final static double QUARTER_RADIANT = Math.PI / 2.0;
+    public final static double THREE_QUARTER_RADIANT = 3.0 * Math.PI / 2.0;
+    public final static double EIGHTH_RADIANT = Math.PI / 4.0;
+    public final static double NORTH = 0;
+    public final static double NORTH_EAST = 1.75 * Math.PI;
+    public final static double EAST = 1.5 * Math.PI;
+    public final static double SOUTH_EAST = 1.25 * Math.PI;
+    public final static double SOUTH = Math.PI;
+    public final static double SOUTH_WEST = 0.75 * Math.PI;
+    public final static double WEST = 0.5 * Math.PI;
+    public final static double NORTH_WEST = 0.25 * Math.PI;
+    public final static double SQRT_OF_2 = Math.sqrt(2.0);
+    public final static double PRECISION = 0.00001;
+    public final static double ZERO_DOT_ONE_DEGREE_IN_RAD = gradToRad(0.1);
+    private final static char[] CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 
     /**
      * @param angel input

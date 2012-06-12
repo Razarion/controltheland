@@ -280,7 +280,7 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
             userTrackingService.saveUserCommand(baseCommand);
             if (baseCommand instanceof PathToDestinationCommand) {
                 if (!collisionService.checkIfPathValid(((PathToDestinationCommand) baseCommand).getPathToDestination())) {
-                    log.error("Path is invalid: " + CommonJava.pathToDestinationAsString(((PathToDestinationCommand) baseCommand).getPathToDestination()));
+                    log.error("Path is invalid: " + ((PathToDestinationCommand) baseCommand).getPathToDestination());
                     connectionService.sendSyncInfo(syncItem);
                     return;
                 }
