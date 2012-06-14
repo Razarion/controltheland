@@ -40,10 +40,12 @@
                         <th bgcolor="#dadada">Item Type</th>
                         <th bgcolor="#dadada">Count</th>
                         <th bgcolor="#dadada">Create Directly</th>
-                        <th bgcolor="#dadada">Region<br><span style="color:red;">Movable units: only if Create Directly</span></th>
+                        <th bgcolor="#dadada">Region<br><span
+                                style="color:red;">Movable units: only if Create Directly</span></th>
                         <th bgcolor="#dadada">Move to Realm if Idle</th>
                         <th bgcolor="#dadada">Idle TTL [ms]</th>
                         <th bgcolor="#dadada">No Rebuild</th>
+                        <th bgcolor="#dadada">Re Pop [s]</th>
                         <th bgcolor="#dadada">Delete</th>
                     </tr>
                     <tr wicket:id="botItems">
@@ -54,6 +56,7 @@
                         <td><input type="checkbox" wicket:id="moveRealmIfIdle"></td>
                         <td><input type="text" wicket:id="idleTtl" size="6"></td>
                         <td><input type="checkbox" wicket:id="noRebuild"></td>
+                        <td wicket:id="rePopTime"/>
                         <td valign="center">
                             <input type="submit" value="Delete" wicket:id="delete"/>
                         </td>

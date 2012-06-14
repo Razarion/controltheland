@@ -15,6 +15,7 @@ package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.mgmt.MgmtService;
+import com.btxtech.game.wicket.pages.mgmt.bot.BotTable;
 import com.btxtech.game.wicket.pages.mgmt.cms.Cms;
 import com.btxtech.game.wicket.pages.mgmt.inventory.InventoryEditor;
 import com.btxtech.game.wicket.pages.mgmt.items.ItemTypeTable;

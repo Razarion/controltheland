@@ -107,9 +107,13 @@ public abstract class BotRunner {
         killResources();
     }
 
-    public boolean isBuildup() {
+    /**
+     * Only used for test purpose
+     * @return true if fulfilled
+     */
+    public boolean isBuildupUseInTestOnly() {
         synchronized (syncObject) {
-            return botItemContainer != null && botItemContainer.isFulfilled(base);
+            return botItemContainer != null && botItemContainer.isFulfilledUseInTestOnly(base);
         }
     }
 

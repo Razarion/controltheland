@@ -67,7 +67,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices, "Test Bot");
         SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, botItemConfigs, null, "Test Bot", null, null, null, null));
 
-        Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
         botItemContainer.work(simpleBase);
         waitForBotItemContainer(botItemContainer, simpleBase);
@@ -80,7 +80,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
 
     private void waitForBotItemContainer(BotItemContainer botItemContainer, SimpleBase simpleBase) throws InterruptedException, TimeoutException {
         long maxTime = System.currentTimeMillis() + 10000;
-        while (!botItemContainer.isFulfilled(simpleBase)) {
+        while (!botItemContainer.isFulfilledUseInTestOnly(simpleBase)) {
             if (System.currentTimeMillis() > maxTime) {
                 throw new TimeoutException();
             }
@@ -110,38 +110,38 @@ public class TestBotItemContainer extends AbstractServiceTest {
         BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices, "Test Bot");
         SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, botItemConfigs, null, "Test Bot", null, null, null, null));
 
-        Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
         botItemContainer.work(simpleBase);
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
-        Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
         botItemContainer.work(simpleBase);
         waitForActionServiceDone();
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
-        Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
         botItemContainer.work(simpleBase);
         waitForActionServiceDone();
-        Assert.assertTrue(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertTrue(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
         Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
 
         // Does nothing
         botItemContainer.work(simpleBase);
         waitForActionServiceDone();
-        Assert.assertTrue(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertTrue(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
         Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
 
         Id id = getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).get(0);
         killSyncItem(id);
-        Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
         botItemContainer.work(simpleBase);
         waitForActionServiceDone();
-        Assert.assertTrue(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertTrue(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
         Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
 
@@ -149,17 +149,17 @@ public class TestBotItemContainer extends AbstractServiceTest {
         killSyncItem(id);
         id = getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).get(0);
         killSyncItem(id);
-        Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
         botItemContainer.work(simpleBase);
         waitForActionServiceDone();
-        Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
 
         botItemContainer.work(simpleBase);
         waitForActionServiceDone();
-        Assert.assertTrue(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertTrue(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
         Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
 
@@ -199,14 +199,14 @@ public class TestBotItemContainer extends AbstractServiceTest {
         BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices, "Test Bot");
         SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, botItemConfigs, null, "Test Bot", null, null, null, null));
 
-        Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
         for (int i = 0; i < 5; i++) {
-            Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
+            // Mock Services instead of this for loop
             botItemContainer.work(simpleBase);
             waitForActionServiceDone();
         }
-        Assert.assertTrue(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertTrue(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
         Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null).size());
@@ -216,11 +216,11 @@ public class TestBotItemContainer extends AbstractServiceTest {
         itemService.killSyncItemIds(getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null));
         itemService.killSyncItemIds(getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null));
         for (int i = 0; i < 5; i++) {
-            Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
+            // Mock Services instead of this for loop
             botItemContainer.work(simpleBase);
             waitForActionServiceDone();
         }
-        Assert.assertTrue(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertTrue(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
         Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null).size());
@@ -257,14 +257,14 @@ public class TestBotItemContainer extends AbstractServiceTest {
         BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices, "Test Bot");
         SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, botItemConfigs, null, "Test Bot", null, null, null, null));
 
-        Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
         for (int i = 0; i < 5; i++) {
-            Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
+            // Mock Services instead of this for loop
             botItemContainer.work(simpleBase);
             waitForActionServiceDone();
         }
-        Assert.assertTrue(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertTrue(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
         Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null).size());
@@ -299,24 +299,26 @@ public class TestBotItemContainer extends AbstractServiceTest {
         BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices, "Test Bot");
         SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, botItemConfigs, null, "Test Bot", null, null, null, null));
 
-        Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
         for (int i = 0; i < 50; i++) {
+            // Mock Services instead of this for loop
             botItemContainer.work(simpleBase);
             waitForActionServiceDone();
         }
-        Assert.assertTrue(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertTrue(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
         Assert.assertEquals(6, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
         Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null).size());
 
         itemService.killSyncItemIds(getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null));
-        Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
         for (int i = 0; i < 50; i++) {
+             // Mock Services instead of this for loop
             botItemContainer.work(simpleBase);
             waitForActionServiceDone();
         }
-        Assert.assertTrue(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertTrue(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
         Assert.assertEquals(6, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
         Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null).size());
@@ -346,14 +348,15 @@ public class TestBotItemContainer extends AbstractServiceTest {
         BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices, "Test Bot");
         SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, botItemConfigs, null, "Test Bot", null, null, null, null));
 
-        Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
         for (int i = 0; i < 50; i++) {
+            // Mock Services instead of this for loop
             botItemContainer.work(simpleBase);
             waitForActionServiceDone();
         }
 
-        Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
     }
 
     @Test
@@ -401,9 +404,9 @@ public class TestBotItemContainer extends AbstractServiceTest {
         EasyMock.replay(mockCollisionService);
         EasyMock.replay(mockItemService);
 
-        Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
         botItemContainer.work(simpleBase);
-        Assert.assertTrue(botItemContainer.isFulfilled(simpleBase));
+        Assert.assertTrue(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
         Collection<BotSyncBaseItem> idleAttackers = botItemContainer.getAllIdleAttackers();
         Assert.assertEquals(3, idleAttackers.size());
@@ -440,7 +443,8 @@ public class TestBotItemContainer extends AbstractServiceTest {
         BaseService baseServiceMock = EasyMock.createStrictMock(BaseService.class);
         Collection<SyncBaseItem> botItems = new ArrayList<SyncBaseItem>();
         botItems.add(syncBaseItem);
-        EasyMock.expect(baseServiceMock.getItems(simpleBase)).andReturn(botItems).times(3);
+        EasyMock.expect(baseServiceMock.getItems(simpleBase)).andReturn(null);
+        EasyMock.expect(baseServiceMock.getItems(simpleBase)).andReturn(botItems).times(2);
         testServices.setBaseService(baseServiceMock);
 
         ActionService mockActionService = EasyMock.createStrictMock(ActionService.class);
@@ -448,17 +452,22 @@ public class TestBotItemContainer extends AbstractServiceTest {
         testServices.setActionService(mockActionService);
 
         CollisionService mockCollisionService = EasyMock.createStrictMock(CollisionService.class);
+        EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem.getBaseItemType(), new Rectangle(0, 0, 1000, 1000), 0, false, true)).andReturn(new Index(500, 500));
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem.getBaseItemType(), new Rectangle(2000, 3000, 1000, 2000), 0, false, false)).andReturn(new Index(3000, 3500));
         testServices.setCollisionService(mockCollisionService);
 
         BaseItemType baseItemType = (BaseItemType) itemService.getItemType(TEST_ATTACK_ITEM_ID);
         Collection<BotItemConfig> botItemConfigs = new ArrayList<BotItemConfig>();
-        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, new Rectangle(0, 0, 1000, 1000), true, null, false));
+        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, new Rectangle(0, 0, 1000, 1000), true, null, false, null));
 
+        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
+        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), new Index(500, 500), null, simpleBase, 0)).andReturn(syncBaseItem);
+        testServices.setItemService(mockItemService);
 
         EasyMock.replay(baseServiceMock);
         EasyMock.replay(mockActionService);
         EasyMock.replay(mockCollisionService);
+        EasyMock.replay(mockItemService);
         BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, new Rectangle(2000, 3000, 1000, 2000), testServices, "Test Bot");
         botItemContainer.work(simpleBase);
         syncBaseItem.setBuildup(0.0); // Simulate busy
@@ -469,6 +478,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         EasyMock.verify(baseServiceMock);
         EasyMock.verify(mockActionService);
         EasyMock.verify(mockCollisionService);
+        EasyMock.verify(mockItemService);
     }
 
     @Test
@@ -488,21 +498,24 @@ public class TestBotItemContainer extends AbstractServiceTest {
         testServices.setBaseService(baseServiceMock);
 
         ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
+        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), new Index(300, 350), null, simpleBase, 0)).andReturn(syncBaseItem);
         mockItemService.killSyncItem(EasyMock.eq(syncBaseItem), EasyMock.<SimpleBase>isNull(), EasyMock.eq(true), EasyMock.eq(false));
         testServices.setItemService(mockItemService);
 
+        CollisionService mockCollisionService = EasyMock.createStrictMock(CollisionService.class);
+        EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem.getBaseItemType(), new Rectangle(0, 0, 1000, 1000), 0, false, true)).andReturn(new Index(300, 350));
+        testServices.setCollisionService(mockCollisionService);
+
         BaseItemType baseItemType = (BaseItemType) itemService.getItemType(TEST_ATTACK_ITEM_ID);
         Collection<BotItemConfig> botItemConfigs = new ArrayList<BotItemConfig>();
-        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, new Rectangle(0, 0, 1000, 1000), false, 50, false));
+        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, new Rectangle(0, 0, 1000, 1000), false, 50, false, null));
 
-        EasyMock.replay(baseServiceMock);
-        EasyMock.replay(mockItemService);
+        EasyMock.replay(baseServiceMock, mockItemService, mockCollisionService);
         BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, new Rectangle(2000, 3000, 1000, 2000), testServices, "Test Bot");
         botItemContainer.work(simpleBase);
         Thread.sleep(60);
         botItemContainer.work(simpleBase);
-        EasyMock.verify(baseServiceMock);
-        EasyMock.verify(mockItemService);
+        EasyMock.verify(mockItemService, baseServiceMock, mockCollisionService);
     }
 
     @Test
@@ -525,7 +538,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
 
         BaseItemType baseItemType = (BaseItemType) itemService.getItemType(TEST_ATTACK_ITEM_ID);
         Collection<BotItemConfig> botItemConfigs = new ArrayList<BotItemConfig>();
-        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, new Rectangle(0, 0, 1000, 1000), false, null, true));
+        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, new Rectangle(0, 0, 1000, 1000), false, null, true, null));
 
         CollisionService mockCollisionService = EasyMock.createStrictMock(CollisionService.class);
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem.getBaseItemType(), new Rectangle(0, 0, 1000, 1000), 0, false, true)).andReturn(new Index(3000, 3500));
@@ -540,6 +553,51 @@ public class TestBotItemContainer extends AbstractServiceTest {
         botItemContainer.work(simpleBase);
         botItemContainer.work(simpleBase);
         syncBaseItem.setHealth(0);
+        botItemContainer.work(simpleBase);
+        EasyMock.verify(baseServiceMock, mockCollisionService, mockItemService);
+    }
+
+    @Test
+    @DirtiesContext
+    public void rePop() throws Exception {
+        configureRealGame();
+
+        SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(1, Id.NO_ID, 0));
+
+        TestServices testServices = new TestServices();
+
+        BaseService baseServiceMock = EasyMock.createStrictMock(BaseService.class);
+        Collection<SyncBaseItem> botItems = new ArrayList<SyncBaseItem>();
+        botItems.add(syncBaseItem);
+        EasyMock.expect(baseServiceMock.getItems(simpleBase)).andReturn(null);
+        EasyMock.expect(baseServiceMock.getItems(simpleBase)).andReturn(botItems);
+        EasyMock.expect(baseServiceMock.getItems(simpleBase)).andReturn(null);
+        EasyMock.expect(baseServiceMock.getItems(simpleBase)).andReturn(botItems);
+        testServices.setBaseService(baseServiceMock);
+
+        BaseItemType baseItemType = (BaseItemType) itemService.getItemType(TEST_ATTACK_ITEM_ID);
+        Collection<BotItemConfig> botItemConfigs = new ArrayList<BotItemConfig>();
+        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, new Rectangle(0, 0, 1000, 1000), false, null, false, 100L));
+
+        CollisionService mockCollisionService = EasyMock.createStrictMock(CollisionService.class);
+        EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem.getBaseItemType(), new Rectangle(0, 0, 1000, 1000), 0, false, true)).andReturn(new Index(3000, 3500));
+        EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem.getBaseItemType(), new Rectangle(0, 0, 1000, 1000), 0, false, true)).andReturn(new Index(3000, 3500));
+        testServices.setCollisionService(mockCollisionService);
+
+        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
+        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), new Index(3000, 3500), null, simpleBase, 0)).andReturn(syncBaseItem);
+        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), new Index(3000, 3500), null, simpleBase, 0)).andReturn(syncBaseItem);
+        testServices.setItemService(mockItemService);
+
+        EasyMock.replay(baseServiceMock, mockCollisionService, mockItemService);
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, new Rectangle(2000, 3000, 1000, 2000), testServices, "Test Bot");
+        botItemContainer.work(simpleBase);
+        botItemContainer.work(simpleBase);
+        syncBaseItem.setHealth(0);
+        botItemContainer.work(simpleBase);
+        Thread.sleep(110);
+        syncBaseItem.setHealth(1);
         botItemContainer.work(simpleBase);
         EasyMock.verify(baseServiceMock, mockCollisionService, mockItemService);
     }

@@ -169,12 +169,12 @@ public class TestBotRunner extends AbstractServiceTest {
         SimpleBase simpleBase2 = botRunner.getBase();
         Assert.assertFalse(baseService.isAlive(simpleBase1));
         Assert.assertFalse(baseService.isAlive(simpleBase2));
-        Assert.assertFalse(botRunner.isBuildup());
+        Assert.assertFalse(botRunner.isBuildupUseInTestOnly());
     }
 
     private void waitForBotRunner(BotRunner botRunner) throws InterruptedException, TimeoutException {
         long maxTime = System.currentTimeMillis() + 10000;
-        while (!botRunner.isBuildup()) {
+        while (!botRunner.isBuildupUseInTestOnly()) {
             if (System.currentTimeMillis() > maxTime) {
                 throw new TimeoutException();
             }

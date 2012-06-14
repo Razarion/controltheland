@@ -5,7 +5,7 @@ import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.terrain.TerrainService;
-import com.btxtech.game.wicket.pages.mgmt.BotTable;
+import com.btxtech.game.wicket.pages.mgmt.bot.BotTable;
 import com.btxtech.game.wicket.pages.mgmt.TerrainTileEditor;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.util.tester.FormTester;

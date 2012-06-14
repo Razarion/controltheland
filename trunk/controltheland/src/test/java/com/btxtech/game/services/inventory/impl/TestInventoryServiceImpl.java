@@ -552,6 +552,25 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         waitForHistoryType(DbHistoryElement.Type.BOX_DROPPED);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+
+        // Killed without actor
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // Target item
+        targetId = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
+        sendMoveCommand(targetId, new Index(1000, 5000));
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(1, getAllHistoryEntriesOfType(DbHistoryElement.Type.BOX_DROPPED).size());
+        itemService.killSyncItem(itemService.getItem(targetId), null, true, false);
+        Assert.assertEquals(1, getAllHistoryEntriesOfType(DbHistoryElement.Type.BOX_DROPPED).size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
     }
 
     @Test

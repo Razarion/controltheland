@@ -1492,7 +1492,7 @@ abstract public class AbstractServiceTest {
 
     protected void waitForBotToBuildup(BotConfig botConfig, int timeOut) throws InterruptedException, TimeoutException {
         long maxTime = System.currentTimeMillis() + timeOut;
-        while (!botService.getBotRunner(botConfig).isBuildup()) {
+        while (!botService.getBotRunner(botConfig).isBuildupUseInTestOnly()) {
             if (System.currentTimeMillis() > maxTime) {
                 throw new TimeoutException();
             }
@@ -1565,6 +1565,18 @@ abstract public class AbstractServiceTest {
     }
 
     // ------------------- History helpers --------------------
+
+    protected List<DbHistoryElement> getAllHistoryEntriesOfType(DbHistoryElement.Type type) throws Exception {
+        List<DbHistoryElement> dbHistoryElements = HibernateUtil.loadAll(sessionFactory, DbHistoryElement.class);
+        for (Iterator<DbHistoryElement> iterator = dbHistoryElements.iterator(); iterator.hasNext(); ) {
+            DbHistoryElement dbHistoryElement = iterator.next();
+            if (dbHistoryElement.getType() != type) {
+                iterator.remove();
+            }
+        }
+        return dbHistoryElements;
+    }
+
 
     protected void waitForHistoryType(DbHistoryElement.Type type) throws Exception {
         long maxTime = System.currentTimeMillis() + 100000;

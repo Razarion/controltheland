@@ -37,18 +37,15 @@ public class BotSyncBaseItem {
     private boolean idle;
     private long idleTimeStamp;
 
-    public BotSyncBaseItem(SyncBaseItem syncBaseItem, Services services) {
+    public BotSyncBaseItem(SyncBaseItem syncBaseItem, BotItemConfig botItemConfig, Services services) {
         this.syncBaseItem = syncBaseItem;
+        this.botItemConfig = botItemConfig;
         this.services = services;
         setIdle();
     }
 
     public BotItemConfig getBotItemConfig() {
         return botItemConfig;
-    }
-
-    public void setBotItemConfig(BotItemConfig botItemConfig) {
-        this.botItemConfig = botItemConfig;
     }
 
     public SyncBaseItem getSyncBaseItem() {
