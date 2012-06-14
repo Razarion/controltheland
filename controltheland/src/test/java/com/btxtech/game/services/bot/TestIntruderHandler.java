@@ -109,7 +109,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
         testServices.setActionService(mockActionService);
 
         BotItemContainer mockBotItemContainer = EasyMock.createStrictMock(BotItemContainer.class);
-        BotSyncBaseItem defenderBotItem = new BotSyncBaseItem(defender, testServices);
+        BotSyncBaseItem defenderBotItem = new BotSyncBaseItem(defender, null, testServices);
         EasyMock.expect(mockBotItemContainer.getAllIdleAttackers()).andReturn(Collections.singleton(defenderBotItem));
 
         IntruderHandler intruderHandler = new IntruderHandler(mockBotItemContainer, region, testServices);
@@ -140,7 +140,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
         mockActionService.attack(EasyMock.eq(defender), EasyMock.eq(intruder), EasyMock.eq(new Index(1001, 822)), EasyMock.eq(3.141592653589793, 0.1), EasyMock.eq(true));
 
         BotItemContainer mockBotItemContainer = EasyMock.createStrictMock(BotItemContainer.class);
-        BotSyncBaseItem defenderBotItem = new BotSyncBaseItem(defender, testServices);
+        BotSyncBaseItem defenderBotItem = new BotSyncBaseItem(defender, null, testServices);
         EasyMock.expect(mockBotItemContainer.getAllIdleAttackers()).andReturn(Collections.singleton(defenderBotItem));
 
         ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
@@ -179,7 +179,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
         testServices.setActionService(mockActionService);
 
         BotItemContainer mockBotItemContainer = EasyMock.createStrictMock(BotItemContainer.class);
-        BotSyncBaseItem defenderBotItem = new BotSyncBaseItem(defender, testServices);
+        BotSyncBaseItem defenderBotItem = new BotSyncBaseItem(defender, null, testServices);
         EasyMock.expect(mockBotItemContainer.getAllIdleAttackers()).andReturn(Collections.singleton(defenderBotItem));
         EasyMock.expect(mockBotItemContainer.getAllIdleAttackers()).andReturn(Collections.<BotSyncBaseItem>emptyList());
 
@@ -221,7 +221,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
         testServices.setActionService(mockActionService);
 
         BotItemContainer mockBotItemContainer = EasyMock.createStrictMock(BotItemContainer.class);
-        BotSyncBaseItem attackerBotItem = new BotSyncBaseItem(attacker, testServices);
+        BotSyncBaseItem attackerBotItem = new BotSyncBaseItem(attacker, null, testServices);
         EasyMock.expect(mockBotItemContainer.getAllIdleAttackers()).andReturn(Collections.singleton(attackerBotItem));
         EasyMock.expect(mockBotItemContainer.getAllIdleAttackers()).andReturn(Collections.singleton(attackerBotItem));
 
@@ -265,7 +265,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
         testServices.setActionService(mockActionService);
 
         BotItemContainer mockBotItemContainer = EasyMock.createStrictMock(BotItemContainer.class);
-        BotSyncBaseItem attackerBotItem = new BotSyncBaseItem(attacker, testServices);
+        BotSyncBaseItem attackerBotItem = new BotSyncBaseItem(attacker, null, testServices);
         EasyMock.expect(mockBotItemContainer.getAllIdleAttackers()).andReturn(Collections.singleton(attackerBotItem));
         EasyMock.expect(mockBotItemContainer.getAllIdleAttackers()).andReturn(Collections.singleton(attackerBotItem));
 
@@ -309,7 +309,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
         testServices.setActionService(mockActionService);
 
         BotItemContainer mockBotItemContainer = EasyMock.createStrictMock(BotItemContainer.class);
-        BotSyncBaseItem attackerBotItem = new BotSyncBaseItem(attacker, testServices);
+        BotSyncBaseItem attackerBotItem = new BotSyncBaseItem(attacker, null, testServices);
         EasyMock.expect(mockBotItemContainer.getAllIdleAttackers()).andReturn(Collections.singleton(attackerBotItem));
         EasyMock.expect(mockBotItemContainer.getAllIdleAttackers()).andReturn(Collections.singleton(attackerBotItem));
 
@@ -346,15 +346,15 @@ public class TestIntruderHandler extends AbstractServiceTest {
 
         // Attackers
         SyncBaseItem attacker1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(2000, 1200), new Id(-6, -2, 0));
-        BotSyncBaseItem attackerBotItem1 = new BotSyncBaseItem(attacker1, null);
+        BotSyncBaseItem attackerBotItem1 = new BotSyncBaseItem(attacker1, null, null);
         SyncBaseItem attacker2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(2000, 1400), new Id(-7, -2, 0));
-        BotSyncBaseItem attackerBotItem2 = new BotSyncBaseItem(attacker2, null);
+        BotSyncBaseItem attackerBotItem2 = new BotSyncBaseItem(attacker2, null, null);
         SyncBaseItem attacker3 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(2000, 1600), new Id(-8, -2, 0));
-        BotSyncBaseItem attackerBotItem3 = new BotSyncBaseItem(attacker3, null);
+        BotSyncBaseItem attackerBotItem3 = new BotSyncBaseItem(attacker3, null, null);
         SyncBaseItem attacker4 = createSyncBaseItem(TEST_ATTACK_ITEM_ID_2, new Index(2000, 1800), new Id(-9, -2, 0));
-        BotSyncBaseItem attackerBotItem4 = new BotSyncBaseItem(attacker4, null);
+        BotSyncBaseItem attackerBotItem4 = new BotSyncBaseItem(attacker4, null, null);
         SyncBaseItem attacker5 = createSyncBaseItem(TEST_ATTACK_ITEM_ID_2, new Index(2000, 2000), new Id(-10, -2, 0));
-        BotSyncBaseItem attackerBotItem5 = new BotSyncBaseItem(attacker5, null);
+        BotSyncBaseItem attackerBotItem5 = new BotSyncBaseItem(attacker5, null, null);
 
         Collection<SyncBaseItem> intruders;
         Collection<BotSyncBaseItem> attackers;

@@ -25,19 +25,19 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 17.01.2011
  * Time: 18:44:15
  */
-public class MinutePanel extends Panel {
+public class SecondPanel extends Panel {
     @SpringBean
     private ItemService itemService;
 
-    public MinutePanel(String id) {
+    public SecondPanel(String id) {
         super(id);
-        add(new TextField<>("minutes", new IModel<Integer>() {
+        add(new TextField<>("seconds", new IModel<Integer>() {
 
             @Override
             public Integer getObject() {
                 Long timeMs = (Long) getDefaultModelObject();
                 if (timeMs != null) {
-                    return (int) (timeMs / ClientDateUtil.MILLIS_IN_MINUTE);
+                    return (int) (timeMs / ClientDateUtil.MILLIS_IN_SECOND);
                 } else {
                     return null;
                 }
@@ -45,7 +45,7 @@ public class MinutePanel extends Panel {
 
             @Override
             public void setObject(Integer minutes) {
-                setDefaultModelObject(minutes * ClientDateUtil.MILLIS_IN_MINUTE);
+                setDefaultModelObject(minutes * ClientDateUtil.MILLIS_IN_SECOND);
             }
 
             @Override

@@ -280,10 +280,10 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
                 Base actorBase = baseService.getBase(actor);
                 xpService.onItemKilled(actorBase, (SyncBaseItem) killedItem);
                 serverConditionService.onSyncItemKilled(actor, (SyncBaseItem) killedItem);
+                inventoryService.onSyncBaseItemKilled((SyncBaseItem) killedItem);
             }
             serverEnergyService.onBaseItemKilled((SyncBaseItem) killedItem);
             killContainedItems((SyncBaseItem) killedItem, actor);
-            inventoryService.onSyncBaseItemKilled((SyncBaseItem) killedItem);
         } else if (killedItem instanceof SyncResourceItem) {
             resourceService.resourceItemDeleted((SyncResourceItem) killedItem);
         }

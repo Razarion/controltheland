@@ -49,6 +49,7 @@ public class TestDbBotConfig extends AbstractServiceTest {
         defence.setBaseItemType(getDbBaseItemTypeInSession(TEST_ATTACK_ITEM_ID));
         defence.setCount(2);
         defence.setIdleTtl(1234);
+        defence.setRePopTime(1000L);
         botService.getDbBotConfigCrudServiceHelper().updateDbChild(dbBotConfig);
 
         BotConfig botConfig = dbBotConfig.createBotConfig(itemService);
@@ -65,12 +66,14 @@ public class TestDbBotConfig extends AbstractServiceTest {
         BotItemConfig botItemConfig = getBotItemConfig4ItemTypeId(TEST_START_BUILDER_ITEM_ID, botConfig.getBotItems());
         Assert.assertEquals(TEST_START_BUILDER_ITEM_ID, botItemConfig.getBaseItemType().getId());
         Assert.assertEquals(1, botItemConfig.getCount());
+        Assert.assertFalse(botItemConfig.hasRePopTime());
         Assert.assertTrue(botItemConfig.isCreateDirectly());
         Assert.assertEquals(new Rectangle(1, 2, 30, 40), botItemConfig.getRegion());
         Assert.assertFalse(botItemConfig.isMoveRealmIfIdle());
         Assert.assertNull(botItemConfig.getIdleTtl());
 
         botItemConfig = getBotItemConfig4ItemTypeId(TEST_FACTORY_ITEM_ID, botConfig.getBotItems());
+        Assert.assertFalse(botItemConfig.hasRePopTime());
         Assert.assertEquals(TEST_FACTORY_ITEM_ID, botItemConfig.getBaseItemType().getId());
         Assert.assertEquals(3, botItemConfig.getCount());
         Assert.assertFalse(botItemConfig.isCreateDirectly());
@@ -85,6 +88,8 @@ public class TestDbBotConfig extends AbstractServiceTest {
         Assert.assertNull(botItemConfig.getRegion());
         Assert.assertFalse(botItemConfig.isMoveRealmIfIdle());
         Assert.assertEquals(1234, (int)botItemConfig.getIdleTtl());
+        Assert.assertTrue(botItemConfig.hasRePopTime());
+        Assert.assertEquals(1000, (int)botItemConfig.getRePopTime());
     }
 
     private BotItemConfig getBotItemConfig4ItemTypeId(int itemTypeId, Collection<BotItemConfig> botItems) {

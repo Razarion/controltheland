@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.wicket.pages.mgmt;
+package com.btxtech.game.wicket.pages.mgmt.bot;
 
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
@@ -20,10 +20,12 @@ import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
 import com.btxtech.game.wicket.uiservices.RectanglePanel;
 import com.btxtech.game.wicket.uiservices.RuModel;
+import com.btxtech.game.wicket.uiservices.SecondPanel;
 import com.btxtech.game.wicket.uiservices.TimeSelector;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -89,6 +91,7 @@ public class BotEditor extends MgmtWebPage {
                 item.add(new CheckBox("moveRealmIfIdle"));
                 item.add(new TextField("idleTtl"));
                 item.add(new CheckBox("noRebuild"));
+                item.add(new SecondPanel("rePopTime"));
             }
         };
 
