@@ -15,9 +15,11 @@ package com.btxtech.game.services.history.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotEnragementStateConfig;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.history.DbHistoryElement;
 import com.btxtech.game.services.history.DisplayHistoryElement;
@@ -84,7 +86,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 baseService,
                 getSessionId(simpleBase),
-                determineSource(simpleBase, null), null, null, null, null));
+                determineSource(simpleBase, null), null, null, null, null, null, null));
     }
 
     @Override
@@ -100,7 +102,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 baseService,
                 getSessionId(actor),
-                determineSource(actor, target), null, null, null, null));
+                determineSource(actor, target), null, null, null, null, null, null));
     }
 
     @Override
@@ -116,7 +118,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 baseService,
                 getSessionId(simpleBase),
-                determineSource(simpleBase, null), null, null, null, null));
+                determineSource(simpleBase, null), null, null, null, null, null, null));
     }
 
     @Override
@@ -132,7 +134,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 baseService,
                 getSessionId(syncBaseItem.getBase()),
-                determineSource(syncBaseItem.getBase(), null), null, null, null, null));
+                determineSource(syncBaseItem.getBase(), null), null, null, null, null, null, null));
     }
 
     @Override
@@ -148,7 +150,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 baseService,
                 getSessionId(actor),
-                determineSource(actor, target.getBase()), null, null, null, null));
+                determineSource(actor, target.getBase()), null, null, null, null, null, null));
     }
 
     @Override
@@ -164,7 +166,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 baseService,
                 userState.getSessionId(),
-                DbHistoryElement.Source.HUMAN, null, null, null, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null));
     }
 
     @Override
@@ -180,7 +182,7 @@ public class HistoryServiceImpl implements HistoryService {
                 levelTask,
                 baseService,
                 userState.getSessionId(),
-                DbHistoryElement.Source.HUMAN, null, null, null, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null));
     }
 
     @Override
@@ -195,7 +197,7 @@ public class HistoryServiceImpl implements HistoryService {
                 dbLevelTask,
                 baseService,
                 userState.getSessionId(),
-                DbHistoryElement.Source.HUMAN, null, null, null, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null));
     }
 
     @Override
@@ -210,7 +212,7 @@ public class HistoryServiceImpl implements HistoryService {
                 dbLevelTask,
                 baseService,
                 userState.getSessionId(),
-                DbHistoryElement.Source.HUMAN, null, null, null, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null));
     }
 
     @Override
@@ -225,7 +227,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 userService.getUserState().getSessionId(),
-                DbHistoryElement.Source.HUMAN, null, null, null, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null));
     }
 
     @Override
@@ -240,7 +242,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 userService.getUserState().getSessionId(),
-                DbHistoryElement.Source.HUMAN, null, null, null, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null));
     }
 
     @Override
@@ -255,7 +257,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 userService.getUserState().getSessionId(),
-                DbHistoryElement.Source.HUMAN, null, null, null, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null));
     }
 
     @Override
@@ -270,7 +272,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 userService.getUserState().getSessionId(),
-                DbHistoryElement.Source.HUMAN, null, null, null, null));
+                DbHistoryElement.Source.HUMAN, null, null, null, null, null, null));
     }
 
     @Override
@@ -286,7 +288,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 DbHistoryElement.Source.BOT,
-                boxItem.getSyncItemArea().getPosition(), null, null, null));
+                boxItem.getSyncItemArea().getPosition(), null, null, null, null, null));
     }
 
     @Override
@@ -306,7 +308,7 @@ public class HistoryServiceImpl implements HistoryService {
                 baseService,
                 null,
                 DbHistoryElement.Source.BOT,
-                position, null, null, null));
+                position, null, null, null, null, null));
     }
 
     @Override
@@ -322,7 +324,7 @@ public class HistoryServiceImpl implements HistoryService {
                 baseService,
                 getSessionId(picker.getBase()),
                 DbHistoryElement.Source.BOT,
-                boxItem.getSyncItemArea().getPosition(), null, null, null));
+                boxItem.getSyncItemArea().getPosition(), null, null, null, null, null));
     }
 
     @Override
@@ -340,7 +342,7 @@ public class HistoryServiceImpl implements HistoryService {
                 DbHistoryElement.Source.HUMAN,
                 null,
                 razarion,
-                userState.getRazarion(), null));
+                userState.getRazarion(), null, null, null));
     }
 
     @Override
@@ -359,7 +361,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 userState.getRazarion(),
-                inventoryItemName));
+                inventoryItemName, null, null));
     }
 
     @Override
@@ -378,7 +380,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 userState.getRazarion(),
-                inventoryArtifactName));
+                inventoryArtifactName, null, null));
     }
 
     @Override
@@ -397,7 +399,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 null,
-                inventoryItemName));
+                inventoryItemName, null, null));
     }
 
     @Override
@@ -416,7 +418,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 razarion,
                 userState.getRazarion(),
-                inventoryItemName));
+                inventoryItemName, null, null));
     }
 
     @Override
@@ -435,7 +437,60 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 razarion,
                 userState.getRazarion(),
-                inventoryArtifactName));
+                inventoryArtifactName, null, null));
+    }
+
+    @Override
+    public void addBotEnrageUp(String botName, BotEnragementStateConfig botEnragementState, SimpleBase actor) {
+        User user = userService.getUser(actor);
+        HibernateUtil.openSession4InternalCall(sessionFactory);
+        try {
+            save(new DbHistoryElement(DbHistoryElement.Type.BOT_ENRAGE_UP,
+                    user,
+                    null,
+                    actor,
+                    null,
+                    null,
+                    null,
+                    null,
+                    baseService,
+                    null,
+                    DbHistoryElement.Source.BOT,
+                    null,
+                    null,
+                    null,
+                    null,
+                    botName,
+                    botEnragementState.getName()));
+        } finally {
+            HibernateUtil.closeSession4InternalCall(sessionFactory);
+        }
+    }
+
+    @Override
+    public void addBotEnrageNormal(String botName, BotEnragementStateConfig botEnragementState) {
+        HibernateUtil.openSession4InternalCall(sessionFactory);
+        try {
+            save(new DbHistoryElement(DbHistoryElement.Type.BOT_ENRAGE_NORMAL,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    baseService,
+                    null,
+                    DbHistoryElement.Source.BOT,
+                    null,
+                    null,
+                    null,
+                    null,
+                    botName,
+                    botEnragementState.getName()));
+        } finally {
+            HibernateUtil.closeSession4InternalCall(sessionFactory);
+        }
     }
 
     private String getSessionId(SimpleBase simpleBase) {
@@ -660,6 +715,9 @@ public class HistoryServiceImpl implements HistoryService {
                 break;
             case INVENTORY_ARTIFACT_BOUGHT:
                 displayHistoryElement.setMessage("Inventory artifact bought: " + dbHistoryElement.getInventory());
+                break;
+            case BOT_ENRAGE_UP:
+                displayHistoryElement.setMessage("You have angered " + dbHistoryElement.getBotName() + ": " + dbHistoryElement.getBotInfo());
                 break;
             default:
                 displayHistoryElement.setMessage("Internal error 10");

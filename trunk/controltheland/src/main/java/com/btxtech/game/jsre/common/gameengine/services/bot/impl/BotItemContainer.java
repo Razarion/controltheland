@@ -38,7 +38,7 @@ import java.util.logging.Logger;
  * Time: 11:41:21
  */
 public class BotItemContainer {
-    private HashMap<SyncBaseItem, BotSyncBaseItem> botItems = new HashMap<SyncBaseItem, BotSyncBaseItem>();
+    private final HashMap<SyncBaseItem, BotSyncBaseItem> botItems = new HashMap<SyncBaseItem, BotSyncBaseItem>();
     private Need need;
     private Logger log = Logger.getLogger(BotItemContainer.class.getName());
     private Services services;
@@ -66,18 +66,22 @@ public class BotItemContainer {
         if (simpleBase != null) {
             updateState(simpleBase);
         }
-        for (SyncBaseItem syncBaseItem : botItems.keySet()) {
-            if (syncBaseItem.isAlive()) {
-                services.getItemService().killSyncItem(syncBaseItem, null, true, false);
+        synchronized (botItems) {
+            for (SyncBaseItem syncBaseItem : botItems.keySet()) {
+                if (syncBaseItem.isAlive()) {
+                    services.getItemService().killSyncItem(syncBaseItem, null, true, false);
+                }
             }
         }
     }
 
     public Collection<BotSyncBaseItem> getAllIdleAttackers() {
         Collection<BotSyncBaseItem> idleAttackers = new ArrayList<BotSyncBaseItem>();
-        for (BotSyncBaseItem botSyncBaseItem : botItems.values()) {
-            if (botSyncBaseItem.isIdle()) {
-                idleAttackers.add(botSyncBaseItem);
+        synchronized (botItems) {
+            for (BotSyncBaseItem botSyncBaseItem : botItems.values()) {
+                if (botSyncBaseItem.isIdle()) {
+                    idleAttackers.add(botSyncBaseItem);
+                }
             }
         }
         return idleAttackers;
@@ -85,6 +89,7 @@ public class BotItemContainer {
 
     /**
      * Only used for test purpose
+     *
      * @return true if fulfilled
      */
     public boolean isFulfilledUseInTestOnly(SimpleBase simpleBase) {
@@ -92,10 +97,18 @@ public class BotItemContainer {
         return need.getEffectiveItemNeed().isEmpty();
     }
 
+    public boolean itemBelongsToMy(SyncBaseItem syncBaseItem) {
+        synchronized (botItems) {
+            return botItems.containsKey(syncBaseItem);
+        }
+    }
+
     private void updateState(SimpleBase simpleBase) {
         Collection<SyncBaseItem> newItems = services.getBaseService().getItems(simpleBase);
         if (newItems != null) {
-            newItems.removeAll(botItems.keySet());
+            synchronized (botItems) {
+                newItems.removeAll(botItems.keySet());
+            }
             for (SyncBaseItem newItem : newItems) {
                 BotItemConfig botItemConfig = currentBuildups.onItemBuilt(newItem);
                 if (botItemConfig != null) {
@@ -107,11 +120,13 @@ public class BotItemContainer {
         }
 
         ArrayList<BotSyncBaseItem> remove = new ArrayList<BotSyncBaseItem>();
-        for (BotSyncBaseItem botSyncBaseItem : botItems.values()) {
-            if (botSyncBaseItem.isAlive()) {
-                botSyncBaseItem.updateIdleState();
-            } else {
-                remove.add(botSyncBaseItem);
+        synchronized (botItems) {
+            for (BotSyncBaseItem botSyncBaseItem : botItems.values()) {
+                if (botSyncBaseItem.isAlive()) {
+                    botSyncBaseItem.updateIdleState();
+                } else {
+                    remove.add(botSyncBaseItem);
+                }
             }
         }
         for (BotSyncBaseItem botSyncBaseItem : remove) {
@@ -121,12 +136,16 @@ public class BotItemContainer {
 
     private void add(SyncBaseItem syncBaseItem, BotItemConfig botItemConfig) {
         BotSyncBaseItem botSyncBaseItem = new BotSyncBaseItem(syncBaseItem, botItemConfig, services);
-        botItems.put(syncBaseItem, botSyncBaseItem);
+        synchronized (botItems) {
+            botItems.put(syncBaseItem, botSyncBaseItem);
+        }
         need.onItemAdded(botSyncBaseItem);
     }
 
     private void remove(BotSyncBaseItem botSyncBaseItem) {
-        botItems.remove(botSyncBaseItem.getSyncBaseItem());
+        synchronized (botItems) {
+            botItems.remove(botSyncBaseItem.getSyncBaseItem());
+        }
         need.onItemRemoved(botSyncBaseItem);
         currentBuildups.onItemRemoved(botSyncBaseItem.getSyncBaseItem());
     }
@@ -177,25 +196,29 @@ public class BotItemContainer {
 
 
     private BotSyncBaseItem getFirstIdleBuilder(BaseItemType toBeBuilt) {
-        for (BotSyncBaseItem botSyncBaseItem : botItems.values()) {
-            if (botSyncBaseItem.isIdle() && botSyncBaseItem.isAbleToBuild(toBeBuilt)) {
-                return botSyncBaseItem;
+        synchronized (botItems) {
+            for (BotSyncBaseItem botSyncBaseItem : botItems.values()) {
+                if (botSyncBaseItem.isIdle() && botSyncBaseItem.isAbleToBuild(toBeBuilt)) {
+                    return botSyncBaseItem;
+                }
             }
         }
         return null;
     }
 
     private void handleIdleItems() {
-        for (BotSyncBaseItem botSyncBaseItem : botItems.values()) {
-            if (!botSyncBaseItem.isIdle()) {
-                continue;
-            }
+        synchronized (botItems) {
+            for (BotSyncBaseItem botSyncBaseItem : botItems.values()) {
+                if (!botSyncBaseItem.isIdle()) {
+                    continue;
+                }
 
-            BotItemConfig botItemConfig = botSyncBaseItem.getBotItemConfig();
-            if (botItemConfig.isMoveRealmIfIdle() && botSyncBaseItem.canMove() && !realm.contains(botSyncBaseItem.getPosition())) {
-                botSyncBaseItem.move(realm);
-            } else if (botItemConfig.getIdleTtl() != null && botSyncBaseItem.getIdleTimeStamp() + botItemConfig.getIdleTtl() < System.currentTimeMillis()) {
-                botSyncBaseItem.kill();
+                BotItemConfig botItemConfig = botSyncBaseItem.getBotItemConfig();
+                if (botItemConfig.isMoveRealmIfIdle() && botSyncBaseItem.canMove() && !realm.contains(botSyncBaseItem.getPosition())) {
+                    botSyncBaseItem.move(realm);
+                } else if (botItemConfig.getIdleTtl() != null && botSyncBaseItem.getIdleTimeStamp() + botItemConfig.getIdleTtl() < System.currentTimeMillis()) {
+                    botSyncBaseItem.kill();
+                }
             }
         }
     }

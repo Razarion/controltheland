@@ -34,13 +34,13 @@ import java.util.logging.Logger;
  */
 public class IntruderHandler {
     private Map<SyncBaseItem, BotSyncBaseItem> intruders = new HashMap<SyncBaseItem, BotSyncBaseItem>();
-    private BotItemContainer botItemContainer;
+    private BotEnragementState botEnragementState;
     private Rectangle region;
     private Services services;
     private Logger log = Logger.getLogger(IntruderHandler.class.getName());
 
-    public IntruderHandler(BotItemContainer botItemContainer, Rectangle region, Services services) {
-        this.botItemContainer = botItemContainer;
+    public IntruderHandler(BotEnragementState botEnragementState, Rectangle region, Services services) {
+        this.botEnragementState = botEnragementState;
         this.region = region;
         this.services = services;
     }
@@ -71,6 +71,7 @@ public class IntruderHandler {
         for (BotSyncBaseItem botSyncBaseItem : oldIntruders.values()) {
             botSyncBaseItem.stop();
         }
+        botEnragementState.handleIntruders(items, simpleBase);
     }
 
     private void removeDeadAttackers() {
@@ -83,7 +84,7 @@ public class IntruderHandler {
     }
 
     private void putAttackerToIntruders(Collection<SyncBaseItem> newIntruders) {
-        Collection<BotSyncBaseItem> idleAttackers = botItemContainer.getAllIdleAttackers();
+        Collection<BotSyncBaseItem> idleAttackers = botEnragementState.getAllIdleAttackers();
         Map<BotSyncBaseItem, SyncBaseItem> assignedAttackers = ShortestWaySorter.setupAttackerTarget(idleAttackers, newIntruders);
 
         for (Map.Entry<BotSyncBaseItem, SyncBaseItem> entry : assignedAttackers.entrySet()) {

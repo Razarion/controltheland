@@ -30,42 +30,38 @@
             <td><input wicket:id="actionDelay" type="text" size="6"></td>
         </tr>
     </table>
-    <h2>Buildup</h2>
-    <table border="0">
+    <h2>Rage Table</h2>
+    The top most entry is the normal state. There must be at least on entry for the normal state. If the a base reaches<br/>
+    the enrageUpKills amout withuout leaving the realm, the next entry is activeted. If there are no enemy items<br/>
+    in the realm, the top most entry is activated.
+    <table cellpadding="1" cellspacing="1" border="0">
         <tr>
-            <td bgcolor="#dadada">Bot Items</td>
-            <td>
-                <table cellpadding="1" cellspacing="1" border="0">
-                    <tr>
-                        <th bgcolor="#dadada">Item Type</th>
-                        <th bgcolor="#dadada">Count</th>
-                        <th bgcolor="#dadada">Create Directly</th>
-                        <th bgcolor="#dadada">Region<br><span
-                                style="color:red;">Movable units: only if Create Directly</span></th>
-                        <th bgcolor="#dadada">Move to Realm if Idle</th>
-                        <th bgcolor="#dadada">Idle TTL [ms]</th>
-                        <th bgcolor="#dadada">No Rebuild</th>
-                        <th bgcolor="#dadada">Re Pop [s]</th>
-                        <th bgcolor="#dadada">Delete</th>
-                    </tr>
-                    <tr wicket:id="botItems">
-                        <td wicket:id="baseItemType"/>
-                        <td><input type="text" wicket:id="count" size="6"></td>
-                        <td><input type="checkbox" wicket:id="createDirectly"></td>
-                        <td wicket:id="region"></td>
-                        <td><input type="checkbox" wicket:id="moveRealmIfIdle"></td>
-                        <td><input type="text" wicket:id="idleTtl" size="6"></td>
-                        <td><input type="checkbox" wicket:id="noRebuild"></td>
-                        <td wicket:id="rePopTime"/>
-                        <td valign="center">
-                            <input type="submit" value="Delete" wicket:id="delete"/>
-                        </td>
-                    </tr>
-                </table>
-                <input type="submit" wicket:id="createBaseBuildupItem" value="Create">
+            <th bgcolor="#dadada">Name [History]</th>
+            <th bgcolor="#dadada">Enrage up kills</th>
+            <th bgcolor="#dadada">Bot Items</th>
+            <th bgcolor="#dadada">Up</th>
+            <th bgcolor="#dadada">Down</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+        <tr wicket:id="enragement">
+            <td><input type="text" wicket:id="name" size="20"></td>
+            <td><input type="text" wicket:id="enrageUpKills" size="6"></td>
+            <td valign="center">
+                <input type="submit" value="Edit" wicket:id="edit"/>
+            </td>
+            <td valign="center">
+                <input type="submit" value="Up" wicket:id="up"/>
+            </td>
+            <td valign="center">
+                <input type="submit" value="Down" wicket:id="down"/>
+            </td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
             </td>
         </tr>
     </table>
+    <input type="submit" wicket:id="createEnragementConfig" value="Create">
+
     <h2>Attack Strategy</h2>
     <table border="0">
         <tr>

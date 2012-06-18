@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.action.ActionHandler;
+import com.btxtech.game.jsre.client.bot.ClientBotService;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
@@ -294,6 +295,13 @@ public class ItemContainer extends AbstractItemService {
         seeminglyDeadItems.remove(itemView.getSyncItem().getId());
         SelectionHandler.getInstance().itemKilled(itemView);
         SpeechBubbleHandler.getInstance().itemKilled(itemView.getSyncItem());
+
+        if (actor != null && itemView.getSyncItem() instanceof SyncBaseItem) {
+            SyncBaseItem target = (SyncBaseItem) itemView.getSyncItem();
+            if (ClientBase.getInstance().isBot(target.getBase())) {
+                ClientBotService.getInstance().onBotItemKilled(target, actor);
+            }
+        }
 
         if (explode) {
             ActionHandler.getInstance().removeActiveItem(itemView.getSyncTickItem());

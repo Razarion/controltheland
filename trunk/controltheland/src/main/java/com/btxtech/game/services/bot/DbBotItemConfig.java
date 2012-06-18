@@ -41,7 +41,7 @@ import java.io.Serializable;
  */
 @Entity(name = "BOT_ITEM_CONFIG")
 @TypeDef(name = "rectangle", typeClass = RectangleUserType.class)
-public class DbBotItemConfig implements CrudChild<DbBotConfig>, Serializable {
+public class DbBotItemConfig implements CrudChild<DbBotEnragementStateConfig>, Serializable {
     @Id
     @GeneratedValue
     private Integer id;
@@ -53,12 +53,12 @@ public class DbBotItemConfig implements CrudChild<DbBotConfig>, Serializable {
     @Type(type = "rectangle")
     @Columns(columns = {@Column(name = "regionX"), @Column(name = "regionY"), @Column(name = "regionWidth"), @Column(name = "regionHeight")})
     private Rectangle region;
-    @ManyToOne
-    private DbBotConfig parent;
     private boolean moveRealmIfIdle;
     private Integer idleTtl;
     private boolean noRebuild;
     private Long rePopTime;
+    @ManyToOne
+    private DbBotEnragementStateConfig dbBotEnragementStateConfig;
 
     /**
      * Used by Hibernate
@@ -101,13 +101,13 @@ public class DbBotItemConfig implements CrudChild<DbBotConfig>, Serializable {
     }
 
     @Override
-    public void setParent(DbBotConfig parent) {
-        this.parent = parent;
+    public void setParent(DbBotEnragementStateConfig dbBotEnragementStateConfig) {
+        this.dbBotEnragementStateConfig = dbBotEnragementStateConfig;
     }
 
     @Override
-    public DbBotConfig getParent() {
-        return parent;
+    public DbBotEnragementStateConfig getParent() {
+        return dbBotEnragementStateConfig;
     }
 
     public boolean isCreateDirectly() {
@@ -165,12 +165,12 @@ public class DbBotItemConfig implements CrudChild<DbBotConfig>, Serializable {
 
         DbBotItemConfig that = (DbBotItemConfig) o;
 
-        return id != null && !id.equals(that.id);
+        return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : System.identityHashCode(this);
+        return id != null ? id : System.identityHashCode(this);
     }
 
     public BotItemConfig createBotItemConfig(ItemService itemService) {

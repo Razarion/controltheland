@@ -13,13 +13,17 @@
 
 package com.btxtech.game.services.bot.impl;
 
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotEnragementStateConfig;
+import com.btxtech.game.jsre.common.gameengine.services.bot.impl.BotEnragementState;
 import com.btxtech.game.jsre.common.gameengine.services.bot.impl.BotRunner;
 import com.btxtech.game.jsre.common.gameengine.services.bot.impl.CommonBotServiceImpl;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.ServerServices;
+import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ItemService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,6 +53,8 @@ public class BotServiceImpl extends CommonBotServiceImpl implements BotService {
     private ItemService itemService;
     @Autowired
     private ServerServices serverServices;
+    @Autowired
+    private HistoryService historyService;
     private Log log = LogFactory.getLog(BotServiceImpl.class);
     private Map<Integer, BotConfig> simulatedBotConfigs = new HashMap<Integer, BotConfig>();
 
@@ -104,6 +110,16 @@ public class BotServiceImpl extends CommonBotServiceImpl implements BotService {
 
     @Override
     protected BotRunner createBotRunner(BotConfig botConfig) {
-        return new ServerBotRunner(botConfig, serverServices);
+        return new ServerBotRunner(botConfig, serverServices, new BotEnragementState.Listener() {
+            @Override
+            public void onEnrageNormal(String botName, BotEnragementStateConfig botEnragementStateConfig) {
+                historyService.addBotEnrageNormal(botName, botEnragementStateConfig);
+            }
+
+            @Override
+            public void onEnrageUp(String botName, BotEnragementStateConfig botEnragementStateConfig, SimpleBase actor) {
+                historyService.addBotEnrageUp(botName, botEnragementStateConfig, actor);
+            }
+        });
     }
 }

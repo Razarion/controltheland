@@ -41,6 +41,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ImageHolder;
@@ -128,6 +129,8 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     private StatisticsService statisticsService;
     @Autowired
     private SessionFactory sessionFactory;
+    @Autowired
+    private BotService botService;
     private int lastId = 0;
     private final HashMap<Id, SyncItem> items = new HashMap<Id, SyncItem>();
     private Log log = LogFactory.getLog(ItemServiceImpl.class);
@@ -275,15 +278,19 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         connectionService.sendSyncInfo(killedItem);
 
         if (killedItem instanceof SyncBaseItem) {
-            actionService.removeGuardingBaseItem((SyncBaseItem) killedItem);
+            SyncBaseItem killedBaseItem = (SyncBaseItem) killedItem;
+            actionService.removeGuardingBaseItem(killedBaseItem);
             if (actor != null) {
                 Base actorBase = baseService.getBase(actor);
-                xpService.onItemKilled(actorBase, (SyncBaseItem) killedItem);
-                serverConditionService.onSyncItemKilled(actor, (SyncBaseItem) killedItem);
-                inventoryService.onSyncBaseItemKilled((SyncBaseItem) killedItem);
+                xpService.onItemKilled(actorBase, killedBaseItem);
+                serverConditionService.onSyncItemKilled(actor, killedBaseItem);
+                inventoryService.onSyncBaseItemKilled(killedBaseItem);
+                if (baseService.isBot(killedBaseItem.getBase())) {
+                    botService.onBotItemKilled(killedBaseItem, actor);
+                }
             }
-            serverEnergyService.onBaseItemKilled((SyncBaseItem) killedItem);
-            killContainedItems((SyncBaseItem) killedItem, actor);
+            serverEnergyService.onBaseItemKilled(killedBaseItem);
+            killContainedItems(killedBaseItem, actor);
         } else if (killedItem instanceof SyncResourceItem) {
             resourceService.resourceItemDeleted((SyncResourceItem) killedItem);
         }

@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
 import java.util.Random;
 import java.util.logging.Level;
@@ -35,7 +36,7 @@ public abstract class BotRunner {
 
     private BotConfig botConfig;
     private SimpleBase base;
-    private BotItemContainer botItemContainer;
+    private BotEnragementState botEnragementState;
     private IntruderHandler intruderHandler;
     private final Object syncObject = new Object();
     private IntervalState intervalState;
@@ -53,18 +54,22 @@ public abstract class BotRunner {
 
     protected abstract void killResources();
 
+    protected BotEnragementState.Listener getEnragementStateListener() {
+        return null;
+    }
+
     private class BotTicker implements Runnable {
         @Override
         public void run() {
             try {
                 synchronized (syncObject) {
-                    if (botItemContainer == null || intruderHandler == null) {
+                    if (botEnragementState == null || intruderHandler == null) {
                         return;
                     }
                     if (base == null || !getServices().getBaseService().isAlive(base)) {
                         base = getServices().getBaseService().createBotBase(botConfig);
                     }
-                    botItemContainer.work(base);
+                    botEnragementState.work(base);
                     intruderHandler.handleIntruders(base);
                 }
             } catch (Throwable t) {
@@ -109,11 +114,12 @@ public abstract class BotRunner {
 
     /**
      * Only used for test purpose
+     *
      * @return true if fulfilled
      */
     public boolean isBuildupUseInTestOnly() {
         synchronized (syncObject) {
-            return botItemContainer != null && botItemContainer.isFulfilledUseInTestOnly(base);
+            return botEnragementState != null && botEnragementState.isFulfilledUseInTestOnly(base);
         }
     }
 
@@ -125,13 +131,20 @@ public abstract class BotRunner {
         return botConfig.getRealm().contains(point);
     }
 
+    public void onBotItemKilled(SyncBaseItem syncBaseItem, SimpleBase actor) {
+        if (botEnragementState != null) {
+            // Timer bot is may inactive
+            botEnragementState.onBotItemKilled(syncBaseItem, actor);
+        }
+    }
+
     private void killBot() {
         synchronized (syncObject) {
             killBotThread();
-            if (botItemContainer != null) {
-                botItemContainer.killAllItems(base);
+            if (botEnragementState != null) {
+                botEnragementState.killAllItems(base);
             }
-            botItemContainer = null;
+            botEnragementState = null;
             intruderHandler = null;
         }
     }
@@ -139,8 +152,8 @@ public abstract class BotRunner {
 
     private void startBot() {
         synchronized (syncObject) {
-            botItemContainer = new BotItemContainer(botConfig.getBotItems(), botConfig.getRealm(), getServices(), botConfig.getName());
-            intruderHandler = new IntruderHandler(botItemContainer, botConfig.getRealm(), getServices());
+            botEnragementState = new BotEnragementState(botConfig.getBotEnragementStateConfigs(), botConfig.getRealm(), getServices(), botConfig.getName(), getEnragementStateListener());
+            intruderHandler = new IntruderHandler(botEnragementState, botConfig.getRealm(), getServices());
         }
         startBotThread(botConfig.getActionDelay(), new BotTicker());
     }

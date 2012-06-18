@@ -2,6 +2,7 @@ package com.btxtech.game.services.bot.impl;
 
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
+import com.btxtech.game.jsre.common.gameengine.services.bot.impl.BotEnragementState;
 import com.btxtech.game.jsre.common.gameengine.services.bot.impl.BotRunner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,10 +23,12 @@ public class ServerBotRunner extends BotRunner {
     private ScheduledThreadPoolExecutor botTimer;
     private ScheduledFuture botThreadScheduledFuture;
     private Log log = LogFactory.getLog(ServerBotRunner.class);
+    private BotEnragementState.Listener enragementStateListener;
 
-    public ServerBotRunner(BotConfig botConfig, Services services) {
+    public ServerBotRunner(BotConfig botConfig, Services services, BotEnragementState.Listener enragementStateListener) {
         super(botConfig);
         this.services = services;
+        this.enragementStateListener = enragementStateListener;
         botThread = new ScheduledThreadPoolExecutor(1, new CustomizableThreadFactory("BotRunner botThread: " + botConfig.getName() + " "));
         botTimer = new ScheduledThreadPoolExecutor(1, new CustomizableThreadFactory("BotRunner botTimer: " + botConfig.getName() + " "));
     }
@@ -74,5 +77,10 @@ public class ServerBotRunner extends BotRunner {
     @Override
     protected Services getServices() {
         return services;
+    }
+
+    @Override
+    protected BotEnragementState.Listener getEnragementStateListener() {
+        return enragementStateListener;
     }
 }

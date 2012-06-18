@@ -1,12 +1,16 @@
 package com.btxtech.game.jsre.common.gameengine.services.bot.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.bot.CommonBotService;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -16,12 +20,17 @@ import java.util.Map;
 public abstract class CommonBotServiceImpl implements CommonBotService {
     private Collection<BotConfig> botConfigs;
     final private Map<BotConfig, BotRunner> botRunners = new HashMap<BotConfig, BotRunner>();
+    private Logger log = Logger.getLogger(CommonBotServiceImpl.class.getName());
 
     protected abstract BotRunner createBotRunner(BotConfig botConfig);
 
     protected void startAllBots() {
         for (BotConfig botConfig : botConfigs) {
-            startBot(botConfig);
+            try {
+                startBot(botConfig);
+            } catch (Exception e) {
+                log.log(Level.SEVERE, "Starting bot failed: " + botConfig.getName(), e);
+            }
         }
     }
 
@@ -49,6 +58,15 @@ public abstract class CommonBotServiceImpl implements CommonBotService {
 
     public BotRunner getBotRunner(BotConfig botConfig) {
         return botRunners.get(botConfig);
+    }
+
+    @Override
+    public void onBotItemKilled(SyncBaseItem syncBaseItem, SimpleBase actor) {
+        synchronized (botRunners) {
+            for (BotRunner botRunner : botRunners.values()) {
+                botRunner.onBotItemKilled(syncBaseItem, actor);
+            }
+        }
     }
 
     @Override
