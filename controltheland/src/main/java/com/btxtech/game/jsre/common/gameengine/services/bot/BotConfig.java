@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * User: beat
@@ -13,24 +14,23 @@ import java.util.Collection;
 public class BotConfig implements Serializable {
     private int id;
     private int actionDelay;
-    private Collection<BotItemConfig> botItems;
     private Rectangle realm;
     private String name;
     private Long minInactiveMs;
     private Long maxInactiveMs;
     private Long minActiveMs;
     private Long maxActiveMs;
-
+    private List<BotEnragementStateConfig> botEnragementStateConfigs;
     /**
      * Used by GWT
      */
     BotConfig() {
     }
 
-    public BotConfig(int id, int actionDelay, Collection<BotItemConfig> botItems, Rectangle realm, String name, Long minInactiveMs, Long maxInactiveMs, Long minActiveMs, Long maxActiveMs) {
+    public BotConfig(int id, int actionDelay, List<BotEnragementStateConfig> botEnragementStateConfigs, Rectangle realm, String name, Long minInactiveMs, Long maxInactiveMs, Long minActiveMs, Long maxActiveMs) {
         this.id = id;
         this.actionDelay = actionDelay;
-        this.botItems = botItems;
+        this.botEnragementStateConfigs = botEnragementStateConfigs;
         this.realm = realm;
         this.name = name;
         this.minInactiveMs = minInactiveMs;
@@ -41,10 +41,6 @@ public class BotConfig implements Serializable {
 
     public int getActionDelay() {
         return actionDelay;
-    }
-
-    public Collection<BotItemConfig> getBotItems() {
-        return botItems;
     }
 
     public Rectangle getRealm() {
@@ -80,6 +76,14 @@ public class BotConfig implements Serializable {
                 && !(minInactiveMs <= 0 || maxInactiveMs <= 0 || minActiveMs <= 0 || maxActiveMs <= 0)
                 && minInactiveMs <= maxInactiveMs
                 && minActiveMs <= maxActiveMs;
+    }
+
+    public void setBotEnragementStateConfigs(List<BotEnragementStateConfig> botEnragementStateConfigs) {
+        this.botEnragementStateConfigs = botEnragementStateConfigs;
+    }
+
+    public List<BotEnragementStateConfig> getBotEnragementStateConfigs() {
+        return botEnragementStateConfigs;
     }
 
     @Override

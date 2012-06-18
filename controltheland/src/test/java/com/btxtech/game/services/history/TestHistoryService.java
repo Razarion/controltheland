@@ -11,6 +11,9 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.bot.DbBotConfig;
+import com.btxtech.game.services.bot.DbBotEnragementStateConfig;
+import com.btxtech.game.services.bot.DbBotItemConfig;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.history.impl.HistoryServiceImpl;
@@ -680,6 +683,41 @@ public class TestHistoryService extends AbstractServiceTest {
         Assert.assertEquals("Inventory item bought: inventoryItemName", displayHistoryElements.get(6).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-
     }
+
+    @Test
+    @DirtiesContext
+    public void botEnragement() throws Exception {
+        configureRealGame();
+
+        DbBotEnragementStateConfig enragementStateConfig1 = new DbBotEnragementStateConfig();
+        enragementStateConfig1.setName("Normal");
+        DbBotEnragementStateConfig enragementStateConfig2 = new DbBotEnragementStateConfig();
+        enragementStateConfig2.setName("Angry");
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("u1", "xxx", "xxx", "");
+        userService.login("u1", "xxx");
+        SimpleBase simpleBase = getMyBase();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        historyService.addBotEnrageUp("Bot1", enragementStateConfig2.createBotEnragementStateConfigg(itemService), simpleBase);
+        historyService.addBotEnrageNormal("Bot1", enragementStateConfig1.createBotEnragementStateConfigg(itemService));
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("u1"), 1000);
+        System.out.println("----- u1 Target-----");
+        for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
+            System.out.println(displayHistoryElement);
+        }
+        Assert.assertEquals(3, displayHistoryElements.size());
+        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
+        Assert.assertEquals("You have angered Bot1: Angry", displayHistoryElements.get(0).getMessage());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 }

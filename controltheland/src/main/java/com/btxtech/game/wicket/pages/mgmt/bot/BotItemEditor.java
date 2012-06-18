@@ -14,22 +14,18 @@
 package com.btxtech.game.wicket.pages.mgmt.bot;
 
 import com.btxtech.game.services.bot.BotService;
-import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.bot.DbBotEnragementStateConfig;
 import com.btxtech.game.services.bot.DbBotItemConfig;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
-import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
-import com.btxtech.game.wicket.uiservices.CrudListChildTableHelper;
 import com.btxtech.game.wicket.uiservices.RectanglePanel;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import com.btxtech.game.wicket.uiservices.SecondPanel;
-import com.btxtech.game.wicket.uiservices.TimeSelector;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
@@ -44,7 +40,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 25.09.2010
  * Time: 14:04:26
  */
-public class BotEditor extends MgmtWebPage {
+public class BotItemEditor extends MgmtWebPage {
     @SpringBean
     private BotService botService;
     @SpringBean
@@ -52,62 +48,55 @@ public class BotEditor extends MgmtWebPage {
     @SpringBean
     private ItemService itemService;
     @SpringBean
-    private RuServiceHelper<DbBotConfig> dbBotConfigRuServiceHelper;
+    private RuServiceHelper<DbBotEnragementStateConfig> ruServiceHelper;
 
 
-    public BotEditor(DbBotConfig dbBotConfig) {
+    public BotItemEditor(DbBotEnragementStateConfig dbBotEnragementStateConfig) {
 
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbBotConfig> form = new Form<DbBotConfig>("from", new CompoundPropertyModel<DbBotConfig>(new RuModel<DbBotConfig>(dbBotConfig, DbBotConfig.class) {
+        final Form<DbBotEnragementStateConfig> form = new Form<>("from", new CompoundPropertyModel<DbBotEnragementStateConfig>(new RuModel<DbBotEnragementStateConfig>(dbBotEnragementStateConfig, DbBotEnragementStateConfig.class) {
             @Override
-            protected RuServiceHelper<DbBotConfig> getRuServiceHelper() {
-                return dbBotConfigRuServiceHelper;
+            protected RuServiceHelper<DbBotEnragementStateConfig> getRuServiceHelper() {
+                return ruServiceHelper;
             }
         }));
         add(form);
-        form.add(new TextField("actionDelay"));
-        form.add(new RectanglePanel("realm"));
 
-        new CrudListChildTableHelper<DbBotConfig, DbBotEnragementStateConfig>("enragement", null, "createEnragementConfig", true, form, true) {
+        new CrudChildTableHelper<DbBotEnragementStateConfig, DbBotItemConfig>("botItems", null, "createBaseBuildupItem", false, form, false) {
             @Override
-            protected RuServiceHelper<DbBotConfig> getRuServiceHelper() {
-                return dbBotConfigRuServiceHelper;
+            protected RuServiceHelper<DbBotEnragementStateConfig> getRuServiceHelper() {
+                return ruServiceHelper;
             }
 
             @Override
-            protected DbBotConfig getParent() {
+            protected DbBotEnragementStateConfig getParent() {
                 return form.getModelObject();
             }
 
             @Override
-            protected CrudListChildServiceHelper<DbBotEnragementStateConfig> getCrudListChildServiceHelperImpl() {
-                return getParent().getEnrageStateCrud();
+            protected CrudChildServiceHelper<DbBotItemConfig> getCrudChildServiceHelperImpl() {
+                return getParent().getBotItemCrud();
             }
 
             @Override
-            protected void extendedPopulateItem(final Item<DbBotEnragementStateConfig> item) {
-                super.extendedPopulateItem(item);
-                item.add(new TextField("enrageUpKills"));
-            }
-
-            @Override
-            protected void onEditSubmit(DbBotEnragementStateConfig dbBotEnragementStateConfig) {
-                setResponsePage(new BotItemEditor(dbBotEnragementStateConfig));
+            protected void extendedPopulateItem(final Item<DbBotItemConfig> item) {
+                item.add(new BaseItemTypePanel("baseItemType"));
+                item.add(new TextField("count"));
+                item.add(new CheckBox("createDirectly"));
+                item.add(new RectanglePanel("region"));
+                item.add(new CheckBox("moveRealmIfIdle"));
+                item.add(new TextField("idleTtl"));
+                item.add(new CheckBox("noRebuild"));
+                item.add(new SecondPanel("rePopTime"));
             }
         };
-
-        form.add(new TimeSelector("minInactiveMs", TimeSelector.Converter.MINUTES_TO_MS));
-        form.add(new TimeSelector("maxInactiveMs", TimeSelector.Converter.MINUTES_TO_MS));
-        form.add(new TimeSelector("minActiveMs", TimeSelector.Converter.MINUTES_TO_MS));
-        form.add(new TimeSelector("maxActiveMs", TimeSelector.Converter.MINUTES_TO_MS));
-
 
         form.add(new Button("save") {
 
             @Override
             public void onSubmit() {
-                dbBotConfigRuServiceHelper.updateDbEntity(form.getModelObject());
+                ruServiceHelper.updateDbEntity(form.getModelObject());
             }
         });
         form.add(new Button("back") {

@@ -15,9 +15,9 @@ package com.btxtech.game.services.bot;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
-import com.btxtech.game.jsre.common.gameengine.services.bot.BotItemConfig;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotEnragementStateConfig;
 import com.btxtech.game.services.common.CrudChild;
-import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.db.RectangleUserType;
 import com.btxtech.game.services.item.ItemService;
@@ -37,9 +37,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * User: beat
@@ -54,9 +52,10 @@ public class DbBotConfig implements CrudChild, CrudParent {
     private Integer id;
     private int actionDelay;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "parent_id")
+    @JoinColumn(name = "dbBotConfig_id")
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-    private Set<DbBotItemConfig> botItems;
+    @org.hibernate.annotations.IndexColumn(name = "orderIndex", base = 0)
+    private List<DbBotEnragementStateConfig> enragementStateConfigs;
     @Type(type = "rectangle")
     @Columns(columns = {@Column(name = "realmRectX"), @Column(name = "realmRectY"), @Column(name = "realmRectWidth"), @Column(name = "realmRectHeight")})
     private Rectangle realm;
@@ -68,7 +67,7 @@ public class DbBotConfig implements CrudChild, CrudParent {
     private boolean realGameBot;
 
     @Transient
-    private CrudChildServiceHelper<DbBotItemConfig> botItemCrud;
+    private CrudListChildServiceHelper<DbBotEnragementStateConfig> enrageStateCrud;
 
     public Integer getId() {
         return id;
@@ -158,7 +157,7 @@ public class DbBotConfig implements CrudChild, CrudParent {
     @Override
     public void init(UserService userService) {
         actionDelay = 3000;
-        botItems = new HashSet<DbBotItemConfig>();
+        enragementStateConfigs = new ArrayList<>();
     }
 
     @Override
@@ -171,18 +170,18 @@ public class DbBotConfig implements CrudChild, CrudParent {
         return null;
     }
 
-    public CrudChildServiceHelper<DbBotItemConfig> getBotItemCrud() {
-        if (botItemCrud == null) {
-            botItemCrud = new CrudChildServiceHelper<DbBotItemConfig>(botItems, DbBotItemConfig.class, this);
+    public CrudListChildServiceHelper<DbBotEnragementStateConfig> getEnrageStateCrud() {
+        if (enrageStateCrud == null) {
+            enrageStateCrud = new CrudListChildServiceHelper<>(enragementStateConfigs, DbBotEnragementStateConfig.class, this);
         }
-        return botItemCrud;
+        return enrageStateCrud;
     }
 
     public BotConfig createBotConfig(ItemService itemService) {
-        Collection<BotItemConfig> botItems = new ArrayList<BotItemConfig>();
-        if (this.botItems != null) {
-            for (DbBotItemConfig botItem : this.botItems) {
-                botItems.add(botItem.createBotItemConfig(itemService));
+        List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
+        if (enragementStateConfigs != null) {
+            for (DbBotEnragementStateConfig dbBotEnragementStateConfig : enragementStateConfigs) {
+                botEnragementStateConfigs.add(dbBotEnragementStateConfig.createBotEnragementStateConfigg(itemService));
             }
         }
         int tmpId;
@@ -191,6 +190,6 @@ public class DbBotConfig implements CrudChild, CrudParent {
         } else {
             tmpId = System.identityHashCode(this);
         }
-        return new BotConfig(tmpId, actionDelay, botItems, realm, name, minInactiveMs, maxInactiveMs, minActiveMs, maxActiveMs);
+        return new BotConfig(tmpId, actionDelay, botEnragementStateConfigs, realm, name, minInactiveMs, maxInactiveMs, minActiveMs, maxActiveMs);
     }
 }

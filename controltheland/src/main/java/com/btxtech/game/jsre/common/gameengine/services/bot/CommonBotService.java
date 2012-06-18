@@ -1,7 +1,9 @@
 package com.btxtech.game.jsre.common.gameengine.services.bot;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.bot.impl.BotRunner;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
 /**
  * User: beat
@@ -11,5 +13,7 @@ import com.btxtech.game.jsre.common.gameengine.services.bot.impl.BotRunner;
 public interface CommonBotService {
     boolean isInRealm(Index point);
 
-    BotRunner getBotRunner(BotConfig botConfig);    
+    BotRunner getBotRunner(BotConfig botConfig);
+
+    void onBotItemKilled(SyncBaseItem syncBaseItem, SimpleBase actor);
 }

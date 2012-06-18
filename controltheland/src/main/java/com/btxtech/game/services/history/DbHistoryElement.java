@@ -65,7 +65,9 @@ public class DbHistoryElement implements Serializable {
         INVENTORY_ARTIFACT_FROM_BOX,
         INVENTORY_ITEM_USED,
         INVENTORY_ITEM_BOUGHT,
-        INVENTORY_ARTIFACT_BOUGHT
+        INVENTORY_ARTIFACT_BOUGHT,
+        BOT_ENRAGE_NORMAL,
+        BOT_ENRAGE_UP
     }
 
     public enum Source {
@@ -102,6 +104,8 @@ public class DbHistoryElement implements Serializable {
     private Integer deltaRazarion;
     private Integer razarion;
     private String inventory;
+    private String botName;
+    private String botInfo;
 
     /**
      * Used by hibernate
@@ -109,10 +113,12 @@ public class DbHistoryElement implements Serializable {
     protected DbHistoryElement() {
     }
 
-    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncItem syncItem, DbLevel level, DbLevelTask levelTask, BaseService baseService, String sessionId, Source source, com.btxtech.game.jsre.client.common.Index position, Integer deltaRazarion, Integer razarion, String inventory) {
+    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncItem syncItem, DbLevel level, DbLevelTask levelTask, BaseService baseService, String sessionId, Source source, com.btxtech.game.jsre.client.common.Index position, Integer deltaRazarion, Integer razarion, String inventory, String botName, String botInfo) {
         this.sessionId = sessionId;
         this.deltaRazarion = deltaRazarion;
         this.razarion = razarion;
+        this.botName = botName;
+        this.botInfo = botInfo;
         timeStamp = new Date();
         timeStampMs = timeStamp.getTime();
         this.type = type;
@@ -200,6 +206,14 @@ public class DbHistoryElement implements Serializable {
 
     public String getInventory() {
         return inventory;
+    }
+
+    public String getBotName() {
+        return botName;
+    }
+
+    public String getBotInfo() {
+        return botInfo;
     }
 
     @Override

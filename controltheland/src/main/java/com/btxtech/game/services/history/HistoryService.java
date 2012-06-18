@@ -15,6 +15,7 @@ package com.btxtech.game.services.history;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotEnragementStateConfig;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
@@ -74,6 +75,10 @@ public interface HistoryService {
     void addInventoryItemBought(UserState userState, String inventoryItemName, int razarion);
 
     void addInventoryArtifactBought(UserState userState, String inventoryArtifactName, int razarion);
+
+    void addBotEnrageUp(String botName, BotEnragementStateConfig botEnragementState, SimpleBase actor);
+
+    void addBotEnrageNormal(String botName, BotEnragementStateConfig botEnragementState);
 
     List<DisplayHistoryElement> getNewestHistoryElements(User user, int count);
 
