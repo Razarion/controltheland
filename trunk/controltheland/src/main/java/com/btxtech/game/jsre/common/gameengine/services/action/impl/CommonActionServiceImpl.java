@@ -104,6 +104,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
             if (moveIfPathTargetUnreachable(syncBaseItem, path)) {
                 return;
             }
+            path.setDestinationAngel(destinationAngel);
             attackCommand.setPathToDestination(path);
         }
         attackCommand.setId(syncBaseItem.getId());

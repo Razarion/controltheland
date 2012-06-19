@@ -23,13 +23,6 @@ public class AttackFormationItem {
         this.inRange = inRange;
     }
 
-    public AttackFormationItem(SyncBaseItem syncBaseItem, int range, Index destinationHint, boolean inRange) {
-        this.syncBaseItem = syncBaseItem;
-        this.range = range;
-        this.destinationHint = destinationHint;
-        this.inRange = inRange;
-    }
-
     public AttackFormationItem(SyncBaseItem syncBaseItem, int range) {
         this.syncBaseItem = syncBaseItem;
         this.range = range;
