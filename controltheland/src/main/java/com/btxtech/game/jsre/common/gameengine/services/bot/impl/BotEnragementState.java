@@ -118,6 +118,7 @@ public class BotEnragementState {
                     }
                 }
                 // TODO remove the killed bot item from the botItemContainer here instead of iterating over and removing the death items
+                // TODO keep in mind: this method is only called if the actor is not null -> solve
             }
         }
     }
