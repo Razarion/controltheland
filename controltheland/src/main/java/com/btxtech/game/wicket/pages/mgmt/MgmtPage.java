@@ -22,6 +22,7 @@ import com.btxtech.game.wicket.pages.mgmt.items.ItemTypeTable;
 import com.btxtech.game.wicket.pages.mgmt.level.DbQuestHubTable;
 import com.btxtech.game.wicket.pages.mgmt.tracking.SessionTable;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.TutorialTable;
+import com.btxtech.game.wicket.pages.mgmt.usermgmt.UserStateTable;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -123,7 +124,7 @@ public class MgmtPage extends MgmtWebPage {
     }
 
     static {
-        toolPages = new ArrayList<LinkAndName>();
+        toolPages = new ArrayList<>();
         toolPages.add(new LinkAndName("Startup", Startup.class));
         toolPages.add(new LinkAndName("DB View", DbView.class));
         toolPages.add(new LinkAndName("Log View", LogView.class));

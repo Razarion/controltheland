@@ -40,4 +40,6 @@ public interface StatisticsService {
     void createAndAddBackup(DbUserState dbUserState, UserState userState);
 
     void onRemoveUserState(UserState userState);
+
+    StatisticsEntry getStatisticsEntryAccess(UserState userState);
 }

@@ -187,6 +187,11 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
+    public StatisticsEntry getStatisticsEntryAccess(UserState userState) {
+       return getStatisticsEntry(userState);
+    }
+
+    @Override
     public ReadonlyListContentProvider<CurrentStatisticEntry> getCmsCurrentStatistics() {
         List<CurrentStatisticEntry> entries = new ArrayList<CurrentStatisticEntry>();
         for (UserState userState : userService.getAllUserStates()) {
