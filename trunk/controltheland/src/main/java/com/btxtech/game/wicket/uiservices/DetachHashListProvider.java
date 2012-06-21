@@ -73,7 +73,12 @@ public abstract class DetachHashListProvider<T> implements IDataProvider<T> {
         hashMap.clear();
     }
 
-    private List<T> getList() {
+    public void forceReload() {
+        detach();
+        getList();
+    }
+
+    public List<T> getList() {
         if (list == null) {
             list = createList();
             for (T t : list) {
@@ -96,6 +101,7 @@ public abstract class DetachHashListProvider<T> implements IDataProvider<T> {
      * @return the item
      */
     protected T getObject4Hash(int hash) {
+        getList();
         T t = hashMap.get(hash);
         if (t == null) {
             throw new IllegalArgumentException("No entry for " + hash);

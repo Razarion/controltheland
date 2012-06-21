@@ -135,4 +135,60 @@ public class StatisticsEntry {
     public void increaseBasesLostPlayer() {
         basesLostPlayer++;
     }
+
+    public void setKilledStructureBot(int killedStructureBot) {
+        this.killedStructureBot = killedStructureBot;
+    }
+
+    public void setKilledUnitsBot(int killedUnitsBot) {
+        this.killedUnitsBot = killedUnitsBot;
+    }
+
+    public void setKilledStructurePlayer(int killedStructurePlayer) {
+        this.killedStructurePlayer = killedStructurePlayer;
+    }
+
+    public void setKilledUnitsPlayer(int killedUnitsPlayer) {
+        this.killedUnitsPlayer = killedUnitsPlayer;
+    }
+
+    public void setLostStructureBot(int lostStructureBot) {
+        this.lostStructureBot = lostStructureBot;
+    }
+
+    public void setLostUnitsBot(int lostUnitsBot) {
+        this.lostUnitsBot = lostUnitsBot;
+    }
+
+    public void setLostStructurePlayer(int lostStructurePlayer) {
+        this.lostStructurePlayer = lostStructurePlayer;
+    }
+
+    public void setLostUnitsPlayer(int lostUnitsPlayer) {
+        this.lostUnitsPlayer = lostUnitsPlayer;
+    }
+
+    public void setBuiltStructures(int builtStructures) {
+        this.builtStructures = builtStructures;
+    }
+
+    public void setBuiltUnits(int builtUnits) {
+        this.builtUnits = builtUnits;
+    }
+
+    public void setBasesDestroyedBot(int basesDestroyedBot) {
+        this.basesDestroyedBot = basesDestroyedBot;
+    }
+
+    public void setBasesDestroyedPlayer(int basesDestroyedPlayer) {
+        this.basesDestroyedPlayer = basesDestroyedPlayer;
+    }
+
+    public void setBasesLostBot(int basesLostBot) {
+        this.basesLostBot = basesLostBot;
+    }
+
+    public void setBasesLostPlayer(int basesLostPlayer) {
+        this.basesLostPlayer = basesLostPlayer;
+    }
 }

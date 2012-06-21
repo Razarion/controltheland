@@ -132,6 +132,10 @@ public class UserState implements Serializable {
         inventoryItemIds.remove(inventoryItemId);
     }
 
+    public void removeAllInventoryItemId(int inventoryItemId) {
+        while(inventoryItemIds.remove(inventoryItemId)){}
+    }
+
     public void addInventoryArtifact(int inventoryArtifactId) {
         inventoryArtifactIds.add(inventoryArtifactId);
     }
@@ -153,5 +157,9 @@ public class UserState implements Serializable {
 
     public Collection<Integer> getInventoryArtifactIds() {
         return inventoryArtifactIds;
+    }
+
+    public void removeAllInventoryArtifactId(int inventoryArtifactId) {
+        while(inventoryArtifactIds.remove(inventoryArtifactId)){}
     }
 }
