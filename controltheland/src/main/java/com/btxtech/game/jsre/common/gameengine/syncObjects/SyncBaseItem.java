@@ -706,6 +706,9 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
         if (getServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
             return;
         }
+        if (!isAlive()) {
+            return;
+        }
         if (!hasSyncWeapon()) {
             return;
         }
