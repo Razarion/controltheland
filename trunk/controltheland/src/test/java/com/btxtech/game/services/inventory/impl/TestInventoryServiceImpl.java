@@ -859,14 +859,23 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         dbInventoryArtifact.setName("InventoryArtifact");
         setPrivateField(DbInventoryArtifact.class, dbInventoryArtifact, "id", 44);
         dbBoxItemTypePossibility.setDbInventoryArtifact(dbInventoryArtifact);
+        DbBoxItemType dbBoxItemType4 = new DbBoxItemType();
+        setupDbItemTypeId(dbBoxItemType4, 4);
+        dbBoxItemTypePossibility = dbBoxItemType4.getBoxPossibilityCrud().createDbChild();
+        dbBoxItemTypePossibility.setPossibility(0.0);
+        dbInventoryArtifact = new DbInventoryArtifact();
+        dbInventoryArtifact.setName("InventoryArtifact");
+        setPrivateField(DbInventoryArtifact.class, dbInventoryArtifact, "id", 55);
+        dbBoxItemTypePossibility.setDbInventoryArtifact(dbInventoryArtifact);
         // BoxItemType
         BoxItemType boxItemType = EasyMock.createStrictMock(BoxItemType.class);
         EasyMock.expect(boxItemType.getId()).andReturn(1);
         EasyMock.expect(boxItemType.getId()).andReturn(2);
         EasyMock.expect(boxItemType.getId()).andReturn(3);
+        EasyMock.expect(boxItemType.getId()).andReturn(4);
         // SyncBoxItems
         SyncBoxItem mockSyncBoxItem1 = EasyMock.createStrictMock(SyncBoxItem.class);
-        EasyMock.expect(mockSyncBoxItem1.getItemType()).andReturn(boxItemType).times(3);
+        EasyMock.expect(mockSyncBoxItem1.getItemType()).andReturn(boxItemType).times(4);
         // ItemService
         ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
         mockItemService.killSyncItem(mockSyncBoxItem1, simpleBase, true, false);
@@ -875,9 +884,11 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         EasyMock.expect(mockItemService.getDbBoxItemType(2)).andReturn(dbBoxItemType2);
         mockItemService.killSyncItem(mockSyncBoxItem1, simpleBase, true, false);
         EasyMock.expect(mockItemService.getDbBoxItemType(3)).andReturn(dbBoxItemType3);
+        mockItemService.killSyncItem(mockSyncBoxItem1, simpleBase, true, false);
+        EasyMock.expect(mockItemService.getDbBoxItemType(4)).andReturn(dbBoxItemType4);
         // Picker
         SyncBaseItem picker = EasyMock.createStrictMock(SyncBaseItem.class);
-        EasyMock.expect(picker.getBase()).andReturn(simpleBase).times(12);
+        EasyMock.expect(picker.getBase()).andReturn(simpleBase).times(16);
         // SyncBoxItems
         UserState mockUserState = EasyMock.createStrictMock(UserState.class);
         mockUserState.addRazarion(100);
@@ -885,6 +896,8 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         mockUserState.addInventoryArtifact(44);
         // SyncBoxItems
         BaseService mockBaseService = EasyMock.createStrictMock(BaseService.class);
+        EasyMock.expect(mockBaseService.isAbandoned(simpleBase)).andReturn(false);
+        EasyMock.expect(mockBaseService.getUserState(simpleBase)).andReturn(mockUserState);
         EasyMock.expect(mockBaseService.isAbandoned(simpleBase)).andReturn(false);
         EasyMock.expect(mockBaseService.getUserState(simpleBase)).andReturn(mockUserState);
         EasyMock.expect(mockBaseService.isAbandoned(simpleBase)).andReturn(false);
@@ -899,7 +912,8 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         mockHistoryService.addInventoryItemFromBox(mockUserState, "InventoryItem");
         mockHistoryService.addBoxPicked(mockSyncBoxItem1, picker);
         mockHistoryService.addInventoryArtifactFromBox(mockUserState, "InventoryArtifact");
-        // History Service
+        mockHistoryService.addBoxPicked(mockSyncBoxItem1, picker);
+        // Connection Service
         ConnectionServiceTestHelper connectionService = new ConnectionServiceTestHelper();
 
         EasyMock.replay(mockHistoryService, mockItemService, mockSyncBoxItem1, picker, mockBaseService, boxItemType, mockUserState);
@@ -923,6 +937,11 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(1, connectionService.getPacketEntries().size());
         boxPickedPacket = (BoxPickedPacket) connectionService.getPacketEntries(simpleBase, BoxPickedPacket.class).get(0).getPacket();
         Assert.assertEquals("You picked up a box! Items added to your Inventory:<ul><li>Artifact: InventoryArtifact</li></ul>", boxPickedPacket.getHtml());
+        connectionService.clearReceivedPackets();
+        inventoryService.onSyncBoxItemPicked(mockSyncBoxItem1, picker);
+        Assert.assertEquals(1, connectionService.getPacketEntries().size());
+        boxPickedPacket = (BoxPickedPacket) connectionService.getPacketEntries(simpleBase, BoxPickedPacket.class).get(0).getPacket();
+        Assert.assertEquals("You picked up a box! Items added to your Inventory:<ul><li>No luck. Empty box found</li></ul>", boxPickedPacket.getHtml());
 
         EasyMock.verify(mockHistoryService, mockItemService, mockSyncBoxItem1, picker, mockBaseService, boxItemType, mockUserState);
     }
