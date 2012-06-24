@@ -163,6 +163,7 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
         StringBuilder builder = new StringBuilder();
         builder.append("You picked up a box! Items added to your Inventory:");
         builder.append("<ul>");
+        boolean somethingAdded = false;
         HibernateUtil.openSession4InternalCall(sessionFactory);
         try {
             historyService.addBoxPicked(box, picker);
@@ -171,10 +172,14 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
             for (DbBoxItemTypePossibility dbBoxItemTypePossibility : dbBoxItemType.getBoxPossibilityCrud().readDbChildren()) {
                 if (MathHelper.isRandomPossibility(dbBoxItemTypePossibility.getPossibility())) {
                     addBoxContentToUser(dbBoxItemTypePossibility, userState, builder);
+                    somethingAdded = true;
                 }
             }
         } finally {
             HibernateUtil.closeSession4InternalCall(sessionFactory);
+        }
+        if (!somethingAdded) {
+            builder.append("<li>No luck. Empty box found</li>");
         }
         builder.append("</ul>");
         BoxPickedPacket boxPickedPacket = new BoxPickedPacket();
