@@ -15,10 +15,11 @@ package com.btxtech.game.wicket.uiservices;
 
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.item.itemType.DbBaseItemTypeI;
 import com.btxtech.game.services.item.itemType.DbItemTypeI;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
@@ -33,7 +34,7 @@ public class BaseItemTypePanel extends Panel {
 
     public BaseItemTypePanel(String id) {
         super(id);
-        add(new TextField<Integer>("baseItemType", new IModel<Integer>() {
+        add(new TextField<>("baseItemType", new IModel<Integer>() {
 
             @Override
             public Integer getObject() {
@@ -66,5 +67,18 @@ public class BaseItemTypePanel extends Panel {
                 // Ignore
             }
         }, Integer.class));
+        add(new Label("baseItemTypeName", new AbstractReadOnlyModel<String>() {
+            @Override
+            public String getObject() {
+                DbItemTypeI itemType = (DbItemTypeI) getDefaultModelObject();
+                // Using DbItemTypeI instead of DbBaseItemTypeI
+                // java.lang.ClassCastException: com.btxtech.game.services.item.itemType.DbItemType_$$_javassist_1 cannot be cast to com.btxtech.game.services.item.itemType.DbBaseItemTypeI
+                if (itemType != null) {
+                    return itemType.getName();
+                } else {
+                    return null;
+                }
+            }
+        }));
     }
 }

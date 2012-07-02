@@ -15,7 +15,7 @@ package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ClientChatHandler;
 import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.common.ChatMessage;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.google.gwt.dom.client.Style;

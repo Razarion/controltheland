@@ -1,13 +1,19 @@
 package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.dialogs.DialogManager;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestDialog;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
+import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
-import com.btxtech.game.jsre.common.CmsUtil;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
@@ -15,6 +21,9 @@ import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -26,6 +35,8 @@ public class QuestProgressCockpit extends FlowPanel {
     private static final String WIDTH = "20%";
     private HTML questTitle;
     private HTML questProgress;
+    private VerticalPanel missionStartPanel;
+    private Label dialog;
 
     public QuestProgressCockpit() {
         getElement().getStyle().setBackgroundColor("rgba(0, 0, 0, 0.5)");
@@ -34,16 +45,70 @@ public class QuestProgressCockpit extends FlowPanel {
         getElement().getStyle().setPaddingRight(10, Style.Unit.PX);
         getElement().getStyle().setProperty("maxWidth", WIDTH);
 
-        questTitle = new HTML();
-        questTitle.getElement().getStyle().setColor("#FFFFAA");
-        add(questTitle);
-
-        questProgress = new HTML();
-        questProgress.getElement().getStyle().setColor("#C7C4BB");
-        add(questProgress);
+        setupTitle();
+        setupQuestProgress();
+        setupMissionStart();
+        setupControlPanel();
 
         preventEvents(this);
         ClientUserTracker.getInstance().onDialogAppears(this, "QuestProgressCockpit");
+    }
+
+    private void setupTitle() {
+        questTitle = new HTML();
+        questTitle.getElement().getStyle().setColor("#FFFFAA");
+        questTitle.getElement().getStyle().setFontSize(18, Style.Unit.PX);
+        questTitle.getElement().getStyle().setProperty("fontFamily", "Arial, Helvetica, sans-serif");
+        questTitle.getElement().getStyle().setFontWeight(Style.FontWeight.BOLD);
+        questTitle.getElement().getStyle().setMarginBottom(10, Style.Unit.PX);
+        add(questTitle);
+    }
+
+    private void setupQuestProgress() {
+        questProgress = new HTML();
+        questProgress.getElement().getStyle().setColor("#C7C4BB");
+        questProgress.getElement().getStyle().setFontSize(12, Style.Unit.PX);
+        questProgress.getElement().getStyle().setProperty("fontFamily", "Arial, Helvetica, sans-serif");
+        add(questProgress);
+    }
+
+    private void setupMissionStart() {
+        missionStartPanel = new VerticalPanel();
+        add(missionStartPanel);
+        HTML text = new HTML("Press the button when ready");
+        text.getElement().getStyle().setColor("#C7C4BB");
+        text.getElement().getStyle().setFontSize(12, Style.Unit.PX);
+        text.getElement().getStyle().setProperty("fontFamily", "Arial, Helvetica, sans-serif");
+        missionStartPanel.add(text);
+        missionStartPanel.setCellHorizontalAlignment(text, HasHorizontalAlignment.ALIGN_LEFT);
+        ExtendedCustomButton start = new ExtendedCustomButton("startmission", false, ToolTips.TOOL_TIP_START_MISSION, new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                ClientLevelHandler.getInstance().startMission();
+            }
+        });
+        missionStartPanel.add(start);
+        missionStartPanel.setCellHorizontalAlignment(start, HasHorizontalAlignment.ALIGN_CENTER);
+        missionStartPanel.setVisible(false);
+    }
+
+    private void setupControlPanel() {
+        dialog = new Label("Open quest dialog");
+        dialog.getElement().getStyle().setMarginTop(10, Style.Unit.PX);
+        dialog.setTitle(ToolTips.TOOL_TIP_OPEN_QUEST_DIALOG);
+        dialog.getElement().getStyle().setColor("#FF0000");
+        dialog.getElement().getStyle().setProperty("textShadow", "1px 1px 0px #777777");
+        dialog.getElement().getStyle().setFontSize(15, Style.Unit.PX);
+        dialog.getElement().getStyle().setProperty("fontFamily", "Arial, Helvetica, sans-serif");
+        dialog.getElement().getStyle().setFontWeight(Style.FontWeight.BOLD);
+        dialog.getElement().getStyle().setCursor(Style.Cursor.POINTER);
+        dialog.addMouseDownHandler(new MouseDownHandler() {
+            @Override
+            public void onMouseDown(MouseDownEvent event) {
+                DialogManager.showDialog(new QuestDialog(), DialogManager.Type.QUEUE_ABLE);
+            }
+        });
+        add(dialog);
     }
 
     public void addToParent(AbsolutePanel parent) {
@@ -56,19 +121,24 @@ public class QuestProgressCockpit extends FlowPanel {
 
     }
 
-    public void setActiveQuest(String activeQuestTitle, String activeQuestProgress, Integer activeQuestLevelTaskId) {
-        if (activeQuestTitle != null && activeQuestLevelTaskId != null) {
-            StringBuilder builder = new StringBuilder();
-            builder.append("<H2>");
-            builder.append(CmsUtil.getUrl4LevelPage(activeQuestLevelTaskId, activeQuestTitle));
-            builder.append("</H2>");
-            questTitle.setHTML(builder.toString());
+
+    public void setActiveQuest(QuestInfo questInfo, String activeQuestProgress) {
+        if (questInfo != null) {
+            if (questInfo.getType() == QuestInfo.Type.MISSION) {
+                missionStartPanel.setVisible(true);
+                questProgress.setVisible(false);
+            } else {
+                missionStartPanel.setVisible(false);
+                questProgress.setVisible(true);
+            }
+            questTitle.setHTML(questInfo.getTitle());
         }
+
         if (activeQuestProgress != null) {
             questProgress.setHTML(activeQuestProgress);
         }
         ClientUserTracker.getInstance().onDialogDisappears(this);
-        ClientUserTracker.getInstance().onDialogAppears(this, activeQuestTitle);
+        ClientUserTracker.getInstance().onDialogAppears(this, "QuestPanel");
     }
 
     public void setNoActiveQuest() {
@@ -76,12 +146,9 @@ public class QuestProgressCockpit extends FlowPanel {
             // Editor
             return;
         }
-        questTitle.setHTML("<H2>No active quest</H2>");
-        StringBuilder builder = new StringBuilder();
-        builder.append("<a href='");
-        builder.append(Connection.getInstance().getGameInfo().getPredefinedUrls().get(CmsUtil.CmsPredefinedPage.USER_PAGE));
-        builder.append("' target='_blank' style='color: #C7C4BB; text-decoration: none;'>Click here to activate a quest or mission</a>");
-        questProgress.setHTML(builder.toString());
+        questTitle.setHTML("No active quest");
+        missionStartPanel.setVisible(false);
+        questProgress.setVisible(false);
         ClientUserTracker.getInstance().onDialogDisappears(this);
         ClientUserTracker.getInstance().onDialogAppears(this, "No active quest");
     }
@@ -109,4 +176,9 @@ public class QuestProgressCockpit extends FlowPanel {
     public Rectangle getArea() {
         return new Rectangle(getAbsoluteLeft(), getAbsoluteTop(), getOffsetWidth(), getOffsetHeight());
     }
+
+    public void enableQuestControl(boolean enabled) {
+        dialog.setVisible(enabled);
+    }
+
 }

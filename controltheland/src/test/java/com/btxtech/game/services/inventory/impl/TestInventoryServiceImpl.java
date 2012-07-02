@@ -4,7 +4,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryArtifactInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
-import com.btxtech.game.jsre.common.BoxPickedPacket;
+import com.btxtech.game.jsre.common.packets.BoxPickedPacket;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;

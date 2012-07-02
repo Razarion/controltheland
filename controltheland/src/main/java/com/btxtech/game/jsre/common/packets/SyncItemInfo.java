@@ -11,11 +11,11 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos;
+package com.btxtech.game.jsre.common.packets;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.CommonJava;
-import com.btxtech.game.jsre.common.Packet;
+import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 

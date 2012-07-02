@@ -2,7 +2,8 @@ package com.btxtech.game.mockservlet;
 
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.AbstractGwtTest;
-import com.btxtech.game.jsre.client.common.ChatMessage;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.client.common.Rectangle;
@@ -10,9 +11,10 @@ import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.NoConnectionException;
-import com.btxtech.game.jsre.common.Packet;
+import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -32,7 +34,7 @@ import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchExc
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
@@ -227,11 +229,11 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     @Override
     public GameFlow sendTutorialProgress(TutorialConfig.TYPE type, String startUuid, int levelTaskId, String name, long duration, long clientTimeStamp) {
         System.out.println("---sendTutorialProgress " + type);
-        if (type == TutorialConfig.TYPE.TUTORIAL) {
-            return new GameFlow(GameFlow.Type.SHOW_LEVEL_TASK_DONE_PAGE, null);
-        } else {
+//        if (type == TutorialConfig.TYPE.TUTORIAL) {
+//            return new GameFlow(GameFlow.Type.SHOW_LEVEL_TASK_DONE_PAGE, null);
+//        } else {
             return null;
-        }
+//        }
     }
 
     @Override
@@ -302,5 +304,15 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     @Override
     public int loadRazarion() {
         return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public QuestOverview loadQuestOverview() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void activateQuest(int questId) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

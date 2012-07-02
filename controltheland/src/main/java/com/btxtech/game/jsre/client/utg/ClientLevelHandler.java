@@ -15,19 +15,25 @@ package com.btxtech.game.jsre.client.utg;
 
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.Game;
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.SplashManager;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupScreen;
-import com.btxtech.game.jsre.common.CmsUtil;
-import com.btxtech.game.jsre.common.LevelStatePacket;
+import com.btxtech.game.jsre.client.dialogs.DialogManager;
+import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
+import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.RootPanel;
+
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -38,10 +44,8 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
     private static final ClientLevelHandler INSTANCE = new ClientLevelHandler();
     private LevelScope levelScope;
     private Integer nextTaskId;
-    private Integer xp2LevelUp;
-    private String activeQuestTitle;
-    private String activeQuestProgress;
-    private Integer activeQuestLevelTaskId;
+    private QuestInfo currentQuest;
+    private static Logger log = Logger.getLogger(ClientLevelHandler.class.getName());
 
     /**
      * Singleton
@@ -53,98 +57,31 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
         return INSTANCE;
     }
 
-    public void setLevelScope(LevelStatePacket levelStatePacket) {
+    public void setLevel(LevelScope levelScope) {
         // Setup values
-        levelScope = levelStatePacket.getLevel();
-        xp2LevelUp = levelStatePacket.getXp2LevelUp();
-        activeQuestTitle = levelStatePacket.getActiveQuestTitle();
-        activeQuestProgress = levelStatePacket.getActiveQuestProgress();
-        activeQuestLevelTaskId = levelStatePacket.getActiveQuestLevelTaskId();
+        this.levelScope = levelScope;
         // Setup GUI
         SideCockpit.getInstance().setLevel(levelScope);
         RadarPanel.getInstance().setLevelRadarMode(levelScope.getRadarMode());
-        if (levelStatePacket.getXp() != null && xp2LevelUp != null) {
-            SideCockpit.getInstance().setXp(levelStatePacket.getXp(), xp2LevelUp);
-        } else {
-            SideCockpit.getInstance().hideXp();
-        }
-        if (activeQuestTitle != null || activeQuestProgress != null || activeQuestLevelTaskId != null) {
-            SideCockpit.getInstance().setActiveQuest(activeQuestTitle, activeQuestProgress, activeQuestLevelTaskId);
-        } else {
-            SideCockpit.getInstance().setNoActiveQuest();
-        }
-        if (levelStatePacket.getQuestsDone() != null && levelStatePacket.getTotalQuests() != null) {
-            SideCockpit.getInstance().setQuestOverview(levelStatePacket.getQuestsDone(), levelStatePacket.getTotalQuests());
-        } else {
-            SideCockpit.getInstance().hideQuestOverview();
-        }
-        if (levelStatePacket.getMissionsDone() != null && levelStatePacket.getTotalMissions() != null) {
-            SideCockpit.getInstance().setMissionOverview(levelStatePacket.getMissionsDone(), levelStatePacket.getTotalMissions());
-        } else {
-            SideCockpit.getInstance().hideMissionOverview();
-        }
         SideCockpit.getInstance().updateItemLimit();
     }
 
-    public void onLevelChanged(LevelStatePacket levelStatePacket) {
-        if (levelStatePacket.isMissionQuestCompleted()) {
+    public void setLevelTask(LevelTaskPacket levelTaskPacket) {
+        if (levelTaskPacket == null) {
+            currentQuest = null;
+            SideCockpit.getInstance().setNoActiveQuest();
+        } else if (levelTaskPacket.isCompleted()) {
             SplashManager.getInstance().onLevelTaskCone();
+            currentQuest = null;
             SideCockpit.getInstance().setNoActiveQuest();
-            activeQuestTitle = null;
-            activeQuestProgress = null;
-            activeQuestLevelTaskId = null;
-        }
-        if (levelStatePacket.getXp() != null || levelStatePacket.getXp2LevelUp() != null) {
-            if (levelStatePacket.getXp2LevelUp() != null) {
-                xp2LevelUp = levelStatePacket.getXp2LevelUp();
+        } else {
+            if (levelTaskPacket.getQuestInfo() != null) {
+                currentQuest = levelTaskPacket.getQuestInfo();
+                if (currentQuest.getType() == QuestInfo.Type.MISSION) {
+                    startMission();
+                }
             }
-            if (levelStatePacket.getXp() != null) {
-                SideCockpit.getInstance().setXp(levelStatePacket.getXp(), xp2LevelUp);
-            }
-        }
-
-        if (levelStatePacket.getXp() != null) {
-            SideCockpit.getInstance().setXp(levelStatePacket.getXp(), xp2LevelUp);
-        }
-
-        if (levelStatePacket.isQuestDeactivated()) {
-            SideCockpit.getInstance().setNoActiveQuest();
-            activeQuestTitle = null;
-            activeQuestProgress = null;
-            activeQuestLevelTaskId = null;
-        }
-        if (!levelStatePacket.isMissionQuestCompleted() &&
-                (levelStatePacket.getActiveQuestTitle() != null || levelStatePacket.getActiveQuestProgress() != null || levelStatePacket.getActiveQuestLevelTaskId() != null)) {
-            if (levelStatePacket.getActiveQuestTitle() != null) {
-                activeQuestTitle = levelStatePacket.getActiveQuestTitle();
-            }
-            if (levelStatePacket.getActiveQuestProgress() != null) {
-                activeQuestProgress = levelStatePacket.getActiveQuestProgress();
-            }
-            if (levelStatePacket.getActiveQuestLevelTaskId() != null) {
-                activeQuestLevelTaskId = levelStatePacket.getActiveQuestLevelTaskId();
-            }
-            SideCockpit.getInstance().setActiveQuest(activeQuestTitle, activeQuestProgress, activeQuestLevelTaskId);
-        }
-
-        if (levelStatePacket.getQuestsDone() != null && levelStatePacket.getTotalQuests() != null) {
-            SideCockpit.getInstance().setQuestOverview(levelStatePacket.getQuestsDone(), levelStatePacket.getTotalQuests());
-        }
-        if (levelStatePacket.getMissionsDone() != null && levelStatePacket.getTotalMissions() != null) {
-            SideCockpit.getInstance().setMissionOverview(levelStatePacket.getMissionsDone(), levelStatePacket.getTotalMissions());
-        }
-        if (levelStatePacket.getLevel() != null) {
-            levelScope = levelStatePacket.getLevel();
-            SplashManager.getInstance().onLevelUp();
-            RadarPanel.getInstance().setLevelRadarMode(levelScope.getRadarMode());
-            SideCockpit.getInstance().setLevel(levelScope);
-            SideCockpit.getInstance().updateItemLimit();
-            if (activeQuestTitle != null || activeQuestProgress != null || activeQuestLevelTaskId != null) {
-                SideCockpit.getInstance().setNoActiveQuest();
-                activeQuestTitle = null;
-                activeQuestProgress = null;
-                activeQuestLevelTaskId = null;
-            }
+            SideCockpit.getInstance().setActiveQuest(currentQuest, levelTaskPacket.getActiveQuestProgress());
         }
     }
 
@@ -186,11 +123,54 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
             case START_REAL_GAME:
                 StartupScreen.getInstance().fadeOutAndStart(GameStartupSeq.WARM_REAL);
                 return;
-            case SHOW_LEVEL_TASK_DONE_PAGE:
-                Window.open(Connection.getInstance().getGameInfo().getPredefinedUrls().get(CmsUtil.CmsPredefinedPage.LEVEL_TASK_DONE), CmsUtil.TARGET_SELF, "");
-                return;
             default:
                 throw new IllegalArgumentException("Unknown GameFlow Type: " + gameFlow.getType());
         }
+    }
+
+    public void abortMission() {
+        if (Connection.getInstance().getGameEngineMode() != GameEngineMode.MASTER) {
+            log.warning("Attempt to abort the real game");
+            return;
+        }
+        StartupScreen.getInstance().fadeOutAndStart(GameStartupSeq.WARM_REAL);
+    }
+
+    public void startMission() {
+        if (currentQuest == null || currentQuest.getType() != QuestInfo.Type.MISSION) {
+            log.warning("ClientLevelHandler.startMission() currentQuest == null");
+            return;
+        }
+        if (currentQuest.getType() != QuestInfo.Type.MISSION) {
+            log.warning("ClientLevelHandler.startMission() currentQuest.getType() != QuestInfo.Type.MISSION");
+            return;
+        }
+        startMission(currentQuest.getId());
+    }
+
+    public void startMission(final int missionId) {
+        if (Connection.getInstance().getGameEngineMode() != GameEngineMode.SLAVE) {
+            log.warning("Attempt to start a mission inside another mission.");
+            return;
+        }
+
+        Connection.getInstance().activateQuest(missionId);
+
+        if (Connection.getInstance().getGameEngineMode() != GameEngineMode.SLAVE) {
+            log.warning("Attempt to start a mission inside another mission.");
+            return;
+        }
+        YesNoDialog yesNoDialog = new YesNoDialog("Start Mission", "Compete in a single player mission on a different planet. You can return to this base at any time.", "Start", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                nextTaskId = missionId;
+                StartupScreen.getInstance().fadeOutAndStart(GameStartupSeq.WARM_SIMULATED);
+            }
+        }, "Cancel", null);
+        DialogManager.showDialog(yesNoDialog, DialogManager.Type.QUEUE_ABLE);
+    }
+
+    public boolean hasActiveQuest() {
+        return currentQuest != null;
     }
 }

@@ -11,27 +11,25 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common;
+package com.btxtech.game.jsre.common.packets;
 
 /**
- * User: beat
- * Date: 24.12.2009
- * Time: 13:14:24
+ * User: beat Date: 12.05.2010 Time: 14:38:58
  */
-public class HouseSpacePacket extends Packet {
-    private int houseSpace;
+public class AllianceOfferPacket extends Packet {
+    private String actorUserName;
 
-    public int getHouseSpace() {
-        return houseSpace;
+    public String getActorUserName() {
+        return actorUserName;
     }
 
-    public void setHouseSpace(int houseSpace) {
-        this.houseSpace = houseSpace;
+    public void setActorUserName(String actorUserName) {
+        this.actorUserName = actorUserName;
     }
 
     @Override
     public String toString() {
-        return "HouseSpacePacket: houseSpace: " + houseSpace;
+        return "AllianceOfferPacket{actorUserName='" + actorUserName + "\'}";
     }
 
     @Override
@@ -39,13 +37,13 @@ public class HouseSpacePacket extends Packet {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        HouseSpacePacket that = (HouseSpacePacket) o;
+        AllianceOfferPacket that = (AllianceOfferPacket) o;
 
-        return houseSpace == that.houseSpace;
+        return actorUserName.equals(that.actorUserName);
     }
 
     @Override
     public int hashCode() {
-        return houseSpace;
+        return actorUserName.hashCode();
     }
 }

@@ -97,8 +97,15 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
         });
 
         if (surfaceImageUrls.isEmpty() && terrainImagesUrls.isEmpty()) {
+            fireTerrainChanged();
             deferredStartup.finished();
             return;
+        }
+        if(surfaceImageUrls.isEmpty()) {
+            allSurfaceImagesLoaded = true;
+        }
+        if(terrainImagesUrls.isEmpty()) {
+            allTerrainImagesLoaded = true;
         }
         if (!surfaceImageUrls.isEmpty()) {
             ImageLoader.addImageUrlsAndStart(surfaceImageUrls, new ImageLoader.Listener() {

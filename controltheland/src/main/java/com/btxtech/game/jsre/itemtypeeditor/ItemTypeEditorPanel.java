@@ -10,7 +10,6 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
-import com.btxtech.game.jsre.common.LevelStatePacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -61,9 +60,7 @@ public class ItemTypeEditorPanel extends FlexTable {
                     ///--- Setup div
                     TerrainView.uglySuppressRadar = true;
                     Connection.getInstance().init4ItemTypeEditor();
-                    LevelStatePacket levelStatePacket = new LevelStatePacket();
-                    levelStatePacket.setLevel(new LevelScope(0, 0, null, 0, 0, RadarMode.NONE));
-                    ClientLevelHandler.getInstance().setLevelScope(levelStatePacket);
+                    ClientLevelHandler.getInstance().setLevel(new LevelScope(0, 0, null, 0, 0, RadarMode.NONE, 0));
                     ///--- Setup terrain
                     ArrayList<SurfaceImage> surfaceImages = new ArrayList<SurfaceImage>();
                     surfaceImages.add(new SurfaceImage(itemType.getTerrainType().getSurfaceTypes().get(0), 23, "#00FF00"));

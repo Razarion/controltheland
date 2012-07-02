@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.utg.tracker;
 
-import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

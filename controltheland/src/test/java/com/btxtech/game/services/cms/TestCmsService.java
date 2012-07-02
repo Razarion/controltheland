@@ -13,7 +13,6 @@ import com.btxtech.game.services.cms.content.DbBlogEntry;
 import com.btxtech.game.services.cms.content.DbWikiSection;
 import com.btxtech.game.services.cms.impl.CmsServiceImpl;
 import com.btxtech.game.services.cms.layout.DbContent;
-import com.btxtech.game.services.cms.layout.DbContentActivateQuestButton;
 import com.btxtech.game.services.cms.layout.DbContentBook;
 import com.btxtech.game.services.cms.layout.DbContentBooleanExpressionImage;
 import com.btxtech.game.services.cms.layout.DbContentContainer;
@@ -28,7 +27,6 @@ import com.btxtech.game.services.cms.layout.DbContentPageLink;
 import com.btxtech.game.services.cms.layout.DbContentPlugin;
 import com.btxtech.game.services.cms.layout.DbContentRow;
 import com.btxtech.game.services.cms.layout.DbContentSmartPageLink;
-import com.btxtech.game.services.cms.layout.DbContentStartMissionButton;
 import com.btxtech.game.services.cms.layout.DbContentStaticHtml;
 import com.btxtech.game.services.cms.layout.DbExpressionProperty;
 import com.btxtech.game.services.cms.page.DbAds;
@@ -58,7 +56,6 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.CmsStringGenerator;
@@ -117,8 +114,6 @@ public class TestCmsService extends AbstractServiceTest {
     private StatisticsService statisticsService;
     @Autowired
     private ItemService itemService;
-    @Autowired
-    private ServerConditionService serverConditionService;
 
     private WicketTester tester;
 
@@ -2372,311 +2367,6 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "2");
 
         tester.debugComponentTrees();
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void testTaskLevelSectionLink() throws Exception {
-        configureGameMultipleLevel();
-
-        // Setup CMS content
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
-
-        // Setup Home
-        DbPage dbPage = pageCrud.createDbChild();
-        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
-        dbPage.setName("Home");
-        DbContentList taskList = new DbContentList();
-        taskList.init(userService);
-        dbPage.setContentAndAccessWrites(taskList);
-        taskList.setSpringBeanName("userGuidanceService");
-        taskList.setContentProviderGetter("mercenaryMissionCms");
-        DbExpressionProperty dbExpressionProperty = (DbExpressionProperty) taskList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
-        dbExpressionProperty.setExpression("dbLevelTask.name");
-        dbExpressionProperty.setLink(true);
-        pageCrud.updateDbChild(dbPage);
-
-        // Setup the level page
-        DbPage dbLevelPage = pageCrud.createDbChild();
-        dbLevelPage.setName("Level");
-
-        DbContentList dbContentList = new DbContentList();
-        dbContentList.init(userService);
-        dbLevelPage.setContentAndAccessWrites(dbContentList);
-        dbContentList.setSpringBeanName("userGuidanceService");
-        dbContentList.setContentProviderGetter("crudQuestHub");
-        dbLevelPage.setContentAndAccessWrites(dbContentList);
-
-        CrudChildServiceHelper<DbContentBook> contentBookCrud = dbContentList.getContentBookCrud();
-        DbContentBook dbContentBook = contentBookCrud.createDbChild();
-        dbContentBook.setClassName("com.btxtech.game.services.utg.DbQuestHub");
-        CrudListChildServiceHelper<DbContentRow> rowCrud = dbContentBook.getRowCrud();
-
-        DbContentRow dbLevelRow = rowCrud.createDbChild();
-        DbContentList levelContentList = new DbContentList();
-        levelContentList.setRowsPerPage(5);
-        dbLevelRow.setDbContent(levelContentList);
-        levelContentList.init(userService);
-        levelContentList.setParent(dbLevelRow);
-        levelContentList.setContentProviderGetter("levelCrud");
-
-        dbContentBook = levelContentList.getContentBookCrud().createDbChild();
-        dbContentBook.setClassName("com.btxtech.game.services.utg.DbLevel");
-        rowCrud = dbContentBook.getRowCrud();
-
-        DbContentRow dbTaskRow = rowCrud.createDbChild();
-        DbContentList taskContentList = new DbContentList();
-        dbTaskRow.setDbContent(taskContentList);
-        taskContentList.init(userService);
-        taskContentList.setParent(dbTaskRow);
-        taskContentList.setContentProviderGetter("levelTaskCrud");
-
-        dbContentBook = taskContentList.getContentBookCrud().createDbChild();
-        dbContentBook.setClassName("com.btxtech.game.services.utg.DbLevelTask");
-        rowCrud = dbContentBook.getRowCrud();
-
-        DbContentRow dbContentRow = rowCrud.createDbChild();
-        dbContentRow.setName("Name");
-        DbExpressionProperty expProperty = new DbExpressionProperty();
-        expProperty.setParent(dbContentRow);
-        expProperty.setExpression("name");
-        dbContentRow.setDbContent(expProperty);
-
-        pageCrud.updateDbChild(dbLevelPage);
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Activate
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        cmsService.activateCms();
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Verify
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userGuidanceService.getDbLevel(); // set level for new user
-        tester.startPage(CmsPage.class);
-        tester.assertRenderedPage(CmsPage.class);
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:link:label", TEST_LEVEL_TASK_1_1_SIMULATED_NAME);
-        // Click Link
-        tester.clickLink("form:content:table:rows:1:cells:1:cell:link");
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell", "Name");
-        tester.assertLabel("form:content:table:rows:1:cells:2:cell", TEST_LEVEL_TASK_1_1_SIMULATED_NAME);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void testContentStartMissionButton() throws Exception {
-        configureGameMultipleLevel();
-
-        // Add cms image
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        CrudRootServiceHelper<DbCmsImage> crud = cmsService.getImageCrudRootServiceHelper();
-        DbCmsImage dbCmsImage1 = crud.createDbChild();
-        dbCmsImage1.setData(new byte[50000]);
-        dbCmsImage1.setContentType("image1");
-        crud.updateDbChild(dbCmsImage1);
-        DbCmsImage dbCmsImage2 = crud.createDbChild();
-        dbCmsImage2.setData(new byte[10000]);
-        dbCmsImage2.setContentType("image2");
-        crud.updateDbChild(dbCmsImage2);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Setup CMS content
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
-        DbPage dbPage = pageCrud.createDbChild();
-        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
-        dbPage.setName("Home");
-        DbContentList taskList = new DbContentList();
-        taskList.init(userService);
-        dbPage.setContentAndAccessWrites(taskList);
-        taskList.setSpringBeanName("userGuidanceService");
-        taskList.setContentProviderGetter("mercenaryMissionCms");
-        DbExpressionProperty dbExpressionProperty = (DbExpressionProperty) taskList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
-        dbExpressionProperty.setExpression("dbLevelTask.name");
-        DbContentStartMissionButton taskButton = (DbContentStartMissionButton) taskList.getColumnsCrud().createDbChild(DbContentStartMissionButton.class);
-        taskButton.setExpression("dbLevelTask");
-        taskButton.setDoneExpression("done");
-        taskButton.setStartImage(dbCmsImage1);
-        taskButton.setDoneImage(dbCmsImage2);
-        pageCrud.updateDbChild(dbPage);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Activate
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        cmsService.activateCms();
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Verify
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userGuidanceService.getDbLevel(); // set level for new user
-        tester.startPage(CmsPage.class);
-        tester.assertRenderedPage(CmsPage.class);
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell", TEST_LEVEL_TASK_1_1_SIMULATED_NAME);
-        tester.assertVisible("form:content:table:rows:1:cells:2:cell:link:linkImage");
-        tester.assertBookmarkablePageLink("form:content:table:rows:1:cells:2:cell:link", Game.class, "taskId = 1");
-        tester.assertInvisible("form:content:table:rows:1:cells:2:cell:doneImage");
-        // go to level 3
-        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_3_REAL_ID);
-        tester.startPage(CmsPage.class);
-        tester.assertRenderedPage(CmsPage.class);
-        tester.assertVisible("form:content:table:rows:1:cells:2:cell:link:linkImage");
-        tester.assertBookmarkablePageLink("form:content:table:rows:1:cells:2:cell:link", Game.class, "taskId = " + TEST_LEVEL_TASK_3_3_SIMULATED_ID);
-        tester.assertInvisible("form:content:table:rows:1:cells:2:cell:doneImage");
-        tester.assertVisible("form:content:table:rows:2:cells:2:cell:link:linkImage");
-        tester.assertBookmarkablePageLink("form:content:table:rows:2:cells:2:cell:link", Game.class, "taskId = " + TEST_LEVEL_TASK_4_3_SIMULATED_ID);
-        tester.assertInvisible("form:content:table:rows:2:cells:2:cell:doneImage");
-        // Click first level task
-        tester.clickLink("form:content:table:rows:1:cells:2:cell:link");
-        tester.assertRenderedPage(Game.class);
-        tester.debugComponentTrees();
-        // Finish first tutorial
-        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_3_3_SIMULATED_ID);
-        tester.startPage(CmsPage.class);
-        tester.assertRenderedPage(CmsPage.class);
-        tester.assertInvisible("form:content:table:rows:1:cells:2:cell:link");
-        tester.assertVisible("form:content:table:rows:1:cells:2:cell:doneImage");
-        tester.assertVisible("form:content:table:rows:2:cells:2:cell:link:linkImage");
-        tester.assertBookmarkablePageLink("form:content:table:rows:2:cells:2:cell:link", Game.class, "taskId = " + TEST_LEVEL_TASK_4_3_SIMULATED_ID);
-        tester.assertInvisible("form:content:table:rows:2:cells:2:cell:doneImage");
-        // Finish second tutorial
-        userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_4_3_SIMULATED_ID);
-        tester.startPage(CmsPage.class);
-        tester.assertRenderedPage(CmsPage.class);
-        tester.assertInvisible("form:content:table:rows:1:cells:2:cell:link");
-        tester.assertVisible("form:content:table:rows:1:cells:2:cell:doneImage");
-        tester.assertInvisible("form:content:table:rows:2:cells:2:cell:link");
-        tester.assertVisible("form:content:table:rows:2:cells:2:cell:doneImage");
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void testDbContentActivateQuestButton() throws Exception {
-        configureGameMultipleLevel();
-
-        // Add cms image
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        CrudRootServiceHelper<DbCmsImage> crud = cmsService.getImageCrudRootServiceHelper();
-        DbCmsImage startImage = crud.createDbChild();
-        startImage.setData(new byte[50000]);
-        startImage.setContentType("startImage");
-        crud.updateDbChild(startImage);
-        DbCmsImage abortImage = crud.createDbChild();
-        abortImage.setData(new byte[10000]);
-        abortImage.setContentType("abortImage");
-        crud.updateDbChild(abortImage);
-        DbCmsImage blockedImage = crud.createDbChild();
-        blockedImage.setData(new byte[7000]);
-        blockedImage.setContentType("blockedImage");
-        crud.updateDbChild(blockedImage);
-        DbCmsImage doneImage = crud.createDbChild();
-        doneImage.setData(new byte[600]);
-        doneImage.setContentType("doneImage");
-        crud.updateDbChild(doneImage);
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Setup CMS content
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
-        DbPage dbPage = pageCrud.createDbChild();
-        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
-        dbPage.setName("Home");
-        DbContentList taskList = new DbContentList();
-        taskList.init(userService);
-        dbPage.setContentAndAccessWrites(taskList);
-        taskList.setSpringBeanName("userGuidanceService");
-        taskList.setContentProviderGetter("questsCms");
-        DbExpressionProperty dbExpressionProperty = (DbExpressionProperty) taskList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
-        dbExpressionProperty.setExpression("dbLevelTask.name");
-        DbContentActivateQuestButton taskButton = (DbContentActivateQuestButton) taskList.getColumnsCrud().createDbChild(DbContentActivateQuestButton.class);
-        taskButton.setExpression("dbLevelTask");
-        taskButton.setStartImage(startImage);
-        taskButton.setDoneExpression("done");
-        taskButton.setDoneImage(doneImage);
-        taskButton.setActiveExpression("active");
-        taskButton.setAbortImage(abortImage);
-        taskButton.setBlockedExpression("blocked");
-        taskButton.setBlockedImage(blockedImage);
-        pageCrud.updateDbChild(dbPage);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Activate
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        cmsService.activateCms();
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Verify
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
-        userGuidanceService.getDbLevel(); // set level for new user
-        tester.startPage(CmsPage.class);
-        tester.assertRenderedPage(CmsPage.class);
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell", TEST_LEVEL_TASK_1_2_REAL_NAME);
-        tester.assertVisible("form:content:table:rows:1:cells:2:cell:link:linkImage");
-        tester.assertBookmarkablePageLink("form:content:table:rows:1:cells:2:cell:link", CmsPage.class, "activateId = 2");
-        tester.assertInvisible("form:content:table:rows:1:cells:2:cell:image");
-        tester.assertLabel("form:content:table:rows:2:cells:1:cell", TEST_LEVEL_TASK_2_2_REAL_NAME);
-        tester.assertVisible("form:content:table:rows:2:cells:2:cell:link:linkImage");
-        tester.assertBookmarkablePageLink("form:content:table:rows:2:cells:2:cell:link", CmsPage.class, "activateId = 3");
-        tester.assertInvisible("form:content:table:rows:2:cells:2:cell:image");
-        // Activate first task
-        tester.clickLink("form:content:table:rows:1:cells:2:cell:link");
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell", TEST_LEVEL_TASK_1_2_REAL_NAME);
-        tester.assertVisible("form:content:table:rows:1:cells:2:cell:link:linkImage");
-        tester.assertBookmarkablePageLink("form:content:table:rows:1:cells:2:cell:link", CmsPage.class, "deactivateId = 2");
-        tester.assertInvisible("form:content:table:rows:1:cells:2:cell:image");
-        tester.assertLabel("form:content:table:rows:2:cells:1:cell", TEST_LEVEL_TASK_2_2_REAL_NAME);
-        tester.assertInvisible("form:content:table:rows:2:cells:2:cell:link");
-        tester.assertVisible("form:content:table:rows:2:cells:2:cell:image");
-        // Deactivate first task
-        tester.clickLink("form:content:table:rows:1:cells:2:cell:link");
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell", TEST_LEVEL_TASK_1_2_REAL_NAME);
-        tester.assertVisible("form:content:table:rows:1:cells:2:cell:link:linkImage");
-        tester.assertBookmarkablePageLink("form:content:table:rows:1:cells:2:cell:link", CmsPage.class, "activateId = 2");
-        tester.assertInvisible("form:content:table:rows:1:cells:2:cell:image");
-        tester.assertLabel("form:content:table:rows:2:cells:1:cell", TEST_LEVEL_TASK_2_2_REAL_NAME);
-        tester.assertVisible("form:content:table:rows:2:cells:2:cell:link:linkImage");
-        tester.assertBookmarkablePageLink("form:content:table:rows:2:cells:2:cell:link", CmsPage.class, "activateId = 3");
-        tester.assertInvisible("form:content:table:rows:2:cells:2:cell:image");
-        // ActivateFailedException and finish first task
-        tester.clickLink("form:content:table:rows:1:cells:2:cell:link");
-        serverConditionService.onMoneyIncrease(getMyBase(), 4);
-        tester.startPage(CmsPage.class);
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell", TEST_LEVEL_TASK_1_2_REAL_NAME);
-        tester.assertInvisible("form:content:table:rows:1:cells:2:cell:link");
-        tester.assertVisible("form:content:table:rows:1:cells:2:cell:image");
-        tester.assertLabel("form:content:table:rows:2:cells:1:cell", TEST_LEVEL_TASK_2_2_REAL_NAME);
-        tester.assertVisible("form:content:table:rows:2:cells:2:cell:link:linkImage");
-        tester.assertBookmarkablePageLink("form:content:table:rows:2:cells:2:cell:link", CmsPage.class, "activateId = 3");
-        tester.assertInvisible("form:content:table:rows:2:cells:2:cell:image");
-
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

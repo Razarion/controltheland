@@ -2,7 +2,6 @@ package com.btxtech.game.wicket.pages.mgmt.cms;
 
 import com.btxtech.game.services.cms.layout.DbContent;
 import com.btxtech.game.services.cms.layout.DbContentActionButton;
-import com.btxtech.game.services.cms.layout.DbContentActivateQuestButton;
 import com.btxtech.game.services.cms.layout.DbContentBook;
 import com.btxtech.game.services.cms.layout.DbContentBooleanExpressionImage;
 import com.btxtech.game.services.cms.layout.DbContentContainer;
@@ -15,7 +14,6 @@ import com.btxtech.game.services.cms.layout.DbContentList;
 import com.btxtech.game.services.cms.layout.DbContentPageLink;
 import com.btxtech.game.services.cms.layout.DbContentPlugin;
 import com.btxtech.game.services.cms.layout.DbContentSmartPageLink;
-import com.btxtech.game.services.cms.layout.DbContentStartMissionButton;
 import com.btxtech.game.services.cms.layout.DbContentStaticHtml;
 import com.btxtech.game.services.cms.layout.DbExpressionProperty;
 import com.btxtech.game.services.common.HibernateUtil;
@@ -122,22 +120,10 @@ public class ContentEditorFactory {
                 return new ContentInvokerButtonEditor((DbContentInvokerButton) dbContent);
             }
         },
-        START_MISSION_BUTTON(DbContentStartMissionButton.class, "Start Mission Button") {
-            @Override
-            MgmtWebPage createContentEditor(DbContent dbContent) {
-                return new ContentStartMissionButtonEditor((DbContentStartMissionButton) dbContent);
-            }
-        },
         CREATE_EDIT(DbContentCreateEdit.class, "Create Edit Content List Item") {
             @Override
             MgmtWebPage createContentEditor(DbContent dbContent) {
                 return new ContentCreateEditEditor((DbContentCreateEdit) dbContent);
-            }
-        },
-        ACTIVATE_QUEST_BUTTON(DbContentActivateQuestButton.class, "Activate Quest Button") {
-            @Override
-            MgmtWebPage createContentEditor(DbContent dbContent) {
-                return new ContentActivateQuestButtonEditor((DbContentActivateQuestButton) dbContent);
             }
         };
 

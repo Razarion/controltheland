@@ -121,5 +121,4 @@ public class InformationCockpit extends VerticalPanel {
             }
         }, MouseDownEvent.getType());
     }
-
 }

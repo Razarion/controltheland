@@ -15,7 +15,7 @@ package com.btxtech.game.services.base;
 
 import com.btxtech.game.jsre.client.AlreadyUsedException;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
-import com.btxtech.game.jsre.common.Packet;
+import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;

@@ -2,8 +2,8 @@ package com.btxtech.game.services.user;
 
 import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
-import com.btxtech.game.jsre.common.AllianceOfferPacket;
-import com.btxtech.game.jsre.common.BaseChangedPacket;
+import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
+import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.services.AbstractServiceTest;

@@ -1,12 +1,12 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
-import com.btxtech.game.jsre.client.common.ChatMessage;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.common.LevelStatePacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
-import com.btxtech.game.jsre.common.Packet;
+import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
+import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -939,7 +939,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Override
     public void sendPacket(SimpleBase base, Packet packet) {
         this.progressBase = base;
-        this.progressString = ((LevelStatePacket) packet).getActiveQuestProgress();
+        this.progressString = ((LevelTaskPacket) packet).getActiveQuestProgress();
         System.out.println("progressString: " + progressString);
     }
 

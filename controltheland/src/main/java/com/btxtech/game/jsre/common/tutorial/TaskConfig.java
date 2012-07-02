@@ -87,7 +87,7 @@ public class TaskConfig implements Serializable {
     }
 
     public LevelScope createLevelScope(int levelNumber) {
-        return new LevelScope(levelNumber, maxMoney, itemTypeLimitation, houseCount, itemSellFactor, radarMode);
+        return new LevelScope(levelNumber, maxMoney, itemTypeLimitation, houseCount, itemSellFactor, radarMode, 0);
     }
 
     public ConditionConfig getConditionConfig() {

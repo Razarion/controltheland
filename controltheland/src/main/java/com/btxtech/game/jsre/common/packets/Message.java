@@ -11,9 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.client.common;
-
-import com.btxtech.game.jsre.common.Packet;
+package com.btxtech.game.jsre.common.packets;
 
 /**
  * User: beat

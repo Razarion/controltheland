@@ -15,22 +15,24 @@ package com.btxtech.game.services.gwt;
 
 
 import com.btxtech.game.jsre.client.MovableService;
-import com.btxtech.game.jsre.client.common.ChatMessage;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.NoConnectionException;
-import com.btxtech.game.jsre.common.Packet;
+import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
@@ -190,6 +192,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             simulationInfo.setLevelTaskId(levelTaskId);
             simulationInfo.setLevelTaskTitel(userGuidanceService.getDbLevel().getLevelTaskCrud().readDbChild(levelTaskId).getName());
             simulationInfo.setLevelNumber(userGuidanceService.getDbLevel().getNumber());
+            simulationInfo.setSkipAble(userGuidanceService.getDbLevel().getParent().isRealBaseRequired());
             // Terrain
             terrainService.setupTerrainTutorial(simulationInfo, dbTutorialConfig);
             return simulationInfo;
@@ -425,6 +428,25 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         } catch (Throwable t) {
             log.error("", t);
             return 0;
+        }
+    }
+
+    @Override
+    public QuestOverview loadQuestOverview() {
+        try {
+            return userGuidanceService.getQuestOverview();
+        } catch (Throwable t) {
+            log.error("", t);
+            return null;
+        }
+    }
+
+    @Override
+    public void activateQuest(int questId) {
+        try {
+            userGuidanceService.activateQuest(questId);
+        } catch (Throwable t) {
+            log.error("", t);
         }
     }
 }

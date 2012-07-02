@@ -1,10 +1,10 @@
 package com.btxtech.game.jsre.common;
 
-import com.btxtech.game.jsre.client.common.Constants;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootPanel;
 
@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  */
 
 /**
- * This is a very tricky class. Different broswers handle the image loading different
+ * This is a very tricky class. Different browsers handle the image loading different
  */
 public class ImageLoader {
     public interface Listener {
@@ -30,6 +30,7 @@ public class ImageLoader {
     private int loadedImageCount;
     private List<String> urls = new ArrayList<String>();
     private Logger log = Logger.getLogger(ImageLoader.class.getName());
+    private Timer timer;
 
     public static void addImageUrlsAndStart(List<String> urls, Listener listener) {
         ImageLoader imageLoader = new ImageLoader();
@@ -79,6 +80,24 @@ public class ImageLoader {
                 onImageLoaded(imageIndex, image, listener);
             }
         }
+        if (!isLoaded()) {
+            startTimer();
+        }
+    }
+
+    private void startTimer() {
+        if (timer != null) {
+            timer.cancel();
+        }
+        timer = new Timer() {
+
+            @Override
+            public void run() {
+                timer = null;
+                checkProgress();
+            }
+        };
+        timer.schedule(10000);
     }
 
     private void onImageLoaded(int imageIndex, Image image, Listener listener) {
@@ -89,9 +108,32 @@ public class ImageLoader {
         ImageElement imageElement = (ImageElement) image.getElement().cast();
         loadedImages[imageIndex] = imageElement;
         loadedImageCount++;
-        if (listener != null && isLoaded()) {
-            listener.onLoaded(loadedImages);
+        if (isLoaded()) {
+            if (timer != null) {
+                timer.cancel();
+                timer = null;
+            }
+            if (listener != null) {
+                listener.onLoaded(loadedImages);
+            }
         }
     }
 
+    private void checkProgress() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("----- Images still not loaded: ");
+        stringBuilder.append(loadedImageCount);
+        stringBuilder.append("/");
+        stringBuilder.append(loadedImages.length);
+        stringBuilder.append('\n');
+        for (int i = 0, loadedImagesLength = loadedImages.length; i < loadedImagesLength; i++) {
+            ImageElement loadedImage = loadedImages[i];
+            if (loadedImage == null) {
+                stringBuilder.append(urls.get(i));
+                stringBuilder.append('\n');
+            }
+        }
+        log.warning(stringBuilder.toString());
+        startTimer();
+    }
 }

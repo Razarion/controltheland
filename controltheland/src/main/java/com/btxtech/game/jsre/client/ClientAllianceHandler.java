@@ -4,7 +4,7 @@ import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.dialogs.AllianceOfferDialog;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.utg.SpeechBubbleHandler;
-import com.btxtech.game.jsre.common.AllianceOfferPacket;
+import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 
 import java.util.logging.Level;

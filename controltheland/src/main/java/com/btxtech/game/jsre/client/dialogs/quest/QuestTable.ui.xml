@@ -1,0 +1,13 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+    <ui:style>
+
+    </ui:style>
+    <g:VerticalPanel>
+        <g:HTML ui:field="quests"/>
+        <g:HTML ui:field="missions"/>
+        <g:FlexTable ui:field="questTable">
+        </g:FlexTable>
+    </g:VerticalPanel>
+</ui:UiBinder>

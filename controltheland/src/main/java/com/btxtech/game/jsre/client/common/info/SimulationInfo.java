@@ -25,6 +25,7 @@ public class SimulationInfo extends GameInfo {
     private String levelTaskTitel;
     private int levelTaskId;
     private int levelNumber;
+    private boolean isSkipAble;
 
     public void setTutorialConfig(TutorialConfig tutorialConfig) {
         this.tutorialConfig = tutorialConfig;
@@ -56,5 +57,13 @@ public class SimulationInfo extends GameInfo {
 
     public void setLevelTaskTitel(String levelTaskTitel) {
         this.levelTaskTitel = levelTaskTitel;
+    }
+
+    public boolean isSkipAble() {
+        return isSkipAble;
+    }
+
+    public void setSkipAble(boolean skipAble) {
+        isSkipAble = skipAble;
     }
 }

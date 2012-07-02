@@ -30,7 +30,7 @@ public class ContentBookEditor extends MgmtWebPage {
     public ContentBookEditor(DbContentBook dbContentBook) {
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbContentBook> form = new Form<DbContentBook>("form", new CompoundPropertyModel<DbContentBook>(new RuModel<DbContentBook>(dbContentBook, DbContentBook.class) {
+        final Form<DbContentBook> form = new Form<>("form", new CompoundPropertyModel<DbContentBook>(new RuModel<DbContentBook>(dbContentBook, DbContentBook.class) {
             @Override
             protected RuServiceHelper<DbContentBook> getRuServiceHelper() {
                 return ruServiceHelper;

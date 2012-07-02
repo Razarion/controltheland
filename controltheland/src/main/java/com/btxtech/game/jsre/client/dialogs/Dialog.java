@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.dialogs;
 
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -21,6 +22,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
+
+import java.util.List;
 
 /**
  * User: beat
@@ -74,4 +77,6 @@ public abstract class Dialog extends DialogBox {
     }
 
     abstract protected void setupPanel(VerticalPanel dialogVPanel);
+
+
 }

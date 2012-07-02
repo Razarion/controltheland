@@ -18,9 +18,12 @@ import com.btxtech.game.jsre.client.ClientChatHandler;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.cockpit.ChatCockpit;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
+import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
+import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 
 /**
  * User: beat
@@ -35,6 +38,8 @@ public class RunRealGameStartupTask extends AbstractStartupTask {
 
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
+        SideCockpit.getInstance().initRealGame((RealGameInfo) Connection.getInstance().getGameInfo());
+        ClientLevelHandler.getInstance().setLevelTask(((RealGameInfo) Connection.getInstance().getGameInfo()).getLevelTaskPacket());
         Connection.getInstance().startSyncInfoPoll();
         RegisterDialog.showDialogRepeating();
         MapWindow.getInstance().displayVisibleItems();

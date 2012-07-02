@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.client.common.ChatMessage;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

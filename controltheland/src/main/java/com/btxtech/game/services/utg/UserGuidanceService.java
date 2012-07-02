@@ -16,6 +16,8 @@ package com.btxtech.game.services.utg;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
@@ -24,6 +26,7 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.user.UserState;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -62,19 +65,17 @@ public interface UserGuidanceService extends CommonUserGuidanceService {
 
     void onRemoveUserState(UserState userState);
 
-    ContentProvider<LevelQuest> getQuestsCms();
-
-    ContentProvider<LevelQuest> getMercenaryMissionCms();
-
     void restoreBackup(Map<DbUserState, UserState> userStates);
 
     void createAndAddBackup(DbUserState dbUserState, UserState userState);
 
     InvalidLevelState createInvalidLevelState();
 
-    void activateLevelTaskCms(int dbLevelTaskId);
-
-    void deactivateLevelTaskCms(int dbLevelTaskId);
-
     void fillRealGameInfo(RealGameInfo realGameInfo);
+
+    void activateQuest(int dbLevelTaskId);
+
+    QuestOverview getQuestOverview();
+
+    int getXp2LevelUp(UserState userState);
 }

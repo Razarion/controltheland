@@ -1,13 +1,13 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Message;
-import com.btxtech.game.jsre.common.BaseChangedPacket;
-import com.btxtech.game.jsre.common.LevelStatePacket;
+import com.btxtech.game.jsre.common.packets.Message;
+import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.packets.XpPacket;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.user.UserService;
@@ -121,11 +121,12 @@ public class TestResurrection extends AbstractServiceTest {
         BaseChangedPacket baseChangedPacket = new BaseChangedPacket();
         baseChangedPacket.setType(BaseChangedPacket.Type.REMOVED);
         baseChangedPacket.setBaseAttributes(new BaseAttributes(targetBase, targetName, false));
-        LevelStatePacket levelStatePacket = new LevelStatePacket();
-        levelStatePacket.setXp(3);
+        XpPacket xpPacket = new XpPacket();
+        xpPacket.setXp(3);
+        xpPacket.setXp2LevelUp(Integer.MAX_VALUE);
         Thread.sleep(3000);
 
-        assertPackagesIgnoreSyncItemInfoAndClear(message, baseChangedPacket, levelStatePacket);
+        assertPackagesIgnoreSyncItemInfoAndClear(message, baseChangedPacket, xpPacket);
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
