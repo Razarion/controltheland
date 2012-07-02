@@ -287,7 +287,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(0).getDate());
         waitForActionServiceDone();
-        // TODO failed on: 21.06.2012
+        // TODO failed on: 21.06.2012, 03.07.2012
         waitForBotToBuildup(botConfig);
         Assert.assertEquals(1, baseService.getBases().size());
         Assert.assertEquals(4, baseService.getBases().get(0).getItems().size());
