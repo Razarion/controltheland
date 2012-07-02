@@ -98,7 +98,7 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
     }
 
     @Override
-    public void deactivateActorConditions(A a, I i) {
+    public void deactivateActorCondition(A a, I i) {
         AbstractConditionTrigger<A, I> abstractConditionTrigger = removeActorConditionsPrivate(a, i);
         if (abstractConditionTrigger != null) {
             handleTimerRemoval(abstractConditionTrigger);
@@ -217,7 +217,7 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
     }
 
     private void conditionPassed(AbstractConditionTrigger<A, I> abstractConditionTrigger) {
-        deactivateActorConditions(abstractConditionTrigger.getActor(), abstractConditionTrigger.getIdentifier());
+        deactivateActorCondition(abstractConditionTrigger.getActor(), abstractConditionTrigger.getIdentifier());
         if (conditionServiceListener != null) {
             conditionServiceListener.conditionPassed(abstractConditionTrigger.getActor(), abstractConditionTrigger.getIdentifier());
         }

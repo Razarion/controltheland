@@ -14,7 +14,7 @@
 package com.btxtech.game.jsre.playback;
 
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;

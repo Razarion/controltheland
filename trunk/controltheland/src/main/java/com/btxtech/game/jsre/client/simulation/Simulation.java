@@ -18,7 +18,6 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ParametrisedRunnable;
 import com.btxtech.game.jsre.client.bot.ClientBotService;
-import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupScreen;
@@ -28,7 +27,6 @@ import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.utg.tip.TipManager;
-import com.btxtech.game.jsre.common.LevelStatePacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
@@ -83,12 +81,7 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
     }
 
     private void processPreparation(TaskConfig taskConfig) {
-        LevelStatePacket levelStatePacket = new LevelStatePacket();
-        levelStatePacket.setActiveQuestLevelTaskId(simulationInfo.getLevelTaskId());
-        levelStatePacket.setActiveQuestTitle(simulationInfo.getLevelTaskTitel());
-        levelStatePacket.setLevel(taskConfig.createLevelScope(simulationInfo.getLevelNumber()));
-        ClientLevelHandler.getInstance().setLevelScope(levelStatePacket);
-        SideCockpit.getInstance().updateItemLimit();
+        ClientLevelHandler.getInstance().setLevel(taskConfig.createLevelScope(simulationInfo.getLevelNumber()));
 
         if (taskConfig.hasBots()) {
             ClientBotService.getInstance().setBotConfigs(taskConfig.getBotConfigs());

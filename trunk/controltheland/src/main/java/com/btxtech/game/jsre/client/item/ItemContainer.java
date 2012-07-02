@@ -45,7 +45,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.google.gwt.user.client.Timer;
 

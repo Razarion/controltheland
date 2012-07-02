@@ -23,7 +23,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemContainerType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 
 import java.util.ArrayList;
 import java.util.Collection;

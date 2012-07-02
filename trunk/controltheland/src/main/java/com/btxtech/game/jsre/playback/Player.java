@@ -19,7 +19,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;

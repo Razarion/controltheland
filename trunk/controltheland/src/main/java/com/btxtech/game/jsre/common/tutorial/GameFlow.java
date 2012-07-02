@@ -10,8 +10,7 @@ import java.io.Serializable;
 public class GameFlow implements Serializable {
     public enum Type {
         START_NEXT_LEVEL_TASK_TUTORIAL,
-        START_REAL_GAME,
-        SHOW_LEVEL_TASK_DONE_PAGE
+        START_REAL_GAME
     }
 
     private Type type;

@@ -13,17 +13,19 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.common.ChatMessage;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
-import com.btxtech.game.jsre.common.Packet;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
+import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
@@ -103,4 +105,8 @@ public interface MovableServiceAsync {
     void buyInventoryArtifact(int inventoryArtifactId, AsyncCallback<Integer> asyncCallback);
 
     void loadRazarion(AsyncCallback<Integer> asyncCallback);
+
+    void loadQuestOverview(AsyncCallback<QuestOverview> async);
+
+    void activateQuest(int questId, AsyncCallback<Void> async);
 }

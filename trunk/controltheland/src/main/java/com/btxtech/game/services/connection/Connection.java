@@ -13,10 +13,9 @@
 
 package com.btxtech.game.services.connection;
 
-import com.btxtech.game.jsre.common.LevelStatePacket;
-import com.btxtech.game.jsre.common.Packet;
+import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.services.base.Base;
 
 import java.io.Serializable;
@@ -81,15 +80,6 @@ public class Connection implements Serializable {
 
     public void sendPacket(Packet packet) {
         synchronized (pendingPackets) {
-            if (packet instanceof LevelStatePacket) {
-                for (Packet previous : pendingPackets) {
-                    if (previous instanceof LevelStatePacket) {
-                        pendingPackets.remove(previous);
-                        ((LevelStatePacket) packet).merge((LevelStatePacket) previous);
-                        break;
-                    }
-                }
-            }
             pendingPackets.add(packet);
         }
     }

@@ -23,7 +23,7 @@ import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.PathToDestinationCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.PickupBoxCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 
 import java.util.List;
 

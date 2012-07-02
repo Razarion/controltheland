@@ -50,11 +50,8 @@ public class DbUserState {
             joinColumns = {@JoinColumn(name = "userState")},
             inverseJoinColumns = {@JoinColumn(name = "levelTask")})
     private Collection<DbLevelTask> levelTasksDone;
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "BACKUP_USER_STATUS_LEVEL_TASK_ACTIVE",
-            joinColumns = {@JoinColumn(name = "userState")},
-            inverseJoinColumns = {@JoinColumn(name = "levelTask")})
-    private Collection<DbLevelTask> levelTasksActive;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbLevelTask activeQuest;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "dbUserState")
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
@@ -104,10 +101,10 @@ public class DbUserState {
             userState.setDbLevelId(currentLevel.getId());
         }
         for (DbInventoryItem inventoryItem : inventoryItems) {
-            userState.addInventoryItem((Integer) inventoryItem.getId());
+            userState.addInventoryItem(inventoryItem.getId());
         }
         for (DbInventoryArtifact inventoryArtifact : inventoryArtifacts) {
-            userState.addInventoryArtifact((Integer) inventoryArtifact.getId());
+            userState.addInventoryArtifact(inventoryArtifact.getId());
         }
         return userState;
     }
@@ -139,12 +136,12 @@ public class DbUserState {
         this.levelTasksDone = levelTasksDone;
     }
 
-    public Collection<DbLevelTask> getLevelTasksActive() {
-        return levelTasksActive;
+    public DbLevelTask getActiveQuest() {
+        return activeQuest;
     }
 
-    public void setLevelTasksActive(Collection<DbLevelTask> levelTasksActive) {
-        this.levelTasksActive = levelTasksActive;
+    public void setActiveQuest(DbLevelTask activeQuest) {
+        this.activeQuest = activeQuest;
     }
 
     public StatisticsEntry getStatisticsEntry() {

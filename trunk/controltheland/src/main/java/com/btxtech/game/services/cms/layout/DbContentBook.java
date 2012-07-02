@@ -91,14 +91,14 @@ public class DbContentBook extends DbContent implements DataProviderInfo, CrudPa
 
     public CrudListChildServiceHelper<DbContentRow> getRowCrud() {
         if (rowCrud == null) {
-            rowCrud = new CrudListChildServiceHelper<DbContentRow>(dbContentRows, DbContentRow.class, this);
+            rowCrud = new CrudListChildServiceHelper<>(dbContentRows, DbContentRow.class, this);
         }
         return rowCrud;
     }
 
     @Override
     public void init(UserService userService) {
-        dbContentRows = new ArrayList<DbContentRow>();
+        dbContentRows = new ArrayList<>();
     }
 
     public boolean isNavigationVisible() {

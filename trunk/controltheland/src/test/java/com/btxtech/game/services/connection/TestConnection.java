@@ -1,12 +1,12 @@
 package com.btxtech.game.services.connection;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.AccountBalancePacket;
-import com.btxtech.game.jsre.common.Packet;
+import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
+import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.item.ItemService;

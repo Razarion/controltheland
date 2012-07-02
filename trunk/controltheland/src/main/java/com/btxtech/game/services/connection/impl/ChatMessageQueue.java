@@ -1,6 +1,6 @@
 package com.btxtech.game.services.connection.impl;
 
-import com.btxtech.game.jsre.client.common.ChatMessage;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

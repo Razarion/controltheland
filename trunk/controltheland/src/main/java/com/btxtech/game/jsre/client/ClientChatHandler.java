@@ -1,7 +1,7 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.ChatListener;
-import com.btxtech.game.jsre.client.common.ChatMessage;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.google.gwt.user.client.Timer;
 
 import java.util.List;

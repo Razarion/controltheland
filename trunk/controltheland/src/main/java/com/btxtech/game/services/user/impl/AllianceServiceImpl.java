@@ -1,7 +1,7 @@
 package com.btxtech.game.services.user.impl;
 
-import com.btxtech.game.jsre.client.common.Message;
-import com.btxtech.game.jsre.common.AllianceOfferPacket;
+import com.btxtech.game.jsre.common.packets.Message;
+import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.HibernateUtil;

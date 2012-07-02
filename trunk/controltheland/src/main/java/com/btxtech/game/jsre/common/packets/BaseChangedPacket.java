@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common;
+package com.btxtech.game.jsre.common.packets;
 
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 

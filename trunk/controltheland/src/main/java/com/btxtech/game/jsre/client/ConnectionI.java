@@ -1,6 +1,6 @@
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.common.ChatMessage;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
 
 /**
  * User: beat

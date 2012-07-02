@@ -14,12 +14,16 @@
 package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.client.common.LevelScope;
-import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
-import com.btxtech.game.jsre.common.LevelStatePacket;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.Territory;
+import com.btxtech.game.jsre.common.packets.LevelPacket;
+import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
+import com.btxtech.game.jsre.common.packets.Message;
+import com.btxtech.game.jsre.common.packets.XpPacket;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
@@ -27,11 +31,8 @@ import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.CountComparisonConfig;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
-import com.btxtech.game.services.common.NoSuchChildException;
-import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ItemService;
@@ -43,7 +44,6 @@ import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.DbQuestHub;
 import com.btxtech.game.services.utg.LevelActivationException;
-import com.btxtech.game.services.utg.LevelQuest;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.XpService;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
@@ -89,7 +89,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
     private Map<Integer, LevelScope> levelScopes = new HashMap<>();
     private final Map<UserState, Collection<Integer>> levelTaskDone = new HashMap<>();
-    private final Map<UserState, Collection<Integer>> levelTaskActive = new HashMap<>();
+    private final Map<UserState, Integer> activeQuestIds = new HashMap<>();
 
     @PostConstruct
     public void init() {
@@ -148,6 +148,20 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         // Tracking
         historyService.addLevelPromotionEntry(userState, dbNextLevel);
         log.debug("User: " + userState + " has been promoted: " + dbOldLevel + " to " + dbNextLevel);
+
+        if (baseService.getBase(userState) != null) {
+            Base base = baseService.getBase(userState);
+            // Send XP
+            XpPacket xpPacket = new XpPacket();
+            xpPacket.setXp(0);
+            xpPacket.setXp2LevelUp(dbNextLevel.getXp());
+            connectionService.sendPacket(base.getSimpleBase(), xpPacket);
+            // Level
+            LevelPacket levelPacket = new LevelPacket();
+            levelPacket.setLevel(getLevelScope(dbNextLevel.getId()));
+            connectionService.sendPacket(base.getSimpleBase(), levelPacket);
+        }
+
         // Create base if needed
         if (baseService.getBase(userState) == null && dbNextLevel.getParent().isRealBaseRequired()) {
             try {
@@ -158,21 +172,46 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         }
         // Prepare next level
         activateConditions4Level(userState, dbNextLevel);
-        // Send level update packet
-        if (baseService.getBase(userState) != null) {
-            Base base = baseService.getBase(userState);
-            LevelStatePacket levelPacket = new LevelStatePacket();
-            levelPacket.setLevel(getLevelScope(dbNextLevel.getId()));
-            levelPacket.setXp(0);
-            levelPacket.setXp2LevelUp(dbNextLevel.getXp());
-            levelPacket.setQuestsDone(0);
-            levelPacket.setTotalQuests(dbNextLevel.getQuestCount());
-            levelPacket.setMissionsDone(0);
-            levelPacket.setTotalMissions(dbNextLevel.getMissionCount());
-            connectionService.sendPacket(base.getSimpleBase(), levelPacket);
-        }
         // Post processing
         userState.setXp(0);
+        activateNextUnDoneLevelTask(userState, null);
+    }
+
+    private void activateNextUnDoneLevelTask(UserState userState, DbLevelTask oldLevelTaskId) {
+        DbLevelTask dbLevelTask = getNextUnDoneLevelTask(userState, oldLevelTaskId);
+        if (dbLevelTask == null) {
+            return;
+        }
+        activateQuest(userState, dbLevelTask);
+    }
+
+    private DbLevelTask getNextUnDoneLevelTask(UserState userState, DbLevelTask oldLevelTask) {
+        DbLevel dbLevel = getDbLevel(userState);
+        Collection<Integer> levelTaskDone = this.levelTaskDone.get(userState);
+        List<DbLevelTask> dbLevelTasks = dbLevel.getLevelTaskCrud().readDbChildren();
+        if (oldLevelTask != null) {
+            int index = dbLevelTasks.indexOf(oldLevelTask);
+            if (index < 0) {
+                throw new IllegalArgumentException("Unknown level task: " + oldLevelTask);
+            }
+            if (index + 1 < dbLevelTasks.size()) {
+                for (DbLevelTask dbLevelTask : dbLevelTasks.subList(index + 1, dbLevelTasks.size())) {
+                    if (levelTaskDone != null && levelTaskDone.contains(dbLevelTask.getId())) {
+                        continue;
+                    }
+                    return dbLevelTask;
+                }
+            }
+            return getNextUnDoneLevelTask(userState, null);
+        } else {
+            for (DbLevelTask dbLevelTask : dbLevelTasks) {
+                if (levelTaskDone != null && levelTaskDone.contains(dbLevelTask.getId())) {
+                    continue;
+                }
+                return dbLevelTask;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -201,30 +240,21 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
 
     @Override
     public GameFlow onTutorialFinished(int levelTaskId) {
-        DbLevel oldLevel = getDbLevel();
         UserState userState = userService.getUserState();
         serverConditionService.onTutorialFinished(userState, levelTaskId);
         DbLevel newLevel = getDbLevel();
 
-        if (!oldLevel.getParent().isRealBaseRequired() && newLevel.getParent().isRealBaseRequired()) {
+        if (newLevel.getParent().isRealBaseRequired()) {
             return new GameFlow(GameFlow.Type.START_REAL_GAME, null);
-        } else if (!newLevel.getParent().isRealBaseRequired()) {
+        } else {
             DbLevelTask dbLevelTask = newLevel.getFirstTutorialLevelTask();
             return new GameFlow(GameFlow.Type.START_NEXT_LEVEL_TASK_TUTORIAL, dbLevelTask.getId());
-        } else {
-            return new GameFlow(GameFlow.Type.SHOW_LEVEL_TASK_DONE_PAGE, null);
         }
     }
 
     private void activateConditions4Level(UserState userState, DbLevel dbLevel) {
         ConditionConfig levelCondition = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(null, dbLevel.getXp(), null));
         serverConditionService.activateCondition(levelCondition, userState, null);
-        for (DbLevelTask dbLevelTask : dbLevel.getLevelTaskCrud().readDbChildren()) {
-            if (dbLevelTask.getDbTutorialConfig() != null && (!levelTaskDone.containsKey(userState) || levelTaskDone.get(userState).contains(dbLevelTask.getId()))) {
-                serverConditionService.activateCondition(dbLevelTask.createConditionConfig(itemService), userState, dbLevelTask.getId());
-                addLevelTaskActive(userState, dbLevelTask);
-            }
-        }
     }
 
     private void cleanupConditions(UserState userState) {
@@ -232,8 +262,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         synchronized (levelTaskDone) {
             levelTaskDone.remove(userState);
         }
-        synchronized (levelTaskActive) {
-            levelTaskActive.remove(userState);
+        synchronized (activeQuestIds) {
+            activeQuestIds.remove(userState);
         }
     }
 
@@ -242,17 +272,17 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         synchronized (levelTaskDone) {
             addLevelTaskDone(userState, dbLevelTask);
         }
-        removeLevelTaskActive(userState, dbLevelTask);
+        removeActiveQuest(userState, dbLevelTask);
 
+        DbLevel oldLevel = getDbLevel(userState);
         // Communication
         log.debug("Level Task completed. userState: " + userState + " " + dbLevelTask);
         historyService.addLevelTaskCompletedEntry(userState, dbLevelTask);
         Base base = baseService.getBase(userState);
         if (base != null) {
-            LevelStatePacket levelPacket = new LevelStatePacket();
-            addMissionQuestCount(levelPacket, userState, dbLevelTask.getParent());
-            levelPacket.setMissionQuestCompleted(true);
-            connectionService.sendPacket(base.getSimpleBase(), levelPacket);
+            LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
+            levelTaskPacket.setCompleted();
+            connectionService.sendPacket(base.getSimpleBase(), levelTaskPacket);
         }
         // Rewards
         if (dbLevelTask.getXp() > 0) {
@@ -262,27 +292,11 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
             baseService.depositResource(dbLevelTask.getMoney(), base.getSimpleBase());
             baseService.sendAccountBaseUpdate(base.getSimpleBase());
         }
-    }
 
-    private void addMissionQuestCount(LevelStatePacket levelPacket, UserState userState, DbLevel dbLevel) {
-        int missionCount = 0;
-        int questCount = 0;
-        synchronized (levelTaskDone) {
-            Collection<Integer> levelTaskIds = levelTaskDone.get(userState);
-            if (levelTaskIds != null) {
-                for (Integer taskDoneId : levelTaskIds) {
-                    if (dbLevel.getLevelTaskCrud().readDbChild(taskDoneId).getDbTutorialConfig() != null) {
-                        missionCount++;
-                    } else {
-                        questCount++;
-                    }
-                }
-            }
+        // Activate next quest / mission
+        if (oldLevel.equals(getDbLevel(userState))) {
+            activateNextUnDoneLevelTask(userState, dbLevelTask);
         }
-        levelPacket.setQuestsDone(questCount);
-        levelPacket.setTotalQuests(dbLevel.getQuestCount());
-        levelPacket.setMissionsDone(missionCount);
-        levelPacket.setTotalMissions(dbLevel.getMissionCount());
     }
 
     private void addLevelTaskDone(UserState userState, DbLevelTask dbLevelTask) {
@@ -294,27 +308,20 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         tasks.add(dbLevelTask.getId());
     }
 
-    private void addLevelTaskActive(UserState userState, DbLevelTask dbLevelTask) {
-        synchronized (levelTaskActive) {
-            Collection<Integer> tasks = levelTaskActive.get(userState);
-            if (tasks == null) {
-                tasks = new ArrayList<>();
-                levelTaskActive.put(userState, tasks);
-            }
-            tasks.add(dbLevelTask.getId());
+    private void setActiveQuest(UserState userState, DbLevelTask dbLevelTask) {
+        synchronized (activeQuestIds) {
+            activeQuestIds.put(userState, dbLevelTask.getId());
         }
     }
 
-    private void removeLevelTaskActive(UserState userState, DbLevelTask dbLevelTask) {
-        synchronized (levelTaskActive) {
-            Collection<Integer> tasks = levelTaskActive.get(userState);
-            if (tasks == null) {
-                log.warn("Level task was not on the active list " + dbLevelTask + " userState: " + userState);
-                return;
+    private void removeActiveQuest(UserState userState, DbLevelTask dbLevelTask) {
+        synchronized (activeQuestIds) {
+            Integer taskId = activeQuestIds.remove(userState);
+            if (taskId == null) {
+                throw new IllegalArgumentException("DbLevelTask was not active before: " + dbLevelTask + " userState: " + userState);
             }
-            tasks.remove(dbLevelTask.getId());
-            if (tasks.isEmpty()) {
-                levelTaskActive.remove(userState);
+            if ((int) taskId != dbLevelTask.getId()) {
+                throw new IllegalArgumentException("DbLevelTask was not active before: " + dbLevelTask + " userState: " + userState + ". Active level task id: " + taskId);
             }
         }
     }
@@ -328,6 +335,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     public void setLevelForNewUser(UserState userState) {
         DbLevel dbLevel = new ArrayList<>(crudQuestHub.readDbChildren()).get(0).getLevelCrud().readDbChildren().get(0);
         userState.setDbLevelId(dbLevel.getId());
+        activateNextUnDoneLevelTask(userState, null);
         activateConditions4Level(userState, dbLevel);
     }
 
@@ -435,42 +443,38 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     }
 
     @Override
-    public ContentProvider<LevelQuest> getQuestsCms() {
-        List<LevelQuest> levelQuests = new ArrayList<>();
+    public QuestOverview getQuestOverview() {
+        List<QuestInfo> levelQuests = new ArrayList<>();
         UserState userState = userService.getUserState();
-        DbLevelTask activeTask = null;
-        Collection<Integer> activeTaskIds = levelTaskActive.get(userState);
-        if (activeTaskIds != null)
-            for (DbLevelTask dbLevelTask : getDbLevel().getLevelTaskCrud().readDbChildren()) {
-                if (dbLevelTask.getDbTutorialConfig() == null && activeTaskIds.contains(dbLevelTask.getId())) {
-                    activeTask = dbLevelTask;
+        Collection<Integer> userLevelTaskDone = levelTaskDone.get(userState);
+        int questsDone = 0;
+        int totalQuests = 0;
+        int missionsDone = 0;
+        int totalMissions = 0;
+        for (DbLevelTask dbLevelTask : getDbLevel().getLevelTaskCrud().readDbChildren()) {
+            if (dbLevelTask.isDbTutorialConfig()) {
+                totalMissions++;
+            } else {
+                totalQuests++;
+            }
+            QuestInfo questInfo = dbLevelTask.createQuestInfo();
+            if (userLevelTaskDone == null || !userLevelTaskDone.contains(dbLevelTask.getId())) {
+                levelQuests.add(questInfo);
+            } else {
+                if (dbLevelTask.isDbTutorialConfig()) {
+                    missionsDone++;
+                } else {
+                    questsDone++;
                 }
             }
-
-        Collection<Integer> userLevelTaskDone = levelTaskDone.get(userState);
-        for (DbLevelTask dbLevelTask : getDbLevel().getLevelTaskCrud().readDbChildren()) {
-            if (dbLevelTask.getDbTutorialConfig() == null) {
-                levelQuests.add(new LevelQuest(dbLevelTask,
-                        userLevelTaskDone != null && userLevelTaskDone.contains(dbLevelTask.getId()),
-                        activeTask != null && dbLevelTask.equals(activeTask),
-                        activeTask != null && !dbLevelTask.equals(activeTask)));
-            }
         }
-
-        return new ReadonlyListContentProvider<>(levelQuests);
-    }
-
-    @Override
-    public ContentProvider<LevelQuest> getMercenaryMissionCms() {
-        List<LevelQuest> levelQuests = new ArrayList<>();
-        UserState userState = userService.getUserState();
-        Collection<Integer> userLevelTaskDone = levelTaskDone.get(userState);
-        for (DbLevelTask dbLevelTask : getDbLevel().getLevelTaskCrud().readDbChildren()) {
-            if (dbLevelTask.getDbTutorialConfig() != null) {
-                levelQuests.add(new LevelQuest(dbLevelTask, userLevelTaskDone != null && userLevelTaskDone.contains(dbLevelTask.getId()), false, false));
-            }
-        }
-        return new ReadonlyListContentProvider<>(levelQuests);
+        QuestOverview questOverview = new QuestOverview();
+        questOverview.setQuestInfos(levelQuests);
+        questOverview.setQuestsDone(questsDone);
+        questOverview.setTotalQuests(totalQuests);
+        questOverview.setMissionsDone(missionsDone);
+        questOverview.setTotalMissions(totalMissions);
+        return questOverview;
     }
 
     @Override
@@ -486,28 +490,25 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
             }
         }
         dbUserState.setLevelTasksDone(tasksDone);
-        Collection<DbLevelTask> tasksActive = new ArrayList<>();
-        synchronized (levelTaskActive) {
-            Collection<Integer> taskIds = levelTaskActive.get(userState);
-            if (taskIds != null) {
-                for (Integer taskId : taskIds) {
-                    tasksActive.add(dbLevel.getLevelTaskCrud().readDbChild(taskId));
-                }
-            }
+        Integer taskId;
+        synchronized (activeQuestIds) {
+            taskId = activeQuestIds.get(userState);
         }
-        dbUserState.setLevelTasksActive(tasksActive);
+        if (taskId != null) {
+            dbUserState.setActiveQuest(dbLevel.getLevelTaskCrud().readDbChild(taskId));
+        }
         serverConditionService.createBackup(dbUserState, userState);
     }
 
     @Override
     public void restoreBackup(Map<DbUserState, UserState> userStates) {
         serverConditionService.deactivateAll();
-        synchronized (levelTaskActive) {
-            levelTaskActive.clear();
+        synchronized (activeQuestIds) {
+            activeQuestIds.clear();
         }
         synchronized (levelTaskDone) {
             levelTaskDone.clear();
-            levelTaskActive.clear();
+            activeQuestIds.clear();
             for (Map.Entry<DbUserState, UserState> entry : userStates.entrySet()) {
                 try {
                     if (entry.getKey().getLevelTasksDone() != null) {
@@ -515,7 +516,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
                             addLevelTaskDone(entry.getValue(), taskDone);
                         }
                     }
-                    activateConditionsRestore(entry.getValue(), getDbLevel(entry.getValue()), entry.getKey().getLevelTasksActive());
+                    activateConditionsRestore(entry.getValue(), getDbLevel(entry.getValue()), entry.getKey().getActiveQuest());
                     serverConditionService.restoreBackup(entry.getKey(), entry.getValue());
                 } catch (Exception e) {
                     log.error("Can not restore user: " + entry.getValue().getUser(), e);
@@ -524,15 +525,13 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         }
     }
 
-    private void activateConditionsRestore(UserState userState, DbLevel dbLevel, Collection<DbLevelTask> levelTasksActive) {
+    private void activateConditionsRestore(UserState userState, DbLevel dbLevel, DbLevelTask activeQuest) {
         ConditionConfig levelCondition = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(null, dbLevel.getXp(), null));
         serverConditionService.activateCondition(levelCondition, userState, null);
 
-        if (levelTasksActive != null) {
-            for (DbLevelTask dbLevelTask : levelTasksActive) {
-                serverConditionService.activateCondition(dbLevelTask.createConditionConfig(itemService), userState, dbLevelTask.getId());
-                addLevelTaskActive(userState, dbLevelTask);
-            }
+        if (activeQuest != null) {
+            serverConditionService.activateCondition(activeQuest.createConditionConfig(itemService), userState, activeQuest.getId());
+            setActiveQuest(userState, activeQuest);
         }
     }
 
@@ -547,93 +546,85 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     }
 
     @Override
-    public void activateLevelTaskCms(int dbLevelTaskId) {
-        DbLevel dbLevel = getDbLevel();
-        DbLevelTask dbLevelTask;
-        try {
-            dbLevelTask = dbLevel.getLevelTaskCrud().readDbChild(dbLevelTaskId);
-        } catch (NoSuchChildException e) {
-            // It is may possible, that an old window from the previous level is still open or it's a crawler
-            return;
-        }
-        if (dbLevelTask.getDbTutorialConfig() != null) {
-            return;
-        }
+    public void activateQuest(int dbLevelTaskId) {
         UserState userState = userService.getUserState();
+        DbLevelTask dbLevelTask = getDbLevel().getLevelTaskCrud().readDbChild(dbLevelTaskId);
         if (levelTaskDone.containsKey(userState) && levelTaskDone.get(userState).contains(dbLevelTaskId)) {
-            return;
+            throw new IllegalArgumentException("DbLevelTask already done: " + dbLevelTask);
         }
-        if (levelTaskActive.containsKey(userState) && levelTaskActive.get(userState).contains(dbLevelTaskId)) {
-            return;
+
+        Integer activeQuestId = activeQuestIds.get(userService.getUserState());
+        // Deactivate old quest level task
+        if (activeQuestId != null) {
+            if (activeQuestId == dbLevelTaskId) {
+                // Do not activate same quest again
+                return;
+            }
+            deactivateLevelTask(getDbLevel().getLevelTaskCrud().readDbChild(activeQuestId));
         }
-        serverConditionService.activateCondition(dbLevelTask.createConditionConfig(itemService), userState, dbLevelTaskId);
-        addLevelTaskActive(userState, dbLevelTask);
+        activateQuest(userState, dbLevelTask);
+    }
+
+    private void activateQuest(UserState userState, DbLevelTask dbLevelTask) {
+        if (levelTaskDone.containsKey(userState) && levelTaskDone.get(userState).contains(dbLevelTask.getId())) {
+            throw new IllegalArgumentException("DbLevelTask already done: " + dbLevelTask);
+        }
+        if (activeQuestIds.containsKey(userState)) {
+            throw new IllegalArgumentException("DbLevelTask already activated: " + activeQuestIds.containsKey(userState) + ". Can not activate new level task: " + dbLevelTask);
+        }
+        serverConditionService.activateCondition(dbLevelTask.createConditionConfig(itemService), userState, dbLevelTask.getId());
+        setActiveQuest(userState, dbLevelTask);
         historyService.addLevelTaskActivated(userState, dbLevelTask);
         if (baseService.getBase(userState) != null) {
             Base base = baseService.getBase(userState);
-            LevelStatePacket levelPacket = new LevelStatePacket();
-            levelPacket.setActiveQuestLevelTaskId(dbLevelTask.getId());
-            levelPacket.setActiveQuestTitle(dbLevelTask.getName());
-            levelPacket.setActiveQuestProgress(serverConditionService.getProgressHtml(userState, dbLevelTaskId));
-            connectionService.sendPacket(base.getSimpleBase(), levelPacket);
+            LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
+            levelTaskPacket.setQuestInfo(dbLevelTask.createQuestInfo());
+            if (!dbLevelTask.isDbTutorialConfig()) {
+                levelTaskPacket.setActiveQuestProgress(serverConditionService.getProgressHtml(userState, dbLevelTask.getId()));
+            }
+            connectionService.sendPacket(base.getSimpleBase(), levelTaskPacket);
         }
     }
 
-    @Override
-    public void deactivateLevelTaskCms(int dbLevelTaskId) {
-        DbLevel dbLevel = getDbLevel();
-        DbLevelTask dbLevelTask;
-        try {
-            dbLevelTask = dbLevel.getLevelTaskCrud().readDbChild(dbLevelTaskId);
-        } catch (NoSuchChildException e) {
-            // It is may possible, that an old window from the previous level is still open or it's a crawler
-            return;
-        }
-        if (dbLevelTask.getDbTutorialConfig() != null) {
-            return;
-        }
+    private void deactivateLevelTask(DbLevelTask dbLevelTask) {
         UserState userState = userService.getUserState();
-        if (levelTaskDone.containsKey(userState) && levelTaskDone.get(userState).contains(dbLevelTaskId)) {
-            return;
+        if (levelTaskDone.containsKey(userState) && levelTaskDone.get(userState).contains(dbLevelTask.getId())) {
+            throw new IllegalArgumentException("DbLevelTask already done: " + dbLevelTask);
         }
-        if (!levelTaskActive.containsKey(userState) || !levelTaskActive.get(userState).contains(dbLevelTaskId)) {
-            return;
+        if (!activeQuestIds.containsKey(userState) || activeQuestIds.get(userState) != (int) dbLevelTask.getId()) {
+            throw new IllegalArgumentException("DbLevelTask was not active: " + dbLevelTask + ". Active level task id: " + activeQuestIds.containsKey(userState));
         }
-        serverConditionService.deactivateActorConditions(userState, dbLevelTaskId);
-        removeLevelTaskActive(userState, dbLevelTask);
+        serverConditionService.deactivateActorCondition(userState, dbLevelTask.getId());
+        removeActiveQuest(userState, dbLevelTask);
         historyService.addLevelTaskDeactivated(userState, dbLevelTask);
-        if (baseService.getBase(userState) != null) {
-            Base base = baseService.getBase(userState);
-            LevelStatePacket levelPacket = new LevelStatePacket();
-            levelPacket.setQuestDeactivated(true);
-            connectionService.sendPacket(base.getSimpleBase(), levelPacket);
-        }
     }
 
     @Override
     public void fillRealGameInfo(RealGameInfo realGameInfo) {
         DbLevel dbLevel = getDbLevel();
         UserState userState = userService.getUserState();
-        LevelStatePacket levelStatePacket = new LevelStatePacket();
-        levelStatePacket.setXp(userState.getXp());
-        levelStatePacket.setXp2LevelUp(dbLevel.getXp());
-        DbLevelTask activeTask = getActiveQuestTask(userState, dbLevel);
-        if (activeTask != null) {
-            levelStatePacket.setActiveQuestLevelTaskId(activeTask.getId());
-            levelStatePacket.setActiveQuestTitle(activeTask.getName());
-            levelStatePacket.setActiveQuestProgress(serverConditionService.getProgressHtml(userState, activeTask.getId()));
+        // Level task
+        Integer activeLevelTaskId = activeQuestIds.get(userState);
+        if (activeLevelTaskId != null) {
+            DbLevelTask activeTask = dbLevel.getLevelTaskCrud().readDbChild(activeLevelTaskId);
+            LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
+            levelTaskPacket.setQuestInfo(activeTask.createQuestInfo());
+            if (!activeTask.isDbTutorialConfig()) {
+                levelTaskPacket.setActiveQuestProgress(serverConditionService.getProgressHtml(userState, activeTask.getId()));
+            }
+            realGameInfo.setLevelTaskPacket(levelTaskPacket);
         }
-        addMissionQuestCount(levelStatePacket, userState, dbLevel);
-        levelStatePacket.setLevel(getLevelScope());
-        realGameInfo.setLevelStatePacket(levelStatePacket);
+        // Xp
+        XpPacket xpPacket = new XpPacket();
+        xpPacket.setXp(userState.getXp());
+        xpPacket.setXp2LevelUp(dbLevel.getXp());
+        realGameInfo.setXpPacket(xpPacket);
+        // Level
+        realGameInfo.setLevel(getLevelScope());
     }
 
-    private DbLevelTask getActiveQuestTask(UserState userState, DbLevel dbLevel) {
-        for (DbLevelTask dbLevelTask : dbLevel.getLevelTaskCrud().readDbChildren()) {
-            if (dbLevelTask.getDbTutorialConfig() == null && serverConditionService.hasConditionTrigger(userState, dbLevelTask.getId())) {
-                return dbLevelTask;
-            }
-        }
-        return null;
+    @Override
+    public int getXp2LevelUp(UserState userState) {
+        return getLevelScope(userState.getDbLevelId()).getXp2LevelUp();
     }
 }

@@ -13,11 +13,13 @@
 
 package com.btxtech.game.jsre.client.common.info;
 
-import com.btxtech.game.jsre.common.AllianceOfferPacket;
-import com.btxtech.game.jsre.common.LevelStatePacket;
+import com.btxtech.game.jsre.client.common.LevelScope;
+import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
+import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
+import com.btxtech.game.jsre.common.packets.XpPacket;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,8 +37,10 @@ public class RealGameInfo extends GameInfo {
     private Collection<BaseAttributes> allBases;
     private int houseSpace;
     private Collection<Territory> territories;
-    private LevelStatePacket levelStatePacket;
+    private LevelTaskPacket levelTaskPacket;
     private Collection<AllianceOfferPacket> allianceOffers = new ArrayList<AllianceOfferPacket>();
+    private XpPacket xpPacket;
+    private LevelScope levelScope;
 
     public SimpleBase getBase() {
         return base;
@@ -94,12 +98,12 @@ public class RealGameInfo extends GameInfo {
         this.territories = territories;
     }
 
-    public LevelStatePacket getLevelStatePacket() {
-        return levelStatePacket;
+    public LevelTaskPacket getLevelTaskPacket() {
+        return levelTaskPacket;
     }
 
-    public void setLevelStatePacket(LevelStatePacket levelStatePacket) {
-        this.levelStatePacket = levelStatePacket;
+    public void setLevelTaskPacket(LevelTaskPacket levelTaskPacket) {
+        this.levelTaskPacket = levelTaskPacket;
     }
 
     public Collection<AllianceOfferPacket> getAllianceOffers() {
@@ -108,5 +112,21 @@ public class RealGameInfo extends GameInfo {
 
     public void setAllianceOffers(Collection<AllianceOfferPacket> allianceOffers) {
         this.allianceOffers = allianceOffers;
+    }
+
+    public XpPacket getXpPacket() {
+        return xpPacket;
+    }
+
+    public void setXpPacket(XpPacket xpPacket) {
+        this.xpPacket = xpPacket;
+    }
+
+    public void setLevel(LevelScope levelScope) {
+        this.levelScope = levelScope;
+    }
+
+    public LevelScope getLevelScope() {
+        return levelScope;
     }
 }

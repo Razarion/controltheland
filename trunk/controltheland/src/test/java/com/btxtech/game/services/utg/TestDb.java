@@ -1,6 +1,7 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
@@ -35,7 +36,7 @@ import java.util.Map;
  * Date: 07.03.2011
  * Time: 17:15:43
  */
-public class TestLevel extends AbstractServiceTest {
+public class TestDb extends AbstractServiceTest {
     @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
@@ -63,7 +64,7 @@ public class TestLevel extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<DbQuestHub> dbQuestHubs = new ArrayList<DbQuestHub>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        List<DbQuestHub> dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
         Assert.assertEquals(0, dbQuestHubs.size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -103,7 +104,7 @@ public class TestLevel extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHubs = new ArrayList<DbQuestHub>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
         Assert.assertEquals(1, dbQuestHubs.size());
         dbQuestHub1 = dbQuestHubs.get(0);
         Assert.assertEquals(99, dbQuestHub1.getStartItemFreeRange());
@@ -158,7 +159,7 @@ public class TestLevel extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHubs = new ArrayList<DbQuestHub>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
         Assert.assertEquals(1, dbQuestHubs.size());
         dbQuestHub1 = dbQuestHubs.get(0);
         Assert.assertEquals(99, dbQuestHub1.getStartItemFreeRange());
@@ -232,7 +233,7 @@ public class TestLevel extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHubs = new ArrayList<DbQuestHub>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
         Assert.assertEquals(2, dbQuestHubs.size());
         dbQuestHub1 = dbQuestHubs.get(0);
         Assert.assertEquals(99, dbQuestHub1.getStartItemFreeRange());
@@ -302,7 +303,7 @@ public class TestLevel extends AbstractServiceTest {
         // --------------------- MODIFY ---------------------
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHubs = new ArrayList<DbQuestHub>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
         dbQuestHubs.get(0).setName("xxx");
         dbQuestHubs.get(0).getLevelCrud().readDbChild(dbLevel1.getId()).setMaxMoney(500);
         userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHubs.get(0));
@@ -314,7 +315,7 @@ public class TestLevel extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHubs = new ArrayList<DbQuestHub>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
         Assert.assertEquals(2, dbQuestHubs.size());
         dbQuestHub1 = dbQuestHubs.get(0);
         Assert.assertEquals(99, dbQuestHub1.getStartItemFreeRange());
@@ -386,7 +387,7 @@ public class TestLevel extends AbstractServiceTest {
         // Delete QuestHub1
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHubs = new ArrayList<DbQuestHub>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
         userGuidanceService.getCrudQuestHub().deleteDbChild(dbQuestHubs.get(0));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -394,7 +395,7 @@ public class TestLevel extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHubs = new ArrayList<DbQuestHub>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
         Assert.assertEquals(1, dbQuestHubs.size());
         dbQuestHub2 = dbQuestHubs.get(0);
         Assert.assertEquals("dbQuestHub2", dbQuestHub2.getName());
@@ -425,7 +426,7 @@ public class TestLevel extends AbstractServiceTest {
         // Delete dbLevelTask32
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHubs = new ArrayList<DbQuestHub>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
         dbLevel3 = dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(0);
         dbLevel3.getLevelTaskCrud().deleteDbChild(dbLevel3.getLevelTaskCrud().readDbChild(dbLevelTask32.getId()));
         userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHubs.get(0));
@@ -435,7 +436,7 @@ public class TestLevel extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHubs = new ArrayList<DbQuestHub>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
         Assert.assertEquals(1, dbQuestHubs.size());
         dbQuestHub2 = dbQuestHubs.get(0);
         Assert.assertEquals("dbQuestHub2", dbQuestHub2.getName());
@@ -462,7 +463,7 @@ public class TestLevel extends AbstractServiceTest {
         // Delete dbLevel3
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHubs = new ArrayList<DbQuestHub>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
         dbLevel3 = dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(0);
         dbQuestHubs.get(0).getLevelCrud().deleteDbChild(dbLevel3);
         userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHubs.get(0));
@@ -472,7 +473,7 @@ public class TestLevel extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHubs = new ArrayList<DbQuestHub>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
         Assert.assertEquals(1, dbQuestHubs.size());
         dbQuestHub2 = dbQuestHubs.get(0);
         Assert.assertEquals("dbQuestHub2", dbQuestHub2.getName());
@@ -485,7 +486,7 @@ public class TestLevel extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void ordering() {
+    public void orderingDbLevel() {
         // Setup QuestHubs
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -510,7 +511,7 @@ public class TestLevel extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<DbQuestHub> dbQuestHubs = new ArrayList<DbQuestHub>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        List<DbQuestHub> dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
         // Size
         Assert.assertEquals(3, dbQuestHubs.size());
         Assert.assertEquals(4, dbQuestHubs.get(0).getLevelCrud().readDbChildren().size());
@@ -558,7 +559,7 @@ public class TestLevel extends AbstractServiceTest {
         // Modify ordering
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHubs = new ArrayList<DbQuestHub>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
         Collections.swap(dbQuestHubs, 0, 1);
         userGuidanceService.getCrudQuestHub().updateDbChildren(dbQuestHubs);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -567,7 +568,7 @@ public class TestLevel extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHubs = new ArrayList<DbQuestHub>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
         // Size
         Assert.assertEquals(3, dbQuestHubs.size());
         Assert.assertEquals(4, dbQuestHubs.get(1).getLevelCrud().readDbChildren().size());
@@ -624,7 +625,7 @@ public class TestLevel extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHubs = new ArrayList<DbQuestHub>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
         // Size
         Assert.assertEquals(3, dbQuestHubs.size());
         Assert.assertEquals(4, dbQuestHubs.get(1).getLevelCrud().readDbChildren().size());
@@ -684,7 +685,7 @@ public class TestLevel extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        dbQuestHubs = new ArrayList<DbQuestHub>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
         // Size
         Assert.assertEquals(2, dbQuestHubs.size());
         Assert.assertEquals(2, dbQuestHubs.get(1).getLevelCrud().readDbChildren().size());
@@ -897,4 +898,191 @@ public class TestLevel extends AbstractServiceTest {
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void orderingDbLevelTask() {
+        // Setup QuestHubs
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbQuestHub dbQuestHub1 = userGuidanceService.getCrudQuestHub().createDbChild();
+        DbLevel dbLevel11 = dbQuestHub1.getLevelCrud().createDbChild();
+        DbLevelTask dbLevelTask111 = dbLevel11.getLevelTaskCrud().createDbChild();
+        DbLevelTask dbLevelTask112 = dbLevel11.getLevelTaskCrud().createDbChild();
+        DbLevelTask dbLevelTask113 = dbLevel11.getLevelTaskCrud().createDbChild();
+        DbLevel dbLevel12 = dbQuestHub1.getLevelCrud().createDbChild();
+        DbLevelTask dbLevelTask121 = dbLevel12.getLevelTaskCrud().createDbChild();
+        DbLevelTask dbLevelTask122 = dbLevel12.getLevelTaskCrud().createDbChild();
+        DbLevelTask dbLevelTask123 = dbLevel12.getLevelTaskCrud().createDbChild();
+        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<DbQuestHub> dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        // Size
+        Assert.assertEquals(3, dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(0).getLevelTaskCrud().readDbChildren().size());
+        Assert.assertEquals(3, dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(1).getLevelTaskCrud().readDbChildren().size());
+        // Ordering
+        List<DbLevelTask> dbLevelTasks11 = dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(0).getLevelTaskCrud().readDbChildren();
+        List<DbLevelTask> dbLevelTasks12 = dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(1).getLevelTaskCrud().readDbChildren();
+        Assert.assertEquals(dbLevelTask111.getId(), dbLevelTasks11.get(0).getId());
+        Assert.assertEquals(dbLevelTask112.getId(), dbLevelTasks11.get(1).getId());
+        Assert.assertEquals(dbLevelTask113.getId(), dbLevelTasks11.get(2).getId());
+        Assert.assertEquals(dbLevelTask121.getId(), dbLevelTasks12.get(0).getId());
+        Assert.assertEquals(dbLevelTask122.getId(), dbLevelTasks12.get(1).getId());
+        Assert.assertEquals(dbLevelTask123.getId(), dbLevelTasks12.get(2).getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Modify ordering
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbQuestHub1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId());
+        dbLevelTasks11 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel11.getId()).getLevelTaskCrud().readDbChildren();
+        Collections.swap(dbLevelTasks11, 0, 1);
+        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        // Size
+        Assert.assertEquals(3, dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(0).getLevelTaskCrud().readDbChildren().size());
+        Assert.assertEquals(3, dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(1).getLevelTaskCrud().readDbChildren().size());
+        // Ordering
+        dbLevelTasks11 = dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(0).getLevelTaskCrud().readDbChildren();
+        dbLevelTasks12 = dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(1).getLevelTaskCrud().readDbChildren();
+        Assert.assertEquals(dbLevelTask111.getId(), dbLevelTasks11.get(1).getId());
+        Assert.assertEquals(dbLevelTask112.getId(), dbLevelTasks11.get(0).getId());
+        Assert.assertEquals(dbLevelTask113.getId(), dbLevelTasks11.get(2).getId());
+        Assert.assertEquals(dbLevelTask121.getId(), dbLevelTasks12.get(0).getId());
+        Assert.assertEquals(dbLevelTask122.getId(), dbLevelTasks12.get(1).getId());
+        Assert.assertEquals(dbLevelTask123.getId(), dbLevelTasks12.get(2).getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Modify ordering
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbQuestHub1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId());
+        dbLevelTasks11 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel12.getId()).getLevelTaskCrud().readDbChildren();
+        Collections.swap(dbLevelTasks11, 1, 2);
+        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        // Size
+        Assert.assertEquals(3, dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(0).getLevelTaskCrud().readDbChildren().size());
+        Assert.assertEquals(3, dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(1).getLevelTaskCrud().readDbChildren().size());
+        // Ordering
+        dbLevelTasks11 = dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(0).getLevelTaskCrud().readDbChildren();
+        dbLevelTasks12 = dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(1).getLevelTaskCrud().readDbChildren();
+        Assert.assertEquals(dbLevelTask111.getId(), dbLevelTasks11.get(1).getId());
+        Assert.assertEquals(dbLevelTask112.getId(), dbLevelTasks11.get(0).getId());
+        Assert.assertEquals(dbLevelTask113.getId(), dbLevelTasks11.get(2).getId());
+        Assert.assertEquals(dbLevelTask121.getId(), dbLevelTasks12.get(0).getId());
+        Assert.assertEquals(dbLevelTask122.getId(), dbLevelTasks12.get(2).getId());
+        Assert.assertEquals(dbLevelTask123.getId(), dbLevelTasks12.get(1).getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Modify delete
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbQuestHub1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId());
+        dbLevelTask123 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel12.getId()).getLevelTaskCrud().readDbChild(dbLevelTask123.getId());
+        dbQuestHub1.getLevelCrud().readDbChild(dbLevel12.getId()).getLevelTaskCrud().deleteDbChild(dbLevelTask123);
+        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        // Size
+        Assert.assertEquals(3, dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(0).getLevelTaskCrud().readDbChildren().size());
+        Assert.assertEquals(2, dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(1).getLevelTaskCrud().readDbChildren().size());
+        // Ordering
+        dbLevelTasks11 = dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(0).getLevelTaskCrud().readDbChildren();
+        dbLevelTasks12 = dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(1).getLevelTaskCrud().readDbChildren();
+        Assert.assertEquals(dbLevelTask111.getId(), dbLevelTasks11.get(1).getId());
+        Assert.assertEquals(dbLevelTask112.getId(), dbLevelTasks11.get(0).getId());
+        Assert.assertEquals(dbLevelTask113.getId(), dbLevelTasks11.get(2).getId());
+        Assert.assertEquals(dbLevelTask121.getId(), dbLevelTasks12.get(0).getId());
+        Assert.assertEquals(dbLevelTask122.getId(), dbLevelTasks12.get(1).getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Modify add
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbQuestHub1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId());
+        DbLevelTask dbLevelTask114 = dbQuestHub1.getLevelCrud().readDbChild(dbLevel11.getId()).getLevelTaskCrud().createDbChild();
+        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbQuestHubs = new ArrayList<>(userGuidanceService.getCrudQuestHub().readDbChildren());
+        // Size
+        Assert.assertEquals(4, dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(0).getLevelTaskCrud().readDbChildren().size());
+        Assert.assertEquals(2, dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(1).getLevelTaskCrud().readDbChildren().size());
+        // Ordering
+        dbLevelTasks11 = dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(0).getLevelTaskCrud().readDbChildren();
+        dbLevelTasks12 = dbQuestHubs.get(0).getLevelCrud().readDbChildren().get(1).getLevelTaskCrud().readDbChildren();
+        Assert.assertEquals(dbLevelTask111.getId(), dbLevelTasks11.get(1).getId());
+        Assert.assertEquals(dbLevelTask112.getId(), dbLevelTasks11.get(0).getId());
+        Assert.assertEquals(dbLevelTask113.getId(), dbLevelTasks11.get(2).getId());
+        Assert.assertEquals(dbLevelTask114.getId(), dbLevelTasks11.get(3).getId());
+        Assert.assertEquals(dbLevelTask121.getId(), dbLevelTasks12.get(0).getId());
+        Assert.assertEquals(dbLevelTask122.getId(), dbLevelTasks12.get(1).getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void createQuestInfo() {
+        DbTutorialConfig tut1 = createTutorial1();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbQuestHub dbQuestHub1 = userGuidanceService.getCrudQuestHub().createDbChild();
+        DbLevel dbLevel11 = dbQuestHub1.getLevelCrud().createDbChild();
+        DbLevelTask dbLevelTask111 = dbLevel11.getLevelTaskCrud().createDbChild();
+        dbLevelTask111.setName("name1");
+        dbLevelTask111.setHtml("html1");
+        dbLevelTask111.setXp(11);
+        dbLevelTask111.setMoney(12);
+        dbLevelTask111.setDbTutorialConfig(tutorialService.getDbTutorialCrudRootServiceHelper().readDbChild(tut1.getId()));
+        DbLevelTask dbLevelTask112 = dbLevel11.getLevelTaskCrud().createDbChild();
+        dbLevelTask112.setName("name2");
+        dbLevelTask112.setHtml("html2");
+        dbLevelTask112.setXp(21);
+        dbLevelTask112.setMoney(22);
+        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        QuestInfo questInfo1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId()).getLevelCrud().readDbChild(dbLevel11.getId()).getLevelTaskCrud().readDbChildren().get(0).createQuestInfo();
+        QuestInfo questInfo2 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId()).getLevelCrud().readDbChild(dbLevel11.getId()).getLevelTaskCrud().readDbChildren().get(1).createQuestInfo();
+        Assert.assertEquals(new QuestInfo("name1", "html1", 11, 12, dbLevelTask111.getId(), QuestInfo.Type.MISSION), questInfo1);
+        Assert.assertEquals(new QuestInfo("name2", "html2", 21, 22, dbLevelTask112.getId(), QuestInfo.Type.QUEST), questInfo2);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+    }
 }

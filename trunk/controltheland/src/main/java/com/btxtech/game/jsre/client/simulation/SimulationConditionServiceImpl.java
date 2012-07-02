@@ -16,9 +16,9 @@ package com.btxtech.game.jsre.client.simulation;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
-import com.btxtech.game.jsre.common.LevelStatePacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
@@ -137,8 +137,8 @@ public class SimulationConditionServiceImpl extends ConditionServiceImpl<SimpleB
 
     @Override
     public void sendProgressUpdate(SimpleBase a, Void i) {
-        LevelStatePacket levelStatePacket = new LevelStatePacket();
-        levelStatePacket.setActiveQuestProgress(SimulationConditionServiceImpl.getInstance().getProgressHtml(a, i));
-        ClientLevelHandler.getInstance().onLevelChanged(levelStatePacket);
+        LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
+        levelTaskPacket.setActiveQuestProgress(SimulationConditionServiceImpl.getInstance().getProgressHtml(a, i));
+        ClientLevelHandler.getInstance().setLevelTask(levelTaskPacket);
     }
 }

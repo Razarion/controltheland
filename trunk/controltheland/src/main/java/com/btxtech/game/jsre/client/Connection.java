@@ -14,9 +14,8 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
-import com.btxtech.game.jsre.client.common.ChatMessage;
+import com.btxtech.game.jsre.client.cockpit.SplashManager;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
@@ -35,26 +34,33 @@ import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.MarketDialog;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestDialog;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
-import com.btxtech.game.jsre.common.AccountBalancePacket;
-import com.btxtech.game.jsre.common.AllianceOfferPacket;
-import com.btxtech.game.jsre.common.BaseChangedPacket;
-import com.btxtech.game.jsre.common.BoxPickedPacket;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.CommonJava;
-import com.btxtech.game.jsre.common.EnergyPacket;
-import com.btxtech.game.jsre.common.HouseSpacePacket;
 import com.btxtech.game.jsre.common.Html5NotSupportedException;
-import com.btxtech.game.jsre.common.LevelStatePacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
-import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
+import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
+import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
+import com.btxtech.game.jsre.common.packets.BoxPickedPacket;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
+import com.btxtech.game.jsre.common.packets.EnergyPacket;
+import com.btxtech.game.jsre.common.packets.HouseSpacePacket;
+import com.btxtech.game.jsre.common.packets.LevelPacket;
+import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
+import com.btxtech.game.jsre.common.packets.Message;
+import com.btxtech.game.jsre.common.packets.Packet;
+import com.btxtech.game.jsre.common.packets.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.XpPacket;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
@@ -267,8 +273,13 @@ public class Connection implements StartupProgressListener, ConnectionI {
                     ClientEnergyService.getInstance().onEnergyPacket((EnergyPacket) packet);
                 } else if (packet instanceof ChatMessage) {
                     ClientChatHandler.getInstance().onMessageReceived((ChatMessage) packet);
-                } else if (packet instanceof LevelStatePacket) {
-                    ClientLevelHandler.getInstance().onLevelChanged((LevelStatePacket) packet);
+                } else if (packet instanceof LevelPacket) {
+                    ClientLevelHandler.getInstance().setLevel(((LevelPacket) packet).getLevel());
+                    SplashManager.getInstance().onLevelUp();
+                    QuestDialog.updateQuestDialog();
+                } else if (packet instanceof LevelTaskPacket) {
+                    ClientLevelHandler.getInstance().setLevelTask((LevelTaskPacket) packet);
+                    QuestDialog.updateQuestDialog();
                 } else if (packet instanceof HouseSpacePacket) {
                     HouseSpacePacket houseSpacePacket = (HouseSpacePacket) packet;
                     ClientBase.getInstance().setHouseSpace(houseSpacePacket.getHouseSpace());
@@ -279,10 +290,12 @@ public class Connection implements StartupProgressListener, ConnectionI {
                     SideCockpit.getInstance().onBoxPicked((BoxPickedPacket) packet);
                     InventoryDialog.onBoxPicket();
                     MarketDialog.onBoxPicket();
+                } else if (packet instanceof XpPacket) {
+                    XpPacket xpPacket = (XpPacket) packet;
+                    SideCockpit.getInstance().setXp(xpPacket.getXp(), xpPacket.getXp2LevelUp());
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }
-
             } catch (Throwable t) {
                 GwtCommon.handleException(t);
             }
@@ -540,6 +553,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
         return gameEngineMode;
     }
 
+
     class VoidAsyncCallback implements AsyncCallback<Void> {
         private String message;
 
@@ -651,6 +665,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
             movableServiceAsync.buyInventoryItem(inventoryItemId, new AsyncCallback<Integer>() {
                 @Override
                 public void onFailure(Throwable caught) {
+                    handleDisconnection("buyInventoryItem", caught);
                 }
 
                 @Override
@@ -666,6 +681,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
             movableServiceAsync.buyInventoryArtifact(inventoryArtifactId, new AsyncCallback<Integer>() {
                 @Override
                 public void onFailure(Throwable caught) {
+                    handleDisconnection("buyInventoryArtifact", caught);
                 }
 
                 @Override
@@ -682,6 +698,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
             movableServiceAsync.loadRazarion(new AsyncCallback<Integer>() {
                 @Override
                 public void onFailure(Throwable caught) {
+                    handleDisconnection("loadRazarion", caught);
                 }
 
                 @Override
@@ -691,4 +708,27 @@ public class Connection implements StartupProgressListener, ConnectionI {
             });
         }
     }
+
+    public void loadQuestOverview(final QuestDialog questDialog) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.loadQuestOverview(new AsyncCallback<QuestOverview>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    handleDisconnection("loadQuestOverview", caught);
+                }
+
+                @Override
+                public void onSuccess(QuestOverview questOverview) {
+                    questDialog.displayQuestOverview(questOverview);
+                }
+            });
+        }
+    }
+
+    public void activateQuest(int questId) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.activateQuest(questId, new VoidAsyncCallback("activateQuest"));
+        }
+    }
+
 }

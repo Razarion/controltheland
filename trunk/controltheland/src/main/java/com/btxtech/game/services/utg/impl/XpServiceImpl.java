@@ -13,9 +13,9 @@
 
 package com.btxtech.game.services.utg.impl;
 
-import com.btxtech.game.jsre.common.LevelStatePacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.packets.XpPacket;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.HibernateUtil;
@@ -23,6 +23,7 @@ import com.btxtech.game.services.common.QueueWorker;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbXpSettings;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.XpService;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
 import org.apache.commons.logging.Log;
@@ -51,6 +52,8 @@ public class XpServiceImpl implements XpService {
     SessionFactory sessionFactory;
     @Autowired
     private ConnectionService connectionService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
     private DbXpSettings dbXpSettings;
     private Log log = LogFactory.getLog(XpServiceImpl.class);
     private XpPerKillQueueWorker xpPerKillQueueWorker;
@@ -125,6 +128,7 @@ public class XpServiceImpl implements XpService {
 
     @Override
     public void onItemBuilt(SyncBaseItem builtItem) {
+        // Is this still needed
         int deltaXp = (int) (builtItem.getBaseItemType().getPrice() * dbXpSettings.getBuiltPriceFactor());
         increaseXpPerBase(builtItem.getBase(), deltaXp);
     }
@@ -140,9 +144,10 @@ public class XpServiceImpl implements XpService {
         userState.increaseXp(deltaXp);
         Base base = baseService.getBase(userState);
         if (base != null) {
-            LevelStatePacket levelPacket = new LevelStatePacket();
-            levelPacket.setXp(userState.getXp());
-            connectionService.sendPacket(base.getSimpleBase(), levelPacket);
+            XpPacket xpPacket = new XpPacket();
+            xpPacket.setXp(userState.getXp());
+            xpPacket.setXp2LevelUp(userGuidanceService.getXp2LevelUp(userState));
+            connectionService.sendPacket(base.getSimpleBase(), xpPacket);
         }
         serverConditionService.onIncreaseXp(userState, deltaXp);
     }

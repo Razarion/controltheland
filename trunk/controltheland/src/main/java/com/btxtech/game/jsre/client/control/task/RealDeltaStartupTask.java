@@ -43,7 +43,7 @@ public class RealDeltaStartupTask extends GameEngineStartupTask {
         ClientEnergyService.getInstance().onEnergyPacket(realGameInfo.getEnergyGenerating(), realGameInfo.getEnergyConsuming());
         ClientTerritoryService.getInstance().setTerritories(realGameInfo.getTerritories());
         ClientBase.getInstance().setHouseSpace(realGameInfo.getHouseSpace());
-        ClientLevelHandler.getInstance().setLevelScope(realGameInfo.getLevelStatePacket());
+        ClientLevelHandler.getInstance().setLevel(realGameInfo.getLevelScope());
     }
 
 }

@@ -15,6 +15,7 @@ package com.btxtech.game.wicket.pages.mgmt.level;
 
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.utg.DbItemTypeLimitation;
 import com.btxtech.game.services.utg.DbLevel;
@@ -22,6 +23,7 @@ import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
+import com.btxtech.game.wicket.uiservices.CrudListChildTableHelper;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import com.btxtech.game.wicket.uiservices.WysiwygEditor;
 import org.apache.wicket.markup.html.form.Button;
@@ -45,7 +47,7 @@ public class DbLevelEditor extends MgmtWebPage {
     public DbLevelEditor(DbLevel dbLevel) {
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbLevel> form = new Form<DbLevel>("form", new CompoundPropertyModel<DbLevel>(new RuModel<DbLevel>(dbLevel, DbLevel.class) {
+        final Form<DbLevel> form = new Form<>("form", new CompoundPropertyModel<DbLevel>(new RuModel<DbLevel>(dbLevel, DbLevel.class) {
 
             @Override
             protected RuServiceHelper<DbLevel> getRuServiceHelper() {
@@ -60,7 +62,7 @@ public class DbLevelEditor extends MgmtWebPage {
         form.add(new TextField("houseSpace"));
         form.add(new TextField("itemSellFactor"));
         form.add(new TextField("maxMoney"));
-        form.add(new DropDownChoice<RadarMode>("radarMode", RadarMode.getList()));
+        form.add(new DropDownChoice<>("radarMode", RadarMode.getList()));
 
         new CrudChildTableHelper<DbLevel, DbItemTypeLimitation>("itemTypeLimitation", null, "createItemTypeLimitation", false, form, false) {
 
@@ -86,7 +88,7 @@ public class DbLevelEditor extends MgmtWebPage {
             }
         };
 
-        new CrudChildTableHelper<DbLevel, DbLevelTask>("levelTasks", null, "createLevelTask", true, form, false) {
+        new CrudListChildTableHelper<DbLevel, DbLevelTask>("levelTasks", null, "createLevelTask", true, form, true) {
 
             @Override
             protected void extendedPopulateItem(Item<DbLevelTask> dbLevelTaskItem) {
@@ -105,7 +107,7 @@ public class DbLevelEditor extends MgmtWebPage {
             }
 
             @Override
-            protected CrudChildServiceHelper<DbLevelTask> getCrudChildServiceHelperImpl() {
+            protected CrudListChildServiceHelper<DbLevelTask> getCrudListChildServiceHelperImpl() {
                 return getParent().getLevelTaskCrud();
             }
 

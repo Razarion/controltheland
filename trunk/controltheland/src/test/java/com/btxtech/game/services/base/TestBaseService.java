@@ -1,7 +1,7 @@
 package com.btxtech.game.services.base;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.AccountBalancePacket;
+import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
@@ -143,6 +143,7 @@ public class TestBaseService extends AbstractServiceTest {
         SimpleBase simpleBase = getMyBase(); // Setup connection
         sendBuildCommand(getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID), new Index(100, 100), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
+        // TODO failed on 02.07.2012
         Assert.assertEquals(2, baseService.getBaseItems().readDbChildren().size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

@@ -23,7 +23,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncProjectileItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;

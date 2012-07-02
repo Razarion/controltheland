@@ -1,6 +1,6 @@
 package com.btxtech.game.services.connection;
 
-import com.btxtech.game.jsre.client.common.ChatMessage;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.services.connection.impl.ChatMessageQueue;
 import org.junit.Assert;
 import org.junit.Test;

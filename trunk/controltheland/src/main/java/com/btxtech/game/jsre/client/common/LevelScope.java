@@ -28,6 +28,7 @@ public class LevelScope implements Serializable {
     private int houseSpace;
     private double itemSellFactor;
     private RadarMode radarMode;
+    private int xp2LevelUp;
 
     /**
      * Used by GWT
@@ -35,13 +36,14 @@ public class LevelScope implements Serializable {
     public LevelScope() {
     }
 
-    public LevelScope(int number, int maxMoney, Map<Integer, Integer> itemTypeLimitation, int houseSpace, double itemSellFactor, RadarMode radarMode) {
+    public LevelScope(int number, int maxMoney, Map<Integer, Integer> itemTypeLimitation, int houseSpace, double itemSellFactor, RadarMode radarMode, int xp2LevelUp) {
         this.number = number;
         this.maxMoney = maxMoney;
         this.itemTypeLimitation = itemTypeLimitation;
         this.houseSpace = houseSpace;
         this.itemSellFactor = itemSellFactor;
         this.radarMode = radarMode;
+        this.xp2LevelUp = xp2LevelUp;
     }
 
     public int getNumber() {
@@ -73,6 +75,10 @@ public class LevelScope implements Serializable {
         return radarMode;
     }
 
+    public int getXp2LevelUp() {
+        return xp2LevelUp;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -85,7 +91,8 @@ public class LevelScope implements Serializable {
                 && maxMoney == that.maxMoney
                 && number == that.number
                 && !(itemTypeLimitation != null ? !itemTypeLimitation.equals(that.itemTypeLimitation) : that.itemTypeLimitation != null)
-                && radarMode == that.radarMode;
+                && radarMode == that.radarMode
+                && xp2LevelUp == that.xp2LevelUp;
     }
 
     @Override
@@ -98,6 +105,7 @@ public class LevelScope implements Serializable {
         long temp = (long) itemSellFactor;
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (radarMode != null ? radarMode.hashCode() : 0);
+        result = 31 * result + xp2LevelUp;
         return result;
     }
 }

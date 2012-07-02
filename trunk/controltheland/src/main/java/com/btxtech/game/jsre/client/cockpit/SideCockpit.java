@@ -14,15 +14,19 @@ import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.dialogs.AllianceDialog;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
+import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
-import com.btxtech.game.jsre.common.BoxPickedPacket;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.ProgressBar;
+import com.btxtech.game.jsre.common.packets.BoxPickedPacket;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -30,9 +34,9 @@ import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -59,12 +63,12 @@ public class SideCockpit {
     // XP overview
     private static final int XP_OVERVIEW_X = 2;
     private static final int XP_OVERVIEW_Y = 17;
-    // Quest overview
-    private static final int QUEST_OVERVIEW_X = 2;
-    private static final int QUEST_OVERVIEW_Y = 30;
-    // Mission overview
-    private static final int MISSION_OVERVIEW_X = 2;
-    private static final int MISSION_OVERVIEW_Y = 43;
+    // Abort Mission Icon
+    private static final int ABORT_MISSION_ICON_X = 1;
+    private static final int ABORT_MISSION_ICON_Y = 6;
+    // Abort Mission Label
+    private static final int ABORT_MISSION_LABEL_X = 53;
+    private static final int ABORT_MISSION_LABEL_Y = 13;
     // Money
     private static final int MONEY_X = 25;
     private static final int MONEY_Y = 4;
@@ -106,9 +110,9 @@ public class SideCockpit {
     private AbsolutePanel mainPanel;
     private AbsolutePanel levelPanel;
     private HTML level;
-    private HTML questOverview;
-    private HTML missionOverview;
     private HTML xpOverview;
+    private HTML abortMissionLabel;
+    private Image abortMissionIcon;
     private Label money;
     private Label itemLimit;
     private ProgressBar energyBar;
@@ -153,13 +157,6 @@ public class SideCockpit {
         levelPanel.getElement().getStyle().setFontSize(11, Style.Unit.PX);
         levelPanel.getElement().getStyle().setCursor(Style.Cursor.POINTER);
         preventEvents(levelPanel);
-        levelPanel.addDomHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                Window.open(Connection.getInstance().getGameInfo().getPredefinedUrls().get(CmsUtil.CmsPredefinedPage.USER_PAGE), CmsUtil.TARGET_BLANK, "");
-            }
-        }, ClickEvent.getType());
-
         levelPanel.setPixelSize(LEVEL_PANEL_W, LEVEL_PANEL_H);
     }
 
@@ -168,18 +165,44 @@ public class SideCockpit {
         level.setTitle(ToolTips.TOOL_TIP_LEVEL);
         level.getElement().getStyle().setColor(TEXT_COLOR);
         levelPanel.add(level, LEVEL_X, LEVEL_Y);
-        questOverview = new HTML();
-        questOverview.setTitle(ToolTips.TOOL_TIP_QUEST_OVERVIEW);
-        questOverview.getElement().getStyle().setColor(TEXT_COLOR);
-        levelPanel.add(questOverview, QUEST_OVERVIEW_X, QUEST_OVERVIEW_Y);
-        missionOverview = new HTML();
-        missionOverview.setTitle(ToolTips.TOOL_TIP_MISSION_OVERVIEW);
-        missionOverview.getElement().getStyle().setColor(TEXT_COLOR);
-        levelPanel.add(missionOverview, MISSION_OVERVIEW_X, MISSION_OVERVIEW_Y);
         xpOverview = new HTML();
         xpOverview.setTitle(ToolTips.TOOL_TIP_XP_OVERVIEW);
         xpOverview.getElement().getStyle().setColor(TEXT_COLOR);
         levelPanel.add(xpOverview, XP_OVERVIEW_X, XP_OVERVIEW_Y);
+        abortMissionIcon = ImageHandler.getCockpitImage("abortmission.png");
+        abortMissionIcon.setTitle(ToolTips.TOOL_TIP_ABORT_MISSION);
+        abortMissionIcon.getElement().getStyle().setCursor(Style.Cursor.POINTER);
+        abortMissionIcon.addMouseDownHandler(new MouseDownHandler() {
+            @Override
+            public void onMouseDown(MouseDownEvent event) {
+                abortMission();
+            }
+        });
+        levelPanel.add(abortMissionIcon, ABORT_MISSION_ICON_X, ABORT_MISSION_ICON_Y);
+        abortMissionLabel = new HTML("Abort<br />Mission");
+        abortMissionLabel.setTitle(ToolTips.TOOL_TIP_ABORT_MISSION);
+        abortMissionLabel.getElement().getStyle().setColor("#FF0000");
+        abortMissionLabel.getElement().getStyle().setCursor(Style.Cursor.POINTER);
+        abortMissionLabel.getElement().getStyle().setFontSize(13, Style.Unit.PX);
+        abortMissionLabel.getElement().getStyle().setProperty("fontFamily", "Arial, Helvetica, sans-serif");
+        abortMissionLabel.getElement().getStyle().setFontWeight(Style.FontWeight.BOLD);
+        abortMissionLabel.addMouseDownHandler(new MouseDownHandler() {
+            @Override
+            public void onMouseDown(MouseDownEvent event) {
+                abortMission();
+            }
+        });
+        levelPanel.add(abortMissionLabel, ABORT_MISSION_LABEL_X, ABORT_MISSION_LABEL_Y);
+    }
+
+    private void abortMission() {
+        ClickHandler clickHandler = new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                ClientLevelHandler.getInstance().abortMission();
+            }
+        };
+        DialogManager.showDialog(new YesNoDialog("Abort Mission", "Do you really want to abort this Mission?", "Abort", clickHandler, "Cancel", null), DialogManager.Type.QUEUE_ABLE);
     }
 
     private void setupMoney() {
@@ -311,8 +334,9 @@ public class SideCockpit {
         onStateChanged();
     }
 
-    public void setActiveQuest(String activeQuestTitle, String activeQuestProgress, Integer activeQuestLevelTaskId) {
-        questProgressCockpit.setActiveQuest(activeQuestTitle, activeQuestProgress, activeQuestLevelTaskId);
+
+    public void setActiveQuest(QuestInfo questInfo, String activeQuestProgress) {
+        questProgressCockpit.setActiveQuest(questInfo, activeQuestProgress);
     }
 
     public void setNoActiveQuest() {
@@ -321,26 +345,6 @@ public class SideCockpit {
 
     public void setXp(int xp, int xp2LevelUp) {
         xpOverview.setHTML("<b>XP:</b> " + xp + " / " + xp2LevelUp);
-    }
-
-    public void hideXp() {
-        xpOverview.setText("");
-    }
-
-    public void setQuestOverview(int questsDone, int totalQuests) {
-        questOverview.setHTML("<b>Quests:</b> " + questsDone + " / " + totalQuests);
-    }
-
-    public void hideQuestOverview() {
-        questOverview.setText("");
-    }
-
-    public void setMissionOverview(int missionsDone, int totalMissions) {
-        missionOverview.setHTML("<b>Missions:</b> " + missionsDone + " / " + totalMissions);
-    }
-
-    public void hideMissionOverview() {
-        missionOverview.setText("");
     }
 
     public void onStateChanged() {
@@ -408,5 +412,22 @@ public class SideCockpit {
 
     public void onBoxPicked(BoxPickedPacket boxPickedPacket) {
         informationCockpit.showBoxPicked(boxPickedPacket.getHtml());
+    }
+
+    public void initMission(SimulationInfo simulationInfo) {
+        level.setVisible(!simulationInfo.isSkipAble());
+        xpOverview.setVisible(false);
+        abortMissionLabel.setVisible(simulationInfo.isSkipAble());
+        abortMissionIcon.setVisible(simulationInfo.isSkipAble());
+        questProgressCockpit.enableQuestControl(false);
+    }
+
+    public void initRealGame(RealGameInfo realGameInfo) {
+        level.setVisible(true);
+        xpOverview.setVisible(true);
+        abortMissionLabel.setVisible(false);
+        abortMissionIcon.setVisible(false);
+        questProgressCockpit.enableQuestControl(true);
+        setXp(realGameInfo.getXpPacket().getXp(), realGameInfo.getXpPacket().getXp2LevelUp());
     }
 }

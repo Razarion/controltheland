@@ -19,8 +19,10 @@ import com.btxtech.game.jsre.client.GameCommon;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.simulation.Simulation;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.utg.tip.TipManager;
 
@@ -47,5 +49,6 @@ public class ClearGame extends AbstractStartupTask {
         SideCockpit.getInstance().getCockpitMode().clearUnloadMode();
         TipManager.getInstance().deactivate();
         RadarPanel.getInstance().cleanup();
+        TerrainView.getInstance().moveAbsolute(new Index(0, 0));
     }
 }

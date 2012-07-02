@@ -276,7 +276,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         sendMoveCommand(container, new Index(1100, 1100));
         waitForActionServiceDone();
         sendUnloadContainerCommand(container, new Index(1000, 1000));
-        waitForActionServiceDone(); // TODO crashed here (Count 1)
+        waitForActionServiceDone(); // TODO crashed here (Count 2)
         assertActorAndIdentifierAndClear(userService.getUserState(), 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -295,32 +295,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         userGuidanceService.promote(userState1, TEST_LEVEL_2_REAL_ID);
         SimpleBase simpleBase1 = getMyBase();
 
-        // Verify the QuestsCms
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertFalse(levelQuest.isDone());
-            Assert.assertFalse(levelQuest.isActive());
-            Assert.assertFalse(levelQuest.isBlocked());
-        }
-        userGuidanceService.activateLevelTaskCms(TEST_LEVEL_TASK_1_2_REAL_ID);
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertFalse(levelQuest.isDone());
-            Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isActive());
-            Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID != levelQuest.getDbLevelTask().getId(), levelQuest.isBlocked());
-        }
-        userGuidanceService.deactivateLevelTaskCms(TEST_LEVEL_TASK_1_2_REAL_ID);
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertFalse(levelQuest.isDone());
-            Assert.assertFalse(levelQuest.isActive());
-            Assert.assertFalse(levelQuest.isBlocked());
-        }
-        userGuidanceService.activateLevelTaskCms(TEST_LEVEL_TASK_1_2_REAL_ID);
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertFalse(levelQuest.isDone());
-            Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isActive());
-            Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID != levelQuest.getDbLevelTask().getId(), levelQuest.isBlocked());
-        }
         serverConditionService.onMoneyIncrease(simpleBase1, 2.0);
-
         serverConditionService.onIncreaseXp(userState1, 10);
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(100, 100), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -343,26 +318,24 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.login("U1", "test");
-        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertFalse(levelQuest.isDone());
-            Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isActive());
-            Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID != levelQuest.getDbLevelTask().getId(), levelQuest.isBlocked());
-        }
+        Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID, getMovableService().getRealGameInfo().getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(0, userGuidanceService.getQuestOverview().getMissionsDone());
+        Assert.assertEquals(0, userGuidanceService.getQuestOverview().getTotalMissions());
+        Assert.assertEquals(0, userGuidanceService.getQuestOverview().getQuestsDone());
+        Assert.assertEquals(2, userGuidanceService.getQuestOverview().getTotalQuests());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Complete missions
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.login("U1", "test");
-        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
         simpleBase1 = getMyBase();
         serverConditionService.onMoneyIncrease(simpleBase1, 1.0);
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isDone());
-            Assert.assertFalse(levelQuest.isActive());
-            Assert.assertFalse(levelQuest.isBlocked());
-        }
+        Assert.assertEquals(TEST_LEVEL_TASK_2_2_REAL_ID, getMovableService().getRealGameInfo().getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(0, userGuidanceService.getQuestOverview().getMissionsDone());
+        Assert.assertEquals(0, userGuidanceService.getQuestOverview().getTotalMissions());
+        Assert.assertEquals(1, userGuidanceService.getQuestOverview().getQuestsDone());
+        Assert.assertEquals(2, userGuidanceService.getQuestOverview().getTotalQuests());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         //Backup
@@ -382,31 +355,20 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.login("U1", "test");
-        serverConditionService.onMoneyIncrease(simpleBase1, 1.0);
-        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isDone());
-            Assert.assertFalse(levelQuest.isActive());
-            Assert.assertFalse(levelQuest.isBlocked());
-        }
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
-        // activate last task
-        userGuidanceService.activateLevelTaskCms(TEST_LEVEL_TASK_2_2_REAL_ID);
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isDone());
-            Assert.assertEquals(TEST_LEVEL_TASK_2_2_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isActive());
-        }
+        serverConditionService.onMoneyIncrease(simpleBase1, 1.0);
+        Assert.assertEquals(TEST_LEVEL_TASK_2_2_REAL_ID, getMovableService().getRealGameInfo().getLevelTaskPacket().getQuestInfo().getId());
+        Assert.assertEquals(0, userGuidanceService.getQuestOverview().getMissionsDone());
+        Assert.assertEquals(0, userGuidanceService.getQuestOverview().getTotalMissions());
+        Assert.assertEquals(1, userGuidanceService.getQuestOverview().getQuestsDone());
+        Assert.assertEquals(2, userGuidanceService.getQuestOverview().getTotalQuests());
+        // fulfill next task level
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(5000, 5000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
         Assert.assertEquals(TEST_LEVEL_3_REAL_ID, (int) userGuidanceService.getDbLevel().getId());
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertFalse(levelQuest.isDone());
-            Assert.assertFalse(levelQuest.isActive());
-            Assert.assertFalse(levelQuest.isBlocked());
-        }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -424,17 +386,12 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         userService.login("U1", "test");
         UserState userState1 = userService.getUserState();
         userGuidanceService.promote(userState1, TEST_LEVEL_4_REAL_ID);
-        userGuidanceService.activateLevelTaskCms(TEST_LEVEL_TASK_1_4_REAL_ID);
-        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertFalse(levelQuest.isDone());
-        }
+        Assert.assertEquals(2, userGuidanceService.getQuestOverview().getQuestInfos().size());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, getMovableService().getRealGameInfo().getLevelTaskPacket().getQuestInfo().getId());
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(600, 600), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
-        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertFalse(levelQuest.isDone());
-        }
+        Assert.assertEquals(2, userGuidanceService.getQuestOverview().getQuestInfos().size());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, getMovableService().getRealGameInfo().getLevelTaskPacket().getQuestInfo().getId());
         Thread.sleep(500);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -456,16 +413,12 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.login("U1", "test");
-        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertFalse(levelQuest.isDone());
-        }
+        Assert.assertEquals(2, userGuidanceService.getQuestOverview().getQuestInfos().size());
+        Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, getMovableService().getRealGameInfo().getLevelTaskPacket().getQuestInfo().getId());
         assertAndSetTimeRemaining();
         Thread.sleep(100);
-        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isDone());
-        }
+        Assert.assertEquals(1, userGuidanceService.getQuestOverview().getQuestInfos().size());
+        Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID, getMovableService().getRealGameInfo().getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -500,13 +453,17 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         userService.createUser("U1", "test", "test", "test");
         userService.login("U1", "test");
         UserState userState1 = userService.getUserState();
+        userGuidanceService.promote(userState1, TEST_LEVEL_2_REAL_ID);
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(2000, 2000), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
         userGuidanceService.promote(userState1, TEST_LEVEL_4_REAL_ID);
-        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertFalse(levelQuest.isDone());
-            Assert.assertFalse(levelQuest.isActive());
-            Assert.assertFalse(levelQuest.isBlocked());
-        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        //
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_4_REAL_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         //Backup
@@ -522,49 +479,11 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         mgmtService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-        // Proceed task but do not activate
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
-        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertFalse(levelQuest.isDone());
-            Assert.assertFalse(levelQuest.isActive());
-            Assert.assertFalse(levelQuest.isBlocked());
-        }
-        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(2000, 2000), TEST_FACTORY_ITEM_ID);
-        waitForActionServiceDone();
-        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertFalse(levelQuest.isDone());
-            Assert.assertFalse(levelQuest.isActive());
-            Assert.assertFalse(levelQuest.isBlocked());
-        }
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        //Backup
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        // Restore
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
         // Proceed task
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.login("U1", "test");
-        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertFalse(levelQuest.isDone());
-            Assert.assertFalse(levelQuest.isActive());
-            Assert.assertFalse(levelQuest.isBlocked());
-        }
+        userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_4_REAL_ID);
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
@@ -573,105 +492,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
-        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertFalse(levelQuest.isDone());
-            Assert.assertFalse(levelQuest.isActive());
-            Assert.assertFalse(levelQuest.isBlocked());
-        }
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        //Backup
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        // Restore
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        // Complete task but inactive
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
-        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertFalse(levelQuest.isDone());
-            Assert.assertFalse(levelQuest.isActive());
-            Assert.assertFalse(levelQuest.isBlocked());
-        }
-        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
-        waitForActionServiceDone();
-        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            // Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isDone());
-            Assert.assertFalse(levelQuest.isDone());
-            Assert.assertFalse(levelQuest.isActive());
-            Assert.assertFalse(levelQuest.isBlocked());
-        }
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        // Activate task
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
-        userGuidanceService.activateLevelTaskCms(TEST_LEVEL_TASK_2_4_REAL_ID);
-        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertFalse(levelQuest.isDone());
-            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isActive());
-            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID != levelQuest.getDbLevelTask().getId(), levelQuest.isBlocked());
-        }
-        waitForActionServiceDone();
-        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertFalse(levelQuest.isDone());
-            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isActive());
-            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID != levelQuest.getDbLevelTask().getId(), levelQuest.isBlocked());
-        }
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        //Backup
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        // Restore
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        backupSummaries = mgmtService.getBackupSummary();
-        mgmtService.restore(backupSummaries.get(0).getDate());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        // Proceed task
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
-        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertFalse(levelQuest.isDone());
-            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isActive());
-            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID != levelQuest.getDbLevelTask().getId(), levelQuest.isBlocked());
-        }
-        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
-        waitForActionServiceDone();
-        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
-        waitForActionServiceDone();
-        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
-        waitForActionServiceDone();
-        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
-        waitForActionServiceDone();
-        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertFalse(levelQuest.isDone());
-            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isActive());
-            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID != levelQuest.getDbLevelTask().getId(), levelQuest.isBlocked());
-        }
+        userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_4_REAL_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         //Backup
@@ -691,21 +512,11 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.login("U1", "test");
-        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertFalse(levelQuest.isDone());
-            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isActive());
-            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID != levelQuest.getDbLevelTask().getId(), levelQuest.isBlocked());
-        }
+        userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_4_REAL_ID);
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(5000, 5000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
-        Assert.assertEquals(2, userGuidanceService.getQuestsCms().readDbChildren().size());
-        for (LevelQuest levelQuest : userGuidanceService.getQuestsCms().readDbChildren()) {
-            Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID == levelQuest.getDbLevelTask().getId(), levelQuest.isDone());
-            Assert.assertFalse(levelQuest.isActive());
-            Assert.assertFalse(levelQuest.isBlocked());
-        }
+        userGuidanceService.activateQuest(TEST_LEVEL_TASK_1_4_REAL_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

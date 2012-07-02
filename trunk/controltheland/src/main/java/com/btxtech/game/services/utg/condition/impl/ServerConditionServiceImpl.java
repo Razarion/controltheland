@@ -13,9 +13,9 @@
 
 package com.btxtech.game.services.utg.condition.impl;
 
-import com.btxtech.game.jsre.common.LevelStatePacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.GenericComparisonValueContainer;
@@ -330,9 +330,9 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
     public void sendProgressUpdate(UserState actor, Integer identifier) {
         AbstractComparison abstractComparison = getActorConditionsPrivate(actor, identifier).getAbstractComparison();
         if (abstractComparison != null && actor.getBase() != null) {
-            LevelStatePacket levelStatePacket = new LevelStatePacket();
-            levelStatePacket.setActiveQuestProgress(abstractComparison.createProgressHtml());
-            connectionService.sendPacket(actor.getBase().getSimpleBase(), levelStatePacket);
+            LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
+            levelTaskPacket.setActiveQuestProgress(abstractComparison.createProgressHtml());
+            connectionService.sendPacket(actor.getBase().getSimpleBase(), levelTaskPacket);
         }
     }
 }

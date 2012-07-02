@@ -22,7 +22,7 @@ import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededE
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 
 import java.util.ArrayList;
 import java.util.Collection;

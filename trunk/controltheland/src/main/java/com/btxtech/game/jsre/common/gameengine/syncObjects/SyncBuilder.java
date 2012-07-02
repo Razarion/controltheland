@@ -24,7 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededEx
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderFinalizeCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 
 /**
  * User: beat

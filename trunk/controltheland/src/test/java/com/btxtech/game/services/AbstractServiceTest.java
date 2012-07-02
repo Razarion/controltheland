@@ -1,16 +1,9 @@
 package com.btxtech.game.services;
 
 import com.btxtech.game.jsre.client.MovableService;
-import com.btxtech.game.jsre.client.common.ChatMessage;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
-import com.btxtech.game.jsre.common.AccountBalancePacket;
-import com.btxtech.game.jsre.common.BaseChangedPacket;
-import com.btxtech.game.jsre.common.HouseSpacePacket;
-import com.btxtech.game.jsre.common.LevelStatePacket;
-import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -28,7 +21,16 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
+import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
+import com.btxtech.game.jsre.common.packets.HouseSpacePacket;
+import com.btxtech.game.jsre.common.packets.LevelPacket;
+import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
+import com.btxtech.game.jsre.common.packets.Message;
+import com.btxtech.game.jsre.common.packets.Packet;
+import com.btxtech.game.jsre.common.packets.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.XpPacket;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.BaseService;
@@ -72,6 +74,8 @@ import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
+import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbItemTypeLimitation;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
@@ -268,6 +272,8 @@ abstract public class AbstractServiceTest {
     private SessionFactory sessionFactory;
     @Autowired
     private ApplicationContext applicationContext;
+    @Autowired
+    private UserService userService;
     private MockHttpServletRequest mockHttpServletRequest;
     private MockHttpServletResponse mockHttpServletResponse;
     private MockHttpSession mockHttpSession;
@@ -465,6 +471,18 @@ abstract public class AbstractServiceTest {
         return receivedPackets;
     }
 
+    protected <T extends Packet> List<T> getPackages(Class<T> packetFilter) throws Exception {
+        List<T> packets = new ArrayList<>();
+        List receivedPackets = new ArrayList<>(getMovableService().getSyncInfo());
+        for (Object packet : receivedPackets) {
+            if (packetFilter.isAssignableFrom(packet.getClass())) {
+                packets.add((T) packet);
+            }
+        }
+        return packets;
+    }
+
+
     protected void assertPackagesIgnoreSyncItemInfoAndClear(Packet... expectedPackets) throws Exception {
         assertPackagesIgnoreSyncItemInfoAndClear(false, expectedPackets);
     }
@@ -502,21 +520,21 @@ abstract public class AbstractServiceTest {
             AccountBalancePacket expected = (AccountBalancePacket) expectedPacket;
             AccountBalancePacket received = (AccountBalancePacket) receivedPacket;
             Assert.assertEquals(expected.getAccountBalance(), received.getAccountBalance(), 0.1);
-        } else if (expectedPacket instanceof LevelStatePacket) {
-            LevelStatePacket expected = (LevelStatePacket) expectedPacket;
-            LevelStatePacket received = (LevelStatePacket) receivedPacket;
+        } else if (expectedPacket instanceof LevelTaskPacket) {
+            LevelTaskPacket expected = (LevelTaskPacket) expectedPacket;
+            LevelTaskPacket received = (LevelTaskPacket) receivedPacket;
+            Assert.assertEquals(expected.isCompleted(), received.isCompleted());
+            Assert.assertEquals(expected.getActiveQuestProgress(), received.getActiveQuestProgress());
+            Assert.assertEquals(expected.getQuestInfo(), received.getQuestInfo());
+        } else if (expectedPacket instanceof LevelPacket) {
+            LevelPacket expected = (LevelPacket) expectedPacket;
+            LevelPacket received = (LevelPacket) receivedPacket;
+            Assert.assertEquals(expected.getLevel(), received.getLevel());
+        } else if (expectedPacket instanceof XpPacket) {
+            XpPacket expected = (XpPacket) expectedPacket;
+            XpPacket received = (XpPacket) receivedPacket;
             Assert.assertEquals(expected.getXp(), received.getXp());
             Assert.assertEquals(expected.getXp2LevelUp(), received.getXp2LevelUp());
-            Assert.assertEquals(expected.getActiveQuestTitle(), received.getActiveQuestTitle());
-            Assert.assertEquals(expected.getActiveQuestProgress(), received.getActiveQuestProgress());
-            Assert.assertEquals(expected.getActiveQuestLevelTaskId(), received.getActiveQuestLevelTaskId());
-            Assert.assertEquals(expected.isQuestDeactivated(), received.isQuestDeactivated());
-            Assert.assertEquals(expected.getQuestsDone(), received.getQuestsDone());
-            Assert.assertEquals(expected.getTotalQuests(), received.getTotalQuests());
-            Assert.assertEquals(expected.getMissionsDone(), received.getMissionsDone());
-            Assert.assertEquals(expected.getTotalMissions(), received.getTotalMissions());
-            Assert.assertEquals(expected.isMissionQuestCompleted(), received.isMissionQuestCompleted());
-            Assert.assertEquals(expected.getLevel(), received.getLevel());
         } else if (expectedPacket instanceof HouseSpacePacket) {
             HouseSpacePacket expected = (HouseSpacePacket) expectedPacket;
             HouseSpacePacket received = (HouseSpacePacket) receivedPacket;
@@ -1202,6 +1220,7 @@ abstract public class AbstractServiceTest {
         DbLevelTask dbSimLevelTask = dbSimLevel.getLevelTaskCrud().createDbChild();
         dbSimLevelTask.setDbTutorialConfig(tut1);
         dbSimLevelTask.setName(TEST_LEVEL_TASK_1_1_SIMULATED_NAME);
+        dbSimLevelTask.setHtml("Description");
         dbSimLevelTask.setXp(1);
         userGuidanceService.getCrudQuestHub().updateDbChild(startQuestHub);
         TEST_LEVEL_1_SIMULATED_ID = dbSimLevel.getId();
@@ -1237,6 +1256,7 @@ abstract public class AbstractServiceTest {
         dbSimLevelTask2.setDbTutorialConfig(tut2);
         dbSimLevelTask2.setXp(2);
         dbSimLevelTask2.setName(TEST_LEVEL_TASK_3_3_SIMULATED_NAME);
+        dbSimLevelTask2.setHtml("Task3Level2Descr");
         DbLevelTask dbSimLevelTask3 = dbLevel2.getLevelTaskCrud().createDbChild();
         dbSimLevelTask3.setDbTutorialConfig(tut3);
         dbSimLevelTask3.setXp(3);
@@ -1340,6 +1360,7 @@ abstract public class AbstractServiceTest {
     private DbLevelTask setupCreateLevelTask1RealGameLevel(DbLevel dbLevel) {
         DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().createDbChild();
         dbLevelTask.setName(TEST_LEVEL_TASK_1_2_REAL_NAME);
+        dbLevelTask.setHtml("Descr2");
         // Rewards
         dbLevelTask.setMoney(10);
         dbLevelTask.setXp(100);
@@ -1356,6 +1377,8 @@ abstract public class AbstractServiceTest {
 
     private DbLevelTask setupCreateLevelTask3RealGameLevel(DbLevel dbLevel) {
         DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().createDbChild();
+        dbLevelTask.setName("Task3Level2");
+        dbLevelTask.setHtml("DecrTask3Level2");
         // Rewards
         dbLevelTask.setMoney(10);
         dbLevelTask.setXp(100);
@@ -1388,6 +1411,7 @@ abstract public class AbstractServiceTest {
     private DbLevelTask setupCreateLevelTask2RealGameLevel(DbLevel dbLevel) {
         DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().createDbChild();
         dbLevelTask.setName(TEST_LEVEL_TASK_2_2_REAL_NAME);
+        dbLevelTask.setHtml("Descr222");
         // Rewards
         dbLevelTask.setMoney(80);
         dbLevelTask.setXp(120);
@@ -1776,7 +1800,10 @@ abstract public class AbstractServiceTest {
         Assert.assertEquals((int) descImg.getId(), valueMap.getInt(CmsImageResource.ID));
     }
 
-
+    // ------------------- User --------------------
+    protected UserState getUserState() {
+        return userService.getUserState();
+    }
     // ------------------- Div --------------------
 
     protected Services createMockServices() {

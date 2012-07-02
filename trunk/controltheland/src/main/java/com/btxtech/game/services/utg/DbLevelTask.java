@@ -1,5 +1,6 @@
 package com.btxtech.game.services.utg;
 
+import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.common.CrudChild;
@@ -124,6 +125,10 @@ public class DbLevelTask implements CrudChild<DbLevel> {
         this.html = html;
     }
 
+    public QuestInfo createQuestInfo() {
+        return new QuestInfo(name, html, xp, money, id, isDbTutorialConfig() ? QuestInfo.Type.MISSION : QuestInfo.Type.QUEST);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -137,5 +142,14 @@ public class DbLevelTask implements CrudChild<DbLevel> {
     @Override
     public int hashCode() {
         return id != null ? id : System.identityHashCode(this);
+    }
+
+    public boolean isDbTutorialConfig() {
+        return dbTutorialConfig != null;
+    }
+
+    @Override
+    public String toString() {
+        return "DbLevelTask{id=" + id + ", name='" + name + '}';
     }
 }

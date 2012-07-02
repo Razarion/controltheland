@@ -29,7 +29,7 @@ public interface ConditionService<A, I> {
 
     void activateCondition(ConditionConfig conditionConfig, A a, I i);
 
-    void deactivateActorConditions(A a, I i);
+    void deactivateActorCondition(A a, I i);
 
     void deactivateAllActorConditions(A a);
 

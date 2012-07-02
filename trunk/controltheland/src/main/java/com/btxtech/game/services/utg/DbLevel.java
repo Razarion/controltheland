@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.user.UserService;
@@ -33,9 +34,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -56,7 +57,8 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "dbLevel", nullable = false)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-    private Collection<DbLevelTask> dbLevelTasks;
+    @org.hibernate.annotations.IndexColumn(name = "orderIndex", base = 0)
+    private List<DbLevelTask> dbLevelTasks;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "dbQuestHub", insertable = false, updatable = false, nullable = false)
     private DbQuestHub dbQuestHub;
@@ -71,12 +73,13 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "dbLevel", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbItemTypeLimitation> itemTypeLimitation;
+    // ----- Condition -----
     private int xp;
 
     @Transient
     private CrudChildServiceHelper<DbItemTypeLimitation> itemTypeLimitationCrud;
     @Transient
-    private CrudChildServiceHelper<DbLevelTask> levelTaskCrud;
+    private CrudListChildServiceHelper<DbLevelTask> levelTaskCrud;
 
     /**
      * Used by CRUD
@@ -118,8 +121,8 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
 
     @Override
     public void init(UserService userService) {
-        itemTypeLimitation = new HashSet<DbItemTypeLimitation>();
-        dbLevelTasks = new ArrayList<DbLevelTask>();
+        itemTypeLimitation = new HashSet<>();
+        dbLevelTasks = new ArrayList<>();
         radarMode = RadarMode.NONE;
     }
 
@@ -201,16 +204,16 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
         return getClass().getSimpleName() + " " + getName();
     }
 
-    public CrudChildServiceHelper<DbLevelTask> getLevelTaskCrud() {
+    public CrudListChildServiceHelper<DbLevelTask> getLevelTaskCrud() {
         if (levelTaskCrud == null) {
-            levelTaskCrud = new CrudChildServiceHelper<DbLevelTask>(dbLevelTasks, DbLevelTask.class, this);
+            levelTaskCrud = new CrudListChildServiceHelper<>(dbLevelTasks, DbLevelTask.class, this);
         }
         return levelTaskCrud;
     }
 
     public CrudChildServiceHelper<DbItemTypeLimitation> getItemTypeLimitationCrud() {
         if (itemTypeLimitationCrud == null) {
-            itemTypeLimitationCrud = new CrudChildServiceHelper<DbItemTypeLimitation>(itemTypeLimitation, DbItemTypeLimitation.class, this);
+            itemTypeLimitationCrud = new CrudChildServiceHelper<>(itemTypeLimitation, DbItemTypeLimitation.class, this);
         }
         return itemTypeLimitationCrud;
     }
@@ -224,27 +227,7 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
         for (DbItemTypeLimitation dbItemTypeLimitation : this.itemTypeLimitation) {
             itemTypeLimitation.put(dbItemTypeLimitation.getDbBaseItemType().getId(), dbItemTypeLimitation.getCount());
         }
-        return new LevelScope(number, maxMoney, itemTypeLimitation, houseSpace, itemSellFactor, radarMode);
-    }
-
-    public int getMissionCount() {
-        int count = 0;
-        for (DbLevelTask dbLevelTask : getLevelTaskCrud().readDbChildren()) {
-            if (dbLevelTask.getDbTutorialConfig() != null) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    public int getQuestCount() {
-        int count = 0;
-        for (DbLevelTask dbLevelTask : getLevelTaskCrud().readDbChildren()) {
-            if (dbLevelTask.getDbTutorialConfig() == null) {
-                count++;
-            }
-        }
-        return count;
+        return new LevelScope(number, maxMoney, itemTypeLimitation, houseSpace, itemSellFactor, radarMode, xp);
     }
 
     public int getXp() {
@@ -257,7 +240,7 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
 
     public DbLevelTask getFirstTutorialLevelTask() {
         for (DbLevelTask dbLevelTask : getLevelTaskCrud().readDbChildren()) {
-            if (dbLevelTask.getDbTutorialConfig() != null) {
+            if (dbLevelTask.isDbTutorialConfig()) {
                 return dbLevelTask;
             }
         }

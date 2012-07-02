@@ -22,7 +22,7 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemViewContainer;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
-import com.btxtech.game.jsre.common.BaseChangedPacket;
+import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
