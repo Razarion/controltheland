@@ -82,20 +82,26 @@ public class SpeechBubbleHandler {
         if (syncItem instanceof SyncBaseItem) {
             SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
             if (ClientBase.getInstance().isMyOwnProperty(syncBaseItem)) {
-                builder.append(syncBaseItem.getBaseItemType().getDescription());
+                builder.append("<b>");
+                builder.append(syncItem.getItemType().getName());
+                builder.append("</b>");
                 builder.append("<br />");
-                CmsUtil.getUrl4ItemTypePage(builder, syncItem.getItemType(), "Details");
+                builder.append(syncBaseItem.getBaseItemType().getDescription());
                 if (ItemCockpit.hasItemCockpit(syncBaseItem) || syncBaseItem.hasSyncMovable()) {
                     builder.append("<br /><b>Click on it!</b>");
                 }
             } else if (ClientBase.getInstance().isBot(syncBaseItem.getBase())) {
-                builder.append("Attack this <b>enemy</b> ");
-                CmsUtil.getUrl4ItemTypePage(builder, syncItem.getItemType(), "unit!");
+                builder.append("Attack this <b>enemy</b>!<br />");
+                builder.append("<b>");
+                builder.append(syncItem.getItemType().getName());
+                builder.append("</b>");
                 builder.append("<br />");
                 builder.append(ClientBase.getInstance().getBaseName(syncBaseItem.getBase()));
             } else if (ClientBase.getInstance().isEnemy(syncBaseItem)) {
-                builder.append("Attack this <b>enemy</b> ");
-                CmsUtil.getUrl4ItemTypePage(builder, syncItem.getItemType(), "unit!");
+                builder.append("Attack this <b>enemy</b>!<br />");
+                builder.append("<b>");
+                builder.append(syncItem.getItemType().getName());
+                builder.append("</b>");
                 builder.append("<br />");
                 builder.append(ClientBase.getInstance().getBaseName(syncBaseItem.getBase()));
                 builder.append("<br /><a href=\"javascript:offerAlliance(");
@@ -103,14 +109,19 @@ public class SpeechBubbleHandler {
                 builder.append(");\">Offer alliance</a>");
             } else {
                 builder.append("Alliance member ");
-                builder.append(ClientBase.getInstance().getBaseName(syncBaseItem.getBase()));
                 builder.append("<br />");
-                CmsUtil.getUrl4ItemTypePage(builder, syncItem.getItemType(), "unit");
+                builder.append("<b>");
+                builder.append(syncItem.getItemType().getName());
+                builder.append("</b>");
+                builder.append("<br />");
+                builder.append(ClientBase.getInstance().getBaseName(syncBaseItem.getBase()));
             }
         } else {
-            builder.append(syncItem.getItemType().getDescription());
+            builder.append("<b>");
+            builder.append(syncItem.getItemType().getName());
+            builder.append("</b>");
             builder.append("<br />");
-            CmsUtil.getUrl4ItemTypePage(builder, syncItem.getItemType(), "Details");
+            builder.append(syncItem.getItemType().getDescription());
         }
         return builder.toString();
     }
