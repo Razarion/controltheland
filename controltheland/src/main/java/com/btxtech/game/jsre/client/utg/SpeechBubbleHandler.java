@@ -4,10 +4,8 @@ import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.google.gwt.user.client.Timer;
 
 /**
@@ -16,12 +14,15 @@ import com.google.gwt.user.client.Timer;
  * Time: 17:00:22
  */
 public class SpeechBubbleHandler {
+    private static final int DEFERRED_SHOW = 500;
+    public static boolean uglySuppress = false;
     private static final SpeechBubbleHandler INSTANCE = new SpeechBubbleHandler();
     private SpeechBubble itemSpeechBubble;
-    private SyncItem syncItem;
+    private SyncItem deferredSyncItem;
     private boolean mouseOverSpeechBubble = false;
     private boolean mouseOverItemType = false;
-    public static boolean uglySuppress = false;
+    private Timer deferredShowTimer;
+    private Timer deferredHideTimer;
 
     public static SpeechBubbleHandler getInstance() {
         return INSTANCE;
@@ -37,27 +38,53 @@ public class SpeechBubbleHandler {
         if (uglySuppress) {
             return;
         }
-
-        if (syncItem.equals(this.syncItem)) {
-            mouseOverItemType = true;
+        if(ItemCockpit.getInstance().isActive()) {
+            return;
+        }
+        mouseOverItemType = true;
+        if (syncItem.equals(deferredSyncItem)) {
             return;
         }
         hide();
+        startDeferredShow();
+        deferredSyncItem = syncItem;
         mouseOverSpeechBubble = false;
-        mouseOverItemType = true;
-        itemSpeechBubble = new SpeechBubble(syncItem, setupHtml(syncItem), true);
-        itemSpeechBubble.setBgColor(setupColor(syncItem));
-        Index position = syncItem.getSyncItemArea().getPosition();
+    }
+
+    private void startDeferredShow() {
+        stopDeferredShow();
+        deferredShowTimer = new Timer() {
+            @Override
+            public void run() {
+                display();
+                deferredShowTimer = null;
+            }
+        };
+        deferredShowTimer.schedule(DEFERRED_SHOW);
+    }
+
+    private void stopDeferredShow() {
+        if (deferredShowTimer != null) {
+            deferredShowTimer.cancel();
+            deferredShowTimer = null;
+        }
+    }
+
+    private void display() {
+        itemSpeechBubble = new SpeechBubble(deferredSyncItem, setupHtml(deferredSyncItem), true);
+        itemSpeechBubble.setBgColor(setupColor(deferredSyncItem));
+        Index position = deferredSyncItem.getSyncItemArea().getPosition();
         TerrainView.getInstance().toAbsoluteIndex(position);
-        this.syncItem = syncItem;
     }
 
     public void hide() {
+        stopDeferredShow();
+        stopDeferredHide();
         if (itemSpeechBubble != null) {
             itemSpeechBubble.close();
             itemSpeechBubble = null;
-            syncItem = null;
         }
+        deferredSyncItem = null;
         mouseOverItemType = false;
         mouseOverSpeechBubble = false;
     }
@@ -132,18 +159,29 @@ public class SpeechBubbleHandler {
 
     public void onSpeechBubbleMouseOut() {
         mouseOverSpeechBubble = false;
-        deferredClose();
+        if (itemSpeechBubble != null) {
+            deferredClose();
+        } else {
+            stopDeferredShow();
+            deferredSyncItem = null;
+        }
     }
 
     public void onSyncItemMouseOut(SyncItem syncItem) {
-        if (syncItem.equals(this.syncItem)) {
+        if (syncItem.equals(deferredSyncItem)) {
+            if (itemSpeechBubble != null) {
+                deferredClose();
+            } else {
+                stopDeferredShow();
+                deferredSyncItem = null;
+            }
             mouseOverItemType = false;
-            deferredClose();
         }
     }
 
     private void deferredClose() {
-        Timer timer = new Timer() {
+        stopDeferredHide();
+        deferredHideTimer = new Timer() {
             @Override
             public void run() {
                 if (!mouseOverSpeechBubble && !mouseOverItemType) {
@@ -151,11 +189,19 @@ public class SpeechBubbleHandler {
                 }
             }
         };
-        timer.schedule(500);
+        deferredHideTimer.schedule(500);
+    }
+
+    private void stopDeferredHide() {
+        if (deferredHideTimer != null) {
+            deferredHideTimer.cancel();
+            deferredHideTimer = null;
+        }
     }
 
     public void itemKilled(SyncItem syncItem) {
-        if (syncItem.equals(this.syncItem)) {
+        if (syncItem.equals(deferredSyncItem)) {
+            stopDeferredShow();
             hide();
         }
     }
