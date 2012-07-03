@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.utg.condition;
 
+import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -223,8 +224,15 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
             } else {
                 return "-";
             }
+        } else if (parameter == TEMPLATE_PARAMETER_ITEM_IMAGE) {
+            try {
+                ItemType itemType = getServices().getItemService().getItemType(number);
+                return ImageHandler.getQuestProgressItemTypeImageString(itemType);
+            } catch (NoSuchItemTypeException e) {
+                throw new IllegalArgumentException("ItemTypePositionComparison.getValue() no such item type id: " + number);
+            }
         } else {
-            throw new IllegalArgumentException("SyncItemTypeComparison.getValue() parameter is not known: " + parameter);
+            throw new IllegalArgumentException("ItemTypePositionComparison.getValue() parameter is not known: " + parameter);
         }
     }
 
