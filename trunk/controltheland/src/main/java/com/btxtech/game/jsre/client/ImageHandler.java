@@ -14,19 +14,12 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.jsre.client.utg.ImageSizeCallback;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BuildupStep;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.google.gwt.event.dom.client.LoadEvent;
-import com.google.gwt.event.dom.client.LoadHandler;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
-
-import java.util.HashSet;
 
 /**
  * User: beat
@@ -36,6 +29,7 @@ import java.util.HashSet;
 public class ImageHandler {
     public static final int EXPLOSION_EDGE_LENGTH = 200;
     public static final int DEFAULT_IMAGE_NUMBER = 9;
+    private static final int QUEST_PROGRESS_IMAGES_HEIGHT = 20;
 
     public static final String PNG_SUFFIX = ".png";
     public static final String IMAGES = "images";
@@ -47,8 +41,6 @@ public class ImageHandler {
     public static final String BTN_UP_IMAGE = "-up.png";
     public static final String BTN_DOWN_IMAGE = "-down.png";
     public static final String SPLASH_IMAGE_PREFIX = "/images/splash/";
-
-    private static HashSet<String> loadedUrls = new HashSet<String>();
 
     /**
      * Singleton
@@ -90,6 +82,26 @@ public class ImageHandler {
             image = new Image(url, xOffset, 0, itemType.getBoundingBox().getImageWidth(), itemType.getBoundingBox().getImageHeight());
         }
         return image;
+    }
+
+    public static String getQuestProgressItemTypeImageString(ItemType itemType) {
+        double scale = (double) QUEST_PROGRESS_IMAGES_HEIGHT / (double) itemType.getBoundingBox().getImageHeight();
+        StringBuilder builder = new StringBuilder();
+        builder.append("<img border='0' src='/game/clear.cache.gif' style='width:");
+        builder.append((int) (itemType.getBoundingBox().getImageWidth() * scale));
+        builder.append("px; height:");
+        builder.append(QUEST_PROGRESS_IMAGES_HEIGHT);
+        builder.append("px; background-image: url(");
+        builder.append(getItemTypeSpriteMapUrl(itemType.getId()));
+        builder.append("); background-repeat: no-repeat; background-position: -");
+        builder.append((int) (itemType.getBoundingBox().angelToImageOffset(itemType.getBoundingBox().getCosmeticAngel()) * scale));
+        builder.append("px 0px; background-size: ");
+        builder.append((int) (itemType.getBoundingBox().getImageWidth() * scale * itemType.getBoundingBox().getAngelCount()));
+        builder.append("px ");
+        builder.append(QUEST_PROGRESS_IMAGES_HEIGHT);
+        builder.append("px;");
+        builder.append("'></img>");
+        return builder.toString();
     }
 
     public static String getItemTypeSpriteMapUrl(int itemId) {
@@ -214,59 +226,8 @@ public class ImageHandler {
         return "/" + IMAGES + "/" + EXPLOSION + "/" + "ex4" + PNG_SUFFIX;
     }
 
-    public static Image getIcon16(String icon) {
-        return createImageIE6TransparencyProblem("/" + IMAGES + "/" + ICONS + "/" + icon + PNG_SUFFIX, 16, 16);
-    }
-
     public static Widget getTipImage(String tip) {
         return new Image("/" + IMAGES + "/" + TIPS + "/" + tip);
-    }
-
-    /**
-     * @param id                image id
-     * @param imageSizeCallback called when the image was loaded. If the image is already loaded is is not called
-     * @return Image
-     */
-    public static Image getTutorialImage(int id, final ImageSizeCallback imageSizeCallback) {
-        StringBuilder url = new StringBuilder();
-        url.append(Constants.TUTORIAL_RESOURCE_URL);
-        url.append("?");
-        url.append(Constants.TUTORIAL_RESOURCE_ID);
-        url.append("=");
-        url.append(id);
-        String urlStr = url.toString();
-        final Image image = new Image();
-        if (imageSizeCallback != null) {
-            image.addLoadHandler(new LoadHandler() {
-                @Override
-                public void onLoad(LoadEvent event) {
-                    imageSizeCallback.onImageSize(image, image.getWidth(), image.getHeight());
-                }
-            });
-        }
-        image.setUrl(urlStr);
-        loadImage(urlStr);
-        return image;
-    }
-
-    private static class ImageForIe6 extends Image {
-        public ImageForIe6(Element element) {
-            super(element);
-        }
-    }
-
-    public static Image createImageIE6TransparencyProblem(String url, int width, int height) {
-        if (GwtCommon.isIe6() && (url.endsWith(".png") || url.endsWith(".PNG"))) {
-            return new ImageForIe6(getIE6TransparencyProblemElement(url, width, height));
-        } else {
-            return new Image(url);
-        }
-    }
-
-    public static Element getIE6TransparencyProblemElement(String url, int width, int height) {
-        Element div = DOM.createDiv();
-        DOM.setInnerHTML(div, "<span style=\"display:inline-block;width:" + width + "px;height:" + height + "px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + url + "', sizingMethod='scale')\"></span>");
-        return DOM.getFirstChild(div);
     }
 
     public static String getCockpitImageUrl(String image) {
@@ -276,18 +237,4 @@ public class ImageHandler {
     public static Image getCockpitImage(String image) {
         return new Image(getCockpitImageUrl(image));
     }
-
-    /**
-     * If an image is loaded in IE7 & IE8, but remove before complete loading than this image can never be loaded again.
-     * To solve this, put every image in a separate instance.
-     *
-     * @param url the image url
-     */
-    private static void loadImage(String url) {
-        if (!loadedUrls.contains(url)) {
-            loadedUrls.add(url);
-            new Image(url);
-        }
-    }
-
 }

@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.utg.condition;
 
+import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -80,27 +81,35 @@ public class SyncItemTypeComparison extends AbstractSyncItemComparison {
 
     @Override
     protected String getValue(char parameter, Integer number) {
-        if (parameter != TEMPLATE_PARAMETER_COUNT) {
-            throw new IllegalArgumentException("SyncItemTypeComparison.getValue() parameter is not known: " + parameter);
-        }
-        if (number == null) {
-            throw new IllegalArgumentException("SyncItemTypeComparison.getValue() number is null");
-        }
-        ItemType itemType;
-        try {
-            itemType = getServices().getItemService().getItemType(number);
-        } catch (NoSuchItemTypeException e) {
-            throw new IllegalArgumentException("SyncItemTypeComparison.getValue() no such item type id: " + number);
-        }
-        Integer totalCount = total.get(itemType);
-        if (totalCount == null) {
-            throw new IllegalArgumentException("SyncItemTypeComparison.getValue() item type is unknown in the comparision: " + itemType);
-        }
-        Integer remainingCount = remaining.get(itemType);
-        if (remainingCount == null) {
-            return totalCount.toString();
+        if (parameter == TEMPLATE_PARAMETER_COUNT) {
+            if (number == null) {
+                throw new IllegalArgumentException("SyncItemTypeComparison.getValue() number is null");
+            }
+            ItemType itemType;
+            try {
+                itemType = getServices().getItemService().getItemType(number);
+            } catch (NoSuchItemTypeException e) {
+                throw new IllegalArgumentException("SyncItemTypeComparison.getValue() no such item type id: " + number);
+            }
+            Integer totalCount = total.get(itemType);
+            if (totalCount == null) {
+                throw new IllegalArgumentException("SyncItemTypeComparison.getValue() item type is unknown in the comparision: " + itemType);
+            }
+            Integer remainingCount = remaining.get(itemType);
+            if (remainingCount == null) {
+                return totalCount.toString();
+            } else {
+                return Integer.toString(totalCount - remainingCount);
+            }
+        } else if (parameter == TEMPLATE_PARAMETER_ITEM_IMAGE) {
+            try {
+                ItemType itemType = getServices().getItemService().getItemType(number);
+                return ImageHandler.getQuestProgressItemTypeImageString(itemType);
+            } catch (NoSuchItemTypeException e) {
+                throw new IllegalArgumentException("SyncItemTypeComparison.getValue() no such item type id: " + number);
+            }
         } else {
-            return Integer.toString(totalCount - remainingCount);
+            throw new IllegalArgumentException("SyncItemTypeComparison.getValue() parameter is not known: " + parameter);
         }
     }
 }

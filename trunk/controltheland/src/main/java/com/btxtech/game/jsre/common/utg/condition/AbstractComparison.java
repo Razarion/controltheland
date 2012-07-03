@@ -21,6 +21,7 @@ package com.btxtech.game.jsre.common.utg.condition;
 public interface AbstractComparison {
     static final char TEMPLATE_PARAMETER_COUNT = 'C';
     static final char TEMPLATE_PARAMETER_TIME = 'T';
+    static final char TEMPLATE_PARAMETER_ITEM_IMAGE = 'I';
 
     boolean isFulfilled();
 
