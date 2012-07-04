@@ -117,8 +117,8 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
         // Condition Simulation with two tasks
         Map<ItemType, Integer> conditionItemType = new HashMap<ItemType, Integer>();
         conditionItemType.put(MOVABLE_ITEM_TYPE, 1);
-        ConditionConfig conditionConfig1 = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, conditionItemType, new Rectangle(500, 500, 400, 400), null, true, null));
-        ConditionConfig conditionConfig2 = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, conditionItemType, new Rectangle(500, 500, 400, 400), null, true, null));
+        ConditionConfig conditionConfig1 = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, conditionItemType, new Rectangle(500, 500, 400, 400), null, true, null), null);
+        ConditionConfig conditionConfig2 = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, conditionItemType, new Rectangle(500, 500, 400, 400), null, true, null), null);
 
         // Setup SimulationInfo
         List<ItemTypeAndPosition> ownItems = new ArrayList<ItemTypeAndPosition>();

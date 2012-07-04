@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.cockpit.radar;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
@@ -22,16 +23,18 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
  * Time: 21:52:27
  */
 public class RadarHintView extends MiniMap {
-    private static final int EDGE_LENGTH = 200;
-    private boolean visible = true;
+    private static final int EDGE_LENGTH = 15;
+    private boolean color = true;
     private SyncBaseItem enemyBaseItem;
+    private Index position;
 
     public RadarHintView(int width, int height) {
-        super(width, height, false);
+        super(width, height, Scale.NONE);
     }
 
     public void showHint(SyncBaseItem enemyBaseItem) {
         this.enemyBaseItem = enemyBaseItem;
+        position = null;
         if (getTerrainSettings() == null) {
             return;
         }
@@ -43,12 +46,37 @@ public class RadarHintView extends MiniMap {
         showCross();
     }
 
+    public void showHint(Index position) {
+        this.position = position;
+        enemyBaseItem = null;
+        if (getTerrainSettings() == null) {
+            return;
+        }
+
+        showCross();
+    }
+
     private void showCross() {
         getContext2d().setLineWidth(1.5 / getScale());
-        getContext2d().setStrokeStyle("#FF0000");
+        if (color) {
+            getContext2d().setStrokeStyle("#FF0000");
+        } else {
+            getContext2d().setStrokeStyle("#FFFFFF");
+        }
 
-        int x = enemyBaseItem.getSyncItemArea().getPosition().getX();
-        int y = enemyBaseItem.getSyncItemArea().getPosition().getY();
+
+
+        int x;
+        int y;
+        if (enemyBaseItem != null) {
+            x = absolute2RadarPositionX(enemyBaseItem.getSyncItemArea().getPosition());
+            y = absolute2RadarPositionY(enemyBaseItem.getSyncItemArea().getPosition());
+        } else if (position != null) {
+            x = absolute2RadarPositionX(position);
+            y = absolute2RadarPositionY(position);
+        } else {
+            throw new IllegalStateException("RadarHintView.showCross() no hint to display");
+        }
 
         getContext2d().beginPath();
         getContext2d().moveTo(x - EDGE_LENGTH, y);
@@ -67,11 +95,15 @@ public class RadarHintView extends MiniMap {
     }
 
     public void blinkHint() {
-        if (visible) {
-            clear();
-        } else {
-            showCross();
-        }
-        visible = !visible;
+        showCross();
+        color = !color;
+    }
+
+    private int absolute2RadarPositionX(Index absolute) {
+        return (int) (absolute.getX() * ((double) getWidth() / (double) getTerrainSettings().getPlayFieldXSize()));
+    }
+
+    private int absolute2RadarPositionY(Index absolute) {
+        return (int) (absolute.getY() * ((double) getHeight() / (double) getTerrainSettings().getPlayFieldYSize()));
     }
 }

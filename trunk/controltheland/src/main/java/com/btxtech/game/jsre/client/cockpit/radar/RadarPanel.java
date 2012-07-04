@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.cockpit.radar;
 
 import com.btxtech.game.jsre.client.ClientSyncItem;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -210,6 +211,10 @@ public class RadarPanel {
 
     public void showHint(SyncBaseItem enemyBaseItem) {
         radarHintView.showHint(enemyBaseItem);
+    }
+
+    public void showHint(Index position) {
+        radarHintView.showHint(position);
     }
 
     public void hideHint() {

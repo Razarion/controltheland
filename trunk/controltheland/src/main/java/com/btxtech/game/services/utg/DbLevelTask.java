@@ -1,5 +1,6 @@
 package com.btxtech.game.services.utg;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
@@ -85,7 +86,7 @@ public class DbLevelTask implements CrudChild<DbLevel> {
 
     public ConditionConfig createConditionConfig(ItemService itemService) {
         if (dbTutorialConfig != null) {
-            return new ConditionConfig(ConditionTrigger.TUTORIAL, null);
+            return new ConditionConfig(ConditionTrigger.TUTORIAL, null, null);
         } else if (dbConditionConfig != null) {
             return dbConditionConfig.createConditionConfig(itemService);
         } else {
@@ -126,7 +127,14 @@ public class DbLevelTask implements CrudChild<DbLevel> {
     }
 
     public QuestInfo createQuestInfo() {
-        return new QuestInfo(name, html, xp, money, id, isDbTutorialConfig() ? QuestInfo.Type.MISSION : QuestInfo.Type.QUEST);
+        return new QuestInfo(name, html, xp, money, id, isDbTutorialConfig() ? QuestInfo.Type.MISSION : QuestInfo.Type.QUEST, getRadarHint());
+    }
+
+    private Index getRadarHint() {
+        if (dbConditionConfig == null) {
+            return null;
+        }
+        return dbConditionConfig.getRadarPositionHint();
     }
 
     @Override

@@ -46,7 +46,7 @@ public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener, Mi
     private BoundingBox boundingBox;
 
     public PathMiniMap(int width, int height) {
-        super(width, height, false);
+        super(width, height,  Scale.ABSOLUTE);
         addMouseDownListener(this);
         addMouseMoveListener(this);
         loadBoundingBox(1);

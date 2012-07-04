@@ -41,7 +41,7 @@ public class RadarFrameView extends MiniMap implements TerrainScrollListener, Mi
     private Logger log = Logger.getLogger(RadarFrameView.class.getName());
 
     public RadarFrameView(int width, int height) {
-        super(width, height, true);
+        super(width, height,  Scale.TILE);
         TerrainView.getInstance().addTerrainScrollListener(this);
         addMouseDownListener(this);
     }

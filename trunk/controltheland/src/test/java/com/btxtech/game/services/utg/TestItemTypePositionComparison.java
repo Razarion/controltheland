@@ -128,7 +128,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @DirtiesContext
     public void noneItemType() throws Exception {
         // Does not make any sense
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, null, null, null, false, "Move no item"));
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, null, null, null, false, "Move no item"), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -154,7 +154,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 1);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, null, null, false, "Move no #C"
-                + builder1B1.getBaseItemType().getId() + " item"));
+                + builder1B1.getBaseItemType().getId() + " item"), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -180,7 +180,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, null, null, false, "#C"
-                + builder1B1.getBaseItemType().getId()));
+                + builder1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -224,7 +224,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, null, null, false, "aaa #C"
-                + builder1B1.getBaseItemType().getId() + " bbb #C" + attacker1B1.getBaseItemType().getId() + " ccc #C" + building1B1.getBaseItemType().getId()));
+                + builder1B1.getBaseItemType().getId() + " bbb #C" + attacker1B1.getBaseItemType().getId() + " ccc #C" + building1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -278,7 +278,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 1);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null,
-                false, "#C" + builder1B1.getBaseItemType().getId() + "  lll yyyy"));
+                false, "#C" + builder1B1.getBaseItemType().getId() + "  lll yyyy"), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -307,7 +307,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         itemTypes.put(builder1B1.getBaseItemType(), 2);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null,
-                false, "#C" + builder1B1.getBaseItemType().getId() + " #C" + attacker1B1.getBaseItemType().getId()));
+                false, "#C" + builder1B1.getBaseItemType().getId() + " #C" + attacker1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -356,7 +356,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         itemTypes.put(builder1B1.getBaseItemType(), 2);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null,
-                false, "#C" + builder1B1.getBaseItemType().getId() + " wwww #C" + attacker1B1.getBaseItemType().getId()));
+                false, "#C" + builder1B1.getBaseItemType().getId() + " wwww #C" + attacker1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -398,7 +398,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 1);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), 100,
-                false, "xxx #T yyy #C" + builder1B1.getBaseItemType().getId()));
+                false, "xxx #T yyy #C" + builder1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -428,7 +428,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), 100,
-                false, "xxx #T yyy #C" + builder1B1.getBaseItemType().getId() + " #C" + attacker1B1.getBaseItemType().getId() + " #C" + building1B1.getBaseItemType().getId()));
+                false, "xxx #T yyy #C" + builder1B1.getBaseItemType().getId() + " #C" + attacker1B1.getBaseItemType().getId() + " #C" + building1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -478,7 +478,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), 100,
-                false, null));
+                false, null), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -532,7 +532,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), 100,
-                false, null));
+                false, null), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -597,7 +597,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), 100,
-                true, "#T #C" + builder1B1.getBaseItemType().getId() + " #C" + attacker1B1.getBaseItemType().getId() + " #C" + building1B1.getBaseItemType().getId()));
+                true, "#T #C" + builder1B1.getBaseItemType().getId() + " #C" + attacker1B1.getBaseItemType().getId() + " #C" + building1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -665,7 +665,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), 100,
-                true, "#T #C" + builder1B1.getBaseItemType().getId() + " #C" + attacker1B1.getBaseItemType().getId() + " #C" + building1B1.getBaseItemType().getId()));
+                true, "#T #C" + builder1B1.getBaseItemType().getId() + " #C" + attacker1B1.getBaseItemType().getId() + " #C" + building1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -732,7 +732,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null,
-                true, "#T #C" + builder1B1.getBaseItemType().getId() + " #C" + attacker1B1.getBaseItemType().getId() + " #C" + building1B1.getBaseItemType().getId()));
+                true, "#T #C" + builder1B1.getBaseItemType().getId() + " #C" + attacker1B1.getBaseItemType().getId() + " #C" + building1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -774,7 +774,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, null, 100, true, null));
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, null, 100, true, null), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -815,7 +815,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 1);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null,
-                true, null));
+                true, null), null);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
             @Override
@@ -845,7 +845,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 2);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null,
-                true, null));
+                true, null), null);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
             @Override
@@ -875,7 +875,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 2);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), 100,
-                true, null));
+                true, null), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {

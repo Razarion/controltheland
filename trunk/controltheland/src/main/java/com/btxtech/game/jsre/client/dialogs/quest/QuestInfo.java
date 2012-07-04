@@ -1,5 +1,7 @@
 package com.btxtech.game.jsre.client.dialogs.quest;
 
+import com.btxtech.game.jsre.client.common.Index;
+
 import java.io.Serializable;
 
 public class QuestInfo implements Serializable {
@@ -13,6 +15,7 @@ public class QuestInfo implements Serializable {
     private int gold;
     private Type type;
     private int id;
+    private Index radarPosition;
 
     /**
      * Used by GWT
@@ -20,13 +23,14 @@ public class QuestInfo implements Serializable {
     QuestInfo() {
     }
 
-    public QuestInfo(String title, String description, int xp, int gold, int id, Type type) {
+    public QuestInfo(String title, String description, int xp, int gold, int id, Type type, Index radarPosition) {
         this.title = title;
         this.description = description;
         this.gold = gold;
         this.xp = xp;
         this.id = id;
         this.type = type;
+        this.radarPosition = radarPosition;
     }
 
     public String getTitle() {
@@ -53,6 +57,14 @@ public class QuestInfo implements Serializable {
         return type;
     }
 
+    public Index getRadarPosition() {
+        return radarPosition;
+    }
+
+    public void setRadarPosition(Index radarPosition) {
+        this.radarPosition = radarPosition;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -64,6 +76,7 @@ public class QuestInfo implements Serializable {
                 && id == questInfo.id
                 && xp == questInfo.xp
                 && description.equals(questInfo.description)
+                && !(radarPosition != null ? !radarPosition.equals(questInfo.radarPosition) : questInfo.radarPosition != null)
                 && title.equals(questInfo.title)
                 && type == questInfo.type;
     }
@@ -76,6 +89,7 @@ public class QuestInfo implements Serializable {
         result = 31 * result + gold;
         result = 31 * result + type.hashCode();
         result = 31 * result + id;
+        result = 31 * result + (radarPosition != null ? radarPosition.hashCode() : 0);
         return result;
     }
 
@@ -88,6 +102,7 @@ public class QuestInfo implements Serializable {
                 ", gold=" + gold +
                 ", type=" + type +
                 ", id=" + id +
+                ", radarPosition=" + radarPosition +
                 '}';
     }
 }

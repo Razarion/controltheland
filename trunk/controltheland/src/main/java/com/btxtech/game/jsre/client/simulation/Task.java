@@ -35,7 +35,7 @@ public class Task {
         ClientBase.getInstance().setAccountBalance(taskConfig.getMoney());
         SimulationConditionServiceImpl.getInstance().activateCondition(taskConfig.getConditionConfig(), ClientBase.getInstance().getSimpleBase(), null);
         LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
-        levelTaskPacket.setQuestInfo(new QuestInfo(taskConfig.getName(), null, 0, 0, 0, QuestInfo.Type.QUEST));
+        levelTaskPacket.setQuestInfo(new QuestInfo(taskConfig.getName(), null, 0, 0, 0, QuestInfo.Type.QUEST, taskConfig.getConditionConfig().getRadarPositionHint()));
         levelTaskPacket.setActiveQuestProgress(SimulationConditionServiceImpl.getInstance().getProgressHtml(ClientBase.getInstance().getSimpleBase(), null));
         ClientLevelHandler.getInstance().setLevelTask(levelTaskPacket);
     }

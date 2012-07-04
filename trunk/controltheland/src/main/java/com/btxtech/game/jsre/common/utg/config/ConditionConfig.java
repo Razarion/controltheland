@@ -13,6 +13,8 @@
 
 package com.btxtech.game.jsre.common.utg.config;
 
+import com.btxtech.game.jsre.client.common.Index;
+
 import java.io.Serializable;
 
 /**
@@ -23,6 +25,7 @@ import java.io.Serializable;
 public class ConditionConfig implements Serializable {
     private ConditionTrigger conditionTrigger;
     private AbstractComparisonConfig abstractComparisonConfig;
+    private Index radarPositionHint;
 
     /**
      * Used by GWT
@@ -30,9 +33,10 @@ public class ConditionConfig implements Serializable {
     protected ConditionConfig() {
     }
 
-    public ConditionConfig(ConditionTrigger conditionTrigger, AbstractComparisonConfig abstractComparisonConfig) {
+    public ConditionConfig(ConditionTrigger conditionTrigger, AbstractComparisonConfig abstractComparisonConfig, Index radarPositionHint) {
         this.conditionTrigger = conditionTrigger;
         this.abstractComparisonConfig = abstractComparisonConfig;
+        this.radarPositionHint = radarPositionHint;
     }
 
     public ConditionTrigger getConditionTrigger() {
@@ -41,5 +45,9 @@ public class ConditionConfig implements Serializable {
 
     public AbstractComparisonConfig getAbstractComparisonConfig() {
         return abstractComparisonConfig;
+    }
+
+    public Index getRadarPositionHint() {
+        return radarPositionHint;
     }
 }

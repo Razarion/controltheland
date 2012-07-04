@@ -36,7 +36,7 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
     private Logger log = Logger.getLogger(MiniTerrain.class.getName());
 
     public MiniTerrain(int width, int height) {
-        super(width, height, true);
+        super(width, height,  Scale.TILE);
         getCanvas().getElement().getStyle().setBackgroundColor("#000000");
         if (!TerrainView.uglySuppressRadar) {
             TerrainView.getInstance().getTerrainHandler().addTerrainListener(this);

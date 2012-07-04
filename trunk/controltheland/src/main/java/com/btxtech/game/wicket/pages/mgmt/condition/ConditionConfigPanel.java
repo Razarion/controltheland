@@ -13,9 +13,11 @@
 
 package com.btxtech.game.wicket.pages.mgmt.condition;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
+import com.btxtech.game.wicket.uiservices.IndexPanel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -34,7 +36,7 @@ import java.util.List;
  */
 public class ConditionConfigPanel extends Panel implements IFormModelUpdateListener {
     private boolean isDirty = false;
-
+    private Log log = LogFactory.getLog(ConditionConfigPanel.class);
     private IModel<ConditionTrigger> conditionTriggerModel = new IModel<ConditionTrigger>() {
         private ConditionTrigger conditionTrigger;
 
@@ -87,13 +89,12 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
             isDirty = false;
         }
     };
-    private Log log = LogFactory.getLog(ConditionConfigPanel.class);
 
     public ConditionConfigPanel(String id) {
         super(id);
-        DropDownChoice<ConditionTrigger> triggers = new DropDownChoice<ConditionTrigger>("conditionTrigger", conditionTriggerModel, ComparisonFactory.getFilteredConditionTriggers());
+        DropDownChoice<ConditionTrigger> triggers = new DropDownChoice<>("conditionTrigger", conditionTriggerModel, ComparisonFactory.getFilteredConditionTriggers());
         add(triggers);
-        final DropDownChoice<Class<? extends DbAbstractComparisonConfig>> comparisons = new DropDownChoice<Class<? extends DbAbstractComparisonConfig>>("comparison", comparisonModel, new IModel<List<Class<? extends DbAbstractComparisonConfig>>>() {
+        final DropDownChoice<Class<? extends DbAbstractComparisonConfig>> comparisons = new DropDownChoice<>("comparison", comparisonModel, new IModel<List<Class<? extends DbAbstractComparisonConfig>>>() {
 
             @Override
             public List<Class<? extends DbAbstractComparisonConfig>> getObject() {
@@ -118,6 +119,29 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
                 target.addComponent(comparisons);
             }
         });
+        IndexPanel radarPositionHint = new IndexPanel("radarPositionHint");
+        radarPositionHint.setDefaultModel(new IModel<Index>() {
+            @Override
+            public Index getObject() {
+                if (ConditionConfigPanel.this.getDefaultModelObject() != null) {
+                    return ((DbConditionConfig) ConditionConfigPanel.this.getDefaultModelObject()).getRadarPositionHint();
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public void setObject(Index object) {
+                if (ConditionConfigPanel.this.getDefaultModelObject() != null) {
+                    ((DbConditionConfig) ConditionConfigPanel.this.getDefaultModelObject()).setRadarPositionHint(object);
+                }
+            }
+
+            @Override
+            public void detach() {
+            }
+        });
+        add(radarPositionHint);
         setupComparisonFields();
     }
 
