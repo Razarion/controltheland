@@ -40,7 +40,7 @@ public class RadarItemView extends MiniMap {
     private Timer timer;
 
     public RadarItemView(int width, int height) {
-        super(width, height, false);
+        super(width, height,  Scale.ABSOLUTE);
     }
 
     @Override

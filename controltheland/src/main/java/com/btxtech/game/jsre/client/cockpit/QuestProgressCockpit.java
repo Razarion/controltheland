@@ -4,7 +4,9 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
+import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestDialog;
@@ -18,6 +20,7 @@ import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -32,11 +35,13 @@ import com.google.gwt.user.client.ui.Widget;
  * Time: 21:32
  */
 public class QuestProgressCockpit extends FlowPanel {
+    private static final int RADAR_HINT_BLINK = 500;
     private static final String WIDTH = "20%";
     private HTML questTitle;
     private HTML questProgress;
     private VerticalPanel missionStartPanel;
     private Label dialog;
+    private Timer radarTimer;
 
     public QuestProgressCockpit() {
         getElement().getStyle().setBackgroundColor("rgba(0, 0, 0, 0.5)");
@@ -123,6 +128,7 @@ public class QuestProgressCockpit extends FlowPanel {
 
 
     public void setActiveQuest(QuestInfo questInfo, String activeQuestProgress) {
+        stopRadarVisualization();
         if (questInfo != null) {
             if (questInfo.getType() == QuestInfo.Type.MISSION) {
                 missionStartPanel.setVisible(true);
@@ -130,6 +136,9 @@ public class QuestProgressCockpit extends FlowPanel {
             } else {
                 missionStartPanel.setVisible(false);
                 questProgress.setVisible(true);
+                if (questInfo.getRadarPosition() != null) {
+                    startRadarVisualization(questInfo.getRadarPosition());
+                }
             }
             questTitle.setHTML(questInfo.getTitle());
         }
@@ -139,9 +148,33 @@ public class QuestProgressCockpit extends FlowPanel {
         }
         ClientUserTracker.getInstance().onDialogDisappears(this);
         ClientUserTracker.getInstance().onDialogAppears(this, "QuestPanel");
+
+
+    }
+
+    private void startRadarVisualization(Index position) {
+        stopRadarVisualization();
+        radarTimer = new Timer() {
+
+            @Override
+            public void run() {
+                RadarPanel.getInstance().blinkHint();
+            }
+        };
+        RadarPanel.getInstance().showHint(position);
+        radarTimer.scheduleRepeating(RADAR_HINT_BLINK);
+    }
+
+    private void stopRadarVisualization() {
+        if (radarTimer != null) {
+            radarTimer.cancel();
+            radarTimer = null;
+            RadarPanel.getInstance().hideHint();
+        }
     }
 
     public void setNoActiveQuest() {
+        stopRadarVisualization();
         if (Connection.getInstance().getGameInfo() == null) {
             // Editor
             return;

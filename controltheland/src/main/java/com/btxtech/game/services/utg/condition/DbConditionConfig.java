@@ -13,13 +13,18 @@
 
 package com.btxtech.game.services.utg.condition;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
+import com.btxtech.game.services.common.db.IndexUserType;
 import com.btxtech.game.services.item.ItemService;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -33,6 +38,7 @@ import java.io.Serializable;
  * Time: 18:21:51
  */
 @Entity(name = "GUIDANCE_CONDITION_CONFIG")
+@TypeDef(name = "index", typeClass = IndexUserType.class)
 public class DbConditionConfig implements Serializable {
     @Id
     @GeneratedValue
@@ -41,6 +47,9 @@ public class DbConditionConfig implements Serializable {
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private DbAbstractComparisonConfig dbAbstractComparisonConfig; // TODO DELETE_ORPHAN does not work
     private ConditionTrigger conditionTrigger;
+    @org.hibernate.annotations.Type(type = "index")
+    @Columns(columns = {@Column(name = "xRadarPositionHin"), @Column(name = "yRadarPositionHin")})
+    private Index radarPositionHint;
     @Transient
     private ConditionConfig conditionConfig;
 
@@ -72,6 +81,14 @@ public class DbConditionConfig implements Serializable {
         this.conditionTrigger = conditionTrigger;
     }
 
+    public Index getRadarPositionHint() {
+        return radarPositionHint;
+    }
+
+    public void setRadarPositionHint(Index radarPositionHint) {
+        this.radarPositionHint = radarPositionHint;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -98,7 +115,7 @@ public class DbConditionConfig implements Serializable {
         if (conditionTrigger.isComparisonNeeded()) {
             abstractComparisonConfig = dbAbstractComparisonConfig.createComparisonConfig(itemService);
         }
-        conditionConfig = new ConditionConfig(conditionTrigger, abstractComparisonConfig);
+        conditionConfig = new ConditionConfig(conditionTrigger, abstractComparisonConfig, radarPositionHint);
         return conditionConfig;
     }
 }

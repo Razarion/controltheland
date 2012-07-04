@@ -1,5 +1,6 @@
 package com.btxtech.game.services.utg;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.CommonJava;
@@ -1071,6 +1072,9 @@ public class TestDb extends AbstractServiceTest {
         dbLevelTask112.setHtml("html2");
         dbLevelTask112.setXp(21);
         dbLevelTask112.setMoney(22);
+        DbConditionConfig dbConditionConfig = new DbConditionConfig();
+        dbConditionConfig.setRadarPositionHint(new Index(100,200));
+        dbLevelTask112.setDbConditionConfig(dbConditionConfig);
         userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -1079,8 +1083,8 @@ public class TestDb extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         QuestInfo questInfo1 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId()).getLevelCrud().readDbChild(dbLevel11.getId()).getLevelTaskCrud().readDbChildren().get(0).createQuestInfo();
         QuestInfo questInfo2 = userGuidanceService.getCrudQuestHub().readDbChild(dbQuestHub1.getId()).getLevelCrud().readDbChild(dbLevel11.getId()).getLevelTaskCrud().readDbChildren().get(1).createQuestInfo();
-        Assert.assertEquals(new QuestInfo("name1", "html1", 11, 12, dbLevelTask111.getId(), QuestInfo.Type.MISSION), questInfo1);
-        Assert.assertEquals(new QuestInfo("name2", "html2", 21, 22, dbLevelTask112.getId(), QuestInfo.Type.QUEST), questInfo2);
+        Assert.assertEquals(new QuestInfo("name1", "html1", 11, 12, dbLevelTask111.getId(), QuestInfo.Type.MISSION, null), questInfo1);
+        Assert.assertEquals(new QuestInfo("name2", "html2", 21, 22, dbLevelTask112.getId(), QuestInfo.Type.QUEST, new Index(100,200)), questInfo2);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

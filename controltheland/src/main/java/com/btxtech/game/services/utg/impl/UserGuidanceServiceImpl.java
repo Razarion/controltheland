@@ -253,7 +253,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     }
 
     private void activateConditions4Level(UserState userState, DbLevel dbLevel) {
-        ConditionConfig levelCondition = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(null, dbLevel.getXp(), null));
+        ConditionConfig levelCondition = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(null, dbLevel.getXp(), null), null);
         serverConditionService.activateCondition(levelCondition, userState, null);
     }
 
@@ -526,7 +526,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     }
 
     private void activateConditionsRestore(UserState userState, DbLevel dbLevel, DbLevelTask activeQuest) {
-        ConditionConfig levelCondition = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(null, dbLevel.getXp(), null));
+        ConditionConfig levelCondition = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(null, dbLevel.getXp(), null), null);
         serverConditionService.activateCondition(levelCondition, userState, null);
 
         if (activeQuest != null) {

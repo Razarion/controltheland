@@ -34,6 +34,11 @@ import java.util.List;
  * Time: 21:50:26
  */
 public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandler {
+    public enum Scale {
+        TILE,
+        ABSOLUTE,
+        NONE
+    }
     private int height;
     private int width;
     private double scale = 1.0;
@@ -48,10 +53,10 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
     private Context2d context2d;
     private int xShift = 0;
     private int yShift = 0;
-    private boolean scaleToTile;
+    private Scale scaleTo;
 
-    public MiniMap(int width, int height, boolean scaleToTile) {
-        this.scaleToTile = scaleToTile;
+    public MiniMap(int width, int height, Scale scaleTo) {
+        this.scaleTo = scaleTo;
         canvas = Canvas.createIfSupported();
         if (canvas == null) {
             throw new Html5NotSupportedException("MiniMap: Canvas not supported.");
@@ -73,11 +78,24 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
 
     public void onTerrainSettings(TerrainSettings terrainSettings) {
         this.terrainSettings = terrainSettings;
-        if (scaleToTile) {
-            scaleToTile();
-        } else {
-            scaleToAbsolute();
+        switch (scaleTo) {
+            case TILE:
+                scaleToTile();
+                break;
+            case ABSOLUTE:
+                scaleToAbsolute();
+                break;
+            case NONE:
+                scaleNoNormal();
+                break;
+            default:
+                throw new IllegalArgumentException("MiniMap.onTerrainSettings() unknown scaleTo: " + scaleTo);
         }
+    }
+
+    private void scaleNoNormal() {
+        scale = 1.0;
+        context2d.setTransform(1, 0, 0, 1, 0, 0); // No transformation
     }
 
     protected void scaleToTile() {

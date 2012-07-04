@@ -438,6 +438,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         id = getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID);
         syncBaseItem = (SyncBaseItem) itemService.getItem(id);
         // Assert path has at lease more the 50 entries (original it was 130 but some are may be already achievement)
+        // TODO failed on 04.07.2012
         Assert.assertTrue(syncBaseItem.getSyncMovable().getPathToDestination().size() > 50);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

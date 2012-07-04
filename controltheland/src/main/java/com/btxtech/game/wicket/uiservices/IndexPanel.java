@@ -31,7 +31,7 @@ public class IndexPanel extends Panel implements IFormModelUpdateListener {
     public IndexPanel(final String id) {
         super(id);
 
-        add(new TextField<Integer>("x", new IModel<Integer>() {
+        add(new TextField<>("x", new IModel<Integer>() {
 
             @Override
             public Integer getObject() {
@@ -53,7 +53,7 @@ public class IndexPanel extends Panel implements IFormModelUpdateListener {
                 // Ignore
             }
         }, Integer.class));
-        add(new TextField<Integer>("y", new IModel<Integer>() {
+        add(new TextField<>("y", new IModel<Integer>() {
 
             @Override
             public Integer getObject() {
