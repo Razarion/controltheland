@@ -155,7 +155,6 @@ public class SideCockpit {
         levelPanel.getElement().getStyle().setBackgroundImage("url(" + ImageHandler.getCockpitImageUrl("cockpit.png") + ")");
         levelPanel.getElement().getStyle().setProperty("backgroundPosition", "-" + Integer.toString(LEVEL_PANEL_X) + "px 0");
         levelPanel.getElement().getStyle().setFontSize(11, Style.Unit.PX);
-        levelPanel.getElement().getStyle().setCursor(Style.Cursor.POINTER);
         preventEvents(levelPanel);
         levelPanel.setPixelSize(LEVEL_PANEL_W, LEVEL_PANEL_H);
     }
