@@ -139,9 +139,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(startItem, startPoint, null, base.getSimpleBase(), 0);
         syncBaseItem.setBuildup(1.0);
         syncBaseItem.getSyncItemArea().setCosmeticsAngel();
-        if (userService.getUserName() != null) {
-            userTrackingService.onBaseCreated(userService.getUser(), setupBaseName(base));
-            allianceService.onBaseCreatedOrDeleted(userService.getUserName());
+        if (userState.isRegistered()) {
+            userTrackingService.onBaseCreated(userService.getUser(userState), setupBaseName(base));
+            allianceService.onBaseCreatedOrDeleted(userState.getUser());
         }
         return base;
     }
