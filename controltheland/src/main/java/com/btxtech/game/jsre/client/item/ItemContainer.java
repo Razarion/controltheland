@@ -261,6 +261,9 @@ public class ItemContainer extends AbstractItemService {
                 SimulationConditionServiceImpl.getInstance().onSyncItemKilled(actor, (SyncBaseItem) killedItem);
             }
             ClientServices.getInstance().getConnectionService().sendSyncInfo(killedItem);
+            if (killedItem instanceof SyncBaseItem) {
+                killContainedItems((SyncBaseItem) killedItem, actor);
+            }
         } else {
             makeItemSeeminglyDead(killedItem, actor, clientSyncItem);
         }

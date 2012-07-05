@@ -63,7 +63,6 @@ import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.services.resource.ResourceService;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.SecurityRoles;
-import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.XpService;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
 import org.apache.commons.logging.Log;
@@ -118,8 +117,6 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     @Autowired
     private ResourceService resourceService;
     @Autowired
-    private UserGuidanceService userGuidanceService;
-    @Autowired
     private InventoryService inventoryService;
     @Autowired
     private ServerConditionService serverConditionService;
@@ -132,12 +129,12 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     @Autowired
     private BotService botService;
     private int lastId = 0;
-    private final HashMap<Id, SyncItem> items = new HashMap<Id, SyncItem>();
+    private final HashMap<Id, SyncItem> items = new HashMap<>();
     private Log log = LogFactory.getLog(ItemServiceImpl.class);
-    private HashMap<Integer, ImageHolder> itemTypeSpriteMap = new HashMap<Integer, ImageHolder>();
-    private HashMap<Integer, HashMap<Integer, DbBuildupStep>> buildupStepsImages = new HashMap<Integer, HashMap<Integer, DbBuildupStep>>();
-    private HashMap<Integer, DbItemTypeImageData> muzzleItemTypeImages = new HashMap<Integer, DbItemTypeImageData>();
-    private HashMap<Integer, DbItemTypeSoundData> muzzleItemTypeSounds = new HashMap<Integer, DbItemTypeSoundData>();
+    private HashMap<Integer, ImageHolder> itemTypeSpriteMap = new HashMap<>();
+    private HashMap<Integer, HashMap<Integer, DbBuildupStep>> buildupStepsImages = new HashMap<>();
+    private HashMap<Integer, DbItemTypeImageData> muzzleItemTypeImages = new HashMap<>();
+    private HashMap<Integer, DbItemTypeSoundData> muzzleItemTypeSounds = new HashMap<>();
 
     @PostConstruct
     public void setup() {
@@ -224,7 +221,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
     @Override
     public Collection<SyncItemInfo> getSyncInfo() {
-        HashSet<SyncItemInfo> result = new HashSet<SyncItemInfo>();
+        HashSet<SyncItemInfo> result = new HashSet<>();
         synchronized (items) {
             for (SyncItem symcItem : items.values()) {
                 result.add(symcItem.getSyncInfo());
@@ -299,7 +296,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
     @Override
     public void killSyncItemIds(Collection<Id> itemsToKill) {
-        Collection<SyncItem> syncItems = new ArrayList<SyncItem>();
+        Collection<SyncItem> syncItems = new ArrayList<>();
         for (Id id : itemsToKill) {
             try {
                 syncItems.add(getItem(id));
@@ -310,30 +307,16 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         killSyncItems(syncItems);
     }
 
-    private void killContainedItems(SyncBaseItem syncBaseItem, SimpleBase actor) {
-        if (!syncBaseItem.hasSyncItemContainer()) {
-            return;
-        }
-        for (Id id : syncBaseItem.getSyncItemContainer().getContainedItems()) {
-            try {
-                SyncBaseItem baseItem = (SyncBaseItem) getItem(id);
-                killSyncItem(baseItem, actor, true, false);
-            } catch (ItemDoesNotExistException e) {
-                log.error("", e);
-            }
-        }
-    }
-
     @Override
     public List<SyncItem> getItemsCopy() {
         synchronized (items) {
-            return new ArrayList<SyncItem>(items.values());
+            return new ArrayList<>(items.values());
         }
     }
 
     @Override
     public Collection<SyncItem> getItems4Backup() {
-        Collection<SyncItem> result = new ArrayList<SyncItem>();
+        Collection<SyncItem> result = new ArrayList<>();
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
                 if (syncItem instanceof SyncBaseItem) {
@@ -493,9 +476,9 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             dbBaseItemType.getBuildupStepCrud().deleteAllChildren();
         } else {
             // Divide in toBeCreated, toBeDeleted and toBeChanged
-            Collection<DbBuildupStep> toBeDeleted = new ArrayList<DbBuildupStep>(originalBuildupStep);
-            Collection<BuildupStep> toBeCreated = new ArrayList<BuildupStep>();
-            Collection<DbBuildupStep> toBeChanged = new ArrayList<DbBuildupStep>();
+            Collection<DbBuildupStep> toBeDeleted = new ArrayList<>(originalBuildupStep);
+            Collection<BuildupStep> toBeCreated = new ArrayList<>();
+            Collection<DbBuildupStep> toBeChanged = new ArrayList<>();
             for (BuildupStep buildupStep : buildupSteps) {
                 if (buildupStep.getImageId() != null) {
                     moveList(toBeDeleted, toBeChanged, buildupStep.getImageId());
@@ -577,7 +560,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     @Override
     public void activate() {
         Collection<DbItemType> dbItemTypes = getDbItemTypes();
-        ArrayList<ItemType> itemTypes = new ArrayList<ItemType>();
+        ArrayList<ItemType> itemTypes = new ArrayList<>();
         itemTypeSpriteMap.clear();
         buildupStepsImages.clear();
         muzzleItemTypeImages.clear();
@@ -594,11 +577,11 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     private void synchronize(Collection<ItemType> itemTypes) {
-        ArrayList<ItemType> newItems = new ArrayList<ItemType>(itemTypes);
+        ArrayList<ItemType> newItems = new ArrayList<>(itemTypes);
         newItems.removeAll(getItemTypes());
-        ArrayList<ItemType> removedItems = new ArrayList<ItemType>(getItemTypes());
+        ArrayList<ItemType> removedItems = new ArrayList<>(getItemTypes());
         removedItems.removeAll(itemTypes);
-        ArrayList<ItemType> changingItems = new ArrayList<ItemType>(itemTypes);
+        ArrayList<ItemType> changingItems = new ArrayList<>(itemTypes);
         changingItems.retainAll(getItemTypes());
 
         checkRemove(removedItems);
@@ -634,7 +617,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
     private void addSpriteMapItemTypeImage(DbItemType dbItemType) {
         try {
-            List<DbItemTypeImage> sortedImages = new ArrayList<DbItemTypeImage>(dbItemType.getItemTypeImageCrud().readDbChildren());
+            List<DbItemTypeImage> sortedImages = new ArrayList<>(dbItemType.getItemTypeImageCrud().readDbChildren());
             Collections.sort(sortedImages, new Comparator<DbItemTypeImage>() {
                 @Override
                 public int compare(DbItemTypeImage o1, DbItemTypeImage o2) {
@@ -686,7 +669,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             return;
         }
         DbBaseItemType dbBaseItemType = (DbBaseItemType) dbItemType;
-        HashMap<Integer, DbBuildupStep> indexBuildupStepMap = new HashMap<Integer, DbBuildupStep>();
+        HashMap<Integer, DbBuildupStep> indexBuildupStepMap = new HashMap<>();
         for (DbBuildupStep dbBuildupStep : dbBaseItemType.getBuildupStepCrud().readDbChildren()) {
             if (indexBuildupStepMap.containsKey(dbBuildupStep.getId())) {
                 throw new IllegalArgumentException("Buildup Step Image Index already exits: " + dbItemType + " index: " + dbBuildupStep.getId());
