@@ -507,5 +507,17 @@ abstract public class AbstractItemService implements ItemService {
         }
     }
 
-
+    protected void killContainedItems(SyncBaseItem syncBaseItem, SimpleBase actor) {
+        if (!syncBaseItem.hasSyncItemContainer()) {
+            return;
+        }
+        for (Id id : syncBaseItem.getSyncItemContainer().getContainedItems()) {
+            try {
+                SyncBaseItem baseItem = (SyncBaseItem) getItem(id);
+                killSyncItem(baseItem, actor, true, false);
+            } catch (ItemDoesNotExistException e) {
+                log.log(Level.SEVERE, "AbstractItemService.killContainedItems()", e);
+            }
+        }
+    }
 }
