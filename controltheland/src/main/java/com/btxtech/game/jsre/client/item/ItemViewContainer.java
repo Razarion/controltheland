@@ -47,6 +47,10 @@ public class ItemViewContainer {
 
     public void onSyncItemInvisible(ClientSyncItem clientSyncItem) {
         ClientSyncItemView clientSyncItemView = visibleItems.remove(clientSyncItem);
+        // Remove if-statement if error is fixed
+        if(clientSyncItemView == null) {
+            throw new IllegalStateException("ItemViewContainer.onSyncItemInvisible() clientSyncItemView == null: " + clientSyncItem);
+        }
         clientSyncItemView.transform(null);
         putClientSyncItemView(clientSyncItemView);
     }
