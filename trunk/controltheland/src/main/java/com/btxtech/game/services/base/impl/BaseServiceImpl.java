@@ -328,12 +328,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public void sendPackage(Packet packet) {
-        Base base = getBase();
-        connectionService.sendPacket(base.getSimpleBase(), packet);
-    }
-
-    @Override
     public void sendAccountBaseUpdate(SyncBaseObject syncBaseObject) {
         if (!isAlive(syncBaseObject.getBase())) {
             return;

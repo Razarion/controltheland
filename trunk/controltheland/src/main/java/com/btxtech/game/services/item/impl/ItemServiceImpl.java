@@ -258,6 +258,11 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             }
         }
 
+        killedItem.setExplode(explode);
+        if (log.isDebugEnabled()) {
+            log.debug("DELETED: " + killedItem);
+        }
+        connectionService.sendSyncInfo(killedItem);
 
         synchronized (items) {
             if (items.remove(killedItem.getId()) == null) {
@@ -268,11 +273,6 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
                 baseService.onItemDeleted((SyncBaseItem) killedItem, actor);
             }
         }
-        killedItem.setExplode(explode);
-        if (log.isDebugEnabled()) {
-            log.debug("DELETED: " + killedItem);
-        }
-        connectionService.sendSyncInfo(killedItem);
 
         if (killedItem instanceof SyncBaseItem) {
             SyncBaseItem killedBaseItem = (SyncBaseItem) killedItem;

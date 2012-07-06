@@ -42,8 +42,6 @@ import java.util.List;
 public interface BaseService extends AbstractBaseService, SyncItemListener {
     void checkCanBeAttack(SyncBaseItem victim);
 
-    void sendPackage(Packet packet);
-
     void sendAccountBaseUpdate(SyncBaseObject syncBaseObject);
 
     void sendEnergyUpdate(BaseEnergy baseEnergy, Base base);
