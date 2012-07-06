@@ -411,11 +411,17 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         if (target.isContainedIn()) {
             return;
         }
+        if (!target.isAlive()) {
+            return;
+        }
         // Prevent ConcurrentModificationException
         List<SyncBaseItem> attackers = new ArrayList<SyncBaseItem>();
         synchronized (guardingItems) {
             for (SyncBaseItem attacker : guardingItems) {
                 if (attacker == target) {
+                    continue;
+                }
+                if (!attacker.isAlive()) {
                     continue;
                 }
                 if (attacker.isEnemy(target)
