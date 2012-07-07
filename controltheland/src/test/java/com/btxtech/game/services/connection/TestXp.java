@@ -34,15 +34,15 @@ public class TestXp extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
-        RealGameInfo realGameInfo = getMovableService().getRealGameInfo();
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
         Assert.assertEquals(0, realGameInfo.getXpPacket().getXp());
         Assert.assertEquals(220, realGameInfo.getXpPacket().getXp2LevelUp());
         xpService.onReward(userService.getUserState(), 10);
-        realGameInfo = getMovableService().getRealGameInfo();
+        realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
         Assert.assertEquals(10, realGameInfo.getXpPacket().getXp());
         Assert.assertEquals(220, realGameInfo.getXpPacket().getXp2LevelUp());
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_3_REAL_ID);
-        realGameInfo = getMovableService().getRealGameInfo();
+        realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
         Assert.assertEquals(0, realGameInfo.getXpPacket().getXp());
         Assert.assertEquals(400, realGameInfo.getXpPacket().getXp2LevelUp());
         endHttpRequestAndOpenSessionInViewFilter();

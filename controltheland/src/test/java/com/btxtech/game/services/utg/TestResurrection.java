@@ -38,7 +38,7 @@ public class TestResurrection extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase simpleBase = getMovableService().getRealGameInfo().getBase();
+        SimpleBase simpleBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
         Id id = getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID);
         clearPackets();
         getMovableService().sellItem(id);
@@ -46,7 +46,7 @@ public class TestResurrection extends AbstractServiceTest {
         Assert.assertEquals(0, baseService.getBases().size());
 
         try {
-            getMovableService().getSyncInfo();
+            getMovableService().getSyncInfo(START_UID_1);
             Assert.fail("Disconnection expected");
         } catch (NoConnectionException e) {
             // OK
@@ -54,13 +54,13 @@ public class TestResurrection extends AbstractServiceTest {
 
         // Also second call should fail
         try {
-            getMovableService().getSyncInfo();
+            getMovableService().getSyncInfo(START_UID_1);
             Assert.fail("Disconnection expected");
         } catch (NoConnectionException e) {
             // OK
         }
 
-        SimpleBase newBase = getMovableService().getRealGameInfo().getBase();
+        SimpleBase newBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
         Assert.assertEquals(1, baseService.getBases().size());
         Assert.assertFalse(newBase.equals(simpleBase));
 
@@ -86,7 +86,7 @@ public class TestResurrection extends AbstractServiceTest {
         // Target
         userService.createUser("U1", "test", "test", "");
         userService.login("U1", "test");
-        SimpleBase targetBase = getMovableService().getRealGameInfo().getBase();
+        SimpleBase targetBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
         String targetName = baseService.getBaseName(targetBase);
         Id target = getFirstSynItemId(targetBase, TEST_START_BUILDER_ITEM_ID);
         clearPackets();
@@ -99,7 +99,7 @@ public class TestResurrection extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
 
         // Actor
-        SimpleBase actorBase = getMovableService().getRealGameInfo().getBase();
+        SimpleBase actorBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
         Assert.assertEquals(2, baseService.getBases().size());
         Id actorBuilder = getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID);
         sendBuildCommand(actorBuilder, new Index(100, 100), TEST_FACTORY_ITEM_ID);
@@ -135,7 +135,7 @@ public class TestResurrection extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
 
         userService.login("U1", "test");
-        SimpleBase targetBaseNew = getMovableService().getRealGameInfo().getBase();
+        SimpleBase targetBaseNew = getMovableService().getRealGameInfo(START_UID_1).getBase();
         Assert.assertFalse(targetBaseNew.equals(targetBase));
         Assert.assertEquals(2, baseService.getBases().size());
         Message message2 = new Message();
@@ -144,44 +144,5 @@ public class TestResurrection extends AbstractServiceTest {
         assertWholeItemCount(4);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void testSurrender() throws Exception {
-        configureRealGame();
-
-        System.out.println("***** testSurrender *****");
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase simpleBase = getMyBase(); // Connection
-        getMovableService().surrenderBase();
-
-        try {
-            getMovableService().getSyncInfo();
-            Assert.fail("Disconnection expected");
-        } catch (NoConnectionException e) {
-            // OK
-        }
-
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(1, baseService.getBases().size());
-        assertWholeItemCount(1);
-
-        SimpleBase newBase = getMyBase(); // Connection
-        Assert.assertFalse(simpleBase.equals(newBase));
-        Assert.assertEquals(2, baseService.getBases().size());
-        Message message2 = new Message();
-        message2.setMessage("You lost your base. A new base was created.");
-        assertPackagesIgnoreSyncItemInfoAndClear(message2);
-        assertWholeItemCount(2);
-
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        endHttpSession();
-
     }
 }

@@ -20,7 +20,6 @@ import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
-import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -50,7 +49,7 @@ import java.util.List;
  */
 @RemoteServiceRelativePath("movableService")
 public interface MovableService extends RemoteService {
-    RealGameInfo getRealGameInfo() throws InvalidLevelState;
+    RealGameInfo getRealGameInfo(String startUuid) throws InvalidLevelState;
 
     SimulationInfo getSimulationGameInfo(int levelTaskId) throws InvalidLevelState;
 
@@ -58,7 +57,7 @@ public interface MovableService extends RemoteService {
 
     void sendCommands(List<BaseCommand> baseCommands);
 
-    List<Packet> getSyncInfo() throws NoConnectionException;
+    List<Packet> getSyncInfo(String startUuid) throws NoConnectionException;
 
     Collection<SyncItemInfo> getAllSyncInfo();
 
@@ -67,10 +66,6 @@ public interface MovableService extends RemoteService {
     void sendChatMessage(ChatMessage chatMessage);
 
     List<ChatMessage> pollChatMessages(Integer lastMessageId);
-
-    void surrenderBase();
-
-    void closeConnection();
 
     void sendStartupTask(StartupTaskInfo startupTaskInfo, String uuid, Integer levelTaskId);
 

@@ -34,11 +34,12 @@ public class Connection implements Serializable {
     private String sessionId;
     private int noTickCount = 0;
     private boolean closed = false;
-
+    private String startUuid;
     // private Log log = LogFactory.getLog(Connection.class);
 
-    public Connection(String sessionId) {
+    public Connection(String sessionId, String startUuid) {
         this.sessionId = sessionId;
+        this.startUuid = startUuid;
     }
 
     public Base getBase() {
@@ -47,6 +48,10 @@ public class Connection implements Serializable {
 
     public void setBase(Base base) {
         this.base = base;
+    }
+
+    public String getStartUuid() {
+        return startUuid;
     }
 
     public List<Packet> getAndRemovePendingPackets() {

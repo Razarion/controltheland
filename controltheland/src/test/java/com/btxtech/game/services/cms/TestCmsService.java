@@ -2357,7 +2357,7 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertRenderedPage(CmsPage.class);
         tester.assertLabel("form:content", "-");
         // Enter game
-        getMovableService().getRealGameInfo();
+        getMovableService().getRealGameInfo(START_UID_1);
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
         tester.assertLabel("form:content:link:label", "2");
@@ -3457,7 +3457,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         // Set Level and XP
-        getMovableService().getRealGameInfo(); // Connection is created here. Don't call movableService.getGameInfo() again!
+        getMovableService().getRealGameInfo(START_UID_1); // Connection is created here. Don't call movableService.getGameInfo() again!
 
         tester.startPage(CmsPage.class);
         tester.assertLabel("form:content:container:1", "2");

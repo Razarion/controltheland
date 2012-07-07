@@ -55,7 +55,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         try {
-            getMovableService().getRealGameInfo();
+            getMovableService().getRealGameInfo(START_UID_1);
             Assert.fail("InvalidLevelState expected");
         } catch (InvalidLevelState invalidLevelState) {
 
@@ -88,7 +88,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertEquals(TEST_LEVEL_2_REAL, userGuidanceService.getDbLevelCms().getNumber());
         Assert.assertTrue(userGuidanceService.isStartRealGame());
-        RealGameInfo realGameInfo = getMovableService().getRealGameInfo();
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
         Assert.assertNotNull(realGameInfo);
         Assert.assertEquals(1, baseService.getBases().size());
         List<DbLevelTask> levelTask = new ArrayList<>(userGuidanceService.getDbLevelCms().getLevelTaskCrud().readDbChildren());

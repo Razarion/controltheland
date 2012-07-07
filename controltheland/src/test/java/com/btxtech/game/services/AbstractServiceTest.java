@@ -148,6 +148,9 @@ import java.util.concurrent.TimeoutException;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:AbstractServiceTest-context.xml")
 abstract public class AbstractServiceTest {
+    public static final String START_UID_1 = "startuid1";
+    public static final String START_UID_2 = "startuid2";
+    public static final String START_UID_3 = "startuid3";
     public static final double[] ANGELS_24 = {0, 0.261799387799149, 0.523598775598299, 0.785398163397448, 1.0471975511966, 1.30899693899575, 1.5707963267949, 1.83259571459405, 2.0943951023932, 2.35619449019234, 2.61799387799149, 2.87979326579064, 3.14159265358979, 3.40339204138894, 3.66519142918809, 3.92699081698724, 4.18879020478639, 4.45058959258554, 4.71238898038469, 4.97418836818384, 5.23598775598299, 5.49778714378214, 5.75958653158129, 6.02138591938044};
     public static final double[] ANGELS_24_2 = {0, 0.436332312998582, 0.837758040957278, 1.09955742875643, 1.2915436464758, 1.44862327915529, 1.5707963267949, 1.74532925199433, 1.86750229963393, 2.05948851735331, 2.32128790515246, 2.68780704807127, 3.14159265358979, 3.64773813666815, 4.01425727958696, 4.25860337486616, 4.4331363000656, 4.59021593274509, 4.71238898038469, 4.85201532054424, 5.00909495322373, 5.14872129338327, 5.42797397370236, 5.79449311662117};
     public static final double[] ANGELS_JEEP = {0, 0.331612557878923, 0.785398163397448, 1.08210413623648, 1.2915436464758, 1.43116998663535, 1.5707963267949, 1.71042266695444, 1.85004900711399, 2.07694180987325, 2.30383461263251, 2.7401669256311, 3.14159265358979, 3.59537825910832, 3.76991118430775, 4.1538836197465, 4.36332312998582, 4.5553093477052, 4.71238898038469, 4.81710873550435, 5.06145483078356, 5.32325421858271, 5.55014702134197, 5.846852994181};
@@ -370,7 +373,7 @@ abstract public class AbstractServiceTest {
      */
     protected SimpleBase getMyBase() {
         try {
-            return getMovableService().getRealGameInfo().getBase();
+            return getMovableService().getRealGameInfo(START_UID_1).getBase();
         } catch (InvalidLevelState invalidLevelState) {
             throw new RuntimeException(invalidLevelState);
         }
@@ -455,11 +458,11 @@ abstract public class AbstractServiceTest {
     // ------------------- Connection --------------------
 
     protected void clearPackets() throws Exception {
-        getMovableService().getSyncInfo();
+        getMovableService().getSyncInfo(START_UID_1);
     }
 
     protected List<Packet> getPackagesIgnoreSyncItemInfoAndClear(boolean ignoreAccountBalancePackets) throws Exception {
-        List<Packet> receivedPackets = new ArrayList<Packet>(getMovableService().getSyncInfo());
+        List<Packet> receivedPackets = new ArrayList<Packet>(getMovableService().getSyncInfo(START_UID_1));
         for (Iterator<Packet> iterator = receivedPackets.iterator(); iterator.hasNext(); ) {
             Packet packet = iterator.next();
             if (packet instanceof SyncItemInfo) {
@@ -473,7 +476,7 @@ abstract public class AbstractServiceTest {
 
     protected <T extends Packet> List<T> getPackages(Class<T> packetFilter) throws Exception {
         List<T> packets = new ArrayList<>();
-        List receivedPackets = new ArrayList<>(getMovableService().getSyncInfo());
+        List receivedPackets = new ArrayList<>(getMovableService().getSyncInfo(START_UID_1));
         for (Object packet : receivedPackets) {
             if (packetFilter.isAssignableFrom(packet.getClass())) {
                 packets.add((T) packet);

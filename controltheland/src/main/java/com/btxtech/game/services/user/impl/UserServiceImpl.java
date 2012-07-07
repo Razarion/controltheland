@@ -18,7 +18,7 @@ import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchExc
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.HibernateUtil;
-import com.btxtech.game.services.connection.NoConnectionException;
+import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.inventory.InventoryService;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
@@ -125,7 +125,7 @@ public class UserServiceImpl implements UserService {
         session.setUserState(userState);
         try {
             userTrackingService.onUserLoggedIn(user, baseService.getBase());
-        } catch (NoConnectionException e) {
+        } catch (NoBaseException e) {
             // Ignore
             userTrackingService.onUserLoggedIn(user, null);
         }

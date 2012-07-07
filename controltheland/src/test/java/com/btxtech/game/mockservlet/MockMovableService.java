@@ -95,7 +95,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public RealGameInfo getRealGameInfo() {
+    public RealGameInfo getRealGameInfo(String startUuid) {
         return null;
     }
 
@@ -183,7 +183,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public List<Packet> getSyncInfo() throws NoConnectionException {
+    public List<Packet> getSyncInfo(String startUuid) throws NoConnectionException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -205,15 +205,6 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     @Override
     public List<ChatMessage> pollChatMessages(Integer lastMessageId) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void surrenderBase() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void closeConnection() {
     }
 
     @Override

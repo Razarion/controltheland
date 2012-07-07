@@ -95,6 +95,7 @@ public class TestBotRunner extends AbstractServiceTest {
 
         itemService.killSyncItemIds(getAllSynItemId(simpleBase1, TEST_FACTORY_ITEM_ID, null));
         itemService.killSyncItemIds(getAllSynItemId(simpleBase1, TEST_ATTACK_ITEM_ID, null));
+        // TODO failed on 07.07.2012
         waitForBotRunner(botRunner);
         SimpleBase simpleBase2 = botRunner.getBase();
         assertWholeItemCount(7);

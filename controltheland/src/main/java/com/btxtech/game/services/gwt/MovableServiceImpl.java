@@ -23,7 +23,6 @@ import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
-import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -44,6 +43,7 @@ import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.ConnectionService;
+import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.inventory.InventoryService;
@@ -115,9 +115,9 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public List<Packet> getSyncInfo() throws NoConnectionException {
+    public List<Packet> getSyncInfo(String startUuid) throws NoConnectionException {
         try {
-            return connectionService.getConnection().getAndRemovePendingPackets();
+            return connectionService.getConnection(startUuid).getAndRemovePendingPackets();
         } catch (NoConnectionException e) {
             throw e;
         } catch (Throwable t) {
@@ -155,9 +155,9 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public RealGameInfo getRealGameInfo() throws InvalidLevelState {
+    public RealGameInfo getRealGameInfo(String startUuid) throws InvalidLevelState {
         try {
-            baseService.continueBase();
+            baseService.continueBase(startUuid);
             RealGameInfo realGameInfo = new RealGameInfo();
             setCommonInfo(realGameInfo, userService, itemService, mgmtService, cmsUiService);
             realGameInfo.setBase(baseService.getBase().getSimpleBase());
@@ -173,7 +173,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             return realGameInfo;
         } catch (InvalidLevelState invalidLevelState) {
             throw invalidLevelState;
-        } catch (com.btxtech.game.services.connection.NoConnectionException t) {
+        } catch (NoBaseException t) {
             log.error(t.getMessage() + ", SessionId: " + t.getSessionId());
         } catch (Throwable t) {
             log.error("", t);
@@ -256,25 +256,6 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         } catch (Throwable t) {
             log.error("", t);
             return null;
-        }
-    }
-
-    @Override
-    public void surrenderBase() {
-        try {
-            baseService.surrenderBase(baseService.getBase());
-            connectionService.closeConnection();
-        } catch (Throwable t) {
-            log.error("", t);
-        }
-    }
-
-    @Override
-    public void closeConnection() {
-        try {
-            connectionService.closeConnection();
-        } catch (Throwable t) {
-            log.error("", t);
         }
     }
 

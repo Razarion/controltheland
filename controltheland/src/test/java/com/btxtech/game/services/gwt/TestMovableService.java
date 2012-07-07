@@ -43,7 +43,7 @@ public class TestMovableService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
-        RealGameInfo realGameInfo = getMovableService().getRealGameInfo();
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
         Assert.assertNotNull(realGameInfo);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -57,7 +57,7 @@ public class TestMovableService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         try {
-            getMovableService().getRealGameInfo();
+            getMovableService().getRealGameInfo(START_UID_1);
             Assert.fail("InvalidLevelState expected");
         } catch (InvalidLevelState invalidLevelState) {
             Assert.assertEquals(TEST_LEVEL_TASK_1_1_SIMULATED_ID, (int) invalidLevelState.getLevelTaskId());

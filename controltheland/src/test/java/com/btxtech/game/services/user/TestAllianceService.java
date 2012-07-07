@@ -506,7 +506,7 @@ public class TestAllianceService extends AbstractServiceTest {
     }
 
     private void verifyAlliances(String... allianceNames) throws InvalidLevelState {
-        RealGameInfo realGameInfo = getMovableService().getRealGameInfo();
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
         SimpleBase myBase = realGameInfo.getBase();
         for (BaseAttributes baseAttributes : realGameInfo.getAllBase()) {
             if (baseAttributes.getSimpleBase().equals(myBase)) {
@@ -527,7 +527,7 @@ public class TestAllianceService extends AbstractServiceTest {
     }
 
     private void verifyAllianceOffers(String... allianceOfferNames) throws InvalidLevelState {
-        RealGameInfo realGameInfo = getMovableService().getRealGameInfo();
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
         Assert.assertEquals(allianceOfferNames.length, realGameInfo.getAllianceOffers().size());
         for (AllianceOfferPacket allianceOfferPacket : realGameInfo.getAllianceOffers()) {
             if (Arrays.binarySearch(allianceOfferNames, allianceOfferPacket.getActorUserName()) == -1) {

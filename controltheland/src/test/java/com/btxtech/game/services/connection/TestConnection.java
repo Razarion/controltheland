@@ -1,6 +1,7 @@
 package com.btxtech.game.services.connection;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -33,7 +34,7 @@ public class TestConnection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void noPendingPackets() {
-        Connection connection = new Connection("1234");
+        Connection connection = new Connection("1234", null);
         Assert.assertTrue(connection.getAndRemovePendingPackets().isEmpty());
         Assert.assertTrue(connection.getAndRemovePendingPackets().isEmpty());
         Assert.assertTrue(connection.getAndRemovePendingPackets().isEmpty());
@@ -45,7 +46,7 @@ public class TestConnection extends AbstractServiceTest {
     public void pendingPackets() throws Exception {
         configureRealGame();
 
-        Connection connection = new Connection("1234");
+        Connection connection = new Connection("1234", null);
         SyncBaseItem attackItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1, 1));
         connection.sendBaseSyncItem(attackItem);
         AccountBalancePacket accountBalancePacket = new AccountBalancePacket();
@@ -66,7 +67,7 @@ public class TestConnection extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         try {
-            connectionService.getConnection();
+            connectionService.getConnection(START_UID_1);
             Assert.fail("NoConnectionException expected");
         } catch (com.btxtech.game.jsre.common.NoConnectionException e) {
             // Expected
@@ -83,7 +84,7 @@ public class TestConnection extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMyBase(); // Opens a connection
-        Assert.assertNotNull(connectionService.getConnection());
+        Assert.assertNotNull(connectionService.getConnection(START_UID_1));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -96,12 +97,12 @@ public class TestConnection extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMyBase(); // Opens a connection
-        Assert.assertNotNull(connectionService.getConnection());
+        Assert.assertNotNull(connectionService.getConnection(START_UID_1));
         SyncBaseItem builder = (SyncBaseItem) itemService.getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
         baseService.onItemDeleted(builder, null);
 
         try {
-            Assert.assertNotNull(connectionService.getConnection());
+            Assert.assertNotNull(connectionService.getConnection(START_UID_1));
             Assert.fail("NoConnectionException expected");
         } catch (com.btxtech.game.jsre.common.NoConnectionException e) {
             // Expected
@@ -124,12 +125,12 @@ public class TestConnection extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMyBase(); // Opens a connection
-        Assert.assertNotNull(connectionService.getConnection());
+        Assert.assertNotNull(connectionService.getConnection(START_UID_1));
         SyncBaseItem builder = (SyncBaseItem) itemService.getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
         baseService.onItemDeleted(builder, humanBase);
 
         try {
-            Assert.assertNotNull(connectionService.getConnection());
+            Assert.assertNotNull(connectionService.getConnection(START_UID_1));
             Assert.fail("NoConnectionException expected");
         } catch (com.btxtech.game.jsre.common.NoConnectionException e) {
             // Expected
@@ -153,12 +154,12 @@ public class TestConnection extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMyBase(); // Opens a connection
-        Assert.assertNotNull(connectionService.getConnection());
+        Assert.assertNotNull(connectionService.getConnection(START_UID_1));
         SyncBaseItem builder = (SyncBaseItem) itemService.getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
         baseService.onItemDeleted(builder, botBase);
 
         try {
-            Assert.assertNotNull(connectionService.getConnection());
+            Assert.assertNotNull(connectionService.getConnection(START_UID_1));
             Assert.fail("NoConnectionException expected");
         } catch (com.btxtech.game.jsre.common.NoConnectionException e) {
             // Expected
@@ -167,4 +168,53 @@ public class TestConnection extends AbstractServiceTest {
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void syncInfoStartUid() throws Exception {
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getMovableService().getRealGameInfo(START_UID_1);
+        getMovableService().getSyncInfo(START_UID_1);
+        try {
+            getMovableService().getSyncInfo(START_UID_2);
+            Assert.fail("NoConnectionException expected");
+        } catch (NoConnectionException e) {
+            // Expected
+        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void twoConnectionSameSession() throws Exception {
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getMovableService().getRealGameInfo(START_UID_1);
+        getMovableService().getSyncInfo(START_UID_1);
+        getMovableService().getRealGameInfo(START_UID_2);
+        getMovableService().getSyncInfo(START_UID_2);
+        try {
+            getMovableService().getSyncInfo(START_UID_1);
+            Assert.fail("NoConnectionException expected");
+        } catch (NoConnectionException e) {
+            // Expected
+        }
+        getMovableService().getSyncInfo(START_UID_2);
+        getMovableService().getRealGameInfo(START_UID_1);
+        getMovableService().getSyncInfo(START_UID_1);
+        try {
+            getMovableService().getSyncInfo(START_UID_2);
+            Assert.fail("NoConnectionException expected");
+        } catch (NoConnectionException e) {
+            // Expected
+        }
+        getMovableService().getSyncInfo(START_UID_1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
 }

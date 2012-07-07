@@ -35,7 +35,6 @@ import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.MarketDialog;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestDialog;
-import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
@@ -116,7 +115,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
 
     public void downloadRealGameInfo(final DeferredStartup deferredStartup) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.getRealGameInfo(new AsyncCallback<RealGameInfo>() {
+            movableServiceAsync.getRealGameInfo(ClientServices.getInstance().getClientRunner().getStartUuid(), new AsyncCallback<RealGameInfo>() {
 
                 @Override
                 public void onFailure(Throwable caught) {
@@ -227,7 +226,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
         if (movableServiceAsync == null) {
             return;
         }
-        movableServiceAsync.getSyncInfo(new AsyncCallback<List<Packet>>() {
+        movableServiceAsync.getSyncInfo(ClientServices.getInstance().getClientRunner().getStartUuid(), new AsyncCallback<List<Packet>>() {
             @Override
             public void onFailure(Throwable throwable) {
                 if (!handleDisconnection("pollSyncInfo", throwable)) {
@@ -405,20 +404,6 @@ public class Connection implements StartupProgressListener, ConnectionI {
         }
     }
 
-    public void surrenderBase() {
-        if (movableServiceAsync != null) {
-            movableServiceAsync.surrenderBase(new VoidAsyncCallback("surrenderBase"));
-            movableServiceAsync = null;
-        }
-    }
-
-    public void closeConnection() {
-        if (movableServiceAsync != null) {
-            movableServiceAsync.closeConnection(new VoidAsyncCallback("closeConnection"));
-            movableServiceAsync = null;
-        }
-    }
-
     public void log(String logMessage, Date date) {
         if (movableServiceAsync != null) {
             movableServiceAsync.log(logMessage, date, new VoidAsyncCallback("log"));
@@ -444,11 +429,12 @@ public class Connection implements StartupProgressListener, ConnectionI {
         if (throwable instanceof NotYourBaseException) {
             movableServiceAsync = null;
             GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to NotYourBaseException: " + message);
-            DialogManager.showDialog(new MessageDialog("Wrong base", "Not your Base: Most likely you start another base in another browser window"), DialogManager.Type.PROMPTLY);
+            DialogManager.showDialog(new MessageDialog("Wrong base", "Not your Base: Most likely you start another base in another browser window."), DialogManager.Type.PROMPTLY);
             return true;
         } else if (throwable instanceof NoConnectionException) {
-            GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to NoConnectionException: " + message);
-            StartupScreen.getInstance().fadeOutAndStart(GameStartupSeq.WARM_REAL);
+            log.warning("Client disconnected due to NoConnectionException: " + message + " NoConnectionException: " + throwable.getMessage());
+            DialogManager.showDialog(new MessageDialog("Connection failed", "Connection to server lost. Most likely you start another browser or tab window."), DialogManager.Type.PROMPTLY);
+            movableServiceAsync = null;
             return true;
         } else {
             GwtCommon.sendLogViaLoadScriptCommunication("Unknown Error (See GWT log for stack trace): " + message + " " + throwable.getMessage());

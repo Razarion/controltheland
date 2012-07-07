@@ -33,7 +33,7 @@ import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.connection.ConnectionService;
-import com.btxtech.game.services.connection.NoConnectionException;
+import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.user.User;
@@ -114,7 +114,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         try {
             DbPageAccess dbPageAccess = new DbPageAccess(session.getSessionId(), pageName, additional);
             sessionFactory.getCurrentSession().saveOrUpdate(dbPageAccess);
-        } catch (NoConnectionException e) {
+        } catch (NoBaseException e) {
             log.error("", e);
         }
     }
@@ -624,7 +624,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 baseId = baseService.getBase().getBaseId();
                 baseName = baseService.getBaseName(baseService.getBase().getSimpleBase());
             }
-        } catch (NoConnectionException e) {
+        } catch (NoBaseException e) {
             // Ignore
         }
         sessionFactory.getCurrentSession().save(new DbStartupTask(session.getSessionId(), startupTaskInfo, startUuid, userGuidanceService.getDbLevel(), levelTaskId, userService.getUser(), baseId, baseName));

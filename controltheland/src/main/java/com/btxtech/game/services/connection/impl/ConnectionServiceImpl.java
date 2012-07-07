@@ -14,12 +14,12 @@
 package com.btxtech.game.services.connection.impl;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
-import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.common.NoConnectionException;
-import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
+import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.HibernateUtil;
@@ -27,6 +27,7 @@ import com.btxtech.game.services.connection.ClientLogEntry;
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.ConnectionStatistics;
+import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
@@ -69,7 +70,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     private SessionFactory sessionFactory;
     private Timer timer;
     private Log log = LogFactory.getLog(ConnectionServiceImpl.class);
-    private final ArrayList<Connection> onlineConnection = new ArrayList<Connection>();
+    private final ArrayList<Connection> onlineConnection = new ArrayList<>();
     private ChatMessageQueue chatMessageQueue = new ChatMessageQueue();
 
     @PostConstruct
@@ -210,7 +211,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
             String baseName = null;
             try {
                 baseName = baseService.getBaseName(baseService.getBase().getSimpleBase());
-            } catch (com.btxtech.game.services.connection.NoConnectionException e) {
+            } catch (NoBaseException e) {
                 // Ignore
             }
             ClientLogEntry clientLogEntry = new ClientLogEntry(message, date, session, baseName);
@@ -222,13 +223,29 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     }
 
     @Override
-    public void createConnection(Base base) {
+    public void createConnection(Base base, String startUuid) {
+        // Connection to same base from same browser
         Connection connection = session.getConnection();
         if (connection != null) {
-            log.warn("Existing connection will be terminated");
-            closeConnection();
+            log.warn("Existing connection will be terminated I");
+            closeConnection(connection);
         }
-        connection = new Connection(session.getSessionId());
+        // Connection to same base from different browser
+        Connection preventConcurrentException = null;
+        synchronized (onlineConnection) {
+            for (Connection existingConnection : onlineConnection) {
+                if (existingConnection.getBase().equals(base)) {
+                    preventConcurrentException = existingConnection;
+                    break;
+                }
+            }
+        }
+        if (preventConcurrentException != null) {
+            log.warn("Existing connection will be terminated II");
+            closeConnection(preventConcurrentException);
+        }
+
+        connection = new Connection(session.getSessionId(), startUuid);
         connection.setBase(base);
         session.setConnection(connection);
         log.debug("Connection established");
@@ -240,17 +257,11 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         }
     }
 
-    @Override
-    public void closeConnection() {
-        Connection connection = session.getConnection();
-        if (connection == null) {
-            throw new IllegalStateException("Connection does not exist");
-        }
+    private void closeConnection(Connection connection) {
         if (connection.getBase() != null && connection.getBase().getUserState() != null && connection.getBase().getUserState().getUser() != null) {
             userTrackingService.onUserLeftGame(userService.getUser(connection.getBase().getUserState().getUser()));
         }
         connection.setClosed();
-        session.setConnection(null);
         log.debug("Connection closed 1");
         synchronized (onlineConnection) {
             onlineConnection.remove(connection);
@@ -279,13 +290,16 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
 
 
     @Override
-    public Connection getConnection() throws NoConnectionException {
+    public Connection getConnection(String startUuid) throws NoConnectionException {
         Connection connection = session.getConnection();
         if (connection == null) {
             throw new NoConnectionException("Connection does not exist");
         }
         if (connection.isClosed()) {
             throw new NoConnectionException("Connection already closed");
+        }
+        if (!connection.getStartUuid().equals(startUuid)) {
+            throw new NoConnectionException("This connection will be closed because a new one was opened");
         }
         return connection;
     }
