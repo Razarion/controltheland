@@ -18,10 +18,10 @@ package com.btxtech.game.services.connection;
  * Date: 17.02.2010
  * Time: 12:41:31
  */
-public class NoConnectionException extends RuntimeException{
+public class NoBaseException extends RuntimeException{
     private String sessionId;
 
-    public NoConnectionException(String message, String sessionId) {
+    public NoBaseException(String message, String sessionId) {
         super(message);
         this.sessionId = sessionId;
     }

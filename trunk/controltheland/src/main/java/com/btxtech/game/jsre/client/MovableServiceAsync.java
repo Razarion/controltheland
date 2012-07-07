@@ -44,7 +44,7 @@ import java.util.List;
  * The async counterpart of <code>MovableService</code>.
  */
 public interface MovableServiceAsync {
-    void getRealGameInfo(AsyncCallback<RealGameInfo> asyncCallback);
+    void getRealGameInfo(String startUuid, AsyncCallback<RealGameInfo> asyncCallback);
 
     void getSimulationGameInfo(int levelTaskId, AsyncCallback<SimulationInfo> asyncCallback);
 
@@ -52,7 +52,7 @@ public interface MovableServiceAsync {
 
     void sendCommands(List<BaseCommand> baseCommands, AsyncCallback async);
 
-    void getSyncInfo(AsyncCallback<List<Packet>> async);
+    void getSyncInfo(String startUuid, AsyncCallback<List<Packet>> async);
 
     void getAllSyncInfo(AsyncCallback<Collection<SyncItemInfo>> async);
 
@@ -61,10 +61,6 @@ public interface MovableServiceAsync {
     void sendChatMessage(ChatMessage chatMessage, AsyncCallback<Void> asyncCallback);
 
     void pollChatMessages(Integer lastMessageId, AsyncCallback<List<ChatMessage>> asyncCallback);
-
-    void surrenderBase(AsyncCallback<Void> asyncCallback);
-
-    void closeConnection(AsyncCallback<Void> async);
 
     void sendTutorialProgress(TutorialConfig.TYPE type, String startUuid, int levelTaskId, String name, long duration, long clientTimeStamp, AsyncCallback<GameFlow> asyncCallback);
 

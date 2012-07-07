@@ -36,11 +36,9 @@ public interface ConnectionService extends com.btxtech.game.jsre.common.gameengi
 
     boolean hasConnection(SimpleBase simpleBase);
 
-    Connection getConnection() throws NoConnectionException;
+    Connection getConnection(String startUuid) throws NoConnectionException;
 
-    void createConnection(Base base);
-
-    void closeConnection();
+    void createConnection(Base base, String startUuid);
 
     void closeConnection(SimpleBase simpleBase);
 

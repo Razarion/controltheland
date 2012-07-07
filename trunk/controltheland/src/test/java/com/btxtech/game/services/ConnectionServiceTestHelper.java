@@ -40,17 +40,12 @@ public class ConnectionServiceTestHelper implements ConnectionService {
     }
 
     @Override
-    public Connection getConnection() throws NoConnectionException {
+    public Connection getConnection(String startUuid) throws NoConnectionException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public void createConnection(Base base) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void closeConnection() {
+    public void createConnection(Base base, String startUuid) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 

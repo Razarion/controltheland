@@ -24,7 +24,6 @@ import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
 import com.btxtech.game.jsre.common.packets.EnergyPacket;
 import com.btxtech.game.jsre.common.packets.HouseSpacePacket;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
-import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -45,7 +44,7 @@ import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.common.ReadonlyCollectionContentProvider;
 import com.btxtech.game.services.connection.ConnectionService;
-import com.btxtech.game.services.connection.NoConnectionException;
+import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.energy.impl.BaseEnergy;
@@ -147,7 +146,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public void continueBase() throws InvalidLevelState {
+    public void continueBase(String startUuid) throws InvalidLevelState {
         UserState userState = userService.getUserState();
         if (userState == null) {
             throw new IllegalStateException("No UserState available.");
@@ -162,7 +161,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             throw new IllegalStateException("No Base in user UserState: " + userState);
         }
 
-        connectionService.createConnection(base);
+        connectionService.createConnection(base, startUuid);
         if (userState.isSendResurrectionMessage()) {
             userGuidanceService.sendResurrectionMessage(base.getSimpleBase());
             userState.clearSendResurrectionMessageAndClear();
@@ -213,7 +212,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     public Base getBase() {
         Base base = userService.getUserState().getBase();
         if (base == null) {
-            throw new NoConnectionException("Base does not exist", session.getSessionId());
+            throw new NoBaseException("Base does not exist", session.getSessionId());
         }
         return base;
     }
@@ -226,7 +225,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         }
         Base base = userService.getUserState().getBase();
         if (base == null) {
-            throw new NoConnectionException("Base does not exist", session.getSessionId());
+            throw new NoBaseException("Base does not exist", session.getSessionId());
         }
         return base;
     }
@@ -253,7 +252,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     private Base getBaseThrow(SimpleBase simpleBase) {
         Base base = getBase(simpleBase);
         if (base == null) {
-            throw new NoConnectionException("Base does not exist", session.getSessionId());
+            throw new NoBaseException("Base does not exist", session.getSessionId());
         }
         return base;
     }
@@ -352,15 +351,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         packet.setConsuming(baseEnergy.getConsuming());
         packet.setGenerating(baseEnergy.getGenerating());
         connectionService.sendPacket(base.getSimpleBase(), packet);
-    }
-
-    @Override
-    public void surrenderBase(Base base) {
-        historyService.addBaseSurrenderedEntry(base.getSimpleBase());
-        userTrackingService.onBaseSurrender(userService.getUser(), base);
-        getUserState(base.getSimpleBase()).setSendResurrectionMessage();
-        makeBaseAbandoned(base);
-
     }
 
     private void makeBaseAbandoned(Base base) {

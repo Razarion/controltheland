@@ -31,10 +31,10 @@ public class TestLevel extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
-        RealGameInfo realGameInfo = getMovableService().getRealGameInfo();
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
         Assert.assertEquals(userGuidanceService.getDbLevel(TEST_LEVEL_2_REAL_ID).createLevelScope(), realGameInfo.getLevelScope());
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_3_REAL_ID);
-        realGameInfo = getMovableService().getRealGameInfo();
+        realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
         Assert.assertEquals(userGuidanceService.getDbLevel(TEST_LEVEL_3_REAL_ID).createLevelScope(), realGameInfo.getLevelScope());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

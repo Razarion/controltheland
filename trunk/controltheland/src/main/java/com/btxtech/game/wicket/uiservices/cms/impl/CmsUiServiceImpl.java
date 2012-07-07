@@ -28,7 +28,7 @@ import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.common.ContentSortList;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.DateUtil;
-import com.btxtech.game.services.connection.NoConnectionException;
+import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.user.DbContentAccessControl;
@@ -443,7 +443,7 @@ public class CmsUiServiceImpl implements CmsUiService {
             log.warn("NoSuchMethodException: bean: " + bean + " expression: " + dbExpressionProperty.getExpression());
             throw ie;
         } catch (InvocationTargetException ie) {
-            if (ie.getTargetException() instanceof NoConnectionException) {
+            if (ie.getTargetException() instanceof NoBaseException) {
                 return new Label(id, "No Base");
             } else {
                 throw ie;

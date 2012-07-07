@@ -111,36 +111,6 @@ public class TestUserHistory extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void surrendered() throws Exception {
-        configureGameMultipleLevel();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "");
-        userService.login("U1", "test");
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
-        getMyBase(); // Setup connection
-        getMovableService().surrenderBase();
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        List<DbUserHistory> dbUserHistories = getUserHistory();
-        Assert.assertEquals(6, dbUserHistories.size());
-        Assert.assertNotNull(dbUserHistories.get(0).getLoggedOut());
-        Assert.assertNotNull(dbUserHistories.get(1).getBaseSurrender());
-        Assert.assertEquals("U1", dbUserHistories.get(1).getBaseName());
-        Assert.assertNotNull(dbUserHistories.get(2).getGameEntered());
-        Assert.assertNotNull(dbUserHistories.get(3).getBaseCreated());
-        Assert.assertNotNull(dbUserHistories.get(4).getLoggedIn());
-        Assert.assertNotNull(dbUserHistories.get(5).getCreated());
-    }
-
-    @Test
-    @DirtiesContext
     public void defeated() throws Exception {
         configureGameMultipleLevel();
 

@@ -917,17 +917,12 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     }
 
     @Override
-    public Connection getConnection() throws NoConnectionException {
+    public Connection getConnection(String startUuid) throws NoConnectionException {
         return null;
     }
 
     @Override
-    public void createConnection(Base base) {
-
-    }
-
-    @Override
-    public void closeConnection() {
+    public void createConnection(Base base, String startUuid) {
 
     }
 

@@ -130,7 +130,7 @@ public class TestHistoryService extends AbstractServiceTest {
 
         beginHttpRequestAndOpenSessionInViewFilter();
         // Establish Connection
-        getMovableService().getRealGameInfo();
+        getMovableService().getRealGameInfo(START_UID_1);
 
         // Build Factory
         System.out.println("---- build unit ---");
@@ -171,7 +171,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("Target", "test", "test", "test");
         userService.login("Target", "test");
-        SimpleBase targetBase = getMovableService().getRealGameInfo().getBase();
+        SimpleBase targetBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -179,7 +179,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("Actor", "test", "test", "test");
         userService.login("Actor", "test");
-        SimpleBase actorBase = getMovableService().getRealGameInfo().getBase();
+        SimpleBase actorBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
         Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
         sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -230,7 +230,7 @@ public class TestHistoryService extends AbstractServiceTest {
         System.out.println("**** testKillAnonymousItem ****");
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase targetBase = getMovableService().getRealGameInfo().getBase();
+        SimpleBase targetBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -238,7 +238,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("Actor", "test", "test", "test");
         userService.login("Actor", "test");
-        SimpleBase actorBase = getMovableService().getRealGameInfo().getBase();
+        SimpleBase actorBase = getMovableService().getRealGameInfo(START_UID_2).getBase();
         Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
         sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -278,13 +278,13 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("Target", "test", "test", "test");
         userService.login("Target", "test");
-        SimpleBase targetBase = getMovableService().getRealGameInfo().getBase();
+        SimpleBase targetBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase actorBase = getMovableService().getRealGameInfo().getBase();
+        SimpleBase actorBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
         Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
         sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -324,48 +324,6 @@ public class TestHistoryService extends AbstractServiceTest {
         Assert.assertEquals("Base created: Target", displayHistoryElements.get(1).getMessage());
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
         Assert.assertEquals("Item created: " + TEST_START_BUILDER_ITEM, displayHistoryElements.get(0).getMessage());
-
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void testSurrender() throws Exception {
-        configureRealGame();
-
-        System.out.println("**** testSurrender ****");
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("Actor", "test", "test", "test");
-        userService.login("Actor", "test");
-        getMovableService().getRealGameInfo();
-        getMovableService().surrenderBase();
-
-        getMyBase(); // Connection -> resurrection
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Verify
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("Actor"), 1000);
-        System.out.println("----- Actor Target-----");
-        for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
-            System.out.println(displayHistoryElement);
-        }
-        System.out.println("----- Actor End -----");
-        Assert.assertEquals(5, displayHistoryElements.size());
-        Assert.assertTrue(displayHistoryElements.get(2).getTimeStamp() >= displayHistoryElements.get(3).getTimeStamp());
-        Assert.assertEquals("Base surrendered", displayHistoryElements.get(2).getMessage());
-        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
-        // Time different to short to assure the correct order of the two out-commented entries below
-        //Assert.assertEquals("Base created: Actor", displayHistoryElements.get(1).getMessage());
-        //Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp().getTime() >= displayHistoryElements.get(1).getTimeStamp().getTime());
-        //Assert.assertEquals("Item created: " + TEST_START_BUILDER_ITEM, displayHistoryElements.get(0).getMessage());
 
 
         endHttpRequestAndOpenSessionInViewFilter();

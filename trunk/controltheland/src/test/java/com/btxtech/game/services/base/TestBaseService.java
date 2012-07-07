@@ -71,62 +71,12 @@ public class TestBaseService extends AbstractServiceTest {
         getMovableService().sellItem(id);
 
         try {
-            getMovableService().getSyncInfo();
+            getMovableService().getSyncInfo(START_UID_1);
             Assert.fail("NoConnectionException expected");
         } catch (NoConnectionException e) {
             // OK
         }
 
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void testSurrenderAndCollecting() throws Exception {
-        configureRealGame();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        setupResource();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
-        SimpleBase simpleBase = getMyBase(); // Setup connection
-        sendBuildCommand(getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID), new Index(100, 100), TEST_FACTORY_ITEM_ID);
-        waitForActionServiceDone();
-        sendFactoryCommand(getFirstSynItemId(simpleBase, TEST_FACTORY_ITEM_ID), TEST_HARVESTER_ITEM_ID);
-        waitForActionServiceDone();
-        Id moneyId = getFirstSynItemId(simpleBase, TEST_RESOURCE_ITEM_ID);
-        sendCollectCommand(getFirstSynItemId(simpleBase, TEST_HARVESTER_ITEM_ID), moneyId);
-        getMovableService().surrenderBase();
-        waitForActionServiceDone();
-        try {
-            itemService.getItem(moneyId);
-            Assert.fail("ItemDoesNotExistException expected");
-        } catch (ItemDoesNotExistException e) {
-            // OK
-        }
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void testSurrender() throws Exception {
-        configureRealGame();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        setupResource();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
-        SimpleBase simpleBase = getMyBase(); // Setup connection
-        Assert.assertEquals("U1", baseService.getBaseName(simpleBase));
-        getMovableService().surrenderBase();
-        Assert.assertEquals("Base 1", baseService.getBaseName(simpleBase));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
