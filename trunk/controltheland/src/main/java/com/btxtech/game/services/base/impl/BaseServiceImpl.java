@@ -16,13 +16,8 @@ package com.btxtech.game.services.base.impl;
 import com.btxtech.game.jsre.client.AlreadyUsedException;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
-import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
-import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
-import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
-import com.btxtech.game.jsre.common.packets.EnergyPacket;
-import com.btxtech.game.jsre.common.packets.HouseSpacePacket;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.Territory;
@@ -37,6 +32,11 @@ import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeExce
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
+import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
+import com.btxtech.game.jsre.common.packets.EnergyPacket;
+import com.btxtech.game.jsre.common.packets.HouseSpacePacket;
+import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseItemTypeCount;
 import com.btxtech.game.services.base.BaseService;
@@ -500,7 +500,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     public void sendHouseSpacePacket(Base base) {
         HouseSpacePacket houseSpacePacket = new HouseSpacePacket();
         houseSpacePacket.setHouseSpace(base.getHouseSpace());
-        connectionService.sendPacket(houseSpacePacket);
+        connectionService.sendPacket(base.getSimpleBase(), houseSpacePacket);
     }
 
     @Override
