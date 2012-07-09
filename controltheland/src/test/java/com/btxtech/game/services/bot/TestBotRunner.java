@@ -15,6 +15,7 @@ import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.impl.ServerBotRunner;
 import com.btxtech.game.services.common.ServerServices;
+import com.btxtech.game.services.history.DbHistoryElement;
 import com.btxtech.game.services.item.ItemService;
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -39,6 +40,8 @@ public class TestBotRunner extends AbstractServiceTest {
     private BaseService baseService;
     @Autowired
     private ServerServices serverServices;
+    @Autowired
+    private BotService botService;
 
     @Test
     @DirtiesContext
@@ -346,4 +349,52 @@ public class TestBotRunner extends AbstractServiceTest {
         }
         EasyMock.verify(mockListener);
     }
+
+    @Test
+    @DirtiesContext
+    public void botBaseKilledAndEnrage() throws Exception {
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBotConfig dbBotConfig = botService.getDbBotConfigCrudServiceHelper().createDbChild();
+        dbBotConfig.setActionDelay(10);
+        dbBotConfig.setName("TestBot");
+        dbBotConfig.setRealGameBot(true);
+        dbBotConfig.setRealm(new Rectangle(0, 0, 1000, 1000));
+        DbBotEnragementStateConfig dbBotEnragementStateConfig1 = dbBotConfig.getEnrageStateCrud().createDbChild();
+        dbBotEnragementStateConfig1.setName("Normal");
+        dbBotEnragementStateConfig1.setEnrageUpKills(2);
+        DbBotItemConfig dbBotItemConfig = dbBotEnragementStateConfig1.getBotItemCrud().createDbChild();
+        dbBotItemConfig.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        dbBotItemConfig.setCount(1);
+        dbBotItemConfig.setCreateDirectly(true);
+        dbBotItemConfig.setRegion(new Rectangle(500,500,200,200));
+        dbBotConfig.getEnrageStateCrud().createDbChild();
+        botService.getDbBotConfigCrudServiceHelper().updateDbChild(dbBotConfig);
+        botService.activate();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        waitForBotToBuildup(dbBotConfig.createBotConfig(itemService));
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(5000, 5000), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        waitForBotToBuildup(dbBotConfig.createBotConfig(itemService));
+        sendAttackCommand(getFirstSynItemId(TEST_ATTACK_ITEM_ID), getFirstSynItemId(getFirstBotBase(), TEST_START_BUILDER_ITEM_ID));
+        waitForActionServiceDone();
+        waitForBotToBuildup(dbBotConfig.createBotConfig(itemService));
+        sendAttackCommand(getFirstSynItemId(TEST_ATTACK_ITEM_ID), getFirstSynItemId(getFirstBotBase(), TEST_START_BUILDER_ITEM_ID));
+        waitForActionServiceDone();
+
+        Assert.assertFalse(getAllHistoryEntriesOfType(DbHistoryElement.Type.BOT_ENRAGE_UP).isEmpty());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 }

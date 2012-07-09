@@ -264,6 +264,15 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         }
         connectionService.sendSyncInfo(killedItem);
 
+        if (killedItem instanceof SyncBaseItem) {
+            SyncBaseItem killedBaseItem = (SyncBaseItem) killedItem;
+            if (actor != null) {
+                if (baseService.isBot(killedBaseItem.getBase())) {
+                    botService.onBotItemKilled(killedBaseItem, actor);
+                }
+            }
+        }
+
         synchronized (items) {
             if (items.remove(killedItem.getId()) == null) {
                 throw new IllegalStateException("Id does not exist: " + killedItem);
@@ -282,9 +291,6 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
                 xpService.onItemKilled(actorBase, killedBaseItem);
                 serverConditionService.onSyncItemKilled(actor, killedBaseItem);
                 inventoryService.onSyncBaseItemKilled(killedBaseItem);
-                if (baseService.isBot(killedBaseItem.getBase())) {
-                    botService.onBotItemKilled(killedBaseItem, actor);
-                }
             }
             serverEnergyService.onBaseItemKilled(killedBaseItem);
             killContainedItems(killedBaseItem, actor);

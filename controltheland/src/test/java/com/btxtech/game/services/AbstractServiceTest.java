@@ -33,6 +33,7 @@ import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.packets.XpPacket;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.action.ActionService;
+import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
@@ -377,6 +378,15 @@ abstract public class AbstractServiceTest {
         } catch (InvalidLevelState invalidLevelState) {
             throw new RuntimeException(invalidLevelState);
         }
+    }
+
+    protected SimpleBase getFirstBotBase() {
+        for (Base base : baseService.getBases()) {
+            if (baseService.isBot(base.getSimpleBase())) {
+                return base.getSimpleBase();
+            }
+        }
+        throw new IllegalStateException("No botbase found");
     }
 
     protected Id getFirstSynItemId(int itemTypeId) {
