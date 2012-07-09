@@ -89,7 +89,7 @@ public class TestBotService extends AbstractServiceTest {
             HibernateUtil.closeSession4InternalCall(getSessionFactory());
         }
         // Wait for bot to complete
-        // TODO failed on: 18.06.2012
+        // TODO failed on: 18.06.2012, 07.07.2012
         waitForBotToBuildup(botConfig);
         assertWholeItemCount(4);
     }

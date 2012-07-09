@@ -20,6 +20,8 @@ import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
@@ -376,6 +378,13 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
     public void longPathToDestination() throws Exception {
         configureGameMultipleLevel();
         System.out.println("**** longPathToDestination ****");
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBaseItemType builderType = (DbBaseItemType) itemService.getDbItemTypeCrud().readDbChild(TEST_START_BUILDER_ITEM_ID);
+        builderType.getDbMovableType().setSpeed(1);
+        itemService.getDbItemTypeCrud().updateDbChild(builderType);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
 
         // U1 no real base, second level
         beginHttpSession();
@@ -439,7 +448,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         id = getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID);
         syncBaseItem = (SyncBaseItem) itemService.getItem(id);
         // Assert path has at lease more the 50 entries (original it was 130 but some are may be already achievement)
-        // TODO failed on 04.07.2012
+        // TODO failed on 04.07.2012, 09.07.2012
         Assert.assertTrue(syncBaseItem.getSyncMovable().getPathToDestination().size() > 50);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

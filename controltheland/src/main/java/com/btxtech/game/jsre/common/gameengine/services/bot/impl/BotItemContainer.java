@@ -124,6 +124,9 @@ public class BotItemContainer {
             for (BotSyncBaseItem botSyncBaseItem : botItems.values()) {
                 if (botSyncBaseItem.isAlive()) {
                     botSyncBaseItem.updateIdleState();
+                    if(botSyncBaseItem.isIdle()) {
+                       currentBuildups.onItemRemoved(botSyncBaseItem.getSyncBaseItem());
+                    }
                 } else {
                     remove.add(botSyncBaseItem);
                 }

@@ -40,7 +40,7 @@ public class Base implements Serializable {
     @Transient
     private final Object syncObject = new Object();
     @Transient
-    private final HashSet<SyncBaseItem> items = new HashSet<SyncBaseItem>();
+    private final HashSet<SyncBaseItem> items = new HashSet<>();
     @Transient
     private SimpleBase simpleBase;
     @Transient
@@ -89,7 +89,9 @@ public class Base implements Serializable {
     }
 
     public Set<SyncBaseItem> getItems() {
-        return new HashSet<SyncBaseItem>(items);
+        synchronized (items) {
+            return new HashSet<>(items);
+        }
     }
 
     public SimpleBase getSimpleBase() {

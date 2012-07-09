@@ -14,7 +14,6 @@
 package com.btxtech.game.services.action.impl;
 
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
-import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
@@ -38,8 +37,6 @@ import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.terrain.TerrainService;
-import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
 import org.apache.commons.logging.Log;
@@ -78,17 +75,13 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
     @Autowired
     private CollisionService collisionService;
     @Autowired
-    private TerrainService terrainService;
-    @Autowired
     private ServerEnergyService energyService;
-    @Autowired
-    private TerritoryService territoryService;
     @Autowired
     private ServerServices serverServices;
     @Autowired
     private ServerConditionService serverConditionService;
-    private final HashSet<SyncTickItem> activeItems = new HashSet<SyncTickItem>();
-    private final ArrayList<SyncTickItem> tmpActiveItems = new ArrayList<SyncTickItem>();
+    private final HashSet<SyncTickItem> activeItems = new HashSet<>();
+    private final ArrayList<SyncTickItem> tmpActiveItems = new ArrayList<>();
     private Timer timer;
     private Log log = LogFactory.getLog(ActionServiceImpl.class);
     private long lastTickTime = 0;
@@ -307,9 +300,11 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
     }
 
     private void finalizeCommand(SyncBaseItem syncItem) {
-        synchronized (tmpActiveItems) {
-            if (!activeItems.contains(syncItem)) {
-                tmpActiveItems.add(syncItem);
+        synchronized (activeItems) {
+            synchronized (tmpActiveItems) {
+                if (!activeItems.contains(syncItem)) {
+                    tmpActiveItems.add(syncItem);
+                }
             }
         }
         removeGuardingBaseItem(syncItem);
