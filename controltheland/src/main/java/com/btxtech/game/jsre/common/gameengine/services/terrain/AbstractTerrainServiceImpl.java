@@ -47,14 +47,19 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
 
     @Override
     public void iteratorOverAllTerrainTiles(Rectangle tileRect, TerrainTileEvaluator terrainTileEvaluator) {
+        iteratorOverAllTerrainTiles(tileRect, terrainTileEvaluator, 1, 1);
+    }
+
+    @Override
+    public void iteratorOverAllTerrainTiles(Rectangle tileRect, TerrainTileEvaluator terrainTileEvaluator, int xIncrease, int yIncrease) {
         if (terrainSettings == null || terrainTileField == null) {
             return;
         }
         if (tileRect == null) {
             tileRect = new Rectangle(0, 0, terrainSettings.getTileXCount(), terrainSettings.getTileYCount());
         }
-        for (int x = tileRect.getX(); x < tileRect.getEndX(); x++) {
-            for (int y = tileRect.getY(); y < tileRect.getEndY(); y++) {
+        for (int x = tileRect.getX(); x < tileRect.getEndX(); x += xIncrease) {
+            for (int y = tileRect.getY(); y < tileRect.getEndY(); y += yIncrease) {
                 terrainTileEvaluator.evaluate(x, y, terrainTileField[x][y]);
             }
         }

@@ -14,11 +14,13 @@
 package com.btxtech.game.jsre.client.cockpit.radar;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.ColorConstants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.google.gwt.user.client.Timer;
 
 import java.util.logging.Level;
@@ -30,17 +32,17 @@ import java.util.logging.Logger;
  * Time: 21:23:04
  */
 public class RadarItemView extends MiniMap {
-    public static final int BASE_ITEM_SIZE_SMALL_MAP = 4;
-    public static final int OWN_BASE_ITEM_SIZE_SMALL_MAP = 6;
-    public static final int RESOURCE_ITEM_SIZE_SMALL_MAP = 2;
-    public static final int BASE_ITEM_SIZE = 2;
-    public static final int OWN_BASE_ITEM_SIZE = 3;
-    public static final int RESOURCE_ITEM_SIZE = 1;
+    private static final int BASE_ITEM_SIZE_SMALL_MAP = 4;
+    private static final int OWN_BASE_ITEM_SIZE_SMALL_MAP = 6;
+    private static final int RESOURCE_ITEM_SIZE_SMALL_MAP = 2;
+    private static final int BASE_ITEM_SIZE = 2;
+    private static final int OWN_BASE_ITEM_SIZE = 3;
+    private static final int RESOURCE_ITEM_SIZE = 1;
     private Logger log = Logger.getLogger(RadarItemView.class.getName());
     private Timer timer;
 
     public RadarItemView(int width, int height) {
-        super(width, height,  Scale.ABSOLUTE);
+        super(width, height);
     }
 
     @Override
@@ -52,7 +54,7 @@ public class RadarItemView extends MiniMap {
                 @Override
                 public void run() {
                     try {
-                        refreshItems();
+                        draw();
                     } catch (Throwable t) {
                         log.log(Level.SEVERE, "Exception in RadarItemView Timer", t);
                     }
@@ -62,40 +64,41 @@ public class RadarItemView extends MiniMap {
         }
     }
 
-    private void refreshItems() {
-        clear();
-
+    @Override
+    protected void render() {
         double ownSize;
         double baseItemSize;
         double resourceItemSize;
-        if (getScale() > 0.01) {
-            ownSize = OWN_BASE_ITEM_SIZE_SMALL_MAP / getScale();
-            baseItemSize = BASE_ITEM_SIZE_SMALL_MAP / getScale();
-            resourceItemSize = RESOURCE_ITEM_SIZE_SMALL_MAP / getScale();
+
+        if (getScale().isDrawImages()) {
+            ownSize = OWN_BASE_ITEM_SIZE_SMALL_MAP;
+            baseItemSize = BASE_ITEM_SIZE_SMALL_MAP;
+            resourceItemSize = RESOURCE_ITEM_SIZE_SMALL_MAP;
         } else {
-            ownSize = OWN_BASE_ITEM_SIZE / getScale();
-            baseItemSize = BASE_ITEM_SIZE / getScale();
-            resourceItemSize = RESOURCE_ITEM_SIZE / getScale();
+            ownSize = OWN_BASE_ITEM_SIZE;
+            baseItemSize = BASE_ITEM_SIZE;
+            resourceItemSize = RESOURCE_ITEM_SIZE;
         }
 
-        for (ClientSyncItem clientSyncItem : ItemContainer.getInstance().getItems()) {
-            if (clientSyncItem.isSyncBaseItem()) {
-                Index pos = clientSyncItem.getSyncItem().getSyncItemArea().getPosition();
+        for (SyncItem syncItem : ItemContainer.getInstance().getItemsInRectangle(getAbsoluteViewRectangle())) {
+            if (syncItem instanceof SyncBaseItem) {
+                SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
+                Index pos = syncBaseItem.getSyncItemArea().getPosition();
                 if (pos == null) {
                     continue;
                 }
-                getContext2d().setFillStyle(ClientBase.getInstance().getBaseHtmlColor(clientSyncItem.getSyncBaseItem().getBase()));
-                if (clientSyncItem.isMyOwnProperty()) {
-                    getContext2d().fillRect(pos.getX(), pos.getY(), ownSize, ownSize);
-                } else if (clientSyncItem.isEnemy()) {
-                    getContext2d().fillRect(pos.getX(), pos.getY(), baseItemSize, baseItemSize);
+                getContext2d().setFillStyle(ClientBase.getInstance().getBaseHtmlColor(syncBaseItem.getBase()));
+                if (ClientBase.getInstance().isMyOwnProperty(syncBaseItem)) {
+                    getContext2d().fillRect(absolute2RadarPositionX(pos), absolute2RadarPositionY(pos), ownSize, ownSize);
+                } else if (ClientBase.getInstance().isEnemy(syncBaseItem)) {
+                    getContext2d().fillRect(absolute2RadarPositionX(pos), absolute2RadarPositionY(pos), baseItemSize, baseItemSize);
                 } else {
-                    getContext2d().fillRect(pos.getX(), pos.getY(), ownSize, ownSize);
+                    getContext2d().fillRect(absolute2RadarPositionX(pos), absolute2RadarPositionY(pos), ownSize, ownSize);
                 }
-            } else if (clientSyncItem.isSyncResourceItem()) {
-                Index pos = clientSyncItem.getSyncItem().getSyncItemArea().getPosition();
+            } else if (syncItem instanceof SyncResourceItem) {
+                Index pos = syncItem.getSyncItemArea().getPosition();
                 getContext2d().setFillStyle(ColorConstants.WHITE);
-                getContext2d().fillRect(pos.getX(), pos.getY(), resourceItemSize, resourceItemSize);
+                getContext2d().fillRect(absolute2RadarPositionX(pos), absolute2RadarPositionY(pos), resourceItemSize, resourceItemSize);
             }
         }
     }

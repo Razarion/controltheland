@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.mapview;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniTerrain;
+import com.btxtech.game.jsre.client.cockpit.radar.ScaleStep;
 import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -98,8 +99,10 @@ public class MapView implements EntryPoint {
                 TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
                 miniTerrain.onTerrainSettings(terrainInfo.getTerrainSettings());
                 miniTerrain.onTerrainChanged();
+                miniTerrain.setScale(ScaleStep.WHOLE_MAP_MISSION);
                 miniTerritoryView.onTerrainSettings(terrainInfo.getTerrainSettings());
-                miniTerritoryView.drawTiles();
+                miniTerritoryView.setScale(ScaleStep.WHOLE_MAP_MISSION);
+                miniTerritoryView.draw();
             }
         });
         terrainEditor.getTerritories(new AsyncCallback<Collection<Territory>>() {

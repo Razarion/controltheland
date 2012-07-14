@@ -35,7 +35,7 @@ public class Rectangle implements Serializable {
 
     public Rectangle(Index start, Index end) {
         if (start.getX() > end.getX() || start.getY() > end.getY()) {
-            throw new IllegalArgumentException("Invalid rectangle");
+            throw new IllegalArgumentException("Invalid rectangle start: " + start + " end: " + end);
         }
         this.start = start.getCopy();
         this.endExclusive = end.getCopy();

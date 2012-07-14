@@ -13,6 +13,9 @@
 
 package com.btxtech.game.jsre.client.cockpit.radar;
 
+import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.canvas.client.Canvas;
@@ -33,15 +36,10 @@ import java.util.List;
  * Date: 22.12.2009
  * Time: 21:50:26
  */
-public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandler {
-    public enum Scale {
-        TILE,
-        ABSOLUTE,
-        NONE
-    }
+public abstract class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandler {
     private int height;
     private int width;
-    private double scale = 1.0;
+    private ScaleStep scaleStep = ScaleStep.WHOLE_MAP;
     private TerrainSettings terrainSettings;
     private List<MiniMapMouseMoveListener> miniMapMouseMoveListeners = new ArrayList<MiniMapMouseMoveListener>();
     private List<MiniMapMouseDownListener> miniMapMouseDownListeners = new ArrayList<MiniMapMouseDownListener>();
@@ -51,12 +49,13 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
     private HandlerRegistration upRegistration;
     private Canvas canvas;
     private Context2d context2d;
-    private int xShift = 0;
-    private int yShift = 0;
-    private Scale scaleTo;
+    private int xShiftRadarPixel = 0;
+    private int yShiftRadarPixel = 0;
+    private Index viewOrigin = new Index(0, 0);
+    private double scaleForFullTerrain;
+    private double scale = 1.0;
 
-    public MiniMap(int width, int height, Scale scaleTo) {
-        this.scaleTo = scaleTo;
+    public MiniMap(int width, int height) {
         canvas = Canvas.createIfSupported();
         if (canvas == null) {
             throw new Html5NotSupportedException("MiniMap: Canvas not supported.");
@@ -68,69 +67,119 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
         this.height = height;
     }
 
-    public double getScale() {
-        return scale;
+    public ScaleStep getScale() {
+        return scaleStep;
     }
 
-    protected void setScale(double scale) {
-        this.scale = scale;
+    public void setScale(ScaleStep scaleStep) {
+        this.scaleStep = scaleStep;
+        Index absoluteMiddle = getAbsoluteMiddle();
+        scale = scaleForFullTerrain * Math.sqrt(scaleStep.getZoom());
+
+        // TODO may be wrong if zoomed in
+        if (getTerrainSettings().getPlayFieldXSize() > getTerrainSettings().getPlayFieldYSize()) {
+            xShiftRadarPixel = 0;
+            yShiftRadarPixel = (int) ((getTerrainSettings().getPlayFieldXSize() - getTerrainSettings().getPlayFieldYSize()) * scale / 2.0);
+        } else if (getTerrainSettings().getPlayFieldYSize() > getTerrainSettings().getPlayFieldXSize()) {
+            xShiftRadarPixel = (int) ((getTerrainSettings().getPlayFieldYSize() - getTerrainSettings().getPlayFieldXSize()) * scale / 2.0);
+            yShiftRadarPixel = 0;
+        } else {
+            xShiftRadarPixel = 0;
+            yShiftRadarPixel = 0;
+        }
+
+        setAbsoluteViewRectMiddle(absoluteMiddle);
+        draw();
+    }
+
+    protected Rectangle getAbsoluteViewRectangle() {
+        int width = getAbsoluteVisibleWidth();
+        int height = getAbsoluteVisibleHeight();
+        if (width + viewOrigin.getX() >= getTerrainSettings().getPlayFieldXSize()) {
+            width = getTerrainSettings().getPlayFieldXSize() - viewOrigin.getX();
+        }
+        if (width < 0) {
+            width = 0;
+        }
+        if (height + viewOrigin.getY() >= getTerrainSettings().getPlayFieldYSize()) {
+            height = getTerrainSettings().getPlayFieldYSize() - viewOrigin.getY();
+        }
+        if (height < 0) {
+            height = 0;
+        }
+        return new Rectangle(viewOrigin, viewOrigin.add(new Index(width, height)));
+    }
+
+    public int getAbsoluteVisibleWidth() {
+        return (int) ((double) getWidth() / scale);
+    }
+
+    public int getAbsoluteVisibleHeight() {
+        return (int) ((double) getHeight() / scale);
+    }
+
+    public Index getAbsoluteMiddle() {
+        return new Index(viewOrigin.getX() + getAbsoluteVisibleWidth() / 2, viewOrigin.getY() + getAbsoluteVisibleHeight() / 2);
+    }
+
+    protected Rectangle getTileViewRectangle() {
+        return TerrainView.getInstance().getTerrainHandler().convertToTilePositionRoundUp(getAbsoluteViewRectangle());
+    }
+
+    protected int scaleAbsoluteRadarPosition(int absolute) {
+        return (int) ((double) absolute * scale);
+    }
+
+    protected int absolute2RadarPositionX(int absolute) {
+        return scaleAbsoluteRadarPosition(absolute - viewOrigin.getX()) + xShiftRadarPixel;
+    }
+
+    protected int absolute2RadarPositionY(int absolute) {
+        return scaleAbsoluteRadarPosition(absolute - viewOrigin.getY()) + yShiftRadarPixel;
+    }
+
+    protected int absolute2RadarPositionX(Index absolute) {
+        return absolute2RadarPositionX(absolute.getX());
+    }
+
+    protected int absolute2RadarPositionY(Index absolute) {
+        return absolute2RadarPositionY(absolute.getY());
+    }
+
+    public void setAbsoluteViewRectMiddle(Index middle) {
+        setAbsoluteViewRect(middle.sub(getAbsoluteVisibleWidth() / 2, getAbsoluteVisibleHeight() / 2));
+    }
+
+    public void setAbsoluteViewRect(Index position) {
+        int width = getAbsoluteVisibleWidth();
+        int height = getAbsoluteVisibleHeight();
+
+        int viewRectX = position.getX();
+        if (position.getX() + width >= getTerrainSettings().getPlayFieldXSize()) {
+            viewRectX = getTerrainSettings().getPlayFieldXSize() - width;
+        }
+        if (viewRectX < 0) {
+            viewRectX = 0;
+        }
+        int viewRectY = position.getY();
+        if (position.getY() + height >= getTerrainSettings().getPlayFieldYSize()) {
+            viewRectY = getTerrainSettings().getPlayFieldYSize() - height;
+        }
+        if (viewRectY < 0) {
+            viewRectY = 0;
+        }
+        viewOrigin = new Index(viewRectX, viewRectY);
+        draw();
     }
 
     public void onTerrainSettings(TerrainSettings terrainSettings) {
         this.terrainSettings = terrainSettings;
-        switch (scaleTo) {
-            case TILE:
-                scaleToTile();
-                break;
-            case ABSOLUTE:
-                scaleToAbsolute();
-                break;
-            case NONE:
-                scaleNoNormal();
-                break;
-            default:
-                throw new IllegalArgumentException("MiniMap.onTerrainSettings() unknown scaleTo: " + scaleTo);
-        }
-    }
-
-    private void scaleNoNormal() {
-        scale = 1.0;
-        context2d.setTransform(1, 0, 0, 1, 0, 0); // No transformation
-    }
-
-    protected void scaleToTile() {
-        context2d.setTransform(1, 0, 0, 1, 0, 0); // No transformation
-        scale = Math.min((double) width / (double) terrainSettings.getTileXCount(),
-                (double) height / (double) terrainSettings.getTileYCount());
-        context2d.scale(scale, scale);
-        if (getTerrainSettings().getTileXCount() > getTerrainSettings().getTileYCount()) {
-            yShift = (int) ((getHeight() / getScale() - getTerrainSettings().getTileYCount()) / 2);
-            getContext2d().translate(0, yShift);
-        } else if (getTerrainSettings().getTileYCount() > getTerrainSettings().getTileXCount()) {
-            xShift = (int) ((getWidth() / getScale() - getTerrainSettings().getTileXCount()) / 2);
-            getContext2d().translate(xShift, 0);
-        }
-    }
-
-    protected void scaleToAbsolute() {
-        context2d.setTransform(1, 0, 0, 1, 0, 0); // No transformation
-        scale = Math.min((double) width / (double) terrainSettings.getPlayFieldXSize(),
-                (double) height / (double) terrainSettings.getPlayFieldYSize());
-        context2d.scale(scale, scale);
-        if (getTerrainSettings().getPlayFieldXSize() > getTerrainSettings().getPlayFieldYSize()) {
-            yShift = (int) ((getHeight() / getScale() - getTerrainSettings().getPlayFieldYSize()) / 2);
-            getContext2d().translate(0, yShift);
-        } else if (getTerrainSettings().getPlayFieldYSize() > getTerrainSettings().getPlayFieldXSize()) {
-            xShift = (int) ((getWidth() / getScale() - getTerrainSettings().getPlayFieldXSize()) / 2);
-            getContext2d().translate(xShift, 0);
-        }
+        scaleForFullTerrain = Math.min((double) width / (double) terrainSettings.getPlayFieldXSize(), (double) height / (double) terrainSettings.getPlayFieldYSize());
+        setScale(scaleStep);
     }
 
     protected void clear() {
-        context2d.save();
-        context2d.setTransform(1, 0, 0, 1, 0, 0); // No transformation
         context2d.clearRect(0, 0, getWidth(), getHeight());
-        context2d.restore();
     }
 
     public TerrainSettings getTerrainSettings() {
@@ -192,11 +241,14 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
         if (y < 0) {
             y = 0;
         }
+        x -= xShiftRadarPixel;
+        y -= yShiftRadarPixel;
+
         x = (int) (x / scale);
         y = (int) (y / scale);
 
-        x -= xShift;
-        y -= yShift;
+        x += viewOrigin.getX();
+        y += viewOrigin.getY();
 
         for (MiniMapMouseMoveListener miniMapMouseMoveListener : miniMapMouseMoveListeners) {
             miniMapMouseMoveListener.onMouseMove(x, y);
@@ -213,11 +265,14 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
         if (y < 0) {
             y = 0;
         }
+        x -= xShiftRadarPixel;
+        y -= yShiftRadarPixel;
+
         x = (int) (x / scale);
         y = (int) (y / scale);
 
-        x -= xShift;
-        y -= yShift;
+        x += viewOrigin.getX();
+        y += viewOrigin.getY();
 
         for (MiniMapMouseDownListener miniMapMouseDownListener : miniMapMouseDownListeners) {
             miniMapMouseDownListener.onMouseDown(x, y, mouseDownEvent);
@@ -234,11 +289,14 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
         if (y < 0) {
             y = 0;
         }
+        x -= xShiftRadarPixel;
+        y -= yShiftRadarPixel;
+
         x = (int) (x / scale);
         y = (int) (y / scale);
 
-        x -= xShift;
-        y -= yShift;
+        x += viewOrigin.getX();
+        y += viewOrigin.getY();
 
         for (MiniMapMouseUpListener miniMapMouseUpListener : miniMapMouseUpListeners) {
             miniMapMouseUpListener.onMouseUp(x, y, event);
@@ -262,6 +320,30 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
     }
 
     public void cleanup() {
+    }
 
+    public Index getViewOrigin() {
+        return viewOrigin;
+    }
+
+    public void draw() {
+        if (terrainSettings != null) {
+            clear();
+            render();
+        }
+    }
+
+    protected double getScaleValue() {
+        return scale;
+    }
+
+    protected abstract void render();
+
+    public int getXShiftRadarPixel() {
+        return xShiftRadarPixel;
+    }
+
+    public int getYShiftRadarPixel() {
+        return yShiftRadarPixel;
     }
 }

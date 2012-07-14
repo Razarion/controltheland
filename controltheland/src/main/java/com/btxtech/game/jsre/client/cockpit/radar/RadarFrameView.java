@@ -41,7 +41,7 @@ public class RadarFrameView extends MiniMap implements TerrainScrollListener, Mi
     private Logger log = Logger.getLogger(RadarFrameView.class.getName());
 
     public RadarFrameView(int width, int height) {
-        super(width, height,  Scale.TILE);
+        super(width, height);
         TerrainView.getInstance().addTerrainScrollListener(this);
         addMouseDownListener(this);
     }
@@ -53,30 +53,24 @@ public class RadarFrameView extends MiniMap implements TerrainScrollListener, Mi
         this.top = top;
         this.width = width;
         this.height = height;
-        drawFrame();
+        draw();
     }
 
-    private void drawFrame() {
-        if (getTerrainSettings() == null) {
-            return;
-        }
-
-        clear();
+    @Override
+    protected void render() {
         getContext2d().setStrokeStyle(color);
         getContext2d().beginPath();
-        double leftDouble = (double) left / (double) getTerrainSettings().getTileWidth();
-        double topDouble = (double) top / (double) getTerrainSettings().getTileHeight();
-        double widthDouble = (double) width / (double) getTerrainSettings().getTileWidth();
-        double heightDouble = (double) height / (double) getTerrainSettings().getTileHeight();
-        getContext2d().rect(leftDouble, topDouble, widthDouble, heightDouble);
+        getContext2d().rect(absolute2RadarPositionX(left),
+                absolute2RadarPositionY(top),
+                scaleAbsoluteRadarPosition(width),
+                scaleAbsoluteRadarPosition(height));
         getContext2d().stroke();
-
     }
 
     @Override
     public void onTerrainSettings(TerrainSettings terrainSettings) {
         super.onTerrainSettings(terrainSettings);
-        getContext2d().setLineWidth(2.0 / getScale());
+        getContext2d().setLineWidth(2.0);
         onScroll(TerrainView.getInstance().getViewOriginLeft(),
                 TerrainView.getInstance().getViewOriginTop(),
                 TerrainView.getInstance().getViewWidth(),
@@ -94,7 +88,7 @@ public class RadarFrameView extends MiniMap implements TerrainScrollListener, Mi
                         } else {
                             color = COLOR_1;
                         }
-                        drawFrame();
+                        draw();
                     } catch (Throwable t) {
                         log.log(Level.SEVERE, "Exception in RadarItemView Timer", t);
                     }
@@ -106,7 +100,7 @@ public class RadarFrameView extends MiniMap implements TerrainScrollListener, Mi
 
     @Override
     public void onMouseDown(int absX, int absY, MouseDownEvent mouseDownEvent) {
-        TerrainView.getInstance().moveToMiddle(new Index(absX * getTerrainSettings().getTileWidth(), absY * getTerrainSettings().getTileHeight()));
+        TerrainView.getInstance().moveToMiddle(new Index(absX, absY));
     }
 
     @Override

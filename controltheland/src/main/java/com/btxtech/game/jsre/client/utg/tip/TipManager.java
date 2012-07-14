@@ -27,10 +27,10 @@ public class TipManager {
      * Singleton
      */
     private TipManager() {
-        tips.add(new ImageTipEntry(17000, 3000, "Maximize.jpg"));
-        tips.add(new AttackEnemyTipEntry(5000, 2000, false));
-        tips.add(new ImageTipEntry(17000, 3000, "ArrowKeys.jpg"));
-        tips.add(new AttackEnemyTipEntry(30000, 2000, true));
+        //tips.add(new ImageTipEntry(17000, 3000, "Maximize.jpg"));
+        //tips.add(new AttackEnemyTipEntry(5000, 2000, false));
+        //tips.add(new ImageTipEntry(17000, 3000, "ArrowKeys.jpg"));
+        tips.add(new AttackEnemyTipEntry(100, 10000, true));
     }
 
     public void activate() {

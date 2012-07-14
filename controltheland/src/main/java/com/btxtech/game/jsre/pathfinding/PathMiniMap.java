@@ -44,12 +44,46 @@ public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener, Mi
     private PathfindingCockpit pathfindingCockpit;
     private Logger log = Logger.getLogger(PathMiniMap.class.getName());
     private BoundingBox boundingBox;
+    private Path path;
 
     public PathMiniMap(int width, int height) {
-        super(width, height,  Scale.ABSOLUTE);
+        super(width, height);
         addMouseDownListener(this);
         addMouseMoveListener(this);
         loadBoundingBox(1);
+    }
+
+    @Override
+    protected void render() {
+        Context2d context2d = getContext2d();
+
+        if (start != null) {
+            context2d.setFillStyle("#ff69ff");
+            context2d.beginPath();
+            context2d.arc(absolute2RadarPositionX(start.getX()), absolute2RadarPositionY(start.getY()), 3, 0, 2 * Math.PI, false);
+            context2d.fill();
+        }
+
+        if (destination != null) {
+            context2d.setFillStyle("#ff6969");
+            context2d.beginPath();
+            context2d.arc(absolute2RadarPositionX(destination.getX()), absolute2RadarPositionY(destination.getY()), 3, 0, 2 * Math.PI, false);
+            context2d.fill();
+        }
+
+        if (path != null && start != null) {
+            context2d.setLineWidth(2.0);
+            context2d.setStrokeStyle("#FFFFFF");
+            pathfindingCockpit.clearPathTable();
+            context2d.beginPath();
+            context2d.moveTo(absolute2RadarPositionX(start.getX()), absolute2RadarPositionY(start.getY()));
+            for (Index index : path.getPath()) {
+                getContext2d().lineTo(absolute2RadarPositionX(index.getX()), absolute2RadarPositionY(index.getY()));
+                //pathfindingCockpit.addPathTable(index);
+            }
+            context2d.stroke();
+        }
+
     }
 
     public void loadBoundingBox(final int itemTypeId) {
@@ -74,59 +108,27 @@ public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener, Mi
         if (start == null) {
             start = new Index(absX, absY);
             destination = null;
-            drawStartAndDestination();
+            path = null;
+            draw();
         } else {
             destination = new Index(absX, absY);
-            drawStartAndDestination();
-            findPathAbsolutePath(start, destination);
+            if (boundingBox != null) {
+                try {
+                    path = ClientCollisionService.getInstance().setupPathToDestination(start, destination, TerrainType.LAND, boundingBox);
+                } catch (Throwable t) {
+                    path = null;
+                    GwtCommon.handleException(t);
+                }
+            }
+            draw();
             start = null;
+            destination = null;
         }
     }
 
     public void findPath(Index start, Index destination) {
-        clear();
-        this.start = start;
-        this.destination = destination;
-        drawStartAndDestination();
-        findPathAbsolutePath(start, destination);
-    }
-
-    private void drawStartAndDestination() {
-        Context2d context2d = getContext2d();
-
-        if (start != null) {
-            context2d.setFillStyle("#ff69ff");
-            context2d.beginPath();
-            context2d.arc(start.getX(), start.getY(), 20, 0, 2 * Math.PI, false);
-            context2d.fill();
-        }
-
-        if (destination != null) {
-            context2d.setFillStyle("#ff6969");
-            context2d.beginPath();
-            context2d.arc(destination.getX(), destination.getY(), 20, 0, 2 * Math.PI, false);
-            context2d.fill();
-        }
-    }
-
-    public void findPathAbsolutePath(final Index start, Index destination) {
-        if (boundingBox == null) {
-            return;
-        }
-        try {
-            Path path = ClientCollisionService.getInstance().setupPathToDestination(start, destination, TerrainType.LAND, boundingBox);
-            getContext2d().setLineWidth(2.0 / getScale());
-            getContext2d().setStrokeStyle("#FFFFFF");
-            pathfindingCockpit.clearPathTable();
-            getContext2d().beginPath();
-            getContext2d().moveTo(start.getX(), start.getY());
-            for (Index index : path.getPath()) {
-                getContext2d().lineTo(index.getX(), index.getY());
-                //pathfindingCockpit.addPathTable(index);
-            }
-            getContext2d().stroke();
-        } catch (Throwable t) {
-            GwtCommon.handleException(t);
+        if (boundingBox != null) {
+            path = ClientCollisionService.getInstance().setupPathToDestination(start, destination, TerrainType.LAND, boundingBox);
         }
     }
 

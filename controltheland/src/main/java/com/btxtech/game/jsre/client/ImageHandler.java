@@ -40,6 +40,7 @@ public class ImageHandler {
     public static final String BTN_IMAGE_PATH = COCKPIT;
     public static final String BTN_UP_IMAGE = "-up.png";
     public static final String BTN_DOWN_IMAGE = "-down.png";
+    public static final String BTN_DISABLED_IMAGE = "-disabled.png";
     public static final String SPLASH_IMAGE_PREFIX = "/images/splash/";
 
     /**
@@ -208,6 +209,10 @@ public class ImageHandler {
 
     public static Image getButtonDownImage(String name) {
         return new Image(BTN_IMAGE_PATH + name + BTN_DOWN_IMAGE);
+    }
+
+    public static Image getButtonDisabledImage(String name) {
+        return new Image(BTN_IMAGE_PATH + name + BTN_DISABLED_IMAGE);
     }
 
     public static String getSplashImageUrl(String name) {

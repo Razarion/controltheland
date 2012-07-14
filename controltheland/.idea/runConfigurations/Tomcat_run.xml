@@ -25,7 +25,7 @@
           </option>
           <option name="runMavenInBackground" value="true" />
           <option name="skipTests" value="false" />
-          <option name="vmOptions" value="-Xmx256M -DnoGameEngine=false" />
+          <option name="vmOptions" value="-Xmx300M -DnoGameEngine=false" />
         </MavenRunnerSettings>
       </option>
       <option name="myRunnerParameters">
@@ -35,6 +35,7 @@
           </option>
           <option name="goals">
             <list>
+              <option value="-e" />
               <option value="tomcat7:run" />
             </list>
           </option>

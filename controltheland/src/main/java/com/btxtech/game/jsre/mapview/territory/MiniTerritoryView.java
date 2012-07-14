@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.client.cockpit.radar.MiniMapMouseMoveListener;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniMapMouseUpListener;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.GeometricalUtil;
 import com.btxtech.game.jsre.common.Territory;
@@ -42,19 +43,19 @@ public class MiniTerritoryView extends MiniMap implements MiniMapMouseMoveListen
     private Territory territory;
 
     public MiniTerritoryView(int width, int height) {
-        super(width, height,  Scale.TILE);
+        super(width, height);
         addMouseMoveListener(this);
         addMouseDownListener(this);
         addMouseUpListener(this);
     }
 
     @Override
-    public void onMouseMove(int tileX, int tileY) {
+    public void onMouseMove(int absoluteX, int absoluteY) {
         if (!drawMode && !eraseMode) {
             return;
         }
         int tmpSize = tiles.size();
-        Index tile = new Index(tileX, tileY);
+        Index tile = TerrainView.getInstance().getTerrainHandler().getTerrainTileIndexForAbsPosition(absoluteX, absoluteY);
         for (int x = -BRUSH_SIZE / 2; x < BRUSH_SIZE / 2; x++) {
             for (int y = -BRUSH_SIZE / 2; y < BRUSH_SIZE / 2; y++) {
                 int newX = tile.getX() + x;
@@ -76,7 +77,7 @@ public class MiniTerritoryView extends MiniMap implements MiniMapMouseMoveListen
             }
         }
         if (tmpSize != tiles.size()) {
-            drawTiles();
+            draw();
         }
     }
 
@@ -100,21 +101,31 @@ public class MiniTerritoryView extends MiniMap implements MiniMapMouseMoveListen
         eraseMode = false;
     }
 
-    public void drawTiles() {
+    protected void render() {
         if (ClientTerritoryService.getInstance().getTerritories() == null || getTerrainSettings() == null) {
             return;
         }
 
-        clear();
         getContext2d().setFillStyle(ColorConstants.ALPHA_RED);
+        int tileWidth = getTerrainSettings().getTileWidth();
+        int tileHeight = getTerrainSettings().getTileHeight();
+
         for (Index index : tiles) {
-            getContext2d().fillRect(index.getX(), index.getY(), 1, 1);
+            Index absolute = TerrainView.getInstance().getTerrainHandler().getAbsolutIndexForTerrainTileIndex(index);
+            getContext2d().fillRect(absolute2RadarPositionX(absolute),
+                    absolute2RadarPositionY(absolute),
+                    scaleAbsoluteRadarPosition(tileWidth),
+                    scaleAbsoluteRadarPosition(tileHeight));
         }
         getContext2d().setFillStyle(ColorConstants.ALPHA_GREY);
         for (Territory territory : ClientTerritoryService.getInstance().getTerritories()) {
             if (!territory.equals(this.territory)) {
                 for (Rectangle rectangle : territory.getTerritoryTileRegions()) {
-                    getContext2d().fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
+                    Rectangle absolute = TerrainView.getInstance().getTerrainHandler().convertToAbsolutePosition(rectangle);
+                    getContext2d().fillRect(absolute2RadarPositionX(absolute.getStart()),
+                            absolute2RadarPositionY(absolute.getStart()),
+                            scaleAbsoluteRadarPosition(absolute.getWidth()),
+                            scaleAbsoluteRadarPosition(absolute.getHeight()));
                 }
             }
         }
@@ -127,6 +138,6 @@ public class MiniTerritoryView extends MiniMap implements MiniMapMouseMoveListen
     public void setTerritory(Territory territory) {
         this.territory = territory;
         tiles = new HashSet<Index>(GeometricalUtil.splitIntoTiles(territory.getTerritoryTileRegions()));
-        drawTiles();
+        draw();
     }
 }

@@ -386,7 +386,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkMode>pertest</forkMode>
-                    <argLine>-Xms1000m -Xmx1200m -Dtestmode=true</argLine>
+                    <argLine>-Xms800m -Xmx800m -Dtestmode=true</argLine>
                     <testFailureIgnore>false</testFailureIgnore>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <!--useFile>false</useFile-->

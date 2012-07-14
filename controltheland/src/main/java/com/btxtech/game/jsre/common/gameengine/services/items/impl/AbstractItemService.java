@@ -432,6 +432,27 @@ abstract public class AbstractItemService implements ItemService {
     }
 
     @Override
+    public Collection<SyncItem> getItemsInRectangle(final Rectangle rectangle) {
+        final Collection<SyncItem> itemsInBase = new ArrayList<SyncItem>();
+        iterateOverItems(new ItemHandler<Void>() {
+            @Override
+            public Void handleItem(SyncItem syncItem) {
+                if (!syncItem.getSyncItemArea().hasPosition()) {
+                    return null;
+                }
+
+                if (!syncItem.getSyncItemArea().contains(rectangle)) {
+                    return null;
+                }
+
+                itemsInBase.add(syncItem);
+                return null;
+            }
+        }, null);
+        return itemsInBase;
+    }
+
+    @Override
     public Collection<SyncBaseItem> getBaseItemsInRectangle(final Rectangle rectangle, final SimpleBase simpleBase, final Collection<BaseItemType> baseItemTypeFilter) {
         final Collection<SyncBaseItem> itemsInBase = new ArrayList<SyncBaseItem>();
         iterateOverItems(new ItemHandler<Void>() {
