@@ -29,43 +29,26 @@ public class RadarHintView extends MiniMap {
     private Index position;
 
     public RadarHintView(int width, int height) {
-        super(width, height, Scale.NONE);
+        super(width, height);
     }
 
     public void showHint(SyncBaseItem enemyBaseItem) {
         this.enemyBaseItem = enemyBaseItem;
         position = null;
-        if (getTerrainSettings() == null) {
-            return;
-        }
-
         if (enemyBaseItem == null) {
             return;
         }
-
-        showCross();
+        draw();
     }
 
     public void showHint(Index position) {
         this.position = position;
         enemyBaseItem = null;
-        if (getTerrainSettings() == null) {
-            return;
-        }
-
-        showCross();
+        draw();
     }
 
-    private void showCross() {
-        getContext2d().setLineWidth(1.5 / getScale());
-        if (color) {
-            getContext2d().setStrokeStyle("#FF0000");
-        } else {
-            getContext2d().setStrokeStyle("#FFFFFF");
-        }
-
-
-
+    @Override
+    protected void render() {
         int x;
         int y;
         if (enemyBaseItem != null) {
@@ -75,7 +58,15 @@ public class RadarHintView extends MiniMap {
             x = absolute2RadarPositionX(position);
             y = absolute2RadarPositionY(position);
         } else {
-            throw new IllegalStateException("RadarHintView.showCross() no hint to display");
+            // No hint to display
+            return;
+        }
+
+        getContext2d().setLineWidth(2.0);
+        if (color) {
+            getContext2d().setStrokeStyle("#000000");
+        } else {
+            getContext2d().setStrokeStyle("#FFFFFF");
         }
 
         getContext2d().beginPath();
@@ -95,15 +86,15 @@ public class RadarHintView extends MiniMap {
     }
 
     public void blinkHint() {
-        showCross();
+        draw();
         color = !color;
     }
 
-    private int absolute2RadarPositionX(Index absolute) {
-        return (int) (absolute.getX() * ((double) getWidth() / (double) getTerrainSettings().getPlayFieldXSize()));
-    }
+    @Override
+    public void cleanup() {
+        hideHint();
+        enemyBaseItem = null;
+        position = null;
 
-    private int absolute2RadarPositionY(Index absolute) {
-        return (int) (absolute.getY() * ((double) getHeight() / (double) getTerrainSettings().getPlayFieldYSize()));
     }
 }

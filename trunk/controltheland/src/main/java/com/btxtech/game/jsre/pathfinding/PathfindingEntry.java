@@ -57,7 +57,7 @@ public class PathfindingEntry implements EntryPoint {
         pathMiniMap.getCanvas().getElement().getStyle().setZIndex(3);
         absolutePanel.add(pathMiniMap.getCanvas(), 0, 0);
 
-        PathfindingCockpit pathfindingCockpit = new PathfindingCockpit(pathMiniMap);
+        PathfindingCockpit pathfindingCockpit = new PathfindingCockpit(pathMiniMap, miniTerrain);
         pathfindingCockpit.addToParent(absolutePanel, TopMapPanel.Direction.RIGHT_TOP, 20);
         pathfindingCockpit.getElement().getStyle().setZIndex(4);
 

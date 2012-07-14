@@ -81,6 +81,8 @@ public interface ItemService {
 
     Collection<SyncBaseItem> getBaseItemsInRadius(Index position, int radius, SimpleBase simpleBase, Collection<BaseItemType> baseItemTypeFilter);
 
+    Collection<SyncItem> getItemsInRectangle(final Rectangle rectangle);
+
     Collection<SyncBaseItem> getBaseItemsInRectangle(Rectangle rectangle, SimpleBase simpleBase, Collection<BaseItemType> baseItemTypeFilter);
 
     boolean hasItemsInRectangle(Rectangle rectangle);

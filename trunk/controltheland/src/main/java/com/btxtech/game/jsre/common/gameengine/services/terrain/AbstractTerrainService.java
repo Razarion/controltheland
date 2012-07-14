@@ -20,8 +20,6 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /**
  * User: beat
@@ -86,4 +84,6 @@ public interface AbstractTerrainService {
     TerrainTile[][] getTerrainTileField();
 
     void iteratorOverAllTerrainTiles(Rectangle tileRect, TerrainTileEvaluator terrainTileEvaluator);
+
+    void iteratorOverAllTerrainTiles(Rectangle tileRect, TerrainTileEvaluator terrainTileEvaluator, int xIncrease, int yIncrease);
 }

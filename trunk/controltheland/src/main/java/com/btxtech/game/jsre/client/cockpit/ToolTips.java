@@ -23,7 +23,6 @@ public class ToolTips {
     // Buttons
     public static final String TOOL_TIP_INVENTORY = "Inventory";
     public static final String TOOL_TIP_ALLIANCE = "Alliances with other players";
-    public static final String TOOL_TIP_SCROLL_HOME = "Scroll home";
     public static final String TOOL_TIP_SELL = "Activate sell mode for selling units and structures";
     public static final String TOOL_TIP_MUTE = "Mute sound";
     public static final String TOOL_TIP_TERMINAL = "Open your terminal page";
@@ -32,4 +31,16 @@ public class ToolTips {
     public static final String TOOL_TIP_UPGRADE_NO = "Upgrade not possible. You are in the wrong level";
     public static final String TOOL_TIP_UNLOAD = "Unload containing units";
     public static final String TOOL_TIP_LAUNCH = "Launch the missile";
+    // radar
+    public static final String TOOL_TIP_ZOOM_IN = "Zoom in";
+    public static final String TOOL_TIP_ZOOM_OUT = "Zoom out";
+    public static final String TOOL_TIP_ZOOM_HOME = "Zoom to home base";
+    public static final String TOOL_TIP_ZOOM_QUEST = "Zoom to quest";
+    public static final String TOOL_TIP_LOCK_RADAR_TO_MAIN = "Lock the radar view to the main window";
+    public static final String TOOL_TIP_RADAR_PAGE_LEFT = "Page left";
+    public static final String TOOL_TIP_RADAR_PAGE_RIGHT = "Page right";
+    public static final String TOOL_TIP_RADAR_PAGE_UP = "Page up";
+    public static final String TOOL_TIP_RADAR_PAGE_DOWN = "Page down";
+
+
 }

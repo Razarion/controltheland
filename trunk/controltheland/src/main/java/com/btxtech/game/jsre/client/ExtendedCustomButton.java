@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.CustomButton;
  */
 public class ExtendedCustomButton extends CustomButton {
     private boolean toggle;
+    private String imageName;
 
     public ExtendedCustomButton(String imageName, boolean toggle, String toolTip, ClickHandler handler) {
         this(imageName, toggle, toolTip);
@@ -32,6 +33,8 @@ public class ExtendedCustomButton extends CustomButton {
 
     public ExtendedCustomButton(String imageName, boolean toggle, String toolTip) {
         super(ImageHandler.getButtonUpImage(imageName), ImageHandler.getButtonDownImage(imageName));
+        this.imageName = imageName;
+        setStyleName("excustombutton");
         this.toggle = toggle;
         getElement().getStyle().setCursor(Style.Cursor.POINTER);
         setTooltip(toolTip);
@@ -75,5 +78,10 @@ public class ExtendedCustomButton extends CustomButton {
 
     public void setTooltip(String toolTip) {
         setTitle(toolTip);
+    }
+
+    public void setSupportDisabled() {
+        getUpDisabledFace().setImage(ImageHandler.getButtonDisabledImage(imageName));
+        getDownDisabledFace().setImage(ImageHandler.getButtonDisabledImage(imageName));
     }
 }

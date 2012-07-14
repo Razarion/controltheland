@@ -533,9 +533,6 @@ public class Connection implements StartupProgressListener, ConnectionI {
 
     @Override
     public GameEngineMode getGameEngineMode() {
-        if (gameEngineMode == null) {
-            throw new NullPointerException("GameEngineMode is null");
-        }
         return gameEngineMode;
     }
 

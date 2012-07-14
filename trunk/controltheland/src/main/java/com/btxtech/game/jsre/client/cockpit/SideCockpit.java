@@ -22,7 +22,6 @@ import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
-import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.ProgressBar;
@@ -83,29 +82,27 @@ public class SideCockpit {
     private static final int ENERGY_TEXT_X = 25;
     private static final int ENERGY_TEXT_Y = 26;
     // Radar
-    private static final int RADAR_X = 13;
-    private static final int RADAR_Y = 65;
-    private static final int RADAR_W = 150;
-    private static final int RADAR_H = 150;
+    private static final int RADAR_X = 4;
+    private static final int RADAR_Y = 50;
+    private static final int RADAR_W = 169;
+    private static final int RADAR_H = 178;
     // Buttons
     private static final int BNT_X = 181;
-    private static final int BNT_Y = 61;
-    private static final int BNT_Y_SPACE = 26;
+    private static final int BNT_Y = 72;
+    private static final int BNT_Y_SPACE = 27;
     private static final int BNT_INVENTORY_X = BNT_X;
     private static final int BNT_INVENTORY_Y = BNT_Y;
     private static final int BNT_ALLIANCE_X = BNT_X;
     private static final int BNT_ALLIANCE_Y = BNT_INVENTORY_Y + BNT_Y_SPACE;
-    private static final int BNT_SCROLL_X = BNT_X;
-    private static final int BNT_SCROLL_Y = BNT_ALLIANCE_Y + BNT_Y_SPACE;
     private static final int BNT_SELL_X = BNT_X;
-    private static final int BNT_SELL_Y = BNT_SCROLL_Y + BNT_Y_SPACE;
+    private static final int BNT_SELL_Y = BNT_ALLIANCE_Y + BNT_Y_SPACE;
     private static final int BNT_MUTE_X = BNT_X;
     private static final int BNT_MUTE_Y = BNT_SELL_Y + BNT_Y_SPACE;
     private static final int BNT_STAT_X = BNT_X;
     private static final int BNT_STAT_Y = BNT_MUTE_Y + BNT_Y_SPACE;
     // Debug
     private static final int DEBUG_X = 10;
-    private static final int DEBUG_Y = 213;
+    private static final int DEBUG_Y = 222;
 
     private AbsolutePanel mainPanel;
     private AbsolutePanel levelPanel;
@@ -271,14 +268,6 @@ public class SideCockpit {
         });
         mainPanel.add(alliance, BNT_ALLIANCE_X, BNT_ALLIANCE_Y);
 
-        //Scroll home
-        ExtendedCustomButton scrollHome = new ExtendedCustomButton("scrollHomeButton", false, ToolTips.TOOL_TIP_SCROLL_HOME, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                TerrainView.getInstance().moveToHome();
-            }
-        });
-        mainPanel.add(scrollHome, BNT_SCROLL_X, BNT_SCROLL_Y);
         // Sell button
         sellButton = new ExtendedCustomButton("sellButton", true, ToolTips.TOOL_TIP_SELL, new ClickHandler() {
             @Override
