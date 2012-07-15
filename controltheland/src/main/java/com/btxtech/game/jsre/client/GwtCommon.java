@@ -240,4 +240,8 @@ public class GwtCommon {
         }
         return (int) Math.floor(intObject);
     }
+
+    public static void dumpStackToServer(String message) {
+        log.log(Level.SEVERE, "Dump Stack: " + message, new Exception("StackTrace"));
+    }
 }
