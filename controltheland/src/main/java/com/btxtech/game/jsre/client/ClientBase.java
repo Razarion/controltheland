@@ -51,9 +51,9 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     }
 
     private final static String OWN_BASE_COLOR = "#00FF00";
-    private final static String ALLIANCE_BASE_COLOR = "#ffd800";
-    private final static String ENEMY_BASE_COLOR = "#e04c4c";
-    private final static String BOT_BASE_COLOR = "#d59c59";
+    private final static String ALLIANCE_BASE_COLOR = "#ffff00";
+    private final static String ENEMY_BASE_COLOR = "#d58759";
+    private final static String BOT_BASE_COLOR = "#f04040";
     private final static String UNKNOWN_BASE_COLOR = "#888888";
     private static final ClientBase INSTANCE = new ClientBase();
     private double accountBalance;
