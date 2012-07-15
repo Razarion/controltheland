@@ -42,6 +42,7 @@ public class QuestProgressCockpit extends FlowPanel {
     private VerticalPanel missionStartPanel;
     private Label dialog;
     private Timer radarTimer;
+    private QuestInfo activeQuest;
 
     public QuestProgressCockpit() {
         getElement().getStyle().setBackgroundColor("rgba(0, 0, 0, 0.5)");
@@ -128,19 +129,25 @@ public class QuestProgressCockpit extends FlowPanel {
 
 
     public void setActiveQuest(QuestInfo questInfo, String activeQuestProgress) {
-        stopRadarVisualization();
         if (questInfo != null) {
             if (questInfo.getType() == QuestInfo.Type.MISSION) {
+                stopRadarVisualization();
                 missionStartPanel.setVisible(true);
                 questProgress.setVisible(false);
             } else {
                 missionStartPanel.setVisible(false);
                 questProgress.setVisible(true);
-                if (questInfo.getRadarPosition() != null) {
-                    startRadarVisualization(questInfo.getRadarPosition());
+                if (!questInfo.equals(activeQuest)) {
+                    activeQuest = questInfo;
+                    stopRadarVisualization();
+                    if (questInfo.getRadarPosition() != null) {
+                        startRadarVisualization(questInfo.getRadarPosition());
+                    }
                 }
             }
             questTitle.setHTML(questInfo.getTitle());
+        } else {
+            stopRadarVisualization();
         }
 
         if (activeQuestProgress != null) {
@@ -184,6 +191,7 @@ public class QuestProgressCockpit extends FlowPanel {
         questProgress.setVisible(false);
         ClientUserTracker.getInstance().onDialogDisappears(this);
         ClientUserTracker.getInstance().onDialogAppears(this, "No active quest");
+        activeQuest = null;
     }
 
     private void preventEvents(Widget widget) {
