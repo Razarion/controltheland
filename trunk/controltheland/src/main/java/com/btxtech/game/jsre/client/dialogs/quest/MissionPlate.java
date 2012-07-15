@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.dialogs.quest;
 
+import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
@@ -47,13 +48,13 @@ public class MissionPlate extends Composite {
                 @Override
                 public void onClick(ClickEvent event) {
                     questDialog.close();
-                    ClientLevelHandler.getInstance().startMission(missionId);
+                    Connection.getInstance().activateQuest(missionId);
                 }
             };
             DialogManager.showDialog(new YesNoDialog("Activate Quest", "You have an active quest. Activate a new quest will abort the current quest.", "Activate", clickHandler, "Cancel", null), DialogManager.Type.STACK_ABLE);
         } else {
             questDialog.close();
-            ClientLevelHandler.getInstance().startMission(missionId);
+            Connection.getInstance().activateQuest(missionId);
         }
     }
 }

@@ -145,25 +145,15 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
             log.warning("ClientLevelHandler.startMission() currentQuest.getType() != QuestInfo.Type.MISSION");
             return;
         }
-        startMission(currentQuest.getId());
-    }
-
-    public void startMission(final int missionId) {
         if (Connection.getInstance().getGameEngineMode() != GameEngineMode.SLAVE) {
             log.warning("Attempt to start a mission inside another mission.");
             return;
         }
 
-        Connection.getInstance().activateQuest(missionId);
-
-        if (Connection.getInstance().getGameEngineMode() != GameEngineMode.SLAVE) {
-            log.warning("Attempt to start a mission inside another mission.");
-            return;
-        }
         YesNoDialog yesNoDialog = new YesNoDialog("Start Mission", "Compete in a single player mission on a different planet. You can return to this base at any time.", "Start", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                nextTaskId = missionId;
+                nextTaskId = currentQuest.getId();
                 StartupScreen.getInstance().fadeOutAndStart(GameStartupSeq.WARM_SIMULATED);
             }
         }, "Cancel", null);
