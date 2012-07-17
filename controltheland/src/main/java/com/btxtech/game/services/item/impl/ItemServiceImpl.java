@@ -262,7 +262,6 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         if (log.isDebugEnabled()) {
             log.debug("DELETED: " + killedItem);
         }
-        connectionService.sendSyncInfo(killedItem);
 
         if (killedItem instanceof SyncBaseItem) {
             SyncBaseItem killedBaseItem = (SyncBaseItem) killedItem;
@@ -271,6 +270,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
                     botService.onBotItemKilled(killedBaseItem, actor);
                 }
             }
+            historyService.addItemDestroyedEntry(actor, (SyncBaseItem) killedItem);
         }
 
         synchronized (items) {
@@ -278,10 +278,10 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
                 throw new IllegalStateException("Id does not exist: " + killedItem);
             }
             if (killedItem instanceof SyncBaseItem) {
-                historyService.addItemDestroyedEntry(actor, (SyncBaseItem) killedItem);
                 baseService.onItemDeleted((SyncBaseItem) killedItem, actor);
             }
         }
+        connectionService.sendSyncInfo(killedItem);
 
         if (killedItem instanceof SyncBaseItem) {
             SyncBaseItem killedBaseItem = (SyncBaseItem) killedItem;
@@ -364,9 +364,17 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    protected <T> T iterateOverItems(ItemHandler<T> itemHandler, T defaultReturn) {
+    protected <T> T iterateOverItems(boolean includeNoPosition, T defaultReturn, ItemHandler<T> itemHandler) {
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
+                if (!syncItem.isAlive()) {
+                    continue;
+                }
+                if (!includeNoPosition) {
+                    if (!syncItem.getSyncItemArea().hasPosition()) {
+                        continue;
+                    }
+                }
                 T result = itemHandler.handleItem(syncItem);
                 if (result != null) {
                     return result;

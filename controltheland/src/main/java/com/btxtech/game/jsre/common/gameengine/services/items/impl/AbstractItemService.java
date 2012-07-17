@@ -56,12 +56,14 @@ abstract public class AbstractItemService implements ItemService {
     /**
      * Iterates over all sync items
      *
-     * @param itemHandler   see ItemHandler
+     *
+     *
+     * @param includeNoPosition
      * @param defaultReturn if iteration is finished without an aport, this param is returned
-     * @param <T>           return type
+     * @param itemHandler   see ItemHandler
      * @return the parameter from the itemHandler or the defaultReturn
      */
-    protected abstract <T> T iterateOverItems(ItemHandler<T> itemHandler, T defaultReturn);
+    protected abstract <T> T iterateOverItems(boolean includeNoPosition, T defaultReturn, ItemHandler<T> itemHandler);
 
     protected abstract Services getServices();
 
@@ -222,16 +224,12 @@ abstract public class AbstractItemService implements ItemService {
     @Override
     public boolean isSyncItemOverlapping(final SyncItem syncItem, final Index positionToCheck, final Double angelToCheck, final Collection<SyncItem> exceptionThem) {
 
-        return iterateOverItems(new ItemHandler<Boolean>() {
+        return iterateOverItems(false, false, new ItemHandler<Boolean>() {
             @Override
             public Boolean handleItem(SyncItem otherItem) {
                 if (otherItem.equals(syncItem)) {
                     return null;
                 }
-                if (!otherItem.getSyncItemArea().hasPosition()) {
-                    return null;
-                }
-
                 if (exceptionThem != null && exceptionThem.contains(otherItem)) {
                     return null;
                 }
@@ -262,18 +260,15 @@ abstract public class AbstractItemService implements ItemService {
                 }
                 return null;
             }
-        }, false);
+        });
     }
 
     @Override
     public boolean hasStandingItemsInRect(final Rectangle rectangle, final SyncItem exceptThat) {
-        return iterateOverItems(new ItemHandler<Boolean>() {
+        return iterateOverItems(false, false, new ItemHandler<Boolean>() {
             @Override
             public Boolean handleItem(SyncItem syncItem) {
                 if (syncItem.equals(exceptThat)) {
-                    return null;
-                }
-                if (!syncItem.getSyncItemArea().hasPosition()) {
                     return null;
                 }
                 if (syncItem instanceof SyncBaseItem) {
@@ -290,21 +285,17 @@ abstract public class AbstractItemService implements ItemService {
                 }
                 return null;
             }
-        }, false);
+        });
     }
 
     @Override
     public boolean hasItemsInRectangle(final Rectangle rectangle) {
-        return iterateOverItems(new ItemHandler<Boolean>() {
+        return iterateOverItems(false, false, new ItemHandler<Boolean>() {
             @Override
             public Boolean handleItem(SyncItem syncItem) {
-                if (!syncItem.getSyncItemArea().hasPosition()) {
-                    return null;
-                }
-
                 return syncItem.getSyncItemArea().contains(rectangle) ? true : null;
             }
-        }, false);
+        });
     }
 
     @Override
@@ -316,13 +307,9 @@ abstract public class AbstractItemService implements ItemService {
 
     @Override
     public boolean isUnmovableSyncItemOverlapping(final BoundingBox boundingBox, final Index positionToCheck) {
-        return iterateOverItems(new ItemHandler<Boolean>() {
+        return iterateOverItems(false, false, new ItemHandler<Boolean>() {
             @Override
             public Boolean handleItem(SyncItem syncItem) {
-                if (!syncItem.getSyncItemArea().hasPosition()) {
-                    return null;
-                }
-
                 if (syncItem instanceof SyncBaseItem) {
                     SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
                     if (!syncBaseItem.hasSyncMovable()) {
@@ -337,25 +324,21 @@ abstract public class AbstractItemService implements ItemService {
                 }
                 return null;
             }
-        }, false);
+        });
     }
 
     @Override
     public Collection<SyncBaseItem> getItems4Base(final SimpleBase simpleBase) {
         final Collection<SyncBaseItem> itemsInBase = new ArrayList<SyncBaseItem>();
-        iterateOverItems(new ItemHandler<Void>() {
+        iterateOverItems(false, null, new ItemHandler<Void>() {
             @Override
             public Void handleItem(SyncItem syncItem) {
-                if (!syncItem.getSyncItemArea().hasPosition()) {
-                    return null;
-                }
-
                 if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).getBase().equals(simpleBase)) {
                     itemsInBase.add((SyncBaseItem) syncItem);
                 }
                 return null;
             }
-        }, null);
+        });
         return itemsInBase;
     }
 
@@ -373,13 +356,9 @@ abstract public class AbstractItemService implements ItemService {
     @Override
     public Collection<SyncBaseItem> getEnemyItems(final SimpleBase simpleBase, final Rectangle region) {
         final Collection<SyncBaseItem> enemyItems = new ArrayList<SyncBaseItem>();
-        iterateOverItems(new ItemHandler<Void>() {
+        iterateOverItems(false, null, new ItemHandler<Void>() {
             @Override
             public Void handleItem(SyncItem syncItem) {
-                if (!syncItem.getSyncItemArea().hasPosition()) {
-                    return null;
-                }
-
                 if (syncItem instanceof SyncBaseItem
                         && ((SyncBaseItem) syncItem).isEnemy(simpleBase)
                         && region.contains(syncItem.getSyncItemArea().getPosition())) {
@@ -388,19 +367,15 @@ abstract public class AbstractItemService implements ItemService {
 
                 return null;
             }
-        }, null);
+        });
         return enemyItems;
     }
 
     @Override
     public SyncBaseItem getFirstEnemyItemInRange(final SyncBaseItem baseSyncItem) {
-        return iterateOverItems(new ItemHandler<SyncBaseItem>() {
+        return iterateOverItems(false, null, new ItemHandler<SyncBaseItem>() {
             @Override
             public SyncBaseItem handleItem(SyncItem syncItem) {
-                if (!syncItem.getSyncItemArea().hasPosition()) {
-                    return null;
-                }
-
                 if (syncItem instanceof SyncBaseItem
                         && baseSyncItem.isEnemy((SyncBaseItem) syncItem)
                         && baseSyncItem.getSyncWeapon().isAttackAllowedWithoutMoving(syncItem)) {
@@ -408,18 +383,14 @@ abstract public class AbstractItemService implements ItemService {
                 }
                 return null;
             }
-        }, null);
+        });
     }
 
     @Override
     public boolean hasEnemyInRange(final SimpleBase simpleBase, final Index middlePoint, final int range) {
-        return iterateOverItems(new ItemHandler<Boolean>() {
+        return iterateOverItems(false, false, new ItemHandler<Boolean>() {
             @Override
             public Boolean handleItem(SyncItem syncItem) {
-                if (!syncItem.getSyncItemArea().hasPosition()) {
-                    return null;
-                }
-
                 if (syncItem instanceof SyncBaseItem
                         && ((SyncBaseItem) syncItem).isEnemy(simpleBase)
                         && syncItem.getSyncItemArea().getDistance(middlePoint) <= range) {
@@ -428,19 +399,15 @@ abstract public class AbstractItemService implements ItemService {
 
                 return null;
             }
-        }, false);
+        });
     }
 
     @Override
     public Collection<SyncItem> getItemsInRectangle(final Rectangle rectangle) {
         final Collection<SyncItem> itemsInBase = new ArrayList<SyncItem>();
-        iterateOverItems(new ItemHandler<Void>() {
+        iterateOverItems(false, null, new ItemHandler<Void>() {
             @Override
             public Void handleItem(SyncItem syncItem) {
-                if (!syncItem.getSyncItemArea().hasPosition()) {
-                    return null;
-                }
-
                 if (!syncItem.getSyncItemArea().contains(rectangle)) {
                     return null;
                 }
@@ -448,20 +415,16 @@ abstract public class AbstractItemService implements ItemService {
                 itemsInBase.add(syncItem);
                 return null;
             }
-        }, null);
+        });
         return itemsInBase;
     }
 
     @Override
     public Collection<SyncBaseItem> getBaseItemsInRectangle(final Rectangle rectangle, final SimpleBase simpleBase, final Collection<BaseItemType> baseItemTypeFilter) {
         final Collection<SyncBaseItem> itemsInBase = new ArrayList<SyncBaseItem>();
-        iterateOverItems(new ItemHandler<Void>() {
+        iterateOverItems(false, null, new ItemHandler<Void>() {
             @Override
             public Void handleItem(SyncItem syncItem) {
-                if (!syncItem.getSyncItemArea().hasPosition()) {
-                    return null;
-                }
-
                 if (!(syncItem instanceof SyncBaseItem)) {
                     return null;
                 }
@@ -479,14 +442,14 @@ abstract public class AbstractItemService implements ItemService {
                 itemsInBase.add((SyncBaseItem) syncItem);
                 return null;
             }
-        }, null);
+        });
         return itemsInBase;
     }
 
     @Override
     public Collection<? extends SyncItem> getItems(final ItemType itemType, final SimpleBase simpleBase) {
         final Collection<SyncItem> items = new ArrayList<SyncItem>();
-        iterateOverItems(new ItemHandler<Void>() {
+        iterateOverItems(true, null, new ItemHandler<Void>() {
             @Override
             public Void handleItem(SyncItem syncItem) {
                 if (!syncItem.getItemType().equals(itemType)) {
@@ -501,7 +464,7 @@ abstract public class AbstractItemService implements ItemService {
                 }
                 return null;
             }
-        }, null);
+        });
         return items;
     }
 

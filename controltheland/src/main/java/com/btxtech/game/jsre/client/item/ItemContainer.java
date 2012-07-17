@@ -81,7 +81,7 @@ public class ItemContainer extends AbstractItemService {
                     if (insertTime + CLEANUP_INTERVALL < System.currentTimeMillis()) {
                         it.remove();
                         items.remove(entry.getKey());
-                        GwtCommon.sendLogToServer("Orphan item removed due timeout: " + entry.getValue().getSyncItem());
+                        // TODO in-comment if fixed: GwtCommon.sendLogToServer("Orphan item removed due timeout: " + entry.getValue().getSyncItem());
                     }
                 }
                 for (Iterator<Map.Entry<Id, ClientSyncItem>> it = seeminglyDeadItems.entrySet().iterator(); it.hasNext(); ) {
@@ -353,12 +353,21 @@ public class ItemContainer extends AbstractItemService {
     }
 
     @Override
-    protected <T> T iterateOverItems(ItemHandler<T> itemHandler, T defaultReturn) {
+    protected <T> T iterateOverItems(boolean includeNoPosition, T defaultReturn, ItemHandler<T> itemHandler) {
         for (ClientSyncItem clientSyncItem : items.values()) {
-            if (orphanItems.containsKey(clientSyncItem.getSyncItem().getId()) || seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId())) {
+            SyncItem syncItem = clientSyncItem.getSyncItem();
+            if (orphanItems.containsKey(syncItem.getId()) || seeminglyDeadItems.containsKey(syncItem.getId())) {
                 continue;
             }
-            T result = itemHandler.handleItem(clientSyncItem.getSyncItem());
+            if (!syncItem.isAlive()) {
+                continue;
+            }
+            if (!includeNoPosition) {
+                if (!syncItem.getSyncItemArea().hasPosition()) {
+                    continue;
+                }
+            }
+            T result = itemHandler.handleItem(syncItem);
             if (result != null) {
                 return result;
             }

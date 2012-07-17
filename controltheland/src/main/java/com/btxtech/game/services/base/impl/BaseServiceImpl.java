@@ -175,6 +175,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             Base base = new Base(lastBaseId);
             createBase(base.getSimpleBase(), botConfig.getName(), false);
             log.debug("Bot Base created: " + botConfig.getName() + " " + " (" + base + ")");
+            historyService.addBaseStartEntry(base.getSimpleBase());
             bases.put(base.getSimpleBase(), base);
             setBot(base.getSimpleBase(), true);
             sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());
