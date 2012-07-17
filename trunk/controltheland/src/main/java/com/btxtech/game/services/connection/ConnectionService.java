@@ -40,7 +40,7 @@ public interface ConnectionService extends com.btxtech.game.jsre.common.gameengi
 
     void createConnection(Base base, String startUuid);
 
-    void closeConnection(SimpleBase simpleBase);
+    void closeConnection(SimpleBase simpleBase, NoConnectionException.Type closedReason);
 
     void sendPacket(SimpleBase base, Packet packet);
 

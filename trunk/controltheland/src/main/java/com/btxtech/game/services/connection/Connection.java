@@ -13,8 +13,9 @@
 
 package com.btxtech.game.services.connection;
 
-import com.btxtech.game.jsre.common.packets.Packet;
+import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.services.base.Base;
 
@@ -33,7 +34,7 @@ public class Connection implements Serializable {
     private int tickCount = 0;
     private String sessionId;
     private int noTickCount = 0;
-    private boolean closed = false;
+    private NoConnectionException.Type closedReason;
     private String startUuid;
     // private Log log = LogFactory.getLog(Connection.class);
 
@@ -108,11 +109,15 @@ public class Connection implements Serializable {
         return noTickCount;
     }
 
-    public void setClosed() {
-        this.closed = true;
+    public void setClosed(NoConnectionException.Type closedReason) {
+        this.closedReason = closedReason;
     }
 
     public boolean isClosed() {
-        return closed;
+        return closedReason != null;
+    }
+
+    public NoConnectionException.Type getClosedReason() {
+        return closedReason;
     }
 }

@@ -50,7 +50,6 @@ public class Constants {
     // zIndex
     public static final int Z_INDEX_LEVEL_SPLASH = 101;
     public static final int Z_INDEX_STARTUP_SCREEN = 100; // Fix coded in Game.html
-    public static final int Z_INDEX_GLASS_PANEL = 99;
     public static final int Z_INDEX_TIP = 21;
     public static final int Z_INDEX_DIALOG = 20;
     public static final int Z_INDEX_INFORMATION_COCKPIT = 19;

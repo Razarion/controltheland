@@ -49,7 +49,7 @@ public class TestResurrection extends AbstractServiceTest {
             getMovableService().getSyncInfo(START_UID_1);
             Assert.fail("Disconnection expected");
         } catch (NoConnectionException e) {
-            // OK
+            Assert.assertEquals(NoConnectionException.Type.BASE_LOST, e.getType());
         }
 
         // Also second call should fail
@@ -57,7 +57,7 @@ public class TestResurrection extends AbstractServiceTest {
             getMovableService().getSyncInfo(START_UID_1);
             Assert.fail("Disconnection expected");
         } catch (NoConnectionException e) {
-            // OK
+            Assert.assertEquals(NoConnectionException.Type.BASE_LOST, e.getType());
         }
 
         SimpleBase newBase = getMovableService().getRealGameInfo(START_UID_1).getBase();

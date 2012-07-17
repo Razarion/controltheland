@@ -19,13 +19,26 @@ package com.btxtech.game.jsre.common;
  * Time: 21:36:34
  */
 public class NoConnectionException extends Exception {
+    private Type type;
+
+    public enum Type {
+        NON_EXISTENT,
+        BASE_LOST,
+        ANOTHER_CONNECTION_EXISTS,
+        TIMED_OUT
+    }
+
     /**
      * Used by GWT
      */
-    public NoConnectionException() {
+    NoConnectionException() {
     }
 
-    public NoConnectionException(String s) {
-        super(s);
+    public NoConnectionException(Type type) {
+        this.type = type;
+    }
+
+    public Type getType() {
+        return type;
     }
 }

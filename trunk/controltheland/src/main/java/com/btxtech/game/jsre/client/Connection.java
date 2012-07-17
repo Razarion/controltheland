@@ -422,7 +422,10 @@ public class Connection implements StartupProgressListener, ConnectionI {
             }
             movableServiceAsync = null;
             GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to HTTP status code 0: " + message);
-            DialogManager.showDialog(new MessageDialog("Connection failed", CONNECTION_DIALOG), DialogManager.Type.PROMPTLY);
+            MessageDialog messageDialog = new MessageDialog("Connection failed", CONNECTION_DIALOG);
+            messageDialog.setShowCloseButton(false);
+            messageDialog.setGlassEnabled(true);
+            DialogManager.showDialog(messageDialog, DialogManager.Type.PROMPTLY);
             return true;
         }
 
@@ -432,10 +435,40 @@ public class Connection implements StartupProgressListener, ConnectionI {
             DialogManager.showDialog(new MessageDialog("Wrong base", "Not your Base: Most likely you start another base in another browser window."), DialogManager.Type.PROMPTLY);
             return true;
         } else if (throwable instanceof NoConnectionException) {
-            log.warning("Client disconnected due to NoConnectionException: " + message + " NoConnectionException: " + throwable.getMessage());
-            DialogManager.showDialog(new MessageDialog("Connection failed", "Connection to server lost. Most likely you start another browser or tab window."), DialogManager.Type.PROMPTLY);
-            movableServiceAsync = null;
-            return true;
+            switch (((NoConnectionException) throwable).getType()) {
+                case NON_EXISTENT: {
+                    log.warning("Client disconnected due to non existing connection");
+                    MessageDialog messageDialog = new MessageDialog("Connection failed", "The server has my be restarted or you have been disconnected for more than 30 minutes. You most likely have to login again");
+                    messageDialog.setShowCloseButton(false);
+                    messageDialog.setGlassEnabled(true);
+                    DialogManager.showDialog(messageDialog, DialogManager.Type.PROMPTLY);
+                    movableServiceAsync = null;
+                    return true;
+                }
+                case BASE_LOST: {
+                    StartupScreen.getInstance().fadeOutAndStart(GameStartupSeq.WARM_REAL);
+                    return true;
+                }
+                case ANOTHER_CONNECTION_EXISTS: {
+                    log.warning("Client disconnected due to another connection");
+                    MessageDialog messageDialog = new MessageDialog("Connection failed", "Connection to server lost. Most likely you start another browser or tab window.");
+                    messageDialog.setGlassEnabled(true);
+                    messageDialog.setShowCloseButton(false);
+                    DialogManager.showDialog(messageDialog, DialogManager.Type.PROMPTLY);
+                    movableServiceAsync = null;
+                    return true;
+                }
+                case TIMED_OUT: {
+                    log.warning("Client disconnected due to time out");
+                    StartupScreen.getInstance().fadeOutAndStart(GameStartupSeq.WARM_REAL);
+                    return true;
+                }
+                default: {
+                    log.warning("Client disconnected type unknown: " + ((NoConnectionException) throwable).getType());
+                    StartupScreen.getInstance().fadeOutAndStart(GameStartupSeq.WARM_REAL);
+                    return true;
+                }
+            }
         } else {
             GwtCommon.sendLogViaLoadScriptCommunication("Unknown Error (See GWT log for stack trace): " + message + " " + throwable.getMessage());
             GwtCommon.handleException(throwable);
