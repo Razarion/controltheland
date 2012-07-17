@@ -74,7 +74,7 @@ public class Market extends Composite implements HasText {
     public void addMarketArtifact(InventoryArtifactInfo inventoryArtifactInfo, int razarion) {
         MarketArtifact marketArtifact = new MarketArtifact(inventoryArtifactInfo, razarion, marketDialog);
         marketArtifacts.add(marketArtifact);
-        itemPlates.add(marketArtifact);
+        artifactPlates.add(marketArtifact);
     }
 
 }
