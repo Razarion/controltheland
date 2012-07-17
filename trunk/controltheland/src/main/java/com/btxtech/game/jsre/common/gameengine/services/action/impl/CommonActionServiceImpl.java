@@ -349,37 +349,41 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
 
     @Override
     public void addGuardingBaseItem(SyncTickItem syncTickItem) {
-        if (getServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
-            return;
-        }
+        try {
+            if (getServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
+                return;
+            }
 
-        if (!(syncTickItem instanceof SyncBaseItem)) {
-            return;
-        }
+            if (!(syncTickItem instanceof SyncBaseItem)) {
+                return;
+            }
 
-        SyncBaseItem syncBaseItem = (SyncBaseItem) syncTickItem;
-        if (!syncBaseItem.hasSyncWeapon() || !syncBaseItem.isAlive()) {
-            return;
-        }
+            SyncBaseItem syncBaseItem = (SyncBaseItem) syncTickItem;
+            if (!syncBaseItem.hasSyncWeapon() || !syncBaseItem.isAlive()) {
+                return;
+            }
 
-        if (syncBaseItem.hasSyncConsumer() && !syncBaseItem.getSyncConsumer().isOperating()) {
-            return;
-        }
+            if (syncBaseItem.hasSyncConsumer() && !syncBaseItem.getSyncConsumer().isOperating()) {
+                return;
+            }
 
-        if (!syncBaseItem.getSyncItemArea().hasPosition()) {
-            return;
-        }
+            if (!syncBaseItem.getSyncItemArea().hasPosition()) {
+                return;
+            }
 
-        if (!getServices().getTerritoryService().isAllowed(syncBaseItem.getSyncItemArea().getPosition(), syncBaseItem)) {
-            return;
-        }
+            if (!getServices().getTerritoryService().isAllowed(syncBaseItem.getSyncItemArea().getPosition(), syncBaseItem)) {
+                return;
+            }
 
-        if (checkGuardingItemHasEnemiesInRange(syncBaseItem)) {
-            return;
-        }
+            if (checkGuardingItemHasEnemiesInRange(syncBaseItem)) {
+                return;
+            }
 
-        synchronized (guardingItems) {
-            guardingItems.add(syncBaseItem);
+            synchronized (guardingItems) {
+                guardingItems.add(syncBaseItem);
+            }
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "CommonActionService.addGuardingBaseItem() " + syncTickItem, e);
         }
     }
 
@@ -405,34 +409,38 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
 
     @Override
     public void interactionGuardingItems(SyncBaseItem target) {
-        if (getServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
-            return;
-        }
-        if (target.isContainedIn()) {
-            return;
-        }
-        if (!target.isAlive()) {
-            return;
-        }
-        // Prevent ConcurrentModificationException
-        List<SyncBaseItem> attackers = new ArrayList<SyncBaseItem>();
-        synchronized (guardingItems) {
-            for (SyncBaseItem attacker : guardingItems) {
-                if (attacker == target) {
-                    continue;
-                }
-                if (!attacker.isAlive()) {
-                    continue;
-                }
-                if (attacker.isEnemy(target)
-                        && attacker.getSyncWeapon().isAttackAllowedWithoutMoving(target)
-                        && attacker.getSyncWeapon().isItemTypeAllowed(target)) {
-                    attackers.add(attacker);
+        try {
+            if (getServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
+                return;
+            }
+            if (target.isContainedIn()) {
+                return;
+            }
+            if (!target.isAlive()) {
+                return;
+            }
+            // Prevent ConcurrentModificationException
+            List<SyncBaseItem> attackers = new ArrayList<SyncBaseItem>();
+            synchronized (guardingItems) {
+                for (SyncBaseItem attacker : guardingItems) {
+                    if (attacker == target) {
+                        continue;
+                    }
+                    if (!attacker.isAlive()) {
+                        continue;
+                    }
+                    if (attacker.isEnemy(target)
+                            && attacker.getSyncWeapon().isAttackAllowedWithoutMoving(target)
+                            && attacker.getSyncWeapon().isItemTypeAllowed(target)) {
+                        attackers.add(attacker);
+                    }
                 }
             }
-        }
-        for (SyncBaseItem attacker : attackers) {
-            defend(attacker, target);
+            for (SyncBaseItem attacker : attackers) {
+                defend(attacker, target);
+            }
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "CommonActionService.interactionGuardingItems(): " + target, e);
         }
     }
 

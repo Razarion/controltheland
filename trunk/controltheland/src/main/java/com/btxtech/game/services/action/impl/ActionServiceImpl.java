@@ -300,11 +300,9 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
     }
 
     private void finalizeCommand(SyncBaseItem syncItem) {
-        synchronized (activeItems) {
-            synchronized (tmpActiveItems) {
-                if (!activeItems.contains(syncItem)) {
-                    tmpActiveItems.add(syncItem);
-                }
+        synchronized (tmpActiveItems) {
+            if (!activeItems.contains(syncItem)) {
+                tmpActiveItems.add(syncItem);
             }
         }
         removeGuardingBaseItem(syncItem);

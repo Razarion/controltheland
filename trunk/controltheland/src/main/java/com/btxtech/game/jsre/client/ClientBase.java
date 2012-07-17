@@ -22,7 +22,6 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemViewContainer;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
-import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -34,10 +33,12 @@ import com.btxtech.game.jsre.common.gameengine.services.base.impl.AbstractBaseSe
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -163,20 +164,25 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
 
 
     public String getBaseHtmlColor(SimpleBase base) {
-        if (isMyOwnBase(base)) {
-            return getOwnBaseHtmlColor();
-        } else if (!isEnemy(base)) {
-            return getAllianceBaseHtmlColor();
-        }
-        BaseAttributes baseAttributes = getBaseAttributes(base);
-        if (baseAttributes == null) {
+        try {
+            if (isMyOwnBase(base)) {
+                return getOwnBaseHtmlColor();
+            } else if (!isEnemy(base)) {
+                return getAllianceBaseHtmlColor();
+            }
+            BaseAttributes baseAttributes = getBaseAttributes(base);
+            if (baseAttributes == null) {
+                return UNKNOWN_BASE_COLOR;
+            }
+
+            if (baseAttributes.isBot()) {
+                return BOT_BASE_COLOR;
+            }
+            return ENEMY_BASE_COLOR;
+        } catch (Throwable t) {
+            log.log(Level.SEVERE, "getBaseHtmlColor() failed", t);
             return UNKNOWN_BASE_COLOR;
         }
-
-        if (baseAttributes.isBot()) {
-            return BOT_BASE_COLOR;
-        }
-        return ENEMY_BASE_COLOR;
     }
 
 

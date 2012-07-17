@@ -98,10 +98,10 @@ public class RadarPanel implements TerrainScrollListener {
 
         // No radar Panel
         noRadarPanel = new HTML();
-        noRadarPanel.setSize("100%", "100%");
+        noRadarPanel.setPixelSize(RADAR_WIDTH, RADAR_HEIGHT);
         noRadarPanel.getElement().getStyle().setColor("#FFFFFF");
         noRadarPanel.getElement().getStyle().setBackgroundColor("#000000");
-        absolutePanel.add(noRadarPanel, RADAR_X, 0);
+        absolutePanel.add(noRadarPanel, RADAR_X, RADAR_Y);
 
         // Terrain
         miniTerrain = new MiniTerrain(RADAR_WIDTH, RADAR_HEIGHT);
