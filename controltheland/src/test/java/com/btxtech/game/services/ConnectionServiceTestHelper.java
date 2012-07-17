@@ -50,7 +50,7 @@ public class ConnectionServiceTestHelper implements ConnectionService {
     }
 
     @Override
-    public void closeConnection(SimpleBase simpleBase) {
+    public void closeConnection(SimpleBase simpleBase, NoConnectionException.Type closedReason) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 

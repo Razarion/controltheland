@@ -74,7 +74,7 @@ public class TestBaseService extends AbstractServiceTest {
             getMovableService().getSyncInfo(START_UID_1);
             Assert.fail("NoConnectionException expected");
         } catch (NoConnectionException e) {
-            // OK
+            Assert.assertEquals(NoConnectionException.Type.BASE_LOST, e.getType());
         }
 
         endHttpRequestAndOpenSessionInViewFilter();

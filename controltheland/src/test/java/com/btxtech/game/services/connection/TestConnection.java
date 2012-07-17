@@ -2,11 +2,11 @@ package com.btxtech.game.services.connection;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.NoConnectionException;
-import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
-import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
+import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.BaseService;
@@ -70,7 +70,7 @@ public class TestConnection extends AbstractServiceTest {
             connectionService.getConnection(START_UID_1);
             Assert.fail("NoConnectionException expected");
         } catch (com.btxtech.game.jsre.common.NoConnectionException e) {
-            // Expected
+            Assert.assertEquals(NoConnectionException.Type.NON_EXISTENT, e.getType());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -105,7 +105,7 @@ public class TestConnection extends AbstractServiceTest {
             Assert.assertNotNull(connectionService.getConnection(START_UID_1));
             Assert.fail("NoConnectionException expected");
         } catch (com.btxtech.game.jsre.common.NoConnectionException e) {
-            // Expected
+            Assert.assertEquals(NoConnectionException.Type.BASE_LOST, e.getType());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -133,7 +133,7 @@ public class TestConnection extends AbstractServiceTest {
             Assert.assertNotNull(connectionService.getConnection(START_UID_1));
             Assert.fail("NoConnectionException expected");
         } catch (com.btxtech.game.jsre.common.NoConnectionException e) {
-            // Expected
+            Assert.assertEquals(NoConnectionException.Type.BASE_LOST, e.getType());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -162,7 +162,7 @@ public class TestConnection extends AbstractServiceTest {
             Assert.assertNotNull(connectionService.getConnection(START_UID_1));
             Assert.fail("NoConnectionException expected");
         } catch (com.btxtech.game.jsre.common.NoConnectionException e) {
-            // Expected
+            Assert.assertEquals(NoConnectionException.Type.BASE_LOST, e.getType());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -181,7 +181,7 @@ public class TestConnection extends AbstractServiceTest {
             getMovableService().getSyncInfo(START_UID_2);
             Assert.fail("NoConnectionException expected");
         } catch (NoConnectionException e) {
-            // Expected
+            Assert.assertEquals(NoConnectionException.Type.ANOTHER_CONNECTION_EXISTS, e.getType());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -202,7 +202,7 @@ public class TestConnection extends AbstractServiceTest {
             getMovableService().getSyncInfo(START_UID_1);
             Assert.fail("NoConnectionException expected");
         } catch (NoConnectionException e) {
-            // Expected
+            Assert.assertEquals(NoConnectionException.Type.ANOTHER_CONNECTION_EXISTS, e.getType());
         }
         getMovableService().getSyncInfo(START_UID_2);
         getMovableService().getRealGameInfo(START_UID_1);
@@ -211,7 +211,7 @@ public class TestConnection extends AbstractServiceTest {
             getMovableService().getSyncInfo(START_UID_2);
             Assert.fail("NoConnectionException expected");
         } catch (NoConnectionException e) {
-            // Expected
+            Assert.assertEquals(NoConnectionException.Type.ANOTHER_CONNECTION_EXISTS, e.getType());
         }
         getMovableService().getSyncInfo(START_UID_1);
         endHttpRequestAndOpenSessionInViewFilter();

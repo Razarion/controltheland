@@ -334,7 +334,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements C
     }
 
     @Override
-    public void closeConnection(SimpleBase simpleBase) {
+    public void closeConnection(SimpleBase simpleBase, NoConnectionException.Type closedReason) {
 
     }
 

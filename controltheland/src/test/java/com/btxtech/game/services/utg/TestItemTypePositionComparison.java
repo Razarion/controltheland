@@ -927,7 +927,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     }
 
     @Override
-    public void closeConnection(SimpleBase simpleBase) {
+    public void closeConnection(SimpleBase simpleBase, NoConnectionException.Type closedReason) {
 
     }
 

@@ -40,7 +40,7 @@ public abstract class Dialog extends DialogBox {
         setStyleName("dialogBox");
     }
 
-    protected void setShowCloseButton(boolean showCloseButton) {
+    public void setShowCloseButton(boolean showCloseButton) {
         this.showCloseButton = showCloseButton;
     }
 

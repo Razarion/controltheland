@@ -239,7 +239,7 @@ public class TestCountComparison extends AbstractServiceTest implements Connecti
     }
 
     @Override
-    public void closeConnection(SimpleBase simpleBase) {
+    public void closeConnection(SimpleBase simpleBase, NoConnectionException.Type closedReason) {
 
     }
 

@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
+import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -205,7 +206,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             }
         }
         if (connectionService.hasConnection(base.getSimpleBase())) {
-            connectionService.closeConnection(base.getSimpleBase());
+            connectionService.closeConnection(base.getSimpleBase(), NoConnectionException.Type.BASE_LOST);
         }
     }
 

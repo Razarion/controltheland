@@ -180,7 +180,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
                                 }
 
                             }
-                            connection.setClosed();
+                            connection.setClosed(NoConnectionException.Type.TIMED_OUT);
                             it.remove();
                         } else {
                             double ticksPerSecond = (double) tickCount / (double) (USER_TRACKING_PERIODE / 1000);
@@ -228,7 +228,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         Connection connection = session.getConnection();
         if (connection != null) {
             log.warn("Existing connection will be terminated I");
-            closeConnection(connection);
+            closeConnection(connection, NoConnectionException.Type.ANOTHER_CONNECTION_EXISTS);
         }
         // Connection to same base from different browser
         Connection preventConcurrentException = null;
@@ -242,7 +242,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         }
         if (preventConcurrentException != null) {
             log.warn("Existing connection will be terminated II");
-            closeConnection(preventConcurrentException);
+            closeConnection(preventConcurrentException, NoConnectionException.Type.ANOTHER_CONNECTION_EXISTS);
         }
 
         connection = new Connection(session.getSessionId(), startUuid);
@@ -257,11 +257,11 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         }
     }
 
-    private void closeConnection(Connection connection) {
+    private void closeConnection(Connection connection, NoConnectionException.Type closedReason) {
         if (connection.getBase() != null && connection.getBase().getUserState() != null && connection.getBase().getUserState().getUser() != null) {
             userTrackingService.onUserLeftGame(userService.getUser(connection.getBase().getUserState().getUser()));
         }
-        connection.setClosed();
+        connection.setClosed(closedReason);
         log.debug("Connection closed 1");
         synchronized (onlineConnection) {
             onlineConnection.remove(connection);
@@ -269,7 +269,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     }
 
     @Override
-    public void closeConnection(SimpleBase simpleBase) {
+    public void closeConnection(SimpleBase simpleBase, NoConnectionException.Type closedReason) {
         Connection connection = null;
         synchronized (onlineConnection) {
             for (Iterator<Connection> iterator = onlineConnection.iterator(); iterator.hasNext(); ) {
@@ -284,7 +284,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
             throw new IllegalStateException("Online connection does not exist for base: " + simpleBase);
         }
 
-        connection.setClosed();
+        connection.setClosed(closedReason);
         log.debug("Connection closed 2");
     }
 
@@ -293,13 +293,13 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     public Connection getConnection(String startUuid) throws NoConnectionException {
         Connection connection = session.getConnection();
         if (connection == null) {
-            throw new NoConnectionException("Connection does not exist");
+            throw new NoConnectionException(NoConnectionException.Type.NON_EXISTENT);
         }
         if (connection.isClosed()) {
-            throw new NoConnectionException("Connection already closed");
+            throw new NoConnectionException(connection.getClosedReason());
         }
         if (!connection.getStartUuid().equals(startUuid)) {
-            throw new NoConnectionException("This connection will be closed because a new one was opened");
+            throw new NoConnectionException(NoConnectionException.Type.ANOTHER_CONNECTION_EXISTS);
         }
         return connection;
     }
