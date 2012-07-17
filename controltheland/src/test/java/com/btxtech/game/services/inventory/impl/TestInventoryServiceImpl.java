@@ -1242,6 +1242,9 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         Base base = new Base(1);
 
+        SyncBaseItem attackerItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID,new Index(1000, 1000),new Id(1,1,1));
+        attackerItem.setBuildup(0.0);
+
         // ItemService
         DbBaseItemType dbAttackItemType = (DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID);
         ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
@@ -1255,7 +1258,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         EasyMock.expect(mockItemService.getItemType(dbAttackItemType)).andReturn(itemService.getItemType(TEST_ATTACK_ITEM_ID));
         EasyMock.expect(mockItemService.hasItemsInRectangle(new Rectangle(960, 960, 80, 80))).andReturn(false);
         EasyMock.expect(mockItemService.hasEnemyInRange(base.getSimpleBase(), new Index(1000, 1000), 156)).andReturn(false);
-        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), new Index(1000, 1000), null, base.getSimpleBase(), 0)).andReturn(null);
+        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), new Index(1000, 1000), null, base.getSimpleBase(), 0)).andReturn(attackerItem);
 
         setPrivateField(InventoryServiceImpl.class, inventoryService, "itemService", mockItemService);
         // Terrain Service
@@ -1352,6 +1355,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
 
         inventoryService.useInventoryItem(dbInventoryItem1.getId(), Collections.singletonList(new Index(1000, 1000)));
         Assert.assertTrue(userService.getUserState().getInventoryItemIds().isEmpty());
+        Assert.assertEquals(1.0, attackerItem.getBuildup(), 0.001);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -1380,6 +1384,9 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
+        SyncBaseItem attackerItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID,new Index(1000, 1000),new Id(1,1,1));
+        attackerItem.setBuildup(0.0);
+
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         SimpleBase simpleBase = getMyBase();
@@ -1397,9 +1404,9 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         EasyMock.expect(mockItemService.hasEnemyInRange(simpleBase, new Index(1200, 1000), 156)).andReturn(false);
         EasyMock.expect(mockItemService.hasItemsInRectangle(new Rectangle(1160, 1160, 80, 80))).andReturn(false);
         EasyMock.expect(mockItemService.hasEnemyInRange(simpleBase, new Index(1200, 1200), 156)).andReturn(false);
-        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), new Index(1000, 1000), null, simpleBase, 0)).andReturn(null);
-        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), new Index(1200, 1000), null, simpleBase, 0)).andReturn(null);
-        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), new Index(1200, 1200), null, simpleBase, 0)).andReturn(null);
+        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), new Index(1000, 1000), null, simpleBase, 0)).andReturn(attackerItem);
+        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), new Index(1200, 1000), null, simpleBase, 0)).andReturn(attackerItem);
+        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), new Index(1200, 1200), null, simpleBase, 0)).andReturn(attackerItem);
         setPrivateField(InventoryServiceImpl.class, inventoryService, "itemService", mockItemService);
         // Terrain Service
         TerrainService mockTerrainService = EasyMock.createStrictMock(TerrainService.class);

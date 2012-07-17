@@ -335,7 +335,8 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
                 }
             }
             for (Index position : positionToBePlaced) {
-                itemService.createSyncObject(baseItemType, position, null, base.getSimpleBase(), 0);
+                SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(baseItemType, position, null, base.getSimpleBase(), 0);
+                syncBaseItem.setBuildup(1.0);
             }
         } else {
             baseService.depositResource(dbInventoryItem.getGoldAmount(), base.getSimpleBase());
