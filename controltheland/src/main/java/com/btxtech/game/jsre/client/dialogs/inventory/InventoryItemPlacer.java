@@ -94,9 +94,13 @@ public class InventoryItemPlacer {
                 relativeMiddlePos = new Index(event.getRelativeX(canvas.getElement()), event.getRelativeY(canvas.getElement()));
                 Index absolutePos = TerrainView.getInstance().toAbsoluteIndex(relativeMiddlePos);
                 relativePositionsToPlace = Index.add(normalizedPositionsToPlace, relativeMiddlePos);
-                for (Index normalizedPosition : normalizedPositionsToPlace) {
-                    if (!checkPlacingAllowed(normalizedPosition.add(absolutePos))) {
-                        break;
+
+                isEnemiesOk = !ItemContainer.getInstance().hasEnemyInRange(ClientBase.getInstance().getSimpleBase(), absolutePos, itemFreeRadius);
+                if (isEnemiesOk) {
+                    for (Index normalizedPosition : normalizedPositionsToPlace) {
+                        if (!checkPlacingAllowed(normalizedPosition.add(absolutePos))) {
+                            break;
+                        }
                     }
                 }
                 draw();
@@ -171,7 +175,6 @@ public class InventoryItemPlacer {
         isTerrainOk = false;
         isTerritoryOk = false;
         isItemsOk = false;
-        isEnemiesOk = false;
 
         isTerrainOk = TerrainView.getInstance().getTerrainHandler().isFree(absolutePos, baseItemType);
         if (!isTerrainOk) {
@@ -183,11 +186,7 @@ public class InventoryItemPlacer {
         }
         Rectangle itemRect = baseItemType.getBoundingBox().getRectangle(absolutePos);
         isItemsOk = !ItemContainer.getInstance().hasItemsInRectangle(itemRect);
-        if (!isItemsOk) {
-            return false;
-        }
-        isEnemiesOk = !ItemContainer.getInstance().hasEnemyInRange(ClientBase.getInstance().getSimpleBase(), absolutePos, itemFreeRadius);
-        return isEnemiesOk;
+        return isItemsOk;
     }
 
     public void close() {
