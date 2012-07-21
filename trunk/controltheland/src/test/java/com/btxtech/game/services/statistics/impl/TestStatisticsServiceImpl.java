@@ -1,6 +1,7 @@
 package com.btxtech.game.services.statistics.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -71,7 +72,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "baseService", baseService);
 
         UserService userService = EasyMock.createNiceMock(UserService.class);
-        EasyMock.expect(userService.getAllUserStates()).andReturn(Arrays.asList(regUserState, unregUserState));
+        EasyMock.expect(userService.getAllUserStates()).andReturn(Arrays.asList(regUserState, unregUserState)).anyTimes();
+        EasyMock.expect(userService.getUserState()).andReturn(regUserState).anyTimes();
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "userService", userService);
 
         SyncBaseItem item1RegBase = EasyMock.createNiceMock(SyncBaseItem.class);
@@ -87,6 +89,11 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(2, entries.size());
         assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "xxx", null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+        List<CurrentStatisticEntryInfo> imGameEntries = statisticsService.getInGameCurrentStatistics();
+        Assert.assertEquals(2, imGameEntries.size());
+        assertInGameEntry(0, imGameEntries, 1, 1000, "xxx",  null, null, 0, 0, 0, 0, 0, 0, true);
+        assertInGameEntry(1, imGameEntries, 2, 1000, null, null, null, 0, 0, 0, 0, 0, 0, false);
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -723,4 +730,25 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(baseLostBot, currentStatisticEntry.getBasesLostBot());
         Assert.assertEquals(baseLostPlayer, currentStatisticEntry.getBasesLostPlayer());
     }
+
+    private void assertInGameEntry(int index, List<CurrentStatisticEntryInfo> entries,
+                                   int rank, int score, String userName, Integer itemCount,
+                                   Integer money, int killed, int killedPve, int killedPvp,
+                                   int basesKilled, int basesLost, int created, boolean isMy) {
+        CurrentStatisticEntryInfo currentStatisticEntry = entries.get(index);
+        Assert.assertEquals(rank, currentStatisticEntry.getRank());
+        Assert.assertEquals(score, currentStatisticEntry.getScore());
+        Assert.assertEquals(userName, currentStatisticEntry.getUserName());
+        Assert.assertEquals(itemCount, currentStatisticEntry.getItemCount());
+        Assert.assertEquals(money, currentStatisticEntry.getMoney());
+        Assert.assertEquals(killed, currentStatisticEntry.getKilled());
+        Assert.assertEquals(killedPve, currentStatisticEntry.getKilledPve());
+        Assert.assertEquals(killedPvp, currentStatisticEntry.getKilledPvp());
+        Assert.assertEquals(basesKilled, currentStatisticEntry.getBasesKilled());
+        Assert.assertEquals(basesLost, currentStatisticEntry.getBasesLost());
+        Assert.assertEquals(created, currentStatisticEntry.getCreated());
+        Assert.assertEquals(isMy, currentStatisticEntry.isMy());
+    }
+
+
 }

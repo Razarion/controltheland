@@ -15,6 +15,7 @@ package com.btxtech.game.services.gwt;
 
 
 import com.btxtech.game.jsre.client.MovableService;
+import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.client.common.Index;
@@ -50,6 +51,7 @@ import com.btxtech.game.services.inventory.InventoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
+import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
@@ -102,6 +104,8 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     private AllianceService allianceService;
     @Autowired
     private InventoryService inventoryService;
+    @Autowired
+    private StatisticsService statisticsService;
 
     private Log log = LogFactory.getLog(MovableServiceImpl.class);
 
@@ -428,6 +432,16 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             userGuidanceService.activateQuest(questId);
         } catch (Throwable t) {
             log.error("", t);
+        }
+    }
+
+    @Override
+    public Collection<CurrentStatisticEntryInfo> loadCurrentStatisticEntryInfos() {
+        try {
+            return statisticsService.getInGameCurrentStatistics();
+        } catch (Throwable t) {
+            log.error("", t);
+            return null;
         }
     }
 }

@@ -14,9 +14,6 @@ public class CmsUtil {
     public static final String ID = "page";
     public static final String NO_HTML5_BROWSER_PAGE_STRING_ID = "NoHtml5Browser";
 
-    public static final String TARGET_GAME = "game";
-    public static final String TARGET_USER_PAGE = "userPage";
-    public static final String TARGET_USER_INFO = "info";
     public static final String TARGET_SELF = "_self";
     public static final String TARGET_BLANK = "_blank";
 

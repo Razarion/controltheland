@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.statistics.impl;
 
+import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.BaseService;
@@ -23,6 +24,7 @@ import com.btxtech.game.services.statistics.StatisticsEntry;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,6 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +45,10 @@ import java.util.Map;
  */
 @Component("statisticsService")
 public class StatisticsServiceImpl implements StatisticsService {
+    private interface EntryEvaluator {
+        void onEntry(int score, DbLevel dbLevel, int xp, String userName, Long upTime, Integer itemCount, Integer money, StatisticsEntry statisticsEntry, UserState userState);
+    }
+
     @Autowired
     private BaseService baseService;
     @Autowired
@@ -188,12 +196,19 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public StatisticsEntry getStatisticsEntryAccess(UserState userState) {
-       return getStatisticsEntry(userState);
+        return getStatisticsEntry(userState);
     }
 
-    @Override
-    public ReadonlyListContentProvider<CurrentStatisticEntry> getCmsCurrentStatistics() {
-        List<CurrentStatisticEntry> entries = new ArrayList<CurrentStatisticEntry>();
+    private int calculateScore(DbLevel level, int xp, String userName) {
+        int xpPart = (int) ((double) xp / (double) level.getXp() * 1000);
+        if (xpPart > 999) {
+            log.warn("XP part in score calculation to height: " + xpPart + " xp:" + xp + " xp in level: " + level.getXp() + " level: " + level + " user: " + userName);
+            xpPart = 999;
+        }
+        return level.getNumber() * 1000 + xpPart;
+    }
+
+    private void iterateOfAllEntries(EntryEvaluator entryEvaluator) {
         for (UserState userState : userService.getAllUserStates()) {
             String userName = null;
             Integer money = null;
@@ -210,16 +225,72 @@ public class StatisticsServiceImpl implements StatisticsService {
                 itemCount = userState.getBase().getItemCount();
                 money = (int) Math.round(userState.getBase().getAccountBalance());
             }
-            entries.add(new CurrentStatisticEntry(userGuidanceService.getDbLevel(userState),
+
+            DbLevel level = userGuidanceService.getDbLevel(userState);
+
+            entryEvaluator.onEntry(calculateScore(level, userState.getXp(), userName),
+                    level,
                     userState.getXp(),
                     userName,
                     upTime,
                     itemCount,
                     money,
-                    getStatisticsEntry(userState)));
+                    getStatisticsEntry(userState),
+                    userState);
         }
+    }
+
+    @Override
+    public ReadonlyListContentProvider<CurrentStatisticEntry> getCmsCurrentStatistics() {
+        final List<CurrentStatisticEntry> entries = new ArrayList<>();
+        iterateOfAllEntries(new EntryEvaluator() {
+            @Override
+            public void onEntry(int score, DbLevel dbLevel, int xp, String userName, Long upTime, Integer itemCount, Integer money, StatisticsEntry statisticsEntry, UserState userState) {
+                entries.add(new CurrentStatisticEntry(score,
+                        dbLevel,
+                        xp,
+                        userName,
+                        upTime,
+                        itemCount,
+                        money,
+                        statisticsEntry));
+            }
+        });
         return new CurrentStatisticServiceContentProvider(entries);
     }
 
-
+    @Override
+    public List<CurrentStatisticEntryInfo> getInGameCurrentStatistics() {
+        final UserState myUserState = userService.getUserState();
+        final List<CurrentStatisticEntryInfo> entries = new ArrayList<>();
+        iterateOfAllEntries(new EntryEvaluator() {
+            @Override
+            public void onEntry(int score, DbLevel dbLevel, int xp, String userName, Long upTime, Integer itemCount, Integer money, StatisticsEntry statisticsEntry, UserState userState) {
+                entries.add(new CurrentStatisticEntryInfo(score,
+                        userName,
+                        itemCount,
+                        money,
+                        statisticsEntry.getKilledStructureBot() + statisticsEntry.getKilledStructurePlayer() + statisticsEntry.getKilledUnitsBot() + statisticsEntry.getKilledUnitsPlayer(),
+                        statisticsEntry.getKilledStructureBot() + statisticsEntry.getKilledUnitsBot(),
+                        statisticsEntry.getKilledStructurePlayer() + statisticsEntry.getKilledUnitsPlayer(),
+                        statisticsEntry.getBasesDestroyedBot() + statisticsEntry.getBasesDestroyedPlayer(),
+                        statisticsEntry.getBasesLostBot() + statisticsEntry.getBasesLostPlayer(),
+                        statisticsEntry.getBuiltStructures() + statisticsEntry.getBuiltUnits(),
+                        myUserState.equals(userState)
+                ));
+            }
+        });
+        // Set the rank
+        Collections.sort(entries, new Comparator<CurrentStatisticEntryInfo>() {
+            @Override
+            public int compare(CurrentStatisticEntryInfo o1, CurrentStatisticEntryInfo o2) {
+                return Integer.compare(o2.getScore(), o1.getScore());
+            }
+        });
+        for (int i = 0, entriesSize = entries.size(); i < entriesSize; i++) {
+            CurrentStatisticEntryInfo entry = entries.get(i);
+            entry.setRank(i + 1);
+        }
+        return entries;
+    }
 }

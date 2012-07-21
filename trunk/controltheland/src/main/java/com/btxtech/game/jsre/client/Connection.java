@@ -31,6 +31,8 @@ import com.btxtech.game.jsre.client.control.task.DeferredStartup;
 import com.btxtech.game.jsre.client.dialogs.AllianceDialog;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
+import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
+import com.btxtech.game.jsre.client.dialogs.highscore.HighscoreDialog;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.MarketDialog;
@@ -569,7 +571,6 @@ public class Connection implements StartupProgressListener, ConnectionI {
         return gameEngineMode;
     }
 
-
     class VoidAsyncCallback implements AsyncCallback<Void> {
         private String message;
 
@@ -747,4 +748,19 @@ public class Connection implements StartupProgressListener, ConnectionI {
         }
     }
 
+    public void loadCurrentStatisticEntryInfos(final HighscoreDialog highscoreDialog) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.loadCurrentStatisticEntryInfos(new AsyncCallback<Collection<CurrentStatisticEntryInfo>>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    handleDisconnection("loadQuestOverview", caught);
+                }
+
+                @Override
+                public void onSuccess(Collection<CurrentStatisticEntryInfo> entryInfos) {
+                    highscoreDialog.onHighscoreRecived(entryInfos);
+                }
+            });
+        }
+    }
 }

@@ -8,7 +8,6 @@ import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.SoundHandler;
-import com.btxtech.game.jsre.client.WebBrowserCustomButton;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
@@ -20,10 +19,10 @@ import com.btxtech.game.jsre.client.dialogs.AllianceDialog;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
+import com.btxtech.game.jsre.client.dialogs.highscore.HighscoreDialog;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
-import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.ProgressBar;
 import com.btxtech.game.jsre.common.packets.BoxPickedPacket;
 import com.google.gwt.dom.client.Style;
@@ -286,7 +285,14 @@ public class SideCockpit {
             }
         });
         mainPanel.add(mute, BNT_MUTE_X, BNT_MUTE_Y);
-        mainPanel.add(new WebBrowserCustomButton("highscoreButton", ToolTips.TOOL_TIP_HIGH_SCORE, CmsUtil.CmsPredefinedPage.HIGH_SCORE), BNT_STAT_X, BNT_STAT_Y);
+        // High score button
+        ExtendedCustomButton highScoreButton = new ExtendedCustomButton("highscoreButton", false, ToolTips.TOOL_TIP_HIGH_SCORE, new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                DialogManager.showDialog(new HighscoreDialog(), DialogManager.Type.QUEUE_ABLE);
+            }
+        });
+        mainPanel.add(highScoreButton, BNT_STAT_X, BNT_STAT_Y);
     }
 
     public void debugAbsoluteCursorPos(int x, int y) {

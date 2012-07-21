@@ -1,6 +1,5 @@
 package com.btxtech.game.wicket.pages.cms.content;
 
-import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.layout.DbContentGameLink;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.pages.Game;
@@ -28,7 +27,7 @@ public class ContentGameLink extends Panel {
     public ContentGameLink(String id, DbContentGameLink dbContentGameLink) {
         super(id);
         contentId = dbContentGameLink.getId();
-        BookmarkablePageLink<Game> pageLink = new BookmarkablePageLink<Game>("link", Game.class);
+        BookmarkablePageLink<Game> pageLink = new BookmarkablePageLink<>("link", Game.class);
         if (dbContentGameLink.getDbCmsImage() != null) {
             pageLink.add(new Label("label", "").setVisible(false));
             pageLink.add(CmsImageResource.createImage("image", dbContentGameLink.getDbCmsImage()));
@@ -39,7 +38,6 @@ public class ContentGameLink extends Panel {
         if (!userGuidanceService.isStartRealGame()) {
             pageLink.setParameter(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, userGuidanceService.getDefaultLevelTaskId());
         }
-        pageLink.add(new SimpleAttributeModifier("target", CmsUtil.TARGET_GAME));
 
         add(pageLink);
         if (dbContentGameLink.getCssClass() != null) {
