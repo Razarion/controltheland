@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.client.common.Index;
@@ -109,4 +110,6 @@ public interface MovableService extends RemoteService {
     QuestOverview loadQuestOverview();
 
     void activateQuest(int questId);
+
+    Collection<CurrentStatisticEntryInfo> loadCurrentStatisticEntryInfos();
 }

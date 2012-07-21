@@ -2,6 +2,7 @@ package com.btxtech.game.mockservlet;
 
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.AbstractGwtTest;
+import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.client.common.Index;
@@ -305,5 +306,10 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     @Override
     public void activateQuest(int questId) {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Collection<CurrentStatisticEntryInfo> loadCurrentStatisticEntryInfos() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

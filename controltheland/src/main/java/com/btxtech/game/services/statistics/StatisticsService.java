@@ -13,12 +13,14 @@
 
 package com.btxtech.game.services.statistics;
 
+import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.user.UserState;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,6 +36,8 @@ public interface StatisticsService {
     void onBaseKilled(SimpleBase target, SimpleBase actor);
 
     ReadonlyListContentProvider<CurrentStatisticEntry> getCmsCurrentStatistics();
+
+    List<CurrentStatisticEntryInfo> getInGameCurrentStatistics();
 
     void restoreBackup(Map<DbUserState, UserState> userStates);
 

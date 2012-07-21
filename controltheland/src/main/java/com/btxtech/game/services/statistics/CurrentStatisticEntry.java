@@ -2,8 +2,6 @@ package com.btxtech.game.services.statistics;
 
 import com.btxtech.game.services.common.SimpleCrudChild;
 import com.btxtech.game.services.utg.DbLevel;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.io.Serializable;
 
@@ -35,12 +33,11 @@ public class CurrentStatisticEntry extends SimpleCrudChild {
     private int basesDestroyedPlayer;
     private int basesLostBot;
     private int basesLostPlayer;
-    private Log log = LogFactory.getLog(CurrentStatisticEntry.class);
 
-    public CurrentStatisticEntry(DbLevel level, int xp, String userName, Long baseUpTime, Integer itemCount, Integer money, StatisticsEntry statisticsEntry) {
+    public CurrentStatisticEntry(int score, DbLevel level, int xp, String userName, Long baseUpTime, Integer itemCount, Integer money, StatisticsEntry statisticsEntry) {
         this.level = level;
         this.xp = xp;
-        score = calculateScore(level, xp, userName);
+        this.score = score;
         this.userName = userName;
         this.baseUpTime = baseUpTime;
         this.itemCount = itemCount;
@@ -67,15 +64,6 @@ public class CurrentStatisticEntry extends SimpleCrudChild {
 
     public void setRank(int rank) {
         this.rank = rank;
-    }
-
-    private int calculateScore(DbLevel level, int xp, String userName) {
-        int xpPart = (int) ((double) xp / (double) level.getXp() * 1000);
-        if (xpPart > 999) {
-            log.warn("XP part in score calculation to height: " + xpPart + " xp:" + xp + " xp in level: " + level.getXp() + " level: " + level + " user: " + userName);
-            xpPart = 999;
-        }
-        return level.getNumber() * 1000 + xpPart;
     }
 
     public DbLevel getLevel() {
