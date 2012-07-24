@@ -56,6 +56,7 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.wicket.WicketApplication;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.CmsStringGenerator;
@@ -66,6 +67,7 @@ import com.btxtech.game.wicket.uiservices.cms.impl.CmsUiServiceImpl;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.RequestCycle;
+import org.apache.wicket.behavior.StringHeaderContributor;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
@@ -103,6 +105,8 @@ public class TestCmsService extends AbstractServiceTest {
     @Autowired
     private ApplicationContext applicationContext;
     @Autowired
+    private WicketApplication wicketApplication;
+    @Autowired
     private UserService userService;
     @Autowired
     private ForumService forumService;
@@ -119,8 +123,7 @@ public class TestCmsService extends AbstractServiceTest {
 
     @Before
     public void setUp() {
-        tester = new WicketTester();
-        tester.getApplication().addComponentInstantiationListener(new SpringComponentInjector(tester.getApplication(), applicationContext, true));
+        tester = new WicketTester(wicketApplication);
     }
 
     @Test
@@ -3508,6 +3511,14 @@ public class TestCmsService extends AbstractServiceTest {
         dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.LEVEL_TASK_DONE);
         pageCrud.updateDbChild(dbPage);
 
+        dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.FACEBOOK_START);
+        pageCrud.updateDbChild(dbPage);
+
+        dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.CHOOSE_NICKNAME);
+        pageCrud.updateDbChild(dbPage);
+
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -4311,6 +4322,75 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", TEST_LEVEL_TASK_4_3_SIMULATED_NAME);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testFacebook() throws Exception {
+        configureRealGame();
+
+        // Do not rejoice too quicklyJust... this is just a  test secret.
+        setPrivateField(CmsUiServiceImpl.class, cmsUiService, "facebookAppSecret", "029a30fb9677d35c79c44d8a505d8fe1");
+
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage facebookPage = pageCrud.createDbChild();
+        facebookPage.setPredefinedType(CmsUtil.CmsPredefinedPage.FACEBOOK_START);
+        facebookPage.setName("Facebook Start");
+        pageCrud.updateDbChild(facebookPage);
+        DbPage nicknamePage = pageCrud.createDbChild();
+        nicknamePage.setPredefinedType(CmsUtil.CmsPredefinedPage.CHOOSE_NICKNAME);
+        nicknamePage.setName("Nickname");
+        DbContentPlugin contentPlugin = new DbContentPlugin();
+        contentPlugin.setPluginEnum(PluginEnum.NICK_NAME);
+        contentPlugin.init(userService);
+        nicknamePage.setContentAndAccessWrites(contentPlugin);
+        pageCrud.updateDbChild(nicknamePage);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        // First authorization -> OAuth dialog
+        beginHttpRequestAndOpenSessionInViewFilter();
+        PageParameters parameters = new PageParameters();
+        parameters.add("page", Integer.toString(facebookPage.getId()));
+        parameters.add("signed_request", "3RaYyXwkwhCc4OlVfDhAU9Y-O_pyqN4mgE7JyzPwcIc.eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsImlzc3VlZF9hdCI6MTM0MzE0NjYzOSwidXNlciI6eyJjb3VudHJ5IjoiY2giLCJsb2NhbGUiOiJlbl9VUyIsImFnZSI6eyJtaW4iOjIxfX19");
+        Page page = tester.startPage(CmsPage.class, parameters);
+        StringHeaderContributor stringHeaderContributor = (StringHeaderContributor) page.getBehaviors().get(0);
+        Assert.assertTrue(stringHeaderContributor.toString().contains("https://www.facebook.com/dialog/oauth/"));
+        endHttpRequestAndOpenSessionInViewFilter();
+        // User accepted
+        beginHttpRequestAndOpenSessionInViewFilter();
+        parameters = new PageParameters();
+        parameters.add("page", Integer.toString(facebookPage.getId()));
+        parameters.add("signed_request", "v3-O8s1WrS9B2XnYXpRo61n2hKc9wboofRDHOxcF8XI.eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsImV4cGlyZXMiOjEzNDMxNTI4MDAsImlzc3VlZF9hdCI6MTM0MzE0NjY4Mywib2F1dGhfdG9rZW4iOiJBQUFFa3RlWVZ1WkNNQkFDS29mOGpkWDMxcnVTWkN3RXFuRnFWd3Z2NnBBNldNMTVaQ1V6bzlRNmliUXJiWGtRVkJOeEF0UDJmc2EzVzY3ZXJITW5EWkFvNlZHRzVPajg4U2FJMWZOYkVyYjhCeDBuOURRWkIyIiwidXNlciI6eyJjb3VudHJ5IjoiY2giLCJsb2NhbGUiOiJlbl9VUyIsImFnZSI6eyJtaW4iOjIxfX0sInVzZXJfaWQiOiIxMDAwMDM2MzQwOTQxMzkifQ");
+        tester.startPage(CmsPage.class, parameters);
+        Assert.assertTrue(stringHeaderContributor.toString().contains("https://www.facebook.com/dialog/oauth/"));
+        // Enter invalid name in nickname field
+        //FormTester formTester = tester.newFormTester("form:content:form");
+        //formTester.setValue("name", "xx");
+        //tester.executeAjaxEvent("form:content:form:name", "onkeyup");
+        //formTester.submit("goButton");
+        //tester.assertLabel("form:content:form:feedback:feedbackul:messages:0:message", "Invalid nick name: name must have at least 3 characters");
+        FormTester formTester = tester.newFormTester("form:content:form");
+        formTester.setValue("name", "xxx");
+        tester.executeAjaxEvent("form:content:form:goButton", "onkeyup");
+        tester.debugComponentTrees();
+        /*formTester.submit("goButton");
+        tester.executeAjaxEvent();
+        formTester = tester.newFormTester("form:content:form");
+        formTester.submit("goButton");
+        tester.debugComponentTrees();  */
+        tester.assertRenderedPage(Game.class);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        endHttpSession();
+
+
     }
 
 }

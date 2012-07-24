@@ -38,6 +38,7 @@ public class DbPageAccess implements Serializable {
     @Index(name = "TRACKER_PAGE_ACCESS_INDEX_SESSION")
     private String sessionId;
     private String page;
+    @Column(length = 5000)
     private String additional;
 
     /**

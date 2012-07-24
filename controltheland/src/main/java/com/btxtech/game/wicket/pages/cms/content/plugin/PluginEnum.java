@@ -1,6 +1,7 @@
 package com.btxtech.game.wicket.pages.cms.content.plugin;
 
 import com.btxtech.game.wicket.pages.cms.content.plugin.login.LoginBox;
+import com.btxtech.game.wicket.pages.cms.content.plugin.nickname.ChooseNickname;
 import com.btxtech.game.wicket.pages.cms.content.plugin.register.Register;
 import org.apache.wicket.Component;
 
@@ -19,6 +20,11 @@ public enum PluginEnum {
         @Override
         public Component createComponent(String componentId) {
             return new Register(componentId);
+        }},
+    NICK_NAME("Nick name") {
+        @Override
+        public Component createComponent(String componentId) {
+            return new ChooseNickname(componentId);
         }};
     private String displayName;
 

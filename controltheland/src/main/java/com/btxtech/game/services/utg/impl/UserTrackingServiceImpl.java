@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.utg.impl;
 
-import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
@@ -21,6 +20,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderComman
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
@@ -111,12 +111,8 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     @Override
     @Transactional
     public void pageAccess(String pageName, String additional) {
-        try {
-            DbPageAccess dbPageAccess = new DbPageAccess(session.getSessionId(), pageName, additional);
-            sessionFactory.getCurrentSession().saveOrUpdate(dbPageAccess);
-        } catch (NoBaseException e) {
-            log.error("", e);
-        }
+        DbPageAccess dbPageAccess = new DbPageAccess(session.getSessionId(), pageName, additional);
+        sessionFactory.getCurrentSession().saveOrUpdate(dbPageAccess);
     }
 
     @Override

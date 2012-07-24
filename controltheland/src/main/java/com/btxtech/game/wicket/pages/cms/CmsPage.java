@@ -18,10 +18,13 @@ import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.CmsSectionInfo;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.page.DbPage;
+import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.uiservices.DisplayPageViewLink;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -75,8 +78,11 @@ public class CmsPage extends WebPage implements IHeaderContributor {
     private CmsUiService cmsUiService;
     @SpringBean
     private UserTrackingService userTrackingService;
+    @SpringBean
+    private UserService userService;
     private int pageId;
     private ContentContext contentContext;
+    private Log log = LogFactory.getLog(CmsPage.class);
 
     public CmsPage(final PageParameters pageParameters) {
         setDefaultModel(new CompoundPropertyModel<DbPage>(new LoadableDetachableModel<DbPage>() {
@@ -114,6 +120,9 @@ public class CmsPage extends WebPage implements IHeaderContributor {
         }));
         contentContext = new ContentContext(pageParameters);
         DbPage dbPage = (DbPage) getDefaultModelObject();
+        if (dbPage.getPredefinedType() == CmsUtil.CmsPredefinedPage.FACEBOOK_START) {
+            cmsUiService.handleFacebookRequest(pageParameters, this);
+        }
         add(new Label("title", dbPage.getName()));
         add(CmsCssResource.createCss("css", dbPage));
         add(new Menu("menu", dbPage.getMenu(), contentContext));
@@ -153,7 +162,11 @@ public class CmsPage extends WebPage implements IHeaderContributor {
     @Override
     protected void onBeforeRender() {
         DbPage dbPage = (DbPage) getDefaultModelObject();
-        userTrackingService.pageAccess(dbPage.getName(), contentContext.getPageParameters().toString());
+        try {
+            userTrackingService.pageAccess(dbPage.getName(), contentContext.getPageParameters().toString());
+        } catch (Exception e) {
+            log.error("", e);
+        }
         super.onBeforeRender();
         if (userTrackingService.hasCookieToAdd()) {
             WebCommon.addCookieId(((WebResponse) getRequestCycle().getResponse()).getHttpServletResponse(), userTrackingService.getAndClearCookieToAdd());

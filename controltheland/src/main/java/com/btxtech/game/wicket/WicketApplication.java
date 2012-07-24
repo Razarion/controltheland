@@ -41,25 +41,34 @@ import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.protocol.http.request.InvalidUrlException;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 /**
  * User: beat Date: May 31, 2009 Time: 9:51:34 PM
  */
 @Component
-public class WicketApplication extends AuthenticatedWebApplication {
+public class WicketApplication extends AuthenticatedWebApplication implements ApplicationContextAware {
     @Autowired
     private Session session;
     private String configurationType;
     private Log log = LogFactory.getLog(WicketApplication.class);
     @Autowired
     private CmsUiService cmsUiService;
+    private ApplicationContext applicationContext;
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 
     @Override
     protected void init() {
         super.init();
-        addComponentInstantiationListener(new SpringComponentInjector(this));
+        addComponentInstantiationListener(new SpringComponentInjector(this, applicationContext, true));
         getApplicationSettings().setAccessDeniedPage(CmsPage.class);
         getSharedResources().add(CmsCssResource.CMS_SHARED_CSS_RESOURCES, new CmsCssResource());
         getSharedResources().add(CmsImageResource.CMS_SHARED_IMAGE_RESOURCES, new CmsImageResource());

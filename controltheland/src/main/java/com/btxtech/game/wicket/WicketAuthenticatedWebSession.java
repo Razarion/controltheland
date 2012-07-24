@@ -28,6 +28,10 @@ public class WicketAuthenticatedWebSession extends AuthenticatedWebSession {
         return userService.login(userName, password);
     }
 
+    public void setSignIn() {
+        signIn(true);
+    }
+
     @Override
     public void signOut() {
         super.signOut();

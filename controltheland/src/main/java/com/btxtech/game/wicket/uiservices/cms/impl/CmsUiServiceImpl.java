@@ -31,10 +31,14 @@ import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
+import com.btxtech.game.services.socialnet.facebook.FacebookUtil;
 import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.DbPageAccessControl;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.DbLevelTask;
+import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.BorderWrapper;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
@@ -66,11 +70,15 @@ import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.behavior.StringHeaderContributor;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebRequestCycle;
+import org.apache.wicket.util.template.JavaScriptTemplate;
+import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.DependsOn;
 
@@ -109,6 +117,13 @@ public class CmsUiServiceImpl implements CmsUiService {
     private SecurityCmsUiService securityCmsUiService;
     @Autowired
     private SessionFactory sessionFactory;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
+    @Value(value = "${facebook.appsecret}")
+    private String facebookAppSecret;
+    @Value(value = "${facebook.appkey}")
+    private String facebookAppKey;
+
     private Log log = LogFactory.getLog(CmsUiServiceImpl.class);
     private Map<CmsUtil.CmsPredefinedPage, String> predefinedUrls = new HashMap<>();
 
@@ -1045,6 +1060,73 @@ public class CmsUiServiceImpl implements CmsUiService {
             method.invoke(bean, parameter);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public FacebookSignedRequest getAndClearFacebookSignedRequest() {
+        FacebookSignedRequest facebookSignedRequest = session.getFacebookSignedRequest();
+        if (facebookSignedRequest == null) {
+            throw new IllegalStateException("Facebook user is not in session. " + session.getSessionId());
+        }
+        session.setFacebookSignedRequest(null);
+        return facebookSignedRequest;
+    }
+
+    @Override
+    public void setFacebookSignedRequest(FacebookSignedRequest facebookSignedRequest) {
+        session.setFacebookSignedRequest(facebookSignedRequest);
+    }
+
+    @Override
+    public void handleFacebookRequest(PageParameters pageParameters, Component component) {
+        try {
+            if ("access_denied".equals(pageParameters.get("error"))) {
+                PageParameters gamePageParameters = new PageParameters();
+                if (!userGuidanceService.isStartRealGame()) {
+                    gamePageParameters.add(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, Integer.toString(userGuidanceService.getDefaultLevelTaskId()));
+                }
+                component.setResponsePage(Game.class, gamePageParameters);
+            } else {
+                String signedRequestParameter = pageParameters.getString("signed_request");
+                String[] signedRequestParts = FacebookUtil.splitSignedRequest(signedRequestParameter);
+
+                FacebookSignedRequest facebookSignedRequest = FacebookUtil.getFacebookSignedRequest(signedRequestParts[1]);
+                if (!facebookSignedRequest.getAlgorithm().toUpperCase().equals("HMAC-SHA256")) {
+                    throw new IllegalArgumentException("Invalid signature algorithm received: " + facebookSignedRequest.getAlgorithm());
+                }
+
+                FacebookUtil.checkSignature(facebookAppSecret, signedRequestParts[1], signedRequestParts[0]);
+
+
+                if (facebookSignedRequest.hasUserId()) {
+                    // Is authorized by facebook
+                    if (userService.isFacebookUserRegistered(facebookSignedRequest)) {
+                        if (!userService.isFacebookLoggedIn(facebookSignedRequest)) {
+                            userService.loginFacebookUser(facebookSignedRequest);
+                        }
+                        PageParameters gamePageParameters = new PageParameters();
+                        if (!userGuidanceService.isStartRealGame()) {
+                            gamePageParameters.add(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, Integer.toString(userGuidanceService.getDefaultLevelTaskId()));
+                        }
+                        component.setResponsePage(Game.class, gamePageParameters);
+                    } else {
+                        setFacebookSignedRequest(facebookSignedRequest);
+                        setPredefinedResponsePage(component, CmsUtil.CmsPredefinedPage.CHOOSE_NICKNAME);
+                    }
+                } else {
+                    // Is NOT authorized by facebook
+                    PackagedTextTemplate jsTemplate = new PackagedTextTemplate(CmsPage.class, "FacebookOAuthDialogRedirect.js");
+                    Map<String, Object> parameters = new HashMap<>();
+                    parameters.put("FACEBOOK_APP_ID", facebookAppKey);
+                    parameters.put("FACEBOOK_APP_NAMESPACE", "razarion");
+                    //parameters.put("FACEBOOK_APP_NAMESPACE", "testing_purposes");
+                    parameters.put("FACEBOOK_PERMISSIONS", "");
+                    component.add(new StringHeaderContributor(new JavaScriptTemplate(jsTemplate).asString(parameters)));
+                }
+            }
+        } catch (Exception e) {
+            log.error("", e);
         }
     }
 }
