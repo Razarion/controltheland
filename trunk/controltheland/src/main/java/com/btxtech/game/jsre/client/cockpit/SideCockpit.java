@@ -8,6 +8,7 @@ import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.SoundHandler;
+import com.btxtech.game.jsre.client.WebBrowserCustomButton;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
@@ -99,6 +100,9 @@ public class SideCockpit {
     private static final int BNT_MUTE_Y = BNT_SELL_Y + BNT_Y_SPACE;
     private static final int BNT_STAT_X = BNT_X;
     private static final int BNT_STAT_Y = BNT_MUTE_Y + BNT_Y_SPACE;
+    // Social net
+    private static final int BNT_FB_COMMUNITY_X = 188;
+    private static final int BNT_FB_COMMUNITY_Y = 213;
     // Debug
     private static final int DEBUG_X = 10;
     private static final int DEBUG_Y = 222;
@@ -136,6 +140,7 @@ public class SideCockpit {
         setupEnergy();
         setupRadar();
         setupButtonPanel();
+        setupSocialNetPanel();
         cockpitMode = new CockpitMode();
         informationCockpit = new InformationCockpit();
     }
@@ -293,6 +298,11 @@ public class SideCockpit {
             }
         });
         mainPanel.add(highScoreButton, BNT_STAT_X, BNT_STAT_Y);
+    }
+
+    private void setupSocialNetPanel() {
+        WebBrowserCustomButton facebookCommunity = new WebBrowserCustomButton("facebookcommunity", ToolTips.TOOL_TIP_FACEBOOK_COMMUNITY, "http://www.facebook.com/RazarionCommunity");
+        mainPanel.add(facebookCommunity, BNT_FB_COMMUNITY_X, BNT_FB_COMMUNITY_Y);
     }
 
     public void debugAbsoluteCursorPos(int x, int y) {
