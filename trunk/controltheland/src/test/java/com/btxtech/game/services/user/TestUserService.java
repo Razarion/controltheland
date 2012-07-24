@@ -327,4 +327,29 @@ public class TestUserService extends AbstractServiceTest {
             Assert.fail("User is logged in");
         }
     }
+
+    @Test
+    @DirtiesContext
+    public void isNickNameValid() throws Exception {
+        configureGameMultipleLevel();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("test", "xxx","xxx", null);
+        userService.login("test", "xxx");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(InvalidNickName.TO_SHORT, userService.isNickNameValid(""));
+        Assert.assertEquals(InvalidNickName.TO_SHORT, userService.isNickNameValid("a"));
+        Assert.assertEquals(InvalidNickName.TO_SHORT, userService.isNickNameValid("aa"));
+        Assert.assertEquals(InvalidNickName.ALREADY_USED, userService.isNickNameValid("test"));
+        Assert.assertNull(userService.isNickNameValid("test33"));
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 }

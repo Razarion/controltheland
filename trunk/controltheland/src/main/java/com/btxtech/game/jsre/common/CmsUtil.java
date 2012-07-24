@@ -41,7 +41,9 @@ public class CmsUtil {
         INFO,
         NO_HTML5_BROWSER,
         NOT_FOUND,
-        LEVEL_TASK_DONE
+        LEVEL_TASK_DONE,
+        FACEBOOK_START,
+        CHOOSE_NICKNAME
     }
 
     public static String getUrl4CmsPage(String id) {

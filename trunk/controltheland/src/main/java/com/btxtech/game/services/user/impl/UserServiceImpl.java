@@ -20,21 +20,26 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.inventory.InventoryService;
+import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.DbPageAccessControl;
+import com.btxtech.game.services.user.InvalidNickName;
 import com.btxtech.game.services.user.NotAuthorizedException;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -111,6 +116,21 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void loginFacebookUser(FacebookSignedRequest facebookSignedRequest) {
+        User user = loadFacebookUserFromDb(facebookSignedRequest.getUserId());
+
+        if (getUserFromSecurityContext() != null) {
+            throw new AlreadyLoggedInException(getUserFromSecurityContext());
+        }
+
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, "", user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        ((WicketAuthenticatedWebSession) AuthenticatedWebSession.get()).setSignIn();
+        loginUser(user);
+    }
+
     private void loginUser(User user) {
         user.setLastLoginDate(new Date());
         privateSave(user);
@@ -132,6 +152,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean isFacebookLoggedIn(FacebookSignedRequest facebookSignedRequest) {
+        User user = getUser();
+        return user != null
+                && user.getSocialNet() == User.SocialNet.FACEBOOK
+                && user.getSocialNetUserId().equals(facebookSignedRequest.getUserId());
+    }
+
+    @Override
     public void logout() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         SecurityContextHolder.getContext().setAuthentication(null);
@@ -145,7 +173,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void onSessionTimedOut(UserState userState, String sessionId) {
+    public void onSessionTimedOut(UserState userState) {
         if (userState != null) {
             removeUserState(userState);
         }
@@ -208,8 +236,50 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void createAndLoginFacebookUser(FacebookSignedRequest facebookSignedRequest, String nickName) throws UserAlreadyExistsException, AlreadyLoggedInException {
+        if (getUserFromSecurityContext() != null) {
+            throw new AlreadyLoggedInException(getUserFromSecurityContext());
+        }
+
+        if (getUser(facebookSignedRequest.getUserId()) != null) {
+            throw new UserAlreadyExistsException();
+        }
+
+        User user = new User();
+        user.registerFacebookUser(facebookSignedRequest, nickName);
+        privateSave(user);
+        userTrackingService.onUserCreated(user);
+
+        getUserState().setUser(nickName);
+        baseService.onUserRegistered();
+
+        loginFacebookUser(facebookSignedRequest);
+    }
+
+    @Override
+    public InvalidNickName isNickNameValid(String nickName) {
+        if (nickName == null || nickName.isEmpty()) {
+            return InvalidNickName.TO_SHORT;
+        }
+
+        if (nickName.length() < 3) {
+            return InvalidNickName.TO_SHORT;
+        }
+        if (!isNicknameFree(nickName)) {
+            return InvalidNickName.ALREADY_USED;
+        }
+
+        return null;
+    }
+
+    @Override
     public boolean isRegistered() {
         return hasUserState() && getUserState().isRegistered();
+    }
+
+    @Override
+    public boolean isFacebookUserRegistered(FacebookSignedRequest facebookUserId) {
+        return loadFacebookUserFromDb(facebookUserId.getUserId()) != null;
     }
 
     @Override
@@ -286,7 +356,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @SuppressWarnings("unchecked")
-    private User loadUserFromDbInSession(final String name) {
+    private User loadFacebookUserFromDb(String facebookUserId) {
+        // Get user from DB
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        criteria.add(Restrictions.eq("socialNet", User.SocialNet.FACEBOOK));
+        criteria.add(Restrictions.eq("socialNetUserId", facebookUserId));
+        List<User> users = criteria.list();
+        if (users == null || users.isEmpty()) {
+            return null;
+        } else {
+            return users.get(0);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private User loadUserFromDbInSession(String name) {
         // Get user from DB
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
@@ -297,6 +382,14 @@ public class UserServiceImpl implements UserService {
         } else {
             return users.get(0);
         }
+    }
+
+    private boolean isNicknameFree(String nickName) {
+        // Get user from DB
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
+        criteria.setProjection(Projections.rowCount());
+        criteria.add(Restrictions.eq("name", nickName));
+        return ((Number) criteria.list().get(0)).intValue() == 0;
     }
 
     private String getUserFromSecurityContext() {

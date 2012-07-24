@@ -14,6 +14,7 @@
 package com.btxtech.game.services.connection;
 
 import com.btxtech.game.services.cms.EditMode;
+import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import com.btxtech.game.services.user.UserState;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,4 +55,8 @@ public interface Session {
     EditMode getEditMode();
 
     void setEditMode(EditMode editMode);
+
+    FacebookSignedRequest getFacebookSignedRequest();
+
+    void setFacebookSignedRequest(FacebookSignedRequest facebookSignedRequest);
 }

@@ -15,6 +15,7 @@ package com.btxtech.game.services.user;
 
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
+import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +25,8 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -39,6 +42,10 @@ import java.util.Set;
 
 @Entity(name = "USER")
 public class User implements UserDetails, Serializable, CrudParent {
+    public enum SocialNet {
+        FACEBOOK
+    }
+
     @Id
     private String name;
     @Column(name = "passwordHash")
@@ -72,6 +79,9 @@ public class User implements UserDetails, Serializable, CrudParent {
             inverseJoinColumns = @JoinColumn(name = "allianceOffer")
     )
     private Collection<User> allianceOffers;
+    @Enumerated(EnumType.STRING)
+    private SocialNet socialNet;
+    private String socialNetUserId;
     @Transient
     private CrudChildServiceHelper<DbContentAccessControl> contentCrud;
     @Transient
@@ -98,6 +108,14 @@ public class User implements UserDetails, Serializable, CrudParent {
         this.name = name;
         this.password = password;
         this.email = email;
+        registerDate = new Date();
+    }
+
+    public void registerFacebookUser(FacebookSignedRequest facebookSignedRequest, String nickName) {
+        name = nickName;
+        socialNet = SocialNet.FACEBOOK;
+        socialNetUserId = facebookSignedRequest.getUserId();
+        // TODO this.email = facebookSignedRequest.get;
         registerDate = new Date();
     }
 
@@ -162,6 +180,14 @@ public class User implements UserDetails, Serializable, CrudParent {
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public SocialNet getSocialNet() {
+        return socialNet;
+    }
+
+    public String getSocialNetUserId() {
+        return socialNetUserId;
     }
 
     public Collection<User> getAlliances() {

@@ -17,6 +17,7 @@ package com.btxtech.game.services.user;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
+import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -24,10 +25,15 @@ import java.util.Collection;
 import java.util.List;
 
 public interface UserService extends UserDetailsService {
-
     boolean login(String userName, String password) throws AlreadyLoggedInException;
 
     boolean isRegistered();
+
+    boolean isFacebookUserRegistered(FacebookSignedRequest facebookSignedRequest);
+
+    void loginFacebookUser(FacebookSignedRequest facebookSignedRequest);
+
+    boolean isFacebookLoggedIn(FacebookSignedRequest facebookSignedRequest);
 
     User getUser();
 
@@ -42,6 +48,8 @@ public interface UserService extends UserDetailsService {
     List<User> getAllUsers();
 
     void createUser(String name, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, AlreadyLoggedInException;
+
+    void createAndLoginFacebookUser(FacebookSignedRequest facebookSignedRequest, String nickName) throws UserAlreadyExistsException, AlreadyLoggedInException;
 
     User getUser(UserState userState);
 
@@ -63,7 +71,7 @@ public interface UserService extends UserDetailsService {
 
     UserState getUserState(User user);
 
-    void onSessionTimedOut(UserState userState, String sessionId);
+    void onSessionTimedOut(UserState userState);
 
     List<UserState> getAllUserStates();
 
@@ -73,4 +81,5 @@ public interface UserService extends UserDetailsService {
 
     Collection<DbPageAccessControl> getDbPageAccessControls();
 
+    InvalidNickName isNickNameValid(String nickName);
 }
