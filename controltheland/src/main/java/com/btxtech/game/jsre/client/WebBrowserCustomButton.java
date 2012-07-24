@@ -24,12 +24,25 @@ import com.google.gwt.user.client.Window;
  * Time: 17:57:12
  */
 public class WebBrowserCustomButton extends ExtendedCustomButton {
-    public WebBrowserCustomButton(String image, String toolTip, final CmsUtil.CmsPredefinedPage cmsPredefinedPage) {
+    private String url;
+
+    public WebBrowserCustomButton(String image, String toolTip, CmsUtil.CmsPredefinedPage cmsPredefinedPage) {
         super(image, false, toolTip);
+        url = Connection.getInstance().getGameInfo().getPredefinedUrls().get(cmsPredefinedPage);
+        setup();
+    }
+
+    public WebBrowserCustomButton(String image, String toolTip, String url) {
+        super(image, false, toolTip);
+        this.url = url;
+        setup();
+    }
+
+    private void setup() {
         addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                Window.open(Connection.getInstance().getGameInfo().getPredefinedUrls().get(cmsPredefinedPage), CmsUtil.TARGET_BLANK, "");
+                Window.open(url, CmsUtil.TARGET_BLANK, "");
             }
         });
     }
