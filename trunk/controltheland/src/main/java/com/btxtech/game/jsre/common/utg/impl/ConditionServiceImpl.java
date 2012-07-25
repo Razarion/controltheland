@@ -122,8 +122,13 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
 
     @Override
     public String getProgressHtml(A a, I i) {
-        AbstractConditionTrigger<A, I> abstractConditionTrigger = getActorConditionsPrivate(a, i);
-        return abstractConditionTrigger.getAbstractComparison().createProgressHtml();
+        try {
+            AbstractConditionTrigger<A, I> abstractConditionTrigger = getActorConditionsPrivate(a, i);
+            return abstractConditionTrigger.getAbstractComparison().createProgressHtml();
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "ConditionServiceImpl.getProgressHtml()", e);
+            return "Internal error!";
+        }
     }
 
     private void handleTimerRemoval(AbstractConditionTrigger<A, I> abstractConditionTrigger) {

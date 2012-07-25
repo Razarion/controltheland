@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
+import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 
 /**
  * User: beat
@@ -34,5 +35,6 @@ public class SimulationDeltaStartupTask extends GameEngineStartupTask {
         ClientBase.getInstance().setConnectedToServer4FakedHouseSpace(false);
         SimulationInfo simulationInfo = (SimulationInfo) Connection.getInstance().getGameInfo();
         deltaSetupGameStructure(simulationInfo);
+        ClientTerritoryService.getInstance().clearTerritories();
     }
 }
