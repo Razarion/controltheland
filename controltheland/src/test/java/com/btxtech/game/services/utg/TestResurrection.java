@@ -104,6 +104,7 @@ public class TestResurrection extends AbstractServiceTest {
         Id actorBuilder = getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID);
         sendBuildCommand(actorBuilder, new Index(100, 100), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
+        // TODO failed on 25.07.2012
         Id actorFactory = getFirstSynItemId(actorBase, TEST_FACTORY_ITEM_ID);
         sendFactoryCommand(actorFactory, TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();

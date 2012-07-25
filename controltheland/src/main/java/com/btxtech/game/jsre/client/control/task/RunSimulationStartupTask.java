@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
+import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 
 /**
  * User: beat
@@ -42,5 +43,6 @@ public class RunSimulationStartupTask extends AbstractStartupTask {
         MapWindow.getInstance().displayVisibleItems();
         SideCockpit.getInstance().updateItemLimit();
         ClientChatHandler.getInstance().runSimulatedGame(Connection.getInstance(), ChatCockpit.getInstance(), ClientChatHandler.START_DELAY, ClientChatHandler.POLL_DELAY);
+        ClientTerritoryService.getInstance().clearTerritories();
     }
 }

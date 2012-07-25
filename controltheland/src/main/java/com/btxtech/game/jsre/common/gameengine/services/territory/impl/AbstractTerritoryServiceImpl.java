@@ -49,10 +49,14 @@ public abstract class AbstractTerritoryServiceImpl implements AbstractTerritoryS
     }
 
     public void setTerritories(Collection<Territory> territories) {
-        this.territories.clear();
+        clearTerritories();
         for (Territory territory : territories) {
             this.territories.put(territory.getId(), territory);
         }
+    }
+
+    public void clearTerritories() {
+        territories.clear();
     }
 
     public Territory getTerritoryTile(int tileX, int tileY) {
