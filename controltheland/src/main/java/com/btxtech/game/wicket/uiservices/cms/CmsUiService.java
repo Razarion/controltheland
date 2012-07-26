@@ -108,4 +108,8 @@ public interface CmsUiService {
     void setFacebookSignedRequest(FacebookSignedRequest facebookSignedRequest);
 
     void handleFacebookRequest(PageParameters pageParameters, Component component);
+
+    String getFacebookAppSecret();
+
+    String getFacebookAppId();
 }

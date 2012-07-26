@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.client.dialogs.highscore.HighscoreDialog;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
+import com.btxtech.game.jsre.common.FacebookUtils;
 import com.btxtech.game.jsre.common.ProgressBar;
 import com.btxtech.game.jsre.common.packets.BoxPickedPacket;
 import com.google.gwt.dom.client.Style;
@@ -87,9 +88,9 @@ public class SideCockpit {
     private static final int RADAR_W = 169;
     private static final int RADAR_H = 178;
     // Buttons
-    private static final int BNT_X = 181;
-    private static final int BNT_Y = 72;
-    private static final int BNT_Y_SPACE = 27;
+    private static final int BNT_X = 179;
+    private static final int BNT_Y = 82;
+    private static final int BNT_Y_SPACE = 26;
     private static final int BNT_INVENTORY_X = BNT_X;
     private static final int BNT_INVENTORY_Y = BNT_Y;
     private static final int BNT_ALLIANCE_X = BNT_X;
@@ -101,8 +102,10 @@ public class SideCockpit {
     private static final int BNT_STAT_X = BNT_X;
     private static final int BNT_STAT_Y = BNT_MUTE_Y + BNT_Y_SPACE;
     // Social net
-    private static final int BNT_FB_COMMUNITY_X = 188;
+    private static final int BNT_FB_COMMUNITY_X = 185;
     private static final int BNT_FB_COMMUNITY_Y = 213;
+    private static final int BNT_FB_INVITE_X = 177;
+    private static final int BNT_FB_INVITE_Y = 49;
     // Debug
     private static final int DEBUG_X = 10;
     private static final int DEBUG_Y = 222;
@@ -303,6 +306,12 @@ public class SideCockpit {
     private void setupSocialNetPanel() {
         WebBrowserCustomButton facebookCommunity = new WebBrowserCustomButton("facebookcommunity", ToolTips.TOOL_TIP_FACEBOOK_COMMUNITY, "http://www.facebook.com/RazarionCommunity");
         mainPanel.add(facebookCommunity, BNT_FB_COMMUNITY_X, BNT_FB_COMMUNITY_Y);
+        mainPanel.add(new ExtendedCustomButton("facebookinvite", false, ToolTips.TOOL_TIP_FACEBOOK_INVITE, new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                FacebookUtils.invite();
+            }
+        }), BNT_FB_INVITE_X, BNT_FB_INVITE_Y);
     }
 
     public void debugAbsoluteCursorPos(int x, int y) {

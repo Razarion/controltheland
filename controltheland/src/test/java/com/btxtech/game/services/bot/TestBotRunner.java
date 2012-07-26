@@ -136,7 +136,7 @@ public class TestBotRunner extends AbstractServiceTest {
         waitForBotRunner(botRunner);
         assertWholeItemCount(1);
         SimpleBase simpleBase2 = botRunner.getBase();
-        // TODO Failed on 24.07.2012
+        // TODO Failed on 24.07.2012, 26.07.2012
         Assert.assertNotSame(simpleBase1, simpleBase2);
         Assert.assertEquals("Bot2", baseService.getBaseName(simpleBase2));
 

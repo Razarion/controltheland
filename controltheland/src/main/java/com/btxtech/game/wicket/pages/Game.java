@@ -23,7 +23,12 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.util.template.PackagedTextTemplate;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: beat
@@ -46,6 +51,8 @@ public class Game extends WebPage {
             return;
         }
 
+        setupFacebookJsSdk();
+
         GameStartupSeq gameStartupSeq;
 
         if (parameters.containsKey(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID)) {
@@ -58,6 +65,14 @@ public class Game extends WebPage {
         add(new Label("startupTaskText", gameStartupSeq.getAbstractStartupTaskEnum()[0].getStartupTaskEnumHtmlHelper().getNiceText()));
 
         setupStartupSeq(gameStartupSeq, levelTaskId);
+    }
+
+    private void setupFacebookJsSdk() {
+        PackagedTextTemplate jsTemplate = new PackagedTextTemplate(Game.class, "FacebookJavaScriptSdk.js");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("FACEBOOK_APP_ID", cmsUiService.getFacebookAppId());
+        parameters.put("CHANNEL_URL", "//www.razarion.com/FacebookChannelFile.html");
+        add(new Label("facebookJsSkd", new Model<>(jsTemplate.asString(parameters))).setEscapeModelStrings(false));
     }
 
     private void setupStartupSeq(GameStartupSeq gameStartupSeq, Integer levelTaskId) {

@@ -43,5 +43,6 @@ public class ToolTips {
     public static final String TOOL_TIP_RADAR_PAGE_DOWN = "Page down";
     // Social net
     public static final String TOOL_TIP_FACEBOOK_COMMUNITY = "Visit razarion on facebook";
+    public static final String TOOL_TIP_FACEBOOK_INVITE = "Invite friends from Facebook";
 
 }
