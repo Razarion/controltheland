@@ -121,8 +121,10 @@ public class CmsUiServiceImpl implements CmsUiService {
     private UserGuidanceService userGuidanceService;
     @Value(value = "${facebook.appsecret}")
     private String facebookAppSecret;
-    @Value(value = "${facebook.appkey}")
-    private String facebookAppKey;
+    @Value(value = "${facebook.appid}")
+    private String facebookAppId;
+    @Value(value = "${facebook.appnamespace}")
+    private String facebookAppNameSpace;
 
     private Log log = LogFactory.getLog(CmsUiServiceImpl.class);
     private Map<CmsUtil.CmsPredefinedPage, String> predefinedUrls = new HashMap<>();
@@ -1118,8 +1120,8 @@ public class CmsUiServiceImpl implements CmsUiService {
                     // Is NOT authorized by facebook
                     PackagedTextTemplate jsTemplate = new PackagedTextTemplate(CmsPage.class, "FacebookOAuthDialogRedirect.js");
                     Map<String, Object> parameters = new HashMap<>();
-                    parameters.put("FACEBOOK_APP_ID", facebookAppKey);
-                    parameters.put("FACEBOOK_APP_NAMESPACE", "razarion");
+                    parameters.put("FACEBOOK_APP_ID", facebookAppId);
+                    parameters.put("FACEBOOK_APP_NAMESPACE", facebookAppNameSpace);
                     //parameters.put("FACEBOOK_APP_NAMESPACE", "testing_purposes");
                     parameters.put("FACEBOOK_PERMISSIONS", "");
                     component.add(new StringHeaderContributor(new JavaScriptTemplate(jsTemplate).asString(parameters)));
@@ -1128,5 +1130,15 @@ public class CmsUiServiceImpl implements CmsUiService {
         } catch (Exception e) {
             log.error("", e);
         }
+    }
+
+    @Override
+    public String getFacebookAppSecret() {
+        return facebookAppSecret;
+    }
+
+    @Override
+    public String getFacebookAppId() {
+        return facebookAppId;
     }
 }
