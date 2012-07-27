@@ -56,11 +56,9 @@ abstract public class AbstractItemService implements ItemService {
     /**
      * Iterates over all sync items
      *
-     *
-     *
      * @param includeNoPosition
-     * @param defaultReturn if iteration is finished without an aport, this param is returned
-     * @param itemHandler   see ItemHandler
+     * @param defaultReturn     if iteration is finished without an aport, this param is returned
+     * @param itemHandler       see ItemHandler
      * @return the parameter from the itemHandler or the defaultReturn
      */
     protected abstract <T> T iterateOverItems(boolean includeNoPosition, T defaultReturn, ItemHandler<T> itemHandler);
@@ -413,6 +411,21 @@ abstract public class AbstractItemService implements ItemService {
                 }
 
                 itemsInBase.add(syncItem);
+                return null;
+            }
+        });
+        return itemsInBase;
+    }
+
+    @Override
+    public Collection<SyncItem> getItemsInRectangleFast(final Rectangle rectangle) {
+        final Collection<SyncItem> itemsInBase = new ArrayList<SyncItem>();
+        iterateOverItems(false, null, new ItemHandler<Void>() {
+            @Override
+            public Void handleItem(SyncItem syncItem) {
+                if (rectangle.contains(syncItem.getSyncItemArea().getPosition())) {
+                    itemsInBase.add(syncItem);
+                }
                 return null;
             }
         });
