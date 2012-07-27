@@ -1,6 +1,6 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
+import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.mgmt.ClientPerfmonDto;
 import com.btxtech.game.services.mgmt.ClientPerfmonEntry;
 import com.btxtech.game.services.mgmt.MgmtService;
@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * User: beat
@@ -78,8 +77,7 @@ public class ClientPerfmonDetail extends MgmtWebPage {
         chart.setSize(600, 450);
         chart.setBarWidth(5);
         chart.setSpaceWithinGroupsOfBars(5);
-        //chart.setDataStacked(true);
-        chart.setTitle("Work time", Color.BLACK, 16);
+        chart.setTitle("Work time: " + DateUtil.formatDuration(clientPerfmonDto.getTotalTime()), Color.BLACK, 16);
         chart.setGrid(100, 10, 3, 2);
         chart.setBackgroundFill(Fills.newSolidFill(Color.ALICEBLUE));
         LinearGradientFill fill = Fills.newLinearGradientFill(0, Color.LAVENDER, 100);
