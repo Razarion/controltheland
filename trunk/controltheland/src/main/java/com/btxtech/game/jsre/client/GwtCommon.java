@@ -244,4 +244,16 @@ public class GwtCommon {
     public static void dumpStackToServer(String message) {
         log.log(Level.SEVERE, "Dump Stack: " + message, new Exception("StackTrace"));
     }
+
+    public static Integer getUrlIntegerParameter(String key) {
+        String valueString = Window.Location.getParameter(key);
+        if (valueString == null) {
+            return null;
+        }
+        try {
+            return Integer.parseInt(valueString);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
 }

@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 public class Game implements EntryPoint {
     public static final String DEBUG_PARAM = "debug";
+    public static final String PERFMON_PARAM = "perfmon";
     public static final String STARTUP_SEQ_ID = "startSeq";
     public static final String LEVEL_TASK_ID = "taskId";
     private static boolean isDebug = false;
@@ -36,7 +37,7 @@ public class Game implements EntryPoint {
             isDebug = Boolean.parseBoolean(Window.Location.getParameter(DEBUG_PARAM));
             ClientServices.getInstance().connectStartupListeners();
             ClientServices.getInstance().getClientRunner().start(getStartupSeqFromHtml());
-            Perfmon.getInstance().startTransmit();
+            Perfmon.getInstance().startTransmit(GwtCommon.getUrlIntegerParameter(PERFMON_PARAM));
         } catch (Throwable t) {
             GwtCommon.handleException(t);
         }

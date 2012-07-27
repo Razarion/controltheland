@@ -30,7 +30,7 @@ public class Perfmon {
         startTime = System.currentTimeMillis();
     }
 
-    public void startTransmit() {
+    public void startTransmit(Integer delayInSeconds) {
         Timer timer = new TimerPerfmon(PerfmonEnum.PERFMON) {
             @Override
             public void runPerfmon() {
@@ -41,7 +41,11 @@ public class Perfmon {
                 }
             }
         };
-        timer.scheduleRepeating((int) ClientDateUtil.MILLIS_IN_MINUTE * SENDING_DELAY_MINUTES);
+        if (delayInSeconds != null) {
+            timer.scheduleRepeating((int) ClientDateUtil.MILLIS_IN_SECOND * delayInSeconds);
+        } else {
+            timer.scheduleRepeating((int) ClientDateUtil.MILLIS_IN_MINUTE * SENDING_DELAY_MINUTES);
+        }
     }
 
     public void onEntered(PerfmonEnum perfmonEnum) {
@@ -61,7 +65,7 @@ public class Perfmon {
         if (workTime == null) {
             workTime = 0;
         }
-        workTimes.put(perfmonEnum, workTime + (int)(System.currentTimeMillis() - startTime));
+        workTimes.put(perfmonEnum, workTime + (int) (System.currentTimeMillis() - startTime));
     }
 
     public Map<PerfmonEnum, Integer> getSummary() {
@@ -69,7 +73,7 @@ public class Perfmon {
     }
 
     public int getTotalTime() {
-        return (int)(System.currentTimeMillis() - startTime);
+        return (int) (System.currentTimeMillis() - startTime);
     }
 
 }
