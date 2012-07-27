@@ -16,6 +16,8 @@ package com.btxtech.game.jsre.client.effects;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.SoundHandler;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 
 import java.util.HashSet;
@@ -35,9 +37,9 @@ public class AttackEffectHandler {
      * Singleton
      */
     private AttackEffectHandler() {
-        Timer timer = new Timer() {
+        Timer timer = new TimerPerfmon(PerfmonEnum.ATTACK_EFFECT_HANDLER) {
             @Override
-            public void run() {
+            public void runPerfmon() {
                 try {
                     for (Iterator<MuzzleFlash> it = attacks.iterator(); it.hasNext();) {
                         MuzzleFlash attack = it.next();

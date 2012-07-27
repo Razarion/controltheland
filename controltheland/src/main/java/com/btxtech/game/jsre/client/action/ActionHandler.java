@@ -48,6 +48,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 
 import java.util.Collection;
@@ -78,9 +80,9 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
      * Singleton
      */
     private ActionHandler() {
-        Timer timer = new Timer() {
+        Timer timer = new TimerPerfmon(PerfmonEnum.ACTION_HANDLER) {
             @Override
-            public void run() {
+            public void runPerfmon() {
                 tick();
             }
         };

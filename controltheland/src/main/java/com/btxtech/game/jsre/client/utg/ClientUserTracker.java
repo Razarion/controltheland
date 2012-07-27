@@ -27,6 +27,7 @@ import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
@@ -40,6 +41,7 @@ import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
@@ -104,9 +106,9 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
     public void startEventTracking() {
         stopEventTracking();
         isCollecting = true;
-        timer = new Timer() {
+        timer = new TimerPerfmon(PerfmonEnum.CLIENT_USER_TRACKIN) {
             @Override
-            public void run() {
+            public void runPerfmon() {
                 try {
                     sendEventTrackerItems();
                 } catch (Throwable t) {

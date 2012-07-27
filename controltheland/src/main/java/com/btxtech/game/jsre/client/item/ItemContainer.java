@@ -46,7 +46,9 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 
 import java.util.ArrayList;
@@ -72,9 +74,9 @@ public class ItemContainer extends AbstractItemService {
      * Singleton
      */
     private ItemContainer() {
-        Timer timer = new Timer() {
+        Timer timer = new TimerPerfmon(PerfmonEnum.ITEM_CONTAINER) {
             @Override
-            public void run() {
+            public void runPerfmon() {
                 for (Iterator<Map.Entry<Id, ClientSyncItem>> it = orphanItems.entrySet().iterator(); it.hasNext(); ) {
                     Map.Entry<Id, ClientSyncItem> entry = it.next();
                     long insertTime = entry.getKey().getUserTimeStamp();

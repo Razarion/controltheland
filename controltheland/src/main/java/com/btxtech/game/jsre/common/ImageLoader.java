@@ -1,9 +1,11 @@
 package com.btxtech.game.jsre.common;
 
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -89,10 +91,10 @@ public class ImageLoader {
         if (timer != null) {
             timer.cancel();
         }
-        timer = new Timer() {
+        timer = new TimerPerfmon(PerfmonEnum.IMAGE_LOADER) {
 
             @Override
-            public void run() {
+            public void runPerfmon() {
                 timer = null;
                 checkProgress();
             }

@@ -19,9 +19,11 @@ import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 
 import java.util.ArrayList;
@@ -118,9 +120,9 @@ public class SimulationConditionServiceImpl extends ConditionServiceImpl<SimpleB
 
     @Override
     protected void startTimer() {
-        timer = new Timer() {
+        timer = new TimerPerfmon(PerfmonEnum.SIMULATION_CONDITION_SERVICE) {
             @Override
-            public void run() {
+            public void runPerfmon() {
                 onTimer();
             }
         };

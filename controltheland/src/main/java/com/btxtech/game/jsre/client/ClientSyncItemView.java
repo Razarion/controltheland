@@ -28,6 +28,8 @@ import com.btxtech.game.jsre.client.utg.SpeechBubbleHandler;
 import com.btxtech.game.jsre.common.gameengine.itemType.BuildupStep;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
+import com.btxtech.game.jsre.common.perfmon.Perfmon;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -69,8 +71,13 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         addDomHandler(new MouseUpHandler() {
             @Override
             public void onMouseUp(MouseUpEvent event) {
-                GwtCommon.preventDefault(event);
-                ChatCockpit.getInstance().blurFocus();
+                try {
+                    Perfmon.getInstance().onEntered(PerfmonEnum.ITEM_MOUSE_UP);
+                    GwtCommon.preventDefault(event);
+                    ChatCockpit.getInstance().blurFocus();
+                } finally {
+                    Perfmon.getInstance().onLeft(PerfmonEnum.ITEM_MOUSE_UP);
+                }
             }
         }, MouseUpEvent.getType());
         GwtCommon.preventNativeSelection(this);
@@ -301,34 +308,39 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
 
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
-        if (SelectionHandler.getInstance().isSellMode()) {
-            if (clientSyncItem.isMyOwnProperty()) {
-                Connection.getInstance().sellItem(clientSyncItem.getSyncItem());
-                SelectionHandler.getInstance().setSellMode(false);
-            }
-        } else if (SideCockpit.getInstance().getCockpitMode().isLaunchMode() && clientSyncItem.isEnemy()) {
-            int x = mouseDownEvent.getRelativeX(TerrainView.getInstance().getCanvas().getElement()) + TerrainView.getInstance().getViewOriginLeft();
-            int y = mouseDownEvent.getRelativeY(TerrainView.getInstance().getCanvas().getElement()) + TerrainView.getInstance().getViewOriginTop();
-            ActionHandler.getInstance().executeLaunchCommand(x, y);
-        } else {
-            if (clientSyncItem.isSyncResourceItem()) {
-                SelectionHandler.getInstance().setTargetSelected(this, mouseDownEvent);
-            } else if (clientSyncItem.isSyncBaseItem()) {
+        try {
+            Perfmon.getInstance().onEntered(PerfmonEnum.ITEM_MOUSE_DOWN);
+            if (SelectionHandler.getInstance().isSellMode()) {
                 if (clientSyncItem.isMyOwnProperty()) {
-                    Group group = new Group();
-                    group.addItem(clientSyncItem);
-                    SelectionHandler.getInstance().setItemGroupSelected(group);
-                } else if (clientSyncItem.isEnemy()) {
-                    SelectionHandler.getInstance().setTargetSelected(this, mouseDownEvent);
+                    Connection.getInstance().sellItem(clientSyncItem.getSyncItem());
+                    SelectionHandler.getInstance().setSellMode(false);
                 }
-            } else if (clientSyncItem.isSyncBoxItem()) {
-                SelectionHandler.getInstance().setTargetSelected(this, mouseDownEvent);
+            } else if (SideCockpit.getInstance().getCockpitMode().isLaunchMode() && clientSyncItem.isEnemy()) {
+                int x = mouseDownEvent.getRelativeX(TerrainView.getInstance().getCanvas().getElement()) + TerrainView.getInstance().getViewOriginLeft();
+                int y = mouseDownEvent.getRelativeY(TerrainView.getInstance().getCanvas().getElement()) + TerrainView.getInstance().getViewOriginTop();
+                ActionHandler.getInstance().executeLaunchCommand(x, y);
             } else {
-                throw new IllegalArgumentException(this + " onMouseDown: SyncItem not supported: " + clientSyncItem);
+                if (clientSyncItem.isSyncResourceItem()) {
+                    SelectionHandler.getInstance().setTargetSelected(this, mouseDownEvent);
+                } else if (clientSyncItem.isSyncBaseItem()) {
+                    if (clientSyncItem.isMyOwnProperty()) {
+                        Group group = new Group();
+                        group.addItem(clientSyncItem);
+                        SelectionHandler.getInstance().setItemGroupSelected(group);
+                    } else if (clientSyncItem.isEnemy()) {
+                        SelectionHandler.getInstance().setTargetSelected(this, mouseDownEvent);
+                    }
+                } else if (clientSyncItem.isSyncBoxItem()) {
+                    SelectionHandler.getInstance().setTargetSelected(this, mouseDownEvent);
+                } else {
+                    throw new IllegalArgumentException(this + " onMouseDown: SyncItem not supported: " + clientSyncItem);
+                }
             }
+            GwtCommon.preventDefault(mouseDownEvent);
+            ChatCockpit.getInstance().blurFocus();
+        } finally {
+            Perfmon.getInstance().onLeft(PerfmonEnum.ITEM_MOUSE_DOWN);
         }
-        GwtCommon.preventDefault(mouseDownEvent);
-        ChatCockpit.getInstance().blurFocus();
     }
 
     private void setupHealthBar() {
@@ -451,16 +463,26 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
 
     @Override
     public void onMouseOver(MouseOverEvent event) {
-        mouseOver = true;
-        CursorHandler.getInstance().setItemCursor(this, cursorItemState);
-        SpeechBubbleHandler.getInstance().show(getClientSyncItem().getSyncItem());
-        GwtCommon.preventDefault(event);
+        try {
+            Perfmon.getInstance().onEntered(PerfmonEnum.ITEM_MOUSE_OVER);
+            mouseOver = true;
+            CursorHandler.getInstance().setItemCursor(this, cursorItemState);
+            SpeechBubbleHandler.getInstance().show(getClientSyncItem().getSyncItem());
+            GwtCommon.preventDefault(event);
+        } finally {
+            Perfmon.getInstance().onLeft(PerfmonEnum.ITEM_MOUSE_OVER);
+        }
     }
 
     @Override
     public void onMouseOut(MouseOutEvent event) {
-        mouseOver = false;
-        SpeechBubbleHandler.getInstance().onSyncItemMouseOut(clientSyncItem.getSyncItem());
+        try {
+            Perfmon.getInstance().onEntered(PerfmonEnum.ITEM_MOUSE_OUT);
+            mouseOver = false;
+            SpeechBubbleHandler.getInstance().onSyncItemMouseOut(clientSyncItem.getSyncItem());
+        } finally {
+            Perfmon.getInstance().onLeft(PerfmonEnum.ITEM_MOUSE_OUT);
+        }
     }
 
     public ClientSyncItem getClientSyncItem() {

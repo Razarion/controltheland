@@ -14,10 +14,12 @@
 package com.btxtech.game.services.mgmt.impl;
 
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.mgmt.BackupSummary;
+import com.btxtech.game.services.mgmt.ClientPerfmonDto;
 import com.btxtech.game.services.mgmt.DbViewDTO;
 import com.btxtech.game.services.mgmt.MemoryUsageHistory;
 import com.btxtech.game.services.mgmt.MgmtService;
@@ -62,8 +64,12 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -94,6 +100,7 @@ public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
     private MemoryUsageContainer noHeapMemory = new MemoryUsageContainer(MEMORY_SAMPLE_SIZE);
     private ScheduledThreadPoolExecutor memoryGrabberThreadPool;
     private boolean isRunning = false;
+    private Map<String, ClientPerfmonDto> clientPerfmonEntries = new HashMap<>();
 
     static {
         File tmpLogDir = null;
@@ -433,6 +440,38 @@ public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
     @Override
     public int getPhase() {
         return Integer.MAX_VALUE;
+    }
+
+    @Override
+    public void saveClientPerfmonData(String sessionId, Map<PerfmonEnum, Integer> workTimes, int totalTime) {
+        ClientPerfmonDto clientPerfmonDto = clientPerfmonEntries.get(sessionId);
+        if (clientPerfmonDto != null) {
+            clientPerfmonDto.setWorkTimes(workTimes, totalTime);
+        } else {
+            clientPerfmonDto = new ClientPerfmonDto(sessionId, workTimes, totalTime);
+            clientPerfmonEntries.put(sessionId, clientPerfmonDto);
+        }
+    }
+
+    @Override
+    public List<ClientPerfmonDto> getClientPerfmonData() {
+        List<ClientPerfmonDto> list = new ArrayList<>(clientPerfmonEntries.values());
+        Collections.sort(list, new Comparator<ClientPerfmonDto>() {
+            @Override
+            public int compare(ClientPerfmonDto o1, ClientPerfmonDto o2) {
+                return o2.getLastActivated().compareTo(o1.getLastActivated());
+            }
+        });
+        return list;
+    }
+
+    @Override
+    public ClientPerfmonDto getClientPerfmonData(String sessionId) {
+        ClientPerfmonDto clientPerfmonDto = clientPerfmonEntries.get(sessionId);
+        if (clientPerfmonDto == null) {
+            throw new IllegalArgumentException("ClientPerfmonData for session id does not exist: " + sessionId);
+        }
+        return clientPerfmonDto;
     }
 }
 

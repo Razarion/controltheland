@@ -4,6 +4,8 @@ import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.bot.impl.BotRunner;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 
 import java.util.logging.Logger;
@@ -25,9 +27,9 @@ public class ClientBotRunner extends BotRunner {
     @Override
     protected void scheduleTimer(long delay, final Runnable runnable) {
         killTimer();
-        botThread = new Timer() {
+        botThread = new TimerPerfmon(PerfmonEnum.BOT_RUNNER) {
             @Override
-            public void run() {
+            public void runPerfmon() {
                 runnable.run();
             }
         };
@@ -48,9 +50,9 @@ public class ClientBotRunner extends BotRunner {
             log.severe("Bot thread was not stopped before: " + getBotConfig());
             killBotThread();
         }
-        botThread = new Timer() {
+        botThread = new TimerPerfmon(PerfmonEnum.BOT_THREAD) {
             @Override
-            public void run() {
+            public void runPerfmon() {
                 runnable.run();
             }
         };

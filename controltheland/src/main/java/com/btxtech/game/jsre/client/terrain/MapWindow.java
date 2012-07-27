@@ -26,6 +26,9 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemViewContainer;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
+import com.btxtech.game.jsre.common.perfmon.Perfmon;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -72,9 +75,9 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler {
         STOP
     }
 
-    private Timer timer = new Timer() {
+    private Timer timer = new TimerPerfmon(PerfmonEnum.SCROLL) {
         @Override
-        public void run() {
+        public void runPerfmon() {
             autoScroll();
         }
     };
@@ -90,13 +93,23 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler {
         mapWindow.addMouseDownHandler(new MouseDownHandler() {
             @Override
             public void onMouseDown(MouseDownEvent event) {
-                TerrainView.getInstance().onMouseDown(event);
+                try {
+                    Perfmon.getInstance().onEntered(PerfmonEnum.MAP_WINDOW_MOUSE_DOWN);
+                    TerrainView.getInstance().onMouseDown(event);
+                } finally {
+                    Perfmon.getInstance().onLeft(PerfmonEnum.MAP_WINDOW_MOUSE_DOWN);
+                }
             }
         });
         mapWindow.addMouseUpHandler(new MouseUpHandler() {
             @Override
             public void onMouseUp(MouseUpEvent event) {
-                TerrainView.getInstance().onMouseUp(event);
+                try {
+                    Perfmon.getInstance().onEntered(PerfmonEnum.MAP_WINDOW_MOUSE_UP);
+                    TerrainView.getInstance().onMouseUp(event);
+                } finally {
+                    Perfmon.getInstance().onLeft(PerfmonEnum.MAP_WINDOW_MOUSE_UP);
+                }
             }
         });
 
@@ -104,9 +117,12 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler {
             @Override
             public void onPreviewNativeEvent(Event.NativePreviewEvent event) {
                 try {
+                    Perfmon.getInstance().onEntered(PerfmonEnum.MAP_WINDOW_EVENT_PREVIEW);
                     handlePreviewNativeEvent(event);
                 } catch (Throwable t) {
                     GwtCommon.handleException(t);
+                } finally {
+                    Perfmon.getInstance().onLeft(PerfmonEnum.MAP_WINDOW_EVENT_PREVIEW);
                 }
             }
         });
@@ -217,36 +233,41 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler {
 
     @Override
     public void onMouseMove(MouseMoveEvent event) {
-        int x = event.getRelativeX(mapWindow.getElement());
-        int y = event.getRelativeY(mapWindow.getElement());
-        int height = mapWindow.getOffsetHeight();
-        int width = mapWindow.getOffsetWidth();
+        try {
+            Perfmon.getInstance().onEntered(PerfmonEnum.MAP_WINDOW_MOUSE_MOVE);
+            int x = event.getRelativeX(mapWindow.getElement());
+            int y = event.getRelativeY(mapWindow.getElement());
+            int height = mapWindow.getOffsetHeight();
+            int width = mapWindow.getOffsetWidth();
 
-        if (CockpitUtil.isInsideCockpit(new Index(x, y))) {
-            executeAutoScrollMouse(ScrollDirection.STOP, ScrollDirection.STOP);
-        } else {
-            ScrollDirection tmpScrollDirectionX = ScrollDirection.STOP;
-            ScrollDirection tmpScrollDirectionY = ScrollDirection.STOP;
-            if (x < SCROLL_AUTO_MOUSE_DETECTION_WIDTH) {
-                tmpScrollDirectionX = ScrollDirection.WEST;
-            } else if (x > width - SCROLL_AUTO_MOUSE_DETECTION_WIDTH) {
-                tmpScrollDirectionX = ScrollDirection.EAST;
+            if (CockpitUtil.isInsideCockpit(new Index(x, y))) {
+                executeAutoScrollMouse(ScrollDirection.STOP, ScrollDirection.STOP);
+            } else {
+                ScrollDirection tmpScrollDirectionX = ScrollDirection.STOP;
+                ScrollDirection tmpScrollDirectionY = ScrollDirection.STOP;
+                if (x < SCROLL_AUTO_MOUSE_DETECTION_WIDTH) {
+                    tmpScrollDirectionX = ScrollDirection.WEST;
+                } else if (x > width - SCROLL_AUTO_MOUSE_DETECTION_WIDTH) {
+                    tmpScrollDirectionX = ScrollDirection.EAST;
+                }
+
+                if (y < SCROLL_AUTO_MOUSE_DETECTION_WIDTH) {
+                    tmpScrollDirectionY = ScrollDirection.NORTH;
+                } else if (y > height - SCROLL_AUTO_MOUSE_DETECTION_WIDTH) {
+                    tmpScrollDirectionY = ScrollDirection.SOUTH;
+                }
+                executeAutoScrollMouse(tmpScrollDirectionX, tmpScrollDirectionY);
             }
 
-            if (y < SCROLL_AUTO_MOUSE_DETECTION_WIDTH) {
-                tmpScrollDirectionY = ScrollDirection.NORTH;
-            } else if (y > height - SCROLL_AUTO_MOUSE_DETECTION_WIDTH) {
-                tmpScrollDirectionY = ScrollDirection.SOUTH;
+            if (Game.isDebug()) {
+                SideCockpit.getInstance().debugAbsoluteCursorPos(x + TerrainView.getInstance().getViewOriginLeft(), y + TerrainView.getInstance().getViewOriginTop());
             }
-            executeAutoScrollMouse(tmpScrollDirectionX, tmpScrollDirectionY);
-        }
 
-        if (Game.isDebug()) {
-            SideCockpit.getInstance().debugAbsoluteCursorPos(x + TerrainView.getInstance().getViewOriginLeft(), y + TerrainView.getInstance().getViewOriginTop());
-        }
-
-        if (terrainMouseMoveListener != null) {
-            terrainMouseMoveListener.onMove(x + TerrainView.getInstance().getViewOriginLeft(), y + TerrainView.getInstance().getViewOriginTop(), x, y);
+            if (terrainMouseMoveListener != null) {
+                terrainMouseMoveListener.onMove(x + TerrainView.getInstance().getViewOriginLeft(), y + TerrainView.getInstance().getViewOriginTop(), x, y);
+            }
+        } finally {
+            Perfmon.getInstance().onLeft(PerfmonEnum.MAP_WINDOW_MOUSE_MOVE);
         }
     }
 

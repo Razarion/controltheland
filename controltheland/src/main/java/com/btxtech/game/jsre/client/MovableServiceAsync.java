@@ -27,6 +27,7 @@ import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
@@ -40,6 +41,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The async counterpart of <code>MovableService</code>.
@@ -108,4 +110,6 @@ public interface MovableServiceAsync {
     void activateQuest(int questId, AsyncCallback<Void> async);
 
     void loadCurrentStatisticEntryInfos(AsyncCallback<Collection<CurrentStatisticEntryInfo>> async);
+
+    void sendPerfmonData(Map<PerfmonEnum, Integer> workTimes, int totalTime, AsyncCallback<Void> async);
 }

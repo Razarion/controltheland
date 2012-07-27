@@ -1,5 +1,7 @@
 package com.btxtech.game.jsre.client.utg.tip;
 
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 
 import java.util.ArrayList;
@@ -47,14 +49,14 @@ public class TipManager {
         if (!nextTip.isRepeat()) {
             tips.remove(0);
         }
-        timer = new Timer() {
+        timer = new TimerPerfmon(PerfmonEnum.TIP_MANAGER_SHOW) {
             @Override
-            public void run() {
+            public void runPerfmon() {
                 showActiveTipPanel(nextTip);
-                timer = new Timer() {
+                timer = new TimerPerfmon(PerfmonEnum.TIP_MANAGER_HIDE) {
 
                     @Override
-                    public void run() {
+                    public void runPerfmon() {
                         closeActiveTipPanel();
                         displayNextTip();
                     }

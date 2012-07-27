@@ -62,6 +62,9 @@ import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.packets.XpPacket;
+import com.btxtech.game.jsre.common.perfmon.Perfmon;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
@@ -79,6 +82,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -208,9 +212,9 @@ public class Connection implements StartupProgressListener, ConnectionI {
     }
 
     public void startSyncInfoPoll() {
-        timer = new Timer() {
+        timer = new TimerPerfmon(PerfmonEnum.SYNC_POLL) {
             @Override
-            public void run() {
+            public void runPerfmon() {
                 pollSyncInfo();
             }
         };
@@ -238,10 +242,12 @@ public class Connection implements StartupProgressListener, ConnectionI {
 
             @Override
             public void onSuccess(List<Packet> packets) {
+                Perfmon.getInstance().onEntered(PerfmonEnum.SYNC_HANDLE_PACKETS);
                 try {
                     disconnectionCount = 0;
                     handlePackets(packets);
                 } finally {
+                    Perfmon.getInstance().onLeft(PerfmonEnum.SYNC_HANDLE_PACKETS);
                     scheduleTimer();
                 }
             }
@@ -763,4 +769,11 @@ public class Connection implements StartupProgressListener, ConnectionI {
             });
         }
     }
+
+    public void sendPerfmonData(Map<PerfmonEnum, Integer> workTimes, int totalTime) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.sendPerfmonData(workTimes, totalTime, new VoidAsyncCallback("sendPerfmonData"));
+        }
+    }
+
 }

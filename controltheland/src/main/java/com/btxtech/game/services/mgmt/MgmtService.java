@@ -14,10 +14,12 @@
 package com.btxtech.game.services.mgmt;
 
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -54,4 +56,10 @@ public interface MgmtService {
     MemoryUsageHistory getHeapMemoryUsageHistory();
 
     MemoryUsageHistory getNoHeapMemoryUsageHistory();
+
+    void saveClientPerfmonData(String sessionId, Map<PerfmonEnum, Integer> workTimes, int totalTime);
+
+    List<ClientPerfmonDto> getClientPerfmonData();
+
+    ClientPerfmonDto getClientPerfmonData(String sessionId);
 }

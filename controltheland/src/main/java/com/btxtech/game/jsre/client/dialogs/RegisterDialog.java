@@ -17,11 +17,13 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -146,9 +148,9 @@ public class RegisterDialog extends Dialog {
             return;
         }
 
-        timer = new Timer() {
+        timer = new TimerPerfmon(PerfmonEnum.REGISTER_DIALOG) {
             @Override
-            public void run() {
+            public void runPerfmon() {
                 if (!Connection.getInstance().isRegistered()) {
                     DialogManager.showDialog(new RegisterDialog(), DialogManager.Type.QUEUE_ABLE);
                 }
