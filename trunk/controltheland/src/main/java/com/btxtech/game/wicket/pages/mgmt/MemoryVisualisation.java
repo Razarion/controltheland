@@ -15,8 +15,6 @@ import com.googlecode.charts4j.LineChart;
 import com.googlecode.charts4j.LineStyle;
 import com.googlecode.charts4j.LinearGradientFill;
 import com.googlecode.charts4j.Plots;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.panel.Panel;
 
 import java.text.SimpleDateFormat;
@@ -66,24 +64,7 @@ public class MemoryVisualisation extends Panel {
         fill.addColorAndOffset(Color.newColor("2E2B2A"), 0);
         chart.setAreaFill(fill);
 
-        add(new Image(chart.toURLString()));
-    }
-
-    private class Image extends MarkupContainer {
-        private String chartString;
-
-        public Image(String chartString) {
-            super("image");
-            this.chartString = chartString;
-        }
-
-        @Override
-        protected void onComponentTag(ComponentTag tag) {
-            super.onComponentTag(tag);
-            checkComponentTag(tag, "img");
-            tag.put("src", chartString);
-        }
-
+        add(new Charts4jImage(chart));
     }
 
 }

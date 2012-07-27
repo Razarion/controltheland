@@ -13,6 +13,7 @@ import com.btxtech.game.jsre.client.dialogs.quest.QuestDialog;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -20,6 +21,7 @@ import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -161,10 +163,10 @@ public class QuestProgressCockpit extends FlowPanel {
 
     private void startRadarVisualization(Index position) {
         stopRadarVisualization();
-        radarTimer = new Timer() {
+        radarTimer = new TimerPerfmon(PerfmonEnum.QUEST_PROGRESS_COCKPIT_RADAR_HINT) {
 
             @Override
-            public void run() {
+            public void runPerfmon() {
                 RadarPanel.getInstance().blinkHint();
             }
         };

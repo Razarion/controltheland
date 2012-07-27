@@ -16,7 +16,10 @@ package com.btxtech.game.jsre.client.effects;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -39,9 +42,9 @@ public class ExplosionHandler {
      * Singleton
      */
     private ExplosionHandler() {
-        timer = new Timer() {
+        timer = new TimerPerfmon(PerfmonEnum.EXPLOSION_HANDLER) {
             @Override
-            public void run() {
+            public void runPerfmon() {
                 try {
                     handlerFrames();
                 } catch (Throwable t) {

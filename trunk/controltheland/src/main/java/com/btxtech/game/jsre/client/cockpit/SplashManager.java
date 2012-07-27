@@ -4,6 +4,8 @@ import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.user.client.Timer;
@@ -52,9 +54,9 @@ public class SplashManager {
         }
         String imageUrl = ImageHandler.getSplashImageUrl(imageNameQueue.remove(0));
         setupImage(imageUrl);
-        Timer timer = new Timer() {
+        Timer timer = new TimerPerfmon(PerfmonEnum.SPLASH_MANAGER) {
             @Override
-            public void run() {
+            public void runPerfmon() {
                 MapWindow.getAbsolutePanel().remove(image);
                 image = null;
                 processQueue();

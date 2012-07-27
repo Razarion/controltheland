@@ -4,6 +4,8 @@ import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.perfmon.Perfmon;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.google.gwt.core.client.Scheduler;
 
 /**
@@ -30,12 +32,17 @@ public class AttackEnemyTipEntry extends TipEntry {
         Scheduler.get().scheduleFixedPeriod(new Scheduler.RepeatingCommand() {
             @Override
             public boolean execute() {
-                if (attackEnemyArrow != null) {
-                    attackEnemyArrow.blink();
-                    RadarPanel.getInstance().blinkHint();
-                    return true;
-                } else {
-                    return false;
+                try {
+                    Perfmon.getInstance().onEntered(PerfmonEnum.TIP_ARROW);
+                    if (attackEnemyArrow != null) {
+                        attackEnemyArrow.blink();
+                        RadarPanel.getInstance().blinkHint();
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } finally {
+                    Perfmon.getInstance().onLeft(PerfmonEnum.TIP_ARROW);
                 }
             }
         }, 250);

@@ -2,10 +2,12 @@ package com.btxtech.game.jsre.itemtypeeditor;
 
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -117,10 +119,10 @@ public class RotationControl extends DecoratorPanel {
             @Override
             public void onClick(ClickEvent event) {
                 stopTimer();
-                timer = new Timer() {
+                timer = new TimerPerfmon(PerfmonEnum.IGNORE) {
 
                     @Override
-                    public void run() {
+                    public void runPerfmon() {
                         if (clockwise.getValue()) {
                             previousImage();
                         } else {

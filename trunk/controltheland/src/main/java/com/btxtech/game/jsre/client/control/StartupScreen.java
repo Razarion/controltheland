@@ -16,9 +16,11 @@ package com.btxtech.game.jsre.client.control;
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.DOM;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 
 import java.util.Arrays;
@@ -87,9 +89,9 @@ public class StartupScreen implements StartupProgressListener {
     private void startFadeOut() {
         stopFade();
         currentFade = 0;
-        fadeTimer = new Timer() {
+        fadeTimer = new TimerPerfmon(PerfmonEnum.STARTUP_FADE_OUT) {
             @Override
-            public void run() {
+            public void runPerfmon() {
                 currentFade += FADE_STEP;
                 if (currentFade >= 1.0) {
                     stopFade();
@@ -109,9 +111,9 @@ public class StartupScreen implements StartupProgressListener {
     private void startFadeIn() {
         stopFade();
         currentFade = 1.0;
-        fadeTimer = new Timer() {
+        fadeTimer = new TimerPerfmon(PerfmonEnum.STARTUP_FADE_IN) {
             @Override
-            public void run() {
+            public void runPerfmon() {
                 currentFade -= FADE_STEP;
                 if (currentFade <= 0.0) {
                     stopFade();

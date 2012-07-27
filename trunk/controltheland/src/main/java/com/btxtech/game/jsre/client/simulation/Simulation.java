@@ -29,11 +29,13 @@ import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.utg.tip.TipManager;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 
 import java.util.List;
@@ -157,9 +159,9 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
     public void onOwnBaseDestroyed() {
         long time = System.currentTimeMillis();
         ClientUserTracker.getInstance().onTutorialFailed(simulationInfo.getLevelTaskId(), time - tutorialTime, time);
-        Timer timer = new Timer() {
+        Timer timer = new TimerPerfmon(PerfmonEnum.SIMULATION) {
             @Override
-            public void run() {
+            public void runPerfmon() {
                 StartupScreen.getInstance().fadeOutAndStart(GameStartupSeq.WARM_RESTART_SIMULATED);
             }
         };

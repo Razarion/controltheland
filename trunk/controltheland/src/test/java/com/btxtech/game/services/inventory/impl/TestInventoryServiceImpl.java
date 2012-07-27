@@ -814,6 +814,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
 
         Thread.sleep(230);
         List<SyncItem> syncItems = itemService.getItemsCopy();
+        // TODO failed on 27.07.2012
         Assert.assertEquals(1, syncItems.size());
         SyncBoxItem boxItem = (SyncBoxItem) syncItems.get(0);
 

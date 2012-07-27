@@ -6,6 +6,8 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 
 /**
@@ -53,9 +55,9 @@ public class SpeechBubbleHandler {
 
     private void startDeferredShow() {
         stopDeferredShow();
-        deferredShowTimer = new Timer() {
+        deferredShowTimer = new TimerPerfmon(PerfmonEnum.SPEECH_SHOW) {
             @Override
-            public void run() {
+            public void runPerfmon() {
                 display();
                 deferredShowTimer = null;
             }
@@ -181,9 +183,9 @@ public class SpeechBubbleHandler {
 
     private void deferredClose() {
         stopDeferredHide();
-        deferredHideTimer = new Timer() {
+        deferredHideTimer = new TimerPerfmon(PerfmonEnum.SPEECH_HIDE) {
             @Override
-            public void run() {
+            public void runPerfmon() {
                 if (!mouseOverSpeechBubble && !mouseOverItemType) {
                     hide();
                 }

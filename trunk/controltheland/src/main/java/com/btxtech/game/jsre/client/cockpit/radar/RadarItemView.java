@@ -21,6 +21,8 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 
 import java.util.logging.Level;
@@ -49,10 +51,10 @@ public class RadarItemView extends MiniMap {
     public void onTerrainSettings(TerrainSettings terrainSettings) {
         super.onTerrainSettings(terrainSettings);
         if (timer == null) {
-            timer = new Timer() {
+            timer = new TimerPerfmon(PerfmonEnum.RADAR_ITEM_VIEW) {
 
                 @Override
-                public void run() {
+                public void runPerfmon() {
                     try {
                         draw();
                     } catch (Throwable t) {

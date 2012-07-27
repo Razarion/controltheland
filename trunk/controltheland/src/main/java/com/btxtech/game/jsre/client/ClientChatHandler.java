@@ -2,6 +2,9 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.ChatListener;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 
 import java.util.List;
@@ -69,9 +72,9 @@ public class ClientChatHandler {
         this.chatListener = chatListener;
         chatListener.clearMessages();
         this.connection = connection;
-        startTimer = new Timer() {
+        startTimer = new TimerPerfmon(PerfmonEnum.CHAT_START) {
             @Override
-            public void run() {
+            public void runPerfmon() {
                 startTimer = null;
                 pollMessages();
             }
@@ -83,14 +86,14 @@ public class ClientChatHandler {
         this.chatListener = chatListener;
         chatListener.clearMessages();
         this.connection = connection;
-        startTimer = new Timer() {
+        startTimer = new TimerPerfmon(PerfmonEnum.CHAT_START) {
             @Override
-            public void run() {
+            public void runPerfmon() {
                 startTimer = null;
                 pollMessages();
-                pollTimer = new Timer() {
+                pollTimer = new TimerPerfmon(PerfmonEnum.CHAT_POLL) {
                     @Override
-                    public void run() {
+                    public void runPerfmon() {
                         pollMessages();
                     }
                 };

@@ -144,5 +144,6 @@ public class MgmtPage extends MgmtWebPage {
         toolPages.add(new LinkAndName("User States", UserStateTable.class));
         toolPages.add(new LinkAndName("CMS", Cms.class));
         toolPages.add(new LinkAndName("Inventory", InventoryEditor.class));
+        toolPages.add(new LinkAndName("Client Performance Monitor", ClientPerfmonTable.class));
     }
 }

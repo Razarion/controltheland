@@ -18,7 +18,9 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
+import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 
 import java.util.logging.Level;
@@ -78,10 +80,10 @@ public class RadarFrameView extends MiniMap implements TerrainScrollListener, Mi
                 0,
                 0);
         if (timer == null) {
-            timer = new Timer() {
+            timer = new TimerPerfmon(PerfmonEnum.RADAR_FRAME_VIEW) {
 
                 @Override
-                public void run() {
+                public void runPerfmon() {
                     try {
                         if (color.equals(COLOR_1)) {
                             color = COLOR_2;

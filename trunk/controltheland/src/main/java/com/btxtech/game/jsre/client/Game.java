@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.FacebookUtils;
+import com.btxtech.game.jsre.common.perfmon.Perfmon;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -35,6 +36,7 @@ public class Game implements EntryPoint {
             isDebug = Boolean.parseBoolean(Window.Location.getParameter(DEBUG_PARAM));
             ClientServices.getInstance().connectStartupListeners();
             ClientServices.getInstance().getClientRunner().start(getStartupSeqFromHtml());
+            Perfmon.getInstance().startTransmit();
         } catch (Throwable t) {
             GwtCommon.handleException(t);
         }
