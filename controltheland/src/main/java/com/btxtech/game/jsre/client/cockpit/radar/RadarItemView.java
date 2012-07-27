@@ -82,7 +82,7 @@ public class RadarItemView extends MiniMap {
             resourceItemSize = RESOURCE_ITEM_SIZE;
         }
 
-        for (SyncItem syncItem : ItemContainer.getInstance().getItemsInRectangle(getAbsoluteViewRectangle())) {
+        for (SyncItem syncItem : ItemContainer.getInstance().getItemsInRectangleFast(getAbsoluteViewRectangle())) {
             if (syncItem instanceof SyncBaseItem) {
                 SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
                 Index pos = syncBaseItem.getSyncItemArea().getPosition();
