@@ -37,7 +37,7 @@ public class Perfmon {
                 try {
                     Connection.getInstance().sendPerfmonData(workTimes, getTotalTime());
                 } catch (Exception e) {
-                    log.log(Level.SEVERE, "FacebookUtils send to server", e);
+                    log.log(Level.SEVERE, "Perfmon: sendPerfmonData", e);
                 }
             }
         };
