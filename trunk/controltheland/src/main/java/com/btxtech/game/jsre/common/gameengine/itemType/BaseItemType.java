@@ -37,7 +37,6 @@ public class BaseItemType extends ItemType {
     private LauncherType launcherType;
     private Integer upgradeable;
     private int upgradeProgress;
-    private List<BuildupStep> buildupStep;
     private double dropBoxPossibility;
     private int boxPickupRange;
 
@@ -185,30 +184,6 @@ public class BaseItemType extends ItemType {
         this.buildup = buildup;
     }
 
-    public List<BuildupStep> getBuildupStep() {
-        return buildupStep;
-    }
-
-    public void setBuildupStep(List<BuildupStep> buildupStep) {
-        // Shall only be called from the ItemTypeEditor or createItemType
-        this.buildupStep = buildupStep;
-    }
-
-    public BuildupStep getBuildupStepData4Progress(double buildupProgress) {
-        if (buildupStep == null || buildupStep.isEmpty()) {
-            return null;
-        }
-        if (buildupProgress >= 1.0) {
-            return null;
-        }
-        for (BuildupStep step : buildupStep) {
-            if (step.isInRange(buildupProgress)) {
-                return step;
-            }
-        }
-        throw new IllegalArgumentException("No BuildupStep for buildupProgress: " + buildupProgress);
-    }
-
     @Override
     public void changeTo(ItemType itemType) {
         super.changeTo(itemType);
@@ -218,7 +193,6 @@ public class BaseItemType extends ItemType {
         buildup = baseItemType.buildup;
         upgradeable = baseItemType.upgradeable;
         upgradeProgress = baseItemType.upgradeProgress;
-        buildupStep = baseItemType.getBuildupStep();
         dropBoxPossibility = baseItemType.dropBoxPossibility;
         boxPickupRange = baseItemType.getBoxPickupRange();
 

@@ -1,16 +1,18 @@
 package com.btxtech.game.services.gwt;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
-import com.btxtech.game.jsre.common.gameengine.itemType.BuildupStep;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.itemtypeeditor.ItemTypeAccess;
+import com.btxtech.game.jsre.itemtypeeditor.ItemTypeImageInfo;
 import com.btxtech.game.services.item.ItemService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -20,6 +22,7 @@ import java.util.List;
 public class ItemTypeAccessImpl extends AutowiredRemoteServiceServlet implements ItemTypeAccess {
     @Autowired
     private ItemService itemService;
+    private Log log = LogFactory.getLog(ItemTypeAccessImpl.class);
 
     @Override
     public ItemType getItemType(int itemTypeId) throws NoSuchItemTypeException {
@@ -27,9 +30,12 @@ public class ItemTypeAccessImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public void saveItemTypeProperties(int itemTypeId, BoundingBox boundingBox, WeaponType weaponType, List<BuildupStep> buildupStep) throws NoSuchItemTypeException {
-        itemService.saveBoundingBox(itemTypeId, boundingBox);
-        itemService.saveWeaponType(itemTypeId, weaponType);
-        itemService.saveBuildupStepData(itemTypeId, buildupStep);
+    public void saveItemTypeProperties(int itemTypeId, BoundingBox boundingBox, ItemTypeSpriteMap itemTypeSpriteMap, WeaponType weaponType, Collection<ItemTypeImageInfo> buildupImages, Collection<ItemTypeImageInfo> runtimeImages, Collection<ItemTypeImageInfo> demolitionImages) throws NoSuchItemTypeException {
+        try {
+            itemService.saveItemTypeProperties(itemTypeId, boundingBox, itemTypeSpriteMap, weaponType, buildupImages, runtimeImages, demolitionImages);
+        } catch (NoSuchItemTypeException | RuntimeException e) {
+            log.error("", e);
+            throw e;
+        }
     }
 }

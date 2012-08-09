@@ -12,14 +12,13 @@ public enum PerfmonEnum {
     SPLASH_MANAGER("Splash"),
     QUEST_PROGRESS_COCKPIT_RADAR_HINT("QPC Radar Hint"),
     SIMULATION_CONDITION_SERVICE("Condition"),
-    CLIENT_USER_TRACKIN("User Tracking"),
+    CLIENT_USER_TRACKING("User Tracking"),
     INFORMATION_COCKPIT("Info Cockpit"),
     IMAGE_LOADER("Image Loader"),
     RADAR_FRAME_VIEW("Radar Frame"),
     SYNC_POLL("Sync Poll"),
     RADAR_ITEM_VIEW("Radar Item"),
     SCROLL("Scroll"),
-    ATTACK_EFFECT_HANDLER("Attack Effect"),
     SPEECH_SHOW("Speech show"),
     SPEECH_HIDE("Speech hide"),
     SIMULATION("Simulation"),
@@ -27,7 +26,6 @@ public enum PerfmonEnum {
     ITEM_CONTAINER("Item Container"),
     PERFMON("Permon"),
     TIP_MANAGER_SHOW("Tip Manager show"),
-    EXPLOSION_HANDLER("Explosion Handler"),
     REGISTER_DIALOG("Register Dialog"),
     STARTUP_FADE_OUT("Start Fade out"),
     STARTUP_FADE_IN("Start Fade in"),
@@ -37,14 +35,15 @@ public enum PerfmonEnum {
     TIP_MANAGER_HIDE("Tip Manager hide"),
     TIP_ARROW("Tip Arrow"),
     SYNC_HANDLE_PACKETS("Handle Packets"),
-    MAP_WINDOW_MOUSE_MOVE("Map Window Mouse move"),
-    MAP_WINDOW_MOUSE_DOWN("Map Window Mouse down"),
-    MAP_WINDOW_MOUSE_UP("Map Window Mouse up"),
+    TERRAIN_MOUSE_MOVE("Terrain Mouse move"),
+    TERRAIN_MOUSE_DOWN("Terrain Mouse down"),
+    TERRAIN_MOUSE_UP("Terrain Mouse up"),
     MAP_WINDOW_EVENT_PREVIEW("Map Window Event preview"),
     ITEM_MOUSE_DOWN("Item Mouse down"),
     ITEM_MOUSE_OVER("Item Mouse over"),
     ITEM_MOUSE_OUT("Item Mouse out"),
-    ITEM_MOUSE_UP("Item Mouse up");
+    ITEM_MOUSE_UP("Item Mouse up"),
+    RENDERER("Renderer");
 
     private String displayName;
 

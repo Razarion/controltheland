@@ -18,6 +18,8 @@ package com.btxtech.game.jsre.client.terrain;
  * Date: Sep 3, 2009
  * Time: 6:21:03 PM
  */
+@Deprecated
 public interface TerrainMouseMoveListener {
+    @Deprecated
     void onMove(int absoluteLeft, int absoluteTop,int relativeLeft, int relativeTop );
 }

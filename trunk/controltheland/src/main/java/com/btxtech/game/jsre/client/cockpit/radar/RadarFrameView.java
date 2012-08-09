@@ -19,8 +19,8 @@ import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
-import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
+import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.user.client.Timer;
 
 import java.util.logging.Level;
@@ -44,7 +44,9 @@ public class RadarFrameView extends MiniMap implements TerrainScrollListener, Mi
 
     public RadarFrameView(int width, int height) {
         super(width, height);
-        TerrainView.getInstance().addTerrainScrollListener(this);
+        if (!TerrainView.uglySuppressRadar) {
+            TerrainView.getInstance().addTerrainScrollListener(this);
+        }
         addMouseDownListener(this);
     }
 

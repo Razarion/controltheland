@@ -63,8 +63,8 @@ public class SpeechBubble extends AbsolutePanel implements MouseOverHandler, Mou
         Index htmlSize = getHtmlSize(html);
         Index relative = TerrainView.getInstance().toRelativeIndex(item.getSyncItemArea().getPosition());
         Direction direction = getBeakDirection(relative.getX(), relative.getY(), htmlSize.getX(), htmlSize.getY());
-        int deltaX = (int) (item.getItemType().getBoundingBox().getImageWidth() / 2 * 0.8);
-        int deltaY = (int) (item.getItemType().getBoundingBox().getImageHeight() / 2 * 0.8);
+        int deltaX = (int) (item.getItemType().getItemTypeSpriteMap().getImageWidth() / 2 * 0.8);
+        int deltaY = (int) (item.getItemType().getItemTypeSpriteMap().getImageHeight() / 2 * 0.8);
 
         switch (direction) {
             case BOTTOM:
@@ -167,7 +167,7 @@ public class SpeechBubble extends AbsolutePanel implements MouseOverHandler, Mou
         MapWindow.getAbsolutePanel().add(this, left, top);
 
         if (scrollWithTerrain) {
-            MapWindow.getInstance().addToScrollElements(this);
+            // TODO MapWindow.getInstance().addToScrollElements(this);
         }
         // HTML content
         VerticalPanel verticalPanel = new VerticalPanel();
@@ -435,7 +435,7 @@ public class SpeechBubble extends AbsolutePanel implements MouseOverHandler, Mou
 
     public void close() {
         if (scrollWithTerrain) {
-            MapWindow.getInstance().removeToScrollElements(this);
+            // TODO MapWindow.getInstance().removeToScrollElements(this);
         }
         MapWindow.getAbsolutePanel().remove(this);
         ClientUserTracker.getInstance().onDialogDisappears(this);

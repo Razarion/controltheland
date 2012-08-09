@@ -12,11 +12,9 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncMovable;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.action.ActionService;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
@@ -28,11 +26,6 @@ import java.util.List;
  * Time: 14:17:18
  */
 public class TestMove extends AbstractServiceTest {
-    @Autowired
-    private ActionService actionService;
-    @Autowired
-    private ItemService itemService;
-
     private SyncBaseItem createSyncBaseItem() throws Exception {
         configureRealGame();
 
@@ -68,7 +61,7 @@ public class TestMove extends AbstractServiceTest {
     public void testMoveHorizontallyLine1() throws Exception {
         SyncBaseItem syncBaseItem = createSyncBaseItem();
 
-        List<Index> path = new ArrayList<Index>();
+        List<Index> path = new ArrayList<>();
         path.add(new Index(3000, 2000));
         syncBaseItem.getSyncMovable().setPathToDestination(path, MathHelper.WEST);
 
@@ -84,7 +77,7 @@ public class TestMove extends AbstractServiceTest {
     public void testMoveHorizontallyLine2() throws Exception {
         SyncBaseItem syncBaseItem = createSyncBaseItem();
 
-        List<Index> path = new ArrayList<Index>();
+        List<Index> path = new ArrayList<>();
         path.add(new Index(3000, 2000));
         syncBaseItem.getSyncMovable().setPathToDestination(path, MathHelper.WEST);
 
@@ -103,7 +96,7 @@ public class TestMove extends AbstractServiceTest {
     public void testMoveHorizontallyLine3() throws Exception {
         SyncBaseItem syncBaseItem = createSyncBaseItem();
 
-        List<Index> path = new ArrayList<Index>();
+        List<Index> path = new ArrayList<>();
         path.add(new Index(2100, 2000));
         syncBaseItem.getSyncMovable().setPathToDestination(path, MathHelper.WEST);
 
@@ -120,7 +113,7 @@ public class TestMove extends AbstractServiceTest {
     public void testMoveVerticallyLine1() throws Exception {
         SyncBaseItem syncBaseItem = createSyncBaseItem();
 
-        List<Index> path = new ArrayList<Index>();
+        List<Index> path = new ArrayList<>();
         path.add(new Index(2000, 3000));
         syncBaseItem.getSyncMovable().setPathToDestination(path, MathHelper.WEST);
 
@@ -136,7 +129,7 @@ public class TestMove extends AbstractServiceTest {
     public void testMoveVerticallyLine2() throws Exception {
         SyncBaseItem syncBaseItem = createSyncBaseItem();
 
-        List<Index> path = new ArrayList<Index>();
+        List<Index> path = new ArrayList<>();
         path.add(new Index(2000, 3000));
         syncBaseItem.getSyncMovable().setPathToDestination(path, MathHelper.WEST);
 
@@ -155,7 +148,7 @@ public class TestMove extends AbstractServiceTest {
     public void testMoveVerticallyLine3() throws Exception {
         SyncBaseItem syncBaseItem = createSyncBaseItem();
 
-        List<Index> path = new ArrayList<Index>();
+        List<Index> path = new ArrayList<>();
         path.add(new Index(2000, 2050));
         syncBaseItem.getSyncMovable().setPathToDestination(path, MathHelper.WEST);
 
@@ -172,7 +165,7 @@ public class TestMove extends AbstractServiceTest {
     public void testMoveDiagonallyLine1() throws Exception {
         SyncBaseItem syncBaseItem = createSyncBaseItem();
 
-        List<Index> path = new ArrayList<Index>();
+        List<Index> path = new ArrayList<>();
         path.add(new Index(3000, 3000));
         syncBaseItem.getSyncMovable().setPathToDestination(path, MathHelper.WEST);
 
@@ -188,7 +181,7 @@ public class TestMove extends AbstractServiceTest {
     public void testMoveDiagonallyLine2() throws Exception {
         SyncBaseItem syncBaseItem = createSyncBaseItem();
 
-        List<Index> path = new ArrayList<Index>();
+        List<Index> path = new ArrayList<>();
         path.add(new Index(2100, 2100));
         syncBaseItem.getSyncMovable().setPathToDestination(path, MathHelper.WEST);
 
@@ -205,7 +198,7 @@ public class TestMove extends AbstractServiceTest {
     public void testMoveDiagonallyLine3() throws Exception {
         SyncBaseItem syncBaseItem = createSyncBaseItem();
 
-        List<Index> path = new ArrayList<Index>();
+        List<Index> path = new ArrayList<>();
         path.add(new Index(2500, 3000));
         syncBaseItem.getSyncMovable().setPathToDestination(path, MathHelper.WEST);
 
@@ -221,7 +214,7 @@ public class TestMove extends AbstractServiceTest {
     public void testMoveDiagonallyLine4() throws Exception {
         SyncBaseItem syncBaseItem = createSyncBaseItem();
 
-        List<Index> path = new ArrayList<Index>();
+        List<Index> path = new ArrayList<>();
         path.add(new Index(2700, 2400));
         syncBaseItem.getSyncMovable().setPathToDestination(path, MathHelper.WEST);
 
@@ -238,7 +231,7 @@ public class TestMove extends AbstractServiceTest {
     public void testMovePath1() throws Exception {
         SyncBaseItem syncBaseItem = createSyncBaseItem();
 
-        List<Index> path = new ArrayList<Index>();
+        List<Index> path = new ArrayList<>();
         path.add(new Index(2100, 2000));
         path.add(new Index(2100, 2100));
         syncBaseItem.getSyncMovable().setPathToDestination(path, MathHelper.WEST);
@@ -258,7 +251,7 @@ public class TestMove extends AbstractServiceTest {
     public void testMovePath2() throws Exception {
         SyncBaseItem syncBaseItem = createSyncBaseItem();
 
-        List<Index> path = new ArrayList<Index>();
+        List<Index> path = new ArrayList<>();
         path.add(new Index(2100, 2000));
         path.add(new Index(2100, 2050));
         path.add(new Index(2100, 2010));

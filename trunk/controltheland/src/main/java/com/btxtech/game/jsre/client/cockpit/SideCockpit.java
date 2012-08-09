@@ -38,6 +38,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -108,7 +109,7 @@ public class SideCockpit {
     private static final int BNT_FB_INVITE_Y = 49;
     // Debug
     private static final int DEBUG_X = 10;
-    private static final int DEBUG_Y = 222;
+    private static final int DEBUG_Y = 200;
 
     private AbsolutePanel mainPanel;
     private AbsolutePanel levelPanel;
@@ -122,7 +123,7 @@ public class SideCockpit {
     private Label energyText;
     private ExtendedCustomButton sellButton;
     private Label debugPosition;
-    private CockpitMode cockpitMode;
+    private Label debugFrameRate;
     private QuestProgressCockpit questProgressCockpit;
     private InformationCockpit informationCockpit;
 
@@ -144,7 +145,6 @@ public class SideCockpit {
         setupRadar();
         setupButtonPanel();
         setupSocialNetPanel();
-        cockpitMode = new CockpitMode();
         informationCockpit = new InformationCockpit();
     }
 
@@ -224,9 +224,14 @@ public class SideCockpit {
 
     private void setDebugPanel() {
         if (Game.isDebug()) {
+            VerticalPanel verticalPanel = new VerticalPanel();
+            mainPanel.add(verticalPanel, DEBUG_X, DEBUG_Y);
+            verticalPanel.getElement().getStyle().setBackgroundColor("#FFFFFF");
+            verticalPanel.getElement().getStyle().setZIndex(10);
             debugPosition = new Label();
-            debugPosition.getElement().getStyle().setBackgroundColor("#FFFFFF");
-            mainPanel.add(debugPosition, DEBUG_X, DEBUG_Y);
+            verticalPanel.add(debugPosition);
+            debugFrameRate = new Label();
+            verticalPanel.add(debugFrameRate);
         }
     }
 
@@ -280,7 +285,11 @@ public class SideCockpit {
             @Override
             public void onClick(ClickEvent event) {
                 ExtendedCustomButton btn = (ExtendedCustomButton) event.getSource();
-                SelectionHandler.getInstance().setSellMode(btn.isDown());
+                if (btn.isDown()) {
+                    CockpitMode.getInstance().setMode(CockpitMode.Mode.SELL);
+                } else {
+                    CockpitMode.getInstance().setMode(null);
+                }
             }
         });
         mainPanel.add(sellButton, BNT_SELL_X, BNT_SELL_Y);
@@ -316,6 +325,10 @@ public class SideCockpit {
 
     public void debugAbsoluteCursorPos(int x, int y) {
         debugPosition.setText(x + ":" + y);
+    }
+
+    public void debugFrameRate(int frameRate, int renderTime) {
+        debugFrameRate.setText("Frame Rate: " + frameRate + " (" + renderTime + "ms)");
     }
 
     public void updateItemLimit() {
@@ -413,10 +426,6 @@ public class SideCockpit {
 
     public Rectangle getAreaLevelPanel() {
         return new Rectangle(levelPanel.getAbsoluteLeft(), levelPanel.getAbsoluteTop(), levelPanel.getOffsetWidth(), levelPanel.getOffsetHeight());
-    }
-
-    public CockpitMode getCockpitMode() {
-        return cockpitMode;
     }
 
     public QuestProgressCockpit getQuestProgressCockpit() {

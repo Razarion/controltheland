@@ -13,11 +13,12 @@ import java.io.Serializable;
  * Time: 13:00:05
  */
 public class BoundingBox implements Serializable {
-    private int imageWidth;
-    private int imageHeight;
     private int width;
     private int height;
     private double[] angels;
+    private int maxDiameter;
+    private int cosmeticAngelIndex;
+    private double cosmeticAngel;
 
     /**
      * Used by GWT
@@ -25,25 +26,28 @@ public class BoundingBox implements Serializable {
     protected BoundingBox() {
     }
 
-    public BoundingBox(int imageWidth, int imageHeight, int width, int height, double[] angels) {
-        this.imageWidth = imageWidth;
-        this.imageHeight = imageHeight;
+    public BoundingBox(int width, int height, double[] angels) {
         this.width = width;
         this.height = height;
+        setupMaxDiameter();
         this.angels = angels;
-        for (int i = 0; i < angels.length - 1; i++) {
-            if (angels[i] >= angels[i + 1]) {
-                throw new IllegalArgumentException("Angels are not in ordered form: " + angels[i] + "[" + i + "] <" + angels[i + 1] + "[" + (i + 1) + "]");
-            }
+        if (angels.length == 0) {
+            cosmeticAngelIndex = 0;
+            cosmeticAngel = 0;
+        } else {
+            cosmeticAngelIndex = angels.length / 8;
+            cosmeticAngel = angels[cosmeticAngelIndex];
         }
     }
 
     public void setWidth(int width) {
         this.width = width;
+        setupMaxDiameter();
     }
 
     public void setHeight(int height) {
         this.height = height;
+        setupMaxDiameter();
     }
 
     public int getWidth() {
@@ -63,7 +67,11 @@ public class BoundingBox implements Serializable {
     }
 
     public int getMaxDiameter() {
-        return (int) Math.round(MathHelper.getPythagoras(width, height));
+        return maxDiameter;
+    }
+
+    private void setupMaxDiameter() {
+        maxDiameter = (int) Math.round(MathHelper.getPythagoras(width, height));
     }
 
     public int getMinDiameter() {
@@ -72,14 +80,6 @@ public class BoundingBox implements Serializable {
 
     public double getMinRadius() {
         return Math.min(width, height) / 2.0;
-    }
-
-    public int getImageWidth() {
-        return imageWidth;
-    }
-
-    public int getImageHeight() {
-        return imageHeight;
     }
 
     public boolean contains(Index middle, Rectangle rectangle) {
@@ -98,25 +98,12 @@ public class BoundingBox implements Serializable {
         return angels.length > 1;
     }
 
-    /**
-     * The cosmetic image index starts with 0.
-     *
-     * @return The cosmetic image index starts with 0.
-     */
-    public int getCosmeticImageIndex() {
-        return getCosmeticImageIndex(angels.length);
-    }
-
-    public static int getCosmeticImageIndex(int angelCount) {
-        if (angelCount > 1) {
-            return angelCount / 8;
-        } else {
-            return 0;
-        }
-    }
-
     public double getCosmeticAngel() {
-        return (double) getCosmeticImageIndex() / (double) angels.length * MathHelper.ONE_RADIANT;
+        return cosmeticAngel;
+    }
+
+    public int getCosmeticAngelIndex() {
+        return cosmeticAngelIndex;
     }
 
     public int getEffectiveWidth() {
@@ -157,18 +144,6 @@ public class BoundingBox implements Serializable {
 
     public Index getCorner4() {
         return new Index(width / 2, -height / 2);
-    }
-
-    public Index getMiddleFromImage() {
-        return new Index(imageWidth / 2, imageHeight / 2);
-    }
-
-    public Index getMiddleFromImage(Index offset) {
-        return getMiddleFromImage().add(offset);
-    }
-
-    public Index getTopLeftFromImage(Index offset) {
-        return offset.sub(getMiddleFromImage());
     }
 
     public int getSmallerstSide() {
@@ -223,23 +198,31 @@ public class BoundingBox implements Serializable {
         return angels;
     }
 
+    public void setAngels(double[] angels) {
+        this.angels = angels;
+    }
+
     public int getAngelCount() {
-        return angels.length;
+        if (angels.length == 0) {
+            return 1;
+        } else {
+            return angels.length;
+        }
     }
 
     /**
-     * @param imageNr 0..x
+     * @param angelIndex 0..x
      * @return allowed angel
      */
-    public double imageNumberToAngel(int imageNr) {
-        return angels[imageNr];
+    public double angelIndexToAngel(int angelIndex) {
+        return angels[angelIndex];
     }
 
-    /**
-     * @param angel angel
-     * @return image nr starts with 0
-     */
-    public int angelToImageNr(double angel) {
+    public int angelToAngelIndex(double angel) {
+        if (angels.length == 0) {
+            return 0;
+        }
+        // TODO slow !!! Is called in every render frame
         angel = getAllowedAngel(angel);
         for (int i = 0; i < angels.length; i++) {
             double allowedAngel = angels[i];
@@ -251,16 +234,9 @@ public class BoundingBox implements Serializable {
         throw new IllegalArgumentException("angelToImageNr angel is unknown:" + angel);
     }
 
-    /**
-     * @param angel angel
-     * @return offset = ImageNr * image imageWidth
-     */
-    public int angelToImageOffset(double angel) {
-        return angelToImageNr(angel) * imageWidth;
-    }
 
     @Override
     public String toString() {
-        return "BoundingBox: imageWidth: " + imageWidth + " imageHeight: " + imageHeight + " width: " + width + " height: " + height + " angels: " + angels.length;
+        return "BoundingBox: width: " + width + " height: " + height + " angels: " + angels.length;
     }
 }

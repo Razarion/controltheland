@@ -6,7 +6,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemContainer;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.collision.CollisionService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +17,6 @@ import org.springframework.test.annotation.DirtiesContext;
  * Time: 17:10:10
  */
 public class TestItemContainer extends AbstractServiceTest {
-    @Autowired
-    private CollisionService collisionService;
     @Autowired
     private ItemService itemService;
 

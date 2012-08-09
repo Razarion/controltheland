@@ -14,7 +14,6 @@
 package com.btxtech.game.jsre.client.utg;
 
 import com.btxtech.game.jsre.client.ClientServices;
-import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ParametrisedRunnable;
@@ -106,7 +105,7 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
     public void startEventTracking() {
         stopEventTracking();
         isCollecting = true;
-        timer = new TimerPerfmon(PerfmonEnum.CLIENT_USER_TRACKIN) {
+        timer = new TimerPerfmon(PerfmonEnum.CLIENT_USER_TRACKING) {
             @Override
             public void runPerfmon() {
                 try {
@@ -217,7 +216,7 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
     }
 
     @Override
-    public void onTargetSelectionChanged(ClientSyncItem selection) {
+    public void onTargetSelectionChanged(SyncItem selection) {
         if (isCollecting) {
             selectionTrackingItems.add(new SelectionTrackingItem(ClientServices.getInstance().getClientRunner().getStartUuid(), selection));
         }

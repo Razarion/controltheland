@@ -52,22 +52,20 @@ import java.util.logging.Logger;
  * Date: May 22, 2009
  * Time: 12:51:09 PM
  */
-public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHandler, TerrainListener {
-    public static final int AUTO_SCROLL_DETECTION_WIDTH = 40;
-    public static final int AUTO_SCROLL_MOVE_DISTANCE = 10;
+public class TerrainView implements TerrainListener {
     private static final TerrainView INSTANCE = new TerrainView();
     private int viewOriginLeft = 0;
     private int viewOriginTop = 0;
     private int viewWidth = 1;
     private int viewHeight = 1;
-    private TerrainMouseButtonListener terrainMouseButtonListener;
     private ArrayList<TerrainScrollListener> terrainScrollListeners = new ArrayList<TerrainScrollListener>();
-    public Canvas canvas;
-    public Context2d context2d;
+    private TerrainMouseHandler terrainMouseHandler;
+    private TerritoryKeyHandler territoryKeyHandler;
+    private Canvas canvas;
+    private Context2d context2d;
     private AbsolutePanel parent;
     private TerrainHandler terrainHandler = new TerrainHandler();
     public static boolean uglySuppressRadar = false;
-    private Logger log = Logger.getLogger(TerrainView.class.getName());
 
     /**
      * Singleton
@@ -77,8 +75,10 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         if (canvas == null) {
             throw new Html5NotSupportedException("TerrainView: Canvas not supported.");
         }
+        canvas.setTabIndex(1); // IE9 need this to receive the focus
         context2d = canvas.getContext2d();
-        canvas.addMouseOutHandler(this);
+        terrainMouseHandler = new TerrainMouseHandler(canvas, this);
+        territoryKeyHandler = new TerritoryKeyHandler(canvas);
     }
 
     public void setupTerrain(TerrainSettings terrainSettings,
@@ -113,129 +113,6 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
 
     public static TerrainView getInstance() {
         return INSTANCE;
-    }
-
-    private void drawTerrain() {
-        if (terrainHandler.getTerrainSettings() == null) {
-            return;
-        }
-        TerrainTile[][] terrainTiles = terrainHandler.getTerrainTileField();
-        if (terrainTiles == null) {
-            return;
-        }
-        final Rectangle tileRect = terrainHandler.convertToTilePositionRoundUp(new Rectangle(viewOriginLeft, viewOriginTop, viewWidth, viewHeight));
-        final int scrollXOffset = viewOriginLeft % terrainHandler.getTerrainSettings().getTileWidth();
-        final int scrollYOffset = viewOriginTop % terrainHandler.getTerrainSettings().getTileHeight();
-        final int tileWidth = terrainHandler.getTerrainSettings().getTileWidth();
-        final int tileHeight = terrainHandler.getTerrainSettings().getTileHeight();
-
-        terrainHandler.iteratorOverAllTerrainTiles(tileRect, new AbstractTerrainService.TerrainTileEvaluator() {
-            @Override
-            public void evaluate(int x, int y, TerrainTile terrainTile) {
-                if (terrainTile == null) {
-                    return;
-                }
-
-                int relativeX = terrainHandler.getAbsolutXForTerrainTile(x - tileRect.getX());
-                int imageWidth = tileWidth;
-                if (relativeX == 0) {
-                    imageWidth = tileWidth - scrollXOffset;
-                } else {
-                    relativeX -= scrollXOffset;
-                }
-
-                int relativeY = terrainHandler.getAbsolutYForTerrainTile(y - tileRect.getY());
-                int imageHeight = tileHeight;
-                if (relativeY == 0) {
-                    imageHeight = tileHeight - scrollYOffset;
-                } else {
-                    relativeY -= scrollYOffset;
-                }
-
-                ImageElement imageElement;
-                if (terrainTile.isSurface()) {
-                    imageElement = terrainHandler.getSurfaceImageElement(terrainTile.getImageId());
-                } else {
-                    imageElement = terrainHandler.getTerrainImageElement(terrainTile.getImageId());
-                }
-                if (imageElement == null || imageElement.getWidth() == 0 || imageElement.getHeight() == 0) {
-                    return;
-                }
-
-                int sourceXOffset = terrainHandler.getAbsolutXForTerrainTile(terrainTile.getTileXOffset());
-                int sourceYOffset = terrainHandler.getAbsolutYForTerrainTile(terrainTile.getTileYOffset());
-                if (relativeX == 0) {
-                    sourceXOffset += scrollXOffset;
-                }
-                if (relativeY == 0) {
-                    sourceYOffset += scrollYOffset;
-                }
-
-                if (terrainTile.isSurface()) {
-                    sourceXOffset = sourceXOffset % imageElement.getWidth();
-                    sourceYOffset = sourceYOffset % imageElement.getHeight();
-                }
-
-                try {
-                    context2d.drawImage(imageElement,
-                            sourceXOffset, //the start X position in the source image
-                            sourceYOffset, //the start Y position in the source image
-                            imageWidth, //the width in the source image you want to sample
-                            imageHeight, //the height in the source image you want to sample
-                            relativeX, //the start X position in the destination image
-                            relativeY, //the start Y position in the destination image
-                            imageWidth, //the width of drawn image in the destination
-                            imageHeight // the height of the drawn image in the destination
-                    );
-                } catch (Throwable t) {
-                    logCanvasError(t, imageElement, sourceXOffset, sourceYOffset, imageWidth, imageHeight, relativeX, relativeY, imageWidth, imageHeight);
-                }
-            }
-        });
-    }
-
-    private void logCanvasError(Throwable t, ImageElement imageElement, int srcXStart, int srcYStart, int srcXWidth, int srcYWidth, int posX, int posY, int imageWidth, int imageHeight) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("TerrainView.drawTerrain() error in canvas drawImage");
-        builder.append("\n");
-
-        builder.append("imageElement: ");
-        builder.append(imageElement);
-        builder.append("\n");
-
-        builder.append("srcXStart: ");
-        builder.append(srcXStart);
-        builder.append("\n");
-
-        builder.append("srcYStart: ");
-        builder.append(srcYStart);
-        builder.append("\n");
-
-        builder.append("srcXWidth: ");
-        builder.append(srcXWidth);
-        builder.append("\n");
-
-        builder.append("srcYWidth: ");
-        builder.append(srcYWidth);
-        builder.append("\n");
-
-        builder.append("posX: ");
-        builder.append(posX);
-        builder.append("\n");
-
-        builder.append("posY: ");
-        builder.append(posY);
-        builder.append("\n");
-
-        builder.append("imageWidth: ");
-        builder.append(imageWidth);
-        builder.append("\n");
-
-        builder.append("imageHeight: ");
-        builder.append(imageHeight);
-        builder.append("\n");
-
-        log.log(Level.SEVERE, builder.toString(), t);
     }
 
     public void moveDelta(int left, int top) {
@@ -282,7 +159,6 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
             return;
         }
 
-        onTerrainChanged();
         fireScrollEvent(left, top);
     }
 
@@ -387,10 +263,6 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         }
     }
 
-    public void setTerrainMouseButtonListener(TerrainMouseButtonListener terrainMouseButtonListener) {
-        this.terrainMouseButtonListener = terrainMouseButtonListener;
-    }
-
     public void addTerrainScrollListener(TerrainScrollListener terrainScrollListener) {
         if (terrainScrollListeners.contains(terrainScrollListener)) {
             return;
@@ -402,38 +274,27 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         terrainScrollListeners.remove(terrainScrollListener);
     }
 
-    @Override
-    public void onMouseDown(MouseDownEvent mouseDownEvent) {
-        int x = mouseDownEvent.getRelativeX(canvas.getElement()) + viewOriginLeft;
-        int y = mouseDownEvent.getRelativeY(canvas.getElement()) + viewOriginTop;
-        if (terrainMouseButtonListener != null) {
-            terrainMouseButtonListener.onMouseDown(x, y, mouseDownEvent);
-        }
-    }
-
-    @Override
-    public void onMouseOut(MouseOutEvent event) {
-        // Ignore
-    }
-
-    @Override
-    public void onMouseUp(MouseUpEvent event) {
-        int x = event.getRelativeX(canvas.getElement()) + viewOriginLeft;
-        int y = event.getRelativeY(canvas.getElement()) + viewOriginTop;
-        if (terrainMouseButtonListener != null) {
-            terrainMouseButtonListener.onMouseUp(x, y, event);
-        }
-    }
-
     public TerrainHandler getTerrainHandler() {
         return terrainHandler;
     }
 
     @Override
     public void onTerrainChanged() {
-        context2d.clearRect(0, 0, viewWidth, viewHeight);
+        // TODO used? context2d.clearRect(0, 0, viewWidth, viewHeight);
         // long time = System.currentTimeMillis();
-        drawTerrain();
+        //drawTerrain();
         // log.warning("Draw time: " + (System.currentTimeMillis() - time));
+    }
+
+    public Context2d getContext2d() {
+        return context2d;
+    }
+
+    public TerrainMouseHandler getTerrainMouseHandler() {
+        return terrainMouseHandler;
+    }
+
+    public void setFocus() {
+        canvas.setFocus(true);
     }
 }

@@ -14,12 +14,12 @@
 package com.btxtech.game.jsre.itemtypeeditor;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
-import com.btxtech.game.jsre.common.gameengine.itemType.BuildupStep;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -29,5 +29,5 @@ import java.util.List;
 public interface ItemTypeAccessAsync {
     void getItemType(int itemTypeId, AsyncCallback<ItemType> async);
 
-    void saveItemTypeProperties(int itemTypeId, BoundingBox boundingBox, WeaponType weaponType, List<BuildupStep> buildupStep, AsyncCallback<Void> async);
+    void saveItemTypeProperties(int itemTypeId, BoundingBox boundingBox, ItemTypeSpriteMap itemTypeSpriteMap, WeaponType weaponType, Collection<ItemTypeImageInfo> buildupImages, Collection<ItemTypeImageInfo> runtimeImages, Collection<ItemTypeImageInfo> demolitionImages, AsyncCallback<Void> async);
 }

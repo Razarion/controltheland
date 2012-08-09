@@ -13,25 +13,14 @@
 
 package com.btxtech.game.jsre.client.effects;
 
-import com.btxtech.game.jsre.client.ClientSyncItem;
-import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.jsre.client.SoundHandler;
-import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
-import com.btxtech.game.jsre.client.terrain.MapWindow;
-import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.google.gwt.canvas.client.Canvas;
-import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.dom.client.ImageElement;
-import com.google.gwt.widgetideas.graphics.client.ImageLoader;
 
 /**
  * User: beat
@@ -40,89 +29,62 @@ import com.google.gwt.widgetideas.graphics.client.ImageLoader;
  */
 public class MuzzleFlash {
     public static final long MILIS_SHOW_TIME = 100;
-    private Index normCenter;
-    private ClientSyncItem clientSyncItem;
-    private long time;
-    private Canvas canvas;
-    private Context2d context2d;
+    private SyncBaseItem syncBaseItem;
+    private long endTime;
     private double muzzleRotationAngel;
+    private Index absoluteMuzzleStart;
+    private int width;
+    private int height;
+    private Rectangle viewRect;
 
-    public MuzzleFlash(ClientSyncItem clientSyncItem, int muzzleFlashNr) throws ItemDoesNotExistException {
-        time = System.currentTimeMillis();
-        this.clientSyncItem = clientSyncItem;
-        BaseItemType baseItemType = clientSyncItem.getSyncBaseItem().getBaseItemType();
+    public MuzzleFlash(SyncBaseItem syncBaseItem, int muzzleFlashNr) throws ItemDoesNotExistException {
+        endTime = System.currentTimeMillis() + MILIS_SHOW_TIME;
+        this.syncBaseItem = syncBaseItem;
+        BaseItemType baseItemType = syncBaseItem.getBaseItemType();
         WeaponType weaponType = baseItemType.getWeaponType();
 
-        double angel = clientSyncItem.getSyncBaseItem().getSyncItemArea().getAngel();
+        double angel = syncBaseItem.getSyncItemArea().getAngel();
         angel = baseItemType.getBoundingBox().getAllowedAngel(angel);
-        int imageNr = baseItemType.getBoundingBox().angelToImageNr(angel);
-        Index muzzleStart = baseItemType.getWeaponType().getMuzzleFlashPosition(muzzleFlashNr, imageNr);
-        Index absoluteMuzzleStart = clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition().add(muzzleStart);
-        int x = (int) (absoluteMuzzleStart.getX() - Math.round(weaponType.getMuzzleFlashWidth() / 2.0));
-        int y;
-        int width = weaponType.getMuzzleFlashWidth();
-        int height;
+        int angelIndex = baseItemType.getBoundingBox().angelToAngelIndex(angel);
+        Index muzzleStart = baseItemType.getWeaponType().getMuzzleFlashPosition(muzzleFlashNr, angelIndex);
+        absoluteMuzzleStart = syncBaseItem.getSyncItemArea().getPosition().add(muzzleStart);
+        width = weaponType.getMuzzleFlashWidth();
         if (weaponType.stretchMuzzleFlashToTarget()) {
-            SyncItem target = ItemContainer.getInstance().getItem(clientSyncItem.getSyncBaseItem().getSyncWeapon().getTarget());
-            int distance = target.getSyncItemArea().getPosition().getDistance(absoluteMuzzleStart);
-            y = absoluteMuzzleStart.getY() - distance;
-            height = distance;
+            SyncItem target = ItemContainer.getInstance().getItem(syncBaseItem.getSyncWeapon().getTarget());
+            height = target.getSyncItemArea().getPosition().getDistance(absoluteMuzzleStart);
             muzzleRotationAngel = absoluteMuzzleStart.getAngleToNord(target.getSyncItemArea().getPosition());
         } else {
-            y = absoluteMuzzleStart.getY() - weaponType.getMuzzleFlashLength();
             height = weaponType.getMuzzleFlashLength();
             muzzleRotationAngel = angel;
         }
-        if (x < 0 || y < 0 || width < 0 || height < 0) {
-            return;
-        }
-
-        Rectangle rectangle = new Rectangle(x, y, width, height);
-        rectangle = rectangle.getSurroundedRectangle(absoluteMuzzleStart, muzzleRotationAngel);
-
-        canvas = Canvas.createIfSupported();
-        if (canvas == null) {
-            throw new Html5NotSupportedException("MuzzleFlash: Canvas not supported.");
-        }
-        canvas.setCoordinateSpaceWidth(rectangle.getWidth());
-        canvas.setCoordinateSpaceHeight(rectangle.getHeight());
-        context2d = canvas.getContext2d();
-
-        MapWindow.getAbsolutePanel().add(canvas,
-                rectangle.getStart().getX() - TerrainView.getInstance().getViewOriginLeft(),
-                rectangle.getStart().getY() - TerrainView.getInstance().getViewOriginTop());
-
-        canvas.getElement().getStyle().setZIndex(Constants.Z_INDEX_MUZZLE_FLASH);
-        normCenter = absoluteMuzzleStart.sub(rectangle.getStart());
-        handlerImage(clientSyncItem.getSyncBaseItem().getBaseItemType());
+        viewRect = Rectangle.generateRectangleFromMiddlePoint(absoluteMuzzleStart, width * 2, height * 2);
     }
 
-    private void handlerImage(BaseItemType baseItemType) {
-        ImageLoader.loadImages(new String[]{ImageHandler.getMuzzleFlashImageUrl(baseItemType)}, new ImageLoader.CallBack() {
-            @Override
-            public void onImagesLoaded(ImageElement[] imageElements) {
-                if (imageElements.length != 1) {
-                    throw new IllegalArgumentException("MuzzleFlash: Wrong image count received: " + imageElements.length);
-                }
-                WeaponType weaponType = clientSyncItem.getSyncBaseItem().getSyncWeapon().getWeaponType();
-                try {
-                    context2d.translate(normCenter.getX(), normCenter.getY());
-                    context2d.rotate(-muzzleRotationAngel);
-                    context2d.drawImage(imageElements[0], -Math.round(weaponType.getMuzzleFlashWidth() / 2.0), -weaponType.getMuzzleFlashLength());
-                } catch (Throwable throwable) {
-                    GwtCommon.handleException(throwable);
-                }
-            }
-        });
+    public boolean isInTime(long time) {
+        return time < endTime;
     }
 
-    public void dispose() {
-        if (canvas != null) {
-            MapWindow.getAbsolutePanel().remove(canvas);
-        }
+    public boolean isInViewRect(Rectangle viewRect) {
+        return viewRect.adjoins(this.viewRect);
     }
 
-    public boolean isTimeUp() {
-        return System.currentTimeMillis() >= time + MILIS_SHOW_TIME;
+    public SyncBaseItem getSyncBaseItem() {
+        return syncBaseItem;
+    }
+
+    public Index getAbsoluteMuzzleStart() {
+        return absoluteMuzzleStart;
+    }
+
+    public double getMuzzleRotationAngel() {
+        return muzzleRotationAngel;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

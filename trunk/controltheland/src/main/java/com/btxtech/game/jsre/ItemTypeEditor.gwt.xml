@@ -21,9 +21,6 @@
     <!-- GWT Issue 5691: Logging mus be at the beginning otherwise log are lost in onModuleLoad() method-->
     <inherits name="com.google.gwt.logging.Logging"/>
     <inherits name='com.google.gwt.user.theme.standard.Standard'/>
-    <inherits name="com.google.gwt.widgetideas.HyperlinkOverride"/>
-    <inherits name='com.google.gwt.widgetideas.GWTCanvas'/>
-    <inherits name='com.google.gwt.widgetideas.GlassPanel'/>
     <!-- Inherit the default GWT style sheet.  You can change       -->
     <!-- the theme of your GWT application by uncommenting          -->
     <!-- any one of the following lines.                            -->

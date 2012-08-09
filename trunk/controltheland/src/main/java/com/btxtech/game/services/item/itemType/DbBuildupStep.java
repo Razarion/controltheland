@@ -31,6 +31,7 @@ import java.io.Serializable;
  * Time: 22:47:20
  */
 @Entity(name = "ITEM_TYPE_BUILDUP_STEP")
+@Deprecated
 public class DbBuildupStep implements Serializable, CrudChild<DbItemType> {
     @Id
     @GeneratedValue
@@ -61,11 +62,11 @@ public class DbBuildupStep implements Serializable, CrudChild<DbItemType> {
     }
 
     public void setBuildupStep(BuildupStep buildupStep) {
-        from = buildupStep.getFrom();
+/*        from = buildupStep.getFrom();
         toExclusive = buildupStep.getToExclusive();
         Html5ImagesUploadConverter.Package aPackage = Html5ImagesUploadConverter.convertInlineImage(buildupStep.getBase64ImageData());
         contentType = aPackage.getMime();
-        data = aPackage.convertBase64ToBytes();
+        data = aPackage.convertBase64ToBytes(); */
     }
 
     public BuildupStep createBuildupStep() {

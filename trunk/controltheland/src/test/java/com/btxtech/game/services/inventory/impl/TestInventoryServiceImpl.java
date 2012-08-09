@@ -600,7 +600,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         SyncBaseItem mockDropper = EasyMock.createStrictMock(SyncBaseItem.class);
         EasyMock.expect(mockDropper.getDropBoxPossibility()).andReturn(1.0);
         EasyMock.expect(mockDropper.getBaseItemType()).andReturn(dropperType);
-        SyncItemArea dropperArea = new SyncItemArea(new BoundingBox(10, 10, 10, 10, new double[]{}), new Index(100, 100));
+        SyncItemArea dropperArea = new SyncItemArea(new BoundingBox(10, 10, new double[]{}), new Index(100, 100));
         EasyMock.expect(mockDropper.getSyncItemArea()).andReturn(dropperArea);
         // History Service
         HistoryService mockHistoryService = EasyMock.createStrictMock(HistoryService.class);
@@ -778,7 +778,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         DbBoxItemType dbBoxItemType = (DbBoxItemType) itemService.getDbItemTypeCrud().createDbChild(DbBoxItemType.class);
         dbBoxItemType.setTerrainType(TerrainType.LAND);
         setupImages(dbBoxItemType, 1);
-        dbBoxItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_1));
+        dbBoxItemType.setBounding(new BoundingBox(80, 80, ANGELS_1));
         dbBoxItemType.setTtl(5000);
         DbBoxItemTypePossibility dbBoxItemTypePossibility1 = dbBoxItemType.getBoxPossibilityCrud().createDbChild();
         dbBoxItemTypePossibility1.setPossibility(1.0);

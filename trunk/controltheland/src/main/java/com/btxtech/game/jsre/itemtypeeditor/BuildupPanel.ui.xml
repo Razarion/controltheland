@@ -1,0 +1,42 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+
+	</ui:style>
+	<g:VerticalPanel>
+		<g:Grid>
+			<g:row>
+				<g:customCell>
+					<g:InlineLabel text="Buildup Steps"/>
+				</g:customCell>
+				<g:customCell>
+					<g:HorizontalPanel>
+						<g:IntegerBox ui:field="buildupStepFiled"/>
+						<g:Button ui:field="buildupStepButton">Apply (!)</g:Button>
+					</g:HorizontalPanel>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell>
+					<g:InlineLabel text="Animation Frames"/>
+				</g:customCell>
+				<g:customCell>
+					<g:HorizontalPanel>
+						<g:IntegerBox ui:field="animationFrameField"/>
+						<g:Button ui:field="animationFrameButton">Apply (!)</g:Button>
+					</g:HorizontalPanel>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell>
+					<g:InlineLabel text="Animation Duration"/>
+				</g:customCell>
+				<g:customCell>
+					<g:IntegerBox ui:field="animationDurationField"/>
+				</g:customCell>
+			</g:row>
+		</g:Grid>
+		<g:FlexTable ui:field="imageTable"  borderWidth="1"/>
+	</g:VerticalPanel>
+</ui:UiBinder>

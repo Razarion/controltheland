@@ -36,5 +36,37 @@ public interface DbItemTypeI {
 
     int getBoundingBoxWidth();
 
+    int getBuildupSteps();
+
+    void setBuildupSteps(int buildupSteps);
+
+    int getBuildupAnimationFrames();
+
+    void setBuildupAnimationFrames(int buildupAnimationFrames);
+
+    int getBuildupAnimationDuration();
+
+    void setBuildupAnimationDuration(int buildupAnimationDuration);
+
+    int getRuntimeAnimationFrames();
+
+    void setRuntimeAnimationFrames(int runtimeAnimationFrames);
+
+    int getRuntimeAnimationDuration();
+
+    void setRuntimeAnimationDuration(int runtimeAnimationDuration);
+
+    int getDemolitionSteps();
+
+    void setDemolitionSteps(int demolitionSteps);
+
+    int getDemolitionAnimationFrames();
+
+    void setDemolitionAnimationFrames(int demolitionAnimationFrames);
+
+    int getDemolitionAnimationDuration();
+
+    void setDemolitionAnimationDuration(int demolitionAnimationDuration);
+
     int getBoundingBoxHeight();
 }

@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.playback;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.DeferredStartup;
+import com.btxtech.game.jsre.client.renderer.Renderer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 
 /**
@@ -33,5 +34,6 @@ public class RunPlaybackStartupTask extends AbstractStartupTask {
     protected void privateStart(DeferredStartup deferredStartup) {
         // TODO Simulation.getInstance().initGameEngine();
         PlaybackVisualisation.getInstance().play();
+        Renderer.getInstance().start();
     }
 }

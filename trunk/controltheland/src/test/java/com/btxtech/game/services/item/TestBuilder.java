@@ -17,7 +17,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBuilder;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncMovable;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.terrain.TerrainService;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
@@ -35,8 +34,6 @@ import java.util.List;
  * Time: 14:17:18
  */
 public class TestBuilder extends AbstractServiceTest {
-    @Autowired
-    private ActionService actionService;
     @Autowired
     private ItemService itemService;
     private Services servicesMock;
@@ -97,7 +94,7 @@ public class TestBuilder extends AbstractServiceTest {
     public void testBuildup() throws Exception {
         SyncBaseItem syncBaseItem = createSyncBuilderItem();
 
-        List<Index> path = new ArrayList<Index>();
+        List<Index> path = new ArrayList<>();
         path.add(new Index(5000, 5000));
         path.add(new Index(5000, 5200));
         syncBaseItem.getSyncMovable().setPathToDestination(path, MathHelper.WEST);
@@ -151,7 +148,7 @@ public class TestBuilder extends AbstractServiceTest {
         Id id2 = new Id(2, 1, 1);
         SyncBaseItem buildupBaseItem = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(5000, 5290), id2, servicesMock);
         buildupBaseItem.setBuildup(0.5);
-        List<Index> path = new ArrayList<Index>();
+        List<Index> path = new ArrayList<>();
         path.add(new Index(5000, 5000));
         path.add(new Index(5000, 5200));
         syncBaseItem.getSyncMovable().setPathToDestination(path, MathHelper.WEST);

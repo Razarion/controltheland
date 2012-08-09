@@ -91,7 +91,7 @@ public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener, Mi
         itemTypeAccess.getItemType(itemTypeId, new AsyncCallback<ItemType>() {
             @Override
             public void onFailure(Throwable caught) {
-                log.log(Level.SEVERE, "getBoundingBox call failed", caught);
+                log.log(Level.SEVERE, "createBoundingBox call failed", caught);
             }
 
             @Override

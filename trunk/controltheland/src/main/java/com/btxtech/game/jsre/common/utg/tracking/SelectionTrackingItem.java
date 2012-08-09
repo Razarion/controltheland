@@ -13,10 +13,10 @@
 
 package com.btxtech.game.jsre.common.utg.tracking;
 
-import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -44,10 +44,10 @@ public class SelectionTrackingItem implements Serializable {
         own = null;
     }
 
-    public SelectionTrackingItem(String startUuid, ClientSyncItem selection) {
+    public SelectionTrackingItem(String startUuid, SyncItem selection) {
         this.startUuid = startUuid;
         selectedIds = new ArrayList<Integer>();
-        selectedIds.add(GwtCommon.checkInt(selection.getSyncItem().getId().getId(), "SelectionTrackingItem (selection) selection.getSyncItem().getId().getId()"));
+        selectedIds.add(GwtCommon.checkInt(selection.getId().getId(), "SelectionTrackingItem (selection) selection.getSyncItem().getId().getId()"));
         own = false;
     }
 

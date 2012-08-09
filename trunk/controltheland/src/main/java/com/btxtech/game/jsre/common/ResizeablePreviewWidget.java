@@ -184,7 +184,7 @@ public abstract class ResizeablePreviewWidget extends AbsolutePanel implements M
         setPixelSize(rectangle.getWidth(), rectangle.getHeight());
         hasMoved = true;
         DOM.setCapture(this.getElement()); //IE6 need this to prevent losing of image
-        MapWindow.getInstance().onMouseMove(event);
+        // TODO MapWindow.getInstance().onMouseMove(event);
         if (allowedToPlace(rectangle)) {
             marker.setVisible(false);
         } else {

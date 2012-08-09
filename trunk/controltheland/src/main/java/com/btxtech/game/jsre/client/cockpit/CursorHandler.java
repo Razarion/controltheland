@@ -13,18 +13,19 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.ClientSyncItemView;
+import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.terrain.MapWindow;
-import com.btxtech.game.jsre.client.terrain.TerrainMouseMoveListener;
+import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemContainer;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.Widget;
 
 import java.util.Collection;
 
@@ -35,95 +36,97 @@ import java.util.Collection;
  * Date: Jun 27, 2009
  * Time: 9:43:48 AM
  */
-public class CursorHandler implements TerrainMouseMoveListener {
+public class CursorHandler {
     private static CursorHandler INSTANCE = new CursorHandler();
-    private CursorState cursorState;
-    private boolean sellMode = false;
 
     /**
      * Singleton
      */
     private CursorHandler() {
-        MapWindow.getInstance().setTerrainMouseMoveListener(this);
     }
 
     public static CursorHandler getInstance() {
         return INSTANCE;
     }
 
-    public void setUnloadContainer() {
-        cursorState.setCanUnload(true);
-    }
-
-    public void clearUnloadContainer() {
-        if (cursorState != null) {
-            cursorState.setCanUnload(false);
-        }
-    }
-
-    public void setLaunch() {
-        cursorState.setCanLaunch(true);
-    }
-
-    public void clearLaunch() {
-        if (cursorState != null) {
-            cursorState.setCanLaunch(false);
-        }
-    }
-
-    public void setSell(boolean sellMode) {
-        this.sellMode = sellMode;
-    }
-
-    public void onOwnSelectionChanged(Group selection) {
-        CursorState cursorState = new CursorState();
-        if (selection.canMove()) {
-            cursorState.setCanMove();
-            cursorState.setCanLoad();
-        }
-
-        if (selection.canAttack()) {
-            cursorState.setCanAttack();
-        }
-
-        if (selection.canCollect()) {
-            cursorState.setCanCollect();
-        }
-
-        if (selection.canFinalizeBuild()) {
-            cursorState.setCanFinalizeBuild();
-        }
-
-        this.cursorState = cursorState;
-    }
 
     public void onSelectionCleared() {
-        cursorState = null;
         setTerrainCursor(null, false);
     }
 
-    @Override
-    public void onMove(int absoluteLeft, int absoluteTop, int relativeLeft, int relativeTop) {
-        if (sellMode) {
-            setTerrainCursor(CursorType.SELL, false);
-            return;
+    public void handleMouseMove(SyncItem syncItem, int absoluteX, int absoluteY) {
+        if (syncItem != null) {
+            handleItemCursor(syncItem);
+        } else {
+            handleTerrainCursor(absoluteX, absoluteY);
         }
+    }
 
-        if (cursorState == null) {
-            setTerrainCursor(null, false);
-            return;
-        }
+    private void handleTerrainCursor(int absoluteLeft, int absoluteTop) {
         Index position = new Index(absoluteLeft, absoluteTop);
-
-        if (cursorState.isCanUnload()) {
+        if (CockpitMode.getInstance().getMode() == CockpitMode.Mode.UNLOAD) {
             setTerrainCursor(CursorType.UNLOAD, atLeastOnAllowedForUnload(position));
-        } else if (cursorState.isCanLaunch()) {
+        } else if (CockpitMode.getInstance().getMode() == CockpitMode.Mode.LAUNCH) {
             setTerrainCursor(CursorType.ATTACK, SelectionHandler.getInstance().atLeastOneAllowedToLaunch(position));
-        } else if (cursorState.isCanMove()) {
+        } else if (CockpitMode.getInstance().isMovePossible()) {
             Collection<SurfaceType> allowedSurfaceTypes = SelectionHandler.getInstance().getOwnSelectionSurfaceTypes();
             SurfaceType surfaceType = TerrainView.getInstance().getTerrainHandler().getSurfaceTypeAbsolute(position);
             boolean tmpIsMoveAllowed = allowedSurfaceTypes.contains(surfaceType);
             setTerrainCursor(CursorType.GO, tmpIsMoveAllowed);
+        } else {
+            setCursor(Style.Cursor.DEFAULT);
+        }
+    }
+
+    private void handleItemCursor(SyncItem syncItem) {
+        Index position = syncItem.getSyncItemArea().getPosition();
+        if (CockpitMode.getInstance().getMode() == CockpitMode.Mode.SELL) {
+            if (syncItem instanceof SyncBaseItem) {
+                setCursor(CursorType.SELL, ClientBase.getInstance().isMyOwnProperty((SyncBaseItem) syncItem));
+            } else {
+                setCursor(Style.Cursor.DEFAULT);
+            }
+            return;
+        } else if (CockpitMode.getInstance().getMode() == CockpitMode.Mode.LAUNCH) {
+            setTerrainCursor(CursorType.ATTACK, SelectionHandler.getInstance().atLeastOneAllowedToLaunch(position));
+            return;
+        }
+
+        if (syncItem instanceof SyncBaseItem) {
+            SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
+            if (ClientBase.getInstance().isMyOwnProperty(syncBaseItem)) {
+                if (CockpitMode.getInstance().isLoadPossible() && syncBaseItem.hasSyncItemContainer() && isNotMyself(syncBaseItem)) {
+                    SyncItemContainer syncItemContainer = syncBaseItem.getSyncItemContainer();
+                    boolean allowed = ClientTerritoryService.getInstance().isAllowed(position, syncBaseItem)
+                            && syncItemContainer.isAbleToLoad(SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems());
+                    setCursor(CursorType.LOAD, allowed);
+                } else if (CockpitMode.getInstance().isFinalizeBuildPossible() && syncBaseItem.isReady() && isNotMyself(syncBaseItem)) {
+                    setCursor(CursorType.FINALIZE_BUILD, SelectionHandler.getInstance().atLeastOneItemTypeAllowed2FinalizeBuild(syncBaseItem));
+                } else {
+                    setCursor(Style.Cursor.POINTER);
+                }
+            } else if (ClientBase.getInstance().isEnemy(syncBaseItem)) {
+                if (CockpitMode.getInstance().isAttackPossible()) {
+                    setCursor(CursorType.ATTACK,
+                            SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection()
+                                    && SelectionHandler.getInstance().atLeastOneAllowedOnTerritory4Selection(position)
+                                    && SelectionHandler.getInstance().atLeastOneItemTypeAllowed2Attack4Selection(syncBaseItem));
+                } else {
+                    setCursor(Style.Cursor.POINTER);
+                }
+            } else {
+                if (CockpitMode.getInstance().isAttackPossible()) {
+                    setCursor(CursorType.ALLIANCE, false);
+                } else {
+                    setCursor(Style.Cursor.POINTER);
+                }
+            }
+        } else if (CockpitMode.getInstance().isCollectPossible() && syncItem instanceof SyncResourceItem) {
+            setCursor(CursorType.COLLECT, SelectionHandler.getInstance().atLeastOneAllowedOnTerritory4Selection(position));
+        } else if (CockpitMode.getInstance().isMovePossible() &&  syncItem instanceof SyncBoxItem) {
+            setCursor(CursorType.PICKUP, SelectionHandler.getInstance().atLeastOneAllowedOnTerritory4Selection(position));
+        } else {
+            setCursor(Style.Cursor.POINTER);
         }
     }
 
@@ -139,46 +142,9 @@ public class CursorHandler implements TerrainMouseMoveListener {
         return false;
     }
 
-    public void setItemCursor(ClientSyncItemView clientSyncItemView, CursorItemState cursorItemState) {
-        if (sellMode) {
-            setCursor(clientSyncItemView, CursorType.SELL, clientSyncItemView.getClientSyncItem().isMyOwnProperty());
-            return;
-        }
-
-        if (cursorState == null) {
-            setCursor(clientSyncItemView, Style.Cursor.POINTER);
-            return;
-        }
-        Index position = clientSyncItemView.getClientSyncItem().getSyncItem().getSyncItemArea().getPosition();
-        if (cursorItemState.isAlliance()) {
-            setCursor(clientSyncItemView, CursorType.ALLIANCE, true);
-        } else if (cursorState.isCanAttack() && cursorItemState.isAttackTarget()) {
-            setCursor(clientSyncItemView, CursorType.ATTACK,
-                    SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection()
-                            && SelectionHandler.getInstance().atLeastOneAllowedOnTerritory4Selection(position)
-                            && SelectionHandler.getInstance().atLeastOneItemTypeAllowed2Attack4Selection((clientSyncItemView).getClientSyncItem().getSyncBaseItem()));
-        } else if (cursorState.isCanCollect() && cursorItemState.isCollectTarget()) {
-            setCursor(clientSyncItemView, CursorType.COLLECT, SelectionHandler.getInstance().atLeastOneAllowedOnTerritory4Selection(position));
-        } else if (cursorState.isCanLoad() && cursorItemState.isLoadTarget() && isNotMyself(clientSyncItemView)) {
-            SyncItemContainer syncItemContainer = clientSyncItemView.getClientSyncItem().getSyncBaseItem().getSyncItemContainer();
-            boolean allowed = ClientTerritoryService.getInstance().isAllowed(position, clientSyncItemView.getClientSyncItem().getSyncBaseItem())
-                    && syncItemContainer.isAbleToLoad(SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems());
-            setCursor(clientSyncItemView, CursorType.LOAD, allowed);
-        } else if (cursorState.isCanFinalizeBuild() && cursorItemState.isFinalizeBuild()) {
-            setCursor(clientSyncItemView, CursorType.FINALIZE_BUILD, SelectionHandler.getInstance().atLeastOneItemTypeAllowed2FinalizeBuild(clientSyncItemView.getClientSyncItem().getSyncBaseItem()));
-        } else if (cursorState.isCanLaunch() && cursorItemState.isAttackTarget()) {
-            setCursor(clientSyncItemView, CursorType.ATTACK, SelectionHandler.getInstance().atLeastOneAllowedToLaunch(position));
-        } else if (cursorState.isCanMove() && cursorItemState.isBoxTarget()) {
-            setCursor(clientSyncItemView, CursorType.PICKUP, SelectionHandler.getInstance().atLeastOneAllowedOnTerritory4Selection(position));
-        } else {
-            setCursor(clientSyncItemView, Style.Cursor.POINTER);
-        }
-    }
-
-    private boolean isNotMyself(ClientSyncItemView clientSyncItemView) {
-        SyncBaseItem my = clientSyncItemView.getClientSyncItem().getSyncBaseItem();
+    private boolean isNotMyself(SyncBaseItem me) {
         for (SyncBaseItem syncBaseItem : SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems()) {
-            if (syncBaseItem.equals(my)) {
+            if (syncBaseItem.equals(me)) {
                 return false;
             }
         }
@@ -187,17 +153,17 @@ public class CursorHandler implements TerrainMouseMoveListener {
 
     private void setTerrainCursor(CursorType cursorType, boolean allowed) {
         if (cursorType != null) {
-            setCursor(MapWindow.getAbsolutePanel(), cursorType, allowed);
+            setCursor(cursorType, allowed);
         } else {
-            setCursor(MapWindow.getAbsolutePanel(), Style.Cursor.DEFAULT);
+            setCursor(Style.Cursor.DEFAULT);
         }
     }
 
-    private void setCursor(Widget widget, Style.Cursor cursor) {
-        widget.getElement().getStyle().setCursor(cursor);
+    private void setCursor(Style.Cursor cursor) {
+        TerrainView.getInstance().getCanvas().getElement().getStyle().setCursor(cursor);
     }
 
-    private void setCursor(Widget widget, CursorType cursorType, boolean allowed) {
+    private void setCursor(CursorType cursorType, boolean allowed) {
         String url;
         Style.Cursor alternativeDefault;
         if (allowed) {
@@ -209,11 +175,10 @@ public class CursorHandler implements TerrainMouseMoveListener {
         }
 
         if (GwtCommon.isOpera() || url == null) {
-            widget.getElement().getStyle().setCursor(alternativeDefault);
+            TerrainView.getInstance().getCanvas().getElement().getStyle().setCursor(alternativeDefault);
         } else {
-            widget.getElement().getStyle().setProperty("cursor", "url(" + url + "), " + alternativeDefault.getCssName());
+            TerrainView.getInstance().getCanvas().getElement().getStyle().setProperty("cursor", "url(" + url + "), " + alternativeDefault.getCssName());
         }
 
     }
-
 }

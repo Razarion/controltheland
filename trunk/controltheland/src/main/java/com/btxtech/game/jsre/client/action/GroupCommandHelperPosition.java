@@ -1,6 +1,5 @@
 package com.btxtech.game.jsre.client.action;
 
-import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.collision.ClientCollisionService;
 import com.btxtech.game.jsre.client.common.Index;
@@ -19,20 +18,20 @@ import java.util.logging.Logger;
 public abstract class GroupCommandHelperPosition {
     private Logger log = Logger.getLogger(GroupCommandHelperPosition.class.getName());
 
-    public void process(ClientSyncItem clientSyncItem, BaseItemType targetBaseItemType, Index targetPosition, boolean findPathIfNotInRange) {
+    public void process(SyncBaseItem syncBaseItem, BaseItemType targetBaseItemType, Index targetPosition, boolean findPathIfNotInRange) {
         try {
-            if (isCommandPossible(clientSyncItem.getSyncBaseItem(), targetBaseItemType, targetPosition)) {
-                if (isAllowedAllowedWithoutMoving(clientSyncItem.getSyncBaseItem(), targetBaseItemType, targetPosition)) {
-                    executeCommand(clientSyncItem.getSyncBaseItem(), targetBaseItemType, targetPosition, clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem().getSyncItemArea().getTurnToAngel(targetPosition));
-                } else if (findPathIfNotInRange && clientSyncItem.getSyncBaseItem().hasSyncMovable()) {
-                    AttackFormationItem format = ClientCollisionService.getInstance().getDestinationHint(clientSyncItem.getSyncBaseItem(),
-                            getRange(clientSyncItem.getSyncBaseItem()),
+            if (isCommandPossible(syncBaseItem, targetBaseItemType, targetPosition)) {
+                if (isAllowedAllowedWithoutMoving(syncBaseItem, targetBaseItemType, targetPosition)) {
+                    executeCommand(syncBaseItem, targetBaseItemType, targetPosition, syncBaseItem.getSyncItemArea().getPosition(), syncBaseItem.getSyncItemArea().getTurnToAngel(targetPosition));
+                } else if (findPathIfNotInRange && syncBaseItem.hasSyncMovable()) {
+                    AttackFormationItem format = ClientCollisionService.getInstance().getDestinationHint(syncBaseItem,
+                            getRange(syncBaseItem),
                             targetBaseItemType.getBoundingBox().createSyntheticSyncItemArea(targetPosition),
                             targetBaseItemType.getTerrainType());
                     if (format.isInRange()) {
-                        executeCommand(clientSyncItem.getSyncBaseItem(), targetBaseItemType, targetPosition, format.getDestinationHint(), format.getDestinationAngel());
+                        executeCommand(syncBaseItem, targetBaseItemType, targetPosition, format.getDestinationHint(), format.getDestinationAngel());
                     } else {
-                        ActionHandler.getInstance().move(clientSyncItem.getSyncBaseItem(), format.getDestinationHint());
+                        ActionHandler.getInstance().move(syncBaseItem, format.getDestinationHint());
                     }
                 }
                 Connection.getInstance().sendCommandQueue();

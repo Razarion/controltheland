@@ -83,11 +83,6 @@
             <version>${gwtVersion}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-incubator</artifactId>
-            <version>2.1.0</version>
-        </dependency>
         <!-- Hibernate -->
         <dependency>
             <groupId>org.hibernate</groupId>

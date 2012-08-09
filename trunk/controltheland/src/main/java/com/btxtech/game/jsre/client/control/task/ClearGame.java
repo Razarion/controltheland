@@ -16,11 +16,13 @@ package com.btxtech.game.jsre.client.control.task;
 import com.btxtech.game.jsre.client.ClientChatHandler;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameCommon;
+import com.btxtech.game.jsre.client.cockpit.CockpitMode;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
+import com.btxtech.game.jsre.client.renderer.Renderer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
@@ -39,14 +41,12 @@ public class ClearGame extends AbstractStartupTask {
 
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
+        Renderer.getInstance().stop();
         ClientChatHandler.getInstance().stop();
         ClientUserTracker.getInstance().stopEventTracking();
         Connection.getInstance().stopSyncInfoPoll();
         GameCommon.clearGame();
         Simulation.getInstance().cleanup();
-        SelectionHandler.getInstance().setSellMode(false);
-        SideCockpit.getInstance().getCockpitMode().clearLaunchMode();
-        SideCockpit.getInstance().getCockpitMode().clearUnloadMode();
         TipManager.getInstance().deactivate();
         RadarPanel.getInstance().cleanup();
         TerrainView.getInstance().moveAbsolute(new Index(0, 0));

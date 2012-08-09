@@ -13,8 +13,9 @@
 
 package com.btxtech.game.jsre.common;
 
-import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+
 import java.util.Collection;
 
 /**
@@ -33,14 +34,14 @@ public class RectangleFormation {
     private int linePartCount = 1;
     private int currentLinePartCount = 0;
 
-    public RectangleFormation(Index origin, Collection<ClientSyncItem> clientSyncItems) {
+    public RectangleFormation(Index origin, Collection<SyncBaseItem> syncBaseItems) {
         this.origin = origin;
-        for (ClientSyncItem clientSyncItem : clientSyncItems) {
-            if (clientSyncItem.getSyncItem().getItemType().getBoundingBox().getMaxDiameter() > distanceX) {
-                distanceX = clientSyncItem.getSyncItem().getItemType().getBoundingBox().getMaxDiameter();
+        for (SyncBaseItem syncBaseItem : syncBaseItems) {
+            if (syncBaseItem.getItemType().getBoundingBox().getMaxDiameter() > distanceX) {
+                distanceX = syncBaseItem.getItemType().getBoundingBox().getMaxDiameter();
             }
-            if (clientSyncItem.getSyncItem().getItemType().getBoundingBox().getMaxDiameter() > distanceY) {
-                distanceY = clientSyncItem.getSyncItem().getItemType().getBoundingBox().getMaxDiameter();
+            if (syncBaseItem.getItemType().getBoundingBox().getMaxDiameter() > distanceY) {
+                distanceY = syncBaseItem.getItemType().getBoundingBox().getMaxDiameter();
             }
         }
     }

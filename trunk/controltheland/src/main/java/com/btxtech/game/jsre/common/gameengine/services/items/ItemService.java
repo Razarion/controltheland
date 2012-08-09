@@ -93,5 +93,15 @@ public interface ItemService {
 
     SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem);
 
+    SyncItem getItemAtAbsolutePosition(Index absolutePosition);
+
     void sellItem(Id id) throws ItemDoesNotExistException, NotYourBaseException;
+
+    int getMaxItemWidth();
+
+    int getMaxItemHeight();
+
+    int getMaxItemDiameter();
+
+    boolean hasItemsInRectangleFast(Rectangle rectangle);
 }

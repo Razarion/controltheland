@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client.cockpit.item;
 
 import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.action.ActionHandler;
+import com.btxtech.game.jsre.client.cockpit.CockpitMode;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.ToolTips;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
@@ -85,7 +86,7 @@ public class SpecialFunctionPanel extends VerticalPanel {
             @Override
             public void onClick(ClickEvent event) {
                 ItemCockpit.getInstance().deActivate();
-                SideCockpit.getInstance().getCockpitMode().setUnloadMode();
+                CockpitMode.getInstance().setMode(CockpitMode.Mode.UNLOAD);
             }
         });
         button.ensureDebugId("unloadButton");
@@ -100,7 +101,7 @@ public class SpecialFunctionPanel extends VerticalPanel {
         ExtendedCustomButton button = new ExtendedCustomButton("launchButton", false, ToolTips.TOOL_TIP_LAUNCH, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                SideCockpit.getInstance().getCockpitMode().setLaunchMode();
+                CockpitMode.getInstance().setMode(CockpitMode.Mode.LAUNCH);
             }
         });
         add(button);

@@ -587,6 +587,10 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
         return health >= getBaseItemType().getHealth();
     }
 
+    public double getNormalizedHealth() {
+        return Math.min(1.0, health / (double) getBaseItemType().getHealth());
+    }
+
     public void addBuildup(double buildup) {
         setBuildup(this.buildup + buildup);
     }

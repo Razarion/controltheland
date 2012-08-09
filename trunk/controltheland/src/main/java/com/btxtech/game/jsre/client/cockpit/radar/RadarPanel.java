@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.client.cockpit.radar;
 
-import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.GameEngineMode;
@@ -24,6 +23,7 @@ import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -88,7 +88,9 @@ public class RadarPanel implements TerrainScrollListener {
      * Singleton
      */
     private RadarPanel() {
-        TerrainView.getInstance().addTerrainScrollListener(this);
+        if (!TerrainView.uglySuppressRadar) {
+            TerrainView.getInstance().addTerrainScrollListener(this);
+        }
     }
 
     public AbsolutePanel createWidget(int width, int height) {
@@ -354,10 +356,9 @@ public class RadarPanel implements TerrainScrollListener {
         handleItemRadarState();
     }
 
-    public void onItemTypeChanged(ClientSyncItem clientSyncItem) {
-        if (clientSyncItem.getSyncItem() instanceof SyncBaseItem) {
-            SyncBaseItem syncBaseItem = clientSyncItem.getSyncBaseItem();
-            if (radarModeItems.contains(syncBaseItem)) {
+    public void onItemTypeChanged(SyncItem syncItem) {
+        if (syncItem instanceof SyncBaseItem) {
+            if (radarModeItems.contains(syncItem)) {
                 handleItemRadarState();
             }
         }

@@ -42,6 +42,7 @@ import com.google.gwt.user.client.ui.RootPanel;
  * Date: 10.01.2010
  * Time: 19:23:21
  */
+@Deprecated
 public abstract class PlaceablePreviewWidget extends AbsolutePanel implements MouseMoveHandler, MouseUpHandler, MouseDownHandler {
     private boolean hasMoved = false;
     private Image image;
@@ -125,7 +126,7 @@ public abstract class PlaceablePreviewWidget extends AbsolutePanel implements Mo
         hasMoved = true;
         DOM.setCapture(this.getElement()); //IE6 need this to prevent losing of image
         getElement().getStyle().setProperty("cursor", "move");//IE6
-        MapWindow.getInstance().onMouseMove(event);
+        // TODO MapWindow.getInstance().onMouseMove(event);
         if (marker == null) {
             // Due to image size is not known. Image mus be loaded before
             setupMarker();

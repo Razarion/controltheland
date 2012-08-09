@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
+import com.btxtech.game.jsre.client.renderer.Renderer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
@@ -40,9 +41,9 @@ public class RunSimulationStartupTask extends AbstractStartupTask {
         SideCockpit.getInstance().initMission(((SimulationInfo) Connection.getInstance().getGameInfo()));
         RegisterDialog.showDialogRepeating();
         Simulation.getInstance().start();
-        MapWindow.getInstance().displayVisibleItems();
         SideCockpit.getInstance().updateItemLimit();
         ClientChatHandler.getInstance().runSimulatedGame(Connection.getInstance(), ChatCockpit.getInstance(), ClientChatHandler.START_DELAY, ClientChatHandler.POLL_DELAY);
         ClientTerritoryService.getInstance().clearTerritories();
+        Renderer.getInstance().start();
     }
 }

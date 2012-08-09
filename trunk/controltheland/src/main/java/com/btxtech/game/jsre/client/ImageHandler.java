@@ -14,10 +14,10 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
-import com.btxtech.game.jsre.common.gameengine.itemType.BuildupStep;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -58,46 +58,35 @@ public class ImageHandler {
         return builder.toString();
     }
 
-    public static String getItemTypeImageBackgroundUrl(SyncItem syncItem) {
-        int xOffset = syncItem.getSyncItemArea().getBoundingBox().angelToImageOffset(syncItem.getSyncItemArea().getAngel());
-        StringBuilder builder = new StringBuilder();
-        builder.append("url(");
-        builder.append(getItemTypeSpriteMapUrl(syncItem.getItemType().getId()));
-        builder.append(") no-repeat -");
-        builder.append(xOffset);
-        builder.append("px 0px");
-        return builder.toString();
-    }
-
-    public static Image getItemTypeImage(ItemType itemType, Integer width, Integer height) {
+    public static Image getItemTypeImage(ItemType itemType, int width, int height) {
         String url = getItemTypeSpriteMapUrl(itemType.getId());
-        Image image;
-        if (width != null && height != null) {
-            int xOffset = itemType.getBoundingBox().getCosmeticImageIndex() * width;
-            image = new Image(url, xOffset, 0, width, height);
-            image.setPixelSize(width, height);
-            String spriteWidth = Integer.toString(width * itemType.getBoundingBox().getAngelCount());
-            image.getElement().getStyle().setProperty("backgroundSize", spriteWidth + "px " + Integer.toString(height) + "px");
-        } else {
-            int xOffset = itemType.getBoundingBox().getCosmeticImageIndex() * itemType.getBoundingBox().getImageWidth();
-            image = new Image(url, xOffset, 0, itemType.getBoundingBox().getImageWidth(), itemType.getBoundingBox().getImageHeight());
-        }
+        ItemTypeSpriteMap itemTypeSpriteMap = itemType.getItemTypeSpriteMap();
+        double scale = (double) width / (double) itemTypeSpriteMap.getImageWidth();
+        Index offset = itemTypeSpriteMap.getCosmeticImageOffset();
+        Image image = new Image(url, (int) ((double) offset.getX() * scale), (int) ((double) offset.getY() * scale), width, height);
+        image.setPixelSize(width, height);
+        image.getElement().getStyle().setProperty("backgroundSize",
+                (int) ((double) itemTypeSpriteMap.getSpriteWidth() * scale) + "px " + Integer.toString(height) + "px");
         return image;
     }
 
     public static String getQuestProgressItemTypeImageString(ItemType itemType) {
-        double scale = (double) QUEST_PROGRESS_IMAGES_HEIGHT / (double) itemType.getBoundingBox().getImageHeight();
+        ItemTypeSpriteMap itemTypeSpriteMap = itemType.getItemTypeSpriteMap();
+        double scale = (double) QUEST_PROGRESS_IMAGES_HEIGHT / (double) itemTypeSpriteMap.getImageHeight();
+        Index offset = itemTypeSpriteMap.getCosmeticImageOffset();
         StringBuilder builder = new StringBuilder();
         builder.append("<img border='0' src='/game/clear.cache.gif' style='width:");
-        builder.append((int) (itemType.getBoundingBox().getImageWidth() * scale));
+        builder.append((int) (itemTypeSpriteMap.getImageWidth() * scale));
         builder.append("px; height:");
         builder.append(QUEST_PROGRESS_IMAGES_HEIGHT);
         builder.append("px; background-image: url(");
         builder.append(getItemTypeSpriteMapUrl(itemType.getId()));
         builder.append("); background-repeat: no-repeat; background-position: -");
-        builder.append((int) (itemType.getBoundingBox().angelToImageOffset(itemType.getBoundingBox().getCosmeticAngel()) * scale));
-        builder.append("px 0px; background-size: ");
-        builder.append((int) (itemType.getBoundingBox().getImageWidth() * scale * itemType.getBoundingBox().getAngelCount()));
+        builder.append((int) (offset.getX() * scale));
+        builder.append("px ");
+        builder.append(offset.getY());
+        builder.append("px; background-size: ");
+        builder.append((int) (itemTypeSpriteMap.getSpriteWidth() * scale));
         builder.append("px ");
         builder.append(QUEST_PROGRESS_IMAGES_HEIGHT);
         builder.append("px;");
@@ -112,24 +101,6 @@ public class ImageHandler {
         url.append(Constants.ITEM_TYPE_SPRITE_MAP_ID);
         url.append("=");
         url.append(itemId);
-        return url.toString();
-    }
-
-    public static String getBuildupStepImageUrl(BaseItemType baseItemType, BuildupStep buildupStep) {
-        StringBuilder url = new StringBuilder();
-        url.append(Constants.ITEM_IMAGE_URL);
-        url.append("?");
-        url.append(Constants.TYPE);
-        url.append("=");
-        url.append(Constants.TYPE_BUILDUP_STEP);
-        url.append("&");
-        url.append(Constants.ITEM_TYPE_ID);
-        url.append("=");
-        url.append(baseItemType.getId());
-        url.append("&");
-        url.append(Constants.ITEM_IMAGE_BUILDUP_STEP);
-        url.append("=");
-        url.append(buildupStep.getImageId());
         return url.toString();
     }
 
