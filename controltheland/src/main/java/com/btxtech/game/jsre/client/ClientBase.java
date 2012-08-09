@@ -19,7 +19,6 @@ import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.dialogs.UnfrequentDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
-import com.btxtech.game.jsre.client.item.ItemViewContainer;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
@@ -199,7 +198,6 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
             case CHANGED:
                 baseChangedPacket.getBaseAttributes().resetAlliancesDueToStrangeGwtBehavior();
                 updateBase(baseChangedPacket.getBaseAttributes());
-                ItemViewContainer.getInstance().updateMarker();
                 break;
             case CREATED:
                 baseChangedPacket.getBaseAttributes().resetAlliancesDueToStrangeGwtBehavior();

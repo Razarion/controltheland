@@ -73,7 +73,7 @@ public class TestPathFinding extends AbstractServiceTest {
     @DirtiesContext
     public void testPath1() throws Exception {
         configureComplexGameOneRealLevel();
-        Path path = collisionService.setupPathToDestination(new Index(800, 3400), new Index(2000, 2700), TerrainType.LAND, new BoundingBox(0, 0, 0, 0, ANGELS_24));
+        Path path = collisionService.setupPathToDestination(new Index(800, 3400), new Index(2000, 2700), TerrainType.LAND, new BoundingBox(0, 0, ANGELS_24));
         assertPathNotInTerrainImage(path);
         // assertPathCanBeReduced(path); Do this may later
     }
@@ -82,7 +82,7 @@ public class TestPathFinding extends AbstractServiceTest {
     @DirtiesContext
     public void testPathSameStartAndDest() throws Exception {
         configureComplexGameOneRealLevel();
-        Path path = collisionService.setupPathToDestination(new Index(800, 3400), new Index(800, 3400), TerrainType.LAND, new BoundingBox(0, 0, 0, 0, ANGELS_24));
+        Path path = collisionService.setupPathToDestination(new Index(800, 3400), new Index(800, 3400), TerrainType.LAND, new BoundingBox(0, 0, ANGELS_24));
         assertPathNotInTerrainImage(path);
         Assert.assertEquals(1, path.getPath().size());
         Assert.assertEquals(new Index(800, 3400), path.getPath().get(0));
@@ -92,7 +92,7 @@ public class TestPathFinding extends AbstractServiceTest {
     @DirtiesContext
     public void testPathDifferentTerrains() throws Exception {
         configureComplexGameOneRealLevel2();
-        SyncItemArea target = new BoundingBox(0, 0, 100, 100, ANGELS_24).createSyntheticSyncItemArea(new Index(2750, 350));
+        SyncItemArea target = new BoundingBox(100, 100, ANGELS_24).createSyntheticSyncItemArea(new Index(2750, 350));
         List<AttackFormationItem> attacker = new ArrayList<AttackFormationItem>();
         attacker.add(new AttackFormationItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1450, 350), new Id(0, 0, 0)), 250));
         attacker = collisionService.setupDestinationHints(target, TerrainType.WATER, attacker);

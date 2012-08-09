@@ -14,13 +14,12 @@
 package com.btxtech.game.services.item.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
-import com.btxtech.game.jsre.common.gameengine.itemType.BuildupStep;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
@@ -38,6 +37,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
+import com.btxtech.game.jsre.itemtypeeditor.ItemTypeImageInfo;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
@@ -70,7 +70,6 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -83,7 +82,6 @@ import javax.imageio.ImageReader;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -131,8 +129,8 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     private int lastId = 0;
     private final HashMap<Id, SyncItem> items = new HashMap<>();
     private Log log = LogFactory.getLog(ItemServiceImpl.class);
-    private HashMap<Integer, ImageHolder> itemTypeSpriteMap = new HashMap<>();
-    private HashMap<Integer, HashMap<Integer, DbBuildupStep>> buildupStepsImages = new HashMap<>();
+    private HashMap<Integer, ImageHolder> itemTypeSpriteMaps = new HashMap<>();
+    //private HashMap<Integer, HashMap<Integer, DbBuildupStep>> buildupStepsImages = new HashMap<>();
     private HashMap<Integer, DbItemTypeImageData> muzzleItemTypeImages = new HashMap<>();
     private HashMap<Integer, DbItemTypeSoundData> muzzleItemTypeSounds = new HashMap<>();
 
@@ -418,38 +416,23 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public BoundingBox getBoundingBox(int itemTypeId) throws NoSuchItemTypeException {
-        DbItemType dbItemType = getDbItemType(itemTypeId);
-        if (dbItemType == null) {
-            throw new NoSuchItemTypeException(itemTypeId);
-        }
-        return dbItemType.getBoundingBox();
-    }
-
-    @Override
     @Transactional
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void saveBoundingBox(int itemTypeId, BoundingBox boundingBox) throws NoSuchItemTypeException {
+    public void saveItemTypeProperties(int itemTypeId, BoundingBox boundingBox, ItemTypeSpriteMap itemTypeSpriteMap, WeaponType weaponType, Collection<ItemTypeImageInfo> buildupImages, Collection<ItemTypeImageInfo> runtimeImages, Collection<ItemTypeImageInfo> demolitionImages) throws NoSuchItemTypeException {
         DbItemType dbItemType = getDbItemType(itemTypeId);
         if (dbItemType == null) {
             throw new NoSuchItemTypeException(itemTypeId);
         }
         dbItemType.setBounding(boundingBox);
+        dbItemType.setTypeSpriteMap(itemTypeSpriteMap);
+        if (dbItemType instanceof DbBaseItemType && ((DbBaseItemType) dbItemType).getDbWeaponType() != null) {
+            saveWeaponType(dbItemType, weaponType);
+        }
+        dbItemType.saveImages(buildupImages, runtimeImages, demolitionImages);
         saveDbItemType(dbItemType);
     }
 
-    @Override
-    @Transactional
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void saveWeaponType(int itemTypeId, WeaponType weaponType) throws NoSuchItemTypeException {
-        if (weaponType == null) {
-            return;
-        }
-        DbItemType dbItemType = getDbItemType(itemTypeId);
-        if (dbItemType == null) {
-            throw new NoSuchItemTypeException(itemTypeId);
-        }
+    private void saveWeaponType(DbItemType dbItemType, WeaponType weaponType) throws NoSuchItemTypeException {
         if (!(dbItemType instanceof DbBaseItemType)) {
             throw new IllegalArgumentException("Given item type is not instance of a DbBaseItemType: " + dbItemType);
         }
@@ -460,82 +443,6 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         }
 
         dbBaseItemType.getDbWeaponType().setMuzzleFlashPositions(weaponType.getMuzzleFlashPositions());
-        saveDbItemType(dbItemType);
-    }
-
-    @Override
-    @Transactional
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void saveBuildupStepData(int itemTypeId, List<BuildupStep> buildupSteps) throws NoSuchItemTypeException {
-        if (buildupSteps == null) {
-            return;
-        }
-        DbItemType dbItemType = getDbItemType(itemTypeId);
-        if (dbItemType == null) {
-            throw new NoSuchItemTypeException(itemTypeId);
-        }
-        if (!(dbItemType instanceof DbBaseItemType)) {
-            throw new IllegalArgumentException("Given item type is not instance of a DbBaseItemType: " + dbItemType);
-        }
-        DbBaseItemType dbBaseItemType = (DbBaseItemType) dbItemType;
-        Collection<DbBuildupStep> originalBuildupStep = dbBaseItemType.getBuildupStepCrud().readDbChildren();
-        if (originalBuildupStep.isEmpty() && buildupSteps.isEmpty()) {
-            return;
-        } else if (originalBuildupStep.isEmpty() && !buildupSteps.isEmpty()) {
-            for (BuildupStep step : buildupSteps) {
-                DbBuildupStep dbBuildupStep = dbBaseItemType.getBuildupStepCrud().createDbChild();
-                dbBuildupStep.setBuildupStep(step);
-            }
-        } else if (!originalBuildupStep.isEmpty() && buildupSteps.isEmpty()) {
-            dbBaseItemType.getBuildupStepCrud().deleteAllChildren();
-        } else {
-            // Divide in toBeCreated, toBeDeleted and toBeChanged
-            Collection<DbBuildupStep> toBeDeleted = new ArrayList<>(originalBuildupStep);
-            Collection<BuildupStep> toBeCreated = new ArrayList<>();
-            Collection<DbBuildupStep> toBeChanged = new ArrayList<>();
-            for (BuildupStep buildupStep : buildupSteps) {
-                if (buildupStep.getImageId() != null) {
-                    moveList(toBeDeleted, toBeChanged, buildupStep.getImageId());
-                } else {
-                    toBeCreated.add(buildupStep);
-                }
-            }
-            // create
-            for (BuildupStep buildupStep : toBeCreated) {
-                DbBuildupStep dbBuildupStep = dbBaseItemType.getBuildupStepCrud().createDbChild();
-                dbBuildupStep.setBuildupStep(buildupStep);
-            }
-            // delete
-            for (DbBuildupStep dbBuildupStep : toBeDeleted) {
-                dbBaseItemType.getBuildupStepCrud().deleteDbChild(dbBuildupStep);
-            }
-            // change
-            for (DbBuildupStep dbBuildupStep : toBeChanged) {
-                BuildupStep newBuildupStep = getBuildStep4Id(buildupSteps, dbBuildupStep.getId());
-                dbBuildupStep.setFrom(newBuildupStep.getFrom());
-                dbBuildupStep.setToExclusive(newBuildupStep.getToExclusive());
-            }
-        }
-        sessionFactory.getCurrentSession().saveOrUpdate(dbBaseItemType);
-    }
-
-    private BuildupStep getBuildStep4Id(List<BuildupStep> buildupSteps, int id) {
-        for (BuildupStep buildupStep : buildupSteps) {
-            if (buildupStep.getImageId() != null && buildupStep.getImageId() == id) {
-                return buildupStep;
-            }
-        }
-        throw new IllegalArgumentException("No BuildupStep for id: " + id);
-    }
-
-    private void moveList(Collection<DbBuildupStep> removeList, Collection<DbBuildupStep> addList, int imageId) {
-        for (Iterator<DbBuildupStep> iterator = removeList.iterator(); iterator.hasNext(); ) {
-            DbBuildupStep dbBuildupStep = iterator.next();
-            if (dbBuildupStep.getId() == imageId) {
-                iterator.remove();
-                addList.add(dbBuildupStep);
-            }
-        }
     }
 
     @Override
@@ -575,16 +482,21 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     public void activate() {
         Collection<DbItemType> dbItemTypes = getDbItemTypes();
         ArrayList<ItemType> itemTypes = new ArrayList<>();
-        itemTypeSpriteMap.clear();
-        buildupStepsImages.clear();
+        itemTypeSpriteMaps.clear();
+        //buildupStepsImages.clear();
         muzzleItemTypeImages.clear();
         muzzleItemTypeSounds.clear();
         for (DbItemType dbItemType : dbItemTypes) {
-            itemTypes.add(dbItemType.createItemType());
-            addItemTypeImages(dbItemType);
-            addBuildupSteps(dbItemType);
-            if (dbItemType instanceof DbBaseItemType) {
-                addMuzzleEffect((DbBaseItemType) dbItemType);
+            try {
+                ItemType itemType = dbItemType.createItemType();
+                itemTypes.add(itemType);
+                addItemTypeImages(dbItemType, itemType);
+                if (dbItemType instanceof DbBaseItemType) {
+                    addMuzzleEffect((DbBaseItemType) dbItemType);
+                }
+            } catch (RuntimeException e) {
+                log.error("Can not activate item type: " + dbItemType.getName() + " id: " + dbItemType.getId());
+                throw e;
             }
         }
         synchronize(itemTypes);
@@ -614,83 +526,122 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         }
     }
 
-
-    private void addItemTypeImages(DbItemType dbItemType) {
-        if (itemTypeSpriteMap.containsKey(dbItemType.getId())) {
-            throw new IllegalArgumentException("Item Type Images Sprite Map already exits: " + dbItemType);
-        }
-
-        if (dbItemType.getItemTypeImageCrud().readDbChildren().size() > 1) {
-            addSpriteMapItemTypeImage(dbItemType);
-        } else if (dbItemType.getItemTypeImageCrud().readDbChildren().size() == 1) {
-            addSingleItemTypeImage(dbItemType);
-        } else {
-            log.warn("No item type images for: " + dbItemType);
-        }
-    }
-
-    private void addSpriteMapItemTypeImage(DbItemType dbItemType) {
+    private void addItemTypeImages(DbItemType dbItemType, ItemType itemType) {
         try {
-            List<DbItemTypeImage> sortedImages = new ArrayList<>(dbItemType.getItemTypeImageCrud().readDbChildren());
-            Collections.sort(sortedImages, new Comparator<DbItemTypeImage>() {
-                @Override
-                public int compare(DbItemTypeImage o1, DbItemTypeImage o2) {
-                    return o1.getNumber() - o2.getNumber();
+            List<DbItemTypeImage> allImages = new ArrayList<>(dbItemType.getItemTypeImageCrud().readDbChildren());
+            List<DbItemTypeImage> buildup = new ArrayList<>();
+            List<DbItemTypeImage> runtime = new ArrayList<>();
+            List<DbItemTypeImage> demolition = new ArrayList<>();
+            DbItemTypeImage exampleImage = null;
+
+            for (DbItemTypeImage image : allImages) {
+                if (exampleImage == null && image.getData() != null) {
+                    exampleImage = image;
                 }
-            });
-            if (sortedImages.get(0).getData() == null) {
-                // Due to test cases
+                if (image.getType() == null) {
+                    log.warn("ItemServiceImpl.addSpriteMapItemTypeImage() type in null: " + image.getType() + " id: " + image.getId());
+                    continue;
+                }
+                switch (image.getType()) {
+                    case BUILD_UP:
+                        buildup.add(image);
+                        break;
+                    case RUN_TIME:
+                        runtime.add(image);
+                        break;
+                    case DEMOLITION:
+                        demolition.add(image);
+                        break;
+                    default:
+                        log.warn("ItemServiceImpl.addSpriteMapItemTypeImage() unknown type in DbItemType: " + image.getType() + " id: " + image.getId());
+                }
+            }
+
+            if (exampleImage == null) {
+                log.warn("ItemServiceImpl.addSpriteMapItemTypeImage() not valid item type image for: " + dbItemType.getName() + " " + dbItemType.getId());
                 return;
             }
-            BufferedImage masterImage = ImageIO.read(new ByteArrayInputStream(sortedImages.get(0).getData()));
+
+            Collections.sort(buildup, new Comparator<DbItemTypeImage>() {
+                @Override
+                public int compare(DbItemTypeImage o1, DbItemTypeImage o2) {
+                    if (o1.getStep() != o2.getStep()) {
+                        return Integer.compare(o1.getStep(), o2.getStep());
+                    } else {
+                        return Integer.compare(o1.getFrame(), o2.getFrame());
+                    }
+                }
+            });
+            Collections.sort(runtime, new Comparator<DbItemTypeImage>() {
+                @Override
+                public int compare(DbItemTypeImage o1, DbItemTypeImage o2) {
+                    if (o1.getAngelIndex() != o2.getAngelIndex()) {
+                        return Integer.compare(o1.getAngelIndex(), o2.getAngelIndex());
+                    } else {
+                        return Integer.compare(o1.getFrame(), o2.getFrame());
+                    }
+                }
+            });
+            Collections.sort(demolition, new Comparator<DbItemTypeImage>() {
+                @Override
+                public int compare(DbItemTypeImage o1, DbItemTypeImage o2) {
+                    if (o1.getAngelIndex() != o2.getAngelIndex()) {
+                        return Integer.compare(o1.getAngelIndex(), o2.getAngelIndex());
+                    } else {
+                        if (o1.getStep() != o2.getStep()) {
+                            return Integer.compare(o1.getStep(), o2.getStep());
+                        } else {
+                            return Integer.compare(o1.getFrame(), o2.getFrame());
+                        }
+                    }
+                }
+            });
+            BufferedImage masterImage = ImageIO.read(new ByteArrayInputStream(exampleImage.getData()));
 
             // Get the format name
-            Iterator<ImageReader> iter = ImageIO.getImageReaders(ImageIO.createImageInputStream(new ByteArrayInputStream(sortedImages.get(0).getData())));
+            Iterator<ImageReader> iter = ImageIO.getImageReaders(ImageIO.createImageInputStream(new ByteArrayInputStream(exampleImage.getData())));
             if (!iter.hasNext()) {
                 throw new IllegalArgumentException("Can not find image reader: " + dbItemType);
             }
             String formatName = iter.next().getFormatName();
 
-            BufferedImage spriteMap = new BufferedImage(dbItemType.getImageWidth() * sortedImages.size(), dbItemType.getImageHeight(), masterImage.getType());
+            ItemTypeSpriteMap itemTypeSpriteMap = itemType.getItemTypeSpriteMap();
+            int totalImageCount = itemTypeSpriteMap.getBuildupSteps() * itemTypeSpriteMap.getBuildupAnimationFrames();
+            totalImageCount += itemType.getBoundingBox().getAngelCount() * itemTypeSpriteMap.getRuntimeAnimationFrames();
+            totalImageCount += itemType.getBoundingBox().getAngelCount() * itemTypeSpriteMap.getDemolitionSteps() * itemTypeSpriteMap.getDemolitionAnimationFrames();
+            BufferedImage spriteMap = new BufferedImage(dbItemType.getImageWidth() * totalImageCount, dbItemType.getImageHeight(), masterImage.getType());
             int xPos = 0;
-            String contentType = sortedImages.get(0).getContentType();
-            for (DbItemTypeImage itemTypeImage : sortedImages) {
-                BufferedImage image = ImageIO.read(new ByteArrayInputStream(itemTypeImage.getData()));
+            String contentType = exampleImage.getContentType();
+            for (DbItemTypeImage dbItemTypeImage : buildup) {
+                BufferedImage image = ImageIO.read(new ByteArrayInputStream(dbItemTypeImage.getData()));
                 boolean done = spriteMap.createGraphics().drawImage(image, xPos, 0, null);
                 if (!done) {
-                    throw new IllegalStateException("Image could not be drawn: " + dbItemType + " image number: " + itemTypeImage.getNumber());
+                    throw new IllegalStateException("Buildup image could not be drawn: " + dbItemType + " image number: " + dbItemTypeImage.getId());
+                }
+                xPos += dbItemType.getImageWidth();
+            }
+            for (DbItemTypeImage dbItemTypeImage : runtime) {
+                BufferedImage image = ImageIO.read(new ByteArrayInputStream(dbItemTypeImage.getData()));
+                boolean done = spriteMap.createGraphics().drawImage(image, xPos, 0, null);
+                if (!done) {
+                    throw new IllegalStateException("Runtime image could not be drawn: " + dbItemType + " image number: " + dbItemTypeImage.getId());
+                }
+                xPos += dbItemType.getImageWidth();
+            }
+            for (DbItemTypeImage dbItemTypeImage : demolition) {
+                BufferedImage image = ImageIO.read(new ByteArrayInputStream(dbItemTypeImage.getData()));
+                boolean done = spriteMap.createGraphics().drawImage(image, xPos, 0, null);
+                if (!done) {
+                    throw new IllegalStateException("Demolition image could not be drawn: " + dbItemType + " image number: " + dbItemTypeImage.getId());
                 }
                 xPos += dbItemType.getImageWidth();
             }
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ImageIO.write(spriteMap, formatName, outputStream);
-            itemTypeSpriteMap.put(dbItemType.getId(), new ImageHolder(outputStream.toByteArray(), contentType));
-        } catch (IOException e) {
+            itemTypeSpriteMaps.put(dbItemType.getId(), new ImageHolder(outputStream.toByteArray(), contentType));
+        } catch (Exception e) {
             log.error("ItemServiceImpl.addSpriteMapItemTypeImage() error with DbItemType: " + dbItemType, e);
         }
-    }
-
-    private void addSingleItemTypeImage(DbItemType dbItemType) {
-        DbItemTypeImage dbItemTypeImage = CommonJava.getFirst(dbItemType.getItemTypeImageCrud().readDbChildren());
-        itemTypeSpriteMap.put(dbItemType.getId(), new ImageHolder(dbItemTypeImage.getData(), dbItemTypeImage.getContentType()));
-    }
-
-    private void addBuildupSteps(DbItemType dbItemType) {
-        if (buildupStepsImages.containsKey(dbItemType.getId())) {
-            throw new IllegalArgumentException("BuildupStep Images already exits: " + dbItemType);
-        }
-        if (!(dbItemType instanceof DbBaseItemType)) {
-            return;
-        }
-        DbBaseItemType dbBaseItemType = (DbBaseItemType) dbItemType;
-        HashMap<Integer, DbBuildupStep> indexBuildupStepMap = new HashMap<>();
-        for (DbBuildupStep dbBuildupStep : dbBaseItemType.getBuildupStepCrud().readDbChildren()) {
-            if (indexBuildupStepMap.containsKey(dbBuildupStep.getId())) {
-                throw new IllegalArgumentException("Buildup Step Image Index already exits: " + dbItemType + " index: " + dbBuildupStep.getId());
-            }
-            indexBuildupStepMap.put(dbBuildupStep.getId(), dbBuildupStep);
-        }
-        buildupStepsImages.put(dbItemType.getId(), indexBuildupStepMap);
     }
 
     private void addMuzzleEffect(DbBaseItemType dbItemType) {
@@ -744,25 +695,28 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         if (dbItemType == null) {
             throw new IllegalArgumentException("DbItemType does not exist: " + itemTypeId);
         }
+        ItemType itemType;
+        try {
+            itemType = getItemType(itemTypeId);
+        } catch (NoSuchItemTypeException e) {
+            throw new RuntimeException(e);
+        }
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbItemTypeImage.class);
         criteria.add(Restrictions.eq("itemType", dbItemType));
-        criteria.setProjection(Projections.rowCount());
-        int number = BoundingBox.getCosmeticImageIndex(((Number) criteria.list().get(0)).intValue());
-        number++; // Number start with 1
-        criteria = sessionFactory.getCurrentSession().createCriteria(DbItemTypeImage.class);
-        criteria.add(Restrictions.eq("itemType", dbItemType));
-        criteria.add(Restrictions.eq("number", number));
+        criteria.add(Restrictions.eq("type", ItemTypeSpriteMap.SyncObjectState.RUN_TIME));
+        criteria.add(Restrictions.eq("angelIndex", itemType.getBoundingBox().getCosmeticAngelIndex()));
+        criteria.add(Restrictions.eq("frame", 0));
+        criteria.add(Restrictions.eq("step", 0));
         List images = criteria.list();
         if (images.size() != 1) {
-            throw new IllegalStateException("Wrong item type image count for: " + dbItemType + " number: " + number + " received: " + images.size());
+            throw new IllegalStateException("Wrong item type image count for: " + dbItemType + " received: " + images.size());
         }
         return (DbItemTypeImage) images.get(0);
     }
 
-
     @Override
     public ImageHolder getItemTypeSpriteMap(int itemTypeId) {
-        ImageHolder imageHolder = itemTypeSpriteMap.get(itemTypeId);
+        ImageHolder imageHolder = itemTypeSpriteMaps.get(itemTypeId);
         if (imageHolder == null) {
             throw new IllegalArgumentException("Sprite map for item type id does not exist: " + itemTypeId);
         }
@@ -771,16 +725,16 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
     @Override
     public DbBuildupStep getDbBuildupStep(int itemTypeId, int buildupStepId) {
-        HashMap<Integer, DbBuildupStep> buildupSteps = this.buildupStepsImages.get(itemTypeId);
-        if (buildupSteps == null) {
-            throw new IllegalArgumentException("Item Type id does not exist in Buildup Steps: " + itemTypeId);
-        }
-        DbBuildupStep dbBuildupStep = buildupSteps.get(buildupStepId);
-        if (dbBuildupStep == null) {
-            throw new IllegalArgumentException("Buildup Step index does not exist: " + buildupStepId + ". ItemTypeId: " + itemTypeId);
-        }
-        return dbBuildupStep;
-
+        /*   HashMap<Integer, DbBuildupStep> buildupSteps = this.buildupStepsImages.get(itemTypeId);
+      if (buildupSteps == null) {
+          throw new IllegalArgumentException("Item Type id does not exist in Buildup Steps: " + itemTypeId);
+      }
+      DbBuildupStep dbBuildupStep = buildupSteps.get(buildupStepId);
+      if (dbBuildupStep == null) {
+          throw new IllegalArgumentException("Buildup Step index does not exist: " + buildupStepId + ". ItemTypeId: " + itemTypeId);
+      }
+      return dbBuildupStep; */
+        return null;
     }
 
     @Override

@@ -13,8 +13,6 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.ClientSyncItem;
-import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.common.Index;
@@ -23,6 +21,9 @@ import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.client.utg.SpeechBubbleHandler;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -38,11 +39,9 @@ import java.util.HashSet;
  */
 public class SelectionHandler {
     private final static SelectionHandler INSTANCE = new SelectionHandler();
-
     private Group selectedGroup; // Always my property
-    private ClientSyncItem selectedTargetClientSyncItem; // Not my property
+    private SyncItem selectedTargetSyncItem; // Not my property
     private ArrayList<SelectionListener> listeners = new ArrayList<SelectionListener>();
-    private boolean sellMode = false;
 
     public static SelectionHandler getInstance() {
         return INSTANCE;
@@ -101,53 +100,45 @@ public class SelectionHandler {
         return selectedGroup == null || selectedGroup.atLeastOneAllowedToLaunch(position);
     }
 
-    public void setTargetSelected(ClientSyncItemView selectedTargetClientSyncItem, MouseDownEvent event) {
+    public void setTargetSelected(SyncItem target, MouseDownEvent event) {
         if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
             if (selectedGroup != null) {
-                if (selectedGroup.canAttack() && selectedTargetClientSyncItem.getClientSyncItem().isSyncBaseItem()) {
-                    ActionHandler.getInstance().attack(selectedGroup.getItems(), selectedTargetClientSyncItem.getClientSyncItem().getSyncBaseItem());
-                } else if (selectedGroup.canCollect() && selectedTargetClientSyncItem.getClientSyncItem().isSyncResourceItem()) {
-                    ActionHandler.getInstance().collect(selectedGroup.getItems(), selectedTargetClientSyncItem.getClientSyncItem().getSyncResourceItem());
-                } else if (selectedTargetClientSyncItem.getClientSyncItem().isSyncBoxItem()) {
-                    ActionHandler.getInstance().pickupBox(selectedGroup.getItems(), selectedTargetClientSyncItem.getClientSyncItem().getSyncBoxItem());
+                if (selectedGroup.canAttack() && target instanceof SyncBaseItem) {
+                    ActionHandler.getInstance().attack(selectedGroup.getItems(), (SyncBaseItem) target);
+                } else if (selectedGroup.canCollect() && target instanceof SyncResourceItem) {
+                    ActionHandler.getInstance().collect(selectedGroup.getItems(), (SyncResourceItem) target);
+                } else if (target instanceof SyncBoxItem) {
+                    ActionHandler.getInstance().pickupBox(selectedGroup.getItems(), (SyncBoxItem) target);
                 }
             } else {
-                this.selectedTargetClientSyncItem = selectedTargetClientSyncItem.getClientSyncItem();
-                onTargetSelectionItemChanged(this.selectedTargetClientSyncItem);
+                this.selectedTargetSyncItem = target;
+                onTargetSelectionItemChanged(this.selectedTargetSyncItem);
             }
         }
     }
 
     public void setItemGroupSelected(Group selectedGroup) {
         if (hasOwnSelection() && selectedGroup.getCount() == 1) {
-            if (selectedGroup.getFirst().getSyncBaseItem().hasSyncItemContainer()) {
+            if (selectedGroup.getFirst().hasSyncItemContainer()) {
                 if (!this.selectedGroup.equals(selectedGroup) && this.selectedGroup.canMove()) {
                     ActionHandler.getInstance().loadContainer(selectedGroup.getFirst(), this.selectedGroup.getItems());
                     clearSelection();
                     return;
                 }
-            } else if (!selectedGroup.getFirst().getSyncBaseItem().isReady()) {
+            } else if (!selectedGroup.getFirst().isReady()) {
                 ItemCockpit.getInstance().deActivate();
                 ActionHandler.getInstance().finalizeBuild(this.selectedGroup.getItems(), selectedGroup.getFirst());
                 return;
             }
         }
         clearSelection();
-        selectedGroup.setSelected(true);
         this.selectedGroup = selectedGroup;
         onOwnItemSelectionChanged(selectedGroup);
     }
 
     public void clearSelection() {
-        if (selectedTargetClientSyncItem != null) {
-            selectedTargetClientSyncItem.setSelected(false);
-            selectedTargetClientSyncItem = null;
-        }
-
-        if (selectedGroup != null) {
-            selectedGroup.setSelected(false);
-            selectedGroup = null;
-        }
+        selectedTargetSyncItem = null;
+        selectedGroup = null;
 
         for (SelectionListener listener : listeners) {
             listener.onSelectionCleared();
@@ -157,7 +148,7 @@ public class SelectionHandler {
         SpeechBubbleHandler.getInstance().hide();
     }
 
-    private void onTargetSelectionItemChanged(ClientSyncItem selection) {
+    private void onTargetSelectionItemChanged(SyncItem selection) {
         for (SelectionListener listener : listeners) {
             listener.onTargetSelectionChanged(selection);
         }
@@ -168,17 +159,16 @@ public class SelectionHandler {
         for (SelectionListener listener : listeners) {
             listener.onOwnSelectionChanged(selection);
         }
-        CursorHandler.getInstance().onOwnSelectionChanged(selection);
     }
 
 
-    public void itemKilled(ClientSyncItem clientSyncItem) {
-        if (clientSyncItem.equals(selectedTargetClientSyncItem)) {
+    public void itemKilled(SyncItem syncItem) {
+        if (syncItem.equals(selectedTargetSyncItem)) {
             clearSelection();
         }
 
-        if (selectedGroup != null && selectedGroup.contains(clientSyncItem)) {
-            selectedGroup.remove(clientSyncItem);
+        if (selectedGroup != null && syncItem instanceof SyncBaseItem && selectedGroup.contains((SyncBaseItem) syncItem)) {
+            selectedGroup.remove((SyncBaseItem) syncItem);
             if (selectedGroup.isEmpty()) {
                 clearSelection();
             } else {
@@ -190,8 +180,8 @@ public class SelectionHandler {
     public void refresh() {
         if (selectedGroup != null) {
             setItemGroupSelected(selectedGroup);
-        } else if (selectedTargetClientSyncItem != null) {
-            onTargetSelectionItemChanged(selectedTargetClientSyncItem);
+        } else if (selectedTargetSyncItem != null) {
+            onTargetSelectionItemChanged(selectedTargetSyncItem);
         }
     }
 
@@ -207,26 +197,12 @@ public class SelectionHandler {
             setItemGroupSelected(group);
         } else {
             int id = selectionTrackingItem.getSelectedIds().iterator().next();
-            selectedTargetClientSyncItem = ItemContainer.getInstance().getSimulationItem(id);
-            onTargetSelectionItemChanged(selectedTargetClientSyncItem);
+            selectedTargetSyncItem = ItemContainer.getInstance().getSimulationItem(id);
+            onTargetSelectionItemChanged(selectedTargetSyncItem);
         }
     }
 
-    public void setSellMode(boolean sellMode) {
-        if (this.sellMode == sellMode) {
-            return;
-        }
-        this.sellMode = sellMode;
-        if (sellMode) {
-            clearSelection();
-        }
-        if (!sellMode) {
-            SideCockpit.getInstance().clearSellMode();
-        }
-        CursorHandler.getInstance().setSell(sellMode);
-    }
-
-    public boolean isSellMode() {
-        return sellMode;
+    public SyncItem getSelectedTargetSyncItem() {
+        return selectedTargetSyncItem;
     }
 }

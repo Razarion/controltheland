@@ -15,13 +15,11 @@ package com.btxtech.game.jsre.client.action;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientServices;
-import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
-import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
@@ -38,6 +36,7 @@ import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionServi
 import com.btxtech.game.jsre.common.gameengine.services.action.impl.CommonActionServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.collision.PlaceCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -48,13 +47,16 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -155,14 +157,14 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
         tmpRemoveActiveItems.add(syncTickItem);
     }
 
-    public void move(Collection<ClientSyncItem> clientSyncItems, Index destination) {
-        if (clientSyncItems.isEmpty()) {
+    public void move(Collection<SyncBaseItem> syncBaseItems, Index destination) {
+        if (syncBaseItems.isEmpty()) {
             return;
         }
         try {
-            RectangleFormation rectangleFormation = new RectangleFormation(destination, clientSyncItems);
-            for (ClientSyncItem clientSyncItem : clientSyncItems) {
-                if (clientSyncItem.getSyncBaseItem().hasSyncMovable()) {
+            RectangleFormation rectangleFormation = new RectangleFormation(destination, syncBaseItems);
+            for (SyncBaseItem syncBaseItem : syncBaseItems) {
+                if (syncBaseItem.hasSyncMovable()) {
                     Index pos = null;
                     while (pos == null) {
                         pos = rectangleFormation.calculateNextEntry();
@@ -170,11 +172,11 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                             continue;
                         }
                         SurfaceType surfaceType = TerrainView.getInstance().getTerrainHandler().getSurfaceTypeAbsolute(pos);
-                        if (!clientSyncItem.getSyncBaseItem().getTerrainType().getSurfaceTypes().contains(surfaceType)) {
+                        if (!syncBaseItem.getTerrainType().getSurfaceTypes().contains(surfaceType)) {
                             pos = null;
                         }
                     }
-                    move(clientSyncItem.getSyncBaseItem(), pos);
+                    move(syncBaseItem, pos);
                 }
             }
             Connection.getInstance().sendCommandQueue();
@@ -183,7 +185,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
         }
     }
 
-    public void build(Collection<ClientSyncItem> clientSyncItems, Index positionToBeBuild, BaseItemType toBeBuilt) throws NoSuchItemTypeException {
+    public void build(Collection<SyncBaseItem> syncBaseItems, Index positionToBeBuild, BaseItemType toBeBuilt) throws NoSuchItemTypeException {
         if (!ClientBase.getInstance().checkItemLimit4ItemAddingDialog(toBeBuilt)) {
             return;
         }
@@ -206,10 +208,10 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                 return syncBaseItem.getSyncBuilder().getBuilderType().getRange();
             }
         };
-        groupCommandHelperPosition.process(CommonJava.getFirst(clientSyncItems), toBeBuilt, positionToBeBuild, true);
+        groupCommandHelperPosition.process(CommonJava.getFirst(syncBaseItems), toBeBuilt, positionToBeBuild, true);
     }
 
-    public void finalizeBuild(Collection<ClientSyncItem> builders, ClientSyncItem building) {
+    public void finalizeBuild(Collection<SyncBaseItem> builders, SyncBaseItem building) {
         GroupCommandHelperItemType<SyncBaseItem> commandHelperItemType = new GroupCommandHelperItemType<SyncBaseItem>() {
             @Override
             protected boolean isCommandPossible(SyncBaseItem syncBaseItem, SyncBaseItem building) {
@@ -229,28 +231,28 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                 return syncBaseItem.getSyncBuilder().getBuilderType().getRange();
             }
         };
-        commandHelperItemType.process(builders, building.getSyncBaseItem(), true);
+        commandHelperItemType.process(builders, building, true);
     }
 
-    public void fabricate(Collection<ClientSyncItem> clientSyncItems, BaseItemType itemTypeToBuild) throws NoSuchItemTypeException {
+    public void fabricate(Collection<SyncBaseItem> syncBaseItems, BaseItemType itemTypeToBuild) throws NoSuchItemTypeException {
         if (!ClientBase.getInstance().checkItemLimit4ItemAddingDialog(itemTypeToBuild)) {
             return;
         }
 
-        for (ClientSyncItem clientSyncItem : clientSyncItems) {
-            if (clientSyncItem.getSyncBaseItem().hasSyncFactory()) {
-                if (ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem())
-                        && ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition(), itemTypeToBuild)) {
-                    fabricate(clientSyncItem.getSyncBaseItem(), itemTypeToBuild);
+        for (SyncBaseItem syncBaseItem : syncBaseItems) {
+            if (syncBaseItem.hasSyncFactory()) {
+                if (ClientTerritoryService.getInstance().isAllowed(syncBaseItem.getSyncItemArea().getPosition(), syncBaseItem)
+                        && ClientTerritoryService.getInstance().isAllowed(syncBaseItem.getSyncItemArea().getPosition(), itemTypeToBuild)) {
+                    fabricate(syncBaseItem, itemTypeToBuild);
                 }
             } else {
-                GwtCommon.sendLogToServer("ActionHandler.build(): can not cast to FactorySyncItem:" + clientSyncItem);
+                GwtCommon.sendLogToServer("ActionHandler.build(): can not cast to FactorySyncItem:" + syncBaseItem);
             }
         }
         Connection.getInstance().sendCommandQueue();
     }
 
-    public void attack(Collection<ClientSyncItem> clientSyncItems, SyncBaseItem target) {
+    public void attack(Collection<SyncBaseItem> syncBaseItems, SyncBaseItem target) {
         GroupCommandHelperItemType<SyncBaseItem> commandHelperItemType = new GroupCommandHelperItemType<SyncBaseItem>() {
             @Override
             protected boolean isCommandPossible(SyncBaseItem syncBaseItem, SyncBaseItem target) {
@@ -270,10 +272,10 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                 return syncBaseItem.getSyncWeapon().getWeaponType().getRange();
             }
         };
-        commandHelperItemType.process(clientSyncItems, target, true);
+        commandHelperItemType.process(syncBaseItems, target, true);
     }
 
-    public void collect(Collection<ClientSyncItem> clientSyncItems, SyncResourceItem money) {
+    public void collect(Collection<SyncBaseItem> syncBaseItems, SyncResourceItem money) {
         GroupCommandHelperItemType<SyncResourceItem> commandHelperItemType = new GroupCommandHelperItemType<SyncResourceItem>() {
             @Override
             protected boolean isCommandPossible(SyncBaseItem syncBaseItem, SyncResourceItem money) {
@@ -290,10 +292,10 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                 return syncBaseItem.getSyncHarvester().getHarvesterType().getRange();
             }
         };
-        commandHelperItemType.process(clientSyncItems, money, true);
+        commandHelperItemType.process(syncBaseItems, money, true);
     }
 
-    public void pickupBox(Collection<ClientSyncItem> clientSyncItems, SyncBoxItem box) {
+    public void pickupBox(Collection<SyncBaseItem> clientSyncItems, SyncBoxItem box) {
         GroupCommandHelperItemType<SyncBoxItem> commandHelperItemType = new GroupCommandHelperItemType<SyncBoxItem>() {
             @Override
             protected boolean isCommandPossible(SyncBaseItem syncBaseItem, SyncBoxItem box) {
@@ -313,8 +315,8 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
         commandHelperItemType.process(clientSyncItems, box, true);
     }
 
-    public void loadContainer(ClientSyncItem container, Collection<ClientSyncItem> items) {
-        if (!container.getSyncBaseItem().hasSyncItemContainer()) {
+    public void loadContainer(SyncBaseItem container, Collection<SyncBaseItem> items) {
+        if (!container.hasSyncItemContainer()) {
             GwtCommon.sendLogToServer("ActionHandler.loadContainer(): can not cast to ItemContainer:" + container);
             return;
         }
@@ -336,12 +338,12 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                 return container.getSyncItemContainer().getRange();
             }
         };
-        commandHelperItemType.process(items, container.getSyncBaseItem(), false);
+        commandHelperItemType.process(items, container, false);
     }
 
-    public void unloadContainer(ClientSyncItem container, Index unloadPos) {
+    public void unloadContainer(SyncBaseItem container, Index unloadPos) {
         try {
-            Id id = CommonJava.getFirst(container.getSyncBaseItem().getSyncItemContainer().getContainedItems());
+            Id id = CommonJava.getFirst(container.getSyncItemContainer().getContainedItems());
             SyncBaseItem containedItem = (SyncBaseItem) ItemContainer.getInstance().getItem(id);
 
             GroupCommandHelperPosition groupCommandHelperPosition = new GroupCommandHelperPosition() {
@@ -381,9 +383,8 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
             return;
         }
 
-        launch(selection.getFirst().getSyncBaseItem(), new Index(absoluteX, absoluteY));
+        launch(selection.getFirst(), new Index(absoluteX, absoluteY));
         Connection.getInstance().sendCommandQueue();
-        SideCockpit.getInstance().getCockpitMode().clearLaunchMode();
     }
 
     protected void executeCommand(SyncBaseItem syncItem, BaseCommand baseCommand) throws ItemLimitExceededException, HouseSpaceExceededException, ItemDoesNotExistException, NoSuchItemTypeException, InsufficientFundsException {
@@ -424,5 +425,26 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
 
     public boolean isBusy() {
         return !activeItems.isEmpty() || !tmpAddActiveItems.isEmpty();
+    }
+
+    public void moveItemTypeEditor(SyncBaseItem syncBaseItem, Index destination, double destinationAngel) {
+        syncBaseItem.stop();
+        MoveCommand moveCommand = new MoveCommand();
+        moveCommand.setId(syncBaseItem.getId());
+        moveCommand.setTimeStamp();
+        Path path = new Path(syncBaseItem.getSyncItemArea().getPosition(), destination, true);
+        path.setDestinationAngel(destinationAngel);
+        List<Index> indexPath = new ArrayList<Index>();
+        indexPath.add(syncBaseItem.getSyncItemArea().getPosition());
+        indexPath.add(destination);
+        path.setPath(indexPath);
+        moveCommand.setPathToDestination(path);
+        try {
+            executeCommand(syncBaseItem, moveCommand);
+        } catch (PathCanNotBeFoundException e) {
+            log.warning("PathCanNotBeFoundException: " + e.getMessage());
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "", e);
+        }
     }
 }

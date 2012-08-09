@@ -22,9 +22,6 @@
     <!-- GWT Issue 5691: Logging mus be at the beginning otherwise log are lost in onModuleLoad() method-->
     <inherits name="com.google.gwt.logging.Logging"/>
     <inherits name='com.google.gwt.user.theme.standard.Standard'/>
-    <inherits name="com.google.gwt.widgetideas.HyperlinkOverride"/>
-    <inherits name='com.google.gwt.widgetideas.GWTCanvas'/>
-    <inherits name='com.google.gwt.widgetideas.GlassPanel'/>
 
     <!-- Logging Properties-->
     <set-property name="gwt.logging.logLevel" value="WARNING"/>

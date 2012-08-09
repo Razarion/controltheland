@@ -1,7 +1,9 @@
 package com.btxtech.game.controllers;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.itemtypeeditor.ItemTypeImageInfo;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.item.ItemService;
@@ -13,6 +15,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * User: beat
@@ -29,47 +34,23 @@ public class TestItemImageController extends AbstractServiceTest {
     public void test1() throws Exception {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-
         DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
-        CrudChildServiceHelper<DbItemTypeImage> crud = dbBaseItemType.getItemTypeImageCrud();
+        createDbItemTypeImage(dbBaseItemType, 0, 0, 0, ItemTypeSpriteMap.SyncObjectState.RUN_TIME, "hoover_bagger_0001.png");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
 
-        DbItemTypeImage dbItemTypeImage = crud.createDbChild();
-        dbItemTypeImage.setNumber(1);
-        dbItemTypeImage.setData(IOUtils.toByteArray(getClass().getResource("/images/hoover_bagger_0001.png").openStream()));
-        dbItemTypeImage.setContentType("image/png");
-
-        dbItemTypeImage = crud.createDbChild();
-        dbItemTypeImage.setNumber(2);
-        dbItemTypeImage.setData(IOUtils.toByteArray(getClass().getResource("/images/hoover_bagger_0002.png").openStream()));
-        dbItemTypeImage.setContentType("image/png");
-
-        dbItemTypeImage = crud.createDbChild();
-        dbItemTypeImage.setNumber(3);
-        dbItemTypeImage.setData(IOUtils.toByteArray(getClass().getResource("/images/hoover_bagger_0003.png").openStream()));
-        dbItemTypeImage.setContentType("image/png");
-
-        dbItemTypeImage = crud.createDbChild();
-        dbItemTypeImage.setNumber(4);
-        dbItemTypeImage.setData(IOUtils.toByteArray(getClass().getResource("/images/hoover_bagger_0004.png").openStream()));
-        dbItemTypeImage.setContentType("image/png");
-
-        dbItemTypeImage = crud.createDbChild();
-        dbItemTypeImage.setNumber(5);
-        dbItemTypeImage.setData(IOUtils.toByteArray(getClass().getResource("/images/hoover_bagger_0005.png").openStream()));
-        dbItemTypeImage.setContentType("image/png");
-
-        dbItemTypeImage = crud.createDbChild();
-        dbItemTypeImage.setNumber(6);
-        dbItemTypeImage.setData(IOUtils.toByteArray(getClass().getResource("/images/hoover_bagger_0006.png").openStream()));
-        dbItemTypeImage.setContentType("image/png");
-
-        dbBaseItemType.setName(TEST_SIMPLE_BUILDING);
-        dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(64, 64, 80, 80, new double[]{0.1, 0.2, 0.3, 0.4, 0.5, 0.6}));
-
-        itemService.saveDbItemType(dbBaseItemType);
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        BoundingBox boundingBox = new BoundingBox(10, 12, new double[]{0.0});
+        ItemTypeSpriteMap itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 64, 64, 0, 0, 0, 1, 0, 0, 0, 0);
+        itemService.saveItemTypeProperties(dbBaseItemType.getId(),
+                boundingBox,
+                itemTypeSpriteMap,
+                null,
+                Arrays.<ItemTypeImageInfo>asList(),
+                Arrays.<ItemTypeImageInfo>asList(),
+                Arrays.<ItemTypeImageInfo>asList());
         itemService.activate();
-
         int itemTypeId = dbBaseItemType.getId();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -87,6 +68,19 @@ public class TestItemImageController extends AbstractServiceTest {
         Assert.assertNull(mockHttpServletResponse.getErrorMessage());
         Assert.assertEquals(200, mockHttpServletResponse.getStatus());
         Assert.assertEquals("image/png", mockHttpServletResponse.getContentType());
-        Assert.assertEquals(19494, mockHttpServletResponse.getContentAsByteArray().length);
+        Assert.assertEquals(2533, mockHttpServletResponse.getContentAsByteArray().length);
     }
+
+    private void createDbItemTypeImage(DbBaseItemType dbBaseItemType, int angelIndex, int step, int frame, ItemTypeSpriteMap.SyncObjectState type, String imageName) throws IOException {
+        DbItemTypeImage dbItemTypeImage = new DbItemTypeImage();
+        dbItemTypeImage.setParent(dbBaseItemType);
+        dbItemTypeImage.setAngelIndex(angelIndex);
+        dbItemTypeImage.setStep(step);
+        dbItemTypeImage.setFrame(frame);
+        dbItemTypeImage.setType(type);
+        dbItemTypeImage.setData(IOUtils.toByteArray(getClass().getResource("/images/" + imageName).openStream()));
+        dbItemTypeImage.setContentType("image/png");
+        getSessionFactory().getCurrentSession().save(dbItemTypeImage);
+    }
+
 }

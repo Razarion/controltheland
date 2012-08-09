@@ -13,11 +13,16 @@
 
 package com.btxtech.game.services.item.itemType;
 
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
+import com.btxtech.game.jsre.itemtypeeditor.ItemTypeImageInfo;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.wicket.pages.mgmt.Html5ImagesUploadConverter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -35,11 +40,14 @@ public class DbItemTypeImage implements Serializable, CrudChild<DbItemType> {
     private Integer id;
     @ManyToOne
     private DbItemType itemType;
-    private int number;
     private String contentType;
     @Column(length = 500000)
     private byte[] data;
-    private double angel;
+    private int angelIndex;
+    private int frame;
+    private int step;
+    @Enumerated(EnumType.STRING)
+    private ItemTypeSpriteMap.SyncObjectState type;
 
 
     @Override
@@ -55,14 +63,6 @@ public class DbItemTypeImage implements Serializable, CrudChild<DbItemType> {
     @Override
     public Integer getId() {
         return id;
-    }
-
-    public int getNumber() {
-        return number;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
     }
 
     public String getContentType() {
@@ -81,12 +81,46 @@ public class DbItemTypeImage implements Serializable, CrudChild<DbItemType> {
         this.data = data;
     }
 
-    public double getAngel() {
-        return angel;
+    public int getAngelIndex() {
+        return angelIndex;
     }
 
-    public void setAngel(double angel) {
-        this.angel = angel;
+    public void setAngelIndex(int angel) {
+        this.angelIndex = angel;
+    }
+
+    public int getFrame() {
+        return frame;
+    }
+
+    public void setFrame(int frame) {
+        this.frame = frame;
+    }
+
+    public int getStep() {
+        return step;
+    }
+
+    public void setStep(int step) {
+        this.step = step;
+    }
+
+    public ItemTypeSpriteMap.SyncObjectState getType() {
+        return type;
+    }
+
+    public void setType(ItemTypeSpriteMap.SyncObjectState type) {
+        this.type = type;
+    }
+
+    public void setItemTypeImageInfo(ItemTypeImageInfo itemTypeImageInfo, ItemTypeSpriteMap.SyncObjectState type) {
+        Html5ImagesUploadConverter.Package aPackage = Html5ImagesUploadConverter.convertInlineImage(itemTypeImageInfo.getBase64ImageData());
+        contentType = aPackage.getMime();
+        data = aPackage.convertBase64ToBytes();
+        angelIndex = itemTypeImageInfo.getAngelIndex();
+        frame = itemTypeImageInfo.getFrame();
+        step = itemTypeImageInfo.getStep();
+        this.type = type;
     }
 
     @Override

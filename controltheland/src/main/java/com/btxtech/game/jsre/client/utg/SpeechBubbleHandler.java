@@ -3,6 +3,7 @@ package com.btxtech.game.jsre.client.utg;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -15,7 +16,7 @@ import com.google.gwt.user.client.Timer;
  * Date: 12.11.2011
  * Time: 17:00:22
  */
-public class SpeechBubbleHandler {
+public class SpeechBubbleHandler implements TerrainScrollListener {
     private static final int DEFERRED_SHOW = 500;
     public static boolean uglySuppress = false;
     private static final SpeechBubbleHandler INSTANCE = new SpeechBubbleHandler();
@@ -34,13 +35,14 @@ public class SpeechBubbleHandler {
      * Singleton
      */
     private SpeechBubbleHandler() {
+        TerrainView.getInstance().addTerrainScrollListener(this);
     }
 
     public void show(SyncItem syncItem) {
         if (uglySuppress) {
             return;
         }
-        if(ItemCockpit.getInstance().isActive()) {
+        if (ItemCockpit.getInstance().isActive()) {
             return;
         }
         mouseOverItemType = true;
@@ -169,16 +171,14 @@ public class SpeechBubbleHandler {
         }
     }
 
-    public void onSyncItemMouseOut(SyncItem syncItem) {
-        if (syncItem.equals(deferredSyncItem)) {
-            if (itemSpeechBubble != null) {
-                deferredClose();
-            } else {
-                stopDeferredShow();
-                deferredSyncItem = null;
-            }
-            mouseOverItemType = false;
+    public void onSyncItemMouseOut() {
+        if (itemSpeechBubble != null) {
+            deferredClose();
+        } else {
+            stopDeferredShow();
+            deferredSyncItem = null;
         }
+        mouseOverItemType = false;
     }
 
     private void deferredClose() {
@@ -206,5 +206,10 @@ public class SpeechBubbleHandler {
             stopDeferredShow();
             hide();
         }
+    }
+
+    @Override
+    public void onScroll(int left, int top, int width, int height, int deltaLeft, int deltaTop) {
+        hide();
     }
 }

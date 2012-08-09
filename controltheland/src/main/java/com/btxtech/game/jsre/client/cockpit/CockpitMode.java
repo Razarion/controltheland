@@ -13,9 +13,10 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.client.cockpit.item.ToBeBuildPlacer;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryItemPlacer;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 /**
  * User: beat
@@ -23,70 +24,75 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
  * Time: 22:52:52
  */
 public class CockpitMode implements SelectionListener {
-    private boolean unloadMode = false;
-    private boolean launchMode = false;
+    public enum Mode {
+        UNLOAD,
+        LAUNCH,
+        SELL
+    }
+
+    private static final CockpitMode INSTANCE = new CockpitMode();
+    private Mode mode;
+    private boolean isMovePossible;
+    private boolean isLoadPossible;
+    private boolean isAttackPossible;
+    private boolean isCollectPossible;
+    private boolean isFinalizeBuildPossible;
+    private GroupSelectionFrame groupSelectionFrame;
+    private InventoryItemPlacer inventoryItemPlacer;
+    private ToBeBuildPlacer toBeBuildPlacer;
+
+    public static CockpitMode getInstance() {
+        return INSTANCE;
+    }
 
     /**
      * Singleton
      */
-    public CockpitMode() {
+    private CockpitMode() {
         SelectionHandler.getInstance().addSelectionListener(this);
     }
 
-    public boolean isUnloadMode() {
-        return unloadMode;
+    public Mode getMode() {
+        return mode;
     }
 
-    public void setUnloadMode() {
-        if (!unloadMode) {
-            unloadMode = true;
-            CursorHandler.getInstance().setUnloadContainer();
+    public void setMode(Mode mode) {
+        if (this.mode != mode) {
+            this.mode = mode;
+            if (mode != null) {
+                SelectionHandler.getInstance().clearSelection();
+                groupSelectionFrame = null;
+                inventoryItemPlacer = null;
+            }
+            if (mode != Mode.SELL) {
+                SideCockpit.getInstance().clearSellMode();
+            }
         }
     }
 
-    public void clearUnloadMode() {
-        if (unloadMode) {
-            unloadMode = false;
-            CursorHandler.getInstance().clearUnloadContainer();
-        }
-    }
-
-    public boolean isLaunchMode() {
-        return launchMode;
-    }
-
-    public void setLaunchMode() {
-        if (!launchMode) {
-            launchMode = true;
-            CursorHandler.getInstance().setLaunch();
-        }
-    }
-
-    public void clearLaunchMode() {
-        if (launchMode) {
-            launchMode = false;
-            CursorHandler.getInstance().clearLaunch();
-        }
+    public void reset() {
+        setMode(null);
+        clearPossibilities();
+        groupSelectionFrame = null;
+        inventoryItemPlacer = null;
     }
 
     @Override
-    public void onTargetSelectionChanged(ClientSyncItem selection) {
+    public void onTargetSelectionChanged(SyncItem selection) {
         ItemCockpit.getInstance().deActivate();
     }
 
     @Override
     public void onSelectionCleared() {
+        clearPossibilities();
     }
 
     @Override
     public void onOwnSelectionChanged(Group selectedGroup) {
-        clearUnloadMode();
-        clearLaunchMode();
-
+        setMode(null);
 
         if (selectedGroup.getCount() == 1) {
-            SyncBaseItem syncBaseItem = selectedGroup.getFirst().getSyncBaseItem();
-            if (ItemCockpit.hasItemCockpit(syncBaseItem)) {
+            if (ItemCockpit.hasItemCockpit(selectedGroup.getFirst())) {
                 ItemCockpit.getInstance().activate(selectedGroup.getFirst());
             } else {
                 ItemCockpit.getInstance().deActivate();
@@ -94,5 +100,90 @@ public class CockpitMode implements SelectionListener {
         } else {
             ItemCockpit.getInstance().deActivate();
         }
+
+        if (selectedGroup.canMove()) {
+            isMovePossible = true;
+            isLoadPossible = true;
+        } else {
+            isMovePossible = false;
+            isLoadPossible = false;
+        }
+        isAttackPossible = selectedGroup.canAttack();
+        isCollectPossible = selectedGroup.canCollect();
+        isFinalizeBuildPossible = selectedGroup.canFinalizeBuild();
+    }
+
+    public boolean isMovePossible() {
+        return isMovePossible;
+    }
+
+    public boolean isLoadPossible() {
+        return isLoadPossible;
+    }
+
+    public boolean isAttackPossible() {
+        return isAttackPossible;
+    }
+
+    public boolean isCollectPossible() {
+        return isCollectPossible;
+    }
+
+    public boolean isFinalizeBuildPossible() {
+        return isFinalizeBuildPossible;
+    }
+
+    public void setGroupSelectionFrame(GroupSelectionFrame groupSelectionFrame) {
+        this.groupSelectionFrame = groupSelectionFrame;
+        inventoryItemPlacer = null;
+        toBeBuildPlacer = null;
+    }
+
+    public boolean hasGroupSelectionFrame() {
+        return groupSelectionFrame != null;
+    }
+
+    public GroupSelectionFrame getGroupSelectionFrame() {
+        return groupSelectionFrame;
+    }
+
+    public void setInventoryItemPlacer(InventoryItemPlacer inventoryItemPlacer) {
+        SelectionHandler.getInstance().clearSelection();
+        this.inventoryItemPlacer = inventoryItemPlacer;
+        groupSelectionFrame = null;
+        toBeBuildPlacer = null;
+    }
+
+    public boolean hasInventoryItemPlacer() {
+        return inventoryItemPlacer != null;
+    }
+
+    public InventoryItemPlacer getInventoryItemPlacer() {
+        return inventoryItemPlacer;
+    }
+
+    public ToBeBuildPlacer getToBeBuildPlacer() {
+        return toBeBuildPlacer;
+    }
+
+    public boolean hasToBeBuildPlacer() {
+        return toBeBuildPlacer != null;
+    }
+
+    public void setToBeBuildPlacer(ToBeBuildPlacer toBeBuildPlacer) {
+        SelectionHandler.getInstance().clearSelection();
+        this.toBeBuildPlacer = toBeBuildPlacer;
+        groupSelectionFrame = null;
+        inventoryItemPlacer = null;
+    }
+
+    private void clearPossibilities() {
+        isMovePossible = false;
+        isLoadPossible = false;
+        isAttackPossible = false;
+        isCollectPossible = false;
+        isFinalizeBuildPossible = false;
+        groupSelectionFrame = null;
+        toBeBuildPlacer = null;
     }
 }

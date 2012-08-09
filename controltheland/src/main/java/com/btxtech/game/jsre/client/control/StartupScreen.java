@@ -17,10 +17,11 @@ import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
+import com.google.gwt.animation.client.AnimationScheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.DOM;
-import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 
 import java.util.Arrays;
@@ -92,17 +93,22 @@ public class StartupScreen implements StartupProgressListener {
         fadeTimer = new TimerPerfmon(PerfmonEnum.STARTUP_FADE_OUT) {
             @Override
             public void runPerfmon() {
-                currentFade += FADE_STEP;
-                if (currentFade >= 1.0) {
-                    stopFade();
-                    setOpacity(1.0);
-                    if (afterFade != null) {
-                        afterFade.run();
-                        afterFade = null;
+                AnimationScheduler.get().requestAnimationFrame(new AnimationScheduler.AnimationCallback() {
+                    @Override
+                    public void execute(double timestamp) {
+                        currentFade += FADE_STEP;
+                        if (currentFade >= 1.0) {
+                            stopFade();
+                            setOpacity(1.0);
+                            if (afterFade != null) {
+                                afterFade.run();
+                                afterFade = null;
+                            }
+                        } else {
+                            setOpacity(currentFade);
+                        }
                     }
-                } else {
-                    setOpacity(currentFade);
-                }
+                }, startScreen);
             }
         };
         fadeTimer.scheduleRepeating(SCHEDULE);
@@ -114,14 +120,19 @@ public class StartupScreen implements StartupProgressListener {
         fadeTimer = new TimerPerfmon(PerfmonEnum.STARTUP_FADE_IN) {
             @Override
             public void runPerfmon() {
-                currentFade -= FADE_STEP;
-                if (currentFade <= 0.0) {
-                    stopFade();
-                    setOpacity(0.0);
-                    detachStartScreen();
-                } else {
-                    setOpacity(currentFade);
-                }
+                AnimationScheduler.get().requestAnimationFrame(new AnimationScheduler.AnimationCallback() {
+                    @Override
+                    public void execute(double timestamp) {
+                        currentFade -= FADE_STEP;
+                        if (currentFade <= 0.0) {
+                            stopFade();
+                            setOpacity(0.0);
+                            detachStartScreen();
+                        } else {
+                            setOpacity(currentFade);
+                        }
+                    }
+                }, startScreen);
             }
         };
         fadeTimer.scheduleRepeating(SCHEDULE);

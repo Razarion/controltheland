@@ -14,13 +14,14 @@
 package com.btxtech.game.services.item;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
-import com.btxtech.game.jsre.common.gameengine.itemType.BuildupStep;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
+import com.btxtech.game.jsre.itemtypeeditor.ItemTypeImageInfo;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.ImageHolder;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
@@ -55,14 +56,6 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
     void saveAttackMatrix(Collection<DbBaseItemType> dbBaseItemTypes);
 
     void saveDbItemType(DbItemType dBItemType);
-
-    BoundingBox getBoundingBox(int itemTypeId) throws NoSuchItemTypeException;
-
-    void saveBoundingBox(int itemTypeId, BoundingBox boundingBox) throws NoSuchItemTypeException;
-
-    void saveWeaponType(int itemTypeId, WeaponType weaponType) throws NoSuchItemTypeException;
-
-    void saveBuildupStepData(int itemTypeId, List<BuildupStep> buildupSteps) throws NoSuchItemTypeException;
 
     Collection<DbItemType> getDbItemTypes();
 
@@ -99,4 +92,6 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
     CrudRootServiceHelper<DbItemType> getDbItemTypeCrud();
 
     DbBuildupStep getDbBuildupStep(int itemTypeId, int buildupStepId);
+
+    void saveItemTypeProperties(int itemTypeId, BoundingBox boundingBox, ItemTypeSpriteMap itemTypeSpriteMap, WeaponType weaponType, Collection<ItemTypeImageInfo> buildupImages, Collection<ItemTypeImageInfo> runtimeImages, Collection<ItemTypeImageInfo> demolitionImages) throws NoSuchItemTypeException;
 }

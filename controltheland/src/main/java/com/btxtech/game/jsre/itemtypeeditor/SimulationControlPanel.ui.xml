@@ -1,0 +1,39 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+    <ui:style>
+        .control {
+            border: 1px solid black;
+        }
+    </ui:style>
+    <g:Grid>
+        <g:row>
+            <g:customCell styleName="{style.control}">
+                <g:Button ui:field="attackButton">Attack</g:Button>
+            </g:customCell>
+            <g:customCell styleName="{style.control}">
+                <g:Button ui:field="moveButton" width="51px">Move</g:Button>
+            </g:customCell>
+            <g:customCell styleName="{style.control}">
+                <g:HorizontalPanel>
+                    <g:Cell verticalAlignment="ALIGN_MIDDLE">
+                        <g:InlineLabel text="Buildup in % " horizontalAlignment="ALIGN_LEFT"/>
+                    </g:Cell>
+                    <g:IntegerBox width="43px" ui:field="buildupField"/>
+                    <g:Button text="+" ui:field="buildupPlusButton"/>
+                    <g:Button text="-" ui:field="buildupMinusButton"/>
+                </g:HorizontalPanel>
+            </g:customCell>
+            <g:customCell styleName="{style.control}">
+                <g:HorizontalPanel>
+                    <g:Cell verticalAlignment="ALIGN_MIDDLE">
+                        <g:InlineLabel text="Demolition in % " horizontalAlignment="ALIGN_LEFT"/>
+                    </g:Cell>
+                    <g:IntegerBox width="62px" ui:field="demolitionField"/>
+                    <g:Button text="+" ui:field="demolitionPlusButton"/>
+                    <g:Button text="-" ui:field="demolitionMinusButton"/>
+                </g:HorizontalPanel>
+            </g:customCell>
+        </g:row>
+    </g:Grid>
+</ui:UiBinder>

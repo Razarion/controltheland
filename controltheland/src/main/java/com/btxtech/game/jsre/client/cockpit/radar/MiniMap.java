@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
+import com.google.gwt.animation.client.AnimationScheduler;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -327,9 +328,14 @@ public abstract class MiniMap implements MouseMoveHandler, MouseDownHandler, Mou
     }
 
     public void draw() {
-        if (terrainSettings != null) {
-            clear();
-            render();
+        if (canvas != null && terrainSettings != null) {
+            AnimationScheduler.get().requestAnimationFrame(new AnimationScheduler.AnimationCallback() {
+                @Override
+                public void execute(double timestamp) {
+                    clear();
+                    render();
+                }
+            }, canvas.getElement());
         }
     }
 

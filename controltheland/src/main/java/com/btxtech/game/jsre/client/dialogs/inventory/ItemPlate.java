@@ -3,6 +3,7 @@ package com.btxtech.game.jsre.client.dialogs.inventory;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.cockpit.CockpitMode;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -68,7 +69,7 @@ public class ItemPlate extends Composite implements HasText {
                 } else if (ClientBase.getInstance().isHouseSpaceExceeded(ClientBase.getInstance().getSimpleBase(), inventoryItemInfo.getItemCount())) {
                     DialogManager.showDialog(new MessageDialog("Use Item", "You do not have enough houses to  add new units or structures."), DialogManager.Type.STACK_ABLE);
                 } else {
-                    InventoryItemPlacer.show(inventoryItemInfo);
+                    CockpitMode.getInstance().setInventoryItemPlacer(new InventoryItemPlacer(inventoryItemInfo));
                 }
             } catch (NoSuchItemTypeException e) {
                 log.log(Level.SEVERE, "ItemPlate.onButtonClick()", e);

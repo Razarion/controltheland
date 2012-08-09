@@ -13,14 +13,12 @@
 
 package com.btxtech.game.jsre.client.effects;
 
-import com.btxtech.game.jsre.client.ClientSyncItem;
-import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.ClientSyncItemView;
-import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
-import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
-import com.google.gwt.user.client.Timer;
+import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 /**
@@ -29,10 +27,8 @@ import java.util.Iterator;
  * Time: 2:16:31 PM
  */
 public class ExplosionHandler {
-    public static final int TIMER_DELAY = 60;
     private static final ExplosionHandler INSTANCE = new ExplosionHandler();
-    final private ArrayList<ExplosionFrame> explosionFrames = new ArrayList<ExplosionFrame>();
-    private Timer timer;
+    private ArrayList<Explosion> explosions = new ArrayList<Explosion>();
 
     public static ExplosionHandler getInstance() {
         return INSTANCE;
@@ -42,50 +38,26 @@ public class ExplosionHandler {
      * Singleton
      */
     private ExplosionHandler() {
-        timer = new TimerPerfmon(PerfmonEnum.EXPLOSION_HANDLER) {
-            @Override
-            public void runPerfmon() {
-                try {
-                    handlerFrames();
-                } catch (Throwable t) {
-                    GwtCommon.handleException(t);
-                }
-            }
-        };
     }
 
-    private void handlerFrames() {
-        synchronized (explosionFrames) {
-            Iterator<ExplosionFrame> iterator = explosionFrames.iterator();
-            while (iterator.hasNext()) {
-                ExplosionFrame explosionFrame = iterator.next();
-                try {
-                    if (explosionFrame.tick()) {
-                        iterator.remove();
-                    }
-                } catch (Throwable t) {
-                    GwtCommon.handleException(t);
-                    iterator.remove();
-                }
-            }
-            if (!explosionFrames.isEmpty()) {
-                timer.schedule(TIMER_DELAY);
-            }
+    public void onExplosion(SyncItem syncItem) {
+        if (syncItem.getSyncItemArea().contains(TerrainView.getInstance().getViewRect())) {
+            explosions.add(new Explosion(syncItem));
         }
     }
 
-    public void terminateWithExplosion(ClientSyncItem clientSyncItem) {
-        if(!clientSyncItem.isVisible()) {
-            return;
-        }
-        ExplosionFrame explosionFrame = new ExplosionFrame(clientSyncItem);
-
-        synchronized (explosionFrames) {
-            explosionFrames.add(explosionFrame);
-            if (explosionFrames.size() < 2) {
-                timer.schedule(TIMER_DELAY);
+    public Collection<Explosion> getExplosions(long timeStamp, Rectangle viewRect) {
+        Collection<Explosion> explosions = new ArrayList<Explosion>();
+        for (Iterator<Explosion> iterator = this.explosions.iterator(); iterator.hasNext(); ) {
+            Explosion explosion = iterator.next();
+            explosion.setTimeStamp(timeStamp);
+            if (explosion.isInTime() && explosion.isInViewRect(viewRect)) {
+                explosions.add(explosion);
+            } else {
+                iterator.remove();
             }
         }
+        return explosions;
     }
 
 }

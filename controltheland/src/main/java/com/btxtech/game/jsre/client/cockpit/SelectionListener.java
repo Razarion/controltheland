@@ -13,8 +13,7 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.ClientSyncItem;
-import com.btxtech.game.jsre.client.ClientSyncItemView;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 /**
  * User: beat
@@ -22,7 +21,7 @@ import com.btxtech.game.jsre.client.ClientSyncItemView;
  * Time: 15:11:34
  */
 public interface SelectionListener {
-    void onTargetSelectionChanged(ClientSyncItem selection);
+    void onTargetSelectionChanged(SyncItem selection);
 
     void onSelectionCleared();
 

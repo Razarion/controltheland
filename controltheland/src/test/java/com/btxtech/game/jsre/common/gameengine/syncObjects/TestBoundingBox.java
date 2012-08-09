@@ -90,7 +90,7 @@ public class TestBoundingBox extends AbstractServiceTest {
     @DirtiesContext
     public void getAllowedAngel() throws Throwable {
         final double[] ANGELS = new double[]{MathHelper.gradToRad(0.0), MathHelper.gradToRad(10), MathHelper.gradToRad(11), MathHelper.gradToRad(12), MathHelper.gradToRad(90), MathHelper.gradToRad(180)};
-        BoundingBox boundingBox = new BoundingBox(100, 100, 100, 100, ANGELS);
+        BoundingBox boundingBox = new BoundingBox(100, 100, ANGELS);
         double angel = 0.0;
         try {
             for (angel = 0.0; angel <= MathHelper.ONE_RADIANT; angel += 0.0001) {
@@ -185,17 +185,5 @@ public class TestBoundingBox extends AbstractServiceTest {
         } else {
             Assert.assertTrue("The angel:" + MathHelper.radToGrad(angel) + " is not inside allowedAngel1:" + MathHelper.radToGrad(allowedAngel1) + " and allowedAngel2:" + MathHelper.radToGrad(allowedAngel2), MathHelper.isInSection(angel, allowedAngel2, delta));
         }
-    }
-
-    @Test
-    @DirtiesContext
-    public void createBoundingBox() {
-        try {
-            new BoundingBox(100, 100, 100, 100, new double[]{0.1, 0.3, 0.2});
-            Assert.fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException ignore) {
-            // ignore
-        }
-
     }
 }

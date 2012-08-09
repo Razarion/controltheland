@@ -47,7 +47,7 @@ import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
@@ -395,17 +395,17 @@ public class Connection implements StartupProgressListener, ConnectionI {
         }
     }
 
-    public void sellItem(SyncItem syncItem) {
+    public void sellItem(SyncBaseItem syncBaseItem) {
         if (gameEngineMode == GameEngineMode.SLAVE) {
-            if (!syncItem.getId().isSynchronized()) {
+            if (!syncBaseItem.getId().isSynchronized()) {
                 return;
             }
             if (movableServiceAsync != null) {
-                movableServiceAsync.sellItem(syncItem.getId(), new VoidAsyncCallback("sellItem"));
+                movableServiceAsync.sellItem(syncBaseItem.getId(), new VoidAsyncCallback("sellItem"));
             }
         } else if (gameEngineMode == GameEngineMode.MASTER) {
             try {
-                ItemContainer.getInstance().sellItem(syncItem.getId());
+                ItemContainer.getInstance().sellItem(syncBaseItem.getId());
             } catch (Exception e) {
                 log.log(java.util.logging.Level.SEVERE, "sendSellItem()", e);
             }

@@ -62,7 +62,7 @@ public class Html5ImagesUploadConverter {
     }
 
     public static void convertAndSetImages(String dataString, DbBaseItemType dbBaseItemType) {
-        if (dataString == null) {
+     /* TODO  if (dataString == null) {
             return;
         }
         Map<Integer, Double> oldAngelMap = getAngelMap(dbBaseItemType.getItemTypeImageCrud().readDbChildren());
@@ -101,14 +101,14 @@ public class Html5ImagesUploadConverter {
             for (int i = 0; i < dbItemTypeImages.size(); i++) {
                 dbItemTypeImages.get(i).setAngel(step * (double) i);
             }
-        }
+        } */
     }
 
     private static Map<Integer, Double> getAngelMap(Collection<DbItemTypeImage> dbItemTypeImages) {
         Map<Integer, Double> angelMap = new HashMap<Integer, Double>();
-        for (DbItemTypeImage dbItemTypeImage : dbItemTypeImages) {
+ /*     TODO  for (DbItemTypeImage dbItemTypeImage : dbItemTypeImages) {
             angelMap.put(dbItemTypeImage.getNumber(), dbItemTypeImage.getAngel());
-        }
+        }    */
         return angelMap;
     }
 

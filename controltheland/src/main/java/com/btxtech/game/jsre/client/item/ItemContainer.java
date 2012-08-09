@@ -26,8 +26,8 @@ import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.effects.ExplosionHandler;
+import com.btxtech.game.jsre.client.effects.MuzzleFlashHandler;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
-import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.SpeechBubbleHandler;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
@@ -47,8 +47,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
-import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
+import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.google.gwt.user.client.Timer;
 
 import java.util.ArrayList;
@@ -56,19 +56,22 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * User: beat
  * Date: Jul 4, 2009
  * Time: 12:26:56 PM
  */
-public class ItemContainer extends AbstractItemService {
+public class ItemContainer extends AbstractItemService implements SyncItemListener {
     public static final int CLEANUP_INTERVALL = 3000;
     private static final ItemContainer INSATNCE = new ItemContainer();
     private HashMap<Id, ClientSyncItem> items = new HashMap<Id, ClientSyncItem>();
     private HashMap<Id, ClientSyncItem> orphanItems = new HashMap<Id, ClientSyncItem>();
     private HashMap<Id, ClientSyncItem> seeminglyDeadItems = new HashMap<Id, ClientSyncItem>();
     private int itemId = 1;
+    private static Logger log = Logger.getLogger(ItemContainer.class.getName());
 
     /**
      * Singleton
@@ -130,8 +133,6 @@ public class ItemContainer extends AbstractItemService {
             }
             clientSyncItem.getSyncItem().synchronize(syncItemInfo);
             checkSpecialChanged(clientSyncItem.getSyncItem());
-            clientSyncItem.checkVisibility(TerrainView.getInstance().getViewRect());
-            clientSyncItem.update();
             if (clientSyncItem.isSyncTickItem()) {
                 ActionHandler.getInstance().syncItemActivated(clientSyncItem.getSyncTickItem());
             }
@@ -182,8 +183,6 @@ public class ItemContainer extends AbstractItemService {
             orphanItems.put(id, itemView);
             itemView.setHidden(true);
         }
-        itemView.checkVisibility(TerrainView.getInstance().getViewRect());
-        itemView.update();
         return itemView.getSyncItem();
     }
 
@@ -192,10 +191,10 @@ public class ItemContainer extends AbstractItemService {
         return new Id(itemId, parentId, createdChildCount);
     }
 
-    public ClientSyncItem getSimulationItem(int intId) {
+    public SyncBaseItem getSimulationItem(int intId) {
         for (Map.Entry<Id, ClientSyncItem> entry : items.entrySet()) {
             if (entry.getKey().getId() == intId) {
-                return entry.getValue();
+                return entry.getValue().getSyncBaseItem();
             }
         }
         throw new IllegalArgumentException(this + " getSimulationItem(): no ClientSyncItem for id: " + intId);
@@ -219,8 +218,6 @@ public class ItemContainer extends AbstractItemService {
             syncBaseItem.fireItemChanged(SyncItemListener.Change.ANGEL);
             ClientBase.getInstance().onItemCreated(syncBaseItem);
         }
-        itemView.checkVisibility(TerrainView.getInstance().getViewRect());
-        itemView.update();
         ClientServices.getInstance().getConnectionService().sendSyncInfo(itemView.getSyncItem());
         return itemView.getSyncItem();
     }
@@ -236,13 +233,12 @@ public class ItemContainer extends AbstractItemService {
             SyncBaseItem syncBaseItem = (SyncBaseItem) itemView.getSyncItem();
             syncBaseItem.setBuildup(1.0);
         }
-        itemView.checkVisibility(TerrainView.getInstance().getViewRect());
-        itemView.update();
         return itemView.getSyncItem();
     }
 
     private ClientSyncItem createAndAddItem(Id id, Index position, int itemTypeId, SimpleBase base) throws NoSuchItemTypeException {
         SyncItem syncItem = newSyncItem(id, position, itemTypeId, base, ClientServices.getInstance());
+        syncItem.addSyncItemListener(this);
         ClientSyncItem itemView = new ClientSyncItem(syncItem);
         items.put(id, itemView);
         return itemView;
@@ -288,7 +284,9 @@ public class ItemContainer extends AbstractItemService {
                 itemView.getSyncResourceItem().setAmount(0);
             }
         }
-
+        if (explode) {
+            ExplosionHandler.getInstance().onExplosion(itemView.getSyncItem());
+        }
         items.remove(itemView.getSyncItem().getId());
         if (itemView.isMyOwnProperty()) {
             ClientBase.getInstance().recalculate4FakedHouseSpace(itemView.getSyncBaseItem());
@@ -298,7 +296,7 @@ public class ItemContainer extends AbstractItemService {
         }
         checkSpecialRemoved(itemView.getSyncItem());
         seeminglyDeadItems.remove(itemView.getSyncItem().getId());
-        SelectionHandler.getInstance().itemKilled(itemView);
+        SelectionHandler.getInstance().itemKilled(itemView.getSyncItem());
         SpeechBubbleHandler.getInstance().itemKilled(itemView.getSyncItem());
 
         if (actor != null && itemView.getSyncItem() instanceof SyncBaseItem) {
@@ -307,12 +305,8 @@ public class ItemContainer extends AbstractItemService {
                 ClientBotService.getInstance().onBotItemKilled(target, actor);
             }
         }
-
-        if (explode) {
+        if (itemView.isSyncTickItem()) {
             ActionHandler.getInstance().removeActiveItem(itemView.getSyncTickItem());
-            ExplosionHandler.getInstance().terminateWithExplosion(itemView);
-        } else {
-            itemView.dispose();
         }
     }
 
@@ -358,7 +352,7 @@ public class ItemContainer extends AbstractItemService {
     protected <T> T iterateOverItems(boolean includeNoPosition, T defaultReturn, ItemHandler<T> itemHandler) {
         for (ClientSyncItem clientSyncItem : items.values()) {
             SyncItem syncItem = clientSyncItem.getSyncItem();
-            if (orphanItems.containsKey(syncItem.getId()) || seeminglyDeadItems.containsKey(syncItem.getId())) {
+            if (orphanItems.containsKey(syncItem.getId())) {
                 continue;
             }
             if (!syncItem.isAlive()) {
@@ -389,8 +383,7 @@ public class ItemContainer extends AbstractItemService {
         for (ClientSyncItem clientSyncItem : items.values()) {
             if (clientSyncItem.isSyncBaseItem() &&
                     clientSyncItem.isMyOwnProperty() &&
-                    !orphanItems.containsKey(clientSyncItem.getSyncItem().getId()) &&
-                    !seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId())) {
+                    !orphanItems.containsKey(clientSyncItem.getSyncItem().getId())) {
                 clientBaseItems.add(clientSyncItem);
             }
         }
@@ -425,11 +418,50 @@ public class ItemContainer extends AbstractItemService {
     }
 
     public void clear() {
-        for (ClientSyncItem clientSyncItem : items.values()) {
-            clientSyncItem.dispose();
-        }
         items.clear();
         orphanItems.clear();
         seeminglyDeadItems.clear();
+    }
+
+    @Override
+    public void onItemChanged(Change change, SyncItem syncItem) {
+        // TODO Remove if bug found
+        switch (change) {
+            case POSITION:
+                try {
+                    if (syncItem instanceof SyncBaseItem && Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
+                        ActionHandler.getInstance().interactionGuardingItems((SyncBaseItem) syncItem);
+                    }
+                } catch (Throwable t) {
+                    log.log(Level.SEVERE, "ClientSyncItem.onItemChanged() failed POSITION: " + syncItem, t);
+                }
+                break;
+            case BUILD:
+                try {
+                    if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).isReady()) {
+                        SimulationConditionServiceImpl.getInstance().onSyncItemBuilt(((SyncBaseItem) syncItem));
+                        ClientBase.getInstance().recalculate4FakedHouseSpace((SyncBaseItem) syncItem);
+                        if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
+                            ActionHandler.getInstance().addGuardingBaseItem((SyncBaseItem) syncItem);
+                            ItemContainer.getInstance().checkSpecialChanged(syncItem);
+                        }
+                    }
+                } catch (Throwable t) {
+                    log.log(Level.SEVERE, "ClientSyncItem.onItemChanged() failed BUILD: " + syncItem, t);
+                }
+                break;
+            case ITEM_TYPE_CHANGED:
+                try {
+                    RadarPanel.getInstance().onItemTypeChanged(syncItem);
+                } catch (Throwable t) {
+                    log.log(Level.SEVERE, "ClientSyncItem.onItemChanged() failed ITEM_TYPE_CHANGED: " + syncItem, t);
+                }
+                SelectionHandler.getInstance().refresh();
+                break;
+            case ON_ATTACK:
+                MuzzleFlashHandler.getInstance().onAttack(syncItem);
+                break;
+
+        }
     }
 }

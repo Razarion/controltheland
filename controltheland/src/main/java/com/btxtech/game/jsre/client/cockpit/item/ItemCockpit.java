@@ -1,6 +1,5 @@
 package com.btxtech.game.jsre.client.cockpit.item;
 
-import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.GwtCommon;
@@ -53,17 +52,17 @@ public class ItemCockpit extends AbstractControlPanel implements BuildupItemPane
         preventEvents();
     }
 
-    public void activate(ClientSyncItem clientSyncItem) {
+    public void activate(SyncBaseItem syncBaseItem) {
         if (Connection.getInstance().getGameEngineMode() == GameEngineMode.PLAYBACK) {
             return;
         }
 
         excFocusPanel.setFocus(true);
-        buildupItemPanel.display(clientSyncItem);
-        specialFunctionPanel.display(clientSyncItem.getSyncBaseItem());
+        buildupItemPanel.display(syncBaseItem);
+        specialFunctionPanel.display(syncBaseItem);
 
         setVisible(true);
-        Index relPosition = TerrainView.getInstance().toRelativeIndex(clientSyncItem.getSyncItem().getSyncItemArea().getPosition());
+        Index relPosition = TerrainView.getInstance().toRelativeIndex(syncBaseItem.getSyncItemArea().getPosition());
         relPosition = relPosition.sub(getOffsetWidth() / 2, getOffsetHeight());
         if (relPosition.getX() < 0) {
             relPosition.setX(0);

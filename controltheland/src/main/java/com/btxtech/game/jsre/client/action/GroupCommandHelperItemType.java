@@ -1,6 +1,5 @@
 package com.btxtech.game.jsre.client.action;
 
-import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.collision.ClientCollisionService;
 import com.btxtech.game.jsre.client.common.Index;
@@ -22,15 +21,15 @@ import java.util.logging.Logger;
 public abstract class GroupCommandHelperItemType<T extends SyncItem> {
     private Logger log = Logger.getLogger(GroupCommandHelperItemType.class.getName());
 
-    public void process(Collection<ClientSyncItem> clientSyncItems, T target, boolean findPathIfNotInRange) {
+    public void process(Collection<SyncBaseItem> syncBaseItems, T target, boolean findPathIfNotInRange) {
         try {
             List<AttackFormationItem> attackFormationItemList = new ArrayList<AttackFormationItem>();
-            for (ClientSyncItem clientSyncItem : clientSyncItems) {
-                if (isCommandPossible(clientSyncItem.getSyncBaseItem(), target)) {
-                    if (isAllowedAllowedWithoutMoving(clientSyncItem.getSyncBaseItem(), target)) {
-                        executeCommand(clientSyncItem.getSyncBaseItem(), target, clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem().getSyncItemArea().getTurnToAngel(target.getSyncItemArea()));
-                    } else if (clientSyncItem.getSyncBaseItem().hasSyncMovable() && findPathIfNotInRange) {
-                        attackFormationItemList.add(new AttackFormationItem(clientSyncItem.getSyncBaseItem(), getRange(clientSyncItem.getSyncBaseItem(), target)));
+            for (SyncBaseItem syncBaseItem : syncBaseItems) {
+                if (isCommandPossible(syncBaseItem, target)) {
+                    if (isAllowedAllowedWithoutMoving(syncBaseItem, target)) {
+                        executeCommand(syncBaseItem, target, syncBaseItem.getSyncItemArea().getPosition(), syncBaseItem.getSyncItemArea().getTurnToAngel(target.getSyncItemArea()));
+                    } else if (syncBaseItem.hasSyncMovable() && findPathIfNotInRange) {
+                        attackFormationItemList.add(new AttackFormationItem(syncBaseItem, getRange(syncBaseItem, target)));
                     }
                 }
             }

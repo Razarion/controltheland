@@ -1,127 +1,80 @@
 package com.btxtech.game.jsre.itemtypeeditor;
 
-import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.Connection;
-import com.btxtech.game.jsre.client.common.LevelScope;
-import com.btxtech.game.jsre.client.common.RadarMode;
-import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
-import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.client.renderer.Renderer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
-import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
-import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.Widget;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+public class ItemTypeEditorPanel extends Composite {
+    private static ItemTypeEditorPanelUiBinder uiBinder = GWT.create(ItemTypeEditorPanelUiBinder.class);
+    @UiField
+    SimplePanel configurationPanel;
+    @UiField
+    SimplePanel simulationPanel;
+    @UiField
+    SimplePanel simulationControlPanel;
+    @UiField
+    Button saveButton;
+    @UiField
+    ListBox configurationSelector;
 
-/**
- * User: beat
- * Date: 15.08.2011
- * Time: 20:27:37
- */
-public class ItemTypeEditorPanel extends FlexTable {
-    private static final int SIM_WIDTH = 600;
-    private static final int SIM_HEIGHT = 800;
-    public static final SimpleBase MY_BASE = new SimpleBase(1);
-    public static final SimpleBase ENEMY_BASE = new SimpleBase(2);
-    private Logger log = Logger.getLogger(ItemTypeEditorPanel.class.getName());
-    private int itemTypeId;
-    private ItemTypeSimulation itemTypeSimulation;
-    private MuzzleFlashControl muzzleFlashControl;
+    interface ItemTypeEditorPanelUiBinder extends UiBinder<Widget, ItemTypeEditorPanel> {
+    }
 
-    public ItemTypeEditorPanel(int itemTypeId) {
-        this.itemTypeId = itemTypeId;
-        ItemTypeAccessAsync itemTypeAccess = GWT.create(ItemTypeAccess.class);
-        itemTypeAccess.getItemType(itemTypeId, new AsyncCallback<ItemType>() {
+    public ItemTypeEditorPanel() {
+        initWidget(uiBinder.createAndBindUi(this));
+        configurationSelector.addItem("Bounding Box");
+        configurationSelector.addItem("Buildup");
+        configurationSelector.addItem("Runtime");
+        configurationSelector.addItem("Demolition");
+        configurationSelector.addItem("Muzzle Flash");
+        configurationSelector.setSelectedIndex(0);
+        configurationPanel.setWidget(new BoundingBoxPanel());
+        simulationControlPanel.setWidget(new SimulationControlPanel());
+        ItemTypeEditorModel.getInstance().addLoadedListener(new ItemTypeEditorModel.LoadedListener() {
             @Override
-            public void onFailure(Throwable caught) {
-                log.log(Level.SEVERE, "getBoundingBox call failed", caught);
-            }
-
-            @Override
-            public void onSuccess(ItemType itemType) {
-                try {
-                    ///--- Setup div
-                    TerrainView.uglySuppressRadar = true;
-                    Connection.getInstance().init4ItemTypeEditor();
-                    ClientLevelHandler.getInstance().setLevel(new LevelScope(0, 0, null, 0, 0, RadarMode.NONE, 0));
-                    ///--- Setup terrain
-                    ArrayList<SurfaceImage> surfaceImages = new ArrayList<SurfaceImage>();
-                    surfaceImages.add(new SurfaceImage(itemType.getTerrainType().getSurfaceTypes().get(0), 23, "#00FF00"));
-                    ArrayList<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
-                    surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, SIM_WIDTH / 100, SIM_HEIGHT / 100), 23));
-                    TerrainView.getInstance().setupTerrain(new TerrainSettings(SIM_WIDTH / 100, SIM_HEIGHT / 100, 100, 100),
-                            new ArrayList<TerrainImagePosition>(),
-                            surfaceRects,
-                            surfaceImages,
-                            new ArrayList<TerrainImage>(),
-                            null);
-                    TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
-                    TerrainView.getInstance().addToParent(MapWindow.getAbsolutePanel());
-                    TerrainView.getInstance().getTerrainHandler().createTerrainTileField(Collections.<TerrainImagePosition>emptyList(), surfaceRects);
-                    ///--- Setup Item Container
-                    Collection<ItemType> itemTypes = new ArrayList<ItemType>();
-                    itemTypes.add(itemType);
-                    ItemContainer.getInstance().setItemTypes(itemTypes);
-                    ///--- Setup Base
-                    ClientBase.getInstance().setBase(MY_BASE);
-                    Collection<BaseAttributes> allBaseAttributes = new ArrayList<BaseAttributes>();
-                    allBaseAttributes.add(new BaseAttributes(MY_BASE, "MyBase", false));
-                    allBaseAttributes.add(new BaseAttributes(ENEMY_BASE, "Enemy", false));
-                    ClientBase.getInstance().setAllBaseAttributes(allBaseAttributes);
-
-                    setupGui(itemType);
-                    if (itemType instanceof BaseItemType) {
-                        itemTypeSimulation.createSyncItem();
-                    }
-                    //---- Init the editors
-                    muzzleFlashControl.init(0, itemType);
-                } catch (Throwable t) {
-                    log.log(Level.SEVERE, "Can not start ItemTypeEditor", t);
-                }
+            public void onModelLoaded() {
+                simulationPanel.setWidget(MapWindow.getAbsolutePanel());
+                Renderer.getInstance().start();
+                MapWindow.getInstance().setMinimalSize(ItemTypeEditorModel.SIM_WIDTH, ItemTypeEditorModel.SIM_HEIGHT);
             }
         });
     }
 
-    private void setupGui(ItemType itemType) {
-        // Create panels
-        muzzleFlashControl = new MuzzleFlashControl();
-        BoundingBoxControl boundingBoxControl = new BoundingBoxControl(itemTypeId, itemType.getBoundingBox(), muzzleFlashControl);
-        itemTypeSimulation = new ItemTypeSimulation(SIM_WIDTH, SIM_HEIGHT, itemType, muzzleFlashControl);
-        ItemTypeView itemTypeView = new ItemTypeView(300, 300, itemType, boundingBoxControl, muzzleFlashControl);
-        RotationControl rotationControl = new RotationControl(itemType.getBoundingBox(), itemTypeView, itemTypeSimulation, muzzleFlashControl);
-        muzzleFlashControl.setRotationControl(rotationControl);
-        BuildupStepEditorPanel buildupStepEditorPanel = new BuildupStepEditorPanel(itemType, itemTypeSimulation, boundingBoxControl);
-        // Init panels
-        boundingBoxControl.setRotationControl(rotationControl);
-        // Add panels to main panel
-        setWidget(0, 0, itemTypeView);
-        getFlexCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
-        getFlexCellFormatter().setRowSpan(0, 0, 4);
-        setWidget(0, 1, rotationControl);
-        // Col is 0 (only one col in second row)
-        setWidget(1, 0, boundingBoxControl);
-        setWidget(2, 0, muzzleFlashControl);
-        setWidget(3, 0, buildupStepEditorPanel);
-        getFlexCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
-        setWidget(0, 2, MapWindow.getAbsolutePanel());
-        getFlexCellFormatter().setRowSpan(0, 2, 4);
-        MapWindow.getInstance().setMinimalSize(SIM_WIDTH, SIM_HEIGHT);
+    @UiHandler("saveButton")
+    void onSaveButtonClick(ClickEvent event) {
+        ItemTypeEditorModel.getInstance().saveItemType(saveButton);
+    }
+
+    @UiHandler("configurationSelector")
+    void onConfigurationSelectorChange(ChangeEvent event) {
+        ItemTypeEditorModel.getInstance().clearUpdateListeners();
+        switch (configurationSelector.getSelectedIndex()) {
+            case 0:
+                configurationPanel.setWidget(new BoundingBoxPanel());
+                break;
+            case 1:
+                configurationPanel.setWidget(new BuildupPanel());
+                break;
+            case 2:
+                configurationPanel.setWidget(new RuntimePanel());
+                break;
+            case 3:
+                configurationPanel.setWidget(new DemolitionPanel());
+                break;
+            case 4:
+                configurationPanel.setWidget(new MuzzleFlashPanel());
+                break;
+        }
+        ItemTypeEditorModel.getInstance().fireUpdate();
     }
 }

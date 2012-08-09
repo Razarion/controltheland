@@ -28,6 +28,7 @@ public abstract class ItemType implements Serializable {
     private String description;
     private TerrainType terrainType;
     private BoundingBox boundingBox;
+    private ItemTypeSpriteMap itemTypeSpriteMap;
 
     public int getId() {
         return id;
@@ -69,6 +70,14 @@ public abstract class ItemType implements Serializable {
         return terrainType;
     }
 
+    public ItemTypeSpriteMap getItemTypeSpriteMap() {
+        return itemTypeSpriteMap;
+    }
+
+    public void setItemTypeSpriteMap(ItemTypeSpriteMap itemTypeSpriteMap) {
+        this.itemTypeSpriteMap = itemTypeSpriteMap;
+    }
+
     public void changeTo(ItemType itemType) {
         if (id != itemType.id) {
             throw new IllegalArgumentException("Id must be the same: " + id + ":" + itemType.id);
@@ -77,6 +86,7 @@ public abstract class ItemType implements Serializable {
         name = itemType.name;
         description = itemType.description;
         terrainType = itemType.terrainType;
+        itemTypeSpriteMap = itemType.itemTypeSpriteMap;
     }
 
     @Override

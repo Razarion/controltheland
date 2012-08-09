@@ -1,6 +1,8 @@
 package com.btxtech.game.jsre.itemtypeeditor;
 
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.renderer.Renderer;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -20,13 +22,14 @@ public class ItemTypeEditor implements EntryPoint {
 
     @Override
     public void onModuleLoad() {
+        TerrainView.uglySuppressRadar = true;
         GwtCommon.setUncaughtExceptionHandler();
         GwtCommon.disableBrowserContextMenuJSNI();
         try {
             RootPanel rootPanel = RootPanel.get(ITEM_TYPE_EDITOR);
             removeLoadingText(rootPanel);
-            int itemTypeId = getItemTypeId(rootPanel);
-            rootPanel.add(new ItemTypeEditorPanel(itemTypeId));
+            rootPanel.add(new ItemTypeEditorPanel());
+            ItemTypeEditorModel.getInstance().loadItemType(getItemTypeId(rootPanel));
         } catch (Throwable throwable) {
             log.log(Level.SEVERE, "Error: ", throwable);
         }

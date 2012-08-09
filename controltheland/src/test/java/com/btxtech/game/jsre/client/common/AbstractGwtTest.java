@@ -1,8 +1,6 @@
 package com.btxtech.game.jsre.client.common;
 
 import com.btxtech.game.jsre.client.ClientServices;
-import com.btxtech.game.jsre.client.ClientSyncItem;
-import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GameCommon;
 import com.btxtech.game.jsre.client.action.ActionHandler;
@@ -12,16 +10,12 @@ import com.btxtech.game.jsre.client.control.StartupScreen;
 import com.btxtech.game.jsre.client.control.StartupSeq;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
-import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.GwtTestRunnable;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.SpeechBubbleHandler;
-import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.logging.client.LogConfiguration;
@@ -35,7 +29,6 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -108,7 +101,7 @@ public abstract class AbstractGwtTest extends GWTTestCase implements StartupProg
 
     // ---------- Helpers ----------
 
-    public ClientSyncItemView getFirstClientSyncItemView(int itemTypeId) throws Exception {
+ /*   public ClientSyncItemView getFirstClientSyncItemView(int itemTypeId) throws Exception {
         ItemType itemType = ItemContainer.getInstance().getItemType(itemTypeId);
         Collection<? extends SyncItem> items = ItemContainer.getInstance().getItems(itemType, null);
         if (items.isEmpty()) {
@@ -116,12 +109,12 @@ public abstract class AbstractGwtTest extends GWTTestCase implements StartupProg
         }
         SyncItem syncItem = CommonJava.getFirst(items);
         ClientSyncItem clientSyncItem = ItemContainer.getInstance().getClientSyncItem(syncItem);
-        ClientSyncItemView clientSyncItemView = clientSyncItem.getClientSyncItemView();
-        if (clientSyncItemView == null) {
+        //ClientSyncItemView clientSyncItemView = clientSyncItem.getClientSyncItemView();
+ //       if (clientSyncItemView == null) {
             throw new IllegalArgumentException("Item not visible: " + syncItem);
         }
         return clientSyncItemView;
-    }
+    }  */
 
     public Element getDebugElement(String debugId) {
         Element element = DOM.getElementById(UIObject.DEBUG_ID_PREFIX + debugId);

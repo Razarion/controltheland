@@ -7,12 +7,13 @@ import java.io.Serializable;
  * Date: 08.01.2012
  * Time: 23:35:16
  */
+@Deprecated
 public class BuildupStep implements Serializable {
     private double from;
     private double toExclusive;
-    private String base64ImageData;
+    //private String base64ImageData;
     private Integer imageId;
-
+    private int animationSteps;
     /**
      * Used by GWT
      */
@@ -29,9 +30,9 @@ public class BuildupStep implements Serializable {
         return imageId;
     }
 
-    public BuildupStep(String base64ImageData) {
+/*    public BuildupStep(String base64ImageData) {
         this.base64ImageData = base64ImageData;
-    }
+    } */
 
     public double getDelta() {
         return toExclusive - from;
@@ -53,9 +54,9 @@ public class BuildupStep implements Serializable {
         this.toExclusive = toExclusive;
     }
 
-    public String getBase64ImageData() {
+/*    public String getBase64ImageData() {
         return base64ImageData;
-    }
+    }  */
 
     public boolean isInRange(double value) {
         return value >= from && value < toExclusive;

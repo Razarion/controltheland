@@ -16,6 +16,8 @@ package com.btxtech.game.jsre.common.gameengine.services.items.impl;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
@@ -52,6 +54,9 @@ import java.util.logging.Logger;
 abstract public class AbstractItemService implements ItemService {
     private final HashMap<Integer, ItemType> itemTypes = new HashMap<Integer, ItemType>();
     private Logger log = Logger.getLogger(AbstractItemService.class.getName());
+    private int maxItemWidth;
+    private int maxItemHeight;
+    private int maxItemDiameter;
 
     /**
      * Iterates over all sync items
@@ -126,6 +131,7 @@ abstract public class AbstractItemService implements ItemService {
             }
             this.itemTypes.put(itemType.getId(), itemType);
         }
+        calculateMaxItemDimension();
     }
 
     public void addDeltaItemTypes(Collection<ItemType> itemTypes) {
@@ -134,12 +140,14 @@ abstract public class AbstractItemService implements ItemService {
                 this.itemTypes.put(itemType.getId(), itemType);
             }
         }
+        calculateMaxItemDimension();
     }
 
     protected void removeAll(ArrayList<ItemType> newItems) {
         for (ItemType newItem : newItems) {
             this.itemTypes.put(newItem.getId(), newItem);
         }
+        calculateMaxItemDimension();
     }
 
     protected void changeAll(ArrayList<ItemType> changingItems) {
@@ -147,6 +155,7 @@ abstract public class AbstractItemService implements ItemService {
             ItemType itemType = itemTypes.get(changingItem.getId());
             itemType.changeTo(changingItem);
         }
+        calculateMaxItemDimension();
     }
 
     protected void putAll(ArrayList<ItemType> newItems) {
@@ -156,6 +165,7 @@ abstract public class AbstractItemService implements ItemService {
             }
             this.itemTypes.put(newItem.getId(), newItem);
         }
+        calculateMaxItemDimension();
     }
 
 
@@ -433,6 +443,19 @@ abstract public class AbstractItemService implements ItemService {
     }
 
     @Override
+    public boolean hasItemsInRectangleFast(final Rectangle rectangle) {
+        return iterateOverItems(false, false, new ItemHandler<Boolean>() {
+            @Override
+            public Boolean handleItem(SyncItem syncItem) {
+                if (rectangle.contains(syncItem.getSyncItemArea().getPosition())) {
+                    return true;
+                }
+                return null;
+            }
+        });
+    }
+
+    @Override
     public Collection<SyncBaseItem> getBaseItemsInRectangle(final Rectangle rectangle, final SimpleBase simpleBase, final Collection<BaseItemType> baseItemTypeFilter) {
         final Collection<SyncBaseItem> itemsInBase = new ArrayList<SyncBaseItem>();
         iterateOverItems(false, null, new ItemHandler<Void>() {
@@ -482,6 +505,18 @@ abstract public class AbstractItemService implements ItemService {
     }
 
     @Override
+    public SyncItem getItemAtAbsolutePosition(Index absolutePosition) {
+        Rectangle rectangle = Rectangle.generateRectangleFromMiddlePoint(absolutePosition, maxItemDiameter, maxItemDiameter);
+        for (SyncItem syncItem : ItemContainer.getInstance().getItemsInRectangleFast(rectangle)) {
+            if (syncItem.getSyncItemArea().contains(absolutePosition)) {
+                return syncItem;
+            }
+        }
+        return null;
+    }
+
+
+    @Override
     public void sellItem(Id id) throws ItemDoesNotExistException, NotYourBaseException {
         try {
             SyncBaseItem syncBaseItem = (SyncBaseItem) getItem(id);
@@ -516,5 +551,34 @@ abstract public class AbstractItemService implements ItemService {
                 log.log(Level.SEVERE, "AbstractItemService.killContainedItems()", e);
             }
         }
+    }
+
+    private void calculateMaxItemDimension() {
+        maxItemWidth = 0;
+        maxItemHeight = 0;
+        for (ItemType itemType : itemTypes.values()) {
+            if(itemType.getBoundingBox().getWidth() > maxItemWidth) {
+                maxItemWidth = itemType.getBoundingBox().getWidth();
+            }
+            if(itemType.getBoundingBox().getHeight() > maxItemHeight) {
+                maxItemHeight = itemType.getBoundingBox().getHeight();
+            }
+        }
+        maxItemDiameter = (int) MathHelper.getPythagoras(maxItemWidth, maxItemHeight);
+    }
+
+    @Override
+    public int getMaxItemWidth() {
+        return maxItemWidth;
+    }
+
+    @Override
+    public int getMaxItemHeight() {
+        return maxItemHeight;
+    }
+
+    @Override
+    public int getMaxItemDiameter() {
+        return maxItemDiameter;
     }
 }

@@ -17,7 +17,6 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
-import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
@@ -170,7 +169,7 @@ public class Cockpit extends TopMapPanel {
         imageButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
-                MapWindow.getInstance().setTerrainMouseMoveListener(terrainImageModifier);
+                // TODO TerrainView.getInstance().getTerrainMouseHandler().setTerrainMouseMoveListener(terrainImageModifier);
                 controlPanel.setWidget(selectorRow, 0, imageScroll);
                 zIndexSelector.setEnabled(true);
             }
@@ -192,7 +191,7 @@ public class Cockpit extends TopMapPanel {
         surfaceButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
-                MapWindow.getInstance().setTerrainMouseMoveListener(surfaceModifier);
+                // TODO TerrainView.getInstance().getTerrainMouseHandler().setTerrainMouseMoveListener(surfaceModifier);
                 controlPanel.setWidget(selectorRow, 0, surfaceScroll);
                 zIndexSelector.setEnabled(false);
             }

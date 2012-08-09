@@ -48,7 +48,7 @@ public class SyncItemArea {
     }
 
     public Index getTopLeftFromImagePosition() {
-        return getPosition().sub(boundingBox.getMiddleFromImage());
+        return getPosition().sub(syncItem.getItemType().getItemTypeSpriteMap().getMiddleFromImage());
     }
 
     public DecimalPosition getDecimalPosition() {
@@ -93,6 +93,11 @@ public class SyncItemArea {
 
     public double getAngel() {
         return angel;
+    }
+
+
+    public int getAngelIndex() {
+        return boundingBox.angelToAngelIndex(angel);
     }
 
     public void setAngel(double angel) {
@@ -198,9 +203,9 @@ public class SyncItemArea {
         if (!syncItemArea.hasPosition()) {
             return false;
         }
-        
+
         // Increase performance
-        if(getPosition().getDistance(syncItemArea.getPosition()) > (getBoundingBox().getMaxRadiusDouble() + syncItemArea.getBoundingBox().getMaxRadiusDouble())) {
+        if (getPosition().getDistance(syncItemArea.getPosition()) > (getBoundingBox().getMaxRadiusDouble() + syncItemArea.getBoundingBox().getMaxRadiusDouble())) {
             return false;
         }
 
@@ -222,7 +227,7 @@ public class SyncItemArea {
         }
     }
 
-    private boolean contains(Index position) {
+    public boolean contains(Index position) {
         Index rotPoint = position.rotateCounterClock(getPosition(), -getAngel());
         return getBoundingBox().contains(getPosition(), rotPoint);
     }
@@ -271,6 +276,15 @@ public class SyncItemArea {
 
     public boolean contains(Rectangle rectangle) {
         if (!hasPosition()) {
+            return false;
+        }
+        if (rectangle.contains(getPosition())) {
+            return true;
+        }
+        Rectangle biggestScope = Rectangle.generateRectangleFromMiddlePoint(rectangle.getCenter(),
+                rectangle.getWidth() + 2 * boundingBox.getMaxDiameter(),
+                rectangle.getHeight() + 2 * boundingBox.getMaxDiameter());
+        if (!biggestScope.contains(getPosition())) {
             return false;
         }
         Collection<Line> lines = getLines();

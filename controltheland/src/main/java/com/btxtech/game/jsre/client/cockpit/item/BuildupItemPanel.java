@@ -14,15 +14,14 @@
 package com.btxtech.game.jsre.client.cockpit.item;
 
 import com.btxtech.game.jsre.client.ClientServices;
-import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.action.ActionHandler;
+import com.btxtech.game.jsre.client.cockpit.CockpitMode;
 import com.btxtech.game.jsre.client.cockpit.Group;
-import com.btxtech.game.jsre.client.cockpit.PlaceablePreviewSyncItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -92,14 +91,14 @@ public class BuildupItemPanel extends AbsolutePanel {
         add(scrollPanel, SCROLL_LEFT, SCROLL_TOP);
     }
 
-    public void display(ClientSyncItem syncBaseItem) {
+    public void display(SyncBaseItem syncBaseItem) {
         try {
-            if (syncBaseItem.getSyncBaseItem().hasSyncBuilder()) {
+            if (syncBaseItem.hasSyncBuilder()) {
                 Group group = new Group();
                 group.addItem(syncBaseItem);
                 setupBuildupItemsCV(group);
                 setVisible(true);
-            } else if (syncBaseItem.getSyncBaseItem().hasSyncFactory()) {
+            } else if (syncBaseItem.hasSyncFactory()) {
                 Group group = new Group();
                 group.addItem(syncBaseItem);
                 setupBuildupItemsFactory(group);
@@ -131,7 +130,7 @@ public class BuildupItemPanel extends AbsolutePanel {
     private void setupBuildupItemsCV(final Group constructionVehicles) throws NoSuchItemTypeException {
         buildupItem.clear();
         HorizontalPanel itemsToBuild = new HorizontalPanel();
-        Collection<Integer> itemTypeIDs = constructionVehicles.getFirst().getSyncBaseItem().getBaseItemType().getBuilderType().getAbleToBuild();
+        Collection<Integer> itemTypeIDs = constructionVehicles.getFirst().getBaseItemType().getBuilderType().getAbleToBuild();
         for (Integer itemTypeID : itemTypeIDs) {
             final BaseItemType itemType = (BaseItemType) ClientServices.getInstance().getItemService().getItemType(itemTypeID);
             itemsToBuild.add(setupBuildupBlock(itemType, new MouseDownHandler() {
@@ -140,7 +139,7 @@ public class BuildupItemPanel extends AbsolutePanel {
                     if (buildListener != null) {
                         buildListener.onBuild();
                     }
-                    new PlaceablePreviewSyncItem(ImageHandler.getItemTypeImage(itemType, null, null), event, constructionVehicles, itemType);
+                    CockpitMode.getInstance().setToBeBuildPlacer(new ToBeBuildPlacer(itemType, constructionVehicles));
                 }
             }));
         }
@@ -151,7 +150,7 @@ public class BuildupItemPanel extends AbsolutePanel {
     private void setupBuildupItemsFactory(final Group factories) throws NoSuchItemTypeException {
         buildupItem.clear();
         HorizontalPanel itemsToBuild = new HorizontalPanel();
-        Collection<Integer> itemTypeIDs = factories.getFirst().getSyncBaseItem().getBaseItemType().getFactoryType().getAbleToBuild();
+        Collection<Integer> itemTypeIDs = factories.getFirst().getBaseItemType().getFactoryType().getAbleToBuild();
         for (Integer itemTypeID : itemTypeIDs) {
             final BaseItemType itemType = (BaseItemType) ClientServices.getInstance().getItemService().getItemType(itemTypeID);
             itemsToBuild.add(setupBuildupBlock(itemType, new MouseDownHandler() {

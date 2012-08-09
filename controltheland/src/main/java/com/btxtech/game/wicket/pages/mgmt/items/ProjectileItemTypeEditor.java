@@ -17,7 +17,7 @@ import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
-import com.btxtech.game.wicket.pages.mgmt.BoundingBoxEditor;
+import com.btxtech.game.wicket.pages.mgmt.ItemTypeImageEditor;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
@@ -58,7 +58,7 @@ public class ProjectileItemTypeEditor extends MgmtWebPage {
         form.add(new Button("editBoundingBox") {
             @Override
             public void onSubmit() {
-                setResponsePage(new BoundingBoxEditor(form.getModelObject().getId()));
+                setResponsePage(new ItemTypeImageEditor(form.getModelObject().getId()));
             }
         });
 
@@ -91,7 +91,7 @@ public class ProjectileItemTypeEditor extends MgmtWebPage {
                 form.getModelObject().getItemTypeImageCrud().deleteAllChildren();
                 DbItemTypeImage itemTypeImage = form.getModelObject().getItemTypeImageCrud().createDbChild();
                 itemTypeImage.setContentType(fileUpload.getContentType());
-                itemTypeImage.setNumber(1);
+                // TODO itemTypeImage.setNumber(1);
                 itemTypeImage.setData(fileUpload.getBytes());
             }
 

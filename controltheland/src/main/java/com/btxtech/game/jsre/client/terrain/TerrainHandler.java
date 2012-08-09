@@ -31,8 +31,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
-import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -42,9 +42,6 @@ import java.util.logging.Logger;
 public class TerrainHandler extends AbstractTerrainServiceImpl {
     private HashMap<Integer, ImageElement> terrainImageElements = new HashMap<Integer, ImageElement>();
     private HashMap<Integer, ImageElement> surfaceImageElements = new HashMap<Integer, ImageElement>();
-    private boolean allTerrainImagesLoaded;
-    private boolean allSurfaceImagesLoaded;
-    //private Logger log = Logger.getLogger(TerrainHandler.class.getName());
 
     public void setupTerrain(TerrainSettings terrainSettings,
                              Collection<TerrainImagePosition> terrainImagePositions,
@@ -67,12 +64,8 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
     }
 
     public void loadImagesAndDrawMap(final DeferredStartup deferredStartup) {
-        final ArrayList<Integer> surfaceImageIds = new ArrayList<Integer>();
-        final ArrayList<Integer> terrainImageIds = new ArrayList<Integer>();
-        final List<String> surfaceImageUrls = new ArrayList<String>();
-        final List<String> terrainImagesUrls = new ArrayList<String>();
-        allSurfaceImagesLoaded = false;
-        allTerrainImagesLoaded = false;
+        final ImageLoader<Integer> surfaceImageLoader = new ImageLoader<Integer>();
+        final ImageLoader<Integer> terrainImageLoader = new ImageLoader<Integer>();
 
         iteratorOverAllTerrainTiles(null, new TerrainTileEvaluator() {
             TreeSet<Integer> addedSurfaceImageIds = new TreeSet<Integer>();
@@ -83,75 +76,54 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
                 if (terrainTile != null) {
                     if (terrainTile.isSurface()) {
                         if (!surfaceImageElements.containsKey(terrainTile.getImageId()) && addedSurfaceImageIds.add(terrainTile.getImageId())) {
-                            surfaceImageUrls.add(ImageHandler.getSurfaceImagesUrl(terrainTile.getImageId()));
-                            surfaceImageIds.add(terrainTile.getImageId());
+                            surfaceImageLoader.addImageUrl(ImageHandler.getSurfaceImagesUrl(terrainTile.getImageId()), terrainTile.getImageId());
                         }
                     } else {
                         if (!terrainImageElements.containsKey(terrainTile.getImageId()) && addedTerrainImageIds.add(terrainTile.getImageId())) {
-                            terrainImagesUrls.add(ImageHandler.getTerrainImageUrl(terrainTile.getImageId()));
-                            terrainImageIds.add(terrainTile.getImageId());
+                            terrainImageLoader.addImageUrl(ImageHandler.getTerrainImageUrl(terrainTile.getImageId()), terrainTile.getImageId());
                         }
                     }
                 }
             }
         });
-
-        if (surfaceImageUrls.isEmpty() && terrainImagesUrls.isEmpty()) {
+        if (surfaceImageLoader.getUrlSize() == 0 && terrainImageLoader.getUrlSize() == 0) {
             fireTerrainChanged();
             deferredStartup.finished();
             return;
         }
-        if(surfaceImageUrls.isEmpty()) {
-            allSurfaceImagesLoaded = true;
-        }
-        if(terrainImagesUrls.isEmpty()) {
-            allTerrainImagesLoaded = true;
-        }
-        if (!surfaceImageUrls.isEmpty()) {
-            ImageLoader.addImageUrlsAndStart(surfaceImageUrls, new ImageLoader.Listener() {
-                @Override
-                public void onLoaded(ImageElement[] imageElements) {
-                    try {
-                        for (int i = 0; i < imageElements.length; i++) {
-                            surfaceImageElements.put(surfaceImageIds.get(i), imageElements[i]);
-                        }
-                        surfaceImageIds.clear();
-                        allSurfaceImagesLoaded = true;
-                        if (allTerrainImagesLoaded) {
-                            fireTerrainChanged();
-                            deferredStartup.finished();
-                        }
-                    } catch (Throwable throwable) {
-                        GwtCommon.handleException(throwable);
-                        deferredStartup.failed(throwable);
-                    }
-                }
-            });
-        }
-        surfaceImageUrls.clear();
-        if (!terrainImagesUrls.isEmpty()) {
-            ImageLoader.addImageUrlsAndStart(terrainImagesUrls, new ImageLoader.Listener() {
-                @Override
-                public void onLoaded(ImageElement[] imageElements) {
-                    try {
-                        for (int i = 0; i < imageElements.length; i++) {
-                            terrainImageElements.put(terrainImageIds.get(i), imageElements[i]);
-                        }
-                        terrainImageIds.clear();
-                        allTerrainImagesLoaded = true;
-                        if (allSurfaceImagesLoaded) {
-                            fireTerrainChanged();
-                            deferredStartup.finished();
-                        }
-                    } catch (Throwable throwable) {
-                        GwtCommon.handleException(throwable);
-                        deferredStartup.failed(throwable);
-                    }
-                }
-            });
-        }
-        terrainImagesUrls.clear();
 
+        surfaceImageLoader.startLoading(new ImageLoader.Listener<Integer>() {
+            @Override
+            public void onLoaded(Map<Integer, ImageElement> imageElements) {
+                try {
+                    surfaceImageElements.putAll(imageElements);
+                    if (terrainImageLoader.isLoaded()) {
+                        fireTerrainChanged();
+                        deferredStartup.finished();
+                    }
+
+                } catch (Throwable throwable) {
+                    GwtCommon.handleException(throwable);
+                    deferredStartup.failed(throwable);
+                }
+            }
+        });
+        terrainImageLoader.startLoading(new ImageLoader.Listener<Integer>() {
+            @Override
+            public void onLoaded(Map<Integer, ImageElement> imageElements) {
+                try {
+                    terrainImageElements.putAll(imageElements);
+                    if (surfaceImageLoader.isLoaded()) {
+                        fireTerrainChanged();
+                        deferredStartup.finished();
+                    }
+
+                } catch (Throwable throwable) {
+                    GwtCommon.handleException(throwable);
+                    deferredStartup.failed(throwable);
+                }
+            }
+        });
     }
 
     public HashMap<Integer, ImageElement> getTerrainImageElements() {

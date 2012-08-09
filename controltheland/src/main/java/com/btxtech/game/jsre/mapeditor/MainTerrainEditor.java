@@ -16,7 +16,6 @@ package com.btxtech.game.jsre.mapeditor;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.client.cockpit.CockpitUtil;
-import com.btxtech.game.jsre.client.cockpit.radar.MiniTerrain;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -48,7 +47,6 @@ public class MainTerrainEditor implements EntryPoint {
         RootPanel.get().add(MapWindow.getAbsolutePanel());
         TerrainView.getInstance().addToParent(MapWindow.getAbsolutePanel());
         TerrainView.getInstance().getCanvas().getElement().getStyle().setZIndex(Constants.Z_INDEX_TERRAIN);
-        TerrainView.getInstance().addTerrainScrollListener(MapWindow.getInstance());
 
         // Setup editor
         final Cockpit cockpit = new Cockpit(terrainEditor, terrainId);

@@ -13,32 +13,39 @@
 
 package com.btxtech.game.services.item.itemType;
 
-import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.itemtypeeditor.ItemTypeImageInfo;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.user.UserService;
+import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -62,10 +69,23 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbItemTypeImage> itemTypeImages;
     private TerrainType terrainType;
-    private int imageWidth;
-    private int imageHeight;
     private int boundingBoxWidth;
     private int boundingBoxHeight;
+    private int imageWidth;
+    private int imageHeight;
+    private int buildupSteps;
+    private int buildupAnimationFrames;
+    private int buildupAnimationDuration;
+    private int runtimeAnimationFrames;
+    private int runtimeAnimationDuration;
+    private int demolitionSteps;
+    private int demolitionAnimationFrames;
+    private int demolitionAnimationDuration;
+    @ElementCollection
+    @CollectionTable(name = "ITEM_TYPE_ANGELS",
+            joinColumns = @JoinColumn(name = "itemTypeId"))
+    @Column(name = "angel")
+    private List<Double> angels;
 
     @Transient
     private CrudChildServiceHelper<DbItemTypeImage> itemTypeImageCrud;
@@ -137,6 +157,86 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
     }
 
     @Override
+    public int getBuildupSteps() {
+        return buildupSteps;
+    }
+
+    @Override
+    public void setBuildupSteps(int buildupSteps) {
+        this.buildupSteps = buildupSteps;
+    }
+
+    @Override
+    public int getBuildupAnimationFrames() {
+        return buildupAnimationFrames;
+    }
+
+    @Override
+    public void setBuildupAnimationFrames(int buildupAnimationFrames) {
+        this.buildupAnimationFrames = buildupAnimationFrames;
+    }
+
+    @Override
+    public int getBuildupAnimationDuration() {
+        return buildupAnimationDuration;
+    }
+
+    @Override
+    public void setBuildupAnimationDuration(int buildupAnimationDuration) {
+        this.buildupAnimationDuration = buildupAnimationDuration;
+    }
+
+    @Override
+    public int getRuntimeAnimationFrames() {
+        return runtimeAnimationFrames;
+    }
+
+    @Override
+    public void setRuntimeAnimationFrames(int runtimeAnimationFrames) {
+        this.runtimeAnimationFrames = runtimeAnimationFrames;
+    }
+
+    @Override
+    public int getRuntimeAnimationDuration() {
+        return runtimeAnimationDuration;
+    }
+
+    @Override
+    public void setRuntimeAnimationDuration(int runtimeAnimationDuration) {
+        this.runtimeAnimationDuration = runtimeAnimationDuration;
+    }
+
+    @Override
+    public int getDemolitionSteps() {
+        return demolitionSteps;
+    }
+
+    @Override
+    public void setDemolitionSteps(int demolitionSteps) {
+        this.demolitionSteps = demolitionSteps;
+    }
+
+    @Override
+    public int getDemolitionAnimationFrames() {
+        return demolitionAnimationFrames;
+    }
+
+    @Override
+    public void setDemolitionAnimationFrames(int demolitionAnimationFrames) {
+        this.demolitionAnimationFrames = demolitionAnimationFrames;
+    }
+
+    @Override
+    public int getDemolitionAnimationDuration() {
+        return demolitionAnimationDuration;
+    }
+
+    @Override
+    public void setDemolitionAnimationDuration(int demolitionAnimationDuration) {
+        this.demolitionAnimationDuration = demolitionAnimationDuration;
+    }
+
+    @Override
     public int getBoundingBoxWidth() {
         return boundingBoxWidth;
     }
@@ -154,38 +254,153 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
         this.imageHeight = imageHeight;
     }
 
-    public BoundingBox getBoundingBox() {
-        double[] angels = new double[itemTypeImages.size()];
-        List<DbItemTypeImage> images = imagesAsList();
-        for (int i = 0; i < images.size(); i++) {
-            angels[i] = MathHelper.normaliseAngel(images.get(i).getAngel());
-        }
-        return new BoundingBox(imageWidth, imageHeight, boundingBoxWidth, boundingBoxHeight, angels);
+    public BoundingBox createBoundingBox() {
+        double[] angelsCopy = ArrayUtils.toPrimitive(angels.toArray(new Double[angels.size()]));
+        Arrays.sort(angelsCopy);
+        return new BoundingBox(boundingBoxWidth, boundingBoxHeight, angelsCopy);
+    }
+
+    public ItemTypeSpriteMap createItemTypeSpriteMap(BoundingBox boundingBox) {
+        return new ItemTypeSpriteMap(boundingBox, imageWidth, imageHeight, buildupSteps,
+                buildupAnimationFrames, buildupAnimationDuration, runtimeAnimationFrames,
+                runtimeAnimationDuration, demolitionSteps, demolitionAnimationFrames, demolitionAnimationDuration);
     }
 
     public void setBounding(BoundingBox boundingBox) {
-        imageWidth = boundingBox.getImageWidth();
-        imageHeight = boundingBox.getImageHeight();
         boundingBoxWidth = boundingBox.getWidth();
         boundingBoxHeight = boundingBox.getHeight();
-        List<DbItemTypeImage> images = imagesAsList();
-        if (images.size() != boundingBox.getAngels().length) {
-            throw new IllegalArgumentException("Images in the DB and angels in the BoundingBox have different size " + images.size() + ":" + boundingBox.getAngels().length + " on item Id:" + id);
+        angels = Arrays.asList(ArrayUtils.toObject(boundingBox.getAngels()));
+    }
+
+    public void setTypeSpriteMap(ItemTypeSpriteMap itemTypeSpriteMap) {
+        imageWidth = itemTypeSpriteMap.getImageWidth();
+        imageHeight = itemTypeSpriteMap.getImageHeight();
+        buildupSteps = itemTypeSpriteMap.getBuildupSteps();
+        buildupAnimationFrames = itemTypeSpriteMap.getBuildupAnimationFrames();
+        buildupAnimationDuration = itemTypeSpriteMap.getBuildupAnimationDuration();
+        runtimeAnimationFrames = itemTypeSpriteMap.getRuntimeAnimationFrames();
+        runtimeAnimationDuration = itemTypeSpriteMap.getRuntimeAnimationDuration();
+        demolitionSteps = itemTypeSpriteMap.getDemolitionSteps();
+        demolitionAnimationFrames = itemTypeSpriteMap.getDemolitionAnimationFrames();
+        demolitionAnimationDuration = itemTypeSpriteMap.getDemolitionAnimationDuration();
+    }
+
+    public void saveImages(Collection<ItemTypeImageInfo> buildupImages, Collection<ItemTypeImageInfo> runtimeImages, Collection<ItemTypeImageInfo> demolitionImages) {
+        addImages(buildupImages, ItemTypeSpriteMap.SyncObjectState.BUILD_UP);
+        addImages(runtimeImages, ItemTypeSpriteMap.SyncObjectState.RUN_TIME);
+        addImages(demolitionImages, ItemTypeSpriteMap.SyncObjectState.DEMOLITION);
+        correctImageEntries();
+        verifyImageEntries();
+    }
+
+    private void verifyImageEntries() {
+        int buildupImages = 0;
+        int runtimeImages = 0;
+        int demolitionImages = 0;
+        for (DbItemTypeImage itemTypeImage : itemTypeImages) {
+            switch (itemTypeImage.getType()) {
+                case BUILD_UP:
+                    buildupImages++;
+                    break;
+                case RUN_TIME:
+                    runtimeImages++;
+                    break;
+                case DEMOLITION:
+                    demolitionImages++;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown SyncObjectState: " + itemTypeImage.getType() + " itemType: " + this);
+            }
         }
-        for (int i = 0; i < images.size(); i++) {
-            images.get(i).setAngel(boundingBox.getAngels()[i]);
+        if(buildupImages != buildupSteps * buildupAnimationFrames) {
+            throw new IllegalStateException("Buildup image count is wrong. Configured: " + (buildupSteps * buildupAnimationFrames) + " Actual: " + buildupImages + " itemType: " + this);
+        }
+        if(runtimeImages != angels.size() * runtimeAnimationFrames) {
+            throw new IllegalStateException("Runtime image count is wrong. Configured: " + (angels.size() * runtimeAnimationFrames) + " Actual: " + runtimeImages + " itemType: " + this);
+        }
+        if(demolitionImages != angels.size() * demolitionSteps * demolitionAnimationFrames) {
+            throw new IllegalStateException("Demolition image count is wrong. Configured: " + (angels.size() * demolitionSteps * demolitionAnimationFrames) + " Actual: " + demolitionImages + " itemType: " + this);
         }
     }
 
-    private List<DbItemTypeImage> imagesAsList() {
-        List<DbItemTypeImage> list = new ArrayList<>(itemTypeImages);
-        Collections.sort(list, new Comparator<DbItemTypeImage>() {
-            @Override
-            public int compare(DbItemTypeImage o1, DbItemTypeImage o2) {
-                return o1.getNumber() - o2.getNumber();
+    private void addImages(Collection<ItemTypeImageInfo> itemTypeImageInfos, ItemTypeSpriteMap.SyncObjectState syncObjectState) {
+        for (ItemTypeImageInfo itemTypeImageInfo : itemTypeImageInfos) {
+            removeImage(itemTypeImageInfo, syncObjectState);
+            DbItemTypeImage dbItemTypeImage = getItemTypeImageCrud().createDbChild();
+            dbItemTypeImage.setItemTypeImageInfo(itemTypeImageInfo, syncObjectState);
+            itemTypeImages.add(dbItemTypeImage);
+        }
+    }
+
+    private void removeImage(ItemTypeImageInfo itemTypeImageInfo, ItemTypeSpriteMap.SyncObjectState syncObjectState) {
+        for (Iterator<DbItemTypeImage> iterator = itemTypeImages.iterator(); iterator.hasNext(); ) {
+            DbItemTypeImage itemTypeImage = iterator.next();
+            if (itemTypeImage.getType() == syncObjectState) {
+                switch (itemTypeImage.getType()) {
+                    case BUILD_UP:
+                        if (itemTypeImage.getStep() == itemTypeImageInfo.getStep() && itemTypeImage.getFrame() == itemTypeImageInfo.getFrame()) {
+                            iterator.remove();
+                        }
+                        break;
+                    case RUN_TIME:
+                        if (itemTypeImage.getAngelIndex() == itemTypeImageInfo.getAngelIndex() && itemTypeImage.getFrame() == itemTypeImageInfo.getFrame()) {
+                            iterator.remove();
+                        }
+                        break;
+                    case DEMOLITION:
+                        if (itemTypeImage.getAngelIndex() == itemTypeImageInfo.getAngelIndex() && itemTypeImage.getStep() == itemTypeImageInfo.getStep() && itemTypeImage.getFrame() == itemTypeImageInfo.getFrame()) {
+                            iterator.remove();
+                        }
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unknown SyncObjectState: " + itemTypeImage.getType() + " itemType: " + this);
+                }
             }
-        });
-        return list;
+        }
+    }
+
+    private void correctImageEntries() {
+        for (Iterator<DbItemTypeImage> iterator = itemTypeImages.iterator(); iterator.hasNext(); ) {
+            DbItemTypeImage itemTypeImage = iterator.next();
+            switch (itemTypeImage.getType()) {
+                case BUILD_UP:
+                    if (itemTypeImage.getStep() >= buildupSteps) {
+                        iterator.remove();
+                        continue;
+                    }
+                    if (itemTypeImage.getFrame() >= buildupAnimationFrames) {
+                        iterator.remove();
+                        continue;
+                    }
+                    break;
+                case RUN_TIME:
+                    if (itemTypeImage.getAngelIndex() >= angels.size()) {
+                        iterator.remove();
+                        continue;
+                    }
+                    if (itemTypeImage.getFrame() >= runtimeAnimationFrames) {
+                        iterator.remove();
+                        continue;
+                    }
+                    break;
+                case DEMOLITION:
+                    if (itemTypeImage.getAngelIndex() >= angels.size()) {
+                        iterator.remove();
+                        continue;
+                    }
+                    if (itemTypeImage.getStep() >= demolitionSteps) {
+                        iterator.remove();
+                        continue;
+                    }
+                    if (itemTypeImage.getFrame() >= demolitionAnimationFrames) {
+                        iterator.remove();
+                        continue;
+                    }
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown SyncObjectState: " + itemTypeImage.getType() + " itemType: " + this);
+            }
+        }
     }
 
     public abstract ItemType createItemType();
@@ -194,7 +409,9 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
         itemType.setId(id);
         itemType.setName(getName());
         itemType.setDescription(getDescription());
-        itemType.setBoundingBox(getBoundingBox());
+        BoundingBox boundingBox = createBoundingBox();
+        itemType.setBoundingBox(boundingBox);
+        itemType.setItemTypeSpriteMap(createItemTypeSpriteMap(boundingBox));
         itemType.setTerrainType(terrainType);
     }
 
@@ -216,6 +433,11 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
     @Override
     public void init(UserService userService) {
         itemTypeImages = new HashSet<>();
+        angels = new ArrayList<>();
+    }
+
+    public List<Double> getAngels() {
+        return angels;
     }
 
     @Override

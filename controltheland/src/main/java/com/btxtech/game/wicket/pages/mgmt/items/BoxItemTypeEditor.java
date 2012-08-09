@@ -20,12 +20,8 @@ import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemTypePossibility;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
-import com.btxtech.game.services.item.itemType.DbResourceItemType;
-import com.btxtech.game.services.tutorial.DbTaskConfig;
-import com.btxtech.game.services.tutorial.DbTutorialConfig;
-import com.btxtech.game.wicket.pages.mgmt.BoundingBoxEditor;
+import com.btxtech.game.wicket.pages.mgmt.ItemTypeImageEditor;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
-import com.btxtech.game.wicket.pages.mgmt.tutorial.TaskEditor;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
 import com.btxtech.game.wicket.uiservices.InventoryArtifactPanel;
 import com.btxtech.game.wicket.uiservices.InventoryItemPanel;
@@ -71,7 +67,7 @@ public class BoxItemTypeEditor extends MgmtWebPage {
         form.add(new Button("editBoundingBox") {
             @Override
             public void onSubmit() {
-                setResponsePage(new BoundingBoxEditor(form.getModelObject().getId()));
+                setResponsePage(new ItemTypeImageEditor(form.getModelObject().getId()));
             }
         });
         form.add(new TextField<String>("name"));
@@ -126,7 +122,7 @@ public class BoxItemTypeEditor extends MgmtWebPage {
                 boxItemType.getItemTypeImageCrud().deleteAllChildren();
                 DbItemTypeImage itemTypeImage = boxItemType.getItemTypeImageCrud().createDbChild();
                 itemTypeImage.setContentType(fileUpload.getContentType());
-                itemTypeImage.setNumber(1);
+                // TODO itemTypeImage.setNumber(1);
                 itemTypeImage.setData(fileUpload.getBytes());
             }
 

@@ -23,9 +23,6 @@
     <!-- the theme of your GWT application by uncommenting          -->
     <!-- any one of the following lines.                            -->
     <inherits name='com.google.gwt.user.theme.standard.Standard'/>
-    <inherits name="com.google.gwt.widgetideas.HyperlinkOverride"/>
-    <inherits name='com.google.gwt.widgetideas.GWTCanvas'/>
-    <inherits name='com.google.gwt.widgetideas.GlassPanel'/>
     <!--inherits name="com.google.gwt.precompress.Precompress"/-->
     <!-- <inherits name='com.google.gwt.base.theme.chrome.Chrome'/> -->
     <!-- <inherits name='com.google.gwt.base.theme.dark.Dark'/>     -->

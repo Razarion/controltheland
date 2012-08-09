@@ -9,6 +9,7 @@ import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoxItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
@@ -799,7 +800,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_START_BUILDER_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_24));
+        dbBaseItemType.setBounding(new BoundingBox(80, 80, ANGELS_24));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(1);
@@ -827,7 +828,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbBaseItemType, 1);
         dbBaseItemType.setName(TEST_FACTORY_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_1));
+        dbBaseItemType.setBounding(new BoundingBox(80, 80, ANGELS_1));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(2);
@@ -852,7 +853,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_ATTACK_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_24));
+        dbBaseItemType.setBounding(new BoundingBox(80, 80, ANGELS_24));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(3);
@@ -889,7 +890,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_ATTACK_ITEM_2);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_24));
+        dbBaseItemType.setBounding(new BoundingBox(80, 80, ANGELS_24));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(3);
@@ -918,7 +919,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_CONTAINER_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_24));
+        dbBaseItemType.setBounding(new BoundingBox(80, 80, ANGELS_24));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         // DbItemContainerType
@@ -942,7 +943,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbBaseItemType, 1);
         dbBaseItemType.setName(TEST_SIMPLE_BUILDING);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_1));
+        dbBaseItemType.setBounding(new BoundingBox(80, 80, ANGELS_1));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
 
@@ -968,7 +969,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbResourceItemType, 1);
         dbResourceItemType.setName(TEST_RESOURCE_ITEM);
         dbResourceItemType.setTerrainType(TerrainType.LAND);
-        dbResourceItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_1));
+        dbResourceItemType.setBounding(new BoundingBox(80, 80, ANGELS_1));
         dbResourceItemType.setAmount(3);
 
         itemService.saveDbItemType(dbResourceItemType);
@@ -982,7 +983,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_HARVESTER_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_24));
+        dbBaseItemType.setBounding(new BoundingBox(80, 80, ANGELS_24));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(4);
@@ -1006,8 +1007,11 @@ abstract public class AbstractServiceTest {
         CrudChildServiceHelper<DbItemTypeImage> crud = dbItemType.getItemTypeImageCrud();
         for (int i = 0; i < count; i++) {
             DbItemTypeImage dbItemTypeImage = crud.createDbChild();
-            dbItemTypeImage.setNumber(i + 1);
             dbItemTypeImage.setContentType("image");
+            dbItemTypeImage.setAngelIndex(i);
+            dbItemTypeImage.setStep(0);
+            dbItemTypeImage.setFrame(0);
+            dbItemTypeImage.setType(ItemTypeSpriteMap.SyncObjectState.RUN_TIME);
         }
     }
 
@@ -1016,7 +1020,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbBoxItemType, 1);
         dbBoxItemType.setName(TEST_BOX_ITEM_1);
         dbBoxItemType.setTerrainType(TerrainType.LAND);
-        dbBoxItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_1));
+        dbBoxItemType.setBounding(new BoundingBox(80, 80, ANGELS_1));
         dbBoxItemType.setTtl(100);
 
         itemService.saveDbItemType(dbBoxItemType);
@@ -1030,7 +1034,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbBoxItemType, 1);
         dbBoxItemType.setName(TEST_BOX_ITEM_2);
         dbBoxItemType.setTerrainType(TerrainType.LAND);
-        dbBoxItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_1));
+        dbBoxItemType.setBounding(new BoundingBox(80, 80, ANGELS_1));
         dbBoxItemType.setTtl(5000);
 
         itemService.saveDbItemType(dbBoxItemType);
