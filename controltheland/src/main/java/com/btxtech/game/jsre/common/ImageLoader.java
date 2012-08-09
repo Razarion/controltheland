@@ -1,15 +1,13 @@
 package com.btxtech.game.jsre.common;
 
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.dom.client.ImageElement;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
-import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.apache.commons.collections.map.HashedMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,11 +69,11 @@ public class ImageLoader<T> {
                         if (event.getAssociatedType().getName().equals("loaded")) {
                             log.warning("ImageLoader onLoad returned unknown name: " + event.getAssociatedType().getName() + " " + image.getUrl());
                         }
-                        image.getElement().getStyle().setVisibility(Style.Visibility.HIDDEN);
                         onImageLoaded(userObjects.get(imageIndex), image, listener);
-                        RootPanel.get().remove(image);
+                        image.setVisible(false); // Remove from RootPanel not possible due to IE9
                     }
                 });
+                image.getElement().getStyle().setZIndex(-100);
                 RootPanel.get().add(image, 0, 0);
             } else {
                 onImageLoaded(userObjects.get(imageIndex), image, listener);
@@ -130,7 +128,7 @@ public class ImageLoader<T> {
 
         for (int i = 0, userObjectsSize = userObjects.size(); i < userObjectsSize; i++) {
             T userObject = userObjects.get(i);
-            if(!loadedImages.containsKey(userObject)) {
+            if (!loadedImages.containsKey(userObject)) {
                 stringBuilder.append(urls.get(i));
                 stringBuilder.append('\n');
             }

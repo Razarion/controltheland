@@ -48,28 +48,17 @@ public class Constants {
     public static final String TUTORIAL_RESOURCE_ID = "id";
 
     // zIndex
-    public static final int Z_INDEX_LEVEL_SPLASH = 101;
+    public static final int Z_INDEX_LEVEL_SPLASH = 101; // TODO Remove splash
     public static final int Z_INDEX_STARTUP_SCREEN = 100; // Fix coded in Game.html
-    public static final int Z_INDEX_TIP = 21;
-    public static final int Z_INDEX_DIALOG = 20;
-    public static final int Z_INDEX_INFORMATION_COCKPIT = 19;
-    public static final int Z_INDEX_GROUP_SELECTION_FRAME = 18;
-    public static final int Z_INDEX_SPEECH_BUBBLE = 17;
-    public static final int Z_INDEX_PLACEABLE_PREVIEW = 16;
-    public static final int Z_INDEX_ITEM_COCKPIT = 15;
-    public static final int Z_INDEX_CHAT_COCKPIT = 14;
-    public static final int Z_INDEX_SIDE_COCKPIT = 13;
-    public static final int Z_INDEX_INVENTORY_ITEM_PLACER = 12;
-    public static final int Z_INDEX_PROJECTILE = 11;
-    public static final int Z_INDEX_EXPLOSION = 10;
-    public static final int Z_INDEX_MUZZLE_FLASH = 9;
-    public static final int Z_INDEX_MACHINE_GUN_ATTACK = 8;
-    public static final int Z_INDEX_ABOVE_MOVABLE = 7;
-    public static final int Z_INDEX_MOVABLE = 6;
-    public static final int Z_INDEX_MONEY = 5;
-    public static final int Z_INDEX_BOX = 5;
-    public static final int Z_INDEX_BUILDING = 4;
-    public static final int Z_INDEX_BELOW_BUILDING = 3;
+    public static final int Z_INDEX_TIP = 11;
+    public static final int Z_INDEX_DIALOG = 10;
+    public static final int Z_INDEX_INFORMATION_COCKPIT = 9;
+    public static final int Z_INDEX_GROUP_SELECTION_FRAME = 8;
+    public static final int Z_INDEX_SPEECH_BUBBLE = 7;
+    public static final int Z_INDEX_PLACEABLE_PREVIEW = 6;
+    public static final int Z_INDEX_ITEM_COCKPIT = 5;
+    public static final int Z_INDEX_CHAT_COCKPIT = 4;
+    public static final int Z_INDEX_SIDE_COCKPIT = 3;
     public static final int Z_INDEX_TERRAIN = 2;
     public static final int Z_INDEX_HIDDEN = 1;
 
