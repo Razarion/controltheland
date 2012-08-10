@@ -1,9 +1,10 @@
 package com.btxtech.game.jsre.client.utg.tip;
 
-import com.btxtech.game.jsre.client.ClientSyncItem;
+import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.perfmon.Perfmon;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.google.gwt.core.client.Scheduler;
@@ -59,19 +60,23 @@ public class AttackEnemyTipEntry extends TipEntry {
 
     private SyncBaseItem getEnemyItem() {
         SyncBaseItem enemy = null;
-        for (ClientSyncItem item : ItemContainer.getInstance().getItems()) {
-            if (!item.isEnemy()) {
+        for (SyncItem item : ItemContainer.getInstance().getItems()) {
+            if (!(item instanceof SyncBaseItem)) {
                 continue;
             }
-            SyncBaseItem enemyItem = item.getSyncBaseItem();
-            if (!enemyItem.hasSyncMovable()) {
-                if (enemyItem.hasSyncFactory()) {
-                    return enemyItem;
+
+            SyncBaseItem syncBaseItem = (SyncBaseItem) item;
+            if (!ClientBase.getInstance().isEnemy(syncBaseItem)) {
+                continue;
+            }
+            if (!syncBaseItem.hasSyncMovable()) {
+                if (syncBaseItem.hasSyncFactory()) {
+                    return syncBaseItem;
                 }
-                enemy = enemyItem;
+                enemy = syncBaseItem;
             }
             if (enemy == null) {
-                enemy = enemyItem;
+                enemy = syncBaseItem;
             }
         }
         return enemy;

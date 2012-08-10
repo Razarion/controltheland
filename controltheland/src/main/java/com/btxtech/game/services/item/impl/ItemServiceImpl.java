@@ -53,7 +53,6 @@ import com.btxtech.game.services.inventory.InventoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
-import com.btxtech.game.services.item.itemType.DbBuildupStep;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbItemTypeImageData;
@@ -721,20 +720,6 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             throw new IllegalArgumentException("Sprite map for item type id does not exist: " + itemTypeId);
         }
         return imageHolder;
-    }
-
-    @Override
-    public DbBuildupStep getDbBuildupStep(int itemTypeId, int buildupStepId) {
-        /*   HashMap<Integer, DbBuildupStep> buildupSteps = this.buildupStepsImages.get(itemTypeId);
-      if (buildupSteps == null) {
-          throw new IllegalArgumentException("Item Type id does not exist in Buildup Steps: " + itemTypeId);
-      }
-      DbBuildupStep dbBuildupStep = buildupSteps.get(buildupStepId);
-      if (dbBuildupStep == null) {
-          throw new IllegalArgumentException("Buildup Step index does not exist: " + buildupStepId + ". ItemTypeId: " + itemTypeId);
-      }
-      return dbBuildupStep; */
-        return null;
     }
 
     @Override

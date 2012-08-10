@@ -19,7 +19,6 @@ import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemTypePossibility;
-import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.wicket.pages.mgmt.ItemTypeImageEditor;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
@@ -32,15 +31,11 @@ import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.form.upload.FileUpload;
-import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import javax.swing.*;
 import java.util.Arrays;
 
 /**
@@ -101,36 +96,6 @@ public class BoxItemTypeEditor extends MgmtWebPage {
 
             }
         };
-
-        form.add(new FileUploadField("upload", new IModel<FileUpload>() {
-
-            @Override
-            public FileUpload getObject() {
-                return null;
-            }
-
-            @Override
-            public void setObject(FileUpload fileUpload) {
-                if(fileUpload == null) {
-                    // Don't know why...
-                    return;
-                }
-                DbBoxItemType boxItemType = form.getModelObject();
-                ImageIcon image = new ImageIcon(fileUpload.getBytes());
-                boxItemType.setImageHeight(image.getIconHeight());
-                boxItemType.setImageWidth(image.getIconWidth());
-                boxItemType.getItemTypeImageCrud().deleteAllChildren();
-                DbItemTypeImage itemTypeImage = boxItemType.getItemTypeImageCrud().createDbChild();
-                itemTypeImage.setContentType(fileUpload.getContentType());
-                // TODO itemTypeImage.setNumber(1);
-                itemTypeImage.setData(fileUpload.getBytes());
-            }
-
-            @Override
-            public void detach() {
-            }
-        }));
-
 
         form.add(new Button("save") {
             @Override

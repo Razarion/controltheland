@@ -39,7 +39,6 @@
         <mapping class="com.btxtech.game.services.item.itemType.DbBoxItemTypePossibility"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbProjectileItemType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbBaseItemType"/>
-        <mapping class="com.btxtech.game.services.item.itemType.DbBuildupStep"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbBuilderType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbFactoryType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbHarvesterType"/>

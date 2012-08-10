@@ -17,7 +17,6 @@ import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.services.common.ImageHolder;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.item.itemType.DbBuildupStep;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,18 +49,6 @@ public class ItemImageController implements Controller {
                 ImageHolder imageHolder = itemService.getItemTypeSpriteMap(itemTypeId);
                 imageData = imageHolder.getData();
                 contentType = imageHolder.getContentType();
-            } else if (itemTypeIdString != null) {
-                int itemTypeId = Integer.parseInt(itemTypeIdString);
-                String type = httpServletRequest.getParameter(Constants.TYPE);
-                if (type.equals(Constants.TYPE_BUILDUP_STEP)) {
-                    int buildupStepId = Integer.parseInt(httpServletRequest.getParameter(Constants.ITEM_IMAGE_BUILDUP_STEP));
-                    DbBuildupStep dbBuildupStep = itemService.getDbBuildupStep(itemTypeId, buildupStepId);
-                    imageData = dbBuildupStep.getData();
-                    contentType = dbBuildupStep.getContentType();
-                } else {
-                    httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, Constants.TYPE + " is invalid: " + type);
-                    return null;
-                }
             } else {
                 httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, Constants.ITEM_TYPE_SPRITE_MAP_ID + " or " + Constants.ITEM_TYPE_ID + " must be given.");
                 return null;

@@ -27,7 +27,7 @@ public class TestSimulation extends AbstractGwtTest {
             @Override
             public void run() {
                 assertEquals(1, ItemContainer.getInstance().getItems().size());
-                SyncBaseItem myJeep = CommonJava.getFirst(ItemContainer.getInstance().getItems()).getSyncBaseItem();
+                SyncBaseItem myJeep = (SyncBaseItem) CommonJava.getFirst(ItemContainer.getInstance().getItems());
                 ActionHandler.getInstance().move(myJeep, new Index(700, 700));
             }
         });
