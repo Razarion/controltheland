@@ -60,9 +60,11 @@ public class CockpitMode implements SelectionListener {
         if (this.mode != mode) {
             this.mode = mode;
             if (mode != null) {
-                SelectionHandler.getInstance().clearSelection();
                 groupSelectionFrame = null;
                 inventoryItemPlacer = null;
+            }
+            if(mode == Mode.SELL) {
+                SelectionHandler.getInstance().clearSelection();
             }
             if (mode != Mode.SELL) {
                 SideCockpit.getInstance().clearSellMode();

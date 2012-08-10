@@ -341,7 +341,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
         commandHelperItemType.process(items, container, false);
     }
 
-    public void unloadContainer(SyncBaseItem container, Index unloadPos) {
+    public void unloadContainerFindPosition(SyncBaseItem container, Index unloadPos) {
         try {
             Id id = CommonJava.getFirst(container.getSyncItemContainer().getContainedItems());
             SyncBaseItem containedItem = (SyncBaseItem) ItemContainer.getInstance().getItem(id);
