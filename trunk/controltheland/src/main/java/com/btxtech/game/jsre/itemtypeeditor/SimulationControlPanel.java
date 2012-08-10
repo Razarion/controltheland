@@ -109,9 +109,14 @@ public class SimulationControlPanel extends Composite implements ItemTypeEditorM
     @Override
     public void onModelLoaded() {
         if (ItemTypeEditorModel.getInstance().getSyncItem() instanceof SyncBaseItem) {
-            buildupField.setValue((int) (((SyncBaseItem) ItemTypeEditorModel.getInstance().getSyncItem()).getBuildup() * 100.0));
-            demolitionField.setValue((int) (((SyncBaseItem) ItemTypeEditorModel.getInstance().getSyncItem()).getNormalizedHealth() * 100.0));
+            SyncBaseItem syncBaseItem = (SyncBaseItem) ItemTypeEditorModel.getInstance().getSyncItem();
+            moveButton.setEnabled(syncBaseItem.hasSyncMovable());
+            attackButton.setEnabled(syncBaseItem.hasSyncWeapon());
+            buildupField.setValue((int) (syncBaseItem.getBuildup() * 100.0));
+            demolitionField.setValue((int) (syncBaseItem.getNormalizedHealth() * 100.0));
         } else {
+            moveButton.setEnabled(false);
+            attackButton.setEnabled(false);
             buildupField.setEnabled(false);
             buildupPlusButton.setEnabled(false);
             buildupMinusButton.setEnabled(false);

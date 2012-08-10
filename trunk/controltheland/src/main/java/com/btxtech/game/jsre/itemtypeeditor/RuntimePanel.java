@@ -43,7 +43,7 @@ public class RuntimePanel extends Composite implements UpdateListener {
     @UiHandler("animationDurationField")
     void onAnimationDurationFieldChange(ChangeEvent event) {
         ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().setRuntimeAnimationDuration(animationDurationField.getValue());
-        ItemTypeEditorModel.getInstance().cutRuntimeToCorrectLength();
+        ItemTypeEditorModel.getInstance().fireUpdate();
     }
 
     @Override

@@ -13,26 +13,21 @@
 
 package com.btxtech.game.wicket.pages.mgmt.items;
 
-import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.wicket.pages.mgmt.ItemTypeImageEditor;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.BoxItemTypePanel;
 import com.btxtech.game.wicket.uiservices.PercentPanel;
 import com.btxtech.game.wicket.uiservices.RuModel;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
@@ -61,7 +56,7 @@ public class BaseItemTypeEditor extends MgmtWebPage {
         }));
         add(form);
 
-
+        form.add(new ItemTypeImagePanel("itemTypeImagePanel", dbBaseItemType.getId()));
         form.add(new TextField<String>("name"));
         form.add(new TextArea<String>("description"));
         form.add(new TextArea<String>("proDescription"));
@@ -97,24 +92,6 @@ public class BaseItemTypeEditor extends MgmtWebPage {
         });
         add(form);
 
-        form.add(new Label("imageSize", new AbstractReadOnlyModel<Double>() {
-            @Override
-            public Double getObject() {
-                try {
-                    return itemService.getItemTypeSpriteMap(form.getModelObject().getId()).getData().length / 1000.0;
-                } catch (Exception e) {
-                    return 0.0;
-                }
-            }
-        }));
-        form.add(new ExternalLink("viewSpriteMapLink", ImageHandler.getItemTypeSpriteMapUrl(dbBaseItemType.getId())));
-
-        form.add(new Button("editImages") {
-            @Override
-            public void onSubmit() {
-                setResponsePage(new ItemTypeImageEditor(form.getModelObject().getId()));
-            }
-        });
     }
 
 }

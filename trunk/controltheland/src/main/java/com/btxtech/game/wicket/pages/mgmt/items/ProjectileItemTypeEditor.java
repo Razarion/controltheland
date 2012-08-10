@@ -16,7 +16,6 @@ package com.btxtech.game.wicket.pages.mgmt.items;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
-import com.btxtech.game.wicket.pages.mgmt.ItemTypeImageEditor;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
@@ -49,13 +48,7 @@ public class ProjectileItemTypeEditor extends MgmtWebPage {
         }));
         add(form);
 
-        form.add(new Button("editBoundingBox") {
-            @Override
-            public void onSubmit() {
-                setResponsePage(new ItemTypeImageEditor(form.getModelObject().getId()));
-            }
-        });
-
+        form.add(new ItemTypeImagePanel("itemTypeImagePanel", dbProjectileItemType.getId()));
         form.add(new TextField<String>("name"));
         form.add(new TextArea<String>("description"));
         form.add(new TextArea<String>("proDescription"));

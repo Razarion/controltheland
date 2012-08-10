@@ -17,7 +17,6 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
-import com.btxtech.game.wicket.pages.mgmt.ItemTypeImageEditor;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
@@ -51,12 +50,7 @@ public class ResourceItemTypeEditor extends MgmtWebPage {
             }
         }));
         add(form);
-        form.add(new Button("editBoundingBox") {
-            @Override
-            public void onSubmit() {
-                setResponsePage(new ItemTypeImageEditor(form.getModelObject().getId()));
-            }
-        });
+        form.add(new ItemTypeImagePanel("itemTypeImagePanel", dbResourceItemType.getId()));
         form.add(new TextField<String>("name"));
         form.add(new TextField<String>("description"));
         form.add(new TextField<String>("amount"));
