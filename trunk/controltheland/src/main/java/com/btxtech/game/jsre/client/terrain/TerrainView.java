@@ -13,30 +13,23 @@
 
 package com.btxtech.game.jsre.client.terrain;
 
-import com.btxtech.game.jsre.client.ClientSyncItem;
+import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.common.Html5NotSupportedException;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImageBackground;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainTile;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.dom.client.ImageElement;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.Window;
@@ -44,15 +37,13 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * User: beat
  * Date: May 22, 2009
  * Time: 12:51:09 PM
  */
-public class TerrainView implements TerrainListener {
+public class TerrainView {
     private static final TerrainView INSTANCE = new TerrainView();
     private int viewOriginLeft = 0;
     private int viewOriginTop = 0;
@@ -91,7 +82,6 @@ public class TerrainView implements TerrainListener {
             GwtCommon.sendLogToServer("Invalid terrain settings");
             return;
         }
-        terrainHandler.addTerrainListener(this);
         deltaSetupTerrain(terrainSettings, terrainImagePositions, surfaceRects, surfaceImages, terrainImages, terrainImageBackground);
     }
 
@@ -190,9 +180,9 @@ public class TerrainView implements TerrainListener {
         return absolute.sub(viewOriginLeft, viewOriginTop);
     }
 
-    public void moveToMiddle(ClientSyncItem clientSyncItem) {
-        int left = clientSyncItem.getSyncItem().getSyncItemArea().getPosition().getX() - parent.getOffsetWidth() / 2 - viewOriginLeft;
-        int top = clientSyncItem.getSyncItem().getSyncItemArea().getPosition().getY() - parent.getOffsetHeight() / 2 - viewOriginTop;
+    public void moveToMiddle(SyncItem syncItem) {
+        int left = syncItem.getSyncItemArea().getPosition().getX() - parent.getOffsetWidth() / 2 - viewOriginLeft;
+        int top = syncItem.getSyncItemArea().getPosition().getY() - parent.getOffsetHeight() / 2 - viewOriginTop;
         moveDelta(left, top);
     }
 
@@ -213,21 +203,21 @@ public class TerrainView implements TerrainListener {
     }
 
     public void moveToHome() {
-        ClientSyncItem scrollTo = null;
-        for (ClientSyncItem itemView : ItemContainer.getInstance().getOwnItems()) {
-            if (itemView.getSyncBaseItem().isContainedIn()) {
+        SyncBaseItem scrollTo = null;
+        for (SyncBaseItem syncBaseItem : ItemContainer.getInstance().getItems4Base(ClientBase.getInstance().getSimpleBase())) {
+            if (syncBaseItem.isContainedIn()) {
                 continue;
             }
 
-            if (itemView.getSyncBaseItem().hasSyncFactory()) {
-                scrollTo = itemView;
+            if (syncBaseItem.hasSyncFactory()) {
+                scrollTo = syncBaseItem;
                 break;
             }
-            if (itemView.getSyncBaseItem().hasSyncBuilder()) {
-                scrollTo = itemView;
+            if (syncBaseItem.hasSyncBuilder()) {
+                scrollTo = syncBaseItem;
                 break;
             }
-            scrollTo = itemView;
+            scrollTo = syncBaseItem;
         }
         if (scrollTo != null) {
             moveToMiddle(scrollTo);
@@ -254,7 +244,6 @@ public class TerrainView implements TerrainListener {
         canvas.setCoordinateSpaceHeight(viewHeight);
         canvas.setCoordinateSpaceWidth(viewWidth);
         canvas.setCoordinateSpaceHeight(viewHeight);
-        onTerrainChanged();
     }
 
     private void fireScrollEvent(int deltaLeft, int deltaTop) {
@@ -278,20 +267,16 @@ public class TerrainView implements TerrainListener {
         return terrainHandler;
     }
 
-    @Override
-    public void onTerrainChanged() {
-        // TODO used? context2d.clearRect(0, 0, viewWidth, viewHeight);
-        // long time = System.currentTimeMillis();
-        //drawTerrain();
-        // log.warning("Draw time: " + (System.currentTimeMillis() - time));
-    }
-
     public Context2d getContext2d() {
         return context2d;
     }
 
     public TerrainMouseHandler getTerrainMouseHandler() {
         return terrainMouseHandler;
+    }
+
+    public TerritoryKeyHandler getTerritoryKeyHandler() {
+        return territoryKeyHandler;
     }
 
     public void setFocus() {

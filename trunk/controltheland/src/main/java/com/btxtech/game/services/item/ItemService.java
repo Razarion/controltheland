@@ -26,7 +26,6 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.ImageHolder;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
-import com.btxtech.game.services.item.itemType.DbBuildupStep;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbItemTypeImageData;
@@ -90,8 +89,6 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
     void killSyncItemIds(Collection<Id> itemsToKill);
 
     CrudRootServiceHelper<DbItemType> getDbItemTypeCrud();
-
-    DbBuildupStep getDbBuildupStep(int itemTypeId, int buildupStepId);
 
     void saveItemTypeProperties(int itemTypeId, BoundingBox boundingBox, ItemTypeSpriteMap itemTypeSpriteMap, WeaponType weaponType, Collection<ItemTypeImageInfo> buildupImages, Collection<ItemTypeImageInfo> runtimeImages, Collection<ItemTypeImageInfo> demolitionImages) throws NoSuchItemTypeException;
 }

@@ -305,8 +305,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
             return;
         }
         houseSpace = 0;
-        for (ClientSyncItem clientSyncItem : ItemContainer.getInstance().getOwnItems()) {
-            SyncBaseItem syncBaseItem = clientSyncItem.getSyncBaseItem();
+        for (SyncBaseItem syncBaseItem : ItemContainer.getInstance().getItems4Base(simpleBase)) {
             if (syncBaseItem.hasSyncHouse()) {
                 houseSpace += syncBaseItem.getSyncHouse().getSpace();
             }

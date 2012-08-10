@@ -18,7 +18,6 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.wicket.pages.mgmt.Html5ImagesUploadConverter;
 import com.btxtech.game.wicket.pages.mgmt.ItemTypeImageEditor;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
@@ -29,14 +28,12 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.util.Arrays;
@@ -78,24 +75,6 @@ public class BaseItemTypeEditor extends MgmtWebPage {
         form.add(new TextField<Integer>("boxPickupRange"));
         form.add(new PercentPanel("dropBoxPossibility"));
         form.add(new BoxItemTypePanel("dbBoxItemType"));
-        form.add(new HiddenField<>("imageFileField", new IModel<String>() {
-            @Override
-            public String getObject() {
-                return null;
-            }
-
-            @Override
-            public void setObject(String imageFileField) {
-                if (imageFileField != null && !imageFileField.trim().isEmpty()) {
-                    Html5ImagesUploadConverter.convertAndSetImages(imageFileField, form.getModelObject());
-                }
-            }
-
-            @Override
-            public void detach() {
-            }
-        }));
-
 
         form.add(new Button("editAbilities") {
             @Override

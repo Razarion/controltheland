@@ -15,7 +15,6 @@ package com.btxtech.game.wicket.pages.mgmt.items;
 
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.wicket.pages.mgmt.ItemTypeImageEditor;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
@@ -24,14 +23,9 @@ import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.form.upload.FileUpload;
-import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-
-import javax.swing.*;
 
 /**
  * User: beat
@@ -47,7 +41,7 @@ public class ProjectileItemTypeEditor extends MgmtWebPage {
     public ProjectileItemTypeEditor(DbProjectileItemType dbProjectileItemType) {
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbProjectileItemType> form = new Form<DbProjectileItemType>("itemTypeForm", new CompoundPropertyModel<DbProjectileItemType>(new RuModel<DbProjectileItemType>(dbProjectileItemType, DbProjectileItemType.class) {
+        final Form<DbProjectileItemType> form = new Form<>("itemTypeForm", new CompoundPropertyModel<DbProjectileItemType>(new RuModel<DbProjectileItemType>(dbProjectileItemType, DbProjectileItemType.class) {
             @Override
             protected RuServiceHelper<DbProjectileItemType> getRuServiceHelper() {
                 return ruServiceHelper;
@@ -72,34 +66,6 @@ public class ProjectileItemTypeEditor extends MgmtWebPage {
         form.add(new TextField<Integer>("damage"));
         form.add(new TextField<Integer>("speed"));
         form.add(new TextField<Integer>("range"));
-        form.add(new FileUploadField("upload", new IModel<FileUpload>() {
-
-            @Override
-            public FileUpload getObject() {
-                return null;
-            }
-
-            @Override
-            public void setObject(FileUpload fileUpload) {
-                if (fileUpload == null) {
-                    // Don't know why...
-                    return;
-                }
-                ImageIcon image = new ImageIcon(fileUpload.getBytes());
-                form.getModelObject().setImageHeight(image.getIconHeight());
-                form.getModelObject().setImageWidth(image.getIconWidth());
-                form.getModelObject().getItemTypeImageCrud().deleteAllChildren();
-                DbItemTypeImage itemTypeImage = form.getModelObject().getItemTypeImageCrud().createDbChild();
-                itemTypeImage.setContentType(fileUpload.getContentType());
-                // TODO itemTypeImage.setNumber(1);
-                itemTypeImage.setData(fileUpload.getBytes());
-            }
-
-            @Override
-            public void detach() {
-            }
-        }));
-
 
         form.add(new Button("save") {
             @Override

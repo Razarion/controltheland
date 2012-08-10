@@ -16,7 +16,6 @@ package com.btxtech.game.wicket.pages.mgmt.items;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.wicket.pages.mgmt.ItemTypeImageEditor;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
@@ -25,14 +24,10 @@ import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.form.upload.FileUpload;
-import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import javax.swing.*;
 import java.util.Arrays;
 
 /**
@@ -49,7 +44,7 @@ public class ResourceItemTypeEditor extends MgmtWebPage {
     public ResourceItemTypeEditor(DbResourceItemType dbResourceItemType) {
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbResourceItemType> form = new Form<DbResourceItemType>("itemTypeForm", new CompoundPropertyModel<DbResourceItemType>(new RuModel<DbResourceItemType>(dbResourceItemType, DbResourceItemType.class) {
+        final Form<DbResourceItemType> form = new Form<>("itemTypeForm", new CompoundPropertyModel<DbResourceItemType>(new RuModel<DbResourceItemType>(dbResourceItemType, DbResourceItemType.class) {
             @Override
             protected RuServiceHelper<DbResourceItemType> getRuServiceHelper() {
                 return ruServiceHelper;
@@ -65,36 +60,7 @@ public class ResourceItemTypeEditor extends MgmtWebPage {
         form.add(new TextField<String>("name"));
         form.add(new TextField<String>("description"));
         form.add(new TextField<String>("amount"));
-        form.add(new DropDownChoice<TerrainType>("terrainType", Arrays.asList(TerrainType.values())));
-        form.add(new FileUploadField("upload", new IModel<FileUpload>() {
-
-            @Override
-            public FileUpload getObject() {
-                return null;
-            }
-
-            @Override
-            public void setObject(FileUpload fileUpload) {
-                if(fileUpload == null) {
-                    // Don't know why...
-                    return;
-                }
-                DbResourceItemType dbResourceItemType = form.getModelObject();
-                ImageIcon image = new ImageIcon(fileUpload.getBytes());
-                dbResourceItemType.setImageHeight(image.getIconHeight());
-                dbResourceItemType.setImageWidth(image.getIconWidth());
-                dbResourceItemType.getItemTypeImageCrud().deleteAllChildren();
-                DbItemTypeImage itemTypeImage = dbResourceItemType.getItemTypeImageCrud().createDbChild();
-                itemTypeImage.setContentType(fileUpload.getContentType());
-                // TODO  itemTypeImage.setNumber(1);
-                itemTypeImage.setData(fileUpload.getBytes());
-            }
-
-            @Override
-            public void detach() {
-            }
-        }));
-
+        form.add(new DropDownChoice<>("terrainType", Arrays.asList(TerrainType.values())));
 
         form.add(new Button("save") {
             @Override

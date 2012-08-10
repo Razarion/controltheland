@@ -31,12 +31,10 @@ public class Constants {
     public static final String ITEM_IMAGE_URL = "/spring/item";
     public static final String MUZZLE_ITEM_IMAGE_URL = "/spring/muzzle";
     public static final String TYPE = "type";
-    public static final String TYPE_BUILDUP_STEP = "bld";
     public static final String TYPE_IMAGE = "img";
     public static final String TYPE_SOUND = "snd";
     public static final String ITEM_TYPE_ID = "id";
     public static final String ITEM_TYPE_SPRITE_MAP_ID = "idsm";
-    public static final String ITEM_IMAGE_BUILDUP_STEP = "bid";
     public static final String CODEC = "cdc";
 
     // Codecs

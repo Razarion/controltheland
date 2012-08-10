@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.client.terrain;
+package com.btxtech.game.jsre.mapeditor;
 
 /**
  * User: beat
