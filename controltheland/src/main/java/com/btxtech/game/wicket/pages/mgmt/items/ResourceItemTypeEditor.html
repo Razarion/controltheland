@@ -31,8 +31,8 @@
             <td colspan="3" valign="top"></td>
         </tr>
         <tr bgcolor="#DDDDDD">
-            <td colspan="2" valign="top">Bounding Box [Item mus be activated]</td>
-            <td valign="top"><input type="submit" wicket:id="editBoundingBox" value="Edit"></td>
+            <td colspan="2" valign="top">Image Editor</td>
+            <td valign="top" wicket:id="itemTypeImagePanel"></td>
         </tr>        
         <tr bgcolor="#DDDDDD">
             <td colspan="2" valign="top">Name</td>
@@ -50,11 +50,6 @@
             <td colspan="2" valign="top">Terrain type</td>
             <td valign="top"><select wicket:id="terrainType" name="top5" size="1"></select></td>
         </tr>        
-        <tr bgcolor="#DDDDDD">
-            <td colspan="2" valign="top">Image</td>
-            <td valign="top"><input type="file" wicket:id="upload"/></td>
-        </tr>
-
     </table>
     <br>
     <input type="submit" wicket:id="save" value="Save">

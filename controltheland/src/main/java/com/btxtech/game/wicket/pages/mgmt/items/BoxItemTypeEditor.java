@@ -19,7 +19,6 @@ import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemTypePossibility;
-import com.btxtech.game.wicket.pages.mgmt.ItemTypeImageEditor;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
 import com.btxtech.game.wicket.uiservices.InventoryArtifactPanel;
@@ -59,12 +58,7 @@ public class BoxItemTypeEditor extends MgmtWebPage {
             }
         }));
         add(form);
-        form.add(new Button("editBoundingBox") {
-            @Override
-            public void onSubmit() {
-                setResponsePage(new ItemTypeImageEditor(form.getModelObject().getId()));
-            }
-        });
+        form.add(new ItemTypeImagePanel("itemTypeImagePanel", dbBoxItemType.getId()));
         form.add(new TextField<String>("name"));
         form.add(new TextField<String>("description"));
         form.add(new DropDownChoice<>("terrainType", Arrays.asList(TerrainType.values())));
