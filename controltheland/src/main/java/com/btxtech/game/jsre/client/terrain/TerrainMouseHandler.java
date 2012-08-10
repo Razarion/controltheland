@@ -90,6 +90,10 @@ public class TerrainMouseHandler implements MouseMoveHandler {
                         return;
                     }
 
+                    if (CockpitMode.getInstance().getMode() == CockpitMode.Mode.UNLOAD) {
+                        return;
+                    }
+
                     if (CockpitMode.getInstance().hasGroupSelectionFrame()) {
                         finalizeSelectionFrame(absoluteX, absoluteY);
                         return;
@@ -177,8 +181,6 @@ public class TerrainMouseHandler implements MouseMoveHandler {
                         } else {
                             if (CockpitMode.getInstance().getMode() == CockpitMode.Mode.UNLOAD) {
                                 executeUnloadContainerCommand(absoluteX, absoluteY);
-                                CockpitMode.getInstance().setMode(null);
-                                ItemCockpit.getInstance().deActivate();
                             } else if (CockpitMode.getInstance().hasGroupSelectionFrame()) {
                                 if(!finalizeSelectionFrame(absoluteX, absoluteY)) {
                                     executeMoveCommand(absoluteX, absoluteY);
@@ -221,6 +223,8 @@ public class TerrainMouseHandler implements MouseMoveHandler {
     }
 
     private void executeUnloadContainerCommand(int absoluteX, int absoluteY) {
+        CockpitMode.getInstance().setMode(null);
+        ItemCockpit.getInstance().deActivate();
         Group selection = SelectionHandler.getInstance().getOwnSelection();
         if (selection == null) {
             return;
@@ -236,7 +240,7 @@ public class TerrainMouseHandler implements MouseMoveHandler {
             return;
         }
 
-        ActionHandler.getInstance().unloadContainer(syncBaseItem, position);
+        ActionHandler.getInstance().unloadContainerFindPosition(syncBaseItem, position);
     }
 
     private void executeMoveCommand(int absoluteX, int absoluteY) {
