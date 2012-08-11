@@ -23,7 +23,7 @@ public class BoundingBoxPanel extends Composite implements UpdateListener {
     @UiField
     Label imageHeightLabel;
     @UiField
-    Label currentAngel;
+    Label currentAngelIndex;
     @UiField
     Button left;
     @UiField
@@ -70,8 +70,7 @@ public class BoundingBoxPanel extends Composite implements UpdateListener {
         if (angelCount < 1) {
             angelCount = 1;
         }
-        ItemTypeEditorModel.getInstance().getBoundingBox().setAngels(new double[angelCount]);
-        ItemTypeEditorModel.getInstance().cutRuntimeToCorrectLength();
+        ItemTypeEditorModel.getInstance().setNewAngels(angelCount);
     }
 
     @UiHandler("widthPlus")
@@ -100,14 +99,14 @@ public class BoundingBoxPanel extends Composite implements UpdateListener {
 
     @UiHandler("currentAngelPlus")
     void onCurrentAngelPlusClick(ClickEvent event) {
-        int grad = (int) MathHelper.radToGrad(ItemTypeEditorModel.getInstance().getBoundingBox().getAngels()[ItemTypeEditorModel.getInstance().getCurrentAngelIndex()]);
+        int grad = (int) Math.round(MathHelper.radToGrad(ItemTypeEditorModel.getInstance().getBoundingBox().getAngels()[ItemTypeEditorModel.getInstance().getCurrentAngelIndex()]));
         ItemTypeEditorModel.getInstance().getBoundingBox().getAngels()[ItemTypeEditorModel.getInstance().getCurrentAngelIndex()] = MathHelper.gradToRad(grad + 1);
         ItemTypeEditorModel.getInstance().fireUpdate();
     }
 
     @UiHandler("currentAngelMinus")
     void onCurrentAngelMinusClick(ClickEvent event) {
-        int grad = (int) MathHelper.radToGrad(ItemTypeEditorModel.getInstance().getBoundingBox().getAngels()[ItemTypeEditorModel.getInstance().getCurrentAngelIndex()]);
+        int grad = (int) Math.round(MathHelper.radToGrad(ItemTypeEditorModel.getInstance().getBoundingBox().getAngels()[ItemTypeEditorModel.getInstance().getCurrentAngelIndex()]));
         ItemTypeEditorModel.getInstance().getBoundingBox().getAngels()[ItemTypeEditorModel.getInstance().getCurrentAngelIndex()] = MathHelper.gradToRad(grad - 1);
         ItemTypeEditorModel.getInstance().fireUpdate();
     }
@@ -143,10 +142,10 @@ public class BoundingBoxPanel extends Composite implements UpdateListener {
     @Override
     public void onModelUpdate() {
         angels.setValue(ItemTypeEditorModel.getInstance().getBoundingBox().getAngelCount());
-        currentAngel.setText((ItemTypeEditorModel.getInstance().getCurrentAngelIndex() + 1) + " of " + (ItemTypeEditorModel.getInstance().getBoundingBox().getAngelCount()));
+        currentAngelIndex.setText((ItemTypeEditorModel.getInstance().getCurrentAngelIndex() + 1) + " of " + (ItemTypeEditorModel.getInstance().getBoundingBox().getAngelCount()));
         widthField.setValue(ItemTypeEditorModel.getInstance().getBoundingBox().getWidth());
         heightField.setValue(ItemTypeEditorModel.getInstance().getBoundingBox().getHeight());
-        currentAngelField.setValue((int) MathHelper.radToGrad(ItemTypeEditorModel.getInstance().getBoundingBox().getAngels()[ItemTypeEditorModel.getInstance().getCurrentAngelIndex()]));
+        currentAngelField.setValue((int) Math.round(MathHelper.radToGrad(ItemTypeEditorModel.getInstance().getBoundingBox().getAngels()[ItemTypeEditorModel.getInstance().getCurrentAngelIndex()])));
         imageWidthLabel.setText(Integer.toString(ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getImageWidth()));
         imageHeightLabel.setText(Integer.toString(ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getImageHeight()));
     }

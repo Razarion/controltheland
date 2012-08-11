@@ -91,6 +91,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         botItemContainer.work(simpleBase);
         waitForActionServiceDone();
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
+        // TODO failed on 11.08.2012
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
         Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
