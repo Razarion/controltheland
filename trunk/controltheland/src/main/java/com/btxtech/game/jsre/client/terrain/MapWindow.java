@@ -14,27 +14,15 @@
 package com.btxtech.game.jsre.client.terrain;
 
 import com.btxtech.game.jsre.client.ExtendedAbsolutePanel;
-import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.ChatCockpit;
-import com.btxtech.game.jsre.client.cockpit.CockpitUtil;
-import com.btxtech.game.jsre.client.cockpit.SideCockpit;
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.perfmon.Perfmon;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
-import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseMoveHandler;
-import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 
 /**
@@ -80,80 +68,72 @@ public class MapWindow {
     private void handlePreviewNativeEvent(Event.NativePreviewEvent event) {
         if (event.getTypeInt() == Event.ONKEYDOWN) {
             switch (event.getNativeEvent().getKeyCode()) {
-                case 'A':
-                case 'a':
+                case 65:
                 case KeyCodes.KEY_LEFT: {
                     if (!ChatCockpit.getInstance().hasFocus()) {
                         TerrainView.getInstance().getTerrainMouseHandler().executeAutoScrollKey(TerrainMouseHandler.ScrollDirection.WEST, null);
                         event.cancel(); // Prevent from scrolling the browser window
-                        break;
                     }
+                    break;
                 }
-                case 'D':
-                case 'd':
+                case 68:
                 case KeyCodes.KEY_RIGHT: {
                     if (!ChatCockpit.getInstance().hasFocus()) {
                         TerrainView.getInstance().getTerrainMouseHandler().executeAutoScrollKey(TerrainMouseHandler.ScrollDirection.EAST, null);
                         event.cancel();
-                        break;
                     }
+                    break;
                 }
-                case 'W':
-                case 'w':
+                case 87:
                 case KeyCodes.KEY_UP: {
                     if (!ChatCockpit.getInstance().hasFocus()) {
                         TerrainView.getInstance().getTerrainMouseHandler().executeAutoScrollKey(null, TerrainMouseHandler.ScrollDirection.NORTH);
                         event.cancel();
-                        break;
                     }
+                    break;
                 }
-                case 'S':
-                case 's':
+                case 83:
                 case KeyCodes.KEY_DOWN: {
                     if (!ChatCockpit.getInstance().hasFocus()) {
                         TerrainView.getInstance().getTerrainMouseHandler().executeAutoScrollKey(null, TerrainMouseHandler.ScrollDirection.SOUTH);
                         event.cancel();
-                        break;
                     }
+                    break;
                 }
             }
         } else if (event.getTypeInt() == Event.ONKEYUP) {
             switch (event.getNativeEvent().getKeyCode()) {
-                case 'A':
-                case 'a':
+                case 65:
                 case KeyCodes.KEY_LEFT: {
                     if (!ChatCockpit.getInstance().hasFocus()) {
                         TerrainView.getInstance().getTerrainMouseHandler().executeAutoScrollKey(TerrainMouseHandler.ScrollDirection.STOP, null);
                         event.cancel(); // Prevent from scrolling the browser window
-                        break;
                     }
+                    break;
                 }
-                case 'D':
-                case 'd':
+                case 68:
                 case KeyCodes.KEY_RIGHT: {
                     if (!ChatCockpit.getInstance().hasFocus()) {
                         TerrainView.getInstance().getTerrainMouseHandler().executeAutoScrollKey(TerrainMouseHandler.ScrollDirection.STOP, null);
                         event.cancel();
-                        break;
                     }
+                    break;
                 }
-                case 'W':
-                case 'w':
+                case 87:
                 case KeyCodes.KEY_UP: {
                     if (!ChatCockpit.getInstance().hasFocus()) {
                         TerrainView.getInstance().getTerrainMouseHandler().executeAutoScrollKey(null, TerrainMouseHandler.ScrollDirection.STOP);
                         event.cancel();
-                        break;
                     }
+                    break;
                 }
-                case 'S':
-                case 's':
+                case 83:
                 case KeyCodes.KEY_DOWN: {
                     if (!ChatCockpit.getInstance().hasFocus()) {
                         TerrainView.getInstance().getTerrainMouseHandler().executeAutoScrollKey(null, TerrainMouseHandler.ScrollDirection.STOP);
                         event.cancel();
-                        break;
                     }
+                    break;
                 }
             }
         }
@@ -164,9 +144,9 @@ public class MapWindow {
                     e.getClientY() + document.getScrollTop(),
                     event.getTypeInt());
         }
-    //    if ((event.getTypeInt() & Event.ONMOUSEOUT) != 0) {
-    //        TerrainView.getInstance().getTerrainMouseHandler().executeAutoScrollMouse(TerrainMouseHandler.ScrollDirection.STOP, TerrainMouseHandler.ScrollDirection.STOP);
-    //    }
+        //    if ((event.getTypeInt() & Event.ONMOUSEOUT) != 0) {
+        //        TerrainView.getInstance().getTerrainMouseHandler().executeAutoScrollMouse(TerrainMouseHandler.ScrollDirection.STOP, TerrainMouseHandler.ScrollDirection.STOP);
+        //    }
     }
 
     public void setTrackingEvents(boolean isTrackingEvents) {

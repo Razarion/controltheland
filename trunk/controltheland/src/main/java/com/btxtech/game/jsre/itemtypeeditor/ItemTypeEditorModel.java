@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.ImageLoader;
+import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
@@ -111,6 +112,16 @@ public class ItemTypeEditorModel {
     public ItemType getItemType() {
         return itemType;
     }
+
+    public void setNewAngels(int count) {
+        getBoundingBox().setAngels(new double[count]);
+        for (int i = 0; i < count; i++) {
+            getBoundingBox().getAngels()[i] = MathHelper.ONE_RADIANT * ((double)i / (double)count);
+        }
+        cutRuntimeToCorrectLength();
+        fireUpdate();
+    }
+
 
     public void setCurrentAngelIndex(int currentAngelIndex) {
         this.currentAngelIndex = currentAngelIndex;
@@ -503,7 +514,7 @@ public class ItemTypeEditorModel {
         try {
             simulationMiddle = new Index(SIM_WIDTH / 2, SIM_HEIGHT / 2);
             SimpleBase myBase = null;
-            if(itemType instanceof BaseItemType) {
+            if (itemType instanceof BaseItemType) {
                 myBase = MY_BASE;
             }
             syncItem = ItemContainer.getInstance().createItemTypeEditorSyncObject(myBase, itemType.getId(), simulationMiddle);
@@ -597,7 +608,7 @@ public class ItemTypeEditorModel {
     private void setTargetPosition() {
         if (target != null) {
             double angel = boundingBox.angelIndexToAngel(currentAngelIndex);
-            Index targetPos = syncItem.getSyncItemArea().getPosition().getPointFromAngelToNord(angel, (double)(weaponType.getRange() + boundingBox.getHeight()) * 0.75);
+            Index targetPos = syncItem.getSyncItemArea().getPosition().getPointFromAngelToNord(angel, (double) (weaponType.getRange() + boundingBox.getHeight()) * 0.75);
             targetPos = Index.createSaveIndex(targetPos);
             target.getSyncItemArea().setPosition(targetPos);
         }

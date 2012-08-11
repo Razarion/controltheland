@@ -67,7 +67,7 @@
                 	<g:HorizontalPanel>
                 		<g:Button text="Left" ui:field="left"/>
                 		<g:Cell verticalAlignment="ALIGN_MIDDLE">
-                			<g:Label text="New Label" ui:field="currentAngel" horizontalAlignment="ALIGN_CENTER"/>
+                			<g:Label text="New Label" ui:field="currentAngelIndex" horizontalAlignment="ALIGN_CENTER"/>
                 		</g:Cell>
                 		<g:Button text="Right" ui:field="right"/>
                 	</g:HorizontalPanel>
