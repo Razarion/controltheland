@@ -75,19 +75,19 @@ public class QuestInfo implements Serializable {
         return gold == questInfo.gold
                 && id == questInfo.id
                 && xp == questInfo.xp
-                && description.equals(questInfo.description)
+                && !(description != null ? !description.equals(questInfo.description) : questInfo.description != null)
                 && !(radarPosition != null ? !radarPosition.equals(questInfo.radarPosition) : questInfo.radarPosition != null)
-                && title.equals(questInfo.title)
+                && !(title != null ? !title.equals(questInfo.title) : questInfo.title != null)
                 && type == questInfo.type;
     }
 
     @Override
     public int hashCode() {
-        int result = title.hashCode();
-        result = 31 * result + description.hashCode();
+        int result = title != null ? title.hashCode() : 0;
+        result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + xp;
         result = 31 * result + gold;
-        result = 31 * result + type.hashCode();
+        result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + id;
         result = 31 * result + (radarPosition != null ? radarPosition.hashCode() : 0);
         return result;
