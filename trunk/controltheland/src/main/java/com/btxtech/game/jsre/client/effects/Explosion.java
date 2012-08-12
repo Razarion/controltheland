@@ -29,7 +29,7 @@ public class Explosion {
     private static final int COUNT = 20;
     private static final int FADEOUT_FRAME = 16;
     private static final int REMOVE_ITEM = 10;
-    private int frame = -1;
+    private int frame = 0;
     private int width;
     private int height;
     private double alpha;
@@ -55,6 +55,20 @@ public class Explosion {
         SoundHandler.getInstance().playItemExplode();
         absoluteMiddle = syncItem.getSyncItemArea().getPosition();
         viewRect = Rectangle.generateRectangleFromMiddlePoint(absoluteMiddle, width * 2, height * 2);
+        calculate();
+    }
+
+    private void calculate() {
+        if (frame >= FADEOUT_FRAME) {
+            alpha = (double) (COUNT - frame) / (double) (COUNT - FADEOUT_FRAME);
+        } else {
+            alpha = 1.0;
+        }
+
+        double factor = (double) frame / (double) COUNT;
+        frameWidth = (int) (factor * width);
+        frameHeight = (int) (factor * height);
+        absoluteImageStart = absoluteMiddle.sub(frameWidth / 2, frameHeight / 2);
     }
 
     public void setTimeStamp(long timeStamp) {
@@ -68,17 +82,7 @@ public class Explosion {
             return;
         }
         frame = oldFrame;
-
-        if (frame >= FADEOUT_FRAME) {
-            alpha = (double) (COUNT - frame) / (double) (COUNT - FADEOUT_FRAME);
-        } else {
-            alpha = 1.0;
-        }
-
-        double factor = (double) frame / (double) COUNT;
-        frameWidth = (int) (factor * width);
-        frameHeight = (int) (factor * height);
-        absoluteImageStart = absoluteMiddle.sub(frameWidth / 2, frameHeight / 2);
+        calculate();
     }
 
     public double getAlpha() {
