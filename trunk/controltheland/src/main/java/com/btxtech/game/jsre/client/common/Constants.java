@@ -46,7 +46,6 @@ public class Constants {
     public static final String TUTORIAL_RESOURCE_ID = "id";
 
     // zIndex
-    public static final int Z_INDEX_LEVEL_SPLASH = 101; // TODO Remove splash
     public static final int Z_INDEX_STARTUP_SCREEN = 100; // Fix coded in Game.html
     public static final int Z_INDEX_TIP = 11;
     public static final int Z_INDEX_DIALOG = 10;

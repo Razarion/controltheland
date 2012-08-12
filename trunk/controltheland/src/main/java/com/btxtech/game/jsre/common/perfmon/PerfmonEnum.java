@@ -9,7 +9,6 @@ public enum PerfmonEnum {
     IGNORE("IGNORE"),
     ACTION_HANDLER("Action"),
     PACKET_INFO_HANDLING("Packets"),
-    SPLASH_MANAGER("Splash"),
     QUEST_PROGRESS_COCKPIT_RADAR_HINT("QPC Radar Hint"),
     SIMULATION_CONDITION_SERVICE("Condition"),
     CLIENT_USER_TRACKING("User Tracking"),

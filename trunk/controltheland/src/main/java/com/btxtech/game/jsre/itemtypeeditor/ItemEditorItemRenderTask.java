@@ -4,7 +4,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.renderer.AbstractRenderTask;
-import com.btxtech.game.jsre.client.renderer.ItemTypeImageHandler;
+import com.btxtech.game.jsre.client.renderer.ItemTypeImageLoaderContainer;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.canvas.dom.client.Context2d;
@@ -56,7 +56,7 @@ public class ItemEditorItemRenderTask extends AbstractRenderTask {
                 ImageElement imageElement = ItemTypeEditorModel.getInstance().getImageElement(angelIndex, step, frame, syncObjectState);
                 context2d.drawImage(imageElement, relativeImagePosition.getX(), relativeImagePosition.getY());
             } else {
-                ImageElement imageElement = ItemTypeImageHandler.getInstance().getImage(syncItem.getItemType());
+                ImageElement imageElement = ItemTypeImageLoaderContainer.getInstance().getImage(syncItem.getItemType());
                 if (imageElement == null) {
                     continue;
                 }
@@ -74,6 +74,6 @@ public class ItemEditorItemRenderTask extends AbstractRenderTask {
             }
         }
 
-        ItemTypeImageHandler.getInstance().startLoad();
+        ItemTypeImageLoaderContainer.getInstance().startLoad();
     }
 }

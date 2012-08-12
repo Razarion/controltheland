@@ -32,7 +32,7 @@ public class ToBeBuildPlacerRenderTask extends AbstractRenderTask {
 
         // Draw Item
         Index offset = itemTypeSpriteMap.getCosmeticImageOffset();
-        ImageElement imageElement = ItemTypeImageHandler.getInstance().getImage(baseItemType);
+        ImageElement imageElement = ItemTypeImageLoaderContainer.getInstance().getImage(baseItemType);
         if (imageElement != null) {
             context2d.setGlobalAlpha(0.5);
             context2d.drawImage(imageElement,

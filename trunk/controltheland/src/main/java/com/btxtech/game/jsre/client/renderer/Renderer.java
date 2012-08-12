@@ -48,6 +48,7 @@ public class Renderer {
         renderTasks.add(new InventoryItemPlacerRenderTask(TerrainView.getInstance().getContext2d()));
         renderTasks.add(new ToBeBuildPlacerRenderTask(TerrainView.getInstance().getContext2d()));
         renderTasks.add(new ExplosionRenderTask(TerrainView.getInstance().getContext2d()));
+        renderTasks.add(new SplashRenderTask(TerrainView.getInstance().getContext2d()));
     }
 
     public void start() {

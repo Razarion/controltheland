@@ -48,7 +48,7 @@ public class InventoryItemPlacerRenderTask extends AbstractRenderTask {
         BaseItemType baseItemType = inventoryItemPlacer.getBaseItemType();
         ItemTypeSpriteMap itemTypeSpriteMap = baseItemType.getItemTypeSpriteMap();
         Index offset = itemTypeSpriteMap.getCosmeticImageOffset();
-        ImageElement imageElement = ItemTypeImageHandler.getInstance().getImage(baseItemType);
+        ImageElement imageElement = ItemTypeImageLoaderContainer.getInstance().getImage(baseItemType);
         if (imageElement != null) {
             for (Index index : inventoryItemPlacer.getRelativePositionsToPlace()) {
                 context2d.drawImage(imageElement,
