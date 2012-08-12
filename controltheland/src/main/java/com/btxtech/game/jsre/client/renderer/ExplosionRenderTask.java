@@ -38,7 +38,7 @@ public class ExplosionRenderTask extends AbstractRenderTask {
             // Draw Item
             if (explosion.isItemVisible()) {
                 SyncItem syncItem = explosion.getSyncItem();
-                ImageElement itemImageElement = ItemTypeImageHandler.getInstance().getImage(explosion.getSyncItem().getItemType());
+                ImageElement itemImageElement = ItemTypeImageLoaderContainer.getInstance().getImage(explosion.getSyncItem().getItemType());
                 if (itemImageElement != null) {
                     SyncItemArea syncItemArea = syncItem.getSyncItemArea();
                     ItemTypeSpriteMap itemTypeSpriteMap = syncItem.getItemType().getItemTypeSpriteMap();

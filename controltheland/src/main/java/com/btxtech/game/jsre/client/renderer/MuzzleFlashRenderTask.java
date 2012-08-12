@@ -1,9 +1,11 @@
 package com.btxtech.game.jsre.client.renderer;
 
+import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.effects.MuzzleFlash;
 import com.btxtech.game.jsre.client.effects.MuzzleFlashHandler;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
@@ -15,7 +17,13 @@ import com.google.gwt.dom.client.ImageElement;
  */
 public class MuzzleFlashRenderTask extends AbstractRenderTask {
     private Context2d context2d;
-    private MuzzleFlashImageHandler muzzleFlashImageHandler = new MuzzleFlashImageHandler();
+    private ImageLoaderContainer<BaseItemType> muzzleFlashImageHandlerContainer = new ImageLoaderContainer<BaseItemType>() {
+
+        @Override
+        protected String getUrl(BaseItemType baseItemType) {
+            return ImageHandler.getMuzzleFlashImageUrl(baseItemType);
+        }
+    };
 
     public MuzzleFlashRenderTask(Context2d context2d) {
         this.context2d = context2d;
@@ -25,7 +33,7 @@ public class MuzzleFlashRenderTask extends AbstractRenderTask {
     public void render(long timeStamp, Rectangle viewRect, Rectangle tileViewRect) {
         for (MuzzleFlash muzzleFlash : MuzzleFlashHandler.getInstance().getMuzzleFlashInRegion(timeStamp, viewRect)) {
             SyncBaseItem syncBaseItem = muzzleFlash.getSyncBaseItem();
-            ImageElement imageElement = muzzleFlashImageHandler.getImage(syncBaseItem.getBaseItemType());
+            ImageElement imageElement = muzzleFlashImageHandlerContainer.getImage(syncBaseItem.getBaseItemType());
             if (imageElement == null) {
                 continue;
             }
@@ -45,6 +53,6 @@ public class MuzzleFlashRenderTask extends AbstractRenderTask {
             );
             context2d.restore();
         }
-        muzzleFlashImageHandler.startLoad();
+        muzzleFlashImageHandlerContainer.startLoad();
     }
 }

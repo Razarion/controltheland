@@ -31,7 +31,7 @@ public class ItemRenderTask extends AbstractRenderTask {
         Group ownSelection = SelectionHandler.getInstance().getOwnSelection();
         SyncItem targetSelection = SelectionHandler.getInstance().getSelectedTargetSyncItem();
         for (SyncItem syncItem : ItemContainer.getInstance().getItemsInRectangleFast(viewRect)) { // TODO clips off items if the middle is no longer in the view rect
-            ImageElement imageElement = ItemTypeImageHandler.getInstance().getImage(syncItem.getItemType());
+            ImageElement imageElement = ItemTypeImageLoaderContainer.getInstance().getImage(syncItem.getItemType());
             if (imageElement == null) {
                 continue;
             }
@@ -62,7 +62,7 @@ public class ItemRenderTask extends AbstractRenderTask {
             );
         }
 
-        ItemTypeImageHandler.getInstance().startLoad();
+        ItemTypeImageLoaderContainer.getInstance().startLoad();
     }
 
     private void showProgressBar(ItemTypeSpriteMap itemTypeSpriteMap, Index relativeImagePosition, SyncBaseItem syncBaseItem) {

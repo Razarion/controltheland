@@ -24,8 +24,8 @@ public class SplashManager {
     private static final String LEVEL_UP_IMAGE = "LevelUp.png";
     private static final String LEVEL_TASK_DONE_IMAGE = "LevelTaskDone.png";
     private static SplashManager INSTANCE = new SplashManager();
-    private List<String> imageNameQueue = new ArrayList<String>();
-    private Image image;
+    private List<SplashImage> splashImages = new ArrayList<SplashImage>();
+    private SplashImage currentSplashImage;
 
     public static SplashManager getInstance() {
         return INSTANCE;
@@ -38,48 +38,36 @@ public class SplashManager {
     }
 
     public void onLevelUp() {
-        imageNameQueue.add(LEVEL_UP_IMAGE);
-        processQueue();
+        splashImages.add(new SplashImage(LEVEL_UP_IMAGE));
     }
 
 
     public void onLevelTaskCone() {
-        imageNameQueue.add(LEVEL_TASK_DONE_IMAGE);
-        processQueue();
+        splashImages.add(new SplashImage(LEVEL_TASK_DONE_IMAGE));
     }
 
-    private void processQueue() {
-        if (imageNameQueue.isEmpty() || image != null) {
-            return;
+    public SplashImage getCurrentSplash(long timeStamp) {
+        if (currentSplashImage == null && splashImages.isEmpty()) {
+            return null;
         }
-        String imageUrl = ImageHandler.getSplashImageUrl(imageNameQueue.remove(0));
-        setupImage(imageUrl);
-        Timer timer = new TimerPerfmon(PerfmonEnum.SPLASH_MANAGER) {
-            @Override
-            public void runPerfmon() {
-                MapWindow.getAbsolutePanel().remove(image);
-                image = null;
-                processQueue();
+        if (currentSplashImage == null) {
+            return showNextSplash(timeStamp);
+        } else {
+            if (currentSplashImage.isInTime(timeStamp)) {
+                return currentSplashImage;
+            } else {
+                return showNextSplash(timeStamp);
             }
-        };
-        timer.schedule(DISPLAY_TIME);
+        }
     }
 
-    private void setupImage(String imageUrl) {
-        image = new Image();
-        image.getElement().getStyle().setZIndex(Constants.Z_INDEX_HIDDEN);
-        image.setUrl(imageUrl);
-        image.addLoadHandler(new LoadHandler() {
-            @Override
-            public void onLoad(LoadEvent event) {
-                Image image = (Image) event.getSource();
-                int xPos = (TerrainView.getInstance().getViewWidth() - image.getOffsetWidth()) / 2;
-                int yPos = (TerrainView.getInstance().getViewHeight() - image.getOffsetHeight()) / 2;
-                image.getElement().getStyle().setZIndex(Constants.Z_INDEX_LEVEL_SPLASH);
-                MapWindow.getAbsolutePanel().setWidgetPosition(image, xPos, yPos);
-            }
-        });
-        MapWindow.getAbsolutePanel().add(image);
+    private SplashImage showNextSplash(long timeStamp) {
+        if (splashImages.isEmpty()) {
+            currentSplashImage = null;
+        } else {
+            currentSplashImage = splashImages.remove(0);
+            currentSplashImage.setEndShowTime(timeStamp + DISPLAY_TIME);
+        }
+        return currentSplashImage;
     }
-
 }
