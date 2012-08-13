@@ -16,7 +16,6 @@ package com.btxtech.game.jsre.client.cockpit;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
@@ -29,12 +28,13 @@ import com.google.gwt.dom.client.Style;
 
 import java.util.Collection;
 
-// Make an ico file with gimp and rename it to cur
-
 /**
  * User: beat
  * Date: Jun 27, 2009
  * Time: 9:43:48 AM
+ * <p/>
+ * Make an ico file with gimp and rename it to cur
+ * Make cur file with RealWorld Cursor Editor 2012.1: http://www.rw-designer.com/cursor-maker
  */
 public class CursorHandler {
     private static CursorHandler INSTANCE = new CursorHandler();
@@ -123,7 +123,7 @@ public class CursorHandler {
             }
         } else if (CockpitMode.getInstance().isCollectPossible() && syncItem instanceof SyncResourceItem) {
             setCursor(CursorType.COLLECT, SelectionHandler.getInstance().atLeastOneAllowedOnTerritory4Selection(position));
-        } else if (CockpitMode.getInstance().isMovePossible() &&  syncItem instanceof SyncBoxItem) {
+        } else if (CockpitMode.getInstance().isMovePossible() && syncItem instanceof SyncBoxItem) {
             setCursor(CursorType.PICKUP, SelectionHandler.getInstance().atLeastOneAllowedOnTerritory4Selection(position));
         } else {
             setCursor(Style.Cursor.POINTER);
@@ -166,18 +166,26 @@ public class CursorHandler {
     private void setCursor(CursorType cursorType, boolean allowed) {
         String url;
         Style.Cursor alternativeDefault;
+        int hotSpotX;
+        int hotSpotY;
         if (allowed) {
             url = cursorType.getUrl();
             alternativeDefault = cursorType.getAlternativeDefault();
+            hotSpotX = cursorType.getHotSpotX();
+            hotSpotY = cursorType.getHotSpotY();
         } else {
             url = cursorType.getNoUrl();
             alternativeDefault = cursorType.getNoAlternativeDefault();
+            hotSpotX = cursorType.getHotSpotNoX();
+            hotSpotY = cursorType.getHotSpotNoY();
         }
 
         if (GwtCommon.isOpera() || url == null) {
             TerrainView.getInstance().getCanvas().getElement().getStyle().setCursor(alternativeDefault);
-        } else {
+        } else if (GwtCommon.isIE()) {
             TerrainView.getInstance().getCanvas().getElement().getStyle().setProperty("cursor", "url(" + url + "), " + alternativeDefault.getCssName());
+        } else {
+            TerrainView.getInstance().getCanvas().getElement().getStyle().setProperty("cursor", "url(" + url + ") " + hotSpotX + " " + hotSpotY + ", " + alternativeDefault.getCssName());
         }
 
     }

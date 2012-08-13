@@ -38,6 +38,7 @@ import java.util.logging.Logger;
 public class GwtCommon {
     private static ExceptionDialog exceptionDialog;
     private static Boolean isIe6;
+    private static Boolean isIe;
     private static Boolean isOpera;
     private static Logger log = Logger.getLogger(GwtCommon.class.getName());
     private static final Set<String> sentIntCheckErrors = new HashSet<String>();
@@ -165,6 +166,13 @@ public class GwtCommon {
             isOpera = Window.Navigator.getUserAgent().contains("Opera");
         }
         return isOpera;
+    }
+
+    public static boolean isIE() {
+        if (isIe == null) {
+            isIe = Window.Navigator.getUserAgent().toLowerCase().contains("msie");
+        }
+        return isIe;
     }
 
     public static native void disableBrowserContextMenuJSNI() /*-{
