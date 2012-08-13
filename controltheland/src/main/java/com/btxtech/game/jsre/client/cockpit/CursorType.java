@@ -19,25 +19,36 @@ import com.google.gwt.dom.client.Style;
  * User: beat
  * Date: 01.06.2010
  * Time: 20:31:59
+ * <p/>
+ * Make an ico file with gimp and rename it to cur
+ * Make cur file with RealWorld Cursor Editor 2012.1: http://www.rw-designer.com/cursor-maker
  */
 public enum CursorType {
-    GO("/images/cursors/go.cur", Style.Cursor.CROSSHAIR, "/images/cursors/nogo.cur", Style.Cursor.POINTER),
-    ATTACK("/images/cursors/attack.cur", Style.Cursor.CROSSHAIR, "/images/cursors/noattack.cur", Style.Cursor.POINTER),
-    COLLECT("/images/cursors/collect.cur", Style.Cursor.CROSSHAIR, "/images/cursors/nocollect.cur", Style.Cursor.POINTER),
-    LOAD("/images/cursors/load.cur", Style.Cursor.S_RESIZE, "/images/cursors/noload.cur", Style.Cursor.POINTER),
-    UNLOAD("/images/cursors/unload.cur", Style.Cursor.N_RESIZE, "/images/cursors/nounload.cur", Style.Cursor.POINTER),
-    SELL("/images/cursors/sell.cur", Style.Cursor.POINTER, "/images/cursors/nosell.cur", Style.Cursor.DEFAULT),
-    FINALIZE_BUILD("/images/cursors/finalizebuild.cur", Style.Cursor.POINTER, "/images/cursors/nofinalizebuild.cur", Style.Cursor.DEFAULT),
-    ALLIANCE("/images/cursors/noattack.cur", Style.Cursor.POINTER, null, null),
-    PICKUP("/images/cursors/pickup.cur", Style.Cursor.CROSSHAIR, "/images/cursors/nopickup.cur", Style.Cursor.POINTER);
+    GO("/images/cursors/go.cur", 15, 16, Style.Cursor.CROSSHAIR, "/images/cursors/nogo.cur", 15, 16, Style.Cursor.POINTER),
+    ATTACK("/images/cursors/attack.cur", 15, 16, Style.Cursor.CROSSHAIR, "/images/cursors/noattack.cur", 15, 16, Style.Cursor.POINTER),
+    COLLECT("/images/cursors/collect.cur", 15, 16, Style.Cursor.CROSSHAIR, "/images/cursors/nocollect.cur", 15, 16, Style.Cursor.POINTER),
+    LOAD("/images/cursors/load.cur", 16, 30, Style.Cursor.S_RESIZE, "/images/cursors/noload.cur", 16, 30, Style.Cursor.POINTER),
+    UNLOAD("/images/cursors/unload.cur", 15, 1, Style.Cursor.N_RESIZE, "/images/cursors/nounload.cur", 15, 1, Style.Cursor.POINTER),
+    SELL("/images/cursors/sell.cur", 15, 16, Style.Cursor.POINTER, "/images/cursors/nosell.cur", 15, 16, Style.Cursor.DEFAULT),
+    FINALIZE_BUILD("/images/cursors/finalizebuild.cur", 15, 16, Style.Cursor.POINTER, "/images/cursors/nofinalizebuild.cur", 15, 16, Style.Cursor.DEFAULT),
+    ALLIANCE("/images/cursors/noattack.cur", 15, 16, Style.Cursor.POINTER, null, 0, 0, null),
+    PICKUP("/images/cursors/pickup.cur", 15, 16, Style.Cursor.CROSSHAIR, "/images/cursors/nopickup.cur", 15, 16, Style.Cursor.POINTER);
     private String url;
     private Style.Cursor alternativeDefault;
     private String noUrl;
     private Style.Cursor noAlternativeDefault;
+    private int hotSpotX;
+    private int hotSpotY;
+    private int hotSpotNoX;
+    private int hotSpotNoY;
 
-    CursorType(String url, Style.Cursor alternativeDefault, String noUrl, Style.Cursor noAlternativeDefault) {
+    CursorType(String url, int hotSpotX, int hotSpotY, Style.Cursor alternativeDefault, String noUrl, int hotSpotNoX, int hotSpotNoY, Style.Cursor noAlternativeDefault) {
         this.url = url;
+        this.hotSpotX = hotSpotX;
+        this.hotSpotY = hotSpotY;
         this.alternativeDefault = alternativeDefault;
+        this.hotSpotNoX = hotSpotNoX;
+        this.hotSpotNoY = hotSpotNoY;
         this.noUrl = noUrl;
         this.noAlternativeDefault = noAlternativeDefault;
     }
@@ -56,5 +67,21 @@ public enum CursorType {
 
     public Style.Cursor getNoAlternativeDefault() {
         return noAlternativeDefault;
+    }
+
+    public int getHotSpotX() {
+        return hotSpotX;
+    }
+
+    public int getHotSpotY() {
+        return hotSpotY;
+    }
+
+    public int getHotSpotNoX() {
+        return hotSpotNoX;
+    }
+
+    public int getHotSpotNoY() {
+        return hotSpotNoY;
     }
 }
