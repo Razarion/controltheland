@@ -96,6 +96,10 @@ public class StartupScreen implements StartupProgressListener {
                 AnimationScheduler.get().requestAnimationFrame(new AnimationScheduler.AnimationCallback() {
                     @Override
                     public void execute(double timestamp) {
+                        if (currentFade >= 1.0) {
+                            // Timer my be faster than AnimationScheduler can execute
+                            return;
+                        }
                         currentFade += FADE_STEP;
                         if (currentFade >= 1.0) {
                             stopFade();
@@ -123,6 +127,10 @@ public class StartupScreen implements StartupProgressListener {
                 AnimationScheduler.get().requestAnimationFrame(new AnimationScheduler.AnimationCallback() {
                     @Override
                     public void execute(double timestamp) {
+                        if (currentFade <= 0.0) {
+                            // Timer my be faster than AnimationScheduler can execute
+                            return;
+                        }
                         currentFade -= FADE_STEP;
                         if (currentFade <= 0.0) {
                             stopFade();
