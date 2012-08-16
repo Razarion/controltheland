@@ -56,6 +56,13 @@ public class ResourceItemTypeEditor extends MgmtWebPage {
         form.add(new TextField<String>("amount"));
         form.add(new DropDownChoice<>("terrainType", Arrays.asList(TerrainType.values())));
 
+        form.add(new Button("editSounds") {
+            @Override
+            public void onSubmit() {
+                setResponsePage(new ItemTypeSoundEditor(form.getModelObject()));
+            }
+        });
+
         form.add(new Button("save") {
             @Override
             public void onSubmit() {

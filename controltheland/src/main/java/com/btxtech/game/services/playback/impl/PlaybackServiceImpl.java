@@ -25,6 +25,7 @@ import com.btxtech.game.services.gwt.AutowiredRemoteServiceServlet;
 import com.btxtech.game.services.gwt.MovableServiceImpl;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.MgmtService;
+import com.btxtech.game.services.sound.SoundService;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
@@ -64,6 +65,8 @@ public class PlaybackServiceImpl extends AutowiredRemoteServiceServlet implement
     private UserService userService;
     @Autowired
     private CmsUiService cmsUiService;
+    @Autowired
+    private SoundService soundService;
     private Log log = LogFactory.getLog(PlaybackServiceImpl.class);
 
     @Override
@@ -72,7 +75,7 @@ public class PlaybackServiceImpl extends AutowiredRemoteServiceServlet implement
             PlaybackInfo playbackInfo = new PlaybackInfo();
 
             // Tutorial
-            MovableServiceImpl.setCommonInfo(playbackInfo, userService, itemService, mgmtService, cmsUiService);
+            MovableServiceImpl.setCommonInfo(playbackInfo, userService, itemService, mgmtService, cmsUiService, soundService);
             LifecycleTrackingInfo lifecycleTrackingInfo = userTrackingService.getLifecycleTrackingInfo(startUuid);
             DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialConfig4Tracking(lifecycleTrackingInfo.getLevelTaskId());
             playbackInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(itemService));

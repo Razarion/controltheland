@@ -62,6 +62,7 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
     private BaseItemType upgradingItemType;
     private Id containedIn;
     private boolean isMoneyEarningOrConsuming = false;
+    private SimpleBase killedBy;
 
     public SyncBaseItem(Id id, Index position, BaseItemType baseItemType, Services services, SimpleBase base) throws NoSuchItemTypeException {
         super(id, position, baseItemType, services);
@@ -182,6 +183,7 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
         setBuildup(syncItemInfo.getBuildup());
         upgradeProgress = syncItemInfo.getUpgradeProgress();
         containedIn = syncItemInfo.getContainedIn();
+        killedBy = syncItemInfo.getKilledBy();
 
         if (syncMovable != null) {
             syncMovable.synchronize(syncItemInfo);
@@ -226,6 +228,7 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
         syncItemInfo.setUpgrading(isUpgrading);
         syncItemInfo.setUpgradeProgress(upgradeProgress);
         syncItemInfo.setContainedIn(containedIn);
+        syncItemInfo.setKilledBy(killedBy);
 
         if (syncMovable != null) {
             syncMovable.fillSyncItemInfo(syncItemInfo);
@@ -679,6 +682,14 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
 
     public void setUpgradingItemType(BaseItemType upgradingItemType) {
         this.upgradingItemType = upgradingItemType;
+    }
+
+    public SimpleBase getKilledBy() {
+        return killedBy;
+    }
+
+    public void setKilledBy(SimpleBase killedBy) {
+        this.killedBy = killedBy;
     }
 
     @Override

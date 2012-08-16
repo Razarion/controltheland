@@ -42,7 +42,6 @@ public class ItemImageController implements Controller {
             String contentType;
 
             String itemTypeSpriteMapString = httpServletRequest.getParameter(Constants.ITEM_TYPE_SPRITE_MAP_ID);
-            String itemTypeIdString = httpServletRequest.getParameter(Constants.ITEM_TYPE_ID);
 
             if (itemTypeSpriteMapString != null) {
                 int itemTypeId = Integer.parseInt(itemTypeSpriteMapString);

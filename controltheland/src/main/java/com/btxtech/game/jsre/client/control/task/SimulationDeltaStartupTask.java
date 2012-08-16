@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.SoundHandler;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
@@ -36,5 +37,6 @@ public class SimulationDeltaStartupTask extends GameEngineStartupTask {
         SimulationInfo simulationInfo = (SimulationInfo) Connection.getInstance().getGameInfo();
         deltaSetupGameStructure(simulationInfo);
         ClientTerritoryService.getInstance().clearTerritories();
+        SoundHandler.getInstance().start(Connection.getInstance().getGameInfo().getCommonSoundInfo());
     }
 }

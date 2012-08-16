@@ -52,6 +52,7 @@ import com.btxtech.game.services.inventory.InventoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
+import com.btxtech.game.services.sound.SoundService;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.TerritoryService;
@@ -108,6 +109,8 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     private InventoryService inventoryService;
     @Autowired
     private StatisticsService statisticsService;
+    @Autowired
+    private SoundService soundService;
 
     private Log log = LogFactory.getLog(MovableServiceImpl.class);
 
@@ -165,7 +168,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             baseService.continueBase(startUuid);
             RealGameInfo realGameInfo = new RealGameInfo();
-            setCommonInfo(realGameInfo, userService, itemService, mgmtService, cmsUiService);
+            setCommonInfo(realGameInfo, userService, itemService, mgmtService, cmsUiService, soundService);
             realGameInfo.setBase(baseService.getBase().getSimpleBase());
             realGameInfo.setAccountBalance(baseService.getBase().getAccountBalance());
             realGameInfo.setEnergyConsuming(serverEnergyService.getConsuming());
@@ -193,7 +196,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             SimulationInfo simulationInfo = new SimulationInfo();
             DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialConfig(levelTaskId);
             // Common
-            setCommonInfo(simulationInfo, userService, itemService, mgmtService, cmsUiService);
+            setCommonInfo(simulationInfo, userService, itemService, mgmtService, cmsUiService, soundService);
             simulationInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(itemService));
             simulationInfo.setLevelTaskId(levelTaskId);
             simulationInfo.setLevelTaskTitel(userGuidanceService.getDbLevel().getLevelTaskCrud().readDbChild(levelTaskId).getName());
@@ -210,12 +213,13 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         return null;
     }
 
-    public static void setCommonInfo(GameInfo gameInfo, UserService userService, ItemService itemService, MgmtService mgmtService, CmsUiService cmsUiService) {
+    public static void setCommonInfo(GameInfo gameInfo, UserService userService, ItemService itemService, MgmtService mgmtService, CmsUiService cmsUiService, SoundService soundService) {
         gameInfo.setRegistered(userService.isRegistered());
         gameInfo.setItemTypes(itemService.getItemTypes());
         StartupData startupData = mgmtService.getStartupData();
         gameInfo.setRegisterDialogDelay(startupData.getRegisterDialogDelay());
         gameInfo.setPredefinedUrls(cmsUiService.getPredefinedUrls());
+        gameInfo.setCommonSoundInfo(soundService.getCommonSoundInfo());
     }
 
     @Override

@@ -11,13 +11,14 @@ import com.btxtech.game.services.item.itemType.DbHarvesterType;
 import com.btxtech.game.services.item.itemType.DbHouseType;
 import com.btxtech.game.services.item.itemType.DbItemContainerType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImageData;
-import com.btxtech.game.services.item.itemType.DbItemTypeSoundData;
 import com.btxtech.game.services.item.itemType.DbLauncherType;
 import com.btxtech.game.services.item.itemType.DbMovableType;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbSpecialType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
+import com.btxtech.game.services.sound.DbSound;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
+import com.btxtech.game.wicket.uiservices.SoundPanel;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -47,9 +48,8 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
     private int damage;
     private int weaponRange;
     private double weaponReloadTime;
-    private FileUpload weaponMuzzleSoundMp3;
-    private FileUpload weaponMuzzleSoundOgg;
     private FileUpload weaponMuzzleImage;
+    private DbSound weaponMuzzleSound;
     private boolean weaponMuzzleStretch;
     private boolean factory;
     private double factoryProgress;
@@ -88,7 +88,7 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
         FeedbackPanel feedbackPanel = new FeedbackPanel("msgs");
         add(feedbackPanel);
 
-        Form<BaseItemTypeEditor> form = new Form<BaseItemTypeEditor>("itemTypeForm", new CompoundPropertyModel<BaseItemTypeEditor>(this));
+        Form<BaseItemTypeEditor> form = new Form<>("itemTypeForm", new CompoundPropertyModel<BaseItemTypeEditor>(this));
 
         form.add(new CheckBox("movable"));
         form.add(new TextField("speed"));
@@ -96,8 +96,7 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
         form.add(new TextField("damage"));
         form.add(new TextField("weaponRange"));
         form.add(new TextField("weaponReloadTime"));
-        form.add(new FileUploadField("weaponMuzzleSoundMp3"));
-        form.add(new FileUploadField("weaponMuzzleSoundOgg"));
+        form.add(new SoundPanel("weaponMuzzleSound"));
         form.add(new FileUploadField("weaponMuzzleImage"));
         form.add(new CheckBox("weaponMuzzleStretch"));
         form.add(new CheckBox("launcher"));
@@ -124,7 +123,7 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
         form.add(new CheckBox("house"));
         form.add(new TextField("space"));
         form.add(new CheckBox("special"));
-        form.add(new DropDownChoice<RadarMode>("radarMode", RadarMode.getList()));
+        form.add(new DropDownChoice<>("radarMode", RadarMode.getList()));
 
         form.add(new Button("save") {
             @Override
@@ -165,6 +164,7 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
             weaponRange = dbBaseItemType.getDbWeaponType().getRange();
             weaponReloadTime = dbBaseItemType.getDbWeaponType().getReloadTime();
             weaponMuzzleStretch = dbBaseItemType.getDbWeaponType().isStretchMuzzleFlashToTarget();
+            weaponMuzzleSound = dbBaseItemType.getDbWeaponType().getSound();
         } else {
             weapon = false;
         }
@@ -266,6 +266,7 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
             weaponType.setDamage(damage);
             weaponType.setReloadTime(weaponReloadTime);
             weaponType.setStretchMuzzleFlashToTarget(weaponMuzzleStretch);
+            weaponType.setSound(weaponMuzzleSound);
             if (weaponMuzzleImage != null) {
                 ImageIcon image = new ImageIcon(weaponMuzzleImage.getBytes());
                 weaponType.setMuzzleFlashWidth(image.getIconWidth());
@@ -274,22 +275,6 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
                 itemTypeImageData.setContentType(weaponMuzzleImage.getContentType());
                 itemTypeImageData.setData(weaponMuzzleImage.getBytes());
                 weaponType.setMuzzleFlashImageData(itemTypeImageData);
-            }
-            if (weaponMuzzleSoundMp3 != null) {
-                DbItemTypeSoundData sound = weaponType.getMuzzleFlashSoundData();
-                if (sound == null) {
-                    sound = new DbItemTypeSoundData();
-                }
-                sound.setDataMp3(weaponMuzzleSoundMp3.getBytes());
-                weaponType.setMuzzleFlashSoundData(sound);
-            }
-            if (weaponMuzzleSoundOgg != null) {
-                DbItemTypeSoundData sound = weaponType.getMuzzleFlashSoundData();
-                if (sound == null) {
-                    sound = new DbItemTypeSoundData();
-                }
-                sound.setDataOgg(weaponMuzzleSoundOgg.getBytes());
-                weaponType.setMuzzleFlashSoundData(sound);
             }
         } else {
             dbBaseItemType.setDbWeaponType(null);

@@ -129,7 +129,7 @@ public class SessionImpl implements Session, Serializable {
     @Override
     @Deprecated
     public HttpServletRequest getRequest() {
-        // This is not the current request. This request is from the init() method.
+        // This is not the current request. This request is from the start() method.
         return request;
     }
 

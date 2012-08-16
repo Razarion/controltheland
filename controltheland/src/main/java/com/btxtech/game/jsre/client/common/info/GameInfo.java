@@ -42,6 +42,7 @@ public abstract class GameInfo implements Serializable {
     private int registerDialogDelay;
     private Collection<ItemType> itemTypes;
     private Map<CmsUtil.CmsPredefinedPage, String> predefinedUrls;
+    private CommonSoundInfo commonSoundInfo;
 
     public TerrainSettings getTerrainSettings() {
         return terrainSettings;
@@ -126,5 +127,13 @@ public abstract class GameInfo implements Serializable {
 
     public void setPredefinedUrls(Map<CmsUtil.CmsPredefinedPage, String> predefinedUrls) {
         this.predefinedUrls = predefinedUrls;
+    }
+
+    public CommonSoundInfo getCommonSoundInfo() {
+        return commonSoundInfo;
+    }
+
+    public void setCommonSoundInfo(CommonSoundInfo commonSoundInfo) {
+        this.commonSoundInfo = commonSoundInfo;
     }
 }

@@ -13,8 +13,19 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.cockpit.Group;
+import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
+import com.btxtech.game.jsre.client.cockpit.SelectionListener;
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.common.info.CommonSoundInfo;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
+import com.google.gwt.dom.client.AudioElement;
 import com.google.gwt.media.client.Audio;
 
 import java.util.ArrayList;
@@ -28,19 +39,15 @@ import java.util.logging.Logger;
  * Date: 01.01.2010
  * Time: 20:32:53
  */
-public class SoundHandler {
+public class SoundHandler implements SelectionListener {
     private static final SoundHandler INSTANCE = new SoundHandler();
     private static final int PARALLEL_PLAY_COUNT = 5;
-    private static final String EXPLODE_MP3 = "/sounds/explosion.mp3";
-    private static final String EXPLODE_OGG = "/sounds/explosion.ogg";
     private Logger log = Logger.getLogger(SoundHandler.class.getName());
-    private Map<BaseItemType, Collection<Audio>> muzzleSound = new HashMap<BaseItemType, Collection<Audio>>();
-    private Collection<Audio> explodeSounds = new ArrayList<Audio>();
-    private String mimeType;
-    private String explodeSrc;
+    private Map<Integer, Collection<Audio>> sounds = new HashMap<Integer, Collection<Audio>>();
     private boolean logNoCreation = true;
-    private boolean logNoMimeType = true;
     private boolean isMute = false;
+    private boolean isRunning = false;
+    private CommonSoundInfo commonSoundInfo;
 
     public static SoundHandler getInstance() {
         return INSTANCE;
@@ -52,18 +59,128 @@ public class SoundHandler {
     private SoundHandler() {
     }
 
-    public void playMuzzleFlashSound(BaseItemType baseItemType) {
-        Audio audio = getMuzzleAudio(baseItemType);
-        if (audio != null) {
-            audio.play();
+    public static String buildUrl(int soundId, String codec) {
+        StringBuilder url = new StringBuilder();
+        url.append(Constants.SOUND_PATH);
+        url.append("?");
+        url.append(Constants.SOUND_ID);
+        url.append("=");
+        url.append(soundId);
+        url.append("&");
+        url.append(Constants.SOUND_CODEC);
+        url.append("=");
+        url.append(codec);
+        return url.toString();
+    }
+
+    public void mute(boolean mute) {
+        if (mute == isMute) {
+            return;
+        }
+        isMute = mute;
+        for (Collection<Audio> audios : sounds.values()) {
+            for (Audio audio : audios) {
+                setVolume(audio);
+            }
         }
     }
 
-    private Audio getMuzzleAudio(BaseItemType baseItemType) {
-        Collection<Audio> available = muzzleSound.get(baseItemType);
+    public void start(CommonSoundInfo commonSoundInfo) {
+        this.commonSoundInfo = commonSoundInfo;
+        SelectionHandler.getInstance().addSelectionListener(this);
+        isRunning = true;
+        playOnBackgroundMusicSoundId();
+    }
+
+    public void stop() {
+        SelectionHandler.getInstance().removeSelectionListener(this);
+        isRunning = false;
+        for (Collection<Audio> audios : sounds.values()) {
+            for (Audio audio : audios) {
+                audio.pause();
+                audio.setCurrentTime(0);
+            }
+        }
+    }
+
+    public void playMuzzleFlashSound(BaseItemType baseItemType) {
+        if (baseItemType.getWeaponType().getSoundId() != null) {
+            playSound(baseItemType.getWeaponType().getSoundId(), false);
+        }
+    }
+
+    public void playSelectionItemSound(ItemType itemType) {
+        if (itemType.getSelectionSound() != null) {
+            playSound(itemType.getSelectionSound(), false);
+        }
+    }
+
+    public void playCommandSound(SyncBaseItem syncItem) {
+        if (syncItem.getItemType().getCommandSound() != null) {
+            playSound(syncItem.getItemType().getCommandSound(), false);
+        }
+    }
+
+    public void playOnBuiltSound(SyncBaseItem syncBaseItem) {
+        if (syncBaseItem.getItemType().getBuildupSound() != null) {
+            playSound(syncBaseItem.getItemType().getBuildupSound(), false);
+        }
+    }
+
+    public void onItemKilled(SyncBaseItem target, SimpleBase actor) {
+        if (ClientBase.getInstance().isMyOwnProperty(target)) {
+            if (target.hasSyncMovable()) {
+                if (commonSoundInfo.getUnitLostSoundId() != null) {
+                    playSound(commonSoundInfo.getUnitLostSoundId(), false);
+                }
+            } else {
+                if (commonSoundInfo.getBuildingLostSoundId() != null) {
+                    playSound(commonSoundInfo.getBuildingLostSoundId(), false);
+                }
+            }
+        } else if (ClientBase.getInstance().isMyOwnBase(actor)) {
+            if (target.hasSyncMovable()) {
+                if (commonSoundInfo.getUnitKilledSoundId() != null) {
+                    playSound(commonSoundInfo.getUnitKilledSoundId(), false);
+                }
+            } else {
+                if (commonSoundInfo.getBuildingKilledSoundId() != null) {
+                    playSound(commonSoundInfo.getBuildingKilledSoundId(), false);
+                }
+            }
+        }
+    }
+
+    public void playItemExplode() {
+        if (commonSoundInfo.getExplosionSoundId() != null) {
+            playSound(commonSoundInfo.getExplosionSoundId(), false);
+        }
+    }
+
+    private void playOnBackgroundMusicSoundId() {
+        if (commonSoundInfo.getBackgroundMusicSoundId() != null) {
+            playSound(commonSoundInfo.getBackgroundMusicSoundId(), true);
+        }
+    }
+
+    private void playSound(int soundId, boolean loop) {
+        if (!isRunning) {
+            return;
+        }
+        Audio audio = getAudio(soundId);
+        if (audio != null) {
+            audio.play();
+            if (loop) {
+                audio.getMediaElement().setLoop(true);
+            }
+        }
+    }
+
+    private Audio getAudio(int soundId) {
+        Collection<Audio> available = sounds.get(soundId);
         if (available == null) {
             available = new ArrayList<Audio>();
-            muzzleSound.put(baseItemType, available);
+            sounds.put(soundId, available);
         }
         Audio audio = null;
         for (Audio availableAudio : available) {
@@ -79,59 +196,15 @@ public class SoundHandler {
             audio = Audio.createIfSupported();
             if (audio == null) {
                 if (logNoCreation) {
-                    log.severe("Audio not supported for muzzle");
+                    log.severe("Audio not supported for sound id: " + soundId);
                     logNoCreation = false;
                 }
                 return null;
             }
-            String codec = determineMimeType(audio);
-            if (codec == null) {
-                return null;
-            }
             setVolume(audio);
-            audio.setSrc(buildUrl(baseItemType, codec));
+            audio.addSource(buildUrl(soundId, Constants.SOUND_CODEC_TYPE_MP3), AudioElement.TYPE_MP3);
+            audio.addSource(buildUrl(soundId, Constants.SOUND_CODEC_TYPE_OGG), AudioElement.TYPE_OGG);
             available.add(audio);
-            return audio;
-        } else {
-            return null;
-        }
-    }
-
-    private Audio getExplodeAudio() {
-        Audio audio = null;
-        for (Audio availableAudio : explodeSounds) {
-            if (availableAudio.hasEnded()) {
-                audio = availableAudio;
-                break;
-            }
-        }
-        if (audio != null) {
-            return audio;
-        }
-        if (explodeSounds.size() < PARALLEL_PLAY_COUNT) {
-            audio = Audio.createIfSupported();
-            if (audio == null) {
-                if (logNoCreation) {
-                    log.severe("Audio not supported for explode");
-                    logNoCreation = false;
-                }
-                return null;
-            }
-            if (explodeSrc == null) {
-                String codec = determineMimeType(audio);
-                if (codec == null) {
-                    return null;
-                } else if (codec.equals(Constants.CODEC_TYPE_MP3)) {
-                    explodeSrc = EXPLODE_MP3;
-                } else if (codec.equals(Constants.CODEC_TYPE_OGG)) {
-                    explodeSrc = EXPLODE_OGG;
-                } else {
-                    return null;
-                }
-            }
-            setVolume(audio);
-            audio.setSrc(explodeSrc);
-            explodeSounds.add(audio);
             return audio;
         } else {
             return null;
@@ -146,63 +219,23 @@ public class SoundHandler {
         }
     }
 
-    private String determineMimeType(Audio audio) {
-        // TODO will be handled by GWT 2.4
-        if (mimeType != null) {
-            return mimeType;
-        }
-        if (!audio.canPlayType(Constants.CODEC_TYPE_MP3).equals("")) {
-            mimeType = Constants.CODEC_TYPE_MP3;
-            return mimeType;
-        } else if (!audio.canPlayType(Constants.CODEC_TYPE_OGG).equals("")) {
-            mimeType = Constants.CODEC_TYPE_OGG;
-            return mimeType;
-        } else {
-            if (logNoMimeType) {
-                log.severe("Can not play sound mime type OGG or MP3");
-                logNoMimeType = false;
-            }
-            return null;
+    @Override
+    public void onTargetSelectionChanged(SyncItem target) {
+        if (target instanceof SyncResourceItem || target instanceof SyncBoxItem) {
+            playSelectionItemSound(target.getItemType());
         }
     }
 
-    public void playItemExplode() {
-        Audio audio = getExplodeAudio();
-        if (audio != null) {
-            audio.play();
+    @Override
+    public void onSelectionCleared() {
+        //Ignore
+    }
+
+    @Override
+    public void onOwnSelectionChanged(Group selectedGroup) {
+        for (SyncBaseItem syncBaseItem : selectedGroup.getSyncBaseItems()) {
+            playSelectionItemSound(syncBaseItem.getItemType());
         }
     }
 
-    private static String buildUrl(BaseItemType baseItemType, String codec) {
-        StringBuilder url = new StringBuilder();
-        url.append(Constants.MUZZLE_ITEM_IMAGE_URL);
-        url.append("?");
-        url.append(Constants.ITEM_TYPE_ID);
-        url.append("=");
-        url.append(baseItemType.getId());
-        url.append("&");
-        url.append(Constants.TYPE);
-        url.append("=");
-        url.append(Constants.TYPE_SOUND);
-        url.append("&");
-        url.append(Constants.CODEC);
-        url.append("=");
-        url.append(codec);
-        return url.toString();
-    }
-
-    public void mute(boolean mute) {
-        if (mute == isMute) {
-            return;
-        }
-        isMute = mute;
-        for (Collection<Audio> audios : muzzleSound.values()) {
-            for (Audio audio : audios) {
-                setVolume(audio);
-            }
-        }
-        for (Audio audio : explodeSounds) {
-            setVolume(audio);
-        }
-    }
 }

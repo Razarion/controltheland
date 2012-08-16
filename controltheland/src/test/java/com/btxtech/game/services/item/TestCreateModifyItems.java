@@ -9,7 +9,6 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImageData;
-import com.btxtech.game.services.item.itemType.DbItemTypeSoundData;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
 import org.junit.Assert;
@@ -127,32 +126,5 @@ public class TestCreateModifyItems extends AbstractServiceTest {
         Assert.assertEquals(TerrainType.WATER, dbResourceItemType.getTerrainType());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void createMuzzleFlashImageSound() throws Exception {
-        configureRealGame();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID);
-        DbWeaponType dbWeaponType = dbBaseItemType.getDbWeaponType();
-
-        DbItemTypeImageData itemTypeImageData = new DbItemTypeImageData();
-        itemTypeImageData.setContentType("xxx/yyy");
-        itemTypeImageData.setData(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9});
-        dbWeaponType.setMuzzleFlashImageData(itemTypeImageData);
-
-        DbItemTypeSoundData dbItemTypeSoundData = new DbItemTypeSoundData();
-        dbItemTypeSoundData.setDataOgg(new byte[]{9, 8, 7});
-        dbItemTypeSoundData.setDataMp3(new byte[]{11, 12, 13, 14});
-        dbWeaponType.setMuzzleFlashSoundData(dbItemTypeSoundData);
-
-        itemService.getDbItemTypeCrud().updateDbChild(dbBaseItemType);
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
     }
 }

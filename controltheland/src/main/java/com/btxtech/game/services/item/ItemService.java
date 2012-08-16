@@ -29,7 +29,6 @@ import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbItemTypeImageData;
-import com.btxtech.game.services.item.itemType.DbItemTypeSoundData;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 
@@ -81,8 +80,6 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
     ImageHolder getItemTypeSpriteMap(int itemTypeId);
 
     DbItemTypeImageData getMuzzleFlashImage(int itemTypeId);
-
-    DbItemTypeSoundData getMuzzleFlashSound(int itemTypeId);
 
     ItemType getItemType(DbItemType dbItemType);
 

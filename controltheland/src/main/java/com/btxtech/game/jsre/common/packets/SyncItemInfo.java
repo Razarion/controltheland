@@ -15,7 +15,6 @@ package com.btxtech.game.jsre.common.packets;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.CommonJava;
-import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 
@@ -33,6 +32,7 @@ public class SyncItemInfo extends Packet {
     private int itemTypeId;
     private boolean isAlive = true;
     private SimpleBase base;
+    private SimpleBase killedBy;
     private List<Index> pathToDestination;
     private Double angel;
     private Index toBeBuildPosition;
@@ -91,6 +91,14 @@ public class SyncItemInfo extends Packet {
 
     public void setAlive(boolean alive) {
         isAlive = alive;
+    }
+
+    public SimpleBase getKilledBy() {
+        return killedBy;
+    }
+
+    public void setKilledBy(SimpleBase killedBy) {
+        this.killedBy = killedBy;
     }
 
     public SimpleBase getBase() {

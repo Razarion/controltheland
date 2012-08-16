@@ -29,6 +29,9 @@ public abstract class ItemType implements Serializable {
     private TerrainType terrainType;
     private BoundingBox boundingBox;
     private ItemTypeSpriteMap itemTypeSpriteMap;
+    private Integer selectionSound;
+    private Integer buildupSound;
+    private Integer commandSound;
 
     public int getId() {
         return id;
@@ -78,6 +81,30 @@ public abstract class ItemType implements Serializable {
         this.itemTypeSpriteMap = itemTypeSpriteMap;
     }
 
+    public Integer getSelectionSound() {
+        return selectionSound;
+    }
+
+    public void setSelectionSound(Integer selectionSound) {
+        this.selectionSound = selectionSound;
+    }
+
+    public Integer getBuildupSound() {
+        return buildupSound;
+    }
+
+    public void setBuildupSound(Integer buildupSound) {
+        this.buildupSound = buildupSound;
+    }
+
+    public Integer getCommandSound() {
+        return commandSound;
+    }
+
+    public void setCommandSound(Integer commandSound) {
+        this.commandSound = commandSound;
+    }
+
     public void changeTo(ItemType itemType) {
         if (id != itemType.id) {
             throw new IllegalArgumentException("Id must be the same: " + id + ":" + itemType.id);
@@ -87,6 +114,9 @@ public abstract class ItemType implements Serializable {
         description = itemType.description;
         terrainType = itemType.terrainType;
         itemTypeSpriteMap = itemType.itemTypeSpriteMap;
+        selectionSound = itemType.selectionSound;
+        buildupSound = itemType.buildupSound;
+        commandSound = itemType.commandSound;
     }
 
     @Override

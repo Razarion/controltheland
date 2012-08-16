@@ -16,13 +16,13 @@ package com.btxtech.game.jsre.client.control.task;
 import com.btxtech.game.jsre.client.ClientAllianceHandler;
 import com.btxtech.game.jsre.client.ClientChatHandler;
 import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.SoundHandler;
 import com.btxtech.game.jsre.client.cockpit.ChatCockpit;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.btxtech.game.jsre.client.renderer.Renderer;
-import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 
 /**
@@ -46,5 +46,6 @@ public class RunRealGameStartupTask extends AbstractStartupTask {
         ClientChatHandler.getInstance().runRealGame(Connection.getInstance(), ChatCockpit.getInstance(), ClientChatHandler.START_DELAY);
         ClientAllianceHandler.getInstance().checkForPendingAlliances();
         Renderer.getInstance().start();
+        SoundHandler.getInstance().start(Connection.getInstance().getGameInfo().getCommonSoundInfo());
     }
 }

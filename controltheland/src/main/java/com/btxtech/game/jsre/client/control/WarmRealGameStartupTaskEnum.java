@@ -38,7 +38,7 @@ public enum WarmRealGameStartupTaskEnum implements StartupTaskEnum {
         public AbstractStartupTask createTask() {
             return new LoadRealGameInfoStartupTask(this);
         }},
-    INIT_GAME("Delta init real Game") {
+    INIT_GAME("Delta start real Game") {
         @Override
         public AbstractStartupTask createTask() {
             return new RealDeltaStartupTask(this);

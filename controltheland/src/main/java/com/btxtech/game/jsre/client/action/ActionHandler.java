@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.SoundHandler;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.common.Index;
@@ -402,6 +403,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
             log.log(Level.SEVERE, "", t);
         }
         ClientServices.getInstance().getConnectionService().sendSyncInfo(syncItem);
+        SoundHandler.getInstance().playCommandSound(syncItem);
     }
 
     private double calculateFactor(long time) {
