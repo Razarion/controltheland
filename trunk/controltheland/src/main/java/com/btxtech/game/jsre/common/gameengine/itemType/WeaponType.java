@@ -27,6 +27,7 @@ public class WeaponType implements Serializable {
     private int range;
     private int demage;
     private double reloadTime;
+    private Integer soundId;
     private int muzzleFlashWidth;
     private int muzzleFlashLength;
     private boolean stretchMuzzleFlashToTarget;
@@ -40,15 +41,28 @@ public class WeaponType implements Serializable {
     WeaponType() {
     }
 
-    public WeaponType(int range, int demage, double reloadTime, int muzzleFlashWidth, int muzzleFlashLength, boolean stretchMuzzleFlashToTarget, Collection<Integer> allowedItemTypes, Index[][] muzzleFlashPositions) {
+    public WeaponType(int range, int demage, double reloadTime, Integer soundId, int muzzleFlashWidth, int muzzleFlashLength, boolean stretchMuzzleFlashToTarget, Collection<Integer> allowedItemTypes, Index[][] muzzleFlashPositions) {
         this.range = range;
         this.demage = demage;
         this.reloadTime = reloadTime;
+        this.soundId = soundId;
         this.muzzleFlashWidth = muzzleFlashWidth;
         this.muzzleFlashLength = muzzleFlashLength;
         this.stretchMuzzleFlashToTarget = stretchMuzzleFlashToTarget;
         this.allowedItemTypes = allowedItemTypes;
         this.muzzleFlashPositions = muzzleFlashPositions;
+    }
+
+    public void changeTo(WeaponType weaponType) {
+        range = weaponType.range;
+        demage = weaponType.demage;
+        reloadTime = weaponType.reloadTime;
+        soundId = weaponType.soundId;
+        muzzleFlashWidth = weaponType.muzzleFlashWidth;
+        muzzleFlashLength = weaponType.muzzleFlashLength;
+        stretchMuzzleFlashToTarget = weaponType.stretchMuzzleFlashToTarget;
+        allowedItemTypes = weaponType.allowedItemTypes;
+        muzzleFlashPositions = weaponType.muzzleFlashPositions;
     }
 
     public int getRange() {
@@ -63,15 +77,8 @@ public class WeaponType implements Serializable {
         return reloadTime;
     }
 
-    public void changeTo(WeaponType weaponType) {
-        range = weaponType.range;
-        demage = weaponType.demage;
-        reloadTime = weaponType.reloadTime;
-        muzzleFlashWidth = weaponType.muzzleFlashWidth;
-        muzzleFlashLength = weaponType.muzzleFlashLength;
-        stretchMuzzleFlashToTarget = weaponType.stretchMuzzleFlashToTarget;
-        allowedItemTypes = weaponType.allowedItemTypes;
-        muzzleFlashPositions = weaponType.muzzleFlashPositions;
+    public Integer getSoundId() {
+        return soundId;
     }
 
     public int getMuzzleFlashWidth() {

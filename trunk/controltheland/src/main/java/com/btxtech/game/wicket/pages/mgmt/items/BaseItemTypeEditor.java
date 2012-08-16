@@ -77,6 +77,12 @@ public class BaseItemTypeEditor extends MgmtWebPage {
                 setResponsePage(new BaseItemTypeAbilityEditor(form.getModelObject()));
             }
         });
+        form.add(new Button("editSounds") {
+            @Override
+            public void onSubmit() {
+                setResponsePage(new ItemTypeSoundEditor(form.getModelObject()));
+            }
+        });
         form.add(new Button("save") {
             @Override
             public void onSubmit() {

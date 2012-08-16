@@ -145,5 +145,7 @@ public class MgmtPage extends MgmtWebPage {
         toolPages.add(new LinkAndName("CMS", Cms.class));
         toolPages.add(new LinkAndName("Inventory", InventoryEditor.class));
         toolPages.add(new LinkAndName("Client Performance Monitor", ClientPerfmonTable.class));
+        toolPages.add(new LinkAndName("Sound Library", SoundLibrary.class));
+        toolPages.add(new LinkAndName("Common Sounds", CommonSounds.class));
     }
 }

@@ -32,14 +32,15 @@ public class Constants {
     public static final String MUZZLE_ITEM_IMAGE_URL = "/spring/muzzle";
     public static final String TYPE = "type";
     public static final String TYPE_IMAGE = "img";
-    public static final String TYPE_SOUND = "snd";
     public static final String ITEM_TYPE_ID = "id";
     public static final String ITEM_TYPE_SPRITE_MAP_ID = "idsm";
-    public static final String CODEC = "cdc";
 
-    // Codecs
-    public static final String CODEC_TYPE_MP3 = "audio/mpeg";
-    public static final String CODEC_TYPE_OGG = "audio/ogg";
+    // Sound
+    public static final String SOUND_PATH = "/spring/sound";
+    public static final String SOUND_ID = "id";
+    public static final String SOUND_CODEC = "cdc";
+    public static final String SOUND_CODEC_TYPE_MP3 = "audio/mpeg";
+    public static final String SOUND_CODEC_TYPE_OGG = "audio/ogg";
 
     // Tutorial
     public static final String TUTORIAL_RESOURCE_URL = "/spring/tutorial";

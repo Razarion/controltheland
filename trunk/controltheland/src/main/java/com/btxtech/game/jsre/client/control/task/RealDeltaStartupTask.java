@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client.control.task;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientEnergyService;
 import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.SoundHandler;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
@@ -44,6 +45,7 @@ public class RealDeltaStartupTask extends GameEngineStartupTask {
         ClientTerritoryService.getInstance().setTerritories(realGameInfo.getTerritories());
         ClientBase.getInstance().setHouseSpace(realGameInfo.getHouseSpace());
         ClientLevelHandler.getInstance().setLevel(realGameInfo.getLevelScope());
+        SoundHandler.getInstance().start(Connection.getInstance().getGameInfo().getCommonSoundInfo());
     }
 
 }

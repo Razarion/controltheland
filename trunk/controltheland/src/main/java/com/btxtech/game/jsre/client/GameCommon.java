@@ -32,6 +32,7 @@ public class GameCommon {
         ActionHandler.getInstance().clear();
         SelectionHandler.getInstance().clearSelection();
         ClientBase.getInstance().cleanup();
+        SoundHandler.getInstance().stop();
     }
 
     

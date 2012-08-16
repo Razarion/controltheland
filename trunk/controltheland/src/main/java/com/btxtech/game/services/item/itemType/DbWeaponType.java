@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.common.ReadonlyCollectionContentProvider;
 import com.btxtech.game.services.common.Utils;
+import com.btxtech.game.services.sound.DbSound;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -28,6 +29,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.io.Serializable;
@@ -52,8 +54,6 @@ public class DbWeaponType implements Serializable {
     private double reloadTime;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbItemTypeImageData muzzleFlashImageData;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private DbItemTypeSoundData muzzleFlashSoundData;
     @Column(nullable = false, columnDefinition = "INT default '0'")
     private int muzzleFlashWidth;
     @Column(nullable = false, columnDefinition = "INT default '0'")
@@ -68,6 +68,8 @@ public class DbWeaponType implements Serializable {
     private Set<DbBaseItemType> allowedItemTypes;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "weaponType", orphanRemoval = true)
     private Collection<DbWeaponTypeMuzzle> muzzles;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbSound sound;
 
     public int getRange() {
         return range;
@@ -129,12 +131,12 @@ public class DbWeaponType implements Serializable {
         this.muzzleFlashImageData = muzzleFlashImageData;
     }
 
-    public DbItemTypeSoundData getMuzzleFlashSoundData() {
-        return muzzleFlashSoundData;
+    public DbSound getSound() {
+        return sound;
     }
 
-    public void setMuzzleFlashSoundData(DbItemTypeSoundData muzzleFlashSoundData) {
-        this.muzzleFlashSoundData = muzzleFlashSoundData;
+    public void setSound(DbSound sound) {
+        this.sound = sound;
     }
 
     public WeaponType createWeaponType(int imageCount) {
@@ -162,6 +164,7 @@ public class DbWeaponType implements Serializable {
         return new WeaponType(range,
                 damage,
                 reloadTime,
+                sound != null ? sound.getId() : null,
                 muzzleFlashWidth,
                 muzzleFlashLength,
                 stretchMuzzleFlashToTarget,

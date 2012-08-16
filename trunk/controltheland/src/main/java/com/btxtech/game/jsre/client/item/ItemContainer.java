@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.SoundHandler;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.bot.ClientBotService;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
@@ -137,7 +138,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
             }
         } else {
             if (syncItem != null) {
-                definitelyKillItem(syncItem, true, syncItemInfo.isExplode(), null);
+                definitelyKillItem(syncItem, true, syncItemInfo.isExplode(), syncItemInfo.getKilledBy());
             }
         }
     }
@@ -246,6 +247,9 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
             throw new IllegalStateException("No SyncItem for: " + killedItem);
         }
         if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
+            if (killedItem instanceof SyncBaseItem) {
+                ((SyncBaseItem)killedItem).setKilledBy(actor);
+            }
             definitelyKillItem(killedItem, force, explode, actor);
             if (killedItem instanceof SyncBaseItem) {
                 SyncBaseItem syncBaseItem = (SyncBaseItem) killedItem;
@@ -300,6 +304,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
             if (ClientBase.getInstance().isBot(target.getBase())) {
                 ClientBotService.getInstance().onBotItemKilled(target, actor);
             }
+            SoundHandler.getInstance().onItemKilled(target, actor);
         }
         if (syncItem instanceof SyncTickItem) {
             ActionHandler.getInstance().removeActiveItem((SyncTickItem) syncItem);
@@ -404,11 +409,15 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
             case BUILD:
                 try {
                     if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).isReady()) {
-                        SimulationConditionServiceImpl.getInstance().onSyncItemBuilt(((SyncBaseItem) syncItem));
-                        ClientBase.getInstance().recalculate4FakedHouseSpace((SyncBaseItem) syncItem);
+                        SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
+                        SimulationConditionServiceImpl.getInstance().onSyncItemBuilt(syncBaseItem);
+                        ClientBase.getInstance().recalculate4FakedHouseSpace(syncBaseItem);
                         if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
-                            ActionHandler.getInstance().addGuardingBaseItem((SyncBaseItem) syncItem);
+                            ActionHandler.getInstance().addGuardingBaseItem(syncBaseItem);
                             ItemContainer.getInstance().checkSpecialChanged(syncItem);
+                        }
+                        if(ClientBase.getInstance().isMyOwnProperty(syncBaseItem)) {
+                            SoundHandler.getInstance().playOnBuiltSound(syncBaseItem);
                         }
                     }
                 } catch (Throwable t) {

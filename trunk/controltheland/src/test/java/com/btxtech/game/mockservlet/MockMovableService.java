@@ -2,19 +2,17 @@ package com.btxtech.game.mockservlet;
 
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.AbstractGwtTest;
-import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
-import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
-import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
+import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.NoConnectionException;
-import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -34,6 +32,8 @@ import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchExc
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
+import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
@@ -155,7 +155,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
         Collection<Integer> allowedItemTypes = new ArrayList<Integer>();
         allowedItemTypes.add(AbstractGwtTest.ITEM_ATTACKER);
         allowedItemTypes.add(AbstractGwtTest.ITEM_DEFENSE_TOWER);
-        baseItemType.setWeaponType(new WeaponType(100, 1, 0.1, 0, 0, false, allowedItemTypes, null));
+        baseItemType.setWeaponType(new WeaponType(100, 1, 0.1, 0, 0, 0, false, allowedItemTypes, null));
         return baseItemType;
     }
 
@@ -169,7 +169,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
         allowedItemTypes.add(AbstractGwtTest.ITEM_ATTACKER);
         allowedItemTypes.add(AbstractGwtTest.ITEM_DEFENSE_TOWER);
         allowedItemTypes.add(AbstractGwtTest.ITEM_MOVABLE);
-        baseItemType.setWeaponType(new WeaponType(100, 1, 0.1, 0, 0, false, allowedItemTypes, null));
+        baseItemType.setWeaponType(new WeaponType(100, 1, 0.1, 0, 0, 0, false, allowedItemTypes, null));
         return baseItemType;
     }
 
@@ -224,7 +224,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
 //        if (type == TutorialConfig.TYPE.TUTORIAL) {
 //            return new GameFlow(GameFlow.Type.SHOW_LEVEL_TASK_DONE_PAGE, null);
 //        } else {
-            return null;
+        return null;
 //        }
     }
 

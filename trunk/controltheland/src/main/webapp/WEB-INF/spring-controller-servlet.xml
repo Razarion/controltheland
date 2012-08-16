@@ -40,8 +40,8 @@
                 <prop key="item">itemImageController</prop>
                 <prop key="muzzle">muzzleFlashController</prop>
                 <prop key="statJS">statisticsController</prop>
-                <prop key="tutorial">tutorialResourceHintController</prop>
                 <prop key="lsc">loadScriptCommunicationController</prop>
+                <prop key="sound">soundController</prop>
             </props>
         </property>
     </bean>

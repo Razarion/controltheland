@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.itemtypeeditor.ItemTypeImageInfo;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
+import com.btxtech.game.services.sound.DbSound;
 import com.btxtech.game.services.user.UserService;
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Cascade;
@@ -38,6 +39,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.io.Serializable;
@@ -86,6 +88,12 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
             joinColumns = @JoinColumn(name = "itemTypeId"))
     @Column(name = "angel")
     private List<Double> angels;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbSound selectionSound;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbSound buildupSound;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbSound commandSound;
 
     @Transient
     private CrudChildServiceHelper<DbItemTypeImage> itemTypeImageCrud;
@@ -254,6 +262,30 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
         this.imageHeight = imageHeight;
     }
 
+    public DbSound getSelectionSound() {
+        return selectionSound;
+    }
+
+    public void setSelectionSound(DbSound selectionSound) {
+        this.selectionSound = selectionSound;
+    }
+
+    public DbSound getBuildupSound() {
+        return buildupSound;
+    }
+
+    public void setBuildupSound(DbSound buildupSound) {
+        this.buildupSound = buildupSound;
+    }
+
+    public DbSound getCommandSound() {
+        return commandSound;
+    }
+
+    public void setCommandSound(DbSound commandSound) {
+        this.commandSound = commandSound;
+    }
+
     public BoundingBox createBoundingBox() {
         double[] angelsCopy = ArrayUtils.toPrimitive(angels.toArray(new Double[angels.size()]));
         Arrays.sort(angelsCopy);
@@ -312,13 +344,13 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
                     throw new IllegalArgumentException("Unknown SyncObjectState: " + itemTypeImage.getType() + " itemType: " + this);
             }
         }
-        if(buildupImages != buildupSteps * buildupAnimationFrames) {
+        if (buildupImages != buildupSteps * buildupAnimationFrames) {
             throw new IllegalStateException("Buildup image count is wrong. Configured: " + (buildupSteps * buildupAnimationFrames) + " Actual: " + buildupImages + " itemType: " + this);
         }
-        if(runtimeImages != angels.size() * runtimeAnimationFrames) {
+        if (runtimeImages != angels.size() * runtimeAnimationFrames) {
             throw new IllegalStateException("Runtime image count is wrong. Configured: " + (angels.size() * runtimeAnimationFrames) + " Actual: " + runtimeImages + " itemType: " + this);
         }
-        if(demolitionImages != angels.size() * demolitionSteps * demolitionAnimationFrames) {
+        if (demolitionImages != angels.size() * demolitionSteps * demolitionAnimationFrames) {
             throw new IllegalStateException("Demolition image count is wrong. Configured: " + (angels.size() * demolitionSteps * demolitionAnimationFrames) + " Actual: " + demolitionImages + " itemType: " + this);
         }
     }
@@ -413,6 +445,9 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
         itemType.setBoundingBox(boundingBox);
         itemType.setItemTypeSpriteMap(createItemTypeSpriteMap(boundingBox));
         itemType.setTerrainType(terrainType);
+        itemType.setSelectionSound(selectionSound != null ? selectionSound.getId() : null);
+        itemType.setBuildupSound(buildupSound != null ? buildupSound.getId() : null);
+        itemType.setCommandSound(commandSound != null ? commandSound.getId() : null);
     }
 
     @Override

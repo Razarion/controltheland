@@ -20,7 +20,7 @@ public class TestWeaponType {
             muzzleFlashPositions[0][i] = new Index(0, i);
         }
 
-        WeaponType weaponType = new WeaponType(0, 0, 0, 0, 0, false, null, muzzleFlashPositions);
+        WeaponType weaponType = new WeaponType(0, 0, 0, 0, 0, 0, false, null, muzzleFlashPositions);
 
         Assert.assertEquals(1, weaponType.getMuzzleFlashCount());
         Assert.assertEquals(new Index(0, 0), weaponType.getMuzzleFlashPosition(0, 0));
