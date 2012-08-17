@@ -1,15 +1,16 @@
 package com.btxtech.game.services.base;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.base.impl.BaseServiceImpl;
+import com.btxtech.game.services.user.AllianceService;
 import com.btxtech.game.services.user.UserService;
 import junit.framework.Assert;
+import org.easymock.EasyMock;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -24,8 +25,6 @@ public class TestBaseService extends AbstractServiceTest {
     private UserService userService;
     @Autowired
     private BaseService baseService;
-    @Autowired
-    private ItemService itemService;
 
     @Test
     @DirtiesContext
@@ -104,6 +103,69 @@ public class TestBaseService extends AbstractServiceTest {
         Assert.assertEquals(2, baseService.getBaseItems().readDbChildren().size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-
     }
+
+    @Test
+    @DirtiesContext
+    public void surrenderBase() throws Exception {
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        SimpleBase simpleBase = getMyBase(); // Setup connection
+        sendBuildCommand(getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID), new Index(100, 100), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        Assert.assertEquals(2, baseService.getBaseItems().readDbChildren().size());
+        Assert.assertFalse(baseService.getBase(simpleBase).isAbandoned());
+        baseService.surrenderBase(baseService.getBase(simpleBase));
+        Assert.assertTrue(baseService.getBase(simpleBase).isAbandoned());
+        Assert.assertNull(userService.getUserState().getBase());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void surrenderBaseAllianceUnregistered() throws Exception {
+        configureRealGame();
+
+        AllianceService allianceServiceMock = EasyMock.createStrictMock(AllianceService.class);
+        setPrivateField(BaseServiceImpl.class, baseService,"allianceService",allianceServiceMock);
+        EasyMock.replay(allianceServiceMock);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        SimpleBase simpleBase = getMyBase(); // Setup connection
+        waitForActionServiceDone();
+        baseService.surrenderBase(baseService.getBase(simpleBase));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        EasyMock.verify(allianceServiceMock);
+    }
+
+    @Test
+    @DirtiesContext
+    public void surrenderBaseAllianceRegistered() throws Exception {
+        configureRealGame();
+
+        AllianceService allianceServiceMock = EasyMock.createStrictMock(AllianceService.class);
+        setPrivateField(BaseServiceImpl.class, baseService,"allianceService",allianceServiceMock);
+        allianceServiceMock.onBaseCreatedOrDeleted("U1");
+        allianceServiceMock.onBaseCreatedOrDeleted("U1");
+        EasyMock.replay(allianceServiceMock);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "test", "test", "test");
+        userService.login("U1", "test");
+        SimpleBase simpleBase = getMyBase(); // Setup connection
+        waitForActionServiceDone();
+        baseService.surrenderBase(baseService.getBase(simpleBase));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        EasyMock.verify(allianceServiceMock);
+    }
+
 }

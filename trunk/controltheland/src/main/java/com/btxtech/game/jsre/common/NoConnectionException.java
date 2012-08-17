@@ -25,7 +25,8 @@ public class NoConnectionException extends Exception {
         NON_EXISTENT,
         BASE_LOST,
         ANOTHER_CONNECTION_EXISTS,
-        TIMED_OUT
+        TIMED_OUT,
+        BASE_SURRENDERED
     }
 
     /**

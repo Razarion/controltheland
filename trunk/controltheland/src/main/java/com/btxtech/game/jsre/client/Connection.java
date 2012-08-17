@@ -453,6 +453,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
                     movableServiceAsync = null;
                     return true;
                 }
+                case BASE_SURRENDERED:
                 case BASE_LOST: {
                     StartupScreen.getInstance().fadeOutAndStart(GameStartupSeq.WARM_REAL);
                     return true;
@@ -773,6 +774,12 @@ public class Connection implements StartupProgressListener, ConnectionI {
     public void sendPerfmonData(Map<PerfmonEnum, Integer> workTimes, int totalTime) {
         if (movableServiceAsync != null) {
             movableServiceAsync.sendPerfmonData(workTimes, totalTime, new VoidAsyncCallback("sendPerfmonData"));
+        }
+    }
+
+    public void surrenderBase() {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.surrenderBase(new VoidAsyncCallback("surrenderBase"));
         }
     }
 

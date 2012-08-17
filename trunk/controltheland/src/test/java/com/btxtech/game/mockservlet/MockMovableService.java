@@ -317,4 +317,9 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     public void sendPerfmonData(Map<PerfmonEnum, Integer> workTimes, int totalTime) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    @Override
+    public void surrenderBase() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

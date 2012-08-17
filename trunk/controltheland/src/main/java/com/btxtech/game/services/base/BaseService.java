@@ -88,4 +88,6 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
     void setAlliances(SimpleBase simpleBase, Collection<SimpleBase> alliances);
 
     void sendAlliancesChanged(SimpleBase simpleBase);
+
+    void surrenderBase(Base base);
 }
