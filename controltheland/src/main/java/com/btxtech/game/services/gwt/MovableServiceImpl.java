@@ -213,6 +213,15 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         return null;
     }
 
+    @Override
+    public void surrenderBase() {
+        try {
+            baseService.surrenderBase(baseService.getBase());
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
     public static void setCommonInfo(GameInfo gameInfo, UserService userService, ItemService itemService, MgmtService mgmtService, CmsUiService cmsUiService, SoundService soundService) {
         gameInfo.setRegistered(userService.isRegistered());
         gameInfo.setItemTypes(itemService.getItemTypes());

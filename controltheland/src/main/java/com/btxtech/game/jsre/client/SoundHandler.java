@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -93,13 +94,17 @@ public class SoundHandler implements SelectionListener {
     }
 
     public void stop() {
-        SelectionHandler.getInstance().removeSelectionListener(this);
-        isRunning = false;
-        for (Collection<Audio> audios : sounds.values()) {
-            for (Audio audio : audios) {
-                audio.pause();
-                audio.setCurrentTime(0);
+        try {
+            SelectionHandler.getInstance().removeSelectionListener(this);
+            isRunning = false;
+            for (Collection<Audio> audios : sounds.values()) {
+                for (Audio audio : audios) {
+                    audio.pause();
+                    audio.setCurrentTime(0);
+                }
             }
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "SoundHandler.stop()", e);
         }
     }
 

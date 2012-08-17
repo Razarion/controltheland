@@ -56,6 +56,8 @@ public interface MovableService extends RemoteService {
 
     SimulationInfo getSimulationGameInfo(int levelTaskId) throws InvalidLevelState;
 
+    void surrenderBase();
+
     void log(String message, Date date);
 
     void sendCommands(List<BaseCommand> baseCommands);

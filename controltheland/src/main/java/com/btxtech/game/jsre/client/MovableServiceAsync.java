@@ -51,6 +51,8 @@ public interface MovableServiceAsync {
 
     void getSimulationGameInfo(int levelTaskId, AsyncCallback<SimulationInfo> asyncCallback);
 
+    void surrenderBase(AsyncCallback<Void> async);
+
     void log(String message, Date date, AsyncCallback async);
 
     void sendCommands(List<BaseCommand> baseCommands, AsyncCallback async);

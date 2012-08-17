@@ -217,4 +217,24 @@ public class TestConnection extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void surrender() throws Exception {
+        configureRealGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getMovableService().getRealGameInfo(START_UID_1);
+        getMovableService().surrenderBase();
+        try {
+            getMovableService().getSyncInfo(START_UID_1);
+            Assert.fail("NoConnectionException expected");
+        } catch (NoConnectionException e) {
+            Assert.assertEquals(NoConnectionException.Type.BASE_SURRENDERED, e.getType());
+        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 }

@@ -22,7 +22,7 @@ import java.util.HashMap;
  */
 public class UnfrequentDialog extends MessageDialog {
     public enum Type {
-        NO_MONEY("No money", "You do not have enough money. You have to Collect more money.", 60 * 1000),
+        NO_MONEY("No money", "", 60 * 1000),
         ITEM_LIMIT("Limitation", "You have to many items. Level up to get a bigger limit.", 60 * 1000),
         SPACE_LIMIT("House space", "Space Limit Exceeded!. Build more houses to get more space.", 60 * 1000);
         private String title;
@@ -39,14 +39,18 @@ public class UnfrequentDialog extends MessageDialog {
     private static HashMap<Type, UnfrequentDialog> dialogHashMap = new HashMap<Type, UnfrequentDialog>();
     private long lastShowTimeStamp = 0;  // Can not be converted to local variable
 
-    private UnfrequentDialog(Type type) {
+    protected UnfrequentDialog(Type type) {
         super(type.title, type.message);
     }
 
     public static void open(Type type) {
         UnfrequentDialog unfrequentDialog = dialogHashMap.get(type);
         if (unfrequentDialog == null) {
-            unfrequentDialog = new UnfrequentDialog(type);
+            if (type == Type.NO_MONEY) {
+                unfrequentDialog = new UnfrequentMoneyDialog();
+            } else {
+                unfrequentDialog = new UnfrequentDialog(type);
+            }
             DialogManager.showDialog(unfrequentDialog, DialogManager.Type.UNIMPORTANT);
             dialogHashMap.put(type, unfrequentDialog);
             unfrequentDialog.lastShowTimeStamp = System.currentTimeMillis();

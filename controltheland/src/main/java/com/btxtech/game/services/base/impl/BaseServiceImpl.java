@@ -185,6 +185,19 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
+    public void surrenderBase(Base base) {
+        historyService.addBaseSurrenderedEntry(base.getSimpleBase());
+        userTrackingService.onBaseSurrender(userService.getUser(), base);
+        UserState userState = getUserState(base.getSimpleBase());
+        userState.setSendResurrectionMessage();
+        connectionService.closeConnection(base.getSimpleBase(), NoConnectionException.Type.BASE_SURRENDERED);
+        makeBaseAbandoned(base);
+        if (userState.isRegistered()) {
+            allianceService.onBaseCreatedOrDeleted(userState.getUser());
+        }
+    }
+
+    @Override
     public void setBot(SimpleBase simpleBase, boolean bot) {
         super.setBot(simpleBase, bot);
     }
