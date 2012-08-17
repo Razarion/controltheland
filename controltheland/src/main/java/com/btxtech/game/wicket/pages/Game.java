@@ -55,7 +55,8 @@ public class Game extends WebPage {
 
         GameStartupSeq gameStartupSeq;
 
-        if (parameters.containsKey(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID)) {
+        if (parameters.containsKey(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID) && !userGuidanceService.isStartRealGame()) {
+            // userGuidanceService.isStartRealGame() prevent error if user finished first mission and press reload in real game (url: .../taskId/1)
             levelTaskId = parameters.getInt(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID);
             gameStartupSeq = GameStartupSeq.COLD_SIMULATED;
         } else {
