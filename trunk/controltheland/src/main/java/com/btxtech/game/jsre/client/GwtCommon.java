@@ -27,6 +27,7 @@ import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.StatusCodeException;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 import java.util.Date;
@@ -218,6 +219,15 @@ public class GwtCommon {
         style.setProperty("MsUserSelect", "none");
         style.setProperty("OUserSelect", "none");
         style.setProperty("UserSelect", "none");
+    }
+
+    public static void preventDragImage(Image image) {
+        image.addMouseDownHandler(new MouseDownHandler() {
+            @Override
+            public void onMouseDown(MouseDownEvent event) {
+                event.preventDefault();
+            }
+        });
     }
 
     /**

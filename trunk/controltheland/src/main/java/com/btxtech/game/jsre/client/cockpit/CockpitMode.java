@@ -81,7 +81,6 @@ public class CockpitMode implements SelectionListener {
 
     @Override
     public void onTargetSelectionChanged(SyncItem selection) {
-        ItemCockpit.getInstance().deActivate();
     }
 
     @Override
@@ -92,16 +91,6 @@ public class CockpitMode implements SelectionListener {
     @Override
     public void onOwnSelectionChanged(Group selectedGroup) {
         setMode(null);
-
-        if (selectedGroup.getCount() == 1) {
-            if (ItemCockpit.hasItemCockpit(selectedGroup.getFirst())) {
-                ItemCockpit.getInstance().activate(selectedGroup.getFirst());
-            } else {
-                ItemCockpit.getInstance().deActivate();
-            }
-        } else {
-            ItemCockpit.getInstance().deActivate();
-        }
 
         if (selectedGroup.canMove()) {
             isMovePossible = true;
@@ -173,7 +162,6 @@ public class CockpitMode implements SelectionListener {
     }
 
     public void setToBeBuildPlacer(ToBeBuildPlacer toBeBuildPlacer) {
-        SelectionHandler.getInstance().clearSelection();
         this.toBeBuildPlacer = toBeBuildPlacer;
         groupSelectionFrame = null;
         inventoryItemPlacer = null;

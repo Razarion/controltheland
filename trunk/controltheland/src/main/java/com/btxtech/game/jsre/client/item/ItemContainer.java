@@ -28,7 +28,6 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.effects.ExplosionHandler;
 import com.btxtech.game.jsre.client.effects.MuzzleFlashHandler;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
-import com.btxtech.game.jsre.client.utg.SpeechBubbleHandler;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -297,7 +296,6 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
         checkSpecialRemoved(syncItem);
         seeminglyDeadItems.remove(syncItem.getId());
         SelectionHandler.getInstance().itemKilled(syncItem);
-        SpeechBubbleHandler.getInstance().itemKilled(syncItem);
 
         if (actor != null && syncItem instanceof SyncBaseItem) {
             SyncBaseItem target = (SyncBaseItem) syncItem;

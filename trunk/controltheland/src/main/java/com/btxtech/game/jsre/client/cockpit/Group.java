@@ -16,13 +16,17 @@ package com.btxtech.game.jsre.client.cockpit;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 /**
  * User: beat
@@ -177,18 +181,18 @@ public class Group {
         return syncBaseItems.size();
     }
 
-    /*   public Map<ItemType, Collection<SyncBaseItem>> getGroupedItems() {
-     HashMap<ItemType, Collection<ClientSyncItem>> map = new HashMap<ItemType, Collection<ClientSyncItem>>();
-     for (ClientSyncItem clientSyncItem : syncBaseItems) {
-         Collection<ClientSyncItem> collection = map.get(clientSyncItem.getSyncItem().getItemType());
-         if (collection == null) {
-             collection = new ArrayList<ClientSyncItem>();
-             map.put(clientSyncItem.getSyncItem().getItemType(), collection);
-         }
-         collection.add(clientSyncItem);
-     }
-     return map;
- }   */
+    public Map<BaseItemType, Collection<SyncBaseItem>> getGroupedItems() {
+        HashMap<BaseItemType, Collection<SyncBaseItem>> map = new HashMap<BaseItemType, Collection<SyncBaseItem>>();
+        for (SyncBaseItem syncBaseItem : syncBaseItems) {
+            Collection<SyncBaseItem> collection = map.get(syncBaseItem.getBaseItemType());
+            if (collection == null) {
+                collection = new ArrayList<SyncBaseItem>();
+                map.put(syncBaseItem.getBaseItemType(), collection);
+            }
+            collection.add(syncBaseItem);
+        }
+        return map;
+    }
 
     public Collection<SurfaceType> getAllowedSurfaceTypes() {
         HashSet<SurfaceType> result = new HashSet<SurfaceType>();

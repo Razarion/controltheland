@@ -13,7 +13,6 @@ import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.simulation.GwtTestRunnable;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.client.utg.SpeechBubbleHandler;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.google.gwt.core.client.Scheduler;
@@ -63,7 +62,6 @@ public abstract class AbstractGwtTest extends GWTTestCase implements StartupProg
         logConfiguration.onModuleLoad();
         afterStartupRunnable = runnable;
         TerrainView.uglySuppressRadar = true;
-        SpeechBubbleHandler.uglySuppress = true;
         init(GameStartupSeq.COLD_SIMULATED, 1);
         ClientServices.getInstance().getClientRunner().addStartupProgressListener(this);
         Game game = new Game();

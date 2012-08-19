@@ -3,10 +3,14 @@ package com.btxtech.game.jsre.client.cockpit.item;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.cockpit.CockpitMode;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
@@ -66,6 +70,15 @@ public class BuildupItem extends VerticalPanel {
         button = new PushButton(image);
         button.setPixelSize(WIDTH, HEIGHT);
         button.addMouseDownHandler(mouseDownHandler);
+        button.addMouseMoveHandler(new MouseMoveHandler() {
+            @Override
+            public void onMouseMove(MouseMoveEvent event) {
+                if (event.getNativeButton() > 0 && CockpitMode.getInstance().hasToBeBuildPlacer()) {
+                    // If mouse down events are going to this button
+                    TerrainView.getInstance().getTerrainMouseHandler().onMouseMove(event);
+                }
+            }
+        });
         add(button);
         add(new Label("$" + itemType.getPrice()));
         accomplishEnableState();

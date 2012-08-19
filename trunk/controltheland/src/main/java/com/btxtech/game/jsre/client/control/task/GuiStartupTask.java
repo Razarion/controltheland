@@ -38,7 +38,7 @@ public class GuiStartupTask extends AbstractStartupTask {
     protected void privateStart(DeferredStartup deferredStartup) {
         GwtCommon.disableBrowserContextMenuJSNI();
         SideCockpit.getInstance().addToParent(MapWindow.getAbsolutePanel());
-        ItemCockpit.getInstance().addToParent(MapWindow.getAbsolutePanel());
+        ItemCockpit.getInstance().addToParentAndRegister(MapWindow.getAbsolutePanel());
         RootPanel.get().add(MapWindow.getAbsolutePanel(), 0, 0);
         ChatCockpit.getInstance().addToParent(MapWindow.getAbsolutePanel());
 

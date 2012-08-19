@@ -413,7 +413,6 @@ public class SideCockpit {
         widget.addDomHandler(new MouseDownHandler() {
             @Override
             public void onMouseDown(MouseDownEvent event) {
-                ItemCockpit.getInstance().deActivate();
                 GwtCommon.preventDefault(event);
                 ChatCockpit.getInstance().blurFocus();
             }
