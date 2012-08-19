@@ -47,30 +47,21 @@ public class BuildupItemPanel extends AbsolutePanel {
     private static final String TOOL_TIP_SCROLL_RIGHT = "Scroll right";
 
     private static final int WIDTH = 355;
-    private static final int HEIGHT = 120;
+    private static final int HEIGHT = 90;
     private static final int SCROLL_STEP = 50;
-    private static final int DESCRIPTION_LEFT = 0;
-    private static final int DESCRIPTION_TOP = 0;
     private static final int ARROW_L_LEFT = 0;
-    private static final int ARROW_L_TOP = 20;
+    private static final int ARROW_L_TOP = 0;
     private static final int ARROW_R_LEFT = 300;
-    private static final int ARROW_R_TOP = 20;
+    private static final int ARROW_R_TOP = 0;
     private static final int SCROLL_LEFT = 50;
-    private static final int SCROLL_TOP = 30;
+    private static final int SCROLL_TOP = 10;
     private static final int SCROLL_LENGTH = 250;
     private static final int SCROLL_HEIGHT = 70;
     private ScrollPanel scrollPanel;
     private Map<Integer, BuildupItem> buildupItem = new HashMap<Integer, BuildupItem>();
-    private BuildListener buildListener;
 
-    public interface BuildListener {
-        void onBuild();
-    }
-
-    public BuildupItemPanel(BuildListener buildListener) {
-        this.buildListener = buildListener;
+    public BuildupItemPanel() {
         setPixelSize(WIDTH, HEIGHT);
-        add(new Label("Build units or structures"), DESCRIPTION_LEFT, DESCRIPTION_TOP);
         ExtendedCustomButton leftArrow = new ExtendedCustomButton("leftArrowButton", false, TOOL_TIP_SCROLL_LEFT, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -97,14 +88,10 @@ public class BuildupItemPanel extends AbsolutePanel {
                 Group group = new Group();
                 group.addItem(syncBaseItem);
                 setupBuildupItemsCV(group);
-                setVisible(true);
             } else if (syncBaseItem.hasSyncFactory()) {
                 Group group = new Group();
                 group.addItem(syncBaseItem);
                 setupBuildupItemsFactory(group);
-                setVisible(true);
-            } else {
-                setVisible(false);
             }
         } catch (NoSuchItemTypeException e) {
             GwtCommon.handleException(e);
@@ -115,12 +102,8 @@ public class BuildupItemPanel extends AbsolutePanel {
         try {
             if (selectedGroup.onlyConstructionVehicle()) {
                 setupBuildupItemsCV(selectedGroup);
-                setVisible(true);
             } else if (selectedGroup.onlyFactories()) {
                 setupBuildupItemsFactory(selectedGroup);
-                setVisible(true);
-            } else {
-                setVisible(false);
             }
         } catch (NoSuchItemTypeException e) {
             GwtCommon.handleException(e);
@@ -136,9 +119,6 @@ public class BuildupItemPanel extends AbsolutePanel {
             itemsToBuild.add(setupBuildupBlock(itemType, new MouseDownHandler() {
                 @Override
                 public void onMouseDown(MouseDownEvent event) {
-                    if (buildListener != null) {
-                        buildListener.onBuild();
-                    }
                     CockpitMode.getInstance().setToBeBuildPlacer(new ToBeBuildPlacer(itemType, constructionVehicles));
                 }
             }));
@@ -156,9 +136,6 @@ public class BuildupItemPanel extends AbsolutePanel {
             itemsToBuild.add(setupBuildupBlock(itemType, new MouseDownHandler() {
                 @Override
                 public void onMouseDown(MouseDownEvent event) {
-                    if (buildListener != null) {
-                        buildListener.onBuild();
-                    }
                     try {
                         ActionHandler.getInstance().fabricate(factories.getItems(), itemType);
                     } catch (NoSuchItemTypeException e) {

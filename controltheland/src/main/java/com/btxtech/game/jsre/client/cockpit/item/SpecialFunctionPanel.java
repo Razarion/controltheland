@@ -37,32 +37,20 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  */
 public class SpecialFunctionPanel extends VerticalPanel {
 
-    public SpecialFunctionPanel() {
+    public SpecialFunctionPanel(SyncBaseItem syncBaseItem) {
         setHeight("100%");
-    }
-
-    public void display(SyncItem syncItem) {
-        clear();
-        if (!(syncItem instanceof SyncBaseItem)) {
-            return;
-        }
-        SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
         if (syncBaseItem.isUpgradeable()) {
             addUpgradeable(syncBaseItem);
         }
-
         if (syncBaseItem.hasSyncItemContainer()) {
             addSyncItemContainer(syncBaseItem.getSyncItemContainer());
         }
-
         if (syncBaseItem.hasSyncLauncher()) {
             addSyncLauncher();
         }
-
     }
 
     private void addUpgradeable(final SyncBaseItem upgradeable) {
-        add(new Label("Can be upgraded"));
         ExtendedCustomButton button = new ExtendedCustomButton("upgradeButton", false, ToolTips.TOOL_TIP_UPGRADE, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -80,12 +68,10 @@ public class SpecialFunctionPanel extends VerticalPanel {
     }
 
     private void addSyncItemContainer(SyncItemContainer syncItemContainer) {
-        add(new Label("Can contain other units"));
         HorizontalPanel horizontalPanel = new HorizontalPanel();
         ExtendedCustomButton button = new ExtendedCustomButton("unloadButton", false, ToolTips.TOOL_TIP_UNLOAD, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                ItemCockpit.getInstance().deActivate();
                 CockpitMode.getInstance().setMode(CockpitMode.Mode.UNLOAD);
             }
         });
@@ -97,7 +83,6 @@ public class SpecialFunctionPanel extends VerticalPanel {
     }
 
     private void addSyncLauncher() {
-        add(new Label("Can launch missiles"));
         ExtendedCustomButton button = new ExtendedCustomButton("launchButton", false, ToolTips.TOOL_TIP_LAUNCH, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

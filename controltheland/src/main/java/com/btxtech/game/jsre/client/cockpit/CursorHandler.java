@@ -54,6 +54,10 @@ public class CursorHandler {
         setTerrainCursor(null, false);
     }
 
+    public void noCursor() {
+        setTerrainCursor(null, false);
+    }
+
     public void handleMouseMove(SyncItem syncItem, int absoluteX, int absoluteY) {
         if (syncItem != null) {
             handleItemCursor(syncItem);

@@ -18,7 +18,6 @@ import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
-import com.btxtech.game.jsre.client.utg.SpeechBubbleHandler;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
@@ -126,7 +125,6 @@ public class SelectionHandler {
                     return;
                 }
             } else if (!selectedGroup.getFirst().isReady()) {
-                ItemCockpit.getInstance().deActivate();
                 ActionHandler.getInstance().finalizeBuild(this.selectedGroup.getItems(), selectedGroup.getFirst());
                 return;
             }
@@ -144,8 +142,6 @@ public class SelectionHandler {
             listener.onSelectionCleared();
         }
         CursorHandler.getInstance().onSelectionCleared();
-        ItemCockpit.getInstance().deActivate();
-        SpeechBubbleHandler.getInstance().hide();
     }
 
     private void onTargetSelectionItemChanged(SyncItem selection) {

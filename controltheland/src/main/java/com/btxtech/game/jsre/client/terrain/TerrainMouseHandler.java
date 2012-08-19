@@ -12,13 +12,11 @@ import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.GroupSelectionFrame;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
-import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.cockpit.item.ToBeBuildPlacer;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryItemPlacer;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
-import com.btxtech.game.jsre.client.utg.SpeechBubbleHandler;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -79,7 +77,6 @@ public class TerrainMouseHandler implements MouseMoveHandler {
             public void onMouseDown(MouseDownEvent mouseDownEvent) {
                 try {
                     Perfmon.getInstance().onEntered(PerfmonEnum.TERRAIN_MOUSE_DOWN);
-                    ItemCockpit.getInstance().deActivate();
                     ChatCockpit.getInstance().blurFocus();
                     int absoluteX = mouseDownEvent.getRelativeX(canvas.getElement()) + terrainView.getViewOriginLeft();
                     int absoluteY = mouseDownEvent.getRelativeY(canvas.getElement()) + terrainView.getViewOriginTop();
@@ -105,7 +102,7 @@ public class TerrainMouseHandler implements MouseMoveHandler {
                     }
 
                     if (CockpitMode.getInstance().hasToBeBuildPlacer()) {
-                        finalizeToBeBuildPlacer(absoluteX, absoluteY);
+                        // Only mouse down. Otherwise a move will be triggered on mouse up
                         return;
                     }
 
@@ -126,7 +123,7 @@ public class TerrainMouseHandler implements MouseMoveHandler {
                                     Group group = new Group();
                                     group.addItem(syncBaseItem);
                                     SelectionHandler.getInstance().setItemGroupSelected(group);
-                                } else if (ClientBase.getInstance().isEnemy(syncBaseItem)) {
+                                } else {
                                     SelectionHandler.getInstance().setTargetSelected(syncBaseItem, mouseDownEvent);
                                 }
                             } else if (syncItem instanceof SyncBoxItem) {
@@ -224,7 +221,6 @@ public class TerrainMouseHandler implements MouseMoveHandler {
 
     private void executeUnloadContainerCommand(int absoluteX, int absoluteY) {
         CockpitMode.getInstance().setMode(null);
-        ItemCockpit.getInstance().deActivate();
         Group selection = SelectionHandler.getInstance().getOwnSelection();
         if (selection == null) {
             return;
@@ -276,13 +272,9 @@ public class TerrainMouseHandler implements MouseMoveHandler {
                 CockpitMode.getInstance().getInventoryItemPlacer().onMove(relativeX, relativeY, absoluteX, absoluteY);
             } else if (CockpitMode.getInstance().hasToBeBuildPlacer()) {
                 CockpitMode.getInstance().getToBeBuildPlacer().onMove(relativeX, relativeY, absoluteX, absoluteY);
+                CursorHandler.getInstance().noCursor();
             } else {
                 SyncItem syncItem = ItemContainer.getInstance().getItemAtAbsolutePosition(new Index(absoluteX, absoluteY));
-                if (syncItem != null) {
-                    SpeechBubbleHandler.getInstance().show(syncItem);
-                } else {
-                    SpeechBubbleHandler.getInstance().onSyncItemMouseOut();
-                }
                 CursorHandler.getInstance().handleMouseMove(syncItem, absoluteX, absoluteY);
             }
 
