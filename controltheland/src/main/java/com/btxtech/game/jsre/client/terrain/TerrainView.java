@@ -51,7 +51,7 @@ public class TerrainView {
     private int viewHeight = 1;
     private ArrayList<TerrainScrollListener> terrainScrollListeners = new ArrayList<TerrainScrollListener>();
     private TerrainMouseHandler terrainMouseHandler;
-    private TerritoryKeyHandler territoryKeyHandler;
+    private TerrainKeyHandler terrainKeyHandler;
     private Canvas canvas;
     private Context2d context2d;
     private AbsolutePanel parent;
@@ -69,7 +69,7 @@ public class TerrainView {
         canvas.setTabIndex(1); // IE9 need this to receive the focus
         context2d = canvas.getContext2d();
         terrainMouseHandler = new TerrainMouseHandler(canvas, this);
-        territoryKeyHandler = new TerritoryKeyHandler(canvas);
+        terrainKeyHandler = new TerrainKeyHandler(canvas);
     }
 
     public void setupTerrain(TerrainSettings terrainSettings,
@@ -275,8 +275,8 @@ public class TerrainView {
         return terrainMouseHandler;
     }
 
-    public TerritoryKeyHandler getTerritoryKeyHandler() {
-        return territoryKeyHandler;
+    public TerrainKeyHandler getTerrainKeyHandler() {
+        return terrainKeyHandler;
     }
 
     public void setFocus() {
