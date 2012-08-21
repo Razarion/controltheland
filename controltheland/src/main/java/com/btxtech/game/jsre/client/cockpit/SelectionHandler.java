@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
@@ -134,6 +135,11 @@ public class SelectionHandler {
         onOwnItemSelectionChanged(selectedGroup);
     }
 
+    public void keepOnlyOwnOfType(BaseItemType baseItemType) {
+        selectedGroup.keepOnlyOwnOfType(baseItemType);
+        onOwnItemSelectionChanged(selectedGroup);
+    }
+    
     public void clearSelection() {
         selectedTargetSyncItem = null;
         selectedGroup = null;
@@ -201,4 +207,5 @@ public class SelectionHandler {
     public SyncItem getSelectedTargetSyncItem() {
         return selectedTargetSyncItem;
     }
+
 }

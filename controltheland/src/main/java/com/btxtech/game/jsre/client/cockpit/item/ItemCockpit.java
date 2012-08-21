@@ -1,8 +1,10 @@
 package com.btxtech.game.jsre.client.cockpit.item;
 
+import java.util.Collection;
+import java.util.Map;
+
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
-import com.btxtech.game.jsre.client.cockpit.AbstractControlPanel;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
@@ -12,24 +14,32 @@ import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import java.util.Collection;
-import java.util.Map;
-
 /**
- * User: beat
- * Date: 08.11.2011
- * Time: 00:29:45
+ * User: beat Date: 08.11.2011 Time: 00:29:45
  */
-public class ItemCockpit extends AbstractControlPanel implements SelectionListener {
+public class ItemCockpit extends Composite implements SelectionListener {
+    private static ItemCockpitUiBinder uiBinder = GWT.create(ItemCockpitUiBinder.class);
+    @UiField
+    SimplePanel buildupPanel;
+    @UiField
+    SimplePanel infoPanel;
+    @UiField
+    SimplePanel specialFunctionPanel;
     private static final ItemCockpit INSTANCE = new ItemCockpit();
     private boolean isActive = false;
-    private VerticalPanel verticalPanel;
+    private BuildupItemPanel buildupItemPanel;
+
+    interface ItemCockpitUiBinder extends UiBinder<Widget, ItemCockpit> {
+    }
 
     public static ItemCockpit getInstance() {
         return INSTANCE;
@@ -39,7 +49,7 @@ public class ItemCockpit extends AbstractControlPanel implements SelectionListen
      * Singleton
      */
     private ItemCockpit() {
-        setup();
+        initWidget(uiBinder.createAndBindUi(this));
     }
 
     public void addToParentAndRegister(AbsolutePanel parentPanel) {
@@ -49,55 +59,41 @@ public class ItemCockpit extends AbstractControlPanel implements SelectionListen
             setVisible(false);
             getElement().getStyle().setZIndex(Constants.Z_INDEX_ITEM_COCKPIT);
             getElement().getStyle().clearTop();
-            getElement().getStyle().setBottom(5, Style.Unit.PX);
+            getElement().getStyle().setBottom(10, Style.Unit.PX);
         }
     }
 
     private void activeOwnSingle(SyncBaseItem syncBaseItem) {
-        HorizontalPanel horizontalPanel = new HorizontalPanel();
-        horizontalPanel.add(new OwnInfoPanel(syncBaseItem));
-        horizontalPanel.add(new SpecialFunctionPanel(syncBaseItem));
-        verticalPanel.add(horizontalPanel);
-        if(syncBaseItem.hasSyncFactory() || syncBaseItem.hasSyncBuilder()) {
-            BuildupItemPanel buildupItemPanel = new BuildupItemPanel();
+        infoPanel.setWidget(new OwnInfoPanel(syncBaseItem.getBaseItemType(), 1));
+        if(SpecialFunctionPanel.hasSpecialFuntion(syncBaseItem)) {
+            specialFunctionPanel.setWidget(new SpecialFunctionPanel(syncBaseItem));
+            specialFunctionPanel.setVisible(true);
+        }
+        if (syncBaseItem.hasSyncFactory() || syncBaseItem.hasSyncBuilder()) {
+            buildupItemPanel = new BuildupItemPanel();
             buildupItemPanel.display(syncBaseItem);
-            verticalPanel.add(buildupItemPanel);
-        }
-        setVisible(true);
-        ClientUserTracker.getInstance().onDialogAppears(this, "ItemCockpit");
-        isActive = true;
-    }
-
-    private void activeOwnMultiDifferentType(Map<BaseItemType, Collection<SyncBaseItem>> itemTypes) {
-       // TODO
-    }
-
-    private void activeOwnMultiSameType(BaseItemType first, Collection<SyncBaseItem> first1) {
-       // TODO
-    }
-
-    private void activateOther(SyncItem syncItem) {
-        verticalPanel.clear();
-        verticalPanel.add(new OtherInfoPanel(syncItem));
-        setVisible(true);
-        ClientUserTracker.getInstance().onDialogAppears(this, "ItemCockpit");
-        isActive = true;
-    }
-
-    private void deActivate() {
-        if (isActive) {
-            ClientUserTracker.getInstance().onDialogDisappears(this);
-            isActive = false;
-            verticalPanel.clear();
-            setVisible(false);
+            buildupPanel.setWidget(buildupItemPanel);
+            buildupPanel.setVisible(true);
         }
     }
 
-    @Override
-    protected Widget createBody() {
-        verticalPanel = new VerticalPanel();
-        verticalPanel.getElement().getStyle().setColor("#C2D7EC");
-        return verticalPanel;
+    private void activeOwnMultiSameType(BaseItemType baseItemType, Group group) {
+        infoPanel.setWidget(new OwnInfoPanel(baseItemType, group.getCount()));
+        if (baseItemType.getFactoryType() != null || baseItemType.getBuilderType() != null) {
+            buildupItemPanel = new BuildupItemPanel();
+            buildupItemPanel.display(group);
+            buildupPanel.setWidget(buildupItemPanel);
+            buildupPanel.setVisible(true);
+        }
+    }
+
+    private void cleanPanels() {
+        buildupPanel.clear();
+        buildupPanel.setVisible(false);
+        infoPanel.clear();
+        specialFunctionPanel.clear();
+        specialFunctionPanel.setVisible(false);
+        buildupItemPanel = null;
     }
 
     public boolean isActive() {
@@ -105,34 +101,51 @@ public class ItemCockpit extends AbstractControlPanel implements SelectionListen
     }
 
     public void onMoneyChanged(double accountBalance) {
-        // TODO buildupItemPanel.onMoneyChanged(accountBalance);
+        if (buildupItemPanel != null) {
+            buildupItemPanel.onMoneyChanged(accountBalance);
+        }
     }
 
     public void onStateChanged() {
-        // TODO buildupItemPanel.onStateChanged();
+        if (buildupItemPanel != null) {
+            buildupItemPanel.onStateChanged();
+        }
     }
 
     @Override
     public void onTargetSelectionChanged(SyncItem selection) {
-        activateOther(selection);
+        cleanPanels();
+        infoPanel.setWidget(new OtherInfoPanel(selection));
+        isActive = true;
+        setVisible(true);
+        ClientUserTracker.getInstance().onDialogAppears(this, "ItemCockpit");
     }
 
     @Override
     public void onSelectionCleared() {
-        deActivate();
+        cleanPanels();
+        if (isActive) {
+            ClientUserTracker.getInstance().onDialogDisappears(this);
+            isActive = false;
+            setVisible(false);
+        }
     }
 
     @Override
     public void onOwnSelectionChanged(Group selectedGroup) {
-        if(selectedGroup.getCount() == 1) {
+        cleanPanels();
+        if (selectedGroup.getCount() == 1) {
             activeOwnSingle(selectedGroup.getFirst());
         } else {
             Map<BaseItemType, Collection<SyncBaseItem>> itemTypes = selectedGroup.getGroupedItems();
-            if(itemTypes.size() == 1) {
-                activeOwnMultiSameType(CommonJava.getFirst(itemTypes.keySet()), CommonJava.getFirst(itemTypes.values()));
+            if (itemTypes.size() == 1) {
+                activeOwnMultiSameType(CommonJava.getFirst(itemTypes.keySet()), selectedGroup);
             } else {
-                activeOwnMultiDifferentType(itemTypes);
+                infoPanel.setWidget(new OwnMultiDifferentItemPanel(itemTypes));
             }
         }
+        isActive = true;
+        setVisible(true);
+        ClientUserTracker.getInstance().onDialogAppears(this, "ItemCockpit");
     }
 }

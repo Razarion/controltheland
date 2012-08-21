@@ -22,9 +22,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * User: beat
- * Date: 18.08.12
- * Time: 13:04
+ * User: beat Date: 18.08.12 Time: 13:04
  */
 public class OtherInfoPanel extends Composite {
     private static OwnInfoPanelUiBinder uiBinder = GWT.create(OwnInfoPanelUiBinder.class);
@@ -38,6 +36,12 @@ public class OtherInfoPanel extends Composite {
     Button offerAlliance;
     @UiField
     HTML itemTypeDescr;
+    @UiField
+    Label baseName;
+    @UiField
+    Image friendImage;
+    @UiField
+    Image enemyImage;
     private SimpleBase simpleBase;
 
     interface OwnInfoPanelUiBinder extends UiBinder<Widget, OtherInfoPanel> {
@@ -50,20 +54,28 @@ public class OtherInfoPanel extends Composite {
         itemTypeName.setText(syncItem.getItemType().getName());
         itemTypeDescr.setHTML(syncItem.getItemType().getDescription());
         offerAlliance.setVisible(false);
+        friendImage.setVisible(false);
+        enemyImage.setVisible(false);
         if (syncItem instanceof SyncBaseItem) {
             SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
             if (ClientBase.getInstance().isBot(syncBaseItem.getBase())) {
-                type.setText("Bot enemy: " + ClientBase.getInstance().getBaseName(syncBaseItem.getBase()));
+                type.setText("Bot enemy");
+                enemyImage.setVisible(true);
             } else if (ClientBase.getInstance().isEnemy(syncBaseItem)) {
                 simpleBase = syncBaseItem.getBase();
-                type.setText("Player enemy: " + ClientBase.getInstance().getBaseName(simpleBase));
+                type.setText("Player enemy");
                 offerAlliance.setVisible(true);
+                enemyImage.setVisible(true);
             } else {
-                type.setText("Alliance member: " + ClientBase.getInstance().getBaseName(syncBaseItem.getBase()));
+                type.setText("Alliance member");
+                friendImage.setVisible(true);
             }
+            baseName.setText(ClientBase.getInstance().getBaseName(syncBaseItem.getBase()));
         } else if (syncItem instanceof SyncResourceItem) {
+            baseName.setVisible(false);
             type.setVisible(false);
         } else if (syncItem instanceof SyncBoxItem) {
+            baseName.setVisible(false);
             type.setVisible(false);
         }
     }
