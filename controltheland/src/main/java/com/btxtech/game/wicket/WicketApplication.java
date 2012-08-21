@@ -15,6 +15,8 @@ package com.btxtech.game.wicket;
 
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.common.CmsUtil;
+import com.btxtech.game.jsre.common.CommonJava;
+import com.btxtech.game.services.common.NoSuchChildException;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.wicket.pages.Game;
@@ -130,6 +132,9 @@ public class WicketApplication extends AuthenticatedWebApplication implements Ap
                 log.error("Page: " + cause);
                 log.error("User Agent: " + session.getUserAgent());
                 log.error("Session Id: " + session.getSessionId());
+                return cmsUiService.getPredefinedNotFound();
+            } else if (CommonJava.getMostInnerThrowable(e) instanceof NoSuchChildException) {
+                log.error("", e);
                 return cmsUiService.getPredefinedNotFound();
             } else if (e instanceof InvalidUrlException) {
                 log.error("", e);
