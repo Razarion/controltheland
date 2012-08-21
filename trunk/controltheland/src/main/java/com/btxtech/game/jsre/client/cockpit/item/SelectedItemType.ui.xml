@@ -1,0 +1,20 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.platte {
+			margin: 5px;
+			-webkit-box-shadow: 1px 1px 1px 1px rgba(100, 100, 100, 1);
+			box-shadow: 1px 1px 1px 1px rgba(100, 100, 100, 1);
+			cursor:pointer;
+		}
+		.label {
+			font-size: 12px;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+	</ui:style>
+	<g:VerticalPanel styleName="{style.platte}">
+		<g:Label ui:field="countLabel" styleName="{style.label}" />
+		<g:Image ui:field="image" width="40px" height="40px" />
+	</g:VerticalPanel>
+</ui:UiBinder> 

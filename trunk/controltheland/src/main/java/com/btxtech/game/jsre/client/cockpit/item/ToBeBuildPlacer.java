@@ -7,6 +7,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
+import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 
@@ -19,7 +20,7 @@ import java.util.logging.Logger;
  * Time: 23:36
  */
 public class ToBeBuildPlacer {
-    private Index relativeMiddlePos = new Index(200, 200);
+    private Index relativeMiddlePos;
     private BaseItemType itemTypeToBuilt;
     private Group builders;
     private boolean isTerrainOk;
@@ -33,6 +34,9 @@ public class ToBeBuildPlacer {
         this.itemTypeToBuilt = itemTypeToBuilt;
         this.builders = builders;
         TerrainView.getInstance().setFocus();
+        Index absolute = builders.getFirst().getSyncItemArea().getPosition();
+        relativeMiddlePos = TerrainView.getInstance().toRelativeIndex(absolute);
+        checkPlacingForAllAllowed(absolute);
     }
 
     public void onMove(int relativeX, int relativeY, int absoluteX, int absoluteY) {

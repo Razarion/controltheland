@@ -13,8 +13,11 @@
 
 package com.btxtech.game.jsre.client.cockpit.item;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.btxtech.game.jsre.client.ClientServices;
-import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
@@ -22,65 +25,52 @@ import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
- * User: beat
- * Date: 15.11.2009
- * Time: 14:12:18
+ * User: beat Date: 15.11.2009 Time: 14:12:18
  */
-public class BuildupItemPanel extends AbsolutePanel {
-    private static final String TOOL_TIP_SCROLL_LEFT = "Scroll left";
-    private static final String TOOL_TIP_SCROLL_RIGHT = "Scroll right";
+public class BuildupItemPanel extends Composite {
+    private static BuildupItemPanelUiBinder uiBinder = GWT.create(BuildupItemPanelUiBinder.class);
+    private static final int SCROLL_STEP = 20;
+    @UiField
+    PushButton scrollLeftButton;
+    @UiField
+    PushButton scrollRightButton;
+    @UiField
+    ScrollPanel scrollPanel;
 
-    private static final int WIDTH = 355;
-    private static final int HEIGHT = 90;
-    private static final int SCROLL_STEP = 50;
-    private static final int ARROW_L_LEFT = 0;
-    private static final int ARROW_L_TOP = 0;
-    private static final int ARROW_R_LEFT = 300;
-    private static final int ARROW_R_TOP = 0;
-    private static final int SCROLL_LEFT = 50;
-    private static final int SCROLL_TOP = 10;
-    private static final int SCROLL_LENGTH = 250;
-    private static final int SCROLL_HEIGHT = 70;
-    private ScrollPanel scrollPanel;
     private Map<Integer, BuildupItem> buildupItem = new HashMap<Integer, BuildupItem>();
 
-    public BuildupItemPanel() {
-        setPixelSize(WIDTH, HEIGHT);
-        ExtendedCustomButton leftArrow = new ExtendedCustomButton("leftArrowButton", false, TOOL_TIP_SCROLL_LEFT, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                scrollPanel.setHorizontalScrollPosition(scrollPanel.getHorizontalScrollPosition() - SCROLL_STEP);
-            }
-        });
-        add(leftArrow, ARROW_L_LEFT, ARROW_L_TOP);
-        ExtendedCustomButton rightArrow = new ExtendedCustomButton("rightArrowButton", false, TOOL_TIP_SCROLL_RIGHT, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                scrollPanel.setHorizontalScrollPosition(scrollPanel.getHorizontalScrollPosition() + SCROLL_STEP);
-            }
-        });
-        add(rightArrow, ARROW_R_LEFT, ARROW_R_TOP);
-        scrollPanel = new ScrollPanel();
-        scrollPanel.setPixelSize(SCROLL_LENGTH, SCROLL_HEIGHT);
-        scrollPanel.getElement().getStyle().setOverflow(Style.Overflow.HIDDEN);
-        add(scrollPanel, SCROLL_LEFT, SCROLL_TOP);
+    interface BuildupItemPanelUiBinder extends UiBinder<Widget, BuildupItemPanel> {
     }
+
+    public BuildupItemPanel() {
+        initWidget(uiBinder.createAndBindUi(this));
+        scrollPanel.getElement().getStyle().setOverflow(Style.Overflow.HIDDEN);
+    }
+
+    @UiHandler("scrollLeftButton")
+    void onScrollLeftButtonClick(ClickEvent event) {
+        scrollPanel.setHorizontalScrollPosition(scrollPanel.getHorizontalScrollPosition() - SCROLL_STEP);
+   }
+
+    @UiHandler("scrollRightButton")
+    void onScrollRightButtonClick(ClickEvent event) {
+        scrollPanel.setHorizontalScrollPosition(scrollPanel.getHorizontalScrollPosition() + SCROLL_STEP);
+   }
 
     public void display(SyncBaseItem syncBaseItem) {
         try {
@@ -165,5 +155,4 @@ public class BuildupItemPanel extends AbsolutePanel {
             buildupItem.onStateChanged();
         }
     }
-
 }

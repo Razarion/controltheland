@@ -8,31 +8,37 @@ import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
-import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
- * User: beat
- * Date: 08.04.2011
- * Time: 14:48:13
+ * User: beat Date: 08.04.2011 Time: 14:48:13
  */
-public class BuildupItem extends VerticalPanel {
-    private static final int WIDTH = 40;
-    private static final int HEIGHT = 40;
+public class BuildupItem extends Composite {
+    private static BuildupItemUiBinder uiBinder = GWT.create(BuildupItemUiBinder.class);
+    @UiField
+    PushButton button;
+    @UiField
+    Label priceLabel;
     private EnableState enableState;
     private BaseItemType itemType;
-    private PushButton button;
+
+    interface BuildupItemUiBinder extends UiBinder<Widget, BuildupItem> {
+    }
 
     private enum EnableState {
-        ENABLE(true, "Build", null),
-        DISABLED_LEVEL(false, "Build of", "not possible. Your are in the wrong level. Go to the next level!"),
-        DISABLED_LEVEL_EXCEEDED(false, "Build of", "not possible. Item limit exceeded. Go to the next level!"),
-        DISABLED_HOUSE_SPACE_EXCEEDED(false, "Build of", "not possible. Item limit exceeded. Build more houses!"),
+        ENABLE(true, "Build", null), 
+        DISABLED_LEVEL(false, "Build of", "not possible. Your are in the wrong level. Go to the next level!"), 
+        DISABLED_LEVEL_EXCEEDED(false, "Build of",                "not possible. Item limit exceeded. Go to the next level!"), 
+        DISABLED_HOUSE_SPACE_EXCEEDED(false, "Build of", "not possible. Item limit exceeded. Build more houses!"), 
         DISABLED_MONEY(false, "Build of", "not possible. Not enough money. Earn more money!");
 
         private boolean enabled;
@@ -63,12 +69,10 @@ public class BuildupItem extends VerticalPanel {
     }
 
     public BuildupItem(BaseItemType itemType, MouseDownHandler mouseDownHandler) {
+        initWidget(uiBinder.createAndBindUi(this));
+        button.getUpFace().setImage(ImageHandler.getItemTypeImage(itemType, 40, 40));
         this.itemType = itemType;
         discoverEnableState();
-        setWidth(WIDTH + "px");
-        Image image = ImageHandler.getItemTypeImage(itemType, WIDTH, HEIGHT);
-        button = new PushButton(image);
-        button.setPixelSize(WIDTH, HEIGHT);
         button.addMouseDownHandler(mouseDownHandler);
         button.addMouseMoveHandler(new MouseMoveHandler() {
             @Override
@@ -79,8 +83,7 @@ public class BuildupItem extends VerticalPanel {
                 }
             }
         });
-        add(button);
-        add(new Label("$" + itemType.getPrice()));
+        priceLabel.setText("$" + itemType.getPrice());
         accomplishEnableState();
     }
 

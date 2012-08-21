@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -241,4 +242,15 @@ public class Group {
         }
         return false;
     }
+    
+
+    public void keepOnlyOwnOfType(BaseItemType baseItemType) {
+        for (Iterator<SyncBaseItem> iterator = syncBaseItems.iterator(); iterator.hasNext(); ) {
+            BaseItemType currentBaseItemType = iterator.next().getBaseItemType();
+            if(!(baseItemType.equals(currentBaseItemType))) {
+                iterator.remove();
+            }
+        }
+    }
+
 }

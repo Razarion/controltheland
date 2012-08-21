@@ -2,6 +2,7 @@ package com.btxtech.game.jsre.client.cockpit.item;
 
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -25,15 +26,21 @@ public class OwnInfoPanel extends Composite {
     Label itemTypeName;
     @UiField
     HTML itemTypeDescr;
+    @UiField Label countLabel;
 
     interface OwnInfoPanelUiBinder extends UiBinder<Widget, OwnInfoPanel> {
     }
 
-    public OwnInfoPanel(SyncBaseItem syncBaseItem) {
-        image = ImageHandler.getItemTypeImage(syncBaseItem.getItemType(), 50, 50);
+    public OwnInfoPanel(BaseItemType baseItemType, int count) {
+        image = ImageHandler.getItemTypeImage(baseItemType, 50, 50);
         initWidget(uiBinder.createAndBindUi(this));
-        itemTypeName.setText(syncBaseItem.getItemType().getName());
-        itemTypeDescr.setHTML(syncBaseItem.getItemType().getDescription());
+        itemTypeName.setText(baseItemType.getName());
+        itemTypeDescr.setHTML(baseItemType.getDescription());
+        if(count > 1) {
+            countLabel.setText(Integer.toString(count));
+        }else {
+            countLabel.setVisible(false); 
+        }
         GwtCommon.preventDragImage(image);
     }
 
