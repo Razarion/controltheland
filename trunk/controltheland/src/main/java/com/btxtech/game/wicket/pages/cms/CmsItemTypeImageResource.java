@@ -12,10 +12,12 @@
  */
 package com.btxtech.game.wicket.pages.cms;
 
+import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
+import org.apache.wicket.AbortException;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.injection.web.InjectorHolder;
 import org.apache.wicket.markup.html.WebResource;
@@ -47,8 +49,12 @@ public class CmsItemTypeImageResource extends WebResource {
 
     @Override
     public IResourceStream getResourceStream() {
-        int itmTypeId = Utils.parseIntSave(getParameters().getString(ID));
-        DbItemTypeImage dbItemTypeImage = itemService.getCmsDbItemTypeImage(itmTypeId);
-        return new ByteArrayResource(dbItemTypeImage.getContentType(), dbItemTypeImage.getData()).getResourceStream();
+        try {
+            int itmTypeId = Utils.parseIntSave(getParameters().getString(ID));
+            DbItemTypeImage dbItemTypeImage = itemService.getCmsDbItemTypeImage(itmTypeId);
+            return new ByteArrayResource(dbItemTypeImage.getContentType(), dbItemTypeImage.getData()).getResourceStream();
+        } catch (NoSuchItemTypeException e) {
+            throw new AbortException();
+        }
     }
 }
