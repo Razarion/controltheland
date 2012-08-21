@@ -680,17 +680,12 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public DbItemTypeImage getCmsDbItemTypeImage(int itemTypeId) {
+    public DbItemTypeImage getCmsDbItemTypeImage(int itemTypeId) throws NoSuchItemTypeException{
         DbItemType dbItemType = getDbItemType(itemTypeId);
         if (dbItemType == null) {
-            throw new IllegalArgumentException("DbItemType does not exist: " + itemTypeId);
+            throw new NoSuchItemTypeException(itemTypeId);
         }
-        ItemType itemType;
-        try {
-            itemType = getItemType(itemTypeId);
-        } catch (NoSuchItemTypeException e) {
-            throw new RuntimeException(e);
-        }
+        ItemType itemType = getItemType(itemTypeId);
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbItemTypeImage.class);
         criteria.add(Restrictions.eq("itemType", dbItemType));
         criteria.add(Restrictions.eq("type", ItemTypeSpriteMap.SyncObjectState.RUN_TIME));

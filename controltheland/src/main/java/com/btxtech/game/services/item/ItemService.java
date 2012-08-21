@@ -75,7 +75,7 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
 
     void deleteItemType(DbItemType dbItemType);
 
-    DbItemTypeImage getCmsDbItemTypeImage(int itemTypeId);
+    DbItemTypeImage getCmsDbItemTypeImage(int itemTypeId) throws NoSuchItemTypeException;
 
     ImageHolder getItemTypeSpriteMap(int itemTypeId);
 
