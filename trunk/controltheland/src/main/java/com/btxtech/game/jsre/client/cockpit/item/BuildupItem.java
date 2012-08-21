@@ -35,10 +35,10 @@ public class BuildupItem extends Composite {
     }
 
     private enum EnableState {
-        ENABLE(true, "Build", null), 
-        DISABLED_LEVEL(false, "Build of", "not possible. Your are in the wrong level. Go to the next level!"), 
-        DISABLED_LEVEL_EXCEEDED(false, "Build of",                "not possible. Item limit exceeded. Go to the next level!"), 
-        DISABLED_HOUSE_SPACE_EXCEEDED(false, "Build of", "not possible. Item limit exceeded. Build more houses!"), 
+        ENABLE(true, "Build", null),
+        DISABLED_LEVEL(false, "Build of", "not possible. Your are in the wrong level. Go to the next level!"),
+        DISABLED_LEVEL_EXCEEDED(false, "Build of", "not possible. Item limit exceeded. Go to the next level!"),
+        DISABLED_HOUSE_SPACE_EXCEEDED(false, "Build of", "not possible. Item limit exceeded. Build more houses!"),
         DISABLED_MONEY(false, "Build of", "not possible. Not enough money. Earn more money!");
 
         private boolean enabled;

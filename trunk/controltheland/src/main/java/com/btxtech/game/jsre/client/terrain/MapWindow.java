@@ -66,77 +66,8 @@ public class MapWindow {
     }
 
     private void handlePreviewNativeEvent(Event.NativePreviewEvent event) {
-        if (event.getTypeInt() == Event.ONKEYDOWN) {
-            switch (event.getNativeEvent().getKeyCode()) {
-                case 65:
-                case KeyCodes.KEY_LEFT: {
-                    if (!ChatCockpit.getInstance().hasFocus()) {
-                        TerrainView.getInstance().getTerrainMouseHandler().executeAutoScrollKey(TerrainMouseHandler.ScrollDirection.WEST, null);
-                        event.cancel(); // Prevent from scrolling the browser window
-                    }
-                    break;
-                }
-                case 68:
-                case KeyCodes.KEY_RIGHT: {
-                    if (!ChatCockpit.getInstance().hasFocus()) {
-                        TerrainView.getInstance().getTerrainMouseHandler().executeAutoScrollKey(TerrainMouseHandler.ScrollDirection.EAST, null);
-                        event.cancel();
-                    }
-                    break;
-                }
-                case 87:
-                case KeyCodes.KEY_UP: {
-                    if (!ChatCockpit.getInstance().hasFocus()) {
-                        TerrainView.getInstance().getTerrainMouseHandler().executeAutoScrollKey(null, TerrainMouseHandler.ScrollDirection.NORTH);
-                        event.cancel();
-                    }
-                    break;
-                }
-                case 83:
-                case KeyCodes.KEY_DOWN: {
-                    if (!ChatCockpit.getInstance().hasFocus()) {
-                        TerrainView.getInstance().getTerrainMouseHandler().executeAutoScrollKey(null, TerrainMouseHandler.ScrollDirection.SOUTH);
-                        event.cancel();
-                    }
-                    break;
-                }
-            }
-        } else if (event.getTypeInt() == Event.ONKEYUP) {
-            switch (event.getNativeEvent().getKeyCode()) {
-                case 65:
-                case KeyCodes.KEY_LEFT: {
-                    if (!ChatCockpit.getInstance().hasFocus()) {
-                        TerrainView.getInstance().getTerrainMouseHandler().executeAutoScrollKey(TerrainMouseHandler.ScrollDirection.STOP, null);
-                        event.cancel(); // Prevent from scrolling the browser window
-                    }
-                    break;
-                }
-                case 68:
-                case KeyCodes.KEY_RIGHT: {
-                    if (!ChatCockpit.getInstance().hasFocus()) {
-                        TerrainView.getInstance().getTerrainMouseHandler().executeAutoScrollKey(TerrainMouseHandler.ScrollDirection.STOP, null);
-                        event.cancel();
-                    }
-                    break;
-                }
-                case 87:
-                case KeyCodes.KEY_UP: {
-                    if (!ChatCockpit.getInstance().hasFocus()) {
-                        TerrainView.getInstance().getTerrainMouseHandler().executeAutoScrollKey(null, TerrainMouseHandler.ScrollDirection.STOP);
-                        event.cancel();
-                    }
-                    break;
-                }
-                case 83:
-                case KeyCodes.KEY_DOWN: {
-                    if (!ChatCockpit.getInstance().hasFocus()) {
-                        TerrainView.getInstance().getTerrainMouseHandler().executeAutoScrollKey(null, TerrainMouseHandler.ScrollDirection.STOP);
-                        event.cancel();
-                    }
-                    break;
-                }
-            }
-        }
+        TerrainView.getInstance().getTerrainKeyHandler().handlePreviewNativeEvent(event);
+
         if ((event.getTypeInt() & Event.MOUSEEVENTS) != 0 && isTrackingEvents) {
             NativeEvent e = event.getNativeEvent();
             Document document = Document.get();
