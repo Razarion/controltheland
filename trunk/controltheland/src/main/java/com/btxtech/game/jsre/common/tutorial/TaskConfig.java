@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.common.tutorial;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.RadarMode;
+import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 
@@ -41,6 +42,7 @@ public class TaskConfig implements Serializable {
     private Map<Integer, Integer> itemTypeLimitation;
     private RadarMode radarMode;
     private ConditionConfig conditionConfig;
+    private GameTipConfig gameTipConfig;
 
     /**
      * Used by GWT
@@ -48,7 +50,7 @@ public class TaskConfig implements Serializable {
     public TaskConfig() {
     }
 
-    public TaskConfig(List<ItemTypeAndPosition> ownItems, Index scroll, ConditionConfig conditionConfig, int houseCount, int money, int maxMoney, double itemSellFactor, String name, Collection<BotConfig> botConfigs, Map<Integer, Integer> itemTypeLimitation, RadarMode radarMode) {
+    public TaskConfig(List<ItemTypeAndPosition> ownItems, Index scroll, ConditionConfig conditionConfig, int houseCount, int money, int maxMoney, double itemSellFactor, String name, Collection<BotConfig> botConfigs, Map<Integer, Integer> itemTypeLimitation, RadarMode radarMode, GameTipConfig gameTipConfig) {
         this.ownItems = ownItems;
         this.scroll = scroll;
         this.conditionConfig = conditionConfig;
@@ -60,6 +62,7 @@ public class TaskConfig implements Serializable {
         this.botConfigs = botConfigs;
         this.itemTypeLimitation = itemTypeLimitation;
         this.radarMode = radarMode;
+        this.gameTipConfig = gameTipConfig;
     }
 
     public Collection<ItemTypeAndPosition> getOwnItems() {
@@ -92,5 +95,9 @@ public class TaskConfig implements Serializable {
 
     public ConditionConfig getConditionConfig() {
         return conditionConfig;
+    }
+
+    public GameTipConfig getGameTipConfig() {
+        return gameTipConfig;
     }
 }

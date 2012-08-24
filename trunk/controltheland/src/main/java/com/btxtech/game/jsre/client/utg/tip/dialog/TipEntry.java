@@ -1,4 +1,4 @@
-package com.btxtech.game.jsre.client.utg.tip;
+package com.btxtech.game.jsre.client.utg.tip.dialog;
 
 /**
  * User: beat

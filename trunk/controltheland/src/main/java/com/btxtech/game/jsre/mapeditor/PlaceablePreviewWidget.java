@@ -11,12 +11,13 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common;
+package com.btxtech.game.jsre.mapeditor;
 
 import com.btxtech.game.jsre.client.ColorConstants;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
+import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.Style;

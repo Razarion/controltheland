@@ -20,7 +20,6 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.Html5NotSupportedException;
-import com.btxtech.game.jsre.common.ResizeablePreviewWidget;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;

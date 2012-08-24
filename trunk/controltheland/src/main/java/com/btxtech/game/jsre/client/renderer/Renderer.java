@@ -24,8 +24,10 @@ public class Renderer {
     private int frameCount = 0;
     private long nextFrameCountCalculation = 0;
     private int renderTime = 0;
-    private AnimationScheduler.AnimationCallback animationCallback;
-    private List<AbstractRenderTask> renderTasks = new ArrayList<AbstractRenderTask>();
+    private AnimationScheduler.AnimationCallback gameAnimationCallback;
+    private AnimationScheduler.AnimationCallback overlayAnimationCallback;
+    private List<AbstractRenderTask> overlayRenderTasks = new ArrayList<AbstractRenderTask>();
+    private List<AbstractRenderTask> gameRenderTasks = new ArrayList<AbstractRenderTask>();
     private int itemRenderTaskIndex;
 
     // TODO Items Animation
@@ -39,20 +41,21 @@ public class Renderer {
     }
 
     private Renderer() {
-        renderTasks.add(new TerrainRenderTask(TerrainView.getInstance().getTerrainHandler(), TerrainView.getInstance().getContext2d()));
+        gameRenderTasks.add(new TerrainRenderTask(TerrainView.getInstance().getTerrainHandler(), TerrainView.getInstance().getContext2d()));
         ItemRenderTask itemRenderTask = new ItemRenderTask(TerrainView.getInstance().getContext2d());
-        renderTasks.add(itemRenderTask);
-        itemRenderTaskIndex = renderTasks.indexOf(itemRenderTask);
-        renderTasks.add(new MuzzleFlashRenderTask(TerrainView.getInstance().getContext2d()));
-        renderTasks.add(new SelectionFrameRenderTask(TerrainView.getInstance().getContext2d()));
-        renderTasks.add(new InventoryItemPlacerRenderTask(TerrainView.getInstance().getContext2d()));
-        renderTasks.add(new ToBeBuildPlacerRenderTask(TerrainView.getInstance().getContext2d()));
-        renderTasks.add(new ExplosionRenderTask(TerrainView.getInstance().getContext2d()));
-        renderTasks.add(new SplashRenderTask(TerrainView.getInstance().getContext2d()));
+        gameRenderTasks.add(itemRenderTask);
+        itemRenderTaskIndex = gameRenderTasks.indexOf(itemRenderTask);
+        gameRenderTasks.add(new MuzzleFlashRenderTask(TerrainView.getInstance().getContext2d()));
+        gameRenderTasks.add(new ExplosionRenderTask(TerrainView.getInstance().getContext2d()));
+        gameRenderTasks.add(new SelectionFrameRenderTask(TerrainView.getInstance().getContext2d()));
+        gameRenderTasks.add(new InventoryItemPlacerRenderTask(TerrainView.getInstance().getContext2d()));
+        gameRenderTasks.add(new InGameTipRenderTask(TerrainView.getInstance().getContext2d()));
+        gameRenderTasks.add(new ToBeBuildPlacerRenderTask(TerrainView.getInstance().getContext2d()));
+        gameRenderTasks.add(new SplashRenderTask(TerrainView.getInstance().getContext2d()));
     }
 
     public void start() {
-        animationCallback = new AnimationScheduler.AnimationCallback() {
+        gameAnimationCallback = new AnimationScheduler.AnimationCallback() {
             @Override
             public void execute(double timestamp) {
                 try {
@@ -78,26 +81,60 @@ public class Renderer {
                         renderTime += (int) (System.currentTimeMillis() - startTime);
                     }
                 } catch (Exception e) {
-                    log.log(Level.SEVERE, "Renderer Timer", e);
+                    log.log(Level.SEVERE, "Renderer Callback", e);
                 } finally {
                     Perfmon.getInstance().onLeft(PerfmonEnum.RENDERER);
-                    if (animationCallback != null) {
-                        AnimationScheduler.get().requestAnimationFrame(animationCallback, TerrainView.getInstance().getCanvas().getElement());
+                    if (gameAnimationCallback != null) {
+                        AnimationScheduler.get().requestAnimationFrame(gameAnimationCallback, TerrainView.getInstance().getCanvas().getElement());
+                        if (overlayAnimationCallback != null) {
+                            AnimationScheduler.get().requestAnimationFrame(overlayAnimationCallback);
+                        }
                     }
                 }
             }
         };
-        AnimationScheduler.get().requestAnimationFrame(animationCallback, TerrainView.getInstance().getCanvas().getElement());
+        AnimationScheduler.get().requestAnimationFrame(gameAnimationCallback, TerrainView.getInstance().getCanvas().getElement());
     }
 
     public void stop() {
-        animationCallback = null;
+        gameAnimationCallback = null;
+    }
+
+    public void startOverlayRenderTask(AbstractRenderTask abstractRenderTask) {
+        if (overlayRenderTasks.contains(abstractRenderTask)) {
+            return;
+        }
+        overlayRenderTasks.add(abstractRenderTask);
+        if (overlayRenderTasks.size() == 1) {
+            overlayAnimationCallback = new AnimationScheduler.AnimationCallback() {
+                @Override
+                public void execute(double timestamp) {
+                    try {
+                        Perfmon.getInstance().onEntered(PerfmonEnum.RENDERER_OVERLAY);
+                        // Main work
+                        doOverlayRender((long) timestamp);
+                        // Statistics
+                    } catch (Exception e) {
+                        log.log(Level.SEVERE, "Overlay Renderer Callback", e);
+                    } finally {
+                        Perfmon.getInstance().onLeft(PerfmonEnum.RENDERER_OVERLAY);
+                    }
+                }
+            };
+        }
+    }
+
+    public void stopOverlayRenderTask(AbstractRenderTask abstractRenderTask) {
+        overlayRenderTasks.remove(abstractRenderTask);
+        if (overlayRenderTasks.isEmpty()) {
+            overlayAnimationCallback = null;
+        }
     }
 
     private void doRender(long timeStamp) {
         Rectangle viewRect = TerrainView.getInstance().getViewRect();
         Rectangle tileViewRect = TerrainView.getInstance().getTerrainHandler().convertToTilePositionRoundUp(viewRect);
-        for (AbstractRenderTask renderTask : renderTasks) {
+        for (AbstractRenderTask renderTask : gameRenderTasks) {
             try {
                 renderTask.render(timeStamp, viewRect, tileViewRect);
             } catch (Exception e) {
@@ -106,7 +143,19 @@ public class Renderer {
         }
     }
 
+    private void doOverlayRender(long timeStamp) {
+        Rectangle viewRect = TerrainView.getInstance().getViewRect();
+        Rectangle tileViewRect = TerrainView.getInstance().getTerrainHandler().convertToTilePositionRoundUp(viewRect);
+        for (AbstractRenderTask renderTask : overlayRenderTasks) {
+            try {
+                renderTask.render(timeStamp, viewRect, tileViewRect);
+            } catch (Exception e) {
+                log.log(Level.SEVERE, "Renderer.doOverlayRender()", e);
+            }
+        }
+    }
+
     public void overrideItemRenderTask(AbstractRenderTask abstractRenderTask) {
-        renderTasks.set(itemRenderTaskIndex, abstractRenderTask);
+        gameRenderTasks.set(itemRenderTaskIndex, abstractRenderTask);
     }
 }

@@ -179,7 +179,7 @@ public class TerrainMouseHandler implements MouseMoveHandler {
                             if (CockpitMode.getInstance().getMode() == CockpitMode.Mode.UNLOAD) {
                                 executeUnloadContainerCommand(absoluteX, absoluteY);
                             } else if (CockpitMode.getInstance().hasGroupSelectionFrame()) {
-                                if(!finalizeSelectionFrame(absoluteX, absoluteY)) {
+                                if (!finalizeSelectionFrame(absoluteX, absoluteY)) {
                                     executeMoveCommand(absoluteX, absoluteY);
                                 }
                             } else {
@@ -213,10 +213,10 @@ public class TerrainMouseHandler implements MouseMoveHandler {
         return groupSelectionFrame.execute(absoluteX, absoluteY);
     }
 
-    private boolean finalizeToBeBuildPlacer(int absoluteX, int absoluteY) {
+    private void finalizeToBeBuildPlacer(int absoluteX, int absoluteY) {
         ToBeBuildPlacer toBeBuildPlacer = CockpitMode.getInstance().getToBeBuildPlacer();
+        toBeBuildPlacer.execute(absoluteX, absoluteY);
         CockpitMode.getInstance().setToBeBuildPlacer(null);
-        return toBeBuildPlacer.execute(absoluteX, absoluteY);
     }
 
     private void executeUnloadContainerCommand(int absoluteX, int absoluteY) {

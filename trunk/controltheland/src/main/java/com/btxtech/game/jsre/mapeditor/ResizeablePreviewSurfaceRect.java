@@ -16,7 +16,6 @@ package com.btxtech.game.jsre.mapeditor;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.ResizeablePreviewWidget;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 
 /**

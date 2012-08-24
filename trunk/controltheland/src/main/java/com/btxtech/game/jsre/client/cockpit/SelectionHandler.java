@@ -144,21 +144,21 @@ public class SelectionHandler {
         selectedTargetSyncItem = null;
         selectedGroup = null;
 
-        for (SelectionListener listener : listeners) {
+        for (SelectionListener listener : new ArrayList<SelectionListener>(listeners)) {
             listener.onSelectionCleared();
         }
         CursorHandler.getInstance().onSelectionCleared();
     }
 
     private void onTargetSelectionItemChanged(SyncItem selection) {
-        for (SelectionListener listener : listeners) {
+        for (SelectionListener listener : new ArrayList<SelectionListener>(listeners)) {
             listener.onTargetSelectionChanged(selection);
         }
         CursorHandler.getInstance().onSelectionCleared();
     }
 
     private void onOwnItemSelectionChanged(Group selection) {
-        for (SelectionListener listener : listeners) {
+        for (SelectionListener listener : new ArrayList<SelectionListener>(listeners)) {
             listener.onOwnSelectionChanged(selection);
         }
     }

@@ -1,6 +1,7 @@
 package com.btxtech.game.services.tutorial;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
@@ -90,6 +91,11 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         dbTaskConfig.setName("name1");
         dbTaskConfig.setScroll(new Index(1, 2));
         dbTaskConfig.setHouseCount(5);
+        dbTaskConfig.setTip(GameTipConfig.Tip.BUILD);
+        dbTaskConfig.setTipActorTypeId(1);
+        dbTaskConfig.setTipResourceId(2);
+        dbTaskConfig.setTipTerrainPositionHint(new Index(111,222));
+        dbTaskConfig.setTipToBeBuiltId(3);
         ruTutorialServiceHelper.updateDbEntity(dbTutorialConfig);
         endHttpRequestAndOpenSessionInViewFilter();
 
@@ -108,6 +114,12 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         Assert.assertEquals("name1", dbTaskConfig.getName());
         Assert.assertEquals(new Index(1, 2), dbTaskConfig.getScroll());
         Assert.assertEquals(5, dbTaskConfig.getHouseCount());
+
+        Assert.assertEquals(GameTipConfig.Tip.BUILD, dbTaskConfig.getTip());
+        Assert.assertEquals(1, (int)dbTaskConfig.getTipActorTypeId());
+        Assert.assertEquals(2, (int)dbTaskConfig.getTipResourceId());
+        Assert.assertEquals(new Index(111,222), dbTaskConfig.getTipTerrainPositionHint());
+        Assert.assertEquals(3, (int)dbTaskConfig.getTipToBeBuiltId());
         endHttpRequestAndOpenSessionInViewFilter();
 
         endHttpSession();
