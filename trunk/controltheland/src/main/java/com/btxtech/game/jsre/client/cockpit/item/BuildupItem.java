@@ -3,20 +3,17 @@ package com.btxtech.game.jsre.client.cockpit.item;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.jsre.client.cockpit.CockpitMode;
-import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -24,8 +21,8 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class BuildupItem extends Composite {
     private static BuildupItemUiBinder uiBinder = GWT.create(BuildupItemUiBinder.class);
-    @UiField
-    PushButton button;
+    @UiField(provided = true)
+    Image image;
     @UiField
     Label priceLabel;
     private EnableState enableState;
@@ -68,19 +65,16 @@ public class BuildupItem extends Composite {
         }
     }
 
-    public BuildupItem(BaseItemType itemType, MouseDownHandler mouseDownHandler) {
+    public BuildupItem(BaseItemType itemType, final MouseDownHandler mouseDownHandler) {
+        image = ImageHandler.getItemTypeImage(itemType, 40, 40);
         initWidget(uiBinder.createAndBindUi(this));
-        button.getUpFace().setImage(ImageHandler.getItemTypeImage(itemType, 40, 40));
         this.itemType = itemType;
         discoverEnableState();
-        button.addMouseDownHandler(mouseDownHandler);
-        button.addMouseMoveHandler(new MouseMoveHandler() {
+        image.addMouseDownHandler(new MouseDownHandler() {
             @Override
-            public void onMouseMove(MouseMoveEvent event) {
-                if (event.getNativeButton() > 0 && CockpitMode.getInstance().hasToBeBuildPlacer()) {
-                    // If mouse down events are going to this button
-                    TerrainView.getInstance().getTerrainMouseHandler().onMouseMove(event);
-                }
+            public void onMouseDown(MouseDownEvent event) {
+                mouseDownHandler.onMouseDown(event);
+                GwtCommon.preventDefault(event);
             }
         });
         priceLabel.setText("$" + itemType.getPrice());
@@ -115,7 +109,11 @@ public class BuildupItem extends Composite {
 
     private void accomplishEnableState() {
         setTitle(enableState.getToolTip(itemType));
-        button.setEnabled(enableState.isEnabled());
+        if (enableState.isEnabled()) {
+            image.getElement().getStyle().setOpacity(1.0);
+        } else {
+            image.getElement().getStyle().setOpacity(0.5);
+        }
     }
 
     public void onMoneyChanged(double accountBalance) {

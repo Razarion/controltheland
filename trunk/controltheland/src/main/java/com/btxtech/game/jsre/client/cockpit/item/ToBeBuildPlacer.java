@@ -7,9 +7,9 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
-import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.google.gwt.event.dom.client.MouseDownEvent;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,13 +30,12 @@ public class ToBeBuildPlacer {
     private String errorText;
     private Logger log = Logger.getLogger(ToBeBuildPlacer.class.getName());
 
-    public ToBeBuildPlacer(BaseItemType itemTypeToBuilt, Group builders) {
+    public ToBeBuildPlacer(BaseItemType itemTypeToBuilt, Group builders, MouseDownEvent event) {
         this.itemTypeToBuilt = itemTypeToBuilt;
         this.builders = builders;
-        TerrainView.getInstance().setFocus();
-        Index absolute = builders.getFirst().getSyncItemArea().getPosition();
-        relativeMiddlePos = TerrainView.getInstance().toRelativeIndex(absolute);
-        checkPlacingForAllAllowed(absolute);
+        relativeMiddlePos = new Index(event.getClientX(), event.getClientY());
+        checkPlacingForAllAllowed(TerrainView.getInstance().toAbsoluteIndex(relativeMiddlePos));
+        setupErrorText();
     }
 
     public void onMove(int relativeX, int relativeY, int absoluteX, int absoluteY) {
@@ -86,6 +85,12 @@ public class ToBeBuildPlacer {
         if (!isTerrainOk) {
             return;
         }
+        Index relative = TerrainView.getInstance().toRelativeIndex(absolute);
+        isTerrainOk = !ItemCockpit.getInstance().isInside(relative.getX(), relative.getY());
+        if (!isTerrainOk) {
+            return;
+        }
+
         isTerritoryOk = ClientTerritoryService.getInstance().isAllowed(absolute, itemTypeToBuilt);
         if (!isTerritoryOk) {
             return;

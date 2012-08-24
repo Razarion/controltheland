@@ -1,8 +1,5 @@
 package com.btxtech.game.jsre.client.cockpit.item;
 
-import java.util.Collection;
-import java.util.Map;
-
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.cockpit.Group;
@@ -10,6 +7,7 @@ import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -23,6 +21,9 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * User: beat Date: 08.11.2011 Time: 00:29:45
@@ -66,7 +67,7 @@ public class ItemCockpit extends Composite implements SelectionListener {
 
     private void activeOwnSingle(SyncBaseItem syncBaseItem) {
         infoPanel.setWidget(new OwnInfoPanel(syncBaseItem.getBaseItemType(), 1));
-        if(SpecialFunctionPanel.hasSpecialFuntion(syncBaseItem)) {
+        if (SpecialFunctionPanel.hasSpecialFuntion(syncBaseItem)) {
             specialFunctionPanel.setWidget(new SpecialFunctionPanel(syncBaseItem));
             specialFunctionPanel.setVisible(true);
         }
@@ -151,10 +152,14 @@ public class ItemCockpit extends Composite implements SelectionListener {
     }
 
     public Index getAbsoluteMiddleTopPositionFromBuildupPanel(int buildupItemTypeId) {
-        if(buildupItemPanel == null) {
+        if (buildupItemPanel == null) {
             throw new IllegalArgumentException("ItemCockpit.getAbsoluteMiddleTopPositionFromBuildupPanel() buildupItemPanel is null. buildupItemTypeId: " + buildupItemTypeId);
         }
         return buildupItemPanel.getAbsoluteMiddleTopPosition(buildupItemTypeId);
+    }
+
+    public boolean isInside(int x, int y) {
+        return new Rectangle(getAbsoluteLeft(), getAbsoluteTop(), getOffsetWidth(), getOffsetHeight()).contains(new Index(x, y));
     }
 
 }

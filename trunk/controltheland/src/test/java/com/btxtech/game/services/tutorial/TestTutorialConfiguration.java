@@ -70,7 +70,9 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void createDeleteTask() {
+    public void createDeleteTask() throws Exception {
+        configureRealGame();
+
         beginHttpSession();
 
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -92,10 +94,10 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         dbTaskConfig.setScroll(new Index(1, 2));
         dbTaskConfig.setHouseCount(5);
         dbTaskConfig.setTip(GameTipConfig.Tip.BUILD);
-        dbTaskConfig.setTipActorTypeId(1);
-        dbTaskConfig.setTipResourceId(2);
-        dbTaskConfig.setTipTerrainPositionHint(new Index(111,222));
-        dbTaskConfig.setTipToBeBuiltId(3);
+        dbTaskConfig.setTipActor(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
+        dbTaskConfig.setTipResource(itemService.getDbResourceItemType(TEST_RESOURCE_ITEM_ID));
+        dbTaskConfig.setTipTerrainPositionHint(new Index(111, 222));
+        dbTaskConfig.setTipToBeBuilt(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
         ruTutorialServiceHelper.updateDbEntity(dbTutorialConfig);
         endHttpRequestAndOpenSessionInViewFilter();
 
@@ -116,10 +118,10 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         Assert.assertEquals(5, dbTaskConfig.getHouseCount());
 
         Assert.assertEquals(GameTipConfig.Tip.BUILD, dbTaskConfig.getTip());
-        Assert.assertEquals(1, (int)dbTaskConfig.getTipActorTypeId());
-        Assert.assertEquals(2, (int)dbTaskConfig.getTipResourceId());
-        Assert.assertEquals(new Index(111,222), dbTaskConfig.getTipTerrainPositionHint());
-        Assert.assertEquals(3, (int)dbTaskConfig.getTipToBeBuiltId());
+        Assert.assertEquals(TEST_FACTORY_ITEM_ID, (int) dbTaskConfig.getTipActor().getId());
+        Assert.assertEquals(TEST_RESOURCE_ITEM_ID, (int) dbTaskConfig.getTipResource().getId());
+        Assert.assertEquals(new Index(111, 222), dbTaskConfig.getTipTerrainPositionHint());
+        Assert.assertEquals(TEST_ATTACK_ITEM_ID, (int) dbTaskConfig.getTipToBeBuilt().getId());
         endHttpRequestAndOpenSessionInViewFilter();
 
         endHttpSession();

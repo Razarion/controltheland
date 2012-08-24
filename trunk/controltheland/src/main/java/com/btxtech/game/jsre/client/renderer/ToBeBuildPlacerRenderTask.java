@@ -7,6 +7,7 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.dom.client.CanvasElement;
 import com.google.gwt.dom.client.ImageElement;
 
 /**
@@ -23,6 +24,8 @@ public class ToBeBuildPlacerRenderTask extends AbstractRenderTask {
 
     @Override
     public void render(long timeStamp, Rectangle viewRect, final Rectangle tileViewRect) {
+        CanvasElement canvas = context2d.getCanvas();
+        context2d.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         if (!CockpitMode.getInstance().hasToBeBuildPlacer()) {
             return;
         }

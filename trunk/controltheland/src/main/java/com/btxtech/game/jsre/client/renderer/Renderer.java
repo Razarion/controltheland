@@ -30,10 +30,6 @@ public class Renderer {
     private List<AbstractRenderTask> gameRenderTasks = new ArrayList<AbstractRenderTask>();
     private int itemRenderTaskIndex;
 
-    // TODO Items Animation
-    // TODO Buildup
-
-    // TODO alles was animiert werden muss
     // TODO native implementation for all browser available AnimationSchedulerImpl: (IE & Opera)
 
     public static Renderer getInstance() {
@@ -50,7 +46,6 @@ public class Renderer {
         gameRenderTasks.add(new SelectionFrameRenderTask(TerrainView.getInstance().getContext2d()));
         gameRenderTasks.add(new InventoryItemPlacerRenderTask(TerrainView.getInstance().getContext2d()));
         gameRenderTasks.add(new InGameTipRenderTask(TerrainView.getInstance().getContext2d()));
-        gameRenderTasks.add(new ToBeBuildPlacerRenderTask(TerrainView.getInstance().getContext2d()));
         gameRenderTasks.add(new SplashRenderTask(TerrainView.getInstance().getContext2d()));
     }
 
@@ -111,9 +106,7 @@ public class Renderer {
                 public void execute(double timestamp) {
                     try {
                         Perfmon.getInstance().onEntered(PerfmonEnum.RENDERER_OVERLAY);
-                        // Main work
                         doOverlayRender((long) timestamp);
-                        // Statistics
                     } catch (Exception e) {
                         log.log(Level.SEVERE, "Overlay Renderer Callback", e);
                     } finally {

@@ -13,9 +13,11 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.cockpit.item.ToBeBuildPlacer;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryItemPlacer;
+import com.btxtech.game.jsre.client.renderer.Renderer;
+import com.btxtech.game.jsre.client.renderer.ToBeBuildPlacerRenderTask;
+import com.btxtech.game.jsre.client.terrain.OverlayPanel;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 /**
@@ -45,6 +47,7 @@ public class CockpitMode implements SelectionListener {
     private InventoryItemPlacer inventoryItemPlacer;
     private ToBeBuildPlacer toBeBuildPlacer;
     private ToBeBuildPlacerListener toBeBuildPlacerListener;
+    private ToBeBuildPlacerRenderTask toBeBuildPlacerRenderTask;
 
     public static CockpitMode getInstance() {
         return INSTANCE;
@@ -68,7 +71,7 @@ public class CockpitMode implements SelectionListener {
                 groupSelectionFrame = null;
                 inventoryItemPlacer = null;
             }
-            if(mode == Mode.SELL) {
+            if (mode == Mode.SELL) {
                 SelectionHandler.getInstance().clearSelection();
             }
             if (mode != Mode.SELL) {
@@ -170,8 +173,17 @@ public class CockpitMode implements SelectionListener {
         this.toBeBuildPlacer = toBeBuildPlacer;
         groupSelectionFrame = null;
         inventoryItemPlacer = null;
-        if(toBeBuildPlacerListener != null) {
+        if (toBeBuildPlacerListener != null) {
             toBeBuildPlacerListener.onToBeBuildPlacerSet(toBeBuildPlacer);
+        }
+        if (toBeBuildPlacer != null) {
+            OverlayPanel.getInstance().create();
+            toBeBuildPlacerRenderTask = new ToBeBuildPlacerRenderTask(OverlayPanel.getInstance().getCanvas().getContext2d());
+            Renderer.getInstance().startOverlayRenderTask(toBeBuildPlacerRenderTask);
+        } else {
+            OverlayPanel.getInstance().destroy();
+            Renderer.getInstance().stopOverlayRenderTask(toBeBuildPlacerRenderTask);
+            toBeBuildPlacerRenderTask = null;
         }
     }
 

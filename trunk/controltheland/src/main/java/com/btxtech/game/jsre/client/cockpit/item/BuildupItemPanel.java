@@ -13,10 +13,6 @@
 
 package com.btxtech.game.jsre.client.cockpit.item;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.action.ActionHandler;
@@ -39,6 +35,10 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: beat Date: 15.11.2009 Time: 14:12:18
@@ -66,12 +66,12 @@ public class BuildupItemPanel extends Composite {
     @UiHandler("scrollLeftButton")
     void onScrollLeftButtonClick(ClickEvent event) {
         scrollPanel.setHorizontalScrollPosition(scrollPanel.getHorizontalScrollPosition() - SCROLL_STEP);
-   }
+    }
 
     @UiHandler("scrollRightButton")
     void onScrollRightButtonClick(ClickEvent event) {
         scrollPanel.setHorizontalScrollPosition(scrollPanel.getHorizontalScrollPosition() + SCROLL_STEP);
-   }
+    }
 
     public void display(SyncBaseItem syncBaseItem) {
         try {
@@ -110,7 +110,7 @@ public class BuildupItemPanel extends Composite {
             itemsToBuild.add(setupBuildupBlock(itemType, new MouseDownHandler() {
                 @Override
                 public void onMouseDown(MouseDownEvent event) {
-                    CockpitMode.getInstance().setToBeBuildPlacer(new ToBeBuildPlacer(itemType, constructionVehicles));
+                    CockpitMode.getInstance().setToBeBuildPlacer(new ToBeBuildPlacer(itemType, constructionVehicles, event));
                 }
             }));
         }
@@ -160,7 +160,7 @@ public class BuildupItemPanel extends Composite {
 
     public Index getAbsoluteMiddleTopPosition(int buildupItemTypeId) {
         BuildupItem buildupItem = buildupItems.get(buildupItemTypeId);
-        if(buildupItem == null) {
+        if (buildupItem == null) {
             throw new IllegalArgumentException("BuildupItemPanel.getAbsoluteMiddleTopPosition() buildupItemTypeId is not known: " + buildupItemTypeId);
         }
         return new Index(buildupItem.getAbsoluteLeft() + buildupItem.getOffsetWidth() / 2, buildupItem.getAbsoluteTop());
