@@ -42,7 +42,8 @@ public enum PerfmonEnum {
     ITEM_MOUSE_OVER("Item Mouse over"),
     ITEM_MOUSE_OUT("Item Mouse out"),
     ITEM_MOUSE_UP("Item Mouse up"),
-    RENDERER("Renderer");
+    RENDERER("Renderer"),
+    RENDERER_OVERLAY("Renderer Overlay");
 
     private String displayName;
 

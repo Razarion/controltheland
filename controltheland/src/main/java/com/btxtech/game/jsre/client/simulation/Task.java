@@ -14,8 +14,11 @@
 package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
+import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
+import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 
@@ -38,6 +41,7 @@ public class Task {
         levelTaskPacket.setQuestInfo(new QuestInfo(taskConfig.getName(), null, 0, 0, 0, QuestInfo.Type.QUEST, taskConfig.getConditionConfig().getRadarPositionHint()));
         levelTaskPacket.setActiveQuestProgress(SimulationConditionServiceImpl.getInstance().getProgressHtml(ClientBase.getInstance().getSimpleBase(), null));
         ClientLevelHandler.getInstance().setLevelTask(levelTaskPacket);
+        GameTipManager.getInstance().start(taskConfig.getGameTipConfig());
     }
 
     public TaskConfig getTaskConfig() {

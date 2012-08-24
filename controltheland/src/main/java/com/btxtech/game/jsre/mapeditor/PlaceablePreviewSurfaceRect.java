@@ -15,8 +15,6 @@ package com.btxtech.game.jsre.mapeditor;
 
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
-import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.PlaceablePreviewWidget;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.google.gwt.event.dom.client.MouseDownEvent;

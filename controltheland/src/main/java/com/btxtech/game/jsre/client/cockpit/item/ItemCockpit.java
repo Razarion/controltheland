@@ -9,6 +9,7 @@ import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -148,4 +149,12 @@ public class ItemCockpit extends Composite implements SelectionListener {
         setVisible(true);
         ClientUserTracker.getInstance().onDialogAppears(this, "ItemCockpit");
     }
+
+    public Index getAbsoluteMiddleTopPositionFromBuildupPanel(int buildupItemTypeId) {
+        if(buildupItemPanel == null) {
+            throw new IllegalArgumentException("ItemCockpit.getAbsoluteMiddleTopPositionFromBuildupPanel() buildupItemPanel is null. buildupItemTypeId: " + buildupItemTypeId);
+        }
+        return buildupItemPanel.getAbsoluteMiddleTopPosition(buildupItemTypeId);
+    }
+
 }

@@ -67,6 +67,9 @@ import java.util.logging.Logger;
  * Time: 10:22:31 PM
  */
 public class ActionHandler extends CommonActionServiceImpl implements CommonActionService {
+    public interface CommandListener {
+        void onCommand(BaseCommand baseCommand);
+    }
     private final static ActionHandler INSTANCE = new ActionHandler();
     private static final int TICK_INTERVAL = 40;
     private long lastTickTime = 0;
@@ -74,6 +77,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
     private HashSet<SyncTickItem> tmpAddActiveItems = new HashSet<SyncTickItem>();
     private HashSet<SyncTickItem> tmpRemoveActiveItems = new HashSet<SyncTickItem>();
     private Logger log = Logger.getLogger(ActionHandler.class.getName());
+    private CommandListener commandListener;
 
     public static ActionHandler getInstance() {
         return INSTANCE;
@@ -404,6 +408,9 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
         }
         ClientServices.getInstance().getConnectionService().sendSyncInfo(syncItem);
         SoundHandler.getInstance().playCommandSound(syncItem);
+        if(commandListener != null) {
+            commandListener.onCommand(baseCommand);
+        }
     }
 
     private double calculateFactor(long time) {
@@ -448,5 +455,9 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
         } catch (Exception e) {
             log.log(Level.SEVERE, "", e);
         }
+    }
+
+    public void setCommandListener(CommandListener commandListener) {
+        this.commandListener = commandListener;
     }
 }

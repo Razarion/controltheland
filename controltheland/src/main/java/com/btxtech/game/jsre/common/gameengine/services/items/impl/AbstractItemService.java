@@ -351,6 +351,21 @@ abstract public class AbstractItemService implements ItemService {
     }
 
     @Override
+    public Collection<SyncBaseItem> getItems4BaseAndType(final SimpleBase simpleBase, final int itemTypeId) {
+        final Collection<SyncBaseItem> itemsInBase = new ArrayList<SyncBaseItem>();
+        iterateOverItems(false, null, new ItemHandler<Void>() {
+            @Override
+            public Void handleItem(SyncItem syncItem) {
+                if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).getBase().equals(simpleBase) && syncItem.getItemType().getId() == itemTypeId) {
+                    itemsInBase.add((SyncBaseItem) syncItem);
+                }
+                return null;
+            }
+        });
+        return itemsInBase;
+    }
+
+    @Override
     public void killSyncItems(Collection<SyncItem> itemsToKill) {
         for (SyncItem syncItem : itemsToKill) {
             try {

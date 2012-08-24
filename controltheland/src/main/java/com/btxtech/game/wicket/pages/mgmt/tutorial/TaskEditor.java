@@ -14,6 +14,7 @@
 package com.btxtech.game.wicket.pages.mgmt.tutorial;
 
 import com.btxtech.game.jsre.client.common.RadarMode;
+import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
@@ -28,6 +29,7 @@ import com.btxtech.game.wicket.uiservices.BotPanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
 import com.btxtech.game.wicket.uiservices.IndexPanel;
 import com.btxtech.game.wicket.uiservices.ItemTypePanel;
+import com.btxtech.game.wicket.uiservices.ResourceItemTypePanel;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import com.btxtech.game.wicket.uiservices.ServiceHelper;
 import org.apache.wicket.markup.html.form.Button;
@@ -38,6 +40,8 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import java.util.Arrays;
 
 /**
  * User: beat
@@ -55,7 +59,7 @@ public class TaskEditor extends MgmtWebPage {
     public TaskEditor(DbTaskConfig dbTaskConfig) {
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbTaskConfig> form = new Form<DbTaskConfig>("taskForm", new CompoundPropertyModel<DbTaskConfig>(new RuModel<DbTaskConfig>(dbTaskConfig, DbTaskConfig.class) {
+        final Form<DbTaskConfig> form = new Form<>("taskForm", new CompoundPropertyModel<DbTaskConfig>(new RuModel<DbTaskConfig>(dbTaskConfig, DbTaskConfig.class) {
             @Override
             protected RuServiceHelper<DbTaskConfig> getRuServiceHelper() {
                 return ruTaskServiceHelper;
@@ -68,8 +72,8 @@ public class TaskEditor extends MgmtWebPage {
         form.add(new TextField("maxMoney"));
         form.add(new TextField("houseCount"));
         form.add(new TextField("itemSellFactor"));
-        form.add(new DropDownChoice<RadarMode>("radarMode", RadarMode.getList()));
-        form.add(new ConditionConfigPanel("conditionConfig"));        
+        form.add(new DropDownChoice<>("radarMode", RadarMode.getList()));
+        form.add(new ConditionConfigPanel("conditionConfig"));
 
         new CrudChildTableHelper<DbTaskConfig, DbTaskAllowedItem>("allowedItemTable", null, "createAllowedItem", false, form, false) {
             @Override
@@ -140,6 +144,13 @@ public class TaskEditor extends MgmtWebPage {
                 dbTaskBotItem.add(new BotPanel("dbBotConfig"));
             }
         };
+
+        form.add(new DropDownChoice<>("tip", GameTipConfig.Tip.getValuesIncludingNull()));
+        form.add(new BaseItemTypePanel("tipActor"));
+        form.add(new BaseItemTypePanel("tipToBeBuilt"));
+        form.add(new ResourceItemTypePanel("tipResource"));
+        form.add(new IndexPanel("tipTerrainPositionHint"));
+
 
         form.add(new Button("save") {
 

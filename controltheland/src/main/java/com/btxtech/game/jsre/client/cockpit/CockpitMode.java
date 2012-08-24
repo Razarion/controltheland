@@ -30,6 +30,10 @@ public class CockpitMode implements SelectionListener {
         SELL
     }
 
+    public interface ToBeBuildPlacerListener {
+        void onToBeBuildPlacerSet(ToBeBuildPlacer toBeBuildPlacer);
+    }
+
     private static final CockpitMode INSTANCE = new CockpitMode();
     private Mode mode;
     private boolean isMovePossible;
@@ -40,6 +44,7 @@ public class CockpitMode implements SelectionListener {
     private GroupSelectionFrame groupSelectionFrame;
     private InventoryItemPlacer inventoryItemPlacer;
     private ToBeBuildPlacer toBeBuildPlacer;
+    private ToBeBuildPlacerListener toBeBuildPlacerListener;
 
     public static CockpitMode getInstance() {
         return INSTANCE;
@@ -165,6 +170,13 @@ public class CockpitMode implements SelectionListener {
         this.toBeBuildPlacer = toBeBuildPlacer;
         groupSelectionFrame = null;
         inventoryItemPlacer = null;
+        if(toBeBuildPlacerListener != null) {
+            toBeBuildPlacerListener.onToBeBuildPlacerSet(toBeBuildPlacer);
+        }
+    }
+
+    public void setToBeBuildPlacerListener(ToBeBuildPlacerListener toBeBuildPlacerListener) {
+        this.toBeBuildPlacerListener = toBeBuildPlacerListener;
     }
 
     private void clearPossibilities() {

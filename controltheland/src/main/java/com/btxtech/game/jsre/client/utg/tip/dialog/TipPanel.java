@@ -1,4 +1,4 @@
-package com.btxtech.game.jsre.client.utg.tip;
+package com.btxtech.game.jsre.client.utg.tip.dialog;
 
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.cockpit.AbstractControlPanel;

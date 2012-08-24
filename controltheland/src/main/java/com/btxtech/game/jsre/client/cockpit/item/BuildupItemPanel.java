@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
 import com.btxtech.game.jsre.client.cockpit.Group;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -52,7 +53,7 @@ public class BuildupItemPanel extends Composite {
     @UiField
     ScrollPanel scrollPanel;
 
-    private Map<Integer, BuildupItem> buildupItem = new HashMap<Integer, BuildupItem>();
+    private Map<Integer, BuildupItem> buildupItems = new HashMap<Integer, BuildupItem>();
 
     interface BuildupItemPanelUiBinder extends UiBinder<Widget, BuildupItemPanel> {
     }
@@ -101,7 +102,7 @@ public class BuildupItemPanel extends Composite {
     }
 
     private void setupBuildupItemsCV(final Group constructionVehicles) throws NoSuchItemTypeException {
-        buildupItem.clear();
+        buildupItems.clear();
         HorizontalPanel itemsToBuild = new HorizontalPanel();
         Collection<Integer> itemTypeIDs = constructionVehicles.getFirst().getBaseItemType().getBuilderType().getAbleToBuild();
         for (Integer itemTypeID : itemTypeIDs) {
@@ -118,7 +119,7 @@ public class BuildupItemPanel extends Composite {
     }
 
     private void setupBuildupItemsFactory(final Group factories) throws NoSuchItemTypeException {
-        buildupItem.clear();
+        buildupItems.clear();
         HorizontalPanel itemsToBuild = new HorizontalPanel();
         Collection<Integer> itemTypeIDs = factories.getFirst().getBaseItemType().getFactoryType().getAbleToBuild();
         for (Integer itemTypeID : itemTypeIDs) {
@@ -140,19 +141,29 @@ public class BuildupItemPanel extends Composite {
 
     private Widget setupBuildupBlock(BaseItemType itemType, MouseDownHandler mouseDownHandler) {
         BuildupItem buildupItem = new BuildupItem(itemType, mouseDownHandler);
-        this.buildupItem.put(itemType.getId(), buildupItem);
+        this.buildupItems.put(itemType.getId(), buildupItem);
         return buildupItem;
     }
 
     public void onMoneyChanged(double accountBalance) {
-        for (BuildupItem buildupItem : this.buildupItem.values()) {
+        for (BuildupItem buildupItem : this.buildupItems.values()) {
             buildupItem.onMoneyChanged(accountBalance);
         }
     }
 
     public void onStateChanged() {
-        for (BuildupItem buildupItem : this.buildupItem.values()) {
+        for (BuildupItem buildupItem : this.buildupItems.values()) {
             buildupItem.onStateChanged();
         }
     }
+
+
+    public Index getAbsoluteMiddleTopPosition(int buildupItemTypeId) {
+        BuildupItem buildupItem = buildupItems.get(buildupItemTypeId);
+        if(buildupItem == null) {
+            throw new IllegalArgumentException("BuildupItemPanel.getAbsoluteMiddleTopPosition() buildupItemTypeId is not known: " + buildupItemTypeId);
+        }
+        return new Index(buildupItem.getAbsoluteLeft() + buildupItem.getOffsetWidth() / 2, buildupItem.getAbsoluteTop());
+    }
+
 }

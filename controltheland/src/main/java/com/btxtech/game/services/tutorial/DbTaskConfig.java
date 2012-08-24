@@ -15,6 +15,7 @@ package com.btxtech.game.services.tutorial;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.RadarMode;
+import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
@@ -23,6 +24,8 @@ import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.db.IndexUserType;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import org.hibernate.annotations.Cascade;
@@ -34,6 +37,8 @@ import org.hibernate.annotations.TypeDefs;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -86,6 +91,18 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     private Set<DbTaskBot> dbTaskBots;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbConditionConfig conditionConfig;
+    @Enumerated(EnumType.STRING)
+    private GameTipConfig.Tip tip;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbBaseItemType tipActor;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbBaseItemType tipToBeBuilt;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbResourceItemType tipResource;
+    @Type(type = "index")
+    @Columns(columns = {@Column(name = "tipXTerrainPositionHint"), @Column(name = "tipYTerrainPositionHint")})
+    private Index tipTerrainPositionHint;
+
 
     @Transient
     private CrudChildServiceHelper<DbItemTypeAndPosition> itemTypeAndPositionCrudHelper;
@@ -176,6 +193,46 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         this.radarMode = radarMode;
     }
 
+    public GameTipConfig.Tip getTip() {
+        return tip;
+    }
+
+    public void setTip(GameTipConfig.Tip tip) {
+        this.tip = tip;
+    }
+
+    public DbBaseItemType getTipActor() {
+        return tipActor;
+    }
+
+    public void setTipActor(DbBaseItemType tipActor) {
+        this.tipActor = tipActor;
+    }
+
+    public DbBaseItemType getTipToBeBuilt() {
+        return tipToBeBuilt;
+    }
+
+    public void setTipToBeBuilt(DbBaseItemType tipToBeBuilt) {
+        this.tipToBeBuilt = tipToBeBuilt;
+    }
+
+    public DbResourceItemType getTipResource() {
+        return tipResource;
+    }
+
+    public void setTipResource(DbResourceItemType tipResource) {
+        this.tipResource = tipResource;
+    }
+
+    public Index getTipTerrainPositionHint() {
+        return tipTerrainPositionHint;
+    }
+
+    public void setTipTerrainPositionHint(Index tipTerrainPositionHint) {
+        this.tipTerrainPositionHint = tipTerrainPositionHint;
+    }
+
     public TaskConfig createTaskConfig(ItemService itemService) {
         ArrayList<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<ItemTypeAndPosition>();
         for (DbItemTypeAndPosition dbItemTypeAndPosition : getItemCrudServiceHelper().readDbChildren()) {
@@ -206,7 +263,21 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
                 name,
                 convertTaskBots(itemService),
                 itemTypeLimitation,
-                radarMode);
+                radarMode,
+                createGameTipConfig());
+    }
+
+    private GameTipConfig createGameTipConfig() {
+        if (tip == null) {
+            return null;
+        }
+        GameTipConfig gameTipConfig = new GameTipConfig();
+        gameTipConfig.setTip(tip);
+        gameTipConfig.setActor(tipActor != null ? tipActor.getId() : 0);
+        gameTipConfig.setToBeBuiltId(tipToBeBuilt != null ? tipToBeBuilt.getId() : 0);
+        gameTipConfig.setTerrainPositionHint(tipTerrainPositionHint);
+        gameTipConfig.setResourceId(tipResource != null ? tipResource.getId() : 0);
+        return gameTipConfig;
     }
 
     public CrudChildServiceHelper<DbItemTypeAndPosition> getItemCrudServiceHelper() {

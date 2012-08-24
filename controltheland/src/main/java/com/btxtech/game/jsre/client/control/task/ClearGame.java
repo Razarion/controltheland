@@ -16,9 +16,6 @@ package com.btxtech.game.jsre.client.control.task;
 import com.btxtech.game.jsre.client.ClientChatHandler;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameCommon;
-import com.btxtech.game.jsre.client.cockpit.CockpitMode;
-import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
-import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
@@ -26,7 +23,7 @@ import com.btxtech.game.jsre.client.renderer.Renderer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
-import com.btxtech.game.jsre.client.utg.tip.TipManager;
+import com.btxtech.game.jsre.client.utg.tip.dialog.TipManager;
 
 /**
  * User: beat
