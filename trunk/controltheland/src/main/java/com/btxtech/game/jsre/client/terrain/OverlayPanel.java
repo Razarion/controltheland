@@ -5,6 +5,8 @@ import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
@@ -60,6 +62,12 @@ public class OverlayPanel {
             @Override
             public void onMouseUp(MouseUpEvent event) {
                 TerrainView.getInstance().getTerrainMouseHandler().onOverlayMouseUp(event);
+            }
+        });
+        canvas.addMouseDownHandler(new MouseDownHandler() {
+            @Override
+            public void onMouseDown(MouseDownEvent event) {
+                TerrainView.getInstance().getTerrainMouseHandler().onOverlayMouseDown(event);
             }
         });
         canvas.addKeyDownHandler(new KeyDownHandler() {

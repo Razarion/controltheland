@@ -200,15 +200,33 @@ public class TerrainMouseHandler implements MouseMoveHandler {
         try {
             Perfmon.getInstance().onEntered(PerfmonEnum.TERRAIN_MOUSE_UP);
 
-            if (CockpitMode.getInstance().hasToBeBuildPlacer()) {
-                int absoluteX = event.getRelativeX(canvas.getElement()) + terrainView.getViewOriginLeft();
-                int absoluteY = event.getRelativeY(canvas.getElement()) + terrainView.getViewOriginTop();
-                finalizeToBeBuildPlacer(absoluteX, absoluteY);
-                return;
+            if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
+                if (CockpitMode.getInstance().hasToBeBuildPlacer()) {
+                    int absoluteX = event.getRelativeX(canvas.getElement()) + terrainView.getViewOriginLeft();
+                    int absoluteY = event.getRelativeY(canvas.getElement()) + terrainView.getViewOriginTop();
+                    finalizeToBeBuildPlacer(absoluteX, absoluteY);
+                    return;
+                }
+            } else if (event.getNativeButton() == NativeEvent.BUTTON_RIGHT) {
+                CockpitMode.getInstance().setToBeBuildPlacer(null);
+                SelectionHandler.getInstance().clearSelection();
             }
             GwtCommon.preventDefault(event);
         } finally {
             Perfmon.getInstance().onLeft(PerfmonEnum.TERRAIN_MOUSE_UP);
+        }
+    }
+
+    public void onOverlayMouseDown(MouseDownEvent event) {
+        try {
+            Perfmon.getInstance().onEntered(PerfmonEnum.TERRAIN_MOUSE_DOWN);
+            if (event.getNativeButton() == NativeEvent.BUTTON_RIGHT) {
+                CockpitMode.getInstance().setToBeBuildPlacer(null);
+                SelectionHandler.getInstance().clearSelection();
+            }
+            GwtCommon.preventDefault(event);
+        } finally {
+            Perfmon.getInstance().onLeft(PerfmonEnum.TERRAIN_MOUSE_DOWN);
         }
     }
 
