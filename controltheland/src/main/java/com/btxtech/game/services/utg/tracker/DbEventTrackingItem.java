@@ -14,6 +14,7 @@
 package com.btxtech.game.services.utg.tracker;
 
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
+import org.hibernate.annotations.Index;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -35,6 +36,7 @@ public class DbEventTrackingItem implements Serializable {
     @Column(nullable = false)
     private Date timeStamp;
     @Column(nullable = false)
+    @Index(name = "TRACKER_EVENT_ITEM_INDEX_START_UUID")
     private String startUuid;
     private long clientTimeStamp;
     private int xPos;

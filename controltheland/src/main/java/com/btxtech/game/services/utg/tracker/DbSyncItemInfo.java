@@ -14,6 +14,7 @@
 package com.btxtech.game.services.utg.tracker;
 
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,6 +40,7 @@ public class DbSyncItemInfo implements Serializable {
     private long clientTimeStamp;
     @Column(nullable = false, length = 100000)
     private SyncItemInfo syncItemInfo;
+    @Index(name = "TRACKER_SYNC_INFOS_INDEX_START_UUID")
     private String startUuid;
 
     /**
