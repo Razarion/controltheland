@@ -15,8 +15,8 @@ package com.btxtech.game.services.terrain.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 
-import javax.persistence.Embeddable;
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 @Embeddable

@@ -13,14 +13,8 @@
 
 package com.btxtech.game.jsre.pathfinding;
 
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.google.gwt.user.client.rpc.RemoteService;
-import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.mapeditor.TerrainInfo;
-import java.util.List;
-import java.util.Map;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 /**
  * User: beat
@@ -29,5 +23,5 @@ import java.util.Map;
  */
 @RemoteServiceRelativePath("pathfinding")
 public interface Pathfinding extends RemoteService {
-    TerrainInfo getTerrainInfo(int terrainId);
+    com.btxtech.game.jsre.common.TerrainInfo getTerrainInfo(int terrainId);
 }

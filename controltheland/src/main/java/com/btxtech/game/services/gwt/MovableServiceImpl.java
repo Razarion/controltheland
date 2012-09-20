@@ -17,7 +17,7 @@ package com.btxtech.game.services.gwt;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
-import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
@@ -42,20 +42,20 @@ import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
-import com.btxtech.game.services.action.ActionService;
-import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.connection.ConnectionService;
-import com.btxtech.game.services.connection.NoBaseException;
+import com.btxtech.game.services.common.ExceptionHandler;
+import com.btxtech.game.services.common.ServerPlanetServices;
+import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.connection.Session;
-import com.btxtech.game.services.energy.ServerEnergyService;
-import com.btxtech.game.services.inventory.InventoryService;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.inventory.GlobalInventoryService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
+import com.btxtech.game.services.planet.Base;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.sound.SoundService;
 import com.btxtech.game.services.statistics.StatisticsService;
-import com.btxtech.game.services.terrain.TerrainService;
-import com.btxtech.game.services.territory.TerritoryService;
+import com.btxtech.game.services.terrain.TerrainDbUtil;
+import com.btxtech.game.services.terrain.TerrainImageService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.AllianceService;
@@ -76,17 +76,11 @@ import java.util.Map;
 
 public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements MovableService {
     @Autowired
-    private TerrainService terrainService;
+    private TerrainImageService terrainImageService;
     @Autowired
-    private ActionService actionService;
+    private ServerItemTypeService serverItemTypeService;
     @Autowired
-    private BaseService baseService;
-    @Autowired
-    private ItemService itemService;
-    @Autowired
-    private ConnectionService connectionService;
-    @Autowired
-    private ServerEnergyService serverEnergyService;
+    private ServerConnectionService serverConnectionService;
     @Autowired
     private UserTrackingService userTrackingService;
     @Autowired
@@ -96,8 +90,6 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Autowired
     private MgmtService mgmtService;
     @Autowired
-    private TerritoryService territoryService;
-    @Autowired
     private TutorialService tutorialService;
     @Autowired
     private Session session;
@@ -106,18 +98,20 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Autowired
     private AllianceService allianceService;
     @Autowired
-    private InventoryService inventoryService;
+    private GlobalInventoryService globalInventoryService;
     @Autowired
     private StatisticsService statisticsService;
     @Autowired
     private SoundService soundService;
+    @Autowired
+    private PlanetSystemService planetSystemService;
 
     private Log log = LogFactory.getLog(MovableServiceImpl.class);
 
     @Override
     public void sendCommands(List<BaseCommand> baseCommands) {
         try {
-            actionService.executeCommands(baseCommands);
+            planetSystemService.getServerPlanetServices().getActionService().executeCommands(baseCommands);
         } catch (Throwable t) {
             log.error("", t);
         }
@@ -126,7 +120,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public List<Packet> getSyncInfo(String startUuid) throws NoConnectionException {
         try {
-            return connectionService.getConnection(startUuid).getAndRemovePendingPackets();
+            return serverConnectionService.getConnection(startUuid).getAndRemovePendingPackets();
         } catch (NoConnectionException e) {
             throw e;
         } catch (Throwable t) {
@@ -138,7 +132,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public Collection<SyncItemInfo> getAllSyncInfo() {
         try {
-            return itemService.getSyncInfo();
+            return planetSystemService.getServerPlanetServices().getItemService().getSyncInfo();
         } catch (Throwable t) {
             log.error("", t);
             return null;
@@ -164,49 +158,51 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public RealGameInfo getRealGameInfo(String startUuid) throws InvalidLevelState {
+    public RealGameInfo getRealGameInfo(String startUuid) throws InvalidLevelStateException {
         try {
-            baseService.continueBase(startUuid);
+            planetSystemService.continuePlanet(startUuid);
             RealGameInfo realGameInfo = new RealGameInfo();
-            setCommonInfo(realGameInfo, userService, itemService, mgmtService, cmsUiService, soundService);
-            realGameInfo.setBase(baseService.getBase().getSimpleBase());
-            realGameInfo.setAccountBalance(baseService.getBase().getAccountBalance());
-            realGameInfo.setEnergyConsuming(serverEnergyService.getConsuming());
-            realGameInfo.setEnergyGenerating(serverEnergyService.getGenerating());
-            terrainService.setupTerrainRealGame(realGameInfo);
-            realGameInfo.setTerritories(territoryService.getTerritories());
-            realGameInfo.setAllBases(baseService.getAllBaseAttributes());
-            realGameInfo.setHouseSpace(baseService.getBase().getHouseSpace());
+            setCommonInfo(realGameInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService);
+            ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices();
+            Base base = serverPlanetServices.getBaseService().getBase();
+            realGameInfo.setBase(base.getSimpleBase());
+            realGameInfo.setAccountBalance(base.getAccountBalance());
+            realGameInfo.setEnergyConsuming(serverPlanetServices.getEnergyService().getConsuming());
+            realGameInfo.setEnergyGenerating(serverPlanetServices.getEnergyService().getGenerating());
+            terrainImageService.setupTerrainImages(realGameInfo);
+            serverPlanetServices.getTerrainService().setupTerrainRealGame(realGameInfo);
+            realGameInfo.setAllBases(planetSystemService.getServerPlanetServices(base.getSimpleBase()).getBaseService().getAllBaseAttributes());
+            realGameInfo.setHouseSpace(base.getHouseSpace());
+            realGameInfo.setPlanetInfo(planetSystemService.getServerPlanetServices(base.getSimpleBase()).getPlanetInfo());
             userGuidanceService.fillRealGameInfo(realGameInfo);
             realGameInfo.setAllianceOffers(allianceService.getPendingAllianceOffers());
             return realGameInfo;
-        } catch (InvalidLevelState invalidLevelState) {
-            throw invalidLevelState;
-        } catch (NoBaseException t) {
-            log.error(t.getMessage() + ", SessionId: " + t.getSessionId());
+        } catch (InvalidLevelStateException invalidLevelStateException) {
+            throw invalidLevelStateException;
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
         return null;
     }
 
     @Override
-    public SimulationInfo getSimulationGameInfo(int levelTaskId) throws InvalidLevelState {
+    public SimulationInfo getSimulationGameInfo(int levelTaskId) throws InvalidLevelStateException {
         try {
             SimulationInfo simulationInfo = new SimulationInfo();
             DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialConfig(levelTaskId);
             // Common
-            setCommonInfo(simulationInfo, userService, itemService, mgmtService, cmsUiService, soundService);
-            simulationInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(itemService));
+            setCommonInfo(simulationInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService);
+            simulationInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(serverItemTypeService));
             simulationInfo.setLevelTaskId(levelTaskId);
             simulationInfo.setLevelTaskTitel(userGuidanceService.getDbLevel().getLevelTaskCrud().readDbChild(levelTaskId).getName());
             simulationInfo.setLevelNumber(userGuidanceService.getDbLevel().getNumber());
-            simulationInfo.setSkipAble(userGuidanceService.getDbLevel().getParent().isRealBaseRequired());
+            simulationInfo.setAbortable(userGuidanceService.getDbLevel().hasDbPlanet());
             // Terrain
-            terrainService.setupTerrainTutorial(simulationInfo, dbTutorialConfig);
+            terrainImageService.setupTerrainImages(simulationInfo);
+            TerrainDbUtil.loadTerrainFromDb(dbTutorialConfig.getDbTerrainSetting(), simulationInfo);
             return simulationInfo;
-        } catch (InvalidLevelState invalidLevelState) {
-            throw invalidLevelState;
+        } catch (InvalidLevelStateException invalidLevelStateException) {
+            throw invalidLevelStateException;
         } catch (Throwable t) {
             log.error("", t);
         }
@@ -216,15 +212,15 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public void surrenderBase() {
         try {
-            baseService.surrenderBase(baseService.getBase());
+            planetSystemService.getServerPlanetServices().getBaseService().surrenderBase(planetSystemService.getServerPlanetServices().getBaseService().getBase());
         } catch (Throwable t) {
             log.error("", t);
         }
     }
 
-    public static void setCommonInfo(GameInfo gameInfo, UserService userService, ItemService itemService, MgmtService mgmtService, CmsUiService cmsUiService, SoundService soundService) {
+    public static void setCommonInfo(GameInfo gameInfo, UserService userService, ServerItemTypeService serverItemTypeService, MgmtService mgmtService, CmsUiService cmsUiService, SoundService soundService) {
         gameInfo.setRegistered(userService.isRegistered());
-        gameInfo.setItemTypes(itemService.getItemTypes());
+        gameInfo.setItemTypes(serverItemTypeService.getItemTypes());
         StartupData startupData = mgmtService.getStartupData();
         gameInfo.setRegisterDialogDelay(startupData.getRegisterDialogDelay());
         gameInfo.setPredefinedUrls(cmsUiService.getPredefinedUrls());
@@ -234,7 +230,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public void log(String message, Date date) {
         try {
-            connectionService.clientLog(message, date);
+            serverConnectionService.clientLog(message, date);
         } catch (Throwable t) {
             log.error("", t);
         }
@@ -249,9 +245,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
                 throw new Exception("Wicket session not found");
             }
             ((AuthenticatedWebSession) o).signIn(userName, password);
-        } catch (UserAlreadyExistsException e) {
-            throw e;
-        } catch (PasswordNotMatchException e) {
+        } catch (UserAlreadyExistsException | PasswordNotMatchException e) {
             throw e;
         } catch (Throwable t) {
             log.error("", t);
@@ -262,7 +256,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public void sendChatMessage(ChatMessage chatMessage) {
         try {
-            connectionService.sendChatMessage(chatMessage);
+            serverConnectionService.sendChatMessage(chatMessage);
         } catch (Throwable t) {
             log.error("", t);
         }
@@ -271,7 +265,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public List<ChatMessage> pollChatMessages(Integer lastMessageId) {
         try {
-            return connectionService.pollChatMessages(lastMessageId);
+            return serverConnectionService.pollChatMessages(lastMessageId);
         } catch (Throwable t) {
             log.error("", t);
             return null;
@@ -319,7 +313,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public void sellItem(Id id) {
         try {
-            itemService.sellItem(id);
+            planetSystemService.getServerPlanetServices().getItemService().sellItem(id);
         } catch (Throwable t) {
             log.error("", t);
         }
@@ -374,7 +368,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public InventoryInfo getInventory() {
         try {
-            return inventoryService.getInventory();
+            return globalInventoryService.getInventory();
         } catch (Throwable t) {
             log.error("", t);
             return null;
@@ -384,8 +378,8 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public InventoryInfo assembleInventoryItem(int inventoryItemId) {
         try {
-            inventoryService.assembleInventoryItem(inventoryItemId);
-            return inventoryService.getInventory();
+            globalInventoryService.assembleInventoryItem(inventoryItemId);
+            return globalInventoryService.getInventory();
         } catch (Throwable t) {
             log.error("", t);
             return null;
@@ -395,7 +389,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public void useInventoryItem(int inventoryItemId, Collection<Index> positionToBePlaced) {
         try {
-            inventoryService.useInventoryItem(inventoryItemId, positionToBePlaced);
+            globalInventoryService.useInventoryItem(inventoryItemId, positionToBePlaced);
         } catch (Throwable t) {
             log.error("", t);
         }
@@ -404,7 +398,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public int buyInventoryItem(int inventoryItemId) {
         try {
-            return inventoryService.buyInventoryItem(inventoryItemId);
+            return globalInventoryService.buyInventoryItem(inventoryItemId);
         } catch (Throwable t) {
             log.error("", t);
             return userService.getUserState().getRazarion();
@@ -414,7 +408,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public int buyInventoryArtifact(int inventoryArtifactId) {
         try {
-            return inventoryService.buyInventoryArtifact(inventoryArtifactId);
+            return globalInventoryService.buyInventoryArtifact(inventoryArtifactId);
         } catch (Throwable t) {
             log.error("", t);
             return 0;

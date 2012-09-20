@@ -13,21 +13,21 @@
 
 package com.btxtech.game.wicket.pages.mgmt.level;
 
-import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
-import com.btxtech.game.services.utg.DbItemTypeLimitation;
 import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbLevelItemTypeLimitation;
 import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
 import com.btxtech.game.wicket.uiservices.CrudListChildTableHelper;
+import com.btxtech.game.wicket.uiservices.PlanetPanel;
+import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import com.btxtech.game.wicket.uiservices.WysiwygEditor;
 import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -57,17 +57,13 @@ public class DbLevelEditor extends MgmtWebPage {
         add(form);
 
         form.add(new WysiwygEditor("html"));
+        form.add(new PlanetPanel("dbPlanet"));
         form.add(new TextField("xp"));
         // Scope
-        form.add(new TextField("houseSpace"));
-        form.add(new TextField("itemSellFactor"));
-        form.add(new TextField("maxMoney"));
-        form.add(new DropDownChoice<>("radarMode", RadarMode.getList()));
-
-        new CrudChildTableHelper<DbLevel, DbItemTypeLimitation>("itemTypeLimitation", null, "createItemTypeLimitation", false, form, false) {
+        new CrudChildTableHelper<DbLevel, DbLevelItemTypeLimitation>("itemTypeLimitation", null, "createItemTypeLimitation", false, form, false) {
 
             @Override
-            protected void extendedPopulateItem(Item<DbItemTypeLimitation> dbItemTypeLimitationItem) {
+            protected void extendedPopulateItem(Item<DbLevelItemTypeLimitation> dbItemTypeLimitationItem) {
                 dbItemTypeLimitationItem.add(new BaseItemTypePanel("dbBaseItemType"));
                 dbItemTypeLimitationItem.add(new TextField("count"));
             }
@@ -83,7 +79,7 @@ public class DbLevelEditor extends MgmtWebPage {
             }
 
             @Override
-            protected CrudChildServiceHelper<DbItemTypeLimitation> getCrudChildServiceHelperImpl() {
+            protected CrudChildServiceHelper<DbLevelItemTypeLimitation> getCrudChildServiceHelperImpl() {
                 return getParent().getItemTypeLimitationCrud();
             }
         };
@@ -113,7 +109,7 @@ public class DbLevelEditor extends MgmtWebPage {
 
             @Override
             protected void onEditSubmit(DbLevelTask dbLevelTask) {
-                setResponsePage(new DbLevelTaskEditor(dbLevelTask));
+                setResponsePage(new DbLevelTaskEditor(dbLevelTask, new TerrainLinkHelper(form.getModelObject())));
             }
         };
 
@@ -127,7 +123,7 @@ public class DbLevelEditor extends MgmtWebPage {
         form.add(new Button("back") {
             @Override
             public void onSubmit() {
-                setResponsePage(DbQuestHubTable.class);
+                setResponsePage(LevelTable.class);
             }
         });
     }

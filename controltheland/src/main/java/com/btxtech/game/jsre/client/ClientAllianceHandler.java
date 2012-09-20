@@ -3,8 +3,8 @@ package com.btxtech.game.jsre.client;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.dialogs.AllianceOfferDialog;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
-import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

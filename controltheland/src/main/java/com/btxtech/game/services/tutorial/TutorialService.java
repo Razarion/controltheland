@@ -13,8 +13,16 @@
 
 package com.btxtech.game.services.tutorial;
 
-import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
+import com.btxtech.game.jsre.client.common.info.SimulationInfo;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.user.SecurityRoles;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collection;
 
 /**
  * User: beat
@@ -24,7 +32,9 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
 public interface TutorialService {
     CrudRootServiceHelper<DbTutorialConfig> getDbTutorialCrudRootServiceHelper();
 
-    DbTutorialConfig getDbTutorialConfig(int levelTaskId) throws InvalidLevelState;
+    DbTutorialConfig getDbTutorialConfig(int levelTaskId) throws InvalidLevelStateException;
 
     DbTutorialConfig getDbTutorialConfig4Tracking(int levelTaskId);
+
+    void saveTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int tutorialId);
 }

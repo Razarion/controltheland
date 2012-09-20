@@ -43,14 +43,14 @@ public class MockMovableServiceTestTransporter extends MockMovableService {
         ownItems.add(new ItemTypeAndPosition(MOVABLE_ITEM_TYPE.getId(), new Index(400, 900), MathHelper.WEST));
         Map<Integer, Integer> itemTypeLimitation = new HashMap<Integer, Integer>();
         List<TaskConfig> taskConfigs = new ArrayList<TaskConfig>();
-        taskConfigs.add(new TaskConfig(ownItems, null, null, 10, 100, 1000, 0.5, "TestTask1", null, itemTypeLimitation, RadarMode.MAP, null));
+        taskConfigs.add(new TaskConfig(ownItems, null, null, 10, 100, 1000, "TestTask1", null, itemTypeLimitation, RadarMode.MAP, null));
         TutorialConfig tutorialConfig = new TutorialConfig(taskConfigs, "MyTestBase", 500, 500, false, "", false);
         simulationInfo.setTutorialConfig(tutorialConfig);
         simulationInfo.setLevelNumber(1);
     }
 
     protected void setupTerrain(GameInfo gameInfo) {
-        gameInfo.setTerrainSettings(new TerrainSettings(50, 50, 100, 100));
+        gameInfo.setTerrainSettings(new TerrainSettings(50, 50));
         gameInfo.setTerrainImagePositions(new ArrayList<TerrainImagePosition>());
         Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
         surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 14, 50), 0)); // Land

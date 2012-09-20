@@ -14,12 +14,11 @@
 package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.client.common.LevelScope;
-import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.packets.LevelPacket;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.packets.Message;
@@ -29,20 +28,18 @@ import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.CountComparisonConfig;
-import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
-import com.btxtech.game.services.connection.ConnectionService;
+import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.history.HistoryService;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
-import com.btxtech.game.services.territory.TerritoryService;
+import com.btxtech.game.services.planet.Base;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
-import com.btxtech.game.services.utg.DbQuestHub;
 import com.btxtech.game.services.utg.LevelActivationException;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.XpService;
@@ -67,9 +64,7 @@ import java.util.Map;
 public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionServiceListener<UserState, Integer> {
     public static final String NO_MISSION_TARGET = "<center>There are no new mission targets.<br /><h1>Please check back later</h1></center>";
     @Autowired
-    private BaseService baseService;
-    @Autowired
-    private ConnectionService connectionService;
+    private ServerConnectionService serverConnectionService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -77,13 +72,13 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     @Autowired
     private HistoryService historyService;
     @Autowired
-    private CrudRootServiceHelper<DbQuestHub> crudQuestHub;
+    private CrudRootServiceHelper<DbLevel> dbLevelCrud;
     @Autowired
-    private TerritoryService territoryService;
+    private PlanetSystemService planetSystemService;
     @Autowired
     private SessionFactory sessionFactory;
     @Autowired
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
     @Autowired
     private XpService xpService;
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
@@ -93,7 +88,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
 
     @PostConstruct
     public void init() {
-        crudQuestHub.init(DbQuestHub.class, "orderIndex", true, true, null);
+        dbLevelCrud.init(DbLevel.class, "orderIndex", true, true, null);
         serverConditionService.setConditionServiceListener(this);
         try {
             HibernateUtil.openSession4InternalCall(sessionFactory);
@@ -106,32 +101,10 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     }
 
     @Override
-    public void createBaseInQuestHub(UserState userState) throws InvalidLevelState {
-        DbLevel dbLevel = getDbLevel(userState);
-        DbQuestHub dbQuestHub = dbLevel.getParent();
-        if (!dbQuestHub.isRealBaseRequired()) {
-            throw createInvalidLevelState();
-        }
-        Territory territory = territoryService.getTerritory(dbQuestHub.getStartTerritory());
-
-        try {
-            baseService.createNewBase(userState, dbQuestHub.getStartItemType(), territory, dbQuestHub.getStartItemFreeRange());
-        } catch (Exception e) {
-            log.error("Can not create base for user: " + userState, e);
-        }
-
-        Base base = baseService.getBase(userState);
-        base.setAccountBalance(dbQuestHub.getStartMoney());
-        baseService.sendAccountBaseUpdate(base.getSimpleBase());
-
-        log.debug("User: " + userState + " will be resurrected: " + dbQuestHub);
-    }
-
-    @Override
     public void sendResurrectionMessage(SimpleBase simpleBase) {
         Message message = new Message();
         message.setMessage("You lost your base. A new base was created.");
-        connectionService.sendPacket(simpleBase, message);
+        serverConnectionService.sendPacket(simpleBase, message);
     }
 
     @Override
@@ -149,25 +122,24 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         historyService.addLevelPromotionEntry(userState, dbNextLevel);
         log.debug("User: " + userState + " has been promoted: " + dbOldLevel + " to " + dbNextLevel);
 
-        if (baseService.getBase(userState) != null) {
-            Base base = baseService.getBase(userState);
+        if (userState.getBase() != null) {
+            Base base = userState.getBase();
             // Send XP
             XpPacket xpPacket = new XpPacket();
             xpPacket.setXp(0);
             xpPacket.setXp2LevelUp(dbNextLevel.getXp());
-            connectionService.sendPacket(base.getSimpleBase(), xpPacket);
+            serverConnectionService.sendPacket(base.getSimpleBase(), xpPacket);
             // Level
             LevelPacket levelPacket = new LevelPacket();
             levelPacket.setLevel(getLevelScope(dbNextLevel.getId()));
-            connectionService.sendPacket(base.getSimpleBase(), levelPacket);
+            serverConnectionService.sendPacket(base.getSimpleBase(), levelPacket);
         }
-
         // Create base if needed
-        if (baseService.getBase(userState) == null && dbNextLevel.getParent().isRealBaseRequired()) {
+        if (userState.getBase() == null && dbNextLevel.hasDbPlanet()) {
             try {
-                createBaseInQuestHub(userState);
-            } catch (InvalidLevelState invalidLevelState) {
-                log.error("Error during base creation: " + userState, invalidLevelState);
+                planetSystemService.createBase(userState);
+            } catch (InvalidLevelStateException invalidLevelStateException) {
+                log.error("Error during base creation: " + userState, invalidLevelStateException);
             }
         }
         // Prepare next level
@@ -244,7 +216,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         serverConditionService.onTutorialFinished(userState, levelTaskId);
         DbLevel newLevel = getDbLevel();
 
-        if (newLevel.getParent().isRealBaseRequired()) {
+        if (newLevel.hasDbPlanet()) {
             return new GameFlow(GameFlow.Type.START_REAL_GAME, null);
         } else {
             DbLevelTask dbLevelTask = newLevel.getFirstTutorialLevelTask();
@@ -253,7 +225,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     }
 
     private void activateConditions4Level(UserState userState, DbLevel dbLevel) {
-        ConditionConfig levelCondition = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(null, dbLevel.getXp(), null), null);
+        ConditionConfig levelCondition = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(dbLevel.getXp(), null), null);
         serverConditionService.activateCondition(levelCondition, userState, null);
     }
 
@@ -278,19 +250,19 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         // Communication
         log.debug("Level Task completed. userState: " + userState + " " + dbLevelTask);
         historyService.addLevelTaskCompletedEntry(userState, dbLevelTask);
-        Base base = baseService.getBase(userState);
+        Base base = userState.getBase();
         if (base != null) {
             LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
             levelTaskPacket.setCompleted();
-            connectionService.sendPacket(base.getSimpleBase(), levelTaskPacket);
+            serverConnectionService.sendPacket(base.getSimpleBase(), levelTaskPacket);
         }
         // Rewards
         if (dbLevelTask.getXp() > 0) {
             xpService.onReward(userState, dbLevelTask.getXp());
         }
         if (base != null && dbLevelTask.getMoney() > 0) {
-            baseService.depositResource(dbLevelTask.getMoney(), base.getSimpleBase());
-            baseService.sendAccountBaseUpdate(base.getSimpleBase());
+            base.getPlanet().getPlanetServices().getBaseService().depositResource(dbLevelTask.getMoney(), base.getSimpleBase());
+            base.getPlanet().getPlanetServices().getBaseService().sendAccountBaseUpdate(base.getSimpleBase());
         }
 
         // Activate next quest / mission
@@ -333,34 +305,27 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
 
     @Override
     public void setLevelForNewUser(UserState userState) {
-        DbLevel dbLevel = new ArrayList<>(crudQuestHub.readDbChildren()).get(0).getLevelCrud().readDbChildren().get(0);
+        List<DbLevel> levels = new ArrayList<>(dbLevelCrud.readDbChildren());
+        if(levels.isEmpty()) {
+            throw new IllegalStateException("No level defined");
+        }
+        DbLevel dbLevel = new ArrayList<>(dbLevelCrud.readDbChildren()).get(0);
         userState.setDbLevelId(dbLevel.getId());
         activateNextUnDoneLevelTask(userState, null);
         activateConditions4Level(userState, dbLevel);
     }
 
     private DbLevel getNextDbLevel(DbLevel dbLevel) {
-        DbQuestHub dbQuestHub = dbLevel.getParent();
-        List<DbLevel> dbLevels = dbQuestHub.getLevelCrud().readDbChildren();
+        List<DbLevel> dbLevels = new ArrayList<>(dbLevelCrud.readDbChildren());
         int index = dbLevels.indexOf(dbLevel);
         if (index < 0) {
-            throw new IllegalArgumentException("DbLevel can not be found in own DbQuestHub: " + dbLevel);
+            throw new IllegalArgumentException("DbLevel can not be found in own DbPlanet: " + dbLevel);
         }
         index++;
         if (dbLevels.size() > index) {
             return dbLevels.get(index);
         } else {
-            List<DbQuestHub> dbQuestHubs = new ArrayList<>(crudQuestHub.readDbChildren());
-            index = dbQuestHubs.indexOf(dbQuestHub);
-            if (index < 0) {
-                throw new IllegalArgumentException("DbLevel can not be found in own DbQuestHub: " + dbLevel);
-            }
-            index++;
-            if (dbQuestHubs.size() > index) {
-                return dbQuestHubs.get(index).getLevelCrud().readDbChildren().get(0);
-            } else {
-                throw new IllegalArgumentException("Is last DbQuestHub" + dbQuestHub);
-            }
+            throw new IllegalArgumentException("This is the last level" + dbLevel);
         }
     }
 
@@ -391,7 +356,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
 
     @Override
     public DbLevel getDbLevel(int levelId) {
-        return (DbLevel) sessionFactory.getCurrentSession().get(DbLevel.class, levelId);
+        return dbLevelCrud.readDbChild(levelId);
     }
 
     public LevelScope getLevelScope(int dbLevelId) {
@@ -403,25 +368,30 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     }
 
     @Override
+    public LevelScope getLevelScope(UserState userState) {
+        return getLevelScope(userState.getDbLevelId());
+    }
+
+    @Override
     public LevelScope getLevelScope() {
         return getLevelScope(userService.getUserState().getDbLevelId());
     }
 
     @Override
     public LevelScope getLevelScope(SimpleBase simpleBase) {
-        UserState userState = baseService.getUserState(simpleBase);
+        UserState userState = planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getUserState(simpleBase);
         return getLevelScope(userState.getDbLevelId());
     }
 
     @Override
     public boolean isStartRealGame() {
-        return getDbLevel().getParent().isRealBaseRequired();
+        return getDbLevel().hasDbPlanet();
     }
 
     @Override
     public int getDefaultLevelTaskId() {
         DbLevel dbLevel = getDbLevel();
-        if (dbLevel.getParent().isRealBaseRequired()) {
+        if (dbLevel.hasDbPlanet()) {
             throw new IllegalArgumentException("If real game is required, no default tutorial LevelTask is is available");
         }
         return dbLevel.getFirstTutorialLevelTask().getId();
@@ -430,16 +400,14 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     @Override
     public void activateLevels() throws LevelActivationException {
         levelScopes.clear();
-        for (DbQuestHub dbQuestHub : crudQuestHub.readDbChildren()) {
-            for (DbLevel dbLevel : dbQuestHub.getLevelCrud().readDbChildren()) {
-                levelScopes.put(dbLevel.getId(), dbLevel.createLevelScope());
-            }
+        for (DbLevel dbLevel : dbLevelCrud.readDbChildren()) {
+            levelScopes.put(dbLevel.getId(), dbLevel.createLevelScope());
         }
     }
 
     @Override
-    public CrudRootServiceHelper<DbQuestHub> getCrudQuestHub() {
-        return crudQuestHub;
+    public CrudRootServiceHelper<DbLevel> getDbLevelCrud() {
+        return dbLevelCrud;
     }
 
     @Override
@@ -519,29 +487,29 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
                     activateConditionsRestore(entry.getValue(), getDbLevel(entry.getValue()), entry.getKey().getActiveQuest());
                     serverConditionService.restoreBackup(entry.getKey(), entry.getValue());
                 } catch (Exception e) {
-                    log.error("Can not restore user: " + entry.getValue().getUser(), e);
+                    log.error("UserGuidanceServiceImpl: Can not restore user: " + entry.getValue().getUser(), e);
                 }
             }
         }
     }
 
     private void activateConditionsRestore(UserState userState, DbLevel dbLevel, DbLevelTask activeQuest) {
-        ConditionConfig levelCondition = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(null, dbLevel.getXp(), null), null);
+        ConditionConfig levelCondition = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(dbLevel.getXp(), null), null);
         serverConditionService.activateCondition(levelCondition, userState, null);
 
         if (activeQuest != null) {
-            serverConditionService.activateCondition(activeQuest.createConditionConfig(itemService), userState, activeQuest.getId());
+            serverConditionService.activateCondition(activeQuest.createConditionConfig(serverItemTypeService), userState, activeQuest.getId());
             setActiveQuest(userState, activeQuest);
         }
     }
 
 
     @Override
-    public InvalidLevelState createInvalidLevelState() {
+    public InvalidLevelStateException createInvalidLevelState() {
         if (isStartRealGame()) {
-            return new InvalidLevelState(null);
+            return new InvalidLevelStateException(null);
         } else {
-            return new InvalidLevelState(getDefaultLevelTaskId());
+            return new InvalidLevelStateException(getDefaultLevelTaskId());
         }
     }
 
@@ -572,17 +540,16 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         if (activeQuestIds.containsKey(userState)) {
             throw new IllegalArgumentException("DbLevelTask already activated: " + activeQuestIds.containsKey(userState) + ". Can not activate new level task: " + dbLevelTask);
         }
-        serverConditionService.activateCondition(dbLevelTask.createConditionConfig(itemService), userState, dbLevelTask.getId());
+        serverConditionService.activateCondition(dbLevelTask.createConditionConfig(serverItemTypeService), userState, dbLevelTask.getId());
         setActiveQuest(userState, dbLevelTask);
         historyService.addLevelTaskActivated(userState, dbLevelTask);
-        if (baseService.getBase(userState) != null) {
-            Base base = baseService.getBase(userState);
+        if (userState.getBase() != null) {
             LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
             levelTaskPacket.setQuestInfo(dbLevelTask.createQuestInfo());
             if (!dbLevelTask.isDbTutorialConfig()) {
                 levelTaskPacket.setActiveQuestProgress(serverConditionService.getProgressHtml(userState, dbLevelTask.getId()));
             }
-            connectionService.sendPacket(base.getSimpleBase(), levelTaskPacket);
+            serverConnectionService.sendPacket(userState.getBase().getSimpleBase(), levelTaskPacket);
         }
     }
 

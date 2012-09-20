@@ -15,12 +15,12 @@ package com.btxtech.game.services.utg.tracker;
 
 import org.hibernate.annotations.Index;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Column;
-import java.util.Date;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * User: beat

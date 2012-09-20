@@ -16,12 +16,11 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncMovable;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.collision.CollisionService;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.common.ServerPlanetServices;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.services.planet.Base;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -44,22 +43,18 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
     @Autowired
     private MgmtService mgmtService;
     @Autowired
-    private ItemService itemService;
-    @Autowired
-    private BaseService baseService;
-    @Autowired
-    private CollisionService collisionService;
-    @Autowired
-    private TerrainService terrainService;
+    private ServerItemTypeService serverItemTypeService;
     @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private PlanetSystemService planetSystemService;
 
     @Test
     @DirtiesContext
     public void twoRegUserOneUnregUserAllOffline() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
         System.out.println("**** twoRegUserOneUnregUserAllOffline ****");
 
         // U1 no real base, first level
@@ -87,7 +82,8 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         userService.login("U2", "test");
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         SimpleBase u2Base = getMyBase();
-        Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
+        Index buildPos = serverPlanetServices.getCollisionService().getFreeRandomPosition(serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
         sendBuildCommand(getFirstSynItemId(u2Base, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(u2Base, TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
@@ -121,12 +117,12 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        waitForActionServiceDone();
+        waitForActionServiceDone(TEST_PLANET_1_ID);
         Thread.sleep(3000); // Wait for XP
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<Base> oldBases = baseService.getBases();
+        List<Base> oldBases = serverPlanetServices.getBaseService().getBases();
         List<UserState> oldUserStates = userService.getAllUserStates();
         mgmtService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -135,7 +131,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
-        assertBackupSummery(1, 15, 3, 3);
+        assertBackupSummery(1, 5, 3, 3);
         mgmtService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -143,7 +139,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<Base> newBases = baseService.getBases();
+        List<Base> newBases = serverPlanetServices.getBaseService().getBases();
         List<UserState> newUserStates = userService.getAllUserStates();
         Assert.assertEquals(3, newBases.size());
         Assert.assertEquals(3, newUserStates.size());
@@ -155,14 +151,14 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         mgmtService.backup();
-        assertBackupSummery(2, 15, 3, 3);
+        assertBackupSummery(2, 5, 3, 3);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         mgmtService.backup();
-        assertBackupSummery(3, 15, 3, 3);
+        assertBackupSummery(3, 5, 3, 3);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -171,7 +167,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(0).getDate());
-        newBases = baseService.getBases();
+        newBases = serverPlanetServices.getBaseService().getBases();
         newUserStates = userService.getAllUserStates();
         Assert.assertEquals(3, newBases.size());
         Assert.assertEquals(3, newUserStates.size());
@@ -212,7 +208,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         backupSummaries = mgmtService.getBackupSummary();
         Assert.assertEquals(1, backupSummaries.size());
         mgmtService.restore(backupSummaries.get(0).getDate());
-        newBases = baseService.getBases();
+        newBases = serverPlanetServices.getBaseService().getBases();
         newUserStates = userService.getAllUserStates();
         Assert.assertEquals(3, newBases.size());
         Assert.assertEquals(3, newUserStates.size());
@@ -225,7 +221,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void onlineUnregUser() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
         System.out.println("**** onlineUnregUser ****");
 
         // Unreg user online, second level
@@ -238,7 +234,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        assertBackupSummery(1, 11, 1, 0);
+        assertBackupSummery(1, 1, 1, 0);
 
         List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(0).getDate());
@@ -248,7 +244,8 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<Base> newBases = baseService.getBases();
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
+        List<Base> newBases = serverPlanetServices.getBaseService().getBases();
         List<UserState> newUserStates = userService.getAllUserStates();
         Assert.assertEquals(0, newUserStates.size());
         Assert.assertEquals(1, newBases.size());
@@ -261,22 +258,23 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void bot() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
         System.out.println("**** bot ****");
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        BotConfig botConfig = setupMinimalBot(new Rectangle(4000, 4000, 3000, 3000)).createBotConfig(itemService);
+        BotConfig botConfig = setupMinimalBot(TEST_PLANET_1_ID, new Rectangle(4000, 4000, 3000, 3000)).createBotConfig(serverItemTypeService);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // TODO failed on: 07.07.2012
-        waitForBotToBuildup(botConfig);
+        waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(1, baseService.getBases().size());
-        Assert.assertEquals(4, baseService.getBases().get(0).getItems().size());
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
+        Assert.assertEquals(1, serverPlanetServices.getBaseService().getBases().size());
+        Assert.assertEquals(4, serverPlanetServices.getBaseService().getBases().get(0).getItems().size());
         Assert.assertEquals(0, userService.getAllUserStates().size());
         mgmtService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -284,15 +282,15 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        assertBackupSummery(1, 10, 0, 0);
+        assertBackupSummery(1, 0, 0, 0);
 
         List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(0).getDate());
-        waitForActionServiceDone();
+        waitForActionServiceDone(TEST_PLANET_1_ID);
         // TODO failed on: 21.06.2012, 03.07.2012, 07,07.2012
-        waitForBotToBuildup(botConfig);
-        Assert.assertEquals(1, baseService.getBases().size());
-        Assert.assertEquals(4, baseService.getBases().get(0).getItems().size());
+        waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
+        Assert.assertEquals(1, serverPlanetServices.getBaseService().getBases().size());
+        Assert.assertEquals(4, serverPlanetServices.getBaseService().getBases().get(0).getItems().size());
         Assert.assertEquals(0, userService.getAllUserStates().size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -305,14 +303,14 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        assertBackupSummery(2, 10, 0, 0);
+        assertBackupSummery(2, 0, 0, 0);
         backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(0).getDate());
-        waitForActionServiceDone();
+        waitForActionServiceDone(TEST_PLANET_1_ID);
         // TODO failed on: 18.06.2012
-        waitForBotToBuildup(botConfig);
-        Assert.assertEquals(1, baseService.getBases().size());
-        Assert.assertEquals(4, baseService.getBases().get(0).getItems().size());
+        waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
+        Assert.assertEquals(1, serverPlanetServices.getBaseService().getBases().size());
+        Assert.assertEquals(4, serverPlanetServices.getBaseService().getBases().get(0).getItems().size());
         Assert.assertEquals(0, userService.getAllUserStates().size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -321,19 +319,20 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void botAttacking() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
         System.out.println("**** bot ****");
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        BotConfig botConfig = setupMinimalNoAttackBot(new Rectangle(4000, 4000, 3000, 3000)).createBotConfig(itemService);
+        BotConfig botConfig = setupMinimalNoAttackBot(TEST_PLANET_1_ID, new Rectangle(4000, 4000, 3000, 3000)).createBotConfig(serverItemTypeService);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        waitForBotToBuildup(botConfig);
+        waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
 
-        Assert.assertEquals(1, baseService.getBases().size());
-        SimpleBase botBase = baseService.getBases().get(0).getSimpleBase();
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
+        Assert.assertEquals(1, serverPlanetServices.getBaseService().getBases().size());
+        SimpleBase botBase = serverPlanetServices.getBaseService().getBases().get(0).getSimpleBase();
 
         // U1 reg user
         beginHttpSession();
@@ -342,7 +341,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         userService.login("U1", "test");
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         SimpleBase realUser = getMyBase();
-        Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
+        Index buildPos = serverPlanetServices.getCollisionService().getFreeRandomPosition(serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
         sendBuildCommand(getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(realUser, TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
@@ -359,12 +358,12 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        assertBackupSummery(1, 13, 1, 1);
+        assertBackupSummery(1, 3, 1, 1);
         List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(0).getDate());
-        waitForActionServiceDone();
-        waitForBotToBuildup(botConfig);
-        Assert.assertEquals(2, baseService.getBases().size());
+        waitForActionServiceDone(TEST_PLANET_1_ID);
+        waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
+        Assert.assertEquals(2, serverPlanetServices.getBaseService().getBases().size());
         Assert.assertEquals(1, userService.getAllUserStates().size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -375,14 +374,14 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void longPathToDestination() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
         System.out.println("**** longPathToDestination ****");
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbBaseItemType builderType = (DbBaseItemType) itemService.getDbItemTypeCrud().readDbChild(TEST_START_BUILDER_ITEM_ID);
+        DbBaseItemType builderType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().readDbChild(TEST_START_BUILDER_ITEM_ID);
         builderType.getDbMovableType().setSpeed(1);
-        itemService.getDbItemTypeCrud().updateDbChild(builderType);
-        itemService.activate();
+        serverItemTypeService.getDbItemTypeCrud().updateDbChild(builderType);
+        serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -394,7 +393,8 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         SimpleBase realUser = getMyBase();
         Id id = getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID);
-        SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.getItem(id);
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
+        SyncBaseItem syncBaseItem = (SyncBaseItem) serverPlanetServices.getItemService().getItem(id);
         // Fill artificial path to long
         List<Index> pathToDestination = new ArrayList<>();
         for (int i = 0; i < 200; i++) {
@@ -407,7 +407,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        assertBackupSummery(1, 11, 1, 1);
+        assertBackupSummery(1, 1, 1, 1);
         List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -419,7 +419,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         userService.login("U1", "test");
         realUser = getMyBase();
         id = getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID);
-        syncBaseItem = (SyncBaseItem) itemService.getItem(id);
+        syncBaseItem = (SyncBaseItem) serverPlanetServices.getItemService().getItem(id);
         SyncMovable syncMovable = syncBaseItem.getSyncMovable();
         Assert.assertTrue(syncMovable.getPathToDestination() == null || syncMovable.getPathToDestination().isEmpty());
         // Fill artificial path ca. 820 cahracters
@@ -434,7 +434,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        assertBackupSummery(2, 11, 1, 1);
+        assertBackupSummery(2, 1, 1, 1);
         backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -446,7 +446,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         userService.login("U1", "test");
         realUser = getMyBase();
         id = getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID);
-        syncBaseItem = (SyncBaseItem) itemService.getItem(id);
+        syncBaseItem = (SyncBaseItem) serverPlanetServices.getItemService().getItem(id);
         // Assert path has at lease more the 50 entries (original it was 130 but some are may be already achievement)
         // TODO failed on 04.07.2012, 09.07.2012, 27.07.2012
         Assert.assertTrue("Size is: " + syncBaseItem.getSyncMovable().getPathToDestination().size(), syncBaseItem.getSyncMovable().getPathToDestination().size() > 50);
@@ -559,10 +559,11 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
     // @Test
 
     public void testBigBackup() throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
         for (int i = 0; i < ITEM_COUNT; i++) {
             ItemType itemType = getRandomItemType();
             System.out.println("Creating: " + (i + 1) + " of " + ITEM_COUNT);
-            itemService.createSyncObject(itemType, getRandomPosition(itemType), null, getBase(itemType), 0);
+            serverPlanetServices.getItemService().createSyncObject(itemType, getRandomPosition(itemType), null, getBase(itemType), 0);
         }
         mgmtService.backup();
     }
@@ -576,12 +577,14 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
     }
 
     private Index getRandomPosition(ItemType itemType) {
-        Rectangle rectangle = new Rectangle(0, 0, terrainService.getTerrainSettings().getPlayFieldXSize(), terrainService.getTerrainSettings().getPlayFieldYSize());
-        return collisionService.getFreeRandomPosition(itemType, rectangle, 200, true, false);
+        Assert.fail();
+        return null;
+        // TODO Rectangle rectangle = new Rectangle(0, 0, terrainService.getTerrainSettings().getPlayFieldXSize(), terrainService.getTerrainSettings().getPlayFieldYSize());
+        // TODO return collisionService.getFreeRandomPosition(itemType, rectangle, 200, true, false);
     }
 
     public ItemType getRandomItemType() {
-        int index = (int) (Math.random() * itemService.getItemTypes().size());
-        return itemService.getItemTypes().get(index);
+        int index = (int) (Math.random() * serverItemTypeService.getItemTypes().size());
+        return serverItemTypeService.getItemTypes().get(index);
     }
 }

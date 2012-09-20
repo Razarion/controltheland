@@ -15,7 +15,7 @@ package com.btxtech.game.wicket.pages.mgmt.usermgmt;
 
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryItem;
-import com.btxtech.game.services.inventory.InventoryService;
+import com.btxtech.game.services.inventory.GlobalInventoryService;
 import com.btxtech.game.services.statistics.StatisticsEntry;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.UserService;
@@ -55,7 +55,7 @@ public class UserStateEditor extends MgmtWebPage {
     @SpringBean
     private XpService xpService;
     @SpringBean
-    private InventoryService inventoryService;
+    private GlobalInventoryService globalInventoryService;
     @SpringBean
     private StatisticsService statisticsService;
     private Integer dbLevelId;
@@ -168,7 +168,7 @@ public class UserStateEditor extends MgmtWebPage {
 
                 List<InventoryHelperEntry> inventoryHelperEntries = new ArrayList<>();
                 for (Map.Entry<Integer, Integer> entry : idCountMap.entrySet()) {
-                    DbInventoryItem dbInventoryItem = inventoryService.getItemCrud().readDbChild(entry.getKey());
+                    DbInventoryItem dbInventoryItem = globalInventoryService.getItemCrud().readDbChild(entry.getKey());
                     inventoryHelperEntries.add(new InventoryHelperEntry(dbInventoryItem.getName(), dbInventoryItem.getId(), entry.getValue()));
                 }
                 return inventoryHelperEntries;
@@ -195,7 +195,7 @@ public class UserStateEditor extends MgmtWebPage {
             public void onSubmit() {
                 if (addInventoryItemId.getModelObject() != null) {
                     // Verify
-                    inventoryService.getItemCrud().readDbChild(addInventoryItemId.getModelObject());
+                    globalInventoryService.getItemCrud().readDbChild(addInventoryItemId.getModelObject());
                     form.getModelObject().addInventoryItem(addInventoryItemId.getModelObject());
                     inventoryItemProvider.forceReload();
                 }
@@ -232,7 +232,7 @@ public class UserStateEditor extends MgmtWebPage {
 
                 List<InventoryHelperEntry> inventoryHelperEntries = new ArrayList<>();
                 for (Map.Entry<Integer, Integer> entry : idCountMap.entrySet()) {
-                    DbInventoryArtifact dbInventoryArtifact = inventoryService.getArtifactCrud().readDbChild(entry.getKey());
+                    DbInventoryArtifact dbInventoryArtifact = globalInventoryService.getArtifactCrud().readDbChild(entry.getKey());
                     inventoryHelperEntries.add(new InventoryHelperEntry(dbInventoryArtifact.getName(), dbInventoryArtifact.getId(), entry.getValue()));
                 }
                 return inventoryHelperEntries;
@@ -259,7 +259,7 @@ public class UserStateEditor extends MgmtWebPage {
             public void onSubmit() {
                 if (addInventoryArtifactId.getModelObject() != null) {
                     // Verify
-                    inventoryService.getArtifactCrud().readDbChild(addInventoryArtifactId.getModelObject());
+                    globalInventoryService.getArtifactCrud().readDbChild(addInventoryArtifactId.getModelObject());
                     form.getModelObject().addInventoryArtifact(addInventoryArtifactId.getModelObject());
                     inventoryArtifactProvider.forceReload();
                 }

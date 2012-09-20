@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.terrain;
 
+import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
@@ -20,7 +21,13 @@ import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,16 +45,12 @@ public class DbTerrainSetting implements CrudParent, CrudChild, Serializable {
     private Integer id;
     private int tileXCount;
     private int tileYCount;
-    private int tileHeight;
-    private int tileWidth;
     @OneToMany(mappedBy = "dbTerrainSetting", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbTerrainImagePosition> dbTerrainImagePositions;
     @OneToMany(mappedBy = "dbTerrainSetting", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbSurfaceRect> dbSurfaceRects;
-    private String name;
-    private boolean isRealGame;
     @Transient
     private CrudChildServiceHelper<DbTerrainImagePosition> dbTerrainImagePositionCrudServiceHelper;
     @Transient
@@ -73,40 +76,16 @@ public class DbTerrainSetting implements CrudParent, CrudChild, Serializable {
         this.tileYCount = tileYCount;
     }
 
-    public int getTileHeight() {
-        return tileHeight;
-    }
-
-    public void setTileHeight(int tileHeight) {
-        this.tileHeight = tileHeight;
-    }
-
-    public int getTileWidth() {
-        return tileWidth;
-    }
-
-    public void setTileWidth(int tileWidth) {
-        this.tileWidth = tileWidth;
-    }
-
     public int getPlayFieldXSize() {
-        return tileXCount * tileWidth;
+        return tileXCount * Constants.TERRAIN_TILE_WIDTH;
     }
 
     public int getPlayFieldYSize() {
-        return tileYCount * tileHeight;
+        return tileYCount * Constants.TERRAIN_TILE_HEIGHT;
     }
 
     public TerrainSettings createTerrainSettings() {
-        return new TerrainSettings(tileXCount, tileYCount, tileHeight, tileWidth);
-    }
-
-    public boolean isRealGame() {
-        return isRealGame;
-    }
-
-    public void setRealGame(boolean realGame) {
-        isRealGame = realGame;
+        return new TerrainSettings(tileXCount, tileYCount);
     }
 
     @Override
@@ -127,37 +106,24 @@ public class DbTerrainSetting implements CrudParent, CrudChild, Serializable {
 
     public CrudChildServiceHelper<DbTerrainImagePosition> getDbTerrainImagePositionCrudServiceHelper() {
         if (dbTerrainImagePositionCrudServiceHelper == null) {
-            dbTerrainImagePositionCrudServiceHelper = new CrudChildServiceHelper<DbTerrainImagePosition>(dbTerrainImagePositions, DbTerrainImagePosition.class, this);
+            dbTerrainImagePositionCrudServiceHelper = new CrudChildServiceHelper<>(dbTerrainImagePositions, DbTerrainImagePosition.class, this);
         }
         return dbTerrainImagePositionCrudServiceHelper;
     }
 
     public CrudChildServiceHelper<DbSurfaceRect> getDbSurfaceRectCrudServiceHelper() {
         if (dbSurfaceRectCrudServiceHelper == null) {
-            dbSurfaceRectCrudServiceHelper = new CrudChildServiceHelper<DbSurfaceRect>(dbSurfaceRects, DbSurfaceRect.class, this);
+            dbSurfaceRectCrudServiceHelper = new CrudChildServiceHelper<>(dbSurfaceRects, DbSurfaceRect.class, this);
         }
         return dbSurfaceRectCrudServiceHelper;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Override
     public void init(UserService userService) {
         tileXCount = 50;
         tileYCount = 50;
-        tileHeight = 100;
-        tileWidth = 100;
-        name = "Unnamed";
-        dbTerrainImagePositions = new HashSet<DbTerrainImagePosition>();
-        dbSurfaceRects = new HashSet<DbSurfaceRect>();
+        dbTerrainImagePositions = new HashSet<>();
+        dbSurfaceRects = new HashSet<>();
     }
 
     @Override
@@ -168,5 +134,15 @@ public class DbTerrainSetting implements CrudParent, CrudChild, Serializable {
     @Override
     public Object getParent() {
         return null;
+    }
+
+    @Override
+    public String getName() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setName(String name) {
+        throw new UnsupportedOperationException();
     }
 }

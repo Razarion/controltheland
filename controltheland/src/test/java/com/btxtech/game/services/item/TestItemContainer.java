@@ -6,6 +6,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemContainer;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.common.ServerPlanetServices;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +20,13 @@ import org.springframework.test.annotation.DirtiesContext;
  */
 public class TestItemContainer extends AbstractServiceTest {
     @Autowired
-    private ItemService itemService;
+    private PlanetSystemService planetSystemService;
 
     @Test
     @DirtiesContext
     public void testLoadUnloadContainer() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         System.out.println("**** testLoadContainer ****");
         beginHttpSession();
@@ -31,7 +34,7 @@ public class TestItemContainer extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         SimpleBase actorBase = getMyBase();
         Id builderId = getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID);
-        SyncBaseItem builder = (SyncBaseItem) itemService.getItem(builderId);
+        SyncBaseItem builder = (SyncBaseItem) serverPlanetServices.getItemService().getItem(builderId);
 
         // Create container
         sendBuildCommand(builderId, new Index(300, 300), TEST_FACTORY_ITEM_ID);
@@ -39,7 +42,7 @@ public class TestItemContainer extends AbstractServiceTest {
         sendFactoryCommand(getFirstSynItemId(actorBase, TEST_FACTORY_ITEM_ID), TEST_CONTAINER_ITEM_ID);
         waitForActionServiceDone();
         Id containerId = getFirstSynItemId(actorBase, TEST_CONTAINER_ITEM_ID);
-        SyncBaseItem container = (SyncBaseItem) itemService.getItem(containerId);
+        SyncBaseItem container = (SyncBaseItem) serverPlanetServices.getItemService().getItem(containerId);
         SyncItemContainer syncItemContainer = container.getSyncItemContainer();
 
         sendMoveCommand(containerId, new Index(5000, 5000));

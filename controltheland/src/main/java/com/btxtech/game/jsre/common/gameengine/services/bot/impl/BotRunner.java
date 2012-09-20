@@ -15,7 +15,7 @@ package com.btxtech.game.jsre.common.gameengine.services.bot.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
@@ -50,7 +50,7 @@ public abstract class BotRunner {
 
     protected abstract void killBotThread();
 
-    protected abstract Services getServices();
+    protected abstract PlanetServices getPlanetServices();
 
     protected abstract void killResources();
 
@@ -66,8 +66,8 @@ public abstract class BotRunner {
                     if (botEnragementState == null || intruderHandler == null) {
                         return;
                     }
-                    if (base == null || !getServices().getBaseService().isAlive(base)) {
-                        base = getServices().getBaseService().createBotBase(botConfig);
+                    if (base == null || !getPlanetServices().getBaseService().isAlive(base)) {
+                        base = getPlanetServices().getBaseService().createBotBase(botConfig);
                     }
                     botEnragementState.work(base);
                     intruderHandler.handleIntruders(base);
@@ -128,7 +128,7 @@ public abstract class BotRunner {
     }
 
     public boolean isInRealm(Index point) {
-        return botConfig.getRealm().contains(point);
+        return botConfig.getRealm().isInsideAbsolute(point);
     }
 
     public void onBotItemKilled(SyncBaseItem syncBaseItem, SimpleBase actor) {
@@ -152,8 +152,8 @@ public abstract class BotRunner {
 
     private void startBot() {
         synchronized (syncObject) {
-            botEnragementState = new BotEnragementState(botConfig.getBotEnragementStateConfigs(), botConfig.getRealm(), getServices(), botConfig.getName(), getEnragementStateListener());
-            intruderHandler = new IntruderHandler(botEnragementState, botConfig.getRealm(), getServices());
+            botEnragementState = new BotEnragementState(botConfig.getBotEnragementStateConfigs(), botConfig.getRealm(), getPlanetServices(), botConfig.getName(), getEnragementStateListener());
+            intruderHandler = new IntruderHandler(botEnragementState, botConfig.getRealm(), getPlanetServices());
         }
         startBotThread(botConfig.getActionDelay(), new BotTicker());
     }

@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.renderer;
 
+import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainHandler;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
@@ -34,10 +35,10 @@ public class TerrainRenderTask extends AbstractRenderTask {
         if (terrainTiles == null) {
             return;
         }
-        final int scrollXOffset = viewRect.getX() % terrainHandler.getTerrainSettings().getTileWidth();
-        final int scrollYOffset = viewRect.getY() % terrainHandler.getTerrainSettings().getTileHeight();
-        final int tileWidth = terrainHandler.getTerrainSettings().getTileWidth();
-        final int tileHeight = terrainHandler.getTerrainSettings().getTileHeight();
+        final int scrollXOffset = viewRect.getX() % Constants.TERRAIN_TILE_WIDTH;
+        final int scrollYOffset = viewRect.getY() % Constants.TERRAIN_TILE_HEIGHT;
+        final int tileWidth = Constants.TERRAIN_TILE_WIDTH;
+        final int tileHeight = Constants.TERRAIN_TILE_HEIGHT;
 
         terrainHandler.iteratorOverAllTerrainTiles(tileViewRect, new AbstractTerrainService.TerrainTileEvaluator() {
             @Override
@@ -64,9 +65,9 @@ public class TerrainRenderTask extends AbstractRenderTask {
 
                 ImageElement imageElement;
                 if (terrainTile.isSurface()) {
-                    imageElement = terrainHandler.getSurfaceImageElement(terrainTile.getImageId());
+                    imageElement = terrainHandler.getTerrainImageHandler().getSurfaceImageElement(terrainTile.getImageId());
                 } else {
-                    imageElement = terrainHandler.getTerrainImageElement(terrainTile.getImageId());
+                    imageElement = terrainHandler.getTerrainImageHandler().getTerrainImageElement(terrainTile.getImageId());
                 }
                 if (imageElement == null || imageElement.getWidth() == 0 || imageElement.getHeight() == 0) {
                     return;

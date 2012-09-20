@@ -13,37 +13,20 @@
 
 package com.btxtech.game.services.playback.impl;
 
-import com.btxtech.game.jsre.common.packets.SyncItemInfo;
-import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
-import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
-import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
-import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
-import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.jsre.playback.Playback;
 import com.btxtech.game.jsre.playback.PlaybackInfo;
 import com.btxtech.game.services.gwt.AutowiredRemoteServiceServlet;
-import com.btxtech.game.services.gwt.MovableServiceImpl;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.sound.SoundService;
-import com.btxtech.game.services.terrain.TerrainService;
-import com.btxtech.game.services.tutorial.DbTutorialConfig;
+import com.btxtech.game.services.terrain.TerrainImageService;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.services.utg.LifecycleTrackingInfo;
 import com.btxtech.game.services.utg.UserTrackingService;
-import com.btxtech.game.services.utg.tracker.DbBrowserWindowTracking;
-import com.btxtech.game.services.utg.tracker.DbDialogTracking;
-import com.btxtech.game.services.utg.tracker.DbEventTrackingItem;
-import com.btxtech.game.services.utg.tracker.DbScrollTrackingItem;
-import com.btxtech.game.services.utg.tracker.DbSelectionTrackingItem;
-import com.btxtech.game.services.utg.tracker.DbSyncItemInfo;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
 
 /**
  * User: beat
@@ -54,11 +37,11 @@ public class PlaybackServiceImpl extends AutowiredRemoteServiceServlet implement
     @Autowired
     private UserTrackingService userTrackingService;
     @Autowired
-    private TerrainService terrainService;
+    private TerrainImageService terrainService;
     @Autowired
     private TutorialService tutorialService;
     @Autowired
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
     @Autowired
     private MgmtService mgmtService;
     @Autowired
@@ -71,14 +54,16 @@ public class PlaybackServiceImpl extends AutowiredRemoteServiceServlet implement
 
     @Override
     public PlaybackInfo getPlaybackInfo(String startUuid) {
+        throw new UnsupportedOperationException();
+        /*
         try {
             PlaybackInfo playbackInfo = new PlaybackInfo();
 
             // Tutorial
-            MovableServiceImpl.setCommonInfo(playbackInfo, userService, itemService, mgmtService, cmsUiService, soundService);
+            MovableServiceImpl.setCommonInfo(playbackInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService);
             LifecycleTrackingInfo lifecycleTrackingInfo = userTrackingService.getLifecycleTrackingInfo(startUuid);
             DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialConfig4Tracking(lifecycleTrackingInfo.getLevelTaskId());
-            playbackInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(itemService));
+            // TODO playbackInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(serverItemTypeService));
             terrainService.setupTerrainTutorial(playbackInfo, dbTutorialConfig);
 
             playbackInfo.setEventTrackingStart(userTrackingService.getDbEventTrackingStart(startUuid).createEventTrackingStart());
@@ -129,6 +114,6 @@ public class PlaybackServiceImpl extends AutowiredRemoteServiceServlet implement
         } catch (Throwable t) {
             log.error("", t);
             return null;
-        }
+        } */
     }
 }

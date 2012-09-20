@@ -13,9 +13,10 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.base.impl;
 
-import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
@@ -39,6 +40,10 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
     private static final String UNDEFINED_NAME = "undefined";
     final private HashMap<SimpleBase, BaseAttributes> bases = new HashMap<SimpleBase, BaseAttributes>();
     private Logger log = Logger.getLogger(AbstractBaseServiceImpl.class.getName());
+
+    protected abstract GlobalServices getGlobalServices();
+
+    protected abstract PlanetServices getPlanetServices();
 
     @Override
     public String getBaseName(SimpleBase simpleBase) {
@@ -89,7 +94,7 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
     public SimpleBase getSimpleBase4Id(int baseId) {
         synchronized (bases) {
             for (SimpleBase simpleBase : bases.keySet()) {
-                if (simpleBase.getId() == baseId) {
+                if (simpleBase.getBaseId() == baseId) {
                     return simpleBase;
                 }
             }
@@ -187,26 +192,28 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
 
     @Override
     public boolean isLevelLimitation4ItemTypeExceeded(BaseItemType newItemType, SimpleBase simpleBase) throws NoSuchItemTypeException {
-        LevelScope levelScope = getLevel(simpleBase);
-        return getItemCount(simpleBase, newItemType.getId()) >= levelScope.getLimitation4ItemType(newItemType.getId());
+        return getItemCount(simpleBase, newItemType.getId()) >= getLimitation4ItemType(simpleBase, newItemType);
     }
 
     @Override
     public boolean isLevelLimitation4ItemTypeExceeded(BaseItemType newItemType, int toAddCount, SimpleBase simpleBase) throws NoSuchItemTypeException {
-        LevelScope levelScope = getLevel(simpleBase);
-        return getItemCount(simpleBase, newItemType.getId()) + toAddCount > levelScope.getLimitation4ItemType(newItemType.getId());
+        return getItemCount(simpleBase, newItemType.getId()) + toAddCount > getLimitation4ItemType(simpleBase, newItemType);
+    }
+
+    private int getLimitation4ItemType(SimpleBase simpleBase, BaseItemType itemType) {
+        int levelCount = getGlobalServices().getCommonUserGuidanceService().getLevelScope(simpleBase).getLimitation4ItemType(itemType.getId());
+        int planetCount = getPlanetServices().getPlanetInfo().getLimitation4ItemType(itemType.getId());
+        return Math.min(levelCount, planetCount);
     }
 
     @Override
     public boolean isHouseSpaceExceeded(SimpleBase simpleBase) {
-        LevelScope levelScope = getLevel(simpleBase);
-        return getItemCount(simpleBase) >= getHouseSpace(simpleBase) + levelScope.getHouseSpace();
+        return getItemCount(simpleBase) >= getHouseSpace(simpleBase) + getPlanetServices().getPlanetInfo().getHouseSpace();
     }
 
     @Override
     public boolean isHouseSpaceExceeded(SimpleBase simpleBase, int itemCountToAdd) {
-        LevelScope levelScope = getLevel(simpleBase);
-        return getItemCount(simpleBase) + itemCountToAdd > getHouseSpace(simpleBase) + levelScope.getHouseSpace();
+        return getItemCount(simpleBase) + itemCountToAdd > getHouseSpace(simpleBase) + getPlanetServices().getPlanetInfo().getHouseSpace();
     }
 
     @Override

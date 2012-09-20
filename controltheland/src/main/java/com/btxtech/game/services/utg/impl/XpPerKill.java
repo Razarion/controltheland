@@ -13,8 +13,9 @@
 
 package com.btxtech.game.services.utg.impl;
 
+import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.services.base.Base;
 
 /**
  * User: beat
@@ -22,19 +23,25 @@ import com.btxtech.game.services.base.Base;
  * Time: 19:36:01
  */
 public class XpPerKill {
-    private Base actorBase;
+    private SimpleBase actorBase;
     private SyncBaseItem killedItem;
+    private PlanetServices planetServices;
 
-    public XpPerKill(Base actorBase, SyncBaseItem killedItem) {
+    public XpPerKill(SimpleBase actorBase, SyncBaseItem killedItem, PlanetServices planetServices) {
         this.actorBase = actorBase;
         this.killedItem = killedItem;
+        this.planetServices = planetServices;
     }
 
-    public Base getActorBase() {
+    public SimpleBase getActorBase() {
         return actorBase;
     }
 
     public SyncBaseItem getKilledItem() {
         return killedItem;
+    }
+
+    public PlanetServices getPlanetServices() {
+        return planetServices;
     }
 }

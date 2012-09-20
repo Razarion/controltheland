@@ -13,11 +13,12 @@
 
 package com.btxtech.game.wicket.uiservices;
 
-import java.util.Iterator;
-import java.util.List;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * User: beat

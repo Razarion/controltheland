@@ -3,7 +3,6 @@ package com.btxtech.game.jsre.client.cockpit;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
@@ -14,6 +13,7 @@ import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -21,7 +21,6 @@ import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
-import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -42,9 +41,11 @@ public class QuestProgressCockpit extends FlowPanel {
     private HTML questTitle;
     private HTML questProgress;
     private VerticalPanel missionStartPanel;
+    private VerticalPanel moveToPlanetPanel;
     private Label dialog;
     private Timer radarTimer;
     private QuestInfo activeQuest;
+    private boolean moveToNextPlane;
 
     public QuestProgressCockpit() {
         getElement().getStyle().setBackgroundColor("rgba(0, 0, 0, 0.5)");
@@ -56,6 +57,7 @@ public class QuestProgressCockpit extends FlowPanel {
         setupTitle();
         setupQuestProgress();
         setupMissionStart();
+        setupMoveToPlanet();
         setupControlPanel();
 
         preventEvents(this);
@@ -100,6 +102,26 @@ public class QuestProgressCockpit extends FlowPanel {
         missionStartPanel.setVisible(false);
     }
 
+    private void setupMoveToPlanet() {
+        moveToPlanetPanel = new VerticalPanel();
+        add(moveToPlanetPanel);
+        HTML text = new HTML("Proceed to the next planet");
+        text.getElement().getStyle().setColor("#C7C4BB");
+        text.getElement().getStyle().setFontSize(12, Style.Unit.PX);
+        text.getElement().getStyle().setProperty("fontFamily", "Arial, Helvetica, sans-serif");
+        moveToPlanetPanel.add(text);
+        moveToPlanetPanel.setCellHorizontalAlignment(text, HasHorizontalAlignment.ALIGN_LEFT);
+        ExtendedCustomButton start = new ExtendedCustomButton("startmission", false, ToolTips.TOOL_TIP_NEXT_PLANET, new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                ClientLevelHandler.getInstance().moveToNextPlanet();
+            }
+        });
+        moveToPlanetPanel.add(start);
+        moveToPlanetPanel.setCellHorizontalAlignment(start, HasHorizontalAlignment.ALIGN_CENTER);
+        moveToPlanetPanel.setVisible(false);
+    }
+
     private void setupControlPanel() {
         dialog = new Label("Open quest dialog");
         dialog.getElement().getStyle().setMarginTop(10, Style.Unit.PX);
@@ -129,8 +151,11 @@ public class QuestProgressCockpit extends FlowPanel {
 
     }
 
-
     public void setActiveQuest(QuestInfo questInfo, String activeQuestProgress) {
+        if(moveToNextPlane) {
+            return;
+        }
+        moveToPlanetPanel.setVisible(false);
         if (questInfo != null) {
             if (questInfo.getType() == QuestInfo.Type.MISSION) {
                 stopRadarVisualization();
@@ -183,6 +208,9 @@ public class QuestProgressCockpit extends FlowPanel {
     }
 
     public void setNoActiveQuest() {
+        if(moveToNextPlane) {
+            return;
+        }
         stopRadarVisualization();
         if (Connection.getInstance().getGameInfo() == null) {
             // Editor
@@ -191,10 +219,21 @@ public class QuestProgressCockpit extends FlowPanel {
         questTitle.setHTML("No active quest");
         missionStartPanel.setVisible(false);
         questProgress.setVisible(false);
+        moveToPlanetPanel.setVisible(false);
         ClientUserTracker.getInstance().onDialogDisappears(this);
         ClientUserTracker.getInstance().onDialogAppears(this, "No active quest");
         activeQuest = null;
     }
+
+
+    public void setWrongPlanet(boolean move) {
+        if(move) {
+            setNoActiveQuest();
+        }
+        moveToNextPlane = move;
+        moveToPlanetPanel.setVisible(move);
+    }
+
 
     private void preventEvents(Widget widget) {
         widget.getElement().getStyle().setCursor(Style.Cursor.DEFAULT);
@@ -222,5 +261,4 @@ public class QuestProgressCockpit extends FlowPanel {
     public void enableQuestControl(boolean enabled) {
         dialog.setVisible(enabled);
     }
-
 }

@@ -1,26 +1,28 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
-import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.NoConnectionException;
-import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
-import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
+import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
+import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.jsre.common.utg.condition.AbstractSyncItemComparison;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.SyncItemTypeComparisonConfig;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.Connection;
-import com.btxtech.game.services.connection.ConnectionService;
+import com.btxtech.game.services.connection.ServerConnectionService;
+import com.btxtech.game.services.planet.Base;
+import com.btxtech.game.services.planet.BaseService;
+import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.services.utg.condition.impl.ServerConditionServiceImpl;
@@ -40,9 +42,11 @@ import java.util.Map;
 /**
  * User: beat Date: 31.01.2012 Time: 16:51:19
  */
-public class TestSyncItemTypeComparison extends AbstractServiceTest implements ConnectionService {
+public class TestSyncItemTypeComparison extends AbstractServiceTest implements ServerConnectionService {
     @Autowired
     private ServerConditionService serverConditionService;
+    @Autowired
+    private PlanetSystemService planetSystemService;
     private Integer identifier;
     private UserState actor;
     private UserState userState1;
@@ -59,30 +63,32 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements C
         progressString = null;
         progressBase = null;
         setPrivateStaticField(AbstractSyncItemComparison.class, "MIN_SEND_DELAY", 0);
-        configureRealGame();
+        configureSimplePlanet();
         identifier = null;
         actor = null;
 
         // Mock objects
         userState1 = new UserState();
         userState1.setUser("TestUser1");
-        base1 = new Base(userState1, 1);
+        userState1.setDbLevelId(TEST_LEVEL_2_REAL_ID);
+        base1 = new Base(userState1, planetSystemService.getPlanet(TEST_PLANET_1_ID), 1);
         int itemId = 0;
-        builder1B1 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockServices(), base1.getSimpleBase());
-        attacker1B1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockServices(), base1.getSimpleBase());
+        builder1B1 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockGlobalServices(), createMockPlanetServices(), base1.getSimpleBase());
+        attacker1B1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockGlobalServices(), createMockPlanetServices(), base1.getSimpleBase());
 
         UserState userState2 = new UserState();
         userState2.setUser("TestUser2");
-        base2 = new Base(userState2, 2);
-        builder1B2 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockServices(), base2.getSimpleBase());
+        userState2.setDbLevelId(TEST_LEVEL_2_REAL_ID);
+        base2 = new Base(userState2, planetSystemService.getPlanet(TEST_PLANET_1_ID), 2);
+        builder1B2 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockGlobalServices(), createMockPlanetServices(), base2.getSimpleBase());
 
         BaseService baseServiceMock = EasyMock.createNiceMock(BaseService.class);
         EasyMock.expect(baseServiceMock.getUserState(base1.getSimpleBase())).andReturn(userState1).anyTimes();
         EasyMock.replay(baseServiceMock);
 
         ((ServerConditionServiceImpl) deAopProxy(serverConditionService)).setRate(50);
-        setPrivateField(ServerConditionServiceImpl.class, serverConditionService, "baseService", baseServiceMock);
-        setPrivateField(ServerConditionServiceImpl.class, serverConditionService, "connectionService", this);
+        ((ServerPlanetServicesImpl)planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setBaseService(baseServiceMock);
+        setPrivateField(ServerConditionServiceImpl.class, serverConditionService, "serverConnectionService", this);
     }
 
     private void assertActorAndIdentifierAndClear(UserState expectedActor, Integer expectedIdentifier) {
@@ -116,7 +122,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements C
     public void build1Item() throws Exception {
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new SyncItemTypeComparisonConfig(null, itemTypes, "Item #C" + builder1B1.getBaseItemType().getId()), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new SyncItemTypeComparisonConfig(itemTypes, "Item #C" + builder1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -142,7 +148,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements C
     public void build3Item() throws Exception {
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new SyncItemTypeComparisonConfig(null, itemTypes, "Item #C" + builder1B1.getBaseItemType().getId()), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new SyncItemTypeComparisonConfig(itemTypes, "Item #C" + builder1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -175,7 +181,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements C
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 2);
         itemTypes.put(attacker1B1.getBaseItemType(), 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new SyncItemTypeComparisonConfig(null, itemTypes, "Item #C" + builder1B1.getBaseItemType().getId()
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new SyncItemTypeComparisonConfig(itemTypes, "Item #C" + builder1B1.getBaseItemType().getId()
                 + " #C" + attacker1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
@@ -208,7 +214,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements C
     public void killed1Item() throws Exception {
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new SyncItemTypeComparisonConfig(null, itemTypes, "Kill #C" + builder1B2.getBaseItemType().getId()), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new SyncItemTypeComparisonConfig(itemTypes, "Kill #C" + builder1B2.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -234,7 +240,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements C
     public void killed3Item() throws Exception {
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new SyncItemTypeComparisonConfig(null, itemTypes, "Kill #C" + builder1B2.getBaseItemType().getId()), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new SyncItemTypeComparisonConfig(itemTypes, "Kill #C" + builder1B2.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -267,7 +273,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements C
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         itemTypes.put(attacker1B1.getBaseItemType(), 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new SyncItemTypeComparisonConfig(null, itemTypes, "Kill #C" + builder1B2.getBaseItemType().getId()
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new SyncItemTypeComparisonConfig(itemTypes, "Kill #C" + builder1B2.getBaseItemType().getId()
                 + " #C" + attacker1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 

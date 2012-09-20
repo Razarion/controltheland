@@ -36,7 +36,6 @@ import com.btxtech.game.services.socialnet.facebook.FacebookUtil;
 import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.DbPageAccessControl;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.BorderWrapper;
@@ -324,14 +323,15 @@ public class CmsUiServiceImpl implements CmsUiService {
         // TODO: this is ugly
         // Ugly way to create BeanIdPathElement level task
         // Main reason: only page id and level task id are given
-        // -> DbQuestHub id and DbLevel id mus be generated in this method
+        // -> DbPlanet id and DbLevel id mus be generated in this method
         // But this can be a new way to access section link without specifying the whole childId path
-        int levelTaskId = pageParameters.getInt(CmsUtil.CHILD_ID);
-        DbLevelTask dbLevelTask = (DbLevelTask) sessionFactory.getCurrentSession().get(DbLevelTask.class, levelTaskId);
-        pageParameters.put(CmsPage.getChildUrlParameter(0), Integer.toString(dbLevelTask.getParent().getParent().getId()));
-        pageParameters.put(CmsPage.getChildUrlParameter(1), Integer.toString(dbLevelTask.getParent().getId()));
-        pageParameters.put(CmsPage.getChildUrlParameter(2), Integer.toString(levelTaskId));
-        return createBeanIdPathElement(pageParameters, dbContentList, beanIdPathElement);
+        // TODO int levelTaskId = pageParameters.getInt(CmsUtil.CHILD_ID);
+        // TODO DbLevelTask dbLevelTask = (DbLevelTask) sessionFactory.getCurrentSession().get(DbLevelTask.class, levelTaskId);
+        // TODO pageParameters.put(CmsPage.getChildUrlParameter(0), Integer.toString(dbLevelTask.getParent().getParent().getBaseId()));
+        // TODO pageParameters.put(CmsPage.getChildUrlParameter(1), Integer.toString(dbLevelTask.getParent().getBaseId()));
+        // TODO pageParameters.put(CmsPage.getChildUrlParameter(2), Integer.toString(levelTaskId));
+        // TODO return createBeanIdPathElement(pageParameters, dbContentList, beanIdPathElement);
+        throw new UnsupportedOperationException();
     }
 
     private BeanIdPathElement createBeanIdPathElement(PageParameters pageParameters, DbContent dbContent, BeanIdPathElement beanIdPathElement) {

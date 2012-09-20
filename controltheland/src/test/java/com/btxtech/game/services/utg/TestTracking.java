@@ -45,7 +45,7 @@ public class TestTracking extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSimple() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -76,7 +76,7 @@ public class TestTracking extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testPageHits() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -171,7 +171,7 @@ public class TestTracking extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testCookie() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -218,7 +218,7 @@ public class TestTracking extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testMulti() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -262,7 +262,7 @@ public class TestTracking extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSessionFilter() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -322,7 +322,7 @@ public class TestTracking extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testStartup() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -409,7 +409,7 @@ public class TestTracking extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testStartupFailure() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -493,7 +493,7 @@ public class TestTracking extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testTutorialTracking() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
 

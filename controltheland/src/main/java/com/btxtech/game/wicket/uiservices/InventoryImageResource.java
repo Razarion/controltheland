@@ -16,7 +16,7 @@ import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryItem;
-import com.btxtech.game.services.inventory.InventoryService;
+import com.btxtech.game.services.inventory.GlobalInventoryService;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.injection.web.InjectorHolder;
 import org.apache.wicket.markup.html.WebResource;
@@ -33,7 +33,7 @@ public class InventoryImageResource extends WebResource {
     public static final String SHARED_IMAGE_RESOURCES = "inventoryImage";
 
     @SpringBean
-    private InventoryService inventoryService;
+    private GlobalInventoryService globalInventoryService;
 
     public static Image createArtifactImage(String id, DbInventoryArtifact dbInventoryArtifact) {
         ValueMap valueMap = new ValueMap();
@@ -63,7 +63,7 @@ public class InventoryImageResource extends WebResource {
         String type = Utils.parseStringSave(getParameters().getString(Constants.INVENTORY_TYPE));
         switch (type) {
             case Constants.INVENTORY_TYPE_ARTIFACT: {
-                DbInventoryArtifact dbInventoryArtifact = inventoryService.getArtifactCrud().readDbChild(id);
+                DbInventoryArtifact dbInventoryArtifact = globalInventoryService.getArtifactCrud().readDbChild(id);
                 if (dbInventoryArtifact.getImageData() != null) {
                     contentType = dbInventoryArtifact.getImageContentType();
                     contentData = dbInventoryArtifact.getImageData();
@@ -71,7 +71,7 @@ public class InventoryImageResource extends WebResource {
                 break;
             }
             case Constants.INVENTORY_TYPE_ITEM: {
-                DbInventoryItem dbInventoryItem = inventoryService.getItemCrud().readDbChild(id);
+                DbInventoryItem dbInventoryItem = globalInventoryService.getItemCrud().readDbChild(id);
                 if (dbInventoryItem.getImageData() != null) {
                     contentType = dbInventoryItem.getImageContentType();
                     contentData = dbInventoryItem.getImageData();

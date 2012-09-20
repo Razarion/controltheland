@@ -16,7 +16,6 @@ package com.btxtech.game.services.mgmt;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -36,8 +35,6 @@ public interface MgmtService {
     List<String> getSavedQueris();
 
     void removeSavedQuery(String query);
-
-    List<File> getLogFiles();
 
     void backup();
 

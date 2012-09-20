@@ -17,7 +17,7 @@ import org.springframework.test.annotation.DirtiesContext;
  */
 public class TestItemSound extends AbstractServiceTest {
     @Autowired
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
     @Autowired
     private SoundService soundService;
 
@@ -41,11 +41,11 @@ public class TestItemSound extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        configureRealGame();
+        configureSimplePlanet();
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        ItemType itemType = itemService.getItemType(TEST_ATTACK_ITEM_ID);
+        ItemType itemType = serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
         Assert.assertNull(itemType.getBuildupSound());
         Assert.assertNull(itemType.getSelectionSound());
         Assert.assertNull(itemType.getBuildupSound());
@@ -54,18 +54,18 @@ public class TestItemSound extends AbstractServiceTest {
         // Config
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbItemType dbItemType = itemService.getDbItemType(TEST_ATTACK_ITEM_ID);
+        DbItemType dbItemType = serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID);
         dbItemType.setSelectionSound(soundService.getSoundLibraryCrud().readDbChild(soundId1));
         dbItemType.setBuildupSound(soundService.getSoundLibraryCrud().readDbChild(soundId2));
         dbItemType.setCommandSound(soundService.getSoundLibraryCrud().readDbChild(soundId1));
-        itemService.saveDbItemType(dbItemType);
-        itemService.activate();
+        serverItemTypeService.saveDbItemType(dbItemType);
+        serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        itemType = itemService.getItemType(TEST_ATTACK_ITEM_ID);
+        itemType = serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
         Assert.assertEquals(soundId1, (int)itemType.getSelectionSound());
         Assert.assertEquals(soundId2, (int)itemType.getBuildupSound());
         Assert.assertEquals(soundId1, (int)itemType.getCommandSound());

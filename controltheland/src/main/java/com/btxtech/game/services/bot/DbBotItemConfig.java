@@ -13,17 +13,14 @@
 
 package com.btxtech.game.services.bot;
 
-import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotItemConfig;
 import com.btxtech.game.services.common.CrudChild;
-import com.btxtech.game.services.common.db.RectangleUserType;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.terrain.DbRegion;
 import com.btxtech.game.services.user.UserService;
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,6 +28,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import java.io.Serializable;
 
 
@@ -40,7 +38,6 @@ import java.io.Serializable;
  * Time: 20:41:25
  */
 @Entity(name = "BOT_ITEM_CONFIG")
-@TypeDef(name = "rectangle", typeClass = RectangleUserType.class)
 public class DbBotItemConfig implements CrudChild<DbBotEnragementStateConfig>, Serializable {
     @Id
     @GeneratedValue
@@ -50,14 +47,13 @@ public class DbBotItemConfig implements CrudChild<DbBotEnragementStateConfig>, S
     @Column(name = "theCount")
     private int count;
     private boolean createDirectly;
-    @Type(type = "rectangle")
-    @Columns(columns = {@Column(name = "regionX"), @Column(name = "regionY"), @Column(name = "regionWidth"), @Column(name = "regionHeight")})
-    private Rectangle region;
+    @OneToOne(fetch = FetchType.LAZY)
+    private DbRegion region;
     private boolean moveRealmIfIdle;
     private Integer idleTtl;
     private boolean noRebuild;
     private Long rePopTime;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private DbBotEnragementStateConfig dbBotEnragementStateConfig;
 
     /**
@@ -118,11 +114,11 @@ public class DbBotItemConfig implements CrudChild<DbBotEnragementStateConfig>, S
         this.createDirectly = createDirectly;
     }
 
-    public Rectangle getRegion() {
+    public DbRegion getRegion() {
         return region;
     }
 
-    public void setRegion(Rectangle region) {
+    public void setRegion(DbRegion region) {
         this.region = region;
     }
 
@@ -173,8 +169,12 @@ public class DbBotItemConfig implements CrudChild<DbBotEnragementStateConfig>, S
         return id != null ? id : System.identityHashCode(this);
     }
 
-    public BotItemConfig createBotItemConfig(ItemService itemService) {
-        BaseItemType baseItemType = (BaseItemType) itemService.getItemType(this.baseItemType);
+    public BotItemConfig createBotItemConfig(ServerItemTypeService serverItemTypeService) {
+        BaseItemType baseItemType = (BaseItemType) serverItemTypeService.getItemType(this.baseItemType);
+        Region region = null;
+        if (this.region != null) {
+            region = this.region.createRegion();
+        }
         return new BotItemConfig(baseItemType, count, createDirectly, region, moveRealmIfIdle, idleTtl, noRebuild, rePopTime);
     }
 }

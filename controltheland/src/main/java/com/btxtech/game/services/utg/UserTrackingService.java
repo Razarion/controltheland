@@ -13,9 +13,9 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
@@ -24,8 +24,9 @@ import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
-import com.btxtech.game.services.base.Base;
+import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.tracker.DbBrowserWindowTracking;
 import com.btxtech.game.services.utg.tracker.DbDialogTracking;
 import com.btxtech.game.services.utg.tracker.DbEventTrackingItem;
@@ -60,7 +61,7 @@ public interface UserTrackingService {
 
     void onUserCreated(User user);
 
-    void onUserLoggedIn(User user, Base base);
+    void onUserLoggedIn(User user, UserState userState);
 
     void onUserLoggedOut(User user);
 

@@ -14,10 +14,8 @@
 package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.action.ActionHandler;
-import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
-import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -78,14 +76,6 @@ public class SelectionHandler {
         } else {
             return new HashSet<SurfaceType>();
         }
-    }
-
-    public boolean atLeastOneAllowedOnTerrain4Selection() {
-        return selectedGroup == null || ClientTerritoryService.getInstance().isAtLeastOneAllowed(selectedGroup.getSyncBaseItems());
-    }
-
-    public boolean atLeastOneAllowedOnTerritory4Selection(Index position) {
-        return selectedGroup == null || ClientTerritoryService.getInstance().isAtLeastOneAllowed(position, selectedGroup.getSyncBaseItems());
     }
 
     public boolean atLeastOneItemTypeAllowed2Attack4Selection(SyncBaseItem syncBaseItem) {

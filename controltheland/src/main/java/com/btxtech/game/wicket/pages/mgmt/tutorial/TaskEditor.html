@@ -42,10 +42,6 @@
             <td><input wicket:id="houseCount" type="text" size="10"></td>
         </tr>
         <tr>
-            <td bgcolor="#dadada">Item Sell Factor</td>
-            <td><input wicket:id="itemSellFactor" type="text" size="10"></td>
-        </tr>
-        <tr>
             <td bgcolor="#dadada">Radar Mode</td>
             <td><select wicket:id="radarMode" size="1"></select></td>
         </tr>
@@ -89,21 +85,26 @@
         </tr>
     </table>
     <input type="submit" wicket:id="createItem" value="Create">
-
     <h2>Bots</h2>
     <table cellpadding="1" cellspacing="1" border="0">
         <tr>
-            <th bgcolor="#dadada">Bot Id</th>
+            <th bgcolor="#dadada">Id</th>
+            <th bgcolor="#dadada">Name</th>
+            <th bgcolor="#dadada">Edit</th>
             <th bgcolor="#dadada">Delete</th>
         </tr>
-        <tr wicket:id="botTable">
-            <td wicket:id="dbBotConfig"/>
+        <tr wicket:id="bots">
+            <td wicket:id="id"></td>
+            <td><input wicket:id="name" type="text" size="30"></td>
+            <td valign="center">
+                <input type="submit" value="Edit" wicket:id="edit"/>
+            </td>
             <td valign="center">
                 <input type="submit" value="Delete" wicket:id="delete"/>
             </td>
         </tr>
     </table>
-    <input type="submit" wicket:id="createBot" value="Create">
+    <input type="submit" value="Create" wicket:id="createBot"/>
     <h2>Tip</h2>
     <table border="0">
         <tr>

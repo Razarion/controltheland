@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.control.task.DeferredStartup;
 import com.btxtech.game.jsre.common.ImageLoader;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainImageService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
@@ -27,10 +28,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainTile;
 import com.google.gwt.dom.client.ImageElement;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -40,8 +38,7 @@ import java.util.TreeSet;
  * Time: 22:58:26
  */
 public class TerrainHandler extends AbstractTerrainServiceImpl {
-    private HashMap<Integer, ImageElement> terrainImageElements = new HashMap<Integer, ImageElement>();
-    private HashMap<Integer, ImageElement> surfaceImageElements = new HashMap<Integer, ImageElement>();
+    private TerrainImageHandler terrainImageHandler = new TerrainImageHandler();
 
     public void setupTerrain(TerrainSettings terrainSettings,
                              Collection<TerrainImagePosition> terrainImagePositions,
@@ -50,17 +47,18 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
                              Collection<TerrainImage> terrainImages,
                              TerrainImageBackground terrainImageBackground) {
         setTerrainSettings(terrainSettings);
-        setTerrainImageBackground(terrainImageBackground);
-        setupImages(surfaceImages, terrainImages);
+        terrainImageHandler.setTerrainImageBackground(terrainImageBackground);
+        terrainImageHandler.setupImages(surfaceImages, terrainImages);
         createTerrainTileField(terrainImagePositions, surfaceRects);
     }
 
-    public ImageElement getTerrainImageElement(int imageId) {
-        return terrainImageElements.get(imageId);
+    @Override
+    protected AbstractTerrainImageService getAbstractTerrainImageService() {
+        return terrainImageHandler;
     }
 
-    public ImageElement getSurfaceImageElement(int tileId) {
-        return surfaceImageElements.get(tileId);
+    public TerrainImageHandler getTerrainImageHandler() {
+        return terrainImageHandler;
     }
 
     public void loadImagesAndDrawMap(final DeferredStartup deferredStartup) {
@@ -75,11 +73,11 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
             public void evaluate(int x, int y, TerrainTile terrainTile) {
                 if (terrainTile != null) {
                     if (terrainTile.isSurface()) {
-                        if (!surfaceImageElements.containsKey(terrainTile.getImageId()) && addedSurfaceImageIds.add(terrainTile.getImageId())) {
+                        if (!terrainImageHandler.getSurfaceImageElements().containsKey(terrainTile.getImageId()) && addedSurfaceImageIds.add(terrainTile.getImageId())) {
                             surfaceImageLoader.addImageUrl(ImageHandler.getSurfaceImagesUrl(terrainTile.getImageId()), terrainTile.getImageId());
                         }
                     } else {
-                        if (!terrainImageElements.containsKey(terrainTile.getImageId()) && addedTerrainImageIds.add(terrainTile.getImageId())) {
+                        if (!terrainImageHandler.getTerrainImageElements().containsKey(terrainTile.getImageId()) && addedTerrainImageIds.add(terrainTile.getImageId())) {
                             terrainImageLoader.addImageUrl(ImageHandler.getTerrainImageUrl(terrainTile.getImageId()), terrainTile.getImageId());
                         }
                     }
@@ -96,7 +94,7 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
             @Override
             public void onLoaded(Map<Integer, ImageElement> imageElements) {
                 try {
-                    surfaceImageElements.putAll(imageElements);
+                    terrainImageHandler.getSurfaceImageElements().putAll(imageElements);
                     if (terrainImageLoader.isLoaded()) {
                         fireTerrainChanged();
                         deferredStartup.finished();
@@ -112,7 +110,7 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
             @Override
             public void onLoaded(Map<Integer, ImageElement> imageElements) {
                 try {
-                    terrainImageElements.putAll(imageElements);
+                    terrainImageHandler.getTerrainImageElements().putAll(imageElements);
                     if (surfaceImageLoader.isLoaded()) {
                         fireTerrainChanged();
                         deferredStartup.finished();
@@ -124,13 +122,5 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
                 }
             }
         });
-    }
-
-    public HashMap<Integer, ImageElement> getTerrainImageElements() {
-        return terrainImageElements;
-    }
-
-    public HashMap<Integer, ImageElement> getSurfaceImageElements() {
-        return surfaceImageElements;
     }
 }

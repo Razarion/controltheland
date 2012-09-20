@@ -1,6 +1,6 @@
 package com.btxtech.game.jsre.common.gameengine.services.bot;
 
-import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 
 import java.io.Serializable;
@@ -14,7 +14,7 @@ public class BotItemConfig implements Serializable {
     private BaseItemType baseItemType;
     private int count;
     private boolean createDirectly;
-    private Rectangle region;
+    private Region region;
     private boolean moveRealmIfIdle;
     private Integer idleTtl;
     private boolean noRebuild;
@@ -26,7 +26,7 @@ public class BotItemConfig implements Serializable {
     BotItemConfig() {
     }
 
-    public BotItemConfig(BaseItemType baseItemType, int count, boolean createDirectly, Rectangle region, boolean moveRealmIfIdle, Integer idleTtl, boolean noRebuild, Long rePopTime) {
+    public BotItemConfig(BaseItemType baseItemType, int count, boolean createDirectly, Region region, boolean moveRealmIfIdle, Integer idleTtl, boolean noRebuild, Long rePopTime) {
         this.baseItemType = baseItemType;
         this.count = count;
         this.createDirectly = createDirectly;
@@ -49,7 +49,7 @@ public class BotItemConfig implements Serializable {
         return createDirectly;
     }
 
-    public Rectangle getRegion() {
+    public Region getRegion() {
         return region;
     }
 

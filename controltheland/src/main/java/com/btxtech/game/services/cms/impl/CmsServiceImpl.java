@@ -111,14 +111,18 @@ public class CmsServiceImpl implements CmsService {
         pageCache.clear();
         contentCache.clear();
         for (DbPage dbPage : pageCrudRootServiceHelper.readDbChildren()) {
-            initializeLazyDependencies(dbPage);
-            pageCache.put(dbPage.getId(), dbPage);
-            handlePredefinedDbPages(dbPage);
-            DbContent dbContent = dbPage.getContent();
-            if (dbContent != null) {
-                dbContent = HibernateUtil.deproxy(dbContent, DbContent.class);
-                dbPage.setContent(dbContent);
-                initializeLazyDependenciesAndFillContentCache(dbContent, dbPage);
+            try {
+                initializeLazyDependencies(dbPage);
+                pageCache.put(dbPage.getId(), dbPage);
+                handlePredefinedDbPages(dbPage);
+                DbContent dbContent = dbPage.getContent();
+                if (dbContent != null) {
+                    dbContent = HibernateUtil.deproxy(dbContent, DbContent.class);
+                    dbPage.setContent(dbContent);
+                    initializeLazyDependenciesAndFillContentCache(dbContent, dbPage);
+                }
+            } catch (Exception e) {
+                log.error("CmsServiceImpl.activateCms() Activating page failed: " + dbPage, e);
             }
         }
         adsCode = null;

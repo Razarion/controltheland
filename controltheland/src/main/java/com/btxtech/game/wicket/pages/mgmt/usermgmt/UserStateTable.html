@@ -13,7 +13,7 @@
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<html xmlns:wicket>
 <head>
     <title>User States Table</title>
 </head>
@@ -29,6 +29,7 @@
             <th bgcolor="#dadada">Level</th>
             <th bgcolor="#dadada">Online</th>
             <th bgcolor="#dadada">Registered</th>
+            <th bgcolor="#dadada">Planet</th>
             <th bgcolor="#dadada">In Game</th>
             <th bgcolor="#dadada">Edit</th>
         </tr>
@@ -37,6 +38,7 @@
             <td wicket:id="dbLevelId"/>
             <td wicket:id="online"/>
             <td wicket:id="user"/>
+            <td wicket:id="planet"/>
             <td wicket:id="inGame"/>
             <td valign="center">
                 <input type="submit" value="Edit" wicket:id="edit"/>

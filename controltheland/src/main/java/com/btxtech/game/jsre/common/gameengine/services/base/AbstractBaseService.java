@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.base;
 
-import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -21,6 +20,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 
 import java.util.Collection;
 
@@ -60,8 +60,6 @@ public interface AbstractBaseService {
 
     boolean isHouseSpaceExceeded(SimpleBase simpleBase, int itemCountToAdd);
 
-    LevelScope getLevel(SimpleBase simpleBase);
-
     boolean isAlive(SimpleBase base);
 
     SimpleBase createBotBase(BotConfig botConfig);
@@ -71,6 +69,8 @@ public interface AbstractBaseService {
     void checkBaseAccess(SyncBaseItem syncBaseItem) throws NotYourBaseException;
 
     void sendAccountBaseUpdate(SimpleBase simpleBase);
+
+    void sendAccountBaseUpdate(SyncBaseObject syncBaseObject);
 
     void onItemCreated(SyncBaseItem syncBaseItem);
 

@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.common.gameengine.services.terrain;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+
 import java.io.Serializable;
 
 /**

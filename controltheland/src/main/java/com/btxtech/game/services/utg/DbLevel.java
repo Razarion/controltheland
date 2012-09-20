@@ -14,11 +14,11 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.LevelScope;
-import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
+import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
@@ -32,6 +32,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,12 +45,15 @@ import java.util.Set;
  * User: beat Date: 13.05.2010 Time: 12:20:32
  */
 @Entity(name = "GUIDANCE_LEVEL")
-public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
+public class DbLevel implements CrudChild, CrudParent {
     protected static final String COPY = "Copy ";
     @Id
     @GeneratedValue
     private Integer id;
-    private int number;
+    @OrderBy
+    @SuppressWarnings({"UnusedDeclaration"})
+    private int orderIndex; // TODO both number and order index needed
+    private int number; // TODO both number and order index needed
     @Column(length = 50000)
     private String html;
     @Column(length = 1000)
@@ -59,25 +63,15 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     @org.hibernate.annotations.IndexColumn(name = "orderIndex", base = 0)
     private List<DbLevelTask> dbLevelTasks;
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "dbQuestHub", insertable = false, updatable = false, nullable = false)
-    private DbQuestHub dbQuestHub;
-    // Only used in CMS for sorting
-    @Column(insertable = false, updatable = false)
-    private int orderIndex;
-    // ----- Scope -----
-    private int maxMoney;
-    private double itemSellFactor;
-    private int houseSpace;
-    private RadarMode radarMode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbPlanet dbPlanet;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "dbLevel", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-    private Set<DbItemTypeLimitation> itemTypeLimitation;
-    // ----- Condition -----
+    private Set<DbLevelItemTypeLimitation> levelItemTypeLimitation;
     private int xp;
 
     @Transient
-    private CrudChildServiceHelper<DbItemTypeLimitation> itemTypeLimitationCrud;
+    private CrudChildServiceHelper<DbLevelItemTypeLimitation> itemTypeLimitationCrud;
     @Transient
     private CrudListChildServiceHelper<DbLevelTask> levelTaskCrud;
 
@@ -121,14 +115,13 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
 
     @Override
     public void init(UserService userService) {
-        itemTypeLimitation = new HashSet<>();
+        levelItemTypeLimitation = new HashSet<>();
         dbLevelTasks = new ArrayList<>();
-        radarMode = RadarMode.NONE;
     }
 
     @Override
-    public void setParent(DbQuestHub parent) {
-        dbQuestHub = parent;
+    public void setParent(Object parent) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -137,40 +130,20 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
     }
 
     @Override
-    public DbQuestHub getParent() {
-        return dbQuestHub;
+    public Object getParent() {
+        return null;
     }
 
-    public int getMaxMoney() {
-        return maxMoney;
+    public boolean hasDbPlanet() {
+        return dbPlanet != null;
     }
 
-    public void setMaxMoney(int maxMoney) {
-        this.maxMoney = maxMoney;
+    public DbPlanet getDbPlanet() {
+        return dbPlanet;
     }
 
-    public double getItemSellFactor() {
-        return itemSellFactor;
-    }
-
-    public void setItemSellFactor(double itemSellFactor) {
-        this.itemSellFactor = itemSellFactor;
-    }
-
-    public int getHouseSpace() {
-        return houseSpace;
-    }
-
-    public void setHouseSpace(int houseSpace) {
-        this.houseSpace = houseSpace;
-    }
-
-    public RadarMode getRadarMode() {
-        return radarMode;
-    }
-
-    public void setRadarMode(RadarMode radarMode) {
-        this.radarMode = radarMode;
+    public void setDbPlanet(DbPlanet dbPlanet) {
+        this.dbPlanet = dbPlanet;
     }
 
     protected int getSaveId() {
@@ -211,9 +184,9 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
         return levelTaskCrud;
     }
 
-    public CrudChildServiceHelper<DbItemTypeLimitation> getItemTypeLimitationCrud() {
+    public CrudChildServiceHelper<DbLevelItemTypeLimitation> getItemTypeLimitationCrud() {
         if (itemTypeLimitationCrud == null) {
-            itemTypeLimitationCrud = new CrudChildServiceHelper<>(itemTypeLimitation, DbItemTypeLimitation.class, this);
+            itemTypeLimitationCrud = new CrudChildServiceHelper<>(levelItemTypeLimitation, DbLevelItemTypeLimitation.class, this);
         }
         return itemTypeLimitationCrud;
     }
@@ -223,11 +196,11 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
     }
 
     public LevelScope createLevelScope() {
-        Map<Integer, Integer> itemTypeLimitation = new HashMap<Integer, Integer>();
-        for (DbItemTypeLimitation dbItemTypeLimitation : this.itemTypeLimitation) {
-            itemTypeLimitation.put(dbItemTypeLimitation.getDbBaseItemType().getId(), dbItemTypeLimitation.getCount());
+        Map<Integer, Integer> itemTypeLimitation = new HashMap<>();
+        for (DbLevelItemTypeLimitation dbLevelItemTypeLimitation : this.levelItemTypeLimitation) {
+            itemTypeLimitation.put(dbLevelItemTypeLimitation.getDbBaseItemType().getId(), dbLevelItemTypeLimitation.getCount());
         }
-        return new LevelScope(number, maxMoney, itemTypeLimitation, houseSpace, itemSellFactor, radarMode, xp);
+        return new LevelScope(dbPlanet != null ? dbPlanet.getId() : null, id, number, itemTypeLimitation, xp);
     }
 
     public int getXp() {
@@ -246,9 +219,4 @@ public class DbLevel implements CrudChild<DbQuestHub>, CrudParent {
         }
         throw new IllegalStateException("No Tutorial Level Task configured for: " + this);
     }
-
-    public int getCmsOrderIndex() {
-        return dbQuestHub.getOrderIndex() * 1000 + orderIndex;
-    }
-
 }

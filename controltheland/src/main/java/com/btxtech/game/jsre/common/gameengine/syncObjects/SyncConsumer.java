@@ -54,9 +54,9 @@ public class SyncConsumer extends SyncBaseAbility {
         this.consuming = consuming;
         if (oldState != consuming) {
             if (consuming) {
-                getServices().getEnergyService().consumerActivated(this);
+                getPlanetServices().getEnergyService().consumerActivated(this);
             } else {
-                getServices().getEnergyService().consumerDeactivated(this);
+                getPlanetServices().getEnergyService().consumerDeactivated(this);
             }
         }
     }

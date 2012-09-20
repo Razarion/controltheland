@@ -20,7 +20,9 @@ import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.db.RectangleUserType;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
+import com.btxtech.game.services.planet.db.DbPlanet;
+import com.btxtech.game.services.terrain.DbRegion;
 import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Columns;
@@ -34,7 +36,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +49,6 @@ import java.util.List;
  * Time: 22:07:46
  */
 @Entity(name = "BOT_CONFIG")
-@TypeDef(name = "rectangle", typeClass = RectangleUserType.class)
 public class DbBotConfig implements CrudChild, CrudParent {
     @Id
     @GeneratedValue
@@ -56,9 +59,8 @@ public class DbBotConfig implements CrudChild, CrudParent {
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     @org.hibernate.annotations.IndexColumn(name = "orderIndex", base = 0)
     private List<DbBotEnragementStateConfig> enragementStateConfigs;
-    @Type(type = "rectangle")
-    @Columns(columns = {@Column(name = "realmRectX"), @Column(name = "realmRectY"), @Column(name = "realmRectWidth"), @Column(name = "realmRectHeight")})
-    private Rectangle realm;
+    @OneToOne(fetch = FetchType.LAZY)
+    private DbRegion realm;
     private String name;
     private Long minInactiveMs;
     private Long maxInactiveMs;
@@ -81,11 +83,11 @@ public class DbBotConfig implements CrudChild, CrudParent {
         this.actionDelay = actionDelay;
     }
 
-    public Rectangle getRealm() {
+    public DbRegion getRealm() {
         return realm;
     }
 
-    public void setRealm(Rectangle realm) {
+    public void setRealm(DbRegion realm) {
         this.realm = realm;
     }
 
@@ -161,8 +163,7 @@ public class DbBotConfig implements CrudChild, CrudParent {
     }
 
     @Override
-    public void setParent(Object o) {
-        throw new UnsupportedOperationException();
+    public void setParent(Object parent) {
     }
 
     @Override
@@ -177,11 +178,11 @@ public class DbBotConfig implements CrudChild, CrudParent {
         return enrageStateCrud;
     }
 
-    public BotConfig createBotConfig(ItemService itemService) {
+    public BotConfig createBotConfig(ServerItemTypeService serverItemTypeService) {
         List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
         if (enragementStateConfigs != null) {
             for (DbBotEnragementStateConfig dbBotEnragementStateConfig : enragementStateConfigs) {
-                botEnragementStateConfigs.add(dbBotEnragementStateConfig.createBotEnragementStateConfigg(itemService));
+                botEnragementStateConfigs.add(dbBotEnragementStateConfig.createBotEnragementStateConfigg(serverItemTypeService));
             }
         }
         int tmpId;
@@ -190,6 +191,6 @@ public class DbBotConfig implements CrudChild, CrudParent {
         } else {
             tmpId = System.identityHashCode(this);
         }
-        return new BotConfig(tmpId, actionDelay, botEnragementStateConfigs, realm, name, minInactiveMs, maxInactiveMs, minActiveMs, maxActiveMs);
+        return new BotConfig(tmpId, actionDelay, botEnragementStateConfigs, realm.createRegion(), name, minInactiveMs, maxInactiveMs, minActiveMs, maxActiveMs);
     }
 }

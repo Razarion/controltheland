@@ -1,6 +1,6 @@
 package com.btxtech.game.services.gwt;
 
-import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.services.AbstractServiceTest;
@@ -25,7 +25,7 @@ public class TestMovableService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void getRealGameInfo() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -38,7 +38,7 @@ public class TestMovableService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void getSimulationGame() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -52,15 +52,15 @@ public class TestMovableService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void getRealGameInfoButLevelHasTutorial() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         try {
             getMovableService().getRealGameInfo(START_UID_1);
-            Assert.fail("InvalidLevelState expected");
-        } catch (InvalidLevelState invalidLevelState) {
-            Assert.assertEquals(TEST_LEVEL_TASK_1_1_SIMULATED_ID, (int) invalidLevelState.getLevelTaskId());
+            Assert.fail("InvalidLevelStateException expected");
+        } catch (InvalidLevelStateException invalidLevelStateException) {
+            Assert.assertEquals(TEST_LEVEL_TASK_1_1_SIMULATED_ID, (int) invalidLevelStateException.getLevelTaskId());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -69,16 +69,16 @@ public class TestMovableService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void getSimulationGameInfoButRealGame() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
         try {
             getMovableService().getSimulationGameInfo(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
-            Assert.fail("InvalidLevelState expected");
-        } catch (InvalidLevelState invalidLevelState) {
-            Assert.assertNull(invalidLevelState.getLevelTaskId());
+            Assert.fail("InvalidLevelStateException expected");
+        } catch (InvalidLevelStateException invalidLevelStateException) {
+            Assert.assertNull(invalidLevelStateException.getLevelTaskId());
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

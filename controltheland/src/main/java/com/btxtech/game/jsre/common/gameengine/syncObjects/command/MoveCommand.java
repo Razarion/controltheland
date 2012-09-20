@@ -13,8 +13,6 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects.command;
 
-import com.btxtech.game.jsre.common.CommonJava;
-
 /**
  * User: beat
  * Date: Aug 1, 2009

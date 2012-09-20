@@ -2,17 +2,11 @@ package com.btxtech.game.jsre.common.gameengine.services.collision.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Line;
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.MathHelper;
-import com.btxtech.game.jsre.common.SimpleEntry;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * User: beat

@@ -3,7 +3,6 @@ package com.btxtech.game.jsre.client.renderer;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.terrain.TerrainHandler;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.CanvasPattern;
 import com.google.gwt.canvas.dom.client.Context2d;

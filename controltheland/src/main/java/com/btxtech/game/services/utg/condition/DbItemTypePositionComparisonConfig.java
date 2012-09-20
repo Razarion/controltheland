@@ -13,26 +13,23 @@
 
 package com.btxtech.game.services.utg.condition;
 
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.ClientDateUtil;
+import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.ItemTypePositionComparisonConfig;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
-import com.btxtech.game.services.common.db.RectangleUserType;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
+import com.btxtech.game.services.terrain.DbRegion;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,25 +43,23 @@ import java.util.Set;
  */
 @Entity
 @DiscriminatorValue("ITEM_TYPE_POSITION")
-@TypeDef(name = "rectangle", typeClass = RectangleUserType.class)
 public class DbItemTypePositionComparisonConfig extends DbAbstractComparisonConfig implements CrudParent {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "dbItemTypePositionComparisonConfig", orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbComparisonItemCount> dbComparisonItemCounts;
-    @Type(type = "rectangle")
-    @Columns(columns = {@Column(name = "regionX"), @Column(name = "regionY"), @Column(name = "regionWidth"), @Column(name = "regionHeight")})
-    private Rectangle region;
+    @OneToOne(fetch = FetchType.LAZY)
+    private DbRegion region;
     private Integer timeInMinutes;
     private boolean addExistingItems;
 
     @Transient
     private CrudChildServiceHelper<DbComparisonItemCount> dbComparisonItemCountCrudServiceHelper;
 
-    public Rectangle getRegion() {
+    public DbRegion getRegion() {
         return region;
     }
 
-    public void setRegion(Rectangle region) {
+    public void setRegion(DbRegion region) {
         this.region = region;
     }
 
@@ -95,13 +90,17 @@ public class DbItemTypePositionComparisonConfig extends DbAbstractComparisonConf
     }
 
     @Override
-    public AbstractComparisonConfig createComparisonConfig(ItemService itemService) {
+    public AbstractComparisonConfig createComparisonConfig(ServerItemTypeService serverItemTypeService) {
         Map<ItemType, Integer> itemTypeCount = new HashMap<ItemType, Integer>();
         for (DbComparisonItemCount dbComparisonItemCount : getCrudDbComparisonItemCount().readDbChildren()) {
-            itemTypeCount.put(itemService.getItemType(dbComparisonItemCount.getItemType()), dbComparisonItemCount.getCount());
+            itemTypeCount.put(serverItemTypeService.getItemType(dbComparisonItemCount.getItemType()), dbComparisonItemCount.getCount());
         }
         Integer timeInMs = timeInMinutes == null ? null : (int) (timeInMinutes * ClientDateUtil.MILLIS_IN_MINUTE);
-        return new ItemTypePositionComparisonConfig(getExcludedTerritoryId(), itemTypeCount, region, timeInMs, addExistingItems, getHtmlProgressTemplate());
+        Region region = null;
+        if (this.region != null) {
+            region = this.region.createRegion();
+        }
+        return new ItemTypePositionComparisonConfig(itemTypeCount, region, timeInMs, addExistingItems, getHtmlProgressTemplate());
     }
 
     @Override

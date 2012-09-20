@@ -13,7 +13,7 @@
 
 package com.btxtech.game.wicket.uiservices;
 
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -27,7 +27,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  */
 public class ItemTypePanel extends Panel {
     @SpringBean
-    private ItemService itemService;
+    private ServerItemTypeService ServerItemTypeService;
 
     public ItemTypePanel(String id) {
         super(id);
@@ -46,7 +46,7 @@ public class ItemTypePanel extends Panel {
             @Override
             public void setObject(Integer integer) {
                 if (integer != null) {
-                    DbItemType itemType = itemService.getDbItemType(integer);
+                    DbItemType itemType = ServerItemTypeService.getDbItemType(integer);
                     setDefaultModelObject(itemType);
                 } else {
                     setDefaultModelObject(null);

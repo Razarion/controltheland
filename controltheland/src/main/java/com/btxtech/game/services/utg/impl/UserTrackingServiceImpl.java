@@ -29,15 +29,16 @@ import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
-import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.HibernateUtil;
-import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.history.HistoryService;
+import com.btxtech.game.services.planet.Base;
+import com.btxtech.game.services.planet.BaseService;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbChatMessage;
 import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.LifecycleTrackingInfo;
@@ -48,7 +49,6 @@ import com.btxtech.game.services.utg.TutorialTrackingInfo;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingFilter;
 import com.btxtech.game.services.utg.UserTrackingService;
-import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.services.utg.tracker.DbBrowserWindowTracking;
 import com.btxtech.game.services.utg.tracker.DbDialogTracking;
 import com.btxtech.game.services.utg.tracker.DbEventTrackingItem;
@@ -93,19 +93,15 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     @Autowired
     private Session session;
     @Autowired
-    private BaseService baseService;
-    @Autowired
     private UserGuidanceService userGuidanceService;
-    @Autowired
-    private ConnectionService connectionService;
-    @Autowired
-    private ServerConditionService serverConditionService;
     @Autowired
     private UserService userService;
     @Autowired
     private HistoryService historyService;
     @Autowired
     private SessionFactory sessionFactory;
+    @Autowired
+    private PlanetSystemService planetSystemService;
     private Log log = LogFactory.getLog(UserTrackingServiceImpl.class);
 
     @Override
@@ -143,7 +139,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     @Override
     @SuppressWarnings("unchecked")
     public List<SessionOverviewDto> getSessionOverviewDtos(UserTrackingFilter filter) {
-        ArrayList<SessionOverviewDto> sessionOverviewDtos = new ArrayList<SessionOverviewDto>();
+        ArrayList<SessionOverviewDto> sessionOverviewDtos = new ArrayList<>();
 
         GregorianCalendar gregorianCalendar = new GregorianCalendar();
         gregorianCalendar.add(GregorianCalendar.DAY_OF_YEAR, -filter.getDays());
@@ -282,7 +278,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         criteria.add(Restrictions.eq("sessionId", sessionId));
         criteria.setProjection(Projections.groupProperty("startUuid"));
         List<String> uuids = criteria.list();
-        ArrayList<LifecycleTrackingInfo> lifecycleTrackingInfos = new ArrayList<LifecycleTrackingInfo>();
+        ArrayList<LifecycleTrackingInfo> lifecycleTrackingInfos = new ArrayList<>();
         LifecycleTrackingInfo lastReaGameLifecycleTrackingInfo = null;
         for (String uuid : uuids) {
             criteria = sessionFactory.getCurrentSession().createCriteria(DbStartupTask.class);
@@ -364,7 +360,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     @Transactional
     public void saveUserCommand(BaseCommand baseCommand) {
         try {
-            DbUserCommand dbUserCommand = new DbUserCommand(session.getConnection(), baseCommand, baseService.getBaseName(baseService.getBase().getSimpleBase()));
+            DbUserCommand dbUserCommand = new DbUserCommand(session.getConnection(), baseCommand, planetSystemService.getServerPlanetServices().getBaseService().getBaseName());
             // log.debug("User Command: " + dbUserCommand);
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserCommand);
         } catch (Throwable t) {
@@ -388,14 +384,14 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     @Transactional
-    public void onUserLoggedIn(User user, Base base) {
+    public void onUserLoggedIn(User user, UserState userState) {
         try {
             DbUserHistory dbUserHistory = new DbUserHistory(user);
             dbUserHistory.setSessionId(session.getSessionId());
             dbUserHistory.setCookieId(session.getCookieId());
             dbUserHistory.setLoggedIn();
-            if (base != null) {
-                dbUserHistory.setBaseName(baseService.getBaseName(base.getSimpleBase()));
+            if (userState != null && userState.getBase() != null) {
+                dbUserHistory.setBaseName(planetSystemService.getServerPlanetServices(userState.getBase().getSimpleBase()).getBaseService().getBaseName(userState.getBase().getSimpleBase()));
             }
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
@@ -436,7 +432,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         try {
             DbUserHistory dbUserHistory = new DbUserHistory(user);
             dbUserHistory.setBaseDefeated();
-            dbUserHistory.setBaseName(baseService.getBaseName(base.getSimpleBase()));
+            dbUserHistory.setBaseName(planetSystemService.getServerPlanetServices(base.getSimpleBase()).getBaseService().getBaseName(base.getSimpleBase()));
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
             log.error("", t);
@@ -450,7 +446,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         try {
             DbUserHistory dbUserHistory = new DbUserHistory(user);
             dbUserHistory.setBaseSurrender();
-            dbUserHistory.setBaseName(baseService.getBaseName(baseService.getBase().getSimpleBase()));
+            dbUserHistory.setBaseName(planetSystemService.getServerPlanetServices(base.getSimpleBase()).getBaseService().getBaseName(base.getSimpleBase()));
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
             log.error("", t);
@@ -548,7 +544,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     private void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems) {
-        ArrayList<DbEventTrackingItem> dbEventTrackingItems = new ArrayList<DbEventTrackingItem>();
+        ArrayList<DbEventTrackingItem> dbEventTrackingItems = new ArrayList<>();
         for (EventTrackingItem eventTrackingItem : eventTrackingItems) {
             dbEventTrackingItems.add(new DbEventTrackingItem(eventTrackingItem));
         }
@@ -556,7 +552,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     private void saveSyncItemInfos(Collection<SyncItemInfo> syncItemInfos) {
-        ArrayList<DbSyncItemInfo> dbSyncItemInfos = new ArrayList<DbSyncItemInfo>();
+        ArrayList<DbSyncItemInfo> dbSyncItemInfos = new ArrayList<>();
         for (SyncItemInfo syncItemInfo : syncItemInfos) {
             dbSyncItemInfos.add(new DbSyncItemInfo(syncItemInfo));
         }
@@ -564,7 +560,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     private void saveSelections(Collection<SelectionTrackingItem> selectionTrackingItems) {
-        ArrayList<DbSelectionTrackingItem> dbSelectionTrackingItems = new ArrayList<DbSelectionTrackingItem>();
+        ArrayList<DbSelectionTrackingItem> dbSelectionTrackingItems = new ArrayList<>();
         for (SelectionTrackingItem command : selectionTrackingItems) {
             dbSelectionTrackingItems.add(new DbSelectionTrackingItem(command));
         }
@@ -572,7 +568,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     private void saveScrollTrackingItems(Collection<TerrainScrollTracking> terrainScrollTrackings) {
-        ArrayList<DbScrollTrackingItem> dbScrollTrackingItems = new ArrayList<DbScrollTrackingItem>();
+        ArrayList<DbScrollTrackingItem> dbScrollTrackingItems = new ArrayList<>();
         for (TerrainScrollTracking terrainScroll : terrainScrollTrackings) {
             dbScrollTrackingItems.add(new DbScrollTrackingItem(terrainScroll));
         }
@@ -580,7 +576,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     private void saveBrowserWindowTrackings(Collection<BrowserWindowTracking> browserWindowTrackings) {
-        ArrayList<DbBrowserWindowTracking> dbBrowserWindowTrackings = new ArrayList<DbBrowserWindowTracking>();
+        ArrayList<DbBrowserWindowTracking> dbBrowserWindowTrackings = new ArrayList<>();
         for (BrowserWindowTracking browserWindowTracking : browserWindowTrackings) {
             dbBrowserWindowTrackings.add(new DbBrowserWindowTracking(browserWindowTracking));
         }
@@ -588,7 +584,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     private void saveDialogTrackings(Collection<DialogTracking> dialogTrackings) {
-        ArrayList<DbDialogTracking> dbDialogTrackings = new ArrayList<DbDialogTracking>();
+        ArrayList<DbDialogTracking> dbDialogTrackings = new ArrayList<>();
         for (DialogTracking dialogTracking : dialogTrackings) {
             dbDialogTrackings.add(new DbDialogTracking(dialogTracking));
         }
@@ -617,8 +613,10 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         Integer baseId = null;
         try {
             if (levelTaskId == null) {
-                baseId = baseService.getBase().getBaseId();
-                baseName = baseService.getBaseName(baseService.getBase().getSimpleBase());
+                BaseService baseService = planetSystemService.getServerPlanetServices().getBaseService();
+                Base base = baseService.getBase();
+                baseId = base.getBaseId();
+                baseName = baseService.getBaseName(base.getSimpleBase());
             }
         } catch (NoBaseException e) {
             // Ignore

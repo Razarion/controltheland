@@ -1,7 +1,7 @@
 package com.btxtech.game.jsre.client.bot;
 
-import com.btxtech.game.jsre.client.ClientServices;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.client.ClientPlanetServices;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.bot.impl.BotRunner;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
@@ -68,8 +68,8 @@ public class ClientBotRunner extends BotRunner {
     }
 
     @Override
-    protected Services getServices() {
-        return ClientServices.getInstance();
+    protected PlanetServices getPlanetServices() {
+        return ClientPlanetServices.getInstance();
     }
 
     @Override

@@ -15,9 +15,7 @@ package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -215,10 +213,7 @@ public class Group {
 
     public boolean atLeastOneItemTypeAllowed2FinalizeBuild(SyncBaseItem tobeFinalized) {
         for (SyncBaseItem syncBaseItem : syncBaseItems) {
-            if (syncBaseItem.hasSyncBuilder()
-                    && syncBaseItem.getSyncBuilder().getBuilderType().isAbleToBuild(tobeFinalized.getItemType().getId())
-                    && ClientTerritoryService.getInstance().isAllowed(tobeFinalized.getSyncItemArea().getPosition(), tobeFinalized)
-                    && ClientTerritoryService.getInstance().isAllowed(tobeFinalized.getSyncItemArea().getPosition(), syncBaseItem)) {
+            if (syncBaseItem.hasSyncBuilder() && syncBaseItem.getSyncBuilder().getBuilderType().isAbleToBuild(tobeFinalized.getItemType().getId())) {
                 return true;
             }
         }
@@ -230,9 +225,7 @@ public class Group {
             if (syncBaseItem.hasSyncLauncher()) {
                 try {
                     int range = syncBaseItem.getSyncLauncher().getRange();
-                    if (syncBaseItem.getSyncItemArea().getPosition().getDistance(position) <= range
-                            && ClientTerritoryService.getInstance().isAllowed(syncBaseItem.getSyncItemArea().getPosition(), syncBaseItem)
-                            && ClientTerritoryService.getInstance().isAllowed(position, syncBaseItem.getSyncLauncher().getLauncherType().getProjectileItemType())) {
+                    if (syncBaseItem.getSyncItemArea().getPosition().getDistance(position) <= range) {
                         return true;
                     }
                 } catch (NoSuchItemTypeException e) {
@@ -242,12 +235,12 @@ public class Group {
         }
         return false;
     }
-    
+
 
     public void keepOnlyOwnOfType(BaseItemType baseItemType) {
         for (Iterator<SyncBaseItem> iterator = syncBaseItems.iterator(); iterator.hasNext(); ) {
             BaseItemType currentBaseItemType = iterator.next().getBaseItemType();
-            if(!(baseItemType.equals(currentBaseItemType))) {
+            if (!(baseItemType.equals(currentBaseItemType))) {
                 iterator.remove();
             }
         }

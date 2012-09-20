@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.common.gameengine.services.collision.impl;
 
+import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
@@ -30,8 +31,8 @@ public class FunnelAlgorithm {
             return;
         }
 
-        int width = terrainService.getTerrainSettings().getTileWidth() - 1;
-        int height = terrainService.getTerrainSettings().getTileHeight() - 1;
+        int width = Constants.TERRAIN_TILE_WIDTH - 1;
+        int height = Constants.TERRAIN_TILE_HEIGHT - 1;
 
         tilePath.add(0, terrainService.getTerrainTileIndexForAbsPosition(start));
         //addStartPoints(tilePath.get(0), tilePath.get(1), terrainService, border1, border2);

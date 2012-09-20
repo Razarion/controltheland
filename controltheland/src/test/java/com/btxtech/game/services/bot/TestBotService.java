@@ -8,8 +8,11 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.history.DbHistoryElement;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.mgmt.MgmtService;
+import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.ServerItemService;
+import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.user.UserService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -23,27 +26,27 @@ import org.springframework.test.annotation.DirtiesContext;
  */
 public class TestBotService extends AbstractServiceTest {
     @Autowired
-    private BotService botService;
-    @Autowired
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
     @Autowired
     private MgmtService mgmtService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private PlanetSystemService planetSystemService;
 
     @Test
     @DirtiesContext
     public void testInRealm() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-
-        setupMinimalBot(new Rectangle(1, 1, 3000, 3000));
-        setupMinimalBot(new Rectangle(4000, 4000, 3000, 3000));
-
+        setupMinimalBot(TEST_PLANET_1_ID, new Rectangle(1, 1, 3000, 3000));
+        setupMinimalBot(TEST_PLANET_1_ID, new Rectangle(4000, 4000, 3000, 3000));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+
+        BotService botService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBotService();
 
         Assert.assertTrue(botService.isInRealm(new Index(2, 2)));
         Assert.assertTrue(botService.isInRealm(new Index(2999, 2999)));
@@ -60,91 +63,97 @@ public class TestBotService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSystemActivate() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        BotConfig botConfig = setupMinimalBot(new Rectangle(1, 1, 5000, 5000)).createBotConfig(itemService);
+        BotConfig botConfig = setupMinimalBot(TEST_PLANET_1_ID, new Rectangle(1, 1, 5000, 5000)).createBotConfig(serverItemTypeService);
+
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Wait for bot to complete
-        waitForBotToBuildup(botConfig);
+        waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
+        BotService botService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBotService();
 
         HibernateUtil.openSession4InternalCall(getSessionFactory());
         try {
-            botService.activate();
+
+            botService.activate(planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID));
         } finally {
             HibernateUtil.closeSession4InternalCall(getSessionFactory());
         }
         // Wait for bot to complete
         // TODO failed on 28.06.2012
-        waitForBotToBuildup(botConfig);
-        assertWholeItemCount(4);
+        waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
+        assertWholeItemCount(TEST_PLANET_1_ID, 4);
 
         HibernateUtil.openSession4InternalCall(getSessionFactory());
         try {
-            botService.activate();
+            botService.activate(planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID));
         } finally {
             HibernateUtil.closeSession4InternalCall(getSessionFactory());
         }
         // Wait for bot to complete
         // TODO failed on: 18.06.2012, 07.07.2012
-        waitForBotToBuildup(botConfig);
-        assertWholeItemCount(4);
+        waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
+        assertWholeItemCount(TEST_PLANET_1_ID, 4);
     }
 
     @Test
     @DirtiesContext
     public void testSystemActivateNoWait() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        BotConfig botConfig = setupMinimalBot(new Rectangle(1, 1, 5000, 5000)).createBotConfig(itemService);
+        BotConfig botConfig = setupMinimalBot(TEST_PLANET_1_ID, new Rectangle(1, 1, 5000, 5000)).createBotConfig(serverItemTypeService);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+
+        BotService botService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBotService();
 
         HibernateUtil.openSession4InternalCall(getSessionFactory());
         try {
             for (int i = 0; i < 1000; i++) {
-                botService.activate();
+                botService.activate(planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID));
             }
         } finally {
             HibernateUtil.closeSession4InternalCall(getSessionFactory());
         }
 
         // Wait for bot to complete
-        // TODO my hangs here
-        waitForBotToBuildup(botConfig);
-        assertBaseCount(1);
-        assertWholeItemCount(4);
+        waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
+        assertBaseCount(TEST_PLANET_1_ID, 1);
+        assertWholeItemCount(TEST_PLANET_1_ID, 4);
     }
 
     @Test
     @DirtiesContext
     public void testDelete() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbBotConfig dbBotConfig = setupMinimalBot(new Rectangle(1, 1, 5000, 5000));
-        BotConfig botConfig = dbBotConfig.createBotConfig(itemService);
+        DbBotConfig dbBotConfig = setupMinimalBot(TEST_PLANET_1_ID, new Rectangle(1, 1, 5000, 5000));
+        BotConfig botConfig = dbBotConfig.createBotConfig(serverItemTypeService);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Wait for bot to complete
-        waitForBotToBuildup(botConfig);
-        assertWholeItemCount(4);
+        waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
+        assertWholeItemCount(TEST_PLANET_1_ID, 4);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        botService.getDbBotConfigCrudServiceHelper().deleteDbChild(dbBotConfig);
-        botService.activate();
+        DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID);
+        dbPlanet.getBotCrud().deleteDbChild(dbPlanet.getBotCrud().readDbChild(dbBotConfig.getId()));
+        BotService botService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBotService();
+        botService.activate(dbPlanet);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertWholeItemCount(0);
+        assertWholeItemCount(TEST_PLANET_1_ID, 0);
 
         // Make sure backup still works
         beginHttpSession();
@@ -157,7 +166,9 @@ public class TestBotService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testRageUp() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
+
+        ServerItemService serverItemService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getItemService();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -170,36 +181,38 @@ public class TestBotService extends AbstractServiceTest {
         Id intruder = getFirstSynItemId(TEST_ATTACK_ITEM_ID);
         sendMoveCommand(getFirstSynItemId(TEST_ATTACK_ITEM_ID), new Index(5000, 5000));
         waitForActionServiceDone();
-        SyncBaseItem intruderItem = (SyncBaseItem) itemService.getItem(intruder);
+        SyncBaseItem intruderItem = (SyncBaseItem) serverItemService.getItem(intruder);
         intruderItem.setHealth(100000);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbBotConfig dbBotConfig = botService.getDbBotConfigCrudServiceHelper().createDbChild();
+        DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID);
+        DbBotConfig dbBotConfig = dbPlanet.getBotCrud().createDbChild();
         dbBotConfig.setName("config2");
         dbBotConfig.setActionDelay(10);
-        dbBotConfig.setRealm(new Rectangle(0, 0, 1000, 1000));
+        dbBotConfig.setRealm(createDbRegion(new Rectangle(0, 0, 1000, 1000)));
         dbBotConfig.setRealGameBot(true);
         DbBotEnragementStateConfig enragementStateConfig1 = dbBotConfig.getEnrageStateCrud().createDbChild();
         enragementStateConfig1.setName("NormalTest");
         enragementStateConfig1.setEnrageUpKills(3);
         DbBotItemConfig dbBotItemConfig1 = enragementStateConfig1.getBotItemCrud().createDbChild();
         dbBotItemConfig1.setCount(2);
-        dbBotItemConfig1.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
-        dbBotItemConfig1.setRegion(new Rectangle(500, 500, 500, 500));
+        dbBotItemConfig1.setBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        dbBotItemConfig1.setRegion(createDbRegion(new Rectangle(500, 500, 500, 500)));
         dbBotItemConfig1.setCreateDirectly(true);
         DbBotEnragementStateConfig enragementStateConfig2 = dbBotConfig.getEnrageStateCrud().createDbChild();
         enragementStateConfig2.setName("AngryTest");
         enragementStateConfig2.setEnrageUpKills(10);
         DbBotItemConfig dbBotItemConfig2 = enragementStateConfig2.getBotItemCrud().createDbChild();
         dbBotItemConfig2.setCount(2);
-        dbBotItemConfig2.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID_2));
-        dbBotItemConfig2.setRegion(new Rectangle(500, 500, 500, 500));
+        dbBotItemConfig2.setBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID_2));
+        dbBotItemConfig2.setRegion(createDbRegion(new Rectangle(500, 500, 500, 500)));
         dbBotItemConfig2.setCreateDirectly(true);
-        botService.getDbBotConfigCrudServiceHelper().updateDbChild(dbBotConfig);
-        botService.activate();
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
+        planetSystemService.getPlanet(TEST_PLANET_1_ID).deactivate();
+        planetSystemService.getPlanet(TEST_PLANET_1_ID).activate(dbPlanet);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         Thread.sleep(500); // Wait for bot to build up

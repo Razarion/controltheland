@@ -23,8 +23,12 @@ public class TestAbstractTerrainServiceImpl {
     @Test
     public void createSurfaceTypeField1() {
         AbstractTerrainServiceImpl abstractTerrainService = new AbstractTerrainServiceImpl() {
+            @Override
+            protected AbstractTerrainImageService getAbstractTerrainImageService() {
+                return null;  //To change body of implemented methods use File | Settings | File Templates.
+            }
         };
-        abstractTerrainService.setTerrainSettings(new TerrainSettings(100, 200, 100, 100));
+        abstractTerrainService.setTerrainSettings(new TerrainSettings(100, 200));
         abstractTerrainService.createTerrainTileField(Collections.<TerrainImagePosition>emptyList(), Collections.<SurfaceRect>emptyList());
         TerrainTile[][] terrainTile = abstractTerrainService.getTerrainTileField();
         Assert.assertEquals(100, terrainTile.length);
@@ -38,19 +42,25 @@ public class TestAbstractTerrainServiceImpl {
 
     @Test
     public void createSurfaceTypeField2() {
-        AbstractTerrainServiceImpl abstractTerrainService = new AbstractTerrainServiceImpl() {
+        final AbstractTerrainImageServiceImpl abstractTerrainImageService = new AbstractTerrainImageServiceImpl() {
         };
-        abstractTerrainService.setTerrainSettings(new TerrainSettings(20, 20, 100, 100));
+        AbstractTerrainServiceImpl abstractTerrainService = new AbstractTerrainServiceImpl() {
+            @Override
+            protected AbstractTerrainImageService getAbstractTerrainImageService() {
+                return abstractTerrainImageService;
+            }
+        };
+        abstractTerrainService.setTerrainSettings(new TerrainSettings(20, 20));
 
         SurfaceType[][] tileSurfaceTypes = new SurfaceType[2][2];
         tileSurfaceTypes[0][0] = SurfaceType.LAND;
         tileSurfaceTypes[0][1] = SurfaceType.WATER;
         tileSurfaceTypes[1][0] = SurfaceType.LAND_COAST;
         tileSurfaceTypes[1][1] = SurfaceType.LAND;
-        abstractTerrainService.putTerrainImage(new TerrainImage(0, 2, 2, tileSurfaceTypes));
+        abstractTerrainImageService.putTerrainImage(new TerrainImage(0, 2, 2, tileSurfaceTypes));
 
-        abstractTerrainService.putSurfaceImage(new SurfaceImage(SurfaceType.LAND, 0, ""));
-        abstractTerrainService.putSurfaceImage(new SurfaceImage(SurfaceType.WATER, 1, ""));
+        abstractTerrainImageService.putSurfaceImage(new SurfaceImage(SurfaceType.LAND, 0, ""));
+        abstractTerrainImageService.putSurfaceImage(new SurfaceImage(SurfaceType.WATER, 1, ""));
 
         List<TerrainImagePosition> terrainImagePositions = new ArrayList<>();
         terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), 0, TerrainImagePosition.ZIndex.LAYER_1));

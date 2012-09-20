@@ -9,8 +9,8 @@ import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.common.ServerPlanetServices;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +25,9 @@ import java.util.List;
  */
 public class TestConnection extends AbstractServiceTest {
     @Autowired
-    private ConnectionService connectionService;
+    private ServerConnectionService serverConnectionService;
     @Autowired
-    private BaseService baseService;
-    @Autowired
-    private ItemService itemService;
+    private PlanetSystemService planetSystemService;
 
     @Test
     @DirtiesContext
@@ -44,7 +42,7 @@ public class TestConnection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void pendingPackets() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         Connection connection = new Connection("1234", null);
         SyncBaseItem attackItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1, 1));
@@ -62,12 +60,12 @@ public class TestConnection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void noConnection() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         try {
-            connectionService.getConnection(START_UID_1);
+            serverConnectionService.getConnection(START_UID_1);
             Assert.fail("NoConnectionException expected");
         } catch (com.btxtech.game.jsre.common.NoConnectionException e) {
             Assert.assertEquals(NoConnectionException.Type.NON_EXISTENT, e.getType());
@@ -79,12 +77,12 @@ public class TestConnection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void validConnection() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMyBase(); // Opens a connection
-        Assert.assertNotNull(connectionService.getConnection(START_UID_1));
+        Assert.assertNotNull(serverConnectionService.getConnection(START_UID_1));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -92,17 +90,18 @@ public class TestConnection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void closeConnectionBaseKilled1() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMyBase(); // Opens a connection
-        Assert.assertNotNull(connectionService.getConnection(START_UID_1));
-        SyncBaseItem builder = (SyncBaseItem) itemService.getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
-        baseService.onItemDeleted(builder, null);
+        Assert.assertNotNull(serverConnectionService.getConnection(START_UID_1));
+        SyncBaseItem builder = (SyncBaseItem) serverPlanetServices.getItemService().getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
+        serverPlanetServices.getBaseService().onItemDeleted(builder, null);
 
         try {
-            Assert.assertNotNull(connectionService.getConnection(START_UID_1));
+            Assert.assertNotNull(serverConnectionService.getConnection(START_UID_1));
             Assert.fail("NoConnectionException expected");
         } catch (com.btxtech.game.jsre.common.NoConnectionException e) {
             Assert.assertEquals(NoConnectionException.Type.BASE_LOST, e.getType());
@@ -114,7 +113,8 @@ public class TestConnection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void closeConnectionBaseKilled2() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -125,12 +125,12 @@ public class TestConnection extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMyBase(); // Opens a connection
-        Assert.assertNotNull(connectionService.getConnection(START_UID_1));
-        SyncBaseItem builder = (SyncBaseItem) itemService.getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
-        baseService.onItemDeleted(builder, humanBase);
+        Assert.assertNotNull(serverConnectionService.getConnection(START_UID_1));
+        SyncBaseItem builder = (SyncBaseItem) serverPlanetServices.getItemService().getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
+        serverPlanetServices.getBaseService().onItemDeleted(builder, humanBase);
 
         try {
-            Assert.assertNotNull(connectionService.getConnection(START_UID_1));
+            Assert.assertNotNull(serverConnectionService.getConnection(START_UID_1));
             Assert.fail("NoConnectionException expected");
         } catch (com.btxtech.game.jsre.common.NoConnectionException e) {
             Assert.assertEquals(NoConnectionException.Type.BASE_LOST, e.getType());
@@ -142,24 +142,25 @@ public class TestConnection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void closeConnectionBaseKilled3() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         SimpleBase botBase = getMyBase(); // Opens a connection
-        baseService.setBot(botBase, true);
+        serverPlanetServices.getBaseService().setBot(botBase, true);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMyBase(); // Opens a connection
-        Assert.assertNotNull(connectionService.getConnection(START_UID_1));
-        SyncBaseItem builder = (SyncBaseItem) itemService.getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
-        baseService.onItemDeleted(builder, botBase);
+        Assert.assertNotNull(serverConnectionService.getConnection(START_UID_1));
+        SyncBaseItem builder = (SyncBaseItem) serverPlanetServices.getItemService().getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
+        serverPlanetServices.getBaseService().onItemDeleted(builder, botBase);
 
         try {
-            Assert.assertNotNull(connectionService.getConnection(START_UID_1));
+            Assert.assertNotNull(serverConnectionService.getConnection(START_UID_1));
             Assert.fail("NoConnectionException expected");
         } catch (com.btxtech.game.jsre.common.NoConnectionException e) {
             Assert.assertEquals(NoConnectionException.Type.BASE_LOST, e.getType());
@@ -171,7 +172,7 @@ public class TestConnection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void syncInfoStartUid() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -190,7 +191,7 @@ public class TestConnection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void twoConnectionSameSession() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -221,7 +222,7 @@ public class TestConnection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void surrender() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

@@ -15,23 +15,21 @@ package com.btxtech.game.wicket.pages.mgmt.tutorial;
 
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
-import com.btxtech.game.services.terrain.DbTerrainSetting;
-import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.services.terrain.TerrainImageService;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
+import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
 import com.btxtech.game.wicket.uiservices.RuModel;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.btxtech.game.wicket.uiservices.TerrainPanel;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -43,62 +41,33 @@ public class TutorialEditor extends MgmtWebPage {
     @SpringBean
     private TutorialService tutorialService;
     @SpringBean
-    private TerrainService terrainService;
+    private TerrainImageService terrainService;
     @SpringBean
     private RuServiceHelper<DbTutorialConfig> ruServiceHelper;
-
-    private Log log = LogFactory.getLog(TutorialEditor.class);
 
     public TutorialEditor(DbTutorialConfig dbTutorialConfig) {
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbTutorialConfig> form = new Form<DbTutorialConfig>("tutorialForm", new CompoundPropertyModel<DbTutorialConfig>(new RuModel<DbTutorialConfig>(dbTutorialConfig, DbTutorialConfig.class) {
+        final Form<DbTutorialConfig> form = new Form<>("tutorialForm", new CompoundPropertyModel<DbTutorialConfig>(new RuModel<DbTutorialConfig>(dbTutorialConfig, DbTutorialConfig.class) {
             @Override
             protected RuServiceHelper<DbTutorialConfig> getRuServiceHelper() {
                 return ruServiceHelper;
             }
         }));
         add(form);
-
         form.add(new TextField<String>("inGameHtml"));
         form.add(new TextField<String>("ownBaseName"));
         form.add(new TextField<String>("width"));
         form.add(new TextField<String>("height"));
         form.add(new CheckBox("tracking"));
         form.add(new CheckBox("showTip"));
-        form.add(new TextField<Integer>("dbTerrainSetting", new IModel<Integer>() {
-            @Override
-            public Integer getObject() {
-                DbTutorialConfig dbTutorialConfig = (DbTutorialConfig) form.getDefaultModelObject();
-                if (dbTutorialConfig.getDbTerrainSetting() != null) {
-                    return dbTutorialConfig.getDbTerrainSetting().getId();
-                } else {
-                    return null;
-                }
-            }
-
-            @Override
-            public void setObject(Integer id) {
-                try {
-                    DbTerrainSetting dbTerrainSetting = terrainService.getDbTerrainSettingCrudServiceHelper().readDbChild(id);
-                    ((DbTutorialConfig) form.getDefaultModelObject()).setDbTerrainSetting(dbTerrainSetting);
-                } catch (Throwable t) {
-                    log.error("", t);
-                    error(t.getMessage());
-                }
-            }
-
-            @Override
-            public void detach() {
-                // Ignore
-            }
-        }, Integer.class));
+        form.add(new TerrainPanel("dbTerrainSetting", new TerrainLinkHelper(dbTutorialConfig)));
 
         new CrudChildTableHelper<DbTutorialConfig, DbTaskConfig>("taskTable", null, "createTask", true, form, true) {
 
             @Override
             protected void onEditSubmit(DbTaskConfig dbTaskConfig) {
-                setResponsePage(new TaskEditor(dbTaskConfig));
+                setResponsePage(new TaskEditor(dbTaskConfig, new TerrainLinkHelper(form.getModelObject())));
             }
 
             @Override

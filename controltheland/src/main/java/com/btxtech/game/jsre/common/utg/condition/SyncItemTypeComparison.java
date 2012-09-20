@@ -28,8 +28,8 @@ public class SyncItemTypeComparison extends AbstractSyncItemComparison {
     private Map<ItemType, Integer> remaining;
     private Map<ItemType, Integer> total;
 
-    public SyncItemTypeComparison(Integer excludedTerritoryId, Map<ItemType, Integer> itemType, String htmlProgressTamplate) {
-        super(excludedTerritoryId, htmlProgressTamplate);
+    public SyncItemTypeComparison(Map<ItemType, Integer> itemType, String htmlProgressTamplate) {
+        super(htmlProgressTamplate);
         remaining = new HashMap<ItemType, Integer>(itemType);
         total = new HashMap<ItemType, Integer>(itemType);
     }
@@ -87,7 +87,7 @@ public class SyncItemTypeComparison extends AbstractSyncItemComparison {
             }
             ItemType itemType;
             try {
-                itemType = getServices().getItemService().getItemType(number);
+                itemType = getGlobalServices().getItemTypeService().getItemType(number);
             } catch (NoSuchItemTypeException e) {
                 throw new IllegalArgumentException("SyncItemTypeComparison.getValue() no such item type id: " + number);
             }
@@ -103,7 +103,7 @@ public class SyncItemTypeComparison extends AbstractSyncItemComparison {
             }
         } else if (parameter == TEMPLATE_PARAMETER_ITEM_IMAGE) {
             try {
-                ItemType itemType = getServices().getItemService().getItemType(number);
+                ItemType itemType = getGlobalServices().getItemTypeService().getItemType(number);
                 return ImageHandler.getQuestProgressItemTypeImageString(itemType);
             } catch (NoSuchItemTypeException e) {
                 throw new IllegalArgumentException("SyncItemTypeComparison.getValue() no such item type id: " + number);

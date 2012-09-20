@@ -15,7 +15,8 @@ package com.btxtech.game.jsre.client.item;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientEnergyService;
-import com.btxtech.game.jsre.client.ClientServices;
+import com.btxtech.game.jsre.client.ClientGlobalServices;
+import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.GwtCommon;
@@ -33,8 +34,8 @@ import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ProjectileItemType;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
-import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
+import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -165,7 +166,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
                 ActionHandler.getInstance().interactionGuardingItems(syncBaseItem);
                 ClientBase.getInstance().onItemCreated(syncBaseItem);
             }
-            ClientServices.getInstance().getConnectionService().sendSyncInfo(syncItem);
+            ClientGlobalServices.getInstance().getConnectionService().sendSyncInfo(syncItem);
         } else {
             Id id = new Id(parentId, createdChildCount);
             syncItem = items.get(id);
@@ -203,7 +204,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
             throw new IllegalStateException(this + " simulated id is already used: " + id);
         }
         SimpleBase simpleBase = null;
-        if (getItemType(itemTypeAndPosition.getItemTypeId()) instanceof BaseItemType) {
+        if (ItemTypeContainer.getInstance().getItemType(itemTypeAndPosition.getItemTypeId()) instanceof BaseItemType) {
             simpleBase = ClientBase.getInstance().getSimpleBase();
         }
         SyncItem syncItem = createAndAddItem(id, itemTypeAndPosition.getPosition(), itemTypeAndPosition.getItemTypeId(), simpleBase);
@@ -215,7 +216,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
             syncBaseItem.fireItemChanged(SyncItemListener.Change.ANGEL);
             ClientBase.getInstance().onItemCreated(syncBaseItem);
         }
-        ClientServices.getInstance().getConnectionService().sendSyncInfo(syncItem);
+        ClientGlobalServices.getInstance().getConnectionService().sendSyncInfo(syncItem);
         return syncItem;
     }
 
@@ -234,7 +235,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
     }
 
     private SyncItem createAndAddItem(Id id, Index position, int itemTypeId, SimpleBase base) throws NoSuchItemTypeException {
-        SyncItem syncItem = newSyncItem(id, position, itemTypeId, base, ClientServices.getInstance());
+        SyncItem syncItem = newSyncItem(id, position, itemTypeId, base, ClientGlobalServices.getInstance(), ClientPlanetServices.getInstance());
         syncItem.addSyncItemListener(this);
         items.put(id, syncItem);
         return syncItem;
@@ -247,7 +248,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
         }
         if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
             if (killedItem instanceof SyncBaseItem) {
-                ((SyncBaseItem)killedItem).setKilledBy(actor);
+                ((SyncBaseItem) killedItem).setKilledBy(actor);
             }
             definitelyKillItem(killedItem, force, explode, actor);
             if (killedItem instanceof SyncBaseItem) {
@@ -256,7 +257,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
                 ClientEnergyService.getInstance().onSyncItemKilled(syncBaseItem);
                 SimulationConditionServiceImpl.getInstance().onSyncItemKilled(actor, (SyncBaseItem) killedItem);
             }
-            ClientServices.getInstance().getConnectionService().sendSyncInfo(killedItem);
+            ClientGlobalServices.getInstance().getConnectionService().sendSyncInfo(killedItem);
             if (killedItem instanceof SyncBaseItem) {
                 killContainedItems((SyncBaseItem) killedItem, actor);
             }
@@ -354,13 +355,13 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
     }
 
     @Override
-    protected Services getServices() {
-        return ClientServices.getInstance();
+    protected GlobalServices getGlobalServices() {
+        return ClientGlobalServices.getInstance();
     }
 
     @Override
-    protected AbstractBaseService getBaseService() {
-        return ClientBase.getInstance();
+    protected PlanetServices getPlanetServices() {
+        return ClientPlanetServices.getInstance();
     }
 
     public void checkSpecialChanged(SyncItem syncItem) {
@@ -414,7 +415,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
                             ActionHandler.getInstance().addGuardingBaseItem(syncBaseItem);
                             ItemContainer.getInstance().checkSpecialChanged(syncItem);
                         }
-                        if(ClientBase.getInstance().isMyOwnProperty(syncBaseItem)) {
+                        if (ClientBase.getInstance().isMyOwnProperty(syncBaseItem)) {
                             SoundHandler.getInstance().playOnBuiltSound(syncBaseItem);
                         }
                     }

@@ -19,11 +19,12 @@ import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
+import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.db.IndexUserType;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.services.user.UserService;
@@ -79,16 +80,14 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     @Column(name = "accountBalance")
     private int money;
     private int maxMoney;
-    double itemSellFactor;
     private int houseCount;
     private RadarMode radarMode;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "dbTutorialConfig", insertable = false, updatable = false, nullable = false)
     private DbTutorialConfig dbTutorialConfig;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "dbTaskConfig", nullable = false)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-    private Set<DbTaskBot> dbTaskBots;
+    private Collection<DbBotConfig> dbBotConfigs;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbConditionConfig conditionConfig;
     @Enumerated(EnumType.STRING)
@@ -109,7 +108,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     @Transient
     private CrudChildServiceHelper<DbTaskAllowedItem> allowedItemHelper;
     @Transient
-    private CrudChildServiceHelper<DbTaskBot> botCrudHelper;
+    private CrudChildServiceHelper<DbBotConfig> botCrud;
 
     public Integer getId() {
         return id;
@@ -127,12 +126,11 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
 
     @Override
     public void init(UserService userService) {
-        items = new HashSet<DbItemTypeAndPosition>();
+        items = new HashSet<>();
         scroll = new Index(0, 0);
-        dbTaskAllowedItems = new HashSet<DbTaskAllowedItem>();
-        dbTaskBots = new HashSet<DbTaskBot>();
+        dbTaskAllowedItems = new HashSet<>();
+        dbBotConfigs = new HashSet<>();
         radarMode = RadarMode.NONE;
-        itemSellFactor = 0.5;
     }
 
     @Override
@@ -167,14 +165,6 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
 
     public void setMaxMoney(int maxMoney) {
         this.maxMoney = maxMoney;
-    }
-
-    public double getItemSellFactor() {
-        return itemSellFactor;
-    }
-
-    public void setItemSellFactor(double itemSellFactor) {
-        this.itemSellFactor = itemSellFactor;
     }
 
     public int getHouseCount() {
@@ -233,8 +223,8 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         this.tipTerrainPositionHint = tipTerrainPositionHint;
     }
 
-    public TaskConfig createTaskConfig(ItemService itemService) {
-        ArrayList<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<ItemTypeAndPosition>();
+    public TaskConfig createTaskConfig(ServerItemTypeService serverItemTypeService) {
+        ArrayList<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<>();
         for (DbItemTypeAndPosition dbItemTypeAndPosition : getItemCrudServiceHelper().readDbChildren()) {
             ItemTypeAndPosition itemTypeAndPosition = dbItemTypeAndPosition.createItemTypeAndPosition();
             if (itemTypeAndPosition != null) {
@@ -242,7 +232,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
             }
         }
 
-        Map<Integer, Integer> itemTypeLimitation = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> itemTypeLimitation = new HashMap<>();
         for (DbTaskAllowedItem dbTaskAllowedItem : getAllowedItemHelper().readDbChildren()) {
             Integer count = itemTypeLimitation.get(dbTaskAllowedItem.getDbBaseItemType().getId());
             if (count == null) {
@@ -255,13 +245,12 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
 
         return new TaskConfig(itemTypeAndPositions,
                 scroll,
-                conditionConfig != null ? conditionConfig.createConditionConfig(itemService) : null,
+                conditionConfig != null ? conditionConfig.createConditionConfig(serverItemTypeService) : null,
                 houseCount,
                 money,
                 maxMoney,
-                itemSellFactor,
                 name,
-                convertTaskBots(itemService),
+                convertTaskBots(serverItemTypeService),
                 itemTypeLimitation,
                 radarMode,
                 createGameTipConfig());
@@ -282,36 +271,34 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
 
     public CrudChildServiceHelper<DbItemTypeAndPosition> getItemCrudServiceHelper() {
         if (itemTypeAndPositionCrudHelper == null) {
-            itemTypeAndPositionCrudHelper = new CrudChildServiceHelper<DbItemTypeAndPosition>(items, DbItemTypeAndPosition.class, this);
+            itemTypeAndPositionCrudHelper = new CrudChildServiceHelper<>(items, DbItemTypeAndPosition.class, this);
         }
         return itemTypeAndPositionCrudHelper;
     }
 
-    private Collection<BotConfig> convertTaskBots(ItemService itemService) {
-        if (dbTaskBots == null || dbTaskBots.isEmpty()) {
+    private Collection<BotConfig> convertTaskBots(ServerItemTypeService serverItemTypeService) {
+        if (dbBotConfigs == null || dbBotConfigs.isEmpty()) {
             return null;
         }
-        List<BotConfig> result = new ArrayList<BotConfig>();
-        for (DbTaskBot dbTaskBot : dbTaskBots) {
-            if (dbTaskBot.getDbBotConfig() != null) {
-                result.add(dbTaskBot.getDbBotConfig().createBotConfig(itemService));
-            }
+        List<BotConfig> result = new ArrayList<>();
+        for (DbBotConfig dbBotConfig : dbBotConfigs) {
+            result.add(dbBotConfig.createBotConfig(serverItemTypeService));
         }
         return result;
     }
 
     public CrudChildServiceHelper<DbTaskAllowedItem> getAllowedItemHelper() {
         if (allowedItemHelper == null) {
-            allowedItemHelper = new CrudChildServiceHelper<DbTaskAllowedItem>(dbTaskAllowedItems, DbTaskAllowedItem.class, this);
+            allowedItemHelper = new CrudChildServiceHelper<>(dbTaskAllowedItems, DbTaskAllowedItem.class, this);
         }
         return allowedItemHelper;
     }
 
-    public CrudChildServiceHelper<DbTaskBot> getBotCrudHelper() {
-        if (botCrudHelper == null) {
-            botCrudHelper = new CrudChildServiceHelper<DbTaskBot>(dbTaskBots, DbTaskBot.class, this);
+    public CrudChildServiceHelper<DbBotConfig> getBotCrud() {
+        if (botCrud == null) {
+            botCrud = new CrudChildServiceHelper<>(dbBotConfigs, DbBotConfig.class, this);
         }
-        return botCrudHelper;
+        return botCrud;
     }
 
     public DbConditionConfig getConditionConfig() {

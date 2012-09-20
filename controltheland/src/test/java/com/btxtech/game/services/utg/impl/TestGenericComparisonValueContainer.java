@@ -5,7 +5,7 @@ import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeExce
 import com.btxtech.game.jsre.common.utg.condition.GenericComparisonValueContainer;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.HibernateUtil;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.mgmt.impl.BackupEntry;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.statistics.StatisticsEntry;
@@ -38,7 +38,7 @@ public class TestGenericComparisonValueContainer extends AbstractServiceTest {
     @Autowired
     private PlatformTransactionManager transactionManager;
     @Autowired
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
     @Autowired
     private StatisticsService statisticsService;
     @Autowired
@@ -118,25 +118,25 @@ public class TestGenericComparisonValueContainer extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         GenericComparisonValueContainer save = new GenericComparisonValueContainer();
         GenericComparisonValueContainer itemCounts = save.createChildContainer(GenericComparisonValueContainer.Key.REMAINING_ITEM_TYPES);
-        itemCounts.addChild(itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 1);
-        itemCounts.addChild(itemService.getItemType(TEST_ATTACK_ITEM_ID), 2);
-        itemCounts.addChild(itemService.getItemType(TEST_CONTAINER_ITEM_ID), 3);
-        save(save, itemService);
+        itemCounts.addChild(serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1);
+        itemCounts.addChild(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 2);
+        itemCounts.addChild(serverItemTypeService.getItemType(TEST_CONTAINER_ITEM_ID), 3);
+        save(save, serverItemTypeService);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        GenericComparisonValueContainer restore = restore(itemService);
+        GenericComparisonValueContainer restore = restore(serverItemTypeService);
         GenericComparisonValueContainer restoreItemCounts = restore.getChildContainer(GenericComparisonValueContainer.Key.REMAINING_ITEM_TYPES);
-        Assert.assertEquals(1, ((Number) restoreItemCounts.getValue(itemService.getItemType(TEST_START_BUILDER_ITEM_ID))).intValue());
-        Assert.assertEquals(2, ((Number) restoreItemCounts.getValue(itemService.getItemType(TEST_ATTACK_ITEM_ID))).intValue());
-        Assert.assertEquals(3, ((Number) restoreItemCounts.getValue(itemService.getItemType(TEST_CONTAINER_ITEM_ID))).intValue());
+        Assert.assertEquals(1, ((Number) restoreItemCounts.getValue(serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID))).intValue());
+        Assert.assertEquals(2, ((Number) restoreItemCounts.getValue(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID))).intValue());
+        Assert.assertEquals(3, ((Number) restoreItemCounts.getValue(serverItemTypeService.getItemType(TEST_CONTAINER_ITEM_ID))).intValue());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
 
-    private void save(final GenericComparisonValueContainer save, final ItemService itemService) {
+    private void save(final GenericComparisonValueContainer save, final ServerItemTypeService serverItemTypeService) {
         // Save
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -144,7 +144,7 @@ public class TestGenericComparisonValueContainer extends AbstractServiceTest {
                 BackupEntry backupEntry = new BackupEntry();
                 UserState userState = new UserState();
                 DbUserState dbUserState = new DbUserState(backupEntry, userService.getUser(userState.getUser()), userState, null, null, null);
-                dbUserState.addDbGenericComparisonValue(new DbGenericComparisonValue(1, save, itemService));
+                dbUserState.addDbGenericComparisonValue(new DbGenericComparisonValue(1, save, serverItemTypeService));
                 statisticsService.createAndAddBackup(dbUserState, userState);
                 dbUserState.setStatisticsEntry(new StatisticsEntry());
                 Set<DbUserState> dbUserStates = new HashSet<>();
@@ -156,7 +156,7 @@ public class TestGenericComparisonValueContainer extends AbstractServiceTest {
         System.out.println("----SAVE DONE---");
     }
 
-    private GenericComparisonValueContainer restore(ItemService itemService) throws NoSuchItemTypeException {
+    private GenericComparisonValueContainer restore(ServerItemTypeService serverItemTypeService) throws NoSuchItemTypeException {
         // restore
         List<BackupEntry> backupEntries = HibernateUtil.loadAll(sessionFactory, BackupEntry.class);
         Assert.assertEquals(1, backupEntries.size());
@@ -165,6 +165,6 @@ public class TestGenericComparisonValueContainer extends AbstractServiceTest {
         DbUserState dbUserState = CommonJava.getFirst(backupEntry.getUserStates());
         Assert.assertEquals(1, dbUserState.getDbGenericComparisonValues().size());
         DbGenericComparisonValue dbGenericComparisonValue = CommonJava.getFirst(dbUserState.getDbGenericComparisonValues());
-        return dbGenericComparisonValue.createGenericComparisonValueContainer(itemService);
+        return dbGenericComparisonValue.createGenericComparisonValueContainer(serverItemTypeService);
     }
 }

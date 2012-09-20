@@ -5,7 +5,7 @@ import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.common.CrudChild;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
@@ -84,11 +84,11 @@ public class DbLevelTask implements CrudChild<DbLevel> {
         this.dbTutorialConfig = dbTutorialConfig;
     }
 
-    public ConditionConfig createConditionConfig(ItemService itemService) {
+    public ConditionConfig createConditionConfig(ServerItemTypeService serverItemTypeService) {
         if (dbTutorialConfig != null) {
             return new ConditionConfig(ConditionTrigger.TUTORIAL, null, null);
         } else if (dbConditionConfig != null) {
-            return dbConditionConfig.createConditionConfig(itemService);
+            return dbConditionConfig.createConditionConfig(serverItemTypeService);
         } else {
             return null;
         }

@@ -13,7 +13,8 @@
 
 package com.btxtech.game.jsre.client.cockpit.item;
 
-import com.btxtech.game.jsre.client.ClientServices;
+import com.btxtech.game.jsre.client.ClientGlobalServices;
+import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
@@ -106,7 +107,10 @@ public class BuildupItemPanel extends Composite {
         HorizontalPanel itemsToBuild = new HorizontalPanel();
         Collection<Integer> itemTypeIDs = constructionVehicles.getFirst().getBaseItemType().getBuilderType().getAbleToBuild();
         for (Integer itemTypeID : itemTypeIDs) {
-            final BaseItemType itemType = (BaseItemType) ClientServices.getInstance().getItemService().getItemType(itemTypeID);
+            if(ClientPlanetServices.getInstance().getPlanetInfo().getLimitation4ItemType(itemTypeID) == 0) {
+                continue;
+            }
+            final BaseItemType itemType = (BaseItemType) ClientGlobalServices.getInstance().getItemTypeService().getItemType(itemTypeID);
             itemsToBuild.add(setupBuildupBlock(itemType, new MouseDownHandler() {
                 @Override
                 public void onMouseDown(MouseDownEvent event) {
@@ -123,7 +127,10 @@ public class BuildupItemPanel extends Composite {
         HorizontalPanel itemsToBuild = new HorizontalPanel();
         Collection<Integer> itemTypeIDs = factories.getFirst().getBaseItemType().getFactoryType().getAbleToBuild();
         for (Integer itemTypeID : itemTypeIDs) {
-            final BaseItemType itemType = (BaseItemType) ClientServices.getInstance().getItemService().getItemType(itemTypeID);
+            if(ClientPlanetServices.getInstance().getPlanetInfo().getLimitation4ItemType(itemTypeID) == 0) {
+                continue;
+            }
+            final BaseItemType itemType = (BaseItemType) ClientGlobalServices.getInstance().getItemTypeService().getItemType(itemTypeID);
             itemsToBuild.add(setupBuildupBlock(itemType, new MouseDownHandler() {
                 @Override
                 public void onMouseDown(MouseDownEvent event) {

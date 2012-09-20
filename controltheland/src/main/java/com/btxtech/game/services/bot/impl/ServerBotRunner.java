@@ -1,6 +1,6 @@
 package com.btxtech.game.services.bot.impl;
 
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.bot.impl.BotEnragementState;
 import com.btxtech.game.jsre.common.gameengine.services.bot.impl.BotRunner;
@@ -18,16 +18,16 @@ import java.util.concurrent.TimeUnit;
  * Time: 22:56:44
  */
 public class ServerBotRunner extends BotRunner {
-    private Services services;
+    private PlanetServices planetServices;
     private ScheduledThreadPoolExecutor botThread;
     private ScheduledThreadPoolExecutor botTimer;
     private ScheduledFuture botThreadScheduledFuture;
     private Log log = LogFactory.getLog(ServerBotRunner.class);
     private BotEnragementState.Listener enragementStateListener;
 
-    public ServerBotRunner(BotConfig botConfig, Services services, BotEnragementState.Listener enragementStateListener) {
+    public ServerBotRunner(BotConfig botConfig, PlanetServices planetServices, BotEnragementState.Listener enragementStateListener) {
         super(botConfig);
-        this.services = services;
+        this.planetServices = planetServices;
         this.enragementStateListener = enragementStateListener;
         botThread = new ScheduledThreadPoolExecutor(1, new CustomizableThreadFactory("BotRunner botThread: " + botConfig.getName() + " "));
         botTimer = new ScheduledThreadPoolExecutor(1, new CustomizableThreadFactory("BotRunner botTimer: " + botConfig.getName() + " "));
@@ -75,8 +75,8 @@ public class ServerBotRunner extends BotRunner {
     }
 
     @Override
-    protected Services getServices() {
-        return services;
+    protected PlanetServices getPlanetServices() {
+        return planetServices;
     }
 
     @Override

@@ -14,8 +14,8 @@
 package com.btxtech.game.services.item.itemType;
 
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.io.Serializable;
 
 /**

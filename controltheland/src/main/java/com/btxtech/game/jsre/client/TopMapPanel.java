@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.mapeditor.MapEditorModel;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -36,6 +37,8 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public abstract class TopMapPanel extends DecoratorPanel {
     private AbsolutePanel absolutePanel;
+
+
 
     public enum Direction {
         LEFT_TOP,

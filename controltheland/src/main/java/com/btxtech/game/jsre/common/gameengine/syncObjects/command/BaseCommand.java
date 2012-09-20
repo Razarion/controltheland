@@ -13,10 +13,9 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects.command;
 
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * User: beat

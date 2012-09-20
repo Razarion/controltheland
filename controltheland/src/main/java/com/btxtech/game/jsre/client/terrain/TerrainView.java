@@ -44,6 +44,7 @@ import java.util.Collection;
  * Time: 12:51:09 PM
  */
 public class TerrainView {
+    public static boolean uglySuppressRadar = false;
     private static final TerrainView INSTANCE = new TerrainView();
     private int viewOriginLeft = 0;
     private int viewOriginTop = 0;
@@ -56,7 +57,6 @@ public class TerrainView {
     private Context2d context2d;
     private AbsolutePanel parent;
     private TerrainHandler terrainHandler = new TerrainHandler();
-    public static boolean uglySuppressRadar = false;
 
     /**
      * Singleton
@@ -68,8 +68,25 @@ public class TerrainView {
         }
         canvas.setTabIndex(1); // IE9 need this to receive the focus
         context2d = canvas.getContext2d();
-        terrainMouseHandler = new TerrainMouseHandler(canvas, this);
-        terrainKeyHandler = new TerrainKeyHandler(canvas);
+
+        TerrainScrollHandler terrainScrollHandler = new TerrainScrollHandler();
+        terrainScrollHandler.setScrollExecutor(new TerrainScrollHandler.ScrollExecutor() {
+            @Override
+            public void moveDelta(int scrollX, int scrollY) {
+                scrollDeltaSafe(scrollX, scrollY);
+            }
+        });
+        terrainMouseHandler = new TerrainMouseHandler(canvas, this, terrainScrollHandler);
+        terrainKeyHandler = new TerrainKeyHandler(canvas, terrainScrollHandler);
+    }
+
+    private void scrollDeltaSafe(int scrollX, int scrollY) {
+        Index safeDelta = TerrainScrollHandler.calculateSafeDelta(scrollX, scrollY, terrainHandler.getTerrainSettings(), getViewRect());
+        if(!safeDelta.isNull()) {
+            viewOriginLeft = viewOriginLeft + safeDelta.getX();
+            viewOriginTop = viewOriginTop + safeDelta.getY();
+            fireScrollEvent(safeDelta.getX(), safeDelta.getY());
+        }
     }
 
     public void setupTerrain(TerrainSettings terrainSettings,
@@ -105,53 +122,6 @@ public class TerrainView {
         return INSTANCE;
     }
 
-    public void moveDelta(int left, int top) {
-        if (terrainHandler.getTerrainSettings() == null) {
-            return;
-        }
-
-        if (viewWidth == 0 && viewHeight == 0) {
-            return;
-        }
-
-        int orgViewOriginLeft = viewOriginLeft;
-        int orgViewOriginTop = viewOriginTop;
-
-        int tmpViewOriginLeft = viewOriginLeft + left;
-        int tmpViewOriginTop = viewOriginTop + top;
-
-        if (tmpViewOriginLeft < 0) {
-            left = left - tmpViewOriginLeft;
-        } else if (tmpViewOriginLeft > terrainHandler.getTerrainSettings().getPlayFieldXSize() - viewWidth - 1) {
-            left = left - (tmpViewOriginLeft - (terrainHandler.getTerrainSettings().getPlayFieldXSize() - viewWidth)) - 1;
-        }
-        if (viewWidth >= terrainHandler.getTerrainSettings().getPlayFieldXSize()) {
-            left = 0;
-            viewOriginLeft = 0;
-        } else {
-            viewOriginLeft += left;
-        }
-
-        if (tmpViewOriginTop < 0) {
-            top = top - tmpViewOriginTop;
-        } else if (tmpViewOriginTop > terrainHandler.getTerrainSettings().getPlayFieldYSize() - viewHeight - 1) {
-            top = top - (tmpViewOriginTop - (terrainHandler.getTerrainSettings().getPlayFieldYSize() - viewHeight)) - 1;
-        }
-        if (viewHeight >= terrainHandler.getTerrainSettings().getPlayFieldYSize()) {
-            top = 0;
-            viewOriginTop = 0;
-        } else {
-            viewOriginTop += top;
-        }
-
-        if (orgViewOriginLeft == viewOriginLeft && orgViewOriginTop == viewOriginTop) {
-            // No moveDelta
-            return;
-        }
-
-        fireScrollEvent(left, top);
-    }
-
     public int getViewOriginLeft() {
         return viewOriginLeft;
     }
@@ -183,19 +153,22 @@ public class TerrainView {
     public void moveToMiddle(SyncItem syncItem) {
         int left = syncItem.getSyncItemArea().getPosition().getX() - parent.getOffsetWidth() / 2 - viewOriginLeft;
         int top = syncItem.getSyncItemArea().getPosition().getY() - parent.getOffsetHeight() / 2 - viewOriginTop;
-        moveDelta(left, top);
+        scrollDeltaSafe(left, top);
     }
 
     public void moveToMiddle(Index startPoint) {
+        if(parent == null) {
+            return;
+        }
         int left = startPoint.getX() - parent.getOffsetWidth() / 2 - viewOriginLeft;
         int top = startPoint.getY() - parent.getOffsetHeight() / 2 - viewOriginTop;
-        moveDelta(left, top);
+        scrollDeltaSafe(left, top);
     }
 
     public void moveAbsolute(Index topLeftCorner) {
         int left = topLeftCorner.getX() - viewOriginLeft;
         int top = topLeftCorner.getY() - viewOriginTop;
-        moveDelta(left, top);
+        scrollDeltaSafe(left, top);
     }
 
     public Canvas getCanvas() {

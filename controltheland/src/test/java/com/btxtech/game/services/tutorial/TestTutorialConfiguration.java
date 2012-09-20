@@ -6,7 +6,7 @@ import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
     @Autowired
     private TutorialService tutorialService;
     @Autowired
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
     @Autowired
     private RuServiceHelper<DbTutorialConfig> ruTutorialServiceHelper;
     @Autowired
@@ -71,7 +71,7 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void createDeleteTask() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
 
@@ -94,10 +94,10 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         dbTaskConfig.setScroll(new Index(1, 2));
         dbTaskConfig.setHouseCount(5);
         dbTaskConfig.setTip(GameTipConfig.Tip.BUILD);
-        dbTaskConfig.setTipActor(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
-        dbTaskConfig.setTipResource(itemService.getDbResourceItemType(TEST_RESOURCE_ITEM_ID));
+        dbTaskConfig.setTipActor(serverItemTypeService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
+        dbTaskConfig.setTipResource(serverItemTypeService.getDbResourceItemType(TEST_RESOURCE_ITEM_ID));
         dbTaskConfig.setTipTerrainPositionHint(new Index(111, 222));
-        dbTaskConfig.setTipToBeBuilt(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        dbTaskConfig.setTipToBeBuilt(serverItemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
         ruTutorialServiceHelper.updateDbEntity(dbTutorialConfig);
         endHttpRequestAndOpenSessionInViewFilter();
 

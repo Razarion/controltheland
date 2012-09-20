@@ -1,7 +1,6 @@
 package com.btxtech.game.jsre.common.gameengine.formation;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Line;
 
 /**
  * User: beat

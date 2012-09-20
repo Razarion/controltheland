@@ -16,7 +16,6 @@ package com.btxtech.game.wicket.pages.mgmt.items;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
-import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemTypePossibility;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
@@ -43,8 +42,6 @@ import java.util.Arrays;
  * Time: 10:35:35 PM
  */
 public class BoxItemTypeEditor extends MgmtWebPage {
-    @SpringBean
-    private ItemService itemService;
     @SpringBean
     private RuServiceHelper<DbBoxItemType> ruServiceHelper;
 

@@ -10,17 +10,18 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.DbBotEnragementStateConfig;
-import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.HibernateUtil;
-import com.btxtech.game.services.history.impl.HistoryServiceImpl;
+import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryArtifactCount;
 import com.btxtech.game.services.inventory.DbInventoryItem;
-import com.btxtech.game.services.inventory.InventoryService;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.inventory.GlobalInventoryService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
+import com.btxtech.game.services.planet.BaseService;
+import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
 import com.btxtech.game.services.user.AllianceService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -47,9 +48,7 @@ public class TestHistoryService extends AbstractServiceTest {
     @Autowired
     private UserService userService;
     @Autowired
-    private ItemService itemService;
-    @Autowired
-    private CollisionService collisionService;
+    private ServerItemTypeService serverItemTypeService;
     @Autowired
     private PlatformTransactionManager platformTransactionManager;
     @Autowired
@@ -57,12 +56,14 @@ public class TestHistoryService extends AbstractServiceTest {
     @Autowired
     private AllianceService allianceService;
     @Autowired
-    private InventoryService inventoryService;
+    private GlobalInventoryService globalInventoryService;
+    @Autowired
+    private PlanetSystemService planetSystemService;
 
     @Test
     @DirtiesContext
     public void testCreateBaseLevel() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         System.out.println("**** testHistoryService ****");
         beginHttpSession();
@@ -119,7 +120,7 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testCreateItem() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         System.out.println("**** testCreateItem ****");
         beginHttpSession();
@@ -134,12 +135,13 @@ public class TestHistoryService extends AbstractServiceTest {
 
         // Build Factory
         System.out.println("---- build unit ---");
-        Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
+        Index buildPos = serverPlanetServices.getCollisionService().getFreeRandomPosition(serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
         sendBuildCommand(getMovableService().getAllSyncInfo().iterator().next().getId(), buildPos, TEST_FACTORY_ITEM_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        waitForActionServiceDone();
+        waitForActionServiceDone(TEST_PLANET_1_ID);
 
         // Verify
         beginHttpSession();
@@ -164,7 +166,7 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testKillItem() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         System.out.println("**** testKillItem ****");
         beginHttpSession();
@@ -180,7 +182,8 @@ public class TestHistoryService extends AbstractServiceTest {
         userService.createUser("Actor", "test", "test", "test");
         userService.login("Actor", "test");
         SimpleBase actorBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
-        Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
+        Index buildPos = serverPlanetServices.getCollisionService().getFreeRandomPosition(serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
         sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(actorBase, TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
@@ -225,7 +228,7 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testKillAnonymousItem() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         System.out.println("**** testKillAnonymousItem ****");
         beginHttpSession();
@@ -239,7 +242,8 @@ public class TestHistoryService extends AbstractServiceTest {
         userService.createUser("Actor", "test", "test", "test");
         userService.login("Actor", "test");
         SimpleBase actorBase = getMovableService().getRealGameInfo(START_UID_2).getBase();
-        Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
+        Index buildPos = serverPlanetServices.getCollisionService().getFreeRandomPosition(serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
         sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(actorBase, TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
@@ -271,7 +275,7 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testKillByAnonymous() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         System.out.println("**** testKillByAnonymous ****");
         beginHttpSession();
@@ -285,7 +289,8 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         SimpleBase actorBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
-        Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
+        Index buildPos = serverPlanetServices.getCollisionService().getFreeRandomPosition(serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
         sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(actorBase, TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
@@ -333,7 +338,7 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSellItem() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         System.out.println("**** testSellItem ****");
         beginHttpSession();
@@ -365,12 +370,12 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void dbHistoryElementBaseSurrenderedHuman() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
-        SimpleBase humanBase1 = new SimpleBase(1);
-        SimpleBase humanBase2 = new SimpleBase(2);
-        SimpleBase botBase1 = new SimpleBase(3);
-        SimpleBase botBase2 = new SimpleBase(4);
+        SimpleBase humanBase1 = new SimpleBase(1, 1);
+        SimpleBase humanBase2 = new SimpleBase(2, 1);
+        SimpleBase botBase1 = new SimpleBase(3, 1);
+        SimpleBase botBase2 = new SimpleBase(4, 1);
         SyncBaseItem humanBaseItem = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(500, 500), new Id(1, 1, 1), humanBase1);
         SyncBaseItem botBaseItem = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(500, 500), new Id(2, 1, 1), botBase1);
 
@@ -380,7 +385,8 @@ public class TestHistoryService extends AbstractServiceTest {
         EasyMock.expect(baseService.isBot(humanBase2)).andReturn(false).anyTimes();
         EasyMock.expect(baseService.isBot(botBase2)).andReturn(true).anyTimes();
         EasyMock.replay(baseService);
-        setPrivateField(HistoryServiceImpl.class, historyService, "baseService", baseService);
+        ServerPlanetServicesImpl serverPlanetServices = (ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
+        serverPlanetServices.setBaseService(baseService);
 
         historyService.addBaseSurrenderedEntry(humanBase1);
         checkSource(DbHistoryElement.Source.HUMAN);
@@ -458,7 +464,7 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void alliances() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -538,28 +544,28 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void inventory() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbInventoryArtifact dbInventoryArtifact = inventoryService.getArtifactCrud().createDbChild();
+        DbInventoryArtifact dbInventoryArtifact = globalInventoryService.getArtifactCrud().createDbChild();
         dbInventoryArtifact.setName("dbInventoryArtifact");
-        inventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact);
-        DbInventoryItem dbInventoryItem = inventoryService.getItemCrud().createDbChild();
+        globalInventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact);
+        DbInventoryItem dbInventoryItem = globalInventoryService.getItemCrud().createDbChild();
         dbInventoryItem.setName("dbInventoryItem");
         DbInventoryArtifactCount dbInventoryArtifactCount = dbInventoryItem.getArtifactCountCrud().createDbChild();
         dbInventoryArtifactCount.setCount(1);
         dbInventoryArtifactCount.setDbInventoryArtifact(dbInventoryArtifact);
-        inventoryService.getItemCrud().updateDbChild(dbInventoryItem);
+        globalInventoryService.getItemCrud().updateDbChild(dbInventoryItem);
 
-        DbBoxItemType dbBoxItemType = (DbBoxItemType) itemService.getDbItemTypeCrud().createDbChild(DbBoxItemType.class);
+        DbBoxItemType dbBoxItemType = (DbBoxItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBoxItemType.class);
         setupImages(dbBoxItemType, 1);
         dbBoxItemType.setName("Box Item");
         dbBoxItemType.setTerrainType(TerrainType.LAND);
-        dbBoxItemType.setBounding(new BoundingBox( 80, 80, ANGELS_1));
+        dbBoxItemType.setBounding(new BoundingBox(80, 80, ANGELS_1));
         dbBoxItemType.setTtl(5000);
-        itemService.saveDbItemType(dbBoxItemType);
-        itemService.activate();
+        serverItemTypeService.saveDbItemType(dbBoxItemType);
+        serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -610,7 +616,7 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void botEnragement() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         DbBotEnragementStateConfig enragementStateConfig1 = new DbBotEnragementStateConfig();
         enragementStateConfig1.setName("Normal");
@@ -625,8 +631,8 @@ public class TestHistoryService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        historyService.addBotEnrageUp("Bot1", enragementStateConfig2.createBotEnragementStateConfigg(itemService), simpleBase);
-        historyService.addBotEnrageNormal("Bot1", enragementStateConfig1.createBotEnragementStateConfigg(itemService));
+        historyService.addBotEnrageUp("Bot1", enragementStateConfig2.createBotEnragementStateConfigg(serverItemTypeService), simpleBase);
+        historyService.addBotEnrageNormal("Bot1", enragementStateConfig1.createBotEnragementStateConfigg(serverItemTypeService));
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

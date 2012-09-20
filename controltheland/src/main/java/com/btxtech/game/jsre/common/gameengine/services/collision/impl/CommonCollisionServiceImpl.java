@@ -1,23 +1,27 @@
 package com.btxtech.game.jsre.common.gameengine.services.collision.impl;
 
+import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.MathHelper;
+import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormation;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationFactory;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.btxtech.game.jsre.common.gameengine.services.collision.PlaceCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainUtil;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 
+import java.awt.image.TileObserver;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,7 +43,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
     private static final int MAX_RANGE_RALLY_POINT = 300;
     private Logger log = Logger.getLogger(CommonCollisionServiceImpl.class.getName());
 
-    protected abstract Services getServices();
+    protected abstract PlanetServices getServices();
 
     @Override
     public Path setupPathToDestination(SyncBaseItem syncItem, Index destination) {
@@ -48,7 +52,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
 
     @Override
     public Path setupPathToDestination(Index start, Index destination, TerrainType terrainType, BoundingBox boundingBox) {
-        if(start.equals(destination)) {
+        if (start.equals(destination)) {
             Path path = new Path(start, destination, true);
             path.makeSameStartAndDestination();
             return path;
@@ -65,7 +69,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
         } else {
             Index bestFitTile = aStar.getBestFitTile();
             Index alternativeDestination = getServices().getTerrainService().getAbsolutIndexForTerrainTileIndex(bestFitTile);
-            alternativeDestination.add(getServices().getTerrainService().getTerrainSettings().getTileWidth() / 2, getServices().getTerrainService().getTerrainSettings().getTileHeight() / 2);
+            alternativeDestination.add(Constants.TERRAIN_TILE_WIDTH / 2, Constants.TERRAIN_TILE_HEIGHT / 2);
             path.setAlternativeDestination(alternativeDestination);
             funnelAlgorithm = new FunnelAlgorithm(start, alternativeDestination);
         }
@@ -192,6 +196,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
     }
 
     @Override
+    @Deprecated
     public Index getFreeRandomPosition(ItemType itemType, Rectangle region, int itemFreeRange, boolean botFree, boolean ignoreMovable) {
         Random random = new Random();
         for (int i = 0; i < MAX_TRIES; i++) {
@@ -223,5 +228,37 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
         throw new PlaceCanNotBeFoundException(itemType, region, itemFreeRange);
     }
 
+    @Override
+    public Index getFreeRandomPosition(ItemType itemType, Region region, int itemFreeRange, boolean botFree, boolean ignoreMovable) {
+        List<Index> tiles = region.getTileCopy();
 
+        Random random = new Random();
+        for (int i = 0; i < MAX_TRIES; i++) {
+            int tileIndex = random.nextInt(tiles.size());
+            Index tile = tiles.get(tileIndex);
+            Index absolutePosition = TerrainUtil.getAbsolutIndexForTerrainTileIndex(tile).add(Constants.TERRAIN_TILE_WIDTH / 2,Constants.TERRAIN_TILE_HEIGHT / 2);
+            if (botFree && getServices().getBotService().isInRealm(absolutePosition)) {
+                continue;
+            }
+
+            if (!getServices().getTerrainService().isFree(absolutePosition, itemType)) {
+                continue;
+            }
+            if (ignoreMovable) {
+                if (getServices().getItemService().isUnmovableSyncItemOverlapping(itemType.getBoundingBox(), absolutePosition)) {
+                    continue;
+                }
+            } else {
+                int width = itemFreeRange + itemType.getBoundingBox().getWidth();
+                int height = itemFreeRange + itemType.getBoundingBox().getHeight();
+                Index start = absolutePosition.sub(new Index(width / 2, height / 2));
+                Rectangle rectangle = new Rectangle(start.getX(), start.getY(), width, height);
+                if (getServices().getItemService().hasItemsInRectangle(rectangle)) {
+                    continue;
+                }
+            }
+            return absolutePosition;
+        }
+        throw new PlaceCanNotBeFoundException(itemType, region, itemFreeRange);
+    }
 }

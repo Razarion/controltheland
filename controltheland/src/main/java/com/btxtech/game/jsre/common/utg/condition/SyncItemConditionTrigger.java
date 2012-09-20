@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.common.utg.condition;
 
-import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 

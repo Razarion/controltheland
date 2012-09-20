@@ -14,7 +14,7 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
@@ -52,9 +52,9 @@ import java.util.Map;
  */
 @RemoteServiceRelativePath("movableService")
 public interface MovableService extends RemoteService {
-    RealGameInfo getRealGameInfo(String startUuid) throws InvalidLevelState;
+    RealGameInfo getRealGameInfo(String startUuid) throws InvalidLevelStateException;
 
-    SimulationInfo getSimulationGameInfo(int levelTaskId) throws InvalidLevelState;
+    SimulationInfo getSimulationGameInfo(int levelTaskId) throws InvalidLevelStateException;
 
     void surrenderBase();
 

@@ -18,8 +18,9 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.debug.DebugService;
-import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.services.item.ServerItemTypeService;
+import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.ServerTerrainService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +37,11 @@ import java.util.List;
  */
 public class TestAttackFormation extends AbstractServiceTest {
     @Autowired
-    private CollisionService collisionService;
-    @Autowired
     private DebugService debugService;
     @Autowired
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
     @Autowired
-    private TerrainService terrainService;
+    private PlanetSystemService planetSystemService;
 
     @Test
     @DirtiesContext
@@ -155,13 +154,13 @@ public class TestAttackFormation extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testAttackFormationNoBlockingObject() throws Throwable {
-        configureRealGame();
+        configureSimplePlanet();
 
-        ItemType targetItemType = itemService.getItemType(TEST_SIMPLE_BUILDING_ID);
+        ItemType targetItemType = serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID);
         targetItemType.setBoundingBox(new BoundingBox(200, 80, ANGELS_24));
         SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(1500, 1500), new Id(1, -100, -100));
 
-        //ItemType attackItemType = itemService.getItemType(TEST_ATTACK_ITEM_ID);
+        //ItemType attackItemType = serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
         //attackItemType.setBoundingBox(new BoundingBox(100, 100, 80, 80, 24));
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(2, -100, -100));
 
@@ -220,11 +219,11 @@ public class TestAttackFormation extends AbstractServiceTest {
     public void testAttackFormationNoBlockingObject__TMP() throws Throwable {
         // TODO configureMinimalGame();
 
-        ItemType targetItemType = itemService.getItemType(TEST_SIMPLE_BUILDING_ID);
+        ItemType targetItemType = serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID);
         targetItemType.setBoundingBox(new BoundingBox(200, 80, ANGELS_24));
         SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(1500, 1500), new Id(1, -100, -100));
 
-        //ItemType attackItemType = itemService.getItemType(TEST_ATTACK_ITEM_ID);
+        //ItemType attackItemType = serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
         //attackItemType.setBoundingBox(new BoundingBox(100, 100, 80, 80, 24));
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(2, -100, -100));
 
@@ -286,11 +285,11 @@ public class TestAttackFormation extends AbstractServiceTest {
     public void testAttackFormationNoBlockingObject__TMP_smallRange() throws Throwable {
         // TODO configureMinimalGame();
 
-        ItemType targetItemType = itemService.getItemType(TEST_SIMPLE_BUILDING_ID);
+        ItemType targetItemType = serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID);
         targetItemType.setBoundingBox(new BoundingBox(80, 80, ANGELS_24));
         SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(500, 500), new Id(1, -100, -100));
 
-        ItemType attackItemType = itemService.getItemType(TEST_ATTACK_ITEM_ID);
+        ItemType attackItemType = serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
         attackItemType.setBoundingBox(new BoundingBox(38, 68, ANGELS_24));
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(2, -100, -100));
 
@@ -366,7 +365,7 @@ public class TestAttackFormation extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testFormationWithNegativePosition() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
         SyncBaseItem target = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 200), new Id(1, -100, -100));
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(2, -100, -100));
 
@@ -374,7 +373,7 @@ public class TestAttackFormation extends AbstractServiceTest {
         for (int i = 0; i < 19; i++) {
             items.add(new AttackFormationItem(syncBaseItem, 200));
         }
-
+        ServerTerrainService terrainService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getTerrainService();
         double angel = MathHelper.HALF_RADIANT;
         AttackFormation attackFormation = AttackFormationFactory.create(target.getSyncItemArea(), angel, items);
         while (attackFormation.hasNext()) {
@@ -393,7 +392,7 @@ public class TestAttackFormation extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testCircleFormationBlockingChannel() throws Throwable {
-        configureRealGame();
+        configureSimplePlanet();
 
         Rectangle blockingRect1 = new Rectangle(0, 0, 300, 800);
         Rectangle blockingRect2 = new Rectangle(400, 0, 300, 800);
@@ -464,7 +463,7 @@ public class TestAttackFormation extends AbstractServiceTest {
 
     @DirtiesContext
     public void testSetupDestinationHints1() throws Exception {
-        configureComplexGameOneRealLevel();
+        configureOneLevelOnePlaneComplexTerrain();
 
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, -100, -100));
 
@@ -479,7 +478,7 @@ public class TestAttackFormation extends AbstractServiceTest {
 
         SyncItem target = createSyncResourceItem(TEST_RESOURCE_ITEM_ID, new Index(1000, 1000), new Id(1, -100, -100));
 
-        collisionService.setupDestinationHints(target, items);
+        //collisionService.setupDestinationHints(target, items);
 
         for (AttackFormationItem item : items) {
             // TODO do some asserts

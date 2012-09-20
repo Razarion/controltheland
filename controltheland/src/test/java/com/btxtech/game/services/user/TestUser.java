@@ -18,7 +18,7 @@ public class TestUser extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void allianceOffers() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -234,7 +234,7 @@ public class TestUser extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void alliances() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

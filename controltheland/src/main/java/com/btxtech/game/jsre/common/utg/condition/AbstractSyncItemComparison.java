@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.common.utg.condition;
 
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 import java.util.ArrayList;
@@ -25,36 +25,29 @@ import java.util.List;
 public abstract class AbstractSyncItemComparison implements AbstractComparison {
     public static final String SHARP = "#";
     private static int MIN_SEND_DELAY = 3000;
-    private Services services;
-    private Integer excludedTerritoryId;
     private AbstractConditionTrigger abstractConditionTrigger;
     private List<ProgressTemplateElement> metaTemplate;
     private long lastProgressSendTime;
+    private GlobalServices globalServices;
 
     protected abstract void privateOnSyncItem(SyncItem syncItem);
 
     protected abstract String getValue(char parameter, Integer number);
 
-    protected AbstractSyncItemComparison(Integer excludedTerritoryId, String htmlProgressTamplate) {
-        this.excludedTerritoryId = excludedTerritoryId;
+    protected AbstractSyncItemComparison(String htmlProgressTamplate) {
         prepareMetaProgressTamplate(htmlProgressTamplate);
     }
 
     public final void onSyncItem(SyncItem syncItem) {
-        if (excludedTerritoryId != null) {
-            if (getServices().getTerritoryService().isTerritory(excludedTerritoryId, syncItem.getSyncItemArea().getPosition())) {
-                return;
-            }
-        }
         privateOnSyncItem(syncItem);
     }
 
-    protected Services getServices() {
-        return services;
+    protected GlobalServices getGlobalServices() {
+        return globalServices;
     }
 
-    public void setServices(Services services) {
-        this.services = services;
+    public void setGlobalServices(GlobalServices globalServices) {
+        this.globalServices = globalServices;
     }
 
     @Override
@@ -75,8 +68,8 @@ public abstract class AbstractSyncItemComparison implements AbstractComparison {
         if (lastProgressSendTime + MIN_SEND_DELAY > System.currentTimeMillis()) {
             return;
         }
-        if (services != null) {
-            services.getConditionService().sendProgressUpdate(abstractConditionTrigger.getActor(), abstractConditionTrigger.getIdentifier());
+        if (globalServices != null) {
+            globalServices.getConditionService().sendProgressUpdate(abstractConditionTrigger.getActor(), abstractConditionTrigger.getIdentifier());
             lastProgressSendTime = System.currentTimeMillis();
         }
     }

@@ -1,0 +1,155 @@
+package com.btxtech.game.services.common;
+
+import com.btxtech.game.services.connection.ServerConnectionService;
+import com.btxtech.game.services.history.HistoryService;
+import com.btxtech.game.services.inventory.GlobalInventoryService;
+import com.btxtech.game.services.item.ServerItemTypeService;
+import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.statistics.StatisticsService;
+import com.btxtech.game.services.terrain.TerrainImageService;
+import com.btxtech.game.services.user.AllianceService;
+import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.services.utg.XpService;
+import com.btxtech.game.services.utg.condition.ServerConditionService;
+import org.junit.Ignore;
+
+/**
+ * User: beat
+ * Date: 27.08.12
+ * Time: 17:20
+ */
+@Ignore
+public class TestGlobalServices implements ServerGlobalServices {
+    private HistoryService historyService;
+    private StatisticsService statisticsService;
+    private UserService userService;
+    private UserTrackingService userTrackingService;
+    private AllianceService allianceService;
+    private ServerConnectionService serverConnectionService;
+    private GlobalInventoryService globalInventoryService;
+    private PlanetSystemService planetSystemService;
+    private TerrainImageService terrainImageService;
+    private XpService xpService;
+    private ServerConditionService serverConditionService;
+    private ServerItemTypeService serverItemTypeService;
+    private UserGuidanceService userGuidanceService;
+
+    @Override
+    public HistoryService getHistoryService() {
+        return historyService;
+    }
+
+    public void setHistoryService(HistoryService historyService) {
+        this.historyService = historyService;
+    }
+
+    @Override
+    public StatisticsService getStatisticsService() {
+        return statisticsService;
+    }
+
+    public void setStatisticsService(StatisticsService statisticsService) {
+        this.statisticsService = statisticsService;
+    }
+
+    @Override
+    public UserService getUserService() {
+        return userService;
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Override
+    public UserTrackingService getUserTrackingService() {
+        return userTrackingService;
+    }
+
+    public void setUserTrackingService(UserTrackingService userTrackingService) {
+        this.userTrackingService = userTrackingService;
+    }
+
+    @Override
+    public AllianceService getAllianceService() {
+        return allianceService;
+    }
+
+    public void setAllianceService(AllianceService allianceService) {
+        this.allianceService = allianceService;
+    }
+
+    @Override
+    public ServerConnectionService getConnectionService() {
+        return serverConnectionService;
+    }
+
+    public void setServerConnectionService(ServerConnectionService serverConnectionService) {
+        this.serverConnectionService = serverConnectionService;
+    }
+
+    @Override
+    public GlobalInventoryService getGlobalInventoryService() {
+        return globalInventoryService;
+    }
+
+    public void setGlobalInventoryService(GlobalInventoryService globalInventoryService) {
+        this.globalInventoryService = globalInventoryService;
+    }
+
+    @Override
+    public PlanetSystemService getPlanetSystemService() {
+        return planetSystemService;
+    }
+
+    public void setPlanetSystemService(PlanetSystemService planetSystemService) {
+        this.planetSystemService = planetSystemService;
+    }
+
+    @Override
+    public TerrainImageService getTerrainImageService() {
+        return terrainImageService;
+    }
+
+    public void setTerrainImageService(TerrainImageService terrainImageService) {
+        this.terrainImageService = terrainImageService;
+    }
+
+    @Override
+    public XpService getXpService() {
+        return xpService;
+    }
+
+    public void setXpService(XpService xpService) {
+        this.xpService = xpService;
+    }
+
+    @Override
+    public ServerConditionService getConditionService() {
+        return serverConditionService;
+    }
+
+    public void setServerConditionService(ServerConditionService serverConditionService) {
+        this.serverConditionService = serverConditionService;
+    }
+
+    @Override
+    public ServerItemTypeService getItemTypeService() {
+        return serverItemTypeService;
+    }
+
+    public void setServerItemTypeService(ServerItemTypeService serverItemTypeService) {
+        this.serverItemTypeService = serverItemTypeService;
+    }
+
+    @Override
+    public UserGuidanceService getCommonUserGuidanceService() {
+        return userGuidanceService;
+    }
+
+    public void setUserGuidanceService(UserGuidanceService userGuidanceService) {
+        this.userGuidanceService = userGuidanceService;
+    }
+}

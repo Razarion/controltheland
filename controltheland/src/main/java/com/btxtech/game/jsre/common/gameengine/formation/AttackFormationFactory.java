@@ -1,6 +1,5 @@
 package com.btxtech.game.jsre.common.gameengine.formation;
 
-import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 

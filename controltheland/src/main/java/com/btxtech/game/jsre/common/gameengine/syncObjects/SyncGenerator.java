@@ -45,9 +45,9 @@ public class SyncGenerator extends SyncBaseAbility{
         this.generating = generating;
         if(oldState != generating) {
             if(generating) {
-                getServices().getEnergyService().generatorActivated(this);
+                getPlanetServices().getEnergyService().generatorActivated(this);
             } else {
-                getServices().getEnergyService().generatorDeactivated(this);
+                getPlanetServices().getEnergyService().generatorDeactivated(this);
             }
         }
     }

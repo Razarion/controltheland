@@ -1,9 +1,8 @@
 package com.btxtech.game.jsre.common.gameengine.services.bot;
 
-import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.Region;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -14,20 +13,21 @@ import java.util.List;
 public class BotConfig implements Serializable {
     private int id;
     private int actionDelay;
-    private Rectangle realm;
+    private Region realm;
     private String name;
     private Long minInactiveMs;
     private Long maxInactiveMs;
     private Long minActiveMs;
     private Long maxActiveMs;
     private List<BotEnragementStateConfig> botEnragementStateConfigs;
+
     /**
      * Used by GWT
      */
     BotConfig() {
     }
 
-    public BotConfig(int id, int actionDelay, List<BotEnragementStateConfig> botEnragementStateConfigs, Rectangle realm, String name, Long minInactiveMs, Long maxInactiveMs, Long minActiveMs, Long maxActiveMs) {
+    public BotConfig(int id, int actionDelay, List<BotEnragementStateConfig> botEnragementStateConfigs, Region realm, String name, Long minInactiveMs, Long maxInactiveMs, Long minActiveMs, Long maxActiveMs) {
         this.id = id;
         this.actionDelay = actionDelay;
         this.botEnragementStateConfigs = botEnragementStateConfigs;
@@ -43,7 +43,7 @@ public class BotConfig implements Serializable {
         return actionDelay;
     }
 
-    public Rectangle getRealm() {
+    public Region getRealm() {
         return realm;
     }
 

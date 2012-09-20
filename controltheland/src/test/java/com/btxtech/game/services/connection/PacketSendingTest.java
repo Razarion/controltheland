@@ -2,14 +2,10 @@ package com.btxtech.game.services.connection;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
-import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.packets.XpPacket;
+import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.services.utg.condition.ServerConditionService;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 /**
@@ -18,15 +14,11 @@ import org.springframework.test.annotation.DirtiesContext;
  * Time: 16:26:59
  */
 public class PacketSendingTest extends AbstractServiceTest {
-    @Autowired
-    private UserGuidanceService userGuidanceService;
-    @Autowired
-    private ServerConditionService serverConditionService;
 
     @Test
     @DirtiesContext
     public void testCreateAndSell() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         System.out.println("----- testSimple -----");
@@ -45,10 +37,7 @@ public class PacketSendingTest extends AbstractServiceTest {
         accountBalancePacket2.setAccountBalance(998);
         AccountBalancePacket accountBalancePacket3 = new AccountBalancePacket();
         accountBalancePacket3.setAccountBalance(998);
-        XpPacket xpPacket = new XpPacket();
-        xpPacket.setXp(1);
-        xpPacket.setXp2LevelUp(Integer.MAX_VALUE);
-        assertPackagesIgnoreSyncItemInfoAndClear(accountBalancePacket1, accountBalancePacket2, accountBalancePacket3, xpPacket);
+        assertPackagesIgnoreSyncItemInfoAndClear(accountBalancePacket1, accountBalancePacket2, accountBalancePacket3);
 
         // Sell
         getMovableService().sellItem(getFirstSynItemId(simpleBase, TEST_FACTORY_ITEM_ID));

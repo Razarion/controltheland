@@ -15,7 +15,7 @@ package com.btxtech.game.services.bot;
 
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.bot.CommonBotService;
-import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.planet.db.DbPlanet;
 
 /**
  * User: beat
@@ -23,11 +23,9 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
  * Time: 17:17:01
  */
 public interface BotService extends CommonBotService {
-    CrudRootServiceHelper<DbBotConfig> getDbBotConfigCrudServiceHelper();
-
-    void activate();
+    void activate(DbPlanet dbPlanet);
 
     BotConfig getSimulationBotConfig(int id);
 
-    void cleanup();
+    void deactivate();
 }

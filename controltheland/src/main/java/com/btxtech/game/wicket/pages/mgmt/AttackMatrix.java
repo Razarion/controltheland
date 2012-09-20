@@ -13,12 +13,16 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.wicket.pages.mgmt.items.ItemTypeTable;
 import com.btxtech.game.wicket.uiservices.ListProvider;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.*;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.HeadersToolbar;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.NoRecordsToolbar;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -37,13 +41,13 @@ import java.util.List;
  */
 public class AttackMatrix extends MgmtWebPage {
     @SpringBean
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
 
     public AttackMatrix() {
         add(new FeedbackPanel("msgs"));
 
-        ArrayList<IColumn<DbBaseItemType>> columnList = new ArrayList<IColumn<DbBaseItemType>>();
-        columnList.add(new AbstractColumn<DbBaseItemType>(new Model<String>("Attacker")) {
+        ArrayList<IColumn<DbBaseItemType>> columnList = new ArrayList<>();
+        columnList.add(new AbstractColumn<DbBaseItemType>(new Model<>("Attacker")) {
 
             @Override
             public void populateItem(Item<ICellPopulator<DbBaseItemType>> cellItem, String componentId, IModel<DbBaseItemType> rowModel) {
@@ -51,8 +55,8 @@ public class AttackMatrix extends MgmtWebPage {
             }
         });
 
-        for (final DbBaseItemType baseItemType : itemService.getDbBaseItemTypes()) {
-            columnList.add(new AbstractColumn<DbBaseItemType>(new Model<String>(baseItemType.getName())) {
+        for (final DbBaseItemType baseItemType : serverItemTypeService.getDbBaseItemTypes()) {
+            columnList.add(new AbstractColumn<DbBaseItemType>(new Model<>(baseItemType.getName())) {
 
                 @Override
                 public void populateItem(Item<ICellPopulator<DbBaseItemType>> cellItem, String componentId, IModel<DbBaseItemType> rowModel) {
@@ -63,24 +67,24 @@ public class AttackMatrix extends MgmtWebPage {
 
         @SuppressWarnings({"unchecked", "SuspiciousToArrayCall"})
         IColumn<DbBaseItemType>[] columnArray = (IColumn<DbBaseItemType>[]) columnList.toArray(new IColumn[columnList.size()]);
-        final ListProvider<DbBaseItemType> territoryProvider = new ListProvider<DbBaseItemType>() {
+        final ListProvider<DbBaseItemType> weaponProvider = new ListProvider<DbBaseItemType>() {
             @Override
             protected List<DbBaseItemType> createList() {
-                return new ArrayList<DbBaseItemType>(itemService.getWeaponDbBaseItemTypes());
+                return new ArrayList<>(serverItemTypeService.getWeaponDbBaseItemTypes());
             }
         };
 
         Form form = new Form("form") {
             protected void onSubmit() {
-                itemService.saveAttackMatrix(territoryProvider.getLastModifiedList());
+                serverItemTypeService.saveAttackMatrix(weaponProvider.getLastModifiedList());
                 setResponsePage(ItemTypeTable.class);
             }
         };
         add(form);
 
-        DataTable<DbBaseItemType> dataTable = new DataTable<DbBaseItemType>("dataTable", columnArray, territoryProvider, Integer.MAX_VALUE);
+        DataTable<DbBaseItemType> dataTable = new DataTable<>("dataTable", columnArray, weaponProvider, Integer.MAX_VALUE);
         dataTable.addTopToolbar(new HeadersToolbar(dataTable, null));
-        dataTable.addBottomToolbar(new NoRecordsToolbar(dataTable, new Model<String>("No Weapon items")));
+        dataTable.addBottomToolbar(new NoRecordsToolbar(dataTable, new Model<>("No Weapon items")));
         form.add(dataTable);
     }
 }

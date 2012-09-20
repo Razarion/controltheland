@@ -1,22 +1,19 @@
 package com.btxtech.game.services.terrain.impl;
 
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.services.terrain.DbSurfaceRect;
-import com.btxtech.game.services.terrain.DbTerrainImagePosition;
 
-class SurfaceRectKey {
+public class SurfaceRectKey {
     private Rectangle rectangle;
     private int imageId;
 
-    SurfaceRectKey(SurfaceRect surfaceRect) {
+    public SurfaceRectKey(SurfaceRect surfaceRect) {
         rectangle = surfaceRect.getTileRectangle();
         imageId = surfaceRect.getSurfaceImageId();
     }
 
-    SurfaceRectKey(DbSurfaceRect dbSurfaceRect) {
+    public SurfaceRectKey(DbSurfaceRect dbSurfaceRect) {
         rectangle = dbSurfaceRect.getRectangle();
         imageId = dbSurfaceRect.getDbSurfaceImage().getId();
     }

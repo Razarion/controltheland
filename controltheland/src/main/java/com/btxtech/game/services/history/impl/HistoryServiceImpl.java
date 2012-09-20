@@ -18,12 +18,12 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotEnragementStateConfig;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
-import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.history.DbHistoryElement;
 import com.btxtech.game.services.history.DisplayHistoryElement;
 import com.btxtech.game.services.history.HistoryService;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
@@ -55,19 +55,19 @@ public class HistoryServiceImpl implements HistoryService {
     static private final int NEWEST_HISTORY_ELEMENT_COUNT = 30;
     private Log log = LogFactory.getLog(HistoryServiceImpl.class);
     @Autowired
-    private BaseService baseService;
-    @Autowired
     private UserService userService;
     @Autowired
     private SessionFactory sessionFactory;
     @Autowired
+    private PlanetSystemService planetSystemService;
+    @Autowired
     private com.btxtech.game.services.connection.Session session;
 
     private DbHistoryElement.Source determineSource(SimpleBase actor, SimpleBase target) {
-        if (actor != null && !baseService.isBot(actor)) {
+        if (actor != null && !planetSystemService.getServerPlanetServices(actor).getBaseService().isBot(actor)) {
             return DbHistoryElement.Source.HUMAN;
         }
-        if (target != null && !baseService.isBot(target)) {
+        if (target != null && !planetSystemService.getServerPlanetServices(target).getBaseService().isBot(target)) {
             return DbHistoryElement.Source.HUMAN;
         }
         return DbHistoryElement.Source.BOT;
@@ -84,7 +84,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 null,
-                baseService,
+                planetSystemService,
                 getSessionId(simpleBase),
                 determineSource(simpleBase, null), null, null, null, null, null, null));
     }
@@ -100,7 +100,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 null,
-                baseService,
+                planetSystemService,
                 getSessionId(actor),
                 determineSource(actor, target), null, null, null, null, null, null));
     }
@@ -116,7 +116,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 null,
-                baseService,
+                planetSystemService,
                 getSessionId(simpleBase),
                 determineSource(simpleBase, null), null, null, null, null, null, null));
     }
@@ -132,7 +132,7 @@ public class HistoryServiceImpl implements HistoryService {
                 syncBaseItem,
                 null,
                 null,
-                baseService,
+                planetSystemService,
                 getSessionId(syncBaseItem.getBase()),
                 determineSource(syncBaseItem.getBase(), null), null, null, null, null, null, null));
     }
@@ -141,14 +141,14 @@ public class HistoryServiceImpl implements HistoryService {
     @Transactional
     public void addItemDestroyedEntry(SimpleBase actor, SyncBaseItem target) {
         save(new DbHistoryElement(DbHistoryElement.Type.ITEM_DESTROYED,
-                userService.getUser(actor),
+                actor != null ? userService.getUser(actor) : null,
                 userService.getUser(target.getBase()),
                 actor,
                 target.getBase(),
                 target,
                 null,
                 null,
-                baseService,
+                planetSystemService,
                 getSessionId(actor),
                 determineSource(actor, target.getBase()), null, null, null, null, null, null));
     }
@@ -164,7 +164,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 level,
                 null,
-                baseService,
+                planetSystemService,
                 userState.getSessionId(),
                 DbHistoryElement.Source.HUMAN, null, null, null, null, null, null));
     }
@@ -180,7 +180,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 levelTask,
-                baseService,
+                planetSystemService,
                 userState.getSessionId(),
                 DbHistoryElement.Source.HUMAN, null, null, null, null, null, null));
     }
@@ -195,7 +195,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 dbLevelTask,
-                baseService,
+                planetSystemService,
                 userState.getSessionId(),
                 DbHistoryElement.Source.HUMAN, null, null, null, null, null, null));
     }
@@ -210,7 +210,7 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 dbLevelTask,
-                baseService,
+                planetSystemService,
                 userState.getSessionId(),
                 DbHistoryElement.Source.HUMAN, null, null, null, null, null, null));
     }
@@ -277,18 +277,38 @@ public class HistoryServiceImpl implements HistoryService {
 
     @Override
     public void addBoxExpired(SyncBoxItem boxItem) {
-        save(new DbHistoryElement(DbHistoryElement.Type.BOX_EXPIRED,
-                null,
-                null,
-                null,
-                null,
-                boxItem,
-                null,
-                null,
-                null,
-                null,
-                DbHistoryElement.Source.BOT,
-                boxItem.getSyncItemArea().getPosition(), null, null, null, null, null));
+        if (HibernateUtil.hasOpenSession(sessionFactory)) {
+            save(new DbHistoryElement(DbHistoryElement.Type.BOX_EXPIRED,
+                    null,
+                    null,
+                    null,
+                    null,
+                    boxItem,
+                    null,
+                    null,
+                    null,
+                    null,
+                    DbHistoryElement.Source.BOT,
+                    boxItem.getSyncItemArea().getPosition(), null, null, null, null, null));
+        } else {
+            HibernateUtil.openSession4InternalCall(sessionFactory);
+            try {
+                save(new DbHistoryElement(DbHistoryElement.Type.BOX_EXPIRED,
+                        null,
+                        null,
+                        null,
+                        null,
+                        boxItem,
+                        null,
+                        null,
+                        null,
+                        null,
+                        DbHistoryElement.Source.BOT,
+                        boxItem.getSyncItemArea().getPosition(), null, null, null, null, null));
+            } finally {
+                HibernateUtil.closeSession4InternalCall(sessionFactory);
+            }
+        }
     }
 
     @Override
@@ -297,18 +317,38 @@ public class HistoryServiceImpl implements HistoryService {
         if (dropper != null) {
             dropperBase = dropper.getBase();
         }
-        save(new DbHistoryElement(DbHistoryElement.Type.BOX_DROPPED,
-                null,
-                null,
-                dropperBase,
-                null,
-                boxItem,
-                null,
-                null,
-                baseService,
-                null,
-                DbHistoryElement.Source.BOT,
-                position, null, null, null, null, null));
+        if (HibernateUtil.hasOpenSession(sessionFactory)) {
+            save(new DbHistoryElement(DbHistoryElement.Type.BOX_DROPPED,
+                    null,
+                    null,
+                    dropperBase,
+                    null,
+                    boxItem,
+                    null,
+                    null,
+                    planetSystemService,
+                    null,
+                    DbHistoryElement.Source.BOT,
+                    position, null, null, null, null, null));
+        }  else {
+            HibernateUtil.openSession4InternalCall(sessionFactory);
+            try {
+                save(new DbHistoryElement(DbHistoryElement.Type.BOX_DROPPED,
+                        null,
+                        null,
+                        dropperBase,
+                        null,
+                        boxItem,
+                        null,
+                        null,
+                        planetSystemService,
+                        null,
+                        DbHistoryElement.Source.BOT,
+                        position, null, null, null, null, null));
+            } finally {
+                HibernateUtil.closeSession4InternalCall(sessionFactory);
+            }
+        }
     }
 
     @Override
@@ -321,7 +361,7 @@ public class HistoryServiceImpl implements HistoryService {
                 boxItem,
                 null,
                 null,
-                baseService,
+                planetSystemService,
                 getSessionId(picker.getBase()),
                 DbHistoryElement.Source.BOT,
                 boxItem.getSyncItemArea().getPosition(), null, null, null, null, null));
@@ -332,12 +372,12 @@ public class HistoryServiceImpl implements HistoryService {
         save(new DbHistoryElement(DbHistoryElement.Type.RAZARION_FROM_BOX,
                 userService.getUser(userState),
                 null,
-                baseService.getBase(userState).getSimpleBase(),
+                userState.getBase().getSimpleBase(),
                 null,
                 null,
                 null,
                 null,
-                baseService,
+                planetSystemService,
                 null,
                 DbHistoryElement.Source.HUMAN,
                 null,
@@ -350,12 +390,12 @@ public class HistoryServiceImpl implements HistoryService {
         save(new DbHistoryElement(DbHistoryElement.Type.INVENTORY_ITEM_FROM_BOX,
                 userService.getUser(userState),
                 null,
-                baseService.getBase(userState).getSimpleBase(),
+                userState.getBase().getSimpleBase(),
                 null,
                 null,
                 null,
                 null,
-                baseService,
+                planetSystemService,
                 null,
                 DbHistoryElement.Source.HUMAN,
                 null,
@@ -369,12 +409,12 @@ public class HistoryServiceImpl implements HistoryService {
         save(new DbHistoryElement(DbHistoryElement.Type.INVENTORY_ARTIFACT_FROM_BOX,
                 userService.getUser(userState),
                 null,
-                baseService.getBase(userState).getSimpleBase(),
+                userState.getBase().getSimpleBase(),
                 null,
                 null,
                 null,
                 null,
-                baseService,
+                planetSystemService,
                 null,
                 DbHistoryElement.Source.HUMAN,
                 null,
@@ -388,12 +428,12 @@ public class HistoryServiceImpl implements HistoryService {
         save(new DbHistoryElement(DbHistoryElement.Type.INVENTORY_ITEM_USED,
                 userService.getUser(userState),
                 null,
-                baseService.getBase(userState).getSimpleBase(),
+                userState.getBase().getSimpleBase(),
                 null,
                 null,
                 null,
                 null,
-                baseService,
+                planetSystemService,
                 null,
                 DbHistoryElement.Source.HUMAN,
                 null,
@@ -407,12 +447,12 @@ public class HistoryServiceImpl implements HistoryService {
         save(new DbHistoryElement(DbHistoryElement.Type.INVENTORY_ITEM_BOUGHT,
                 userService.getUser(userState),
                 null,
-                baseService.getBase(userState) != null ? baseService.getBase(userState).getSimpleBase() : null,
+                userState.getBase() != null ? userState.getBase().getSimpleBase() : null,
                 null,
                 null,
                 null,
                 null,
-                baseService,
+                planetSystemService,
                 null,
                 DbHistoryElement.Source.HUMAN,
                 null,
@@ -426,12 +466,12 @@ public class HistoryServiceImpl implements HistoryService {
         save(new DbHistoryElement(DbHistoryElement.Type.INVENTORY_ARTIFACT_BOUGHT,
                 userService.getUser(userState),
                 null,
-                baseService.getBase(userState) != null ? baseService.getBase(userState).getSimpleBase() : null,
+                userState.getBase() != null ? userState.getBase().getSimpleBase() : null,
                 null,
                 null,
                 null,
                 null,
-                baseService,
+                planetSystemService,
                 null,
                 DbHistoryElement.Source.HUMAN,
                 null,
@@ -453,7 +493,7 @@ public class HistoryServiceImpl implements HistoryService {
                     null,
                     null,
                     null,
-                    baseService,
+                    planetSystemService,
                     null,
                     DbHistoryElement.Source.BOT,
                     null,
@@ -479,7 +519,7 @@ public class HistoryServiceImpl implements HistoryService {
                     null,
                     null,
                     null,
-                    baseService,
+                    planetSystemService,
                     null,
                     DbHistoryElement.Source.BOT,
                     null,
@@ -494,7 +534,10 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     private String getSessionId(SimpleBase simpleBase) {
-        UserState userState = baseService.getUserState(simpleBase);
+        if(simpleBase == null) {
+            return null;
+        }
+        UserState userState = planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getUserState(simpleBase);
         if (userState != null && userState.getSessionId() != null) {
             return userState.getSessionId();
         }

@@ -30,14 +30,10 @@ import com.btxtech.game.services.user.UserService;
 
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.OrderColumn;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * User: beat

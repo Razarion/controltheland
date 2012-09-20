@@ -15,7 +15,6 @@ package com.btxtech.game.services.mgmt.impl;
 
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
-import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.mgmt.BackupSummary;
@@ -24,7 +23,7 @@ import com.btxtech.game.services.mgmt.DbViewDTO;
 import com.btxtech.game.services.mgmt.MemoryUsageHistory;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
-import com.btxtech.game.services.resource.ResourceService;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.SecurityRoles;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,11 +31,11 @@ import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -50,10 +49,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
@@ -62,7 +57,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -80,20 +74,16 @@ import java.util.concurrent.TimeUnit;
  */
 @Component("mgmtService")
 public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
-    public static final String LOG_DIR_NAME = "logs";
-    public static final File LOG_DIR;
     private static final int MEMORY_SAMPLE_SIZE = 200;
     private static final int MEMORY_SAMPLE_DELAY_SECONDS = 120;
     private Date startTime = new Date();
     private JdbcTemplate readonlyJdbcTemplate;
     @Autowired
-    private BotService botService;
-    @Autowired
-    private ResourceService resourceService;
-    @Autowired
     private GenericItemConverter genericItemConverter;
     @Autowired
     private SessionFactory sessionFactory;
+    @Autowired
+    private PlanetSystemService planetSystemService;
     private static Log log = LogFactory.getLog(MgmtServiceImpl.class);
     private StartupData startupData;
     private MemoryUsageContainer heapMemory = new MemoryUsageContainer(MEMORY_SAMPLE_SIZE);
@@ -101,17 +91,6 @@ public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
     private ScheduledThreadPoolExecutor memoryGrabberThreadPool;
     private boolean isRunning = false;
     private Map<String, ClientPerfmonDto> clientPerfmonEntries = new HashMap<>();
-
-    static {
-        File tmpLogDir = null;
-        try {
-            String userHome = System.getProperty("user.home");
-            tmpLogDir = new File(userHome, LOG_DIR_NAME);
-        } catch (Throwable t) {
-            log.error("", t);
-        }
-        LOG_DIR = tmpLogDir;
-    }
 
     public MgmtServiceImpl() {
         memoryGrabberThreadPool = new ScheduledThreadPoolExecutor(1, new CustomizableThreadFactory("Memory grabber " + getClass().getName() + " "));
@@ -217,12 +196,6 @@ public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
 
     @Override
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public List<File> getLogFiles() {
-        return Arrays.asList(LOG_DIR.listFiles());
-    }
-
-    @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     @Transactional
     public void backup() {
         long time = System.currentTimeMillis();
@@ -238,8 +211,8 @@ public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
     @SuppressWarnings("unchecked")
     public List<BackupSummary> getBackupSummary() {
         Criteria criteriaEntries = sessionFactory.getCurrentSession().createCriteria(BackupEntry.class);
-        criteriaEntries.createCriteria("items", "itemAlias", CriteriaSpecification.LEFT_JOIN);
-        criteriaEntries.createCriteria("userStates", "userStateAlias", CriteriaSpecification.LEFT_JOIN);
+        criteriaEntries.createCriteria("items", "itemAlias", JoinType.LEFT_OUTER_JOIN);
+        criteriaEntries.createCriteria("userStates", "userStateAlias", JoinType.LEFT_OUTER_JOIN);
         ProjectionList entryProjectionList = Projections.projectionList();
         entryProjectionList.add(Projections.groupProperty("timeStamp"));
         entryProjectionList.add(Projections.countDistinct("itemAlias.id"));
@@ -289,24 +262,6 @@ public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
         BackupEntry backupEntry = list.get(0);
         sessionFactory.getCurrentSession().delete(backupEntry);
         log.info("Backup entry deleted: " + date);
-    }
-
-    public String getLogFile(String name) {
-        try {
-            File logFile = new File(LOG_DIR, name);
-            StringBuffer fileData = new StringBuffer(1000);
-            BufferedReader reader = new BufferedReader(new FileReader(logFile));
-            char[] buf = new char[1024];
-            int numRead;
-            while ((numRead = reader.read(buf)) != -1) {
-                fileData.append(buf, 0, numRead);
-            }
-            reader.close();
-            return fileData.toString();
-        } catch (IOException e) {
-            log.error("", e);
-            return "Unable reading logfile: " + e.toString();
-        }
     }
 
     @PreDestroy
@@ -409,6 +364,7 @@ public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
     public void start() {
         HibernateUtil.openSession4InternalCall(sessionFactory);
         try {
+            planetSystemService.activate();
             List<BackupSummary> backupSummaries = getBackupSummary();
             if (!backupSummaries.isEmpty()) {
                 try {
@@ -417,8 +373,6 @@ public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
                     log.error("", e);
                 }
             }
-            resourceService.activate();
-            botService.activate();
             isRunning = true;
         } catch (Throwable t) {
             log.error("", t);

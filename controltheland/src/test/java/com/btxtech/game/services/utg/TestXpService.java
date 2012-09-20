@@ -1,11 +1,11 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.impl.XpServiceImpl;
 import org.junit.Assert;
@@ -23,13 +23,11 @@ import java.util.Collection;
  */
 public class TestXpService extends AbstractServiceTest {
     @Autowired
-    private ItemService itemService;
-    @Autowired
     private UserService userService;
     @Autowired
-    private UserGuidanceService userGuidanceService;
-    @Autowired
     private XpService xpService;
+    @Autowired
+    private PlanetSystemService planetSystemService;
 
     @Test
     @DirtiesContext
@@ -41,7 +39,6 @@ public class TestXpService extends AbstractServiceTest {
         Assert.assertEquals(0.1, dbXpSettings.getKillPriceFactor(), 0.0001);
         Assert.assertEquals(2000, dbXpSettings.getKillQueuePeriod());
         Assert.assertEquals(10000, dbXpSettings.getKillQueueSize());
-        Assert.assertEquals(0.1, dbXpSettings.getBuiltPriceFactor(), 0.001);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -51,7 +48,6 @@ public class TestXpService extends AbstractServiceTest {
         dbXpSettings.setKillPriceFactor(0.1);
         dbXpSettings.setKillQueuePeriod(100);
         dbXpSettings.setKillQueueSize(1000);
-        dbXpSettings.setBuiltPriceFactor(0.4);
         xpService.saveXpPointSettings(dbXpSettings);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -63,7 +59,6 @@ public class TestXpService extends AbstractServiceTest {
         Assert.assertEquals(0.1, dbXpSettings.getKillPriceFactor(), 0.0001);
         Assert.assertEquals(100, dbXpSettings.getKillQueuePeriod());
         Assert.assertEquals(1000, dbXpSettings.getKillQueueSize());
-        Assert.assertEquals(0.4, dbXpSettings.getBuiltPriceFactor(), 0.001);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -77,37 +72,6 @@ public class TestXpService extends AbstractServiceTest {
         Assert.assertEquals(0.1, dbXpSettings.getKillPriceFactor(), 0.0001);
         Assert.assertEquals(100, dbXpSettings.getKillQueuePeriod());
         Assert.assertEquals(1000, dbXpSettings.getKillQueueSize());
-        Assert.assertEquals(0.4, dbXpSettings.getBuiltPriceFactor(), 0.001);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void testBuiltItemXp() throws Exception {
-        configureRealGame();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        DbXpSettings dbXpSettings = new DbXpSettings();
-        dbXpSettings.setKillPriceFactor(0.1);
-        dbXpSettings.setKillQueuePeriod(100);
-        dbXpSettings.setKillQueueSize(1000);
-        dbXpSettings.setBuiltPriceFactor(1);
-        xpService.saveXpPointSettings(dbXpSettings);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Create Items
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        // Create StartItem gets 1 XP
-        getMovableService().getRealGameInfo(START_UID_1);
-        Assert.assertEquals(1, userService.getUserState().getXp());
-        Id builder = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
-        sendBuildCommand(builder, new Index(500, 100), TEST_FACTORY_ITEM_ID);
-        waitForActionServiceDone();
-        Assert.assertEquals(3, userService.getUserState().getXp());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -115,7 +79,7 @@ public class TestXpService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testKillItemXp() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -123,7 +87,6 @@ public class TestXpService extends AbstractServiceTest {
         dbXpSettings.setKillPriceFactor(2);
         dbXpSettings.setKillQueuePeriod(50);
         dbXpSettings.setKillQueueSize(1000);
-        dbXpSettings.setBuiltPriceFactor(0);
         xpService.saveXpPointSettings(dbXpSettings);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -142,13 +105,19 @@ public class TestXpService extends AbstractServiceTest {
         waitForActionServiceDone();
         Id attacker = getFirstSynItemId(TEST_ATTACK_ITEM_ID);
         Assert.assertEquals(0, userService.getUserState().getXp());
-        for (Id target : targets) {
+
+        while (true) {
+            Id target = getNearestTarget(attacker, targets);
+            if (target == null) {
+                break;
+            }
             try {
                 sendAttackCommand(attacker, target);
                 waitForActionServiceDone();
             } catch (ItemDoesNotExistException ignore) {
                 // Ignore. Item may was killed by accident
             }
+
         }
         Thread.sleep(100);
         Assert.assertEquals(40, userService.getUserState().getXp());
@@ -157,14 +126,35 @@ public class TestXpService extends AbstractServiceTest {
         endHttpSession();
     }
 
-    private Collection<Id> createTargets(int count) throws InvalidLevelState {
-        Collection<Id> targets = new ArrayList<Id>();
+    private Id getNearestTarget(Id attacker, Collection<Id> targets) throws ItemDoesNotExistException {
+        Index attackerPos = planetSystemService.getServerPlanetServices().getItemService().getItem(attacker).getSyncItemArea().getPosition();
+        int distance = Integer.MAX_VALUE;
+        Id resultTarget = null;
+        for (Id target : targets) {
+            try {
+                SyncBaseItem syncBaseItem = (SyncBaseItem) planetSystemService.getServerPlanetServices().getItemService().getItem(target);
+                int tmpDistance = syncBaseItem.getSyncItemArea().getPosition().getDistance(attackerPos);
+                if (tmpDistance < distance) {
+                    resultTarget = target;
+                    distance = tmpDistance;
+                }
+            } catch (ItemDoesNotExistException e) {
+                // Ignore
+            }
+        }
+        return resultTarget;
+    }
+
+    private Collection<Id> createTargets(int count) throws Exception {
+        Collection<Id> targets = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             beginHttpSession();
             beginHttpRequestAndOpenSessionInViewFilter();
             getMovableService().getRealGameInfo(START_UID_1);
             Id target = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
+            sendMoveCommand(target, new Index(8000, 8000));
             targets.add(target);
+            waitForActionServiceDone();
             endHttpRequestAndOpenSessionInViewFilter();
             endHttpSession();
         }

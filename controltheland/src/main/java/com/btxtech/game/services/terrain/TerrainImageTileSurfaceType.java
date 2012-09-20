@@ -14,11 +14,12 @@
 package com.btxtech.game.services.terrain;
 
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
-import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import java.io.Serializable;
 
 /**
  * User: beat

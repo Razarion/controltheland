@@ -16,14 +16,12 @@ import com.btxtech.game.jsre.client.cockpit.item.ToBeBuildPlacer;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryItemPlacer;
 import com.btxtech.game.jsre.client.item.ItemContainer;
-import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.perfmon.Perfmon;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
-import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -34,7 +32,6 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
-import com.google.gwt.user.client.Timer;
 
 /**
  * User: beat
@@ -42,35 +39,14 @@ import com.google.gwt.user.client.Timer;
  * Time: 18:53
  */
 public class TerrainMouseHandler implements MouseMoveHandler {
-    public enum ScrollDirection {
-        NORTH,
-        SOUTH,
-        WEST,
-        EAST,
-        STOP
-    }
-
-    private static final int SCROLL_AUTO_MOUSE_DETECTION_WIDTH = 40;
-    private static final int SCROLL_TIMER_DELAY = 40;
-    private static final int SCROLL_AUTO_DISTANCE = 60;
-    private ScrollDirection scrollDirectionXKey = ScrollDirection.STOP;
-    private ScrollDirection scrollDirectionYKey = ScrollDirection.STOP;
-    private ScrollDirection scrollDirectionXMouse = ScrollDirection.STOP;
-    private ScrollDirection scrollDirectionYMouse = ScrollDirection.STOP;
-    private ScrollDirection scrollDirectionX = ScrollDirection.STOP;
-    private ScrollDirection scrollDirectionY = ScrollDirection.STOP;
     private Canvas canvas;
     private TerrainView terrainView;
-    private Timer timer = new TimerPerfmon(PerfmonEnum.SCROLL) {
-        @Override
-        public void runPerfmon() {
-            autoScroll();
-        }
-    };
+    private TerrainScrollHandler terrainScrollHandler;
 
-    public TerrainMouseHandler(final Canvas canvas, final TerrainView terrainView) {
+    public TerrainMouseHandler(final Canvas canvas, final TerrainView terrainView, final TerrainScrollHandler terrainScrollHandler) {
         this.canvas = canvas;
         this.terrainView = terrainView;
+        this.terrainScrollHandler = terrainScrollHandler;
         canvas.addMouseMoveHandler(this);
         canvas.addMouseDownHandler(new MouseDownHandler() {
             @Override
@@ -191,7 +167,7 @@ public class TerrainMouseHandler implements MouseMoveHandler {
         canvas.addMouseOutHandler(new MouseOutHandler() {
             @Override
             public void onMouseOut(MouseOutEvent event) {
-                executeAutoScrollMouse(TerrainMouseHandler.ScrollDirection.STOP, TerrainMouseHandler.ScrollDirection.STOP);
+                terrainScrollHandler.executeAutoScrollMouse(TerrainScrollHandler.ScrollDirection.STOP, TerrainScrollHandler.ScrollDirection.STOP);
             }
         });
     }
@@ -235,10 +211,10 @@ public class TerrainMouseHandler implements MouseMoveHandler {
             Perfmon.getInstance().onEntered(PerfmonEnum.TERRAIN_MOUSE_MOVE);
             int relativeX = event.getRelativeX(canvas.getElement());
             int relativeY = event.getRelativeY(canvas.getElement());
-            int height = canvas.getOffsetHeight();
             int width = canvas.getOffsetWidth();
+            int height = canvas.getOffsetHeight();
 
-            handleMouseMoveScroll(relativeX, relativeY, height, width);
+            terrainScrollHandler.handleMouseMoveScroll(relativeX, relativeY, width, height);
 
             int absoluteX = event.getRelativeX(canvas.getElement()) + terrainView.getViewOriginLeft();
             int absoluteY = event.getRelativeY(canvas.getElement()) + terrainView.getViewOriginTop();
@@ -284,12 +260,7 @@ public class TerrainMouseHandler implements MouseMoveHandler {
         }
 
         SyncBaseItem syncBaseItem = selection.getFirst();
-        Index position = new Index(absoluteX, absoluteY);
-        if (!ClientTerritoryService.getInstance().isAllowed(position, syncBaseItem)) {
-            return;
-        }
-
-        ActionHandler.getInstance().unloadContainerFindPosition(syncBaseItem, position);
+        ActionHandler.getInstance().unloadContainerFindPosition(syncBaseItem, new Index(absoluteX, absoluteY));
     }
 
     private void executeMoveCommand(int absoluteX, int absoluteY) {
@@ -311,10 +282,10 @@ public class TerrainMouseHandler implements MouseMoveHandler {
             Perfmon.getInstance().onEntered(PerfmonEnum.TERRAIN_MOUSE_MOVE);
             int relativeX = event.getRelativeX(canvas.getElement());
             int relativeY = event.getRelativeY(canvas.getElement());
-            int height = canvas.getOffsetHeight();
             int width = canvas.getOffsetWidth();
+            int height = canvas.getOffsetHeight();
 
-            handleMouseMoveScroll(relativeX, relativeY, height, width);
+            terrainScrollHandler.handleMouseMoveScroll(relativeX, relativeY, width, height);
 
             int absoluteX = event.getRelativeX(canvas.getElement()) + terrainView.getViewOriginLeft();
             int absoluteY = event.getRelativeY(canvas.getElement()) + terrainView.getViewOriginTop();
@@ -337,91 +308,5 @@ public class TerrainMouseHandler implements MouseMoveHandler {
         } finally {
             Perfmon.getInstance().onLeft(PerfmonEnum.TERRAIN_MOUSE_MOVE);
         }
-    }
-
-    private void handleMouseMoveScroll(int x, int y, int height, int width) {
-        ScrollDirection tmpScrollDirectionX = ScrollDirection.STOP;
-        ScrollDirection tmpScrollDirectionY = ScrollDirection.STOP;
-        if (x < SCROLL_AUTO_MOUSE_DETECTION_WIDTH) {
-            tmpScrollDirectionX = ScrollDirection.WEST;
-        } else if (x > width - SCROLL_AUTO_MOUSE_DETECTION_WIDTH) {
-            tmpScrollDirectionX = ScrollDirection.EAST;
-        }
-
-        if (y < SCROLL_AUTO_MOUSE_DETECTION_WIDTH) {
-            tmpScrollDirectionY = ScrollDirection.NORTH;
-        } else if (y > height - SCROLL_AUTO_MOUSE_DETECTION_WIDTH) {
-            tmpScrollDirectionY = ScrollDirection.SOUTH;
-        }
-        executeAutoScrollMouse(tmpScrollDirectionX, tmpScrollDirectionY);
-    }
-
-    public void executeAutoScrollKey(ScrollDirection tmpScrollDirectionX, ScrollDirection tmpScrollDirectionY) {
-        if (tmpScrollDirectionX != scrollDirectionXKey || tmpScrollDirectionY != scrollDirectionYKey) {
-            if (tmpScrollDirectionX != null) {
-                scrollDirectionXKey = tmpScrollDirectionX;
-            }
-            if (tmpScrollDirectionY != null) {
-                scrollDirectionYKey = tmpScrollDirectionY;
-            }
-            executeAutoScroll();
-        }
-    }
-
-    private void executeAutoScrollMouse(ScrollDirection tmpScrollDirectionX, ScrollDirection tmpScrollDirectionY) {
-        if (tmpScrollDirectionX != scrollDirectionXMouse || tmpScrollDirectionY != scrollDirectionYMouse) {
-            scrollDirectionXMouse = tmpScrollDirectionX;
-            scrollDirectionYMouse = tmpScrollDirectionY;
-            executeAutoScroll();
-        }
-    }
-
-    private void executeAutoScroll() {
-        ScrollDirection newScrollDirectionX = ScrollDirection.STOP;
-        if (scrollDirectionXKey != ScrollDirection.STOP) {
-            newScrollDirectionX = scrollDirectionXKey;
-        } else if (scrollDirectionXMouse != ScrollDirection.STOP) {
-            newScrollDirectionX = scrollDirectionXMouse;
-        }
-
-        ScrollDirection newScrollDirectionY = ScrollDirection.STOP;
-        if (scrollDirectionYKey != ScrollDirection.STOP) {
-            newScrollDirectionY = scrollDirectionYKey;
-        } else if (scrollDirectionYMouse != ScrollDirection.STOP) {
-            newScrollDirectionY = scrollDirectionYMouse;
-        }
-
-        if (newScrollDirectionX != scrollDirectionX || newScrollDirectionY != scrollDirectionY) {
-            boolean isTimerRunningOld = scrollDirectionX != ScrollDirection.STOP || scrollDirectionY != ScrollDirection.STOP;
-            boolean isTimerRunningNew = newScrollDirectionX != ScrollDirection.STOP || newScrollDirectionY != ScrollDirection.STOP;
-            scrollDirectionX = newScrollDirectionX;
-            scrollDirectionY = newScrollDirectionY;
-            if (isTimerRunningOld != isTimerRunningNew) {
-                if (isTimerRunningNew) {
-                    autoScroll();
-                    timer.scheduleRepeating(SCROLL_TIMER_DELAY);
-                } else {
-                    timer.cancel();
-                }
-            }
-        }
-    }
-
-    private void autoScroll() {
-        int scrollX = 0;
-        if (scrollDirectionX == ScrollDirection.WEST) {
-            scrollX = -SCROLL_AUTO_DISTANCE;
-        } else if (scrollDirectionX == ScrollDirection.EAST) {
-            scrollX = SCROLL_AUTO_DISTANCE;
-        }
-
-        int scrollY = 0;
-        if (scrollDirectionY == ScrollDirection.SOUTH) {
-            scrollY = SCROLL_AUTO_DISTANCE;
-        } else if (scrollDirectionY == ScrollDirection.NORTH) {
-            scrollY = -SCROLL_AUTO_DISTANCE;
-        }
-
-        terrainView.moveDelta(scrollX, scrollY);
     }
 }

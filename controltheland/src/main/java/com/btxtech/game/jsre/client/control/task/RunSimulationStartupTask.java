@@ -18,14 +18,11 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.SoundHandler;
 import com.btxtech.game.jsre.client.cockpit.ChatCockpit;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
-import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.btxtech.game.jsre.client.renderer.Renderer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
-import com.btxtech.game.jsre.client.terrain.MapWindow;
-import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 
 /**
  * User: beat
@@ -45,7 +42,6 @@ public class RunSimulationStartupTask extends AbstractStartupTask {
         Simulation.getInstance().start();
         SideCockpit.getInstance().updateItemLimit();
         ClientChatHandler.getInstance().runSimulatedGame(Connection.getInstance(), ChatCockpit.getInstance(), ClientChatHandler.START_DELAY, ClientChatHandler.POLL_DELAY);
-        ClientTerritoryService.getInstance().clearTerritories();
         Renderer.getInstance().start();
         SoundHandler.getInstance().start(Connection.getInstance().getGameInfo().getCommonSoundInfo());
     }

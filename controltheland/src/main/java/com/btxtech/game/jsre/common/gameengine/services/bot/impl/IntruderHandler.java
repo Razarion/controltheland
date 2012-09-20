@@ -13,10 +13,10 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.bot.impl;
 
-import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
 import java.util.ArrayList;
@@ -35,23 +35,23 @@ import java.util.logging.Logger;
 public class IntruderHandler {
     private Map<SyncBaseItem, BotSyncBaseItem> intruders = new HashMap<SyncBaseItem, BotSyncBaseItem>();
     private BotEnragementState botEnragementState;
-    private Rectangle region;
-    private Services services;
+    private Region region;
+    private PlanetServices planetServices;
     private Logger log = Logger.getLogger(IntruderHandler.class.getName());
 
-    public IntruderHandler(BotEnragementState botEnragementState, Rectangle region, Services services) {
+    public IntruderHandler(BotEnragementState botEnragementState, Region region, PlanetServices planetServices) {
         this.botEnragementState = botEnragementState;
         this.region = region;
-        this.services = services;
+        this.planetServices = planetServices;
     }
 
-    public Rectangle getRegion() {
+    public Region getRegion() {
         return region;
     }
 
     public void handleIntruders(SimpleBase simpleBase) {
         removeDeadAttackers();
-        Collection<SyncBaseItem> items = services.getItemService().getEnemyItems(simpleBase, region);
+        Collection<SyncBaseItem> items = planetServices.getItemService().getEnemyItems(simpleBase, region);
         Map<SyncBaseItem, BotSyncBaseItem> oldIntruders = intruders;
         intruders = new HashMap<SyncBaseItem, BotSyncBaseItem>();
         Collection<SyncBaseItem> newIntruders = new ArrayList<SyncBaseItem>();
@@ -95,7 +95,7 @@ public class IntruderHandler {
     private void putAttackerToIntruder(BotSyncBaseItem attacker, SyncBaseItem intruder) {
         if (attacker != null) {
             try {
-                AttackFormationItem attackFormationItem = services.getCollisionService().getDestinationHint(attacker.getSyncBaseItem(),
+                AttackFormationItem attackFormationItem = planetServices.getCollisionService().getDestinationHint(attacker.getSyncBaseItem(),
                         attacker.getSyncBaseItem().getBaseItemType().getWeaponType().getRange(),
                         intruder.getSyncItemArea(),
                         intruder.getTerrainType());

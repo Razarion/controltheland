@@ -13,13 +13,13 @@
 
 package com.btxtech.game.wicket.pages.mgmt.items;
 
-import com.btxtech.game.services.energy.ServerEnergyService;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
+import com.btxtech.game.services.planet.ServerEnergyService;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -41,9 +41,7 @@ import java.util.Iterator;
  */
 public class ItemTypeTable extends MgmtWebPage {
     @SpringBean
-    private ItemService itemService;
-    @SpringBean
-    private ServerEnergyService energyService;
+    private ServerItemTypeService serverItemTypeService;
 
     public ItemTypeTable() {
         Form form = new Form("itemTypeForm");
@@ -76,7 +74,7 @@ public class ItemTypeTable extends MgmtWebPage {
                 Button delete = new Button("delete") {
                     @Override
                     public void onSubmit() {
-                        itemService.deleteItemType(item.getModelObject());
+                        serverItemTypeService.deleteItemType(item.getModelObject());
                     }
                 };
                 item.add(delete);
@@ -87,39 +85,39 @@ public class ItemTypeTable extends MgmtWebPage {
             @Override
             public void onSubmit() {
                 // TODO put to a service -> MGMT
-                itemService.activate();
-                energyService.recalculateEnergy();
+                serverItemTypeService.activate();
+                // TODO energyService.recalculateEnergy();
             }
         });
         form.add(new Button("addBaseItemType") {
             @Override
             public void onSubmit() {
-                DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
-                itemService.saveDbItemType(dbBaseItemType);
+                DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+                serverItemTypeService.saveDbItemType(dbBaseItemType);
                 setResponsePage(new BaseItemTypeEditor(dbBaseItemType));
             }
         });
         form.add(new Button("addResourceItemType") {
             @Override
             public void onSubmit() {
-                DbResourceItemType dbResourceItemType = (DbResourceItemType) itemService.getDbItemTypeCrud().createDbChild(DbResourceItemType.class);
-                itemService.saveDbItemType(dbResourceItemType);
+                DbResourceItemType dbResourceItemType = (DbResourceItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbResourceItemType.class);
+                serverItemTypeService.saveDbItemType(dbResourceItemType);
                 setResponsePage(new ResourceItemTypeEditor(dbResourceItemType));
             }
         });
         form.add(new Button("addBoxItemType") {
             @Override
             public void onSubmit() {
-                DbBoxItemType dbBoxItemType = (DbBoxItemType) itemService.getDbItemTypeCrud().createDbChild(DbBoxItemType.class);
-                itemService.saveDbItemType(dbBoxItemType);
+                DbBoxItemType dbBoxItemType = (DbBoxItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBoxItemType.class);
+                serverItemTypeService.saveDbItemType(dbBoxItemType);
                 setResponsePage(new BoxItemTypeEditor(dbBoxItemType));
             }
         });
         form.add(new Button("addProjectileItemType") {
             @Override
             public void onSubmit() {
-                DbProjectileItemType dbProjectileItemType = (DbProjectileItemType) itemService.getDbItemTypeCrud().createDbChild(DbProjectileItemType.class);
-                itemService.saveDbItemType(dbProjectileItemType);
+                DbProjectileItemType dbProjectileItemType = (DbProjectileItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbProjectileItemType.class);
+                serverItemTypeService.saveDbItemType(dbProjectileItemType);
                 setResponsePage(new ProjectileItemTypeEditor(dbProjectileItemType));
             }
         });
@@ -128,15 +126,15 @@ public class ItemTypeTable extends MgmtWebPage {
     class ItemTypeProvider implements IDataProvider<DbItemType> {
         @Override
         public Iterator<DbItemType> iterator(int first, int count) {
-            if (first != 0 && count != itemService.getDbItemTypes().size()) {
-                throw new IllegalArgumentException("first: " + first + " count: " + count + " | " + itemService.getDbItemTypes().size());
+            if (first != 0 && count != serverItemTypeService.getDbItemTypes().size()) {
+                throw new IllegalArgumentException("first: " + first + " count: " + count + " | " + serverItemTypeService.getDbItemTypes().size());
             }
-            return itemService.getDbItemTypes().iterator();
+            return serverItemTypeService.getDbItemTypes().iterator();
         }
 
         @Override
         public int size() {
-            return itemService.getDbItemTypes().size();
+            return serverItemTypeService.getDbItemTypes().size();
         }
 
         @Override

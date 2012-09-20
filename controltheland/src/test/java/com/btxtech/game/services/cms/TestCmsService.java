@@ -3,12 +3,12 @@ package com.btxtech.game.services.cms;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.jsre.common.CmsUtil;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.TestPlanetHelper;
 import com.btxtech.game.services.cms.content.DbBlogEntry;
 import com.btxtech.game.services.cms.content.DbWikiSection;
 import com.btxtech.game.services.cms.impl.CmsServiceImpl;
@@ -44,9 +44,13 @@ import com.btxtech.game.services.forum.DbPost;
 import com.btxtech.game.services.forum.DbSubForum;
 import com.btxtech.game.services.forum.ForumService;
 import com.btxtech.game.services.forum.TestForum;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.messenger.InvalidFieldException;
 import com.btxtech.game.services.messenger.MessengerService;
+import com.btxtech.game.services.planet.Base;
+import com.btxtech.game.services.planet.BaseService;
+import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.statistics.impl.StatisticsServiceImpl;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
@@ -54,7 +58,6 @@ import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.WicketApplication;
 import com.btxtech.game.wicket.pages.Game;
@@ -70,16 +73,13 @@ import org.apache.wicket.RequestCycle;
 import org.apache.wicket.behavior.StringHeaderContributor;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.protocol.http.WebRequest;
-import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.easymock.EasyMock;
-import org.hibernate.proxy.HibernateProxy;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -103,8 +103,6 @@ public class TestCmsService extends AbstractServiceTest {
     @Autowired
     private ContentService contentService;
     @Autowired
-    private ApplicationContext applicationContext;
-    @Autowired
     private WicketApplication wicketApplication;
     @Autowired
     private UserService userService;
@@ -117,7 +115,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Autowired
     private StatisticsService statisticsService;
     @Autowired
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
 
     private WicketTester tester;
 
@@ -309,7 +307,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSubMenu() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -457,7 +455,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testBottomMenuInvisible() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -495,7 +493,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testBottomMenu() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -578,7 +576,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testBlogRead() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         // Setup CMS content
         int id = setupBlogPage();
@@ -639,7 +637,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testBlogWrite() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         // Setup CMS content
         beginHttpSession();
@@ -728,7 +726,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testBlogWriteProtected() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         // Setup CMS content
         beginHttpSession();
@@ -801,7 +799,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testWiki() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         // Setup CMS content
         beginHttpSession();
@@ -902,7 +900,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testDynamicHtmlRead() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         // Setup CMS content
         beginHttpSession();
@@ -941,7 +939,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testDynamicHtmlWrite() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         // Setup CMS content
         beginHttpSession();
@@ -1002,7 +1000,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void test2DynamicHtml() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -1200,7 +1198,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testForumView() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         setupForumStructure();
 
@@ -1243,7 +1241,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testForumAdmin() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         setupForumStructure();
 
@@ -1288,7 +1286,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testForumAdminSubForumEdit() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         setupForumStructure();
 
@@ -1350,7 +1348,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testForumAdminCategoryEdit() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         setupForumStructure();
 
@@ -1403,7 +1401,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testForumAdminCategoryEdit2() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         setupForumStructure();
 
@@ -1456,7 +1454,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testForumAdminThreadEdit2() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         setupForumStructure();
 
@@ -1513,7 +1511,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testForumCreateThreadInvisible() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         setupForumStructure();
 
@@ -1535,7 +1533,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testForumCreateThreadCancel() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         setupForumStructure();
 
@@ -1590,7 +1588,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testForumCreateThreadSubmit() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         setupForumStructure();
 
@@ -1649,166 +1647,10 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpSession();
     }
 
-
-    @Test
-    @DirtiesContext
-    public void testLevels() throws Exception {
-        configureGameMultipleLevel();
-
-        // Setup CMS content
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
-        DbPage dbPage = pageCrud.createDbChild();
-        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
-        dbPage.setName("Home");
-
-        DbContentList dbContentList = new DbContentList();
-        dbContentList.setRowsPerPage(5);
-        dbContentList.init(userService);
-        dbPage.setContentAndAccessWrites(dbContentList);
-        dbContentList.setSpringBeanName("userGuidanceService");
-        dbContentList.setContentProviderGetter("crudQuestHub");
-
-        CrudListChildServiceHelper<DbContent> columnCrud = dbContentList.getColumnsCrud();
-        DbExpressionProperty column = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
-        column.setExpression("name");
-        DbContentDetailLink detailLink = (DbContentDetailLink) columnCrud.createDbChild(DbContentDetailLink.class);
-        detailLink.setName("Details");
-
-        CrudChildServiceHelper<DbContentBook> contentBookCrud = dbContentList.getContentBookCrud();
-        DbContentBook dbContentBook = contentBookCrud.createDbChild();
-        dbContentBook.setClassName("com.btxtech.game.services.utg.DbQuestHub");
-        CrudListChildServiceHelper<DbContentRow> rowCrud = dbContentBook.getRowCrud();
-
-        DbContentRow dbQuestHubRow = rowCrud.createDbChild();
-        DbExpressionProperty questHubNameProperty = new DbExpressionProperty();
-        questHubNameProperty.setExpression("name");
-        dbQuestHubRow.setDbContent(questHubNameProperty);
-        questHubNameProperty.init(userService);
-        questHubNameProperty.setParent(dbQuestHubRow);
-
-        DbContentRow dbLevelRow = rowCrud.createDbChild();
-        DbContentList levelContentList = new DbContentList();
-        levelContentList.setRowsPerPage(5);
-        dbLevelRow.setDbContent(levelContentList);
-        levelContentList.init(userService);
-        levelContentList.setParent(dbLevelRow);
-        levelContentList.setContentProviderGetter("levelCrud");
-
-        DbExpressionProperty expProperty = (DbExpressionProperty) levelContentList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
-        expProperty.setExpression("name");
-        DbContentDetailLink dbContentDetailLink = (DbContentDetailLink) levelContentList.getColumnsCrud().createDbChild(DbContentDetailLink.class);
-        dbContentDetailLink.setName("Details");
-        dbContentBook = levelContentList.getContentBookCrud().createDbChild();
-        dbContentBook.setClassName("com.btxtech.game.services.utg.DbLevel");
-        rowCrud = dbContentBook.getRowCrud();
-
-        DbContentRow dbContentRow = rowCrud.createDbChild();
-        dbContentRow.setName("Name");
-        expProperty = new DbExpressionProperty();
-        expProperty.setExpression("name");
-        expProperty.setParent(dbContentRow);
-        dbContentRow.setDbContent(expProperty);
-
-        dbContentRow = rowCrud.createDbChild();
-        dbContentRow.setName("Description");
-        expProperty = new DbExpressionProperty();
-        expProperty.setParent(dbContentRow);
-        expProperty.setExpression("html");
-        expProperty.setEditorType(DbExpressionProperty.EditorType.HTML_AREA);
-        dbContentRow.setDbContent(expProperty);
-
-        dbContentRow = rowCrud.createDbChild();
-        dbContentRow.setName("Allowed Items");
-        DbContentList dbContentListItems = new DbContentList();
-        dbContentListItems.setParent(dbContentRow);
-        dbContentRow.setDbContent(dbContentListItems);
-        dbContentListItems.init(userService);
-        dbContentListItems.setContentProviderGetter("itemTypeLimitationCrud");
-        columnCrud = dbContentListItems.getColumnsCrud();
-        DbExpressionProperty name = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
-        name.setExpression("dbBaseItemType.name");
-        DbExpressionProperty count = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
-        count.setExpression("count");
-        DbExpressionProperty img = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
-        img.setExpression("dbBaseItemType");
-
-        pageCrud.updateDbChild(dbPage);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Activate
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        cmsService.activateCms();
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Verify
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        tester.startPage(CmsPage.class);
-        tester.assertRenderedPage(CmsPage.class);
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell", "TEST_QUEST_HUB_1");
-        tester.assertVisible("form:content:table:rows:1:cells:2:cell:link");
-        tester.assertLabel("form:content:table:rows:2:cells:1:cell", "TEST_QUEST_HUB_2");
-        tester.assertVisible("form:content:table:rows:2:cells:2:cell:link");
-        // Click first link (RealGame Level)
-        tester.clickLink("form:content:table:rows:2:cells:2:cell:link");
-        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TEST_QUEST_HUB_2");
-        tester.assertLabel("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:1:cell", "2");
-        tester.assertVisible("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:2:cell:link");
-        tester.assertLabel("form:content:table:rows:2:cells:2:cell:table:rows:2:cells:1:cell", "3");
-        tester.assertVisible("form:content:table:rows:2:cells:2:cell:table:rows:2:cells:2:cell:link");
-        // Click second link
-        tester.clickLink("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:2:cell:link");
-        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "2");
-        // Item limitations list
-        // unpredictable order tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:1:cell", "TestAttackItem");
-        tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:2:cell", "10");
-        tester.assertVisible("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:3:cell:image");
-
-        // unpredictable order tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:2:cells:1:cell", "TEST_HARVESTER_ITEM");
-        tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:2:cells:2:cell", "10");
-        tester.assertVisible("form:content:table:rows:3:cells:2:cell:table:rows:2:cells:3:cell:image");
-
-        // unpredictable order tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:3:cells:1:cell", "TestContainerItem");
-        tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:3:cells:2:cell", "10");
-        tester.assertVisible("form:content:table:rows:3:cells:2:cell:table:rows:3:cells:3:cell:image");
-
-        // unpredictable order tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:3:cells:1:cell", "TestContainerItem");
-        tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:3:cells:2:cell", "10");
-        tester.assertVisible("form:content:table:rows:3:cells:2:cell:table:rows:3:cells:3:cell:image");
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Test that a hibernate proxy as a ContentBook also works
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        // Go to start again
-        tester.startPage(CmsPage.class);
-        tester.assertRenderedPage(CmsPage.class);
-        DbLevel dbLevel = userGuidanceService.getDbLevel(); // User level is now in UserState (HTTP session)
-        Assert.assertFalse(dbLevel.getParent() instanceof HibernateProxy);
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbLevel = userGuidanceService.getDbLevel(); // User level is just be read from DB
-        Assert.assertTrue(dbLevel.getParent() instanceof HibernateProxy);
-        // Click first link (First Quest. This DBQuestHub is now in the Hibernate-Session as Hibernate-Proxy object)
-        tester.clickLink("form:content:table:rows:1:cells:2:cell:link");
-        tester.debugComponentTrees();
-        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TEST_QUEST_HUB_1");
-        tester.assertLabel("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:1:cell", "1");
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
     @Test
     @DirtiesContext
     public void testLevelsContentContainerExpression() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         // Setup CMS content
         beginHttpSession();
@@ -1823,7 +1665,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbContentList.init(userService);
         dbPage.setContentAndAccessWrites(dbContentList);
         dbContentList.setSpringBeanName("userGuidanceService");
-        dbContentList.setContentProviderGetter("crudQuestHub");
+        dbContentList.setContentProviderGetter("dbLevelCrud");
 
         CrudListChildServiceHelper<DbContent> columnCrud = dbContentList.getColumnsCrud();
         DbExpressionProperty column = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
@@ -1833,35 +1675,12 @@ public class TestCmsService extends AbstractServiceTest {
 
         CrudChildServiceHelper<DbContentBook> contentBookCrud = dbContentList.getContentBookCrud();
         DbContentBook dbContentBook = contentBookCrud.createDbChild();
-        dbContentBook.setClassName("com.btxtech.game.services.utg.DbQuestHub");
-        CrudListChildServiceHelper<DbContentRow> rowCrud = dbContentBook.getRowCrud();
-
-        DbContentRow dbQuestHubRow = rowCrud.createDbChild();
-        DbExpressionProperty questHubNameProperty = new DbExpressionProperty();
-        questHubNameProperty.setExpression("name");
-        dbQuestHubRow.setDbContent(questHubNameProperty);
-        questHubNameProperty.init(userService);
-        questHubNameProperty.setParent(dbQuestHubRow);
-
-        DbContentRow dbLevelRow = rowCrud.createDbChild();
-        DbContentList levelContentList = new DbContentList();
-        levelContentList.setRowsPerPage(5);
-        dbLevelRow.setDbContent(levelContentList);
-        levelContentList.init(userService);
-        levelContentList.setParent(dbLevelRow);
-        levelContentList.setContentProviderGetter("levelCrud");
-
-        DbExpressionProperty expProperty = (DbExpressionProperty) levelContentList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
-        expProperty.setExpression("name");
-        DbContentDetailLink dbContentDetailLink = (DbContentDetailLink) levelContentList.getColumnsCrud().createDbChild(DbContentDetailLink.class);
-        dbContentDetailLink.setName("Details");
-        dbContentBook = levelContentList.getContentBookCrud().createDbChild();
         dbContentBook.setClassName("com.btxtech.game.services.utg.DbLevel");
-        rowCrud = dbContentBook.getRowCrud();
+        CrudListChildServiceHelper<DbContentRow> rowCrud = dbContentBook.getRowCrud();
 
         DbContentRow dbContentRow = rowCrud.createDbChild();
         dbContentRow.setName("Name");
-        expProperty = new DbExpressionProperty();
+        DbExpressionProperty expProperty = new DbExpressionProperty();
         expProperty.setExpression("name");
         expProperty.setParent(dbContentRow);
         dbContentRow.setDbContent(expProperty);
@@ -1908,16 +1727,14 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell", "TEST_QUEST_HUB_1");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell", "1");
         tester.assertVisible("form:content:table:rows:1:cells:2:cell:link");
-        tester.assertLabel("form:content:table:rows:2:cells:1:cell", "TEST_QUEST_HUB_2");
+        tester.assertLabel("form:content:table:rows:2:cells:1:cell", "2");
         tester.assertVisible("form:content:table:rows:2:cells:2:cell:link");
-        // Click QuestHub
-        tester.clickLink("form:content:table:rows:2:cells:2:cell:link");
-        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TEST_QUEST_HUB_2");
-        tester.debugComponentTrees();
         // Click first Level
-        tester.clickLink("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:2:cell:link");
+        tester.clickLink("form:content:table:rows:2:cells:2:cell:link");
+        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "2");
+        tester.debugComponentTrees();
         // Item limitations list
         // unpredictable order tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:1:cell", "TestAttackItem");
         tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:1:cell", "10");
@@ -1941,7 +1758,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testItemTypes() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         // Setup CMS content
         beginHttpSession();
@@ -1954,7 +1771,7 @@ public class TestCmsService extends AbstractServiceTest {
         DbContentList dbContentList = new DbContentList();
         dbContentList.init(userService);
         dbPage.setContentAndAccessWrites(dbContentList);
-        dbContentList.setSpringBeanName("itemService");
+        dbContentList.setSpringBeanName("serverItemTypeService");
         dbContentList.setContentProviderGetter("dbItemTypeCrud");
 
         CrudListChildServiceHelper<DbContent> columnCrud = dbContentList.getColumnsCrud();
@@ -2069,7 +1886,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testItemTypesColumnCountSingleCell() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         // Setup CMS content
         beginHttpSession();
@@ -2083,7 +1900,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbContentList.setRowsPerPage(5);
         dbContentList.init(userService);
         dbPage.setContentAndAccessWrites(dbContentList);
-        dbContentList.setSpringBeanName("itemService");
+        dbContentList.setSpringBeanName("serverItemTypeService");
         dbContentList.setContentProviderGetter("dbItemTypeCrud");
 
         CrudListChildServiceHelper<DbContent> columnCrud = dbContentList.getColumnsCrud();
@@ -2173,7 +1990,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testItemTypeSectionLink() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         // Setup CMS content
         beginHttpSession();
@@ -2187,7 +2004,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbContentList.setRowsPerPage(5);
         dbContentList.init(userService);
         dbPage.setContentAndAccessWrites(dbContentList);
-        dbContentList.setSpringBeanName("itemService");
+        dbContentList.setSpringBeanName("serverItemTypeService");
         dbContentList.setContentProviderGetter("dbItemTypeCrud");
 
         CrudListChildServiceHelper<DbContent> columnCrud = dbContentList.getColumnsCrud();
@@ -2287,7 +2104,8 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testLevelSectionLink() throws Exception {
-        configureRealGame();
+        Assert.fail();
+        configureSimplePlanet();
 
         // Setup CMS content
         beginHttpSession();
@@ -2319,7 +2137,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         CrudChildServiceHelper<DbContentBook> contentBookCrud = dbContentList.getContentBookCrud();
         DbContentBook dbContentBook = contentBookCrud.createDbChild();
-        dbContentBook.setClassName("com.btxtech.game.services.utg.DbQuestHub");
+        dbContentBook.setClassName("com.btxtech.game.services.planet.db.DbPlanet");
         CrudListChildServiceHelper<DbContentRow> rowCrud = dbContentBook.getRowCrud();
 
         DbContentRow dbLevelRow = rowCrud.createDbChild();
@@ -2377,13 +2195,13 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testItemTypeNavigation() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         // Remove resource
-        itemService.getDbItemTypeCrud().deleteDbChild(itemService.getDbItemTypeCrud().readDbChild(TEST_RESOURCE_ITEM_ID));
-        itemService.activate();
+        serverItemTypeService.getDbItemTypeCrud().deleteDbChild(serverItemTypeService.getDbItemTypeCrud().readDbChild(TEST_RESOURCE_ITEM_ID));
+        serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -2399,7 +2217,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbContentList.setRowsPerPage(5);
         dbContentList.init(userService);
         dbPage.setContentAndAccessWrites(dbContentList);
-        dbContentList.setSpringBeanName("itemService");
+        dbContentList.setSpringBeanName("serverItemTypeService");
         dbContentList.setContentProviderGetter("dbItemTypeCrud");
 
         CrudListChildServiceHelper<DbContent> columnCrud = dbContentList.getColumnsCrud();
@@ -2558,7 +2376,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testPageLinkText() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         // Setup CMS content
         beginHttpSession();
@@ -2597,7 +2415,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testPageLinkImage() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         // Setup CMS content
         beginHttpSession();
@@ -2641,7 +2459,7 @@ public class TestCmsService extends AbstractServiceTest {
     }
 
     private void prepare4RegisterCheck() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         // Setup CMS content
         beginHttpSession();
@@ -2856,7 +2674,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testGetValue() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -2875,7 +2693,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSmartPageLink() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -3046,7 +2864,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testMail() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
         // Add cms image
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -3138,7 +2956,7 @@ public class TestCmsService extends AbstractServiceTest {
     }
 
     private void setupNewMailTest() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -3286,7 +3104,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testAds() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         // Setup ads
         beginHttpSession();
@@ -3335,7 +3153,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testGameLinkText() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -3373,7 +3191,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testGameLinkImage() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         // Setup image
         beginHttpSession();
@@ -3423,7 +3241,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testExpressionProperty() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -3546,7 +3364,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void noHtml5Browser() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -3606,7 +3424,8 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSorting() throws Exception {
-        configureGameMultipleLevel();
+        Assert.fail();
+        configureMultiplePlanetsAndLevels();
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbCmsImage> crud = cmsService.getImageCrudRootServiceHelper();
@@ -3627,9 +3446,16 @@ public class TestCmsService extends AbstractServiceTest {
         userState.setDbLevelId(TEST_LEVEL_1_SIMULATED_ID);
         userStates.add(userState);
 
+        PlanetInfo planetInfo = new PlanetInfo();
+        planetInfo.setPlanetId(1);
+        ServerPlanetServicesImpl serverPlanetServices = new ServerPlanetServicesImpl();
+        serverPlanetServices.setPlanetInfo(planetInfo);
+        TestPlanetHelper planet = new TestPlanetHelper();
+        planet.setServerPlanetServices(serverPlanetServices);
+
         userState = new UserState();
         userState.setUser("aaa");
-        Base base1 = new Base(userState, 1);
+        Base base1 = new Base(userState, planet, 1);
         base1.setAccountBalance(1234);
         setPrivateField(Base.class, base1, "startTime", new Date(System.currentTimeMillis() - ClientDateUtil.MILLIS_IN_HOUR));
         base1.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1, 1)));
@@ -3640,7 +3466,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         userState = new UserState();
         userState.setUser("xxx");
-        Base base2 = new Base(userState, 2);
+        Base base2 = new Base(userState, planet, 2);
         base2.setAccountBalance(90);
         setPrivateField(Base.class, base2, "startTime", new Date(System.currentTimeMillis() - ClientDateUtil.MILLIS_IN_MINUTE));
         base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1, 1)));
@@ -3661,7 +3487,12 @@ public class TestCmsService extends AbstractServiceTest {
         EasyMock.expect(baseService.getBaseName(base1.getSimpleBase())).andReturn("aaa").times(4);
         EasyMock.expect(baseService.getBaseName(base2.getSimpleBase())).andReturn("xxx").times(4);
         EasyMock.replay(baseService);
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "baseService", baseService);
+        serverPlanetServices.setBaseService(baseService);
+
+        PlanetSystemService planetSystemServiceMock  = EasyMock.createMock(PlanetSystemService.class);
+        EasyMock.replay(planetSystemServiceMock);
+
+        setPrivateField(StatisticsServiceImpl.class, statisticsService, "planetSystemService", planetSystemServiceMock);
 
         // Setup CMS content
         beginHttpSession();
@@ -3905,7 +3736,8 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testPaging() throws Exception {
-        configureGameMultipleLevel();
+        Assert.fail();
+        configureMultiplePlanetsAndLevels();
         // Mock statistics service
         List<UserState> userStates = new ArrayList<>();
 
@@ -3915,7 +3747,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         userState = new UserState();
         userState.setUser("aaa");
-        Base base1 = new Base(userState, 1);
+        Base base1 = new Base(userState, null, 1);
         base1.setAccountBalance(1234);
         setPrivateField(Base.class, base1, "startTime", new Date(System.currentTimeMillis() - ClientDateUtil.MILLIS_IN_HOUR));
         base1.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1, 1)));
@@ -3926,7 +3758,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         userState = new UserState();
         userState.setUser("xxx");
-        Base base2 = new Base(userState, 2);
+        Base base2 = new Base(userState, null, 2);
         base2.setAccountBalance(90);
         setPrivateField(Base.class, base2, "startTime", new Date(System.currentTimeMillis() - ClientDateUtil.MILLIS_IN_MINUTE));
         base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1, 1)));
@@ -4121,7 +3953,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void borderWrapper() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         // Setup CMS content
         beginHttpSession();
@@ -4135,7 +3967,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbContentList.setBorderCss("borderCSS");
         dbContentList.init(userService);
         dbPage.setContentAndAccessWrites(dbContentList);
-        dbContentList.setSpringBeanName("itemService");
+        dbContentList.setSpringBeanName("serverItemTypeService");
         dbContentList.setContentProviderGetter("dbItemTypeCrud");
 
         CrudListChildServiceHelper<DbContent> columnCrud = dbContentList.getColumnsCrud();
@@ -4170,7 +4002,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testDbExpressionPropertyTypes() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         // Setup CMS content
         beginHttpSession();
@@ -4241,7 +4073,8 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testUglyBeanIdPathElement4LevelTask() throws Exception {
-        configureGameMultipleLevel();
+        Assert.fail();
+        configureMultiplePlanetsAndLevels();
 
         // Setup CMS content
         beginHttpSession();
@@ -4262,7 +4095,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         CrudChildServiceHelper<DbContentBook> contentBookCrud = dbContentList.getContentBookCrud();
         DbContentBook dbContentBook = contentBookCrud.createDbChild();
-        dbContentBook.setClassName("com.btxtech.game.services.utg.DbQuestHub");
+        dbContentBook.setClassName("com.btxtech.game.services.planet.db.DbPlanet");
         CrudListChildServiceHelper<DbContentRow> rowCrud = dbContentBook.getRowCrud();
 
         DbContentRow dbLevelRow = rowCrud.createDbChild();
@@ -4327,7 +4160,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testFacebook() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         // Do not rejoice too quicklyJust... this is just a  test secret.
         setPrivateField(CmsUiServiceImpl.class, cmsUiService, "facebookAppSecret", "029a30fb9677d35c79c44d8a505d8fe1");

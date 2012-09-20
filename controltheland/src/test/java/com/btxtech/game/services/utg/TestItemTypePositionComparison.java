@@ -1,29 +1,31 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
-import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.NoConnectionException;
-import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
-import com.btxtech.game.jsre.common.packets.Packet;
+import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
+import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
+import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.jsre.common.utg.condition.AbstractSyncItemComparison;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.ItemTypePositionComparisonConfig;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.connection.Connection;
-import com.btxtech.game.services.connection.ConnectionService;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.connection.ServerConnectionService;
+import com.btxtech.game.services.planet.Base;
+import com.btxtech.game.services.planet.BaseService;
+import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.ServerItemService;
+import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.services.utg.condition.impl.ServerConditionServiceImpl;
@@ -44,11 +46,11 @@ import java.util.Map;
 /**
  * User: beat Date: 31.01.2012 Time: 16:51:19
  */
-public class TestItemTypePositionComparison extends AbstractServiceTest implements ConnectionService {
+public class TestItemTypePositionComparison extends AbstractServiceTest implements ServerConnectionService {
     @Autowired
     private ServerConditionService serverConditionService;
     @Autowired
-    private ServerServices serverServices;
+    private PlanetSystemService planetSystemService;
     private Integer identifier;
     private UserState actor;
     private UserState userState1;
@@ -68,34 +70,35 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         progressString = null;
         progressBase = null;
         setPrivateStaticField(AbstractSyncItemComparison.class, "MIN_SEND_DELAY", 0);
-        configureRealGame();
+        configureSimplePlanet();
         identifier = null;
         actor = null;
 
         // Mock objects
         userState1 = new UserState();
         userState1.setUser("TestUser1");
-        base1 = new Base(userState1, 1);
+        userState1.setDbLevelId(TEST_LEVEL_2_REAL_ID);
+        base1 = new Base(userState1, planetSystemService.getPlanet(TEST_PLANET_1_ID), 1);
         int itemId = 0;
-        builder1B1 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockServices(), base1.getSimpleBase());
-        builder2B1 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockServices(), base1.getSimpleBase());
-        builder3B1 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockServices(), base1.getSimpleBase());
-        attacker1B1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockServices(), base1.getSimpleBase());
-        attacker2B1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockServices(), base1.getSimpleBase());
-        building1B1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockServices(), base1.getSimpleBase());
+        builder1B1 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockGlobalServices(), createMockPlanetServices(), base1.getSimpleBase());
+        builder2B1 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockGlobalServices(), createMockPlanetServices(), base1.getSimpleBase());
+        builder3B1 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockGlobalServices(), createMockPlanetServices(), base1.getSimpleBase());
+        attacker1B1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockGlobalServices(), createMockPlanetServices(), base1.getSimpleBase());
+        attacker2B1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockGlobalServices(), createMockPlanetServices(), base1.getSimpleBase());
+        building1B1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockGlobalServices(), createMockPlanetServices(), base1.getSimpleBase());
 
         UserState userState2 = new UserState();
         userState2.setUser("TestUser2");
-        Base base2 = new Base(userState2, 2);
-        builder1B2 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockServices(), base2.getSimpleBase());
+        Base base2 = new Base(userState2, planetSystemService.getPlanet(TEST_PLANET_1_ID), 2);
+        builder1B2 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockGlobalServices(), createMockPlanetServices(), base2.getSimpleBase());
 
         BaseService baseServiceMock = EasyMock.createNiceMock(BaseService.class);
         EasyMock.expect(baseServiceMock.getUserState(base1.getSimpleBase())).andReturn(userState1).anyTimes();
         EasyMock.replay(baseServiceMock);
 
         ((ServerConditionServiceImpl) deAopProxy(serverConditionService)).setRate(50);
-        setPrivateField(ServerConditionServiceImpl.class, serverConditionService, "baseService", baseServiceMock);
-        setPrivateField(ServerConditionServiceImpl.class, serverConditionService, "connectionService", this);
+        ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setBaseService(baseServiceMock);
+        setPrivateField(ServerConditionServiceImpl.class, serverConditionService, "serverConnectionService", this);
     }
 
     private void assertActorAndIdentifierAndClear(UserState expectedActor, Integer expectedIdentifier) {
@@ -128,7 +131,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @DirtiesContext
     public void noneItemType() throws Exception {
         // Does not make any sense
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, null, null, null, false, "Move no item"), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, null, null, false, "Move no item"), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -153,7 +156,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     public void singleItemType() throws Exception {
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, null, null, false, "Move no #C"
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, null, null, false, "Move no #C"
                 + builder1B1.getBaseItemType().getId() + " item"), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
@@ -179,7 +182,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     public void multipleItemTypes1() throws Exception {
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, null, null, false, "#C"
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, null, null, false, "#C"
                 + builder1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
@@ -223,7 +226,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, null, null, false, "aaa #C"
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, null, null, false, "aaa #C"
                 + builder1B1.getBaseItemType().getId() + " bbb #C" + attacker1B1.getBaseItemType().getId() + " ccc #C" + building1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
@@ -277,7 +280,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     public void singleItemTypeRegion() throws Exception {
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null,
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, createRegion(new Rectangle(500, 500, 1000, 1000), 1), null,
                 false, "#C" + builder1B1.getBaseItemType().getId() + "  lll yyyy"), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
@@ -306,7 +309,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 2);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null,
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, createRegion(new Rectangle(500, 500, 1000, 1000), 1), null,
                 false, "#C" + builder1B1.getBaseItemType().getId() + " #C" + attacker1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
@@ -355,7 +358,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 2);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null,
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, createRegion(new Rectangle(500, 500, 1000, 1000), 1), null,
                 false, "#C" + builder1B1.getBaseItemType().getId() + " wwww #C" + attacker1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
@@ -397,7 +400,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     public void singleItemTypeRegionTime() throws Exception {
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), 100,
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, createRegion(new Rectangle(500, 500, 1000, 1000), 1), 100,
                 false, "xxx #T yyy #C" + builder1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
@@ -427,7 +430,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), 100,
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, createRegion(new Rectangle(500, 500, 1000, 1000), 1), 100,
                 false, "xxx #T yyy #C" + builder1B1.getBaseItemType().getId() + " #C" + attacker1B1.getBaseItemType().getId() + " #C" + building1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
@@ -477,7 +480,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), 100,
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, createRegion(new Rectangle(500, 500, 1000, 1000), 1), 100,
                 false, null), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
@@ -531,7 +534,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), 100,
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, createRegion(new Rectangle(500, 500, 1000, 1000), 1), 100,
                 false, null), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
@@ -583,20 +586,18 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Test
     @DirtiesContext
     public void multipleItemTypeRegionTimeAddExisting1() throws Exception {
-        ItemService itemServiceMock = EasyMock.createMock(ItemService.class);
+        ServerItemService serverItemServiceMock = EasyMock.createMock(ServerItemService.class);
         Collection<SyncBaseItem> syncBaseItems = new ArrayList<>();
-        EasyMock.expect(itemServiceMock.getBaseItemsInRectangle(new Rectangle(500, 500, 1000, 1000), base1.getSimpleBase(), null)).andReturn(syncBaseItems);
-        EasyMock.expect(itemServiceMock.getItemType(builder1B1.getBaseItemType().getId())).andReturn(builder1B1.getBaseItemType()).anyTimes();
-        EasyMock.expect(itemServiceMock.getItemType(attacker1B1.getBaseItemType().getId())).andReturn(attacker1B1.getBaseItemType()).anyTimes();
-        EasyMock.expect(itemServiceMock.getItemType(building1B1.getBaseItemType().getId())).andReturn(building1B1.getBaseItemType()).anyTimes();
-        EasyMock.replay(itemServiceMock);
-        setPrivateField(ServerServices.class, serverServices, "itemService", itemServiceMock);
+        Region region = createRegion(new Rectangle(500, 500, 1000, 1000), 1);
+        EasyMock.expect(serverItemServiceMock.getBaseItemsInRectangle(region, base1.getSimpleBase(), null)).andReturn(syncBaseItems);
+        EasyMock.replay(serverItemServiceMock);
+        ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setServerItemService(serverItemServiceMock);
 
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), 100,
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, region, 100,
                 true, "#T #C" + builder1B1.getBaseItemType().getId() + " #C" + attacker1B1.getBaseItemType().getId() + " #C" + building1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
@@ -649,22 +650,20 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Test
     @DirtiesContext
     public void multipleItemTypeRegionTimeAddExisting2() throws Exception {
-        ItemService itemServiceMock = EasyMock.createMock(ItemService.class);
+        ServerItemService serverItemServiceMock = EasyMock.createMock(ServerItemService.class);
         Collection<SyncBaseItem> syncBaseItems = new ArrayList<>();
         builder1B1.getSyncItemArea().setPosition(new Index(600, 600));
         syncBaseItems.add(builder1B1);
-        EasyMock.expect(itemServiceMock.getBaseItemsInRectangle(new Rectangle(500, 500, 1000, 1000), base1.getSimpleBase(), null)).andReturn(syncBaseItems);
-        EasyMock.expect(itemServiceMock.getItemType(builder1B1.getBaseItemType().getId())).andReturn(builder1B1.getBaseItemType()).anyTimes();
-        EasyMock.expect(itemServiceMock.getItemType(attacker1B1.getBaseItemType().getId())).andReturn(attacker1B1.getBaseItemType()).anyTimes();
-        EasyMock.expect(itemServiceMock.getItemType(building1B1.getBaseItemType().getId())).andReturn(building1B1.getBaseItemType()).anyTimes();
-        EasyMock.replay(itemServiceMock);
-        setPrivateField(ServerServices.class, serverServices, "itemService", itemServiceMock);
+        Region region = createRegion(new Rectangle(500, 500, 1000, 1000), 1);
+        EasyMock.expect(serverItemServiceMock.getBaseItemsInRectangle(region, base1.getSimpleBase(), null)).andReturn(syncBaseItems);
+        EasyMock.replay(serverItemServiceMock);
+        ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setServerItemService(serverItemServiceMock);
 
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), 100,
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, region, 100,
                 true, "#T #C" + builder1B1.getBaseItemType().getId() + " #C" + attacker1B1.getBaseItemType().getId() + " #C" + building1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
@@ -714,24 +713,22 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Test
     @DirtiesContext
     public void multipleItemTypeRegionTimeAddExisting3() throws Exception {
-        ItemService itemServiceMock = EasyMock.createMock(ItemService.class);
+        ServerItemService serverItemServiceMock = EasyMock.createMock(ServerItemService.class);
         Collection<SyncBaseItem> syncBaseItems = new ArrayList<>();
         builder1B1.getSyncItemArea().setPosition(new Index(600, 600));
         syncBaseItems.add(builder1B1);
         builder2B1.getSyncItemArea().setPosition(new Index(600, 600));
         syncBaseItems.add(builder2B1);
-        EasyMock.expect(itemServiceMock.getBaseItemsInRectangle(new Rectangle(500, 500, 1000, 1000), base1.getSimpleBase(), null)).andReturn(syncBaseItems);
-        EasyMock.expect(itemServiceMock.getItemType(builder1B1.getBaseItemType().getId())).andReturn(builder1B1.getBaseItemType()).anyTimes();
-        EasyMock.expect(itemServiceMock.getItemType(attacker1B1.getBaseItemType().getId())).andReturn(attacker1B1.getBaseItemType()).anyTimes();
-        EasyMock.expect(itemServiceMock.getItemType(building1B1.getBaseItemType().getId())).andReturn(building1B1.getBaseItemType()).anyTimes();
-        EasyMock.replay(itemServiceMock);
-        setPrivateField(ServerServices.class, serverServices, "itemService", itemServiceMock);
+        Region region = createRegion(new Rectangle(500, 500, 1000, 1000), 1);
+        EasyMock.expect(serverItemServiceMock.getBaseItemsInRectangle(region, base1.getSimpleBase(), null)).andReturn(syncBaseItems);
+        EasyMock.replay(serverItemServiceMock);
+        ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setServerItemService(serverItemServiceMock);
 
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null,
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, region, null,
                 true, "#T #C" + builder1B1.getBaseItemType().getId() + " #C" + attacker1B1.getBaseItemType().getId() + " #C" + building1B1.getBaseItemType().getId()), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
@@ -762,19 +759,20 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Test
     @DirtiesContext
     public void multipleItemTypeRegionTimeAddExisting4() throws Exception {
-        ItemService itemServiceMock = EasyMock.createMock(ItemService.class);
+        ServerItemService serverItemServiceMock = EasyMock.createMock(ServerItemService.class);
         Collection<SyncBaseItem> syncBaseItems = new ArrayList<>();
         syncBaseItems.add(builder1B1);
         syncBaseItems.add(builder2B1);
-        EasyMock.expect(itemServiceMock.getItems4Base(base1.getSimpleBase())).andReturn(syncBaseItems);
-        EasyMock.replay(itemServiceMock);
-        setPrivateField(ServerServices.class, serverServices, "itemService", itemServiceMock);
+        EasyMock.expect(serverItemServiceMock.getItems4Base(base1.getSimpleBase())).andReturn(syncBaseItems);
+        EasyMock.replay(serverItemServiceMock);
+
+        ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setServerItemService(serverItemServiceMock);
 
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         itemTypes.put(attacker1B1.getBaseItemType(), 2);
         itemTypes.put(building1B1.getBaseItemType(), 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, null, 100, true, null), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, null, 100, true, null), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -804,17 +802,18 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Test
     @DirtiesContext
     public void multipleItemTypeRegionAddExistingNoNewItems1() throws Exception {
-        ItemService itemServiceMock = EasyMock.createMock(ItemService.class);
+        ServerItemService serverItemServiceMock = EasyMock.createMock(ServerItemService.class);
         Collection<SyncBaseItem> syncBaseItems = new ArrayList<>();
         builder1B1.getSyncItemArea().setPosition(new Index(600, 600));
         syncBaseItems.add(builder1B1);
-        EasyMock.expect(itemServiceMock.getBaseItemsInRectangle(new Rectangle(500, 500, 1000, 1000), base1.getSimpleBase(), null)).andReturn(syncBaseItems);
-        EasyMock.replay(itemServiceMock);
-        setPrivateField(ServerServices.class, serverServices, "itemService", itemServiceMock);
+        Region region = createRegion(new Rectangle(500, 500, 1000, 1000), 1);
+        EasyMock.expect(serverItemServiceMock.getBaseItemsInRectangle(region, base1.getSimpleBase(), null)).andReturn(syncBaseItems);
+        EasyMock.replay(serverItemServiceMock);
+        ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setServerItemService(serverItemServiceMock);
 
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null,
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, region, null,
                 true, null), null);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -832,19 +831,20 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Test
     @DirtiesContext
     public void multipleItemTypeRegionAddExistingNoNewItems2() throws Exception {
-        ItemService itemServiceMock = EasyMock.createMock(ItemService.class);
+        ServerItemService serverItemServiceMock = EasyMock.createMock(ServerItemService.class);
         Collection<SyncBaseItem> syncBaseItems = new ArrayList<>();
         builder1B1.getSyncItemArea().setPosition(new Index(600, 600));
         syncBaseItems.add(builder1B1);
         builder2B1.getSyncItemArea().setPosition(new Index(600, 600));
         syncBaseItems.add(builder2B1);
-        EasyMock.expect(itemServiceMock.getBaseItemsInRectangle(new Rectangle(500, 500, 1000, 1000), base1.getSimpleBase(), null)).andReturn(syncBaseItems);
-        EasyMock.replay(itemServiceMock);
-        setPrivateField(ServerServices.class, serverServices, "itemService", itemServiceMock);
+        Region region = createRegion(new Rectangle(500, 500, 1000, 1000), 1);
+        EasyMock.expect(serverItemServiceMock.getBaseItemsInRectangle(region, base1.getSimpleBase(), null)).andReturn(syncBaseItems);
+        EasyMock.replay(serverItemServiceMock);
+        ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setServerItemService(serverItemServiceMock);
 
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 2);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), null,
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, region, null,
                 true, null), null);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -862,19 +862,20 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Test
     @DirtiesContext
     public void multipleItemTypeRegionTimeAddExistingNoNewItems() throws Exception {
-        ItemService itemServiceMock = EasyMock.createMock(ItemService.class);
+        ServerItemService serverItemServiceMock = EasyMock.createMock(ServerItemService.class);
         Collection<SyncBaseItem> syncBaseItems = new ArrayList<>();
         builder1B1.getSyncItemArea().setPosition(new Index(600, 600));
         syncBaseItems.add(builder1B1);
         builder2B1.getSyncItemArea().setPosition(new Index(600, 600));
         syncBaseItems.add(builder2B1);
-        EasyMock.expect(itemServiceMock.getBaseItemsInRectangle(new Rectangle(500, 500, 1000, 1000), base1.getSimpleBase(), null)).andReturn(syncBaseItems);
-        EasyMock.replay(itemServiceMock);
-        setPrivateField(ServerServices.class, serverServices, "itemService", itemServiceMock);
+        Region region = createRegion(new Rectangle(500, 500, 1000, 1000), 1);
+        EasyMock.expect(serverItemServiceMock.getBaseItemsInRectangle(region, base1.getSimpleBase(), null)).andReturn(syncBaseItems);
+        EasyMock.replay(serverItemServiceMock);
+        ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setServerItemService(serverItemServiceMock);
 
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 2);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, itemTypes, new Rectangle(500, 500, 1000, 1000), 100,
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, region, 100,
                 true, null), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 

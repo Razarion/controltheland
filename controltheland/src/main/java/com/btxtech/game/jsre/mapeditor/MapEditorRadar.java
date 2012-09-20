@@ -13,9 +13,10 @@
 
 package com.btxtech.game.jsre.mapeditor;
 
-import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.TopMapPanel;
+import com.btxtech.game.jsre.client.cockpit.radar.MiniMapMouseDownListener;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -35,30 +36,23 @@ import com.google.gwt.user.client.ui.Widget;
 public class MapEditorRadar extends TopMapPanel {
     private static final int RADAR_WIDTH = 200;
     private static final int RADAR_HEIGHT = 200;
+    private MapEditorModel mapEditorModel;
 
     @Override
     protected Widget createBody() {
-        VerticalPanel verticalPanel = new VerticalPanel();
-        verticalPanel.add(new Button("Update Radar", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                RadarPanel.getInstance().getMiniTerrain().onTerrainChanged();
-            }
-        }));
-        verticalPanel.add(RadarPanel.getInstance().createWidget(RADAR_WIDTH, RADAR_HEIGHT));
+        Widget radarPane = RadarPanel.getInstance().createWidget(RADAR_WIDTH, RADAR_HEIGHT);
         RadarPanel.getInstance().setLevelRadarMode(RadarMode.MAP);
-        RadarPanel.getInstance().getRadarFrameView().getCanvas().addMouseDownHandler(new MouseDownHandler() {
+        RadarPanel.getInstance().getRadarFrameView().addMouseDownListener(new MiniMapMouseDownListener() {
             @Override
-            public void onMouseDown(MouseDownEvent event) {
-                event.stopPropagation();
+            public void onMouseDown(int absX, int absY, MouseDownEvent mouseDownEvent) {
+                Index delta = new Index(absX,absY).sub(mapEditorModel.getViewRectangle().getCenter());
+                mapEditorModel.moveDelta(delta.getX(), delta.getY());
             }
         });
-        RadarPanel.getInstance().getRadarFrameView().getCanvas().addMouseUpHandler(new MouseUpHandler() {
-            @Override
-            public void onMouseUp(MouseUpEvent event) {
-                event.stopPropagation();
-            }
-        });
-        return verticalPanel;
+        return radarPane;
+    }
+
+    public void setMapEditorModel(MapEditorModel mapEditorModel) {
+        this.mapEditorModel = mapEditorModel;
     }
 }

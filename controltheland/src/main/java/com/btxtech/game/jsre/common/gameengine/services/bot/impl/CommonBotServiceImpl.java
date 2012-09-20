@@ -81,4 +81,5 @@ public abstract class CommonBotServiceImpl implements CommonBotService {
         return false;
     }
 
+
 }

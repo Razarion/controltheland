@@ -13,9 +13,9 @@
 
 package com.btxtech.game.services.gwt;
 
-import com.btxtech.game.jsre.mapeditor.TerrainInfo;
+import com.btxtech.game.jsre.mapeditor.TerrainInfoImpl;
 import com.btxtech.game.jsre.pathfinding.Pathfinding;
-import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.services.terrain.TerrainImageService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +27,15 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class PathfindingImpl extends AutowiredRemoteServiceServlet implements Pathfinding {
     @Autowired
-    private TerrainService terrainService;
+    private TerrainImageService terrainService;
     private Log log = LogFactory.getLog(PathfindingImpl.class);
 
     @Override
-    public TerrainInfo getTerrainInfo(int terrainId) {
+    public com.btxtech.game.jsre.common.TerrainInfo getTerrainInfo(int terrainId) {
         try {
-            TerrainInfo terrainInfo = new TerrainInfo();
-            terrainService.setupTerrain(terrainInfo, terrainId);
+            com.btxtech.game.jsre.common.TerrainInfo terrainInfo = new TerrainInfoImpl();
+            // TODO setup terrain
+            terrainService.setupTerrainImages(terrainInfo);
             return terrainInfo;
         } catch (Throwable t) {
             log.error("", t);

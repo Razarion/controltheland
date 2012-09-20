@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.wicket.uiservices.IndexPanel;
+import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -36,6 +37,7 @@ import java.util.List;
  */
 public class ConditionConfigPanel extends Panel implements IFormModelUpdateListener {
     private boolean isDirty = false;
+    private TerrainLinkHelper terrainLinkHelper;
     private Log log = LogFactory.getLog(ConditionConfigPanel.class);
     private IModel<ConditionTrigger> conditionTriggerModel = new IModel<ConditionTrigger>() {
         private ConditionTrigger conditionTrigger;
@@ -90,8 +92,9 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
         }
     };
 
-    public ConditionConfigPanel(String id) {
+    public ConditionConfigPanel(String id, TerrainLinkHelper terrainLinkHelper) {
         super(id);
+        this.terrainLinkHelper = terrainLinkHelper;
         DropDownChoice<ConditionTrigger> triggers = new DropDownChoice<>("conditionTrigger", conditionTriggerModel, ComparisonFactory.getFilteredConditionTriggers());
         add(triggers);
         final DropDownChoice<Class<? extends DbAbstractComparisonConfig>> comparisons = new DropDownChoice<>("comparison", comparisonModel, new IModel<List<Class<? extends DbAbstractComparisonConfig>>>() {
@@ -142,17 +145,17 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
             }
         });
         add(radarPositionHint);
-        setupComparisonFields();
+        setupComparisonFields(terrainLinkHelper);
     }
 
-    private void setupComparisonFields() {
+    private void setupComparisonFields(TerrainLinkHelper terrainLinkHelper) {
         DbConditionConfig dbConditionConfig = (DbConditionConfig) getDefaultModelObject();
-        addOrReplace(ComparisonFactory.createComparisonPanel("dbAbstractComparisonConfig", dbConditionConfig));
+        addOrReplace(ComparisonFactory.createComparisonPanel("dbAbstractComparisonConfig", dbConditionConfig, terrainLinkHelper));
     }
 
     @Override
     protected void onBeforeRender() {
-        setupComparisonFields();
+        setupComparisonFields(terrainLinkHelper);
         super.onBeforeRender();
     }
 

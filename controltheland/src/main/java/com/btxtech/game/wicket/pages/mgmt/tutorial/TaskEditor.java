@@ -15,23 +15,22 @@ package com.btxtech.game.wicket.pages.mgmt.tutorial;
 
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
+import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
-import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.tutorial.DbItemTypeAndPosition;
 import com.btxtech.game.services.tutorial.DbTaskAllowedItem;
-import com.btxtech.game.services.tutorial.DbTaskBot;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
+import com.btxtech.game.wicket.pages.mgmt.bot.BotEditor;
 import com.btxtech.game.wicket.pages.mgmt.condition.ConditionConfigPanel;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
-import com.btxtech.game.wicket.uiservices.BotPanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
 import com.btxtech.game.wicket.uiservices.IndexPanel;
 import com.btxtech.game.wicket.uiservices.ItemTypePanel;
+import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
 import com.btxtech.game.wicket.uiservices.ResourceItemTypePanel;
 import com.btxtech.game.wicket.uiservices.RuModel;
-import com.btxtech.game.wicket.uiservices.ServiceHelper;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -41,8 +40,6 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import java.util.Arrays;
-
 /**
  * User: beat
  * Date: 23.07.2010
@@ -51,12 +48,8 @@ import java.util.Arrays;
 public class TaskEditor extends MgmtWebPage {
     @SpringBean
     private RuServiceHelper<DbTaskConfig> ruTaskServiceHelper;
-    @SpringBean
-    private ItemService itemService;
-    @SpringBean
-    private ServiceHelper serviceHelper;
 
-    public TaskEditor(DbTaskConfig dbTaskConfig) {
+    public TaskEditor(DbTaskConfig dbTaskConfig, final TerrainLinkHelper terrainLinkHelper) {
         add(new FeedbackPanel("msgs"));
 
         final Form<DbTaskConfig> form = new Form<>("taskForm", new CompoundPropertyModel<DbTaskConfig>(new RuModel<DbTaskConfig>(dbTaskConfig, DbTaskConfig.class) {
@@ -71,9 +64,8 @@ public class TaskEditor extends MgmtWebPage {
         form.add(new TextField("money"));
         form.add(new TextField("maxMoney"));
         form.add(new TextField("houseCount"));
-        form.add(new TextField("itemSellFactor"));
         form.add(new DropDownChoice<>("radarMode", RadarMode.getList()));
-        form.add(new ConditionConfigPanel("conditionConfig"));
+        form.add(new ConditionConfigPanel("conditionConfig", terrainLinkHelper));
 
         new CrudChildTableHelper<DbTaskConfig, DbTaskAllowedItem>("allowedItemTable", null, "createAllowedItem", false, form, false) {
             @Override
@@ -123,7 +115,26 @@ public class TaskEditor extends MgmtWebPage {
             }
         };
 
-        new CrudChildTableHelper<DbTaskConfig, DbTaskBot>("botTable", null, "createBot", false, form, false) {
+        // Bot
+        new CrudChildTableHelper<DbTaskConfig, DbBotConfig>("bots", null, "createBot", true, form, false) {
+
+            @Override
+            protected CrudChildServiceHelper<DbBotConfig> getCrudChildServiceHelperImpl() {
+                return getParent().getBotCrud();
+            }
+
+            @Override
+            protected void onEditSubmit(DbBotConfig dbBotConfig) {
+                setResponsePage(new BotEditor(dbBotConfig, terrainLinkHelper));
+            }
+
+            @Override
+            protected void extendedPopulateItem(Item<DbBotConfig> dbBotConfigItem) {
+                displayId(dbBotConfigItem);
+                super.extendedPopulateItem(dbBotConfigItem);
+            }
+
+
             @Override
             protected RuServiceHelper<DbTaskConfig> getRuServiceHelper() {
                 return ruTaskServiceHelper;
@@ -131,17 +142,7 @@ public class TaskEditor extends MgmtWebPage {
 
             @Override
             protected DbTaskConfig getParent() {
-                return (DbTaskConfig) form.getDefaultModelObject();
-            }
-
-            @Override
-            protected CrudChildServiceHelper<DbTaskBot> getCrudChildServiceHelperImpl() {
-                return ((DbTaskConfig) form.getDefaultModelObject()).getBotCrudHelper();
-            }
-
-            @Override
-            protected void extendedPopulateItem(final Item<DbTaskBot> dbTaskBotItem) {
-                dbTaskBotItem.add(new BotPanel("dbBotConfig"));
+                return form.getModelObject();
             }
         };
 

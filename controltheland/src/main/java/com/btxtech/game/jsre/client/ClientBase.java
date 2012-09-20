@@ -14,16 +14,18 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
-import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.dialogs.UnfrequentDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.client.item.ItemTypeContainer;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
-import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
@@ -32,6 +34,7 @@ import com.btxtech.game.jsre.common.gameengine.services.base.impl.AbstractBaseSe
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
 
 import java.util.Collection;
@@ -78,7 +81,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     public void createOwnSimulationBaseIfNotExist(String onwBaseName) {
         if (simpleBase == null) {
             int baseId = getFreeBaseId();
-            simpleBase = new SimpleBase(baseId);
+            simpleBase = new SimpleBase(baseId, PlanetInfo.MISSION_PLANET_ID);
             createBase(simpleBase, onwBaseName, false);
         }
     }
@@ -121,8 +124,8 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         if (this.simpleBase != null && this.simpleBase.equals(simpleBase)) {
             if (Connection.getInstance().getGameInfo() instanceof RealGameInfo) {
                 accountBalance += price;
-                if (accountBalance > ClientLevelHandler.getInstance().getLevelScope().getMaxMoney()) {
-                    accountBalance = ClientLevelHandler.getInstance().getLevelScope().getMaxMoney();
+                if (accountBalance > ClientPlanetServices.getInstance().getPlanetInfo().getMaxMoney()) {
+                    accountBalance = ClientPlanetServices.getInstance().getPlanetInfo().getMaxMoney();
                 }
             } else {
                 accountBalance += price;
@@ -133,11 +136,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     }
 
     public boolean isDepositResourceAllowed(double amount) {
-        if (Connection.getInstance().getGameInfo() instanceof RealGameInfo) {
-            return ClientLevelHandler.getInstance().getLevelScope().getMaxMoney() >= accountBalance + amount;
-        } else {
-            return true;
-        }
+        return !(Connection.getInstance().getGameInfo() instanceof RealGameInfo) || ClientPlanetServices.getInstance().getPlanetInfo().getMaxMoney() >= accountBalance + amount;
     }
 
     @Override
@@ -285,19 +284,13 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     @Override
     public int getItemCount(SimpleBase simpleBase, int itemTypeId) throws NoSuchItemTypeException {
         check4OwnBase(simpleBase);
-        BaseItemType baseItemType = (BaseItemType) ItemContainer.getInstance().getItemType(itemTypeId);
+        BaseItemType baseItemType = (BaseItemType) ItemTypeContainer.getInstance().getItemType(itemTypeId);
         Integer count = myItemTypeCount.get(baseItemType);
         if (count != null) {
             return count;
         } else {
             return 0;
         }
-    }
-
-    @Override
-    public LevelScope getLevel(SimpleBase simpleBase) {
-        check4OwnBase(simpleBase);
-        return ClientLevelHandler.getInstance().getLevelScope();
     }
 
     public void recalculate4FakedHouseSpace(SyncBaseItem affectedSyncItem) {
@@ -325,7 +318,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     @Override
     public SimpleBase createBotBase(BotConfig botConfig) {
         int baseId = getFreeBaseId();
-        SimpleBase simpleBase = new SimpleBase(baseId);
+        SimpleBase simpleBase = new SimpleBase(baseId, PlanetInfo.MISSION_PLANET_ID);
         createBase(simpleBase, botConfig.getName(), false);
         setBot(simpleBase, true);
         return simpleBase;
@@ -334,8 +327,8 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     private int getFreeBaseId() {
         int maxId = 0;
         for (SimpleBase simpleBase : getAllSimpleBases()) {
-            if (simpleBase.getId() > maxId) {
-                maxId = simpleBase.getId();
+            if (simpleBase.getBaseId() > maxId) {
+                maxId = simpleBase.getBaseId();
             }
         }
         maxId++;
@@ -363,6 +356,11 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
 
     @Override
     public void sendAccountBaseUpdate(SimpleBase simpleBase) {
+        // Do nothing here
+    }
+
+    @Override
+    public void sendAccountBaseUpdate(SyncBaseObject syncBaseObject) {
         // Do nothing here
     }
 
@@ -417,5 +415,15 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
 
     public int getOwnItemCount() {
         return ownItemCount;
+    }
+
+    @Override
+    protected GlobalServices getGlobalServices() {
+        return ClientGlobalServices.getInstance();
+    }
+
+    @Override
+    protected PlanetServices getPlanetServices() {
+        return ClientPlanetServices.getInstance();
     }
 }

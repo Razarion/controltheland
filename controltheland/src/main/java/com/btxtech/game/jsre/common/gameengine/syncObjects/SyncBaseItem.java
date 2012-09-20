@@ -19,7 +19,8 @@ import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -64,8 +65,8 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
     private boolean isMoneyEarningOrConsuming = false;
     private SimpleBase killedBy;
 
-    public SyncBaseItem(Id id, Index position, BaseItemType baseItemType, Services services, SimpleBase base) throws NoSuchItemTypeException {
-        super(id, position, baseItemType, services);
+    public SyncBaseItem(Id id, Index position, BaseItemType baseItemType, GlobalServices globalServices, PlanetServices planetServices, SimpleBase base) throws NoSuchItemTypeException {
+        super(id, position, baseItemType, globalServices, planetServices);
         this.base = base;
         health = baseItemType.getHealth();
         setup();
@@ -88,7 +89,7 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
 
         if (baseItemType.getFactoryType() != null) {
             syncFactory = new SyncFactory(baseItemType.getFactoryType(), this);
-            if (getServices().getConnectionService().getGameEngineMode() == GameEngineMode.MASTER) {
+            if (getGlobalServices().getConnectionService().getGameEngineMode() == GameEngineMode.MASTER) {
                 syncFactory.calculateRallyPoint();
             }
             isMoneyEarningOrConsuming = true;
@@ -170,12 +171,12 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
         checkBase(syncItemInfo.getBase());
         isUpgrading = syncItemInfo.isUpgrading();
         if (isUpgrading) {
-            upgradingItemType = (BaseItemType) getServices().getItemService().getItemType(getBaseItemType().getUpgradeable());
+            upgradingItemType = (BaseItemType) getGlobalServices().getItemTypeService().getItemType(getBaseItemType().getUpgradeable());
         } else {
             upgradingItemType = null;
         }
         if (getItemType().getId() != syncItemInfo.getItemTypeId()) {
-            setItemType(getServices().getItemService().getItemType(syncItemInfo.getItemTypeId()));
+            setItemType(getGlobalServices().getItemTypeService().getItemType(syncItemInfo.getItemTypeId()));
             fireItemChanged(SyncItemListener.Change.ITEM_TYPE_CHANGED);
             setup();
         }
@@ -392,8 +393,8 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
             if (getBaseItemType().getUpgradeable() == null) {
                 throw new IllegalArgumentException(this + " can not be upgraded");
             }
-            BaseItemType tmpUpgradingItemType = (BaseItemType) getServices().getItemService().getItemType(getBaseItemType().getUpgradeable());
-            getServices().getBaseService().withdrawalMoney(tmpUpgradingItemType.getPrice(), getBase());
+            BaseItemType tmpUpgradingItemType = (BaseItemType) getGlobalServices().getItemTypeService().getItemType(getBaseItemType().getUpgradeable());
+            getPlanetServices().getBaseService().withdrawalMoney(tmpUpgradingItemType.getPrice(), getBase());
             isUpgrading = true;
             upgradingItemType = tmpUpgradingItemType;
             return;
@@ -550,11 +551,11 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
     }
 
     public boolean isEnemy(SyncBaseItem syncBaseItem) {
-        return getServices().getBaseService().isEnemy(this, syncBaseItem);
+        return getPlanetServices().getBaseService().isEnemy(this, syncBaseItem);
     }
 
     public boolean isEnemy(SimpleBase simpleBase) {
-        return getServices().getBaseService().isEnemy(getBase(), simpleBase);
+        return getPlanetServices().getBaseService().isEnemy(getBase(), simpleBase);
     }
 
     public void decreaseHealth(double progress, SimpleBase actor) {
@@ -562,7 +563,7 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
         fireItemChanged(SyncItemListener.Change.HEALTH);
         if (health <= 0) {
             health = 0;
-            getServices().getItemService().killSyncItem(this, actor, false, true);
+            getPlanetServices().getItemService().killSyncItem(this, actor, false, true);
         }
     }
 
@@ -718,7 +719,7 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
     }
 
     public void onAttacked(SyncBaseItem syncBaseItem) {
-        if (getServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
+        if (getGlobalServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
             return;
         }
         if (!isAlive()) {
@@ -736,7 +737,7 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
         }
 
         if (syncWeapon.isInRange(syncBaseItem)) {
-            getServices().getActionService().defend(this, syncBaseItem);
+            getPlanetServices().getActionService().defend(this, syncBaseItem);
         }
     }
 }

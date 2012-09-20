@@ -29,6 +29,7 @@
         <mapping class="com.btxtech.game.services.terrain.TerrainImageTileSurfaceType"/>
         <mapping class="com.btxtech.game.services.terrain.DbSurfaceImage"/>
         <mapping class="com.btxtech.game.services.terrain.DbTerrainSetting"/>
+        <mapping class="com.btxtech.game.services.terrain.DbRegion"/>
         <mapping class="com.btxtech.game.services.user.User"/>
         <mapping class="com.btxtech.game.services.user.DbContentAccessControl"/>
         <mapping class="com.btxtech.game.services.user.DbPageAccessControl"/>
@@ -65,27 +66,22 @@
         <mapping class="com.btxtech.game.services.forum.DbForumThread"/>
         <mapping class="com.btxtech.game.services.forum.DbPost"/>
         <mapping class="com.btxtech.game.services.messenger.DbMail"/>
-        <mapping class="com.btxtech.game.services.resource.DbRegionResource"/>
+        <mapping class="com.btxtech.game.services.planet.db.DbRegionResource"/>
         <mapping class="com.btxtech.game.services.bot.DbBotConfig"/>
         <mapping class="com.btxtech.game.services.bot.DbBotEnragementStateConfig"/>
         <mapping class="com.btxtech.game.services.bot.DbBotItemConfig"/>
-        <mapping class="com.btxtech.game.services.territory.DbTerritory"/>
-        <mapping class="com.btxtech.game.services.territory.DbTerritoryRegion"/>
         <mapping class="com.btxtech.game.services.tutorial.DbTutorialConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.DbTaskConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.DbTaskAllowedItem"/>
         <mapping class="com.btxtech.game.services.tutorial.DbItemTypeAndPosition"/>
-        <mapping class="com.btxtech.game.services.tutorial.DbTaskBot"/>
         <!-- User Guidance -->
         <mapping class="com.btxtech.game.services.utg.DbXpSettings"/>
-        <mapping class="com.btxtech.game.services.utg.DbQuestHub"/>
         <mapping class="com.btxtech.game.services.utg.DbLevel"/>
         <mapping class="com.btxtech.game.services.utg.DbLevelTask"/>
-        <mapping class="com.btxtech.game.services.utg.DbItemTypeLimitation"/>
+        <mapping class="com.btxtech.game.services.utg.DbLevelItemTypeLimitation"/>
         <!-- Backup -->
         <mapping class="com.btxtech.game.services.mgmt.impl.BackupEntry"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.GenericBaseItem"/>
-        <mapping class="com.btxtech.game.services.mgmt.impl.GenericResourceItem"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.GenericProjectileItem"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.DbUserState"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.DbBase"/>
@@ -146,5 +142,9 @@
         <!-- Sound -->
         <mapping class="com.btxtech.game.services.sound.DbSound"/>
         <mapping class="com.btxtech.game.services.sound.DbCommonSound"/>
+        <!-- Planet -->
+        <mapping class="com.btxtech.game.services.planet.db.DbPlanet"/>
+        <mapping class="com.btxtech.game.services.planet.db.DbPlanetItemTypeLimitation"/>
+
     </session-factory>
 </hibernate-configuration>

@@ -34,8 +34,8 @@ public class TutorialPanel extends Panel {
             public void setObject(Integer integer) {
                 try {
                     if (integer != null) {
-                        DbTutorialConfig dbTerritory = tutorialService.getDbTutorialCrudRootServiceHelper().readDbChild(integer);
-                        setDefaultModelObject(dbTerritory);
+                        DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().readDbChild(integer);
+                        setDefaultModelObject(dbTutorialConfig);
                     } else {
                         setDefaultModelObject(null);
                     }

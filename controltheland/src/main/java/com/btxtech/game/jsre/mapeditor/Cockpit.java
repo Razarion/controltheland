@@ -13,20 +13,19 @@
 
 package com.btxtech.game.jsre.mapeditor;
 
-import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.TopMapPanel;
-import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
-import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
-import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.TerrainInfo;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
@@ -46,33 +45,26 @@ import java.util.Map;
 public class Cockpit extends TopMapPanel {
     public static final String HEIGHT = "600px";
     private static final String RADIO_BUTTON_GROUP = "RadioButtonGroup";
-    private TerrainImageSelectorItem selection;
-    private FlexTable surfaceSelector;
-    private ToggleButton deleteButton;
-    private TerrainEditorAsync terrainEditor;
-    private int terrainId;
-    private TerrainImageModifier terrainImageModifier;
-    private SurfaceModifier surfaceModifier;
     private Map<Integer, FlexTable> imageGroup = new HashMap<Integer, FlexTable>();
     private FlexTable controlPanel;
     private int selectorRow;
     private ListBox zIndexSelector;
-    private TerrainData terrainData = new TerrainData();
+    private MapEditorModel mapEditorModel;
+    private TerrainEditorConnection terrainEditorConnection;
 
-    public Cockpit(TerrainEditorAsync terrainEditor, int terrainId) {
-        this.terrainEditor = terrainEditor;
-        this.terrainId = terrainId;
-        setupTerrainImageGroups();
+    public Cockpit() {
     }
 
     @Override
     protected Widget createBody() {
-        terrainImageModifier = new TerrainImageModifier(this);
-        surfaceModifier = new SurfaceModifier(this);
-
         controlPanel = new FlexTable();
         // Delete Button
-        deleteButton = new ToggleButton("Delete");
+        final ToggleButton deleteButton = new ToggleButton("Delete", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                mapEditorModel.setDeleteMode(((ToggleButton) event.getSource()).getValue());
+            }
+        });
         controlPanel.setWidget(0, 0, deleteButton);
         // Save Button
         final Button saveButton = new Button("Save");
@@ -80,106 +72,16 @@ public class Cockpit extends TopMapPanel {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 saveButton.setEnabled(false);
-                terrainEditor.saveTerrainImagePositions(terrainData.getTerrainImagePositions(),
-                        terrainData.getSurfaceRects(),
-                        terrainId,
-                        new AsyncCallback<Void>() {
-                            @Override
-                            public void onFailure(Throwable throwable) {
-                                GwtCommon.handleException(throwable, true);
-                                saveButton.setEnabled(true);
-                            }
-
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                saveButton.setEnabled(true);
-                            }
-                        });
-
+                terrainEditorConnection.save(saveButton);
             }
         });
         controlPanel.setWidget(1, 0, saveButton);
+        setupSelectionModePanel();
         return controlPanel;
     }
 
-    private void setupTerrainImageGroups() {
-        terrainEditor.getTerrainImageGroups(new AsyncCallback<Map<String, Collection<Integer>>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                GwtCommon.handleException(caught, true);
-            }
-
-            @Override
-            public void onSuccess(Map<String, Collection<Integer>> result) {
-                setupSurfaceSelector();
-
-                for (Map.Entry<String, Collection<Integer>> entry : result.entrySet()) {
-                    setupImageSelector(entry);
-                }
-                // Z Index
-                zIndexSelector = new ListBox();
-                zIndexSelector.addItem("Layer 1", TerrainImagePosition.ZIndex.LAYER_1.name());
-                zIndexSelector.addItem("Layer 2", TerrainImagePosition.ZIndex.LAYER_2.name());
-                zIndexSelector.setSelectedIndex(0);
-                zIndexSelector.setEnabled(false);
-                controlPanel.setWidget(controlPanel.getRowCount(), 0, zIndexSelector);
-
-                selectorRow = controlPanel.getRowCount();
-
-                terrainEditor.getTerrainInfo(terrainId, new AsyncCallback<TerrainInfo>() {
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        GwtCommon.handleException(throwable);
-                    }
-
-                    @Override
-                    public void onSuccess(TerrainInfo terrainInfo) {
-                        terrainData.setSurfaceRects(terrainInfo.getSurfaceRects());
-                        terrainData.setTerrainImagePositions(terrainInfo.getTerrainImagePositions());
-                        TerrainView.getInstance().setupTerrain(terrainInfo.getTerrainSettings(),
-                                terrainInfo.getTerrainImagePositions(),
-                                terrainInfo.getSurfaceRects(),
-                                terrainInfo.getSurfaceImages(),
-                                terrainInfo.getTerrainImages(),
-                                terrainInfo.getTerrainImageBackground());
-                        TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
-                        fillTerrainImages(terrainInfo.getTerrainImages());
-                        fillSurfaces(terrainInfo.getSurfaceImages());
-                        RadarPanel.getInstance().onTerrainSettings(terrainInfo.getTerrainSettings());
-                    }
-                });
-
-            }
-        });
-    }
-
-    private void setupImageSelector(Map.Entry<String, Collection<Integer>> entry) {
-        FlexTable imageSelector = new FlexTable();
-        imageSelector.setCellSpacing(5);
-        imageSelector.setCellPadding(3);
-        imageSelector.addStyleName("tile-selector");
-        final ScrollPanel imageScroll = new ScrollPanel(imageSelector);
-        imageScroll.setAlwaysShowScrollBars(true);
-        imageScroll.setHeight(HEIGHT);
-        for (Integer imageId : entry.getValue()) {
-            imageGroup.put(imageId, imageSelector);
-        }
-
-        RadioButton imageButton = new RadioButton(RADIO_BUTTON_GROUP, entry.getKey());
-        imageButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
-                // TODO TerrainView.getInstance().getTerrainMouseHandler().setTerrainMouseMoveListener(terrainImageModifier);
-                controlPanel.setWidget(selectorRow, 0, imageScroll);
-                zIndexSelector.setEnabled(true);
-            }
-        });
-
-        controlPanel.setWidget(controlPanel.getRowCount(), 0, imageButton);
-    }
-
-    private void setupSurfaceSelector() {
-        surfaceSelector = new FlexTable();
+    public void setupSurfaceSelector(TerrainInfo terrainInfo) {
+        FlexTable surfaceSelector = new FlexTable();
         surfaceSelector.setCellSpacing(5);
         surfaceSelector.setCellPadding(3);
         surfaceSelector.addStyleName("tile-selector");
@@ -191,51 +93,129 @@ public class Cockpit extends TopMapPanel {
         surfaceButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
-                // TODO TerrainView.getInstance().getTerrainMouseHandler().setTerrainMouseMoveListener(surfaceModifier);
                 controlPanel.setWidget(selectorRow, 0, surfaceScroll);
                 zIndexSelector.setEnabled(false);
+                mapEditorModel.setActiveLayer(MapEditorModel.ActiveLayer.SURFACE);
+                mapEditorModel.setSelectionMode(false);
             }
         });
         controlPanel.setWidget(controlPanel.getRowCount(), 0, surfaceButton);
+        // Fill surface images
+        for (SurfaceImage surfaceImage : terrainInfo.getSurfaceImages()) {
+            surfaceSelector.setWidget(surfaceSelector.getRowCount(), 0, new SurfaceSelectorItem(surfaceImage, mapEditorModel));
+        }
     }
 
-    private void fillTerrainImages(Collection<TerrainImage> terrainImages) {
-        for (TerrainImage terrainImage : terrainImages) {
+    public void setupImageSelectors(TerrainInfo terrainInfo, Map<String, Collection<Integer>> terrainImageGroups) {
+        for (Map.Entry<String, Collection<Integer>> entry : terrainImageGroups.entrySet()) {
+            setupImageGroupSelector(entry);
+        }
+        // Z Index
+        zIndexSelector = new ListBox();
+        zIndexSelector.addItem("Layer 1", TerrainImagePosition.ZIndex.LAYER_1.name());
+        zIndexSelector.addItem("Layer 2", TerrainImagePosition.ZIndex.LAYER_2.name());
+        zIndexSelector.setSelectedIndex(0);
+        zIndexSelector.setEnabled(false);
+        zIndexSelector.addChangeHandler(new ChangeHandler() {
+            @Override
+            public void onChange(ChangeEvent event) {
+                mapEditorModel.setActiveLayer(zIndexSelector.getSelectedIndex() == 0 ? MapEditorModel.ActiveLayer.IMAGE_LAYER_1 : MapEditorModel.ActiveLayer.IMAGE_LAYER_2);
+            }
+        });
+        controlPanel.setWidget(controlPanel.getRowCount(), 0, zIndexSelector);
+        selectorRow = controlPanel.getRowCount();
+        // Fill Images
+        for (TerrainImage terrainImage : terrainInfo.getTerrainImages()) {
             FlexTable terrainImageSelector = imageGroup.get(terrainImage.getId());
             if (terrainImageSelector == null) {
                 throw new IllegalArgumentException("No group for terrain image: " + terrainImage.getId());
             }
-            terrainImageSelector.setWidget(terrainImageSelector.getRowCount(), 0, new TerrainImageSelectorItem(terrainImage, this));
+            terrainImageSelector.setWidget(terrainImageSelector.getRowCount(), 0, new TerrainImageSelectorItem(terrainImage, this, mapEditorModel));
         }
     }
 
-    private void fillSurfaces(Collection<SurfaceImage> surfaceImages) {
-        for (SurfaceImage surfaceImage : surfaceImages) {
-            surfaceSelector.setWidget(surfaceSelector.getRowCount(), 0, new SurfaceSelectorItem(terrainData, surfaceImage));
-        }
-    }
-
-    public void onSelectionChanged(TerrainImageSelectorItem newSelection) {
-        if (selection == newSelection) {
-            return;
-        }
-        if (selection != null) {
-            selection.setSelected(false);
+    private void setupImageGroupSelector(Map.Entry<String, Collection<Integer>> imageGroupEntry) {
+        FlexTable imageSelector = new FlexTable();
+        imageSelector.setCellSpacing(5);
+        imageSelector.setCellPadding(3);
+        imageSelector.addStyleName("tile-selector");
+        final ScrollPanel imageScroll = new ScrollPanel(imageSelector);
+        imageScroll.setAlwaysShowScrollBars(true);
+        imageScroll.setHeight(HEIGHT);
+        for (Integer imageId : imageGroupEntry.getValue()) {
+            imageGroup.put(imageId, imageSelector);
         }
 
-        selection = newSelection;
-        selection.setSelected(true);
+        RadioButton imageGroupButton = new RadioButton(RADIO_BUTTON_GROUP, imageGroupEntry.getKey());
+        imageGroupButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
+                controlPanel.setWidget(selectorRow, 0, imageScroll);
+                zIndexSelector.setEnabled(true);
+                mapEditorModel.setActiveLayer(zIndexSelector.getSelectedIndex() == 0 ? MapEditorModel.ActiveLayer.IMAGE_LAYER_1 : MapEditorModel.ActiveLayer.IMAGE_LAYER_2);
+                mapEditorModel.setSelectionMode(false);
+            }
+        });
+
+        controlPanel.setWidget(controlPanel.getRowCount(), 0, imageGroupButton);
     }
 
-    public boolean isDeleteModus() {
-        return deleteButton.isDown();
+    private void setupSelectionModePanel() {
+        RadioButton selectionModeButton = new RadioButton(RADIO_BUTTON_GROUP, "Selection Operation");
+        selectionModeButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
+                controlPanel.setWidget(selectorRow, 0, createSelectionOperationPanel());
+                zIndexSelector.setEnabled(false);
+                mapEditorModel.setSelectionMode(true);
+            }
+        });
+        controlPanel.setWidget(controlPanel.getRowCount(), 0, selectionModeButton);
     }
 
-    public TerrainImagePosition.ZIndex getSelectedZIndex() {
-        return TerrainImagePosition.ZIndex.valueOf(zIndexSelector.getValue(zIndexSelector.getSelectedIndex()));
+    private Widget createSelectionOperationPanel() {
+        FlexTable flexTable = new FlexTable();
+        CheckBox surfaceCheckBox = new CheckBox("Surface");
+        surfaceCheckBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                mapEditorModel.setSelectionModeSurface(event.getValue());
+            }
+        });
+        surfaceCheckBox.setValue(mapEditorModel.isSelectionModeSurface());
+        flexTable.setWidget(0, 0, surfaceCheckBox);
+        CheckBox surfaceLayer1 = new CheckBox("Layer 1");
+        surfaceLayer1.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                mapEditorModel.setSelectionModeLayer1(event.getValue());
+            }
+        });
+        surfaceLayer1.setValue(mapEditorModel.isSelectionModeLayer1());
+        flexTable.setWidget(1, 0, surfaceLayer1);
+        CheckBox surfaceLayer2 = new CheckBox("Layer 2");
+        surfaceLayer2.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                mapEditorModel.setSelectionModeLayer2(event.getValue());
+            }
+        });
+        surfaceLayer2.setValue(mapEditorModel.isSelectionModeLayer2());
+        flexTable.setWidget(2, 0, surfaceLayer2);
+        flexTable.setWidget(3, 0, new Button("Delete", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                mapEditorModel.deleteTerrainImageSurfaceGroup();
+            }
+        }));
+        return flexTable;
     }
 
-    public TerrainData getTerrainData() {
-        return terrainData;
+    public void setMapEditorModel(MapEditorModel mapEditorModel) {
+        this.mapEditorModel = mapEditorModel;
+    }
+
+    public void setTerrainEditorConnection(TerrainEditorConnection terrainEditorConnection) {
+        this.terrainEditorConnection = terrainEditorConnection;
     }
 }

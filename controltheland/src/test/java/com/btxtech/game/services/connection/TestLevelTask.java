@@ -31,7 +31,7 @@ public class TestLevelTask extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void realGameInfo() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         UserGuidanceServiceImpl userGuidanceServiceImpl = (UserGuidanceServiceImpl) deAopProxy(userGuidanceService);
 
@@ -66,7 +66,7 @@ public class TestLevelTask extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void packetSending() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         UserGuidanceServiceImpl userGuidanceServiceImpl = (UserGuidanceServiceImpl) deAopProxy(userGuidanceService);
 

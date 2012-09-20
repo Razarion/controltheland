@@ -1,7 +1,7 @@
 package com.btxtech.game.jsre.common.gameengine;
 
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 
 /**
  * User: beat

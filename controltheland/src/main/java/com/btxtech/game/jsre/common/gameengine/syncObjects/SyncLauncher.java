@@ -63,7 +63,7 @@ public class SyncLauncher extends SyncBaseAbility {
         }
         try {
             if (getProjectileItemType().getPrice() > 0) {
-                getServices().getBaseService().withdrawalMoney(buildFactor * (double) getProjectileItemType().getPrice(), getSyncBaseItem().getBase());
+                getPlanetServices().getBaseService().withdrawalMoney(buildFactor * (double) getProjectileItemType().getPrice(), getSyncBaseItem().getBase());
             }
             buildup += buildFactor;
             getSyncBaseItem().fireItemChanged(SyncItemListener.Change.LAUNCHER_PROGRESS);
@@ -94,7 +94,7 @@ public class SyncLauncher extends SyncBaseAbility {
 
     public ProjectileItemType getProjectileItemType() throws NoSuchItemTypeException {
         if(projectileItemType == null) {
-            projectileItemType = (ProjectileItemType) getServices().getItemService().getItemType(launcherType.getProjectileItemType());
+            projectileItemType = (ProjectileItemType) getGlobalServices().getItemTypeService().getItemType(launcherType.getProjectileItemType());
         }
         return projectileItemType;
     }
@@ -109,22 +109,14 @@ public class SyncLauncher extends SyncBaseAbility {
             throw new IllegalStateException(this + " range too big for projectile");
         }
 
-        if (!getServices().getTerritoryService().isAllowed(getSyncItemArea().getPosition(), getSyncBaseItem())) {
-            throw new IllegalArgumentException(this + " Can not launch on territory:" + getSyncItemArea().getPosition());
-        }
-
-        if (!getServices().getTerritoryService().isAllowed(command.getTarget(), getLauncherType().getProjectileItemType())) {
-            throw new IllegalArgumentException(this + " Projectile not allowed on territory:" + command.getTarget());
-        }
-
-        SyncProjectileItem projectile = (SyncProjectileItem) getServices().getItemService().createSyncObject(getProjectileItemType(), getSyncItemArea().getPosition(), getSyncBaseItem(), getSyncBaseItem().getBase(), 0);
+        SyncProjectileItem projectile = (SyncProjectileItem) getPlanetServices().getItemService().createSyncObject(getProjectileItemType(), getSyncItemArea().getPosition(), getSyncBaseItem(), getSyncBaseItem().getBase(), 0);
         if (projectile != null) {
             getSyncItemArea().turnTo(command.getTarget());
             buildup = 0;
             getSyncBaseItem().fireItemChanged(SyncItemListener.Change.LAUNCHER_PROGRESS);
             projectile.setTarget(command.getTarget());
-            getServices().getActionService().syncItemActivated(projectile);
-            getServices().getConnectionService().sendSyncInfo(projectile);
+            getPlanetServices().getActionService().syncItemActivated(projectile);
+            getGlobalServices().getConnectionService().sendSyncInfo(projectile);
         }
     }
 

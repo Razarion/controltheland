@@ -1,15 +1,16 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.packets.Message;
-import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
+import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.jsre.common.packets.XpPacket;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.planet.BaseService;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.UserService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -23,18 +24,15 @@ import org.springframework.test.annotation.DirtiesContext;
  */
 public class TestResurrection extends AbstractServiceTest {
     @Autowired
-    private BaseService baseService;
-    @Autowired
     private UserService userService;
     @Autowired
-    private UserGuidanceService userGuidanceService;
+    private PlanetSystemService planetSystemService;
 
     @Test
     @DirtiesContext
     public void testOnlineSell() throws Exception {
-        configureRealGame();
-
-        System.out.println("***** testOnlineSell *****");
+        configureSimplePlanet();
+        BaseService baseService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -76,9 +74,8 @@ public class TestResurrection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testOffline() throws Exception {
-        configureRealGame();
-
-        System.out.println("***** testOffline *****");
+        configureSimplePlanet();
+        BaseService baseService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -90,7 +87,7 @@ public class TestResurrection extends AbstractServiceTest {
         String targetName = baseService.getBaseName(targetBase);
         Id target = getFirstSynItemId(targetBase, TEST_START_BUILDER_ITEM_ID);
         clearPackets();
-        assertWholeItemCount(1);
+        assertWholeItemCount(TEST_PLANET_1_ID, 1);
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -110,11 +107,11 @@ public class TestResurrection extends AbstractServiceTest {
         waitForActionServiceDone();
         Id actorAttacker = getFirstSynItemId(actorBase, TEST_ATTACK_ITEM_ID);
         clearPackets();
-        assertWholeItemCount(4);
+        assertWholeItemCount(TEST_PLANET_1_ID, 4);
         sendAttackCommand(actorAttacker, target);
         waitForActionServiceDone();
         Assert.assertEquals(1, baseService.getBases().size());
-        assertWholeItemCount(3);
+        assertWholeItemCount(TEST_PLANET_1_ID, 3);
 
         Message message = new Message();
         message.setMessage("You defeated U1");
@@ -123,7 +120,7 @@ public class TestResurrection extends AbstractServiceTest {
         baseChangedPacket.setType(BaseChangedPacket.Type.REMOVED);
         baseChangedPacket.setBaseAttributes(new BaseAttributes(targetBase, targetName, false));
         XpPacket xpPacket = new XpPacket();
-        xpPacket.setXp(3);
+        xpPacket.setXp(1);
         xpPacket.setXp2LevelUp(Integer.MAX_VALUE);
         Thread.sleep(3000);
 
@@ -142,7 +139,7 @@ public class TestResurrection extends AbstractServiceTest {
         Message message2 = new Message();
         message2.setMessage("You lost your base. A new base was created.");
         assertPackagesIgnoreSyncItemInfoAndClear(message2);
-        assertWholeItemCount(4);
+        assertWholeItemCount(TEST_PLANET_1_ID, 4);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

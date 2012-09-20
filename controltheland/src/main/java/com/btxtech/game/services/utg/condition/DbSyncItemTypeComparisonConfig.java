@@ -18,7 +18,7 @@ import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.SyncItemTypeComparisonConfig;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
@@ -48,7 +48,7 @@ public class DbSyncItemTypeComparisonConfig extends DbAbstractComparisonConfig i
 
     public Set<DbComparisonItemCount> getDbComparisonItemCounts() {
         if (dbComparisonItemCounts == null) {
-            dbComparisonItemCounts = new HashSet<DbComparisonItemCount>();
+            dbComparisonItemCounts = new HashSet<>();
         }
         return dbComparisonItemCounts;
     }
@@ -60,27 +60,27 @@ public class DbSyncItemTypeComparisonConfig extends DbAbstractComparisonConfig i
     public CrudChildServiceHelper<DbComparisonItemCount> getCrudDbComparisonItemCount() {
         if (dbComparisonItemCountCrudServiceHelper == null) {
             if (dbComparisonItemCounts == null) {
-                dbComparisonItemCounts = new HashSet<DbComparisonItemCount>();
+                dbComparisonItemCounts = new HashSet<>();
             }
-            dbComparisonItemCountCrudServiceHelper = new CrudChildServiceHelper<DbComparisonItemCount>(dbComparisonItemCounts, DbComparisonItemCount.class, this);
+            dbComparisonItemCountCrudServiceHelper = new CrudChildServiceHelper<>(dbComparisonItemCounts, DbComparisonItemCount.class, this);
         }
         return dbComparisonItemCountCrudServiceHelper;
     }
 
     @Override
-    public AbstractComparisonConfig createComparisonConfig(ItemService itemService) {
-        Map<ItemType, Integer> itemTypeCount = new HashMap<ItemType, Integer>();
+    public AbstractComparisonConfig createComparisonConfig(ServerItemTypeService serverItemTypeService) {
+        Map<ItemType, Integer> itemTypeCount = new HashMap<>();
         for (DbComparisonItemCount dbComparisonItemCount : dbComparisonItemCounts) {
-            itemTypeCount.put(itemService.getItemType(dbComparisonItemCount.getItemType()), dbComparisonItemCount.getCount());
+            itemTypeCount.put(serverItemTypeService.getItemType(dbComparisonItemCount.getItemType()), dbComparisonItemCount.getCount());
         }
 
-        return new SyncItemTypeComparisonConfig(getExcludedTerritoryId(), itemTypeCount, getHtmlProgressTemplate());
+        return new SyncItemTypeComparisonConfig(itemTypeCount, getHtmlProgressTemplate());
     }
 
     @Override
     protected DbAbstractComparisonConfig createCopy() {
         DbSyncItemTypeComparisonConfig copy = new DbSyncItemTypeComparisonConfig();
-        copy.dbComparisonItemCounts = new HashSet<DbComparisonItemCount>();
+        copy.dbComparisonItemCounts = new HashSet<>();
         getCrudDbComparisonItemCount().copyTo(copy.getCrudDbComparisonItemCount());
         return copy;
     }

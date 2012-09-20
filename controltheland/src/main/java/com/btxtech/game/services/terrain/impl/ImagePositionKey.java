@@ -4,12 +4,12 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.services.terrain.DbTerrainImagePosition;
 
-class ImagePositionKey {
+public class ImagePositionKey {
     private Index position;
     private int imageId;
     private TerrainImagePosition.ZIndex zIndex;
 
-    ImagePositionKey(TerrainImagePosition terrainImagePosition) {
+    public ImagePositionKey(TerrainImagePosition terrainImagePosition) {
         position = terrainImagePosition.getTileIndex();
         imageId = terrainImagePosition.getImageId();
         zIndex = terrainImagePosition.getzIndex();

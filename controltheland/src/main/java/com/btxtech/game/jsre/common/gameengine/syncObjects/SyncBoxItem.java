@@ -15,7 +15,8 @@ package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoxItemType;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 
 /**
  * User: beat
@@ -26,8 +27,8 @@ public class SyncBoxItem extends SyncItem {
     private long createdTimeStamp; // Is not synchronized
     private boolean alive; // Synchronized in super class
 
-    public SyncBoxItem(Id id, Index position, BoxItemType boxItemType, Services services) {
-        super(id, position, boxItemType, services);
+    public SyncBoxItem(Id id, Index position, BoxItemType boxItemType, GlobalServices globalServices, PlanetServices planetServices) {
+        super(id, position, boxItemType, globalServices, planetServices);
         createdTimeStamp = System.currentTimeMillis();
         alive = true;
     }

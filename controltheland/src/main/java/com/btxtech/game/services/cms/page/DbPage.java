@@ -167,12 +167,17 @@ public class DbPage implements CrudChild {
 
         DbPage dbPage = (DbPage) o;
 
-        // Use getId() due to lazy loading
+        // Use getBaseId() due to lazy loading
         return id != null && id.equals(dbPage.getId());
     }
 
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : System.identityHashCode(this);
+    }
+
+    @Override
+    public String toString() {
+        return "DbPage: " + id;
     }
 }

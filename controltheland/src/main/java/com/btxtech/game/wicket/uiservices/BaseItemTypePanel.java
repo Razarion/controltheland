@@ -13,7 +13,7 @@
 
 package com.btxtech.game.wicket.uiservices;
 
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeI;
 import org.apache.wicket.markup.html.basic.Label;
@@ -30,7 +30,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  */
 public class BaseItemTypePanel extends Panel {
     @SpringBean
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
 
     public BaseItemTypePanel(String id) {
         super(id);
@@ -51,7 +51,7 @@ public class BaseItemTypePanel extends Panel {
             @Override
             public void setObject(Integer integer) {
                 if (integer != null) {
-                    DbBaseItemType dbItemTypeI = itemService.getDbBaseItemType(integer);
+                    DbBaseItemType dbItemTypeI = serverItemTypeService.getDbBaseItemType(integer);
                     if (dbItemTypeI == null) {
                         error("Item type does not exist: " + integer);
                         return;

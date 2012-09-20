@@ -2,6 +2,7 @@ package com.btxtech.game.services.collision.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.collision.impl.FunnelAlgorithm;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainImageService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import junit.framework.Assert;
@@ -18,12 +19,16 @@ import java.util.List;
  * Time: 11:19
  */
 public class TestFunnelAlgorithm {
-    private TerrainSettings terrainSettings = new TerrainSettings(400, 400, 100, 100);
+    private TerrainSettings terrainSettings = new TerrainSettings(400, 400);
     private AbstractTerrainServiceImpl terrainService;
 
     @Before
     public void setup() {
         terrainService = new AbstractTerrainServiceImpl() {
+            @Override
+            protected AbstractTerrainImageService getAbstractTerrainImageService() {
+                return null;
+            }
         };
         terrainService.setTerrainSettings(terrainSettings);
     }

@@ -1,7 +1,7 @@
 package com.btxtech.game.jsre.client.utg.tip.tiptask;
 
-import com.btxtech.game.jsre.client.utg.tip.visualization.GameTipVisualization;
 import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
+import com.btxtech.game.jsre.client.utg.tip.visualization.GameTipVisualization;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 
 /**

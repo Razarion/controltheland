@@ -1,7 +1,7 @@
 package com.btxtech.game.wicket.pages.mgmt.items;
 
 import com.btxtech.game.jsre.client.common.RadarMode;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBuilderType;
 import com.btxtech.game.services.item.itemType.DbConsumerType;
@@ -40,7 +40,7 @@ import java.util.Collection;
  */
 public class BaseItemTypeAbilityEditor extends MgmtWebPage {
     @SpringBean
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
     private DbBaseItemType dbBaseItemType;
     private boolean movable;
     private int speed;
@@ -145,8 +145,8 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
 
     private void loadDataToSession() {
         // Prevent circular object from with same id -> Hibernate problem
-        baseItemTypes = itemService.getDbBaseItemTypes();
-        projectileItemTypes = itemService.getDbProjectileItemTypes();
+        baseItemTypes = serverItemTypeService.getDbBaseItemTypes();
+        projectileItemTypes = serverItemTypeService.getDbProjectileItemTypes();
         this.dbBaseItemType = ItemsUtil.getItemType4Id(dbBaseItemTypeId, baseItemTypes);
     }
 
@@ -384,7 +384,7 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
         } else {
             dbBaseItemType.setDbSpecialType(null);
         }
-        itemService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
     }
 
 }

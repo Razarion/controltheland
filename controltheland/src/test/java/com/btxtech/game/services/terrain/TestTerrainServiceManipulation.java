@@ -1,19 +1,10 @@
 package com.btxtech.game.services.terrain;
 
-import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.services.AbstractServiceTest;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * User: beat
@@ -22,11 +13,14 @@ import java.util.List;
  */
 public class TestTerrainServiceManipulation extends AbstractServiceTest {
     @Autowired
-    private TerrainService terrainService;
+    private TerrainImageService terrainService;
 
     @Test
     @DirtiesContext
     public void testSaveEmptyMap() {
+        Assert.fail();
+        // TODO
+        /*
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbTerrainSetting dbTerrainSetting = setupMinimalTerrain();
@@ -367,7 +361,7 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
                     || dbSurfaceRect.getRectangle().getHeight() > height) {
                 Assert.fail("SurfaceRect is out of band");
             }
-        }
+        }*/
     }
 
 

@@ -54,8 +54,6 @@ public class GenericBaseItem extends GenericItem {
     private Double destinationAngel;
     @OneToOne(fetch = FetchType.LAZY)
     private GenericBaseItem baseTarget;
-    @OneToOne(fetch = FetchType.LAZY)
-    private GenericResourceItem resourceTarget;
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbBase base;
     private double buildup;
@@ -183,14 +181,6 @@ public class GenericBaseItem extends GenericItem {
 
     public double getAngel() {
         return angel;
-    }
-
-    public void setResourceTarget(GenericResourceItem resourceTarget) {
-        this.resourceTarget = resourceTarget;
-    }
-
-    public GenericItem getResourceTarget() {
-        return resourceTarget;
     }
 
     public Double getReloadProgress() {

@@ -14,7 +14,7 @@ package com.btxtech.game.wicket.pages.cms;
 
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.services.common.Utils;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import org.apache.wicket.AbortException;
@@ -36,7 +36,7 @@ public class CmsItemTypeImageResource extends WebResource {
     private static final String ID = "id";
 
     @SpringBean
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
 
     public static Image createImage(String id, DbItemType dbItemType) {
         return new Image(id, new ResourceReference(CMS_SHARED_IMAGE_RESOURCES), new ValueMap(ID + "=" + dbItemType.getId()));
@@ -51,7 +51,7 @@ public class CmsItemTypeImageResource extends WebResource {
     public IResourceStream getResourceStream() {
         try {
             int itmTypeId = Utils.parseIntSave(getParameters().getString(ID));
-            DbItemTypeImage dbItemTypeImage = itemService.getCmsDbItemTypeImage(itmTypeId);
+            DbItemTypeImage dbItemTypeImage = serverItemTypeService.getCmsDbItemTypeImage(itmTypeId);
             return new ByteArrayResource(dbItemTypeImage.getContentType(), dbItemTypeImage.getData()).getResourceStream();
         } catch (NoSuchItemTypeException e) {
             throw new AbortException();

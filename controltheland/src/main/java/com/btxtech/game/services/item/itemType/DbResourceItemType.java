@@ -15,6 +15,7 @@ package com.btxtech.game.services.item.itemType;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 

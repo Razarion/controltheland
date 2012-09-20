@@ -18,7 +18,7 @@ import com.btxtech.game.jsre.common.gameengine.services.bot.BotItemConfig;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
 
@@ -51,7 +51,7 @@ public class DbBotEnragementStateConfig implements CrudChild<DbBotConfig>, CrudP
     private Collection<DbBotItemConfig> botItems;
     private String name;
     private Integer enrageUpKills;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private DbBotConfig dbBotConfig;
 
     @Transient
@@ -102,11 +102,11 @@ public class DbBotEnragementStateConfig implements CrudChild<DbBotConfig>, CrudP
         return botItemCrud;
     }
 
-    public BotEnragementStateConfig createBotEnragementStateConfigg(ItemService itemService) {
+    public BotEnragementStateConfig createBotEnragementStateConfigg(ServerItemTypeService serverItemTypeService) {
         Collection<BotItemConfig> botItems = new ArrayList<>();
         if (this.botItems != null) {
             for (DbBotItemConfig botItem : this.botItems) {
-                botItems.add(botItem.createBotItemConfig(itemService));
+                botItems.add(botItem.createBotItemConfig(serverItemTypeService));
             }
         }
         return new BotEnragementStateConfig(name, botItems, enrageUpKills);

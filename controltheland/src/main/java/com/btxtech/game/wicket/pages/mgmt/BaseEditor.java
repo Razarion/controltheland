@@ -19,10 +19,8 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.connection.ConnectionService;
-import com.btxtech.game.services.energy.ServerEnergyService;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.connection.ServerConnectionService;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -52,19 +50,15 @@ import java.util.Set;
 public class BaseEditor extends MgmtWebPage {
     public static final String NO_POS = "-";
     @SpringBean
-    private ItemService itemService;
+    private ServerConnectionService serverConnectionService;
     @SpringBean
-    private BaseService baseService;
-    @SpringBean
-    private ConnectionService connectionService;
-    @SpringBean
-    private ServerEnergyService energyService;
-    private HashSet<Id> itemsToKill = new HashSet<Id>();
+    private PlanetSystemService planetSystemService;
+    private HashSet<Id> itemsToKill = new HashSet<>();
     private Rectangle selection = new Rectangle(0, 0, 0, 0);
     private SimpleBase simpleBase;
 
     public static TextField<String> createReadonlyTextFiled(String id) {
-        TextField<String> field = new TextField<String>(id);
+        TextField<String> field = new TextField<>(id);
         field.setEnabled(false);
         return field;
     }
@@ -80,7 +74,7 @@ public class BaseEditor extends MgmtWebPage {
             @Override
             protected void onSubmit() {
                 itemsToKill.clear();
-                for (SyncBaseItem syncBaseItem : baseService.getBase(simpleBase).getItems()) {
+                for (SyncBaseItem syncBaseItem : planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getBase(simpleBase).getItems()) {
                     if (syncBaseItem.getSyncItemArea().contains(selection)) {
                         itemsToKill.add(syncBaseItem.getId());
                     }
@@ -120,7 +114,7 @@ public class BaseEditor extends MgmtWebPage {
         form.add(new Label("name", new IModel<String>() {
             @Override
             public String getObject() {
-                return baseService.getBaseName(simpleBase);
+                return planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getBaseName(simpleBase);
             }
 
             @Override
@@ -131,16 +125,16 @@ public class BaseEditor extends MgmtWebPage {
             public void detach() {
             }
         }));
-        form.add(new Label("bot", new Model<String>(baseService.isBot(simpleBase) ? "Yes" : "No")));
-        form.add(new TextField<String>("accountBalance", new IModel<String>() {
+        form.add(new Label("bot", new Model<>(planetSystemService.getServerPlanetServices(simpleBase).getBaseService().isBot(simpleBase) ? "Yes" : "No")));
+        form.add(new TextField<>("accountBalance", new IModel<String>() {
             @Override
             public String getObject() {
-                return Double.toString(baseService.getBase(simpleBase).getAccountBalance());
+                return Double.toString(planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getBase(simpleBase).getAccountBalance());
             }
 
             @Override
             public void setObject(String s) {
-                baseService.getBase(simpleBase).setAccountBalance(Double.parseDouble(s));
+                planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getBase(simpleBase).setAccountBalance(Double.parseDouble(s));
             }
 
             @Override
@@ -150,7 +144,7 @@ public class BaseEditor extends MgmtWebPage {
         form.add(new Label("energy", new IModel<String>() {
             @Override
             public String getObject() {
-                return energyService.getConsuming(simpleBase) + "/" + energyService.getGenerating(simpleBase);
+                return planetSystemService.getServerPlanetServices(simpleBase).getEnergyService().getConsuming(simpleBase) + "/" + planetSystemService.getServerPlanetServices(simpleBase).getEnergyService().getGenerating(simpleBase);
             }
 
             @Override
@@ -166,7 +160,7 @@ public class BaseEditor extends MgmtWebPage {
         form.add(new Label("itemCount", new IModel<Integer>() {
             @Override
             public Integer getObject() {
-                return baseService.getBase(simpleBase).getItems().size();
+                return planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getBase(simpleBase).getItems().size();
             }
 
             @Override
@@ -189,7 +183,7 @@ public class BaseEditor extends MgmtWebPage {
                     item.add(new Label("id", item.getModelObject().getId().toString()));
                     item.add(new Label("itemType", item.getModelObject().getItemType().getName()));
 
-                    item.add(new TextField<String>("health", new IModel<String>() {
+                    item.add(new TextField<>("health", new IModel<String>() {
                         @Override
                         public String getObject() {
                             return Integer.toString((int) item.getModelObject().getHealth());
@@ -205,7 +199,7 @@ public class BaseEditor extends MgmtWebPage {
                         }
                     }));
 
-                    item.add(new TextField<String>("xPos", new IModel<String>() {
+                    item.add(new TextField<>("xPos", new IModel<String>() {
                         @Override
                         public String getObject() {
                             if (item.getModelObject().getSyncItemArea().hasPosition()) {
@@ -230,7 +224,7 @@ public class BaseEditor extends MgmtWebPage {
                         public void detach() {
                         }
                     }));
-                    item.add(new TextField<String>("yPos", new IModel<String>() {
+                    item.add(new TextField<>("yPos", new IModel<String>() {
                         @Override
                         public String getObject() {
                             if (item.getModelObject().getSyncItemArea().hasPosition()) {
@@ -259,8 +253,8 @@ public class BaseEditor extends MgmtWebPage {
                     Button killButton = new Button("kill") {
                         @Override
                         public void onSubmit() {
-                            itemService.killSyncItem(item.getModelObject(), null, true, false);
-                            if (baseService.getBase(simpleBase) == null) {
+                            planetSystemService.getServerPlanetServices(simpleBase).getItemService().killSyncItem(item.getModelObject(), null, true, false);
+                            if (planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getBase(simpleBase) == null) {
                                 setResponsePage(BasesTable.class);
                             }
 
@@ -290,7 +284,7 @@ public class BaseEditor extends MgmtWebPage {
                     }));
 
                     // alternating row color
-                    item.add(new AttributeModifier("class", true, new Model<String>(item.getIndex() % 2 == 0 ? "even" : "odd")));
+                    item.add(new AttributeModifier("class", true, new Model<>(item.getIndex() % 2 == 0 ? "even" : "odd")));
 
                 } catch (RuntimeException e) {
                     if (e.getCause() instanceof ItemDoesNotExistException) {
@@ -306,10 +300,10 @@ public class BaseEditor extends MgmtWebPage {
                         };
                         killButton.setEnabled(false);
                         item.add(killButton);
-                        CheckBox checkBox = new CheckBox("select", new Model<Boolean>(false));
+                        CheckBox checkBox = new CheckBox("select", new Model<>(false));
                         item.add(checkBox);
                         // alternating row color
-                        item.add(new AttributeModifier("class", true, new Model<String>(item.getIndex() % 2 == 0 ? "even" : "odd")));
+                        item.add(new AttributeModifier("class", true, new Model<>(item.getIndex() % 2 == 0 ? "even" : "odd")));
                     } else {
                         throw e;
                     }
@@ -320,8 +314,8 @@ public class BaseEditor extends MgmtWebPage {
         form.add(new Button("killSelected") {
             @Override
             public void onSubmit() {
-                itemService.killSyncItemIds(itemsToKill);
-                if (baseService.getBase(simpleBase) == null) {
+                planetSystemService.getServerPlanetServices(simpleBase).getItemService().killSyncItemIds(itemsToKill);
+                if (planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getBase(simpleBase) == null) {
                     setResponsePage(BasesTable.class);
                 }
             }
@@ -330,10 +324,10 @@ public class BaseEditor extends MgmtWebPage {
         form.add(new Button("apply") {
             @Override
             public void onSubmit() {
-                Set<SyncBaseItem> syncBaseItems = baseService.getBase(simpleBase).getItems();
+                Set<SyncBaseItem> syncBaseItems = planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getBase(simpleBase).getItems();
                 if (!syncBaseItems.isEmpty()) {
-                    baseService.sendAccountBaseUpdate(syncBaseItems.iterator().next());
-                    connectionService.sendSyncInfos(syncBaseItems);
+                    planetSystemService.getServerPlanetServices(simpleBase).getBaseService().sendAccountBaseUpdate(syncBaseItems.iterator().next());
+                    serverConnectionService.sendSyncInfos(syncBaseItems);
                 }
             }
         });
@@ -351,7 +345,7 @@ public class BaseEditor extends MgmtWebPage {
 
         private List<SyncBaseItem> getSyncBaseItem() {
             if (items == null) {
-                items = new ArrayList<SyncBaseItem>(baseService.getBase(simpleBase).getItems());
+                items = new ArrayList<>(planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getBase(simpleBase).getItems());
             }
             return items;
         }
@@ -373,7 +367,7 @@ public class BaseEditor extends MgmtWebPage {
                 @Override
                 protected SyncBaseItem load() {
                     try {
-                        return (SyncBaseItem) itemService.getItem(id);
+                        return (SyncBaseItem) planetSystemService.getServerPlanetServices(simpleBase).getItemService().getItem(id);
                     } catch (ItemDoesNotExistException e) {
                         throw new RuntimeException(e);
                     }

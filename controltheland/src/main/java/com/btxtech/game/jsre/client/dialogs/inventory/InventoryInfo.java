@@ -1,9 +1,7 @@
 package com.btxtech.game.jsre.client.dialogs.inventory;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**

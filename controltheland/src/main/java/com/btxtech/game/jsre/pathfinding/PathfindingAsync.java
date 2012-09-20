@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.pathfinding;
 
-import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -22,5 +21,5 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * Time: 12:16:13
  */
 public interface PathfindingAsync {
-    void getTerrainInfo(int terrainId, AsyncCallback<TerrainInfo> async);
+    void getTerrainInfo(int terrainId, AsyncCallback<com.btxtech.game.jsre.common.TerrainInfo> async);
 }

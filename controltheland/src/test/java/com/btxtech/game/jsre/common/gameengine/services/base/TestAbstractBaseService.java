@@ -1,14 +1,16 @@
 package com.btxtech.game.jsre.common.gameengine.services.base;
 
-import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.base.impl.AbstractBaseServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -27,25 +29,25 @@ public class TestAbstractBaseService {
     @Test
     public void isEnemy() {
         Collection<BaseAttributes> allBaseAttributes = new ArrayList<>();
-        SimpleBase bot1 = new SimpleBase(1);
+        SimpleBase bot1 = new SimpleBase(1, 1);
         BaseAttributes baseAttributesBot1 = new BaseAttributes(bot1, "bot1", false);
         baseAttributesBot1.setBot(true);
         allBaseAttributes.add(baseAttributesBot1);
 
-        SimpleBase bot2 = new SimpleBase(2);
+        SimpleBase bot2 = new SimpleBase(2, 1);
         BaseAttributes baseAttributesBot2 = new BaseAttributes(bot2, "bot2", false);
         baseAttributesBot2.setBot(true);
         allBaseAttributes.add(baseAttributesBot2);
 
-        SimpleBase base1 = new SimpleBase(3);
+        SimpleBase base1 = new SimpleBase(3, 1);
         BaseAttributes baseAttributes1 = new BaseAttributes(base1, "base1", false);
         allBaseAttributes.add(baseAttributes1);
 
-        SimpleBase base2 = new SimpleBase(4);
+        SimpleBase base2 = new SimpleBase(4, 1);
         BaseAttributes baseAttributes2 = new BaseAttributes(base2, "base2", false);
         allBaseAttributes.add(baseAttributes2);
 
-        SimpleBase base3 = new SimpleBase(5);
+        SimpleBase base3 = new SimpleBase(5, 1);
         BaseAttributes baseAttributes3 = new BaseAttributes(base3, "base3", false);
         allBaseAttributes.add(baseAttributes3);
 
@@ -133,11 +135,6 @@ public class TestAbstractBaseService {
         }
 
         @Override
-        public LevelScope getLevel(SimpleBase simpleBase) {
-            return null;
-        }
-
-        @Override
         public SimpleBase createBotBase(BotConfig botConfig) {
             return null;
         }
@@ -156,11 +153,25 @@ public class TestAbstractBaseService {
         }
 
         @Override
+        public void sendAccountBaseUpdate(SyncBaseObject syncBaseObject) {
+        }
+
+        @Override
         public void onItemCreated(SyncBaseItem syncBaseItem) {
         }
 
         @Override
         public void onItemDeleted(SyncBaseItem syncBaseItem, SimpleBase actor) {
+        }
+
+        @Override
+        protected GlobalServices getGlobalServices() {
+            return null;  //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        protected PlanetServices getPlanetServices() {
+            return null;
         }
     }
 

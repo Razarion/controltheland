@@ -1,6 +1,6 @@
 package com.btxtech.game.wicket.uiservices;
 
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.wicket.pages.mgmt.items.ItemsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import java.util.StringTokenizer;
 @Component
 public class ServiceHelper {
     @Autowired
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
 
     public String itemTypesToString(Set<DbBaseItemType> dbBaseItemTypes) {
         return ItemsUtil.itemTypesToString(dbBaseItemTypes);
@@ -32,7 +32,7 @@ public class ServiceHelper {
         StringTokenizer st = new StringTokenizer(itemIdString, ItemsUtil.DELIMITER);
         while (st.hasMoreTokens()) {
             int id = Integer.parseInt(st.nextToken());
-            result.add((DbBaseItemType) itemService.getDbItemType(id));
+            result.add((DbBaseItemType) serverItemTypeService.getDbItemType(id));
         }
         return result;
     }

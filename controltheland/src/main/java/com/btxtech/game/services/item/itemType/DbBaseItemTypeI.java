@@ -1,7 +1,5 @@
 package com.btxtech.game.services.item.itemType;
 
-import com.btxtech.game.services.common.CrudChildServiceHelper;
-
 /**
  * User: beat
  * Date: 16.03.2011

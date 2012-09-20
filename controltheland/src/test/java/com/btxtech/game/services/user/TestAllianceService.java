@@ -1,17 +1,18 @@
 package com.btxtech.game.services.user;
 
-import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
-import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
-import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
+import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
+import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.ConnectionServiceTestHelper;
-import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.base.impl.BaseServiceImpl;
-import com.btxtech.game.services.connection.ConnectionService;
+import com.btxtech.game.services.ServerConnectionServiceTestHelper;
+import com.btxtech.game.services.common.ServerGlobalServices;
+import com.btxtech.game.services.common.impl.ServerGlobalServicesImpl;
+import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.mgmt.MgmtService;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.impl.AllianceServiceImpl;
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -35,22 +36,23 @@ public class TestAllianceService extends AbstractServiceTest {
     @Autowired
     private MgmtService mgmtService;
     @Autowired
-    private BaseService baseService;
+    private PlanetSystemService planetSystemService;
+    @Autowired
+    private ServerGlobalServices serverGlobalServices;
 
     @Test
     @DirtiesContext
     public void addAllianceAndBreak() throws Exception {
-        ConnectionService mockConnectionService = EasyMock.createStrictMock(ConnectionService.class);
-        mockConnectionService.sendPacket(new SimpleBase(1), createAllianceOfferPacket("u2"));
-        mockConnectionService.sendPacket(new SimpleBase(2), createMessage("The user u1 has accepted your alliance", false));
-        mockConnectionService.sendPacket(new SimpleBase(2), createMessage("The user u1 has broken the alliance", false));
-        EasyMock.replay(mockConnectionService);
-        setPrivateField(AllianceServiceImpl.class, allianceService, "connectionService", mockConnectionService);
+        ServerConnectionService mockServerConnectionService = EasyMock.createStrictMock(ServerConnectionService.class);
+        mockServerConnectionService.sendPacket(new SimpleBase(1, 1), createAllianceOfferPacket("u2"));
+        mockServerConnectionService.sendPacket(new SimpleBase(2, 1), createMessage("The user u1 has accepted your alliance", false));
+        mockServerConnectionService.sendPacket(new SimpleBase(2, 1), createMessage("The user u1 has broken the alliance", false));
+        EasyMock.replay(mockServerConnectionService);
+        setPrivateField(AllianceServiceImpl.class, allianceService, "serverConnectionService", mockServerConnectionService);
 
-        ConnectionServiceTestHelper connectionServiceTestHelper = new ConnectionServiceTestHelper();
-        setPrivateField(BaseServiceImpl.class, baseService, "connectionService", connectionServiceTestHelper);
-
-        configureRealGame();
+        configureSimplePlanet();
+        ServerConnectionServiceTestHelper connectionServiceTestHelper = new ServerConnectionServiceTestHelper();
+        setPrivateField(ServerGlobalServicesImpl.class, serverGlobalServices, "serverConnectionService", connectionServiceTestHelper);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -76,8 +78,8 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(1));
-        assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(2));
+        assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1));
+        assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(2, 1));
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -93,8 +95,8 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(1), "u2");
-        assertAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(2), "u1");
+        assertAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1), "u2");
+        assertAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(2, 1), "u1");
         connectionServiceTestHelper.clearReceivedPackets();
 
         beginHttpSession();
@@ -109,8 +111,8 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(1));
-        assertAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(2));
+        assertAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1));
+        assertAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(2, 1));
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -134,16 +136,15 @@ public class TestAllianceService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void rejectAlliance() throws Exception {
-        ConnectionService mockConnectionService = EasyMock.createStrictMock(ConnectionService.class);
-        mockConnectionService.sendPacket(new SimpleBase(1), createAllianceOfferPacket("u2"));
-        mockConnectionService.sendPacket(new SimpleBase(2), createMessage("The user u1 has rejected your alliance", false));
-        EasyMock.replay(mockConnectionService);
-        setPrivateField(AllianceServiceImpl.class, allianceService, "connectionService", mockConnectionService);
+        ServerConnectionService mockServerConnectionService = EasyMock.createStrictMock(ServerConnectionService.class);
+        mockServerConnectionService.sendPacket(new SimpleBase(1, 1), createAllianceOfferPacket("u2"));
+        mockServerConnectionService.sendPacket(new SimpleBase(2, 1), createMessage("The user u1 has rejected your alliance", false));
+        EasyMock.replay(mockServerConnectionService);
+        setPrivateField(AllianceServiceImpl.class, allianceService, "serverConnectionService", mockServerConnectionService);
 
-        ConnectionServiceTestHelper connectionServiceTestHelper = new ConnectionServiceTestHelper();
-        setPrivateField(BaseServiceImpl.class, baseService, "connectionService", connectionServiceTestHelper);
-
-        configureRealGame();
+        configureSimplePlanet();
+        ServerConnectionServiceTestHelper connectionServiceTestHelper = new ServerConnectionServiceTestHelper();
+        setPrivateField(ServerGlobalServicesImpl.class, serverGlobalServices, "serverConnectionService", connectionServiceTestHelper);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -169,8 +170,8 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(1));
-        assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(2));
+        assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1));
+        assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(2, 1));
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -186,8 +187,8 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(1));
-        assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(2));
+        assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1));
+        assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(2, 1));
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -211,13 +212,12 @@ public class TestAllianceService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void addAllianceBothUnregistered() throws Exception {
-        ConnectionService mockAllianceConnectionService = EasyMock.createStrictMock(ConnectionService.class);
-        mockAllianceConnectionService.sendPacket(new SimpleBase(2), createMessage("Only registered user can form alliances.", true));
-        setPrivateField(AllianceServiceImpl.class, allianceService, "connectionService", mockAllianceConnectionService);
-        EasyMock.replay(mockAllianceConnectionService);
+        ServerConnectionService mockAllianceServerConnectionService = EasyMock.createStrictMock(ServerConnectionService.class);
+        mockAllianceServerConnectionService.sendPacket(new SimpleBase(2, 1), createMessage("Only registered user can form alliances.", true));
+        setPrivateField(AllianceServiceImpl.class, allianceService, "serverConnectionService", mockAllianceServerConnectionService);
+        EasyMock.replay(mockAllianceServerConnectionService);
 
-
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -247,17 +247,16 @@ public class TestAllianceService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void createDeleteBase() throws Exception {
-        ConnectionService mockAllianceConnectionService = EasyMock.createStrictMock(ConnectionService.class);
-        mockAllianceConnectionService.sendPacket(new SimpleBase(1), createAllianceOfferPacket("u2"));
-        mockAllianceConnectionService.sendPacket(new SimpleBase(2), createMessage("The user u1 has accepted your alliance", false));
-        mockAllianceConnectionService.sendPacket(new SimpleBase(2), createMessage("The user u1 has broken the alliance", false));
-        setPrivateField(AllianceServiceImpl.class, allianceService, "connectionService", mockAllianceConnectionService);
-        EasyMock.replay(mockAllianceConnectionService);
+        ServerConnectionService mockAllianceServerConnectionService = EasyMock.createStrictMock(ServerConnectionService.class);
+        mockAllianceServerConnectionService.sendPacket(new SimpleBase(1, 1), createAllianceOfferPacket("u2"));
+        mockAllianceServerConnectionService.sendPacket(new SimpleBase(2, 1), createMessage("The user u1 has accepted your alliance", false));
+        mockAllianceServerConnectionService.sendPacket(new SimpleBase(2, 1), createMessage("The user u1 has broken the alliance", false));
+        setPrivateField(AllianceServiceImpl.class, allianceService, "serverConnectionService", mockAllianceServerConnectionService);
+        EasyMock.replay(mockAllianceServerConnectionService);
 
-        ConnectionServiceTestHelper connectionServiceTestHelper = new ConnectionServiceTestHelper();
-        setPrivateField(BaseServiceImpl.class, baseService, "connectionService", connectionServiceTestHelper);
-
-        configureRealGame();
+        configureSimplePlanet();
+        ServerConnectionServiceTestHelper connectionServiceTestHelper = new ServerConnectionServiceTestHelper();
+        setPrivateField(ServerGlobalServicesImpl.class, serverGlobalServices, "serverConnectionService", connectionServiceTestHelper);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -330,8 +329,8 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(1), "u2");
-        assertAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(3), "u1");
+        assertAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1), "u2");
+        assertAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(3, 1), "u1");
         assertBaseCreatedPacket(connectionServiceTestHelper, simpleBase3);
 
         beginHttpSession();
@@ -347,13 +346,13 @@ public class TestAllianceService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void addAlliancePartnerUnregistered() throws Exception {
-        ConnectionService mockConnectionService = EasyMock.createStrictMock(ConnectionService.class);
-        mockConnectionService.sendPacket(new SimpleBase(1), createMessage("u2 offers you an alliance. Only registered user can form alliances.", true));
-        mockConnectionService.sendPacket(new SimpleBase(2), createMessage("The player 'Base 1' is not registered. Only registered user can form alliances. Use the chat to persuade him to register!", false));
-        EasyMock.replay(mockConnectionService);
-        setPrivateField(AllianceServiceImpl.class, allianceService, "connectionService", mockConnectionService);
+        ServerConnectionService mockServerConnectionService = EasyMock.createStrictMock(ServerConnectionService.class);
+        mockServerConnectionService.sendPacket(new SimpleBase(1, 1), createMessage("u2 offers you an alliance. Only registered user can form alliances.", true));
+        mockServerConnectionService.sendPacket(new SimpleBase(2, 1), createMessage("The player 'Base 1' is not registered. Only registered user can form alliances. Use the chat to persuade him to register!", false));
+        EasyMock.replay(mockServerConnectionService);
+        setPrivateField(AllianceServiceImpl.class, allianceService, "serverConnectionService", mockServerConnectionService);
 
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -379,7 +378,7 @@ public class TestAllianceService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void backupRestore() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -496,7 +495,7 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpSession();
     }
 
-    private void verifyAlliancesFromUser(String... allianceNames) throws InvalidLevelState {
+    private void verifyAlliancesFromUser(String... allianceNames) throws InvalidLevelStateException {
         Assert.assertEquals(allianceNames.length, allianceService.getAllAlliances().size());
         for (String alliance : allianceService.getAllAlliances()) {
             if (Arrays.binarySearch(allianceNames, alliance) == -1) {
@@ -505,7 +504,7 @@ public class TestAllianceService extends AbstractServiceTest {
         }
     }
 
-    private void verifyAlliances(String... allianceNames) throws InvalidLevelState {
+    private void verifyAlliances(String... allianceNames) throws InvalidLevelStateException {
         RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
         SimpleBase myBase = realGameInfo.getBase();
         for (BaseAttributes baseAttributes : realGameInfo.getAllBase()) {
@@ -526,7 +525,7 @@ public class TestAllianceService extends AbstractServiceTest {
         }
     }
 
-    private void verifyAllianceOffers(String... allianceOfferNames) throws InvalidLevelState {
+    private void verifyAllianceOffers(String... allianceOfferNames) throws InvalidLevelStateException {
         RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
         Assert.assertEquals(allianceOfferNames.length, realGameInfo.getAllianceOffers().size());
         for (AllianceOfferPacket allianceOfferPacket : realGameInfo.getAllianceOffers()) {
@@ -542,8 +541,8 @@ public class TestAllianceService extends AbstractServiceTest {
         return allianceOfferPacket;
     }
 
-    private void assertAlliancesInPackets(ConnectionServiceTestHelper connectionServiceTestHelper, SimpleBase myBase, String... allianceNames) {
-        List<ConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelper.getPacketEntries(myBase, BaseChangedPacket.class);
+    private void assertAlliancesInPackets(ServerConnectionServiceTestHelper connectionServiceTestHelper, SimpleBase myBase, String... allianceNames) {
+        List<ServerConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelper.getPacketEntries(myBase, BaseChangedPacket.class);
         Assert.assertEquals(1, packets.size());
         BaseChangedPacket baseChangedPacket = (BaseChangedPacket) packets.get(0).getPacket();
         Assert.assertEquals(BaseChangedPacket.Type.CHANGED, baseChangedPacket.getType());
@@ -555,24 +554,24 @@ public class TestAllianceService extends AbstractServiceTest {
         }
     }
 
-    private void assertBaseDeletedPacket(ConnectionServiceTestHelper connectionServiceTestHelper, SimpleBase deletedBase) {
-        List<ConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelper.getPacketEntriesToAllBases(BaseChangedPacket.class);
+    private void assertBaseDeletedPacket(ServerConnectionServiceTestHelper connectionServiceTestHelper, SimpleBase deletedBase) {
+        List<ServerConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelper.getPacketEntriesToAllBases(BaseChangedPacket.class);
         Assert.assertEquals(1, packets.size());
         BaseChangedPacket baseChangedPacket = (BaseChangedPacket) packets.get(0).getPacket();
         Assert.assertEquals(BaseChangedPacket.Type.REMOVED, baseChangedPacket.getType());
         Assert.assertEquals(deletedBase, baseChangedPacket.getBaseAttributes().getSimpleBase());
     }
 
-    private void assertBaseCreatedPacket(ConnectionServiceTestHelper connectionServiceTestHelper, SimpleBase createdBase) {
-        List<ConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelper.getPacketEntriesToAllBases(BaseChangedPacket.class);
+    private void assertBaseCreatedPacket(ServerConnectionServiceTestHelper connectionServiceTestHelper, SimpleBase createdBase) {
+        List<ServerConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelper.getPacketEntriesToAllBases(BaseChangedPacket.class);
         Assert.assertEquals(1, packets.size());
         BaseChangedPacket baseChangedPacket = (BaseChangedPacket) packets.get(0).getPacket();
         Assert.assertEquals(BaseChangedPacket.Type.CREATED, baseChangedPacket.getType());
         Assert.assertEquals(createdBase, baseChangedPacket.getBaseAttributes().getSimpleBase());
     }
 
-    private void assertNoAlliancesInPackets(ConnectionServiceTestHelper connectionServiceTestHelper, SimpleBase myBase) {
-        List<ConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelper.getPacketEntries(myBase, BaseChangedPacket.class);
+    private void assertNoAlliancesInPackets(ServerConnectionServiceTestHelper connectionServiceTestHelper, SimpleBase myBase) {
+        List<ServerConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelper.getPacketEntries(myBase, BaseChangedPacket.class);
         Assert.assertEquals(0, packets.size());
     }
 }

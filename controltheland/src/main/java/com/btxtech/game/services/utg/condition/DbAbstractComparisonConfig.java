@@ -14,8 +14,7 @@
 package com.btxtech.game.services.utg.condition;
 
 import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
-import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.territory.DbTerritory;
+import com.btxtech.game.services.item.ServerItemTypeService;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -25,7 +24,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
 /**
@@ -40,12 +38,12 @@ public abstract class DbAbstractComparisonConfig implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-    @ManyToOne
-    private DbTerritory excludedDbTerritory;
     @Column(length = 1000)
     private String htmlProgressTemplate;
 
-    public abstract AbstractComparisonConfig createComparisonConfig(ItemService itemService);
+    public abstract AbstractComparisonConfig createComparisonConfig(ServerItemTypeService serverItemTypeService);
+
+    protected abstract DbAbstractComparisonConfig createCopy();
 
     public Integer getId() {
         return id;
@@ -66,25 +64,8 @@ public abstract class DbAbstractComparisonConfig implements Serializable {
         return id != null ? id.hashCode() : 0;
     }
 
-    public DbTerritory getExcludedDbTerritory() {
-        return excludedDbTerritory;
-    }
-
-    public void setExcludedDbTerritory(DbTerritory excludedDbTerritory) {
-        this.excludedDbTerritory = excludedDbTerritory;
-    }
-
-    protected Integer getExcludedTerritoryId() {
-        if (excludedDbTerritory == null) {
-            return null;
-        }
-        return excludedDbTerritory.getId();
-    }
-
     public DbAbstractComparisonConfig copy() {
-        DbAbstractComparisonConfig copy = createCopy();
-        copy.setExcludedDbTerritory(excludedDbTerritory);
-        return copy;
+        return createCopy();
     }
 
     public String getHtmlProgressTemplate() {
@@ -94,6 +75,4 @@ public abstract class DbAbstractComparisonConfig implements Serializable {
     public void setHtmlProgressTemplate(String htmlProgressTamplate) {
         this.htmlProgressTemplate = htmlProgressTamplate;
     }
-
-    protected abstract DbAbstractComparisonConfig createCopy();
 }

@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.client.control;
 
-import com.btxtech.game.jsre.client.ClientServices;
+import com.btxtech.game.jsre.client.ClientGlobalServices;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
@@ -156,7 +156,7 @@ public class StartupScreen implements StartupProgressListener {
         this.afterFade = new Runnable() {
             @Override
             public void run() {
-                ClientServices.getInstance().getClientRunner().start(startupSeq);
+                ClientGlobalServices.getInstance().getClientRunner().start(startupSeq);
             }
         };
         attachStartScreen();

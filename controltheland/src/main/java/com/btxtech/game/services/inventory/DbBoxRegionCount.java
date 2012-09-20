@@ -1,6 +1,5 @@
 package com.btxtech.game.services.inventory;
 
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.user.UserService;

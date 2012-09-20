@@ -18,7 +18,7 @@ import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.common.db.IndexUserType;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.TypeDef;
@@ -104,7 +104,7 @@ public class DbConditionConfig implements Serializable {
         return id != null ? id : System.identityHashCode(this);
     }
 
-    public ConditionConfig createConditionConfig(ItemService itemService) {
+    public ConditionConfig createConditionConfig(ServerItemTypeService serverItemTypeService) {
         if (conditionTrigger == null) {
             throw new IllegalStateException("conditionTrigger is null");
         }
@@ -113,7 +113,7 @@ public class DbConditionConfig implements Serializable {
         }
         AbstractComparisonConfig abstractComparisonConfig = null;
         if (conditionTrigger.isComparisonNeeded()) {
-            abstractComparisonConfig = dbAbstractComparisonConfig.createComparisonConfig(itemService);
+            abstractComparisonConfig = dbAbstractComparisonConfig.createComparisonConfig(serverItemTypeService);
         }
         conditionConfig = new ConditionConfig(conditionTrigger, abstractComparisonConfig, radarPositionHint);
         return conditionConfig;

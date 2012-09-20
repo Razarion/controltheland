@@ -2,10 +2,11 @@ package com.btxtech.game.crudtabletest;
 
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.bot.BotService;
-import com.btxtech.game.services.bot.DbBotConfig;
-import com.btxtech.game.services.terrain.TerrainService;
-import com.btxtech.game.wicket.pages.mgmt.bot.BotTable;
+import com.btxtech.game.services.sound.DbSound;
+import com.btxtech.game.services.sound.SoundService;
+import com.btxtech.game.services.terrain.DbSurfaceImage;
+import com.btxtech.game.services.terrain.TerrainImageService;
+import com.btxtech.game.wicket.pages.mgmt.SoundLibrary;
 import com.btxtech.game.wicket.pages.mgmt.TerrainTileEditor;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.util.tester.FormTester;
@@ -27,9 +28,10 @@ public class TestCurdRootTable extends AbstractServiceTest {
     @Autowired
     private ApplicationContext applicationContext;
     @Autowired
-    private BotService botService;
+    private SoundService soundService;
     @Autowired
-    private TerrainService terrainService;
+    private TerrainImageService terrainImageService;
+
 
     @Before
     public void setUp() {
@@ -40,63 +42,58 @@ public class TestCurdRootTable extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSingleTable() throws Exception {
-        configureRealGame();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        tester.startPage(BotTable.class);
-        tester.assertRenderedPage(BotTable.class);
-        // Create new Bot
-        tester.newFormTester("form").submit("create");
+        tester.startPage(SoundLibrary.class);
+        tester.assertRenderedPage(SoundLibrary.class);
+        // Create new Sound
+        tester.newFormTester("form").submit("createSound");
         FormTester formTester = tester.newFormTester("form");
-        formTester.setValue("bots:1:name", "Bot1");
-        formTester.setValue("bots:1:realGameBot", true);
-        formTester.submit("save");
+        formTester.setValue("sounds:1:name", "Value1");
+        formTester.submit("saveSounds");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(1, botService.getDbBotConfigCrudServiceHelper().readDbChildren().size());
-        DbBotConfig dbBotConfig = botService.getDbBotConfigCrudServiceHelper().readDbChildren().iterator().next();
-        Assert.assertEquals(dbBotConfig.getName(), "Bot1");
-        Assert.assertTrue(dbBotConfig.isRealGameBot());
+        Assert.assertEquals(1, soundService.getSoundLibraryCrud().readDbChildren().size());
+        DbSound dbSound = soundService.getSoundLibraryCrud().readDbChildren().iterator().next();
+        Assert.assertEquals(dbSound.getName(), "Value1");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        tester.startPage(BotTable.class);
-        tester.assertRenderedPage(BotTable.class);
-        // Edit Bot
+        tester.startPage(SoundLibrary.class);
+        tester.assertRenderedPage(SoundLibrary.class);
+        // Edit SoundLibrary
         formTester = tester.newFormTester("form");
-        formTester.setValue("bots:1:name", "Bot2");
-        formTester.setValue("bots:1:realGameBot", false);
-        formTester.submit("save");
+        formTester.setValue("sounds:1:name", "Value2");
+        formTester.submit("saveSounds");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(1, botService.getDbBotConfigCrudServiceHelper().readDbChildren().size());
-        dbBotConfig = botService.getDbBotConfigCrudServiceHelper().readDbChildren().iterator().next();
-        Assert.assertEquals(dbBotConfig.getName(), "Bot2");
-        Assert.assertFalse(dbBotConfig.isRealGameBot());
+        Assert.assertEquals(1, soundService.getSoundLibraryCrud().readDbChildren().size());
+        dbSound = soundService.getSoundLibraryCrud().readDbChildren().iterator().next();
+        Assert.assertEquals(dbSound.getName(), "Value2");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        tester.startPage(BotTable.class);
-        tester.assertRenderedPage(BotTable.class);
-        // Delete Bot
-        tester.newFormTester("form").submit("bots:1:delete");
+        tester.startPage(SoundLibrary.class);
+        tester.assertRenderedPage(SoundLibrary.class);
+        // Delete Sound
+        tester.newFormTester("form").submit("sounds:1:delete");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(0, botService.getDbBotConfigCrudServiceHelper().readDbChildren().size());
+        Assert.assertEquals(0, soundService.getSoundLibraryCrud().readDbChildren().size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -104,9 +101,14 @@ public class TestCurdRootTable extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testMultipleCrudTable() throws Exception {
-        configureComplexGameOneRealLevel();
-
-        System.out.println("---------------- START ----------------");
+        // Setup
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbSurfaceImage dbSurfaceImage = terrainImageService.getDbSurfaceImageCrudServiceHelper().createDbChild();
+        dbSurfaceImage.setHtmlBackgroundColor("#000000");
+        terrainImageService.getDbSurfaceImageCrudServiceHelper().updateDbChild(dbSurfaceImage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -124,10 +126,9 @@ public class TestCurdRootTable extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals("#123456", CommonJava.getFirst(terrainService.getDbSurfaceImageCrudServiceHelper().readDbChildren()).getHtmlBackgroundColor());
+        Assert.assertEquals("#123456", CommonJava.getFirst(terrainImageService.getDbSurfaceImageCrudServiceHelper().readDbChildren()).getHtmlBackgroundColor());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-
     }
 
 }

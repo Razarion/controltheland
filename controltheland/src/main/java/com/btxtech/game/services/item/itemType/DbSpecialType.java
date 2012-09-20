@@ -16,8 +16,8 @@ package com.btxtech.game.services.item.itemType;
 import com.btxtech.game.jsre.client.common.RadarMode;
 
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.io.Serializable;
 
 /**

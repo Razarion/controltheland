@@ -1,7 +1,7 @@
 package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
@@ -9,18 +9,17 @@ import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
-import com.btxtech.game.services.utg.DbQuestHub;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.XpService;
-import com.btxtech.game.services.utg.condition.ServerConditionService;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,25 +38,25 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
     @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
-    private BaseService baseService;
-    @Autowired
     private UserService userService;
     @Autowired
     private XpService xpService;
+    @Autowired
+    private PlanetSystemService planetSystemService;
     @Autowired
     private TutorialService tutorialService;
 
     @Test
     @DirtiesContext
     public void noBaseAllowed() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         try {
             getMovableService().getRealGameInfo(START_UID_1);
-            Assert.fail("InvalidLevelState expected");
-        } catch (InvalidLevelState invalidLevelState) {
+            Assert.fail("InvalidLevelStateException expected");
+        } catch (InvalidLevelStateException invalidLevelStateException) {
 
         }
         endHttpRequestAndOpenSessionInViewFilter();
@@ -67,7 +66,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void levelUp() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
         // Verify first level
@@ -90,7 +89,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         Assert.assertTrue(userGuidanceService.isStartRealGame());
         RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
         Assert.assertNotNull(realGameInfo);
-        Assert.assertEquals(1, baseService.getBases().size());
+        Assert.assertEquals(1, planetSystemService.getServerPlanetServices().getBaseService().getBases().size());
         List<DbLevelTask> levelTask = new ArrayList<>(userGuidanceService.getDbLevelCms().getLevelTaskCrud().readDbChildren());
         Assert.assertEquals(2, levelTask.size());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -123,7 +122,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         EasyMock.expect(mockSyncBaseItem.getBaseItemType()).andReturn(mockBaseItemType);
         EasyMock.replay(mockBaseItemType, mockSyncBaseItem);
 
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -142,7 +141,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
 
         // Condition: 220 XP
         Assert.assertEquals(TEST_LEVEL_2_REAL_ID, userState.getDbLevelId());
-        xpService.onItemKilled(baseService.getBase(userState), mockSyncBaseItem);
+        xpService.onItemKilled(userState.getBase().getSimpleBase(), mockSyncBaseItem, planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID));
         Thread.sleep(100);
         Assert.assertEquals(TEST_LEVEL_3_REAL_ID, userState.getDbLevelId());
     }
@@ -150,7 +149,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void levelUpUserOfflineReward() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -171,7 +170,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(TEST_LEVEL_2_REAL_ID, userState.getDbLevelId());
         xpService.onReward(userState, 200);
         Assert.assertEquals(TEST_LEVEL_2_REAL_ID, userState.getDbLevelId());
-        xpService.onReward(userState, 17);
+        xpService.onReward(userState, 19);
         Assert.assertEquals(TEST_LEVEL_2_REAL_ID, userState.getDbLevelId());
         xpService.onReward(userState, 1);
         Assert.assertEquals(TEST_LEVEL_3_REAL_ID, userState.getDbLevelId());
@@ -183,34 +182,35 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
 
-        DbQuestHub startQuestHub = userGuidanceService.getCrudQuestHub().createDbChild();
-        startQuestHub.setRealBaseRequired(false);
-        DbLevel dbSimLevel1 = startQuestHub.getLevelCrud().createDbChild();
+        DbLevel dbSimLevel1 = userGuidanceService.getDbLevelCrud().createDbChild();
         dbSimLevel1.setXp(1);
         dbSimLevel1.setNumber(1);
         DbLevelTask dbSimLevelTask1 = dbSimLevel1.getLevelTaskCrud().createDbChild();
         dbSimLevelTask1.setDbTutorialConfig(createTutorial1());
         dbSimLevelTask1.setXp(1);
+        userGuidanceService.getDbLevelCrud().updateDbChild(dbSimLevel1);
 
-        DbLevel dbSimLevel2 = startQuestHub.getLevelCrud().createDbChild();
+        DbLevel dbSimLevel2 = userGuidanceService.getDbLevelCrud().createDbChild();
         dbSimLevel2.setXp(1);
         dbSimLevel2.setNumber(2);
         DbLevelTask dbSimLevelTask2 = dbSimLevel2.getLevelTaskCrud().createDbChild();
         dbSimLevelTask2.setDbTutorialConfig(createTutorial1());
         dbSimLevelTask2.setXp(1);
-        userGuidanceService.getCrudQuestHub().updateDbChild(startQuestHub);
+        userGuidanceService.getDbLevelCrud().updateDbChild(dbSimLevel2);
 
-        DbQuestHub realGameQuestHub = userGuidanceService.getCrudQuestHub().createDbChild();
+        DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().createDbChild();
         DbBaseItemType dbBaseItemType = createSimpleBuilding();
-        realGameQuestHub.setStartTerritory(setupSimpleTerritory("test", dbBaseItemType.getId()));
-        realGameQuestHub.setStartItemType(dbBaseItemType);
-        DbLevel realGameLevel = realGameQuestHub.getLevelCrud().createDbChild();
+        dbPlanet.setStartItemType(dbBaseItemType);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
+        planetSystemService.activate();
+
+        DbLevel realGameLevel = userGuidanceService.getDbLevelCrud().createDbChild();
         realGameLevel.setNumber(3);
         realGameLevel.setXp(Integer.MAX_VALUE);
         DbLevelTask dbLevelTask = realGameLevel.getLevelTaskCrud().createDbChild();
         dbLevelTask.setDbTutorialConfig(createTutorial1());
-        userGuidanceService.getCrudQuestHub().updateDbChild(realGameQuestHub);
-
+        realGameLevel.setDbPlanet(dbPlanet);
+        userGuidanceService.getDbLevelCrud().updateDbChild(realGameLevel);
         userGuidanceService.activateLevels();
 
         endHttpRequestAndOpenSessionInViewFilter();
@@ -243,7 +243,6 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-
     }
 
     @Test
@@ -252,8 +251,8 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().createDbChild();
-        DbQuestHub dbQuestHub = userGuidanceService.getCrudQuestHub().createDbChild();
-        DbLevel dbLevel = dbQuestHub.getLevelCrud().createDbChild();
+        //DbPlanet dbPlanet = userGuidanceService.getDbLevelCrud().createDbChild();
+        DbLevel dbLevel = userGuidanceService.getDbLevelCrud().createDbChild();
         dbLevel.setXp(100);
         DbLevelTask dbLevelTask0 = dbLevel.getLevelTaskCrud().createDbChild();
         dbLevelTask0.setName("dbLevelTask0");
@@ -269,7 +268,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         dbLevelTask4.setName("dbLevelTask4");
         DbLevelTask dbLevelTask5 = dbLevel.getLevelTaskCrud().createDbChild();
         dbLevelTask5.setName("dbLevelTask5");
-        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub);
+        userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         userGuidanceService.activateLevels();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

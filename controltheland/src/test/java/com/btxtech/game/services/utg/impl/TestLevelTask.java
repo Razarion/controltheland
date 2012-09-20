@@ -6,19 +6,13 @@ import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.CountComparisonConfig;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.history.HistoryService;
-import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.mgmt.MgmtService;
-import com.btxtech.game.services.territory.DbTerritory;
-import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
-import com.btxtech.game.services.utg.DbQuestHub;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
@@ -37,15 +31,7 @@ import org.springframework.test.annotation.DirtiesContext;
  */
 public class TestLevelTask extends AbstractServiceTest {
     @Autowired
-    private ServerConditionService serverConditionService;
-    @Autowired
-    private ItemService itemService;
-    @Autowired
-    private UserService userService;
-    @Autowired
     private UserGuidanceService userGuidanceService;
-    @Autowired
-    private MgmtService mgmtService;
     @Autowired
     private TutorialService tutorialService;
 
@@ -70,10 +56,6 @@ public class TestLevelTask extends AbstractServiceTest {
         mockServerConditionService.onTutorialFinished(userState, 1);
         setPrivateField(UserGuidanceServiceImpl.class, userGuidanceService, "serverConditionService", mockServerConditionService);
 
-        BaseService mockBaseService = EasyMock.createStrictMock(BaseService.class);
-        EasyMock.expect(mockBaseService.getBase(userState)).andReturn(null).anyTimes();
-        setPrivateField(UserGuidanceServiceImpl.class, userGuidanceService, "baseService", mockBaseService);
-
         HistoryService mockHistoryService = EasyMock.createStrictMock(HistoryService.class);
         mockHistoryService.addLevelTaskActivated(EasyMock.eq(userState), EasyMock.<DbLevelTask>anyObject());
         mockHistoryService.addLevelTaskDeactivated(EasyMock.eq(userState), EasyMock.<DbLevelTask>anyObject());
@@ -85,13 +67,12 @@ public class TestLevelTask extends AbstractServiceTest {
         mockHistoryService.addLevelTaskCompletedEntry(EasyMock.eq(userState), EasyMock.<DbLevelTask>anyObject());
         setPrivateField(UserGuidanceServiceImpl.class, userGuidanceService, "historyService", mockHistoryService);
 
-        EasyMock.replay(mockUserService,  mockServerConditionService, mockBaseService, mockHistoryService);
+        EasyMock.replay(mockUserService,  mockServerConditionService,mockHistoryService);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().createDbChild();
-        DbQuestHub dbQuestHub = userGuidanceService.getCrudQuestHub().createDbChild();
-        DbLevel dbLevel1 = dbQuestHub.getLevelCrud().createDbChild();
+        DbLevel dbLevel1 = userGuidanceService.getDbLevelCrud().createDbChild();
         dbLevel1.setXp(100);
         DbLevelTask dbLevelTask0 = dbLevel1.getLevelTaskCrud().createDbChild();
         dbLevelTask0.setName("dbLevelTask0");
@@ -107,7 +88,7 @@ public class TestLevelTask extends AbstractServiceTest {
         DbLevelTask dbLevelTask2 = dbLevel1.getLevelTaskCrud().createDbChild();
         dbLevelTask2.setName("dbLevelTask2");
         dbLevelTask2.setDbTutorialConfig(dbTutorialConfig);
-        userGuidanceService.getCrudQuestHub().updateDbChild(dbQuestHub);
+        userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel1);
         userGuidanceService.activateLevels();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -142,7 +123,7 @@ public class TestLevelTask extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        EasyMock.verify(mockUserService, mockServerConditionService, mockBaseService, mockHistoryService);
+        EasyMock.verify(mockUserService, mockServerConditionService, mockHistoryService);
     }
 
     private Integer getActiveQuestId() {

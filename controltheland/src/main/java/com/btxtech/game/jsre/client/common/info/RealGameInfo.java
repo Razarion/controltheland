@@ -14,10 +14,10 @@
 package com.btxtech.game.jsre.client.common.info;
 
 import com.btxtech.game.jsre.client.common.LevelScope;
-import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.Territory;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
+import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.packets.XpPacket;
 
@@ -36,11 +36,11 @@ public class RealGameInfo extends GameInfo {
     private int energyConsuming;
     private Collection<BaseAttributes> allBases;
     private int houseSpace;
-    private Collection<Territory> territories;
     private LevelTaskPacket levelTaskPacket;
     private Collection<AllianceOfferPacket> allianceOffers = new ArrayList<AllianceOfferPacket>();
     private XpPacket xpPacket;
     private LevelScope levelScope;
+    private PlanetInfo planetInfo;
 
     public SimpleBase getBase() {
         return base;
@@ -90,14 +90,6 @@ public class RealGameInfo extends GameInfo {
         this.houseSpace = houseSpace;
     }
 
-    public Collection<Territory> getTerritories() {
-        return territories;
-    }
-
-    public void setTerritories(Collection<Territory> territories) {
-        this.territories = territories;
-    }
-
     public LevelTaskPacket getLevelTaskPacket() {
         return levelTaskPacket;
     }
@@ -128,5 +120,13 @@ public class RealGameInfo extends GameInfo {
 
     public LevelScope getLevelScope() {
         return levelScope;
+    }
+
+    public PlanetInfo getPlanetInfo() {
+        return planetInfo;
+    }
+
+    public void setPlanetInfo(PlanetInfo planetInfo) {
+        this.planetInfo = planetInfo;
     }
 }

@@ -16,7 +16,8 @@ package com.btxtech.game.jsre.common.gameengine.syncObjects;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 
@@ -29,8 +30,8 @@ public class SyncResourceItem extends SyncItem {
     private double amount;
     private boolean missionMoney = false;
 
-    public SyncResourceItem(Id id, Index position, ResourceType resourceType, Services services) {
-        super(id, position, resourceType, services);
+    public SyncResourceItem(Id id, Index position, ResourceType resourceType, GlobalServices globalServices, PlanetServices planetServices) {
+        super(id, position, resourceType, globalServices, planetServices);
         amount = resourceType.getAmount();
     }
 
@@ -42,7 +43,7 @@ public class SyncResourceItem extends SyncItem {
         } else {
             amount = this.amount;
             this.amount = 0;
-            getServices().getItemService().killSyncItem(this, null, false, false);
+            getPlanetServices().getItemService().killSyncItem(this, null, false, false);
             return amount;
         }
     }

@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.control;
 
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
+
 import java.io.Serializable;
 
 /**

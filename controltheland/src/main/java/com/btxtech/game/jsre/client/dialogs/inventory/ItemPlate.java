@@ -6,7 +6,7 @@ import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
-import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.client.item.ItemTypeContainer;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.google.gwt.core.client.GWT;
@@ -63,7 +63,7 @@ public class ItemPlate extends Composite implements HasText {
         if (inventoryItemInfo.hasBaseItemTypeId()) {
             BaseItemType baseItemType;
             try {
-                baseItemType = (BaseItemType) ItemContainer.getInstance().getItemType(inventoryItemInfo.getBaseItemTypeId());
+                baseItemType = (BaseItemType) ItemTypeContainer.getInstance().getItemType(inventoryItemInfo.getBaseItemTypeId());
                 if (ClientBase.getInstance().isLevelLimitation4ItemTypeExceeded(baseItemType, inventoryItemInfo.getItemCount(), ClientBase.getInstance().getSimpleBase())) {
                     DialogManager.showDialog(new MessageDialog("Use Item", baseItemType.getName() + " item limit is is exceeded."), DialogManager.Type.STACK_ABLE);
                 } else if (ClientBase.getInstance().isHouseSpaceExceeded(ClientBase.getInstance().getSimpleBase(), inventoryItemInfo.getItemCount())) {

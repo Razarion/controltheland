@@ -66,7 +66,7 @@ public class SyncBuilder extends SyncBaseAbility {
                     syncItemArea = toBeBuiltType.getBoundingBox().createSyntheticSyncItemArea(toBeBuildPosition);
                 }
                 recalculateNewPath(builderType.getRange(), syncItemArea, toBeBuiltType.getTerrainType());
-                getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+                getGlobalServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                 return true;
             } else {
                 return false;
@@ -78,10 +78,10 @@ public class SyncBuilder extends SyncBaseAbility {
                 throw new IllegalArgumentException("Invalid attributes |" + toBeBuiltType + "|" + toBeBuildPosition);
             }
 
-            getServices().getItemService().checkBuildingsInRect(toBeBuiltType, toBeBuildPosition);
+            getPlanetServices().getItemService().checkBuildingsInRect(toBeBuiltType, toBeBuildPosition);
 
             try {
-                currentBuildup = (SyncBaseItem) getServices().getItemService().createSyncObject(toBeBuiltType, toBeBuildPosition, getSyncBaseItem(), getSyncBaseItem().getBase(), createdChildCount);
+                currentBuildup = (SyncBaseItem) getPlanetServices().getItemService().createSyncObject(toBeBuiltType, toBeBuildPosition, getSyncBaseItem(), getSyncBaseItem().getBase(), createdChildCount);
                 createdChildCount++;
             } catch (ItemLimitExceededException e) {
                 stop();
@@ -92,10 +92,10 @@ public class SyncBuilder extends SyncBaseAbility {
             }
         }
         getSyncItemArea().turnTo(toBeBuildPosition);
-        if (getServices().getItemService().baseObjectExists(currentBuildup)) {
+        if (getPlanetServices().getItemService().baseObjectExists(currentBuildup)) {
             double buildFactor = setupBuildFactor(factor, builderType.getProgress(), toBeBuiltType, currentBuildup);
             try {
-                getServices().getBaseService().withdrawalMoney(buildFactor * (double) toBeBuiltType.getPrice(), getSyncBaseItem().getBase());
+                getPlanetServices().getBaseService().withdrawalMoney(buildFactor * (double) toBeBuiltType.getPrice(), getSyncBaseItem().getBase());
                 currentBuildup.addBuildup(buildFactor);
                 if (currentBuildup.isReady()) {
                     stop();
@@ -127,7 +127,7 @@ public class SyncBuilder extends SyncBaseAbility {
 
     public synchronized void stop() {
         if (currentBuildup != null) {
-            getServices().getConnectionService().sendSyncInfo(currentBuildup);
+            getGlobalServices().getConnectionService().sendSyncInfo(currentBuildup);
         }
         currentBuildup = null;
         toBeBuiltType = null;
@@ -140,7 +140,7 @@ public class SyncBuilder extends SyncBaseAbility {
     public void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException {
         toBeBuildPosition = syncItemInfo.getToBeBuildPosition();
         if (syncItemInfo.getToBeBuiltTypeId() != null) {
-            toBeBuiltType = (BaseItemType) getServices().getItemService().getItemType(syncItemInfo.getToBeBuiltTypeId());
+            toBeBuiltType = (BaseItemType) getGlobalServices().getItemTypeService().getItemType(syncItemInfo.getToBeBuiltTypeId());
         } else {
             toBeBuiltType = null;
         }
@@ -161,17 +161,9 @@ public class SyncBuilder extends SyncBaseAbility {
             throw new IllegalArgumentException(this + " can not build: " + builderCommand.getToBeBuilt());
         }
 
-        BaseItemType tmpToBeBuiltType = (BaseItemType) getServices().getItemService().getItemType(builderCommand.getToBeBuilt());
-        if (!getServices().getTerrainService().isFree(builderCommand.getPositionToBeBuilt(), tmpToBeBuiltType)) {
+        BaseItemType tmpToBeBuiltType = (BaseItemType) getGlobalServices().getItemTypeService().getItemType(builderCommand.getToBeBuilt());
+        if (!getPlanetServices().getTerrainService().isFree(builderCommand.getPositionToBeBuilt(), tmpToBeBuiltType)) {
             throw new PositionTakenException(builderCommand.getPositionToBeBuilt(), builderCommand.getToBeBuilt());
-        }
-
-        if (!getServices().getTerritoryService().isAllowed(builderCommand.getPositionToBeBuilt(), getSyncBaseItem())) {
-            throw new IllegalArgumentException(this + " Builder not allowed (TerritoryService) to build on territory: " + builderCommand.getPositionToBeBuilt() + "  " + getSyncBaseItem());
-        }
-
-        if (!getServices().getTerritoryService().isAllowed(builderCommand.getPositionToBeBuilt(), builderCommand.getToBeBuilt())) {
-            throw new IllegalArgumentException(this + " Item can not be built (TerritoryService) on territory: " + builderCommand.getPositionToBeBuilt() + "  " + builderCommand.getToBeBuilt());
         }
 
         toBeBuiltType = tmpToBeBuiltType;
@@ -180,17 +172,9 @@ public class SyncBuilder extends SyncBaseAbility {
     }
 
     public synchronized void executeCommand(BuilderFinalizeCommand builderFinalizeCommand) throws NoSuchItemTypeException, ItemDoesNotExistException {
-        SyncBaseItem syncBaseItem = (SyncBaseItem) getServices().getItemService().getItem(builderFinalizeCommand.getToBeBuilt());
+        SyncBaseItem syncBaseItem = (SyncBaseItem) getPlanetServices().getItemService().getItem(builderFinalizeCommand.getToBeBuilt());
         if (!builderType.isAbleToBuild(syncBaseItem.getItemType().getId())) {
             throw new IllegalArgumentException(this + " can not build: " + builderFinalizeCommand.getToBeBuilt());
-        }
-
-        if (!getServices().getTerritoryService().isAllowed(syncBaseItem.getSyncItemArea().getPosition(), getSyncBaseItem())) {
-            throw new IllegalArgumentException(this + " Builder not allowed to build on territory: " + syncBaseItem.getSyncItemArea().getPosition() + "  " + getSyncBaseItem());
-        }
-
-        if (!getServices().getTerritoryService().isAllowed(syncBaseItem.getSyncItemArea().getPosition(), syncBaseItem)) {
-            throw new IllegalArgumentException(this + " Item can not be built on territory: " + syncBaseItem.getSyncItemArea().getPosition() + "  " + syncBaseItem);
         }
 
         currentBuildup = syncBaseItem;

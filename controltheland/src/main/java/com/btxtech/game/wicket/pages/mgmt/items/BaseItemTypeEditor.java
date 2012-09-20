@@ -15,7 +15,6 @@ package com.btxtech.game.wicket.pages.mgmt.items;
 
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.services.common.RuServiceHelper;
-import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
@@ -41,9 +40,6 @@ import java.util.Arrays;
 public class BaseItemTypeEditor extends MgmtWebPage {
     @SpringBean
     private RuServiceHelper<DbBaseItemType> ruServiceHelper;
-    @SpringBean
-    private ItemService itemService;
-
 
     public BaseItemTypeEditor(DbBaseItemType dbBaseItemType) {
         add(new FeedbackPanel("msgs"));

@@ -14,11 +14,9 @@
 package com.btxtech.game.wicket.uiservices;
 
 import com.btxtech.game.jsre.common.ClientDateUtil;
-import com.btxtech.game.services.item.ItemService;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
  * User: beat
@@ -26,9 +24,6 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Time: 18:44:15
  */
 public class MinutePanel extends Panel {
-    @SpringBean
-    private ItemService itemService;
-
     public MinutePanel(String id) {
         super(id);
         add(new TextField<>("minutes", new IModel<Integer>() {

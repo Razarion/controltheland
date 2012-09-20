@@ -19,6 +19,7 @@ import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
+import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 
@@ -65,7 +66,7 @@ public class ComparisonFactory {
         }
     }
 
-    public static Component createComparisonPanel(String id, DbConditionConfig dbConditionConfig) {
+    public static Component createComparisonPanel(String id, DbConditionConfig dbConditionConfig, TerrainLinkHelper terrainLinkHelper) {
         if (dbConditionConfig == null || dbConditionConfig.getDbAbstractComparisonConfig() == null) {
             return new Label(id, "").setVisible(false);
         } else {
@@ -75,7 +76,7 @@ public class ComparisonFactory {
             } else if (config instanceof DbCountComparisonConfig) {
                 return new CountComparisonConfigPanel(id);
             } else if (config instanceof DbItemTypePositionComparisonConfig) {
-                return new ItemTypePositionComparisonConfigPanel(id);
+                return new ItemTypePositionComparisonConfigPanel(id, terrainLinkHelper);
             } else {
                 throw new IllegalArgumentException("No panel for " + config);
             }

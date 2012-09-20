@@ -1,8 +1,9 @@
 package com.btxtech.game.jsre.common.gameengine.services.bot.impl;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotEnragementStateConfig;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
@@ -30,16 +31,16 @@ public class BotEnragementState {
     private BotEnragementStateConfig currentBotEnragementStateConfig;
     private boolean isEnragementActive;
     private BotItemContainer botItemContainer;
-    private final Rectangle realm;
-    private final Services services;
+    private final Region realm;
+    private final PlanetServices planetServices;
     private final String botName;
     private Map<SimpleBase, Integer> killsPerBase = new HashMap<SimpleBase, Integer>();
     private Listener listener;
 
-    public BotEnragementState(List<BotEnragementStateConfig> botEnragementStateConfigs, Rectangle realm, Services services, String botName, Listener listener) {
+    public BotEnragementState(List<BotEnragementStateConfig> botEnragementStateConfigs, Region realm, PlanetServices planetServices, String botName, Listener listener) {
         this.botEnragementStateConfigs = botEnragementStateConfigs;
         this.realm = realm;
-        this.services = services;
+        this.planetServices = planetServices;
         this.botName = botName;
         this.listener = listener;
         if (botEnragementStateConfigs.isEmpty()) {
@@ -69,7 +70,7 @@ public class BotEnragementState {
             botItemContainer.killAllItems(base);
         }
         currentBotEnragementStateConfig = botEnragementStateConfig;
-        botItemContainer = new BotItemContainer(botEnragementStateConfig.getBotItems(), realm, services, botName);
+        botItemContainer = new BotItemContainer(botEnragementStateConfig.getBotItems(), realm, planetServices, botName);
         killsPerBase.clear();
         isEnragementActive = currentBotEnragementStateConfig.hasMaxKillsPerBase() && botEnragementStateConfigs.indexOf(currentBotEnragementStateConfig) + 1 < botEnragementStateConfigs.size();
     }

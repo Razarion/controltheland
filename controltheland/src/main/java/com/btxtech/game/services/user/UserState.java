@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.user;
 
-import com.btxtech.game.services.base.Base;
+import com.btxtech.game.services.planet.Base;
 
 import java.io.Serializable;
 import java.util.ArrayList;
