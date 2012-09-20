@@ -7,7 +7,8 @@ import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
@@ -50,7 +51,9 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
 
     protected abstract void executeCommand(SyncBaseItem syncItem, BaseCommand baseCommand) throws ItemLimitExceededException, HouseSpaceExceededException, ItemDoesNotExistException, NoSuchItemTypeException, InsufficientFundsException, NotYourBaseException;
 
-    protected abstract Services getServices();
+    protected abstract GlobalServices getGlobalServices();
+
+    protected abstract PlanetServices getPlanetServices();
 
     protected boolean checkCommand(SyncItem syncItem) {
         Id id = syncItem.getId();
@@ -81,7 +84,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         MoveCommand moveCommand = new MoveCommand();
         moveCommand.setId(syncBaseItem.getId());
         moveCommand.setTimeStamp();
-        moveCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(syncBaseItem, destination));
+        moveCommand.setPathToDestination(getPlanetServices().getCollisionService().setupPathToDestination(syncBaseItem, destination));
         try {
             executeCommand(syncBaseItem, moveCommand);
         } catch (PathCanNotBeFoundException e) {
@@ -100,7 +103,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         Path path;
         AttackCommand attackCommand = new AttackCommand();
         if (followTarget) {
-            path = getServices().getCollisionService().setupPathToDestination(syncBaseItem, destinationHint);
+            path = getPlanetServices().getCollisionService().setupPathToDestination(syncBaseItem, destinationHint);
             if (moveIfPathTargetUnreachable(syncBaseItem, path)) {
                 return;
             }
@@ -135,12 +138,12 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         builderCommand.setTimeStamp();
         builderCommand.setToBeBuilt(toBeBuilt.getId());
         builderCommand.setPositionToBeBuilt(positionToBeBuild);
-        AttackFormationItem format = getServices().getCollisionService().getDestinationHint(syncItem,
+        AttackFormationItem format = getPlanetServices().getCollisionService().getDestinationHint(syncItem,
                 syncItem.getSyncBuilder().getBuilderType().getRange(),
                 toBeBuilt.getBoundingBox().createSyntheticSyncItemArea(positionToBeBuild),
                 toBeBuilt.getTerrainType());
         if (format.isInRange()) {
-            Path path = getServices().getCollisionService().setupPathToDestination(syncItem, format.getDestinationHint());
+            Path path = getPlanetServices().getCollisionService().setupPathToDestination(syncItem, format.getDestinationHint());
             if (moveIfPathTargetUnreachable(syncItem, path)) {
                 return;
             }
@@ -169,7 +172,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         builderCommand.setTimeStamp();
         builderCommand.setToBeBuilt(toBeBuilt.getId());
         builderCommand.setPositionToBeBuilt(positionToBeBuild);
-        Path path = getServices().getCollisionService().setupPathToDestination(syncItem, destinationHint);
+        Path path = getPlanetServices().getCollisionService().setupPathToDestination(syncItem, destinationHint);
         if (moveIfPathTargetUnreachable(syncItem, path)) {
             return;
         }
@@ -195,7 +198,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         builderFinalizeCommand.setId(builder.getId());
         builderFinalizeCommand.setTimeStamp();
         builderFinalizeCommand.setToBeBuilt(building.getId());
-        Path path = getServices().getCollisionService().setupPathToDestination(builder, destinationHint);
+        Path path = getPlanetServices().getCollisionService().setupPathToDestination(builder, destinationHint);
         if (moveIfPathTargetUnreachable(builder, path)) {
             return;
         }
@@ -235,7 +238,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         collectCommand.setId(collector.getId());
         collectCommand.setTimeStamp();
         collectCommand.setTarget(money.getId());
-        Path path = getServices().getCollisionService().setupPathToDestination(collector, destinationHint);
+        Path path = getPlanetServices().getCollisionService().setupPathToDestination(collector, destinationHint);
         if (moveIfPathTargetUnreachable(collector, path)) {
             return;
         }
@@ -317,7 +320,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         pickupBoxCommand.setId(picker.getId());
         pickupBoxCommand.setBox(box.getId());
         pickupBoxCommand.setTimeStamp();
-        Path path = getServices().getCollisionService().setupPathToDestination(picker, destinationHint);
+        Path path = getPlanetServices().getCollisionService().setupPathToDestination(picker, destinationHint);
         if (moveIfPathTargetUnreachable(picker, path)) {
             return;
         }
@@ -350,7 +353,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
     @Override
     public void addGuardingBaseItem(SyncTickItem syncTickItem) {
         try {
-            if (getServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
+            if (getGlobalServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
                 return;
             }
 
@@ -371,10 +374,6 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
                 return;
             }
 
-            if (!getServices().getTerritoryService().isAllowed(syncBaseItem.getSyncItemArea().getPosition(), syncBaseItem)) {
-                return;
-            }
-
             if (checkGuardingItemHasEnemiesInRange(syncBaseItem)) {
                 return;
             }
@@ -389,7 +388,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
 
     @Override
     public void removeGuardingBaseItem(SyncBaseItem syncItem) {
-        if (getServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
+        if (getGlobalServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
             return;
         }
         if (!syncItem.hasSyncWeapon()) {
@@ -410,7 +409,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
     @Override
     public void interactionGuardingItems(SyncBaseItem target) {
         try {
-            if (getServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
+            if (getGlobalServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
                 return;
             }
             if (target.isContainedIn()) {
@@ -445,7 +444,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
     }
 
     private boolean checkGuardingItemHasEnemiesInRange(SyncBaseItem guardingItem) {
-        SyncBaseItem target = getServices().getItemService().getFirstEnemyItemInRange(guardingItem);
+        SyncBaseItem target = getPlanetServices().getItemService().getFirstEnemyItemInRange(guardingItem);
         if (target != null) {
             defend(guardingItem, target);
             return true;
@@ -453,5 +452,6 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
             return false;
         }
     }
+
 
 }

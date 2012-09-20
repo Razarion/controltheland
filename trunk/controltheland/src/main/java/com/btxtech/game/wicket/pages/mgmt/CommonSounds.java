@@ -1,6 +1,5 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.sound.DbCommonSound;
 import com.btxtech.game.services.sound.SoundService;

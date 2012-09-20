@@ -17,7 +17,7 @@ import com.btxtech.game.jsre.client.ClientEnergyService;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
-import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.client.item.ItemTypeContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 
 /**
@@ -41,7 +41,7 @@ public abstract class GameEngineStartupTask extends AbstractStartupTask {
                 gameInfo.getTerrainImages(),
                 gameInfo.getTerrainImageBackground());
         gameInfo.freePositionAndRects();
-        ItemContainer.getInstance().setItemTypes(gameInfo.getItemTypes());
+        ItemTypeContainer.getInstance().setItemTypes(gameInfo.getItemTypes());
     }
 
     protected void deltaSetupGameStructure(GameInfo gameInfo) {
@@ -54,6 +54,6 @@ public abstract class GameEngineStartupTask extends AbstractStartupTask {
                 gameInfo.getTerrainImages(),
                 gameInfo.getTerrainImageBackground());
         gameInfo.freePositionAndRects();
-        ItemContainer.getInstance().addDeltaItemTypes(gameInfo.getItemTypes());
+        ItemTypeContainer.getInstance().addDeltaItemTypes(gameInfo.getItemTypes());
     }
 }

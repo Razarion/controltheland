@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.cockpit.radar;
 
+import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainHandler;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
@@ -59,15 +60,15 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
 
     private void drawWithoutImages(final Context2d context2d) {
         final Rectangle tileRect = getTileViewRectangle();
-        final int scrollXOffset = getViewOrigin().getX() % getTerrainSettings().getTileWidth();
-        final int scrollYOffset = getViewOrigin().getY() % getTerrainSettings().getTileHeight();
+        final int scrollXOffset = getViewOrigin().getX() % Constants.TERRAIN_TILE_WIDTH;
+        final int scrollYOffset = getViewOrigin().getY() % Constants.TERRAIN_TILE_HEIGHT;
         final int xTileIncrease = getScale().getTileIncrease();
         final int yTileIncrease = getScale().getTileIncrease();
-        final int tileWidth = getTerrainSettings().getTileWidth() * xTileIncrease;
-        final int tileHeight = getTerrainSettings().getTileHeight() * yTileIncrease;
+        final int tileWidth = Constants.TERRAIN_TILE_WIDTH * xTileIncrease;
+        final int tileHeight = Constants.TERRAIN_TILE_HEIGHT * yTileIncrease;
         TerrainView.getInstance().getTerrainHandler().iteratorOverAllTerrainTiles(tileRect, new AbstractTerrainService.TerrainTileEvaluator() {
             TerrainHandler terrainHandler = TerrainView.getInstance().getTerrainHandler();
-            TerrainImageBackground terrainImageBackground = terrainHandler.getTerrainImageBackground();
+            TerrainImageBackground terrainImageBackground = terrainHandler.getTerrainImageHandler().getTerrainImageBackground();
 
             @Override
             public void evaluate(int x, int y, TerrainTile terrainTile) {
@@ -92,9 +93,9 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
                 }
 
                 if (terrainTile.isSurface()) {
-                    context2d.setFillStyle(terrainHandler.getSurfaceImage(terrainTile.getImageId()).getHtmlBackgroundColor());
+                    context2d.setFillStyle(terrainHandler.getTerrainImageHandler().getSurfaceImage(terrainTile.getImageId()).getHtmlBackgroundColor());
                 } else {
-                    SurfaceType surfaceType = terrainHandler.getTerrainImage(terrainTile.getImageId()).getSurfaceType(terrainTile.getTileXOffset(), terrainTile.getTileYOffset());
+                    SurfaceType surfaceType = terrainHandler.getTerrainImageHandler().getTerrainImage(terrainTile.getImageId()).getSurfaceType(terrainTile.getTileXOffset(), terrainTile.getTileYOffset());
                     context2d.setFillStyle(terrainImageBackground.get(terrainTile.getImageId(), surfaceType));
                 }
 
@@ -112,10 +113,10 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
 
     private void drawImages(final Context2d context2d) {
         final Rectangle tileRect = getTileViewRectangle();
-        final int scrollXOffset = getViewOrigin().getX() % getTerrainSettings().getTileWidth();
-        final int scrollYOffset = getViewOrigin().getY() % getTerrainSettings().getTileHeight();
-        final int tileWidth = getTerrainSettings().getTileWidth();
-        final int tileHeight = getTerrainSettings().getTileHeight();
+        final int scrollXOffset = getViewOrigin().getX() % Constants.TERRAIN_TILE_WIDTH;
+        final int scrollYOffset = getViewOrigin().getY() % Constants.TERRAIN_TILE_HEIGHT;
+        final int tileWidth = Constants.TERRAIN_TILE_WIDTH;
+        final int tileHeight = Constants.TERRAIN_TILE_HEIGHT;
         TerrainView.getInstance().getTerrainHandler().iteratorOverAllTerrainTiles(tileRect, new AbstractTerrainService.TerrainTileEvaluator() {
             TerrainHandler terrainHandler = TerrainView.getInstance().getTerrainHandler();
 
@@ -143,9 +144,9 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
 
                 ImageElement imageElement;
                 if (terrainTile.isSurface()) {
-                    imageElement = terrainHandler.getSurfaceImageElement(terrainTile.getImageId());
+                    imageElement = terrainHandler.getTerrainImageHandler().getSurfaceImageElement(terrainTile.getImageId());
                 } else {
-                    imageElement = terrainHandler.getTerrainImageElement(terrainTile.getImageId());
+                    imageElement = terrainHandler.getTerrainImageHandler().getTerrainImageElement(terrainTile.getImageId());
                 }
                 if (imageElement == null || imageElement.getWidth() == 0 || imageElement.getHeight() == 0) {
                     return;

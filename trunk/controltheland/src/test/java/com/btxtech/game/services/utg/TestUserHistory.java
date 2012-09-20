@@ -29,7 +29,7 @@ public class TestUserHistory extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void createUser() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -48,7 +48,7 @@ public class TestUserHistory extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void loginLogout() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -85,7 +85,7 @@ public class TestUserHistory extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void enterGame() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -112,7 +112,7 @@ public class TestUserHistory extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void defeated() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

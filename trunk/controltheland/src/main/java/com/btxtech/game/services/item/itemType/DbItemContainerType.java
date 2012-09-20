@@ -16,8 +16,6 @@ package com.btxtech.game.services.item.itemType;
 import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.common.ReadonlyCollectionContentProvider;
 
-import java.io.Serializable;
-import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,6 +25,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import java.io.Serializable;
+import java.util.Set;
 
 /**
  * User: beat

@@ -15,7 +15,7 @@ package com.btxtech.game.services.utg.condition;
 
 import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.CountComparisonConfig;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -41,8 +41,8 @@ public class DbCountComparisonConfig extends DbAbstractComparisonConfig {
     }
 
     @Override
-    public AbstractComparisonConfig createComparisonConfig(ItemService itemService) {
-        return new CountComparisonConfig(getExcludedTerritoryId(), count, getHtmlProgressTemplate());
+    public AbstractComparisonConfig createComparisonConfig(ServerItemTypeService serverItemTypeService) {
+        return new CountComparisonConfig(count, getHtmlProgressTemplate());
     }
 
     @Override

@@ -22,12 +22,10 @@ import java.util.Map;
  * Time: 18:48:18
  */
 public class LevelScope implements Serializable {
+    private Integer planetId;
+    private int levelId;
     private int number;
-    private int maxMoney;
     private Map<Integer, Integer> itemTypeLimitation;
-    private int houseSpace;
-    private double itemSellFactor;
-    private RadarMode radarMode;
     private int xp2LevelUp;
 
     /**
@@ -36,22 +34,24 @@ public class LevelScope implements Serializable {
     public LevelScope() {
     }
 
-    public LevelScope(int number, int maxMoney, Map<Integer, Integer> itemTypeLimitation, int houseSpace, double itemSellFactor, RadarMode radarMode, int xp2LevelUp) {
+    public LevelScope(Integer planetId, int levelId, int number, Map<Integer, Integer> itemTypeLimitation, int xp2LevelUp) {
+        this.planetId = planetId;
+        this.levelId = levelId;
         this.number = number;
-        this.maxMoney = maxMoney;
         this.itemTypeLimitation = itemTypeLimitation;
-        this.houseSpace = houseSpace;
-        this.itemSellFactor = itemSellFactor;
-        this.radarMode = radarMode;
         this.xp2LevelUp = xp2LevelUp;
+    }
+
+    public Integer getPlanetId() {
+        return planetId;
+    }
+
+    public boolean hasPlanet() {
+        return planetId != null;
     }
 
     public int getNumber() {
         return number;
-    }
-
-    public int getMaxMoney() {
-        return maxMoney;
     }
 
     public int getLimitation4ItemType(int itemTypeId) {
@@ -61,18 +61,6 @@ public class LevelScope implements Serializable {
         } else {
             return 0;
         }
-    }
-
-    public int getHouseSpace() {
-        return houseSpace;
-    }
-
-    public double getItemSellFactor() {
-        return itemSellFactor;
-    }
-
-    public RadarMode getRadarMode() {
-        return radarMode;
     }
 
     public int getXp2LevelUp() {
@@ -86,26 +74,17 @@ public class LevelScope implements Serializable {
 
         LevelScope that = (LevelScope) o;
 
-        return houseSpace == that.houseSpace
-                && Double.compare(that.itemSellFactor, itemSellFactor) == 0
-                && maxMoney == that.maxMoney
-                && number == that.number
-                && !(itemTypeLimitation != null ? !itemTypeLimitation.equals(that.itemTypeLimitation) : that.itemTypeLimitation != null)
-                && radarMode == that.radarMode
-                && xp2LevelUp == that.xp2LevelUp;
+        return levelId == that.levelId;
+
     }
 
     @Override
     public int hashCode() {
-        int result;
-        result = number;
-        result = 31 * result + maxMoney;
-        result = 31 * result + (itemTypeLimitation != null ? itemTypeLimitation.hashCode() : 0);
-        result = 31 * result + houseSpace;
-        long temp = (long) itemSellFactor;
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + (radarMode != null ? radarMode.hashCode() : 0);
-        result = 31 * result + xp2LevelUp;
-        return result;
+        return levelId;
+    }
+
+    @Override
+    public String toString() {
+        return "LevelScope{levelId=" + levelId + ", number=" + number + ", planetId=" + planetId + '}';
     }
 }

@@ -46,12 +46,12 @@ public class SyncHarvester extends SyncBaseAbility {
         }
 
         try {
-            SyncResourceItem resource = (SyncResourceItem) getServices().getItemService().getItem(target);
+            SyncResourceItem resource = (SyncResourceItem) getPlanetServices().getItemService().getItem(target);
             if (!isInRange(resource)) {
                 if (isNewPathRecalculationAllowed()) {
                     // Destination place was may be taken. Calculate a new one.
                     recalculateNewPath(harvesterType.getRange(), resource.getSyncItemArea(), resource.getTerrainType());
-                    getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+                    getGlobalServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                     return true;
                 } else {
                     return false;
@@ -59,7 +59,7 @@ public class SyncHarvester extends SyncBaseAbility {
             }
             getSyncItemArea().turnTo(resource);
             double money = resource.harvest(factor * harvesterType.getProgress());
-            getServices().getBaseService().depositResource(money, getSyncBaseItem().getBase());
+            getPlanetServices().getBaseService().depositResource(money, getSyncBaseItem().getBase());
             return true;
         } catch (ItemDoesNotExistException ignore) {
             // Target may be empty
@@ -84,11 +84,7 @@ public class SyncHarvester extends SyncBaseAbility {
     }
 
     public void executeCommand(MoneyCollectCommand attackCommand) throws ItemDoesNotExistException {
-        SyncResourceItem resource = (SyncResourceItem) getServices().getItemService().getItem(attackCommand.getTarget());
-
-        if (!getServices().getTerritoryService().isAllowed(resource.getSyncItemArea().getPosition(), getSyncBaseItem())) {
-            throw new IllegalArgumentException(this + " Collector not allowed to collect on territory: " + resource.getSyncItemArea().getPosition() + "  " + getSyncBaseItem());
-        }
+        SyncResourceItem resource = (SyncResourceItem) getPlanetServices().getItemService().getItem(attackCommand.getTarget());
 
         this.target = resource.getId();
         setPathToDestinationIfSyncMovable(attackCommand.getPathToDestination());

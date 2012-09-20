@@ -17,7 +17,6 @@ import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
@@ -101,8 +100,7 @@ public class CursorHandler {
             if (ClientBase.getInstance().isMyOwnProperty(syncBaseItem)) {
                 if (CockpitMode.getInstance().isLoadPossible() && syncBaseItem.hasSyncItemContainer() && isNotMyself(syncBaseItem)) {
                     SyncItemContainer syncItemContainer = syncBaseItem.getSyncItemContainer();
-                    boolean allowed = ClientTerritoryService.getInstance().isAllowed(position, syncBaseItem)
-                            && syncItemContainer.isAbleToLoad(SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems());
+                    boolean allowed = syncItemContainer.isAbleToLoad(SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems());
                     setCursor(CursorType.LOAD, allowed);
                 } else if (CockpitMode.getInstance().isFinalizeBuildPossible() && !syncBaseItem.isReady() && isNotMyself(syncBaseItem)) {
                     setCursor(CursorType.FINALIZE_BUILD, SelectionHandler.getInstance().atLeastOneItemTypeAllowed2FinalizeBuild(syncBaseItem));
@@ -111,10 +109,7 @@ public class CursorHandler {
                 }
             } else if (ClientBase.getInstance().isEnemy(syncBaseItem)) {
                 if (CockpitMode.getInstance().isAttackPossible()) {
-                    setCursor(CursorType.ATTACK,
-                            SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection()
-                                    && SelectionHandler.getInstance().atLeastOneAllowedOnTerritory4Selection(position)
-                                    && SelectionHandler.getInstance().atLeastOneItemTypeAllowed2Attack4Selection(syncBaseItem));
+                    setCursor(CursorType.ATTACK, SelectionHandler.getInstance().atLeastOneItemTypeAllowed2Attack4Selection(syncBaseItem));
                 } else {
                     setCursor(Style.Cursor.POINTER);
                 }
@@ -126,9 +121,9 @@ public class CursorHandler {
                 }
             }
         } else if (CockpitMode.getInstance().isCollectPossible() && syncItem instanceof SyncResourceItem) {
-            setCursor(CursorType.COLLECT, SelectionHandler.getInstance().atLeastOneAllowedOnTerritory4Selection(position));
+            setCursor(CursorType.COLLECT, true);
         } else if (CockpitMode.getInstance().isMovePossible() && syncItem instanceof SyncBoxItem) {
-            setCursor(CursorType.PICKUP, SelectionHandler.getInstance().atLeastOneAllowedOnTerritory4Selection(position));
+            setCursor(CursorType.PICKUP, true);
         } else {
             setCursor(Style.Cursor.POINTER);
         }

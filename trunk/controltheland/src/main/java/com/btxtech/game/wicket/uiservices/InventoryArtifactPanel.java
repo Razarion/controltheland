@@ -14,8 +14,7 @@
 package com.btxtech.game.wicket.uiservices;
 
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
-import com.btxtech.game.services.inventory.DbInventoryItem;
-import com.btxtech.game.services.inventory.InventoryService;
+import com.btxtech.game.services.inventory.GlobalInventoryService;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -28,7 +27,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  */
 public class InventoryArtifactPanel extends Panel {
     @SpringBean
-    private InventoryService inventoryService;
+    private GlobalInventoryService globalInventoryService;
 
     public InventoryArtifactPanel(String id) {
         super(id);
@@ -47,7 +46,7 @@ public class InventoryArtifactPanel extends Panel {
             @Override
             public void setObject(Integer integer) {
                 if (integer != null) {
-                    DbInventoryArtifact dbInventoryArtifact = inventoryService.getArtifactCrud().readDbChild(integer);
+                    DbInventoryArtifact dbInventoryArtifact = globalInventoryService.getArtifactCrud().readDbChild(integer);
                     if (dbInventoryArtifact == null) {
                         error("Inventory artifact does not exist: " + integer);
                         return;

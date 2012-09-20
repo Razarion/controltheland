@@ -20,7 +20,6 @@ import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.mapeditor.TerrainEditorAsync;
-import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
@@ -61,14 +60,14 @@ public class PathfindingEntry implements EntryPoint {
         pathfindingCockpit.addToParent(absolutePanel, TopMapPanel.Direction.RIGHT_TOP, 20);
         pathfindingCockpit.getElement().getStyle().setZIndex(4);
 
-        pathfinding.getTerrainInfo(terrainId, new AsyncCallback<TerrainInfo>() {
+        pathfinding.getTerrainInfo(terrainId, new AsyncCallback<com.btxtech.game.jsre.common.TerrainInfo>() {
             @Override
             public void onFailure(Throwable throwable) {
                 GwtCommon.handleException(throwable);
             }
 
             @Override
-            public void onSuccess(TerrainInfo terrainInfo) {
+            public void onSuccess(com.btxtech.game.jsre.common.TerrainInfo terrainInfo) {
                 TerrainView.getInstance().setupTerrain(terrainInfo.getTerrainSettings(),
                         terrainInfo.getTerrainImagePositions(),
                         terrainInfo.getSurfaceRects(),

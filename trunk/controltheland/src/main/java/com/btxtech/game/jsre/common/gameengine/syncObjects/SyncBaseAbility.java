@@ -16,7 +16,8 @@ package com.btxtech.game.jsre.common.gameengine.syncObjects;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -39,8 +40,12 @@ public abstract class SyncBaseAbility {
         return syncBaseItem;
     }
 
-    public Services getServices() {
-        return syncBaseItem.getServices();
+    public GlobalServices getGlobalServices() {
+        return syncBaseItem.getGlobalServices();
+    }
+
+    public PlanetServices getPlanetServices() {
+        return syncBaseItem.getPlanetServices();
     }
 
     public SyncItemArea getSyncItemArea() {
@@ -54,17 +59,17 @@ public abstract class SyncBaseAbility {
     }
 
     public boolean isNewPathRecalculationAllowed() {
-        return getServices().getConnectionService().getGameEngineMode() == GameEngineMode.MASTER;
+        return getGlobalServices().getConnectionService().getGameEngineMode() == GameEngineMode.MASTER;
     }
 
     public void recalculateNewPath(int range, SyncItemArea target, TerrainType targetTerrainType) {
         SyncBaseItem syncItem = getSyncBaseItem();
-        AttackFormationItem format = getServices().getCollisionService().getDestinationHint(syncItem,
+        AttackFormationItem format = getPlanetServices().getCollisionService().getDestinationHint(syncItem,
                 range,
                 target,
                 targetTerrainType);
         if (format.isInRange()) {
-            Path path = getServices().getCollisionService().setupPathToDestination(syncItem, format.getDestinationHint());
+            Path path = getPlanetServices().getCollisionService().setupPathToDestination(syncItem, format.getDestinationHint());
             if (!path.isDestinationReachable()) {
                 throw new PathCanNotBeFoundException("Can not find path in recalculateNewPath: " + syncItem, syncItem.getSyncItemArea().getPosition(), null);
             }

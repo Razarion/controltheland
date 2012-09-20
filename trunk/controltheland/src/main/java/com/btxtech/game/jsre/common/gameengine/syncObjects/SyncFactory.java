@@ -65,19 +65,19 @@ public class SyncFactory extends SyncBaseAbility {
             buildFactor = 1.0 - buildup;
         }
         try {
-            getServices().getBaseService().withdrawalMoney(buildFactor * (double) toBeBuiltType.getPrice(), getSyncBaseItem().getBase());
+            getPlanetServices().getBaseService().withdrawalMoney(buildFactor * (double) toBeBuiltType.getPrice(), getSyncBaseItem().getBase());
             buildup += buildFactor;
             getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS);
             if (buildup >= 1.0) {
-                if (!getServices().getBaseService().isItemLimit4ItemAddingAllowed(toBeBuiltType, getSyncBaseItem().getBase())) {
+                if (!getPlanetServices().getBaseService().isItemLimit4ItemAddingAllowed(toBeBuiltType, getSyncBaseItem().getBase())) {
                     return true;
                 }
-                SyncBaseItem item = (SyncBaseItem) getServices().getItemService().createSyncObject(toBeBuiltType, rallyPoint, getSyncBaseItem(), getSyncBaseItem().getBase(), createdChildCount);
+                SyncBaseItem item = (SyncBaseItem) getPlanetServices().getItemService().createSyncObject(toBeBuiltType, rallyPoint, getSyncBaseItem(), getSyncBaseItem().getBase(), createdChildCount);
                 item.setBuildup(buildup);
                 createdChildCount++;
                 stop();
                 if (item.hasSyncMovable() && item.getSyncMovable().onFinished()) {
-                    getServices().getActionService().syncItemActivated(item);
+                    getPlanetServices().getActionService().syncItemActivated(item);
                 }
                 return false;
             }
@@ -102,7 +102,7 @@ public class SyncFactory extends SyncBaseAbility {
     @Override
     public void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException {
         if (syncItemInfo.getToBeBuiltTypeId() != null) {
-            toBeBuiltType = (BaseItemType) getServices().getItemService().getItemType(syncItemInfo.getToBeBuiltTypeId());
+            toBeBuiltType = (BaseItemType) getGlobalServices().getItemTypeService().getItemType(syncItemInfo.getToBeBuiltTypeId());
         } else {
             toBeBuiltType = null;
         }
@@ -134,14 +134,8 @@ public class SyncFactory extends SyncBaseAbility {
         if (!factoryType.isAbleToBuild(factoryCommand.getToBeBuilt())) {
             throw new IllegalArgumentException(this + " can not fabricate: " + factoryCommand.getToBeBuilt());
         }
-        if (!getServices().getTerritoryService().isAllowed(getSyncBaseItem().getSyncItemArea().getPosition(), getSyncBaseItem())) {
-            throw new IllegalArgumentException(this + " Factory not allowed to build on (TerritoryService) territory: " + getSyncBaseItem().getSyncItemArea().getPosition() + "  " + getSyncBaseItem());
-        }
-        if (!getServices().getTerritoryService().isAllowed(getSyncBaseItem().getSyncItemArea().getPosition(), factoryCommand.getToBeBuilt())) {
-            throw new IllegalArgumentException(this + " Item can not be built on (TerritoryService) territory: " + getSyncBaseItem().getSyncItemArea().getPosition() + "  " + factoryCommand.getToBeBuilt());
-        }
         if (toBeBuiltType == null) {
-            toBeBuiltType = (BaseItemType) getServices().getItemService().getItemType(factoryCommand.getToBeBuilt());
+            toBeBuiltType = (BaseItemType) getGlobalServices().getItemTypeService().getItemType(factoryCommand.getToBeBuilt());
         }
     }
 
@@ -173,9 +167,9 @@ public class SyncFactory extends SyncBaseAbility {
         Collection<ItemType> types = new ArrayList<ItemType>();
         try {
             for (int id : factoryType.getAbleToBuild()) {
-                types.add(getServices().getItemService().getItemType(id));
+                types.add(getGlobalServices().getItemTypeService().getItemType(id));
             }
-            rallyPoint = getServices().getCollisionService().getRallyPoint(getSyncBaseItem(), types);
+            rallyPoint = getPlanetServices().getCollisionService().getRallyPoint(getSyncBaseItem(), types);
         } catch (NoSuchItemTypeException e) {
             log.log(Level.SEVERE, "Unable to calculate rally point: " + e.getMessage());
             rallyPoint = getSyncItemArea().getPosition();

@@ -9,8 +9,12 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.contains;
+import static org.easymock.EasyMock.createStrictMock;
 import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.geq;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 /**
  * User: beat

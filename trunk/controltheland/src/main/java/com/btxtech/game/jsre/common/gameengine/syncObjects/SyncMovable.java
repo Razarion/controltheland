@@ -95,15 +95,15 @@ public class SyncMovable extends SyncBaseAbility {
     }
 
     public boolean onFinished() {
-        if (getServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
+        if (getGlobalServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
             return false;
         }
         SyncBaseItem syncBaseItem = getSyncBaseItem();
-        if (getServices().getItemService().isSyncItemOverlapping(syncBaseItem)) {
-            Path path = getServices().getCollisionService().setupPathToSyncMovableRandomPositionIfTaken(syncBaseItem);
+        if (getPlanetServices().getItemService().isSyncItemOverlapping(syncBaseItem)) {
+            Path path = getPlanetServices().getCollisionService().setupPathToSyncMovableRandomPositionIfTaken(syncBaseItem);
             pathToDestination = path.getPath();
             destinationAngel = path.getActualDestinationAngel();
-            getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+            getGlobalServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
             return true;
         }  else {
             return false;
@@ -112,7 +112,7 @@ public class SyncMovable extends SyncBaseAbility {
 
     private boolean putInContainer() {
         try {
-            SyncBaseItem syncItemContainer = (SyncBaseItem) getServices().getItemService().getItem(targetContainer);
+            SyncBaseItem syncItemContainer = (SyncBaseItem) getPlanetServices().getItemService().getItem(targetContainer);
             if (getSyncItemArea().isInRange(syncItemContainer.getSyncItemContainer().getRange(), syncItemContainer)) {
                 getSyncItemArea().turnTo(syncItemContainer);
                 syncItemContainer.getSyncItemContainer().load(getSyncBaseItem());
@@ -130,17 +130,17 @@ public class SyncMovable extends SyncBaseAbility {
 
     private boolean pickupBox() {
         try {
-            SyncBoxItem syncBoxItem = (SyncBoxItem) getServices().getItemService().getItem(syncBoxItemId);
+            SyncBoxItem syncBoxItem = (SyncBoxItem) getPlanetServices().getItemService().getItem(syncBoxItemId);
             if (getSyncItemArea().isInRange(getSyncBaseItem().getBaseItemType().getBoxPickupRange(), syncBoxItem)) {
                 getSyncItemArea().turnTo(syncBoxItem);
-                getServices().getInventoryService().onSyncBoxItemPicked(syncBoxItem, getSyncBaseItem());
+                getPlanetServices().getInventoryService().onSyncBoxItemPicked(syncBoxItem, getSyncBaseItem());
                 stop();
                 return false;
             } else {
                 if (isNewPathRecalculationAllowed()) {
                     // Destination place was may be taken. Calculate a new one or target has moved away
                     recalculateNewPath(getSyncBaseItem().getBaseItemType().getBoxPickupRange(), syncBoxItem.getSyncItemArea(), syncBoxItem.getTerrainType());
-                    getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+                    getGlobalServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                     return true;
                 } else {
                     return false;

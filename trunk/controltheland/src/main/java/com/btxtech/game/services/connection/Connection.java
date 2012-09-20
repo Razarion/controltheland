@@ -17,7 +17,7 @@ import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
-import com.btxtech.game.services.base.Base;
+import com.btxtech.game.services.planet.Base;
 
 import java.io.Serializable;
 import java.util.ArrayList;

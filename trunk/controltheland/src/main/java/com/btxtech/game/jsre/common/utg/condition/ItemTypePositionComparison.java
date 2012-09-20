@@ -14,11 +14,11 @@
 package com.btxtech.game.jsre.common.utg.condition;
 
 import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.ClientDateUtil;
+import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -34,21 +34,21 @@ import java.util.Map;
  */
 public class ItemTypePositionComparison extends AbstractSyncItemComparison implements TimeAware {
     private Map<ItemType, Integer> itemTypes;
-    private Rectangle region;
+    private Region region;
     private Integer time;
-    private Services services;
+    private PlanetServices planetServices;
     private SimpleBase simpleBase;
     private boolean isFulfilled = false;
     private final Collection<SyncItem> fulfilledItems = new HashSet<SyncItem>();
     private Long fulfilledTimeStamp;
 
-    public ItemTypePositionComparison(Integer excludedTerritoryId, Map<ItemType, Integer> itemTypes, Rectangle region, Integer time, boolean addExistingItems, Services services,
+    public ItemTypePositionComparison(Map<ItemType, Integer> itemTypes, Region region, Integer time, boolean addExistingItems, PlanetServices planetServices,
                                       SimpleBase simpleBase, String htmlProgressTamplate) {
-        super(excludedTerritoryId, htmlProgressTamplate);
+        super(htmlProgressTamplate);
         this.itemTypes = itemTypes;
         this.region = region;
         this.time = time;
-        this.services = services;
+        this.planetServices = planetServices;
         this.simpleBase = simpleBase;
         if (addExistingItems) {
             addInitail();
@@ -87,9 +87,9 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
     private void addInitail() {
         Collection<SyncBaseItem> items;
         if (region != null) {
-            items = services.getItemService().getBaseItemsInRectangle(region, simpleBase, null);
+            items = planetServices.getItemService().getBaseItemsInRectangle(region, simpleBase, null);
         } else {
-            items = services.getItemService().getItems4Base(simpleBase);
+            items = planetServices.getItemService().getItems4Base(simpleBase);
         }
         fulfilledItems.addAll(items);
     }
@@ -143,7 +143,7 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
     }
 
     private boolean checkRegion(SyncItem syncItem) {
-        return region == null || syncItem.getSyncItemArea().contains(region);
+        return region == null || region.isInside(syncItem);
     }
 
     private boolean areItemsComplete() {
@@ -194,7 +194,7 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
             }
             ItemType itemType;
             try {
-                itemType = getServices().getItemService().getItemType(number);
+                itemType = getGlobalServices().getItemTypeService().getItemType(number);
             } catch (NoSuchItemTypeException e) {
                 throw new IllegalArgumentException("ItemTypePositionComparison.getValue() no such item type id: " + number);
             }
@@ -226,7 +226,7 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
             }
         } else if (parameter == TEMPLATE_PARAMETER_ITEM_IMAGE) {
             try {
-                ItemType itemType = getServices().getItemService().getItemType(number);
+                ItemType itemType = getGlobalServices().getItemTypeService().getItemType(number);
                 return ImageHandler.getQuestProgressItemTypeImageString(itemType);
             } catch (NoSuchItemTypeException e) {
                 throw new IllegalArgumentException("ItemTypePositionComparison.getValue() no such item type id: " + number);

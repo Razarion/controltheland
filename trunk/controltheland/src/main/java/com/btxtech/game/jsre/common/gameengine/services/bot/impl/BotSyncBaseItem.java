@@ -14,9 +14,9 @@
 package com.btxtech.game.jsre.common.gameengine.services.bot.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotItemConfig;
 import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -31,16 +31,16 @@ import java.util.logging.Logger;
  */
 public class BotSyncBaseItem {
     private SyncBaseItem syncBaseItem;
-    private Services services;
+    private PlanetServices planetServices;
     private BotItemConfig botItemConfig;
     private Logger log = Logger.getLogger(BotSyncBaseItem.class.getName());
     private boolean idle;
     private long idleTimeStamp;
 
-    public BotSyncBaseItem(SyncBaseItem syncBaseItem, BotItemConfig botItemConfig, Services services) {
+    public BotSyncBaseItem(SyncBaseItem syncBaseItem, BotItemConfig botItemConfig, PlanetServices planetServices) {
         this.syncBaseItem = syncBaseItem;
         this.botItemConfig = botItemConfig;
-        this.services = services;
+        this.planetServices = planetServices;
         setIdle();
     }
 
@@ -75,7 +75,7 @@ public class BotSyncBaseItem {
 
     public void buildBuilding(Index position, BaseItemType toBeBuilt) {
         try {
-            services.getActionService().build(syncBaseItem, position, toBeBuilt);
+            planetServices.getActionService().build(syncBaseItem, position, toBeBuilt);
             clearIdle();
         } catch (PathCanNotBeFoundException e) {
             setIdle();
@@ -88,7 +88,7 @@ public class BotSyncBaseItem {
 
     public void buildUnit(BaseItemType toBeBuilt) {
         try {
-            services.getActionService().fabricate(syncBaseItem, toBeBuilt);
+            planetServices.getActionService().fabricate(syncBaseItem, toBeBuilt);
             clearIdle();
         } catch (PathCanNotBeFoundException e) {
             setIdle();
@@ -101,7 +101,7 @@ public class BotSyncBaseItem {
 
     public void attack(SyncBaseItem target, Index destinationHint, double destinationAngel) {
         try {
-            services.getActionService().attack(syncBaseItem, target, destinationHint, destinationAngel, true);
+            planetServices.getActionService().attack(syncBaseItem, target, destinationHint, destinationAngel, true);
             clearIdle();
         } catch (PathCanNotBeFoundException e) {
             setIdle();
@@ -112,10 +112,10 @@ public class BotSyncBaseItem {
         }
     }
 
-    public void move(Rectangle region) {
+    public void move(Region region) {
         try {
-            Index position = services.getCollisionService().getFreeRandomPosition(syncBaseItem.getBaseItemType(), region, 0, false, false);
-            services.getActionService().move(syncBaseItem, position);
+            Index position = planetServices.getCollisionService().getFreeRandomPosition(syncBaseItem.getBaseItemType(), region, 0, false, false);
+            planetServices.getActionService().move(syncBaseItem, position);
             clearIdle();
         } catch (PathCanNotBeFoundException e) {
             setIdle();
@@ -127,7 +127,7 @@ public class BotSyncBaseItem {
     }
 
     public void kill() {
-        services.getItemService().killSyncItem(syncBaseItem, null, true, false);
+        planetServices.getItemService().killSyncItem(syncBaseItem, null, true, false);
     }
 
     public void updateIdleState() {

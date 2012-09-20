@@ -17,6 +17,7 @@ import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.pages.mgmt.condition.ConditionConfigPanel;
+import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import com.btxtech.game.wicket.uiservices.TutorialPanel;
 import com.btxtech.game.wicket.uiservices.WysiwygEditor;
@@ -36,7 +37,7 @@ public class DbLevelTaskEditor extends MgmtWebPage {
     @SpringBean
     private RuServiceHelper<DbLevelTask> ruServiceHelper;
 
-    public DbLevelTaskEditor(DbLevelTask dbLevelTask) {
+    public DbLevelTaskEditor(DbLevelTask dbLevelTask, TerrainLinkHelper terrainLinkHelper) {
         add(new FeedbackPanel("msgs"));
 
         final Form<DbLevelTask> form = new Form<DbLevelTask>("form", new CompoundPropertyModel<DbLevelTask>(new RuModel<DbLevelTask>(dbLevelTask, DbLevelTask.class) {
@@ -50,7 +51,7 @@ public class DbLevelTaskEditor extends MgmtWebPage {
 
         form.add(new WysiwygEditor("html"));
         form.add(new TutorialPanel("dbTutorialConfig"));
-        form.add(new ConditionConfigPanel("dbConditionConfig"));
+        form.add(new ConditionConfigPanel("dbConditionConfig", terrainLinkHelper));
 
         // Reward
         form.add(new TextField("money"));
@@ -65,7 +66,7 @@ public class DbLevelTaskEditor extends MgmtWebPage {
         form.add(new Button("back") {
             @Override
             public void onSubmit() {
-                setResponsePage(DbQuestHubTable.class);
+                setResponsePage(LevelTable.class);
             }
         });
     }

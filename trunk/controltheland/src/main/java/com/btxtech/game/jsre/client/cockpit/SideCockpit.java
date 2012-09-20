@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.Game;
@@ -336,7 +337,7 @@ public class SideCockpit {
             StringBuilder builder = new StringBuilder();
             builder.append(ClientBase.getInstance().getOwnItemCount());
             builder.append("/");
-            builder.append(ClientBase.getInstance().getHouseSpace() + ClientLevelHandler.getInstance().getLevelScope().getHouseSpace());
+            builder.append(ClientBase.getInstance().getHouseSpace() + ClientPlanetServices.getInstance().getPlanetInfo().getHouseSpace());
             itemLimit.setText(builder.toString());
         }
     }
@@ -367,6 +368,10 @@ public class SideCockpit {
 
     public void setNoActiveQuest() {
         questProgressCockpit.setNoActiveQuest();
+    }
+
+    public void setWrongPlanet(boolean move) {
+        questProgressCockpit.setWrongPlanet(move);
     }
 
     public void setXp(int xp, int xp2LevelUp) {
@@ -436,10 +441,10 @@ public class SideCockpit {
     }
 
     public void initMission(SimulationInfo simulationInfo) {
-        level.setVisible(!simulationInfo.isSkipAble());
+        level.setVisible(!simulationInfo.isAbortable());
         xpOverview.setVisible(false);
-        abortMissionLabel.setVisible(simulationInfo.isSkipAble());
-        abortMissionIcon.setVisible(simulationInfo.isSkipAble());
+        abortMissionLabel.setVisible(simulationInfo.isAbortable());
+        abortMissionIcon.setVisible(simulationInfo.isAbortable());
         questProgressCockpit.enableQuestControl(false);
     }
 

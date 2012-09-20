@@ -13,19 +13,20 @@
 
 package com.btxtech.game.jsre.client.utg;
 
+import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.SplashManager;
-import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupScreen;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
-import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
@@ -60,9 +61,14 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
     public void setLevel(LevelScope levelScope) {
         // Setup values
         this.levelScope = levelScope;
+        if (levelScope.getPlanetId() != null && levelScope.getPlanetId() != ClientPlanetServices.getInstance().getPlanetInfo().getPlanetId()) {
+            SideCockpit.getInstance().setWrongPlanet(true);
+            moveToNextPlanet();
+        } else {
+            SideCockpit.getInstance().setWrongPlanet(false);
+        }
         // Setup GUI
         SideCockpit.getInstance().setLevel(levelScope);
-        RadarPanel.getInstance().setLevelRadarMode(levelScope.getRadarMode());
         SideCockpit.getInstance().updateItemLimit();
     }
 
@@ -90,14 +96,13 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
         return levelScope;
     }
 
-    public boolean isItemTypeAllowed(BaseItemType baseItemType) {
-        return isItemTypeAllowed(baseItemType.getId());
+    @Override
+    public LevelScope getLevelScope(SimpleBase simpleBase) {
+        if (!ClientBase.getInstance().getSimpleBase().equals(simpleBase)) {
+            throw new IllegalArgumentException("ClientLevelHandler.getLevelScope() is only allowed for own base " + simpleBase);
+        }
+        return getLevelScope();
     }
-
-    public boolean isItemTypeAllowed(int baseItemTypeId) {
-        return levelScope.getLimitation4ItemType(baseItemTypeId) > 0;
-    }
-
 
     public int getLevelTaskId() {
         if (nextTaskId != null) {
@@ -162,5 +167,15 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
 
     public boolean hasActiveQuest() {
         return currentQuest != null;
+    }
+
+    public void moveToNextPlanet() {
+        YesNoDialog yesNoDialog = new YesNoDialog("Next Planet", "Leave your base and move to the next planet?", "GO!", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                Connection.getInstance().surrenderBase();
+            }
+        }, "Cancel", null);
+        DialogManager.showDialog(yesNoDialog, DialogManager.Type.QUEUE_ABLE);
     }
 }

@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ParametrisedRunnable;
@@ -30,12 +31,12 @@ import com.btxtech.game.jsre.client.utg.tip.dialog.TipManager;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
-import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 
 import java.util.List;
@@ -83,8 +84,8 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
     }
 
     private void processPreparation(TaskConfig taskConfig) {
+        ClientPlanetServices.getInstance().setPlanetInfo(taskConfig.createPlanetInfo());
         ClientLevelHandler.getInstance().setLevel(taskConfig.createLevelScope(simulationInfo.getLevelNumber()));
-
         if (taskConfig.hasBots()) {
             ClientBotService.getInstance().setBotConfigs(taskConfig.getBotConfigs());
             ClientBotService.getInstance().start();

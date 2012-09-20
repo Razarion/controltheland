@@ -19,7 +19,7 @@ public class TestUserService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void createLoginLogoutTimeOut() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
         beginHttpSession();
         // Create account
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -80,7 +80,7 @@ public class TestUserService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void createCreateEnterLeaveGame() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
         beginHttpSession();
         // Create account
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -118,7 +118,7 @@ public class TestUserService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void createEnterGameRegister() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
         beginHttpSession();
         // Enter Game
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -163,7 +163,7 @@ public class TestUserService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void createEnterGameUnRegTimeout() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
         beginHttpSession();
         // Enter Game
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -193,7 +193,7 @@ public class TestUserService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void createEnterGameRegTimeout() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
         beginHttpSession();
         // Create account
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -237,7 +237,7 @@ public class TestUserService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void createLoginInGame() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
         beginHttpSession();
         // Create account
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -278,7 +278,7 @@ public class TestUserService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testLoginTwice() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
         // U1 no real base, first level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -297,7 +297,7 @@ public class TestUserService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testCreateUserTwice() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
         // U1 no real base, first level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -331,7 +331,7 @@ public class TestUserService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void isNickNameValid() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

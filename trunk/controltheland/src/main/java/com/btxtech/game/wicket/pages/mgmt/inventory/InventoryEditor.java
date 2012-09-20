@@ -4,7 +4,7 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.inventory.DbBoxRegion;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryItem;
-import com.btxtech.game.services.inventory.InventoryService;
+import com.btxtech.game.services.inventory.GlobalInventoryService;
 import com.btxtech.game.services.inventory.impl.DbInventoryNewUser;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
@@ -33,7 +33,7 @@ import java.util.Arrays;
  */
 public class InventoryEditor extends MgmtWebPage {
     @SpringBean
-    private InventoryService inventoryService;
+    private GlobalInventoryService globalInventoryService;
 
     public InventoryEditor() {
         add(new FeedbackPanel("msgs"));
@@ -77,7 +77,7 @@ public class InventoryEditor extends MgmtWebPage {
 
             @Override
             protected CrudRootServiceHelper<DbInventoryArtifact> getCrudRootServiceHelperImpl() {
-                return inventoryService.getArtifactCrud();
+                return globalInventoryService.getArtifactCrud();
             }
         };
 
@@ -116,7 +116,7 @@ public class InventoryEditor extends MgmtWebPage {
 
             @Override
             protected CrudRootServiceHelper<DbInventoryItem> getCrudRootServiceHelperImpl() {
-                return inventoryService.getItemCrud();
+                return globalInventoryService.getItemCrud();
             }
 
             @Override
@@ -124,37 +124,6 @@ public class InventoryEditor extends MgmtWebPage {
                 setResponsePage(new InventoryItemEditor(dbInventoryItem));
             }
         };
-
-        new CrudRootTableHelper<DbBoxRegion>("boxRegions", "saveBoxRegions", "createBoxRegion", true, form, false) {
-
-            @Override
-            protected void extendedPopulateItem(final Item<DbBoxRegion> dbBoxRegionItem) {
-                displayId(dbBoxRegionItem);
-                super.extendedPopulateItem(dbBoxRegionItem);
-                dbBoxRegionItem.add(new MinutePanel("minInterval"));
-                dbBoxRegionItem.add(new MinutePanel("maxInterval"));
-                dbBoxRegionItem.add(new RectanglePanel("region"));
-                dbBoxRegionItem.add(new TextField("itemFreeRange"));
-            }
-
-            @Override
-            protected CrudRootServiceHelper<DbBoxRegion> getCrudRootServiceHelperImpl() {
-                return inventoryService.getBoxRegionCrud();
-            }
-
-            @Override
-            protected void onEditSubmit(DbBoxRegion dbBoxRegion) {
-                setResponsePage(new BoxRegionEditor(dbBoxRegion));
-            }
-        };
-
-        form.add(new Button("activateBoxRegion") {
-
-            @Override
-            public void onSubmit() {
-                inventoryService.activate();
-            }
-        });
 
         new CrudRootTableHelper<DbInventoryNewUser>("newUserItems", "saveNewUserItems", "createNewUserItem", false, form, false) {
 
@@ -168,7 +137,7 @@ public class InventoryEditor extends MgmtWebPage {
 
             @Override
             protected CrudRootServiceHelper<DbInventoryNewUser> getCrudRootServiceHelperImpl() {
-                return inventoryService.getNewUserCrud();
+                return globalInventoryService.getNewUserCrud();
             }
         };
     }

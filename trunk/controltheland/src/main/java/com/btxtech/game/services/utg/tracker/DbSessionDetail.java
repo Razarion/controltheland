@@ -15,14 +15,14 @@ package com.btxtech.game.services.utg.tracker;
 
 import org.hibernate.annotations.Index;
 
-import java.io.Serializable;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Date;
 
 /**
  * User: beat

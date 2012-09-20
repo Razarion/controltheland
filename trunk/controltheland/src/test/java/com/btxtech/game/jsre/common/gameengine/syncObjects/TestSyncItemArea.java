@@ -6,7 +6,6 @@ import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.debug.DebugService;
-import com.btxtech.game.services.item.ItemService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +17,6 @@ import org.springframework.test.annotation.DirtiesContext;
  * Time: 17:18:42
  */
 public class TestSyncItemArea extends AbstractServiceTest {
-    @Autowired
-    private ItemService itemService;
     @Autowired
     private DebugService debugService;
 
@@ -95,7 +92,7 @@ public class TestSyncItemArea extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testInRangeSyncItem__TMP() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
         // TODO test angel != 0
 
         BoundingBox boundingBox = new BoundingBox(200, 200, ANGELS_24);
@@ -118,7 +115,7 @@ public class TestSyncItemArea extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testInRangeSyncItem() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         assertSameDistance(45, 102);
         assertSameDistance(0, 160);
@@ -128,7 +125,7 @@ public class TestSyncItemArea extends AbstractServiceTest {
 //        Assert.assertTrue(syncItemArea.isInRange(100, createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(1, 1, 1))));
 //        Assert.assertTrue(syncItemArea.isInRange(100, createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 640), new Id(1, 1, 1))));
 //
-//        ItemType targetItemType = itemService.getItemType(TEST_SIMPLE_BUILDING_ID);
+//        ItemType targetItemType = serverItemService.getItemType(TEST_SIMPLE_BUILDING_ID);
 //        targetItemType.setBoundingBox(new BoundingBox(100, 100, 200, 80, 1));
 //        SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(1500, 1500), new Id(1, -100, -100));
 //        target.getSyncItemArea().turnTo(MathHelper.gradToRad(0));
@@ -137,7 +134,7 @@ public class TestSyncItemArea extends AbstractServiceTest {
 //        syncBaseItem.getSyncItemArea().turnTo(MathHelper.gradToRad(0));
 //        Assert.assertTrue(syncBaseItem.getSyncItemArea().isInRange(200, target.getSyncItemArea()));
 //
-//        targetItemType = itemService.getItemType(TEST_SIMPLE_BUILDING_ID);
+//        targetItemType = serverItemService.getItemType(TEST_SIMPLE_BUILDING_ID);
 //        targetItemType.setBoundingBox(new BoundingBox(100, 100, 200, 80, 1));
 //        target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(1500, 1500), new Id(1, -100, -100));
 //        target.getSyncItemArea().turnTo(MathHelper.gradToRad(14.32394487827058));
@@ -145,7 +142,7 @@ public class TestSyncItemArea extends AbstractServiceTest {
 //        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1572, 1771), new Id(2, -100, -100));
 //        syncBaseItem.getSyncItemArea().turnTo(MathHelper.gradToRad(194.80565034447966));
 //
-//        ItemType targetItemType = itemService.getItemType(TEST_SIMPLE_BUILDING_ID);
+//        ItemType targetItemType = serverItemService.getItemType(TEST_SIMPLE_BUILDING_ID);
 //        targetItemType.setBoundingBox(new BoundingBox(100, 100, 200, 80, 1));
 //        SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(1500, 1500), new Id(1, -100, -100));
 //        target.getSyncItemArea().turnTo(MathHelper.gradToRad(14.32394487827058));
@@ -175,7 +172,7 @@ public class TestSyncItemArea extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testInRangeSyncItemArea() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         BoundingBox boundingBox = new BoundingBox(200, 200, ANGELS_24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(400, 400));

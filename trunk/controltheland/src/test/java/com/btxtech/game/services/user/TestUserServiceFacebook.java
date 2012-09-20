@@ -4,29 +4,15 @@ import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.page.DbPage;
-import com.btxtech.game.services.messenger.MessengerService;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import com.btxtech.game.wicket.WicketApplication;
-import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import junit.framework.Assert;
-import org.apache.wicket.Page;
-import org.apache.wicket.authentication.AuthenticatedWebApplication;
-import org.apache.wicket.authentication.AuthenticatedWebSession;
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.protocol.http.HttpSessionStore;
-import org.apache.wicket.protocol.http.WebResponse;
-import org.apache.wicket.session.ISessionStore;
-import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
-import org.apache.wicket.util.tester.DummyHomePage;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
-
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * User: beat
@@ -50,7 +36,7 @@ public class TestUserServiceFacebook extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void createLogin() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

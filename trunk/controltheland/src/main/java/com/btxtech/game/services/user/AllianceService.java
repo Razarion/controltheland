@@ -1,7 +1,7 @@
 package com.btxtech.game.services.user;
 
-import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 
 import java.util.Collection;
 

@@ -1,0 +1,55 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket>
+<head>
+    <title>Resource</title>
+</head>
+<body>
+<h1>Resource</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="regionResourceForm">
+    <h2>Region Resource</h2>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Name [internal only]</th>
+            <th bgcolor="#dadada">Count</th>
+            <th bgcolor="#dadada">Resource item type</th>
+            <th bgcolor="#dadada">Region</th>
+            <th bgcolor="#dadada">Item free range</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+
+        <tr wicket:id="regionResources">
+            <td><input type="text" wicket:id="name" size="20" maxlength="500"/></td>
+            <td><input type="text" wicket:id="count" size="5" maxlength="20"/></td>
+            <td wicket:id="resourceItemType"/>
+            <td wicket:id="region"/>
+            <td><input type="text" wicket:id="minDistanceToItems" size="5" maxlength="20"/></td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" wicket:id="create" value="Create">
+    <input type="submit" wicket:id="save" value="Save">
+    <br>
+    <input type="submit" wicket:id="activate" value="Activate">
+
+</form>
+</body>
+</html>

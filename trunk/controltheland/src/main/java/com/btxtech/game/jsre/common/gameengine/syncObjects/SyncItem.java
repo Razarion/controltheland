@@ -17,7 +17,8 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
@@ -31,7 +32,8 @@ import java.util.ArrayList;
  */
 public abstract class SyncItem {
     private Id id;
-    private Services services;
+    private GlobalServices globalServices;
+    private PlanetServices planetServices;
     // Own states
     private ItemType itemType;
     private SyncItemArea syncItemArea;
@@ -40,10 +42,11 @@ public abstract class SyncItem {
     private boolean explode = false;
 
 
-    public SyncItem(Id id, Index position, ItemType itemType, Services services) {
+    public SyncItem(Id id, Index position, ItemType itemType, GlobalServices globalServices, PlanetServices planetServices) {
         this.id = id;
         this.itemType = itemType;
-        this.services = services;
+        this.globalServices = globalServices;
+        this.planetServices = planetServices;
         syncItemArea = new SyncItemArea(this);
         syncItemArea.setPosition(position);
         syncItemArea.correctPosition();
@@ -68,8 +71,12 @@ public abstract class SyncItem {
         return syncItemInfo;
     }
 
-    public Services getServices() {
-        return services;
+    public GlobalServices getGlobalServices() {
+        return globalServices;
+    }
+
+    public PlanetServices getPlanetServices() {
+        return planetServices;
     }
 
     public ItemType getItemType() {

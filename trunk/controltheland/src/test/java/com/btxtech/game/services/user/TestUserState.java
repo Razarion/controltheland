@@ -24,7 +24,7 @@ public class TestUserState extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testTwoRegUsers() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
         // U1 no real base, first level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -113,7 +113,7 @@ public class TestUserState extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testOneRegUsersOneUnregOnlineUser() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
         // U1 no real base, first level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -143,7 +143,7 @@ public class TestUserState extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testRegUserLogOutLogIn() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
         // U1 no real base, first level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -221,7 +221,7 @@ public class TestUserState extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSameSessionUnregRegUnreg() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
         // U1 no real base, first level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

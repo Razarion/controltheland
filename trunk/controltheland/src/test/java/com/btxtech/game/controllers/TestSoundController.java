@@ -1,23 +1,13 @@
 package com.btxtech.game.controllers;
 
-import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
-import com.btxtech.game.jsre.itemtypeeditor.ItemTypeImageInfo;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.sound.DbSound;
 import com.btxtech.game.services.sound.SoundService;
-import org.apache.wicket.util.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * User: beat

@@ -3,6 +3,7 @@ package com.btxtech.game.services.bot;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.CommonJava;
+import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
@@ -12,12 +13,14 @@ import com.btxtech.game.jsre.common.gameengine.services.bot.impl.BotSyncBaseItem
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.TestServices;
-import com.btxtech.game.services.action.ActionService;
-import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.collision.CollisionService;
-import com.btxtech.game.services.common.ServerServices;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.TestPlanetServices;
+import com.btxtech.game.services.common.ServerPlanetServices;
+import com.btxtech.game.services.item.ServerItemTypeService;
+import com.btxtech.game.services.planet.ActionService;
+import com.btxtech.game.services.planet.BaseService;
+import com.btxtech.game.services.planet.CollisionService;
+import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.ServerItemService;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
@@ -35,30 +38,29 @@ import java.util.concurrent.TimeoutException;
  */
 public class TestBotItemContainer extends AbstractServiceTest {
     @Autowired
-    private ServerServices serverServices;
+    private ServerItemTypeService serverItemTypeService;
     @Autowired
-    private ItemService itemService;
-    @Autowired
-    private BaseService baseService;
+    private PlanetSystemService planetSystemService;
 
     @Test
     @DirtiesContext
     public void oneItem() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
-        botItemConfigs.add(new BotItemConfig((BaseItemType) itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, new Rectangle(2000, 2000, 1000, 1000), false, null, false, null));
-        SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), false, null, false, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
 
-        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices, "Test Bot");
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverPlanetServices, "Test Bot");
         Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
         botItemContainer.work(simpleBase);
         waitForBotItemContainer(botItemContainer, simpleBase);
-        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
+        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null, TEST_PLANET_1_ID).size());
 
         botItemContainer.killAllItems(simpleBase);
-        assertWholeItemCount(0);
+        assertWholeItemCount(TEST_PLANET_1_ID, 0);
     }
 
     private void waitForBotItemContainer(BotItemContainer botItemContainer, SimpleBase simpleBase) throws InterruptedException, TimeoutException {
@@ -74,199 +76,204 @@ public class TestBotItemContainer extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void threeItems() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
-        botItemConfigs.add(new BotItemConfig((BaseItemType) itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, new Rectangle(2000, 2000, 2000, 2000), false, null, false, null));
-        botItemConfigs.add(new BotItemConfig((BaseItemType) itemService.getItemType(TEST_FACTORY_ITEM_ID), 2, false, new Rectangle(2000, 2000, 2000, 2000), false, null, false, null));
-        SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 2000, 2000), 1), false, null, false, null));
+        botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), 2, false, createRegion(new Rectangle(2000, 2000, 2000, 2000), 1), false, null, false, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
 
-        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices, "Test Bot");
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverPlanetServices, "Test Bot");
         Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
         botItemContainer.work(simpleBase);
-        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
+        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null, TEST_PLANET_1_ID).size());
         Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
         botItemContainer.work(simpleBase);
-        waitForActionServiceDone();
-        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
+        waitForActionServiceDone(TEST_PLANET_1_ID);
+        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null, TEST_PLANET_1_ID).size());
         // TODO failed on 11.08.2012
-        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
+        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null, TEST_PLANET_1_ID).size());
         Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
         botItemContainer.work(simpleBase);
-        waitForActionServiceDone();
+        waitForActionServiceDone(TEST_PLANET_1_ID);
         Assert.assertTrue(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
-        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
-        Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
+        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null, TEST_PLANET_1_ID).size());
+        Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null, TEST_PLANET_1_ID).size());
 
         // Does nothing
         botItemContainer.work(simpleBase);
-        waitForActionServiceDone();
+        waitForActionServiceDone(TEST_PLANET_1_ID);
         Assert.assertTrue(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
-        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
-        Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
+        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null, TEST_PLANET_1_ID).size());
+        Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null, TEST_PLANET_1_ID).size());
 
-        Id id = getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).get(0);
-        killSyncItem(id);
+        Id id = getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null, TEST_PLANET_1_ID).get(0);
+        killSyncItem(TEST_PLANET_1_ID, id);
         Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
         botItemContainer.work(simpleBase);
-        waitForActionServiceDone();
+        waitForActionServiceDone(TEST_PLANET_1_ID);
         Assert.assertTrue(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
-        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
-        Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
+        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null, TEST_PLANET_1_ID).size());
+        Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null, TEST_PLANET_1_ID).size());
 
-        id = getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).get(0);
-        killSyncItem(id);
-        id = getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).get(0);
-        killSyncItem(id);
+        id = getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null, TEST_PLANET_1_ID).get(0);
+        killSyncItem(TEST_PLANET_1_ID, id);
+        id = getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null, TEST_PLANET_1_ID).get(0);
+        killSyncItem(TEST_PLANET_1_ID, id);
         Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
         botItemContainer.work(simpleBase);
-        waitForActionServiceDone();
+        waitForActionServiceDone(TEST_PLANET_1_ID);
         // Mock Services instead of two times call work
         botItemContainer.work(simpleBase);
-        waitForActionServiceDone();
+        waitForActionServiceDone(TEST_PLANET_1_ID);
         Assert.assertTrue(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
-        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
-        Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
+        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null, TEST_PLANET_1_ID).size());
+        Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null, TEST_PLANET_1_ID).size());
 
         botItemContainer.killAllItems(simpleBase);
-        assertWholeItemCount(0);
+        assertWholeItemCount(TEST_PLANET_1_ID, 0);
     }
 
     @Test
     @DirtiesContext
     public void complexItems() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
-        botItemConfigs.add(new BotItemConfig((BaseItemType) itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, new Rectangle(2000, 2000, 2000, 2000), false, null, false, null));
-        botItemConfigs.add(new BotItemConfig((BaseItemType) itemService.getItemType(TEST_FACTORY_ITEM_ID), 1, false, new Rectangle(4000, 2000, 2000, 2000), false, null, false, null));
-        botItemConfigs.add(new BotItemConfig((BaseItemType) itemService.getItemType(TEST_ATTACK_ITEM_ID), 3, false, null, false, null, false, null));
-        botItemConfigs.add(new BotItemConfig((BaseItemType) itemService.getItemType(TEST_SIMPLE_BUILDING_ID), 2, true, new Rectangle(4000, 4000, 2000, 2000), false, null, false, null));
-        SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 2000, 2000), 1), false, null, false, null));
+        botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), 1, false, createRegion(new Rectangle(4000, 2000, 2000, 2000), 1), false, null, false, null));
+        botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 3, false, null, false, null, false, null));
+        botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), 2, true, createRegion(new Rectangle(4000, 4000, 2000, 2000), 1), false, null, false, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
 
-        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices, "Test Bot");
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverPlanetServices, "Test Bot");
 
         Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
         for (int i = 0; i < 5; i++) {
             // Mock Services instead of this for loop
             botItemContainer.work(simpleBase);
-            waitForActionServiceDone();
+            waitForActionServiceDone(TEST_PLANET_1_ID);
         }
         Assert.assertTrue(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
-        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
-        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
-        Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null).size());
-        Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_SIMPLE_BUILDING_ID, null).size());
+        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null, TEST_PLANET_1_ID).size());
+        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null, TEST_PLANET_1_ID).size());
+        Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null, TEST_PLANET_1_ID).size());
+        Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_SIMPLE_BUILDING_ID, null, TEST_PLANET_1_ID).size());
 
-        itemService.killSyncItemIds(getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null));
-        itemService.killSyncItemIds(getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null));
-        itemService.killSyncItemIds(getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null));
+        serverPlanetServices.getItemService().killSyncItemIds(getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null, TEST_PLANET_1_ID));
+        serverPlanetServices.getItemService().killSyncItemIds(getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null, TEST_PLANET_1_ID));
+        serverPlanetServices.getItemService().killSyncItemIds(getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null, TEST_PLANET_1_ID));
         for (int i = 0; i < 5; i++) {
             // Mock Services instead of this for loop
             botItemContainer.work(simpleBase);
-            waitForActionServiceDone();
+            waitForActionServiceDone(TEST_PLANET_1_ID);
         }
         Assert.assertTrue(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
-        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
-        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
-        Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null).size());
-        Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_SIMPLE_BUILDING_ID, null).size());
+        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null, TEST_PLANET_1_ID).size());
+        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null, TEST_PLANET_1_ID).size());
+        Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null, TEST_PLANET_1_ID).size());
+        Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_SIMPLE_BUILDING_ID, null, TEST_PLANET_1_ID).size());
 
         botItemContainer.killAllItems(simpleBase);
-        assertWholeItemCount(0);
+        assertWholeItemCount(TEST_PLANET_1_ID, 0);
     }
 
     @Test
     @DirtiesContext
     public void regionAndMovable() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
-        botItemConfigs.add(new BotItemConfig((BaseItemType) itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, new Rectangle(2000, 2000, 2000, 2000), false, null, false, null));
-        botItemConfigs.add(new BotItemConfig((BaseItemType) itemService.getItemType(TEST_FACTORY_ITEM_ID), 1, false, new Rectangle(4000, 2000, 2000, 2000), false, null, false, null));
-        botItemConfigs.add(new BotItemConfig((BaseItemType) itemService.getItemType(TEST_ATTACK_ITEM_ID), 3, false, new Rectangle(8000, 8000, 2000, 2000), false, null, false, null));
-        SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 2000, 2000), 1), false, null, false, null));
+        botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), 1, false, createRegion(new Rectangle(4000, 2000, 2000, 2000), 1), false, null, false, null));
+        botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 3, false, createRegion(new Rectangle(8000, 8000, 2000, 2000), 1), false, null, false, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
 
-        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices, "Test Bot");
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverPlanetServices, "Test Bot");
         Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
         for (int i = 0; i < 5; i++) {
             // Mock Services instead of this for loop
             botItemContainer.work(simpleBase);
-            waitForActionServiceDone();
+            waitForActionServiceDone(TEST_PLANET_1_ID);
         }
         Assert.assertTrue(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
-        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
-        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
-        Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null).size());
+        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null, TEST_PLANET_1_ID).size());
+        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null, TEST_PLANET_1_ID).size());
+        Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null, TEST_PLANET_1_ID).size());
 
         botItemContainer.killAllItems(simpleBase);
-        assertWholeItemCount(0);
+        assertWholeItemCount(TEST_PLANET_1_ID, 0);
     }
 
     @Test
     @DirtiesContext
     public void multipleFactoriesAndOverdrive() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
-        botItemConfigs.add(new BotItemConfig((BaseItemType) itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, new Rectangle(2000, 2000, 1000, 1000), false, null, false, null));
-        botItemConfigs.add(new BotItemConfig((BaseItemType) itemService.getItemType(TEST_FACTORY_ITEM_ID), 6, false, new Rectangle(2000, 2000, 1000, 1000), false, null, false, null));
-        botItemConfigs.add(new BotItemConfig((BaseItemType) itemService.getItemType(TEST_ATTACK_ITEM_ID), 3, false, null, false, null, false, null));
-        SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), false, null, false, null));
+        botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), 6, false, createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), false, null, false, null));
+        botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 3, false, null, false, null, false, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
 
-        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices, "Test Bot");
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverPlanetServices, "Test Bot");
         Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
         for (int i = 0; i < 50; i++) {
             // Mock Services instead of this for loop
             botItemContainer.work(simpleBase);
-            waitForActionServiceDone();
+            waitForActionServiceDone(TEST_PLANET_1_ID);
         }
         Assert.assertTrue(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
-        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
-        Assert.assertEquals(6, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
-        Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null).size());
+        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null, TEST_PLANET_1_ID).size());
+        Assert.assertEquals(6, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null, TEST_PLANET_1_ID).size());
+        Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null, TEST_PLANET_1_ID).size());
 
-        itemService.killSyncItemIds(getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null));
+        serverPlanetServices.getItemService().killSyncItemIds(getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null, TEST_PLANET_1_ID));
         Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
         for (int i = 0; i < 50; i++) {
             // Mock Services instead of this for loop
             botItemContainer.work(simpleBase);
-            waitForActionServiceDone();
+            waitForActionServiceDone(TEST_PLANET_1_ID);
         }
         Assert.assertTrue(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
-        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null).size());
-        Assert.assertEquals(6, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null).size());
-        Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null).size());
+        Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null, TEST_PLANET_1_ID).size());
+        Assert.assertEquals(6, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null, TEST_PLANET_1_ID).size());
+        Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null, TEST_PLANET_1_ID).size());
 
         botItemContainer.killAllItems(simpleBase);
-        assertWholeItemCount(0);
+        assertWholeItemCount(TEST_PLANET_1_ID, 0);
     }
 
     @Test
     @DirtiesContext
     public void buildupWrongConfig() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
-        botItemConfigs.add(new BotItemConfig((BaseItemType) itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, new Rectangle(2000, 2000, 1000, 1000), false, null, false, null));
-        botItemConfigs.add(new BotItemConfig((BaseItemType) itemService.getItemType(TEST_ATTACK_ITEM_ID), 3, false, null, false, null, false, null));
-        SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), false, null, false, null));
+        botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 3, false, null, false, null, false, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
 
-        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices, "Test Bot");
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverPlanetServices, "Test Bot");
         Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
 
         for (int i = 0; i < 50; i++) {
             // Mock Services instead of this for loop
             botItemContainer.work(simpleBase);
-            waitForActionServiceDone();
+            waitForActionServiceDone(TEST_PLANET_1_ID);
         }
 
         Assert.assertFalse(botItemContainer.isFulfilledUseInTestOnly(simpleBase));
@@ -275,9 +282,10 @@ public class TestBotItemContainer extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void getIdleAttackers() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
-        SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
 
         SyncBaseItem defender1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(1, Id.NO_ID, 0));
         SyncBaseItem defender2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1200), new Id(2, Id.NO_ID, 0));
@@ -293,23 +301,23 @@ public class TestBotItemContainer extends AbstractServiceTest {
 
         CollisionService mockCollisionService = EasyMock.createNiceMock(CollisionService.class);
 
-        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
+        ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
         // TODO region expected
-        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), null, null, simpleBase, 0)).andReturn(defender1);
-        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), null, null, simpleBase, 0)).andReturn(defender2);
-        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), null, null, simpleBase, 0)).andReturn(defender3);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), null, null, simpleBase, 0)).andReturn(defender1);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), null, null, simpleBase, 0)).andReturn(defender2);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), null, null, simpleBase, 0)).andReturn(defender3);
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
-        botItemConfigs.add(new BotItemConfig((BaseItemType) itemService.getItemType(TEST_ATTACK_ITEM_ID), 3, true, new Rectangle(2000, 2000, 1000, 1000), false, null, false, null));
+        botItemConfigs.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 3, true, createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), false, null, false, null));
 
-        TestServices testServices = new TestServices();
-        testServices.setItemService(mockItemService);
+        TestPlanetServices testServices = new TestPlanetServices();
+        testServices.setItemService(mockServerItemService);
         testServices.setCollisionService(mockCollisionService);
         testServices.setBaseService(baseService);
 
         EasyMock.replay(baseService);
         EasyMock.replay(mockCollisionService);
-        EasyMock.replay(mockItemService);
+        EasyMock.replay(mockServerItemService);
 
         BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, testServices, "Test Bot");
 
@@ -336,18 +344,19 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Assert.assertTrue(idleAttackers.isEmpty());
 
         EasyMock.verify(baseService);
-        EasyMock.verify(mockItemService);
+        EasyMock.verify(mockServerItemService);
     }
 
     @Test
     @DirtiesContext
     public void moveRealIfIdle() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
-        SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(1, Id.NO_ID, 0));
 
-        TestServices testServices = new TestServices();
+        TestPlanetServices testServices = new TestPlanetServices();
 
         BaseService baseServiceMock = EasyMock.createStrictMock(BaseService.class);
         Collection<SyncBaseItem> botItems = new ArrayList<>();
@@ -360,45 +369,48 @@ public class TestBotItemContainer extends AbstractServiceTest {
         mockActionService.move(EasyMock.eq(syncBaseItem), EasyMock.eq(new Index(3000, 3500)));
         testServices.setActionService(mockActionService);
 
+        Region region1 = createRegion(new Rectangle(0, 0, 1000, 1000), 1);
+        Region region2 = createRegion(new Rectangle(2000, 3000, 1000, 2000), 2);
         CollisionService mockCollisionService = EasyMock.createStrictMock(CollisionService.class);
-        EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem.getBaseItemType(), new Rectangle(0, 0, 1000, 1000), 0, false, true)).andReturn(new Index(500, 500));
-        EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem.getBaseItemType(), new Rectangle(2000, 3000, 1000, 2000), 0, false, false)).andReturn(new Index(3000, 3500));
+        EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem.getBaseItemType(), region1, 0, false, true)).andReturn(new Index(500, 500));
+        EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem.getBaseItemType(), region2, 0, false, false)).andReturn(new Index(3000, 3500));
         testServices.setCollisionService(mockCollisionService);
 
-        BaseItemType baseItemType = (BaseItemType) itemService.getItemType(TEST_ATTACK_ITEM_ID);
+        BaseItemType baseItemType = (BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
-        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, new Rectangle(0, 0, 1000, 1000), true, null, false, null));
+        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, region1, true, null, false, null));
 
-        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
-        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), new Index(500, 500), null, simpleBase, 0)).andReturn(syncBaseItem);
-        testServices.setItemService(mockItemService);
+        ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(500, 500), null, simpleBase, 0)).andReturn(syncBaseItem);
+        testServices.setItemService(mockServerItemService);
 
         EasyMock.replay(baseServiceMock);
         EasyMock.replay(mockActionService);
         EasyMock.replay(mockCollisionService);
-        EasyMock.replay(mockItemService);
-        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, new Rectangle(2000, 3000, 1000, 2000), testServices, "Test Bot");
+        EasyMock.replay(mockServerItemService);
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, region2, testServices, "Test Bot");
         botItemContainer.work(simpleBase);
         syncBaseItem.setBuildup(0.0); // Simulate busy
         botItemContainer.work(simpleBase);
         syncBaseItem.setBuildup(1.0); // Simulate not busy
-        syncBaseItem.getSyncItemArea().setPosition(new Index(3000, 3500));
+        syncBaseItem.getSyncItemArea().setPosition(new Index(2000, 3500));
         botItemContainer.work(simpleBase);
         EasyMock.verify(baseServiceMock);
         EasyMock.verify(mockActionService);
         EasyMock.verify(mockCollisionService);
-        EasyMock.verify(mockItemService);
+        EasyMock.verify(mockServerItemService);
     }
 
     @Test
     @DirtiesContext
     public void ttlIfIdle() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
-        SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(1, Id.NO_ID, 0));
 
-        TestServices testServices = new TestServices();
+        TestPlanetServices testServices = new TestPlanetServices();
 
         BaseService baseServiceMock = EasyMock.createStrictMock(BaseService.class);
         Collection<SyncBaseItem> botItems = new ArrayList<>();
@@ -406,36 +418,38 @@ public class TestBotItemContainer extends AbstractServiceTest {
         EasyMock.expect(baseServiceMock.getItems(simpleBase)).andReturn(botItems).times(2);
         testServices.setBaseService(baseServiceMock);
 
-        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
-        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), new Index(300, 350), null, simpleBase, 0)).andReturn(syncBaseItem);
-        mockItemService.killSyncItem(EasyMock.eq(syncBaseItem), EasyMock.<SimpleBase>isNull(), EasyMock.eq(true), EasyMock.eq(false));
-        testServices.setItemService(mockItemService);
+        ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(300, 350), null, simpleBase, 0)).andReturn(syncBaseItem);
+        mockServerItemService.killSyncItem(EasyMock.eq(syncBaseItem), EasyMock.<SimpleBase>isNull(), EasyMock.eq(true), EasyMock.eq(false));
+        testServices.setItemService(mockServerItemService);
 
         CollisionService mockCollisionService = EasyMock.createStrictMock(CollisionService.class);
-        EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem.getBaseItemType(), new Rectangle(0, 0, 1000, 1000), 0, false, true)).andReturn(new Index(300, 350));
+        Region region1 = createRegion(new Rectangle(0, 0, 1000, 1000), 1);
+        EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem.getBaseItemType(), region1, 0, false, true)).andReturn(new Index(300, 350));
         testServices.setCollisionService(mockCollisionService);
 
-        BaseItemType baseItemType = (BaseItemType) itemService.getItemType(TEST_ATTACK_ITEM_ID);
+        BaseItemType baseItemType = (BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
-        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, new Rectangle(0, 0, 1000, 1000), false, 50, false, null));
+        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, region1, false, 50, false, null));
 
-        EasyMock.replay(baseServiceMock, mockItemService, mockCollisionService);
-        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, new Rectangle(2000, 3000, 1000, 2000), testServices, "Test Bot");
+        EasyMock.replay(baseServiceMock, mockServerItemService, mockCollisionService);
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, createRegion(new Rectangle(2000, 3000, 1000, 2000), 1), testServices, "Test Bot");
         botItemContainer.work(simpleBase);
         Thread.sleep(60);
         botItemContainer.work(simpleBase);
-        EasyMock.verify(mockItemService, baseServiceMock, mockCollisionService);
+        EasyMock.verify(mockServerItemService, baseServiceMock, mockCollisionService);
     }
 
     @Test
     @DirtiesContext
     public void noRebuild() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
-        SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(1, Id.NO_ID, 0));
 
-        TestServices testServices = new TestServices();
+        TestPlanetServices testServices = new TestPlanetServices();
 
         BaseService baseServiceMock = EasyMock.createStrictMock(BaseService.class);
         Collection<SyncBaseItem> botItems = new ArrayList<>();
@@ -445,36 +459,38 @@ public class TestBotItemContainer extends AbstractServiceTest {
         EasyMock.expect(baseServiceMock.getItems(simpleBase)).andReturn(null);
         testServices.setBaseService(baseServiceMock);
 
-        BaseItemType baseItemType = (BaseItemType) itemService.getItemType(TEST_ATTACK_ITEM_ID);
+        BaseItemType baseItemType = (BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
-        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, new Rectangle(0, 0, 1000, 1000), false, null, true, null));
+        Region region1 = createRegion(new Rectangle(0, 0, 1000, 1000), 1);
+        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, region1, false, null, true, null));
 
         CollisionService mockCollisionService = EasyMock.createStrictMock(CollisionService.class);
-        EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem.getBaseItemType(), new Rectangle(0, 0, 1000, 1000), 0, false, true)).andReturn(new Index(3000, 3500));
+        EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem.getBaseItemType(), region1, 0, false, true)).andReturn(new Index(3000, 3500));
         testServices.setCollisionService(mockCollisionService);
 
-        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
-        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), new Index(3000, 3500), null, simpleBase, 0)).andReturn(syncBaseItem);
-        testServices.setItemService(mockItemService);
+        ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(3000, 3500), null, simpleBase, 0)).andReturn(syncBaseItem);
+        testServices.setItemService(mockServerItemService);
 
-        EasyMock.replay(baseServiceMock, mockCollisionService, mockItemService);
-        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, new Rectangle(2000, 3000, 1000, 2000), testServices, "Test Bot");
+        EasyMock.replay(baseServiceMock, mockCollisionService, mockServerItemService);
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, createRegion(new Rectangle(2000, 3000, 1000, 2000), 1), testServices, "Test Bot");
         botItemContainer.work(simpleBase);
         botItemContainer.work(simpleBase);
         syncBaseItem.setHealth(0);
         botItemContainer.work(simpleBase);
-        EasyMock.verify(baseServiceMock, mockCollisionService, mockItemService);
+        EasyMock.verify(baseServiceMock, mockCollisionService, mockServerItemService);
     }
 
     @Test
     @DirtiesContext
     public void rePop() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
-        SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(1, Id.NO_ID, 0));
 
-        TestServices testServices = new TestServices();
+        TestPlanetServices testServices = new TestPlanetServices();
 
         BaseService baseServiceMock = EasyMock.createStrictMock(BaseService.class);
         Collection<SyncBaseItem> botItems = new ArrayList<>();
@@ -485,22 +501,23 @@ public class TestBotItemContainer extends AbstractServiceTest {
         EasyMock.expect(baseServiceMock.getItems(simpleBase)).andReturn(botItems);
         testServices.setBaseService(baseServiceMock);
 
-        BaseItemType baseItemType = (BaseItemType) itemService.getItemType(TEST_ATTACK_ITEM_ID);
+        BaseItemType baseItemType = (BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
-        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, new Rectangle(0, 0, 1000, 1000), false, null, false, 100L));
+        Region region1 = createRegion(new Rectangle(0, 0, 1000, 1000), 1);
+        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, region1, false, null, false, 100L));
 
         CollisionService mockCollisionService = EasyMock.createStrictMock(CollisionService.class);
-        EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem.getBaseItemType(), new Rectangle(0, 0, 1000, 1000), 0, false, true)).andReturn(new Index(3000, 3500));
-        EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem.getBaseItemType(), new Rectangle(0, 0, 1000, 1000), 0, false, true)).andReturn(new Index(3000, 3500));
+        EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem.getBaseItemType(), region1, 0, false, true)).andReturn(new Index(3000, 3500));
+        EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem.getBaseItemType(), region1, 0, false, true)).andReturn(new Index(3000, 3500));
         testServices.setCollisionService(mockCollisionService);
 
-        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
-        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), new Index(3000, 3500), null, simpleBase, 0)).andReturn(syncBaseItem);
-        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), new Index(3000, 3500), null, simpleBase, 0)).andReturn(syncBaseItem);
-        testServices.setItemService(mockItemService);
+        ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(3000, 3500), null, simpleBase, 0)).andReturn(syncBaseItem);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(3000, 3500), null, simpleBase, 0)).andReturn(syncBaseItem);
+        testServices.setItemService(mockServerItemService);
 
-        EasyMock.replay(baseServiceMock, mockCollisionService, mockItemService);
-        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, new Rectangle(2000, 3000, 1000, 2000), testServices, "Test Bot");
+        EasyMock.replay(baseServiceMock, mockCollisionService, mockServerItemService);
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, createRegion(new Rectangle(2000, 3000, 1000, 2000), 1), testServices, "Test Bot");
         botItemContainer.work(simpleBase);
         botItemContainer.work(simpleBase);
         syncBaseItem.setHealth(0);
@@ -508,44 +525,46 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Thread.sleep(110);
         syncBaseItem.setHealth(1);
         botItemContainer.work(simpleBase);
-        EasyMock.verify(baseServiceMock, mockCollisionService, mockItemService);
+        EasyMock.verify(baseServiceMock, mockCollisionService, mockServerItemService);
     }
 
     @Test
     @DirtiesContext
     public void itemBelongsToMy() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
-        SimpleBase botBase = baseService.createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
-        SimpleBase otherBotBase = baseService.createBotBase(new BotConfig(0, 0, null, null, "OtherTest Bot", null, null, null, null));
+        SimpleBase botBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        SimpleBase otherBotBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "OtherTest Bot", null, null, null, null));
         SyncBaseItem botBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 500), new Id(1, Id.NO_ID, 0));
         SyncBaseItem otherBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 1000), new Id(2, Id.NO_ID, 0), otherBotBase);
         SyncBaseItem otherItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(3, Id.NO_ID, 0));
 
-        TestServices testServices = new TestServices();
+        TestPlanetServices testServices = new TestPlanetServices();
 
         BaseService baseServiceMock = EasyMock.createStrictMock(BaseService.class);
         EasyMock.expect(baseServiceMock.getItems(botBase)).andReturn(null);
         testServices.setBaseService(baseServiceMock);
 
-        BaseItemType baseItemType = (BaseItemType) itemService.getItemType(TEST_ATTACK_ITEM_ID);
+        BaseItemType baseItemType = (BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
-        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, new Rectangle(0, 0, 1000, 1000), false, null, false, 100L));
+        Region region1 = createRegion(new Rectangle(0, 0, 1000, 1000), 1);
+        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, region1, false, null, false, 100L));
 
         CollisionService mockCollisionService = EasyMock.createStrictMock(CollisionService.class);
-        EasyMock.expect(mockCollisionService.getFreeRandomPosition(botBaseItem.getBaseItemType(), new Rectangle(0, 0, 1000, 1000), 0, false, true)).andReturn(new Index(3000, 3500));
+        EasyMock.expect(mockCollisionService.getFreeRandomPosition(botBaseItem.getBaseItemType(), region1, 0, false, true)).andReturn(new Index(3000, 3500));
         testServices.setCollisionService(mockCollisionService);
 
-        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
-        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), new Index(3000, 3500), null, botBase, 0)).andReturn(botBaseItem);
-        testServices.setItemService(mockItemService);
+        ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(3000, 3500), null, botBase, 0)).andReturn(botBaseItem);
+        testServices.setItemService(mockServerItemService);
 
-        EasyMock.replay(baseServiceMock, mockCollisionService, mockItemService);
-        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, new Rectangle(2000, 3000, 1000, 2000), testServices, "Test Bot");
+        EasyMock.replay(baseServiceMock, mockCollisionService, mockServerItemService);
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, createRegion(new Rectangle(2000, 3000, 1000, 2000), 1), testServices, "Test Bot");
         botItemContainer.work(botBase);
         Assert.assertTrue(botItemContainer.itemBelongsToMy(botBaseItem));
         Assert.assertFalse(botItemContainer.itemBelongsToMy(otherBaseItem));
         Assert.assertFalse(botItemContainer.itemBelongsToMy(otherItem));
-        EasyMock.verify(baseServiceMock, mockCollisionService, mockItemService);
+        EasyMock.verify(baseServiceMock, mockCollisionService, mockServerItemService);
     }
 }

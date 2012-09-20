@@ -18,7 +18,7 @@ import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
@@ -30,8 +30,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +57,8 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
     private int height;
     private String ownBaseName;
     private boolean tracking;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private DbTerrainSetting dbTerrainSetting;
     @Column(length = 50000)
     private String inGameHtml;
@@ -132,7 +133,9 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
 
     public void init(UserService userService) {
         ownBaseName = "My Base";
-        dbTaskConfigs = new ArrayList<DbTaskConfig>();
+        dbTaskConfigs = new ArrayList<>();
+        dbTerrainSetting = new DbTerrainSetting();
+        dbTerrainSetting.init(userService);
     }
 
     @Override
@@ -162,7 +165,7 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
 
     public CrudChildServiceHelper<DbTaskConfig> getDbTaskConfigCrudChildServiceHelper() {
         if (dbTaskConfigCrudChildServiceHelper == null) {
-            dbTaskConfigCrudChildServiceHelper = new CrudChildServiceHelper<DbTaskConfig>(dbTaskConfigs, DbTaskConfig.class, this);
+            dbTaskConfigCrudChildServiceHelper = new CrudChildServiceHelper<>(dbTaskConfigs, DbTaskConfig.class, this);
         }
         return dbTaskConfigCrudChildServiceHelper;
     }
@@ -204,17 +207,17 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
         return "DbTutorialSetting: " + name;
     }
 
-    public TutorialConfig getTutorialConfig(ItemService itemService) {
+    public TutorialConfig getTutorialConfig(ServerItemTypeService serverItemTypeService) {
         if (tutorialConfig == null) {
-            tutorialConfig = createTutorialConfig(itemService);
+            tutorialConfig = createTutorialConfig(serverItemTypeService);
         }
         return tutorialConfig;
     }
 
-    private TutorialConfig createTutorialConfig(ItemService itemService) {
-        ArrayList<TaskConfig> taskConfigs = new ArrayList<TaskConfig>();
+    private TutorialConfig createTutorialConfig(ServerItemTypeService serverItemTypeService) {
+        ArrayList<TaskConfig> taskConfigs = new ArrayList<>();
         for (DbTaskConfig dbTaskConfig : dbTaskConfigs) {
-            taskConfigs.add(dbTaskConfig.createTaskConfig(itemService));
+            taskConfigs.add(dbTaskConfig.createTaskConfig(serverItemTypeService));
         }
 
         return new TutorialConfig(taskConfigs, ownBaseName, width, height, tracking, inGameHtml, showTip);

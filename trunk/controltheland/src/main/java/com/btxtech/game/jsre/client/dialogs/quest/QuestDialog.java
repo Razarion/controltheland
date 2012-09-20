@@ -2,11 +2,7 @@ package com.btxtech.game.jsre.client.dialogs.quest;
 
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.dialogs.Dialog;
-import com.btxtech.game.jsre.client.dialogs.inventory.Inventory;
 import com.google.gwt.user.client.ui.VerticalPanel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class QuestDialog extends Dialog {
     private static QuestDialog staticInstance;

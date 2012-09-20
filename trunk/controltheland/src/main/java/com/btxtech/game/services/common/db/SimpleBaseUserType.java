@@ -14,14 +14,15 @@
 package com.btxtech.game.services.common.db;
 
 import com.btxtech.game.jsre.common.SimpleBase;
+import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.usertype.UserType;
+
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.usertype.UserType;
 
 
 /**
@@ -52,19 +53,22 @@ public class SimpleBaseUserType implements UserType {
 
     @Override
     public Object nullSafeGet(ResultSet resultSet, String[] names, SessionImplementor sessionImplementor, Object owner) throws HibernateException, SQLException {
-        int id = resultSet.getInt(names[0]);
+        int baseId = resultSet.getInt(names[0]);
         if (resultSet.wasNull()) {
             return null;
         }
-
-        return new SimpleBase(id);
+        int planetId = resultSet.getInt(names[0]);
+        if (resultSet.wasNull()) {
+            return null;
+        }
+        return new SimpleBase(baseId, planetId);
     }
 
     @Override
     public void nullSafeSet(PreparedStatement statement, Object o, int columnIndex, SessionImplementor sessionImplementor) throws HibernateException, SQLException {
         SimpleBase simpleBase = (SimpleBase) o;
         if (simpleBase != null) {
-            statement.setInt(columnIndex, simpleBase.getId());
+            statement.setInt(columnIndex, simpleBase.getBaseId());
         } else {
             statement.setNull(columnIndex, Types.INTEGER);
         }

@@ -13,19 +13,30 @@
 
 package com.btxtech.game.services.tutorial.impl;
 
-import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
+import com.btxtech.game.jsre.client.common.info.SimulationInfo;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainUtil;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.NoSuchChildException;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.planet.db.DbPlanet;
+import com.btxtech.game.services.terrain.DbTerrainSetting;
+import com.btxtech.game.services.terrain.TerrainDbUtil;
+import com.btxtech.game.services.terrain.TerrainImageService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
+import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -39,9 +50,9 @@ public class TutorialServiceImpl implements TutorialService {
     @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
-    private ItemService itemService;
-    @Autowired
     private SessionFactory sessionFactory;
+    @Autowired
+    private TerrainImageService terrainImageService;
 
     @PostConstruct
     public void ini() {
@@ -54,7 +65,7 @@ public class TutorialServiceImpl implements TutorialService {
     }
 
     @Override
-    public DbTutorialConfig getDbTutorialConfig(int levelTaskId) throws InvalidLevelState {
+    public DbTutorialConfig getDbTutorialConfig(int levelTaskId) throws InvalidLevelStateException {
         try {
             return userGuidanceService.getDbLevel().getDbTutorialConfigFromTask(levelTaskId);
         } catch (NoSuchChildException e) {
@@ -71,4 +82,14 @@ public class TutorialServiceImpl implements TutorialService {
         return dbLevelTask.getDbTutorialConfig();
     }
 
+
+    @Transactional
+    @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
+    public void saveTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int tutorialId) {
+        DbTutorialConfig dbTutorialConfig = dbTutorialConfigCrudRootServiceHelper.readDbChild(tutorialId);
+        DbTerrainSetting dbTerrainSetting = dbTutorialConfig.getDbTerrainSetting();
+        TerrainDbUtil.modifyTerrainSetting(dbTerrainSetting, terrainImagePositions, surfaceRects, terrainImageService);
+        dbTutorialConfigCrudRootServiceHelper.updateDbChild(dbTutorialConfig);
+    }
 }

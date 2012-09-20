@@ -183,6 +183,14 @@ public class Index implements Serializable {
         return new Index(largestX, largestY);
     }
 
+    public Index scale(double scale) {
+        return new Index((int) (x * scale), (int) (y * scale));
+    }
+
+    public Index scaleInverse(double scale) {
+        return new Index((int) (x / scale), (int) (y / scale));
+    }
+
     public Index add(Index point) {
         return new Index(x + point.x, y + point.y);
     }
@@ -256,6 +264,10 @@ public class Index implements Serializable {
                 return Direction.NW;
             }
         }
+    }
+
+    public boolean isNull() {
+        return x == 0 && y == 0;
     }
 
     public String testString() {

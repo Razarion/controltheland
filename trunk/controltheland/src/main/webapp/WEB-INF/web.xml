@@ -39,7 +39,7 @@
     <!-- GWT -->
     <servlet>
         <servlet-name>mapeditor-dispatcher</servlet-name>
-        <servlet-class>com.btxtech.game.services.gwt.TerrainEditoImpl</servlet-class>
+        <servlet-class>com.btxtech.game.services.gwt.TerrainEditorImpl</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>mapeditor-dispatcher</servlet-name>
@@ -47,7 +47,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>mapeditor-dispatcher</servlet-name>
-        <url-pattern>/mapview/terrainEditor</url-pattern>
+        <url-pattern>/regioneditor/terrainEditor</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -148,16 +148,16 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>mapviewRemoteLogging</servlet-name>
+        <servlet-name>regionEditorRemoteLogging</servlet-name>
         <servlet-class>com.btxtech.game.services.gwt.ExtendedRemoteLoggingServiceImpl</servlet-class>
         <init-param>
             <param-name>symbolMapsDirectory</param-name>
-            <param-value>WEB-INF/deploy/mapview/symbolMaps</param-value>
+            <param-value>WEB-INF/deploy/regioneditor/symbolMaps</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
-        <servlet-name>mapviewRemoteLogging</servlet-name>
-        <url-pattern>/mapview/remote_logging</url-pattern>
+        <servlet-name>regionEditorRemoteLogging</servlet-name>
+        <url-pattern>/regioneditor/remote_logging</url-pattern>
     </servlet-mapping>
 
     <servlet>

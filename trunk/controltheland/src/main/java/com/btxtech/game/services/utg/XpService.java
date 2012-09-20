@@ -14,8 +14,8 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.user.UserState;
 
 /**
@@ -24,11 +24,9 @@ import com.btxtech.game.services.user.UserState;
  * Time: 21:07:42
  */
 public interface XpService {
-    void onItemKilled(Base actorBase, SyncBaseItem killedItem);
+    void onItemKilled(SimpleBase actorBase, SyncBaseItem killedItem, PlanetServices planetServices);
 
     void onReward(UserState userState, int deltaXp);
-
-    void onItemBuilt(SyncBaseItem builtItem);
 
     DbXpSettings getXpPointSettings();
 

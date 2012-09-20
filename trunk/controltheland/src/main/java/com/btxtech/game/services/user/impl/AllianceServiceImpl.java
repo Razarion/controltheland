@@ -1,12 +1,13 @@
 package com.btxtech.game.services.user.impl;
 
-import com.btxtech.game.jsre.common.packets.Message;
-import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
+import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.services.common.HibernateUtil;
-import com.btxtech.game.services.connection.ConnectionService;
+import com.btxtech.game.services.common.ServerPlanetServices;
+import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.history.HistoryService;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.AllianceService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
@@ -27,9 +28,9 @@ public class AllianceServiceImpl implements AllianceService {
     @Autowired
     private UserService userService;
     @Autowired
-    private ConnectionService connectionService;
+    private ServerConnectionService serverConnectionService;
     @Autowired
-    private BaseService baseService;
+    private PlanetSystemService planetSystemService;
     @Autowired
     private HistoryService historyService;
     @Autowired
@@ -39,13 +40,13 @@ public class AllianceServiceImpl implements AllianceService {
     public void proposeAlliance(SimpleBase partner) {
         User user = userService.getUser();
         if (user == null) {
-            sendMessage(baseService.getBase().getSimpleBase(), "Only registered user can form alliances.", true);
+            sendMessage(planetSystemService.getServerPlanetServices().getBaseService().getBase().getSimpleBase(), "Only registered user can form alliances.", true);
             return;
         }
         User partnerUser = userService.getUser(partner);
         if (partnerUser == null) {
             sendMessage(partner, user.getUsername() + " offers you an alliance. Only registered user can form alliances.", true);
-            sendMessage(user, "The player '" + baseService.getBaseName(partner) + "' is not registered. Only registered user can form alliances. Use the chat to persuade him to register!", false);
+            sendMessage(user, "The player '" + planetSystemService.getServerPlanetServices(partner).getBaseService().getBaseName(partner) + "' is not registered. Only registered user can form alliances. Use the chat to persuade him to register!", false);
             return;
         }
         if (partnerUser.getAlliances().contains(user)) {
@@ -56,7 +57,7 @@ public class AllianceServiceImpl implements AllianceService {
             userService.save(partnerUser);
             historyService.addAllianceOffered(user, partnerUser);
         }
-        connectionService.sendPacket(partner, createAllianceOfferPackage(user));
+        serverConnectionService.sendPacket(partner, createAllianceOfferPackage(user));
     }
 
     @Override
@@ -183,32 +184,32 @@ public class AllianceServiceImpl implements AllianceService {
     }
 
     private void updateBaseService(User user) {
-        SimpleBase simpleBase = baseService.getSimpleBase(user);
+        SimpleBase simpleBase = getSimpleBase(user);
         if (simpleBase == null) {
             // User has no base
             return;
         }
         Collection<SimpleBase> allianceBases = new ArrayList<>();
         for (User allianceUser : user.getAlliances()) {
-            SimpleBase allianceBase = baseService.getSimpleBase(allianceUser);
-            if (allianceBase != null && baseService.isAlive(allianceBase)) {
+            SimpleBase allianceBase = getSimpleBase(allianceUser);
+            if (allianceBase != null && planetSystemService.getServerPlanetServices(allianceBase).getBaseService().isAlive(allianceBase)) {
                 allianceBases.add(allianceBase);
             }
         }
-        baseService.setAlliances(simpleBase, allianceBases);
+        planetSystemService.getServerPlanetServices(simpleBase).getBaseService().setAlliances(simpleBase, allianceBases);
     }
 
     private void sendAllianceChanged(User user) {
-        SimpleBase simpleBase = baseService.getSimpleBase(user);
+        SimpleBase simpleBase = getSimpleBase(user);
         if (simpleBase == null) {
             // User has no base
             return;
         }
-        baseService.sendAlliancesChanged(simpleBase);
+        planetSystemService.getServerPlanetServices(simpleBase).getBaseService().sendAlliancesChanged(simpleBase);
     }
 
     private void sendMessage(User user, String message, boolean showRegisterDialog) {
-        SimpleBase simpleBase = baseService.getSimpleBase(user);
+        SimpleBase simpleBase = getSimpleBase(user);
         sendMessage(simpleBase, message, showRegisterDialog);
     }
 
@@ -217,7 +218,7 @@ public class AllianceServiceImpl implements AllianceService {
         accepted.setMessage(message);
         accepted.setShowRegisterDialog(showRegisterDialog);
         if (simpleBase != null) {
-            connectionService.sendPacket(simpleBase, accepted);
+            serverConnectionService.sendPacket(simpleBase, accepted);
         }
     }
 
@@ -225,5 +226,13 @@ public class AllianceServiceImpl implements AllianceService {
         AllianceOfferPacket allianceOfferPacket = new AllianceOfferPacket();
         allianceOfferPacket.setActorUserName(user.getUsername());
         return allianceOfferPacket;
+    }
+
+    private SimpleBase getSimpleBase(User user) {
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(user);
+        if(serverPlanetServices == null) {
+            return null;
+        }
+        return serverPlanetServices.getBaseService().getSimpleBase(user);
     }
 }

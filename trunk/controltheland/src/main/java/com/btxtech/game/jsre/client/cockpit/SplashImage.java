@@ -1,7 +1,5 @@
 package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.ImageHandler;
-
 /**
  * User: beat
  * Date: 11.08.12

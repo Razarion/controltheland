@@ -13,12 +13,13 @@
 
 package com.btxtech.game.jsre.mapeditor;
 
-import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.common.Territory;
+import com.btxtech.game.jsre.common.Region;
+import com.btxtech.game.jsre.common.TerrainInfo;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+
 import java.util.Collection;
 import java.util.Map;
 
@@ -29,14 +30,17 @@ import java.util.Map;
  */
 @RemoteServiceRelativePath("terrainEditor")
 public interface TerrainEditor extends RemoteService {
-    TerrainInfo getTerrainInfo(int terrainId);
+    TerrainInfo getPlanetTerrainInfo(int planetId);
 
-    void saveTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int terrainId);
+    TerrainInfo getTutorialTerrainInfo(int tutorialId);
 
-    void saveTerritory(int territoryId, Collection<Rectangle> territoryTileRegions);
+    void savePlanetTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int planetId);
 
-    Collection<Territory> getTerritories();
+    void saveTutorialTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int tutorialId);
 
     Map<String, Collection<Integer>> getTerrainImageGroups();
 
+    void saveRegionToDb(Region region);
+
+    Region loadRegionFromDb(int regionId);
 }

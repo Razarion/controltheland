@@ -13,166 +13,114 @@
 
 package com.btxtech.game.jsre.mapeditor;
 
-import com.btxtech.game.jsre.client.ColorConstants;
-import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.terrain.MapWindow;
-import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.Html5NotSupportedException;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
-import com.google.gwt.canvas.client.Canvas;
-import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainUtil;
+
+import java.util.Collection;
 
 /**
  * User: beat
  * Date: 14.04.2010
  * Time: 12:19:47
  */
-public class SurfaceModifier implements TerrainMouseMoveListener, MouseDownHandler {
-    public static final int LINE_WIDTH = 2;
-    public static final int RESIZE_CURSOR_SPACE = 10;
-    private Canvas marker;
-    private Context2d context2d;
-    private Cockpit cockpit;
-    private boolean nr;
-    private boolean er;
-    private boolean sr;
-    private boolean wr;
+public class SurfaceModifier {
+    private SurfaceRect surfaceRect;
+    private Index absoluteMouse;
+    private TerrainData terrainData;
+    private EditMode editMode;
+    private Rectangle newRectangle;
+    private Rectangle newRelativeRectangle;
+    private int imageId;
+    private boolean placeAllowed;
 
-    public SurfaceModifier(Cockpit cockpit) {
-        this.cockpit = cockpit;
-        marker = Canvas.createIfSupported();
-        if (marker == null) {
-            throw new Html5NotSupportedException("SurfaceModifier: Canvas not supported.");
-        }
-        marker.setCoordinateSpaceWidth(100);
-        marker.setCoordinateSpaceHeight(100);
-        marker.getElement().getStyle().setZIndex(Constants.Z_INDEX_GROUP_SELECTION_FRAME);
-        MapWindow.getAbsolutePanel().add(marker, 0, 0);
-        context2d = marker.getContext2d();
-        marker.setVisible(false);
-        context2d.setStrokeStyle(ColorConstants.BLACK);
-        marker.addMouseDownHandler(this);
+    public SurfaceModifier(SurfaceRect surfaceRect, Index absoluteMouse, Rectangle viewRectangle, TerrainData terrainData, EditMode editMode) {
+        imageId = surfaceRect.getSurfaceImageId();
+        this.surfaceRect = surfaceRect;
+        this.absoluteMouse = TerrainUtil.moveAbsoluteToGrid(absoluteMouse);
+        this.terrainData = terrainData;
+        this.editMode = editMode;
+        newRectangle = TerrainUtil.convertToAbsolutePosition(surfaceRect.getTileRectangle());
+        newRelativeRectangle = new Rectangle(newRectangle.getStart().sub(viewRectangle.getStart()), newRectangle.getEnd().sub(viewRectangle.getStart()));
+        checkPlaceAllowed(null);
     }
 
-    @Override
-    public void onMove(int absoluteLeft, int absoluteTop, int relativeLeft, int relativeTop) {
-        if (cockpit.isInside(relativeLeft, relativeTop)) {
-            marker.setVisible(false);
-            return;
-        }
+    public SurfaceModifier(int imageId, Index absoluteMouse, Rectangle viewRectangle, TerrainData terrainData) {
+        this.imageId = imageId;
+        this.absoluteMouse = TerrainUtil.moveAbsoluteToGrid(absoluteMouse);
+        this.terrainData = terrainData;
+        editMode = new EditMode();
+        newRectangle = new Rectangle(this.absoluteMouse.getX(), this.absoluteMouse.getY(), Constants.TERRAIN_TILE_WIDTH, Constants.TERRAIN_TILE_HEIGHT);
+        newRelativeRectangle = new Rectangle(newRectangle.getStart().sub(viewRectangle.getStart()), newRectangle.getEnd().sub(viewRectangle.getStart()));
+        checkPlaceAllowed(null);
+    }
 
-        SurfaceRect surfaceRect = cockpit.getTerrainData().getSurfaceRect(absoluteLeft, absoluteTop);
+    public void onMouseMove(Index newAbsoluteMouse, Rectangle viewRectangle, Collection<SurfaceRect> surfaceRects) {
+        newAbsoluteMouse = TerrainUtil.moveAbsoluteToGrid(newAbsoluteMouse);
+        Index delta = newAbsoluteMouse.sub(absoluteMouse);
+        absoluteMouse = newAbsoluteMouse;
+        if (editMode.isNr() && editMode.isEr()) {
+            newRectangle.growNorth(-delta.getY());
+            newRectangle.growEast(delta.getX());
+        } else if (editMode.isEr() && editMode.isSr()) {
+            newRectangle.growSouth(delta.getY());
+            newRectangle.growEast(delta.getX());
+        } else if (editMode.isSr() && editMode.isWr()) {
+            newRectangle.growSouth(delta.getY());
+            newRectangle.growWest(-delta.getX());
+        } else if (editMode.isWr() && editMode.isNr()) {
+            newRectangle.growNorth(-delta.getY());
+            newRectangle.growWest(-delta.getX());
+        } else if (editMode.isNr()) {
+            newRectangle.growNorth(-delta.getY());
+        } else if (editMode.isEr()) {
+            newRectangle.growEast(delta.getX());
+        } else if (editMode.isSr()) {
+            newRectangle.growSouth(delta.getY());
+        } else if (editMode.isWr()) {
+            newRectangle.growWest(-delta.getX());
+        } else {
+            newRectangle.shift(delta);
+        }
+        newRelativeRectangle = new Rectangle(newRectangle.getStart().sub(viewRectangle.getStart()), newRectangle.getEnd().sub(viewRectangle.getStart()));
+        checkPlaceAllowed(surfaceRects);
+    }
+
+    public Rectangle getNewRelativeRectangle() {
+        return newRelativeRectangle;
+    }
+
+    public Rectangle getNewRectangle() {
+        return newRectangle;
+    }
+
+    public SurfaceRect getSurfaceRect() {
+        return surfaceRect;
+    }
+
+    public int getImageId() {
+        return imageId;
+    }
+
+    public boolean isPlaceAllowed() {
+        return placeAllowed;
+    }
+
+    private void checkPlaceAllowed(Collection<SurfaceRect> surfaceRects) {
+        placeAllowed = !terrainData.hasSurfaceRectInRegion(newRectangle, surfaceRect, surfaceRects);
+    }
+
+    public void onScroll(Rectangle viewRectangle) {
+        newRelativeRectangle = new Rectangle(newRectangle.getStart().sub(viewRectangle.getStart()), newRectangle.getEnd().sub(viewRectangle.getStart()));
+    }
+
+    public void updateModel() {
         if (surfaceRect != null) {
-            marker.setVisible(true);
-            Index size = TerrainView.getInstance().getTerrainHandler().getAbsolutIndexForTerrainTileIndex(surfaceRect.getTileWidth(), surfaceRect.getTileHeight());
-            Index absolute = TerrainView.getInstance().getTerrainHandler().getAbsolutIndexForTerrainTileIndex(surfaceRect.getTileIndex());
-            int markerX = absolute.getX() - TerrainView.getInstance().getViewOriginLeft();
-            int markerY = absolute.getY() - TerrainView.getInstance().getViewOriginTop();
-            MapWindow.getAbsolutePanel().setWidgetPosition(marker, markerX, markerY);
-            marker.setCoordinateSpaceWidth(size.getX());
-            marker.setCoordinateSpaceHeight(size.getY());
-            context2d.setLineWidth(LINE_WIDTH);
-            context2d.clearRect(0, 0, size.getX(), size.getY());
-            context2d.rect(LINE_WIDTH / 2,
-                    LINE_WIDTH / 2,
-                    size.getX() - LINE_WIDTH,
-                    size.getY() - LINE_WIDTH);
-            context2d.stroke();
-            int inMarkerX = absoluteLeft - markerX - TerrainView.getInstance().getViewOriginLeft();
-            int inMarkerY = absoluteTop - markerY - TerrainView.getInstance().getViewOriginTop();
-            nr = false;
-            er = false;
-            sr = false;
-            wr = false;
-            if (inMarkerY >= 0 && inMarkerY <= RESIZE_CURSOR_SPACE) {
-                nr = true;
-            }
-            if (inMarkerX >= size.getX() - RESIZE_CURSOR_SPACE && inMarkerX <= size.getX()) {
-                er = true;
-            }
-            if (inMarkerY >= size.getY() - RESIZE_CURSOR_SPACE && inMarkerY <= size.getY()) {
-                sr = true;
-            }
-            if (inMarkerX >= 0 && inMarkerX <= RESIZE_CURSOR_SPACE) {
-                wr = true;
-            }
-            if (nr && er) {
-                setCursor(Style.Cursor.NE_RESIZE);
-            } else if (er && sr) {
-                setCursor(Style.Cursor.SE_RESIZE);
-            } else if (sr && wr) {
-                setCursor(Style.Cursor.SW_RESIZE);
-            } else if (wr && nr) {
-                setCursor(Style.Cursor.NW_RESIZE);
-            } else if (nr) {
-                setCursor(Style.Cursor.N_RESIZE);
-            } else if (er) {
-                setCursor(Style.Cursor.E_RESIZE);
-            } else if (sr) {
-                setCursor(Style.Cursor.S_RESIZE);
-            } else if (wr) {
-                setCursor(Style.Cursor.W_RESIZE);
-            } else {
-                setCursor(Style.Cursor.MOVE);
-            }
+            terrainData.moveSurfaceRect(newRectangle, surfaceRect);
         } else {
-            marker.setVisible(false);
+            terrainData.addNewSurfaceRect(newRectangle, imageId);
         }
     }
-
-    @Override
-    public void onMouseDown(MouseDownEvent mouseDownEvent) {
-        int relX = mouseDownEvent.getRelativeX(MapWindow.getAbsolutePanel().getElement());
-        int relY = mouseDownEvent.getRelativeY(MapWindow.getAbsolutePanel().getElement());
-        if (cockpit.isInside(relX, relY)) {
-            return;
-        }
-
-        int absoluteX = relX + TerrainView.getInstance().getViewOriginLeft();
-        int absoluteY = relY + TerrainView.getInstance().getViewOriginTop();
-        GwtCommon.preventDefault(mouseDownEvent);
-        SurfaceRect surfaceRect = cockpit.getTerrainData().getSurfaceRect(absoluteX, absoluteY);
-        if (surfaceRect == null) {
-            return;
-        }
-        if (nr && er) {
-            new ResizeablePreviewSurfaceRect(cockpit.getTerrainData(), surfaceRect, ResizeablePreviewWidget.Direction.NORTH_EAST);
-        } else if (er && sr) {
-            new ResizeablePreviewSurfaceRect(cockpit.getTerrainData(), surfaceRect, ResizeablePreviewWidget.Direction.SOUTH_EAST);
-        } else if (sr && wr) {
-            new ResizeablePreviewSurfaceRect(cockpit.getTerrainData(), surfaceRect, ResizeablePreviewWidget.Direction.SOUTH_WEST);
-        } else if (wr && nr) {
-            new ResizeablePreviewSurfaceRect(cockpit.getTerrainData(), surfaceRect, ResizeablePreviewWidget.Direction.NORTH_WEST);
-        } else if (nr) {
-            new ResizeablePreviewSurfaceRect(cockpit.getTerrainData(), surfaceRect, ResizeablePreviewWidget.Direction.NORTH);
-        } else if (er) {
-            new ResizeablePreviewSurfaceRect(cockpit.getTerrainData(), surfaceRect, ResizeablePreviewWidget.Direction.EAST);
-        } else if (sr) {
-            new ResizeablePreviewSurfaceRect(cockpit.getTerrainData(), surfaceRect, ResizeablePreviewWidget.Direction.SOUTH);
-        } else if (wr) {
-            new ResizeablePreviewSurfaceRect(cockpit.getTerrainData(), surfaceRect, ResizeablePreviewWidget.Direction.WEST);
-        } else {
-            move(surfaceRect, mouseDownEvent);
-        }
-    }
-
-    private void move(SurfaceRect surfaceRect, MouseDownEvent mouseDownEvent) {
-        marker.setVisible(false);
-
-        if (cockpit.isDeleteModus()) {
-            cockpit.getTerrainData().removeSurfaceRect(surfaceRect);
-        } else {
-            new PlaceablePreviewSurfaceRect(cockpit.getTerrainData(), surfaceRect, mouseDownEvent);
-        }
-    }
-
-    private void setCursor(Style.Cursor cursor) {
-        marker.getElement().getStyle().setCursor(cursor);
-    }
-
 }

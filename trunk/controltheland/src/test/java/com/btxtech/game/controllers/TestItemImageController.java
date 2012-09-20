@@ -2,11 +2,9 @@ package com.btxtech.game.controllers;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.itemtypeeditor.ItemTypeImageInfo;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.common.CrudChildServiceHelper;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import org.apache.wicket.util.io.IOUtils;
@@ -28,13 +26,13 @@ public class TestItemImageController extends AbstractServiceTest {
     @Autowired
     private ItemImageController itemImageController;
     @Autowired
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
 
     @Test
     public void test1() throws Exception {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
         createDbItemTypeImage(dbBaseItemType, 0, 0, 0, ItemTypeSpriteMap.SyncObjectState.RUN_TIME, "hoover_bagger_0001.png");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -43,14 +41,14 @@ public class TestItemImageController extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         BoundingBox boundingBox = new BoundingBox(10, 12, new double[]{0.0});
         ItemTypeSpriteMap itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 64, 64, 0, 0, 0, 1, 0, 0, 0, 0);
-        itemService.saveItemTypeProperties(dbBaseItemType.getId(),
+        serverItemTypeService.saveItemTypeProperties(dbBaseItemType.getId(),
                 boundingBox,
                 itemTypeSpriteMap,
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList());
-        itemService.activate();
+        serverItemTypeService.activate();
         int itemTypeId = dbBaseItemType.getId();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

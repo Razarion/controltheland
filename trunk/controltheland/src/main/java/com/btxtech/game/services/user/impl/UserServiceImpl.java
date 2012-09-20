@@ -16,10 +16,11 @@ package com.btxtech.game.services.user.impl;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
-import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.connection.NoBaseException;
-import com.btxtech.game.services.inventory.InventoryService;
+import com.btxtech.game.services.inventory.GlobalInventoryService;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
@@ -72,8 +73,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private com.btxtech.game.services.connection.Session session;
     @Autowired
-    private BaseService baseService;
-    @Autowired
     private UserTrackingService userTrackingService;
     @Autowired
     private UserGuidanceService userGuidanceService;
@@ -86,12 +85,18 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private StatisticsService statisticsService;
     @Autowired
-    private InventoryService inventoryService;
+    private GlobalInventoryService globalInventoryService;
+    @Autowired
+    private PlanetSystemService planetSystemService;
     @Value(value = "${security.md5salt}")
     private String md5HashSalt;
 
     private final Collection<UserState> userStates = new ArrayList<>();
     private Log log = LogFactory.getLog(UserServiceImpl.class);
+
+    public UserServiceImpl() {
+        ExceptionHandler.init(this);
+    }
 
     @Override
     public boolean login(String userName, String password) throws AlreadyLoggedInException {
@@ -144,10 +149,10 @@ public class UserServiceImpl implements UserService {
         }
         session.setUserState(userState);
         try {
-            userTrackingService.onUserLoggedIn(user, baseService.getBase());
+            userTrackingService.onUserLoggedIn(user, userState);
         } catch (NoBaseException e) {
             // Ignore
-            userTrackingService.onUserLoggedIn(user, null);
+            userTrackingService.onUserLoggedIn(user, userState);
         }
     }
 
@@ -189,7 +194,7 @@ public class UserServiceImpl implements UserService {
 
     private void removeUserState(UserState userState) {
         userState.setSessionId(null);
-        baseService.onSessionTimedOut(userState);
+        planetSystemService.onSessionTimedOut(userState);
         if (!userState.isRegistered()) {
             synchronized (userStates) {
                 userStates.remove(userState);
@@ -232,7 +237,7 @@ public class UserServiceImpl implements UserService {
         userTrackingService.onUserCreated(user);
 
         getUserState().setUser(name);
-        baseService.onUserRegistered();
+        planetSystemService.onUserRegistered();
     }
 
     @Override
@@ -251,7 +256,7 @@ public class UserServiceImpl implements UserService {
         userTrackingService.onUserCreated(user);
 
         getUserState().setUser(nickName);
-        baseService.onUserRegistered();
+        planetSystemService.onUserRegistered();
 
         loginFacebookUser(facebookSignedRequest);
     }
@@ -311,7 +316,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUser(SimpleBase simpleBase) {
-        UserState userState = baseService.getUserState(simpleBase);
+        if(simpleBase == null) {
+            return null;
+        }
+        UserState userState = planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getUserState(simpleBase);
         if (userState == null) {
             return null;
         }
@@ -478,7 +486,7 @@ public class UserServiceImpl implements UserService {
                 userStates.add(userState);
             }
             userGuidanceService.setLevelForNewUser(userState);
-            inventoryService.setupNewUserState(userState);
+            globalInventoryService.setupNewUserState(userState);
         }
         return session.getUserState();
     }

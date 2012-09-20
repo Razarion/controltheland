@@ -24,8 +24,8 @@ public class CountComparison extends AbstractSyncItemComparison {
     private double count;
     private double countTotal;
 
-    public CountComparison(Integer excludedTerritoryId, int count, String htmlProgressTamplate) {
-        super(excludedTerritoryId, htmlProgressTamplate);
+    public CountComparison(int count, String htmlProgressTamplate) {
+        super(htmlProgressTamplate);
         this.count = count;
         countTotal = count;
     }

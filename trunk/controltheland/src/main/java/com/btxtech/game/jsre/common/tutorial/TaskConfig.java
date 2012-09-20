@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 
@@ -36,7 +37,6 @@ public class TaskConfig implements Serializable {
     private int houseCount;
     private int money;
     private int maxMoney;
-    private double itemSellFactor;
     private String name;
     private Collection<BotConfig> botConfigs;
     private Map<Integer, Integer> itemTypeLimitation;
@@ -50,14 +50,13 @@ public class TaskConfig implements Serializable {
     public TaskConfig() {
     }
 
-    public TaskConfig(List<ItemTypeAndPosition> ownItems, Index scroll, ConditionConfig conditionConfig, int houseCount, int money, int maxMoney, double itemSellFactor, String name, Collection<BotConfig> botConfigs, Map<Integer, Integer> itemTypeLimitation, RadarMode radarMode, GameTipConfig gameTipConfig) {
+    public TaskConfig(List<ItemTypeAndPosition> ownItems, Index scroll, ConditionConfig conditionConfig, int houseCount, int money, int maxMoney, String name, Collection<BotConfig> botConfigs, Map<Integer, Integer> itemTypeLimitation, RadarMode radarMode, GameTipConfig gameTipConfig) {
         this.ownItems = ownItems;
         this.scroll = scroll;
         this.conditionConfig = conditionConfig;
         this.houseCount = houseCount;
         this.money = money;
         this.maxMoney = maxMoney;
-        this.itemSellFactor = itemSellFactor;
         this.name = name;
         this.botConfigs = botConfigs;
         this.itemTypeLimitation = itemTypeLimitation;
@@ -90,7 +89,17 @@ public class TaskConfig implements Serializable {
     }
 
     public LevelScope createLevelScope(int levelNumber) {
-        return new LevelScope(levelNumber, maxMoney, itemTypeLimitation, houseCount, itemSellFactor, radarMode, 0);
+        return new LevelScope(PlanetInfo.MISSION_PLANET_ID, -1, levelNumber, itemTypeLimitation, 0);
+    }
+
+    public PlanetInfo createPlanetInfo() {
+        PlanetInfo planetInfo = new PlanetInfo();
+        planetInfo.setPlanetId(PlanetInfo.MISSION_PLANET_ID);
+        planetInfo.setHouseSpace(houseCount);
+        planetInfo.setMaxMoney(maxMoney);
+        planetInfo.setItemTypeLimitation(itemTypeLimitation);
+        planetInfo.setRadarMode(radarMode);
+        return planetInfo;
     }
 
     public ConditionConfig getConditionConfig() {

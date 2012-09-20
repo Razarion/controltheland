@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.client.utg;
 
-import com.btxtech.game.jsre.client.ClientServices;
+import com.btxtech.game.jsre.client.ClientGlobalServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ParametrisedRunnable;
@@ -27,6 +27,7 @@ import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
@@ -40,7 +41,6 @@ import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
@@ -84,7 +84,7 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
             @Override
             public void onClose(CloseEvent<Window> windowCloseEvent) {
                 // Take care, the uuid parameter is added here. Would be better do add this parameter inside sendLogViaLoadScriptCommunication()
-                GwtCommon.sendLogViaLoadScriptCommunication(WINDOW_CLOSE + "&" + START_UUID + "=" + ClientServices.getInstance().getClientRunner().getStartUuid());
+                GwtCommon.sendLogViaLoadScriptCommunication(WINDOW_CLOSE + "&" + START_UUID + "=" + ClientGlobalServices.getInstance().getClientRunner().getStartUuid());
                 sendEventTrackerItems();
             }
         });
@@ -120,7 +120,7 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
         MapWindow.getInstance().setTrackingEvents(true);
         TerrainView.getInstance().addTerrainScrollListener(this);
         Connection.getInstance().sendEventTrackingStart(new EventTrackingStart(
-                ClientServices.getInstance().getClientRunner().getStartUuid(),
+                ClientGlobalServices.getInstance().getClientRunner().getStartUuid(),
                 GwtCommon.checkInt(Window.getClientWidth(), "startEventTracking Window.getClientWidth()"),
                 GwtCommon.checkInt(Window.getClientHeight(), "startEventTracking Window.getClientHeight()"),
                 GwtCommon.checkInt(Window.getScrollLeft(), "startEventTracking Window.getScrollLeft()"),
@@ -163,7 +163,7 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
 
     public void addEventTrackingItem(int xPos, int yPos, int eventType) {
         if (isCollecting) {
-            eventTrackingItems.add(new EventTrackingItem(ClientServices.getInstance().getClientRunner().getStartUuid(),
+            eventTrackingItems.add(new EventTrackingItem(ClientGlobalServices.getInstance().getClientRunner().getStartUuid(),
                     GwtCommon.checkInt(xPos, "addEventTrackingItem xPos"),
                     GwtCommon.checkInt(yPos, "addEventTrackingItem yPos"),
                     GwtCommon.checkInt(eventType, "addEventTrackingItem eventType")));
@@ -173,7 +173,7 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
     public void addBrowserWindowTracking() {
         if (isCollecting) {
             BrowserWindowTracking wind = new BrowserWindowTracking(
-                    ClientServices.getInstance().getClientRunner().getStartUuid(),
+                    ClientGlobalServices.getInstance().getClientRunner().getStartUuid(),
                     GwtCommon.checkInt(Window.getClientWidth(), "addBrowserWindowTracking Window.getClientWidth()"),
                     GwtCommon.checkInt(Window.getClientHeight(), "addBrowserWindowTracking Window.getClientHeight()"),
                     GwtCommon.checkInt(Window.getScrollLeft(), "addBrowserWindowTracking Window.getScrollLeft()"),
@@ -187,7 +187,7 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
     public void trackSyncInfo(SyncItem syncItem) {
         if (isCollecting) {
             SyncItemInfo syncItemInfo = syncItem.getSyncInfo();
-            syncItemInfo.setStartUuid(ClientServices.getInstance().getClientRunner().getStartUuid());
+            syncItemInfo.setStartUuid(ClientGlobalServices.getInstance().getClientRunner().getStartUuid());
             syncItemInfo.setClientTimeStamp();
             syncItemInfos.add(syncItemInfo);
         }
@@ -218,28 +218,28 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
     @Override
     public void onTargetSelectionChanged(SyncItem selection) {
         if (isCollecting) {
-            selectionTrackingItems.add(new SelectionTrackingItem(ClientServices.getInstance().getClientRunner().getStartUuid(), selection));
+            selectionTrackingItems.add(new SelectionTrackingItem(ClientGlobalServices.getInstance().getClientRunner().getStartUuid(), selection));
         }
     }
 
     @Override
     public void onSelectionCleared() {
         if (isCollecting) {
-            selectionTrackingItems.add(new SelectionTrackingItem(ClientServices.getInstance().getClientRunner().getStartUuid()));
+            selectionTrackingItems.add(new SelectionTrackingItem(ClientGlobalServices.getInstance().getClientRunner().getStartUuid()));
         }
     }
 
     @Override
     public void onOwnSelectionChanged(Group selectedGroup) {
         if (isCollecting) {
-            selectionTrackingItems.add(new SelectionTrackingItem(ClientServices.getInstance().getClientRunner().getStartUuid(), selectedGroup));
+            selectionTrackingItems.add(new SelectionTrackingItem(ClientGlobalServices.getInstance().getClientRunner().getStartUuid(), selectedGroup));
         }
     }
 
     @Override
     public void onScroll(int left, int top, int width, int height, int deltaLeft, int deltaTop) {
         if (isCollecting) {
-            terrainScrollTrackings.add(new TerrainScrollTracking(ClientServices.getInstance().getClientRunner().getStartUuid(),
+            terrainScrollTrackings.add(new TerrainScrollTracking(ClientGlobalServices.getInstance().getClientRunner().getStartUuid(),
                     GwtCommon.checkInt(left, "onScroll left"),
                     GwtCommon.checkInt(top, "onScroll top")));
         }
@@ -255,7 +255,7 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
             }
 
             dialogTrackings.add(new DialogTracking(
-                    ClientServices.getInstance().getClientRunner().getStartUuid(),
+                    ClientGlobalServices.getInstance().getClientRunner().getStartUuid(),
                     GwtCommon.checkInt(widget.getAbsoluteLeft(), "onDialogAppears widget.getAbsoluteLeft()"),
                     GwtCommon.checkInt(widget.getAbsoluteTop(), "onDialogAppears widget.getAbsoluteTop()"),
                     GwtCommon.checkInt(widget.getOffsetWidth(), "onDialogAppears widget.getOffsetWidth()"),
@@ -269,7 +269,7 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
 
     public void onDialogDisappears(Widget widget) {
         if (isCollecting) {
-            dialogTrackings.add(new DialogTracking(ClientServices.getInstance().getClientRunner().getStartUuid(),
+            dialogTrackings.add(new DialogTracking(ClientGlobalServices.getInstance().getClientRunner().getStartUuid(),
                     GwtCommon.checkInt(System.identityHashCode(widget), "onDialogDisappears System.identityHashCode(widget)")));
         }
     }

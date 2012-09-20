@@ -19,14 +19,7 @@ package com.btxtech.game.services.connection;
  * Time: 12:41:31
  */
 public class NoBaseException extends RuntimeException{
-    private String sessionId;
-
-    public NoBaseException(String message, String sessionId) {
+    public NoBaseException(String message) {
         super(message);
-        this.sessionId = sessionId;
-    }
-
-    public String getSessionId() {
-        return sessionId;
     }
 }

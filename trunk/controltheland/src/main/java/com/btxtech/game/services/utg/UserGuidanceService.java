@@ -14,19 +14,16 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.LevelScope;
-import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
-import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
-import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.user.UserState;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,11 +46,9 @@ public interface UserGuidanceService extends CommonUserGuidanceService {
 
     void activateLevels() throws LevelActivationException;
 
-    void createBaseInQuestHub(UserState userState) throws InvalidLevelState;
-
     void sendResurrectionMessage(SimpleBase simpleBase);
 
-    LevelScope getLevelScope(SimpleBase simpleBase);
+    LevelScope getLevelScope(UserState userState);
 
     GameFlow onTutorialFinished(int levelTaskId);
 
@@ -61,7 +56,7 @@ public interface UserGuidanceService extends CommonUserGuidanceService {
 
     int getDefaultLevelTaskId();
 
-    CrudRootServiceHelper<DbQuestHub> getCrudQuestHub();
+    CrudRootServiceHelper<DbLevel> getDbLevelCrud();
 
     void onRemoveUserState(UserState userState);
 
@@ -69,7 +64,7 @@ public interface UserGuidanceService extends CommonUserGuidanceService {
 
     void createAndAddBackup(DbUserState dbUserState, UserState userState);
 
-    InvalidLevelState createInvalidLevelState();
+    InvalidLevelStateException createInvalidLevelState();
 
     void fillRealGameInfo(RealGameInfo realGameInfo);
 

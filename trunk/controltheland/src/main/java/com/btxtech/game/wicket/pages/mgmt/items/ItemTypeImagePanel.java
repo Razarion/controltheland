@@ -1,7 +1,7 @@
 package com.btxtech.game.wicket.pages.mgmt.items;
 
 import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.wicket.pages.mgmt.ItemTypeImageEditor;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -17,7 +17,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  */
 public class ItemTypeImagePanel extends Panel {
     @SpringBean
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
 
     public ItemTypeImagePanel(String id, final int itemTypeId) {
         super(id);
@@ -25,7 +25,7 @@ public class ItemTypeImagePanel extends Panel {
             @Override
             public Double getObject() {
                 try {
-                    return itemService.getItemTypeSpriteMap(itemTypeId).getData().length / 1000.0;
+                    return serverItemTypeService.getItemTypeSpriteMap(itemTypeId).getData().length / 1000.0;
                 } catch (Exception e) {
                     return 0.0;
                 }

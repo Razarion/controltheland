@@ -9,8 +9,6 @@ import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
 
-import javax.print.attribute.standard.Destination;
-
 /**
  * User: beat
  * Date: 06.08.12

@@ -13,10 +13,10 @@
 
 package com.btxtech.game.services.item.itemType;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Column;
 import java.io.Serializable;
 
 /**

@@ -14,13 +14,14 @@
 package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.packets.XpPacket;
-import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.QueueWorker;
-import com.btxtech.game.services.connection.ConnectionService;
+import com.btxtech.game.services.connection.ServerConnectionService;
+import com.btxtech.game.services.planet.Base;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbXpSettings;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -45,15 +46,15 @@ import java.util.Map;
 @Component("xpService")
 public class XpServiceImpl implements XpService {
     @Autowired
-    private BaseService baseService;
-    @Autowired
     private ServerConditionService serverConditionService;
     @Autowired
     SessionFactory sessionFactory;
     @Autowired
-    private ConnectionService connectionService;
+    private ServerConnectionService serverConnectionService;
     @Autowired
     private UserGuidanceService userGuidanceService;
+    @Autowired
+    private PlanetSystemService planetSystemService;
     private DbXpSettings dbXpSettings;
     private Log log = LogFactory.getLog(XpServiceImpl.class);
     private XpPerKillQueueWorker xpPerKillQueueWorker;
@@ -65,12 +66,12 @@ public class XpServiceImpl implements XpService {
 
         @Override
         protected void processEntries(List<XpPerKill> xpPerKills) {
-            HashMap<SimpleBase, Integer> baseXpHashMap = new HashMap<SimpleBase, Integer>();
+            HashMap<SimpleBase, Integer> baseXpHashMap = new HashMap<>();
             for (XpPerKill xpPerKill : xpPerKills) {
-                if (xpPerKill.getActorBase().isAbandoned()) {
+                if (xpPerKill.getPlanetServices().getBaseService().isAbandoned(xpPerKill.getActorBase())) {
                     continue;
                 }
-                sumUpXpPerBase(baseXpHashMap, xpPerKill.getActorBase().getSimpleBase(), xpPerKill.getKilledItem(), dbXpSettings.getKillPriceFactor());
+                sumUpXpPerBase(baseXpHashMap, xpPerKill.getActorBase(), xpPerKill.getKilledItem(), dbXpSettings.getKillPriceFactor());
             }
 
             increaseXpPerBase(baseXpHashMap);
@@ -115,9 +116,9 @@ public class XpServiceImpl implements XpService {
     }
 
     @Override
-    public void onItemKilled(Base actorBase, SyncBaseItem killedItem) {
-        if (!baseService.isBot(actorBase.getSimpleBase())) {
-            xpPerKillQueueWorker.put(new XpPerKill(actorBase, killedItem));
+    public void onItemKilled(SimpleBase actorBase, SyncBaseItem killedItem, PlanetServices planetServices) {
+        if (!planetServices.getBaseService().isBot(actorBase)) {
+            xpPerKillQueueWorker.put(new XpPerKill(actorBase, killedItem, planetServices));
         }
     }
 
@@ -126,15 +127,8 @@ public class XpServiceImpl implements XpService {
         increaseXpPerUserState(userState, deltaXp);
     }
 
-    @Override
-    public void onItemBuilt(SyncBaseItem builtItem) {
-        // Is this still needed
-        int deltaXp = (int) (builtItem.getBaseItemType().getPrice() * dbXpSettings.getBuiltPriceFactor());
-        increaseXpPerBase(builtItem.getBase(), deltaXp);
-    }
-
     private void increaseXpPerBase(SimpleBase simpleBase, int deltaXp) {
-        UserState userState = baseService.getUserState(simpleBase);
+        UserState userState = planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getUserState(simpleBase);
         if (userState != null) {
             increaseXpPerUserState(userState, deltaXp);
         }
@@ -142,12 +136,12 @@ public class XpServiceImpl implements XpService {
 
     private void increaseXpPerUserState(UserState userState, int deltaXp) {
         userState.increaseXp(deltaXp);
-        Base base = baseService.getBase(userState);
+        Base base = userState.getBase();
         if (base != null) {
             XpPacket xpPacket = new XpPacket();
             xpPacket.setXp(userState.getXp());
             xpPacket.setXp2LevelUp(userGuidanceService.getXp2LevelUp(userState));
-            connectionService.sendPacket(base.getSimpleBase(), xpPacket);
+            serverConnectionService.sendPacket(base.getSimpleBase(), xpPacket);
         }
         serverConditionService.onIncreaseXp(userState, deltaXp);
     }
@@ -162,7 +156,6 @@ public class XpServiceImpl implements XpService {
             dbXpSettings.setKillPriceFactor(0.1);
             dbXpSettings.setKillQueuePeriod(2000);
             dbXpSettings.setKillQueueSize(10000);
-            dbXpSettings.setBuiltPriceFactor(0.1);
             sessionFactory.getCurrentSession().saveOrUpdate(dbXpSettings);
         } else if (settings.size() != 1) {
             log.warn("More then one DbXpSettings found in DB.");

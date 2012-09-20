@@ -1,0 +1,53 @@
+package com.btxtech.game.services.common;
+
+import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
+import com.btxtech.game.services.connection.ServerConnectionService;
+import com.btxtech.game.services.history.HistoryService;
+import com.btxtech.game.services.inventory.GlobalInventoryService;
+import com.btxtech.game.services.item.ServerItemTypeService;
+import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.statistics.StatisticsService;
+import com.btxtech.game.services.terrain.TerrainImageService;
+import com.btxtech.game.services.user.AllianceService;
+import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.services.utg.XpService;
+import com.btxtech.game.services.utg.condition.ServerConditionService;
+
+/**
+ * User: beat
+ * Date: 27.08.12
+ * Time: 00:12
+ */
+public interface ServerGlobalServices extends GlobalServices {
+    HistoryService getHistoryService();
+
+    StatisticsService getStatisticsService();
+
+    UserService getUserService();
+
+    UserTrackingService getUserTrackingService();
+
+    AllianceService getAllianceService();
+
+    GlobalInventoryService getGlobalInventoryService();
+
+    PlanetSystemService getPlanetSystemService();
+
+    TerrainImageService getTerrainImageService();
+
+    XpService getXpService();
+
+    @Override
+    ServerConnectionService getConnectionService();
+
+    @Override
+    ServerConditionService getConditionService();
+
+    @Override
+    ServerItemTypeService getItemTypeService();
+
+    @Override
+    UserGuidanceService getCommonUserGuidanceService();
+}

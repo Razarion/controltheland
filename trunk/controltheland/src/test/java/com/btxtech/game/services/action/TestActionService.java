@@ -3,8 +3,6 @@ package com.btxtech.game.services.action;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.collision.CollisionService;
-import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.user.UserService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,16 +17,11 @@ import org.springframework.test.annotation.DirtiesContext;
 public class TestActionService extends AbstractServiceTest {
     @Autowired
     private UserService userService;
-    @Autowired
-    private ItemService itemService;
-    @Autowired
-    private CollisionService collisionService;
-
 
     @Test
     @DirtiesContext
     public void testLogoutDuringBuild() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -51,7 +44,7 @@ public class TestActionService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testLogoutDuringBuildRegUser() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -75,12 +68,14 @@ public class TestActionService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testAttackWithDestination() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         // Target
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         Id target = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
+        sendMoveCommand(target, new Index(2000,2000));
+        waitForActionServiceDone();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

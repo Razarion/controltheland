@@ -9,7 +9,7 @@ import com.btxtech.game.jsre.common.gameengine.services.bot.impl.Need;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +25,15 @@ import java.util.Collection;
  */
 public class TestNeed extends AbstractServiceTest {
     @Autowired
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
 
     @Test
     @DirtiesContext
     public void oneDirectItem() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
-        BotItemConfig botItemConfig = new BotItemConfig((BaseItemType) itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, new Rectangle(2000, 2000, 1000, 1000), false, null, false, null);
+        BotItemConfig botItemConfig = new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), false, null, false, null);
         botItemConfigs.add(botItemConfig);
 
         Need need = new Need(botItemConfigs);
@@ -55,14 +55,14 @@ public class TestNeed extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void twoDirectOneNormal() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
-        BotItemConfig botItemConfig1 = new BotItemConfig((BaseItemType) itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, new Rectangle(2000, 2000, 1000, 1000), false, null, false, null);
+        BotItemConfig botItemConfig1 = new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), false, null, false, null);
         botItemConfigs.add(botItemConfig1);
-        BotItemConfig botItemConfig2 = new BotItemConfig((BaseItemType) itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 2, true, new Rectangle(2000, 2000, 1000, 1000), false, null, false, null);
+        BotItemConfig botItemConfig2 = new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 2, true, createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), false, null, false, null);
         botItemConfigs.add(botItemConfig2);
-        BotItemConfig botItemConfig3 = new BotItemConfig((BaseItemType) itemService.getItemType(TEST_ATTACK_ITEM_ID), 1, false, null, false, null, false, null);
+        BotItemConfig botItemConfig3 = new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 1, false, null, false, null, false, null);
         botItemConfigs.add(botItemConfig3);
 
         Need need = new Need(botItemConfigs);
@@ -115,10 +115,10 @@ public class TestNeed extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void noRebuild() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
-        BotItemConfig botItemConfig = new BotItemConfig((BaseItemType) itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, new Rectangle(2000, 2000, 1000, 1000), false, null, true, null);
+        BotItemConfig botItemConfig = new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), false, null, true, null);
         botItemConfigs.add(botItemConfig);
 
         Need need = new Need(botItemConfigs);
@@ -139,10 +139,10 @@ public class TestNeed extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void rePop() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
-        BotItemConfig botItemConfig = new BotItemConfig((BaseItemType) itemService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, new Rectangle(2000, 2000, 1000, 1000), false, null, false, 100L);
+        BotItemConfig botItemConfig = new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), false, null, false, 100L);
         botItemConfigs.add(botItemConfig);
 
         Need need = new Need(botItemConfigs);

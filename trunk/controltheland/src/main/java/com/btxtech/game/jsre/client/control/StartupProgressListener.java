@@ -3,7 +3,6 @@ package com.btxtech.game.jsre.client.control;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 
-import java.util.Collection;
 import java.util.List;
 
 /**

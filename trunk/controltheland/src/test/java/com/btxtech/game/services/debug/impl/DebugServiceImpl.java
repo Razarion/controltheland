@@ -17,13 +17,12 @@ import com.btxtech.game.jsre.client.common.Arc;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Line;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.common.gameengine.formation.Segment;
 import com.btxtech.game.jsre.common.MathHelper;
+import com.btxtech.game.jsre.common.gameengine.formation.Segment;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.btxtech.game.services.debug.DebugService;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.awt.*;
 import java.awt.event.MouseEvent;

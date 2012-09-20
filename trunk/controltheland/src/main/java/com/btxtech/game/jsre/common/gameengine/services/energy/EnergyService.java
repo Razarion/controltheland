@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.energy;
 
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncConsumer;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncGenerator;
 
@@ -33,4 +34,6 @@ public interface EnergyService {
     int getConsuming();
 
     int getGenerating();
+
+    void onBaseKilled(SimpleBase simpleBase);
 }

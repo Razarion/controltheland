@@ -13,21 +13,24 @@
 
 package com.btxtech.game.services.utg.condition.impl;
 
+import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.GenericComparisonValueContainer;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
-import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.common.ServerServices;
-import com.btxtech.game.services.connection.ConnectionService;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.common.ServerGlobalServices;
+import com.btxtech.game.services.connection.ServerConnectionService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.condition.DbGenericComparisonValue;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
 import org.apache.commons.logging.Log;
@@ -52,15 +55,17 @@ import java.util.concurrent.TimeUnit;
 @Component("serverConditionService")
 public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, Integer> implements ServerConditionService {
     @Autowired
-    private BaseService baseService;
+    private PlanetSystemService planetSystemService;
     @Autowired
     private UserService userService;
     @Autowired
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
     @Autowired
-    private ServerServices serverServices;
+    private ServerConnectionService serverConnectionService;
     @Autowired
-    private ConnectionService connectionService;
+    private UserGuidanceService userGuidanceService;
+    @Autowired
+    private ServerGlobalServices serverGlobalServices;
     private long rate = 10000;
     private final Map<UserState, Collection<AbstractConditionTrigger<UserState, Integer>>> triggerMap = new HashMap<>();
     private ScheduledThreadPoolExecutor timer = new ScheduledThreadPoolExecutor(1, new CustomizableThreadFactory("ServerConditionServiceImpl timer "));
@@ -205,7 +210,7 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
     @Override
     protected UserState getActor(SimpleBase actorBase) {
         if (actorBase != null) {
-            return baseService.getUserState(actorBase);
+            return planetSystemService.getServerPlanetServices(actorBase).getBaseService().getUserState(actorBase);
         } else {
             return userService.getUserState();
         }
@@ -237,7 +242,7 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
                     AbstractConditionTrigger<UserState, Integer> activeTrigger = getAbstractConditionTrigger(identifier, triggers);
                     if (activeTrigger != null) {
                         try {
-                            activeTrigger.getAbstractComparison().restoreFromGenericComparisonValue(dbGenericComparisonValue.createGenericComparisonValueContainer(itemService));
+                            activeTrigger.getAbstractComparison().restoreFromGenericComparisonValue(dbGenericComparisonValue.createGenericComparisonValueContainer(serverItemTypeService));
                         } catch (Exception e) {
                             log.error("Can not backup user conditions: " + userState + " identifier: " + activeTrigger.getIdentifier(), e);
                         }
@@ -278,7 +283,7 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
                     GenericComparisonValueContainer container = new GenericComparisonValueContainer();
                     conditionTrigger.getAbstractComparison().fillGenericComparisonValues(container);
                     if (!container.isEmpty()) {
-                        dbUserState.addDbGenericComparisonValue(new DbGenericComparisonValue(conditionTrigger.getIdentifier(), container, itemService));
+                        dbUserState.addDbGenericComparisonValue(new DbGenericComparisonValue(conditionTrigger.getIdentifier(), container, serverItemTypeService));
                     }
                 }
             } catch (Exception e) {
@@ -289,8 +294,18 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
     }
 
     @Override
-    protected Services getServices() {
-        return serverServices;
+    protected GlobalServices getGlobalServices() {
+        return serverGlobalServices;
+    }
+
+    @Override
+    protected PlanetServices getPlanetServices(UserState userState) {
+        LevelScope levelScope = userGuidanceService.getLevelScope(userState);
+        if (levelScope.hasPlanet()) {
+            return planetSystemService.getServerPlanetServices(userState);
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -332,7 +347,7 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
         if (abstractComparison != null && actor.getBase() != null) {
             LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
             levelTaskPacket.setActiveQuestProgress(abstractComparison.createProgressHtml());
-            connectionService.sendPacket(actor.getBase().getSimpleBase(), levelTaskPacket);
+            serverConnectionService.sendPacket(actor.getBase().getSimpleBase(), levelTaskPacket);
         }
     }
 }

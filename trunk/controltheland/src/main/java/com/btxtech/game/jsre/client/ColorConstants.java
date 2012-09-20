@@ -1,8 +1,5 @@
 package com.btxtech.game.jsre.client;
 
-import com.google.gwt.canvas.dom.client.CssColor;
-import com.google.gwt.canvas.dom.client.FillStrokeStyle;
-
 /**
  * User: beat
  * Date: 29.09.2011

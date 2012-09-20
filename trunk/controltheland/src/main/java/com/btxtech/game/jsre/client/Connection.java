@@ -18,7 +18,7 @@ import com.btxtech.game.jsre.client.cockpit.SplashManager;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
-import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
@@ -121,7 +121,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
 
     public void downloadRealGameInfo(final DeferredStartup deferredStartup) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.getRealGameInfo(ClientServices.getInstance().getClientRunner().getStartUuid(), new AsyncCallback<RealGameInfo>() {
+            movableServiceAsync.getRealGameInfo(ClientGlobalServices.getInstance().getClientRunner().getStartUuid(), new AsyncCallback<RealGameInfo>() {
 
                 @Override
                 public void onFailure(Throwable caught) {
@@ -164,8 +164,8 @@ public class Connection implements StartupProgressListener, ConnectionI {
     }
 
     private void handleGameInfoThrowable(Throwable caught, DeferredStartup deferredStartup) {
-        if (caught instanceof InvalidLevelState) {
-            Window.open(CmsUtil.getUrl4Game(((InvalidLevelState) caught).getLevelTaskId()), CmsUtil.TARGET_SELF, "");
+        if (caught instanceof InvalidLevelStateException) {
+            Window.open(CmsUtil.getUrl4Game(((InvalidLevelStateException) caught).getLevelTaskId()), CmsUtil.TARGET_SELF, "");
         } else {
             deferredStartup.failed(caught);
             gameEngineMode = null;
@@ -232,7 +232,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
         if (movableServiceAsync == null) {
             return;
         }
-        movableServiceAsync.getSyncInfo(ClientServices.getInstance().getClientRunner().getStartUuid(), new AsyncCallback<List<Packet>>() {
+        movableServiceAsync.getSyncInfo(ClientGlobalServices.getInstance().getClientRunner().getStartUuid(), new AsyncCallback<List<Packet>>() {
             @Override
             public void onFailure(Throwable throwable) {
                 if (!handleDisconnection("pollSyncInfo", throwable)) {
@@ -326,7 +326,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
     public void sendTutorialProgress(final TutorialConfig.TYPE type, final int levelTaskId, final String name, final long duration, final long clientTimeStamp, final ParametrisedRunnable<GameFlow> runnable) {
         if (movableServiceAsync != null) {
             movableServiceAsync.sendTutorialProgress(type,
-                    ClientServices.getInstance().getClientRunner().getStartUuid(),
+                    ClientGlobalServices.getInstance().getClientRunner().getStartUuid(),
                     levelTaskId,
                     name,
                     duration,
@@ -524,7 +524,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
     public void onTaskFinished(AbstractStartupTask task) {
         if (movableServiceAsync != null) {
             movableServiceAsync.sendStartupTask(task.createStartupTaskInfo(),
-                    ClientServices.getInstance().getClientRunner().getStartUuid(),
+                    ClientGlobalServices.getInstance().getClientRunner().getStartUuid(),
                     Simulation.getInstance().getLevelTaskId(),
                     new VoidAsyncCallback("onTaskFinished"));
         }
@@ -534,7 +534,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
     public void onTaskFailed(AbstractStartupTask task, String error, Throwable t) {
         if (movableServiceAsync != null) {
             movableServiceAsync.sendStartupTask(task.createStartupTaskInfo(error),
-                    ClientServices.getInstance().getClientRunner().getStartUuid(),
+                    ClientGlobalServices.getInstance().getClientRunner().getStartUuid(),
                     Simulation.getInstance().getLevelTaskId(),
                     new VoidAsyncCallback("onTaskFailed"));
         }
@@ -556,7 +556,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
         if (movableServiceAsync != null) {
             movableServiceAsync.sendStartupTerminated(true,
                     totalTime,
-                    ClientServices.getInstance().getClientRunner().getStartUuid(),
+                    ClientGlobalServices.getInstance().getClientRunner().getStartUuid(),
                     Simulation.getInstance().getLevelTaskId(),
                     new VoidAsyncCallback("onStartupFinished"));
         }
@@ -567,7 +567,7 @@ public class Connection implements StartupProgressListener, ConnectionI {
         if (movableServiceAsync != null) {
             movableServiceAsync.sendStartupTerminated(false,
                     totalTime,
-                    ClientServices.getInstance().getClientRunner().getStartUuid(),
+                    ClientGlobalServices.getInstance().getClientRunner().getStartUuid(),
                     Simulation.getInstance().getLevelTaskId(),
                     new VoidAsyncCallback("onStartupFailed"));
         }

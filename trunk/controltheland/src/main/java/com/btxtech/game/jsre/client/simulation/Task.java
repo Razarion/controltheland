@@ -14,10 +14,8 @@
 package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
-import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
 import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;

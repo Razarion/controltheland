@@ -15,13 +15,11 @@ package com.btxtech.game.jsre.client.terrain;
 
 import com.btxtech.game.jsre.client.ExtendedAbsolutePanel;
 import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.cockpit.ChatCockpit;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.perfmon.Perfmon;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 
@@ -75,9 +73,6 @@ public class MapWindow {
                     e.getClientY() + document.getScrollTop(),
                     event.getTypeInt());
         }
-        //    if ((event.getTypeInt() & Event.ONMOUSEOUT) != 0) {
-        //        TerrainView.getInstance().getTerrainMouseHandler().executeAutoScrollMouse(TerrainMouseHandler.ScrollDirection.STOP, TerrainMouseHandler.ScrollDirection.STOP);
-        //    }
     }
 
     public void setTrackingEvents(boolean isTrackingEvents) {

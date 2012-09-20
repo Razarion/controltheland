@@ -1,26 +1,23 @@
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.client.AlreadyUsedException;
-import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
-import com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.TestServices;
-import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.common.ServerServices;
-import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.territory.TerritoryService;
+import com.btxtech.game.services.common.ServerPlanetServices;
+import com.btxtech.game.services.item.ServerItemTypeService;
+import com.btxtech.game.services.planet.Base;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.UserState;
 import junit.framework.Assert;
-import org.easymock.EasyMock;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -32,53 +29,57 @@ import java.util.HashSet;
  */
 public class TestSyncBaseItem extends AbstractServiceTest {
     @Autowired
-    private BaseService baseService;
+    private ServerItemTypeService serverItemTypeService;
     @Autowired
-    private ItemService itemService;
+    private GlobalServices globalServices;
     @Autowired
-    private TerritoryService territoryService;
-    @Autowired
-    private ServerServices serverServices;
+    private PlanetSystemService planetSystemService;
 
     @Test
+    @DirtiesContext
     public void isEnemy1() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
-        TestServices testServices = new TestServices();
-        testServices.setBaseService(baseService);
-        ConnectionService connectionServiceMock = EasyMock.createStrictMock(ConnectionService.class);
-        EasyMock.expect(connectionServiceMock.getGameEngineMode()).andReturn(GameEngineMode.MASTER).anyTimes();
-        testServices.setConnectionService(connectionServiceMock);
+        ServerPlanetServices planetServices = planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices();
 
-        EasyMock.replay(connectionServiceMock);
+        // TestPlanetServices testServices = new TestPlanetServices();
+        // BaseService baseService = new BaseServiceImpl(null);
+        // ServerItemService serverItemService = new ServerItemServiceImpl();
+
+        // testServices.setBaseService(baseService);
+        //ServerConnectionService connectionServiceMock = EasyMock.createStrictMock(ServerConnectionService.class);
+        //EasyMock.expect(connectionServiceMock.getGameEngineMode()).andReturn(GameEngineMode.MASTER).anyTimes();
+        //globalServices.setServerConnectionService(connectionServiceMock);
+
+        //EasyMock.replay(connectionServiceMock);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Base base1 = createBase();
-        Base base2 = createBase();
-        Base base3 = createBase();
-        Base base4 = createBase();
-        SimpleBase botBase1 = createBotBase();
-        SimpleBase botBase2 = createBotBase();
-        SyncBaseItem syncBaseItem1 = (SyncBaseItem) itemService.getItem(getFirstSynItemId(base1.getSimpleBase(), TEST_START_BUILDER_ITEM_ID));
-        SyncBaseItem syncBaseItem2 = (SyncBaseItem) itemService.getItem(getFirstSynItemId(base2.getSimpleBase(), TEST_START_BUILDER_ITEM_ID));
-        SyncBaseItem syncBaseItem3 = (SyncBaseItem) itemService.getItem(getFirstSynItemId(base3.getSimpleBase(), TEST_START_BUILDER_ITEM_ID));
-        SyncBaseItem syncBaseItem4 = (SyncBaseItem) itemService.getItem(getFirstSynItemId(base4.getSimpleBase(), TEST_START_BUILDER_ITEM_ID));
-        SyncBaseItem botSyncBaseItem1 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1000, 1000), new Id(100, 0, 0), serverServices, botBase1);
-        SyncBaseItem botSyncBaseItem2 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1100, 1100), new Id(101, 0, 0), serverServices, botBase2);
+        Base base1 = createBase(planetServices);
+        Base base2 = createBase(planetServices);
+        Base base3 = createBase(planetServices);
+        Base base4 = createBase(planetServices);
+        SimpleBase botBase1 = createBotBase(planetServices);
+        SimpleBase botBase2 = createBotBase(planetServices);
+        SyncBaseItem syncBaseItem1 = (SyncBaseItem) planetServices.getItemService().getItem(getFirstSynItemId(base1.getSimpleBase(), TEST_START_BUILDER_ITEM_ID));
+        SyncBaseItem syncBaseItem2 = (SyncBaseItem) planetServices.getItemService().getItem(getFirstSynItemId(base2.getSimpleBase(), TEST_START_BUILDER_ITEM_ID));
+        SyncBaseItem syncBaseItem3 = (SyncBaseItem) planetServices.getItemService().getItem(getFirstSynItemId(base3.getSimpleBase(), TEST_START_BUILDER_ITEM_ID));
+        SyncBaseItem syncBaseItem4 = (SyncBaseItem) planetServices.getItemService().getItem(getFirstSynItemId(base4.getSimpleBase(), TEST_START_BUILDER_ITEM_ID));
+        SyncBaseItem botSyncBaseItem1 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1000, 1000), new Id(100, 0, 0), globalServices, planetServices, botBase1);
+        SyncBaseItem botSyncBaseItem2 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1100, 1100), new Id(101, 0, 0), globalServices, planetServices, botBase2);
 
         Collection<SimpleBase> alliancesBase1 = new HashSet<>();
         alliancesBase1.add(base2.getSimpleBase());
         alliancesBase1.add(base3.getSimpleBase());
-        baseService.setAlliances(base1.getSimpleBase(), alliancesBase1);
+        planetServices.getBaseService().setAlliances(base1.getSimpleBase(), alliancesBase1);
 
         Collection<SimpleBase> alliancesBase2 = new HashSet<>();
         alliancesBase2.add(base1.getSimpleBase());
-        baseService.setAlliances(base2.getSimpleBase(), alliancesBase2);
+        planetServices.getBaseService().setAlliances(base2.getSimpleBase(), alliancesBase2);
 
         Collection<SimpleBase> alliancesBase3 = new HashSet<>();
         alliancesBase3.add(base1.getSimpleBase());
-        baseService.setAlliances(base3.getSimpleBase(), alliancesBase3);
+        planetServices.getBaseService().setAlliances(base3.getSimpleBase(), alliancesBase3);
 
         Assert.assertFalse(syncBaseItem1.isEnemy(syncBaseItem1));
         Assert.assertFalse(syncBaseItem1.isEnemy(base1.getSimpleBase()));
@@ -162,15 +163,15 @@ public class TestSyncBaseItem extends AbstractServiceTest {
         endHttpSession();
     }
 
-    private Base createBase() throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
+    private Base createBase(ServerPlanetServices baseService) throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
         UserState userState2 = new UserState();
         userState2.setDbLevelId(TEST_LEVEL_2_REAL_ID);
-        return baseService.createNewBase(userState2, itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID), territoryService.getTerritory(TEST_NOOB_TERRITORY_ID), 100);
+        return baseService.getBaseService().createNewBase(userState2, serverItemTypeService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID), 100, createSimpleRegion(1), 100);
     }
 
-    private SimpleBase createBotBase() throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
-        BotConfig botConfig = new BotConfig(1, 0, null, null, "bot", null, null, null, null);
-        return baseService.createBotBase(botConfig);
+    private SimpleBase createBotBase(ServerPlanetServices baseService) throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
+        BotConfig botConfig = new BotConfig(1, 0, null, createSimpleRegion(1), "bot", null, null, null, null);
+        return baseService.getBaseService().createBotBase(botConfig);
     }
 
 }

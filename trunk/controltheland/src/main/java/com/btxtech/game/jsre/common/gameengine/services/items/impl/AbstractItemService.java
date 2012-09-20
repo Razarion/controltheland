@@ -13,11 +13,12 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.items.impl;
 
+import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
-import com.btxtech.game.jsre.common.MathHelper;
+import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
@@ -27,8 +28,8 @@ import com.btxtech.game.jsre.common.gameengine.itemType.BoxItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ProjectileItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
-import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
+import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -40,7 +41,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -52,11 +52,7 @@ import java.util.logging.Logger;
  * Time: 13:04:56
  */
 abstract public class AbstractItemService implements ItemService {
-    private final HashMap<Integer, ItemType> itemTypes = new HashMap<Integer, ItemType>();
     private Logger log = Logger.getLogger(AbstractItemService.class.getName());
-    private int maxItemWidth;
-    private int maxItemHeight;
-    private int maxItemDiameter;
 
     /**
      * Iterates over all sync items
@@ -68,131 +64,38 @@ abstract public class AbstractItemService implements ItemService {
      */
     protected abstract <T> T iterateOverItems(boolean includeNoPosition, T defaultReturn, ItemHandler<T> itemHandler);
 
-    protected abstract Services getServices();
+    protected abstract GlobalServices getGlobalServices();
 
-    public SyncItem newSyncItem(Id id, Index position, int itemTypeId, SimpleBase base, Services services) throws NoSuchItemTypeException {
-        ItemType itemType = getItemType(itemTypeId);
+    protected abstract PlanetServices getPlanetServices();
+
+    public SyncItem newSyncItem(Id id, Index position, int itemTypeId, SimpleBase base, GlobalServices globalServices, PlanetServices planetServices) throws NoSuchItemTypeException {
+        ItemType itemType = getGlobalServices().getItemTypeService().getItemType(itemTypeId);
         SyncItem syncItem;
         if (itemType instanceof BaseItemType) {
             if (base == null) {
                 throw new NullPointerException(this + " base must be set for a SyncBaseItem");
             }
-            syncItem = new SyncBaseItem(id, position, (BaseItemType) itemType, services, base);
+            syncItem = new SyncBaseItem(id, position, (BaseItemType) itemType, globalServices, planetServices, base);
         } else if (itemType instanceof ResourceType) {
             if (base != null) {
                 throw new IllegalArgumentException(this + " ResourceType does not have a base");
             }
-            syncItem = new SyncResourceItem(id, position, (ResourceType) itemType, services);
+            syncItem = new SyncResourceItem(id, position, (ResourceType) itemType, globalServices, planetServices);
         } else if (itemType instanceof ProjectileItemType) {
             if (base == null) {
                 throw new NullPointerException(this + " base must be set for a ProjectileItemType");
             }
-            syncItem = new SyncProjectileItem(id, position, (ProjectileItemType) itemType, services, base);
+            syncItem = new SyncProjectileItem(id, position, (ProjectileItemType) itemType, globalServices, planetServices, base);
         } else if (itemType instanceof BoxItemType) {
             if (base != null) {
                 throw new IllegalArgumentException(this + " BoxItemType does not have a base");
             }
-            syncItem = new SyncBoxItem(id, position, (BoxItemType) itemType, services);
+            syncItem = new SyncBoxItem(id, position, (BoxItemType) itemType, globalServices, planetServices);
         } else {
             throw new IllegalArgumentException(this + " ItemType not supported: " + itemType);
         }
         return syncItem;
     }
-
-    @Override
-    public ItemType getItemType(int itemTypeId) throws NoSuchItemTypeException {
-        ItemType itemType = itemTypes.get(itemTypeId);
-        if (itemType == null) {
-            throw new NoSuchItemTypeException(itemTypeId);
-        }
-        return itemType;
-    }
-
-    @Override
-    public ItemType getItemType(String name) throws NoSuchItemTypeException {
-        for (ItemType itemType : itemTypes.values()) {
-            if (itemType.getName().equals(name)) {
-                return itemType;
-            }
-        }
-        throw new NoSuchItemTypeException(name);
-    }
-
-    @Override
-    public List<ItemType> getItemTypes() {
-        return new ArrayList<ItemType>(itemTypes.values());
-    }
-
-    public void setItemTypes(Collection<ItemType> itemTypes) {
-        this.itemTypes.clear();
-        for (ItemType itemType : itemTypes) {
-            if (this.itemTypes.containsKey(itemType.getId())) {
-                throw new IllegalArgumentException(this + " ID already exists in items: " + itemType.getId());
-            }
-            this.itemTypes.put(itemType.getId(), itemType);
-        }
-        calculateMaxItemDimension();
-    }
-
-    public void addDeltaItemTypes(Collection<ItemType> itemTypes) {
-        for (ItemType itemType : itemTypes) {
-            if (!this.itemTypes.containsKey(itemType.getId())) {
-                this.itemTypes.put(itemType.getId(), itemType);
-            }
-        }
-        calculateMaxItemDimension();
-    }
-
-    protected void removeAll(ArrayList<ItemType> newItems) {
-        for (ItemType newItem : newItems) {
-            this.itemTypes.put(newItem.getId(), newItem);
-        }
-        calculateMaxItemDimension();
-    }
-
-    protected void changeAll(ArrayList<ItemType> changingItems) {
-        for (ItemType changingItem : changingItems) {
-            ItemType itemType = itemTypes.get(changingItem.getId());
-            itemType.changeTo(changingItem);
-        }
-        calculateMaxItemDimension();
-    }
-
-    protected void putAll(ArrayList<ItemType> newItems) {
-        for (ItemType newItem : newItems) {
-            if (this.itemTypes.containsKey(newItem.getId())) {
-                throw new IllegalArgumentException(this + " ID already exists in items: " + newItem.getId());
-            }
-            this.itemTypes.put(newItem.getId(), newItem);
-        }
-        calculateMaxItemDimension();
-    }
-
-
-    @Override
-    public boolean areItemTypesLoaded() {
-        return !itemTypes.isEmpty();
-    }
-
-    @Override
-    public List<BaseItemType> ableToBuild(BaseItemType toBeBuilt) {
-        ArrayList<BaseItemType> result = new ArrayList<BaseItemType>();
-        for (ItemType itemType : itemTypes.values()) {
-            if (!(itemType instanceof BaseItemType)) {
-                continue;
-            }
-            BaseItemType baseItemType = (BaseItemType) itemType;
-            if (baseItemType.getBuilderType() != null && baseItemType.getBuilderType().getAbleToBuild().contains(toBeBuilt.getId())) {
-                result.add(baseItemType);
-            }
-            if (baseItemType.getFactoryType() != null && baseItemType.getFactoryType().getAbleToBuild().contains(toBeBuilt.getId())) {
-                result.add(baseItemType);
-            }
-        }
-        return result;
-    }
-
-    abstract protected AbstractBaseService getBaseService();
 
     @Override
     public List<SyncBaseItem> getBaseItems(List<Id> baseItemsIds) throws ItemDoesNotExistException {
@@ -395,6 +298,24 @@ abstract public class AbstractItemService implements ItemService {
     }
 
     @Override
+    public Collection<SyncBaseItem> getEnemyItems(final SimpleBase simpleBase, final Region region) {
+        final Collection<SyncBaseItem> enemyItems = new ArrayList<SyncBaseItem>();
+        iterateOverItems(false, null, new ItemHandler<Void>() {
+            @Override
+            public Void handleItem(SyncItem syncItem) {
+                if (syncItem instanceof SyncBaseItem
+                        && ((SyncBaseItem) syncItem).isEnemy(simpleBase)
+                        && region.isInside(syncItem)) {
+                    enemyItems.add((SyncBaseItem) syncItem);
+                }
+
+                return null;
+            }
+        });
+        return enemyItems;
+    }
+
+    @Override
     public SyncBaseItem getFirstEnemyItemInRange(final SyncBaseItem baseSyncItem) {
         return iterateOverItems(false, null, new ItemHandler<SyncBaseItem>() {
             @Override
@@ -414,9 +335,7 @@ abstract public class AbstractItemService implements ItemService {
         return iterateOverItems(false, false, new ItemHandler<Boolean>() {
             @Override
             public Boolean handleItem(SyncItem syncItem) {
-                if (syncItem instanceof SyncBaseItem
-                        && ((SyncBaseItem) syncItem).isEnemy(simpleBase)
-                        && syncItem.getSyncItemArea().getDistance(middlePoint) <= range) {
+                if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).isEnemy(simpleBase) && syncItem.getSyncItemArea().getDistance(middlePoint) <= range) {
                     return true;
                 }
 
@@ -498,6 +417,33 @@ abstract public class AbstractItemService implements ItemService {
     }
 
     @Override
+    public Collection<SyncBaseItem> getBaseItemsInRectangle(final Region region, final SimpleBase simpleBase, final Collection<BaseItemType> baseItemTypeFilter) {
+        final Collection<SyncBaseItem> itemsInBase = new ArrayList<SyncBaseItem>();
+        iterateOverItems(false, null, new ItemHandler<Void>() {
+            @Override
+            public Void handleItem(SyncItem syncItem) {
+                if (!(syncItem instanceof SyncBaseItem)) {
+                    return null;
+                }
+                SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
+                if (simpleBase != null && !(syncBaseItem.getBase().equals(simpleBase))) {
+                    return null;
+                }
+                if (!region.isInside(syncBaseItem)) {
+                    return null;
+                }
+                if (baseItemTypeFilter != null && !baseItemTypeFilter.contains(syncBaseItem.getBaseItemType())) {
+                    return null;
+                }
+
+                itemsInBase.add((SyncBaseItem) syncItem);
+                return null;
+            }
+        });
+        return itemsInBase;
+    }
+
+    @Override
     public Collection<? extends SyncItem> getItems(final ItemType itemType, final SimpleBase simpleBase) {
         final Collection<SyncItem> items = new ArrayList<SyncItem>();
         iterateOverItems(true, null, new ItemHandler<Void>() {
@@ -521,6 +467,7 @@ abstract public class AbstractItemService implements ItemService {
 
     @Override
     public SyncItem getItemAtAbsolutePosition(Index absolutePosition) {
+        int maxItemDiameter = getGlobalServices().getItemTypeService().getMaxItemDiameter();
         Rectangle rectangle = Rectangle.generateRectangleFromMiddlePoint(absolutePosition, maxItemDiameter, maxItemDiameter);
         for (SyncItem syncItem : ItemContainer.getInstance().getItemsInRectangleFast(rectangle)) {
             if (syncItem.getSyncItemArea().contains(absolutePosition)) {
@@ -530,12 +477,11 @@ abstract public class AbstractItemService implements ItemService {
         return null;
     }
 
-
     @Override
     public void sellItem(Id id) throws ItemDoesNotExistException, NotYourBaseException {
         try {
             SyncBaseItem syncBaseItem = (SyncBaseItem) getItem(id);
-            getServices().getBaseService().checkBaseAccess(syncBaseItem);
+            getPlanetServices().getBaseService().checkBaseAccess(syncBaseItem);
             double health = syncBaseItem.getHealth();
             double fullHealth = syncBaseItem.getBaseItemType().getHealth();
             double price = syncBaseItem.getBaseItemType().getPrice();
@@ -543,10 +489,10 @@ abstract public class AbstractItemService implements ItemService {
             killSyncItem(syncBaseItem, null, true, false);
             SimpleBase simpleBase = syncBaseItem.getBase();
             // May last item sold
-            if (getServices().getBaseService().isAlive(simpleBase)) {
-                double money = health / fullHealth * buildup * price * getServices().getCommonUserGuidanceService().getLevelScope().getItemSellFactor();
-                getServices().getBaseService().depositResource(money, simpleBase);
-                getServices().getBaseService().sendAccountBaseUpdate(simpleBase);
+            if (getPlanetServices().getBaseService().isAlive(simpleBase)) {
+                double money = health / fullHealth * buildup * price * Constants.ITEM_SELL_FACTOR;
+                getPlanetServices().getBaseService().depositResource(money, simpleBase);
+                getPlanetServices().getBaseService().sendAccountBaseUpdate(simpleBase);
             }
         } catch (ItemDoesNotExistException ignore) {
             // Ignore
@@ -566,34 +512,5 @@ abstract public class AbstractItemService implements ItemService {
                 log.log(Level.SEVERE, "AbstractItemService.killContainedItems()", e);
             }
         }
-    }
-
-    private void calculateMaxItemDimension() {
-        maxItemWidth = 0;
-        maxItemHeight = 0;
-        for (ItemType itemType : itemTypes.values()) {
-            if(itemType.getBoundingBox().getWidth() > maxItemWidth) {
-                maxItemWidth = itemType.getBoundingBox().getWidth();
-            }
-            if(itemType.getBoundingBox().getHeight() > maxItemHeight) {
-                maxItemHeight = itemType.getBoundingBox().getHeight();
-            }
-        }
-        maxItemDiameter = (int) MathHelper.getPythagoras(maxItemWidth, maxItemHeight);
-    }
-
-    @Override
-    public int getMaxItemWidth() {
-        return maxItemWidth;
-    }
-
-    @Override
-    public int getMaxItemHeight() {
-        return maxItemHeight;
-    }
-
-    @Override
-    public int getMaxItemDiameter() {
-        return maxItemDiameter;
     }
 }

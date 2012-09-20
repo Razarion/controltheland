@@ -16,7 +16,7 @@ package com.btxtech.game.controllers;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.services.common.ImageHolder;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ import java.io.OutputStream;
 @Component(value = "itemImageController")
 public class ItemImageController implements Controller {
     @Autowired
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
     private Log log = LogFactory.getLog(ItemImageController.class);
 
     @Override
@@ -45,7 +45,7 @@ public class ItemImageController implements Controller {
 
             if (itemTypeSpriteMapString != null) {
                 int itemTypeId = Integer.parseInt(itemTypeSpriteMapString);
-                ImageHolder imageHolder = itemService.getItemTypeSpriteMap(itemTypeId);
+                ImageHolder imageHolder = serverItemTypeService.getItemTypeSpriteMap(itemTypeId);
                 imageData = imageHolder.getData();
                 contentType = imageHolder.getContentType();
             } else {

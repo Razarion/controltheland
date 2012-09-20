@@ -42,7 +42,7 @@ public class BaseAttributes implements Serializable {
         this.simpleBase = simpleBase;
         this.name = name;
         this.abandoned = abandoned;
-        id = simpleBase.getId();
+        id = simpleBase.getBaseId();
     }
 
     public String getName() {
@@ -114,7 +114,7 @@ public class BaseAttributes implements Serializable {
             for (BaseAttributes alliance : alliances) {
                 allianceString.append(alliance.getName());
                 allianceString.append("(");
-                allianceString.append(alliance.getSimpleBase().getId());
+                allianceString.append(alliance.getSimpleBase().getBaseId());
                 allianceString.append(",");
                 allianceString.append(alliance.id);
                 allianceString.append(")");

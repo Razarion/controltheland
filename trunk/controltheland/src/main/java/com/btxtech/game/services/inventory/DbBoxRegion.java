@@ -5,6 +5,8 @@ import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.db.RectangleUserType;
+import com.btxtech.game.services.planet.db.DbPlanet;
+import com.btxtech.game.services.terrain.DbRegion;
 import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Columns;
@@ -18,7 +20,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -30,8 +34,7 @@ import java.util.Collection;
  * Time: 22:03
  */
 @Entity(name = "BOX_REGION")
-@TypeDef(name = "rectangle", typeClass = RectangleUserType.class)
-public class DbBoxRegion implements CrudChild, CrudParent {
+public class DbBoxRegion implements CrudChild<DbPlanet>, CrudParent {
     @Id
     @GeneratedValue
     private Integer id;
@@ -42,10 +45,11 @@ public class DbBoxRegion implements CrudChild, CrudParent {
     private Collection<DbBoxRegionCount> dbBoxRegionCounts;
     private long minInterval;
     private long maxInterval;
-    @Type(type = "rectangle")
-    @Columns(columns = {@Column(name = "regionX"), @Column(name = "regionY"), @Column(name = "regionWidth"), @Column(name = "regionHeight")})
-    private Rectangle region;
+    @OneToOne(fetch = FetchType.LAZY)
+    private DbRegion region;
     private int itemFreeRange;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbPlanet dbPlanet;
 
     @Transient
     private CrudChildServiceHelper<DbBoxRegionCount> boxRegionCountCrud;
@@ -71,13 +75,13 @@ public class DbBoxRegion implements CrudChild, CrudParent {
     }
 
     @Override
-    public void setParent(Object o) {
-        throw new UnsupportedOperationException();
+    public void setParent(DbPlanet dbPlanet) {
+        this.dbPlanet = dbPlanet;
     }
 
     @Override
-    public Object getParent() {
-        throw new UnsupportedOperationException();
+    public DbPlanet getParent() {
+        return dbPlanet;
     }
 
     public long getMinInterval() {
@@ -103,11 +107,11 @@ public class DbBoxRegion implements CrudChild, CrudParent {
         return boxRegionCountCrud;
     }
 
-    public Rectangle getRegion() {
+    public DbRegion getRegion() {
         return region;
     }
 
-    public void setRegion(Rectangle region) {
+    public void setRegion(DbRegion region) {
         this.region = region;
     }
 

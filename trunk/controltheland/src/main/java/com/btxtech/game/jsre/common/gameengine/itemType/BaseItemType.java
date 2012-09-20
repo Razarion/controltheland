@@ -13,8 +13,6 @@
 
 package com.btxtech.game.jsre.common.gameengine.itemType;
 
-import java.util.List;
-
 /**
  * User: beat
  * Date: 04.12.2009

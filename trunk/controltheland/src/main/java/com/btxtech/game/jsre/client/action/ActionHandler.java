@@ -14,7 +14,8 @@
 package com.btxtech.game.jsre.client.action;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.ClientServices;
+import com.btxtech.game.jsre.client.ClientGlobalServices;
+import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.GwtCommon;
@@ -25,14 +26,14 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.RectangleFormation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
 import com.btxtech.game.jsre.common.gameengine.services.action.impl.CommonActionServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
@@ -70,6 +71,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
     public interface CommandListener {
         void onCommand(BaseCommand baseCommand);
     }
+
     private final static ActionHandler INSTANCE = new ActionHandler();
     private static final int TICK_INTERVAL = 40;
     private long lastTickTime = 0;
@@ -113,7 +115,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                         activeItem.stop();
                         if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
                             ActionHandler.getInstance().addGuardingBaseItem(activeItem);
-                            ClientServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
+                            ClientGlobalServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
                             if (activeItem instanceof SyncBaseItem) {
                                 SimulationConditionServiceImpl.getInstance().onSyncItemDeactivated((SyncBaseItem) activeItem);
                             }
@@ -122,28 +124,28 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                 } catch (ItemDoesNotExistException ife) {
                     iterator.remove();
                     activeItem.stop();
-                    ClientServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
+                    ClientGlobalServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
                     log.warning("ItemDoesNotExistException");
                 } catch (PositionTakenException ife) {
                     iterator.remove();
                     activeItem.stop();
-                    ClientServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
+                    ClientGlobalServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
                     // TODO in-comment if fixed: log.warning("PositionTakenException");
                 } catch (PathCanNotBeFoundException e) {
                     iterator.remove();
                     activeItem.stop();
-                    ClientServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
+                    ClientGlobalServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
                     log.warning("PathCanNotBeFoundException: " + e.getMessage());
                 } catch (PlaceCanNotBeFoundException e) {
                     iterator.remove();
                     activeItem.stop();
-                    ClientServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
+                    ClientGlobalServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
                     log.warning("PlaceCanNotBeFoundException: " + e.getMessage());
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);
                     activeItem.stop();
                     iterator.remove();
-                    ClientServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
+                    ClientGlobalServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
                 }
             }
             lastTickTime = time;
@@ -198,9 +200,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
         GroupCommandHelperPosition groupCommandHelperPosition = new GroupCommandHelperPosition() {
             @Override
             protected boolean isCommandPossible(SyncBaseItem builder, BaseItemType toBeBuilt, Index positionToBeBuild) {
-                return builder.hasSyncBuilder()
-                        && ClientTerritoryService.getInstance().isAllowed(positionToBeBuild, builder)
-                        && ClientTerritoryService.getInstance().isAllowed(positionToBeBuild, toBeBuilt);
+                return builder.hasSyncBuilder();
             }
 
             @Override
@@ -220,10 +220,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
         GroupCommandHelperItemType<SyncBaseItem> commandHelperItemType = new GroupCommandHelperItemType<SyncBaseItem>() {
             @Override
             protected boolean isCommandPossible(SyncBaseItem syncBaseItem, SyncBaseItem building) {
-                return syncBaseItem.hasSyncBuilder()
-                        && ClientTerritoryService.getInstance().isAllowed(building.getSyncItemArea().getPosition(), syncBaseItem)
-                        && ClientTerritoryService.getInstance().isAllowed(building.getSyncItemArea().getPosition(), building)
-                        && syncBaseItem.getSyncBuilder().getBuilderType().isAbleToBuild(building.getItemType().getId());
+                return syncBaseItem.hasSyncBuilder() && syncBaseItem.getSyncBuilder().getBuilderType().isAbleToBuild(building.getItemType().getId());
             }
 
             @Override
@@ -246,10 +243,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
 
         for (SyncBaseItem syncBaseItem : syncBaseItems) {
             if (syncBaseItem.hasSyncFactory()) {
-                if (ClientTerritoryService.getInstance().isAllowed(syncBaseItem.getSyncItemArea().getPosition(), syncBaseItem)
-                        && ClientTerritoryService.getInstance().isAllowed(syncBaseItem.getSyncItemArea().getPosition(), itemTypeToBuild)) {
-                    fabricate(syncBaseItem, itemTypeToBuild);
-                }
+                fabricate(syncBaseItem, itemTypeToBuild);
             } else {
                 GwtCommon.sendLogToServer("ActionHandler.build(): can not cast to FactorySyncItem:" + syncBaseItem);
             }
@@ -261,10 +255,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
         GroupCommandHelperItemType<SyncBaseItem> commandHelperItemType = new GroupCommandHelperItemType<SyncBaseItem>() {
             @Override
             protected boolean isCommandPossible(SyncBaseItem syncBaseItem, SyncBaseItem target) {
-                return syncBaseItem.hasSyncWeapon()
-                        && ClientTerritoryService.getInstance().isAllowed(syncBaseItem.getSyncItemArea().getPosition(), syncBaseItem)
-                        && ClientTerritoryService.getInstance().isAllowed(target.getSyncItemArea().getPosition(), syncBaseItem)
-                        && syncBaseItem.getSyncWeapon().isItemTypeAllowed(target);
+                return syncBaseItem.hasSyncWeapon() && syncBaseItem.getSyncWeapon().isItemTypeAllowed(target);
             }
 
             @Override
@@ -284,7 +275,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
         GroupCommandHelperItemType<SyncResourceItem> commandHelperItemType = new GroupCommandHelperItemType<SyncResourceItem>() {
             @Override
             protected boolean isCommandPossible(SyncBaseItem syncBaseItem, SyncResourceItem money) {
-                return syncBaseItem.hasSyncHarvester() && ClientTerritoryService.getInstance().isAllowed(money.getSyncItemArea().getPosition(), syncBaseItem);
+                return syncBaseItem.hasSyncHarvester();
             }
 
             @Override
@@ -304,7 +295,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
         GroupCommandHelperItemType<SyncBoxItem> commandHelperItemType = new GroupCommandHelperItemType<SyncBoxItem>() {
             @Override
             protected boolean isCommandPossible(SyncBaseItem syncBaseItem, SyncBoxItem box) {
-                return ClientTerritoryService.getInstance().isAllowed(box.getSyncItemArea().getPosition(), syncBaseItem);
+                return true;
             }
 
             @Override
@@ -328,9 +319,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
         GroupCommandHelperItemType<SyncBaseItem> commandHelperItemType = new GroupCommandHelperItemType<SyncBaseItem>() {
             @Override
             protected boolean isCommandPossible(SyncBaseItem syncBaseItem, SyncBaseItem container) {
-                return ClientTerritoryService.getInstance().isAllowed(container.getSyncItemArea().getPosition(), container)
-                        && container.getSyncItemContainer().isAbleToLoad(syncBaseItem)
-                        && syncBaseItem.hasSyncMovable();
+                return container.getSyncItemContainer().isAbleToLoad(syncBaseItem) && syncBaseItem.hasSyncMovable();
             }
 
             @Override
@@ -406,9 +395,9 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
         } catch (Throwable t) {
             log.log(Level.SEVERE, "", t);
         }
-        ClientServices.getInstance().getConnectionService().sendSyncInfo(syncItem);
+        ClientGlobalServices.getInstance().getConnectionService().sendSyncInfo(syncItem);
         SoundHandler.getInstance().playCommandSound(syncItem);
-        if(commandListener != null) {
+        if (commandListener != null) {
             commandListener.onCommand(baseCommand);
         }
     }
@@ -428,8 +417,13 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
     }
 
     @Override
-    protected Services getServices() {
-        return ClientServices.getInstance();
+    protected GlobalServices getGlobalServices() {
+        return ClientGlobalServices.getInstance();
+    }
+
+    @Override
+    protected PlanetServices getPlanetServices() {
+        return ClientPlanetServices.getInstance();
     }
 
     public boolean isBusy() {

@@ -13,11 +13,9 @@
 
 package com.btxtech.game.wicket.uiservices;
 
-import com.btxtech.game.services.item.ItemService;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
  * User: beat
@@ -25,9 +23,6 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Time: 18:44:15
  */
 public class PercentPanel extends Panel {
-    @SpringBean
-    private ItemService itemService;
-
     public PercentPanel(String id) {
         super(id);
         add(new TextField<>("percent", new IModel<Integer>() {

@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.common.gameengine.services.collision;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -46,5 +47,8 @@ public interface CommonCollisionService {
 
     List<AttackFormationItem> setupDestinationHints(SyncItem target, List<AttackFormationItem> items);
 
+    @Deprecated
     Index getFreeRandomPosition(ItemType itemType, Rectangle region, int itemFreeRange, boolean botFree, boolean ignoreMovable);
+
+    Index getFreeRandomPosition(ItemType itemType, Region region, int itemFreeRange, boolean botFree, boolean ignoreMovable);
 }

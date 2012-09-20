@@ -13,6 +13,8 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.terrain;
 
+import com.btxtech.game.jsre.client.common.Constants;
+
 import java.io.Serializable;
 
 /**
@@ -23,8 +25,6 @@ import java.io.Serializable;
 public class TerrainSettings implements Serializable {
     private int tileXCount;
     private int tileYCount;
-    private int tileHeight;
-    private int tileWidth;
 
     /**
      * Used gy BWT
@@ -32,11 +32,9 @@ public class TerrainSettings implements Serializable {
     TerrainSettings() {
     }
 
-    public TerrainSettings(int tileXCount, int tileYCount, int tileHeight, int tileWidth) {
+    public TerrainSettings(int tileXCount, int tileYCount) {
         this.tileXCount = tileXCount;
         this.tileYCount = tileYCount;
-        this.tileHeight = tileHeight;
-        this.tileWidth = tileWidth;
     }
 
     public int getTileXCount() {
@@ -47,19 +45,11 @@ public class TerrainSettings implements Serializable {
         return tileYCount;
     }
 
-    public int getTileHeight() {
-        return tileHeight;
-    }
-
-    public int getTileWidth() {
-        return tileWidth;
-    }
-
     public int getPlayFieldXSize() {
-        return tileXCount * tileWidth;
+        return tileXCount * Constants.TERRAIN_TILE_WIDTH;
     }
 
     public int getPlayFieldYSize() {
-        return tileYCount * tileHeight;
+        return tileYCount * Constants.TERRAIN_TILE_WIDTH;
     }
 }

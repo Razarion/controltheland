@@ -1,12 +1,11 @@
 package com.btxtech.game.jsre.client.cockpit.item;
 
-import com.btxtech.game.jsre.client.ClientServices;
+import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -24,8 +23,6 @@ public class ToBeBuildPlacer {
     private BaseItemType itemTypeToBuilt;
     private Group builders;
     private boolean isTerrainOk;
-    private boolean isTerritoryOk;
-    private boolean isTerritoryBuilderOk;
     private boolean isItemsOk;
     private String errorText;
     private Logger log = Logger.getLogger(ToBeBuildPlacer.class.getName());
@@ -64,7 +61,7 @@ public class ToBeBuildPlacer {
     }
 
     public boolean isValidPosition() {
-        return isTerrainOk & isTerritoryOk & isTerritoryBuilderOk & isItemsOk;
+        return isTerrainOk && isItemsOk;
     }
 
     public Index getRelativeMiddlePos() {
@@ -77,11 +74,9 @@ public class ToBeBuildPlacer {
 
     private void checkPlacingForAllAllowed(Index absolute) {
         isTerrainOk = false;
-        isTerritoryOk = false;
-        isTerritoryBuilderOk = false;
         isItemsOk = false;
 
-        isTerrainOk = ClientServices.getInstance().getTerrainService().isFree(absolute, itemTypeToBuilt);
+        isTerrainOk = ClientPlanetServices.getInstance().getTerrainService().isFree(absolute, itemTypeToBuilt);
         if (!isTerrainOk) {
             return;
         }
@@ -91,24 +86,12 @@ public class ToBeBuildPlacer {
             return;
         }
 
-        isTerritoryOk = ClientTerritoryService.getInstance().isAllowed(absolute, itemTypeToBuilt);
-        if (!isTerritoryOk) {
-            return;
-        }
-        isTerritoryBuilderOk = ClientTerritoryService.getInstance().isAtLeastOneAllowed(absolute, builders.getSyncBaseItems());
-        if (!isTerritoryBuilderOk) {
-            return;
-        }
         isItemsOk = !ItemContainer.getInstance().isUnmovableSyncItemOverlapping(itemTypeToBuilt.getBoundingBox(), absolute);
     }
 
     private void setupErrorText() {
         if (!isTerrainOk) {
             errorText = "You can not place here";
-        } else if (!isTerritoryOk) {
-            errorText = "Item not allowed on territory";
-        } else if (!isTerritoryBuilderOk) {
-            errorText = "Builders not allowed on territory";
         } else if (!isItemsOk) {
             errorText = "Not allowed to place on other items";
         } else {

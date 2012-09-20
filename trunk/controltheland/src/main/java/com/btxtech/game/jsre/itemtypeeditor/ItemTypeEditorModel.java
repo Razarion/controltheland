@@ -6,12 +6,12 @@ import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
-import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.client.item.ItemTypeContainer;
 import com.btxtech.game.jsre.client.renderer.Renderer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
@@ -53,8 +54,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ItemTypeEditorModel {
-    public static final SimpleBase MY_BASE = new SimpleBase(1);
-    public static final SimpleBase ENEMY_BASE = new SimpleBase(2);
+    public static final SimpleBase MY_BASE = new SimpleBase(1, PlanetInfo.EDITOR_PLANET_ID);
+    public static final SimpleBase ENEMY_BASE = new SimpleBase(2, PlanetInfo.EDITOR_PLANET_ID);
     public static final int SIM_WIDTH = 700;
     public static final int SIM_HEIGHT = 700;
 
@@ -116,7 +117,7 @@ public class ItemTypeEditorModel {
     public void setNewAngels(int count) {
         getBoundingBox().setAngels(new double[count]);
         for (int i = 0; i < count; i++) {
-            getBoundingBox().getAngels()[i] = MathHelper.ONE_RADIANT * ((double)i / (double)count);
+            getBoundingBox().getAngels()[i] = MathHelper.ONE_RADIANT * ((double) i / (double) count);
         }
         cutRuntimeToCorrectLength();
         fireUpdate();
@@ -468,13 +469,13 @@ public class ItemTypeEditorModel {
                     ///--- Setup div
                     TerrainView.uglySuppressRadar = true;
                     Connection.getInstance().init4ItemTypeEditor();
-                    ClientLevelHandler.getInstance().setLevel(new LevelScope(0, 0, null, 0, 0, RadarMode.NONE, 0));
+                    ClientLevelHandler.getInstance().setLevel(new LevelScope(PlanetInfo.EDITOR_PLANET_ID, 0, 0, null, 0));
                     ///--- Setup terrain
                     ArrayList<SurfaceImage> surfaceImages = new ArrayList<SurfaceImage>();
                     surfaceImages.add(new SurfaceImage(itemType.getTerrainType().getSurfaceTypes().get(0), 23, "#00FF00"));
                     ArrayList<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
                     surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, SIM_WIDTH / 100, SIM_HEIGHT / 100), 23));
-                    TerrainView.getInstance().setupTerrain(new TerrainSettings(SIM_WIDTH / 100, SIM_HEIGHT / 100, 100, 100),
+                    TerrainView.getInstance().setupTerrain(new TerrainSettings(SIM_WIDTH / 100, SIM_HEIGHT / 100),
                             new ArrayList<TerrainImagePosition>(),
                             surfaceRects,
                             surfaceImages,
@@ -487,7 +488,7 @@ public class ItemTypeEditorModel {
                     ///--- Setup Item Container
                     Collection<ItemType> itemTypes = new ArrayList<ItemType>();
                     itemTypes.add(itemType);
-                    ItemContainer.getInstance().setItemTypes(itemTypes);
+                    ItemTypeContainer.getInstance().setItemTypes(itemTypes);
                     ///--- Setup Base
                     ClientBase.getInstance().setBase(MY_BASE);
                     Collection<BaseAttributes> allBaseAttributes = new ArrayList<BaseAttributes>();

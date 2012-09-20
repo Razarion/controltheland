@@ -32,10 +32,12 @@ public class TerrainImageSelectorItem extends FlowPanel implements MouseDownHand
     private static final int MAX_EDGE_LENGTH = 100;
     private TerrainImage terrainImage;
     private Cockpit cockpit;
+    private MapEditorModel mapEditorModel;
 
-    public TerrainImageSelectorItem(TerrainImage terrainImage, Cockpit cockpit) {
+    public TerrainImageSelectorItem(TerrainImage terrainImage, Cockpit cockpit, MapEditorModel mapEditorModel) {
         this.terrainImage = terrainImage;
         this.cockpit = cockpit;
+        this.mapEditorModel = mapEditorModel;
         Image image = new Image();
         image.addLoadHandler(new LoadHandler() {
             @Override
@@ -63,7 +65,7 @@ public class TerrainImageSelectorItem extends FlowPanel implements MouseDownHand
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
         GwtCommon.preventDefault(mouseDownEvent);
-        new PlaceablePreviewTerrainImagePoition(cockpit.getTerrainData(), terrainImage, cockpit.getSelectedZIndex(), mouseDownEvent);
+        mapEditorModel.createTerrainImagePosition(terrainImage, mouseDownEvent);
     }
 
     public void setSelected(boolean selected) {

@@ -14,7 +14,7 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class BasesTable extends MgmtWebPage {
     @SpringBean
-    private BaseService baseService;
+    private PlanetSystemService planetSystemService;
 
     public BasesTable() {
         ListView<SimpleBase> listView = new ListView<SimpleBase>("bases", new IModel<List<SimpleBase>>() {
@@ -40,7 +40,7 @@ public class BasesTable extends MgmtWebPage {
             @Override
             public List<SimpleBase> getObject() {
                 if (simpleBases == null) {
-                    simpleBases = baseService.getSimpleBases();
+                    simpleBases = planetSystemService.getAllSimpleBases();
                 }
                 return simpleBases;
             }
@@ -64,7 +64,8 @@ public class BasesTable extends MgmtWebPage {
                         setResponsePage(new BaseEditor(listItem.getModelObject()));
                     }
                 };
-                link.add(new Label("baseName", baseService.getBaseName(listItem.getModelObject()) + " (" + listItem.getModelObject().getId() + ")"));
+                String baseName = planetSystemService.getServerPlanetServices(listItem.getModelObject()).getBaseService().getBaseName(listItem.getModelObject());
+                link.add(new Label("baseName", baseName + " (" + listItem.getModelObject().getBaseId() + ")"));
                 listItem.add(link);
             }
         };

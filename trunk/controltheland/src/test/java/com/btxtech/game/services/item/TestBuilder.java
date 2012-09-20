@@ -8,16 +8,19 @@ import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BuilderType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
-import com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBuilder;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncMovable;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.services.common.TestGlobalServices;
+import com.btxtech.game.services.connection.ServerConnectionService;
+import com.btxtech.game.services.planet.ServerItemService;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.junit.Assert;
@@ -35,17 +38,17 @@ import java.util.List;
  */
 public class TestBuilder extends AbstractServiceTest {
     @Autowired
-    private ItemService itemService;
-    private Services servicesMock;
+    private ServerItemTypeService serverItemTypeService;
+    private PlanetServices planetServicesMock;
 
     private SyncBaseItem createSyncBuilderItem() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         // Mock
-        ItemService itemServiceMock = EasyMock.createNiceMock(ItemService.class);
-        EasyMock.expect(itemServiceMock.hasItemsInRectangle(EasyMock.<Rectangle>anyObject())).andReturn(false).anyTimes();
-        EasyMock.expect(itemServiceMock.baseObjectExists(EasyMock.<SyncItem>anyObject())).andReturn(true).anyTimes();
-        EasyMock.expect(itemServiceMock.createSyncObject(EasyMock.<ItemType>anyObject(),
+        ServerItemService serverItemServiceMock = EasyMock.createNiceMock(ServerItemService.class);
+        EasyMock.expect(serverItemServiceMock.hasItemsInRectangle(EasyMock.<Rectangle>anyObject())).andReturn(false).anyTimes();
+        EasyMock.expect(serverItemServiceMock.baseObjectExists(EasyMock.<SyncItem>anyObject())).andReturn(true).anyTimes();
+        EasyMock.expect(serverItemServiceMock.createSyncObject(EasyMock.<ItemType>anyObject(),
                 EasyMock.<Index>anyObject(),
                 EasyMock.<SyncBaseItem>anyObject(),
                 EasyMock.<SimpleBase>anyObject(),
@@ -53,30 +56,36 @@ public class TestBuilder extends AbstractServiceTest {
             @Override
             public SyncItem answer() throws Throwable {
                 Id id2 = new Id(2, 1, 1);
-                return createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(5000, 5350), id2, servicesMock);
+                return createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(5000, 5350), id2, null, planetServicesMock);
             }
         }).once();
-        EasyMock.replay(itemServiceMock);
+        EasyMock.replay(serverItemServiceMock);
 
-        TerrainService terrainServiceMock = EasyMock.createNiceMock(TerrainService.class);
+        AbstractTerrainService terrainServiceMock = EasyMock.createNiceMock(AbstractTerrainService.class);
         EasyMock.expect(terrainServiceMock.correctPosition(EasyMock.<SyncItem>anyObject(), EasyMock.<Index>anyObject())).andReturn(new Index(5000, 5000));
         EasyMock.replay(terrainServiceMock);
 
-        ConnectionService connectionServiceMock = EasyMock.createNiceMock(ConnectionService.class);
+        ServerConnectionService connectionServiceMock = EasyMock.createNiceMock(ServerConnectionService.class);
         EasyMock.replay(connectionServiceMock);
 
         AbstractBaseService abstractBaseServiceMock = EasyMock.createNiceMock(AbstractBaseService.class);
         EasyMock.replay(abstractBaseServiceMock);
 
-        servicesMock = EasyMock.createNiceMock(Services.class);
-        EasyMock.expect(servicesMock.getItemService()).andReturn(itemServiceMock).anyTimes();
-        EasyMock.expect(servicesMock.getTerrainService()).andReturn(terrainServiceMock).anyTimes();
-        EasyMock.expect(servicesMock.getConnectionService()).andReturn(connectionServiceMock).anyTimes();
-        EasyMock.expect(servicesMock.getBaseService()).andReturn(abstractBaseServiceMock).anyTimes();
-        EasyMock.replay(servicesMock);
+        PlanetInfo planetInfo = new PlanetInfo();
+        planetInfo.setPlanetId(1);
+
+        planetServicesMock = EasyMock.createNiceMock(PlanetServices.class);
+        EasyMock.expect(planetServicesMock.getItemService()).andReturn(serverItemServiceMock).anyTimes();
+        EasyMock.expect(planetServicesMock.getTerrainService()).andReturn(terrainServiceMock).anyTimes();
+        EasyMock.expect(planetServicesMock.getBaseService()).andReturn(abstractBaseServiceMock).anyTimes();
+        EasyMock.expect(planetServicesMock.getPlanetInfo()).andReturn(planetInfo).anyTimes();
+        EasyMock.replay(planetServicesMock);
+
+        TestGlobalServices testGlobalServices = new TestGlobalServices();
+        testGlobalServices.setServerConnectionService(connectionServiceMock);
 
         Id id = new Id(1, 1, 1);
-        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(5000, 5000), id, servicesMock);
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(5000, 5000), id, testGlobalServices, planetServicesMock);
         SyncMovable syncMovable = syncBaseItem.getSyncMovable();
         // Set speed to 100
         syncMovable.getMovableType().changeTo(new MovableType(100));
@@ -99,7 +108,7 @@ public class TestBuilder extends AbstractServiceTest {
         path.add(new Index(5000, 5200));
         syncBaseItem.getSyncMovable().setPathToDestination(path, MathHelper.WEST);
         syncBaseItem.getSyncBuilder().setToBeBuildPosition(new Index(5000, 5290));
-        syncBaseItem.getSyncBuilder().setToBeBuiltType((BaseItemType) itemService.getItemType(TEST_SIMPLE_BUILDING_ID));
+        syncBaseItem.getSyncBuilder().setToBeBuiltType((BaseItemType) serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID));
 
         Assert.assertEquals(new Index(5000, 5000), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertNull(syncBaseItem.getSyncBuilder().getCurrentBuildup());
@@ -146,7 +155,7 @@ public class TestBuilder extends AbstractServiceTest {
         SyncBaseItem syncBaseItem = createSyncBuilderItem();
 
         Id id2 = new Id(2, 1, 1);
-        SyncBaseItem buildupBaseItem = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(5000, 5290), id2, servicesMock);
+        SyncBaseItem buildupBaseItem = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(5000, 5290), id2, null, planetServicesMock);
         buildupBaseItem.setBuildup(0.5);
         List<Index> path = new ArrayList<>();
         path.add(new Index(5000, 5000));

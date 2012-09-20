@@ -20,8 +20,8 @@ import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
-import com.btxtech.game.wicket.uiservices.RectanglePanel;
-import com.btxtech.game.wicket.uiservices.TerritoryPanel;
+import com.btxtech.game.wicket.uiservices.RegionPanel;
+import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -39,7 +39,7 @@ public class ItemTypePositionComparisonConfigPanel extends Panel {
     @SpringBean
     private RuServiceHelper<DbItemTypePositionComparisonConfig> ruServiceHelper;
 
-    public ItemTypePositionComparisonConfigPanel(String id) {
+    public ItemTypePositionComparisonConfigPanel(String id, TerrainLinkHelper terrainLinkHelper) {
         super(id);
         setDefaultModel(new CompoundPropertyModel<DbItemTypePositionComparisonConfig>(new IModel<DbItemTypePositionComparisonConfig>() {
 
@@ -84,10 +84,15 @@ public class ItemTypePositionComparisonConfigPanel extends Panel {
             }
         };
 
-        add(new RectanglePanel("region"));
+        add(new RegionPanel("region", terrainLinkHelper){
+
+            @Override
+            protected void updateDependentModel() {
+                ruServiceHelper.updateDbEntity((DbItemTypePositionComparisonConfig) ItemTypePositionComparisonConfigPanel.this.getDefaultModelObject());
+            }
+        });
         add(new TextField("timeInMinutes"));
         add(new CheckBox("addExistingItems"));
-        add(new TerritoryPanel("excludedDbTerritory"));
         add(new HtmlProgressTemplatePanel("progressText"));
     }
 }

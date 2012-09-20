@@ -1,6 +1,6 @@
 package com.btxtech.game.jsre.client.common;
 
-import com.btxtech.game.jsre.client.ClientServices;
+import com.btxtech.game.jsre.client.ClientGlobalServices;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GameCommon;
 import com.btxtech.game.jsre.client.action.ActionHandler;
@@ -37,9 +37,9 @@ import java.util.List;
  */
 public abstract class AbstractGwtTest extends GWTTestCase implements StartupProgressListener {
     public final static int MY_BASE_ID = 1;
-    public final static SimpleBase MY_BASE = new SimpleBase(MY_BASE_ID);
+    public final static SimpleBase MY_BASE = new SimpleBase(MY_BASE_ID, 1);
     public final static int BOT_BASE_ID = 2;
-    public final static SimpleBase BOT_BASE = new SimpleBase(BOT_BASE_ID);
+    public final static SimpleBase BOT_BASE = new SimpleBase(BOT_BASE_ID, 1);
     public final static int ITEM_MOVABLE = 1;
     public final static int ITEM_CONTAINER = 2;
     public final static int ITEM_ATTACKER = 3;
@@ -57,13 +57,13 @@ public abstract class AbstractGwtTest extends GWTTestCase implements StartupProg
 
     protected void startColdSimulated(GwtTestRunnable runnable) {
         GameCommon.clearGame();
-        ClientServices.getInstance().getClientRunner().cleanupBeforeTest();
+        ClientGlobalServices.getInstance().getClientRunner().cleanupBeforeTest();
         LogConfiguration logConfiguration = new LogConfiguration();
         logConfiguration.onModuleLoad();
         afterStartupRunnable = runnable;
         TerrainView.uglySuppressRadar = true;
         init(GameStartupSeq.COLD_SIMULATED, 1);
-        ClientServices.getInstance().getClientRunner().addStartupProgressListener(this);
+        ClientGlobalServices.getInstance().getClientRunner().addStartupProgressListener(this);
         Game game = new Game();
         MapWindow.getAbsolutePanel().setPixelSize(1920, 1024);
         game.onModuleLoad();
@@ -94,25 +94,25 @@ public abstract class AbstractGwtTest extends GWTTestCase implements StartupProg
     }
 
     private native double setNativeCtlStartTime() /*-{
-      return $wnd.ctlStartTime = 0;
+        return $wnd.ctlStartTime = 0;
     }-*/;
 
     // ---------- Helpers ----------
 
- /*   public ClientSyncItemView getFirstClientSyncItemView(int itemTypeId) throws Exception {
-        ItemType itemType = ItemContainer.getInstance().getItemType(itemTypeId);
-        Collection<? extends SyncItem> items = ItemContainer.getInstance().getItems(itemType, null);
-        if (items.isEmpty()) {
-            throw new IllegalArgumentException("No such item of item type id available: " + itemTypeId);
-        }
-        SyncItem syncItem = CommonJava.getFirst(items);
-        ClientSyncItem clientSyncItem = ItemContainer.getInstance().getClientSyncItem(syncItem);
-        //ClientSyncItemView clientSyncItemView = clientSyncItem.getClientSyncItemView();
- //       if (clientSyncItemView == null) {
-            throw new IllegalArgumentException("Item not visible: " + syncItem);
-        }
-        return clientSyncItemView;
-    }  */
+    /*   public ClientSyncItemView getFirstClientSyncItemView(int itemTypeId) throws Exception {
+      ItemType itemType = ItemContainer.getInstance().getItemType(itemTypeId);
+      Collection<? extends SyncItem> items = ItemContainer.getInstance().getItems(itemType, null);
+      if (items.isEmpty()) {
+          throw new IllegalArgumentException("No such item of item type id available: " + itemTypeId);
+      }
+      SyncItem syncItem = CommonJava.getFirst(items);
+      ClientSyncItem clientSyncItem = ItemContainer.getInstance().getClientSyncItem(syncItem);
+      //ClientSyncItemView clientSyncItemView = clientSyncItem.getClientSyncItemView();
+//       if (clientSyncItemView == null) {
+          throw new IllegalArgumentException("Item not visible: " + syncItem);
+      }
+      return clientSyncItemView;
+  }  */
 
     public Element getDebugElement(String debugId) {
         Element element = DOM.getElementById(UIObject.DEBUG_ID_PREFIX + debugId);

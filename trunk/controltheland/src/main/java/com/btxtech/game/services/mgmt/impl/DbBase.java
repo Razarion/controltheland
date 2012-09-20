@@ -13,7 +13,9 @@
 
 package com.btxtech.game.services.mgmt.impl;
 
-import com.btxtech.game.services.base.Base;
+import com.btxtech.game.services.planet.Base;
+import com.btxtech.game.services.planet.Planet;
+import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.user.UserState;
 
 import javax.persistence.CascadeType;
@@ -21,6 +23,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import java.util.Date;
 
@@ -40,6 +43,8 @@ public class DbBase {
     private int baseId;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "base", fetch = FetchType.LAZY)
     private DbUserState userState;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbPlanet dbPlanet;
 
     /**
      * Used by hibernate
@@ -54,12 +59,13 @@ public class DbBase {
         baseId = base.getBaseId();
     }
 
-    public Base createBase(UserState userState) {
+    public Base createBase(UserState userState, Planet planet) {
         return new Base(accountBalance,
                 startTime,
                 userState == null || abandoned,
                 baseId,
-                userState);
+                userState,
+                planet);
     }
 
     public DbUserState getUserState() {
@@ -68,5 +74,13 @@ public class DbBase {
 
     public void setUserState(DbUserState userState) {
         this.userState = userState;
+    }
+
+    public void setDbPlanet(DbPlanet dbPlanet) {
+        this.dbPlanet = dbPlanet;
+    }
+
+    public DbPlanet getDbPlanet() {
+        return dbPlanet;
     }
 }

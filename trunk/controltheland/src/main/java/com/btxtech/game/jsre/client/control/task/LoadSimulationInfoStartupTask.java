@@ -14,10 +14,8 @@
 package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.Connection;
-import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
-import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * User: beat

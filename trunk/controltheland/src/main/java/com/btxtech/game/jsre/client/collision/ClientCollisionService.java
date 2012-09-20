@@ -1,7 +1,7 @@
 package com.btxtech.game.jsre.client.collision;
 
-import com.btxtech.game.jsre.client.ClientServices;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.client.ClientPlanetServices;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.collision.impl.CommonCollisionServiceImpl;
 
 /**
@@ -23,7 +23,7 @@ public class ClientCollisionService extends CommonCollisionServiceImpl {
     }
 
     @Override
-    protected Services getServices() {
-        return ClientServices.getInstance();
+    protected PlanetServices getServices() {
+        return ClientPlanetServices.getInstance();
     }
 }

@@ -13,98 +13,123 @@
 
 package com.btxtech.game.jsre.mapeditor;
 
-import com.btxtech.game.jsre.client.ColorConstants;
-import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.terrain.MapWindow;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
-import com.google.gwt.canvas.client.Canvas;
-import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainUtil;
+
+import java.util.Collection;
 
 /**
  * User: beat
  * Date: Sep 3, 2009
  * Time: 6:26:18 PM
  */
-public class TerrainImageModifier implements TerrainMouseMoveListener, MouseDownHandler {
-    public static final int LINE_WIDTH = 2;
-    private Cockpit cockpit;
-    private Canvas marker;
-    private Context2d context2d;
+public class TerrainImageModifier {
+    private int imageId;
+    private Index absolutePosition;
+    private Index absoluteGridPosition;
+    private Index relativeGridPosition;
+    private TerrainImagePosition terrainImagePosition;
+    private TerrainData terrainData;
+    private boolean placeAllowed;
+    private int width;
+    private int height;
+    private TerrainImage terrainImage;
+    private TerrainImagePosition.ZIndex selectedZIndex;
 
-    public TerrainImageModifier(Cockpit cockpit) {
-        this.cockpit = cockpit;
-        marker = Canvas.createIfSupported();
-        if (marker == null) {
-            throw new Html5NotSupportedException("TerrainImageModifier: Canvas not supported.");
-        }
-        marker.setCoordinateSpaceWidth(100);
-        marker.setCoordinateSpaceHeight(100);
-        context2d = marker.getContext2d();
-        marker.getElement().getStyle().setZIndex(Constants.Z_INDEX_GROUP_SELECTION_FRAME);
-        MapWindow.getAbsolutePanel().add(marker, 0, 0);
-        marker.setVisible(false);
-        context2d.setStrokeStyle(ColorConstants.BLACK);
-        marker.addMouseDownHandler(this);
+    public TerrainImageModifier(TerrainImagePosition terrainImagePosition, Rectangle viewRectangle, TerrainData terrainData) {
+        this.terrainImagePosition = terrainImagePosition;
+        absolutePosition = TerrainUtil.getAbsolutIndexForTerrainTileIndex(terrainImagePosition.getTileIndex());
+        setupGridPosition();
+        TerrainImage terrainImage = TerrainView.getInstance().getTerrainHandler().getTerrainImageHandler().getTerrainImage(terrainImagePosition.getImageId());
+        width = TerrainUtil.getAbsolutXForTerrainTile(terrainImage.getTileWidth());
+        height = TerrainUtil.getAbsolutYForTerrainTile(terrainImage.getTileHeight());
+        this.terrainData = terrainData;
+        imageId = terrainImagePosition.getImageId();
+        setupRelativePosition(viewRectangle);
+        checkPlaceAllowed(null);
     }
 
-    @Override
-    public void onMouseDown(MouseDownEvent mouseDownEvent) {
-        int relX = mouseDownEvent.getRelativeX(MapWindow.getAbsolutePanel().getElement());
-        int relY = mouseDownEvent.getRelativeY(MapWindow.getAbsolutePanel().getElement());
-        if (cockpit.isInside(relX, relY) || cockpit.isInside(relX, relY)) {
-            return;
-        }
-
-        marker.setVisible(false);
-        int absoluteX = relX + TerrainView.getInstance().getViewOriginLeft();
-        int absoluteY = relY + TerrainView.getInstance().getViewOriginTop();
-        TerrainImagePosition terrainImagePosition = cockpit.getTerrainData().getTerrainImagePosition(cockpit.getSelectedZIndex(), absoluteX, absoluteY);
-        GwtCommon.preventDefault(mouseDownEvent);
-        if (terrainImagePosition == null) {
-            return;
-        }
-
-        if (cockpit.isDeleteModus()) {
-            cockpit.getTerrainData().removeTerrainImagePosition(terrainImagePosition);
-        } else {
-            new PlaceablePreviewTerrainImagePoition(cockpit.getTerrainData(), terrainImagePosition, mouseDownEvent);
-        }
+    public TerrainImageModifier(TerrainImage terrainImage, TerrainImagePosition.ZIndex selectedZIndex, Index absolutePosition, Rectangle viewRectangle, TerrainData terrainData) {
+        this.terrainImage = terrainImage;
+        this.selectedZIndex = selectedZIndex;
+        this.absolutePosition = absolutePosition;
+        setupGridPosition();
+        width = TerrainUtil.getAbsolutXForTerrainTile(terrainImage.getTileWidth());
+        height = TerrainUtil.getAbsolutYForTerrainTile(terrainImage.getTileHeight());
+        this.terrainData = terrainData;
+        imageId = terrainImage.getId();
+        setupRelativePosition(viewRectangle);
+        checkPlaceAllowed(null);
     }
 
-    @Override
-    public void onMove(int absoluteLeft, int absoluteTop, int relativeLeft, int relativeTop) {
-        if (cockpit.isInside(relativeLeft, relativeTop)) {
-            marker.setVisible(false);
-            return;
-        }
+    public void onMouseMove(Index delta, Rectangle viewRectangle, Collection<TerrainImagePosition> exceptThem) {
+        absolutePosition = absolutePosition.add(delta);
+        setupGridPosition();
+        setupRelativePosition(viewRectangle);
+        checkPlaceAllowed(exceptThem);
+    }
 
-        TerrainImagePosition terrainImagePosition = cockpit.getTerrainData().getTerrainImagePosition(cockpit.getSelectedZIndex(), absoluteLeft, absoluteTop);
+    public void onScroll(Rectangle viewRectangle) {
+        setupRelativePosition(viewRectangle);
+    }
+
+    public Index getRelativeGridPosition() {
+        return relativeGridPosition;
+    }
+
+    public int getImageId() {
+        return imageId;
+    }
+
+    public boolean isPlaceAllowed() {
+        return placeAllowed;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public TerrainImagePosition getTerrainImagePosition() {
+        return terrainImagePosition;
+    }
+
+    public TerrainImagePosition.ZIndex getSelectedZIndex() {
+        return selectedZIndex;
+    }
+
+    public TerrainImage getTerrainImage() {
+        return terrainImage;
+    }
+
+    public void checkPlaceAllowed(Collection<TerrainImagePosition> exceptThem) {
         if (terrainImagePosition != null) {
-            marker.setVisible(true);
-            TerrainImage terrainImage = TerrainView.getInstance().getTerrainHandler().getTerrainImage(terrainImagePosition.getImageId());
-            Index absolute = TerrainView.getInstance().getTerrainHandler().getAbsolutIndexForTerrainTileIndex(terrainImagePosition.getTileIndex());
-            MapWindow.getAbsolutePanel().setWidgetPosition(marker,
-                    absolute.getX() - TerrainView.getInstance().getViewOriginLeft(),
-                    absolute.getY() - TerrainView.getInstance().getViewOriginTop());
-            Index size = TerrainView.getInstance().getTerrainHandler().getAbsolutIndexForTerrainTileIndex(terrainImage.getTileWidth(), terrainImage.getTileHeight());
-            marker.setCoordinateSpaceWidth(size.getX());
-            marker.setCoordinateSpaceHeight(size.getY());
-            context2d.setLineWidth(LINE_WIDTH);
-            context2d.clearRect(0, 0, size.getX(), size.getY());
-            context2d.rect(LINE_WIDTH / 2,
-                    LINE_WIDTH / 2,
-                    size.getX() - LINE_WIDTH,
-                    size.getY() - LINE_WIDTH);
-            context2d.stroke();
+            placeAllowed = !terrainData.hasTerrainImagesInRegion(new Rectangle(absoluteGridPosition.getX(), absoluteGridPosition.getY(), width, height), terrainImagePosition, exceptThem);
         } else {
-            marker.setVisible(false);
+            placeAllowed = !terrainData.hasTerrainImagesInRegion(new Rectangle(absoluteGridPosition.getX(), absoluteGridPosition.getY(), width, height), selectedZIndex, exceptThem);
+        }
+    }
+
+    private void setupRelativePosition(Rectangle viewRectangle) {
+        relativeGridPosition = absoluteGridPosition.sub(viewRectangle.getStart());
+    }
+
+    private void setupGridPosition() {
+        absoluteGridPosition = TerrainUtil.moveAbsoluteToGrid(absolutePosition);
+    }
+
+    public void updateModel() {
+        if (terrainImagePosition != null) {
+            terrainData.moveTerrainImagePosition(absoluteGridPosition, terrainImagePosition);
+        } else {
+            terrainData.addNewTerrainImagePosition(absoluteGridPosition, terrainImage, selectedZIndex);
         }
     }
 }

@@ -14,13 +14,13 @@
 package com.btxtech.game.wicket.pages.mgmt.tracking;
 
 import com.btxtech.game.jsre.playback.PlaybackEntry;
-import javax.servlet.http.HttpSession;
-
 import com.btxtech.game.jsre.playback.PlaybackStartupSeq;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.protocol.http.WebRequest;
+
+import javax.servlet.http.HttpSession;
 
 /**
  * User: beat

@@ -5,8 +5,8 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.client.item.ItemTypeContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
@@ -29,7 +29,6 @@ public class InventoryItemPlacer {
     private int itemFreeRadius;
     private BaseItemType baseItemType;
     private boolean isTerrainOk;
-    private boolean isTerritoryOk;
     private boolean isItemsOk;
     private boolean isEnemiesOk;
     private Logger log = Logger.getLogger(InventoryItemPlacer.class.getName());
@@ -42,7 +41,7 @@ public class InventoryItemPlacer {
         TerrainView.getInstance().setFocus();
         inventoryItemId = inventoryItemInfo.getInventoryItemId();
         try {
-            baseItemType = (BaseItemType) ItemContainer.getInstance().getItemType(inventoryItemInfo.getBaseItemTypeId());
+            baseItemType = (BaseItemType) ItemTypeContainer.getInstance().getItemType(inventoryItemInfo.getBaseItemTypeId());
         } catch (NoSuchItemTypeException e) {
             log.log(Level.SEVERE, "InventoryItemPlacer() ", e);
         }
@@ -59,7 +58,7 @@ public class InventoryItemPlacer {
 
     public boolean execute(int absoluteX, int absoluteY) {
         checkPlacingForAllAllowed(absoluteX, absoluteY);
-        if (isTerrainOk && isTerritoryOk && isItemsOk && isEnemiesOk) {
+        if (isTerrainOk && isItemsOk && isEnemiesOk) {
             Connection.getInstance().useInventoryItem(inventoryItemId, Index.add(normalizedPositionsToPlace, new Index(absoluteX, absoluteY)));
             return true;
         } else {
@@ -72,7 +71,7 @@ public class InventoryItemPlacer {
     }
 
     public boolean isPositionValid() {
-        return isTerrainOk && isTerritoryOk && isItemsOk && isEnemiesOk;
+        return isTerrainOk && isItemsOk && isEnemiesOk;
     }
 
     public Index getRelativeMiddlePos() {
@@ -114,8 +113,6 @@ public class InventoryItemPlacer {
             errorText = "Not allowed to place on other items";
         } else if (!isTerrainOk) {
             errorText = "You can not place here";
-        } else if (!isTerritoryOk) {
-            errorText = "Items not allowed on territory";
         } else {
             errorText = null;
         }
@@ -146,14 +143,7 @@ public class InventoryItemPlacer {
     }
 
     private boolean checkPlacingAllowed(Index absolutePos) {
-        isTerrainOk = false;
-        isTerritoryOk = false;
-
         isTerrainOk = TerrainView.getInstance().getTerrainHandler().isFree(absolutePos, baseItemType);
-        if (!isTerrainOk) {
-            return false;
-        }
-        isTerritoryOk = ClientTerritoryService.getInstance().isAllowed(absolutePos, baseItemType);
-        return isTerritoryOk;
+        return isTerrainOk;
     }
 }

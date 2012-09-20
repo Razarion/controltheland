@@ -17,7 +17,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbTerrainImageGroup;
-import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.services.terrain.TerrainImageService;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -43,7 +43,7 @@ import java.util.Arrays;
  */
 public class TerrainTileEditor extends MgmtWebPage {
     @SpringBean
-    private TerrainService terrainService;
+    private TerrainImageService terrainImageService;
 
     public TerrainTileEditor() {
         Form form = new Form("tileForm");
@@ -53,7 +53,7 @@ public class TerrainTileEditor extends MgmtWebPage {
 
             @Override
             protected CrudRootServiceHelper<DbSurfaceImage> getCrudRootServiceHelperImpl() {
-                return terrainService.getDbSurfaceImageCrudServiceHelper();
+                return terrainImageService.getDbSurfaceImageCrudServiceHelper();
             }
 
             @Override
@@ -115,7 +115,7 @@ public class TerrainTileEditor extends MgmtWebPage {
 
             @Override
             public String getObject() {
-                return Double.toString(terrainService.getDbTerrainImagesBitSize() / 1000.0);
+                return Double.toString(terrainImageService.getDbTerrainImagesSizeInBytes() / 1000.0);
             }
 
             @Override
@@ -132,7 +132,7 @@ public class TerrainTileEditor extends MgmtWebPage {
         new CrudRootTableHelper<DbTerrainImageGroup>("terrainImageGroups", "updateTerrainImageGroups", "createTerrainImageGroup", true, form, false) {
             @Override
             protected CrudRootServiceHelper<DbTerrainImageGroup> getCrudRootServiceHelperImpl() {
-                return terrainService.getDbTerrainImageGroupCrudServiceHelper();
+                return terrainImageService.getDbTerrainImageGroupCrudServiceHelper();
             }
 
             @Override
@@ -150,7 +150,7 @@ public class TerrainTileEditor extends MgmtWebPage {
         form.add(new Button("activateTerrain") {
             @Override
             public void onSubmit() {
-                terrainService.activateTerrain();
+                terrainImageService.activate();
             }
         });
     }

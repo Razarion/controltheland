@@ -15,7 +15,7 @@ package com.btxtech.game.controllers;
 
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.common.ClientDateUtil;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbItemTypeImageData;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,7 +37,7 @@ import java.io.OutputStream;
 @Component(value = "muzzleFlashController")
 public class MuzzleFlashController implements Controller {
     @Autowired
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
     private Log log = LogFactory.getLog(MuzzleFlashController.class);
 
     @Override
@@ -46,7 +46,7 @@ public class MuzzleFlashController implements Controller {
             int itemTypeId = Integer.parseInt(httpServletRequest.getParameter(Constants.ITEM_TYPE_ID));
             String type = httpServletRequest.getParameter(Constants.TYPE);
             if (Constants.TYPE_IMAGE.equals(type)) {
-                DbItemTypeImageData image = itemService.getMuzzleFlashImage(itemTypeId);
+                DbItemTypeImageData image = serverItemTypeService.getMuzzleFlashImage(itemTypeId);
                 if (image.getData() == null) {
                     throw new IllegalStateException("No image data for itemTypeId: " + itemTypeId);
                 }

@@ -15,9 +15,6 @@ package com.btxtech.game.services.forum;
 
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 
-import java.io.Serializable;
-import java.util.List;
-
 /**
  * User: beat
  * Date: 21.03.2010

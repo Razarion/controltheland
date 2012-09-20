@@ -1,25 +1,27 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
-import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.NoConnectionException;
-import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
-import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
+import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
+import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.jsre.common.utg.condition.AbstractSyncItemComparison;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.CountComparisonConfig;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.Connection;
-import com.btxtech.game.services.connection.ConnectionService;
+import com.btxtech.game.services.connection.ServerConnectionService;
+import com.btxtech.game.services.planet.Base;
+import com.btxtech.game.services.planet.BaseService;
+import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
 import com.btxtech.game.services.utg.condition.impl.ServerConditionServiceImpl;
@@ -37,9 +39,11 @@ import java.util.List;
 /**
  * User: beat Date: 31.01.2012 Time: 16:51:19
  */
-public class TestCountComparison extends AbstractServiceTest implements ConnectionService {
+public class TestCountComparison extends AbstractServiceTest implements ServerConnectionService {
     @Autowired
     private ServerConditionService serverConditionService;
+    @Autowired
+    private PlanetSystemService planetSystemService;
     private Integer identifier;
     private UserState actor;
     private UserState userState1;
@@ -53,24 +57,27 @@ public class TestCountComparison extends AbstractServiceTest implements Connecti
         progressString = null;
         progressBase = null;
         setPrivateStaticField(AbstractSyncItemComparison.class, "MIN_SEND_DELAY", 0);
-        configureRealGame();
+        configureSimplePlanet();
         identifier = null;
         actor = null;
 
         // Mock objects
         userState1 = new UserState();
         userState1.setUser("TestUser1");
-        base1 = new Base(userState1, 1);
+        userState1.setDbLevelId(TEST_LEVEL_2_REAL_ID);
+
+        base1 = new Base(userState1, planetSystemService.getPlanet(TEST_PLANET_1_ID), 1);
         int itemId = 0;
-        building1B1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockServices(), base1.getSimpleBase());
+        building1B1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockGlobalServices(), createMockPlanetServices(), base1.getSimpleBase());
 
         BaseService baseServiceMock = EasyMock.createNiceMock(BaseService.class);
         EasyMock.expect(baseServiceMock.getUserState(base1.getSimpleBase())).andReturn(userState1).anyTimes();
         EasyMock.replay(baseServiceMock);
 
         ((ServerConditionServiceImpl) deAopProxy(serverConditionService)).setRate(50);
-        setPrivateField(ServerConditionServiceImpl.class, serverConditionService, "baseService", baseServiceMock);
-        setPrivateField(ServerConditionServiceImpl.class, serverConditionService, "connectionService", this);
+        ServerPlanetServicesImpl serverPlanetServices = (ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
+        serverPlanetServices.setBaseService(baseServiceMock);
+        setPrivateField(ServerConditionServiceImpl.class, serverConditionService, "serverConnectionService", this);
     }
 
     private void assertActorAndIdentifierAndClear(UserState expectedActor, Integer expectedIdentifier) {
@@ -103,7 +110,7 @@ public class TestCountComparison extends AbstractServiceTest implements Connecti
     @DirtiesContext
     public void test1Money() throws Exception {
         // Does not make any sense
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.MONEY_INCREASED, new CountComparisonConfig(null, 1, "Money #C / 1"), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.MONEY_INCREASED, new CountComparisonConfig(1, "Money #C / 1"), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -128,7 +135,7 @@ public class TestCountComparison extends AbstractServiceTest implements Connecti
     @DirtiesContext
     public void test100Money() throws Exception {
         // Does not make any sense
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.MONEY_INCREASED, new CountComparisonConfig(null, 100, "#C / 100"), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.MONEY_INCREASED, new CountComparisonConfig(100, "#C / 100"), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -156,7 +163,7 @@ public class TestCountComparison extends AbstractServiceTest implements Connecti
     @DirtiesContext
     public void test1Built() throws Exception {
         // Does not make any sense
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new CountComparisonConfig(null, 1, "Item#C"), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new CountComparisonConfig(1, "Item#C"), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -178,7 +185,7 @@ public class TestCountComparison extends AbstractServiceTest implements Connecti
     @DirtiesContext
     public void test3Built() throws Exception {
         // Does not make any sense
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new CountComparisonConfig(null, 3, "Item#C / 3"), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new CountComparisonConfig(3, "Item#C / 3"), null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {

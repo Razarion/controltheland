@@ -1,13 +1,6 @@
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
-import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.services.AbstractServiceTest;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**

@@ -20,6 +20,7 @@ public class ToolTips {
     public static final String TOOL_TIP_OPEN_QUEST_DIALOG = "Open the quest dialog";
     public static final String TOOL_TIP_SKIP_QUEST = "Skip current quest and start the next quest";
     public static final String TOOL_TIP_START_MISSION = "Start this mission now!";
+    public static final String TOOL_TIP_NEXT_PLANET = "Move to the next planet!";
     // Buttons
     public static final String TOOL_TIP_INVENTORY = "Inventory";
     public static final String TOOL_TIP_ALLIANCE = "Alliances with other players";

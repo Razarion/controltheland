@@ -30,13 +30,11 @@ public class DbXpSettings implements Cloneable {
     private double killPriceFactor;
     private long killQueuePeriod;
     private int killQueueSize;
-    private double builtPriceFactor;
 
     public void fill(DbXpSettings dbXpSettings) {
         killPriceFactor = dbXpSettings.killPriceFactor;
         killQueuePeriod = dbXpSettings.killQueuePeriod;
         killQueueSize = dbXpSettings.killQueueSize;
-        builtPriceFactor = dbXpSettings.builtPriceFactor;
     }
 
     public double getKillPriceFactor() {
@@ -45,14 +43,6 @@ public class DbXpSettings implements Cloneable {
 
     public void setKillPriceFactor(double killPriceFactor) {
         this.killPriceFactor = killPriceFactor;
-    }
-
-    public double getBuiltPriceFactor() {
-        return builtPriceFactor;
-    }
-
-    public void setBuiltPriceFactor(double builtPriceFactor) {
-        this.builtPriceFactor = builtPriceFactor;
     }
 
     public long getKillQueuePeriod() {

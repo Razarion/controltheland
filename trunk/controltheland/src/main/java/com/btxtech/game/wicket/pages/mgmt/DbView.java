@@ -15,9 +15,7 @@ package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.mgmt.DbViewDTO;
 import com.btxtech.game.services.mgmt.MgmtService;
-import java.util.List;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -26,6 +24,8 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import java.util.List;
 
 /**
  * User: beat

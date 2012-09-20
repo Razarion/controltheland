@@ -29,7 +29,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void simpleLevelup() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         // U1 no real base, second level
         beginHttpSession();
@@ -89,7 +89,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void levelTaskMissionDone() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         // U1 no real base, second level
         beginHttpSession();

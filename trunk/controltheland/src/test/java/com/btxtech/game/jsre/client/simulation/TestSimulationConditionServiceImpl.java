@@ -39,9 +39,9 @@ public class TestSimulationConditionServiceImpl {
     @Before
     public void before() {
         // Bases
-        myBase = new SimpleBase(1);
+        myBase = new SimpleBase(1, 1);
         ClientBase.getInstance().setBase(myBase);
-        enemyBase = new SimpleBase(2);
+        enemyBase = new SimpleBase(2, 1);
         // Sync Items
         itemType1 = EasyMock.createNiceMock(BaseItemType.class);
         EasyMock.expect(itemType1.getId()).andReturn(1);
@@ -72,7 +72,7 @@ public class TestSimulationConditionServiceImpl {
     public void moneyEarned() throws Exception {
         SimulationConditionServiceImpl conditionService = SimulationConditionServiceImpl.getInstance();
 
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.MONEY_INCREASED, new CountComparisonConfig(null, 100, null), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.MONEY_INCREASED, new CountComparisonConfig(100, null), null);
         conditionService.activateCondition(conditionConfig, myBase, null);
         passed = false;
         conditionService.setConditionServiceListener(new ConditionServiceListener<SimpleBase, Void>() {
@@ -96,7 +96,7 @@ public class TestSimulationConditionServiceImpl {
     public void syncItemKilled() throws Exception {
         SimulationConditionServiceImpl conditionService = SimulationConditionServiceImpl.getInstance();
 
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new CountComparisonConfig(null, 2, null), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new CountComparisonConfig(2, null), null);
         conditionService.activateCondition(conditionConfig, myBase, null);
         passed = false;
         conditionService.setConditionServiceListener(new ConditionServiceListener<SimpleBase, Void>() {
@@ -124,7 +124,7 @@ public class TestSimulationConditionServiceImpl {
 
         Map<ItemType, Integer> itemTypeMap = new HashMap<ItemType, Integer>();
         itemTypeMap.put(itemType2, 2);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new SyncItemTypeComparisonConfig(null, itemTypeMap, null), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new SyncItemTypeComparisonConfig(itemTypeMap, null), null);
         conditionService.activateCondition(conditionConfig, myBase, null);
         passed = false;
         conditionService.setConditionServiceListener(new ConditionServiceListener<SimpleBase, Void>() {
@@ -153,7 +153,7 @@ public class TestSimulationConditionServiceImpl {
     public void syncItemBuilt() throws Exception {
         SimulationConditionServiceImpl conditionService = SimulationConditionServiceImpl.getInstance();
 
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new CountComparisonConfig(null, 2, null), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new CountComparisonConfig(2, null), null);
         conditionService.activateCondition(conditionConfig, myBase, null);
         passed = false;
         conditionService.setConditionServiceListener(new ConditionServiceListener<SimpleBase, Void>() {
@@ -182,7 +182,7 @@ public class TestSimulationConditionServiceImpl {
 
         Map<ItemType, Integer> itemTypeMap = new HashMap<ItemType, Integer>();
         itemTypeMap.put(itemType2, 2);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new SyncItemTypeComparisonConfig(null, itemTypeMap, null), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new SyncItemTypeComparisonConfig(itemTypeMap, null), null);
         conditionService.activateCondition(conditionConfig, myBase, null);
         passed = false;
         conditionService.setConditionServiceListener(new ConditionServiceListener<SimpleBase, Void>() {
@@ -209,13 +209,13 @@ public class TestSimulationConditionServiceImpl {
     @Test
     @DirtiesContext
     public void baseDeleted() throws Exception {
-        final SimpleBase myBase = new SimpleBase(1);
+        final SimpleBase myBase = new SimpleBase(1, 1);
         ClientBase.getInstance().setBase(myBase);
-        SimpleBase enemyBase = new SimpleBase(2);
+        SimpleBase enemyBase = new SimpleBase(2, 1);
 
         SimulationConditionServiceImpl conditionService = SimulationConditionServiceImpl.getInstance();
 
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.BASE_KILLED, new CountComparisonConfig(null, 1, null), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.BASE_KILLED, new CountComparisonConfig(1, null), null);
         conditionService.activateCondition(conditionConfig, myBase, null);
         passed = false;
         conditionService.setConditionServiceListener(new ConditionServiceListener<SimpleBase, Void>() {

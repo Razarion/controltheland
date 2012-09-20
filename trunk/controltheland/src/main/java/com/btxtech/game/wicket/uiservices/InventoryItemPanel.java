@@ -14,10 +14,7 @@
 package com.btxtech.game.wicket.uiservices;
 
 import com.btxtech.game.services.inventory.DbInventoryItem;
-import com.btxtech.game.services.inventory.InventoryService;
-import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.item.itemType.DbBoxItemType;
-import com.btxtech.game.services.item.itemType.DbItemTypeI;
+import com.btxtech.game.services.inventory.GlobalInventoryService;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -30,7 +27,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  */
 public class InventoryItemPanel extends Panel {
     @SpringBean
-    private InventoryService inventoryService;
+    private GlobalInventoryService globalInventoryService;
 
     public InventoryItemPanel(String id) {
         super(id);
@@ -49,7 +46,7 @@ public class InventoryItemPanel extends Panel {
             @Override
             public void setObject(Integer integer) {
                 if (integer != null) {
-                    DbInventoryItem dbInventoryItem = inventoryService.getItemCrud().readDbChild(integer);
+                    DbInventoryItem dbInventoryItem = globalInventoryService.getItemCrud().readDbChild(integer);
                     if (dbInventoryItem == null) {
                         error("Inventory item does not exist: " + integer);
                         return;

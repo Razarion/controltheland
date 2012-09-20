@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.common.info;
 
 import com.btxtech.game.jsre.common.CmsUtil;
+import com.btxtech.game.jsre.common.TerrainInfo;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
@@ -31,7 +32,7 @@ import java.util.Map;
  * Date: Jun 5, 2009
  * Time: 8:19:05 PM
  */
-public abstract class GameInfo implements Serializable {
+public abstract class GameInfo implements TerrainInfo, Serializable {
     private TerrainSettings terrainSettings;
     private Collection<TerrainImagePosition> terrainImagePositions;
     private Collection<SurfaceRect> surfaceRects;

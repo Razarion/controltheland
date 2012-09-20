@@ -14,11 +14,12 @@
 package com.btxtech.game.services.mgmt;
 
 import com.btxtech.game.services.common.db.RectangleUserType;
-import java.io.Serializable;
+import org.hibernate.annotations.TypeDef;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import org.hibernate.annotations.TypeDef;
+import java.io.Serializable;
 
 /**
  * User: beat

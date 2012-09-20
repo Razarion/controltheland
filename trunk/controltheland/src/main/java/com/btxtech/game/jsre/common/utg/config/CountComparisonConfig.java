@@ -14,7 +14,7 @@
 package com.btxtech.game.jsre.common.utg.config;
 
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.CountComparison;
 
@@ -24,7 +24,6 @@ import com.btxtech.game.jsre.common.utg.condition.CountComparison;
  * Time: 14:04:29
  */
 public class CountComparisonConfig implements AbstractComparisonConfig {
-    private Integer excludedTerritoryId;
     private int count;
     private String htmlProgressTamplate;
 
@@ -34,14 +33,13 @@ public class CountComparisonConfig implements AbstractComparisonConfig {
     protected CountComparisonConfig() {
     }
 
-    public CountComparisonConfig(Integer excludedTerritoryId, int count, String htmlProgressTamplate) {
-        this.excludedTerritoryId = excludedTerritoryId;
+    public CountComparisonConfig(int count, String htmlProgressTamplate) {
         this.count = count;
         this.htmlProgressTamplate = htmlProgressTamplate;
     }
 
     @Override
-    public AbstractComparison createAbstractComparison(Services services, SimpleBase simpleBase) {
-        return new CountComparison(excludedTerritoryId, count, htmlProgressTamplate);
+    public AbstractComparison createAbstractComparison(PlanetServices planetServices, SimpleBase simpleBase) {
+        return new CountComparison(count, htmlProgressTamplate);
     }
 }

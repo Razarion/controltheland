@@ -13,17 +13,15 @@
 
 package com.btxtech.game.wicket.pages.mgmt.bot;
 
-import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotEnragementStateConfig;
 import com.btxtech.game.services.bot.DbBotItemConfig;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
-import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
-import com.btxtech.game.wicket.uiservices.RectanglePanel;
+import com.btxtech.game.wicket.uiservices.RegionPanel;
+import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import com.btxtech.game.wicket.uiservices.SecondPanel;
 import org.apache.wicket.markup.html.form.Button;
@@ -42,16 +40,9 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  */
 public class BotItemEditor extends MgmtWebPage {
     @SpringBean
-    private BotService botService;
-    @SpringBean
-    private UserService userService;
-    @SpringBean
-    private ItemService itemService;
-    @SpringBean
     private RuServiceHelper<DbBotEnragementStateConfig> ruServiceHelper;
 
-
-    public BotItemEditor(DbBotEnragementStateConfig dbBotEnragementStateConfig) {
+    public BotItemEditor(DbBotEnragementStateConfig dbBotEnragementStateConfig, final TerrainLinkHelper terrainLinkHelper) {
 
         add(new FeedbackPanel("msgs"));
 
@@ -84,7 +75,12 @@ public class BotItemEditor extends MgmtWebPage {
                 item.add(new BaseItemTypePanel("baseItemType"));
                 item.add(new TextField("count"));
                 item.add(new CheckBox("createDirectly"));
-                item.add(new RectanglePanel("region"));
+                item.add(new RegionPanel("region", terrainLinkHelper) {
+                    @Override
+                    protected void updateDependentModel() {
+                        ruServiceHelper.updateDbEntity(form.getModelObject());
+                    }
+                });
                 item.add(new CheckBox("moveRealmIfIdle"));
                 item.add(new TextField("idleTtl"));
                 item.add(new CheckBox("noRebuild"));
@@ -99,13 +95,5 @@ public class BotItemEditor extends MgmtWebPage {
                 ruServiceHelper.updateDbEntity(form.getModelObject());
             }
         });
-        form.add(new Button("back") {
-
-            @Override
-            public void onSubmit() {
-                setResponsePage(BotTable.class);
-            }
-        });
-
     }
 }

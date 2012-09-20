@@ -14,8 +14,9 @@
 package com.btxtech.game.jsre.common.utg.config;
 
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
+
 import java.io.Serializable;
 
 /**
@@ -24,5 +25,5 @@ import java.io.Serializable;
  * Time: 23:07:18
  */
 public interface AbstractComparisonConfig extends Serializable {
-    AbstractComparison createAbstractComparison(Services services, SimpleBase simpleBase);
+    AbstractComparison createAbstractComparison(PlanetServices planetServices, SimpleBase simpleBase);
 }

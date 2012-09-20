@@ -3,7 +3,6 @@ package com.btxtech.game.jsre.client.cockpit.item;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.google.gwt.core.client.GWT;
@@ -82,10 +81,6 @@ public class BuildupItem extends Composite {
     }
 
     private void discoverEnableState() {
-        if (!ClientLevelHandler.getInstance().isItemTypeAllowed(itemType)) {
-            enableState = EnableState.DISABLED_LEVEL;
-            return;
-        }
         try {
             if (ClientBase.getInstance().isLevelLimitation4ItemTypeExceeded(itemType, ClientBase.getInstance().getSimpleBase())) {
                 enableState = EnableState.DISABLED_LEVEL_EXCEEDED;

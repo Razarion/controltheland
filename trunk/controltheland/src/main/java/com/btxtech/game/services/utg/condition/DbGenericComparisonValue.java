@@ -4,9 +4,8 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.utg.condition.GenericComparisonValueContainer;
 import com.btxtech.game.jsre.common.utg.condition.GenericComparisonValueException;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbItemType;
-import com.btxtech.game.services.mgmt.impl.DbUserState;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
@@ -48,24 +47,24 @@ public class DbGenericComparisonValue {
     DbGenericComparisonValue() {
     }
 
-    public DbGenericComparisonValue(Integer identifier, GenericComparisonValueContainer genericComparisonValueContainer, ItemService itemService) {
+    public DbGenericComparisonValue(Integer identifier, GenericComparisonValueContainer genericComparisonValueContainer, ServerItemTypeService serverItemTypeService) {
         this.identifier = identifier;
         children = new ArrayList<DbGenericComparisonValue>();
         for (Map.Entry<Object, Object> entry : genericComparisonValueContainer.getEntries()) {
-            children.add(createChildDbGenericComparisonValue(entry.getKey(), entry.getValue(), itemService));
+            children.add(createChildDbGenericComparisonValue(entry.getKey(), entry.getValue(), serverItemTypeService));
         }
     }
 
-    private DbGenericComparisonValue createChildDbGenericComparisonValue(Object key, Object value, ItemService itemService) {
+    private DbGenericComparisonValue createChildDbGenericComparisonValue(Object key, Object value, ServerItemTypeService serverItemTypeService) {
         DbGenericComparisonValue dbGenericComparisonValue = new DbGenericComparisonValue();
-        dbGenericComparisonValue.setKey(key, itemService);
+        dbGenericComparisonValue.setKey(key, serverItemTypeService);
         if (value instanceof GenericComparisonValueContainer) {
             GenericComparisonValueContainer child = (GenericComparisonValueContainer) value;
             if (dbGenericComparisonValue.children == null) {
                 dbGenericComparisonValue.children = new ArrayList<DbGenericComparisonValue>();
             }
             for (Map.Entry<Object, Object> entry : child.getEntries()) {
-                dbGenericComparisonValue.children.add(createChildDbGenericComparisonValue(entry.getKey(), entry.getValue(), itemService));
+                dbGenericComparisonValue.children.add(createChildDbGenericComparisonValue(entry.getKey(), entry.getValue(), serverItemTypeService));
             }
         } else {
             dbGenericComparisonValue.setValue(value);
@@ -77,11 +76,11 @@ public class DbGenericComparisonValue {
         return id;
     }
 
-    private void setKey(Object key, ItemService itemService) {
+    private void setKey(Object key, ServerItemTypeService serverItemTypeService) {
         if (key instanceof GenericComparisonValueContainer.Key) {
             enumKey = (GenericComparisonValueContainer.Key) key;
         } else if (key instanceof ItemType) {
-            itemTypeKey = itemService.getDbItemType(((ItemType) key).getId());
+            itemTypeKey = serverItemTypeService.getDbItemType(((ItemType) key).getId());
         } else {
             throw new GenericComparisonValueException("Key is not allowed: " + key);
         }
@@ -109,11 +108,11 @@ public class DbGenericComparisonValue {
         }
     }
 
-    public GenericComparisonValueContainer createGenericComparisonValueContainer(ItemService itemService) throws NoSuchItemTypeException {
+    public GenericComparisonValueContainer createGenericComparisonValueContainer(ServerItemTypeService serverItemTypeService) throws NoSuchItemTypeException {
         GenericComparisonValueContainer container = new GenericComparisonValueContainer();
         if (children != null && !children.isEmpty()) {
             for (DbGenericComparisonValue child : children) {
-                addChildren(itemService, container, child);
+                addChildren(serverItemTypeService, container, child);
             }
         } else {
             throw new GenericComparisonValueException("Root must have children: " + this);
@@ -121,23 +120,23 @@ public class DbGenericComparisonValue {
         return container;
     }
 
-    private void addChildren(ItemService itemService, GenericComparisonValueContainer container, DbGenericComparisonValue dbGenericComparisonValue) throws NoSuchItemTypeException {
+    private void addChildren(ServerItemTypeService serverItemTypeService, GenericComparisonValueContainer container, DbGenericComparisonValue dbGenericComparisonValue) throws NoSuchItemTypeException {
         Object value;
         if (dbGenericComparisonValue.getChildren() != null && !dbGenericComparisonValue.getChildren().isEmpty()) {
             GenericComparisonValueContainer childContainer = new GenericComparisonValueContainer();
             for (DbGenericComparisonValue child : dbGenericComparisonValue.getChildren()) {
-                addChildren(itemService, childContainer, child);
+                addChildren(serverItemTypeService, childContainer, child);
             }
             value = childContainer;
         } else {
             value = dbGenericComparisonValue.getValue();
         }
-        dbGenericComparisonValue.getKeyAndValue(itemService, container, value);
+        dbGenericComparisonValue.getKeyAndValue(serverItemTypeService, container, value);
     }
 
-    private void getKeyAndValue(ItemService itemService, GenericComparisonValueContainer container, Object value) throws NoSuchItemTypeException {
+    private void getKeyAndValue(ServerItemTypeService serverItemTypeService, GenericComparisonValueContainer container, Object value) throws NoSuchItemTypeException {
         if (itemTypeKey != null) {
-            container.addChild(itemService.getItemType(itemTypeKey.getId()), value);
+            container.addChild(serverItemTypeService.getItemType(itemTypeKey.getId()), value);
         } else if (enumKey != null) {
             container.addChild(enumKey, value);
         } else {

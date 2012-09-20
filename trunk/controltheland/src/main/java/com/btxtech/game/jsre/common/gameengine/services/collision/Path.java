@@ -15,7 +15,6 @@ package com.btxtech.game.jsre.common.gameengine.services.collision;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.CommonJava;
-import com.btxtech.game.jsre.common.MathHelper;
 
 import java.io.Serializable;
 import java.util.ArrayList;

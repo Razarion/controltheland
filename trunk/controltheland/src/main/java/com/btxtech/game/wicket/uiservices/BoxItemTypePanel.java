@@ -13,8 +13,7 @@
 
 package com.btxtech.game.wicket.uiservices;
 
-import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeI;
 import org.apache.wicket.markup.html.form.TextField;
@@ -29,7 +28,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  */
 public class BoxItemTypePanel extends Panel {
     @SpringBean
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
 
     public BoxItemTypePanel(String id) {
         super(id);
@@ -50,7 +49,7 @@ public class BoxItemTypePanel extends Panel {
             @Override
             public void setObject(Integer integer) {
                 if (integer != null) {
-                    DbBoxItemType dbBoxItemType = itemService.getDbBoxItemType(integer);
+                    DbBoxItemType dbBoxItemType = serverItemTypeService.getDbBoxItemType(integer);
                     if (dbBoxItemType == null) {
                         error("Box item type does not exist: " + integer);
                         return;

@@ -19,7 +19,11 @@ package com.btxtech.game.jsre.client.common;
  * Time: 3:07:05 PM
  */
 public class Constants {
+    // Game
+    public static final double ITEM_SELL_FACTOR = 0.5;
     // Terrain
+    public static final int TERRAIN_TILE_WIDTH = 100;
+    public static final int TERRAIN_TILE_HEIGHT = 100;
     public static final int SCROLL_DISTANCE = 500;
     public static final String TERRAIN_CONTROLLER_URL = "/spring/terrain";
     public static final String TERRAIN_IMG_TYPE = "tp";

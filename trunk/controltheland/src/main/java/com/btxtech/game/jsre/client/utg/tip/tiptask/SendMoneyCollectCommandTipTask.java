@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
 import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.client.item.ItemTypeContainer;
 import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
 import com.btxtech.game.jsre.client.utg.tip.visualization.GameTipVisualization;
 import com.btxtech.game.jsre.client.utg.tip.visualization.ItemInGameTipVisualization;
@@ -53,7 +54,7 @@ public class SendMoneyCollectCommandTipTask extends AbstractTipTask implements S
     }
 
     public GameTipVisualization createInGameTip() throws NoSuchItemTypeException {
-        ItemType resource = ItemContainer.getInstance().getItemType(toCollectFormId);
+        ItemType resource = ItemTypeContainer.getInstance().getItemType(toCollectFormId);
         SyncItem syncItem  = CommonJava.getFirst(ItemContainer.getInstance().getItems(resource, null));
         return new ItemInGameTipVisualization(syncItem);
     }

@@ -1,16 +1,5 @@
 package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.jsre.client.terrain.MapWindow;
-import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
-import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
-import com.google.gwt.event.dom.client.LoadEvent;
-import com.google.gwt.event.dom.client.LoadHandler;
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.Image;
-
 import java.util.ArrayList;
 import java.util.List;
 

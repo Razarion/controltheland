@@ -26,7 +26,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 

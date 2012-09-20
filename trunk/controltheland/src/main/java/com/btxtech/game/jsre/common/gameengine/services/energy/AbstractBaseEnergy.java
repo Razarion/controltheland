@@ -127,4 +127,6 @@ public abstract class AbstractBaseEnergy {
     protected void setConsuming(int consuming) {
         this.consuming = consuming;
     }
+
+
 }

@@ -31,7 +31,7 @@ public class RuServiceHelper<T> {
     }
 
     @Transactional
-    public <C extends CrudChild> void removeChildAndUpdate(final T entity, final CrudChildServiceHelper<C> crudChildServiceHelper, final C childToRemove) {
+    public <C extends CrudChild> void removeChildAndUpdate(T entity, CrudChildServiceHelper<C> crudChildServiceHelper, final C childToRemove) {
         // Delete and save in the same transaction
         crudChildServiceHelper.deleteDbChild(childToRemove);
         sessionFactory.getCurrentSession().update(entity);

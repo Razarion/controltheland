@@ -16,9 +16,10 @@ package com.btxtech.game.services.statistics.impl;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
+import com.btxtech.game.services.planet.Base;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.statistics.CurrentStatisticEntry;
 import com.btxtech.game.services.statistics.StatisticsEntry;
 import com.btxtech.game.services.statistics.StatisticsService;
@@ -50,7 +51,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Autowired
-    private BaseService baseService;
+    private PlanetSystemService planetSystemService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -59,35 +60,36 @@ public class StatisticsServiceImpl implements StatisticsService {
     private Log log = LogFactory.getLog(StatisticsServiceImpl.class);
 
     @Override
-    public void onItemKilled(SyncBaseItem targetItem, SimpleBase actorBase) {
+    public void onItemKilled(SyncBaseItem targetItem, SimpleBase actorSimpleBase) {
         try {
-            if (!baseService.isAbandoned(actorBase)) {
-                boolean targetHuman = !baseService.isBot(targetItem.getBase());
-                boolean actorHuman = !baseService.isBot(actorBase);
+            Base targetBase = planetSystemService.getServerPlanetServices(targetItem.getBase()).getBaseService().getBase(targetItem.getBase());
+            if (!planetSystemService.getServerPlanetServices(actorSimpleBase).getBaseService().isAbandoned(actorSimpleBase)) {
+                boolean targetHuman = !planetSystemService.getServerPlanetServices(targetItem.getBase()).getBaseService().isBot(targetItem.getBase());
+                boolean actorHuman = !planetSystemService.getServerPlanetServices(actorSimpleBase).getBaseService().isBot(actorSimpleBase);
                 if (targetHuman && actorHuman) {
-                    StatisticsEntry actorEntry = getStatisticsEntry(actorBase);
+                    StatisticsEntry actorEntry = getStatisticsEntry(actorSimpleBase);
                     if (targetItem.hasSyncMovable()) {
                         actorEntry.increaseKilledUnitsPlayer();
-                        if (!baseService.isAbandoned(targetItem.getBase())) {
+                        if (!targetBase.isAbandoned()) {
                             StatisticsEntry targetEntry = getStatisticsEntry(targetItem.getBase());
                             targetEntry.increaseLostUnitsPlayer();
                         }
                     } else {
                         actorEntry.increaseKilledStructurePlayer();
-                        if (!baseService.isAbandoned(targetItem.getBase())) {
+                        if (!targetBase.isAbandoned()) {
                             StatisticsEntry targetEntry = getStatisticsEntry(targetItem.getBase());
                             targetEntry.increaseLostStructurePlayer();
                         }
                     }
                 } else if (!targetHuman && actorHuman) {
-                    StatisticsEntry actorEntry = getStatisticsEntry(actorBase);
+                    StatisticsEntry actorEntry = getStatisticsEntry(actorSimpleBase);
                     if (targetItem.hasSyncMovable()) {
                         actorEntry.increaseKilledUnitsBot();
                     } else {
                         actorEntry.increaseKilledStructureBot();
                     }
                 } else if (targetHuman && !actorHuman) {
-                    if (!baseService.isAbandoned(targetItem.getBase())) {
+                    if (!targetBase.isAbandoned()) {
                         StatisticsEntry targetEntry = getStatisticsEntry(targetItem.getBase());
                         if (targetItem.hasSyncMovable()) {
                             targetEntry.increaseLostUnitsBot();
@@ -105,7 +107,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public void onItemCreated(SyncBaseItem syncBaseItem) {
         try {
-            if (!baseService.isBot(syncBaseItem.getBase()) && !baseService.isAbandoned(syncBaseItem.getBase())) {
+            Base base = planetSystemService.getServerPlanetServices(syncBaseItem.getBase()).getBaseService().getBase(syncBaseItem.getBase());
+            if (!planetSystemService.getServerPlanetServices(syncBaseItem.getBase()).getBaseService().isBot(syncBaseItem.getBase()) && !base.isAbandoned()) {
                 StatisticsEntry entry = getStatisticsEntry(syncBaseItem.getBase());
                 if (syncBaseItem.hasSyncMovable()) {
                     entry.increaseBuiltUnits();
@@ -120,14 +123,20 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public void onBaseKilled(SimpleBase target, SimpleBase actor) {
+        if(actor == null) {
+            // Kill all bot items
+            return;
+        }
         try {
-            if (!baseService.isAbandoned(actor)) {
-                boolean targetHuman = !baseService.isBot(target);
-                boolean actorHuman = !baseService.isBot(actor);
+            Base actorBase = planetSystemService.getServerPlanetServices(actor).getBaseService().getBase(actor);
+            Base targetBase = planetSystemService.getServerPlanetServices(target).getBaseService().getBase(target);
+            if (!actorBase.isAbandoned()) {
+                boolean targetHuman = !planetSystemService.getServerPlanetServices(target).getBaseService().isBot(target);
+                boolean actorHuman = !planetSystemService.getServerPlanetServices(actor).getBaseService().isBot(actor);
                 if (targetHuman && actorHuman) {
                     StatisticsEntry actorEntry = getStatisticsEntry(actor);
                     actorEntry.increaseBasesDestroyedPlayer();
-                    if (!baseService.isAbandoned(target)) {
+                    if (!targetBase.isAbandoned()) {
                         StatisticsEntry targetEntry = getStatisticsEntry(target);
                         targetEntry.increaseBasesLostPlayer();
                     }
@@ -135,7 +144,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                     StatisticsEntry actorEntry = getStatisticsEntry(actor);
                     actorEntry.increaseBasesDestroyedBot();
                 } else if (targetHuman && !actorHuman) {
-                    if (!baseService.isAbandoned(target)) {
+                    if (!targetBase.isAbandoned()) {
                         StatisticsEntry targetEntry = getStatisticsEntry(target);
                         targetEntry.increaseBasesLostBot();
                     }
@@ -191,7 +200,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private StatisticsEntry getStatisticsEntry(SimpleBase simpleBase) {
-        return getStatisticsEntry(baseService.getUserState(simpleBase));
+        return getStatisticsEntry(planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getUserState(simpleBase));
     }
 
     @Override
@@ -219,9 +228,9 @@ public class StatisticsServiceImpl implements StatisticsService {
             }
             if (userState.getBase() != null) {
                 if (!userState.isRegistered()) {
-                    userName = baseService.getBaseName(userState.getBase().getSimpleBase());
+                    userName = planetSystemService.getServerPlanetServices(userState).getBaseService().getBaseName(userState.getBase().getSimpleBase());
                 }
-                upTime = userState.getBase().getUptime();
+                upTime = userState.getBase().getUpTime();
                 itemCount = userState.getBase().getItemCount();
                 money = (int) Math.round(userState.getBase().getAccountBalance());
             }

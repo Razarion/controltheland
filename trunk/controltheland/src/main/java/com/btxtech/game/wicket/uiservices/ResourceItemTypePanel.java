@@ -13,13 +13,13 @@
 
 package com.btxtech.game.wicket.uiservices;
 
-import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbItemType;
-import com.btxtech.game.services.item.itemType.DbItemTypeI;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
@@ -30,11 +30,11 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  */
 public class ResourceItemTypePanel extends Panel {
     @SpringBean
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
 
     public ResourceItemTypePanel(String id) {
         super(id);
-        add(new TextField<Integer>("resourceItemType", new IModel<Integer>() {
+        add(new TextField<>("resourceItemType", new IModel<Integer>() {
 
             @Override
             public Integer getObject() {
@@ -51,7 +51,7 @@ public class ResourceItemTypePanel extends Panel {
             @Override
             public void setObject(Integer integer) {
                 if (integer != null) {
-                    DbResourceItemType dbResourceItemType = itemService.getDbResourceItemType(integer);
+                    DbResourceItemType dbResourceItemType = serverItemTypeService.getDbResourceItemType(integer);
                     if (dbResourceItemType == null) {
                         error("Item type does not exist: " + integer);
                         return;
@@ -62,7 +62,6 @@ public class ResourceItemTypePanel extends Panel {
                 }
 
 
-
             }
 
             @Override
@@ -70,5 +69,17 @@ public class ResourceItemTypePanel extends Panel {
                 // Ignore
             }
         }, Integer.class));
+        add(new Label("resourceItemTypeName", new AbstractReadOnlyModel<String>() {
+            @Override
+            public String getObject() {
+                DbResourceItemType resourceItemType = (DbResourceItemType) getDefaultModelObject();
+                if (resourceItemType != null) {
+                    return resourceItemType.getName();
+                } else {
+                    return null;
+                }
+            }
+        }));
+
     }
 }

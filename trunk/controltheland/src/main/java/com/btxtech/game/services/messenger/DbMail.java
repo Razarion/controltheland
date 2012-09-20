@@ -17,14 +17,14 @@ import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 
-import java.io.Serializable;
-import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * User: beat

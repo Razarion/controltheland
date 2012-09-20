@@ -3,7 +3,8 @@ package com.btxtech.game.services;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.common.info.InvalidLevelState;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
+import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -11,12 +12,14 @@ import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoxItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainUtil;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
@@ -33,21 +36,17 @@ import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.packets.XpPacket;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
-import com.btxtech.game.services.action.ActionService;
-import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.bot.DbBotEnragementStateConfig;
 import com.btxtech.game.services.bot.DbBotItemConfig;
 import com.btxtech.game.services.cms.DbCmsImage;
-import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
-import com.btxtech.game.services.common.ServerServices;
+import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.gwt.MovableServiceImpl;
 import com.btxtech.game.services.history.DbHistoryElement;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbBuilderType;
@@ -61,27 +60,31 @@ import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
 import com.btxtech.game.services.mgmt.BackupSummary;
 import com.btxtech.game.services.mgmt.MgmtService;
+import com.btxtech.game.services.planet.Base;
+import com.btxtech.game.services.planet.BaseService;
+import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.ResourceService;
+import com.btxtech.game.services.planet.db.DbPlanet;
+import com.btxtech.game.services.planet.db.DbPlanetItemTypeLimitation;
+import com.btxtech.game.services.planet.db.DbRegionResource;
 import com.btxtech.game.services.playback.impl.PlaybackServiceImpl;
-import com.btxtech.game.services.resource.DbRegionResource;
-import com.btxtech.game.services.resource.ResourceService;
+import com.btxtech.game.services.terrain.DbRegion;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbSurfaceRect;
 import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.services.terrain.DbTerrainImageGroup;
 import com.btxtech.game.services.terrain.DbTerrainImagePosition;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
-import com.btxtech.game.services.terrain.TerrainService;
-import com.btxtech.game.services.territory.DbTerritory;
-import com.btxtech.game.services.territory.TerritoryService;
+import com.btxtech.game.services.terrain.RegionService;
+import com.btxtech.game.services.terrain.TerrainImageService;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.DbItemTypeLimitation;
 import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbLevelItemTypeLimitation;
 import com.btxtech.game.services.utg.DbLevelTask;
-import com.btxtech.game.services.utg.DbQuestHub;
 import com.btxtech.game.services.utg.DbXpSettings;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.XpService;
@@ -178,9 +181,13 @@ abstract public class AbstractServiceTest {
     protected static int TEST_BOX_ITEM_1_ID = -1;
     protected static final String TEST_BOX_ITEM_2 = "TEST_BOX_ITEM_2";
     protected static int TEST_BOX_ITEM_2_ID = -1;
-    // Quest Hubs
-    protected static final String TEST_QUEST_HUB_1 = "TEST_QUEST_HUB_1";
-    protected static final String TEST_QUEST_HUB_2 = "TEST_QUEST_HUB_2";
+    // Planets
+    protected static final String TEST_PLANET_1 = "TEST_PLANET_1";
+    protected static int TEST_PLANET_1_ID = -1;
+    protected static final String TEST_PLANET_2 = "TEST_PLANET_2";
+    protected static int TEST_PLANET_2_ID = -1;
+    protected static final String TEST_PLANET_3 = "TEST_PLANET_3";
+    protected static int TEST_PLANET_3_ID = -1;
     // Level ID
     protected static int TEST_LEVEL_1_SIMULATED_ID = -1;
     protected static int TEST_LEVEL_2_REAL_ID = -1;
@@ -235,50 +242,37 @@ abstract public class AbstractServiceTest {
             COMPLEX_TERRAIN_RECT_10,
             COMPLEX_TERRAIN_RECT_11);
 
-    // Territories
-    protected static String COMPLEX_TERRITORY = "ComplexTerritory";
-    protected static int COMPLEX_TERRITORY_ID = -1;
-    protected static final String TEST_NOOB_TERRITORY = "TEST_NOOB_TERRITORY";
-    protected static int TEST_NOOB_TERRITORY_ID = -1;
-
     @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
-    private TerrainService terrainService;
+    private TerrainImageService terrainService;
     @Autowired
     private ConfigurableListableBeanFactory configurableListableBeanFactory;
     @Autowired
     private TutorialService tutorialService;
     @Autowired
-    private ItemService itemService;
+    private ServerItemTypeService serverItemTypeService;
     @Autowired
     private XpService xpService;
     @Autowired
-    private ActionService actionService;
-    @Autowired
-    private BotService botService;
-    @Autowired
-    private TerritoryService territoryService;
-    @Autowired
     private XpService xpServic;
-    @Autowired
+    //@Autowired
     private ResourceService resourceService;
-    @Autowired
-    private ServerServices serverServices;
-    @Autowired
-    private BaseService baseService;
+    private ServerPlanetServices serverServices;
     @Autowired
     private MgmtService mgmtService;
     @Autowired
     private PlatformTransactionManager transactionManager;
-    @Autowired
-    private CollisionService collisionService;
     @Autowired
     private SessionFactory sessionFactory;
     @Autowired
     private ApplicationContext applicationContext;
     @Autowired
     private UserService userService;
+    @Autowired
+    private PlanetSystemService planetSystemService;
+    @Autowired
+    private RegionService regionService;
     private MockHttpServletRequest mockHttpServletRequest;
     private MockHttpServletResponse mockHttpServletResponse;
     private MockHttpSession mockHttpSession;
@@ -289,6 +283,29 @@ abstract public class AbstractServiceTest {
 
     protected PlatformTransactionManager getTransactionManager() {
         return transactionManager;
+    }
+
+    // ---------------------- Region -----------------------
+    public Region createRegion(Rectangle rectangle, int id) {
+        Rectangle tileRect = TerrainUtil.convertToTilePosition(rectangle);
+        Set<Index> tiles = new HashSet<>();
+        for (int x = tileRect.getX(); x < tileRect.getEndX(); x++) {
+            for (int y = tileRect.getY(); y < tileRect.getEndY(); y++) {
+                tiles.add(new Index(x, y));
+            }
+        }
+        return new Region(id, tiles);
+    }
+
+    protected Region createSimpleRegion(int id) {
+        return createRegion(new Rectangle(5000, 5000, 5000, 5000), id);
+    }
+
+    public DbRegion createDbRegion(Rectangle rectangle) {
+        DbRegion dbRegion = regionService.getRegionCrud().createDbChild();
+        dbRegion.setRegion(createRegion(rectangle, 1));
+        regionService.getRegionCrud().updateDbChild(dbRegion);
+        return dbRegion;
     }
 
     // ---------------------- GWT Servlets -----------------------
@@ -317,7 +334,7 @@ abstract public class AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
 
-        DbBaseItemType dbBaseItemType = itemService.getDbBaseItemType(id);
+        DbBaseItemType dbBaseItemType = serverItemTypeService.getDbBaseItemType(id);
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -325,8 +342,8 @@ abstract public class AbstractServiceTest {
         return dbBaseItemType;
     }
 
-    protected void assertBaseCount(int count) {
-        Assert.assertEquals(count, baseService.getAllBaseAttributes().size());
+    protected void assertBaseCount(int planetId, int count) {
+        Assert.assertEquals(count, planetSystemService.getServerPlanetServices(planetId).getBaseService().getAllBaseAttributes().size());
     }
 
     // ------------------- DbItemType helpers --------------------
@@ -338,34 +355,34 @@ abstract public class AbstractServiceTest {
 
     // ------------------- Sync Items --------------------
 
-    protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id, Services services, SimpleBase simpleBase) throws Exception {
-        SyncBaseItem syncBaseItem = new SyncBaseItem(id, null, (BaseItemType) itemService.getItemType(itemTypeId), services, simpleBase);
+    protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id, GlobalServices globalServices, PlanetServices planetServices, SimpleBase simpleBase) throws Exception {
+        SyncBaseItem syncBaseItem = new SyncBaseItem(id, null, (BaseItemType) serverItemTypeService.getItemType(itemTypeId), globalServices, planetServices, simpleBase);
         syncBaseItem.getSyncItemArea().setPosition(position);
         return syncBaseItem;
     }
 
-    protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id, Services services) throws Exception {
-        return createSyncBaseItem(itemTypeId, position, id, services, new SimpleBase(1));
+    protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id, GlobalServices globalServices, PlanetServices planetServices) throws Exception {
+        return createSyncBaseItem(itemTypeId, position, id, globalServices, planetServices, new SimpleBase(1, planetServices.getPlanetInfo().getPlanetId()));
     }
 
     protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id, SimpleBase simpleBase) throws Exception {
-        SyncBaseItem syncBaseItem = createSyncBaseItem(itemTypeId, position, id, createMockServices(), simpleBase);
+        SyncBaseItem syncBaseItem = createSyncBaseItem(itemTypeId, position, id, createMockGlobalServices(), createMockPlanetServices(), simpleBase);
         syncBaseItem.setBuildup(1.0);
         return syncBaseItem;
     }
 
     protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id) throws Exception {
-        return createSyncBaseItem(itemTypeId, position, id, new SimpleBase(1));
+        return createSyncBaseItem(itemTypeId, position, id, new SimpleBase(1, 1));
     }
 
     protected SyncResourceItem createSyncResourceItem(int itemTypeId, Index position, Id id) throws Exception {
-        SyncResourceItem syncResourceItem = new SyncResourceItem(id, null, (ResourceType) itemService.getItemType(itemTypeId), createMockServices());
+        SyncResourceItem syncResourceItem = new SyncResourceItem(id, null, (ResourceType) serverItemTypeService.getItemType(itemTypeId), createMockGlobalServices(), createMockPlanetServices());
         syncResourceItem.getSyncItemArea().setPosition(position);
         return syncResourceItem;
     }
 
     protected SyncBoxItem createSyncBoxItem(int itemTypeId, Index position, Id id) throws Exception {
-        return new SyncBoxItem(id, position, (BoxItemType) itemService.getItemType(itemTypeId), createMockServices());
+        return new SyncBoxItem(id, position, (BoxItemType) serverItemTypeService.getItemType(itemTypeId), createMockGlobalServices(), createMockPlanetServices());
     }
 
     /**
@@ -376,12 +393,13 @@ abstract public class AbstractServiceTest {
     protected SimpleBase getMyBase() {
         try {
             return getMovableService().getRealGameInfo(START_UID_1).getBase();
-        } catch (InvalidLevelState invalidLevelState) {
-            throw new RuntimeException(invalidLevelState);
+        } catch (InvalidLevelStateException invalidLevelStateException) {
+            throw new RuntimeException(invalidLevelStateException);
         }
     }
 
-    protected SimpleBase getFirstBotBase() {
+    protected SimpleBase getFirstBotBase(int planetId) {
+        BaseService baseService = planetSystemService.getServerPlanetServices(planetId).getBaseService();
         for (Base base : baseService.getBases()) {
             if (baseService.isBot(base.getSimpleBase())) {
                 return base.getSimpleBase();
@@ -430,8 +448,18 @@ abstract public class AbstractServiceTest {
     }
 
     protected List<Id> getAllSynItemId(SimpleBase simpleBase, int itemTypeId, Rectangle region) {
-        List<Id> ids = new ArrayList<Id>();
-        for (SyncItemInfo syncItemInfo : getMovableService().getAllSyncInfo()) {
+        return getAllSynItemId(simpleBase, itemTypeId, region, null);
+    }
+
+    protected List<Id> getAllSynItemId(SimpleBase simpleBase, int itemTypeId, Rectangle region, Integer planetId) {
+        List<Id> ids = new ArrayList<>();
+        Collection<SyncItemInfo> allSyncInfos;
+        if (planetId != null) {
+            allSyncInfos = planetSystemService.getServerPlanetServices(planetId).getItemService().getSyncInfo();
+        } else {
+            allSyncInfos = getMovableService().getAllSyncInfo();
+        }
+        for (SyncItemInfo syncItemInfo : allSyncInfos) {
             if (syncItemInfo.getBase() == null && syncItemInfo.getItemTypeId() == itemTypeId) {
                 if (region != null) {
                     if (region.contains(syncItemInfo.getPosition())) {
@@ -456,14 +484,13 @@ abstract public class AbstractServiceTest {
         return ids;
     }
 
-
-    protected void assertWholeItemCount(int count) {
-        Assert.assertEquals(count, itemService.getItemsCopy().size());
+    protected void assertWholeItemCount(int planetId, int count) {
+        Assert.assertEquals(count, planetSystemService.getServerPlanetServices(planetId).getItemService().getItemsCopy().size());
     }
 
-    protected void killSyncItem(Id id) throws Exception {
-        SyncItem syncItem = itemService.getItem(id);
-        itemService.killSyncItem(syncItem, null, true, false);
+    protected void killSyncItem(int planetId, Id id) throws Exception {
+        SyncItem syncItem = planetSystemService.getServerPlanetServices(planetId).getItemService().getItem(id);
+        planetSystemService.getServerPlanetServices(planetId).getItemService().killSyncItem(syncItem, null, true, false);
     }
 
     // ------------------- Connection --------------------
@@ -585,9 +612,26 @@ abstract public class AbstractServiceTest {
     }
     // ------------------- Action Service --------------------
 
-    protected void waitForActionServiceDone() throws TimeoutException, InterruptedException {
+    protected void waitForActionServiceDone(Integer planetId) throws TimeoutException, InterruptedException {
+        ServerPlanetServices serverPlanetServices;
+        if (planetId != null) {
+            serverPlanetServices = planetSystemService.getServerPlanetServices(planetId);
+        } else {
+            serverPlanetServices = planetSystemService.getServerPlanetServices();
+        }
         long maxTime = System.currentTimeMillis() + 100000;
-        while (actionService.isBusy()) {
+        while (serverPlanetServices.getActionService().isBusy()) {
+            if (System.currentTimeMillis() > maxTime) {
+                throw new TimeoutException();
+            }
+            Thread.sleep(100);
+        }
+    }
+
+    protected void waitForActionServiceDone() throws TimeoutException, InterruptedException {
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices();
+        long maxTime = System.currentTimeMillis() + 100000;
+        while (serverPlanetServices.getActionService().isBusy()) {
             if (System.currentTimeMillis() > maxTime) {
                 throw new TimeoutException();
             }
@@ -596,33 +640,46 @@ abstract public class AbstractServiceTest {
     }
 
     protected void sendMoveCommand(Id movable, Index destination) throws Exception {
-        SyncBaseItem syncItem = (SyncBaseItem) itemService.getItem(movable);
-        actionService.move(syncItem, destination);
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices();
+        SyncBaseItem syncItem = (SyncBaseItem) serverPlanetServices.getItemService().getItem(movable);
+        serverPlanetServices.getActionService().move(syncItem, destination);
     }
 
     protected void sendBuildCommand(Id builderId, Index toBeBuiltPosition, int toBeBuiltId) throws Exception {
-        SyncBaseItem builder = (SyncBaseItem) itemService.getItem(builderId);
-        BaseItemType itemType = (BaseItemType) itemService.getItemType(toBeBuiltId);
-        actionService.build(builder, toBeBuiltPosition, itemType);
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices();
+        SyncBaseItem builder = (SyncBaseItem) serverPlanetServices.getItemService().getItem(builderId);
+        BaseItemType itemType = (BaseItemType) serverItemTypeService.getItemType(toBeBuiltId);
+        serverPlanetServices.getActionService().build(builder, toBeBuiltPosition, itemType);
     }
 
     protected void sendFactoryCommand(Id factoryId, int toBeBuiltId) throws Exception {
-        SyncBaseItem factory = (SyncBaseItem) itemService.getItem(factoryId);
-        BaseItemType itemType = (BaseItemType) itemService.getItemType(toBeBuiltId);
-        actionService.fabricate(factory, itemType);
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices();
+        SyncBaseItem factory = (SyncBaseItem) serverPlanetServices.getItemService().getItem(factoryId);
+        BaseItemType itemType = (BaseItemType) serverItemTypeService.getItemType(toBeBuiltId);
+        serverPlanetServices.getActionService().fabricate(factory, itemType);
     }
 
-    protected void sendAttackCommand(Id actorId, Id targetId) throws Exception {
-        SyncBaseItem actor = (SyncBaseItem) itemService.getItem(actorId);
-        SyncBaseItem target = (SyncBaseItem) itemService.getItem(targetId);
-        AttackFormationItem attackFormationItem = collisionService.getDestinationHint(actor,
+    protected void sendAttackCommand(Id actorId, Id targetId, Integer planetId) throws Exception {
+        ServerPlanetServices serverPlanetServices;
+        if (planetId != null) {
+            serverPlanetServices = planetSystemService.getServerPlanetServices(planetId);
+        } else {
+            serverPlanetServices = planetSystemService.getServerPlanetServices();
+        }
+        SyncBaseItem actor = (SyncBaseItem) serverPlanetServices.getItemService().getItem(actorId);
+        SyncBaseItem target = (SyncBaseItem) serverPlanetServices.getItemService().getItem(targetId);
+        AttackFormationItem attackFormationItem = serverPlanetServices.getCollisionService().getDestinationHint(actor,
                 actor.getBaseItemType().getWeaponType().getRange(),
                 target.getSyncItemArea(),
                 target.getTerrainType());
         if (!attackFormationItem.isInRange()) {
             throw new IllegalStateException("Not in range");
         }
-        actionService.attack(actor, target, attackFormationItem.getDestinationHint(), attackFormationItem.getDestinationAngel(), true);
+        serverPlanetServices.getActionService().attack(actor, target, attackFormationItem.getDestinationHint(), attackFormationItem.getDestinationAngel(), true);
+    }
+
+    protected void sendAttackCommand(Id actorId, Id targetId) throws Exception {
+        sendAttackCommand(actorId, targetId, null);
     }
 
     protected void sendAttackCommands(Collection<Id> attackers, Id targetId) throws Exception {
@@ -632,33 +689,37 @@ abstract public class AbstractServiceTest {
     }
 
     protected void sendCollectCommand(Id harvesterId, Id resourceId) throws Exception {
-        SyncBaseItem harvester = (SyncBaseItem) itemService.getItem(harvesterId);
-        SyncResourceItem syncResourceItem = (SyncResourceItem) itemService.getItem(resourceId);
-        AttackFormationItem attackFormationItem = collisionService.getDestinationHint(harvester,
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices();
+        SyncBaseItem harvester = (SyncBaseItem) serverPlanetServices.getItemService().getItem(harvesterId);
+        SyncResourceItem syncResourceItem = (SyncResourceItem) serverPlanetServices.getItemService().getItem(resourceId);
+        AttackFormationItem attackFormationItem = serverPlanetServices.getCollisionService().getDestinationHint(harvester,
                 harvester.getBaseItemType().getHarvesterType().getRange(),
                 syncResourceItem.getSyncItemArea(),
                 syncResourceItem.getTerrainType());
         if (!attackFormationItem.isInRange()) {
             throw new IllegalStateException("Not in range");
         }
-        actionService.collect(harvester, syncResourceItem, attackFormationItem.getDestinationHint(), attackFormationItem.getDestinationAngel());
+        serverPlanetServices.getActionService().collect(harvester, syncResourceItem, attackFormationItem.getDestinationHint(), attackFormationItem.getDestinationAngel());
     }
 
     protected void sendContainerLoadCommand(Id item, Id containerId) throws Exception {
-        SyncBaseItem container = (SyncBaseItem) itemService.getItem(containerId);
-        SyncBaseItem syncItem = (SyncBaseItem) itemService.getItem(item);
-        actionService.loadContainer(container, syncItem);
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices();
+        SyncBaseItem container = (SyncBaseItem) serverPlanetServices.getItemService().getItem(containerId);
+        SyncBaseItem syncItem = (SyncBaseItem) serverPlanetServices.getItemService().getItem(item);
+        serverPlanetServices.getActionService().loadContainer(container, syncItem);
     }
 
     protected void sendUnloadContainerCommand(Id containerId, Index position) throws Exception {
-        SyncBaseItem container = (SyncBaseItem) itemService.getItem(containerId);
-        actionService.unloadContainer(container, position);
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices();
+        SyncBaseItem container = (SyncBaseItem) serverPlanetServices.getItemService().getItem(containerId);
+        serverPlanetServices.getActionService().unloadContainer(container, position);
     }
 
-    protected void sendPickupBoxCommand(Id picker, Id box) throws Exception {
-        SyncBaseItem baseItem = (SyncBaseItem) itemService.getItem(picker);
-        SyncBoxItem boxItem = (SyncBoxItem) itemService.getItem(box);
-        AttackFormationItem attackFormationItem = collisionService.getDestinationHint(baseItem,
+    protected void sendPickupBoxCommand(int planetId, Id picker, Id box) throws Exception {
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(planetId);
+        SyncBaseItem baseItem = (SyncBaseItem) serverPlanetServices.getItemService().getItem(picker);
+        SyncBoxItem boxItem = (SyncBoxItem) serverPlanetServices.getItemService().getItem(box);
+        AttackFormationItem attackFormationItem = serverPlanetServices.getCollisionService().getDestinationHint(baseItem,
                 baseItem.getBaseItemType().getBoxPickupRange(),
                 boxItem.getSyncItemArea(),
                 boxItem.getTerrainType());
@@ -666,7 +727,7 @@ abstract public class AbstractServiceTest {
             throw new IllegalStateException("Not in range");
         }
 
-        actionService.pickupBox(baseItem, boxItem, attackFormationItem.getDestinationHint(), attackFormationItem.getDestinationAngel());
+        serverPlanetServices.getActionService().pickupBox(baseItem, boxItem, attackFormationItem.getDestinationHint(), attackFormationItem.getDestinationAngel());
     }
 
     // -------------------  Game Config --------------------
@@ -680,49 +741,59 @@ abstract public class AbstractServiceTest {
         endHttpSession();
     }
 
-    protected void configureRealGame() throws Exception {
-        System.out.println("---- Configure Real Game ---");
+    protected void configureSimplePlanet() throws Exception {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-
         // Item Types
         setupItemTypes();
+        // Planet
+        DbPlanet dbPlanet1 = setupPlanet1();
         // Terrain
-        setupMinimalTerrain();
-        // Setup territory
-        setupNoobTerritory();
+        setupMinimalTerrain(dbPlanet1);
         // QuestHubs
-        setupQuestHubWithOneRealGame(TEST_NOOB_TERRITORY_ID);
+        setupOneLevel(dbPlanet1);
         // Xp
         setupXpSettings();
 
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet1);
+        planetSystemService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
 
-    protected void configureGameMultipleLevel() throws Exception {
-        System.out.println("---- configureGameMultipleLevel Game ---");
+    protected void configureMultiplePlanetsAndLevels() throws Exception {
+        System.out.println("---- configureMultiplePlanetsAndLevels Game ---");
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
 
         // Item Types
         setupItemTypes();
+
+        DbPlanet dbPlanet1 = setupPlanet1();
+        DbPlanet dbPlanet2 = setupPlanet2();
+        DbPlanet dbPlanet3 = setupPlanet3();
+
         // Terrain
-        setupMinimalTerrain();
-        // Setup territory
-        setupNoobTerritory();
+        setupMinimalTerrain(dbPlanet1);
+        setupComplexTerrain(dbPlanet2);
+        setupComplexTerrain2(dbPlanet3);
         // User Guidance
-        setupQuestHubMultipleLevels();
+        setupMultipleLevels(dbPlanet1, dbPlanet2, dbPlanet3);
         // Xp
         setupXpSettings();
         // Resource fields
-        setupResource();
+        setupResource(dbPlanet1);
+
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet1);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
+        planetSystemService.activate();
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
 
-    private void setupItemTypes() {
+    protected void setupItemTypes() {
         createSimpleBuilding();
         createHarvesterItemType();
         createAttackBaseItemType();
@@ -735,11 +806,9 @@ abstract public class AbstractServiceTest {
         createMoney();
     }
 
-    protected void configureComplexGameOneRealLevel() throws Exception {
-        System.out.println("---- Configure complex Game ---");
+    protected void configureOneLevelOnePlaneComplexTerrain() throws Exception {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-
         // Item Types
         createHarvesterItemType();
         createAttackBaseItemType();
@@ -750,25 +819,22 @@ abstract public class AbstractServiceTest {
         finishAttackBaseItemType();
         finishContainerBaseItemType();
         createMoney();
+        // Planet
+        DbPlanet dbPlanet1 = setupPlanet1();
         // Terrain
-        setupComplexTerrain();
-        // Setup territory
-        setupComplexTerritory();
+        setupComplexTerrain(dbPlanet1);
         // QuestHubs
-        setupQuestHubWithOneRealGame(COMPLEX_TERRITORY_ID);
-        // Market
-        //setupMinimalMarket();
+        setupOneLevel(dbPlanet1);
         //setupXpSettings();
-
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet1);
+        planetSystemService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
 
-    protected void configureComplexGameOneRealLevel2() throws Exception {
-        System.out.println("---- Configure complex Game 2---");
+    protected void configureOneLevelOnePlaneComplexTerrain2() throws Exception {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-
         // Item Types
         createHarvesterItemType();
         createAttackBaseItemType();
@@ -779,16 +845,15 @@ abstract public class AbstractServiceTest {
         finishAttackBaseItemType();
         finishContainerBaseItemType();
         createMoney();
+        // Planet
+        DbPlanet dbPlanet1 = setupPlanet1();
         // Terrain
-        setupComplexTerrain2();
-        // Setup territory
-        setupComplexTerritory();
+        setupComplexTerrain2(dbPlanet1);
         // QuestHubs
-        setupQuestHubWithOneRealGame(COMPLEX_TERRITORY_ID);
-        // Market
-        //setupMinimalMarket();
+        setupOneLevel(dbPlanet1);
         //setupXpSettings();
-
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet1);
+        planetSystemService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -796,7 +861,7 @@ abstract public class AbstractServiceTest {
     // ------------------- Setup Item Types --------------------
 
     protected DbBaseItemType createBuilderBaseItemType() {
-        DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
         setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_START_BUILDER_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
@@ -809,7 +874,7 @@ abstract public class AbstractServiceTest {
         dbBuilderType.setProgress(1000);
         dbBuilderType.setRange(100);
         Set<DbBaseItemType> ableToBuild = new HashSet<DbBaseItemType>();
-        ableToBuild.add((DbBaseItemType) itemService.getDbItemType(TEST_FACTORY_ITEM_ID));
+        ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_FACTORY_ITEM_ID));
         dbBuilderType.setAbleToBuild(ableToBuild);
         dbBaseItemType.setDbBuilderType(dbBuilderType);
         // DbMovableType
@@ -817,14 +882,14 @@ abstract public class AbstractServiceTest {
         dbMovableType.setSpeed(10000);
         dbBaseItemType.setDbMovableType(dbMovableType);
 
-        itemService.saveDbItemType(dbBaseItemType);
-        itemService.activate();
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.activate();
         TEST_START_BUILDER_ITEM_ID = dbBaseItemType.getId();
         return dbBaseItemType;
     }
 
     protected DbBaseItemType createFactoryBaseItemType() {
-        DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
         setupImages(dbBaseItemType, 1);
         dbBaseItemType.setName(TEST_FACTORY_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
@@ -836,20 +901,20 @@ abstract public class AbstractServiceTest {
         DbFactoryType dbFactoryType = new DbFactoryType();
         dbFactoryType.setProgress(1000);
         Set<DbBaseItemType> ableToBuild = new HashSet<DbBaseItemType>();
-        ableToBuild.add((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
-        ableToBuild.add((DbBaseItemType) itemService.getDbItemType(TEST_CONTAINER_ITEM_ID));
-        ableToBuild.add((DbBaseItemType) itemService.getDbItemType(TEST_HARVESTER_ITEM_ID));
+        ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID));
+        ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONTAINER_ITEM_ID));
+        ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_HARVESTER_ITEM_ID));
         dbFactoryType.setAbleToBuild(ableToBuild);
         dbBaseItemType.setDbFactoryType(dbFactoryType);
 
-        itemService.saveDbItemType(dbBaseItemType);
-        itemService.activate();
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.activate();
         TEST_FACTORY_ITEM_ID = dbBaseItemType.getId();
         return dbBaseItemType;
     }
 
     protected DbBaseItemType createAttackBaseItemType() {
-        DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
         setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_ATTACK_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
@@ -868,25 +933,25 @@ abstract public class AbstractServiceTest {
         dbMovableType.setSpeed(10000);
         dbBaseItemType.setDbMovableType(dbMovableType);
 
-        itemService.saveDbItemType(dbBaseItemType);
-        itemService.activate();
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.activate();
         TEST_ATTACK_ITEM_ID = dbBaseItemType.getId();
         return dbBaseItemType;
     }
 
     private void finishAttackBaseItemType() {
-        DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID);
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID);
         // DbWeaponType
-        dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID), true);
-        dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) itemService.getDbItemType(TEST_FACTORY_ITEM_ID), true);
-        dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID), true);
+        dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID), true);
+        dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_FACTORY_ITEM_ID), true);
+        dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID), true);
 
-        itemService.saveDbItemType(dbBaseItemType);
-        itemService.activate();
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.activate();
     }
 
     protected DbBaseItemType createAttackBaseItemType2() {
-        DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
         setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_ATTACK_ITEM_2);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
@@ -905,17 +970,17 @@ abstract public class AbstractServiceTest {
         dbMovableType.setSpeed(10000);
         dbBaseItemType.setDbMovableType(dbMovableType);
 
-        itemService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
         TEST_ATTACK_ITEM_ID_2 = dbBaseItemType.getId();
         // DbWeaponType
-        dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID_2), true);
-        itemService.saveDbItemType(dbBaseItemType);
-        itemService.activate();
+        dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID_2), true);
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.activate();
         return dbBaseItemType;
     }
 
     protected DbBaseItemType createContainerBaseItemType() {
-        DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
         setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_CONTAINER_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
@@ -932,14 +997,14 @@ abstract public class AbstractServiceTest {
         dbMovableType.setSpeed(10000);
         dbBaseItemType.setDbMovableType(dbMovableType);
 
-        itemService.saveDbItemType(dbBaseItemType);
-        itemService.activate();
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.activate();
         TEST_CONTAINER_ITEM_ID = dbBaseItemType.getId();
         return dbBaseItemType;
     }
 
     protected DbBaseItemType createSimpleBuilding() {
-        DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
         setupImages(dbBaseItemType, 1);
         dbBaseItemType.setName(TEST_SIMPLE_BUILDING);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
@@ -947,39 +1012,39 @@ abstract public class AbstractServiceTest {
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
 
-        itemService.saveDbItemType(dbBaseItemType);
-        itemService.activate();
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.activate();
         TEST_SIMPLE_BUILDING_ID = dbBaseItemType.getId();
         return dbBaseItemType;
     }
 
     private void finishContainerBaseItemType() {
-        DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemType(TEST_CONTAINER_ITEM_ID);
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONTAINER_ITEM_ID);
         // DbItemContainerType
         Set<DbBaseItemType> ableToContain = new HashSet<DbBaseItemType>();
-        ableToContain.add(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        ableToContain.add(serverItemTypeService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
         dbBaseItemType.getDbItemContainerType().setAbleToContain(ableToContain);
 
-        itemService.saveDbItemType(dbBaseItemType);
-        itemService.activate();
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.activate();
     }
 
     private DbResourceItemType createMoney() {
-        DbResourceItemType dbResourceItemType = (DbResourceItemType) itemService.getDbItemTypeCrud().createDbChild(DbResourceItemType.class);
+        DbResourceItemType dbResourceItemType = (DbResourceItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbResourceItemType.class);
         setupImages(dbResourceItemType, 1);
         dbResourceItemType.setName(TEST_RESOURCE_ITEM);
         dbResourceItemType.setTerrainType(TerrainType.LAND);
         dbResourceItemType.setBounding(new BoundingBox(80, 80, ANGELS_1));
         dbResourceItemType.setAmount(3);
 
-        itemService.saveDbItemType(dbResourceItemType);
-        itemService.activate();
+        serverItemTypeService.saveDbItemType(dbResourceItemType);
+        serverItemTypeService.activate();
         TEST_RESOURCE_ITEM_ID = dbResourceItemType.getId();
         return dbResourceItemType;
     }
 
     protected DbBaseItemType createHarvesterItemType() {
-        DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
         setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_HARVESTER_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
@@ -997,8 +1062,8 @@ abstract public class AbstractServiceTest {
         dbMovableType.setSpeed(10000);
         dbBaseItemType.setDbMovableType(dbMovableType);
 
-        itemService.saveDbItemType(dbBaseItemType);
-        itemService.activate();
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.activate();
         TEST_HARVESTER_ITEM_ID = dbBaseItemType.getId();
         return dbBaseItemType;
     }
@@ -1016,46 +1081,148 @@ abstract public class AbstractServiceTest {
     }
 
     protected DbBoxItemType createDbBoxItemType1() {
-        DbBoxItemType dbBoxItemType = (DbBoxItemType) itemService.getDbItemTypeCrud().createDbChild(DbBoxItemType.class);
+        DbBoxItemType dbBoxItemType = (DbBoxItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBoxItemType.class);
         setupImages(dbBoxItemType, 1);
         dbBoxItemType.setName(TEST_BOX_ITEM_1);
         dbBoxItemType.setTerrainType(TerrainType.LAND);
         dbBoxItemType.setBounding(new BoundingBox(80, 80, ANGELS_1));
         dbBoxItemType.setTtl(100);
 
-        itemService.saveDbItemType(dbBoxItemType);
-        itemService.activate();
+        serverItemTypeService.saveDbItemType(dbBoxItemType);
+        serverItemTypeService.activate();
         TEST_BOX_ITEM_1_ID = dbBoxItemType.getId();
         return dbBoxItemType;
     }
 
     protected DbBoxItemType createDbBoxItemType2() {
-        DbBoxItemType dbBoxItemType = (DbBoxItemType) itemService.getDbItemTypeCrud().createDbChild(DbBoxItemType.class);
+        DbBoxItemType dbBoxItemType = (DbBoxItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBoxItemType.class);
         setupImages(dbBoxItemType, 1);
         dbBoxItemType.setName(TEST_BOX_ITEM_2);
         dbBoxItemType.setTerrainType(TerrainType.LAND);
         dbBoxItemType.setBounding(new BoundingBox(80, 80, ANGELS_1));
         dbBoxItemType.setTtl(5000);
 
-        itemService.saveDbItemType(dbBoxItemType);
-        itemService.activate();
+        serverItemTypeService.saveDbItemType(dbBoxItemType);
+        serverItemTypeService.activate();
         TEST_BOX_ITEM_2_ID = dbBoxItemType.getId();
         return dbBoxItemType;
+    }
+    // ------------------- Setup Planet --------------------
+
+    private DbPlanet setupPlanet1() {
+        DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().createDbChild();
+        dbPlanet.setName(TEST_PLANET_1);
+        dbPlanet.setStartItemFreeRange(300);
+        dbPlanet.setStartMoney(1000);
+        dbPlanet.setStartItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
+        dbPlanet.setHouseSpace(20);
+        dbPlanet.setMaxMoney(10000);
+        dbPlanet.setStartRegion(createDbRegion(new Rectangle(0, 0, 5000, 5000)));
+
+        DbPlanetItemTypeLimitation builder = dbPlanet.getItemLimitationCrud().createDbChild();
+        builder.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
+        builder.setCount(10);
+        DbPlanetItemTypeLimitation factory = dbPlanet.getItemLimitationCrud().createDbChild();
+        factory.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_FACTORY_ITEM_ID));
+        factory.setCount(10);
+        DbPlanetItemTypeLimitation attacker = dbPlanet.getItemLimitationCrud().createDbChild();
+        attacker.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID));
+        attacker.setCount(10);
+        DbPlanetItemTypeLimitation harvester = dbPlanet.getItemLimitationCrud().createDbChild();
+        harvester.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_HARVESTER_ITEM_ID));
+        harvester.setCount(10);
+        DbPlanetItemTypeLimitation container = dbPlanet.getItemLimitationCrud().createDbChild();
+        container.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONTAINER_ITEM_ID));
+        container.setCount(10);
+        DbPlanetItemTypeLimitation simpleBuilding = dbPlanet.getItemLimitationCrud().createDbChild();
+        simpleBuilding.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_SIMPLE_BUILDING_ID));
+        simpleBuilding.setCount(10);
+
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
+        TEST_PLANET_1_ID = dbPlanet.getId();
+        return dbPlanet;
+    }
+
+    private DbPlanet setupPlanet2() {
+        DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().createDbChild();
+        dbPlanet.setName(TEST_PLANET_2);
+        dbPlanet.setStartItemFreeRange(300);
+        dbPlanet.setStartMoney(1000);
+        dbPlanet.setStartItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
+        dbPlanet.setHouseSpace(20);
+        dbPlanet.setStartRegion(createDbRegion(new Rectangle(0, 0, 5000, 5000)));
+
+        DbPlanetItemTypeLimitation builder = dbPlanet.getItemLimitationCrud().createDbChild();
+        builder.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
+        builder.setCount(10);
+        DbPlanetItemTypeLimitation factory = dbPlanet.getItemLimitationCrud().createDbChild();
+        factory.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_FACTORY_ITEM_ID));
+        factory.setCount(10);
+        DbPlanetItemTypeLimitation attacker = dbPlanet.getItemLimitationCrud().createDbChild();
+        attacker.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID));
+        attacker.setCount(10);
+        DbPlanetItemTypeLimitation harvester = dbPlanet.getItemLimitationCrud().createDbChild();
+        harvester.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_HARVESTER_ITEM_ID));
+        harvester.setCount(10);
+        DbPlanetItemTypeLimitation container = dbPlanet.getItemLimitationCrud().createDbChild();
+        container.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONTAINER_ITEM_ID));
+        container.setCount(10);
+        DbPlanetItemTypeLimitation simpleBuilding = dbPlanet.getItemLimitationCrud().createDbChild();
+        simpleBuilding.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_SIMPLE_BUILDING_ID));
+        simpleBuilding.setCount(10);
+
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
+        TEST_PLANET_2_ID = dbPlanet.getId();
+        return dbPlanet;
+    }
+
+
+    private DbPlanet setupPlanet3() {
+        DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().createDbChild();
+        dbPlanet.setName(TEST_PLANET_3);
+        dbPlanet.setStartItemFreeRange(300);
+        dbPlanet.setStartMoney(1000);
+        dbPlanet.setStartItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
+        dbPlanet.setHouseSpace(20);
+        dbPlanet.setStartRegion(createDbRegion(new Rectangle(0, 0, 5000, 5000)));
+
+        DbPlanetItemTypeLimitation builder = dbPlanet.getItemLimitationCrud().createDbChild();
+        builder.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
+        builder.setCount(10);
+        DbPlanetItemTypeLimitation factory = dbPlanet.getItemLimitationCrud().createDbChild();
+        factory.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_FACTORY_ITEM_ID));
+        factory.setCount(10);
+        DbPlanetItemTypeLimitation attacker = dbPlanet.getItemLimitationCrud().createDbChild();
+        attacker.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID));
+        attacker.setCount(10);
+        DbPlanetItemTypeLimitation harvester = dbPlanet.getItemLimitationCrud().createDbChild();
+        harvester.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_HARVESTER_ITEM_ID));
+        harvester.setCount(10);
+        DbPlanetItemTypeLimitation container = dbPlanet.getItemLimitationCrud().createDbChild();
+        container.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONTAINER_ITEM_ID));
+        container.setCount(10);
+        DbPlanetItemTypeLimitation simpleBuilding = dbPlanet.getItemLimitationCrud().createDbChild();
+        simpleBuilding.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_SIMPLE_BUILDING_ID));
+        simpleBuilding.setCount(10);
+
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
+        TEST_PLANET_3_ID = dbPlanet.getId();
+        return dbPlanet;
     }
 
     // ------------------- Setup Terrain --------------------
 
-    protected DbTerrainSetting setupComplexTerrain() {
+    protected DbTerrainSetting setupComplexTerrain(DbPlanet dbPlanet) {
         setupTerrainImages();
         DbTerrainSetting dbTerrainSetting = setupComplexRealGameTerrain(createDbSurfaceImage(SurfaceType.LAND));
-        terrainService.activateTerrain();
+        dbPlanet.setDbTerrainSetting(dbTerrainSetting);
         return dbTerrainSetting;
     }
 
-    protected DbTerrainSetting setupComplexTerrain2() {
+    protected DbTerrainSetting setupComplexTerrain2(DbPlanet dbPlanet) {
         setupTerrainImages();
         DbTerrainSetting dbTerrainSetting = setupComplexRealGameTerrain2();
-        terrainService.activateTerrain();
+        dbPlanet.setDbTerrainSetting(dbTerrainSetting);
         return dbTerrainSetting;
     }
 
@@ -1081,9 +1248,9 @@ abstract public class AbstractServiceTest {
         TERRAIN_IMAGE_10x10 = dbTerrainImage4.getId();
     }
 
-    protected DbTerrainSetting setupMinimalTerrain() {
+    protected DbTerrainSetting setupMinimalTerrain(DbPlanet dbPlanet) {
         DbTerrainSetting dbTerrainSetting = setupMinimalRealGameTerrain(createDbSurfaceImage(SurfaceType.LAND));
-        terrainService.activateTerrain();
+        dbPlanet.setDbTerrainSetting(dbTerrainSetting);
         return dbTerrainSetting;
     }
 
@@ -1091,7 +1258,7 @@ abstract public class AbstractServiceTest {
         DbSurfaceImage dbSurfaceImage = terrainService.getDbSurfaceImageCrudServiceHelper().createDbChild();
         dbSurfaceImage.setSurfaceType(surfaceType);
         terrainService.getDbSurfaceImageCrudServiceHelper().updateDbChild(dbSurfaceImage);
-        terrainService.activateTerrain();
+        terrainService.activate();
         return dbSurfaceImage;
     }
 
@@ -1100,48 +1267,31 @@ abstract public class AbstractServiceTest {
         DbTerrainImage dbTerrainImage = dbTerrainImageGroup.getTerrainImageCrud().createDbChild();
         dbTerrainImage.setTiles(tileWidth, tileHeight);
         terrainService.getDbTerrainImageGroupCrudServiceHelper().updateDbChild(dbTerrainImageGroup);
-        terrainService.activateTerrain();
+        terrainService.activate();
         return dbTerrainImage;
     }
 
     protected DbTerrainSetting setupMinimalRealGameTerrain(DbSurfaceImage dbSurfaceImage) {
-        DbTerrainSetting dbTerrainSetting = terrainService.getDbTerrainSettingCrudServiceHelper().createDbChild();
-        dbTerrainSetting.setRealGame(true);
+        DbTerrainSetting dbTerrainSetting = new DbTerrainSetting();
+        dbTerrainSetting.init(null);
         dbTerrainSetting.setTileXCount(100);
         dbTerrainSetting.setTileYCount(100);
-        dbTerrainSetting.setTileWidth(100);
-        dbTerrainSetting.setTileHeight(100);
         DbSurfaceRect dbSurfaceRect = new DbSurfaceRect(new Rectangle(0, 0, 100, 100), dbSurfaceImage);
         dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(dbSurfaceRect, null);
-        terrainService.getDbTerrainSettingCrudServiceHelper().updateDbChild(dbTerrainSetting);
-        return dbTerrainSetting;
-    }
-
-    protected DbTerrainSetting setupMinimalSimulatedTerrain() {
-        DbTerrainSetting dbTerrainSetting = terrainService.getDbTerrainSettingCrudServiceHelper().createDbChild();
-        dbTerrainSetting.setRealGame(false);
-        dbTerrainSetting.setTileXCount(100);
-        dbTerrainSetting.setTileYCount(100);
-        dbTerrainSetting.setTileWidth(100);
-        dbTerrainSetting.setTileHeight(100);
-        terrainService.getDbTerrainSettingCrudServiceHelper().updateDbChild(dbTerrainSetting);
-        terrainService.activateTerrain();
         return dbTerrainSetting;
     }
 
     protected DbTerrainSetting setupComplexRealGameTerrain(DbSurfaceImage dbSurfaceImage) {
         DbTerrainImageGroup dbTerrainImageGroup = terrainService.getDbTerrainImageGroupCrudServiceHelper().readDbChildren().iterator().next();
 
-        DbTerrainSetting dbTerrainSetting = terrainService.getDbTerrainSettingCrudServiceHelper().createDbChild();
-        dbTerrainSetting.setRealGame(true);
+        DbTerrainSetting dbTerrainSetting = new DbTerrainSetting();
+        dbTerrainSetting.init(null);
         dbTerrainSetting.setTileXCount(100);
         dbTerrainSetting.setTileYCount(100);
-        dbTerrainSetting.setTileWidth(100);
-        dbTerrainSetting.setTileHeight(100);
         DbSurfaceRect dbSurfaceRect = new DbSurfaceRect(new Rectangle(0, 0, 100, 100), dbSurfaceImage);
         dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(dbSurfaceRect, null);
         // Setup Terrain Images
-        Collection<DbTerrainImagePosition> dbTerrainImagePositions = new ArrayList<DbTerrainImagePosition>();
+        Collection<DbTerrainImagePosition> dbTerrainImagePositions = new ArrayList<>();
         dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(10, 0), dbTerrainImageGroup.getTerrainImageCrud().readDbChild(TERRAIN_IMAGE_4x10), TerrainImagePosition.ZIndex.LAYER_1));
         dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(0, 13), dbTerrainImageGroup.getTerrainImageCrud().readDbChild(TERRAIN_IMAGE_10x4), TerrainImagePosition.ZIndex.LAYER_2));
         dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(0, 21), dbTerrainImageGroup.getTerrainImageCrud().readDbChild(TERRAIN_IMAGE_10x4), TerrainImagePosition.ZIndex.LAYER_1));
@@ -1153,11 +1303,7 @@ abstract public class AbstractServiceTest {
         dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(21, 29), dbTerrainImageGroup.getTerrainImageCrud().readDbChild(TERRAIN_IMAGE_4x10), TerrainImagePosition.ZIndex.LAYER_1));
         dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(35, 20), dbTerrainImageGroup.getTerrainImageCrud().readDbChild(TERRAIN_IMAGE_4x10), TerrainImagePosition.ZIndex.LAYER_2));
         dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(36, 5), dbTerrainImageGroup.getTerrainImageCrud().readDbChild(TERRAIN_IMAGE_4x10), TerrainImagePosition.ZIndex.LAYER_1));
-
-
         dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().updateDbChildren(dbTerrainImagePositions);
-
-        terrainService.getDbTerrainSettingCrudServiceHelper().updateDbChild(dbTerrainSetting);
         return dbTerrainSetting;
     }
 
@@ -1169,12 +1315,10 @@ abstract public class AbstractServiceTest {
 
         DbTerrainImageGroup dbTerrainImageGroup = terrainService.getDbTerrainImageGroupCrudServiceHelper().readDbChildren().iterator().next();
 
-        DbTerrainSetting dbTerrainSetting = terrainService.getDbTerrainSettingCrudServiceHelper().createDbChild();
-        dbTerrainSetting.setRealGame(true);
+        DbTerrainSetting dbTerrainSetting = new DbTerrainSetting();
+        dbTerrainSetting.init(null);
         dbTerrainSetting.setTileXCount(100);
         dbTerrainSetting.setTileYCount(100);
-        dbTerrainSetting.setTileWidth(100);
-        dbTerrainSetting.setTileHeight(100);
         // Surface images
         dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(new Rectangle(0, 0, 25, 40), land), null);
         dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(new Rectangle(25, 0, 1, 41), landCoast), null);
@@ -1183,55 +1327,44 @@ abstract public class AbstractServiceTest {
         dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(new Rectangle(26, 0, 1, 41), waterCoast), null);
         dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(new Rectangle(27, 0, 25, 50), water), null);
         dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(new Rectangle(0, 42, 27, 8), water), null);
-
-        terrainService.getDbTerrainSettingCrudServiceHelper().updateDbChild(dbTerrainSetting);
         return dbTerrainSetting;
     }
 
     // ------------------- Setup Levels --------------------
 
-    private void setupQuestHubWithOneRealGame(int territoryId) throws Exception {
-        DbQuestHub realGameQuestHub = userGuidanceService.getCrudQuestHub().createDbChild();
-        realGameQuestHub.setName(TEST_QUEST_HUB_1);
-        realGameQuestHub.setStartItemFreeRange(300);
-        realGameQuestHub.setStartMoney(1000);
-        realGameQuestHub.setStartTerritory(territoryService.getDbTerritoryCrudServiceHelper().readDbChild(territoryId));
-        realGameQuestHub.setStartItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
-        DbLevel dbLevel = createDbLevel2(realGameQuestHub);
+    private void setupOneLevel(DbPlanet dbPlanet) throws Exception {
+        DbLevel dbLevel = userGuidanceService.getDbLevelCrud().createDbChild();
         dbLevel.setXp(Integer.MAX_VALUE);
         dbLevel.setNumber(TEST_LEVEL_2_REAL);
+        dbLevel.setDbPlanet(dbPlanet);
         // Limitation
-        DbItemTypeLimitation builder = dbLevel.getItemTypeLimitationCrud().createDbChild();
-        builder.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
+        DbLevelItemTypeLimitation builder = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        builder.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
         builder.setCount(10);
-        DbItemTypeLimitation factory = dbLevel.getItemTypeLimitationCrud().createDbChild();
-        factory.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_FACTORY_ITEM_ID));
+        DbLevelItemTypeLimitation factory = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        factory.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_FACTORY_ITEM_ID));
         factory.setCount(10);
-        DbItemTypeLimitation attacker = dbLevel.getItemTypeLimitationCrud().createDbChild();
-        attacker.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
+        DbLevelItemTypeLimitation attacker = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        attacker.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID));
         attacker.setCount(10);
-        DbItemTypeLimitation harvester = dbLevel.getItemTypeLimitationCrud().createDbChild();
-        harvester.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_HARVESTER_ITEM_ID));
+        DbLevelItemTypeLimitation harvester = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        harvester.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_HARVESTER_ITEM_ID));
         harvester.setCount(10);
-        DbItemTypeLimitation container = dbLevel.getItemTypeLimitationCrud().createDbChild();
-        container.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_CONTAINER_ITEM_ID));
+        DbLevelItemTypeLimitation container = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        container.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONTAINER_ITEM_ID));
         container.setCount(10);
-        DbItemTypeLimitation simpleBuilding = dbLevel.getItemTypeLimitationCrud().createDbChild();
-        simpleBuilding.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_SIMPLE_BUILDING_ID));
+        DbLevelItemTypeLimitation simpleBuilding = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        simpleBuilding.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_SIMPLE_BUILDING_ID));
         simpleBuilding.setCount(10);
-        userGuidanceService.getCrudQuestHub().updateDbChild(realGameQuestHub);
+        userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         userGuidanceService.activateLevels();
         TEST_LEVEL_2_REAL_ID = dbLevel.getId();
     }
 
-    private void setupQuestHubMultipleLevels() throws Exception {
+    private void setupMultipleLevels(DbPlanet dbPlanet1, DbPlanet dbPlanet2, DbPlanet dbPlanet3) throws Exception {
+        // Setup Level - Task - Tutorial
         DbTutorialConfig tut1 = createTutorial1();
-
-        // Setup QuestHub1 - Level - Task - Tutorial
-        DbQuestHub startQuestHub = userGuidanceService.getCrudQuestHub().createDbChild();
-        startQuestHub.setName(TEST_QUEST_HUB_1);
-        startQuestHub.setRealBaseRequired(false);
-        DbLevel dbSimLevel = startQuestHub.getLevelCrud().createDbChild();
+        DbLevel dbSimLevel = userGuidanceService.getDbLevelCrud().createDbChild();
         dbSimLevel.setNumber(TEST_LEVEL_1_SIMULATED);
         dbSimLevel.setXp(1);
         DbLevelTask dbSimLevelTask = dbSimLevel.getLevelTaskCrud().createDbChild();
@@ -1239,30 +1372,22 @@ abstract public class AbstractServiceTest {
         dbSimLevelTask.setName(TEST_LEVEL_TASK_1_1_SIMULATED_NAME);
         dbSimLevelTask.setHtml("Description");
         dbSimLevelTask.setXp(1);
-        userGuidanceService.getCrudQuestHub().updateDbChild(startQuestHub);
+        userGuidanceService.getDbLevelCrud().updateDbChild(dbSimLevel);
         TEST_LEVEL_1_SIMULATED_ID = dbSimLevel.getId();
         TEST_LEVEL_TASK_1_1_SIMULATED_ID = dbSimLevelTask.getId();
 
-        // Setup QuestHub1 - Level1 - 2*LevelTask
-        DbQuestHub realGameQuestHub1 = userGuidanceService.getCrudQuestHub().createDbChild();
-        realGameQuestHub1.setName(TEST_QUEST_HUB_2);
-        realGameQuestHub1.setStartItemFreeRange(300);
-        realGameQuestHub1.setStartMoney(1000);
-        realGameQuestHub1.setStartTerritory(territoryService.getDbTerritoryCrudServiceHelper().readDbChild(TEST_NOOB_TERRITORY_ID));
-        realGameQuestHub1.setStartItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
-
-        DbLevel dbLevel1 = createDbLevel2(realGameQuestHub1);
-        dbLevel1.setHouseSpace(5);
+        DbLevel dbLevel1 = userGuidanceService.getDbLevelCrud().createDbChild();
+        dbLevel1.setDbPlanet(dbPlanet1);
         dbLevel1.setNumber(TEST_LEVEL_2_REAL);
         dbLevel1.setXp(220);
         setLimitation(dbLevel1);
         DbLevelTask dbLevelTask1 = setupCreateLevelTask1RealGameLevel(dbLevel1);
         DbLevelTask dbLevelTask2 = setupCreateLevelTask2RealGameLevel(dbLevel1);
+        userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel1);
 
-        DbLevel dbLevel2 = realGameQuestHub1.getLevelCrud().createDbChild();
-        dbLevel2.setHouseSpace(5);
+        DbLevel dbLevel2 = userGuidanceService.getDbLevelCrud().createDbChild();
+        dbLevel2.setDbPlanet(dbPlanet1);
         dbLevel2.setNumber(TEST_LEVEL_3_REAL);
-        dbLevel2.setMaxMoney(10000);
         setLimitation(dbLevel2);
         dbLevel2.setXp(400);
         DbLevelTask dbLevelTask3 = setupCreateLevelTask3RealGameLevel(dbLevel2);
@@ -1278,18 +1403,18 @@ abstract public class AbstractServiceTest {
         dbSimLevelTask3.setDbTutorialConfig(tut3);
         dbSimLevelTask3.setXp(3);
         dbSimLevelTask3.setName(TEST_LEVEL_TASK_4_3_SIMULATED_NAME);
+        userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel2);
 
-        DbLevel dbLevel3 = realGameQuestHub1.getLevelCrud().createDbChild();
+        DbLevel dbLevel3 = userGuidanceService.getDbLevelCrud().createDbChild();
+        dbLevel3.setDbPlanet(dbPlanet1);
         dbLevel3.setXp(Integer.MAX_VALUE);
-        dbLevel3.setMaxMoney(10000);
-        dbLevel3.setHouseSpace(20);
         dbLevel3.setNumber(TEST_LEVEL_4_REAL);
         setLimitation(dbLevel3);
         DbLevelTask dbLevelTask5 = setupCreateLevelTask5RealGameLevel(dbLevel3);
         DbLevelTask dbLevelTask6 = setupCreateLevelTask6RealGameLevel(dbLevel3);
+        userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel3);
 
 
-        userGuidanceService.getCrudQuestHub().updateDbChild(startQuestHub);
         TEST_LEVEL_2_REAL_ID = dbLevel1.getId();
         TEST_LEVEL_TASK_1_2_REAL_ID = dbLevelTask1.getId();
         TEST_LEVEL_TASK_2_2_REAL_ID = dbLevelTask2.getId();
@@ -1306,60 +1431,67 @@ abstract public class AbstractServiceTest {
     }
 
     private void setLimitation(DbLevel dbLevel) {
-        DbItemTypeLimitation builder = dbLevel.getItemTypeLimitationCrud().createDbChild();
-        builder.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
+        DbLevelItemTypeLimitation builder = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        builder.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
         builder.setCount(10);
-        DbItemTypeLimitation factory = dbLevel.getItemTypeLimitationCrud().createDbChild();
-        factory.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_FACTORY_ITEM_ID));
+        DbLevelItemTypeLimitation factory = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        factory.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_FACTORY_ITEM_ID));
         factory.setCount(10);
-        DbItemTypeLimitation attacker = dbLevel.getItemTypeLimitationCrud().createDbChild();
-        attacker.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
+        DbLevelItemTypeLimitation attacker = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        attacker.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID));
         attacker.setCount(10);
-        DbItemTypeLimitation harvester = dbLevel.getItemTypeLimitationCrud().createDbChild();
-        harvester.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_HARVESTER_ITEM_ID));
+        DbLevelItemTypeLimitation harvester = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        harvester.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_HARVESTER_ITEM_ID));
         harvester.setCount(10);
-        DbItemTypeLimitation container = dbLevel.getItemTypeLimitationCrud().createDbChild();
-        container.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_CONTAINER_ITEM_ID));
+        DbLevelItemTypeLimitation container = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        container.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONTAINER_ITEM_ID));
         container.setCount(10);
-        DbItemTypeLimitation simpleBuilding = dbLevel.getItemTypeLimitationCrud().createDbChild();
-        simpleBuilding.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_SIMPLE_BUILDING_ID));
+        DbLevelItemTypeLimitation simpleBuilding = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        simpleBuilding.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_SIMPLE_BUILDING_ID));
         simpleBuilding.setCount(10);
     }
 
-    private DbLevel createDbLevel2(DbQuestHub realGameQuestHub) {
-        DbLevel dbLevel1 = realGameQuestHub.getLevelCrud().createDbChild();
+    private DbLevel createDbLevel2(DbPlanet realGamePlanet) {
+        // TODO
+        Assert.fail();
+        return null;
+        /*
+        DbLevel dbLevel1 = realGamePlanet.getLevelCrud().createDbChild();
         dbLevel1.setHouseSpace(20);
         dbLevel1.setMaxMoney(10000);
         dbLevel1.setItemSellFactor(0.5);
         dbLevel1.setNumber(TEST_LEVEL_2_REAL);
         // Limitation
-        DbItemTypeLimitation builder = dbLevel1.getItemTypeLimitationCrud().createDbChild();
-        builder.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
+        DbLevelItemTypeLimitation builder = dbLevel1.getItemTypeLimitationCrud().createDbChild();
+        builder.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
         builder.setCount(10);
-        DbItemTypeLimitation factory = dbLevel1.getItemTypeLimitationCrud().createDbChild();
-        factory.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_FACTORY_ITEM_ID));
+        DbLevelItemTypeLimitation factory = dbLevel1.getItemTypeLimitationCrud().createDbChild();
+        factory.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_FACTORY_ITEM_ID));
         factory.setCount(10);
-        DbItemTypeLimitation attacker = dbLevel1.getItemTypeLimitationCrud().createDbChild();
-        attacker.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
+        DbLevelItemTypeLimitation attacker = dbLevel1.getItemTypeLimitationCrud().createDbChild();
+        attacker.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID));
         attacker.setCount(10);
-        DbItemTypeLimitation harvester = dbLevel1.getItemTypeLimitationCrud().createDbChild();
-        harvester.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_HARVESTER_ITEM_ID));
+        DbLevelItemTypeLimitation harvester = dbLevel1.getItemTypeLimitationCrud().createDbChild();
+        harvester.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_HARVESTER_ITEM_ID));
         harvester.setCount(10);
-        DbItemTypeLimitation container = dbLevel1.getItemTypeLimitationCrud().createDbChild();
-        container.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_CONTAINER_ITEM_ID));
+        DbLevelItemTypeLimitation container = dbLevel1.getItemTypeLimitationCrud().createDbChild();
+        container.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONTAINER_ITEM_ID));
         container.setCount(10);
-        DbItemTypeLimitation simpleBuilding = dbLevel1.getItemTypeLimitationCrud().createDbChild();
-        simpleBuilding.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_SIMPLE_BUILDING_ID));
+        DbLevelItemTypeLimitation simpleBuilding = dbLevel1.getItemTypeLimitationCrud().createDbChild();
+        simpleBuilding.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_SIMPLE_BUILDING_ID));
         simpleBuilding.setCount(10);
 
         return dbLevel1;
+        */
     }
 
     protected DbTutorialConfig createTutorial1() {
         // Tutorial
         DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().createDbChild();
         // Terrain
-        DbTerrainSetting dbTerrainSetting = setupMinimalSimulatedTerrain();
+        DbTerrainSetting dbTerrainSetting = new DbTerrainSetting();
+        dbTerrainSetting.setTileXCount(100);
+        dbTerrainSetting.setTileYCount(100);
         dbTutorialConfig.setDbTerrainSetting(dbTerrainSetting);
         // Task
         DbTaskConfig dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild();
@@ -1452,13 +1584,13 @@ abstract public class AbstractServiceTest {
         DbConditionConfig dbConditionConfig = new DbConditionConfig();
         dbConditionConfig.setConditionTrigger(ConditionTrigger.SYNC_ITEM_POSITION);
         DbItemTypePositionComparisonConfig dbItemTypePositionComparisonConfig = new DbItemTypePositionComparisonConfig();
-        dbItemTypePositionComparisonConfig.setRegion(new Rectangle(200, 200, 1000, 1000));
+        dbItemTypePositionComparisonConfig.setRegion(createDbRegion(new Rectangle(200, 200, 1000, 1000)));
         dbItemTypePositionComparisonConfig.setTimeInMinutes(1);
         DbComparisonItemCount dbComparisonItemCount = dbItemTypePositionComparisonConfig.getCrudDbComparisonItemCount().createDbChild();
-        dbComparisonItemCount.setItemType(itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
+        dbComparisonItemCount.setItemType(serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
         dbComparisonItemCount.setCount(1);
         dbComparisonItemCount = dbItemTypePositionComparisonConfig.getCrudDbComparisonItemCount().createDbChild();
-        dbComparisonItemCount.setItemType(itemService.getDbItemType(TEST_FACTORY_ITEM_ID));
+        dbComparisonItemCount.setItemType(serverItemTypeService.getDbItemType(TEST_FACTORY_ITEM_ID));
         dbComparisonItemCount.setCount(1);
         dbConditionConfig.setDbAbstractComparisonConfig(dbItemTypePositionComparisonConfig);
         dbLevelTask.setDbConditionConfig(dbConditionConfig);
@@ -1475,10 +1607,10 @@ abstract public class AbstractServiceTest {
         dbConditionConfig.setConditionTrigger(ConditionTrigger.SYNC_ITEM_BUILT);
         DbSyncItemTypeComparisonConfig dbSyncItemTypeComparisonConfig = new DbSyncItemTypeComparisonConfig();
         DbComparisonItemCount limit = dbSyncItemTypeComparisonConfig.getCrudDbComparisonItemCount().createDbChild();
-        limit.setItemType(itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
+        limit.setItemType(serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID));
         limit.setCount(5);
         limit = dbSyncItemTypeComparisonConfig.getCrudDbComparisonItemCount().createDbChild();
-        limit.setItemType(itemService.getDbItemType(TEST_FACTORY_ITEM_ID));
+        limit.setItemType(serverItemTypeService.getDbItemType(TEST_FACTORY_ITEM_ID));
         limit.setCount(1);
         dbConditionConfig.setDbAbstractComparisonConfig(dbSyncItemTypeComparisonConfig);
         dbLevelTask.setDbConditionConfig(dbConditionConfig);
@@ -1487,101 +1619,70 @@ abstract public class AbstractServiceTest {
 
     // ------------------- Setup minimal bot --------------------
 
-    protected DbBotConfig setupMinimalNoAttackBot(Rectangle realm) {
-        DbBotConfig dbBotConfig = botService.getDbBotConfigCrudServiceHelper().createDbChild();
+    protected DbBotConfig setupMinimalNoAttackBot(int planetId, Rectangle realmRectangle) {
+        DbRegion realm = createDbRegion(realmRectangle);
+        DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().readDbChild(planetId);
+        DbBotConfig dbBotConfig = dbPlanet.getBotCrud().createDbChild();
         dbBotConfig.setActionDelay(10);
         dbBotConfig.setRealm(realm);
         dbBotConfig.setRealGameBot(true);
         DbBotEnragementStateConfig dbBotEnragementStateConfig = dbBotConfig.getEnrageStateCrud().createDbChild();
         dbBotEnragementStateConfig.setName("NormalTest");
         DbBotItemConfig builder = dbBotEnragementStateConfig.getBotItemCrud().createDbChild();
-        builder.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        builder.setBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
         builder.setCount(1);
         builder.setCreateDirectly(true);
         builder.setRegion(realm);
         DbBotItemConfig factory = dbBotEnragementStateConfig.getBotItemCrud().createDbChild();
-        factory.setBaseItemType(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
+        factory.setBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
         factory.setCount(1);
         factory.setRegion(realm);
-        botService.getDbBotConfigCrudServiceHelper().updateDbChild(dbBotConfig);
-        botService.activate();
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
+        planetSystemService.getPlanet(planetId).deactivate();
+        planetSystemService.getPlanet(planetId).activate(dbPlanet);
         return dbBotConfig;
     }
 
-    protected DbBotConfig setupMinimalBot(Rectangle realm) {
-        DbBotConfig dbBotConfig = botService.getDbBotConfigCrudServiceHelper().createDbChild();
+    protected DbBotConfig setupMinimalBot(int planetId, Rectangle rectangleRealm) {
+        DbRegion realm = createDbRegion(rectangleRealm);
+        DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().readDbChild(planetId);
+        DbBotConfig dbBotConfig = dbPlanet.getBotCrud().createDbChild();
         dbBotConfig.setActionDelay(10);
         dbBotConfig.setRealm(realm);
         dbBotConfig.setRealGameBot(true);
         DbBotEnragementStateConfig dbBotEnragementStateConfig = dbBotConfig.getEnrageStateCrud().createDbChild();
         dbBotEnragementStateConfig.setName("NormalTest");
         DbBotItemConfig builder = dbBotEnragementStateConfig.getBotItemCrud().createDbChild();
-        builder.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        builder.setBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
         builder.setCount(1);
         builder.setCreateDirectly(true);
         builder.setRegion(realm);
         DbBotItemConfig factory = dbBotEnragementStateConfig.getBotItemCrud().createDbChild();
-        factory.setBaseItemType(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
+        factory.setBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
         factory.setCount(1);
         factory.setRegion(realm);
         DbBotItemConfig defence = dbBotEnragementStateConfig.getBotItemCrud().createDbChild();
-        defence.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        defence.setBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
         defence.setCount(2);
-        botService.getDbBotConfigCrudServiceHelper().updateDbChild(dbBotConfig);
-        botService.activate();
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
+        planetSystemService.getPlanet(planetId).deactivate();
+        planetSystemService.getPlanet(planetId).activate(dbPlanet);
         return dbBotConfig;
     }
 
-    protected void waitForBotToBuildup(BotConfig botConfig) throws InterruptedException, TimeoutException {
-        waitForBotToBuildup(botConfig, 100000);
+    protected void waitForBotToBuildup(int planetId, BotConfig botConfig) throws InterruptedException, TimeoutException {
+        waitForBotToBuildup(planetId, botConfig, 100000);
     }
 
-    protected void waitForBotToBuildup(BotConfig botConfig, int timeOut) throws InterruptedException, TimeoutException {
+    protected void waitForBotToBuildup(int planetId, BotConfig botConfig, int timeOut) throws InterruptedException, TimeoutException {
         long maxTime = System.currentTimeMillis() + timeOut;
+        BotService botService = planetSystemService.getPlanet(planetId).getPlanetServices().getBotService();
         while (!botService.getBotRunner(botConfig).isBuildupUseInTestOnly()) {
             if (System.currentTimeMillis() > maxTime) {
                 throw new TimeoutException();
             }
             Thread.sleep(100);
         }
-    }
-
-    // ------------------- Territory Config --------------------
-
-    protected DbTerritory setupSimpleTerritory(String name, int itemTypeId) {
-        DbTerritory dbTerritory = setupTerritory(name,
-                new int[]{itemTypeId},
-                new Rectangle(50, 50, 50, 50));
-        return dbTerritory;
-    }
-
-    protected void setupNoobTerritory() {
-        DbTerritory dbTerritory = setupTerritory(TEST_NOOB_TERRITORY,
-                new int[]{TEST_START_BUILDER_ITEM_ID, TEST_ATTACK_ITEM_ID, TEST_CONTAINER_ITEM_ID, TEST_FACTORY_ITEM_ID, TEST_HARVESTER_ITEM_ID},
-                new Rectangle(50, 50, 50, 50));
-        TEST_NOOB_TERRITORY_ID = dbTerritory.getId();
-    }
-
-    protected void setupComplexTerritory() {
-        DbTerritory dbTerritory = setupTerritory(COMPLEX_TERRITORY,
-                new int[]{TEST_START_BUILDER_ITEM_ID, TEST_ATTACK_ITEM_ID, TEST_CONTAINER_ITEM_ID, TEST_FACTORY_ITEM_ID, TEST_HARVESTER_ITEM_ID},
-                new Rectangle(0, 0, 16, 6),
-                new Rectangle(0, 6, 5, 6), new Rectangle(5, 6, 11, 7),
-                new Rectangle(0, 12, 5, 6), new Rectangle(5, 13, 11, 5));
-        COMPLEX_TERRITORY_ID = dbTerritory.getId();
-    }
-
-    protected DbTerritory setupTerritory(String name, int[] allowedItems, Rectangle... tileRegions) {
-        DbTerritory dbTerritory = territoryService.getDbTerritoryCrudServiceHelper().createDbChild();
-        dbTerritory.setName(name);
-        if (allowedItems != null) {
-            for (int allowedItem : allowedItems) {
-                dbTerritory.setItemAllowed(itemService.getDbBaseItemType(allowedItem), true);
-            }
-        }
-        territoryService.saveTerritory(dbTerritory.getId(), Arrays.asList(tileRegions));
-        territoryService.activate();
-        return dbTerritory;
     }
 
     // ------------------- DbXpSettings Config --------------------
@@ -1591,22 +1692,18 @@ abstract public class AbstractServiceTest {
         dbXpSettings.setKillPriceFactor(1);
         dbXpSettings.setKillQueuePeriod(20);
         dbXpSettings.setKillQueueSize(10000);
-        dbXpSettings.setBuiltPriceFactor(0.5);
         xpServic.saveXpPointSettings(dbXpSettings);
         return dbXpSettings;
     }
 
     // ------------------- Setup Resource --------------------
 
-    protected DbRegionResource setupResource() {
-        DbRegionResource dbRegionResource = resourceService.getDbRegionResourceCrudServiceHelper().createDbChild();
-        dbRegionResource.setResourceItemType(itemService.getDbResourceItemType(TEST_RESOURCE_ITEM_ID));
+    protected DbRegionResource setupResource(DbPlanet dbPlanet) {
+        DbRegionResource dbRegionResource = dbPlanet.getRegionResourceCrud().createDbChild();
+        dbRegionResource.setResourceItemType(serverItemTypeService.getDbResourceItemType(TEST_RESOURCE_ITEM_ID));
         dbRegionResource.setCount(10);
         dbRegionResource.setMinDistanceToItems(100);
-        dbRegionResource.setRegion(new Rectangle(5000, 5000, 10000, 10000));
-
-        resourceService.getDbRegionResourceCrudServiceHelper().updateDbChild(dbRegionResource);
-        resourceService.activate();
+        dbRegionResource.setRegion(createDbRegion(new Rectangle(5000, 5000, 10000, 10000)));
         return dbRegionResource;
     }
 
@@ -1823,12 +1920,18 @@ abstract public class AbstractServiceTest {
     }
     // ------------------- Div --------------------
 
-    protected Services createMockServices() {
-        Services services = EasyMock.createNiceMock(Services.class);
+    protected GlobalServices createMockGlobalServices() {
+        GlobalServices planetServices = EasyMock.createNiceMock(GlobalServices.class);
+        EasyMock.replay(planetServices);
+        return planetServices;
+    }
+
+    protected PlanetServices createMockPlanetServices() {
+        PlanetServices planetServices = EasyMock.createNiceMock(PlanetServices.class);
         AbstractTerrainService terrainService = EasyMock.createNiceMock(AbstractTerrainService.class);
-        EasyMock.expect(services.getTerrainService()).andReturn(terrainService);
-        EasyMock.replay(services);
-        return services;
+        EasyMock.expect(planetServices.getTerrainService()).andReturn(terrainService);
+        EasyMock.replay(planetServices);
+        return planetServices;
     }
 
     public static void setPrivateField(Class clazz, Object object, String fieldName, Object value) throws Exception {

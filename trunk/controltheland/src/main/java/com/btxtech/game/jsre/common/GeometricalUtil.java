@@ -15,16 +15,10 @@ package com.btxtech.game.jsre.common;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * User: beat

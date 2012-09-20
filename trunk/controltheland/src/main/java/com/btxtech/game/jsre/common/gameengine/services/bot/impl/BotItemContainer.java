@@ -15,9 +15,10 @@ package com.btxtech.game.jsre.common.gameengine.services.bot.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotItemConfig;
@@ -41,14 +42,14 @@ public class BotItemContainer {
     private final HashMap<SyncBaseItem, BotSyncBaseItem> botItems = new HashMap<SyncBaseItem, BotSyncBaseItem>();
     private Need need;
     private Logger log = Logger.getLogger(BotItemContainer.class.getName());
-    private Services services;
+    private PlanetServices planetServices;
     private String botName;
-    private Rectangle realm;
+    private Region realm;
     private CurrentBuildups currentBuildups = new CurrentBuildups();
 
-    public BotItemContainer(Collection<BotItemConfig> botItems, Rectangle realm, Services services, String botName) {
+    public BotItemContainer(Collection<BotItemConfig> botItems, Region realm, PlanetServices planetServices, String botName) {
         this.realm = realm;
-        this.services = services;
+        this.planetServices = planetServices;
         this.botName = botName;
         need = new Need(botItems);
     }
@@ -69,7 +70,7 @@ public class BotItemContainer {
         synchronized (botItems) {
             for (SyncBaseItem syncBaseItem : botItems.keySet()) {
                 if (syncBaseItem.isAlive()) {
-                    services.getItemService().killSyncItem(syncBaseItem, null, true, false);
+                    planetServices.getItemService().killSyncItem(syncBaseItem, null, true, false);
                 }
             }
         }
@@ -104,7 +105,7 @@ public class BotItemContainer {
     }
 
     private void updateState(SimpleBase simpleBase) {
-        Collection<SyncBaseItem> newItems = services.getBaseService().getItems(simpleBase);
+        Collection<SyncBaseItem> newItems = planetServices.getBaseService().getItems(simpleBase);
         if (newItems != null) {
             synchronized (botItems) {
                 newItems.removeAll(botItems.keySet());
@@ -138,7 +139,7 @@ public class BotItemContainer {
     }
 
     private void add(SyncBaseItem syncBaseItem, BotItemConfig botItemConfig) {
-        BotSyncBaseItem botSyncBaseItem = new BotSyncBaseItem(syncBaseItem, botItemConfig, services);
+        BotSyncBaseItem botSyncBaseItem = new BotSyncBaseItem(syncBaseItem, botItemConfig, planetServices);
         synchronized (botItems) {
             botItems.put(syncBaseItem, botSyncBaseItem);
         }
@@ -178,8 +179,8 @@ public class BotItemContainer {
     private void createItem(BotItemConfig botItemConfig, SimpleBase simpleBase) throws ItemLimitExceededException, HouseSpaceExceededException, NoSuchItemTypeException {
         BaseItemType toBeBuilt = botItemConfig.getBaseItemType();
         if (botItemConfig.isCreateDirectly()) {
-            Index position = services.getCollisionService().getFreeRandomPosition(toBeBuilt, botItemConfig.getRegion(), 0, false, true);
-            SyncBaseItem newItem = (SyncBaseItem) services.getItemService().createSyncObject(toBeBuilt, position, null, simpleBase, 0);
+            Index position = planetServices.getCollisionService().getFreeRandomPosition(toBeBuilt, botItemConfig.getRegion(), 0, false, true);
+            SyncBaseItem newItem = (SyncBaseItem) planetServices.getItemService().createSyncObject(toBeBuilt, position, null, simpleBase, 0);
             newItem.setBuildup(1.0);
             add(newItem, botItemConfig);
         } else {
@@ -190,7 +191,7 @@ public class BotItemContainer {
             if (botSyncBuilder.getSyncBaseItem().hasSyncFactory()) {
                 botSyncBuilder.buildUnit(toBeBuilt);
             } else {
-                Index position = services.getCollisionService().getFreeRandomPosition(toBeBuilt, botItemConfig.getRegion(), 0, false, true);
+                Index position = planetServices.getCollisionService().getFreeRandomPosition(toBeBuilt, botItemConfig.getRegion(), 0, false, true);
                 botSyncBuilder.buildBuilding(position, toBeBuilt);
             }
             currentBuildups.startBuildup(botItemConfig, botSyncBuilder.getSyncBaseItem());
@@ -217,7 +218,7 @@ public class BotItemContainer {
                 }
 
                 BotItemConfig botItemConfig = botSyncBaseItem.getBotItemConfig();
-                if (botItemConfig.isMoveRealmIfIdle() && botSyncBaseItem.canMove() && !realm.contains(botSyncBaseItem.getPosition())) {
+                if (botItemConfig.isMoveRealmIfIdle() && botSyncBaseItem.canMove() && !realm.isInsideAbsolute(botSyncBaseItem.getPosition())) {
                     botSyncBaseItem.move(realm);
                 } else if (botItemConfig.getIdleTtl() != null && botSyncBaseItem.getIdleTimeStamp() + botItemConfig.getIdleTtl() < System.currentTimeMillis()) {
                     botSyncBaseItem.kill();

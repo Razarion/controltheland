@@ -15,7 +15,7 @@ package com.btxtech.game.jsre.common.utg.config;
 
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.SyncItemTypeComparison;
 
@@ -27,7 +27,6 @@ import java.util.Map;
  * Time: 21:06:41
  */
 public class SyncItemTypeComparisonConfig implements AbstractComparisonConfig {
-    private Integer excludedTerritoryId;
     private Map<ItemType, Integer> itemTypeCount;
     private String htmlProgressTamplate;
 
@@ -37,14 +36,13 @@ public class SyncItemTypeComparisonConfig implements AbstractComparisonConfig {
     public SyncItemTypeComparisonConfig() {
     }
 
-    public SyncItemTypeComparisonConfig(Integer excludedTerritoryId, Map<ItemType, Integer> itemTypeCount, String htmlProgressTamplate) {
-        this.excludedTerritoryId = excludedTerritoryId;
+    public SyncItemTypeComparisonConfig(Map<ItemType, Integer> itemTypeCount, String htmlProgressTamplate) {
         this.itemTypeCount = itemTypeCount;
         this.htmlProgressTamplate = htmlProgressTamplate;
     }
 
     @Override
-    public AbstractComparison createAbstractComparison(Services services, SimpleBase simpleBase) {
-        return new SyncItemTypeComparison(excludedTerritoryId, itemTypeCount, htmlProgressTamplate);
+    public AbstractComparison createAbstractComparison(PlanetServices planetServices, SimpleBase simpleBase) {
+        return new SyncItemTypeComparison(itemTypeCount, htmlProgressTamplate);
     }
 }

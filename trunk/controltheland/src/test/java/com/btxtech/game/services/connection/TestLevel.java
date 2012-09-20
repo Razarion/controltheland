@@ -26,7 +26,7 @@ public class TestLevel extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void realGameInfo() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -43,7 +43,7 @@ public class TestLevel extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void packetSending() throws Exception {
-        configureGameMultipleLevel();
+        configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

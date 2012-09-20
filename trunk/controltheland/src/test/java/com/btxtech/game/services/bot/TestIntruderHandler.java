@@ -3,6 +3,7 @@ package com.btxtech.game.services.bot;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.CommonJava;
+import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.bot.impl.BotEnragementState;
 import com.btxtech.game.jsre.common.gameengine.services.bot.impl.BotSyncBaseItem;
@@ -11,10 +12,10 @@ import com.btxtech.game.jsre.common.gameengine.services.bot.impl.ShortestWaySort
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.TestServices;
-import com.btxtech.game.services.action.ActionService;
-import com.btxtech.game.services.collision.CollisionService;
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.TestPlanetServices;
+import com.btxtech.game.services.planet.ActionService;
+import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.ServerItemService;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
@@ -34,38 +35,38 @@ import java.util.Map;
  */
 public class TestIntruderHandler extends AbstractServiceTest {
     @Autowired
-    private CollisionService collisionService;
+    private PlanetSystemService planetSystemService;
 
     @Test
     @DirtiesContext
     public void noIntruders() throws Exception {
-        SimpleBase botBase = new SimpleBase(1);
-        Rectangle region = new Rectangle(0, 0, 2000, 2000);
+        SimpleBase botBase = new SimpleBase(1, 1);
+        Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
 
-        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
-        EasyMock.expect(mockItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>emptyList());
+        ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
+        EasyMock.expect(mockServerItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>emptyList());
         BotEnragementState mockEnragementState = EasyMock.createStrictMock(BotEnragementState.class);
         mockEnragementState.handleIntruders(Collections.<SyncBaseItem>emptyList(), botBase);
 
-        TestServices testServices = new TestServices();
-        testServices.setItemService(mockItemService);
+        TestPlanetServices testServices = new TestPlanetServices();
+        testServices.setItemService(mockServerItemService);
 
         IntruderHandler intruderHandler = new IntruderHandler(mockEnragementState, region, testServices);
 
         EasyMock.replay(mockEnragementState);
-        EasyMock.replay(mockItemService);
+        EasyMock.replay(mockServerItemService);
         intruderHandler.handleIntruders(botBase);
         EasyMock.verify(mockEnragementState);
-        EasyMock.verify(mockItemService);
+        EasyMock.verify(mockServerItemService);
     }
 
     @Test
     @DirtiesContext
     public void oneIntrudersNoDefender() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
-        SimpleBase botBase = new SimpleBase(1);
-        Rectangle region = new Rectangle(0, 0, 2000, 2000);
+        SimpleBase botBase = new SimpleBase(1, 1);
+        Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
         SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
 
         BotEnragementState mockEnragementState = EasyMock.createStrictMock(BotEnragementState.class);
@@ -76,42 +77,42 @@ public class TestIntruderHandler extends AbstractServiceTest {
         EasyMock.expect(mockEnragementState.getAllIdleAttackers()).andReturn(Collections.<BotSyncBaseItem>emptyList());
         mockEnragementState.handleIntruders(Collections.<SyncBaseItem>singletonList(intruder), botBase);
 
-        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
-        EasyMock.expect(mockItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder)).times(3);
+        ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
+        EasyMock.expect(mockServerItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder)).times(3);
 
-        TestServices testServices = new TestServices();
-        testServices.setItemService(mockItemService);
+        TestPlanetServices testServices = new TestPlanetServices();
+        testServices.setItemService(mockServerItemService);
 
         IntruderHandler intruderHandler = new IntruderHandler(mockEnragementState, region, testServices);
 
         EasyMock.replay(mockEnragementState);
-        EasyMock.replay(mockItemService);
+        EasyMock.replay(mockServerItemService);
         intruderHandler.handleIntruders(botBase);
         intruderHandler.handleIntruders(botBase);
         intruderHandler.handleIntruders(botBase);
         EasyMock.verify(mockEnragementState);
-        EasyMock.verify(mockItemService);
+        EasyMock.verify(mockServerItemService);
     }
 
     @Test
     @DirtiesContext
     public void oneIntruders() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
-        SimpleBase botBase = new SimpleBase(1);
-        Rectangle region = new Rectangle(0, 0, 2000, 2000);
+        SimpleBase botBase = new SimpleBase(1, 1);
+        Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
         SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
         SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-2, -2, 0));
 
         ActionService mockActionService = EasyMock.createStrictMock(ActionService.class);
         mockActionService.attack(EasyMock.eq(defender), EasyMock.eq(intruder), EasyMock.eq(new Index(1001, 822)), EasyMock.eq(3.141592653589793, 0.1), EasyMock.eq(true));
 
-        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
-        EasyMock.expect(mockItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
+        ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
+        EasyMock.expect(mockServerItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
 
-        TestServices testServices = new TestServices();
-        testServices.setItemService(mockItemService);
-        testServices.setCollisionService(collisionService);
+        TestPlanetServices testServices = new TestPlanetServices();
+        testServices.setItemService(mockServerItemService);
+        testServices.setCollisionService(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getCollisionService());
         testServices.setActionService(mockActionService);
 
         BotEnragementState mockEnragementState = EasyMock.createStrictMock(BotEnragementState.class);
@@ -122,25 +123,25 @@ public class TestIntruderHandler extends AbstractServiceTest {
         IntruderHandler intruderHandler = new IntruderHandler(mockEnragementState, region, testServices);
 
         EasyMock.replay(mockEnragementState);
-        EasyMock.replay(mockItemService);
+        EasyMock.replay(mockServerItemService);
         EasyMock.replay(mockActionService);
         intruderHandler.handleIntruders(botBase);
         EasyMock.verify(mockEnragementState);
-        EasyMock.verify(mockItemService);
+        EasyMock.verify(mockServerItemService);
         EasyMock.verify(mockActionService);
     }
 
     @Test
     @DirtiesContext
     public void oneIntruderAndGone() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
-        SimpleBase botBase = new SimpleBase(1);
-        Rectangle region = new Rectangle(0, 0, 2000, 2000);
+        SimpleBase botBase = new SimpleBase(1, 1);
+        Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
         SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
         SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-2, -2, 0));
 
-        TestServices testServices = new TestServices();
+        TestPlanetServices testServices = new TestPlanetServices();
 
         ActionService mockActionService = EasyMock.createStrictMock(ActionService.class);
         testServices.setActionService(mockActionService);
@@ -152,36 +153,36 @@ public class TestIntruderHandler extends AbstractServiceTest {
         mockEnragementState.handleIntruders(Collections.<SyncBaseItem>singletonList(intruder), botBase);
         mockEnragementState.handleIntruders(Collections.<SyncBaseItem>emptyList(), botBase);
 
-        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
-        EasyMock.expect(mockItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
-        EasyMock.expect(mockItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>emptyList());
+        ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
+        EasyMock.expect(mockServerItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
+        EasyMock.expect(mockServerItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>emptyList());
 
-        testServices.setItemService(mockItemService);
-        testServices.setCollisionService(collisionService);
+        testServices.setItemService(mockServerItemService);
+        testServices.setCollisionService(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getCollisionService());
 
         IntruderHandler intruderHandler = new IntruderHandler(mockEnragementState, region, testServices);
 
         EasyMock.replay(mockEnragementState);
-        EasyMock.replay(mockItemService);
+        EasyMock.replay(mockServerItemService);
         EasyMock.replay(mockActionService);
         intruderHandler.handleIntruders(botBase);
         intruderHandler.handleIntruders(botBase);
         EasyMock.verify(mockEnragementState);
-        EasyMock.verify(mockItemService);
+        EasyMock.verify(mockServerItemService);
         EasyMock.verify(mockActionService);
     }
 
     @Test
     @DirtiesContext
     public void oneIntruderAndAttackerDies() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
-        SimpleBase botBase = new SimpleBase(1);
-        Rectangle region = new Rectangle(0, 0, 2000, 2000);
+        SimpleBase botBase = new SimpleBase(1, 1);
+        Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
         SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
         SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-2, -2, 0));
 
-        TestServices testServices = new TestServices();
+        TestPlanetServices testServices = new TestPlanetServices();
 
         ActionService mockActionService = EasyMock.createStrictMock(ActionService.class);
         mockActionService.attack(EasyMock.eq(defender), EasyMock.eq(intruder), EasyMock.eq(new Index(1001, 822)), EasyMock.eq(3.141592653589793, 0.1), EasyMock.eq(true));
@@ -194,37 +195,37 @@ public class TestIntruderHandler extends AbstractServiceTest {
         EasyMock.expect(mockEnragementState.getAllIdleAttackers()).andReturn(Collections.<BotSyncBaseItem>emptyList());
         mockEnragementState.handleIntruders(Collections.<SyncBaseItem>singletonList(intruder), botBase);
 
-        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
-        EasyMock.expect(mockItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
-        EasyMock.expect(mockItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
+        ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
+        EasyMock.expect(mockServerItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
+        EasyMock.expect(mockServerItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
 
-        testServices.setItemService(mockItemService);
-        testServices.setCollisionService(collisionService);
+        testServices.setItemService(mockServerItemService);
+        testServices.setCollisionService(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getCollisionService());
 
         IntruderHandler intruderHandler = new IntruderHandler(mockEnragementState, region, testServices);
 
         EasyMock.replay(mockEnragementState);
-        EasyMock.replay(mockItemService);
+        EasyMock.replay(mockServerItemService);
         EasyMock.replay(mockActionService);
         intruderHandler.handleIntruders(botBase);
         defender.setHealth(0);
         intruderHandler.handleIntruders(botBase);
         EasyMock.verify(mockEnragementState);
-        EasyMock.verify(mockItemService);
+        EasyMock.verify(mockServerItemService);
         EasyMock.verify(mockActionService);
     }
 
     @Test
     @DirtiesContext
     public void oneIntruderAndAttackerBecomesIdle() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
-        SimpleBase botBase = new SimpleBase(1);
-        Rectangle region = new Rectangle(0, 0, 2000, 2000);
+        SimpleBase botBase = new SimpleBase(1, 1);
+        Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
         SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
         SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-2, -2, 0));
 
-        TestServices testServices = new TestServices();
+        TestPlanetServices testServices = new TestPlanetServices();
 
         ActionService mockActionService = EasyMock.createStrictMock(ActionService.class);
         mockActionService.attack(EasyMock.eq(attacker), EasyMock.eq(intruder), EasyMock.eq(new Index(1001, 822)), EasyMock.eq(3.141592653589793, 0.1), EasyMock.eq(true));
@@ -238,37 +239,37 @@ public class TestIntruderHandler extends AbstractServiceTest {
         EasyMock.expect(mockEnragementState.getAllIdleAttackers()).andReturn(Collections.singleton(attackerBotItem));
         mockEnragementState.handleIntruders(Collections.<SyncBaseItem>singletonList(intruder), botBase);
 
-        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
-        EasyMock.expect(mockItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
-        EasyMock.expect(mockItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
+        ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
+        EasyMock.expect(mockServerItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
+        EasyMock.expect(mockServerItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
 
-        testServices.setItemService(mockItemService);
-        testServices.setCollisionService(collisionService);
+        testServices.setItemService(mockServerItemService);
+        testServices.setCollisionService(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getCollisionService());
 
         IntruderHandler intruderHandler = new IntruderHandler(mockEnragementState, region, testServices);
 
         EasyMock.replay(mockEnragementState);
-        EasyMock.replay(mockItemService);
+        EasyMock.replay(mockServerItemService);
         EasyMock.replay(mockActionService);
         intruderHandler.handleIntruders(botBase);
         setPrivateField(BotSyncBaseItem.class, attackerBotItem, "idle", true);
         intruderHandler.handleIntruders(botBase);
         EasyMock.verify(mockEnragementState);
-        EasyMock.verify(mockItemService);
+        EasyMock.verify(mockServerItemService);
         EasyMock.verify(mockActionService);
     }
 
     @Test
     @DirtiesContext
     public void oneIntruderAndAttackerException() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
-        SimpleBase botBase = new SimpleBase(1);
-        Rectangle region = new Rectangle(0, 0, 2000, 2000);
+        SimpleBase botBase = new SimpleBase(1, 1);
+        Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
         SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
         SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-2, -2, 0));
 
-        TestServices testServices = new TestServices();
+        TestPlanetServices testServices = new TestPlanetServices();
 
         ActionService mockActionService = EasyMock.createStrictMock(ActionService.class);
         mockActionService.attack(EasyMock.eq(attacker), EasyMock.eq(intruder), EasyMock.eq(new Index(1001, 822)), EasyMock.eq(3.141592653589793, 0.1), EasyMock.eq(true));
@@ -284,37 +285,37 @@ public class TestIntruderHandler extends AbstractServiceTest {
         EasyMock.expect(mockEnragementState.getAllIdleAttackers()).andReturn(Collections.singleton(attackerBotItem));
         mockEnragementState.handleIntruders(Collections.<SyncBaseItem>singletonList(intruder), botBase);
 
-        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
-        EasyMock.expect(mockItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
-        EasyMock.expect(mockItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
+        ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
+        EasyMock.expect(mockServerItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
+        EasyMock.expect(mockServerItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
 
-        testServices.setItemService(mockItemService);
-        testServices.setCollisionService(collisionService);
+        testServices.setItemService(mockServerItemService);
+        testServices.setCollisionService(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getCollisionService());
 
         IntruderHandler intruderHandler = new IntruderHandler(mockEnragementState, region, testServices);
 
         EasyMock.replay(mockEnragementState);
-        EasyMock.replay(mockItemService);
+        EasyMock.replay(mockServerItemService);
         EasyMock.replay(mockActionService);
         intruderHandler.handleIntruders(botBase);
         intruderHandler.handleIntruders(botBase);
         EasyMock.verify(mockEnragementState);
-        EasyMock.verify(mockItemService);
+        EasyMock.verify(mockServerItemService);
         EasyMock.verify(mockActionService);
     }
 
     @Test
     @DirtiesContext
     public void twoIntruderTakeNextEnemy() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
-        SimpleBase botBase = new SimpleBase(1);
-        Rectangle region = new Rectangle(0, 0, 2000, 2000);
+        SimpleBase botBase = new SimpleBase(1, 1);
+        Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
         SyncBaseItem intruder1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
         SyncBaseItem intruder2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1500), new Id(-2, -1, 0));
         SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-3, -2, 0));
 
-        TestServices testServices = new TestServices();
+        TestPlanetServices testServices = new TestPlanetServices();
 
         ActionService mockActionService = EasyMock.createStrictMock(ActionService.class);
         mockActionService.attack(EasyMock.eq(attacker), EasyMock.eq(intruder1), EasyMock.eq(new Index(1001, 822)), EasyMock.eq(3.141592653589793, 0.1), EasyMock.eq(true));
@@ -330,29 +331,29 @@ public class TestIntruderHandler extends AbstractServiceTest {
         EasyMock.expect(mockEnragementState.getAllIdleAttackers()).andReturn(Collections.singleton(attackerBotItem));
         mockEnragementState.handleIntruders(Collections.<SyncBaseItem>singletonList(intruder1), botBase);
 
-        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
-        EasyMock.expect(mockItemService.getEnemyItems(botBase, region)).andReturn(Arrays.asList(intruder2, intruder1));
-        EasyMock.expect(mockItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder1));
+        ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
+        EasyMock.expect(mockServerItemService.getEnemyItems(botBase, region)).andReturn(Arrays.asList(intruder2, intruder1));
+        EasyMock.expect(mockServerItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder1));
 
-        testServices.setItemService(mockItemService);
-        testServices.setCollisionService(collisionService);
+        testServices.setItemService(mockServerItemService);
+        testServices.setCollisionService(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getCollisionService());
 
         IntruderHandler intruderHandler = new IntruderHandler(mockEnragementState, region, testServices);
 
         EasyMock.replay(mockEnragementState);
-        EasyMock.replay(mockItemService);
+        EasyMock.replay(mockServerItemService);
         EasyMock.replay(mockActionService);
         intruderHandler.handleIntruders(botBase);
         intruderHandler.handleIntruders(botBase);
         EasyMock.verify(mockEnragementState);
-        EasyMock.verify(mockItemService);
+        EasyMock.verify(mockServerItemService);
         EasyMock.verify(mockActionService);
     }
 
     @Test
     @DirtiesContext
     public void shortestWaySorter() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
         // Intruders
         SyncBaseItem intruder1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1200), new Id(-1, -1, 0));
@@ -529,14 +530,14 @@ public class TestIntruderHandler extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void onIntrudersLeft() throws Exception {
-        configureRealGame();
+        configureSimplePlanet();
 
-        SimpleBase botBase = new SimpleBase(1);
-        Rectangle region = new Rectangle(0, 0, 2000, 2000);
+        SimpleBase botBase = new SimpleBase(1, 1);
+        Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
         SyncBaseItem intruder1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
         SyncBaseItem intruder2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1500), new Id(-2, -1, 0));
 
-        TestServices testServices = new TestServices();
+        TestPlanetServices testServices = new TestPlanetServices();
 
         ActionService mockActionService = EasyMock.createNiceMock(ActionService.class);
         testServices.setActionService(mockActionService);
@@ -554,22 +555,22 @@ public class TestIntruderHandler extends AbstractServiceTest {
         mockEnragementState.handleIntruders(Arrays.asList(intruder2, intruder1), botBase);
         mockEnragementState.handleIntruders(Collections.<SyncBaseItem>emptyList(), botBase);
 
-        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
-        EasyMock.expect(mockItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>emptyList());
-        EasyMock.expect(mockItemService.getEnemyItems(botBase, region)).andReturn(Arrays.asList(intruder2, intruder1));
-        EasyMock.expect(mockItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder1));
-        EasyMock.expect(mockItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>emptyList());
-        EasyMock.expect(mockItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder2));
-        EasyMock.expect(mockItemService.getEnemyItems(botBase, region)).andReturn(Arrays.asList(intruder2, intruder1));
-        EasyMock.expect(mockItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>emptyList());
+        ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
+        EasyMock.expect(mockServerItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>emptyList());
+        EasyMock.expect(mockServerItemService.getEnemyItems(botBase, region)).andReturn(Arrays.asList(intruder2, intruder1));
+        EasyMock.expect(mockServerItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder1));
+        EasyMock.expect(mockServerItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>emptyList());
+        EasyMock.expect(mockServerItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder2));
+        EasyMock.expect(mockServerItemService.getEnemyItems(botBase, region)).andReturn(Arrays.asList(intruder2, intruder1));
+        EasyMock.expect(mockServerItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>emptyList());
 
-        testServices.setItemService(mockItemService);
-        testServices.setCollisionService(collisionService);
+        testServices.setItemService(mockServerItemService);
+        testServices.setCollisionService(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getCollisionService());
 
         IntruderHandler intruderHandler = new IntruderHandler(mockEnragementState, region, testServices);
 
         EasyMock.replay(mockEnragementState);
-        EasyMock.replay(mockItemService);
+        EasyMock.replay(mockServerItemService);
         EasyMock.replay(mockActionService);
         intruderHandler.handleIntruders(botBase);
         intruderHandler.handleIntruders(botBase);
@@ -579,7 +580,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
         intruderHandler.handleIntruders(botBase);
         intruderHandler.handleIntruders(botBase);
         EasyMock.verify(mockEnragementState);
-        EasyMock.verify(mockItemService);
+        EasyMock.verify(mockServerItemService);
         EasyMock.verify(mockActionService);
     }
 

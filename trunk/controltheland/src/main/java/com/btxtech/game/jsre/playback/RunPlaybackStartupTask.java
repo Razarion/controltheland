@@ -17,7 +17,6 @@ import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.DeferredStartup;
 import com.btxtech.game.jsre.client.renderer.Renderer;
-import com.btxtech.game.jsre.client.simulation.Simulation;
 
 /**
  * User: beat

@@ -14,7 +14,8 @@
 package com.btxtech.game.jsre.common.utg.impl;
 
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.utg.ConditionService;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
@@ -55,7 +56,9 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
 
     protected abstract Collection<AbstractConditionTrigger<A, I>> getAbstractConditionPrivate(A actor, ConditionTrigger conditionTrigger);
 
-    protected abstract Services getServices();
+    protected abstract GlobalServices getGlobalServices();
+
+    protected abstract PlanetServices getPlanetServices(A a);
 
     protected abstract A getActor(SimpleBase actorBase);
 
@@ -77,9 +80,9 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
         }
         AbstractComparison abstractComparison = null;
         if (conditionConfig.getConditionTrigger().isComparisonNeeded()) {
-            abstractComparison = conditionConfig.getAbstractComparisonConfig().createAbstractComparison(getServices(), getSimpleBase(a));
+            abstractComparison = conditionConfig.getAbstractComparisonConfig().createAbstractComparison(getPlanetServices(a), getSimpleBase(a));
             if (abstractComparison instanceof AbstractSyncItemComparison) {
-                ((AbstractSyncItemComparison) abstractComparison).setServices(getServices());
+                ((AbstractSyncItemComparison) abstractComparison).setGlobalServices(getGlobalServices());
             }
             if (abstractComparison instanceof TimeAware && ((TimeAware) abstractComparison).isTimerNeeded()) {
                 timeAwareList.add((TimeAware) abstractComparison);

@@ -51,6 +51,7 @@ import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import junit.framework.Assert;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -115,26 +116,27 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     protected void setupTutorialConfig(SimulationInfo simulationInfo) {
+        Assert.fail("...TODO...");
         // Condition Simulation with two tasks
-        Map<ItemType, Integer> conditionItemType = new HashMap<ItemType, Integer>();
+       /* Map<ItemType, Integer> conditionItemType = new HashMap<ItemType, Integer>();
         conditionItemType.put(MOVABLE_ITEM_TYPE, 1);
-        ConditionConfig conditionConfig1 = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, conditionItemType, new Rectangle(500, 500, 400, 400), null, true, null), null);
-        ConditionConfig conditionConfig2 = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(null, conditionItemType, new Rectangle(500, 500, 400, 400), null, true, null), null);
+        ConditionConfig conditionConfig1 = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(conditionItemType, creanew Rectangle(500, 500, 400, 400), null, true, null), null);
+        ConditionConfig conditionConfig2 = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(conditionItemType, new Rectangle(500, 500, 400, 400), null, true, null), null);
 
         // Setup SimulationInfo
         List<ItemTypeAndPosition> ownItems = new ArrayList<ItemTypeAndPosition>();
         ownItems.add(new ItemTypeAndPosition(MOVABLE_ITEM_TYPE.getId(), new Index(100, 100), 0));
         Map<Integer, Integer> itemTypeLimitation = new HashMap<Integer, Integer>();
         List<TaskConfig> taskConfigs = new ArrayList<TaskConfig>();
-        taskConfigs.add(new TaskConfig(ownItems, null, conditionConfig1, 10, 100, 1000, 0.5, "TestTask1", null, itemTypeLimitation, RadarMode.MAP, null));
-        taskConfigs.add(new TaskConfig(ownItems, null, conditionConfig2, 10, 100, 1000, 0.5, "TestTask2", null, itemTypeLimitation, RadarMode.MAP, null));
+        taskConfigs.add(new TaskConfig(ownItems, null, conditionConfig1, 10, 100, 1000, "TestTask1", null, itemTypeLimitation, RadarMode.MAP, null));
+        taskConfigs.add(new TaskConfig(ownItems, null, conditionConfig2, 10, 100, 1000, "TestTask2", null, itemTypeLimitation, RadarMode.MAP, null));
         TutorialConfig tutorialConfig = new TutorialConfig(taskConfigs, "MyTestBase", 500, 500, false, "", false);
         simulationInfo.setTutorialConfig(tutorialConfig);
-        simulationInfo.setLevelNumber(1);
+        simulationInfo.setLevelNumber(1); */
     }
 
     protected void setupTerrain(GameInfo gameInfo) {
-        gameInfo.setTerrainSettings(new TerrainSettings(50, 50, 100, 100));
+        gameInfo.setTerrainSettings(new TerrainSettings(50, 50));
         gameInfo.setTerrainImagePositions(new ArrayList<TerrainImagePosition>());
         Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
         surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 50, 50), 0));

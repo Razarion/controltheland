@@ -14,9 +14,10 @@
 package com.btxtech.game.jsre.common.utg.config;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.ItemTypePositionComparison;
 
@@ -28,9 +29,8 @@ import java.util.Map;
  * Time: 21:06:41
  */
 public class ItemTypePositionComparisonConfig implements AbstractComparisonConfig {
-    private Integer excludedTerritoryId;
     private Map<ItemType, Integer> itemTypes;
-    private Rectangle region;
+    private Region region;
     private Integer time;
     private boolean addExistingItems;
     private String htmlProgressTamplate;
@@ -41,8 +41,7 @@ public class ItemTypePositionComparisonConfig implements AbstractComparisonConfi
     public ItemTypePositionComparisonConfig() {
     }
 
-    public ItemTypePositionComparisonConfig(Integer excludedTerritoryId, Map<ItemType, Integer> itemTypes, Rectangle region, Integer time, boolean addExistingItems, String htmlProgressTamplate) {
-        this.excludedTerritoryId = excludedTerritoryId;
+    public ItemTypePositionComparisonConfig(Map<ItemType, Integer> itemTypes, Region region, Integer time, boolean addExistingItems, String htmlProgressTamplate) {
         this.itemTypes = itemTypes;
         this.region = region;
         this.time = time;
@@ -51,7 +50,10 @@ public class ItemTypePositionComparisonConfig implements AbstractComparisonConfi
     }
 
     @Override
-    public AbstractComparison createAbstractComparison(Services services, SimpleBase simpleBase) {
-        return new ItemTypePositionComparison(excludedTerritoryId, itemTypes, region, time, addExistingItems, services, simpleBase, htmlProgressTamplate);
+    public AbstractComparison createAbstractComparison(PlanetServices planetServices, SimpleBase simpleBase) {
+        if (planetServices == null) {
+            throw new IllegalArgumentException("PlanetServices is not allowed to be null on a ItemTypePositionComparisonConfig");
+        }
+        return new ItemTypePositionComparison(itemTypes, region, time, addExistingItems, planetServices, simpleBase, htmlProgressTamplate);
     }
 }

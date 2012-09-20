@@ -16,12 +16,13 @@ package com.btxtech.game.jsre.client;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
-import com.btxtech.game.jsre.common.packets.EnergyPacket;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.energy.AbstractBaseEnergy;
 import com.btxtech.game.jsre.common.gameengine.services.energy.EnergyService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncConsumer;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncGenerator;
+import com.btxtech.game.jsre.common.packets.EnergyPacket;
 
 /**
  * User: beat
@@ -107,5 +108,10 @@ public class ClientEnergyService extends AbstractBaseEnergy implements EnergySer
         if (syncBaseItem.hasSyncGenerator()) {
             generatorDeactivated(syncBaseItem.getSyncGenerator());
         }
+    }
+
+    @Override
+    public void onBaseKilled(SimpleBase simpleBase) {
+        // Not Used on client
     }
 }

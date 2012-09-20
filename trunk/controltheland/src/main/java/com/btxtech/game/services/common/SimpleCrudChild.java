@@ -2,8 +2,6 @@ package com.btxtech.game.services.common;
 
 import com.btxtech.game.services.user.UserService;
 
-import java.io.Serializable;
-
 /**
  * User: beat
  * Date: 03.07.2011

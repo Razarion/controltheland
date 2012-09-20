@@ -15,8 +15,8 @@ package com.btxtech.game.services.history;
 
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.db.IndexUserType;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
@@ -113,7 +113,7 @@ public class DbHistoryElement implements Serializable {
     protected DbHistoryElement() {
     }
 
-    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncItem syncItem, DbLevel level, DbLevelTask levelTask, BaseService baseService, String sessionId, Source source, com.btxtech.game.jsre.client.common.Index position, Integer deltaRazarion, Integer razarion, String inventory, String botName, String botInfo) {
+    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncItem syncItem, DbLevel level, DbLevelTask levelTask, PlanetSystemService planetSystemService, String sessionId, Source source, com.btxtech.game.jsre.client.common.Index position, Integer deltaRazarion, Integer razarion, String inventory, String botName, String botInfo) {
         this.sessionId = sessionId;
         this.deltaRazarion = deltaRazarion;
         this.razarion = razarion;
@@ -124,10 +124,10 @@ public class DbHistoryElement implements Serializable {
         this.type = type;
         actorUserName = actorUser != null ? actorUser.getUsername() : null;
         targetUserName = targetUser != null ? targetUser.getUsername() : null;
-        actorBaseId = actorBase != null ? actorBase.getId() : null;
-        actorBaseName = actorBase != null ? baseService.getBaseName(actorBase) : null;
-        targetBaseId = targetBase != null ? targetBase.getId() : null;
-        targetBaseName = targetBase != null ? baseService.getBaseName(targetBase) : null;
+        actorBaseId = actorBase != null ? actorBase.getBaseId() : null;
+        actorBaseName = actorBase != null ? planetSystemService.getServerPlanetServices(actorBase).getBaseService().getBaseName(actorBase) : null;
+        targetBaseId = targetBase != null ? targetBase.getBaseId() : null;
+        targetBaseName = targetBase != null ? planetSystemService.getServerPlanetServices(targetBase).getBaseService().getBaseName(targetBase) : null;
         itemTypeName = syncItem != null ? syncItem.getItemType().getName() : null;
         levelName = level != null ? level.getName() : null;
         levelTaskName = levelTask != null ? levelTask.getName() : null;

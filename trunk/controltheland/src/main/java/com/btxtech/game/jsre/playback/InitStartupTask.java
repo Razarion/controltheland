@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.playback;
 
-import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.control.task.DeferredStartup;

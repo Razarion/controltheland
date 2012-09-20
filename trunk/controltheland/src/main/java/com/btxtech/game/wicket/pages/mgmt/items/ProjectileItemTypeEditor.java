@@ -14,7 +14,6 @@
 package com.btxtech.game.wicket.pages.mgmt.items;
 
 import com.btxtech.game.services.common.RuServiceHelper;
-import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.RuModel;
@@ -32,8 +31,6 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Time: 12:55:51
  */
 public class ProjectileItemTypeEditor extends MgmtWebPage {
-    @SpringBean
-    private ItemService itemService;
     @SpringBean
     private RuServiceHelper<DbProjectileItemType> ruServiceHelper;
 

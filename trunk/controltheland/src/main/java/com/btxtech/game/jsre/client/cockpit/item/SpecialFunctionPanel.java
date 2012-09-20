@@ -13,9 +13,13 @@
 
 package com.btxtech.game.jsre.client.cockpit.item;
 
+import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
-import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
+import com.btxtech.game.jsre.client.item.ItemTypeContainer;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -23,9 +27,9 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.Label;
 
 /**
  * User: beat Date: 18.11.2010 Time: 10:51:09
@@ -58,7 +62,12 @@ public class SpecialFunctionPanel extends Composite {
         }
 
         if (syncBaseItem.isUpgradeable()) {
-            upgradeButton.setEnabled(ClientLevelHandler.getInstance().isItemTypeAllowed(syncBaseItem.getBaseItemType().getUpgradeable()));
+            try {
+                BaseItemType upgradeTo = (BaseItemType) ItemTypeContainer.getInstance().getItemType(syncBaseItem.getBaseItemType().getUpgradeable());
+                upgradeButton.setEnabled(!ClientBase.getInstance().isLevelLimitation4ItemTypeExceeded(upgradeTo, ClientBase.getInstance().getSimpleBase()));
+            } catch (NoSuchItemTypeException e) {
+                GwtCommon.handleException(e);
+            }
         } else {
             upgradeButton.setVisible(false);
 

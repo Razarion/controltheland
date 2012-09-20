@@ -9,8 +9,8 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.debug.DebugService;
-import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.services.planet.CollisionService;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,23 +26,19 @@ import java.util.List;
  */
 public class TestPathFinding extends AbstractServiceTest {
     @Autowired
-    private CollisionService collisionService;
-    @Autowired
-    private TerrainService terrainService;
-    @Autowired
-    private DebugService debugService;
+    private PlanetSystemService planetSystemService;
 
     @Test
     @DirtiesContext
     public void testTest() throws Exception {
-        List<Index> path = new ArrayList<Index>();
+        List<Index> path = new ArrayList<>();
         path.add(new Index(0, 0));
         path.add(new Index(1000, 1200));
         path.add(new Index(1000, 1800));
         path.add(new Index(0, 1900));
         assertPathCanBeReduced(path);
 
-        path = new ArrayList<Index>();
+        path = new ArrayList<>();
         path.add(new Index(0, 0));
         path.add(new Index(700, 0));
         path.add(new Index(700, 600));
@@ -54,7 +50,7 @@ public class TestPathFinding extends AbstractServiceTest {
             // OK
         }
 
-        path = new ArrayList<Index>();
+        path = new ArrayList<>();
         path.add(new Index(0, 0));
         path.add(new Index(1000, 1200));
         path.add(new Index(1000, 1800));
@@ -72,7 +68,8 @@ public class TestPathFinding extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testPath1() throws Exception {
-        configureComplexGameOneRealLevel();
+        configureOneLevelOnePlaneComplexTerrain();
+        CollisionService collisionService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getCollisionService();
         Path path = collisionService.setupPathToDestination(new Index(800, 3400), new Index(2000, 2700), TerrainType.LAND, new BoundingBox(0, 0, ANGELS_24));
         assertPathNotInTerrainImage(path);
         // assertPathCanBeReduced(path); Do this may later
@@ -81,7 +78,8 @@ public class TestPathFinding extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testPathSameStartAndDest() throws Exception {
-        configureComplexGameOneRealLevel();
+        configureOneLevelOnePlaneComplexTerrain();
+        CollisionService collisionService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getCollisionService();
         Path path = collisionService.setupPathToDestination(new Index(800, 3400), new Index(800, 3400), TerrainType.LAND, new BoundingBox(0, 0, ANGELS_24));
         assertPathNotInTerrainImage(path);
         Assert.assertEquals(1, path.getPath().size());
@@ -91,9 +89,10 @@ public class TestPathFinding extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testPathDifferentTerrains() throws Exception {
-        configureComplexGameOneRealLevel2();
+        configureOneLevelOnePlaneComplexTerrain2();
+        CollisionService collisionService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getCollisionService();
         SyncItemArea target = new BoundingBox(100, 100, ANGELS_24).createSyntheticSyncItemArea(new Index(2750, 350));
-        List<AttackFormationItem> attacker = new ArrayList<AttackFormationItem>();
+        List<AttackFormationItem> attacker = new ArrayList<>();
         attacker.add(new AttackFormationItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1450, 350), new Id(0, 0, 0)), 250));
         attacker = collisionService.setupDestinationHints(target, TerrainType.WATER, attacker);
         Assert.assertEquals(new Index(2412, 306), attacker.get(0).getDestinationHint());

@@ -13,9 +13,9 @@
 
 package com.btxtech.game.wicket.pages.mgmt.usermgmt;
 
-import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.connection.ConnectionService;
+import com.btxtech.game.services.connection.ServerConnectionService;
+import com.btxtech.game.services.planet.Planet;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
@@ -40,9 +40,9 @@ public class UserStateTable extends MgmtWebPage {
     @SpringBean
     private UserService userService;
     @SpringBean
-    private BaseService baseService;
+    private PlanetSystemService planetSystemService;
     @SpringBean
-    private ConnectionService connectionService;
+    private ServerConnectionService serverConnectionService;
 
     public UserStateTable() {
         add(new FeedbackPanel("msgs"));
@@ -68,10 +68,16 @@ public class UserStateTable extends MgmtWebPage {
                 item.add(new Label("sessionId"));
                 item.add(new Label("online"));
                 item.add(new Label("user"));
-                Base base = baseService.getBase(item.getModelObject());
-                if (base != null && connectionService.hasConnection(base.getSimpleBase())) {
-                    item.add(new Label("inGame", "yes"));
+                if (item.getModelObject().getBase() != null) {
+                    Planet planet = planetSystemService.getPlanet(item.getModelObject());
+                    item.add(new Label("planet", planet.getPlanetServices().getPlanetInfo().getName()));
+                    if (serverConnectionService.hasConnection(item.getModelObject().getBase().getSimpleBase())) {
+                        item.add(new Label("inGame", "yes"));
+                    } else {
+                        item.add(new Label("inGame", ""));
+                    }
                 } else {
+                    item.add(new Label("planet", ""));
                     item.add(new Label("inGame", ""));
                 }
                 item.add(new Button("edit") {

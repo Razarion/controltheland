@@ -14,16 +14,18 @@
 package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.ClientServices;
+import com.btxtech.game.jsre.client.ClientGlobalServices;
+import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
+import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
-import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 
 import java.util.ArrayList;
@@ -110,8 +112,13 @@ public class SimulationConditionServiceImpl extends ConditionServiceImpl<SimpleB
     }
 
     @Override
-    protected Services getServices() {
-        return ClientServices.getInstance();
+    protected GlobalServices getGlobalServices() {
+        return ClientGlobalServices.getInstance();
+    }
+
+    @Override
+    protected PlanetServices getPlanetServices(SimpleBase simpleBase) {
+        return ClientPlanetServices.getInstance();
     }
 
     public void setRate(int rate) {

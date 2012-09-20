@@ -16,17 +16,18 @@ package com.btxtech.game.controllers;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbTerrainImage;
-import com.btxtech.game.services.terrain.TerrainService;
-import java.io.IOException;
-import java.io.OutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.btxtech.game.services.terrain.TerrainImageService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * User: beat
@@ -36,7 +37,7 @@ import org.springframework.web.servlet.mvc.Controller;
 @Component
 public class TerrainImageController implements Controller {
     @Autowired
-    private TerrainService terrainService;
+    private TerrainImageService terrainService;
     private Log log = LogFactory.getLog(TerrainImageController.class);
 
 

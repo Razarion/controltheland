@@ -18,7 +18,8 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ProjectileItemType;
-import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 
@@ -36,8 +37,8 @@ public class SyncProjectileItem extends SyncTickItem implements SyncBaseObject {
     private DecimalPosition position;
     private boolean isAlive = true;
 
-    public SyncProjectileItem(Id id, Index position, ProjectileItemType projectileItemType, Services services, SimpleBase simpleBase) {
-        super(id, position, projectileItemType, services);
+    public SyncProjectileItem(Id id, Index position, ProjectileItemType projectileItemType, GlobalServices globalServices, PlanetServices planetServices, SimpleBase simpleBase) {
+        super(id, position, projectileItemType, globalServices, planetServices);
         this.projectileItemType = projectileItemType;
         this.simpleBase = simpleBase;
     }
@@ -65,12 +66,12 @@ public class SyncProjectileItem extends SyncTickItem implements SyncBaseObject {
     }
 
     private void explode() {
-        Collection<SyncBaseItem> syncBaseItems = getServices().getItemService().getBaseItemsInRadius(target, projectileItemType.getExplosionRadius(), null, null);
+        Collection<SyncBaseItem> syncBaseItems = getPlanetServices().getItemService().getBaseItemsInRadius(target, projectileItemType.getExplosionRadius(), null, null);
         for (SyncBaseItem syncBaseItem : syncBaseItems) {
             syncBaseItem.decreaseHealth(projectileItemType.getDamage(), simpleBase);
         }
         isAlive = false;
-        getServices().getItemService().killSyncItem(this, null, true, true);
+        getPlanetServices().getItemService().killSyncItem(this, null, true, true);
     }
 
     @Override

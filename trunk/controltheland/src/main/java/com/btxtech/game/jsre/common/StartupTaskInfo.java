@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.common;
 
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
+
 import java.io.Serializable;
 
 /**

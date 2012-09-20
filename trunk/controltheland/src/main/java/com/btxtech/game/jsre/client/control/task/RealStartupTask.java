@@ -15,11 +15,10 @@ package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientEnergyService;
+import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
-import com.btxtech.game.jsre.client.SoundHandler;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
-import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 
 /**
@@ -42,8 +41,8 @@ public class RealStartupTask extends GameEngineStartupTask {
         ClientBase.getInstance().setAccountBalance(realGameInfo.getAccountBalance());
         ClientBase.getInstance().setConnectedToServer4FakedHouseSpace(true);
         ClientEnergyService.getInstance().onEnergyPacket(realGameInfo.getEnergyGenerating(), realGameInfo.getEnergyConsuming());
-        ClientTerritoryService.getInstance().setTerritories(realGameInfo.getTerritories());
         ClientBase.getInstance().setHouseSpace(realGameInfo.getHouseSpace());
+        ClientPlanetServices.getInstance().setPlanetInfo(realGameInfo.getPlanetInfo());
         ClientLevelHandler.getInstance().setLevel(realGameInfo.getLevelScope());
     }
 

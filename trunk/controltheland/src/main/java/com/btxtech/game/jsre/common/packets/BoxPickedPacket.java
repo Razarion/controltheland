@@ -1,7 +1,5 @@
 package com.btxtech.game.jsre.common.packets;
 
-import com.btxtech.game.jsre.common.packets.Packet;
-
 /**
  * User: beat
  * Date: 25.05.12

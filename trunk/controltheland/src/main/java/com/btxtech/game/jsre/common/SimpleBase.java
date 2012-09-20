@@ -21,7 +21,8 @@ import java.io.Serializable;
  * Time: 2:03:06 PM
  */
 public class SimpleBase implements Serializable {
-    private int id;
+    private int baseId;
+    private int planetId;
 
     /**
      * Used by GWT
@@ -29,32 +30,38 @@ public class SimpleBase implements Serializable {
     SimpleBase() {
     }
 
-    public SimpleBase(int id) {
-        this.id = id;
+    public SimpleBase(int baseId, int planetId) {
+        this.baseId = baseId;
+        this.planetId = planetId;
     }
 
-    public int getId() {
-        return id;
+    public int getBaseId() {
+        return baseId;
+    }
+
+    public int getPlanetId() {
+        return planetId;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SimpleBase)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         SimpleBase that = (SimpleBase) o;
 
-        return id == that.id;
-
+        return baseId == that.baseId && planetId == that.planetId;
     }
 
     @Override
     public int hashCode() {
-        return id;
+        int result = baseId;
+        result = 31 * result + planetId;
+        return result;
     }
 
     @Override
     public String toString() {
-        return "Base: " + id;
+        return "Base Id: " + baseId + " Planet Id: " + planetId;
     }
 }
