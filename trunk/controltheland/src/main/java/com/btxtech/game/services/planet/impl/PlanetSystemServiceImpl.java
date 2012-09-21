@@ -158,15 +158,30 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
 
     @Override
     public Planet getPlanet(UserState userState) throws NoSuchPlanetException {
+        Planet planet = getPlanetNoThrow(userState);
+        if (planet != null) {
+            return planet;
+        } else {
+            LevelScope levelScope = userGuidanceService.getLevelScope(userState);
+            throw new IllegalArgumentException("UserStat '" + userState + "' does not have a level with a planet configured: " + levelScope);
+        }
+    }
+
+    private Planet getPlanetNoThrow(UserState userState) {
         Base base = userState.getBase();
         if (base != null) {
             return base.getPlanet();
         }
         LevelScope levelScope = userGuidanceService.getLevelScope(userState);
         if (!levelScope.hasPlanet()) {
-            throw new IllegalArgumentException("UserStat '" + userState + "' does not have a level with a planet configured: " + levelScope);
+            return null;
         }
         return getPlanet(levelScope.getPlanetId());
+    }
+
+    @Override
+    public boolean hasPlanet() {
+        return getPlanetNoThrow(userService.getUserState()) != null;
     }
 
     @Override

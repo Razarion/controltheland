@@ -612,7 +612,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         String baseName = null;
         Integer baseId = null;
         try {
-            if (levelTaskId == null) {
+            if (levelTaskId == null && planetSystemService.hasPlanet()) {
                 BaseService baseService = planetSystemService.getServerPlanetServices().getBaseService();
                 Base base = baseService.getBase();
                 baseId = base.getBaseId();
