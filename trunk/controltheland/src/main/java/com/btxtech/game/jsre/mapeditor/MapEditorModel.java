@@ -166,6 +166,8 @@ public class MapEditorModel implements TerrainScrollHandler.ScrollExecutor, Mous
             if (terrainImageSurfaceGroup == null) {
                 terrainEditorSelection = new TerrainEditorSelection();
                 terrainEditorSelection.setStart(absoluteMouse);
+            } else {
+                terrainImageSurfaceGroup.startMove(absoluteMouse);
             }
         } else if (deleteMode && activeLayer != null) {
             switch (activeLayer) {
