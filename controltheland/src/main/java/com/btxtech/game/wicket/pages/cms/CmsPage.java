@@ -118,22 +118,27 @@ public class CmsPage extends WebPage implements IHeaderContributor {
                 return dbPage;
             }
         }));
-        contentContext = new ContentContext(pageParameters);
-        DbPage dbPage = (DbPage) getDefaultModelObject();
-        if (dbPage.getPredefinedType() == CmsUtil.CmsPredefinedPage.FACEBOOK_START) {
-            cmsUiService.handleFacebookRequest(pageParameters, this);
+        try {
+            contentContext = new ContentContext(pageParameters);
+            DbPage dbPage = (DbPage) getDefaultModelObject();
+            if (dbPage.getPredefinedType() == CmsUtil.CmsPredefinedPage.FACEBOOK_START) {
+                cmsUiService.handleFacebookRequest(pageParameters, this);
+            }
+            add(new Label("title", dbPage.getName()));
+            add(CmsCssResource.createCss("css", dbPage));
+            add(new Menu("menu", dbPage.getMenu(), contentContext));
+            add(new Header("header", dbPage));
+            // Footer removed due CMS redisgn
+            //add(new Footer("footer", dbPage));
+            add(new Ads("contentRight", dbPage));
+            Form form = new Form("form");
+            add(form);
+            form.add(cmsUiService.getRootComponent(dbPage, "content", contentContext));
+            add(new DisplayPageViewLink("componentTree", this));
+        } catch (Exception e) {
+            log.error("Error displaying CMS page. PageParameters: " + pageParameters);
+            throw new RuntimeException(e);
         }
-        add(new Label("title", dbPage.getName()));
-        add(CmsCssResource.createCss("css", dbPage));
-        add(new Menu("menu", dbPage.getMenu(), contentContext));
-        add(new Header("header", dbPage));
-        // Footer removed due CMS redisgn
-        //add(new Footer("footer", dbPage));
-        add(new Ads("contentRight", dbPage));
-        Form form = new Form("form");
-        add(form);
-        form.add(cmsUiService.getRootComponent(dbPage, "content", contentContext));
-        add(new DisplayPageViewLink("componentTree", this));
     }
 
     @Override

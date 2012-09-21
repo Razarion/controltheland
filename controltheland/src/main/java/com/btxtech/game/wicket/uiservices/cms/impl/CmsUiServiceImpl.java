@@ -73,6 +73,7 @@ import org.apache.wicket.behavior.StringHeaderContributor;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebRequestCycle;
+import org.apache.wicket.protocol.http.request.InvalidUrlException;
 import org.apache.wicket.util.template.JavaScriptTemplate;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hibernate.SessionFactory;
@@ -371,7 +372,7 @@ public class CmsUiServiceImpl implements CmsUiService {
         if (beanIds.size() == 1) {
             beanIdPathElement = beanIdPathElement.createChildFromBeanId(beanIds.remove(0));
         } else if (beanIds.size() > 1) {
-            throw new IllegalStateException("Bean Id mismatch: " + beanIds.size());
+            throw new InvalidUrlException("Bean Id mismatch: " + beanIds.size());
         }
         return beanIdPathElement;
     }
