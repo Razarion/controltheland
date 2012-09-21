@@ -123,4 +123,8 @@ public class SurfaceModifier {
             terrainData.addNewSurfaceRect(newRectangle, imageId);
         }
     }
+
+    public void resetMouseOffset(Index absoluteMouse) {
+        this.absoluteMouse = TerrainUtil.moveAbsoluteToGrid(absoluteMouse);
+    }
 }

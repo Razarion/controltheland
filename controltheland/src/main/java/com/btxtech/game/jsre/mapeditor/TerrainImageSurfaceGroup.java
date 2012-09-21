@@ -33,6 +33,15 @@ public class TerrainImageSurfaceGroup {
         }
     }
 
+    public void startMove(Index absoluteMouse) {
+        for (TerrainImageModifier terrainImageModifier : terrainImageModifiers) {
+            terrainImageModifier.resetMouseOffset(absoluteMouse);
+        }
+        for (SurfaceModifier surfaceModifier : surfaceModifiers) {
+            surfaceModifier.resetMouseOffset(absoluteMouse);
+        }
+    }
+
     public Collection<TerrainImageModifier> getTerrainImageModifiers() {
         return terrainImageModifiers;
     }

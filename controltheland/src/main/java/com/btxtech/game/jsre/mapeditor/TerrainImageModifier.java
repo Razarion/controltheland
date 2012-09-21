@@ -72,6 +72,10 @@ public class TerrainImageModifier {
         checkPlaceAllowed(exceptThem);
     }
 
+    public void resetMouseOffset(Index absolutePosition) {
+        mouseOffset = absolutePosition.sub(absoluteGridPosition);
+    }
+
     public void onScroll(Rectangle viewRectangle) {
         setupRelativePosition(viewRectangle);
     }
