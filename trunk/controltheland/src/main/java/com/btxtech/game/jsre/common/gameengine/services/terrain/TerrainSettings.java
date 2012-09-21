@@ -50,6 +50,6 @@ public class TerrainSettings implements Serializable {
     }
 
     public int getPlayFieldYSize() {
-        return tileYCount * Constants.TERRAIN_TILE_WIDTH;
+        return tileYCount * Constants.TERRAIN_TILE_HEIGHT;
     }
 }
