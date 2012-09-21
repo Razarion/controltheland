@@ -136,7 +136,7 @@ public class WicketApplication extends AuthenticatedWebApplication implements Ap
             } else if (CommonJava.getMostInnerThrowable(e) instanceof NoSuchChildException) {
                 log.error("", e);
                 return cmsUiService.getPredefinedNotFound();
-            } else if (e instanceof InvalidUrlException) {
+            } else if (CommonJava.getMostInnerThrowable(e) instanceof InvalidUrlException) {
                 log.error("", e);
                 return cmsUiService.getPredefinedNotFound();
             } else {
