@@ -25,7 +25,7 @@ public class TerrainImageSurfaceGroup {
         this.surfaceRects = surfaceRects;
         terrainImageModifiers = new ArrayList<TerrainImageModifier>();
         for (TerrainImagePosition terrainImagePosition : selectionImages) {
-            terrainImageModifiers.add(new TerrainImageModifier(terrainImagePosition, viewRectangle, terrainData));
+            terrainImageModifiers.add(new TerrainImageModifier(terrainImagePosition, absoluteMouse, viewRectangle, terrainData));
         }
         surfaceModifiers = new ArrayList<SurfaceModifier>();
         for (SurfaceRect surfaceRect : surfaceRects) {
@@ -41,10 +41,10 @@ public class TerrainImageSurfaceGroup {
         return surfaceModifiers;
     }
 
-    public void mouseMove(Index delta, Index absoluteMouse, Rectangle viewRectangle) {
+    public void mouseMove(Index absoluteMouse, Rectangle viewRectangle) {
         placeAllowed = true;
         for (TerrainImageModifier terrainImageModifier : terrainImageModifiers) {
-            terrainImageModifier.onMouseMove(delta, viewRectangle, selectionImages);
+            terrainImageModifier.onMouseMove(absoluteMouse, viewRectangle, selectionImages);
             if (!terrainImageModifier.isPlaceAllowed()) {
                 placeAllowed = false;
             }

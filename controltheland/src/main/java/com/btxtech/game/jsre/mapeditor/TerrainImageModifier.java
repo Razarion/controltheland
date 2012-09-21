@@ -29,7 +29,7 @@ import java.util.Collection;
  */
 public class TerrainImageModifier {
     private int imageId;
-    private Index absolutePosition;
+    private Index mouseOffset;
     private Index absoluteGridPosition;
     private Index relativeGridPosition;
     private TerrainImagePosition terrainImagePosition;
@@ -40,13 +40,13 @@ public class TerrainImageModifier {
     private TerrainImage terrainImage;
     private TerrainImagePosition.ZIndex selectedZIndex;
 
-    public TerrainImageModifier(TerrainImagePosition terrainImagePosition, Rectangle viewRectangle, TerrainData terrainData) {
+    public TerrainImageModifier(TerrainImagePosition terrainImagePosition, Index absolutePosition, Rectangle viewRectangle, TerrainData terrainData) {
         this.terrainImagePosition = terrainImagePosition;
-        absolutePosition = TerrainUtil.getAbsolutIndexForTerrainTileIndex(terrainImagePosition.getTileIndex());
-        setupGridPosition();
         TerrainImage terrainImage = TerrainView.getInstance().getTerrainHandler().getTerrainImageHandler().getTerrainImage(terrainImagePosition.getImageId());
         width = TerrainUtil.getAbsolutXForTerrainTile(terrainImage.getTileWidth());
         height = TerrainUtil.getAbsolutYForTerrainTile(terrainImage.getTileHeight());
+        absoluteGridPosition = TerrainUtil.getAbsolutIndexForTerrainTileIndex(terrainImagePosition.getTileIndex());
+        mouseOffset = absolutePosition.sub(absoluteGridPosition);
         this.terrainData = terrainData;
         imageId = terrainImagePosition.getImageId();
         setupRelativePosition(viewRectangle);
@@ -56,19 +56,18 @@ public class TerrainImageModifier {
     public TerrainImageModifier(TerrainImage terrainImage, TerrainImagePosition.ZIndex selectedZIndex, Index absolutePosition, Rectangle viewRectangle, TerrainData terrainData) {
         this.terrainImage = terrainImage;
         this.selectedZIndex = selectedZIndex;
-        this.absolutePosition = absolutePosition;
-        setupGridPosition();
         width = TerrainUtil.getAbsolutXForTerrainTile(terrainImage.getTileWidth());
         height = TerrainUtil.getAbsolutYForTerrainTile(terrainImage.getTileHeight());
+        mouseOffset = new Index(width / 2, height / 2);
+        absoluteGridPosition = TerrainUtil.moveAbsoluteToGrid(absolutePosition.sub(mouseOffset));
         this.terrainData = terrainData;
         imageId = terrainImage.getId();
         setupRelativePosition(viewRectangle);
         checkPlaceAllowed(null);
     }
 
-    public void onMouseMove(Index delta, Rectangle viewRectangle, Collection<TerrainImagePosition> exceptThem) {
-        absolutePosition = absolutePosition.add(delta);
-        setupGridPosition();
+    public void onMouseMove(Index absolutePosition, Rectangle viewRectangle, Collection<TerrainImagePosition> exceptThem) {
+        absoluteGridPosition = TerrainUtil.moveAbsoluteToGrid(absolutePosition.sub(mouseOffset));
         setupRelativePosition(viewRectangle);
         checkPlaceAllowed(exceptThem);
     }
@@ -119,10 +118,6 @@ public class TerrainImageModifier {
 
     private void setupRelativePosition(Rectangle viewRectangle) {
         relativeGridPosition = absoluteGridPosition.sub(viewRectangle.getStart());
-    }
-
-    private void setupGridPosition() {
-        absoluteGridPosition = TerrainUtil.moveAbsoluteToGrid(absolutePosition);
     }
 
     public void updateModel() {

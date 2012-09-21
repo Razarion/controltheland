@@ -45,7 +45,7 @@ public class MainTerrainEditor implements EntryPoint {
         // View
         Cockpit cockpit = new Cockpit();
         cockpit.setMapEditorModel(mapEditorModel);
-        cockpit.addToParent(RootPanel.get(), TopMapPanel.Direction.LEFT_TOP, 10);
+        cockpit.addToParent(RootPanel.get(), TopMapPanel.Direction.LEFT_TOP, 0);
         cockpit.getElement().getStyle().setZIndex(2);
         final Canvas canvas = Canvas.createIfSupported();
         canvas.setCoordinateSpaceWidth(RootPanel.get().getOffsetWidth());

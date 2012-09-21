@@ -55,7 +55,6 @@ public class MapEditorModel implements TerrainScrollHandler.ScrollExecutor, Mous
     private boolean selectionModeLayer2;
     private TerrainImageSurfaceGroup terrainImageSurfaceGroup;
     private boolean leftButton;
-    private Index lastAbsoluteMouseMove;
 
     public MapEditorModel(int width, int height) {
         viewRectangle = new Rectangle(0, 0, width, height);
@@ -119,24 +118,17 @@ public class MapEditorModel implements TerrainScrollHandler.ScrollExecutor, Mous
         terrainScrollHandler.handleMouseMoveScroll(event.getX(), event.getY(), viewRectangle.getWidth(), viewRectangle.getHeight());
 
         Index absoluteMouse = new Index(event.getX(), event.getY()).add(viewRectangle.getStart());
-        Index delta;
-        if (lastAbsoluteMouseMove == null) {
-            delta = new Index(0, 0);
-        } else {
-            delta = absoluteMouse.sub(lastAbsoluteMouseMove);
-        }
-        lastAbsoluteMouseMove = absoluteMouse;
         absoluteMouseOver = null;
         if (selectionMode) {
             if (terrainImageSurfaceGroup != null) {
                 if (leftButton) {
-                    terrainImageSurfaceGroup.mouseMove(delta, absoluteMouse, viewRectangle);
+                    terrainImageSurfaceGroup.mouseMove(absoluteMouse, viewRectangle);
                 }
             } else if (terrainEditorSelection != null) {
                 terrainEditorSelection.setEnd(absoluteMouse, viewRectangle);
             }
         } else if (terrainImageModifier != null) {
-            terrainImageModifier.onMouseMove(delta, viewRectangle, null);
+            terrainImageModifier.onMouseMove(absoluteMouse, viewRectangle, null);
         } else if (surfaceModifier != null) {
             surfaceModifier.onMouseMove(absoluteMouse, viewRectangle, null);
         } else if (activeLayer != null) {
@@ -212,14 +204,14 @@ public class MapEditorModel implements TerrainScrollHandler.ScrollExecutor, Mous
                 case IMAGE_LAYER_1: {
                     TerrainImagePosition terrainImagePosition = terrainData.getTerrainImagePosition(TerrainImagePosition.ZIndex.LAYER_1, absoluteMouse.getX(), absoluteMouse.getY());
                     if (terrainImagePosition != null) {
-                        terrainImageModifier = new TerrainImageModifier(terrainImagePosition, viewRectangle, terrainData);
+                        terrainImageModifier = new TerrainImageModifier(terrainImagePosition, absoluteMouse, viewRectangle, terrainData);
                     }
                     break;
                 }
                 case IMAGE_LAYER_2: {
                     TerrainImagePosition terrainImagePosition = terrainData.getTerrainImagePosition(TerrainImagePosition.ZIndex.LAYER_2, absoluteMouse.getX(), absoluteMouse.getY());
                     if (terrainImagePosition != null) {
-                        terrainImageModifier = new TerrainImageModifier(terrainImagePosition, viewRectangle, terrainData);
+                        terrainImageModifier = new TerrainImageModifier(terrainImagePosition, absoluteMouse, viewRectangle, terrainData);
                     }
                     break;
                 }
