@@ -93,7 +93,7 @@ public class RegionEditorModel {
 
     public void setMouseOverTile(Index mousePosition) {
         if (mousePosition != null) {
-            Index absolute = mousePosition.scaleInverse(scale).add(viewOriginTerrain);
+            Index absolute = mousePosition.sub(displayRectangle.getStart()).scaleInverse(scale).add(viewOriginTerrain);
             Index tile = TerrainUtil.getTerrainTileIndexForAbsPosition(absolute);
             mouseOverTiles = createTileField(tile);
         } else {
@@ -102,7 +102,7 @@ public class RegionEditorModel {
     }
 
     public void tileSelected(Index mousePosition) {
-        Index absolute = mousePosition.scaleInverse(scale).add(viewOriginTerrain);
+        Index absolute = mousePosition.sub(displayRectangle.getStart()).scaleInverse(scale).add(viewOriginTerrain);
         Index tile = TerrainUtil.getTerrainTileIndexForAbsPosition(absolute);
         Collection<Index> tiles = createTileField(tile);
         if (mode == Mode.PAINT) {
@@ -163,18 +163,22 @@ public class RegionEditorModel {
 
         int xShiftRadarPixel;
         int yShiftRadarPixel;
-        if (terrainSettings.getPlayFieldXSize() > terrainSettings.getPlayFieldYSize()) {
+        int terrainDisplayWidth = (int) (terrainSettings.getPlayFieldXSize() * scale);
+        int terrainDisplayHeight = (int) (terrainSettings.getPlayFieldYSize() * scale);
+
+        if(terrainDisplayWidth < width) {
+            xShiftRadarPixel = (int) ((width - terrainDisplayWidth) / 2.0);
+        }   else {
             xShiftRadarPixel = 0;
-            yShiftRadarPixel = (int) ((terrainSettings.getPlayFieldXSize() - terrainSettings.getPlayFieldYSize()) * scale / 2.0);
-        } else if (terrainSettings.getPlayFieldYSize() > terrainSettings.getPlayFieldXSize()) {
-            xShiftRadarPixel = (int) ((terrainSettings.getPlayFieldYSize() - terrainSettings.getPlayFieldXSize()) * scale / 2.0);
-            yShiftRadarPixel = 0;
-        } else {
-            xShiftRadarPixel = 0;
+        }
+        if(terrainDisplayHeight < height) {
+            yShiftRadarPixel = (int) ((height - terrainDisplayHeight) / 2.0);
+        }   else {
             yShiftRadarPixel = 0;
         }
-        int displayWidth = (int) Math.min(width - xShiftRadarPixel / 2, terrainSettings.getPlayFieldXSize() * scale);
-        int displayHeight = (int) Math.min(height - yShiftRadarPixel / 2, terrainSettings.getPlayFieldYSize() * scale);
+
+        int displayWidth = Math.min(width, terrainDisplayWidth);
+        int displayHeight = Math.min(height, terrainDisplayHeight);
         displayRectangle = new Rectangle(xShiftRadarPixel, yShiftRadarPixel, displayWidth, displayHeight);
         miniTerrain.setScale(scaleStep);
         setAbsoluteViewRectMiddle(absoluteMiddle);

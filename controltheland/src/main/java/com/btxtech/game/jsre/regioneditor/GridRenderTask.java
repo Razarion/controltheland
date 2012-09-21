@@ -28,14 +28,14 @@ public class GridRenderTask extends AbstractRegionEditorRenderTask {
         int absoluteHeight = (int) (displayRectangle.getHeight() / scale);
         int scrollXOffset = viewOriginTerrain.getX() % Constants.TERRAIN_TILE_WIDTH;
         int scrollYOffset = viewOriginTerrain.getY() % Constants.TERRAIN_TILE_HEIGHT;
-        for (int x = 0; x < absoluteLength; x += Constants.TERRAIN_TILE_WIDTH) {
+        for (int x = 0; x <= absoluteLength; x += Constants.TERRAIN_TILE_WIDTH) {
             int relativeX = x - scrollXOffset;
 
             relativeX = (int) (relativeX * scale) + displayRectangle.getX();
             context2d.moveTo(relativeX, displayRectangle.getY());
             context2d.lineTo(relativeX, displayRectangle.getEndY());
         }
-        for (int y = 0; y < absoluteHeight; y += Constants.TERRAIN_TILE_HEIGHT) {
+        for (int y = 0; y <= absoluteHeight; y += Constants.TERRAIN_TILE_HEIGHT) {
             int relativeY = y - scrollYOffset;
 
             relativeY = (int) (relativeY * scale) + displayRectangle.getY();

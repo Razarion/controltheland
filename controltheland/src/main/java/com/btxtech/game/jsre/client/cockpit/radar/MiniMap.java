@@ -77,15 +77,16 @@ public abstract class MiniMap implements MouseMoveHandler, MouseDownHandler, Mou
         Index absoluteMiddle = getAbsoluteMiddle();
         scale = scaleForFullTerrain * Math.sqrt(scaleStep.getZoom());
 
-        // TODO may be wrong if zoomed in
-        if (getTerrainSettings().getPlayFieldXSize() > getTerrainSettings().getPlayFieldYSize()) {
-            xShiftRadarPixel = 0;
-            yShiftRadarPixel = (int) ((getTerrainSettings().getPlayFieldXSize() - getTerrainSettings().getPlayFieldYSize()) * scale / 2.0);
-        } else if (getTerrainSettings().getPlayFieldYSize() > getTerrainSettings().getPlayFieldXSize()) {
-            xShiftRadarPixel = (int) ((getTerrainSettings().getPlayFieldYSize() - getTerrainSettings().getPlayFieldXSize()) * scale / 2.0);
-            yShiftRadarPixel = 0;
+        int terrainDisplayWidth = (int) (terrainSettings.getPlayFieldXSize() * scale);
+        int terrainDisplayHeight = (int) (terrainSettings.getPlayFieldYSize() * scale);
+        if (terrainDisplayWidth < width) {
+            xShiftRadarPixel = (int) ((width - terrainDisplayWidth) / 2.0);
         } else {
             xShiftRadarPixel = 0;
+        }
+        if (terrainDisplayHeight < height) {
+            yShiftRadarPixel = (int) ((height - terrainDisplayHeight) / 2.0);
+        } else {
             yShiftRadarPixel = 0;
         }
 
