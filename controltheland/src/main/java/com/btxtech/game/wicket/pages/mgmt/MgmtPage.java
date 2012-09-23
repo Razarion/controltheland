@@ -46,7 +46,7 @@ import java.util.TimeZone;
  * Time: 1:37:14 PM
  */
 public class MgmtPage extends MgmtWebPage {
-    private static final ArrayList<LinkAndName> toolPages;
+    public static final ArrayList<LinkAndName> toolPages;
     @SpringBean
     private MgmtService mgmtService;
 
@@ -105,7 +105,7 @@ public class MgmtPage extends MgmtWebPage {
         add(tools);
     }
 
-    static class LinkAndName implements Serializable {
+    public static class LinkAndName implements Serializable {
         private String name;
         private Class<? extends MgmtWebPage> clazz;
 

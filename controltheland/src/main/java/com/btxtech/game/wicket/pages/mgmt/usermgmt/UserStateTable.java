@@ -13,7 +13,6 @@
 
 package com.btxtech.game.wicket.pages.mgmt.usermgmt;
 
-import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.planet.Planet;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.UserService;
@@ -41,8 +40,6 @@ public class UserStateTable extends MgmtWebPage {
     private UserService userService;
     @SpringBean
     private PlanetSystemService planetSystemService;
-    @SpringBean
-    private ServerConnectionService serverConnectionService;
 
     public UserStateTable() {
         add(new FeedbackPanel("msgs"));
@@ -71,7 +68,7 @@ public class UserStateTable extends MgmtWebPage {
                 if (item.getModelObject().getBase() != null) {
                     Planet planet = planetSystemService.getPlanet(item.getModelObject());
                     item.add(new Label("planet", planet.getPlanetServices().getPlanetInfo().getName()));
-                    if (serverConnectionService.hasConnection(item.getModelObject().getBase().getSimpleBase())) {
+                    if (planet.getPlanetServices().getConnectionService().hasConnection(item.getModelObject().getBase().getSimpleBase())) {
                         item.add(new Label("inGame", "yes"));
                     } else {
                         item.add(new Label("inGame", ""));
