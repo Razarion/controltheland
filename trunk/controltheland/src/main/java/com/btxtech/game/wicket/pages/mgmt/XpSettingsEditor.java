@@ -63,7 +63,6 @@ public class XpSettingsEditor extends MgmtWebPage {
         form.add(new TextField<String>("killPriceFactor"));
         form.add(new TextField<String>("killQueuePeriod"));
         form.add(new TextField<String>("killQueueSize"));
-        form.add(new TextField<String>("builtPriceFactor"));
         add(form);
     }
 }

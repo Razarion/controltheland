@@ -214,22 +214,26 @@ public class User implements UserDetails, Serializable, CrudParent {
 
     public CrudChildServiceHelper<DbContentAccessControl> getContentCrud() {
         if (dbContentAccessControls == null) {
-            dbContentAccessControls = new ArrayList<DbContentAccessControl>();
+            dbContentAccessControls = new ArrayList<>();
         }
         if (contentCrud == null) {
-            contentCrud = new CrudChildServiceHelper<DbContentAccessControl>(dbContentAccessControls, DbContentAccessControl.class, this);
+            contentCrud = new CrudChildServiceHelper<>(dbContentAccessControls, DbContentAccessControl.class, this);
         }
         return contentCrud;
     }
 
     public CrudChildServiceHelper<DbPageAccessControl> getPageCrud() {
         if (dbPageAccessControls == null) {
-            dbPageAccessControls = new ArrayList<DbPageAccessControl>();
+            dbPageAccessControls = new ArrayList<>();
         }
         if (pageCrud == null) {
-            pageCrud = new CrudChildServiceHelper<DbPageAccessControl>(dbPageAccessControls, DbPageAccessControl.class, this);
+            pageCrud = new CrudChildServiceHelper<>(dbPageAccessControls, DbPageAccessControl.class, this);
         }
         return pageCrud;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
 
     @Override
