@@ -166,7 +166,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
                 ActionHandler.getInstance().interactionGuardingItems(syncBaseItem);
                 ClientBase.getInstance().onItemCreated(syncBaseItem);
             }
-            ClientGlobalServices.getInstance().getConnectionService().sendSyncInfo(syncItem);
+            Connection.getInstance().sendSyncInfo(syncItem);
         } else {
             Id id = new Id(parentId, createdChildCount);
             syncItem = items.get(id);
@@ -216,7 +216,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
             syncBaseItem.fireItemChanged(SyncItemListener.Change.ANGEL);
             ClientBase.getInstance().onItemCreated(syncBaseItem);
         }
-        ClientGlobalServices.getInstance().getConnectionService().sendSyncInfo(syncItem);
+        Connection.getInstance().sendSyncInfo(syncItem);
         return syncItem;
     }
 
@@ -257,7 +257,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
                 ClientEnergyService.getInstance().onSyncItemKilled(syncBaseItem);
                 SimulationConditionServiceImpl.getInstance().onSyncItemKilled(actor, (SyncBaseItem) killedItem);
             }
-            ClientGlobalServices.getInstance().getConnectionService().sendSyncInfo(killedItem);
+            Connection.getInstance().sendSyncInfo(killedItem);
             if (killedItem instanceof SyncBaseItem) {
                 killContainedItems((SyncBaseItem) killedItem, actor);
             }

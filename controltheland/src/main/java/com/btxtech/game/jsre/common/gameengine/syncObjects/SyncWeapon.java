@@ -78,7 +78,7 @@ public class SyncWeapon extends SyncBaseAbility {
                 if (isNewPathRecalculationAllowed()) {
                     // Destination place was may be taken. Calculate a new one or target has moved away
                     recalculateNewPath(weaponType.getRange(), targetItem.getSyncItemArea(), targetItem.getTerrainType());
-                    getGlobalServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+                    getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                     return true;
                 } else {
                     return false;

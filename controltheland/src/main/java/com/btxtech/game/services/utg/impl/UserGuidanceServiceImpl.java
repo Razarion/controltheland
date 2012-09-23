@@ -64,8 +64,6 @@ import java.util.Map;
 public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionServiceListener<UserState, Integer> {
     public static final String NO_MISSION_TARGET = "<center>There are no new mission targets.<br /><h1>Please check back later</h1></center>";
     @Autowired
-    private ServerConnectionService serverConnectionService;
-    @Autowired
     private UserService userService;
     @Autowired
     private ServerConditionService serverConditionService;
@@ -104,7 +102,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     public void sendResurrectionMessage(SimpleBase simpleBase) {
         Message message = new Message();
         message.setMessage("You lost your base. A new base was created.");
-        serverConnectionService.sendPacket(simpleBase, message);
+        planetSystemService.getServerPlanetServices(simpleBase).getConnectionService().sendPacket(simpleBase, message);
     }
 
     @Override
@@ -128,11 +126,11 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
             XpPacket xpPacket = new XpPacket();
             xpPacket.setXp(0);
             xpPacket.setXp2LevelUp(dbNextLevel.getXp());
-            serverConnectionService.sendPacket(base.getSimpleBase(), xpPacket);
+            base.getPlanet().getPlanetServices().getConnectionService().sendPacket(base.getSimpleBase(), xpPacket);
             // Level
             LevelPacket levelPacket = new LevelPacket();
             levelPacket.setLevel(getLevelScope(dbNextLevel.getId()));
-            serverConnectionService.sendPacket(base.getSimpleBase(), levelPacket);
+            base.getPlanet().getPlanetServices().getConnectionService().sendPacket(base.getSimpleBase(), levelPacket);
         }
         // Create base if needed
         if (userState.getBase() == null && dbNextLevel.hasDbPlanet()) {
@@ -254,7 +252,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         if (base != null) {
             LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
             levelTaskPacket.setCompleted();
-            serverConnectionService.sendPacket(base.getSimpleBase(), levelTaskPacket);
+            base.getPlanet().getPlanetServices().getConnectionService().sendPacket(base.getSimpleBase(), levelTaskPacket);
         }
         // Rewards
         if (dbLevelTask.getXp() > 0) {
@@ -549,7 +547,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
             if (!dbLevelTask.isDbTutorialConfig()) {
                 levelTaskPacket.setActiveQuestProgress(serverConditionService.getProgressHtml(userState, dbLevelTask.getId()));
             }
-            serverConnectionService.sendPacket(userState.getBase().getSimpleBase(), levelTaskPacket);
+            userState.getBase().getPlanet().getPlanetServices().getConnectionService().sendPacket(userState.getBase().getSimpleBase(), levelTaskPacket);
         }
     }
 

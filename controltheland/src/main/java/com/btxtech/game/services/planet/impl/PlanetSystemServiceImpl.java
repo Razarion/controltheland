@@ -17,7 +17,6 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.common.ServerPlanetServices;
-import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.NoSuchPlanetException;
@@ -65,8 +64,6 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
     @Autowired
     private UserService userService;
     @Autowired
-    private ServerConnectionService serverConnectionService;
-    @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
     private ServerGlobalServices serverGlobalServices;
@@ -108,7 +105,7 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
             throw new IllegalStateException("No Base in user UserState: " + userState);
         }
 
-        serverConnectionService.createConnection(base, startUuid);
+        base.getPlanet().getPlanetServices().getConnectionService().createConnection(base, startUuid);
         if (userState.isSendResurrectionMessage()) {
             userGuidanceService.sendResurrectionMessage(base.getSimpleBase());
             userState.clearSendResurrectionMessageAndClear();
@@ -365,5 +362,10 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
         DbTerrainSetting dbTerrainSetting = dbPlanet.getDbTerrainSetting();
         TerrainDbUtil.modifyTerrainSetting(dbTerrainSetting, terrainImagePositions, surfaceRects, terrainImageService);
         dbPlanetCrud.updateDbChild(dbPlanet);
+    }
+
+    @Override
+    public Collection<Planet> getAllPlanets() {
+        return new ArrayList<Planet>(planetImpls.values());
     }
 }

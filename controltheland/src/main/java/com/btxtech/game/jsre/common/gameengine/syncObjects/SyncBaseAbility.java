@@ -59,7 +59,7 @@ public abstract class SyncBaseAbility {
     }
 
     public boolean isNewPathRecalculationAllowed() {
-        return getGlobalServices().getConnectionService().getGameEngineMode() == GameEngineMode.MASTER;
+        return getPlanetServices().getConnectionService().getGameEngineMode() == GameEngineMode.MASTER;
     }
 
     public void recalculateNewPath(int range, SyncItemArea target, TerrainType targetTerrainType) {

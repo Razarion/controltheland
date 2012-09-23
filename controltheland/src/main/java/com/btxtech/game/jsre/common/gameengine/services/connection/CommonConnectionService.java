@@ -21,7 +21,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
  * Date: 06.12.2009
  * Time: 18:49:44
  */
-public interface ConnectionService {
+public interface CommonConnectionService {
     void sendSyncInfo(SyncItem syncItem);
 
     GameEngineMode getGameEngineMode();

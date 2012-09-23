@@ -25,16 +25,6 @@ public class ServerConnectionServiceTestHelper implements ServerConnectionServic
     private List<PacketEntry> packetEntries = new ArrayList<>();
 
     @Override
-    public void clientLog(String message, Date date) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public boolean hasConnection() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
     public boolean hasConnection(SimpleBase simpleBase) {
         return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
@@ -69,16 +59,6 @@ public class ServerConnectionServiceTestHelper implements ServerConnectionServic
     @Override
     public void sendSyncInfos(Collection<SyncBaseItem> syncItem) {
         //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void sendChatMessage(ChatMessage chatMessage) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public List<ChatMessage> pollChatMessages(Integer lastMessageId) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override

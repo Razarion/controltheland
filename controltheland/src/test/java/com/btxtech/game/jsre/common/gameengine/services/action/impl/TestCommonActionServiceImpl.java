@@ -62,7 +62,7 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
 
         ServerConnectionService connectionServiceMock = EasyMock.createStrictMock(ServerConnectionService.class);
         EasyMock.expect(connectionServiceMock.getGameEngineMode()).andReturn(GameEngineMode.MASTER).anyTimes();
-        testGlobalServices.setServerConnectionService(connectionServiceMock);
+        testPlanetServices.setConnectionService(connectionServiceMock);
 
         AbstractBaseService baseService = EasyMock.createMock(AbstractBaseService.class);
         EasyMock.expect(baseService.isEnemy(defender, intruder)).andReturn(true).anyTimes();
@@ -157,7 +157,7 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
 
         ServerConnectionService connectionServiceMock = EasyMock.createStrictMock(ServerConnectionService.class);
         EasyMock.expect(connectionServiceMock.getGameEngineMode()).andReturn(GameEngineMode.SLAVE).anyTimes();
-        testGlobalServices.setServerConnectionService(connectionServiceMock);
+        testServices.setConnectionService(connectionServiceMock);
 
         AbstractBaseService baseService = EasyMock.createStrictMock(AbstractBaseService.class);
         testServices.setBaseService(baseService);
@@ -250,7 +250,7 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
 
         ServerConnectionService connectionServiceMock = EasyMock.createStrictMock(ServerConnectionService.class);
         EasyMock.expect(connectionServiceMock.getGameEngineMode()).andReturn(GameEngineMode.MASTER).anyTimes();
-        testGlobalServices.setServerConnectionService(connectionServiceMock);
+        testServices.setConnectionService(connectionServiceMock);
 
         AbstractBaseService baseService = EasyMock.createMock(AbstractBaseService.class);
         EasyMock.expect(baseService.isEnemy(defender, intruderBot)).andReturn(true).anyTimes();
@@ -350,7 +350,7 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
 
         ServerConnectionService connectionServiceMock = EasyMock.createStrictMock(ServerConnectionService.class);
         EasyMock.expect(connectionServiceMock.getGameEngineMode()).andReturn(GameEngineMode.MASTER).anyTimes();
-        testGlobalServices.setServerConnectionService(connectionServiceMock);
+        testServices.setConnectionService(connectionServiceMock);
 
         AbstractBaseService baseService = EasyMock.createMock(AbstractBaseService.class);
         EasyMock.expect(baseService.isEnemy(defenderBot, intruder)).andReturn(true).anyTimes();
@@ -449,7 +449,7 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
 
         ServerConnectionService connectionServiceMock = EasyMock.createStrictMock(ServerConnectionService.class);
         EasyMock.expect(connectionServiceMock.getGameEngineMode()).andReturn(GameEngineMode.MASTER).anyTimes();
-        testGlobalServices.setServerConnectionService(connectionServiceMock);
+        testServices.setConnectionService(connectionServiceMock);
 
         AbstractBaseService baseService = EasyMock.createMock(AbstractBaseService.class);
         EasyMock.expect(baseService.isEnemy(defenderBot, intruderBot)).andReturn(false).anyTimes();

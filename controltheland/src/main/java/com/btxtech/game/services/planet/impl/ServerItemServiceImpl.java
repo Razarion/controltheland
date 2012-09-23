@@ -101,7 +101,7 @@ public class ServerItemServiceImpl extends AbstractItemService implements Server
             serverGlobalServices.getStatisticsService().onItemCreated(syncBaseItem);
         }
 
-        serverGlobalServices.getConnectionService().sendSyncInfo(syncItem);
+        serverPlanetServices.getConnectionService().sendSyncInfo(syncItem);
         if (log.isDebugEnabled()) {
             log.debug("CREATED: " + syncItem);
         }
@@ -196,7 +196,7 @@ public class ServerItemServiceImpl extends AbstractItemService implements Server
                 serverPlanetServices.getBaseService().onItemDeleted((SyncBaseItem) killedItem, actor);
             }
         }
-        serverGlobalServices.getConnectionService().sendSyncInfo(killedItem);
+        serverPlanetServices.getConnectionService().sendSyncInfo(killedItem);
 
         if (killedItem instanceof SyncBaseItem) {
             SyncBaseItem killedBaseItem = (SyncBaseItem) killedItem;

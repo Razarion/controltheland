@@ -89,7 +89,7 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
 
         if (baseItemType.getFactoryType() != null) {
             syncFactory = new SyncFactory(baseItemType.getFactoryType(), this);
-            if (getGlobalServices().getConnectionService().getGameEngineMode() == GameEngineMode.MASTER) {
+            if (getPlanetServices().getConnectionService().getGameEngineMode() == GameEngineMode.MASTER) {
                 syncFactory.calculateRallyPoint();
             }
             isMoneyEarningOrConsuming = true;
@@ -719,7 +719,7 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
     }
 
     public void onAttacked(SyncBaseItem syncBaseItem) {
-        if (getGlobalServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
+        if (getPlanetServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
             return;
         }
         if (!isAlive()) {

@@ -1,7 +1,7 @@
 package com.btxtech.game.services.common.impl;
 
 import com.btxtech.game.services.common.ServerGlobalServices;
-import com.btxtech.game.services.connection.ServerConnectionService;
+import com.btxtech.game.services.connection.ServerGlobalConnectionService;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
 import com.btxtech.game.services.item.ServerItemTypeService;
@@ -35,8 +35,6 @@ public class ServerGlobalServicesImpl implements ServerGlobalServices {
     @Autowired
     private AllianceService allianceService;
     @Autowired
-    private ServerConnectionService serverConnectionService;
-    @Autowired
     private GlobalInventoryService globalInventoryService;
     @Autowired
     private PlanetSystemService planetSystemService;
@@ -50,6 +48,8 @@ public class ServerGlobalServicesImpl implements ServerGlobalServices {
     private ServerItemTypeService serverItemTypeService;
     @Autowired
     private UserGuidanceService userGuidanceService;
+    @Autowired
+    private ServerGlobalConnectionService serverGlobalConnectionService;
 
     @Override
     public HistoryService getHistoryService() {
@@ -74,11 +74,6 @@ public class ServerGlobalServicesImpl implements ServerGlobalServices {
     @Override
     public AllianceService getAllianceService() {
         return allianceService;
-    }
-
-    @Override
-    public ServerConnectionService getConnectionService() {
-        return serverConnectionService;
     }
 
     @Override
@@ -114,5 +109,10 @@ public class ServerGlobalServicesImpl implements ServerGlobalServices {
     @Override
     public UserGuidanceService getCommonUserGuidanceService() {
         return userGuidanceService;
+    }
+
+    @Override
+    public ServerGlobalConnectionService getServerGlobalConnectionService() {
+        return serverGlobalConnectionService;
     }
 }

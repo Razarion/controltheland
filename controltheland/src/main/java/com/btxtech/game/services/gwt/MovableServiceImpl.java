@@ -44,7 +44,7 @@ import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.ServerPlanetServices;
-import com.btxtech.game.services.connection.ServerConnectionService;
+import com.btxtech.game.services.connection.ServerGlobalConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
 import com.btxtech.game.services.item.ServerItemTypeService;
@@ -80,7 +80,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Autowired
     private ServerItemTypeService serverItemTypeService;
     @Autowired
-    private ServerConnectionService serverConnectionService;
+    private ServerGlobalConnectionService serverGlobalConnectionService;
     @Autowired
     private UserTrackingService userTrackingService;
     @Autowired
@@ -120,7 +120,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public List<Packet> getSyncInfo(String startUuid) throws NoConnectionException {
         try {
-            return serverConnectionService.getConnection(startUuid).getAndRemovePendingPackets();
+            return planetSystemService.getServerPlanetServices().getConnectionService().getConnection(startUuid).getAndRemovePendingPackets();
         } catch (NoConnectionException e) {
             throw e;
         } catch (Throwable t) {
@@ -230,7 +230,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public void log(String message, Date date) {
         try {
-            serverConnectionService.clientLog(message, date);
+            serverGlobalConnectionService.clientLog(message, date);
         } catch (Throwable t) {
             log.error("", t);
         }
@@ -256,7 +256,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public void sendChatMessage(ChatMessage chatMessage) {
         try {
-            serverConnectionService.sendChatMessage(chatMessage);
+            serverGlobalConnectionService.sendChatMessage(chatMessage);
         } catch (Throwable t) {
             log.error("", t);
         }
@@ -265,7 +265,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public List<ChatMessage> pollChatMessages(Integer lastMessageId) {
         try {
-            return serverConnectionService.pollChatMessages(lastMessageId);
+            return serverGlobalConnectionService.pollChatMessages(lastMessageId);
         } catch (Throwable t) {
             log.error("", t);
             return null;

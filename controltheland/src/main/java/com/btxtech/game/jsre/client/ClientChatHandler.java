@@ -21,7 +21,7 @@ public class ClientChatHandler {
     private Timer startTimer;
     private Timer pollTimer;
     private ChatMessage lastMessage;
-    private ConnectionI connection;
+    private GlobalCommonConnectionService globalCommonConnectionService;
     private ChatListener chatListener;
     private Logger log = Logger.getLogger(ClientChatHandler.class.getName());
 
@@ -67,10 +67,10 @@ public class ClientChatHandler {
         lastMessage = null;
     }
 
-    public void runRealGame(ConnectionI connection, ChatListener chatListener, int startDelay) {
+    public void runRealGame(GlobalCommonConnectionService globalCommonConnectionService, ChatListener chatListener, int startDelay) {
         this.chatListener = chatListener;
         chatListener.clearMessages();
-        this.connection = connection;
+        this.globalCommonConnectionService = globalCommonConnectionService;
         startTimer = new TimerPerfmon(PerfmonEnum.CHAT_START) {
             @Override
             public void runPerfmon() {
@@ -81,10 +81,10 @@ public class ClientChatHandler {
         startTimer.schedule(startDelay);
     }
 
-    public void runSimulatedGame(ConnectionI connection, ChatListener chatListener, int startDelay, final int pollDelay) {
+    public void runSimulatedGame(GlobalCommonConnectionService globalCommonConnectionService, ChatListener chatListener, int startDelay, final int pollDelay) {
         this.chatListener = chatListener;
         chatListener.clearMessages();
-        this.connection = connection;
+        this.globalCommonConnectionService = globalCommonConnectionService;
         startTimer = new TimerPerfmon(PerfmonEnum.CHAT_START) {
             @Override
             public void runPerfmon() {
@@ -104,12 +104,12 @@ public class ClientChatHandler {
 
 
     private void pollMessages() {
-        if (connection == null) {
+        if (globalCommonConnectionService == null) {
             log.severe("ClientChatHandler.poll() connection == null");
             return;
         }
         Integer lastMessageId = lastMessage != null ? lastMessage.getMessageId() : null;
-        connection.pollChatMessages(lastMessageId);
+        globalCommonConnectionService.pollChatMessages(lastMessageId);
     }
 
     public void pollMessagesIfInPollMode() {
@@ -125,6 +125,6 @@ public class ClientChatHandler {
     public void sendMessage(String text) {
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setMessage(text);
-        connection.sendChatMessage(chatMessage);
+        globalCommonConnectionService.sendChatMessage(chatMessage);
     }
 }

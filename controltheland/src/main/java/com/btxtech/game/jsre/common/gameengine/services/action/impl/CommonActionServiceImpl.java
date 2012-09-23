@@ -353,7 +353,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
     @Override
     public void addGuardingBaseItem(SyncTickItem syncTickItem) {
         try {
-            if (getGlobalServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
+            if (getPlanetServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
                 return;
             }
 
@@ -388,7 +388,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
 
     @Override
     public void removeGuardingBaseItem(SyncBaseItem syncItem) {
-        if (getGlobalServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
+        if (getPlanetServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
             return;
         }
         if (!syncItem.hasSyncWeapon()) {
@@ -409,7 +409,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
     @Override
     public void interactionGuardingItems(SyncBaseItem target) {
         try {
-            if (getGlobalServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
+            if (getPlanetServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
                 return;
             }
             if (target.isContainedIn()) {

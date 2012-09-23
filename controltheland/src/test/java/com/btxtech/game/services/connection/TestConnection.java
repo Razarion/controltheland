@@ -25,8 +25,6 @@ import java.util.List;
  */
 public class TestConnection extends AbstractServiceTest {
     @Autowired
-    private ServerConnectionService serverConnectionService;
-    @Autowired
     private PlanetSystemService planetSystemService;
 
     @Test
@@ -65,7 +63,7 @@ public class TestConnection extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         try {
-            serverConnectionService.getConnection(START_UID_1);
+            planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1);
             Assert.fail("NoConnectionException expected");
         } catch (com.btxtech.game.jsre.common.NoConnectionException e) {
             Assert.assertEquals(NoConnectionException.Type.NON_EXISTENT, e.getType());
@@ -82,7 +80,7 @@ public class TestConnection extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMyBase(); // Opens a connection
-        Assert.assertNotNull(serverConnectionService.getConnection(START_UID_1));
+        Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -96,12 +94,12 @@ public class TestConnection extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMyBase(); // Opens a connection
-        Assert.assertNotNull(serverConnectionService.getConnection(START_UID_1));
+        Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
         SyncBaseItem builder = (SyncBaseItem) serverPlanetServices.getItemService().getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
         serverPlanetServices.getBaseService().onItemDeleted(builder, null);
 
         try {
-            Assert.assertNotNull(serverConnectionService.getConnection(START_UID_1));
+            Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
             Assert.fail("NoConnectionException expected");
         } catch (com.btxtech.game.jsre.common.NoConnectionException e) {
             Assert.assertEquals(NoConnectionException.Type.BASE_LOST, e.getType());
@@ -125,12 +123,12 @@ public class TestConnection extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMyBase(); // Opens a connection
-        Assert.assertNotNull(serverConnectionService.getConnection(START_UID_1));
+        Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
         SyncBaseItem builder = (SyncBaseItem) serverPlanetServices.getItemService().getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
         serverPlanetServices.getBaseService().onItemDeleted(builder, humanBase);
 
         try {
-            Assert.assertNotNull(serverConnectionService.getConnection(START_UID_1));
+            Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
             Assert.fail("NoConnectionException expected");
         } catch (com.btxtech.game.jsre.common.NoConnectionException e) {
             Assert.assertEquals(NoConnectionException.Type.BASE_LOST, e.getType());
@@ -155,12 +153,12 @@ public class TestConnection extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMyBase(); // Opens a connection
-        Assert.assertNotNull(serverConnectionService.getConnection(START_UID_1));
+        Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
         SyncBaseItem builder = (SyncBaseItem) serverPlanetServices.getItemService().getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
         serverPlanetServices.getBaseService().onItemDeleted(builder, botBase);
 
         try {
-            Assert.assertNotNull(serverConnectionService.getConnection(START_UID_1));
+            Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
             Assert.fail("NoConnectionException expected");
         } catch (com.btxtech.game.jsre.common.NoConnectionException e) {
             Assert.assertEquals(NoConnectionException.Type.BASE_LOST, e.getType());

@@ -15,7 +15,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.packets.BoxPickedPacket;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
-import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryArtifactCount;
@@ -64,8 +63,6 @@ public class GlobalInventoryServiceImpl implements GlobalInventoryService {
     private HistoryService historyService;
     @Autowired
     private UserService userService;
-    @Autowired
-    private ServerConnectionService serverConnectionService;
     @Autowired
     private PlanetSystemService planetSystemService;
     private Log log = LogFactory.getLog(GlobalInventoryServiceImpl.class);
@@ -267,7 +264,7 @@ public class GlobalInventoryServiceImpl implements GlobalInventoryService {
         builder.append("</ul>");
         BoxPickedPacket boxPickedPacket = new BoxPickedPacket();
         boxPickedPacket.setHtml(builder.toString());
-        serverConnectionService.sendPacket(picker.getBase(), boxPickedPacket);
+        planetSystemService.getServerPlanetServices(picker.getBase()).getConnectionService().sendPacket(picker.getBase(), boxPickedPacket);
     }
 
     @Override
@@ -275,7 +272,7 @@ public class GlobalInventoryServiceImpl implements GlobalInventoryService {
         HibernateUtil.openSession4InternalCall(sessionFactory);
         try {
             DbBaseItemType dbBaseItemType = serverItemTypeService.getDbBaseItemType(baseItemType.getId());
-            if(dbBaseItemType.getDbBoxItemType() == null) {
+            if (dbBaseItemType.getDbBoxItemType() == null) {
                 return null;
             }
             return (BoxItemType) serverItemTypeService.getItemType(dbBaseItemType.getDbBoxItemType());

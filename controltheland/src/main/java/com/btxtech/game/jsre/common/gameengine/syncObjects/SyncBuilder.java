@@ -66,7 +66,7 @@ public class SyncBuilder extends SyncBaseAbility {
                     syncItemArea = toBeBuiltType.getBoundingBox().createSyntheticSyncItemArea(toBeBuildPosition);
                 }
                 recalculateNewPath(builderType.getRange(), syncItemArea, toBeBuiltType.getTerrainType());
-                getGlobalServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+                getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                 return true;
             } else {
                 return false;
@@ -127,7 +127,7 @@ public class SyncBuilder extends SyncBaseAbility {
 
     public synchronized void stop() {
         if (currentBuildup != null) {
-            getGlobalServices().getConnectionService().sendSyncInfo(currentBuildup);
+            getPlanetServices().getConnectionService().sendSyncInfo(currentBuildup);
         }
         currentBuildup = null;
         toBeBuiltType = null;

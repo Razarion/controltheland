@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.services;
 
-import com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService;
+import com.btxtech.game.jsre.common.gameengine.services.connection.CommonConnectionService;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemTypeService;
 import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
 import com.btxtech.game.jsre.common.utg.ConditionService;
@@ -27,8 +27,6 @@ public interface GlobalServices {
     ItemTypeService getItemTypeService();
 
     ConditionService getConditionService();
-
-    ConnectionService getConnectionService();
 
     CommonUserGuidanceService getCommonUserGuidanceService();
 }

@@ -20,7 +20,7 @@ import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
-import com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService;
+import com.btxtech.game.jsre.common.gameengine.services.connection.CommonConnectionService;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemTypeService;
 import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -34,17 +34,6 @@ import com.btxtech.game.jsre.common.utg.ConditionService;
 public class ClientGlobalServices implements GlobalServices {
     private static ClientGlobalServices INSTANCE = new ClientGlobalServices();
     private ClientRunner clientRunner = new ClientRunner();
-    private ConnectionService dummyConnectionService = new ConnectionService() {
-        @Override
-        public void sendSyncInfo(SyncItem syncItem) {
-            ClientUserTracker.getInstance().trackSyncInfo(syncItem);
-        }
-
-        @Override
-        public GameEngineMode getGameEngineMode() {
-            return Connection.getInstance().getGameEngineMode();
-        }
-    };
 
     public static ClientGlobalServices getInstance() {
         return INSTANCE;
@@ -64,11 +53,6 @@ public class ClientGlobalServices implements GlobalServices {
     @Override
     public ItemTypeService getItemTypeService() {
         return ItemTypeContainer.getInstance();
-    }
-
-    @Override
-    public ConnectionService getConnectionService() {
-        return dummyConnectionService;
     }
 
     @Override
