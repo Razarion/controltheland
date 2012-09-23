@@ -1,6 +1,7 @@
 package com.btxtech.game.services.common;
 
 import com.btxtech.game.services.connection.ServerConnectionService;
+import com.btxtech.game.services.connection.ServerGlobalConnectionService;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
 import com.btxtech.game.services.item.ServerItemTypeService;
@@ -27,7 +28,6 @@ public class TestGlobalServices implements ServerGlobalServices {
     private UserService userService;
     private UserTrackingService userTrackingService;
     private AllianceService allianceService;
-    private ServerConnectionService serverConnectionService;
     private GlobalInventoryService globalInventoryService;
     private PlanetSystemService planetSystemService;
     private TerrainImageService terrainImageService;
@@ -35,6 +35,7 @@ public class TestGlobalServices implements ServerGlobalServices {
     private ServerConditionService serverConditionService;
     private ServerItemTypeService serverItemTypeService;
     private UserGuidanceService userGuidanceService;
+    private ServerGlobalConnectionService serverGlobalConnectionService;
 
     @Override
     public HistoryService getHistoryService() {
@@ -79,15 +80,6 @@ public class TestGlobalServices implements ServerGlobalServices {
 
     public void setAllianceService(AllianceService allianceService) {
         this.allianceService = allianceService;
-    }
-
-    @Override
-    public ServerConnectionService getConnectionService() {
-        return serverConnectionService;
-    }
-
-    public void setServerConnectionService(ServerConnectionService serverConnectionService) {
-        this.serverConnectionService = serverConnectionService;
     }
 
     @Override
@@ -151,5 +143,14 @@ public class TestGlobalServices implements ServerGlobalServices {
 
     public void setUserGuidanceService(UserGuidanceService userGuidanceService) {
         this.userGuidanceService = userGuidanceService;
+    }
+
+    @Override
+    public ServerGlobalConnectionService getServerGlobalConnectionService() {
+        return serverGlobalConnectionService;
+    }
+
+    public void setServerGlobalConnectionService(ServerGlobalConnectionService serverGlobalConnectionService) {
+        this.serverGlobalConnectionService = serverGlobalConnectionService;
     }
 }

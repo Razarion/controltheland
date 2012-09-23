@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.services.bot.impl.BotServiceImpl;
 import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.common.ServerPlanetServices;
+import com.btxtech.game.services.connection.impl.ServerConnectionServiceImpl;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.Planet;
 import com.btxtech.game.services.planet.db.DbPlanet;
@@ -30,6 +31,7 @@ public class PlanetImpl implements Planet {
         planetServices.setServerEnergyService(new ServerEnergyServiceImpl());
         planetServices.setBotService(new BotServiceImpl());
         planetServices.setResourceService(new ResourceServiceImpl());
+        planetServices.setServerConnectionService(new ServerConnectionServiceImpl());
     }
 
     public void init(ServerGlobalServices serverGlobalServices) {
@@ -42,6 +44,7 @@ public class PlanetImpl implements Planet {
         ((ServerEnergyServiceImpl) planetServices.getEnergyService()).init(planetServices);
         ((BotServiceImpl) planetServices.getBotService()).init(planetServices, serverGlobalServices);
         ((ResourceServiceImpl) planetServices.getResourceService()).init(planetServices);
+        ((ServerConnectionServiceImpl) planetServices.getConnectionService()).init(planetServices, serverGlobalServices);
     }
 
     @Override
@@ -55,6 +58,7 @@ public class PlanetImpl implements Planet {
         (planetServices.getBotService()).activate(dbPlanet);
         planetServices.getResourceService().activate(dbPlanet);
         planetServices.getActionService().activate();
+        ((ServerConnectionServiceImpl) planetServices.getConnectionService()).activate();
         active = true;
     }
 
@@ -68,6 +72,7 @@ public class PlanetImpl implements Planet {
         planetServices.getBotService().deactivate();
         planetServices.getActionService().deactivate();
         planetServices.getResourceService().deactivate();
+        ((ServerConnectionServiceImpl) planetServices.getConnectionService()).deactivate();
     }
 
     @Override

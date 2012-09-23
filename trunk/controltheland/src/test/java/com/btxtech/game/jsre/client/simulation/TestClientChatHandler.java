@@ -2,8 +2,7 @@ package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientChatHandler;
-import com.btxtech.game.jsre.client.ConnectionI;
-import com.btxtech.game.jsre.client.GameEngineMode;
+import com.btxtech.game.jsre.client.GlobalCommonConnectionService;
 import com.btxtech.game.jsre.client.cockpit.ChatListener;
 import com.btxtech.game.jsre.client.common.AbstractGwtTest;
 import com.btxtech.game.jsre.client.common.LevelScope;
@@ -23,17 +22,16 @@ import java.util.List;
  * Time: 17:06:52
  */
 @Ignore
-public class TestClientChatHandler extends AbstractGwtTest implements ConnectionI, ChatListener {
+public class TestClientChatHandler extends AbstractGwtTest implements GlobalCommonConnectionService, ChatListener {
     private Integer lastMessageId;
     private int pollChatMessagesCalled;
     private List<ChatMessage> displayMessages = new ArrayList<ChatMessage>();
     private List<ChatMessage> sentMessages = new ArrayList<ChatMessage>();
-    private GameEngineMode gameEngineMode;
 
     public void testSimulatedToReal() throws Exception {
         lastMessageId = null;
         ClientLevelHandler.getInstance().setLevel(new LevelScope(1, 1, 0, null, 0));
-        gameEngineMode = GameEngineMode.MASTER;
+        // TODO gameEngineMode = GameEngineMode.MASTER;
         assertEquals(0, sentMessages.size());
         assertNull(lastMessageId);
         assertEquals(0, displayMessages.size());
@@ -71,7 +69,7 @@ public class TestClientChatHandler extends AbstractGwtTest implements Connection
                                 assertEquals(2, pollChatMessagesCalled);
                                 // Change to real game mode
                                 pollChatMessagesCalled = 0;
-                                gameEngineMode = GameEngineMode.SLAVE;
+                                // TODO gameEngineMode = GameEngineMode.SLAVE;
                                 SimpleBase simpleBase = new SimpleBase(1, 1);
                                 ClientBase.getInstance().setAllBaseAttributes(Arrays.asList(new BaseAttributes(simpleBase, "test", false)));
                                 ClientBase.getInstance().setBase(simpleBase);
@@ -153,11 +151,6 @@ public class TestClientChatHandler extends AbstractGwtTest implements Connection
     public void pollChatMessages(Integer lastMessageId) {
         this.lastMessageId = lastMessageId;
         pollChatMessagesCalled++;
-    }
-
-    @Override
-    public GameEngineMode getGameEngineMode() {
-        return gameEngineMode;
     }
 
     @Override

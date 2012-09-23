@@ -116,7 +116,7 @@ public class SyncLauncher extends SyncBaseAbility {
             getSyncBaseItem().fireItemChanged(SyncItemListener.Change.LAUNCHER_PROGRESS);
             projectile.setTarget(command.getTarget());
             getPlanetServices().getActionService().syncItemActivated(projectile);
-            getGlobalServices().getConnectionService().sendSyncInfo(projectile);
+            getPlanetServices().getConnectionService().sendSyncInfo(projectile);
         }
     }
 

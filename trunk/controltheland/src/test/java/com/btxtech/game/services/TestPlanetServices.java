@@ -6,6 +6,7 @@ import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionServi
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.bot.CommonBotService;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
+import com.btxtech.game.jsre.common.gameengine.services.connection.CommonConnectionService;
 import com.btxtech.game.jsre.common.gameengine.services.energy.EnergyService;
 import com.btxtech.game.jsre.common.gameengine.services.inventory.CommonInventoryService;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
@@ -30,6 +31,7 @@ public class TestPlanetServices implements PlanetServices {
     private CommonActionService actionService;
     private CommonBotService botService;
     private CommonInventoryService inventoryService;
+    private CommonConnectionService connectionService;
 
     @Override
     public PlanetInfo getPlanetInfo() {
@@ -120,5 +122,11 @@ public class TestPlanetServices implements PlanetServices {
         this.inventoryService = inventoryService;
     }
 
+    public CommonConnectionService getConnectionService() {
+        return connectionService;
+    }
 
+    public void setConnectionService(CommonConnectionService connectionService) {
+        this.connectionService = connectionService;
+    }
 }

@@ -115,7 +115,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                         activeItem.stop();
                         if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
                             ActionHandler.getInstance().addGuardingBaseItem(activeItem);
-                            ClientGlobalServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
+                            Connection.getInstance().sendSyncInfo(activeItem);
                             if (activeItem instanceof SyncBaseItem) {
                                 SimulationConditionServiceImpl.getInstance().onSyncItemDeactivated((SyncBaseItem) activeItem);
                             }
@@ -124,28 +124,28 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                 } catch (ItemDoesNotExistException ife) {
                     iterator.remove();
                     activeItem.stop();
-                    ClientGlobalServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
+                    Connection.getInstance().sendSyncInfo(activeItem);
                     log.warning("ItemDoesNotExistException");
                 } catch (PositionTakenException ife) {
                     iterator.remove();
                     activeItem.stop();
-                    ClientGlobalServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
+                    Connection.getInstance().sendSyncInfo(activeItem);
                     // TODO in-comment if fixed: log.warning("PositionTakenException");
                 } catch (PathCanNotBeFoundException e) {
                     iterator.remove();
                     activeItem.stop();
-                    ClientGlobalServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
+                    Connection.getInstance().sendSyncInfo(activeItem);
                     log.warning("PathCanNotBeFoundException: " + e.getMessage());
                 } catch (PlaceCanNotBeFoundException e) {
                     iterator.remove();
                     activeItem.stop();
-                    ClientGlobalServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
+                    Connection.getInstance().sendSyncInfo(activeItem);
                     log.warning("PlaceCanNotBeFoundException: " + e.getMessage());
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);
                     activeItem.stop();
                     iterator.remove();
-                    ClientGlobalServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
+                    Connection.getInstance().sendSyncInfo(activeItem);
                 }
             }
             lastTickTime = time;
@@ -395,7 +395,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
         } catch (Throwable t) {
             log.log(Level.SEVERE, "", t);
         }
-        ClientGlobalServices.getInstance().getConnectionService().sendSyncInfo(syncItem);
+        Connection.getInstance().sendSyncInfo(syncItem);
         SoundHandler.getInstance().playCommandSound(syncItem);
         if (commandListener != null) {
             commandListener.onCommand(baseCommand);

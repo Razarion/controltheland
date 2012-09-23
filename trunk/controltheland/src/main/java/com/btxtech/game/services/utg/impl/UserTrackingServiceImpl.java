@@ -469,7 +469,6 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     @Transactional
-    // ???
     public void onUserLeftGame(User user) {
         try {
             DbUserHistory dbUserHistory = new DbUserHistory(user);
@@ -478,6 +477,17 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         } catch (Throwable t) {
             log.error("", t);
         }
+    }
+
+    @Override
+    public void onUserLeftGameNoSession(User user) {
+        HibernateUtil.openSession4InternalCall(sessionFactory);
+        try {
+            onUserLeftGame(user);
+        } finally {
+            HibernateUtil.closeSession4InternalCall(sessionFactory);
+        }
+
     }
 
     @Override

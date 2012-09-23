@@ -16,6 +16,7 @@ package com.btxtech.game.services.common;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.services.bot.BotService;
+import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.planet.ActionService;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.CollisionService;
@@ -59,4 +60,7 @@ public interface ServerPlanetServices extends PlanetServices {
     InventoryService getInventoryService();
 
     ResourceService getResourceService();
+
+    @Override
+    ServerConnectionService getConnectionService();
 }

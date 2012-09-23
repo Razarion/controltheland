@@ -7,10 +7,8 @@ import com.btxtech.game.jsre.common.packets.ChatMessage;
  * Date: 03.04.2012
  * Time: 17:18:44
  */
-public interface ConnectionI {
+public interface GlobalCommonConnectionService {
     void sendChatMessage(ChatMessage chatMessage);
 
     void pollChatMessages(Integer lastMessageId);
-
-    GameEngineMode getGameEngineMode();
 }

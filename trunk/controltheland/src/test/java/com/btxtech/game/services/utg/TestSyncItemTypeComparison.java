@@ -8,7 +8,6 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
@@ -34,9 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -87,7 +84,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
         EasyMock.replay(baseServiceMock);
 
         ((ServerConditionServiceImpl) deAopProxy(serverConditionService)).setRate(50);
-        ((ServerPlanetServicesImpl)planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setBaseService(baseServiceMock);
+        ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setBaseService(baseServiceMock);
         setPrivateField(ServerConditionServiceImpl.class, serverConditionService, "serverConnectionService", this);
     }
 
@@ -315,16 +312,6 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
     }
 
     @Override
-    public void clientLog(String message, Date date) {
-
-    }
-
-    @Override
-    public boolean hasConnection() {
-        return false;
-    }
-
-    @Override
     public boolean hasConnection(SimpleBase simpleBase) {
         return false;
     }
@@ -359,16 +346,6 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
     @Override
     public void sendSyncInfos(Collection<SyncBaseItem> syncItem) {
 
-    }
-
-    @Override
-    public void sendChatMessage(ChatMessage chatMessage) {
-
-    }
-
-    @Override
-    public List<ChatMessage> pollChatMessages(Integer lastMessageId) {
-        return null;
     }
 
     @Override

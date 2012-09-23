@@ -35,6 +35,7 @@ import com.btxtech.game.services.utg.tracker.DbScrollTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbSelectionTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbSessionDetail;
 import com.btxtech.game.services.utg.tracker.DbSyncItemInfo;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
@@ -74,6 +75,8 @@ public interface UserTrackingService {
     void onUserEnterGame(User user);
 
     void onUserLeftGame(User user);
+
+    void onUserLeftGameNoSession(User user);
 
     void trackChatMessage(ChatMessage chatMessage);
 

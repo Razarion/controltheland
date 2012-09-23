@@ -24,7 +24,6 @@ import com.btxtech.game.jsre.common.utg.condition.GenericComparisonValueContaine
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
 import com.btxtech.game.services.common.ServerGlobalServices;
-import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.planet.PlanetSystemService;
@@ -60,8 +59,6 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
     private UserService userService;
     @Autowired
     private ServerItemTypeService serverItemTypeService;
-    @Autowired
-    private ServerConnectionService serverConnectionService;
     @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
@@ -347,7 +344,7 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
         if (abstractComparison != null && actor.getBase() != null) {
             LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
             levelTaskPacket.setActiveQuestProgress(abstractComparison.createProgressHtml());
-            serverConnectionService.sendPacket(actor.getBase().getSimpleBase(), levelTaskPacket);
+            actor.getBase().getPlanet().getPlanetServices().getConnectionService().sendPacket(actor.getBase().getSimpleBase(), levelTaskPacket);
         }
     }
 }

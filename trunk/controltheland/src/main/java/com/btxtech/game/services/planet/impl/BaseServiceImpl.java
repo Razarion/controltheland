@@ -39,6 +39,7 @@ import com.btxtech.game.jsre.common.packets.EnergyPacket;
 import com.btxtech.game.jsre.common.packets.HouseSpacePacket;
 import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.services.common.ServerGlobalServices;
+import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.planet.Base;
@@ -62,7 +63,7 @@ import java.util.List;
 public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseService {
     private static final String DEFAULT_BASE_NAME_PREFIX = "Base ";
     private Log log = LogFactory.getLog(BaseServiceImpl.class);
-    private PlanetServices planetServices;
+    private ServerPlanetServices planetServices;
     private ServerGlobalServices serverGlobalServices;
     private Planet planet;
     private final HashMap<SimpleBase, Base> bases = new HashMap<>();
@@ -72,7 +73,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         this.planet = planet;
     }
 
-    public void init(PlanetServices planetServices, ServerGlobalServices serverGlobalServices) {
+    public void init(ServerPlanetServices planetServices, ServerGlobalServices serverGlobalServices) {
         this.planetServices = planetServices;
         this.serverGlobalServices = serverGlobalServices;
     }
@@ -138,7 +139,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         serverGlobalServices.getUserTrackingService().onBaseSurrender(serverGlobalServices.getUserService().getUser(), base);
         UserState userState = getUserState(base.getSimpleBase());
         userState.setSendResurrectionMessage();
-        serverGlobalServices.getConnectionService().closeConnection(base.getSimpleBase(), NoConnectionException.Type.BASE_SURRENDERED);
+        planetServices.getConnectionService().closeConnection(base.getSimpleBase(), NoConnectionException.Type.BASE_SURRENDERED);
         makeBaseAbandoned(base);
         if (userState.isRegistered()) {
             serverGlobalServices.getAllianceService().onBaseCreatedOrDeleted(userState.getUser());
@@ -166,8 +167,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
                 serverGlobalServices.getConditionService().onBaseDeleted(actor);
             }
         }
-        if (serverGlobalServices.getConnectionService().hasConnection(base.getSimpleBase())) {
-            serverGlobalServices.getConnectionService().closeConnection(base.getSimpleBase(), NoConnectionException.Type.BASE_LOST);
+        if (planetServices.getConnectionService().hasConnection(base.getSimpleBase())) {
+            planetServices.getConnectionService().closeConnection(base.getSimpleBase(), NoConnectionException.Type.BASE_LOST);
         }
     }
 
@@ -291,7 +292,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     private void sendDefeatedMessage(SyncBaseItem victim, SimpleBase actor) {
         Message message = new Message();
         message.setMessage("You defeated " + getBaseName(victim.getBase()));
-        serverGlobalServices.getConnectionService().sendPacket(actor, message);
+        planetServices.getConnectionService().sendPacket(actor, message);
     }
 
     @Override
@@ -302,7 +303,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         Base base = getBase(syncBaseObject);
         AccountBalancePacket packet = new AccountBalancePacket();
         packet.setAccountBalance(base.getAccountBalance());
-        serverGlobalServices.getConnectionService().sendPacket(base.getSimpleBase(), packet);
+        planetServices.getConnectionService().sendPacket(base.getSimpleBase(), packet);
     }
 
     @Override
@@ -310,7 +311,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         Base base = getBaseThrow(simpleBase);
         AccountBalancePacket packet = new AccountBalancePacket();
         packet.setAccountBalance(base.getAccountBalance());
-        serverGlobalServices.getConnectionService().sendPacket(base.getSimpleBase(), packet);
+        planetServices.getConnectionService().sendPacket(base.getSimpleBase(), packet);
     }
 
     @Override
@@ -318,7 +319,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         EnergyPacket packet = new EnergyPacket();
         packet.setConsuming(baseEnergy.getConsuming());
         packet.setGenerating(baseEnergy.getGenerating());
-        serverGlobalServices.getConnectionService().sendPacket(base.getSimpleBase(), packet);
+        planetServices.getConnectionService().sendPacket(base.getSimpleBase(), packet);
     }
 
     private void makeBaseAbandoned(Base base) {
@@ -403,7 +404,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             BaseChangedPacket baseChangedPacket = new BaseChangedPacket();
             baseChangedPacket.setType(type);
             baseChangedPacket.setBaseAttributes(baseAttributes);
-            serverGlobalServices.getConnectionService().sendPacket(baseChangedPacket);
+            planetServices.getConnectionService().sendPacket(baseChangedPacket);
         } else {
             log.error("Base does not exist: " + simpleBase);
         }
@@ -432,7 +433,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             BaseChangedPacket baseChangedPacket = new BaseChangedPacket();
             baseChangedPacket.setType(BaseChangedPacket.Type.CHANGED);
             baseChangedPacket.setBaseAttributes(baseAttributes);
-            serverGlobalServices.getConnectionService().sendPacket(simpleBase, baseChangedPacket);
+            planetServices.getConnectionService().sendPacket(simpleBase, baseChangedPacket);
         } else {
             log.error("Base does not exist: " + simpleBase);
         }
@@ -467,7 +468,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     public void sendHouseSpacePacket(Base base) {
         HouseSpacePacket houseSpacePacket = new HouseSpacePacket();
         houseSpacePacket.setHouseSpace(base.getHouseSpace());
-        serverGlobalServices.getConnectionService().sendPacket(base.getSimpleBase(), houseSpacePacket);
+        planetServices.getConnectionService().sendPacket(base.getSimpleBase(), houseSpacePacket);
     }
 
     @Override

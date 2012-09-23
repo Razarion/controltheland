@@ -15,6 +15,7 @@ package com.btxtech.game.services.connection;
 
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.services.connection.CommonConnectionService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.common.packets.Packet;
@@ -29,11 +30,7 @@ import java.util.List;
  * Date: Jul 15, 2009
  * Time: 1:20:07 PM
  */
-public interface ServerConnectionService extends com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService {
-    void clientLog(String message, Date date);
-
-    boolean hasConnection();
-
+public interface ServerConnectionService extends CommonConnectionService {
     boolean hasConnection(SimpleBase simpleBase);
 
     Connection getConnection(String startUuid) throws NoConnectionException;
@@ -47,10 +44,6 @@ public interface ServerConnectionService extends com.btxtech.game.jsre.common.ga
     void sendPacket(Packet packet);
 
     void sendSyncInfos(Collection<SyncBaseItem> syncItem);
-
-    void sendChatMessage(ChatMessage chatMessage);
-
-    List<ChatMessage> pollChatMessages(Integer lastMessageId);
 
     Collection<SimpleBase> getOnlineBases();
 }

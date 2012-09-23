@@ -95,7 +95,7 @@ public class SyncMovable extends SyncBaseAbility {
     }
 
     public boolean onFinished() {
-        if (getGlobalServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
+        if (getPlanetServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
             return false;
         }
         SyncBaseItem syncBaseItem = getSyncBaseItem();
@@ -103,7 +103,7 @@ public class SyncMovable extends SyncBaseAbility {
             Path path = getPlanetServices().getCollisionService().setupPathToSyncMovableRandomPositionIfTaken(syncBaseItem);
             pathToDestination = path.getPath();
             destinationAngel = path.getActualDestinationAngel();
-            getGlobalServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+            getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
             return true;
         }  else {
             return false;
@@ -140,7 +140,7 @@ public class SyncMovable extends SyncBaseAbility {
                 if (isNewPathRecalculationAllowed()) {
                     // Destination place was may be taken. Calculate a new one or target has moved away
                     recalculateNewPath(getSyncBaseItem().getBaseItemType().getBoxPickupRange(), syncBoxItem.getSyncItemArea(), syncBoxItem.getTerrainType());
-                    getGlobalServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+                    getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                     return true;
                 } else {
                     return false;

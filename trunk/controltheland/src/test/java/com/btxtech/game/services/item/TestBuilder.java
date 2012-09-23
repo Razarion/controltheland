@@ -79,10 +79,10 @@ public class TestBuilder extends AbstractServiceTest {
         EasyMock.expect(planetServicesMock.getTerrainService()).andReturn(terrainServiceMock).anyTimes();
         EasyMock.expect(planetServicesMock.getBaseService()).andReturn(abstractBaseServiceMock).anyTimes();
         EasyMock.expect(planetServicesMock.getPlanetInfo()).andReturn(planetInfo).anyTimes();
+        EasyMock.expect(planetServicesMock.getConnectionService()).andReturn(connectionServiceMock).anyTimes();
         EasyMock.replay(planetServicesMock);
 
         TestGlobalServices testGlobalServices = new TestGlobalServices();
-        testGlobalServices.setServerConnectionService(connectionServiceMock);
 
         Id id = new Id(1, 1, 1);
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(5000, 5000), id, testGlobalServices, planetServicesMock);

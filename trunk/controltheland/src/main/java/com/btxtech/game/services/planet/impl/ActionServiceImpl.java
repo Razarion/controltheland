@@ -32,9 +32,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.PathToDestinationCommand;
 import com.btxtech.game.services.common.ServerGlobalServices;
+import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.planet.ActionService;
-import com.btxtech.game.services.planet.CollisionService;
-import com.btxtech.game.services.planet.ServerEnergyService;
 import com.btxtech.game.services.planet.ServerItemService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,7 +60,7 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
     private Log log = LogFactory.getLog(ActionServiceImpl.class);
     private long lastTickTime = 0;
     private boolean pause = false;
-    private PlanetServices planetServices;
+    private ServerPlanetServices planetServices;
     private ServerGlobalServices serverGlobalServices;
 
     private class ActionServiceTimerTask extends TimerTask {
@@ -91,7 +90,7 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
                                 try {
                                     activeItem.stop();
                                     addGuardingBaseItem(activeItem);
-                                    serverGlobalServices.getConnectionService().sendSyncInfo(activeItem);
+                                    planetServices.getConnectionService().sendSyncInfo(activeItem);
                                     if (activeItem instanceof SyncBaseItem) {
                                         SyncBaseItem syncBaseItem = (SyncBaseItem) activeItem;
                                         if (syncBaseItem.hasSyncHarvester()) {
@@ -114,22 +113,22 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
                             log.info("PositionTakenException: " + ife.getMessage());
                             activeItem.stop();
                             iterator.remove();
-                            serverGlobalServices.getConnectionService().sendSyncInfo(activeItem);
+                            planetServices.getConnectionService().sendSyncInfo(activeItem);
                         } catch (PathCanNotBeFoundException e) {
                             log.info("PathCanNotBeFoundException: " + e.getMessage());
                             activeItem.stop();
                             iterator.remove();
-                            serverGlobalServices.getConnectionService().sendSyncInfo(activeItem);
+                            planetServices.getConnectionService().sendSyncInfo(activeItem);
                         } catch (PlaceCanNotBeFoundException e) {
                             log.info("PlaceCanNotBeFoundException: " + e.getMessage());
                             activeItem.stop();
                             iterator.remove();
-                            serverGlobalServices.getConnectionService().sendSyncInfo(activeItem);
+                            planetServices.getConnectionService().sendSyncInfo(activeItem);
                         } catch (Throwable t) {
                             log.error("ActiveItem: " + activeItem, t);
                             activeItem.stop();
                             iterator.remove();
-                            serverGlobalServices.getConnectionService().sendSyncInfo(activeItem);
+                            planetServices.getConnectionService().sendSyncInfo(activeItem);
                         }
                     }
                     lastTickTime = time;
@@ -140,7 +139,7 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
         }
     }
 
-    public void init(PlanetServices planetServices, ServerGlobalServices serverGlobalServices) {
+    public void init(ServerPlanetServices planetServices, ServerGlobalServices serverGlobalServices) {
         this.planetServices = planetServices;
         this.serverGlobalServices = serverGlobalServices;
     }
@@ -202,10 +201,10 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
                 }
                 break;
             case ITEM_TYPE_CHANGED:
-                ((ServerEnergyService) planetServices.getEnergyService()).onItemChanged((SyncBaseItem) syncItem);
+                planetServices.getEnergyService().onItemChanged((SyncBaseItem) syncItem);
                 break;
             case CONTAINED_IN_CHANGED:
-                ((ServerEnergyService) planetServices.getEnergyService()).onItemChanged((SyncBaseItem) syncItem);
+                planetServices.getEnergyService().onItemChanged((SyncBaseItem) syncItem);
                 break;
         }
 
@@ -260,9 +259,9 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
             getPlanetServices().getBaseService().checkBaseAccess(syncItem);
             serverGlobalServices.getUserTrackingService().saveUserCommand(baseCommand);
             if (baseCommand instanceof PathToDestinationCommand) {
-                if (!((CollisionService) planetServices.getCollisionService()).checkIfPathValid(((PathToDestinationCommand) baseCommand).getPathToDestination())) {
+                if (!planetServices.getCollisionService().checkIfPathValid(((PathToDestinationCommand) baseCommand).getPathToDestination())) {
                     log.error("Path is invalid: " + ((PathToDestinationCommand) baseCommand).getPathToDestination());
-                    serverGlobalServices.getConnectionService().sendSyncInfo(syncItem);
+                    planetServices.getConnectionService().sendSyncInfo(syncItem);
                     return;
                 }
             }
@@ -272,25 +271,25 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
             syncItem.executeCommand(baseCommand);
             finalizeCommand(syncItem);
         } catch (PathCanNotBeFoundException e) {
-            serverGlobalServices.getConnectionService().sendSyncInfo(syncItem);
+            planetServices.getConnectionService().sendSyncInfo(syncItem);
         } catch (ItemDoesNotExistException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Can not execute command. Item does no longer exist " + baseCommand);
             }
-            serverGlobalServices.getConnectionService().sendSyncInfo(syncItem);
+            planetServices.getConnectionService().sendSyncInfo(syncItem);
         } catch (InsufficientFundsException e) {
-            serverGlobalServices.getConnectionService().sendSyncInfo(syncItem);
+            planetServices.getConnectionService().sendSyncInfo(syncItem);
             getPlanetServices().getBaseService().sendAccountBaseUpdate(syncItem);
         } catch (Exception e) {
             log.error("", e);
-            serverGlobalServices.getConnectionService().sendSyncInfo(syncItem);
+            planetServices.getConnectionService().sendSyncInfo(syncItem);
         }
     }
 
     private void finalizeCommand(SyncBaseItem syncItem) {
         addToQueue(syncItem);
         removeGuardingBaseItem(syncItem);
-        serverGlobalServices.getConnectionService().sendSyncInfo(syncItem);
+        planetServices.getConnectionService().sendSyncInfo(syncItem);
     }
 
     @Override

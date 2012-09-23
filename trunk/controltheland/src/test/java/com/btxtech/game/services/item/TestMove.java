@@ -50,7 +50,6 @@ public class TestMove extends AbstractServiceTest {
         EasyMock.replay(mockTerrainService);
 
         TestGlobalServices testGlobalServices = new TestGlobalServices();
-        testGlobalServices.setServerConnectionService(connectionService);
 
         serverPlanetServices.setServerItemService(serverItemServiceMock);
         serverPlanetServices.setTerrainService(mockTerrainService);

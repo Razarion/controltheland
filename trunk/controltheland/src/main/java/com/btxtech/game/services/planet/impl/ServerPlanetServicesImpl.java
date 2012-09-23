@@ -16,6 +16,8 @@ package com.btxtech.game.services.planet.impl;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.common.ServerPlanetServices;
+import com.btxtech.game.services.connection.ServerConnectionService;
+import com.btxtech.game.services.connection.impl.ServerConnectionServiceImpl;
 import com.btxtech.game.services.planet.ActionService;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.CollisionService;
@@ -42,6 +44,7 @@ public class ServerPlanetServicesImpl implements ServerPlanetServices {
     private ServerEnergyService serverEnergyService;
     private BotService botService;
     private ResourceService resourceService;
+    private ServerConnectionService serverConnectionService;
 
     @Override
     public PlanetInfo getPlanetInfo() {
@@ -130,5 +133,14 @@ public class ServerPlanetServicesImpl implements ServerPlanetServices {
 
     public void setResourceService(ResourceService resourceService) {
         this.resourceService = resourceService;
+    }
+
+    @Override
+    public ServerConnectionService getConnectionService() {
+        return serverConnectionService;
+    }
+
+    public void setServerConnectionService(ServerConnectionService serverConnectionService) {
+        this.serverConnectionService = serverConnectionService;
     }
 }

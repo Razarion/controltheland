@@ -10,7 +10,6 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
@@ -38,9 +37,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -903,16 +900,6 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     }
 
     @Override
-    public void clientLog(String message, Date date) {
-
-    }
-
-    @Override
-    public boolean hasConnection() {
-        return false;
-    }
-
-    @Override
     public boolean hasConnection(SimpleBase simpleBase) {
         return false;
     }
@@ -947,16 +934,6 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Override
     public void sendSyncInfos(Collection<SyncBaseItem> syncItem) {
 
-    }
-
-    @Override
-    public void sendChatMessage(ChatMessage chatMessage) {
-
-    }
-
-    @Override
-    public List<ChatMessage> pollChatMessages(Integer lastMessageId) {
-        return null;
     }
 
     @Override

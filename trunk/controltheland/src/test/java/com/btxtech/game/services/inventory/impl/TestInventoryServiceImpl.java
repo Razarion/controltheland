@@ -488,7 +488,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         setupDbItemTypeId(dbBoxItemTypeMock, TEST_BOX_ITEM_1_ID);
         // Picker
         SyncBaseItem mockPicker = EasyMock.createStrictMock(SyncBaseItem.class);
-        EasyMock.expect(mockPicker.getBase()).andReturn(simpleBase).times(5);
+        EasyMock.expect(mockPicker.getBase()).andReturn(simpleBase).times(6);
         // SyncBoxItems
         SyncBoxItem mockSyncBoxItem1 = EasyMock.createStrictMock(SyncBoxItem.class);
         EasyMock.expect(mockSyncBoxItem1.isInTTL()).andReturn(true).anyTimes();
@@ -938,7 +938,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         mockServerItemService.killSyncItem(mockSyncBoxItem1, simpleBase, true, false);
         // Picker
         SyncBaseItem picker = EasyMock.createStrictMock(SyncBaseItem.class);
-        EasyMock.expect(picker.getBase()).andReturn(simpleBase).times(20);
+        EasyMock.expect(picker.getBase()).andReturn(simpleBase).times(24);
         // SyncBoxItems
         UserState mockUserState = EasyMock.createStrictMock(UserState.class);
         mockUserState.addRazarion(100);
@@ -970,7 +970,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
 
         setPrivateField(GlobalInventoryServiceImpl.class, globalInventoryService, "historyService", mockHistoryService);
         setPrivateField(GlobalInventoryServiceImpl.class, globalInventoryService, "serverItemTypeService", mockServerItemTypeService);
-        setPrivateField(GlobalInventoryServiceImpl.class, globalInventoryService, "serverConnectionService", connectionService);
+        serverPlanetServices.setServerConnectionService(connectionService);
         serverPlanetServices.setBaseService(mockBaseService);
         serverPlanetServices.setServerItemService(mockServerItemService);
 

@@ -84,4 +84,6 @@ public interface PlanetSystemService {
     List<SimpleBase> getAllSimpleBases();
 
     void saveTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int planetId);
+
+    Collection<Planet> getAllPlanets();
 }

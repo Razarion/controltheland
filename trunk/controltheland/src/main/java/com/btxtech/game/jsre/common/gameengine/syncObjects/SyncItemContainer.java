@@ -57,7 +57,7 @@ public class SyncItemContainer extends SyncBaseAbility {
     }
 
     public void load(SyncBaseItem syncBaseItem) throws ItemContainerFullException {
-        if (getGlobalServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
+        if (getPlanetServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
             return;
         }
 
@@ -65,7 +65,7 @@ public class SyncItemContainer extends SyncBaseAbility {
         containedItems.add(syncBaseItem.getId());
         syncBaseItem.setContained(getSyncBaseItem().getId());
         getSyncBaseItem().fireItemChanged(SyncItemListener.Change.CONTAINER_COUNT_CHANGED);
-        getGlobalServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+        getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
     }
 
     private void isAbleToContainThrow(SyncBaseItem syncBaseItem) throws ItemContainerFullException {
@@ -121,7 +121,7 @@ public class SyncItemContainer extends SyncBaseAbility {
                 // Destination place was may be taken. Calculate a new one.
                 TerrainType targetTerrainType = getUglyTerrainType(this);
                 recalculateNewPath(itemContainerType.getRange(), getSyncItemArea().getBoundingBox().createSyntheticSyncItemArea(unloadPos), targetTerrainType);
-                getGlobalServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+                getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                 return true;
             } else {
                 return false;
@@ -143,7 +143,7 @@ public class SyncItemContainer extends SyncBaseAbility {
     }
 
     private void unload() throws ItemDoesNotExistException {
-        if (getGlobalServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
+        if (getPlanetServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
             return;
         }
         for (Iterator<Id> iterator = containedItems.iterator(); iterator.hasNext();) {
@@ -151,10 +151,10 @@ public class SyncItemContainer extends SyncBaseAbility {
             if (allowedUnload(unloadPos, containedItem)) {
                 SyncBaseItem syncItem = (SyncBaseItem) getPlanetServices().getItemService().getItem(containedItem);
                 syncItem.clearContained(unloadPos);
-                if (getGlobalServices().getConnectionService().getGameEngineMode() == GameEngineMode.MASTER) {
+                if (getPlanetServices().getConnectionService().getGameEngineMode() == GameEngineMode.MASTER) {
                     getGlobalServices().getConditionService().onSyncItemUnloaded(syncItem);
                 }
-                getGlobalServices().getConnectionService().sendSyncInfo(syncItem);
+                getPlanetServices().getConnectionService().sendSyncInfo(syncItem);
                 iterator.remove();
             }
         }

@@ -41,13 +41,16 @@ import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
+import com.btxtech.game.jsre.common.gameengine.services.connection.CommonConnectionService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
@@ -91,7 +94,7 @@ import java.util.logging.Logger;
  * Date: Jul 4, 2009
  * Time: 11:23:52 AM
  */
-public class Connection implements StartupProgressListener, ConnectionI {
+public class Connection implements StartupProgressListener, GlobalCommonConnectionService, CommonConnectionService {
     public static final int MAX_DISCONNECTION_COUNT = 20;
     public static final int MIN_DELAY_BETWEEN_POLL = 200;
     public static final int STATISTIC_DELAY = 10000;
@@ -347,6 +350,11 @@ public class Connection implements StartupProgressListener, ConnectionI {
                         }
                     });
         }
+    }
+
+    @Override
+    public void sendSyncInfo(SyncItem syncItem) {
+        ClientUserTracker.getInstance().trackSyncInfo(syncItem);
     }
 
     @Override

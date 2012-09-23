@@ -28,8 +28,6 @@ public class AllianceServiceImpl implements AllianceService {
     @Autowired
     private UserService userService;
     @Autowired
-    private ServerConnectionService serverConnectionService;
-    @Autowired
     private PlanetSystemService planetSystemService;
     @Autowired
     private HistoryService historyService;
@@ -57,7 +55,7 @@ public class AllianceServiceImpl implements AllianceService {
             userService.save(partnerUser);
             historyService.addAllianceOffered(user, partnerUser);
         }
-        serverConnectionService.sendPacket(partner, createAllianceOfferPackage(user));
+        planetSystemService.getServerPlanetServices(partner).getConnectionService().sendPacket(partner, createAllianceOfferPackage(user));
     }
 
     @Override
@@ -218,7 +216,7 @@ public class AllianceServiceImpl implements AllianceService {
         accepted.setMessage(message);
         accepted.setShowRegisterDialog(showRegisterDialog);
         if (simpleBase != null) {
-            serverConnectionService.sendPacket(simpleBase, accepted);
+            planetSystemService.getServerPlanetServices(simpleBase).getConnectionService().sendPacket(simpleBase, accepted);
         }
     }
 
