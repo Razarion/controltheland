@@ -531,12 +531,6 @@ public class TestAllianceService extends AbstractServiceTest {
         }
     }
 
-    private AllianceOfferPacket createAllianceOfferPacket(String userName) {
-        AllianceOfferPacket allianceOfferPacket = new AllianceOfferPacket();
-        allianceOfferPacket.setActorUserName(userName);
-        return allianceOfferPacket;
-    }
-
     private void assertAlliancesInPackets(ServerConnectionServiceTestHelper connectionServiceTestHelper, SimpleBase myBase, String... allianceNames) {
         List<ServerConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelper.getPacketEntries(myBase, BaseChangedPacket.class);
         Assert.assertEquals(1, packets.size());
