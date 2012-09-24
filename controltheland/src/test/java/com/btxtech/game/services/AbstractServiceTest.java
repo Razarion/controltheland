@@ -15,6 +15,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
 import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
+import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
@@ -493,6 +494,14 @@ abstract public class AbstractServiceTest {
         planetSystemService.getServerPlanetServices(planetId).getItemService().killSyncItem(syncItem, null, true, false);
     }
 
+    protected Collection<SyncResourceItem> getAllResourceItems(int planetId, int itemTypeId) throws NoSuchItemTypeException {
+        return (Collection<SyncResourceItem>) planetSystemService.getServerPlanetServices(planetId).getItemService().getItems(serverItemTypeService.getItemType(itemTypeId), null);
+    }
+
+    protected Id getFirstResourceItem(int planetId, int itemTypeId) throws NoSuchItemTypeException {
+        return new ArrayList<>(getAllResourceItems(planetId, itemTypeId)).get(0).getId();
+    }
+
     // ------------------- Connection --------------------
 
     protected void clearPackets() throws Exception {
@@ -754,6 +763,8 @@ abstract public class AbstractServiceTest {
         setupOneLevel(dbPlanet1);
         // Xp
         setupXpSettings();
+        // Resource
+        setupResource1(dbPlanet1, 1, new Rectangle(5000, 5000, 300, 300));
 
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet1);
         planetSystemService.activate();
@@ -782,7 +793,9 @@ abstract public class AbstractServiceTest {
         // Xp
         setupXpSettings();
         // Resource fields
-        setupResource(dbPlanet1);
+        setupResource1(dbPlanet1, 10, new Rectangle(5000, 5000, 1000, 1000));
+        setupResource1(dbPlanet2, 5, new Rectangle(5000, 5000, 1000, 1000));
+        setupResource1(dbPlanet3, 6, new Rectangle(0, 0, 1000, 1000));
 
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet1);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
@@ -1698,12 +1711,12 @@ abstract public class AbstractServiceTest {
 
     // ------------------- Setup Resource --------------------
 
-    protected DbRegionResource setupResource(DbPlanet dbPlanet) {
+    protected DbRegionResource setupResource1(DbPlanet dbPlanet, int count, Rectangle region) {
         DbRegionResource dbRegionResource = dbPlanet.getRegionResourceCrud().createDbChild();
         dbRegionResource.setResourceItemType(serverItemTypeService.getDbResourceItemType(TEST_RESOURCE_ITEM_ID));
-        dbRegionResource.setCount(10);
+        dbRegionResource.setCount(count);
         dbRegionResource.setMinDistanceToItems(100);
-        dbRegionResource.setRegion(createDbRegion(new Rectangle(5000, 5000, 10000, 10000)));
+        dbRegionResource.setRegion(createDbRegion(region));
         return dbRegionResource;
     }
 
