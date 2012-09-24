@@ -91,6 +91,7 @@ public class PlanetImpl implements Planet {
         planetServices.getEnergyService().pause(true);
         planetServices.getBotService().deactivate();
         planetServices.getInventoryService().deactivate();
+        planetServices.getResourceService().deactivate();
     }
 
     @Override
@@ -100,6 +101,7 @@ public class PlanetImpl implements Planet {
         planetServices.getBotService().activate(dbPlanet);
         planetServices.getInventoryService().activate(dbPlanet);
         planetServices.getActionService().reload();
+        planetServices.getResourceService().activate(dbPlanet);
         active = true;
     }
 

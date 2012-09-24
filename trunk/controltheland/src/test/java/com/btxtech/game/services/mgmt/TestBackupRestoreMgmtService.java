@@ -14,6 +14,7 @@ import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeExce
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncMovable;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.ServerPlanetServices;
@@ -30,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -453,6 +455,98 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void resourceAfterRestore() throws Exception {
+        configureMultiplePlanetsAndLevels();
+
+        assertWholeItemCount(TEST_PLANET_1_ID, 10);
+        assertWholeItemCount(TEST_PLANET_2_ID, 5);
+        assertWholeItemCount(TEST_PLANET_3_ID, 6);
+
+        Collection<SyncResourceItem> resourceP1Before = getAllResourceItems(TEST_PLANET_1_ID, TEST_RESOURCE_ITEM_ID);
+        Collection<SyncResourceItem> resourceP2Before = getAllResourceItems(TEST_PLANET_2_ID, TEST_RESOURCE_ITEM_ID);
+        Collection<SyncResourceItem> resourceP3Before = getAllResourceItems(TEST_PLANET_3_ID, TEST_RESOURCE_ITEM_ID);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        assertBackupSummery(1, 0, 0, 0);
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        assertWholeItemCount(TEST_PLANET_1_ID, 10);
+        assertWholeItemCount(TEST_PLANET_2_ID, 5);
+        assertWholeItemCount(TEST_PLANET_3_ID, 6);
+
+        Collection<SyncResourceItem> resourceP1After = getAllResourceItems(TEST_PLANET_1_ID, TEST_RESOURCE_ITEM_ID);
+        Collection<SyncResourceItem> resourceP2After = getAllResourceItems(TEST_PLANET_2_ID, TEST_RESOURCE_ITEM_ID);
+        Collection<SyncResourceItem> resourceP3After = getAllResourceItems(TEST_PLANET_3_ID, TEST_RESOURCE_ITEM_ID);
+
+        resourceP1Before.retainAll(resourceP1After);
+        resourceP2Before.retainAll(resourceP2After);
+        resourceP3Before.retainAll(resourceP3After);
+
+        Assert.assertTrue(resourceP1Before.isEmpty());
+        Assert.assertTrue(resourceP2Before.isEmpty());
+        Assert.assertTrue(resourceP3Before.isEmpty());
+    }
+
+    @Test
+    @DirtiesContext
+    public void resourceCollectingRestore() throws Exception {
+        configureSimplePlanet();
+
+        // U1 reg user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "test", "test", "test");
+        userService.login("U1", "test");
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone(TEST_PLANET_1_ID);
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_HARVESTER_ITEM_ID);
+        waitForActionServiceDone(TEST_PLANET_1_ID);
+        Id harvester = getFirstSynItemId(TEST_HARVESTER_ITEM_ID);
+        Id resource = getFirstResourceItem(TEST_PLANET_1_ID, TEST_RESOURCE_ITEM_ID);
+        ((SyncResourceItem) planetSystemService.getServerPlanetServices().getItemService().getItem(resource)).setAmount(999999999999.0);
+        SyncBaseItem harvesterItem = (SyncBaseItem) planetSystemService.getServerPlanetServices().getItemService().getItem(harvester);
+        sendCollectCommand(harvester, resource);
+        Assert.assertTrue(harvesterItem.getSyncHarvester().getTarget() != null);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        assertBackupSummery(1, 3, 1, 1);
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        harvester = getFirstSynItemId(TEST_HARVESTER_ITEM_ID);
+        harvesterItem = (SyncBaseItem) planetSystemService.getServerPlanetServices().getItemService().getItem(harvester);
+        Assert.assertFalse(harvesterItem.getSyncHarvester().getTarget() != null);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 
     private void verifyUserStates(List<UserState> newUserStates, List<UserState> oldUserStates) {
         Assert.assertEquals(oldUserStates.size(), newUserStates.size());
