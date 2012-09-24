@@ -24,15 +24,12 @@ import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.common.ServerPlanetServices;
-import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.planet.db.DbPlanet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * User: beat
@@ -43,7 +40,6 @@ public class BotServiceImpl extends CommonBotServiceImpl implements BotService {
     private PlanetServices planetServices;
     private ServerGlobalServices serverGlobalServices;
     private Log log = LogFactory.getLog(BotServiceImpl.class);
-    private Map<Integer, BotConfig> simulatedBotConfigs = new HashMap<>();
 
     public void init(ServerPlanetServices planetServices, ServerGlobalServices serverGlobalServices) {
         this.planetServices = planetServices;
@@ -67,25 +63,15 @@ public class BotServiceImpl extends CommonBotServiceImpl implements BotService {
     }
 
     private void fillBotConfigs(DbPlanet dbPlanet) {
-        simulatedBotConfigs.clear();
         Collection<BotConfig> realGameBotConfigs = new ArrayList<>();
         for (DbBotConfig botConfig : dbPlanet.getBotCrud().readDbChildren()) {
             try {
-                if (botConfig.isRealGameBot()) {
-                    realGameBotConfigs.add(botConfig.createBotConfig(serverGlobalServices.getItemTypeService()));
-                } else {
-                    simulatedBotConfigs.put(botConfig.getId(), botConfig.createBotConfig((ServerItemTypeService) serverGlobalServices.getItemTypeService()));
-                }
+                realGameBotConfigs.add(botConfig.createBotConfig(serverGlobalServices.getItemTypeService()));
             } catch (Exception e) {
                 log.error("", e);
             }
         }
         setBotConfigs(realGameBotConfigs);
-    }
-
-    @Override
-    public BotConfig getSimulationBotConfig(int id) {
-        return simulatedBotConfigs.get(id);
     }
 
     @Override

@@ -25,7 +25,5 @@ import com.btxtech.game.services.planet.db.DbPlanet;
 public interface BotService extends CommonBotService {
     void activate(DbPlanet dbPlanet);
 
-    BotConfig getSimulationBotConfig(int id);
-
     void deactivate();
 }

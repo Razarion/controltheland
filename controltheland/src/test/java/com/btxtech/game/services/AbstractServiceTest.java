@@ -1638,7 +1638,6 @@ abstract public class AbstractServiceTest {
         DbBotConfig dbBotConfig = dbPlanet.getBotCrud().createDbChild();
         dbBotConfig.setActionDelay(10);
         dbBotConfig.setRealm(realm);
-        dbBotConfig.setRealGameBot(true);
         DbBotEnragementStateConfig dbBotEnragementStateConfig = dbBotConfig.getEnrageStateCrud().createDbChild();
         dbBotEnragementStateConfig.setName("NormalTest");
         DbBotItemConfig builder = dbBotEnragementStateConfig.getBotItemCrud().createDbChild();
@@ -1662,7 +1661,6 @@ abstract public class AbstractServiceTest {
         DbBotConfig dbBotConfig = dbPlanet.getBotCrud().createDbChild();
         dbBotConfig.setActionDelay(10);
         dbBotConfig.setRealm(realm);
-        dbBotConfig.setRealGameBot(true);
         DbBotEnragementStateConfig dbBotEnragementStateConfig = dbBotConfig.getEnrageStateCrud().createDbChild();
         dbBotEnragementStateConfig.setName("NormalTest");
         DbBotItemConfig builder = dbBotEnragementStateConfig.getBotItemCrud().createDbChild();
