@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainS
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImageBackground;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainTile;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainUtil;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
 
@@ -51,19 +52,21 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
 
     @Override
     protected void render() {
-        if (getScale().isDrawImages()) {
-            drawImages(getContext2d());
+        final Rectangle tileRect = getTileViewRectangle();
+        MiniMapRenderDetails miniMapRenderDetails = new MiniMapRenderDetails(tileRect);
+
+        if (miniMapRenderDetails.isDrawImages()) {
+            drawImages(getContext2d(), tileRect);
         } else {
-            drawWithoutImages(getContext2d());
+            drawWithoutImages(getContext2d(), tileRect, miniMapRenderDetails);
         }
     }
 
-    private void drawWithoutImages(final Context2d context2d) {
-        final Rectangle tileRect = getTileViewRectangle();
+    private void drawWithoutImages(final Context2d context2d, final Rectangle tileRect, MiniMapRenderDetails miniMapRenderDetails) {
         final int scrollXOffset = getViewOrigin().getX() % Constants.TERRAIN_TILE_WIDTH;
         final int scrollYOffset = getViewOrigin().getY() % Constants.TERRAIN_TILE_HEIGHT;
-        final int xTileIncrease = getScale().getTileIncrease();
-        final int yTileIncrease = getScale().getTileIncrease();
+        final int xTileIncrease = miniMapRenderDetails.getTileIncrease();
+        final int yTileIncrease = miniMapRenderDetails.getTileIncrease();
         final int tileWidth = Constants.TERRAIN_TILE_WIDTH * xTileIncrease;
         final int tileHeight = Constants.TERRAIN_TILE_HEIGHT * yTileIncrease;
         TerrainView.getInstance().getTerrainHandler().iteratorOverAllTerrainTiles(tileRect, new AbstractTerrainService.TerrainTileEvaluator() {
@@ -76,7 +79,7 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
                     return;
                 }
 
-                int relativeX = terrainHandler.getAbsolutXForTerrainTile(x - tileRect.getX());
+                int relativeX = TerrainUtil.getAbsolutXForTerrainTile(x - tileRect.getX());
                 int imageWidth = tileWidth;
                 if (relativeX == 0) {
                     imageWidth = tileWidth - scrollXOffset;
@@ -84,7 +87,7 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
                     relativeX -= scrollXOffset;
                 }
 
-                int relativeY = terrainHandler.getAbsolutYForTerrainTile(y - tileRect.getY());
+                int relativeY = TerrainUtil.getAbsolutYForTerrainTile(y - tileRect.getY());
                 int imageHeight = tileHeight;
                 if (relativeY == 0) {
                     imageHeight = tileHeight - scrollYOffset;
@@ -111,8 +114,7 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
         }, xTileIncrease, yTileIncrease);
     }
 
-    private void drawImages(final Context2d context2d) {
-        final Rectangle tileRect = getTileViewRectangle();
+    private void drawImages(final Context2d context2d, final Rectangle tileRect) {
         final int scrollXOffset = getViewOrigin().getX() % Constants.TERRAIN_TILE_WIDTH;
         final int scrollYOffset = getViewOrigin().getY() % Constants.TERRAIN_TILE_HEIGHT;
         final int tileWidth = Constants.TERRAIN_TILE_WIDTH;
@@ -126,7 +128,7 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
                     return;
                 }
 
-                int relativeX = terrainHandler.getAbsolutXForTerrainTile(x - tileRect.getX());
+                int relativeX = TerrainUtil.getAbsolutXForTerrainTile(x - tileRect.getX());
                 int imageWidth = tileWidth;
                 if (relativeX == 0) {
                     imageWidth = tileWidth - scrollXOffset;
@@ -134,7 +136,7 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
                     relativeX -= scrollXOffset;
                 }
 
-                int relativeY = terrainHandler.getAbsolutYForTerrainTile(y - tileRect.getY());
+                int relativeY = TerrainUtil.getAbsolutYForTerrainTile(y - tileRect.getY());
                 int imageHeight = tileHeight;
                 if (relativeY == 0) {
                     imageHeight = tileHeight - scrollYOffset;
@@ -152,8 +154,8 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
                     return;
                 }
 
-                int sourceXOffset = terrainHandler.getAbsolutXForTerrainTile(terrainTile.getTileXOffset());
-                int sourceYOffset = terrainHandler.getAbsolutYForTerrainTile(terrainTile.getTileYOffset());
+                int sourceXOffset = TerrainUtil.getAbsolutXForTerrainTile(terrainTile.getTileXOffset());
+                int sourceYOffset = TerrainUtil.getAbsolutYForTerrainTile(terrainTile.getTileYOffset());
                 if (relativeX == 0) {
                     sourceXOffset += scrollXOffset;
                 }
