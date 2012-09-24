@@ -6,37 +6,25 @@ package com.btxtech.game.jsre.client.cockpit.radar;
  * Time: 08:46
  */
 public enum ScaleStep {
-    WHOLE_MAP_MISSION(1, true, 1),
-    WHOLE_MAP(1, false, 4),
-    MORE(4, false, 2),
-    DEFAULT(8, false, 1),
-    DETAILED(16, true, 1),
-    FULL_ZOOM(32, true, 1);
+    WHOLE_MAP_MISSION(1),
+    WHOLE_MAP(1),
+    MORE(4),
+    DEFAULT(8),
+    DETAILED(16),
+    FULL_ZOOM(32);
 
     private final double zoom;
-    private final boolean drawImages;
-    private final int tileIncrease;
 
-    ScaleStep(double zoom, boolean drawImages, int tileIncrease) {
+    ScaleStep(double zoom) {
         this.zoom = zoom;
-        this.drawImages = drawImages;
-        this.tileIncrease = tileIncrease;
     }
 
     public double getZoom() {
         return zoom;
     }
 
-    public boolean isDrawImages() {
-        return drawImages;
-    }
-
-    public int getTileIncrease() {
-        return tileIncrease;
-    }
-
     public static ScaleStep zoomIn(ScaleStep current) {
-        if(current == WHOLE_MAP_MISSION) {
+        if (current == WHOLE_MAP_MISSION) {
             return null;
         }
 
@@ -47,7 +35,7 @@ public enum ScaleStep {
     }
 
     public static ScaleStep zoomOut(ScaleStep current) {
-        if(current == WHOLE_MAP_MISSION) {
+        if (current == WHOLE_MAP_MISSION) {
             return null;
         }
 

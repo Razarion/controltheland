@@ -72,7 +72,8 @@ public class RadarItemView extends MiniMap {
         double baseItemSize;
         double resourceItemSize;
 
-        if (getScale().isDrawImages()) {
+        MiniMapRenderDetails miniMapRenderDetails = new MiniMapRenderDetails(getTileViewRectangle());
+        if (miniMapRenderDetails.isDrawImages()) {
             ownSize = OWN_BASE_ITEM_SIZE_SMALL_MAP;
             baseItemSize = BASE_ITEM_SIZE_SMALL_MAP;
             resourceItemSize = RESOURCE_ITEM_SIZE_SMALL_MAP;
