@@ -18,6 +18,7 @@ import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.inventory.DbBoxRegion;
 import com.btxtech.game.services.inventory.DbBoxRegionCount;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
+import com.btxtech.game.wicket.pages.mgmt.planet.PlanetTable;
 import com.btxtech.game.wicket.uiservices.BoxItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
 import com.btxtech.game.wicket.uiservices.RuModel;
@@ -83,7 +84,7 @@ public class BoxRegionEditor extends MgmtWebPage {
 
             @Override
             public void onSubmit() {
-                setResponsePage(InventoryEditor.class);
+                setResponsePage(PlanetTable.class);
             }
         });
     }
