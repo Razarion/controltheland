@@ -10,6 +10,10 @@ import com.google.gwt.canvas.dom.client.Context2d;
  * Time: 11:40
  */
 public abstract class AbstractMapEditorRenderTask {
+    public static final String OVER_COLOR = "#888800";
+    public static final String SELECT_COLOR = "#FFFF00";
+    public static final String FORBIDDEN_COLOR = "#FF0000";
+
     private Rectangle viewRectangle;
 
     public abstract void render(long timeStamp, final Context2d context2d, MapEditorModel mapEditorModel);

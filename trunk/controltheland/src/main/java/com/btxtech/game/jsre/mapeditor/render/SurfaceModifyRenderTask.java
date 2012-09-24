@@ -30,7 +30,12 @@ public class SurfaceModifyRenderTask extends AbstractMapEditorRenderTask {
     private void renderGroup(Context2d context2d, TerrainImageSurfaceGroup terrainImageSurfaceGroup) {
         context2d.save();
         for (SurfaceModifier surfaceModifier : terrainImageSurfaceGroup.getSurfaceModifiers()) {
-            context2d.setFillStyle("#FFFFFF");
+            context2d.setGlobalAlpha(0.75);
+            if (surfaceModifier.isPlaceAllowed()) {
+                context2d.setFillStyle(SELECT_COLOR);
+            } else {
+                context2d.setFillStyle(FORBIDDEN_COLOR);
+            }
             Rectangle newRelativeRectangle = surfaceModifier.getNewRelativeRectangle();
             context2d.fillRect(newRelativeRectangle.getX(), newRelativeRectangle.getY(), newRelativeRectangle.getWidth(), newRelativeRectangle.getHeight());
             context2d.setGlobalAlpha(0.5);
@@ -42,24 +47,18 @@ public class SurfaceModifyRenderTask extends AbstractMapEditorRenderTask {
                     }
                 }
             }
-            context2d.setGlobalAlpha(1.0);
-            if (!surfaceModifier.isPlaceAllowed()) {
-                context2d.setLineWidth(10);
-                context2d.setStrokeStyle("#FF0000");
-                context2d.beginPath();
-                context2d.moveTo(newRelativeRectangle.getX(), newRelativeRectangle.getY());
-                context2d.lineTo(newRelativeRectangle.getX() + newRelativeRectangle.getWidth(), newRelativeRectangle.getY() + newRelativeRectangle.getHeight());
-                context2d.moveTo(newRelativeRectangle.getX() + newRelativeRectangle.getWidth(), newRelativeRectangle.getY());
-                context2d.lineTo(newRelativeRectangle.getX(), newRelativeRectangle.getY() + newRelativeRectangle.getHeight());
-                context2d.stroke();
-            }
         }
         context2d.restore();
     }
 
     private void renderSingle(Context2d context2d, SurfaceModifier surfaceModifier) {
         context2d.save();
-        context2d.setFillStyle("#FFFFFF");
+        context2d.setGlobalAlpha(0.75);
+        if (surfaceModifier.isPlaceAllowed()) {
+            context2d.setFillStyle(SELECT_COLOR);
+        } else {
+            context2d.setFillStyle(FORBIDDEN_COLOR);
+        }
         Rectangle newRelativeRectangle = surfaceModifier.getNewRelativeRectangle();
         context2d.fillRect(newRelativeRectangle.getX(), newRelativeRectangle.getY(), newRelativeRectangle.getWidth(), newRelativeRectangle.getHeight());
         context2d.setGlobalAlpha(0.5);
@@ -70,17 +69,6 @@ public class SurfaceModifyRenderTask extends AbstractMapEditorRenderTask {
                     context2d.drawImage(imageElement, x, y, Constants.TERRAIN_TILE_WIDTH, Constants.TERRAIN_TILE_HEIGHT);
                 }
             }
-        }
-        context2d.setGlobalAlpha(1.0);
-        if (!surfaceModifier.isPlaceAllowed()) {
-            context2d.setLineWidth(10);
-            context2d.setStrokeStyle("#FF0000");
-            context2d.beginPath();
-            context2d.moveTo(newRelativeRectangle.getX(), newRelativeRectangle.getY());
-            context2d.lineTo(newRelativeRectangle.getX() + newRelativeRectangle.getWidth(), newRelativeRectangle.getY() + newRelativeRectangle.getHeight());
-            context2d.moveTo(newRelativeRectangle.getX() + newRelativeRectangle.getWidth(), newRelativeRectangle.getY());
-            context2d.lineTo(newRelativeRectangle.getX(), newRelativeRectangle.getY() + newRelativeRectangle.getHeight());
-            context2d.stroke();
         }
         context2d.restore();
     }

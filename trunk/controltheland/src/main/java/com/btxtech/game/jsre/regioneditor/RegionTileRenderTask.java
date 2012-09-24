@@ -26,7 +26,7 @@ public class RegionTileRenderTask extends AbstractRegionEditorRenderTask {
         }
         context2d.save();
         context2d.setFillStyle("#FF0000");
-        context2d.setGlobalAlpha(0.75);
+        context2d.setGlobalAlpha(0.5);
         for (Index tile : tiles) {
             int relativeX = TerrainUtil.getAbsolutXForTerrainTile(tile.getX()) - viewOriginTerrain.getX();
             relativeX = (int) (relativeX * scale) + displayRectangle.getX();

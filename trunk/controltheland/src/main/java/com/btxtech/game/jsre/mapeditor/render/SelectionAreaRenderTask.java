@@ -26,10 +26,10 @@ public class SelectionAreaRenderTask extends AbstractMapEditorRenderTask {
         }
         context2d.save();
         context2d.setGlobalAlpha(0.5);
-        context2d.setFillStyle("#FF0000");
+        context2d.setFillStyle(SELECT_COLOR);
         context2d.fillRect(relativeRectangle.getX(), relativeRectangle.getY(), relativeRectangle.getWidth(), relativeRectangle.getHeight());
         context2d.setGlobalAlpha(1.0);
-        context2d.setStrokeStyle("#FF0000");
+        context2d.setStrokeStyle(SELECT_COLOR);
         context2d.strokeRect(relativeRectangle.getX(), relativeRectangle.getY(), relativeRectangle.getWidth(), relativeRectangle.getHeight());
         context2d.restore();
     }
