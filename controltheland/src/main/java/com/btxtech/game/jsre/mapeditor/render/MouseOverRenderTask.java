@@ -19,7 +19,7 @@ public class MouseOverRenderTask extends AbstractMapEditorRenderTask {
         Rectangle relativeMouseOver = getRelativeRectangle(absoluteMouseOver);
         context2d.save();
         context2d.setGlobalAlpha(0.5);
-        context2d.setFillStyle("#FF0000");
+        context2d.setFillStyle(OVER_COLOR);
         context2d.fillRect(relativeMouseOver.getX(), relativeMouseOver.getY(), relativeMouseOver.getWidth(), relativeMouseOver.getHeight());
         context2d.setGlobalAlpha(1.0);
         context2d.setLineWidth(2.0);

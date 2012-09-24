@@ -30,24 +30,16 @@ public class TerrainImageModifyRenderTask extends AbstractMapEditorRenderTask {
         for (TerrainImageModifier terrainImageModifier : terrainImageSurfaceGroup.getTerrainImageModifiers()) {
             Index relativeImage = terrainImageModifier.getRelativeGridPosition();
             ImageElement imageElement = TerrainImageLoaderContainer.getInstance().getImage(terrainImageModifier.getImageId());
-
-            context2d.setGlobalAlpha(0.5);
-            context2d.setFillStyle("#FF0000");
+            context2d.setGlobalAlpha(0.75);
+            if (terrainImageModifier.isPlaceAllowed()) {
+                context2d.setFillStyle(SELECT_COLOR);
+            } else {
+                context2d.setFillStyle(FORBIDDEN_COLOR);
+            }
             context2d.fillRect(relativeImage.getX(), relativeImage.getY(), terrainImageModifier.getWidth(), terrainImageModifier.getHeight());
+            context2d.setGlobalAlpha(0.5);
             if (imageElement != null) {
                 context2d.drawImage(imageElement, relativeImage.getX(), relativeImage.getY());
-            }
-
-            context2d.setGlobalAlpha(1.0);
-            if (!terrainImageModifier.isPlaceAllowed()) {
-                context2d.setLineWidth(10);
-                context2d.setStrokeStyle("#FF0000");
-                context2d.beginPath();
-                context2d.moveTo(relativeImage.getX(), relativeImage.getY());
-                context2d.lineTo(relativeImage.getX() + terrainImageModifier.getWidth(), relativeImage.getY() + terrainImageModifier.getHeight());
-                context2d.moveTo(relativeImage.getX() + terrainImageModifier.getWidth(), relativeImage.getY());
-                context2d.lineTo(relativeImage.getX(), relativeImage.getY() + terrainImageModifier.getHeight());
-                context2d.stroke();
             }
         }
         context2d.restore();
@@ -55,27 +47,20 @@ public class TerrainImageModifyRenderTask extends AbstractMapEditorRenderTask {
 
     private void renderSingle(Context2d context2d, TerrainImageModifier terrainImageModifier) {
         context2d.save();
-        context2d.setGlobalAlpha(0.5);
         Index relativeImage = terrainImageModifier.getRelativeGridPosition();
         ImageElement imageElement = TerrainImageLoaderContainer.getInstance().getImage(terrainImageModifier.getImageId());
 
+        if (terrainImageModifier.isPlaceAllowed()) {
+            context2d.setFillStyle(SELECT_COLOR);
+        } else {
+            context2d.setFillStyle(FORBIDDEN_COLOR);
+        }
+        context2d.setGlobalAlpha(0.75);
+        context2d.fillRect(relativeImage.getX(), relativeImage.getY(), terrainImageModifier.getWidth(), terrainImageModifier.getHeight());
+
+        context2d.setGlobalAlpha(0.5);
         if (imageElement != null) {
             context2d.drawImage(imageElement, relativeImage.getX(), relativeImage.getY());
-        } else {
-            context2d.setFillStyle("#FFFFFF");
-            context2d.fillRect(relativeImage.getX(), relativeImage.getY(), terrainImageModifier.getWidth(), terrainImageModifier.getHeight());
-        }
-
-        if (!terrainImageModifier.isPlaceAllowed()) {
-            context2d.setGlobalAlpha(1.0);
-            context2d.setLineWidth(10);
-            context2d.setStrokeStyle("#FF0000");
-            context2d.beginPath();
-            context2d.moveTo(relativeImage.getX(), relativeImage.getY());
-            context2d.lineTo(relativeImage.getX() + terrainImageModifier.getWidth(), relativeImage.getY() + terrainImageModifier.getHeight());
-            context2d.moveTo(relativeImage.getX() + terrainImageModifier.getWidth(), relativeImage.getY());
-            context2d.lineTo(relativeImage.getX(), relativeImage.getY() + terrainImageModifier.getHeight());
-            context2d.stroke();
         }
         context2d.restore();
     }
