@@ -66,7 +66,6 @@ public class DbBotConfig implements CrudChild, CrudParent {
     private Long maxInactiveMs;
     private Long minActiveMs;
     private Long maxActiveMs;
-    private boolean realGameBot;
 
     @Transient
     private CrudListChildServiceHelper<DbBotEnragementStateConfig> enrageStateCrud;
@@ -146,14 +145,6 @@ public class DbBotConfig implements CrudChild, CrudParent {
 
     public void setMaxActiveMs(Long maxActiveMs) {
         this.maxActiveMs = maxActiveMs;
-    }
-
-    public boolean isRealGameBot() {
-        return realGameBot;
-    }
-
-    public void setRealGameBot(boolean realGameBot) {
-        this.realGameBot = realGameBot;
     }
 
     @Override

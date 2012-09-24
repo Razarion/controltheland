@@ -60,7 +60,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null, TEST_PLANET_1_ID).size());
 
         botItemContainer.killAllItems(simpleBase);
-        assertWholeItemCount(TEST_PLANET_1_ID, 0);
+        assertWholeItemCount(TEST_PLANET_1_ID, 1);
     }
 
     private void waitForBotItemContainer(BotItemContainer botItemContainer, SimpleBase simpleBase) throws InterruptedException, TimeoutException {
@@ -137,7 +137,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null, TEST_PLANET_1_ID).size());
 
         botItemContainer.killAllItems(simpleBase);
-        assertWholeItemCount(TEST_PLANET_1_ID, 0);
+        assertWholeItemCount(TEST_PLANET_1_ID, 1);
     }
 
     @Test
@@ -183,7 +183,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_SIMPLE_BUILDING_ID, null, TEST_PLANET_1_ID).size());
 
         botItemContainer.killAllItems(simpleBase);
-        assertWholeItemCount(TEST_PLANET_1_ID, 0);
+        assertWholeItemCount(TEST_PLANET_1_ID, 1);
     }
 
     @Test
@@ -212,7 +212,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null, TEST_PLANET_1_ID).size());
 
         botItemContainer.killAllItems(simpleBase);
-        assertWholeItemCount(TEST_PLANET_1_ID, 0);
+        assertWholeItemCount(TEST_PLANET_1_ID, 1);
     }
 
     @Test
@@ -253,7 +253,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null, TEST_PLANET_1_ID).size());
 
         botItemContainer.killAllItems(simpleBase);
-        assertWholeItemCount(TEST_PLANET_1_ID, 0);
+        assertWholeItemCount(TEST_PLANET_1_ID, 1);
     }
 
     @Test

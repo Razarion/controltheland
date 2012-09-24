@@ -11,6 +11,7 @@ import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.terrain.DbRegion;
+import com.btxtech.game.services.terrain.RegionService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,8 @@ public class TestBotCrud extends AbstractServiceTest {
     private ServerItemTypeService serverItemTypeService;
     @Autowired
     private PlanetSystemService planetSystemService;
+    @Autowired
+    private RegionService regionService;
 
     @Test
     @DirtiesContext
@@ -50,16 +53,23 @@ public class TestBotCrud extends AbstractServiceTest {
         DbBotEnragementStateConfig enragementStateConfig1 = dbBotConfig1.getEnrageStateCrud().createDbChild();
         enragementStateConfig1.setName("Normal");
         enragementStateConfig1.setEnrageUpKills(10);
-        DbBotItemConfig dbBotItemConfig1 = enragementStateConfig1.getBotItemCrud().createDbChild();
-        dbBotItemConfig1.setCount(1);
-        dbBotItemConfig1.setBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
-        DbRegion dbRegion2 = createDbRegion(new Rectangle(2000, 2000, 1000, 1000));
-        dbBotItemConfig1.setRegion(dbRegion2);
-        dbBotItemConfig1.setCreateDirectly(true);
-        dbBotItemConfig1.setMoveRealmIfIdle(true);
-        dbBotItemConfig1.setIdleTtl(1234);
-        dbBotItemConfig1.setRePopTime(10L);
+        DbBotItemConfig dbBotItemConfig11 = enragementStateConfig1.getBotItemCrud().createDbChild();
+        dbBotItemConfig11.setCount(1);
+        dbBotItemConfig11.setBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        DbRegion dbRegion11 = createDbRegion(new Rectangle(2000, 2000, 1000, 1000));
+        dbBotItemConfig11.setRegion(dbRegion11);
+        dbBotItemConfig11.setCreateDirectly(true);
+        dbBotItemConfig11.setMoveRealmIfIdle(true);
+        dbBotItemConfig11.setIdleTtl(1234);
+        dbBotItemConfig11.setRePopTime(10L);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbRegion dbRegion21 = createDbRegion(new Rectangle(0, 0, 1001, 1001));
+        DbRegion dbRegion22 = createDbRegion(new Rectangle(0, 0, 1002, 1002));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -69,41 +79,39 @@ public class TestBotCrud extends AbstractServiceTest {
         DbBotConfig dbBotConfig2 = dbPlanet.getBotCrud().createDbChild();
         dbBotConfig2.setName("config2");
         dbBotConfig2.setActionDelay(111);
-        DbRegion dbRegion3 = createDbRegion(new Rectangle(0, 0, 1000, 1000));
-        dbBotConfig2.setRealm(dbRegion3);
+        DbRegion dbRegion2 = createDbRegion(new Rectangle(0, 0, 1000, 1000));
+        dbBotConfig2.setRealm(dbRegion2);
         DbBotEnragementStateConfig enragementStateConfig2 = dbBotConfig2.getEnrageStateCrud().createDbChild();
         enragementStateConfig2.setName("Normal2");
         enragementStateConfig2.setEnrageUpKills(20);
-        DbBotItemConfig dbBotItemConfig2 = enragementStateConfig2.getBotItemCrud().createDbChild();
-        dbBotItemConfig2.setCount(10);
-        dbBotItemConfig2.setBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
-        DbRegion dbRegion4 = createDbRegion(new Rectangle(0, 0, 1001, 1001));
-        dbBotItemConfig2.setRegion(dbRegion4);
-        dbBotItemConfig2.setCreateDirectly(false);
-        DbBotItemConfig dbBotItemConfig3 = enragementStateConfig2.getBotItemCrud().createDbChild();
-        dbBotItemConfig3.setCount(4);
-        dbBotItemConfig3.setBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_CONTAINER_ITEM_ID));
-        DbRegion dbRegion5 = createDbRegion(new Rectangle(0, 0, 1002, 1002));
-        dbBotItemConfig3.setRegion(dbRegion5);
-        dbBotItemConfig3.setCreateDirectly(false);
-        DbBotItemConfig dbBotItemConfig4 = enragementStateConfig2.getBotItemCrud().createDbChild();
-        dbBotItemConfig4.setCount(7);
-        dbBotItemConfig4.setBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
-        DbRegion dbRegion6 = createDbRegion(new Rectangle(0, 0, 1003, 1003));
-        dbBotItemConfig4.setRegion(dbRegion6);
-        dbBotItemConfig4.setCreateDirectly(false);
+        DbBotItemConfig dbBotItemConfig21 = enragementStateConfig2.getBotItemCrud().createDbChild();
+        dbBotItemConfig21.setCount(10);
+        dbBotItemConfig21.setBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        dbBotItemConfig21.setRegion(regionService.getRegionCrud().readDbChild(dbRegion21.getId()));
+        dbBotItemConfig21.setCreateDirectly(false);
+        DbBotItemConfig dbBotItemConfig22 = enragementStateConfig2.getBotItemCrud().createDbChild();
+        dbBotItemConfig22.setCount(4);
+        dbBotItemConfig22.setBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_CONTAINER_ITEM_ID));
+        dbBotItemConfig22.setRegion(regionService.getRegionCrud().readDbChild(dbRegion22.getId()));
+        dbBotItemConfig22.setCreateDirectly(false);
+        DbBotItemConfig dbBotItemConfig23 = enragementStateConfig2.getBotItemCrud().createDbChild();
+        dbBotItemConfig23.setCount(7);
+        dbBotItemConfig23.setBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
+        DbRegion dbRegion23 = createDbRegion(new Rectangle(0, 0, 1003, 1003));
+        dbBotItemConfig23.setRegion(dbRegion23);
+        dbBotItemConfig23.setCreateDirectly(false);
         DbBotEnragementStateConfig enragementStateConfig3 = dbBotConfig2.getEnrageStateCrud().createDbChild();
         enragementStateConfig3.setName("Angry1");
         enragementStateConfig3.setEnrageUpKills(10);
-        DbBotItemConfig dbBotItemConfig5 = enragementStateConfig3.getBotItemCrud().createDbChild();
-        dbBotItemConfig5.setCount(33);
-        dbBotItemConfig5.setBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_HARVESTER_ITEM_ID));
-        DbRegion dbRegion7 = createDbRegion(new Rectangle(1, 1, 1005, 1005));
-        dbBotItemConfig5.setRegion(dbRegion7);
-        dbBotItemConfig5.setCreateDirectly(true);
-        dbBotItemConfig5.setMoveRealmIfIdle(true);
-        dbBotItemConfig5.setIdleTtl(1234);
-        dbBotItemConfig5.setRePopTime(10L);
+        DbBotItemConfig dbBotItemConfig24 = enragementStateConfig3.getBotItemCrud().createDbChild();
+        dbBotItemConfig24.setCount(33);
+        dbBotItemConfig24.setBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_HARVESTER_ITEM_ID));
+        DbRegion dbRegion24 = createDbRegion(new Rectangle(1, 1, 1005, 1005));
+        dbBotItemConfig24.setRegion(dbRegion24);
+        dbBotItemConfig24.setCreateDirectly(true);
+        dbBotItemConfig24.setMoveRealmIfIdle(true);
+        dbBotItemConfig24.setIdleTtl(1234);
+        dbBotItemConfig24.setRePopTime(10L);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -116,7 +124,7 @@ public class TestBotCrud extends AbstractServiceTest {
         BotConfig botConfig1 = readDbBotConfig1.createBotConfig(serverItemTypeService);
         Assert.assertEquals("qaywsx", botConfig1.getName());
         Assert.assertEquals(202, botConfig1.getActionDelay());
-        Assert.assertEquals(createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), botConfig1.getRealm());
+        Assert.assertEquals((int)dbRegion1.getId(), botConfig1.getRealm().getId());
         Assert.assertEquals(101L, (long) botConfig1.getMaxActiveMs());
         Assert.assertEquals(202L, (long) botConfig1.getMinActiveMs());
         Assert.assertEquals(303L, (long) botConfig1.getMaxInactiveMs());
@@ -126,15 +134,15 @@ public class TestBotCrud extends AbstractServiceTest {
         Assert.assertEquals("Normal", botEnragementStateConfig1.getName());
         Assert.assertEquals(10, botEnragementStateConfig1.getEnrageUpKills());
         Assert.assertEquals(1, botEnragementStateConfig1.getBotItems().size());
-        BotItemConfig botItemConfig1 = CommonJava.getFirst(botEnragementStateConfig1.getBotItems());
-        Assert.assertEquals(1, botItemConfig1.getCount());
-        Assert.assertEquals(TEST_START_BUILDER_ITEM_ID, botItemConfig1.getBaseItemType().getId());
-        Assert.assertEquals((int)readDbBotConfig1.getRealm().getId(), botItemConfig1.getRegion().getId());
-        Assert.assertTrue(botItemConfig1.isCreateDirectly());
-        Assert.assertTrue(botItemConfig1.isMoveRealmIfIdle());
-        Assert.assertTrue(botItemConfig1.hasRePopTime());
-        Assert.assertEquals(10L, botItemConfig1.getRePopTime());
-        Assert.assertEquals(1234, (int) botItemConfig1.getIdleTtl());
+        BotItemConfig botItemConfig11 = CommonJava.getFirst(botEnragementStateConfig1.getBotItems());
+        Assert.assertEquals(1, botItemConfig11.getCount());
+        Assert.assertEquals(TEST_START_BUILDER_ITEM_ID, botItemConfig11.getBaseItemType().getId());
+        Assert.assertEquals((int)dbRegion11.getId(), botItemConfig11.getRegion().getId());
+        Assert.assertTrue(botItemConfig11.isCreateDirectly());
+        Assert.assertTrue(botItemConfig11.isMoveRealmIfIdle());
+        Assert.assertTrue(botItemConfig11.hasRePopTime());
+        Assert.assertEquals(10L, botItemConfig11.getRePopTime());
+        Assert.assertEquals(1234, (int) botItemConfig11.getIdleTtl());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -146,7 +154,7 @@ public class TestBotCrud extends AbstractServiceTest {
         BotConfig botConfig2 = readDbBotConfig2.createBotConfig(serverItemTypeService);
         Assert.assertEquals("config2", botConfig2.getName());
         Assert.assertEquals(111, botConfig2.getActionDelay());
-        Assert.assertEquals(createRegion(new Rectangle(0, 0, 1000, 1000), 1), botConfig2.getRealm());
+        Assert.assertEquals((int)dbRegion2.getId(), botConfig2.getRealm().getId());
         Assert.assertEquals(2, botConfig2.getBotEnragementStateConfigs().size());
         BotEnragementStateConfig botEnragementStateConfig2 = botConfig2.getBotEnragementStateConfigs().get(0);
         Assert.assertEquals("Normal2", botEnragementStateConfig2.getName());
@@ -155,7 +163,7 @@ public class TestBotCrud extends AbstractServiceTest {
         BotItemConfig botItemConfig2 = getBotItemConfig(TEST_ATTACK_ITEM_ID, botEnragementStateConfig2.getBotItems());
         Assert.assertEquals(10, botItemConfig2.getCount());
         Assert.assertEquals(TEST_ATTACK_ITEM_ID, botItemConfig2.getBaseItemType().getId());
-        Assert.assertEquals((int)readDbBotConfig2.getRealm().getId(), botItemConfig2.getRegion().getId());
+        Assert.assertEquals((int)dbRegion21.getId(), botItemConfig2.getRegion().getId());
         Assert.assertFalse(botItemConfig2.isCreateDirectly());
         Assert.assertFalse(botItemConfig2.isMoveRealmIfIdle());
         Assert.assertFalse(botItemConfig2.hasRePopTime());
@@ -163,7 +171,7 @@ public class TestBotCrud extends AbstractServiceTest {
         BotItemConfig botItemConfig3 = getBotItemConfig(TEST_CONTAINER_ITEM_ID, botEnragementStateConfig2.getBotItems());
         Assert.assertEquals(4, botItemConfig3.getCount());
         Assert.assertEquals(TEST_CONTAINER_ITEM_ID, botItemConfig3.getBaseItemType().getId());
-        Assert.assertEquals(botItemConfig3.getRegion().getId(), botItemConfig3.getRegion().getId());
+        Assert.assertEquals((int)dbRegion22.getId(), botItemConfig3.getRegion().getId());
         Assert.assertFalse(botItemConfig3.isCreateDirectly());
         Assert.assertFalse(botItemConfig3.isMoveRealmIfIdle());
         Assert.assertFalse(botItemConfig3.hasRePopTime());
@@ -171,7 +179,7 @@ public class TestBotCrud extends AbstractServiceTest {
         BotItemConfig botItemConfig4 = getBotItemConfig(TEST_FACTORY_ITEM_ID, botEnragementStateConfig2.getBotItems());
         Assert.assertEquals(7, botItemConfig4.getCount());
         Assert.assertEquals(TEST_FACTORY_ITEM_ID, botItemConfig4.getBaseItemType().getId());
-        Assert.assertEquals(botItemConfig4.getRegion().getId(), botItemConfig4.getRegion().getId());
+        Assert.assertEquals((int)dbRegion23.getId(), botItemConfig4.getRegion().getId());
         Assert.assertFalse(botItemConfig4.isCreateDirectly());
         Assert.assertFalse(botItemConfig4.isMoveRealmIfIdle());
         Assert.assertFalse(botItemConfig4.hasRePopTime());
@@ -183,7 +191,7 @@ public class TestBotCrud extends AbstractServiceTest {
         BotItemConfig botItemConfig5 = getBotItemConfig(TEST_HARVESTER_ITEM_ID, botEnragementStateConfig3.getBotItems());
         Assert.assertEquals(33, botItemConfig5.getCount());
         Assert.assertEquals(TEST_HARVESTER_ITEM_ID, botItemConfig5.getBaseItemType().getId());
-        Assert.assertEquals(botItemConfig5.getRegion().getId(), botItemConfig5.getRegion().getId());
+        Assert.assertEquals((int)dbRegion24.getId(), botItemConfig5.getRegion().getId());
         Assert.assertTrue(botItemConfig5.isCreateDirectly());
         Assert.assertTrue(botItemConfig5.isMoveRealmIfIdle());
         Assert.assertTrue(botItemConfig5.hasRePopTime());
@@ -210,7 +218,7 @@ public class TestBotCrud extends AbstractServiceTest {
         botConfig2 = readDbBotConfig2.createBotConfig(serverItemTypeService);
         Assert.assertEquals("config2", botConfig2.getName());
         Assert.assertEquals(111, botConfig2.getActionDelay());
-        Assert.assertEquals((int)dbRegion1.getId(), botConfig2.getRealm().getId());
+        Assert.assertEquals((int)dbRegion2.getId(), botConfig2.getRealm().getId());
         Assert.assertEquals(2, botConfig2.getBotEnragementStateConfigs().size());
         botEnragementStateConfig2 = botConfig2.getBotEnragementStateConfigs().get(0);
         Assert.assertEquals("Normal2", botEnragementStateConfig2.getName());
@@ -219,7 +227,7 @@ public class TestBotCrud extends AbstractServiceTest {
         botItemConfig2 = getBotItemConfig(TEST_ATTACK_ITEM_ID, botEnragementStateConfig2.getBotItems());
         Assert.assertEquals(10, botItemConfig2.getCount());
         Assert.assertEquals(TEST_ATTACK_ITEM_ID, botItemConfig2.getBaseItemType().getId());
-        Assert.assertEquals((int)dbRegion2.getId(), botItemConfig2.getRegion().getId());
+        Assert.assertEquals((int)dbRegion21.getId(), botItemConfig2.getRegion().getId());
         Assert.assertFalse(botItemConfig2.isCreateDirectly());
         Assert.assertFalse(botItemConfig2.isMoveRealmIfIdle());
         Assert.assertFalse(botItemConfig2.hasRePopTime());
@@ -227,7 +235,7 @@ public class TestBotCrud extends AbstractServiceTest {
         botItemConfig3 = getBotItemConfig(TEST_CONTAINER_ITEM_ID, botEnragementStateConfig2.getBotItems());
         Assert.assertEquals(4, botItemConfig3.getCount());
         Assert.assertEquals(TEST_CONTAINER_ITEM_ID, botItemConfig3.getBaseItemType().getId());
-        Assert.assertEquals((int)botItemConfig3.getRegion().getId(), botItemConfig3.getRegion().getId());
+        Assert.assertEquals((int)dbRegion22.getId(), botItemConfig3.getRegion().getId());
         Assert.assertFalse(botItemConfig3.isCreateDirectly());
         Assert.assertFalse(botItemConfig3.isMoveRealmIfIdle());
         Assert.assertFalse(botItemConfig3.hasRePopTime());
@@ -235,7 +243,7 @@ public class TestBotCrud extends AbstractServiceTest {
         botItemConfig4 = getBotItemConfig(TEST_FACTORY_ITEM_ID, botEnragementStateConfig2.getBotItems());
         Assert.assertEquals(7, botItemConfig4.getCount());
         Assert.assertEquals(TEST_FACTORY_ITEM_ID, botItemConfig4.getBaseItemType().getId());
-        Assert.assertEquals((int)botItemConfig4.getRegion().getId(), botItemConfig4.getRegion().getId());
+        Assert.assertEquals((int)dbRegion23.getId(), botItemConfig4.getRegion().getId());
         Assert.assertFalse(botItemConfig4.isCreateDirectly());
         Assert.assertFalse(botItemConfig4.isMoveRealmIfIdle());
         Assert.assertFalse(botItemConfig4.hasRePopTime());
@@ -247,7 +255,7 @@ public class TestBotCrud extends AbstractServiceTest {
         botItemConfig5 = getBotItemConfig(TEST_HARVESTER_ITEM_ID, botEnragementStateConfig3.getBotItems());
         Assert.assertEquals(33, botItemConfig5.getCount());
         Assert.assertEquals(TEST_HARVESTER_ITEM_ID, botItemConfig5.getBaseItemType().getId());
-        Assert.assertEquals((int)botItemConfig3.getRegion().getId(), botItemConfig5.getRegion().getId());
+        Assert.assertEquals((int)dbRegion24.getId(), botItemConfig5.getRegion().getId());
         Assert.assertTrue(botItemConfig5.isCreateDirectly());
         Assert.assertTrue(botItemConfig5.isMoveRealmIfIdle());
         Assert.assertTrue(botItemConfig5.hasRePopTime());
@@ -261,8 +269,8 @@ public class TestBotCrud extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         dbPlanet = planetSystemService.getDbPlanetCrud().readDbChild(dbPlanet.getId());
         readDbBotConfig2 = dbPlanet.getBotCrud().readDbChild(dbBotConfig2.getId());
-        dbBotItemConfig2 = readDbBotConfig2.getEnrageStateCrud().readDbChildren().get(0).getBotItemCrud().readDbChild(dbBotItemConfig2.getId());
-        readDbBotConfig2.getEnrageStateCrud().readDbChildren().get(0).getBotItemCrud().deleteDbChild(dbBotItemConfig2);
+        dbBotItemConfig21 = readDbBotConfig2.getEnrageStateCrud().readDbChildren().get(0).getBotItemCrud().readDbChild(dbBotItemConfig21.getId());
+        readDbBotConfig2.getEnrageStateCrud().readDbChildren().get(0).getBotItemCrud().deleteDbChild(dbBotItemConfig21);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -275,7 +283,7 @@ public class TestBotCrud extends AbstractServiceTest {
         botConfig2 = readDbBotConfig2.createBotConfig(serverItemTypeService);
         Assert.assertEquals("config2", botConfig2.getName());
         Assert.assertEquals(111, botConfig2.getActionDelay());
-        Assert.assertEquals(createRegion(new Rectangle(0, 0, 1000, 1000), 1), botConfig2.getRealm());
+        Assert.assertEquals((int)dbRegion2.getId(), botConfig2.getRealm().getId());
         Assert.assertEquals(2, botConfig2.getBotEnragementStateConfigs().size());
         botEnragementStateConfig2 = botConfig2.getBotEnragementStateConfigs().get(0);
         Assert.assertEquals("Normal2", botEnragementStateConfig2.getName());
@@ -284,7 +292,7 @@ public class TestBotCrud extends AbstractServiceTest {
         botItemConfig3 = getBotItemConfig(TEST_CONTAINER_ITEM_ID, botEnragementStateConfig2.getBotItems());
         Assert.assertEquals(4, botItemConfig3.getCount());
         Assert.assertEquals(TEST_CONTAINER_ITEM_ID, botItemConfig3.getBaseItemType().getId());
-        Assert.assertEquals(createRegion(new Rectangle(0, 0, 1002, 1002), 1), botItemConfig3.getRegion().getId());
+        Assert.assertEquals((int)dbRegion22.getId(), botItemConfig3.getRegion().getId());
         Assert.assertFalse(botItemConfig3.isCreateDirectly());
         Assert.assertFalse(botItemConfig3.isMoveRealmIfIdle());
         Assert.assertFalse(botItemConfig3.hasRePopTime());
@@ -292,7 +300,7 @@ public class TestBotCrud extends AbstractServiceTest {
         botItemConfig4 = getBotItemConfig(TEST_FACTORY_ITEM_ID, botEnragementStateConfig2.getBotItems());
         Assert.assertEquals(7, botItemConfig4.getCount());
         Assert.assertEquals(TEST_FACTORY_ITEM_ID, botItemConfig4.getBaseItemType().getId());
-        Assert.assertEquals(createRegion(new Rectangle(0, 0, 1003, 1003), 1), botItemConfig4.getRegion().getId());
+        Assert.assertEquals((int)dbRegion23.getId(), botItemConfig4.getRegion().getId());
         Assert.assertFalse(botItemConfig4.isCreateDirectly());
         Assert.assertFalse(botItemConfig4.isMoveRealmIfIdle());
         Assert.assertFalse(botItemConfig4.hasRePopTime());
@@ -304,7 +312,7 @@ public class TestBotCrud extends AbstractServiceTest {
         botItemConfig5 = getBotItemConfig(TEST_HARVESTER_ITEM_ID, botEnragementStateConfig3.getBotItems());
         Assert.assertEquals(33, botItemConfig5.getCount());
         Assert.assertEquals(TEST_HARVESTER_ITEM_ID, botItemConfig5.getBaseItemType().getId());
-        Assert.assertEquals(createRegion(new Rectangle(1, 1, 1005, 1005), 1), botItemConfig5.getRegion().getId());
+        Assert.assertEquals((int)dbRegion24.getId(), botItemConfig5.getRegion().getId());
         Assert.assertTrue(botItemConfig5.isCreateDirectly());
         Assert.assertTrue(botItemConfig5.isMoveRealmIfIdle());
         Assert.assertTrue(botItemConfig5.hasRePopTime());
@@ -331,7 +339,7 @@ public class TestBotCrud extends AbstractServiceTest {
         botConfig2 = readDbBotConfig2.createBotConfig(serverItemTypeService);
         Assert.assertEquals("config2", botConfig2.getName());
         Assert.assertEquals(111, botConfig2.getActionDelay());
-        Assert.assertEquals(createRegion(new Rectangle(0, 0, 1000, 1000), 1), botConfig2.getRealm());
+        Assert.assertEquals((int)dbRegion2.getId(), botConfig2.getRealm().getId());
         Assert.assertEquals(2, botConfig2.getBotEnragementStateConfigs().size());
         botEnragementStateConfig3 = botConfig2.getBotEnragementStateConfigs().get(0);
         Assert.assertEquals("Angry1", botEnragementStateConfig3.getName());
@@ -340,7 +348,7 @@ public class TestBotCrud extends AbstractServiceTest {
         botItemConfig5 = getBotItemConfig(TEST_HARVESTER_ITEM_ID, botEnragementStateConfig3.getBotItems());
         Assert.assertEquals(33, botItemConfig5.getCount());
         Assert.assertEquals(TEST_HARVESTER_ITEM_ID, botItemConfig5.getBaseItemType().getId());
-        Assert.assertEquals(createRegion(new Rectangle(1, 1, 1005, 1005), 1), botItemConfig5.getRegion().getId());
+        Assert.assertEquals((int)dbRegion24.getId(), botItemConfig5.getRegion().getId());
         Assert.assertTrue(botItemConfig5.isCreateDirectly());
         Assert.assertTrue(botItemConfig5.isMoveRealmIfIdle());
         Assert.assertTrue(botItemConfig5.hasRePopTime());
@@ -353,7 +361,7 @@ public class TestBotCrud extends AbstractServiceTest {
         botItemConfig3 = getBotItemConfig(TEST_CONTAINER_ITEM_ID, botEnragementStateConfig2.getBotItems());
         Assert.assertEquals(4, botItemConfig3.getCount());
         Assert.assertEquals(TEST_CONTAINER_ITEM_ID, botItemConfig3.getBaseItemType().getId());
-        Assert.assertEquals(createRegion(new Rectangle(0, 0, 1002, 1002), 1), botItemConfig3.getRegion().getId());
+        Assert.assertEquals((int)dbRegion22.getId(), botItemConfig3.getRegion().getId());
         Assert.assertFalse(botItemConfig3.isCreateDirectly());
         Assert.assertFalse(botItemConfig3.isMoveRealmIfIdle());
         Assert.assertFalse(botItemConfig3.hasRePopTime());
@@ -361,7 +369,7 @@ public class TestBotCrud extends AbstractServiceTest {
         botItemConfig4 = getBotItemConfig(TEST_FACTORY_ITEM_ID, botEnragementStateConfig2.getBotItems());
         Assert.assertEquals(7, botItemConfig4.getCount());
         Assert.assertEquals(TEST_FACTORY_ITEM_ID, botItemConfig4.getBaseItemType().getId());
-        Assert.assertEquals(createRegion(new Rectangle(0, 0, 1003, 1003), 1), botItemConfig4.getRegion().getId());
+        Assert.assertEquals((int)dbRegion23.getId(), botItemConfig4.getRegion().getId());
         Assert.assertFalse(botItemConfig4.isCreateDirectly());
         Assert.assertFalse(botItemConfig4.isMoveRealmIfIdle());
         Assert.assertFalse(botItemConfig4.hasRePopTime());
@@ -387,7 +395,7 @@ public class TestBotCrud extends AbstractServiceTest {
         botConfig2 = readDbBotConfig2.createBotConfig(serverItemTypeService);
         Assert.assertEquals("config2", botConfig2.getName());
         Assert.assertEquals(111, botConfig2.getActionDelay());
-        Assert.assertEquals(createRegion(new Rectangle(0, 0, 1000, 1000), 1), botConfig2.getRealm());
+        Assert.assertEquals((int)dbRegion2.getId(), botConfig2.getRealm().getId());
         Assert.assertEquals(1, botConfig2.getBotEnragementStateConfigs().size());
         botEnragementStateConfig3 = botConfig2.getBotEnragementStateConfigs().get(0);
         Assert.assertEquals("Angry1", botEnragementStateConfig3.getName());
@@ -396,7 +404,7 @@ public class TestBotCrud extends AbstractServiceTest {
         botItemConfig5 = getBotItemConfig(TEST_HARVESTER_ITEM_ID, botEnragementStateConfig3.getBotItems());
         Assert.assertEquals(33, botItemConfig5.getCount());
         Assert.assertEquals(TEST_HARVESTER_ITEM_ID, botItemConfig5.getBaseItemType().getId());
-        Assert.assertEquals(createRegion(new Rectangle(1, 1, 1005, 1005), 1), botItemConfig5.getRegion().getId());
+        Assert.assertEquals((int)dbRegion24.getId(), botItemConfig5.getRegion().getId());
         Assert.assertTrue(botItemConfig5.isCreateDirectly());
         Assert.assertTrue(botItemConfig5.isMoveRealmIfIdle());
         Assert.assertTrue(botItemConfig5.hasRePopTime());

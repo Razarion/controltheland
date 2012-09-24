@@ -86,7 +86,7 @@ public class TestBotService extends AbstractServiceTest {
         // Wait for bot to complete
         // TODO failed on 28.06.2012
         waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
-        assertWholeItemCount(TEST_PLANET_1_ID, 4);
+        assertWholeItemCount(TEST_PLANET_1_ID, 5);
 
         HibernateUtil.openSession4InternalCall(getSessionFactory());
         try {
@@ -97,7 +97,7 @@ public class TestBotService extends AbstractServiceTest {
         // Wait for bot to complete
         // TODO failed on: 18.06.2012, 07.07.2012
         waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
-        assertWholeItemCount(TEST_PLANET_1_ID, 4);
+        assertWholeItemCount(TEST_PLANET_1_ID, 5);
     }
 
     @Test
@@ -125,7 +125,7 @@ public class TestBotService extends AbstractServiceTest {
         // Wait for bot to complete
         waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
         assertBaseCount(TEST_PLANET_1_ID, 1);
-        assertWholeItemCount(TEST_PLANET_1_ID, 4);
+        assertWholeItemCount(TEST_PLANET_1_ID, 5);
     }
 
     @Test
@@ -142,7 +142,7 @@ public class TestBotService extends AbstractServiceTest {
 
         // Wait for bot to complete
         waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
-        assertWholeItemCount(TEST_PLANET_1_ID, 4);
+        assertWholeItemCount(TEST_PLANET_1_ID, 5);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -153,7 +153,7 @@ public class TestBotService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertWholeItemCount(TEST_PLANET_1_ID, 0);
+        assertWholeItemCount(TEST_PLANET_1_ID, 1);
 
         // Make sure backup still works
         beginHttpSession();
@@ -193,7 +193,6 @@ public class TestBotService extends AbstractServiceTest {
         dbBotConfig.setName("config2");
         dbBotConfig.setActionDelay(10);
         dbBotConfig.setRealm(createDbRegion(new Rectangle(0, 0, 1000, 1000)));
-        dbBotConfig.setRealGameBot(true);
         DbBotEnragementStateConfig enragementStateConfig1 = dbBotConfig.getEnrageStateCrud().createDbChild();
         enragementStateConfig1.setName("NormalTest");
         enragementStateConfig1.setEnrageUpKills(3);

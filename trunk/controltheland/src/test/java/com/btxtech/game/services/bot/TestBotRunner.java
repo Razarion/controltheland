@@ -61,7 +61,7 @@ public class TestBotRunner extends AbstractServiceTest {
 
         waitForBotRunner(botRunner);
 
-        assertWholeItemCount(TEST_PLANET_1_ID, 1);
+        assertWholeItemCount(TEST_PLANET_1_ID, 2);
         Assert.assertEquals("Bot", serverPlanetServices.getBaseService().getBaseName(botRunner.getBase()));
 
         EasyMock.verify(mockListener);
@@ -90,7 +90,7 @@ public class TestBotRunner extends AbstractServiceTest {
 
         waitForBotRunner(botRunner);
         SimpleBase simpleBase1 = botRunner.getBase();
-        assertWholeItemCount(TEST_PLANET_1_ID, 7);
+        assertWholeItemCount(TEST_PLANET_1_ID, 8);
         Assert.assertEquals(1, getAllSynItemId(botRunner.getBase(), TEST_START_BUILDER_ITEM_ID, null, TEST_PLANET_1_ID).size());
         Assert.assertEquals(3, getAllSynItemId(botRunner.getBase(), TEST_FACTORY_ITEM_ID, null, TEST_PLANET_1_ID).size());
         Assert.assertEquals(3, getAllSynItemId(botRunner.getBase(), TEST_ATTACK_ITEM_ID, null, TEST_PLANET_1_ID).size());
@@ -100,7 +100,7 @@ public class TestBotRunner extends AbstractServiceTest {
         // TODO failed on 07.07.2012
         waitForBotRunner(botRunner);
         SimpleBase simpleBase2 = botRunner.getBase();
-        assertWholeItemCount(TEST_PLANET_1_ID, 7);
+        assertWholeItemCount(TEST_PLANET_1_ID, 8);
         Assert.assertEquals(1, getAllSynItemId(botRunner.getBase(), TEST_START_BUILDER_ITEM_ID, null, TEST_PLANET_1_ID).size());
         Assert.assertEquals(3, getAllSynItemId(botRunner.getBase(), TEST_FACTORY_ITEM_ID, null, TEST_PLANET_1_ID).size());
         Assert.assertEquals(3, getAllSynItemId(botRunner.getBase(), TEST_ATTACK_ITEM_ID, null, TEST_PLANET_1_ID).size());
@@ -128,13 +128,13 @@ public class TestBotRunner extends AbstractServiceTest {
         botRunner.start();
 
         waitForBotRunner(botRunner);
-        assertWholeItemCount(TEST_PLANET_1_ID, 1);
+        assertWholeItemCount(TEST_PLANET_1_ID, 2);
         SimpleBase simpleBase1 = botRunner.getBase();
         Assert.assertEquals("Bot2", serverPlanetServices.getBaseService().getBaseName(simpleBase1));
         serverPlanetServices.getItemService().killSyncItemIds(getAllSynItemId(simpleBase1, TEST_START_BUILDER_ITEM_ID, null, TEST_PLANET_1_ID));
 
         waitForBotRunner(botRunner);
-        assertWholeItemCount(TEST_PLANET_1_ID, 1);
+        assertWholeItemCount(TEST_PLANET_1_ID, 2);
         SimpleBase simpleBase2 = botRunner.getBase();
         Assert.assertEquals("Bot2", serverPlanetServices.getBaseService().getBaseName(simpleBase2));
 
@@ -161,7 +161,7 @@ public class TestBotRunner extends AbstractServiceTest {
         botRunner.start();
 
         waitForBotRunner(botRunner);
-        assertWholeItemCount(TEST_PLANET_1_ID, 1);
+        assertWholeItemCount(TEST_PLANET_1_ID, 2);
         SimpleBase simpleBase1 = botRunner.getBase();
         Assert.assertEquals("Bot2", serverPlanetServices.getBaseService().getBaseName(simpleBase1));
 
@@ -170,7 +170,7 @@ public class TestBotRunner extends AbstractServiceTest {
         }
 
         waitForBotRunner(botRunner);
-        assertWholeItemCount(TEST_PLANET_1_ID, 1);
+        assertWholeItemCount(TEST_PLANET_1_ID, 2);
         SimpleBase simpleBase2 = botRunner.getBase();
         Assert.assertNotSame(simpleBase1, simpleBase2);
         Assert.assertEquals("Bot2", serverPlanetServices.getBaseService().getBaseName(simpleBase2));
@@ -200,14 +200,14 @@ public class TestBotRunner extends AbstractServiceTest {
         botRunner.start();
 
         waitForBotRunner(botRunner);
-        assertWholeItemCount(TEST_PLANET_1_ID, 8);
+        assertWholeItemCount(TEST_PLANET_1_ID, 9);
         SimpleBase simpleBase1 = botRunner.getBase();
 
         botRunner.kill();
 
         Thread.sleep(1000);
 
-        assertWholeItemCount(TEST_PLANET_1_ID, 0);
+        assertWholeItemCount(TEST_PLANET_1_ID, 1);
         SimpleBase simpleBase2 = botRunner.getBase();
         Assert.assertFalse(serverPlanetServices.getBaseService().isAlive(simpleBase1));
         Assert.assertFalse(serverPlanetServices.getBaseService().isAlive(simpleBase2));
@@ -255,7 +255,7 @@ public class TestBotRunner extends AbstractServiceTest {
         botRunner.start();
 
         waitForBotRunner(botRunner);
-        assertWholeItemCount(TEST_PLANET_1_ID, 2);
+        assertWholeItemCount(TEST_PLANET_1_ID, 3);
 
         SyncItem target = serverPlanetServices.getItemService().getItem(targetId);
         Assert.assertTrue(target.isAlive());
@@ -288,9 +288,9 @@ public class TestBotRunner extends AbstractServiceTest {
         BotRunner botRunner = new ServerBotRunner(botConfig, serverPlanetServices, mockListener);
         botRunner.start();
 
-        assertWholeItemCount(TEST_PLANET_1_ID, 0);
+        assertWholeItemCount(TEST_PLANET_1_ID, 1);
         Thread.sleep(250);
-        assertWholeItemCount(TEST_PLANET_1_ID, 3);
+        assertWholeItemCount(TEST_PLANET_1_ID, 4);
         Assert.assertEquals("Bot4", serverPlanetServices.getBaseService().getBaseName(botRunner.getBase()));
 
         EasyMock.verify(mockListener);
@@ -319,9 +319,9 @@ public class TestBotRunner extends AbstractServiceTest {
         Thread.sleep(250);
 
         for (int i = 0; i < 10; i++) {
-            assertWholeItemCount(TEST_PLANET_1_ID, 0);
+            assertWholeItemCount(TEST_PLANET_1_ID, 1);
             Thread.sleep(500);
-            assertWholeItemCount(TEST_PLANET_1_ID, 5);
+            assertWholeItemCount(TEST_PLANET_1_ID, 6);
             Thread.sleep(500);
         }
 
@@ -347,17 +347,17 @@ public class TestBotRunner extends AbstractServiceTest {
 
         BotRunner botRunner = new ServerBotRunner(botConfig, serverPlanetServices, mockListener);
         botRunner.start();
-        assertWholeItemCount(TEST_PLANET_1_ID, 0);
+        assertWholeItemCount(TEST_PLANET_1_ID, 1);
 
         Thread.sleep(100);
-        assertWholeItemCount(TEST_PLANET_1_ID, 3);
+        assertWholeItemCount(TEST_PLANET_1_ID, 4);
 
         botRunner.kill();
-        assertWholeItemCount(TEST_PLANET_1_ID, 0);
+        assertWholeItemCount(TEST_PLANET_1_ID, 1);
 
         for (int i = 0; i < 200; i++) {
             Thread.sleep(20);
-            assertWholeItemCount(TEST_PLANET_1_ID, 0);
+            assertWholeItemCount(TEST_PLANET_1_ID, 1);
         }
         EasyMock.verify(mockListener);
     }
@@ -380,14 +380,14 @@ public class TestBotRunner extends AbstractServiceTest {
 
         BotRunner botRunner = new ServerBotRunner(botConfig, serverPlanetServices, mockListener);
         botRunner.start();
-        assertWholeItemCount(TEST_PLANET_1_ID, 0);
+        assertWholeItemCount(TEST_PLANET_1_ID, 1);
         Thread.sleep(40);
 
         botRunner.kill();
 
         for (int i = 0; i < 200; i++) {
             Thread.sleep(20);
-            assertWholeItemCount(TEST_PLANET_1_ID, 0);
+            assertWholeItemCount(TEST_PLANET_1_ID, 1);
         }
         EasyMock.verify(mockListener);
     }
@@ -404,7 +404,6 @@ public class TestBotRunner extends AbstractServiceTest {
         dbBotConfig.init(null);
         dbBotConfig.setActionDelay(10);
         dbBotConfig.setName("TestBot");
-        dbBotConfig.setRealGameBot(true);
         dbBotConfig.setRealm(createDbRegion(new Rectangle(0, 0, 1000, 1000)));
         DbBotEnragementStateConfig dbBotEnragementStateConfig1 = dbBotConfig.getEnrageStateCrud().createDbChild();
         dbBotEnragementStateConfig1.setName("Normal");
