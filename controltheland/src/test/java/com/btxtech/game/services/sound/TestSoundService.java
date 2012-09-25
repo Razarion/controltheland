@@ -21,7 +21,7 @@ public class TestSoundService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testDbSoundDb() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         // Configure
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -131,7 +131,7 @@ public class TestSoundService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testDbCommonSoundDb() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         setupSound();
         // Create
         beginHttpSession();
@@ -215,7 +215,7 @@ public class TestSoundService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void createCommonSoundInfo() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         setupSound();
         // Verify
         beginHttpSession();

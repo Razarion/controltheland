@@ -120,7 +120,7 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testCreateItem() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         System.out.println("**** testCreateItem ****");
         beginHttpSession();
@@ -137,7 +137,7 @@ public class TestHistoryService extends AbstractServiceTest {
         System.out.println("---- build unit ---");
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
         Index buildPos = serverPlanetServices.getCollisionService().getFreeRandomPosition(serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
-        sendBuildCommand(getMovableService().getAllSyncInfo().iterator().next().getId(), buildPos, TEST_FACTORY_ITEM_ID);
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -166,7 +166,7 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testKillItem() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         System.out.println("**** testKillItem ****");
         beginHttpSession();
@@ -228,7 +228,7 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testKillAnonymousItem() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         System.out.println("**** testKillAnonymousItem ****");
         beginHttpSession();
@@ -275,7 +275,7 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testKillByAnonymous() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         System.out.println("**** testKillByAnonymous ****");
         beginHttpSession();
@@ -338,7 +338,7 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSellItem() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         System.out.println("**** testSellItem ****");
         beginHttpSession();
@@ -370,7 +370,7 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void dbHistoryElementBaseSurrenderedHuman() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         SimpleBase humanBase1 = new SimpleBase(1, 1);
         SimpleBase humanBase2 = new SimpleBase(2, 1);
@@ -464,7 +464,7 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void alliances() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -544,7 +544,7 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void inventory() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -616,7 +616,7 @@ public class TestHistoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void botEnragement() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         DbBotEnragementStateConfig enragementStateConfig1 = new DbBotEnragementStateConfig();
         enragementStateConfig1.setName("Normal");

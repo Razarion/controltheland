@@ -45,7 +45,7 @@ public class TestTracking extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSimple() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -76,7 +76,7 @@ public class TestTracking extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testPageHits() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -171,7 +171,7 @@ public class TestTracking extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testCookie() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -218,7 +218,7 @@ public class TestTracking extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testMulti() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -262,7 +262,7 @@ public class TestTracking extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSessionFilter() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

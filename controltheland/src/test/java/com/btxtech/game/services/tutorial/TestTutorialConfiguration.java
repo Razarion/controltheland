@@ -71,7 +71,7 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void createDeleteTask() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
 

@@ -38,7 +38,7 @@ public class TestSyncBaseItem extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void isEnemy1() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         ServerPlanetServices planetServices = planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices();
 

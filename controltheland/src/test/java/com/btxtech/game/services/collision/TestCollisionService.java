@@ -26,7 +26,7 @@ public class TestCollisionService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testRandomPositionInRectangleWithBot() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

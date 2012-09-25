@@ -30,7 +30,7 @@ public class TestItemServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void isSyncItemOverlapping() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServicesImpl serverPlanetServices = (ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         SimpleBase base1 = new SimpleBase(1, 1);
@@ -61,7 +61,7 @@ public class TestItemServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void isSyncItemOverlappingAngel() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServicesImpl serverPlanetServices = (ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         SimpleBase base1 = new SimpleBase(1, 1);

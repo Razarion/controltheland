@@ -50,6 +50,7 @@ import com.btxtech.game.services.messenger.MessengerService;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.statistics.impl.StatisticsServiceImpl;
@@ -116,6 +117,8 @@ public class TestCmsService extends AbstractServiceTest {
     private StatisticsService statisticsService;
     @Autowired
     private ServerItemTypeService serverItemTypeService;
+    @Autowired
+    private PlanetSystemService planetSystemService;
 
     private WicketTester tester;
 
@@ -307,7 +310,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSubMenu() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -455,7 +458,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testBottomMenuInvisible() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -493,7 +496,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testBottomMenu() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -576,7 +579,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testBlogRead() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // Setup CMS content
         int id = setupBlogPage();
@@ -637,7 +640,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testBlogWrite() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // Setup CMS content
         beginHttpSession();
@@ -726,7 +729,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testBlogWriteProtected() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // Setup CMS content
         beginHttpSession();
@@ -799,7 +802,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testWiki() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // Setup CMS content
         beginHttpSession();
@@ -900,7 +903,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testDynamicHtmlRead() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // Setup CMS content
         beginHttpSession();
@@ -939,7 +942,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testDynamicHtmlWrite() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // Setup CMS content
         beginHttpSession();
@@ -1000,7 +1003,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void test2DynamicHtml() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -1198,7 +1201,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testForumView() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         setupForumStructure();
 
@@ -1241,7 +1244,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testForumAdmin() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         setupForumStructure();
 
@@ -1286,7 +1289,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testForumAdminSubForumEdit() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         setupForumStructure();
 
@@ -1348,7 +1351,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testForumAdminCategoryEdit() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         setupForumStructure();
 
@@ -1401,7 +1404,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testForumAdminCategoryEdit2() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         setupForumStructure();
 
@@ -1454,7 +1457,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testForumAdminThreadEdit2() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         setupForumStructure();
 
@@ -1511,7 +1514,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testForumCreateThreadInvisible() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         setupForumStructure();
 
@@ -1533,7 +1536,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testForumCreateThreadCancel() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         setupForumStructure();
 
@@ -1588,7 +1591,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testForumCreateThreadSubmit() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         setupForumStructure();
 
@@ -1758,7 +1761,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testItemTypes() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // Setup CMS content
         beginHttpSession();
@@ -1886,7 +1889,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testItemTypesColumnCountSingleCell() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // Setup CMS content
         beginHttpSession();
@@ -1990,7 +1993,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testItemTypeSectionLink() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // Setup CMS content
         beginHttpSession();
@@ -2105,7 +2108,7 @@ public class TestCmsService extends AbstractServiceTest {
     @DirtiesContext
     public void testLevelSectionLink() throws Exception {
         Assert.fail();
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // Setup CMS content
         beginHttpSession();
@@ -2195,7 +2198,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testItemTypeNavigation() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -2376,7 +2379,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testPageLinkText() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // Setup CMS content
         beginHttpSession();
@@ -2415,7 +2418,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testPageLinkImage() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // Setup CMS content
         beginHttpSession();
@@ -2674,7 +2677,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testGetValue() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -2693,7 +2696,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSmartPageLink() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -2864,7 +2867,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testMail() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         // Add cms image
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -2956,7 +2959,7 @@ public class TestCmsService extends AbstractServiceTest {
     }
 
     private void setupNewMailTest() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -3104,7 +3107,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testAds() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // Setup ads
         beginHttpSession();
@@ -3153,7 +3156,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testGameLinkText() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -3191,7 +3194,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testGameLinkImage() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // Setup image
         beginHttpSession();
@@ -3241,7 +3244,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testExpressionProperty() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -3364,7 +3367,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void noHtml5Browser() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -3953,7 +3956,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void borderWrapper() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // Setup CMS content
         beginHttpSession();
@@ -4002,7 +4005,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testDbExpressionPropertyTypes() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // Setup CMS content
         beginHttpSession();
@@ -4160,7 +4163,7 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testFacebook() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // Do not rejoice too quicklyJust... this is just a  test secret.
         setPrivateField(CmsUiServiceImpl.class, cmsUiService, "facebookAppSecret", "029a30fb9677d35c79c44d8a505d8fe1");

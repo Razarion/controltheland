@@ -29,7 +29,7 @@ public class TestUserHistory extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void createUser() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -48,7 +48,7 @@ public class TestUserHistory extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void loginLogout() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

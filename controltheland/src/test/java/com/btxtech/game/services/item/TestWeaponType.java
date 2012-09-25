@@ -26,7 +26,7 @@ public class TestWeaponType extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void weaponTypeSound() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         // Verify
         BaseItemType baseItemType = (BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
         Assert.assertNull(baseItemType.getWeaponType().getSoundId());
@@ -58,7 +58,7 @@ public class TestWeaponType extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void weaponTypeImage() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // Create
         beginHttpSession();

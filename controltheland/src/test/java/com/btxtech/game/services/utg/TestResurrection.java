@@ -31,7 +31,7 @@ public class TestResurrection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testOnlineSell() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         BaseService baseService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService();
 
         beginHttpSession();
@@ -74,7 +74,7 @@ public class TestResurrection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testOffline() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         BaseService baseService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService();
 
         beginHttpSession();

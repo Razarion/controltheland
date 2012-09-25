@@ -34,7 +34,7 @@ public class TestMove extends AbstractServiceTest {
     private PlanetSystemService planetSystemService;
 
     private SyncBaseItem createSyncBaseItem() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServicesImpl serverPlanetServices = (ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         // Mock

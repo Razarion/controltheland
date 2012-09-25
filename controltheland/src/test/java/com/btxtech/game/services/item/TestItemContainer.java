@@ -25,7 +25,7 @@ public class TestItemContainer extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testLoadUnloadContainer() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         System.out.println("**** testLoadContainer ****");

@@ -37,7 +37,7 @@ public class TestBotService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testInRealm() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -63,7 +63,7 @@ public class TestBotService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSystemActivate() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -86,7 +86,7 @@ public class TestBotService extends AbstractServiceTest {
         // Wait for bot to complete
         // TODO failed on 28.06.2012
         waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
-        assertWholeItemCount(TEST_PLANET_1_ID, 5);
+        assertWholeItemCount(TEST_PLANET_1_ID, 4);
 
         HibernateUtil.openSession4InternalCall(getSessionFactory());
         try {
@@ -97,13 +97,13 @@ public class TestBotService extends AbstractServiceTest {
         // Wait for bot to complete
         // TODO failed on: 18.06.2012, 07.07.2012
         waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
-        assertWholeItemCount(TEST_PLANET_1_ID, 5);
+        assertWholeItemCount(TEST_PLANET_1_ID, 4);
     }
 
     @Test
     @DirtiesContext
     public void testSystemActivateNoWait() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -125,13 +125,13 @@ public class TestBotService extends AbstractServiceTest {
         // Wait for bot to complete
         waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
         assertBaseCount(TEST_PLANET_1_ID, 1);
-        assertWholeItemCount(TEST_PLANET_1_ID, 5);
+        assertWholeItemCount(TEST_PLANET_1_ID, 4);
     }
 
     @Test
     @DirtiesContext
     public void testDelete() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -142,7 +142,7 @@ public class TestBotService extends AbstractServiceTest {
 
         // Wait for bot to complete
         waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
-        assertWholeItemCount(TEST_PLANET_1_ID, 5);
+        assertWholeItemCount(TEST_PLANET_1_ID, 4);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -153,7 +153,7 @@ public class TestBotService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertWholeItemCount(TEST_PLANET_1_ID, 1);
+        assertWholeItemCount(TEST_PLANET_1_ID, 0);
 
         // Make sure backup still works
         beginHttpSession();
@@ -166,7 +166,7 @@ public class TestBotService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testRageUp() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         ServerItemService serverItemService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getItemService();
 

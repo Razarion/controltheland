@@ -60,7 +60,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
         progressString = null;
         progressBase = null;
         setPrivateStaticField(AbstractSyncItemComparison.class, "MIN_SEND_DELAY", 0);
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         identifier = null;
         actor = null;
 
@@ -85,7 +85,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
 
         ((ServerConditionServiceImpl) deAopProxy(serverConditionService)).setRate(50);
         ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setBaseService(baseServiceMock);
-        setPrivateField(ServerConditionServiceImpl.class, serverConditionService, "serverConnectionService", this);
+        ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setServerConnectionService(this);
     }
 
     private void assertActorAndIdentifierAndClear(UserState expectedActor, Integer expectedIdentifier) {

@@ -92,7 +92,7 @@ public class TestSyncItemArea extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testInRangeSyncItem__TMP() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         // TODO test angel != 0
 
         BoundingBox boundingBox = new BoundingBox(200, 200, ANGELS_24);
@@ -115,7 +115,7 @@ public class TestSyncItemArea extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testInRangeSyncItem() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         assertSameDistance(45, 102);
         assertSameDistance(0, 160);
@@ -172,7 +172,7 @@ public class TestSyncItemArea extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testInRangeSyncItemArea() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         BoundingBox boundingBox = new BoundingBox(200, 200, ANGELS_24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(400, 400));

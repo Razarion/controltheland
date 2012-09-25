@@ -18,7 +18,7 @@ public class PacketSendingTest extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testCreateAndSell() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         System.out.println("----- testSimple -----");

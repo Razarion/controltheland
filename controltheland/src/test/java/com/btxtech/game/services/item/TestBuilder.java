@@ -42,7 +42,7 @@ public class TestBuilder extends AbstractServiceTest {
     private PlanetServices planetServicesMock;
 
     private SyncBaseItem createSyncBuilderItem() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // Mock
         ServerItemService serverItemServiceMock = EasyMock.createNiceMock(ServerItemService.class);

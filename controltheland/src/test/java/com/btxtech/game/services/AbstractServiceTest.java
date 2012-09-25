@@ -750,6 +750,26 @@ abstract public class AbstractServiceTest {
         endHttpSession();
     }
 
+    protected void configureSimplePlanetNoResources() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // Item Types
+        setupItemTypes();
+        // Planet
+        DbPlanet dbPlanet1 = setupPlanet1();
+        // Terrain
+        setupMinimalTerrain(dbPlanet1);
+        // QuestHubs
+        setupOneLevel(dbPlanet1);
+        // Xp
+        setupXpSettings();
+
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet1);
+        planetSystemService.activate();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
     protected void configureSimplePlanet() throws Exception {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

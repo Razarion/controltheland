@@ -31,7 +31,7 @@ public class TestPositionTaken extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testMultipleAttackNoOverlapping() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 

@@ -63,7 +63,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void oneIntrudersNoDefender() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         SimpleBase botBase = new SimpleBase(1, 1);
         Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
@@ -97,7 +97,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void oneIntruders() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         SimpleBase botBase = new SimpleBase(1, 1);
         Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
@@ -134,7 +134,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void oneIntruderAndGone() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         SimpleBase botBase = new SimpleBase(1, 1);
         Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
@@ -175,7 +175,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void oneIntruderAndAttackerDies() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         SimpleBase botBase = new SimpleBase(1, 1);
         Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
@@ -218,7 +218,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void oneIntruderAndAttackerBecomesIdle() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         SimpleBase botBase = new SimpleBase(1, 1);
         Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
@@ -262,7 +262,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void oneIntruderAndAttackerException() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         SimpleBase botBase = new SimpleBase(1, 1);
         Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
@@ -307,7 +307,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void twoIntruderTakeNextEnemy() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         SimpleBase botBase = new SimpleBase(1, 1);
         Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
@@ -353,7 +353,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void shortestWaySorter() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // Intruders
         SyncBaseItem intruder1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1200), new Id(-1, -1, 0));
@@ -530,7 +530,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void onIntrudersLeft() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         SimpleBase botBase = new SimpleBase(1, 1);
         Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);

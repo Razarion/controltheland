@@ -45,7 +45,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void oneItem() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
@@ -60,7 +60,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Assert.assertEquals(1, getAllSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID, null, TEST_PLANET_1_ID).size());
 
         botItemContainer.killAllItems(simpleBase);
-        assertWholeItemCount(TEST_PLANET_1_ID, 1);
+        assertWholeItemCount(TEST_PLANET_1_ID, 0);
     }
 
     private void waitForBotItemContainer(BotItemContainer botItemContainer, SimpleBase simpleBase) throws InterruptedException, TimeoutException {
@@ -76,7 +76,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void threeItems() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
@@ -137,13 +137,13 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_FACTORY_ITEM_ID, null, TEST_PLANET_1_ID).size());
 
         botItemContainer.killAllItems(simpleBase);
-        assertWholeItemCount(TEST_PLANET_1_ID, 1);
+        assertWholeItemCount(TEST_PLANET_1_ID, 0);
     }
 
     @Test
     @DirtiesContext
     public void complexItems() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
@@ -183,13 +183,13 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Assert.assertEquals(2, getAllSynItemId(simpleBase, TEST_SIMPLE_BUILDING_ID, null, TEST_PLANET_1_ID).size());
 
         botItemContainer.killAllItems(simpleBase);
-        assertWholeItemCount(TEST_PLANET_1_ID, 1);
+        assertWholeItemCount(TEST_PLANET_1_ID, 0);
     }
 
     @Test
     @DirtiesContext
     public void regionAndMovable() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
@@ -212,13 +212,13 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null, TEST_PLANET_1_ID).size());
 
         botItemContainer.killAllItems(simpleBase);
-        assertWholeItemCount(TEST_PLANET_1_ID, 1);
+        assertWholeItemCount(TEST_PLANET_1_ID, 0);
     }
 
     @Test
     @DirtiesContext
     public void multipleFactoriesAndOverdrive() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
@@ -253,13 +253,13 @@ public class TestBotItemContainer extends AbstractServiceTest {
         Assert.assertEquals(3, getAllSynItemId(simpleBase, TEST_ATTACK_ITEM_ID, null, TEST_PLANET_1_ID).size());
 
         botItemContainer.killAllItems(simpleBase);
-        assertWholeItemCount(TEST_PLANET_1_ID, 1);
+        assertWholeItemCount(TEST_PLANET_1_ID, 0);
     }
 
     @Test
     @DirtiesContext
     public void buildupWrongConfig() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
@@ -282,7 +282,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void getIdleAttackers() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
@@ -350,7 +350,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void moveRealIfIdle() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
@@ -404,7 +404,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void ttlIfIdle() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
@@ -443,7 +443,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void noRebuild() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
@@ -484,7 +484,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void rePop() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         SimpleBase simpleBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
@@ -531,7 +531,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void itemBelongsToMy() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         SimpleBase botBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
