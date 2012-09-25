@@ -30,7 +30,7 @@ public class ItemRenderTask extends AbstractRenderTask {
         context2d.setFillStyle("#999999");
         Group ownSelection = SelectionHandler.getInstance().getOwnSelection();
         SyncItem targetSelection = SelectionHandler.getInstance().getSelectedTargetSyncItem();
-        for (SyncItem syncItem : ItemContainer.getInstance().getItemsInRectangleFast(viewRect)) { // TODO clips off items if the middle is no longer in the view rect
+        for (SyncItem syncItem : ItemContainer.getInstance().getItemsInRectangleFastIncludingDead(viewRect)) { // TODO clips off items if the middle is no longer in the view rect
             ImageElement imageElement = ItemTypeImageLoaderContainer.getInstance().getImage(syncItem.getItemType());
             if (imageElement == null) {
                 continue;

@@ -333,24 +333,23 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
     }
 
     @Override
-    protected <T> T iterateOverItems(boolean includeNoPosition, T defaultReturn, ItemHandler<T> itemHandler) {
+    protected <T> T iterateOverItems(boolean includeNoPosition, boolean includeDead, T defaultReturn, ItemHandler<T> itemHandler) {
         for (SyncItem syncItem : items.values()) {
             if (orphanItems.containsKey(syncItem.getId())) {
                 continue;
             }
-            if (!syncItem.isAlive()) {
+            if (!includeDead && !syncItem.isAlive()) {
                 continue;
             }
-            if (!includeNoPosition) {
-                if (!syncItem.getSyncItemArea().hasPosition()) {
-                    continue;
-                }
+            if (!includeNoPosition && !syncItem.getSyncItemArea().hasPosition()) {
+                continue;
             }
             T result = itemHandler.handleItem(syncItem);
             if (result != null) {
                 return result;
             }
         }
+
         return defaultReturn;
     }
 
