@@ -113,7 +113,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             planetSystemService.getServerPlanetServices().getActionService().executeCommands(baseCommands);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -124,7 +124,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         } catch (NoConnectionException e) {
             throw e;
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
             return null;
         }
     }
@@ -134,7 +134,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             return planetSystemService.getServerPlanetServices().getItemService().getSyncInfo();
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
             return null;
         }
     }
@@ -144,7 +144,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             userTrackingService.saveStartupTask(startupTaskInfo, startUuid, levelTaskId);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -153,7 +153,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             userTrackingService.saveStartupTerminated(successful, totalTime, startUuid, levelTaskId);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -204,7 +204,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         } catch (InvalidLevelStateException invalidLevelStateException) {
             throw invalidLevelStateException;
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
         return null;
     }
@@ -214,7 +214,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             planetSystemService.getServerPlanetServices().getBaseService().surrenderBase(planetSystemService.getServerPlanetServices().getBaseService().getBase());
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -232,7 +232,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             serverGlobalConnectionService.clientLog(message, date);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -248,7 +248,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         } catch (UserAlreadyExistsException | PasswordNotMatchException e) {
             throw e;
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
 
     }
@@ -258,7 +258,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             serverGlobalConnectionService.sendChatMessage(chatMessage);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -267,7 +267,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             return serverGlobalConnectionService.pollChatMessages(lastMessageId);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
             return null;
         }
     }
@@ -282,7 +282,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
                 return null;
             }
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
             return null;
         }
     }
@@ -292,7 +292,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             userTrackingService.onEventTrackingStart(eventTrackingStart);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -306,7 +306,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             userTrackingService.onEventTrackerItems(eventTrackingItems, syncItemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings, dialogTrackings);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -315,7 +315,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             planetSystemService.getServerPlanetServices().getItemService().sellItem(id);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -324,7 +324,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             allianceService.proposeAlliance(partner);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -333,7 +333,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             allianceService.acceptAllianceOffer(partnerUserName);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -342,7 +342,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             allianceService.rejectAllianceOffer(partnerUserName);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -351,7 +351,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             allianceService.breakAlliance(partnerUserName);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -360,7 +360,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             return allianceService.getAllAlliances();
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
             return new ArrayList<>();
         }
     }
@@ -370,7 +370,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             return globalInventoryService.getInventory();
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
             return null;
         }
     }
@@ -381,7 +381,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             globalInventoryService.assembleInventoryItem(inventoryItemId);
             return globalInventoryService.getInventory();
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
             return null;
         }
     }
@@ -391,7 +391,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             globalInventoryService.useInventoryItem(inventoryItemId, positionToBePlaced);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -400,7 +400,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             return globalInventoryService.buyInventoryItem(inventoryItemId);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
             return userService.getUserState().getRazarion();
         }
     }
@@ -410,7 +410,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             return globalInventoryService.buyInventoryArtifact(inventoryArtifactId);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
             return 0;
         }
     }
@@ -420,7 +420,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             return userService.getUserState().getRazarion();
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
             return 0;
         }
     }
@@ -430,7 +430,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             return userGuidanceService.getQuestOverview();
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
             return null;
         }
     }
@@ -440,7 +440,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             userGuidanceService.activateQuest(questId);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -449,7 +449,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             return statisticsService.getInGameCurrentStatistics();
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
             return null;
         }
     }
@@ -459,7 +459,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             mgmtService.saveClientPerfmonData(session.getSessionId(), workTimes, totalTime);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 }
