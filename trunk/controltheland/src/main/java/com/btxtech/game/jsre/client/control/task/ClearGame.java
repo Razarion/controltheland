@@ -23,6 +23,7 @@ import com.btxtech.game.jsre.client.renderer.Renderer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
+import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
 import com.btxtech.game.jsre.client.utg.tip.dialog.TipManager;
 
 /**
@@ -38,6 +39,7 @@ public class ClearGame extends AbstractStartupTask {
 
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
+        GameTipManager.getInstance().stop();
         Renderer.getInstance().stop();
         ClientChatHandler.getInstance().stop();
         ClientUserTracker.getInstance().stopEventTracking();

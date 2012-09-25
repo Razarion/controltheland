@@ -29,11 +29,6 @@ public enum WarmRestartSimulatedGameStartupTaskEnum implements StartupTaskEnum {
         public AbstractStartupTask createTask() {
             return new ClearGame(this);
         }},
-    INIT_GAME("Delta start simulated Game") {
-        @Override
-        public AbstractStartupTask createTask() {
-            return new SimulationDeltaStartupTask(this);
-        }},
     RUN_SIMULATED_GAME("Run simulated Game") {
         @Override
         public AbstractStartupTask createTask() {
