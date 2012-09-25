@@ -49,8 +49,9 @@ import com.btxtech.game.services.messenger.InvalidFieldException;
 import com.btxtech.game.services.messenger.MessengerService;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.BaseService;
+import com.btxtech.game.services.planet.Planet;
 import com.btxtech.game.services.planet.PlanetSystemService;
-import com.btxtech.game.services.planet.db.DbPlanet;
+import com.btxtech.game.services.planet.impl.PlanetImpl;
 import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.statistics.impl.StatisticsServiceImpl;
@@ -2107,7 +2108,6 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testLevelSectionLink() throws Exception {
-        Assert.fail();
         configureSimplePlanetNoResources();
 
         // Setup CMS content
@@ -2131,29 +2131,17 @@ public class TestCmsService extends AbstractServiceTest {
         DbPage dbLevelPage = pageCrud.createDbChild();
         dbLevelPage.setName("Level");
 
-        DbContentList dbContentList = new DbContentList();
-        dbContentList.init(userService);
-        dbLevelPage.setContentAndAccessWrites(dbContentList);
-        dbContentList.setSpringBeanName("userGuidanceService");
-        dbContentList.setContentProviderGetter("crudQuestHub");
-        dbLevelPage.setContentAndAccessWrites(dbContentList);
-
-        CrudChildServiceHelper<DbContentBook> contentBookCrud = dbContentList.getContentBookCrud();
-        DbContentBook dbContentBook = contentBookCrud.createDbChild();
-        dbContentBook.setClassName("com.btxtech.game.services.planet.db.DbPlanet");
-        CrudListChildServiceHelper<DbContentRow> rowCrud = dbContentBook.getRowCrud();
-
-        DbContentRow dbLevelRow = rowCrud.createDbChild();
+        // Setup the level page
         DbContentList levelContentList = new DbContentList();
+        dbLevelPage.setContentAndAccessWrites(levelContentList);
         levelContentList.setRowsPerPage(5);
-        dbLevelRow.setDbContent(levelContentList);
         levelContentList.init(userService);
-        levelContentList.setParent(dbLevelRow);
-        levelContentList.setContentProviderGetter("levelCrud");
+        levelContentList.setSpringBeanName("userGuidanceService");
+        levelContentList.setContentProviderGetter("dbLevelCrud");
 
-        dbContentBook = levelContentList.getContentBookCrud().createDbChild();
+        DbContentBook dbContentBook = levelContentList.getContentBookCrud().createDbChild();
         dbContentBook.setClassName("com.btxtech.game.services.utg.DbLevel");
-        rowCrud = dbContentBook.getRowCrud();
+        CrudListChildServiceHelper<DbContentRow> rowCrud = dbContentBook.getRowCrud();
 
         DbContentRow dbContentRow = rowCrud.createDbChild();
         dbContentRow.setName("Name");
@@ -3427,7 +3415,6 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSorting() throws Exception {
-        Assert.fail();
         configureMultiplePlanetsAndLevels();
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -3492,7 +3479,7 @@ public class TestCmsService extends AbstractServiceTest {
         EasyMock.replay(baseService);
         serverPlanetServices.setBaseService(baseService);
 
-        PlanetSystemService planetSystemServiceMock  = EasyMock.createMock(PlanetSystemService.class);
+        PlanetSystemService planetSystemServiceMock = EasyMock.createMock(PlanetSystemService.class);
         EasyMock.replay(planetSystemServiceMock);
 
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "planetSystemService", planetSystemServiceMock);
@@ -3739,10 +3726,16 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testPaging() throws Exception {
-        Assert.fail();
         configureMultiplePlanetsAndLevels();
         // Mock statistics service
         List<UserState> userStates = new ArrayList<>();
+
+        PlanetInfo planetInfo = new PlanetInfo();
+        planetInfo.setPlanetId(1);
+        ServerPlanetServicesImpl serverPlanetServices = new ServerPlanetServicesImpl();
+        serverPlanetServices.setPlanetInfo(planetInfo);
+        TestPlanetHelper planet = new TestPlanetHelper();
+        planet.setServerPlanetServices(serverPlanetServices);
 
         UserState userState = new UserState();
         userState.setDbLevelId(TEST_LEVEL_1_SIMULATED_ID);
@@ -3750,7 +3743,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         userState = new UserState();
         userState.setUser("aaa");
-        Base base1 = new Base(userState, null, 1);
+        Base base1 = new Base(userState, planet, 1);
         base1.setAccountBalance(1234);
         setPrivateField(Base.class, base1, "startTime", new Date(System.currentTimeMillis() - ClientDateUtil.MILLIS_IN_HOUR));
         base1.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1, 1)));
@@ -3761,7 +3754,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         userState = new UserState();
         userState.setUser("xxx");
-        Base base2 = new Base(userState, null, 2);
+        Base base2 = new Base(userState, planet, 2);
         base2.setAccountBalance(90);
         setPrivateField(Base.class, base2, "startTime", new Date(System.currentTimeMillis() - ClientDateUtil.MILLIS_IN_MINUTE));
         base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1, 1)));
@@ -3782,7 +3775,7 @@ public class TestCmsService extends AbstractServiceTest {
         EasyMock.expect(baseService.getBaseName(base1.getSimpleBase())).andReturn("Base 1").times(8);
         EasyMock.expect(baseService.getBaseName(base2.getSimpleBase())).andReturn("RegUser").times(8);
         EasyMock.replay(baseService);
-        setPrivateField(StatisticsServiceImpl.class, statisticsService, "baseService", baseService);
+        ((ServerPlanetServicesImpl)planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setBaseService(baseService);
 
         // Setup CMS content
         beginHttpSession();
@@ -3804,15 +3797,12 @@ public class TestCmsService extends AbstractServiceTest {
         level.setExpression("level.name");
         level.setName("Level1");
         DbExpressionProperty userColumn = (DbExpressionProperty) dbContentList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
-        userColumn.setExpression("user.username");
+        userColumn.setExpression("userName");
         userColumn.setName("User1");
         DbExpressionProperty baseUpTime = (DbExpressionProperty) dbContentList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
         baseUpTime.setExpression("baseUpTime");
         baseUpTime.setOptionalType(DbExpressionProperty.Type.DURATION_HH_MM_SS);
         baseUpTime.setName("Time1");
-        DbExpressionProperty baseName = (DbExpressionProperty) dbContentList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
-        baseName.setExpression("baseName");
-        baseName.setName("Base Name1");
         DbExpressionProperty itemCount = (DbExpressionProperty) dbContentList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
         itemCount.setExpression("itemCount");
         itemCount.setName("Items1");
@@ -3828,15 +3818,12 @@ public class TestCmsService extends AbstractServiceTest {
         level.setExpression("level.name");
         level.setName("Level2");
         userColumn = (DbExpressionProperty) dbContentList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
-        userColumn.setExpression("user.username");
+        userColumn.setExpression("userName");
         userColumn.setName("User2");
         baseUpTime = (DbExpressionProperty) dbContentList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
         baseUpTime.setExpression("baseUpTime");
         baseUpTime.setOptionalType(DbExpressionProperty.Type.DURATION_HH_MM_SS);
         baseUpTime.setName("Time2");
-        baseName = (DbExpressionProperty) dbContentList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
-        baseName.setExpression("baseName");
-        baseName.setName("Base Name2");
         itemCount = (DbExpressionProperty) dbContentList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
         itemCount.setExpression("itemCount");
         itemCount.setName("Items2");
@@ -3888,7 +3875,7 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertLabel("form:content:container:1:table:rows:2:cells:1:cell", "2");
 
         pageParameters = new PageParameters("page=1");
-        pageParameters.put("paging9", 0);
+        pageParameters.put("paging8", 0);
         assertBookmarkablePageLink(tester, "form:content:container:2:navigator:navigation:0:pageLink", CmsPage.class, pageParameters);
         tester.assertDisabled("form:content:container:2:navigator:navigation:0:pageLink");
         tester.assertLabel("form:content:container:2:navigator:navigation:0:pageLink:pageNumber", "1");
@@ -3928,7 +3915,7 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertLabel("form:content:container:1:table:rows:1:cells:1:cell", "2");
 
         pageParameters = new PageParameters("page=1");
-        pageParameters.put("paging9", 0);
+        pageParameters.put("paging8", 0);
         assertBookmarkablePageLink(tester, "form:content:container:2:navigator:navigation:0:pageLink", CmsPage.class, pageParameters);
         tester.assertDisabled("form:content:container:2:navigator:navigation:0:pageLink");
         tester.assertLabel("form:content:container:2:navigator:navigation:0:pageLink:pageNumber", "1");
@@ -3939,10 +3926,9 @@ public class TestCmsService extends AbstractServiceTest {
         tester.clickLink("form:content:container:2:navigator:next");
 
         tester.assertLabel("form:content:container:1:table:rows:1:cells:1:cell", "1");
-        tester.assertLabel("form:content:container:1:table:rows:2:cells:1:cell", "2");
 
         pageParameters = new PageParameters("page=1");
-        pageParameters.put("paging9", 0);
+        pageParameters.put("paging8", 0);
         assertBookmarkablePageLink(tester, "form:content:container:2:navigator:navigation:0:pageLink", CmsPage.class, pageParameters);
         tester.assertEnabled("form:content:container:2:navigator:navigation:0:pageLink");
         tester.assertLabel("form:content:container:2:navigator:navigation:0:pageLink:pageNumber", "1");
@@ -4076,7 +4062,6 @@ public class TestCmsService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testUglyBeanIdPathElement4LevelTask() throws Exception {
-        Assert.fail();
         configureMultiplePlanetsAndLevels();
 
         // Setup CMS content
@@ -4089,29 +4074,16 @@ public class TestCmsService extends AbstractServiceTest {
         dbLevelPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbLevelPage.setName("Level");
 
-        DbContentList dbContentList = new DbContentList();
-        dbContentList.init(userService);
-        dbLevelPage.setContentAndAccessWrites(dbContentList);
-        dbContentList.setSpringBeanName("userGuidanceService");
-        dbContentList.setContentProviderGetter("crudQuestHub");
-        dbLevelPage.setContentAndAccessWrites(dbContentList);
-
-        CrudChildServiceHelper<DbContentBook> contentBookCrud = dbContentList.getContentBookCrud();
-        DbContentBook dbContentBook = contentBookCrud.createDbChild();
-        dbContentBook.setClassName("com.btxtech.game.services.planet.db.DbPlanet");
-        CrudListChildServiceHelper<DbContentRow> rowCrud = dbContentBook.getRowCrud();
-
-        DbContentRow dbLevelRow = rowCrud.createDbChild();
         DbContentList levelContentList = new DbContentList();
+        dbLevelPage.setContentAndAccessWrites(levelContentList);
         levelContentList.setRowsPerPage(5);
-        dbLevelRow.setDbContent(levelContentList);
         levelContentList.init(userService);
-        levelContentList.setParent(dbLevelRow);
-        levelContentList.setContentProviderGetter("levelCrud");
+        levelContentList.setSpringBeanName("userGuidanceService");
+        levelContentList.setContentProviderGetter("dbLevelCrud");
 
-        dbContentBook = levelContentList.getContentBookCrud().createDbChild();
+        DbContentBook dbContentBook = levelContentList.getContentBookCrud().createDbChild();
         dbContentBook.setClassName("com.btxtech.game.services.utg.DbLevel");
-        rowCrud = dbContentBook.getRowCrud();
+        CrudListChildServiceHelper<DbContentRow> rowCrud = dbContentBook.getRowCrud();
 
         DbContentRow dbTaskRow = rowCrud.createDbChild();
         DbContentList taskContentList = new DbContentList();
