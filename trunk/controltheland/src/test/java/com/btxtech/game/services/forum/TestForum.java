@@ -54,7 +54,7 @@ public class TestForum extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testCreateAndFillForum() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
 
@@ -73,7 +73,7 @@ public class TestForum extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testOrderForum() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

@@ -803,7 +803,7 @@ public class TestItemImageHandling extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void muzzleFlashPosition() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

@@ -54,7 +54,7 @@ public class TestCountComparison extends AbstractServiceTest implements ServerCo
         progressString = null;
         progressBase = null;
         setPrivateStaticField(AbstractSyncItemComparison.class, "MIN_SEND_DELAY", 0);
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         identifier = null;
         actor = null;
 
@@ -74,7 +74,7 @@ public class TestCountComparison extends AbstractServiceTest implements ServerCo
         ((ServerConditionServiceImpl) deAopProxy(serverConditionService)).setRate(50);
         ServerPlanetServicesImpl serverPlanetServices = (ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
         serverPlanetServices.setBaseService(baseServiceMock);
-        setPrivateField(ServerConditionServiceImpl.class, serverConditionService, "serverConnectionService", this);
+        serverPlanetServices.setServerConnectionService(this);
     }
 
     private void assertActorAndIdentifierAndClear(UserState expectedActor, Integer expectedIdentifier) {

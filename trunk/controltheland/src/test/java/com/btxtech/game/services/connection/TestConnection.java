@@ -40,7 +40,7 @@ public class TestConnection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void pendingPackets() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         Connection connection = new Connection("1234", null);
         SyncBaseItem attackItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1, 1));
@@ -58,7 +58,7 @@ public class TestConnection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void noConnection() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -75,7 +75,7 @@ public class TestConnection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void validConnection() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -88,7 +88,7 @@ public class TestConnection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void closeConnectionBaseKilled1() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         beginHttpSession();
@@ -111,7 +111,7 @@ public class TestConnection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void closeConnectionBaseKilled2() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         beginHttpSession();
@@ -140,7 +140,7 @@ public class TestConnection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void closeConnectionBaseKilled3() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         beginHttpSession();
@@ -170,7 +170,7 @@ public class TestConnection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void syncInfoStartUid() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -189,7 +189,7 @@ public class TestConnection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void twoConnectionSameSession() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -220,7 +220,7 @@ public class TestConnection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void surrender() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

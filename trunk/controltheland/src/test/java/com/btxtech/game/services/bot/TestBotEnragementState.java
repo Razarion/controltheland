@@ -39,7 +39,7 @@ public class TestBotEnragementState extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void noEnrageUp() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         SimpleBase botBase = new SimpleBase(1, 1);
         SimpleBase actorBase = new SimpleBase(2, 1);
@@ -80,7 +80,7 @@ public class TestBotEnragementState extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void oneEnrageUp() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         SimpleBase botBase = new SimpleBase(1, 1);
         SimpleBase actorBase = new SimpleBase(2, 1);
@@ -162,7 +162,7 @@ public class TestBotEnragementState extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void realmLeft() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         SimpleBase botBase = new SimpleBase(1, 1);
         SimpleBase actorBase = new SimpleBase(2, 1);
@@ -241,7 +241,7 @@ public class TestBotEnragementState extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void multipleAttackers() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         SimpleBase botBase = new SimpleBase(1, 1);
         SimpleBase actorBase1 = new SimpleBase(2, 1);

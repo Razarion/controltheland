@@ -127,7 +127,7 @@ public class TestInventoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void crudItems() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -478,7 +478,7 @@ public class TestInventoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void dbBoxItemType() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -582,7 +582,7 @@ public class TestInventoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void generateItemAndArtifact() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -758,7 +758,7 @@ public class TestInventoryService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void setupNewUser() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

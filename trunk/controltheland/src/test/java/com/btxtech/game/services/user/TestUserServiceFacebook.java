@@ -36,7 +36,7 @@ public class TestUserServiceFacebook extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void createLogin() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

@@ -154,7 +154,7 @@ public class TestAttackFormation extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testAttackFormationNoBlockingObject() throws Throwable {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         ItemType targetItemType = serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID);
         targetItemType.setBoundingBox(new BoundingBox(200, 80, ANGELS_24));
@@ -365,7 +365,7 @@ public class TestAttackFormation extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testFormationWithNegativePosition() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         SyncBaseItem target = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 200), new Id(1, -100, -100));
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(2, -100, -100));
 
@@ -392,7 +392,7 @@ public class TestAttackFormation extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testCircleFormationBlockingChannel() throws Throwable {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         Rectangle blockingRect1 = new Rectangle(0, 0, 300, 800);
         Rectangle blockingRect2 = new Rectangle(400, 0, 300, 800);

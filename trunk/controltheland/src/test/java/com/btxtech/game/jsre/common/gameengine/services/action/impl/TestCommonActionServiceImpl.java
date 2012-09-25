@@ -40,7 +40,7 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void defenseMaster() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         final List<BaseCommand> commands = new ArrayList<>();
         final TestGlobalServices testGlobalServices = new TestGlobalServices();
@@ -139,7 +139,7 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void defenseSlave() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         final List<BaseCommand> commands = new ArrayList<>();
         final TestGlobalServices testGlobalServices = new TestGlobalServices();
@@ -227,7 +227,7 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void defenseBotVsNoBot() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         final List<BaseCommand> commands = new ArrayList<>();
         final TestGlobalServices testGlobalServices = new TestGlobalServices();
@@ -327,7 +327,7 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void defenseNoBotVsBot() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         final List<BaseCommand> commands = new ArrayList<>();
         final TestGlobalServices testGlobalServices = new TestGlobalServices();
@@ -427,7 +427,7 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void defenseBotVsBot() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         final List<BaseCommand> commands = new ArrayList<>();
         final TestGlobalServices testGlobalServices = new TestGlobalServices();

@@ -113,7 +113,7 @@ public class TestUserState extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testOneRegUsersOneUnregOnlineUser() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         // U1 no real base, first level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

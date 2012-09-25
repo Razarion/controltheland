@@ -34,7 +34,7 @@ public class TestBaseService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSellBaseItem() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         BaseService baseService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService();
 
         beginHttpSession();
@@ -63,7 +63,7 @@ public class TestBaseService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testSellLastBaseItem() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -89,7 +89,7 @@ public class TestBaseService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testGetBaseItems() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         BaseService baseService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService();
 
         beginHttpSession();
@@ -115,7 +115,7 @@ public class TestBaseService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void surrenderBase() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         BaseService baseService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService();
 
         beginHttpSession();
@@ -135,7 +135,7 @@ public class TestBaseService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void surrenderBaseAllianceUnregistered() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         BaseService baseService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService();
 
         AllianceService allianceServiceMock = EasyMock.createStrictMock(AllianceService.class);
@@ -156,7 +156,7 @@ public class TestBaseService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void surrenderBaseAllianceRegistered() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         BaseService baseService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService();
 
         AllianceService allianceServiceMock = EasyMock.createStrictMock(AllianceService.class);

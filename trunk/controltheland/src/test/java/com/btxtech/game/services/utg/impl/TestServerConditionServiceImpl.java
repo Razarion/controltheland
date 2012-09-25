@@ -65,7 +65,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void multiplePlayers() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         UserState userState1 = new UserState();
         userState1.setUser("TestUser1");
@@ -269,7 +269,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void positionConditionTrigger() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

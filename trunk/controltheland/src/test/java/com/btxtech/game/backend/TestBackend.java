@@ -37,7 +37,7 @@ public class TestBackend extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testPagesNoRights() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -54,7 +54,7 @@ public class TestBackend extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testPages() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

@@ -30,7 +30,7 @@ public class TestNeed extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void oneDirectItem() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
         BotItemConfig botItemConfig = new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), false, null, false, null);
@@ -55,7 +55,7 @@ public class TestNeed extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void twoDirectOneNormal() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
         BotItemConfig botItemConfig1 = new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), false, null, false, null);
@@ -115,7 +115,7 @@ public class TestNeed extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void noRebuild() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
         BotItemConfig botItemConfig = new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), false, null, true, null);
@@ -139,7 +139,7 @@ public class TestNeed extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void rePop() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         Collection<BotItemConfig> botItemConfigs = new ArrayList<>();
         BotItemConfig botItemConfig = new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, createRegion(new Rectangle(2000, 2000, 1000, 1000), 1), false, null, false, 100L);

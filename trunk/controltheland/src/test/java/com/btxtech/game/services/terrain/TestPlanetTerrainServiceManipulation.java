@@ -1,31 +1,46 @@
 package com.btxtech.game.services.terrain;
 
+import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.db.DbPlanet;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * User: beat
  * Date: Jul 11, 2009
  * Time: 12:00:44 PM
  */
-public class TestTerrainServiceManipulation extends AbstractServiceTest {
+public class TestPlanetTerrainServiceManipulation extends AbstractServiceTest {
     @Autowired
-    private TerrainImageService terrainService;
+    private PlanetSystemService planetSystemService;
 
     @Test
     @DirtiesContext
     public void testSaveEmptyMap() {
-        Assert.fail();
-        // TODO
-        /*
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbTerrainSetting dbTerrainSetting = setupMinimalTerrain();
-        Assert.assertEquals(0, getTerrainTileCount(dbTerrainSetting));
-        Assert.assertEquals(1, getSurfaceRectCount(dbTerrainSetting));
+        DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().createDbChild();
+        setupMinimalTerrain(dbPlanet);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(0, getTerrainTileCount(dbPlanet));
+        Assert.assertEquals(1, getSurfaceRectCount(dbPlanet));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -33,14 +48,14 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<>();
         Collection<SurfaceRect> surfaceRects = new ArrayList<>();
-        terrainService.saveTerrain(terrainImagePositions, surfaceRects, dbTerrainSetting.getId());
+        planetSystemService.saveTerrain(terrainImagePositions, surfaceRects, dbPlanet.getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(0, getTerrainTileCount(dbTerrainSetting));
-        Assert.assertEquals(0, getSurfaceRectCount(dbTerrainSetting));
+        Assert.assertEquals(0, getTerrainTileCount(dbPlanet));
+        Assert.assertEquals(0, getSurfaceRectCount(dbPlanet));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -50,9 +65,16 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
     public void testUniqueImagePosition() {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbTerrainSetting dbTerrainSetting = setupMinimalTerrain();
-        Assert.assertEquals(0, getTerrainTileCount(dbTerrainSetting));
-        Assert.assertEquals(1, getSurfaceRectCount(dbTerrainSetting));
+        DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().createDbChild();
+        setupMinimalTerrain(dbPlanet);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(0, getTerrainTileCount(dbPlanet));
+        Assert.assertEquals(1, getSurfaceRectCount(dbPlanet));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -63,14 +85,14 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
         terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_1));
         terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_1));
         Collection<SurfaceRect> surfaceRects = new ArrayList<>();
-        terrainService.saveTerrain(terrainImagePositions, surfaceRects, dbTerrainSetting.getId());
+        planetSystemService.saveTerrain(terrainImagePositions, surfaceRects, dbPlanet.getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(1, getTerrainTileCount(dbTerrainSetting));
-        Assert.assertEquals(0, getSurfaceRectCount(dbTerrainSetting));
+        Assert.assertEquals(1, getTerrainTileCount(dbPlanet));
+        Assert.assertEquals(0, getSurfaceRectCount(dbPlanet));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -80,9 +102,16 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
     public void testLayer1_2() {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbTerrainSetting dbTerrainSetting = setupMinimalTerrain();
-        Assert.assertEquals(0, getTerrainTileCount(dbTerrainSetting));
-        Assert.assertEquals(1, getSurfaceRectCount(dbTerrainSetting));
+        DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().createDbChild();
+        setupMinimalTerrain(dbPlanet);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(0, getTerrainTileCount(dbPlanet));
+        Assert.assertEquals(1, getSurfaceRectCount(dbPlanet));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -95,16 +124,16 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
         terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_1));
         terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_2));
         Collection<SurfaceRect> surfaceRects = new ArrayList<>();
-        terrainService.saveTerrain(terrainImagePositions, surfaceRects, dbTerrainSetting.getId());
+        planetSystemService.saveTerrain(terrainImagePositions, surfaceRects, dbPlanet.getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(2, getTerrainTileCount(dbTerrainSetting));
-        Assert.assertEquals(0, getSurfaceRectCount(dbTerrainSetting));
+        Assert.assertEquals(2, getTerrainTileCount(dbPlanet));
+        Assert.assertEquals(0, getSurfaceRectCount(dbPlanet));
 
-        Collection<DbTerrainImagePosition> dbTerrainImagePositions = terrainService.getDbTerrainSettingCrudServiceHelper().readDbChild(dbTerrainSetting.getId()).getDbTerrainImagePositionCrudServiceHelper().readDbChildren();
+        Collection<DbTerrainImagePosition> dbTerrainImagePositions = planetSystemService.getDbPlanetCrud().readDbChild(dbPlanet.getId()).getDbTerrainSetting().getDbTerrainImagePositionCrudServiceHelper().readDbChildren();
         List<DbTerrainImagePosition> list = new ArrayList<>(dbTerrainImagePositions);
         if (list.get(0).getzIndex() == TerrainImagePosition.ZIndex.LAYER_1) {
             Assert.assertEquals(TerrainImagePosition.ZIndex.LAYER_2, list.get(1).getzIndex());
@@ -121,9 +150,16 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
     public void testUniqueSurfaceRect() {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbTerrainSetting dbTerrainSetting = setupMinimalTerrain();
-        Assert.assertEquals(0, getTerrainTileCount(dbTerrainSetting));
-        Assert.assertEquals(1, getSurfaceRectCount(dbTerrainSetting));
+        DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().createDbChild();
+        setupMinimalTerrain(dbPlanet);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(0, getTerrainTileCount(dbPlanet));
+        Assert.assertEquals(1, getSurfaceRectCount(dbPlanet));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -134,14 +170,14 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
         Collection<SurfaceRect> surfaceRects = new ArrayList<>();
         surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 100, 100), dbSurfaceImage.getId()));
         surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 100, 100), dbSurfaceImage.getId()));
-        terrainService.saveTerrain(terrainImagePositions, surfaceRects, dbTerrainSetting.getId());
+        planetSystemService.saveTerrain(terrainImagePositions, surfaceRects, dbPlanet.getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(0, getTerrainTileCount(dbTerrainSetting));
-        Assert.assertEquals(1, getSurfaceRectCount(dbTerrainSetting));
+        Assert.assertEquals(0, getTerrainTileCount(dbPlanet));
+        Assert.assertEquals(1, getSurfaceRectCount(dbPlanet));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -151,9 +187,16 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
     public void testSaveNewMap() {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbTerrainSetting dbTerrainSetting = setupMinimalTerrain();
-        Assert.assertEquals(0, getTerrainTileCount(dbTerrainSetting));
-        Assert.assertEquals(1, getSurfaceRectCount(dbTerrainSetting));
+        DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().createDbChild();
+        setupMinimalTerrain(dbPlanet);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(0, getTerrainTileCount(dbPlanet));
+        Assert.assertEquals(1, getSurfaceRectCount(dbPlanet));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -164,14 +207,14 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
         terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_1));
         Collection<SurfaceRect> surfaceRects = new ArrayList<>();
         surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 100, 100), 1));
-        terrainService.saveTerrain(terrainImagePositions, surfaceRects, dbTerrainSetting.getId());
+        planetSystemService.saveTerrain(terrainImagePositions, surfaceRects, dbPlanet.getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(1, getTerrainTileCount(dbTerrainSetting));
-        Assert.assertEquals(1, getSurfaceRectCount(dbTerrainSetting));
+        Assert.assertEquals(1, getTerrainTileCount(dbPlanet));
+        Assert.assertEquals(1, getSurfaceRectCount(dbPlanet));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -181,9 +224,16 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
     public void testSaveImagePositionMulti() {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbTerrainSetting dbTerrainSetting = setupMinimalTerrain();
-        Assert.assertEquals(0, getTerrainTileCount(dbTerrainSetting));
-        Assert.assertEquals(1, getSurfaceRectCount(dbTerrainSetting));
+        DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().createDbChild();
+        setupMinimalTerrain(dbPlanet);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(0, getTerrainTileCount(dbPlanet));
+        Assert.assertEquals(1, getSurfaceRectCount(dbPlanet));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -198,15 +248,15 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
             }
         }
         Collection<SurfaceRect> surfaceRects = new ArrayList<>();
-        terrainService.saveTerrain(terrainImagePositions, surfaceRects, dbTerrainSetting.getId());
+        planetSystemService.saveTerrain(terrainImagePositions, surfaceRects, dbPlanet.getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(1600, getTerrainTileCount(dbTerrainSetting));
-        Assert.assertEquals(0, getSurfaceRectCount(dbTerrainSetting));
-        verifyImagePositions(0, 40, 0, 40);
+        Assert.assertEquals(1600, getTerrainTileCount(dbPlanet));
+        Assert.assertEquals(0, getSurfaceRectCount(dbPlanet));
+        verifyImagePositions(dbPlanet, 0, 40, 0, 40);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -219,15 +269,15 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
                 terrainImagePositions.add(new TerrainImagePosition(new Index(x, y), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_1));
             }
         }
-        terrainService.saveTerrain(terrainImagePositions, surfaceRects, dbTerrainSetting.getId());
+        planetSystemService.saveTerrain(terrainImagePositions, surfaceRects, dbPlanet.getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(1600, getTerrainTileCount(dbTerrainSetting));
-        Assert.assertEquals(0, getSurfaceRectCount(dbTerrainSetting));
-        verifyImagePositions(0, 40, 0, 40);
+        Assert.assertEquals(1600, getTerrainTileCount(dbPlanet));
+        Assert.assertEquals(0, getSurfaceRectCount(dbPlanet));
+        verifyImagePositions(dbPlanet, 0, 40, 0, 40);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -240,15 +290,15 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
                 terrainImagePositions.add(new TerrainImagePosition(new Index(x, y), dbTerrainImage.getId(), TerrainImagePosition.ZIndex.LAYER_1));
             }
         }
-        terrainService.saveTerrain(terrainImagePositions, surfaceRects, dbTerrainSetting.getId());
+        planetSystemService.saveTerrain(terrainImagePositions, surfaceRects, dbPlanet.getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(1600, getTerrainTileCount(dbTerrainSetting));
-        Assert.assertEquals(0, getSurfaceRectCount(dbTerrainSetting));
-        verifyImagePositions(20, 60, 20, 60);
+        Assert.assertEquals(1600, getTerrainTileCount(dbPlanet));
+        Assert.assertEquals(0, getSurfaceRectCount(dbPlanet));
+        verifyImagePositions(dbPlanet, 20, 60, 20, 60);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -258,9 +308,16 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
     public void testSaveSurfaceRectMulti() {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbTerrainSetting dbTerrainSetting = setupMinimalTerrain();
-        Assert.assertEquals(0, getTerrainTileCount(dbTerrainSetting));
-        Assert.assertEquals(1, getSurfaceRectCount(dbTerrainSetting));
+        DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().createDbChild();
+        setupMinimalTerrain(dbPlanet);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(0, getTerrainTileCount(dbPlanet));
+        Assert.assertEquals(1, getSurfaceRectCount(dbPlanet));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -274,15 +331,15 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
             }
         }
         Collection<TerrainImagePosition> imagePositions = new ArrayList<>();
-        terrainService.saveTerrain(imagePositions, surfaceRects, dbTerrainSetting.getId());
+        planetSystemService.saveTerrain(imagePositions, surfaceRects, dbPlanet.getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(0, getTerrainTileCount(dbTerrainSetting));
-        Assert.assertEquals(1600, getSurfaceRectCount(dbTerrainSetting));
-        verifySurfaceRects(0, 40, 0, 40, 1, 1);
+        Assert.assertEquals(0, getTerrainTileCount(dbPlanet));
+        Assert.assertEquals(1600, getSurfaceRectCount(dbPlanet));
+        verifySurfaceRects(dbPlanet, 0, 40, 0, 40, 1, 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -295,15 +352,15 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
                 surfaceRects.add(new SurfaceRect(new Rectangle(x, y, 1, 1), 1));
             }
         }
-        terrainService.saveTerrain(imagePositions, surfaceRects, dbTerrainSetting.getId());
+        planetSystemService.saveTerrain(imagePositions, surfaceRects, dbPlanet.getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(0, getTerrainTileCount(dbTerrainSetting));
-        Assert.assertEquals(1600, getSurfaceRectCount(dbTerrainSetting));
-        verifySurfaceRects(0, 40, 0, 40, 1, 1);
+        Assert.assertEquals(0, getTerrainTileCount(dbPlanet));
+        Assert.assertEquals(1600, getSurfaceRectCount(dbPlanet));
+        verifySurfaceRects(dbPlanet, 0, 40, 0, 40, 1, 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -316,30 +373,29 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
                 surfaceRects.add(new SurfaceRect(new Rectangle(x, y, 1, 1), 1));
             }
         }
-        terrainService.saveTerrain(imagePositions, surfaceRects, dbTerrainSetting.getId());
+        planetSystemService.saveTerrain(imagePositions, surfaceRects, dbPlanet.getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(0, getTerrainTileCount(dbTerrainSetting));
-        Assert.assertEquals(1600, getSurfaceRectCount(dbTerrainSetting));
-        verifySurfaceRects(20, 60, 20, 60, 1, 1);
+        Assert.assertEquals(0, getTerrainTileCount(dbPlanet));
+        Assert.assertEquals(1600, getSurfaceRectCount(dbPlanet));
+        verifySurfaceRects(dbPlanet, 20, 60, 20, 60, 1, 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
-
-    private int getSurfaceRectCount(DbTerrainSetting dbTerrainSetting) {
-        return terrainService.getDbTerrainSettingCrudServiceHelper().readDbChild(dbTerrainSetting.getId()).getDbSurfaceRectCrudServiceHelper().readDbChildren().size();
+    private int getSurfaceRectCount(DbPlanet dbPlanet) {
+        return planetSystemService.getDbPlanetCrud().readDbChild(dbPlanet.getId()).getDbTerrainSetting().getDbSurfaceRectCrudServiceHelper().readDbChildren().size();
     }
 
-    private int getTerrainTileCount(DbTerrainSetting dbTerrainSetting) {
-        return terrainService.getDbTerrainSettingCrudServiceHelper().readDbChild(dbTerrainSetting.getId()).getDbTerrainImagePositionCrudServiceHelper().readDbChildren().size();
+    private int getTerrainTileCount(DbPlanet dbPlanet) {
+        return planetSystemService.getDbPlanetCrud().readDbChild(dbPlanet.getId()).getDbTerrainSetting().getDbTerrainImagePositionCrudServiceHelper().readDbChildren().size();
     }
 
 
-    private void verifyImagePositions(int xFrom, int xTo, int yFrom, int yTo) {
-        Collection<DbTerrainImagePosition> terrainImagePositions = terrainService.getDbTerrainSettingCrudServiceHelper().readDbChildren().iterator().next().getDbTerrainImagePositionCrudServiceHelper().readDbChildren();
+    private void verifyImagePositions(DbPlanet dbPlanet, int xFrom, int xTo, int yFrom, int yTo) {
+        Collection<DbTerrainImagePosition> terrainImagePositions = planetSystemService.getDbPlanetCrud().readDbChild(dbPlanet.getId()).getDbTerrainSetting().getDbTerrainImagePositionCrudServiceHelper().readDbChildren();
         for (DbTerrainImagePosition terrainImagePosition : terrainImagePositions) {
             if (terrainImagePosition.getTileX() < xFrom
                     || terrainImagePosition.getTileX() > xTo
@@ -350,8 +406,8 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
         }
     }
 
-    private void verifySurfaceRects(int xFrom, int xTo, int yFrom, int yTo, int width, int height) {
-        Collection<DbSurfaceRect> dbSurfaceRects = terrainService.getDbTerrainSettingCrudServiceHelper().readDbChildren().iterator().next().getDbSurfaceRectCrudServiceHelper().readDbChildren();
+    private void verifySurfaceRects(DbPlanet dbPlanet, int xFrom, int xTo, int yFrom, int yTo, int width, int height) {
+        Collection<DbSurfaceRect> dbSurfaceRects = planetSystemService.getDbPlanetCrud().readDbChild(dbPlanet.getId()).getDbTerrainSetting().getDbSurfaceRectCrudServiceHelper().readDbChildren();
         for (DbSurfaceRect dbSurfaceRect : dbSurfaceRects) {
             if (dbSurfaceRect.getRectangle().getX() < xFrom
                     || dbSurfaceRect.getRectangle().getEndX() > xTo
@@ -361,7 +417,7 @@ public class TestTerrainServiceManipulation extends AbstractServiceTest {
                     || dbSurfaceRect.getRectangle().getHeight() > height) {
                 Assert.fail("SurfaceRect is out of band");
             }
-        }*/
+        }
     }
 
 

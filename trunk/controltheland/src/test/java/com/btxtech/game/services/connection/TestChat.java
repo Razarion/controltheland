@@ -27,7 +27,7 @@ public class TestChat extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testRealGame() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -62,7 +62,7 @@ public class TestChat extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testRealGameRegUser() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -99,7 +99,7 @@ public class TestChat extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testUnregUserTutorial() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

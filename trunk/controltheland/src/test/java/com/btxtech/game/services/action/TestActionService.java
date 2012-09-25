@@ -21,7 +21,7 @@ public class TestActionService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testLogoutDuringBuild() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -44,7 +44,7 @@ public class TestActionService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testLogoutDuringBuildRegUser() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -68,7 +68,7 @@ public class TestActionService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testAttackWithDestination() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // Target
         beginHttpSession();

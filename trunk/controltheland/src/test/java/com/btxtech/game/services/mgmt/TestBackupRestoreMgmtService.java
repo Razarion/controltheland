@@ -503,7 +503,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void resourceCollectingRestore() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         // U1 reg user
         beginHttpSession();

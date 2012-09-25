@@ -79,7 +79,7 @@ public class TestXpService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testKillItemXp() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

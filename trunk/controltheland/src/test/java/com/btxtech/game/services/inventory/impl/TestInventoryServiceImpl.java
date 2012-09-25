@@ -89,7 +89,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     @DirtiesContext
     public void testDbBoxRegionReal() throws Exception {
         setPrivateStaticField(InventoryServiceImpl.class, "SCHEDULE_RATE", 10);
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -133,7 +133,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     @DirtiesContext
     public void testDbBoxRegionMock() throws Exception {
         setPrivateStaticField(InventoryServiceImpl.class, "SCHEDULE_RATE", 25);
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServicesImpl serverPlanetServices = (ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         beginHttpSession();
@@ -213,7 +213,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     @DirtiesContext
     public void testDbBoxRegionMockMultipleRegions() throws Exception {
         setPrivateStaticField(InventoryServiceImpl.class, "SCHEDULE_RATE", 25);
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServicesImpl serverPlanetServices = (ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         beginHttpSession();
@@ -247,15 +247,6 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         SyncBoxItem mockSyncBoxItem7 = EasyMock.createStrictMock(SyncBoxItem.class);
         EasyMock.expect(mockSyncBoxItem7.isInTTL()).andReturn(true);
         EasyMock.expect(mockSyncBoxItem7.isInTTL()).andReturn(false);
-        SyncBoxItem mockSyncBoxItem8 = EasyMock.createStrictMock(SyncBoxItem.class);
-        EasyMock.expect(mockSyncBoxItem8.isInTTL()).andReturn(true);
-        EasyMock.expect(mockSyncBoxItem8.isInTTL()).andReturn(false);
-        SyncBoxItem mockSyncBoxItem9 = EasyMock.createStrictMock(SyncBoxItem.class);
-        EasyMock.expect(mockSyncBoxItem9.isInTTL()).andReturn(true);
-        EasyMock.expect(mockSyncBoxItem9.isInTTL()).andReturn(false);
-        SyncBoxItem mockSyncBoxItem10 = EasyMock.createStrictMock(SyncBoxItem.class);
-        EasyMock.expect(mockSyncBoxItem10.isInTTL()).andReturn(true);
-        EasyMock.expect(mockSyncBoxItem10.isInTTL()).andReturn(false);
         // History Service
         HistoryService mockHistoryService = EasyMock.createNiceMock(HistoryService.class);
         // ServerItemService
@@ -265,27 +256,21 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
 
         EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem1);
         EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem2);
-        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType2), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem7);
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem1), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem2), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
-        mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem7), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
 
         EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem3);
         EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem4);
-        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType2), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem8);
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem3), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem4), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
-        mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem8), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
 
-        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem10);
-        mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem10), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
+        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType2), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem7);
+        mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem7), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
 
         EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem5);
         EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem6);
-        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType2), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem9);
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem5), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem6), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
-        mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem9), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
 
         CollisionService mockCollisionService = EasyMock.createStrictMock(CollisionService.class);
         DbRegion dbRegion1 = createDbRegion(new Rectangle(100, 100, 1000, 1000));
@@ -294,7 +279,6 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         Region region2 = dbRegion2.createRegion();
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(boxItemType1, region1, 100, true, false)).andReturn(new Index(100, 100));
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(boxItemType1, region1, 100, true, false)).andReturn(new Index(100, 100));
-        EasyMock.expect(mockCollisionService.getFreeRandomPosition(boxItemType2, region2, 100, true, false)).andReturn(new Index(100, 100));
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(boxItemType1, region1, 100, true, false)).andReturn(new Index(100, 100));
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(boxItemType1, region1, 100, true, false)).andReturn(new Index(100, 100));
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(boxItemType2, region2, 100, true, false)).andReturn(new Index(100, 100));
@@ -304,7 +288,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(boxItemType2, region2, 100, true, false)).andReturn(new Index(100, 100));
         serverPlanetServices.setCollisionService(mockCollisionService);
 
-        EasyMock.replay(mockHistoryService, mockServerItemService, mockCollisionService, mockSyncBoxItem1, mockSyncBoxItem2, mockSyncBoxItem3, mockSyncBoxItem4, mockSyncBoxItem5, mockSyncBoxItem6, mockSyncBoxItem7, mockSyncBoxItem8, mockSyncBoxItem9, mockSyncBoxItem10);
+        EasyMock.replay(mockHistoryService, mockServerItemService, mockCollisionService, mockSyncBoxItem1, mockSyncBoxItem2, mockSyncBoxItem3, mockSyncBoxItem4, mockSyncBoxItem5, mockSyncBoxItem6,  mockSyncBoxItem7);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         setPrivateField(ServerGlobalServicesImpl.class, serverGlobalServices, "historyService", mockHistoryService);
@@ -322,9 +306,6 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         DbBoxRegionCount dbBoxRegionCount1 = dbBoxRegion1.getBoxRegionCountCrud().createDbChild();
         dbBoxRegionCount1.setDbBoxItemType(serverItemTypeService.getDbBoxItemType(TEST_BOX_ITEM_1_ID));
         dbBoxRegionCount1.setCount(2);
-        DbBoxRegionCount dbBoxRegionCount2 = dbBoxRegion1.getBoxRegionCountCrud().createDbChild();
-        dbBoxRegionCount2.setDbBoxItemType(serverItemTypeService.getDbBoxItemType(TEST_BOX_ITEM_2_ID));
-        dbBoxRegionCount2.setCount(1);
 
         DbBoxRegion dbBoxRegion2 = dbPlanet.getBoxRegionCrud().createDbChild();
         dbBoxRegion2.setItemFreeRange(100);
@@ -333,7 +314,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         dbBoxRegion2.setName("DbBoxRegion2");
         dbBoxRegion2.setRegion(regionService.getRegionCrud().readDbChild(dbRegion2.getId()));
         DbBoxRegionCount dbBoxRegionCount = dbBoxRegion2.getBoxRegionCountCrud().createDbChild();
-        dbBoxRegionCount.setDbBoxItemType(serverItemTypeService.getDbBoxItemType(TEST_BOX_ITEM_1_ID));
+        dbBoxRegionCount.setDbBoxItemType(serverItemTypeService.getDbBoxItemType(TEST_BOX_ITEM_2_ID));
         dbBoxRegionCount.setCount(1);
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
         planetSystemService.deactivatePlanet(TEST_PLANET_1_ID);
@@ -343,14 +324,14 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
 
         Thread.sleep(790);
 
-        EasyMock.verify(mockHistoryService, mockServerItemService, mockSyncBoxItem1, mockSyncBoxItem2, mockSyncBoxItem3, mockSyncBoxItem4, mockSyncBoxItem5, mockSyncBoxItem6, mockSyncBoxItem7, mockSyncBoxItem8, mockSyncBoxItem9, mockSyncBoxItem10);
+        EasyMock.verify(mockHistoryService, mockServerItemService, mockSyncBoxItem1, mockSyncBoxItem2, mockSyncBoxItem3, mockSyncBoxItem4, mockSyncBoxItem5, mockSyncBoxItem6, mockSyncBoxItem7);
     }
 
     @Test
     @DirtiesContext
     public void testDbBoxRegionMockLongRunningBox() throws Exception {
         setPrivateStaticField(InventoryServiceImpl.class, "SCHEDULE_RATE", 25);
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServicesImpl serverPlanetServices = (ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         beginHttpSession();
@@ -423,7 +404,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     @DirtiesContext
     public void testPickupReal() throws Exception {
         setPrivateStaticField(InventoryServiceImpl.class, "SCHEDULE_RATE", 25);
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -470,7 +451,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     @DirtiesContext
     public void testPickupMock() throws Exception {
         setPrivateStaticField(InventoryServiceImpl.class, "SCHEDULE_RATE", 25);
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServicesImpl serverPlanetServices = (ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         beginHttpSession();
@@ -551,7 +532,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     @DirtiesContext
     public void testDropBoxOnKillReal() throws Exception {
         setPrivateStaticField(InventoryServiceImpl.class, "SCHEDULE_RATE", 25);
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -616,7 +597,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     @DirtiesContext
     public void testDropBoxOnKillMock() throws Exception {
         setPrivateStaticField(InventoryServiceImpl.class, "SCHEDULE_RATE", 25);
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServicesImpl serverPlanetServices = (ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         beginHttpSession();
@@ -669,7 +650,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     @DirtiesContext
     public void backupRestoreSyncBoxItems() throws Exception {
         setPrivateStaticField(InventoryServiceImpl.class, "SCHEDULE_RATE", 25);
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -731,7 +712,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     @DirtiesContext
     public void backupRestoreSyncBoxItemsAsTarget() throws Exception {
         setPrivateStaticField(InventoryServiceImpl.class, "SCHEDULE_RATE", 25);
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -811,7 +792,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     @DirtiesContext
     public void pickupInventoryItemReal() throws Exception {
         setPrivateStaticField(InventoryServiceImpl.class, "SCHEDULE_RATE", 25);
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -882,7 +863,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     @DirtiesContext
     public void pickupInventoryItemMock() throws Exception {
         setPrivateStaticField(InventoryServiceImpl.class, "SCHEDULE_RATE", 25);
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServicesImpl serverPlanetServices = (ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         SimpleBase simpleBase = new SimpleBase(1, TEST_PLANET_1_ID);
@@ -1000,7 +981,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void backupRestoreUserState() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -1071,7 +1052,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void assembleInventoryItem() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -1170,7 +1151,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void getInventory() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -1265,7 +1246,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void useInventoryItem() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServicesImpl serverPlanetServices = (ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         beginHttpSession();
@@ -1397,7 +1378,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void useInventoryItemMultipleBaseItems() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         ServerPlanetServicesImpl serverPlanetServices = (ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         beginHttpSession();
@@ -1470,7 +1451,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void buyInventoryItem() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -1527,7 +1508,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void buyInventoryArtifact() throws Exception {
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

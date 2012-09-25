@@ -41,7 +41,7 @@ public class TestItemSound extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        configureSimplePlanet();
+        configureSimplePlanetNoResources();
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
