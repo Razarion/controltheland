@@ -106,6 +106,7 @@ public class DbHistoryElement implements Serializable {
     private String inventory;
     private String botName;
     private String botInfo;
+    private String planetName;
 
     /**
      * Used by hibernate
@@ -134,6 +135,7 @@ public class DbHistoryElement implements Serializable {
         this.source = source;
         this.position = position;
         this.inventory = inventory;
+        planetName = actorBase != null ? planetSystemService.getServerPlanetServices(actorBase).getPlanetInfo().getName() : null;
     }
 
     public Integer getId() {
@@ -214,6 +216,10 @@ public class DbHistoryElement implements Serializable {
 
     public String getBotInfo() {
         return botInfo;
+    }
+
+    public String getPlanetName() {
+        return planetName;
     }
 
     @Override
