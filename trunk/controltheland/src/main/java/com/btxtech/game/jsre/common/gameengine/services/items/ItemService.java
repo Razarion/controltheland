@@ -81,6 +81,8 @@ public interface ItemService {
 
     Collection<SyncItem> getItemsInRectangleFast(Rectangle rectangle);
 
+    Collection<SyncItem> getItemsInRectangleFastIncludingDead(Rectangle rectangle);
+
     Collection<SyncBaseItem> getBaseItemsInRectangle(Rectangle rectangle, SimpleBase simpleBase, Collection<BaseItemType> baseItemTypeFilter);
 
     Collection<SyncBaseItem> getBaseItemsInRectangle(Region region, SimpleBase simpleBase, Collection<BaseItemType> baseItemTypeFilter);

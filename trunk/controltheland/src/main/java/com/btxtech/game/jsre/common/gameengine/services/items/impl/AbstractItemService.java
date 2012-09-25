@@ -57,12 +57,15 @@ abstract public class AbstractItemService implements ItemService {
     /**
      * Iterates over all sync items
      *
-     * @param includeNoPosition
+     *
+     *
+     * @param includeNoPosition include items which have no position (e.g. items which are inside a container)
+     * @param includeDead includes dead items (isAlive = false)
      * @param defaultReturn     if iteration is finished without an aport, this param is returned
      * @param itemHandler       see ItemHandler
      * @return the parameter from the itemHandler or the defaultReturn
      */
-    protected abstract <T> T iterateOverItems(boolean includeNoPosition, T defaultReturn, ItemHandler<T> itemHandler);
+    protected abstract <T> T iterateOverItems(boolean includeNoPosition, boolean includeDead, T defaultReturn, ItemHandler<T> itemHandler);
 
     protected abstract GlobalServices getGlobalServices();
 
@@ -135,7 +138,7 @@ abstract public class AbstractItemService implements ItemService {
     @Override
     public boolean isSyncItemOverlapping(final SyncItem syncItem, final Index positionToCheck, final Double angelToCheck, final Collection<SyncItem> exceptionThem) {
 
-        return iterateOverItems(false, false, new ItemHandler<Boolean>() {
+        return iterateOverItems(false, false, false, new ItemHandler<Boolean>() {
             @Override
             public Boolean handleItem(SyncItem otherItem) {
                 if (otherItem.equals(syncItem)) {
@@ -176,7 +179,7 @@ abstract public class AbstractItemService implements ItemService {
 
     @Override
     public boolean hasStandingItemsInRect(final Rectangle rectangle, final SyncItem exceptThat) {
-        return iterateOverItems(false, false, new ItemHandler<Boolean>() {
+        return iterateOverItems(false, false, false, new ItemHandler<Boolean>() {
             @Override
             public Boolean handleItem(SyncItem syncItem) {
                 if (syncItem.equals(exceptThat)) {
@@ -201,7 +204,7 @@ abstract public class AbstractItemService implements ItemService {
 
     @Override
     public boolean hasItemsInRectangle(final Rectangle rectangle) {
-        return iterateOverItems(false, false, new ItemHandler<Boolean>() {
+        return iterateOverItems(false, false, false, new ItemHandler<Boolean>() {
             @Override
             public Boolean handleItem(SyncItem syncItem) {
                 return syncItem.getSyncItemArea().contains(rectangle) ? true : null;
@@ -218,7 +221,7 @@ abstract public class AbstractItemService implements ItemService {
 
     @Override
     public boolean isUnmovableSyncItemOverlapping(final BoundingBox boundingBox, final Index positionToCheck) {
-        return iterateOverItems(false, false, new ItemHandler<Boolean>() {
+        return iterateOverItems(false, false, false, new ItemHandler<Boolean>() {
             @Override
             public Boolean handleItem(SyncItem syncItem) {
                 if (syncItem instanceof SyncBaseItem) {
@@ -241,7 +244,7 @@ abstract public class AbstractItemService implements ItemService {
     @Override
     public Collection<SyncBaseItem> getItems4Base(final SimpleBase simpleBase) {
         final Collection<SyncBaseItem> itemsInBase = new ArrayList<SyncBaseItem>();
-        iterateOverItems(false, null, new ItemHandler<Void>() {
+        iterateOverItems(false, false, null, new ItemHandler<Void>() {
             @Override
             public Void handleItem(SyncItem syncItem) {
                 if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).getBase().equals(simpleBase)) {
@@ -256,7 +259,7 @@ abstract public class AbstractItemService implements ItemService {
     @Override
     public Collection<SyncBaseItem> getItems4BaseAndType(final SimpleBase simpleBase, final int itemTypeId) {
         final Collection<SyncBaseItem> itemsInBase = new ArrayList<SyncBaseItem>();
-        iterateOverItems(false, null, new ItemHandler<Void>() {
+        iterateOverItems(false, false, null, new ItemHandler<Void>() {
             @Override
             public Void handleItem(SyncItem syncItem) {
                 if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).getBase().equals(simpleBase) && syncItem.getItemType().getId() == itemTypeId) {
@@ -282,7 +285,7 @@ abstract public class AbstractItemService implements ItemService {
     @Override
     public Collection<SyncBaseItem> getEnemyItems(final SimpleBase simpleBase, final Rectangle region) {
         final Collection<SyncBaseItem> enemyItems = new ArrayList<SyncBaseItem>();
-        iterateOverItems(false, null, new ItemHandler<Void>() {
+        iterateOverItems(false, false, null, new ItemHandler<Void>() {
             @Override
             public Void handleItem(SyncItem syncItem) {
                 if (syncItem instanceof SyncBaseItem
@@ -300,7 +303,7 @@ abstract public class AbstractItemService implements ItemService {
     @Override
     public Collection<SyncBaseItem> getEnemyItems(final SimpleBase simpleBase, final Region region) {
         final Collection<SyncBaseItem> enemyItems = new ArrayList<SyncBaseItem>();
-        iterateOverItems(false, null, new ItemHandler<Void>() {
+        iterateOverItems(false, false, null, new ItemHandler<Void>() {
             @Override
             public Void handleItem(SyncItem syncItem) {
                 if (syncItem instanceof SyncBaseItem
@@ -317,7 +320,7 @@ abstract public class AbstractItemService implements ItemService {
 
     @Override
     public SyncBaseItem getFirstEnemyItemInRange(final SyncBaseItem baseSyncItem) {
-        return iterateOverItems(false, null, new ItemHandler<SyncBaseItem>() {
+        return iterateOverItems(false, false, null, new ItemHandler<SyncBaseItem>() {
             @Override
             public SyncBaseItem handleItem(SyncItem syncItem) {
                 if (syncItem instanceof SyncBaseItem
@@ -332,7 +335,7 @@ abstract public class AbstractItemService implements ItemService {
 
     @Override
     public boolean hasEnemyInRange(final SimpleBase simpleBase, final Index middlePoint, final int range) {
-        return iterateOverItems(false, false, new ItemHandler<Boolean>() {
+        return iterateOverItems(false, false, false, new ItemHandler<Boolean>() {
             @Override
             public Boolean handleItem(SyncItem syncItem) {
                 if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).isEnemy(simpleBase) && syncItem.getSyncItemArea().getDistance(middlePoint) <= range) {
@@ -347,7 +350,7 @@ abstract public class AbstractItemService implements ItemService {
     @Override
     public Collection<SyncItem> getItemsInRectangle(final Rectangle rectangle) {
         final Collection<SyncItem> itemsInBase = new ArrayList<SyncItem>();
-        iterateOverItems(false, null, new ItemHandler<Void>() {
+        iterateOverItems(false, false, null, new ItemHandler<Void>() {
             @Override
             public Void handleItem(SyncItem syncItem) {
                 if (!syncItem.getSyncItemArea().contains(rectangle)) {
@@ -364,7 +367,22 @@ abstract public class AbstractItemService implements ItemService {
     @Override
     public Collection<SyncItem> getItemsInRectangleFast(final Rectangle rectangle) {
         final Collection<SyncItem> itemsInBase = new ArrayList<SyncItem>();
-        iterateOverItems(false, null, new ItemHandler<Void>() {
+        iterateOverItems(false, false, null, new ItemHandler<Void>() {
+            @Override
+            public Void handleItem(SyncItem syncItem) {
+                if (rectangle.contains(syncItem.getSyncItemArea().getPosition())) {
+                    itemsInBase.add(syncItem);
+                }
+                return null;
+            }
+        });
+        return itemsInBase;
+    }
+
+    @Override
+    public Collection<SyncItem> getItemsInRectangleFastIncludingDead(final Rectangle rectangle) {
+        final Collection<SyncItem> itemsInBase = new ArrayList<SyncItem>();
+        iterateOverItems(false, true, null, new ItemHandler<Void>() {
             @Override
             public Void handleItem(SyncItem syncItem) {
                 if (rectangle.contains(syncItem.getSyncItemArea().getPosition())) {
@@ -378,7 +396,7 @@ abstract public class AbstractItemService implements ItemService {
 
     @Override
     public boolean hasItemsInRectangleFast(final Rectangle rectangle) {
-        return iterateOverItems(false, false, new ItemHandler<Boolean>() {
+        return iterateOverItems(false, false, false, new ItemHandler<Boolean>() {
             @Override
             public Boolean handleItem(SyncItem syncItem) {
                 if (rectangle.contains(syncItem.getSyncItemArea().getPosition())) {
@@ -392,7 +410,7 @@ abstract public class AbstractItemService implements ItemService {
     @Override
     public Collection<SyncBaseItem> getBaseItemsInRectangle(final Rectangle rectangle, final SimpleBase simpleBase, final Collection<BaseItemType> baseItemTypeFilter) {
         final Collection<SyncBaseItem> itemsInBase = new ArrayList<SyncBaseItem>();
-        iterateOverItems(false, null, new ItemHandler<Void>() {
+        iterateOverItems(false, false, null, new ItemHandler<Void>() {
             @Override
             public Void handleItem(SyncItem syncItem) {
                 if (!(syncItem instanceof SyncBaseItem)) {
@@ -419,7 +437,7 @@ abstract public class AbstractItemService implements ItemService {
     @Override
     public Collection<SyncBaseItem> getBaseItemsInRectangle(final Region region, final SimpleBase simpleBase, final Collection<BaseItemType> baseItemTypeFilter) {
         final Collection<SyncBaseItem> itemsInBase = new ArrayList<SyncBaseItem>();
-        iterateOverItems(false, null, new ItemHandler<Void>() {
+        iterateOverItems(false, false, null, new ItemHandler<Void>() {
             @Override
             public Void handleItem(SyncItem syncItem) {
                 if (!(syncItem instanceof SyncBaseItem)) {
@@ -446,7 +464,7 @@ abstract public class AbstractItemService implements ItemService {
     @Override
     public Collection<? extends SyncItem> getItems(final ItemType itemType, final SimpleBase simpleBase) {
         final Collection<SyncItem> items = new ArrayList<SyncItem>();
-        iterateOverItems(true, null, new ItemHandler<Void>() {
+        iterateOverItems(true, false, null, new ItemHandler<Void>() {
             @Override
             public Void handleItem(SyncItem syncItem) {
                 if (!syncItem.getItemType().equals(itemType)) {

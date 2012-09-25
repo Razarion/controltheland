@@ -258,11 +258,11 @@ public class ServerItemServiceImpl extends AbstractItemService implements Server
         synchronized (items) {
             items.clear();
             for (SyncBaseObject syncBaseObject : syncBaseObjects) {
-                if(syncBaseObject instanceof SyncBaseItem) {
+                if (syncBaseObject instanceof SyncBaseItem) {
                     SyncBaseItem syncBaseItem = (SyncBaseItem) syncBaseObject;
                     syncBaseItem.addSyncItemListener(serverPlanetServices.getActionService());
                     syncBaseItem.addSyncItemListener(serverPlanetServices.getBaseService());
-                } else if(!(syncBaseObject instanceof SyncProjectileItem)) {
+                } else if (!(syncBaseObject instanceof SyncProjectileItem)) {
                     log.warn("ServerItemServiceImpl.restore() can not restore syncBaseObject: " + syncBaseObject);
                     continue;
                 }
@@ -280,16 +280,14 @@ public class ServerItemServiceImpl extends AbstractItemService implements Server
     }
 
     @Override
-    protected <T> T iterateOverItems(boolean includeNoPosition, T defaultReturn, ItemHandler<T> itemHandler) {
+    protected <T> T iterateOverItems(boolean includeNoPosition, boolean includeDead, T defaultReturn, ItemHandler<T> itemHandler) {
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
-                if (!syncItem.isAlive()) {
+                if (!includeDead & !syncItem.isAlive()) {
                     continue;
                 }
-                if (!includeNoPosition) {
-                    if (!syncItem.getSyncItemArea().hasPosition()) {
-                        continue;
-                    }
+                if (!includeNoPosition && !syncItem.getSyncItemArea().hasPosition()) {
+                    continue;
                 }
                 T result = itemHandler.handleItem(syncItem);
                 if (result != null) {
