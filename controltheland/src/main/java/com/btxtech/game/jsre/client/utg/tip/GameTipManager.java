@@ -46,6 +46,22 @@ public class GameTipManager {
         }
     }
 
+    public void stop() {
+        try {
+            if (tasks == null) {
+                return;
+            }
+            AbstractTipTask abstractTipTask = tasks.get(currentTaskIndex);
+            if (!abstractTipTask.isFulfilled()) {
+                abstractTipTask.cleanup();
+            }
+            cleanupVisualization();
+            tasks = null;
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "GameTipManager.stop()", e);
+        }
+    }
+
     private void startTipTask(int currentTaskIndex) throws NoSuchItemTypeException {
         this.currentTaskIndex = currentTaskIndex;
         AbstractTipTask currentTipTask = tasks.get(this.currentTaskIndex);
