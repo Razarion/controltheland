@@ -51,6 +51,7 @@ import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.planet.Base;
+import com.btxtech.game.services.planet.NoSuchPlanetException;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.sound.SoundService;
 import com.btxtech.game.services.statistics.StatisticsService;
@@ -123,6 +124,10 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             return planetSystemService.getServerPlanetServices().getConnectionService().getConnection(startUuid).getAndRemovePendingPackets();
         } catch (NoConnectionException e) {
             throw e;
+        } catch (NoSuchPlanetException e) {
+            // Happens during server restart while client (user on a planet) still polls server
+            ExceptionHandler.handleException(e);
+            throw new NoConnectionException(NoConnectionException.Type.NON_EXISTENT);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return null;

@@ -15,4 +15,8 @@ public class NoSuchPlanetException extends RuntimeException {
     public NoSuchPlanetException(int planetId) {
         super("No such planet with id: " + planetId);
     }
+
+    public NoSuchPlanetException(String s) {
+        super(s);
+    }
 }
