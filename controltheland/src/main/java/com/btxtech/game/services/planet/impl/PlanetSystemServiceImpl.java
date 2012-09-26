@@ -160,7 +160,7 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
             return planet;
         } else {
             LevelScope levelScope = userGuidanceService.getLevelScope(userState);
-            throw new IllegalArgumentException("UserStat '" + userState + "' does not have a level with a planet configured: " + levelScope);
+            throw new NoSuchPlanetException("UserStat '" + userState + "' does not have a level with a planet configured: " + levelScope);
         }
     }
 
