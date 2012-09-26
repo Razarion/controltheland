@@ -54,8 +54,8 @@ public class AllianceServiceImpl implements AllianceService {
             partnerUser.getAllianceOffers().add(user);
             userService.save(partnerUser);
             historyService.addAllianceOffered(user, partnerUser);
+            planetSystemService.getServerPlanetServices(partner).getConnectionService().sendPacket(partner, createAllianceOfferPackage(user));
         }
-        planetSystemService.getServerPlanetServices(partner).getConnectionService().sendPacket(partner, createAllianceOfferPackage(user));
     }
 
     @Override
