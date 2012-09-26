@@ -1,7 +1,7 @@
 package com.btxtech.game.services.planet.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.dialogs.inventory.InventoryItemPlacerChecker;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -116,7 +116,7 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
             for (SyncBoxItem syncBoxItem : syncBoxItems) {
                 if (syncBoxItem.isAlive()) {
                     try {
-                    expireBox(syncBoxItem);
+                        expireBox(syncBoxItem);
                     } catch (Exception ignore) {
                         // Ignore
                     }
@@ -161,18 +161,19 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
                 throw new IllegalArgumentException("positionToBePlaced.size() != dbInventoryItem.getBaseItemTypeCount() " + positionToBePlaced.size() + " " + dbInventoryItem.getBaseItemTypeCount());
             }
             BaseItemType baseItemType = (BaseItemType) serverGlobalServices.getItemTypeService().getItemType(dbInventoryItem.getDbBaseItemType());
-            for (Index position : positionToBePlaced) {
-                if (!serverPlanetServices.getTerrainService().isFree(position, baseItemType)) {
-                    throw new IllegalArgumentException("Terrain is not free " + position + " " + baseItemType + " " + userState);
-                }
-                Rectangle itemRect = baseItemType.getBoundingBox().getRectangle(position);
-                if (serverPlanetServices.getItemService().hasItemsInRectangle(itemRect)) {
-                    throw new IllegalArgumentException("Can not place over other items " + position + " " + baseItemType + " " + userState);
-                }
-                if (serverPlanetServices.getItemService().hasEnemyInRange(simpleBase, position, (int) baseItemType.getBoundingBox().getMaxRadiusDouble() + dbInventoryItem.getItemFreeRange())) {
-                    throw new IllegalArgumentException("Enemy items too near " + position + " " + baseItemType + " " + userState);
-                }
+            InventoryItemPlacerChecker inventoryItemPlacerChecker = new InventoryItemPlacerChecker(baseItemType, dbInventoryItem.getBaseItemTypeCount(), dbInventoryItem.getItemFreeRange(), simpleBase, serverPlanetServices);
+            inventoryItemPlacerChecker.check(positionToBePlaced);
+
+            if (!inventoryItemPlacerChecker.isTerrainOk()) {
+                throw new IllegalArgumentException("Terrain is not free " + baseItemType + " " + userState);
             }
+            if (!inventoryItemPlacerChecker.isItemsOk()) {
+                throw new IllegalArgumentException("Can not place over other items " + baseItemType + " " + userState);
+            }
+            if (!inventoryItemPlacerChecker.isEnemiesOk()) {
+                throw new IllegalArgumentException("Enemy items too near " + baseItemType + " " + userState);
+            }
+
             for (Index position : positionToBePlaced) {
                 SyncBaseItem syncBaseItem = (SyncBaseItem) serverPlanetServices.getItemService().createSyncObject(baseItemType, position, null, simpleBase, 0);
                 syncBaseItem.setBuildup(1.0);

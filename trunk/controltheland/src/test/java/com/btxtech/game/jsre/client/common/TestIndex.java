@@ -3,6 +3,8 @@ package com.btxtech.game.jsre.client.common;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 /**
  * User: beat
  * Date: 06.05.2011
@@ -54,4 +56,16 @@ public class TestIndex {
         Index newPoint = point.getPointWithDistance(100, directionTo, true);
         Assert.assertEquals(new Index(499, 350), newPoint);
     }
+
+    @Test
+    public void testCalculateMiddle() {
+        Assert.assertEquals(new Index(5, 5), Index.calculateMiddle(Arrays.asList(new Index(5, 5))));
+        Assert.assertEquals(new Index(5, 5), Index.calculateMiddle(Arrays.asList(new Index(0, 0), new Index(10, 10))));
+        Assert.assertEquals(new Index(5, 5), Index.calculateMiddle(Arrays.asList(new Index(0, 0), new Index(0, 10), new Index(10, 0), new Index(10, 10))));
+        Assert.assertEquals(new Index(5, 5), Index.calculateMiddle(Arrays.asList(new Index(0, 10), new Index(10, 0), new Index(10, 10))));
+        Assert.assertEquals(new Index(5, 5), Index.calculateMiddle(Arrays.asList(new Index(0, 0), new Index(10, 0), new Index(10, 10))));
+        Assert.assertEquals(new Index(5, 5), Index.calculateMiddle(Arrays.asList(new Index(0, 0), new Index(0, 10), new Index(10, 10))));
+        Assert.assertEquals(new Index(5, 5), Index.calculateMiddle(Arrays.asList(new Index(0, 0), new Index(0, 10), new Index(10, 0))));
+    }
+
 }
