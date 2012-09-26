@@ -19,7 +19,6 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -49,8 +48,6 @@ import java.util.Set;
  */
 public class BaseEditor extends MgmtWebPage {
     public static final String NO_POS = "-";
-    @SpringBean
-    private ServerConnectionService serverConnectionService;
     @SpringBean
     private PlanetSystemService planetSystemService;
     private HashSet<Id> itemsToKill = new HashSet<>();
@@ -327,7 +324,7 @@ public class BaseEditor extends MgmtWebPage {
                 Set<SyncBaseItem> syncBaseItems = planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getBase(simpleBase).getItems();
                 if (!syncBaseItems.isEmpty()) {
                     planetSystemService.getServerPlanetServices(simpleBase).getBaseService().sendAccountBaseUpdate(syncBaseItems.iterator().next());
-                    serverConnectionService.sendSyncInfos(syncBaseItems);
+                    planetSystemService.getServerPlanetServices(simpleBase).getConnectionService().sendSyncInfos(syncBaseItems);
                 }
             }
         });
