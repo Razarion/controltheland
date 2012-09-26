@@ -304,4 +304,18 @@ public class Index implements Serializable {
         return result;
     }
 
+    public static Index calculateMiddle(Collection<Index> positions) {
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE;
+        int maxY = Integer.MIN_VALUE;
+        for (Index position : positions) {
+            minX = Math.min(position.getX(), minX);
+            minY = Math.min(position.getY(), minY);
+            maxX = Math.max(position.getX(), maxX);
+            maxY = Math.max(position.getY(), maxY);
+        }
+        return new Index((minX + maxX) / 2, (minY + maxY) / 2);
+    }
+
 }
