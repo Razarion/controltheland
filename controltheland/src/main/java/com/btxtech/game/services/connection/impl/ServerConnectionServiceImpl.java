@@ -53,6 +53,7 @@ public class ServerConnectionServiceImpl implements ServerConnectionService {
         this.serverGlobalServices = serverGlobalServices;
     }
 
+    @Override
     public void activate() {
         timer = new Timer(getClass().getName(), true);
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -90,6 +91,7 @@ public class ServerConnectionServiceImpl implements ServerConnectionService {
         }, 0, USER_TRACKING_PERIODE);
     }
 
+    @Override
     public void deactivate() {
         try {
             if (timer != null) {

@@ -40,7 +40,7 @@ public class TestAllianceService extends AbstractServiceTest {
     public void addAllianceAndBreak() throws Exception {
         configureSimplePlanetNoResources();
         ServerConnectionServiceTestHelper connectionServiceTestHelper = new ServerConnectionServiceTestHelper();
-        ((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices()).setServerConnectionService(connectionServiceTestHelper);
+        overrideConnectionService(((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices()), connectionServiceTestHelper);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -134,7 +134,7 @@ public class TestAllianceService extends AbstractServiceTest {
     public void rejectAlliance() throws Exception {
         configureSimplePlanetNoResources();
         ServerConnectionServiceTestHelper connectionServiceTestHelper = new ServerConnectionServiceTestHelper();
-        ((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices()).setServerConnectionService(connectionServiceTestHelper);
+        overrideConnectionService(((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices()), connectionServiceTestHelper);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -208,7 +208,7 @@ public class TestAllianceService extends AbstractServiceTest {
     public void addAllianceBothUnregistered() throws Exception {
         configureSimplePlanetNoResources();
         ServerConnectionServiceTestHelper connectionServiceTestHelper = new ServerConnectionServiceTestHelper();
-        ((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices()).setServerConnectionService(connectionServiceTestHelper);
+        overrideConnectionService(((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices()), connectionServiceTestHelper);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -243,7 +243,7 @@ public class TestAllianceService extends AbstractServiceTest {
     public void createDeleteBase() throws Exception {
         configureSimplePlanetNoResources();
         ServerConnectionServiceTestHelper connectionServiceTestHelper = new ServerConnectionServiceTestHelper();
-        ((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices()).setServerConnectionService(connectionServiceTestHelper);
+        overrideConnectionService(((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices()), connectionServiceTestHelper);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -343,7 +343,7 @@ public class TestAllianceService extends AbstractServiceTest {
         configureSimplePlanetNoResources();
 
         ServerConnectionServiceTestHelper connectionServiceTestHelper = new ServerConnectionServiceTestHelper();
-        ((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices()).setServerConnectionService(connectionServiceTestHelper);
+        overrideConnectionService(((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices()), connectionServiceTestHelper);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

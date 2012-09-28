@@ -76,6 +76,16 @@ public class ServerConnectionServiceTestHelper implements ServerConnectionServic
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    @Override
+    public void activate() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void deactivate() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public void clearReceivedPackets() {
         packetEntries.clear();
     }

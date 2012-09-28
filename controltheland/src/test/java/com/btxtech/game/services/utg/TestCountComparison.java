@@ -74,7 +74,7 @@ public class TestCountComparison extends AbstractServiceTest implements ServerCo
         ((ServerConditionServiceImpl) deAopProxy(serverConditionService)).setRate(50);
         ServerPlanetServicesImpl serverPlanetServices = (ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
         serverPlanetServices.setBaseService(baseServiceMock);
-        serverPlanetServices.setServerConnectionService(this);
+        overrideConnectionService(serverPlanetServices, this);
     }
 
     private void assertActorAndIdentifierAndClear(UserState expectedActor, Integer expectedIdentifier) {
@@ -259,4 +259,11 @@ public class TestCountComparison extends AbstractServiceTest implements ServerCo
         return null;
     }
 
+    @Override
+    public void activate() {
+    }
+
+    @Override
+    public void deactivate() {
+    }
 }

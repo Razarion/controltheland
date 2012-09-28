@@ -58,7 +58,7 @@ public class PlanetImpl implements Planet {
         (planetServices.getBotService()).activate(dbPlanet);
         planetServices.getResourceService().activate(dbPlanet);
         planetServices.getActionService().activate();
-        ((ServerConnectionServiceImpl) planetServices.getConnectionService()).activate();
+        planetServices.getConnectionService().activate();
         planetServices.setStartRegion(dbPlanet.getStartRegion().createRegion());
         active = true;
     }
@@ -73,7 +73,7 @@ public class PlanetImpl implements Planet {
         planetServices.getBotService().deactivate();
         planetServices.getActionService().deactivate();
         planetServices.getResourceService().deactivate();
-        ((ServerConnectionServiceImpl) planetServices.getConnectionService()).deactivate();
+        planetServices.getConnectionService().deactivate();
     }
 
     @Override

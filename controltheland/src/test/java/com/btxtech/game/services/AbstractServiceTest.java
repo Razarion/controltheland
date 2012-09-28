@@ -45,6 +45,7 @@ import com.btxtech.game.services.cms.DbCmsImage;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ServerPlanetServices;
+import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.gwt.MovableServiceImpl;
 import com.btxtech.game.services.history.DbHistoryElement;
 import com.btxtech.game.services.item.ServerItemTypeService;
@@ -68,6 +69,7 @@ import com.btxtech.game.services.planet.ResourceService;
 import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.planet.db.DbPlanetItemTypeLimitation;
 import com.btxtech.game.services.planet.db.DbRegionResource;
+import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
 import com.btxtech.game.services.playback.impl.PlaybackServiceImpl;
 import com.btxtech.game.services.terrain.DbRegion;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
@@ -285,6 +287,13 @@ abstract public class AbstractServiceTest {
 
     protected PlatformTransactionManager getTransactionManager() {
         return transactionManager;
+    }
+
+    // ---------------------- planet -----------------------
+
+    protected void overrideConnectionService(ServerPlanetServicesImpl serverPlanetServices, ServerConnectionService serverConnectionService) {
+        serverPlanetServices.getConnectionService().deactivate();
+        serverPlanetServices.setServerConnectionService(serverConnectionService);
     }
 
     // ---------------------- Region -----------------------
