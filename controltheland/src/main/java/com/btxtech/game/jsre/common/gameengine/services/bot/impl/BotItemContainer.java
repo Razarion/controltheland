@@ -14,7 +14,6 @@
 package com.btxtech.game.jsre.common.gameengine.services.bot.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -125,8 +124,8 @@ public class BotItemContainer {
             for (BotSyncBaseItem botSyncBaseItem : botItems.values()) {
                 if (botSyncBaseItem.isAlive()) {
                     botSyncBaseItem.updateIdleState();
-                    if(botSyncBaseItem.isIdle()) {
-                       currentBuildups.onItemRemoved(botSyncBaseItem.getSyncBaseItem());
+                    if (botSyncBaseItem.isIdle()) {
+                        currentBuildups.onItemRemoved(botSyncBaseItem.getSyncBaseItem());
                     }
                 } else {
                     remove.add(botSyncBaseItem);
@@ -179,7 +178,7 @@ public class BotItemContainer {
     private void createItem(BotItemConfig botItemConfig, SimpleBase simpleBase) throws ItemLimitExceededException, HouseSpaceExceededException, NoSuchItemTypeException {
         BaseItemType toBeBuilt = botItemConfig.getBaseItemType();
         if (botItemConfig.isCreateDirectly()) {
-            Index position = planetServices.getCollisionService().getFreeRandomPosition(toBeBuilt, botItemConfig.getRegion(), 0, false, true);
+            Index position = planetServices.getCollisionService().getFreeRandomPosition(toBeBuilt, getSafeRegion(botItemConfig.getRegion()), 0, false, true);
             SyncBaseItem newItem = (SyncBaseItem) planetServices.getItemService().createSyncObject(toBeBuilt, position, null, simpleBase, 0);
             newItem.setBuildup(1.0);
             add(newItem, botItemConfig);
@@ -191,10 +190,18 @@ public class BotItemContainer {
             if (botSyncBuilder.getSyncBaseItem().hasSyncFactory()) {
                 botSyncBuilder.buildUnit(toBeBuilt);
             } else {
-                Index position = planetServices.getCollisionService().getFreeRandomPosition(toBeBuilt, botItemConfig.getRegion(), 0, false, true);
+                Index position = planetServices.getCollisionService().getFreeRandomPosition(toBeBuilt, getSafeRegion(botItemConfig.getRegion()), 0, false, true);
                 botSyncBuilder.buildBuilding(position, toBeBuilt);
             }
             currentBuildups.startBuildup(botItemConfig, botSyncBuilder.getSyncBaseItem());
+        }
+    }
+
+    private Region getSafeRegion(Region region) {
+        if (region != null) {
+            return region;
+        } else {
+            return realm;
         }
     }
 

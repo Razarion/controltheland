@@ -247,7 +247,7 @@ public class TestBotRunner extends AbstractServiceTest {
         botItems.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 1, true, createRegion(new Rectangle(0, 0, 1000, 1000), 1), false, null, false, null));
         List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
         botEnragementStateConfigs.add(new BotEnragementStateConfig("NormalTest", botItems, null));
-        BotConfig botConfig = new BotConfig(1, 10, botEnragementStateConfigs,createRegion( new Rectangle(0, 0, 4000, 4000), 1), "Bot2", null, null, null, null);
+        BotConfig botConfig = new BotConfig(1, 10, botEnragementStateConfigs, createRegion(new Rectangle(0, 0, 4000, 4000), 1), "Bot2", null, null, null, null);
 
         EasyMock.replay(mockListener);
 
@@ -444,6 +444,26 @@ public class TestBotRunner extends AbstractServiceTest {
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testUseRealmAsRegion() throws Exception {
+        configureSimplePlanetNoResources();
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
+
+        Collection<BotItemConfig> botItems = new ArrayList<>();
+        botItems.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1, true, null, false, null, false, null));
+        botItems.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), 1, false, null, false, null, false, null));
+        List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
+        botEnragementStateConfigs.add(new BotEnragementStateConfig("NormalTest", botItems, null));
+        BotConfig botConfig = new BotConfig(1, 10, botEnragementStateConfigs, createRegion(new Rectangle(0, 0, 1000, 1000), 1), "Bot2", null, null, null, null);
+
+        BotRunner botRunner = new ServerBotRunner(botConfig, serverPlanetServices, null);
+        botRunner.start();
+
+        waitForBotRunner(botRunner);
+        assertWholeItemCount(TEST_PLANET_1_ID, 2);
     }
 
 }
