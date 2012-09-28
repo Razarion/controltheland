@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * User: beat
@@ -26,12 +27,36 @@ import java.util.HashSet;
  * Time: 11:07:15
  */
 public class GeometricalUtil {
-    public static ArrayList<Rectangle> separateIntoRectangles(Collection<Index> tiles) {
+    /**
+     * Splits Rectangles into smaller Rectangles with 1*1 size (indexes)
+     *
+     * @param tileRectangle input rectangle
+     * @return Collection with Indexes
+     */
+    public static Set<Index> splitRectanglesToIndexes(Collection<Rectangle> tileRectangle) {
+        Set<Index> tiles = new HashSet<Index>();
+        for (Rectangle rectangle : tileRectangle) {
+            Collection<Rectangle> tileRectangles = rectangle.split(1, 1);
+            for (Rectangle tileRect : tileRectangles) {
+                tiles.add(new Index(tileRect.getX(), tileRect.getY()));
+            }
+        }
+        return tiles;
+    }
+
+    /**
+     * Groups Indexes to rectangles
+     * 4 adjoining indexes will form a 2*2 or 1*4 rectangle if the can be grouped to a single rectangle
+     *
+     * @param indexes input tiles
+     * @return Collection with rectangles
+     */
+    public static ArrayList<Rectangle> groupIndexToRectangles(Collection<Index> indexes) {
         ArrayList<Rectangle> rectangles = new ArrayList<Rectangle>();
-        if (tiles.isEmpty()) {
+        if (indexes.isEmpty()) {
             return rectangles;
         }
-        Collection<Index> remainingTiles = new HashSet<Index>(tiles);
+        Collection<Index> remainingTiles = new HashSet<Index>(indexes);
         removeRectangles(remainingTiles, rectangles);
         return rectangles;
     }
@@ -56,7 +81,7 @@ public class GeometricalUtil {
         }
     }
 
-    static private Rectangle findBiggestRectangle(int startX, int startY, Collection<Index> tiles) {
+    private static Rectangle findBiggestRectangle(int startX, int startY, Collection<Index> tiles) {
         Index index = new Index(startX, startY);
         if (!tiles.contains(index)) {
             throw new IllegalArgumentException("Invalid start point");
@@ -121,7 +146,7 @@ public class GeometricalUtil {
         return rectangle;
     }
 
-    static private boolean checkPassableAtomsVertial(int startX, int startY, int length, Collection<Index> passableMap) {
+    private static boolean checkPassableAtomsVertial(int startX, int startY, int length, Collection<Index> passableMap) {
         for (int y = startY; y <= (startY + length); y++) {
             Index index = new Index(startX, y);
             if (!passableMap.contains(index)) {
@@ -132,7 +157,7 @@ public class GeometricalUtil {
     }
 
 
-    static private boolean checkPassableAtomsHorizontal(int startX, int startY, int length, Collection<Index> passableMap) {
+    private static boolean checkPassableAtomsHorizontal(int startX, int startY, int length, Collection<Index> passableMap) {
         for (int x = startX; x <= (startX + length); x++) {
             Index index = new Index(x, startY);
             if (!passableMap.contains(index)) {
@@ -140,22 +165,5 @@ public class GeometricalUtil {
             }
         }
         return true;
-    }
-
-    /**
-     * Splits Rectangles into smaller Rectangles with 1*1 size (indexes)
-     *
-     * @param tileRectangle input rectangle
-     * @return Collection with Indexes
-     */
-    public static Collection<Index> splitIntoTiles(Collection<Rectangle> tileRectangle) {
-        ArrayList<Index> tiles = new ArrayList<Index>();
-        for (Rectangle rectangle : tileRectangle) {
-            Collection<Rectangle> tileRectangles = rectangle.split(1, 1);
-            for (Rectangle tileRect : tileRectangles) {
-                tiles.add(new Index(tileRect.getX(), tileRect.getY()));
-            }
-        }
-        return tiles;
     }
 }

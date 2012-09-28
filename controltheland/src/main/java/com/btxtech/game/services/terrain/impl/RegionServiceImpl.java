@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * User: beat
@@ -21,9 +19,6 @@ import java.util.Map;
 public class RegionServiceImpl implements RegionService {
     @Autowired
     private CrudRootServiceHelper<DbRegion> regionCrud;
-    //@Autowired
-    //private SessionFactory sessionFactory;
-    private Map<Integer, Region> regionCache = new HashMap<>();
 
     @PostConstruct
     public void init() {
@@ -36,40 +31,11 @@ public class RegionServiceImpl implements RegionService {
     }
 
     @Override
-    public Region getRegionFromCache(DbRegion dbRegion) {
-        Region region = regionCache.get(dbRegion.getId());
-        if (region != null) {
-            return region;
-        }
-        return putDbRegionToCacheInSession(dbRegion);
-//        if(HibernateUtil.hasOpenSession(sessionFactory)) {
-//
-//        } else {
-//            HibernateUtil.openSession4InternalCall(sessionFactory);
-//            try {
-//
-//            } finally {
-//                HibernateUtil.closeSession4InternalCall(sessionFactory);
-//            }
-//        }
-
-    }
-
-    private Region putDbRegionToCacheInSession(DbRegion dbRegion) {
-        Region region = dbRegion.createRegion();
-        regionCache.put(region.getId(), region);
-        return region;
-    }
-
-    @Override
     @Transactional
     public void saveRegionToDb(Region region) {
         DbRegion dbRegion = regionCrud.readDbChild(region.getId());
         dbRegion.setRegion(region);
         regionCrud.updateDbChild(dbRegion);
-        if (regionCache.containsKey(region.getId())) {
-            regionCache.put(region.getId(), region);
-        }
     }
 
     @Override

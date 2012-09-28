@@ -37,6 +37,6 @@ public class RegionBuilder {
     }
 
     public Region toRegion() {
-        return new Region(regionId, new HashSet<Index>(tiles));
+        return new Region(regionId, GeometricalUtil.groupIndexToRectangles(tiles));
     }
 }

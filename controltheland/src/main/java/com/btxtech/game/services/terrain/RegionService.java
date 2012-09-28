@@ -11,8 +11,6 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
 public interface RegionService {
     CrudRootServiceHelper<DbRegion> getRegionCrud();
 
-    Region getRegionFromCache(DbRegion dbRegion);
-
     void saveRegionToDb(Region region);
 
     Region loadRegionFromDb(int regionId);

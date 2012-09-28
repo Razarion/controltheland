@@ -1,6 +1,7 @@
 package com.btxtech.game.services.terrain;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.RegionBuilder;
 import com.btxtech.game.services.AbstractServiceTest;
@@ -9,6 +10,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -41,6 +44,15 @@ public class TestRegionService extends AbstractServiceTest {
         regionService.saveRegionToDb(regionBuilder.toRegion());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+        // Verify No session
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(1, regionService.getRegionCrud().readDbChildren().size());
+        region = regionService.loadRegionFromDb(dbRegion.getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        Assert.assertTrue(region.isInsideTile(new Index(1, 1)));
+        Assert.assertTrue(region.isInsideAbsolute(new Index(100, 100)));
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -98,33 +110,87 @@ public class TestRegionService extends AbstractServiceTest {
     }
 
     @Test
-    @DirtiesContext
-    public void cache() {
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertTrue(regionService.getRegionCrud().readDbChildren().isEmpty());
-        DbRegion dbRegion = regionService.getRegionCrud().createDbChild();
-        RegionBuilder regionBuilder = new RegionBuilder(dbRegion.createRegion());
-        regionBuilder.insertTile(Collections.singletonList(new Index(1, 1)));
-        regionService.saveRegionToDb(regionBuilder.toRegion());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        // Verify
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbRegion = regionService.getRegionCrud().readDbChild(dbRegion.getId());
-        Region region = regionService.getRegionFromCache(dbRegion);
+    public void testSimple1() {
+        Region region = new Region(1, Collections.<Rectangle>emptyList());
+        RegionBuilder regionBuilder = new RegionBuilder(region);
+        Collection<Index> indexes = new ArrayList<>();
+        indexes.add(new Index(0, 0));
+        indexes.add(new Index(0, 1));
+        indexes.add(new Index(1, 0));
+        indexes.add(new Index(1, 1));
+        indexes.add(new Index(7, 7));
+        regionBuilder.insertTile(indexes);
+        region = regionBuilder.toRegion();
+        Assert.assertTrue(region.isInsideTile(new Index(0, 0)));
+        Assert.assertTrue(region.isInsideTile(new Index(0, 1)));
+        Assert.assertTrue(region.isInsideTile(new Index(1, 0)));
         Assert.assertTrue(region.isInsideTile(new Index(1, 1)));
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        // Verify
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbRegion = regionService.getRegionCrud().readDbChild(dbRegion.getId());
-        region = regionService.getRegionFromCache(dbRegion);
+        Assert.assertFalse(region.isInsideTile(new Index(0, 2)));
+        Assert.assertFalse(region.isInsideTile(new Index(1, 2)));
+        Assert.assertFalse(region.isInsideTile(new Index(2, 2)));
+        Assert.assertFalse(region.isInsideTile(new Index(2, 0)));
+        Assert.assertFalse(region.isInsideTile(new Index(2, 1)));
+        Assert.assertTrue(region.isInsideTile(new Index(7, 7)));
+        Assert.assertFalse(region.isInsideTile(new Index(8, 8)));
+    }
+
+    @Test
+    public void testSimple2() {
+        Region region = new Region(1, Collections.<Rectangle>emptyList());
+        RegionBuilder regionBuilder = new RegionBuilder(region);
+        Collection<Index> indexes = new ArrayList<>();
+        indexes.add(new Index(0, 0));
+        indexes.add(new Index(0, 1));
+        indexes.add(new Index(1, 0));
+        indexes.add(new Index(1, 1));
+        indexes.add(new Index(4, 4));
+        indexes.add(new Index(5, 5));
+        indexes.add(new Index(8, 8));
+        regionBuilder.insertTile(indexes);
+        region = regionBuilder.toRegion();
+        Assert.assertTrue(region.isInsideTile(new Index(0, 0)));
+        Assert.assertTrue(region.isInsideTile(new Index(0, 1)));
+        Assert.assertTrue(region.isInsideTile(new Index(1, 0)));
         Assert.assertTrue(region.isInsideTile(new Index(1, 1)));
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
+        Assert.assertFalse(region.isInsideTile(new Index(0, 2)));
+        Assert.assertFalse(region.isInsideTile(new Index(1, 2)));
+        Assert.assertFalse(region.isInsideTile(new Index(2, 2)));
+        Assert.assertFalse(region.isInsideTile(new Index(2, 0)));
+        Assert.assertFalse(region.isInsideTile(new Index(2, 1)));
+        Assert.assertTrue(region.isInsideTile(new Index(4, 4)));
+        Assert.assertTrue(region.isInsideTile(new Index(5, 5)));
+        Assert.assertTrue(region.isInsideTile(new Index(8, 8)));
+    }
+
+    @Test
+    public void multipleSameInsert() {
+        Region region = new Region(1, Collections.<Rectangle>emptyList());
+        RegionBuilder regionBuilder = new RegionBuilder(region);
+        Collection<Index> indexes = new ArrayList<>();
+        indexes.add(new Index(1, 1));
+        indexes.add(new Index(1, 1));
+        indexes.add(new Index(1, 1));
+        indexes.add(new Index(1, 1));
+        indexes.add(new Index(1, 1));
+        indexes.add(new Index(1, 1));
+        indexes.add(new Index(1, 1));
+        indexes.add(new Index(1, 1));
+        indexes.add(new Index(1, 1));
+        indexes.add(new Index(1, 1));
+        regionBuilder.insertTile(indexes);
+        region = regionBuilder.toRegion();
+
+        Assert.assertFalse(region.isInsideTile(new Index(0, 0)));
+        Assert.assertFalse(region.isInsideTile(new Index(1, 0)));
+        Assert.assertFalse(region.isInsideTile(new Index(2, 0)));
+
+        Assert.assertFalse(region.isInsideTile(new Index(0, 1)));
+        Assert.assertTrue(region.isInsideTile(new Index(1, 1)));
+        Assert.assertFalse(region.isInsideTile(new Index(2, 1)));
+
+        Assert.assertFalse(region.isInsideTile(new Index(0, 2)));
+        Assert.assertFalse(region.isInsideTile(new Index(1, 2)));
+        Assert.assertFalse(region.isInsideTile(new Index(2, 2)));
     }
 
 }

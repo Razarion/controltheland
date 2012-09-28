@@ -230,12 +230,10 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
 
     @Override
     public Index getFreeRandomPosition(ItemType itemType, Region region, int itemFreeRange, boolean botFree, boolean ignoreMovable) {
-        List<Index> tiles = region.getTileCopy();
-
         Random random = new Random();
         for (int i = 0; i < MAX_TRIES; i++) {
-            int tileIndex = random.nextInt(tiles.size());
-            Index tile = tiles.get(tileIndex);
+            int tileIndex = random.nextInt(region.tileSize());
+            Index tile = region.getIndexForRandomPosition(tileIndex);
             Index absolutePosition = TerrainUtil.getAbsolutIndexForTerrainTileIndex(tile).add(Constants.TERRAIN_TILE_WIDTH / 2,Constants.TERRAIN_TILE_HEIGHT / 2);
             if (botFree && getServices().getBotService().isInRealm(absolutePosition)) {
                 continue;

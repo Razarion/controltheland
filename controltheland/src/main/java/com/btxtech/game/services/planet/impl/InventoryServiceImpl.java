@@ -164,14 +164,14 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
             InventoryItemPlacerChecker inventoryItemPlacerChecker = new InventoryItemPlacerChecker(baseItemType, dbInventoryItem.getBaseItemTypeCount(), dbInventoryItem.getItemFreeRange(), simpleBase, serverPlanetServices);
             inventoryItemPlacerChecker.check(positionToBePlaced);
 
-            if (!inventoryItemPlacerChecker.isTerrainOk()) {
-                throw new IllegalArgumentException("Terrain is not free " + baseItemType + " " + userState);
+            if (!inventoryItemPlacerChecker.isEnemiesOk()) {
+                throw new IllegalArgumentException("Enemy items too near " + baseItemType + " " + userState);
             }
             if (!inventoryItemPlacerChecker.isItemsOk()) {
                 throw new IllegalArgumentException("Can not place over other items " + baseItemType + " " + userState);
             }
-            if (!inventoryItemPlacerChecker.isEnemiesOk()) {
-                throw new IllegalArgumentException("Enemy items too near " + baseItemType + " " + userState);
+            if (!inventoryItemPlacerChecker.isTerrainOk()) {
+                throw new IllegalArgumentException("Terrain is not free " + baseItemType + " " + userState);
             }
 
             for (Index position : positionToBePlaced) {

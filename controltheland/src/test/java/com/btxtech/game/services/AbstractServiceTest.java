@@ -140,6 +140,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -289,13 +290,7 @@ abstract public class AbstractServiceTest {
     // ---------------------- Region -----------------------
     public Region createRegion(Rectangle rectangle, int id) {
         Rectangle tileRect = TerrainUtil.convertToTilePosition(rectangle);
-        Set<Index> tiles = new HashSet<>();
-        for (int x = tileRect.getX(); x < tileRect.getEndX(); x++) {
-            for (int y = tileRect.getY(); y < tileRect.getEndY(); y++) {
-                tiles.add(new Index(x, y));
-            }
-        }
-        return new Region(id, tiles);
+        return new Region(id, Collections.singletonList(tileRect));
     }
 
     protected Region createSimpleRegion(int id) {
@@ -955,6 +950,8 @@ abstract public class AbstractServiceTest {
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(3);
+        dbBaseItemType.setImageWidth(80);
+        dbBaseItemType.setImageHeight(100);
         // DbWeaponType
         DbWeaponType dbWeaponType = new DbWeaponType();
         dbWeaponType.setRange(100);
