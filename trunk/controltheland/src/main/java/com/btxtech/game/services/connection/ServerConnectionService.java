@@ -46,4 +46,8 @@ public interface ServerConnectionService extends CommonConnectionService {
     void sendSyncInfos(Collection<SyncBaseItem> syncItem);
 
     Collection<SimpleBase> getOnlineBases();
+
+    void activate();
+
+    void deactivate();
 }

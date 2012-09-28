@@ -95,7 +95,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
 
         ((ServerConditionServiceImpl) deAopProxy(serverConditionService)).setRate(50);
         ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setBaseService(baseServiceMock);
-        ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setServerConnectionService(this);
+        overrideConnectionService(((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices()), this);
     }
 
     private void assertActorAndIdentifierAndClear(UserState expectedActor, Integer expectedIdentifier) {
@@ -939,6 +939,14 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Override
     public Collection<SimpleBase> getOnlineBases() {
         return null;
+    }
+
+    @Override
+    public void activate() {
+    }
+
+    @Override
+    public void deactivate() {
     }
 
 }
