@@ -1285,19 +1285,19 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
 
         // ServerItemService
         ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
-        EasyMock.expect(mockServerItemService.hasItemsInRectangle(new Rectangle(960, 960, 80, 80))).andReturn(true);
-        EasyMock.expect(mockServerItemService.hasItemsInRectangle(new Rectangle(960, 960, 80, 80))).andReturn(false);
-        EasyMock.expect(mockServerItemService.hasEnemyInRange(base.getSimpleBase(), new Index(1000, 1000), 156)).andReturn(true);
-        EasyMock.expect(mockServerItemService.hasItemsInRectangle(new Rectangle(960, 960, 80, 80))).andReturn(false);
-        EasyMock.expect(mockServerItemService.hasEnemyInRange(base.getSimpleBase(), new Index(1000, 1000), 156)).andReturn(false);
+        EasyMock.expect(mockServerItemService.hasEnemyInRange(base.getSimpleBase(), new Index(1000, 1000), 164)).andReturn(false);
+        EasyMock.expect(mockServerItemService.hasItemsInRectangleFast(new Rectangle(960, 950, 80, 100))).andReturn(false);
+        EasyMock.expect(mockServerItemService.hasEnemyInRange(base.getSimpleBase(), new Index(1000, 1000), 164)).andReturn(false);
+        EasyMock.expect(mockServerItemService.hasItemsInRectangleFast(new Rectangle(960, 950, 80, 100))).andReturn(true);
+        EasyMock.expect(mockServerItemService.hasEnemyInRange(base.getSimpleBase(), new Index(1000, 1000), 164)).andReturn(true);
+        EasyMock.expect(mockServerItemService.hasEnemyInRange(base.getSimpleBase(), new Index(1000, 1000), 164)).andReturn(false);
+        EasyMock.expect(mockServerItemService.hasItemsInRectangleFast(new Rectangle(960, 950, 80, 100))).andReturn(false);
         EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(1000, 1000), null, base.getSimpleBase(), 0)).andReturn(attackerItem);
         serverPlanetServices.setServerItemService(mockServerItemService);
 
         // Terrain Service
         ServerTerrainService mockTerrainService = EasyMock.createStrictMock(ServerTerrainService.class);
         EasyMock.expect(mockTerrainService.isFree(new Index(1000, 1000), serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID))).andReturn(false);
-        EasyMock.expect(mockTerrainService.isFree(new Index(1000, 1000), serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID))).andReturn(true);
-        EasyMock.expect(mockTerrainService.isFree(new Index(1000, 1000), serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID))).andReturn(true);
         EasyMock.expect(mockTerrainService.isFree(new Index(1000, 1000), serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID))).andReturn(true);
         serverPlanetServices.setTerrainService(mockTerrainService);
 
@@ -1349,21 +1349,21 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
             globalInventoryService.useInventoryItem(dbInventoryItem1.getId(), Collections.singletonList(new Index(1000, 1000)));
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
-            Assert.assertEquals("Terrain is not free x: 1000 y: 1000 ItemType: TestAttackItem UserState: user=null", e.getMessage());
+            Assert.assertEquals("Terrain is not free ItemType: TestAttackItem UserState: user=null", e.getMessage());
         }
         // Use item over other unit
         try {
             globalInventoryService.useInventoryItem(dbInventoryItem1.getId(), Collections.singletonList(new Index(1000, 1000)));
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
-            Assert.assertEquals("Can not place over other items x: 1000 y: 1000 ItemType: TestAttackItem UserState: user=null", e.getMessage());
+            Assert.assertEquals("Can not place over other items ItemType: TestAttackItem UserState: user=null", e.getMessage());
         }
         //Enemy items
         try {
             globalInventoryService.useInventoryItem(dbInventoryItem1.getId(), Collections.singletonList(new Index(1000, 1000)));
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
-            Assert.assertEquals("Enemy items too near x: 1000 y: 1000 ItemType: TestAttackItem UserState: user=null", e.getMessage());
+            Assert.assertEquals("Enemy items too near ItemType: TestAttackItem UserState: user=null", e.getMessage());
         }
 
         globalInventoryService.useInventoryItem(dbInventoryItem1.getId(), Collections.singletonList(new Index(1000, 1000)));
@@ -1410,12 +1410,8 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
 
         // ServerItemService
         ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
-        EasyMock.expect(mockServerItemService.hasItemsInRectangle(new Rectangle(960, 960, 80, 80))).andReturn(false);
-        EasyMock.expect(mockServerItemService.hasEnemyInRange(simpleBase, new Index(1000, 1000), 156)).andReturn(false);
-        EasyMock.expect(mockServerItemService.hasItemsInRectangle(new Rectangle(1160, 960, 80, 80))).andReturn(false);
-        EasyMock.expect(mockServerItemService.hasEnemyInRange(simpleBase, new Index(1200, 1000), 156)).andReturn(false);
-        EasyMock.expect(mockServerItemService.hasItemsInRectangle(new Rectangle(1160, 1160, 80, 80))).andReturn(false);
-        EasyMock.expect(mockServerItemService.hasEnemyInRange(simpleBase, new Index(1200, 1200), 156)).andReturn(false);
+        EasyMock.expect(mockServerItemService.hasEnemyInRange(simpleBase, new Index(1100, 1100), 228)).andReturn(false);
+        EasyMock.expect(mockServerItemService.hasItemsInRectangleFast(new Rectangle(1020, 1000, 160, 200))).andReturn(false);
         EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(1000, 1000), null, simpleBase, 0)).andReturn(attackerItem);
         EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(1200, 1000), null, simpleBase, 0)).andReturn(attackerItem);
         EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(1200, 1200), null, simpleBase, 0)).andReturn(attackerItem);
