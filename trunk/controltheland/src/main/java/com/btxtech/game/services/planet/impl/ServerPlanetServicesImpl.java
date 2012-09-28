@@ -13,11 +13,11 @@
 
 package com.btxtech.game.services.planet.impl;
 
+import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.connection.ServerConnectionService;
-import com.btxtech.game.services.connection.impl.ServerConnectionServiceImpl;
 import com.btxtech.game.services.planet.ActionService;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.CollisionService;
@@ -33,7 +33,6 @@ import com.btxtech.game.services.planet.ServerTerrainService;
  * Time: 23:05:54
  */
 public class ServerPlanetServicesImpl implements ServerPlanetServices {
-    // Planet
     private PlanetInfo planetInfo;
     private CollisionService collisionService;
     private ServerTerrainService terrainService;
@@ -45,6 +44,7 @@ public class ServerPlanetServicesImpl implements ServerPlanetServices {
     private BotService botService;
     private ResourceService resourceService;
     private ServerConnectionService serverConnectionService;
+    private Region startRegion;
 
     @Override
     public PlanetInfo getPlanetInfo() {
@@ -142,5 +142,14 @@ public class ServerPlanetServicesImpl implements ServerPlanetServices {
 
     public void setServerConnectionService(ServerConnectionService serverConnectionService) {
         this.serverConnectionService = serverConnectionService;
+    }
+
+    @Override
+    public Region getStartRegion() {
+        return startRegion;
+    }
+
+    public void setStartRegion(Region startRegion) {
+        this.startRegion = startRegion;
     }
 }

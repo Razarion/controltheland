@@ -121,8 +121,7 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
         }
         try {
             Planet planet = getPlanet(dbPlanet);
-            Region region = regionService.getRegionFromCache(dbPlanet.getStartRegion());
-            planet.getPlanetServices().getBaseService().createNewBase(userState, dbPlanet.getStartItemType(), dbPlanet.getStartMoney(), region, dbPlanet.getStartItemFreeRange());
+            planet.getPlanetServices().getBaseService().createNewBase(userState, dbPlanet.getStartItemType(), dbPlanet.getStartMoney(), planet.getPlanetServices().getStartRegion(), dbPlanet.getStartItemFreeRange());
         } catch (Exception e) {
             log.error("Can not create base for user: " + userState, e);
         }

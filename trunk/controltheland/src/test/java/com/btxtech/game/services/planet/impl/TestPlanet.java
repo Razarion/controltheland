@@ -3,6 +3,7 @@ package com.btxtech.game.services.planet.impl;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.TestGlobalServices;
 import com.btxtech.game.services.planet.db.DbPlanet;
+import com.btxtech.game.services.terrain.DbRegion;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import org.junit.Test;
 
@@ -29,6 +30,10 @@ public class TestPlanet {
         dbTerrainSetting.setTileYCount(100);
         AbstractServiceTest.setPrivateField(DbTerrainSetting.class, dbTerrainSetting, "dbSurfaceRects", new HashSet<>());
         AbstractServiceTest.setPrivateField(DbTerrainSetting.class, dbTerrainSetting, "dbTerrainImagePositions", new HashSet<>());
+        DbRegion dbRegion = new DbRegion();
+        dbRegion.init(null);
+        AbstractServiceTest.setPrivateField(DbRegion.class, dbRegion, "id", 1);
+        dbPlanet.setStartRegion(dbRegion);
 
         PlanetImpl planet = new PlanetImpl();
         planet.init(new TestGlobalServices());

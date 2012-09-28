@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.common;
 
+import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.services.bot.BotService;
@@ -63,4 +64,6 @@ public interface ServerPlanetServices extends PlanetServices {
 
     @Override
     ServerConnectionService getConnectionService();
+
+    Region getStartRegion();
 }

@@ -59,6 +59,7 @@ public class PlanetImpl implements Planet {
         planetServices.getResourceService().activate(dbPlanet);
         planetServices.getActionService().activate();
         ((ServerConnectionServiceImpl) planetServices.getConnectionService()).activate();
+        planetServices.setStartRegion(dbPlanet.getStartRegion().createRegion());
         active = true;
     }
 
