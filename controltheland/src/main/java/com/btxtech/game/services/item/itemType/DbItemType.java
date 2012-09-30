@@ -469,6 +469,7 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
     public void init(UserService userService) {
         itemTypeImages = new HashSet<>();
         angels = new ArrayList<>();
+        angels.add(0.0);
     }
 
     public List<Double> getAngels() {

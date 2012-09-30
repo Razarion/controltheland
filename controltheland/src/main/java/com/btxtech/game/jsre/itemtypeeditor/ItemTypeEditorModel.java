@@ -196,7 +196,7 @@ public class ItemTypeEditorModel {
                         itemTypeSpriteMap.getImageWidth(), itemTypeSpriteMap.getImageHeight(),
                         angelIndex, step, animationFrame, syncObjectState);
             } else {
-                DropImage dropImage = new DropImage(null, angelIndex, step, animationFrame, syncObjectState);
+                DropImage dropImage = new DropImage("", angelIndex, step, animationFrame, syncObjectState);
                 dropImage.setPixelSize(20, 20);
                 dropImage.getElement().getStyle().setBackgroundColor("#CCCCCC");
                 return dropImage;
@@ -338,7 +338,7 @@ public class ItemTypeEditorModel {
             case BUILD_UP:
                 return buildupImages[step][frame] != null;
             case RUN_TIME:
-                return runtimeImages[angelIndex][frame] != null;
+                return runtimeImages.length > 0 && runtimeImages[0].length > 0 && runtimeImages[angelIndex][frame] != null;
             case DEMOLITION:
                 return demolitionImages[angelIndex][step][frame] != null;
             default:
@@ -478,6 +478,9 @@ public class ItemTypeEditorModel {
                     ClientLevelHandler.getInstance().setLevel(new LevelScope(PlanetInfo.EDITOR_PLANET_ID, 0, 0, null, 0));
                     ///--- Setup terrain
                     ArrayList<SurfaceImage> surfaceImages = new ArrayList<SurfaceImage>();
+                    if(itemType.getTerrainType() == null) {
+                        throw new IllegalArgumentException("ItemTypeEditorModel: No surface type specified");
+                    }
                     surfaceImages.add(new SurfaceImage(itemType.getTerrainType().getSurfaceTypes().get(0), 23, "#00FF00"));
                     ArrayList<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
                     surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, SIM_WIDTH / 100, SIM_HEIGHT / 100), 23));
