@@ -14,17 +14,14 @@ import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.LevelScope;
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.dialogs.AllianceDialog;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
-import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
 import com.btxtech.game.jsre.client.dialogs.highscore.HighscoreDialog;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
-import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.FacebookUtils;
 import com.btxtech.game.jsre.common.ProgressBar;
 import com.btxtech.game.jsre.common.packets.BoxPickedPacket;
@@ -36,8 +33,6 @@ import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -48,8 +43,11 @@ import com.google.gwt.user.client.ui.Widget;
  * Time: 23:13:15
  */
 public class SideCockpit {
+    public static final String TEXT_COLOR = "#C7C4BB";
     private static final SideCockpit INSTANCE = new SideCockpit();
-    private static final String TEXT_COLOR = "#C7C4BB";
+    // RealGame or Mission panel
+    private static final int REAL_GAME_MISSION_X = 2;
+    private static final int REAL_GAME_MISSION_Y = 4;
     // Background Panels
     private static final int MAIN_PANEL_W = 227;
     private static final int MAIN_PANEL_H = 240;
@@ -59,18 +57,6 @@ public class SideCockpit {
     // Information panel
     public static final int INFORMATION_COCKPIT_X = LEVEL_PANEL_X + LEVEL_PANEL_W + 10;
     public static final int INFORMATION_COCKPIT_Y = 10;
-    // Level
-    private static final int LEVEL_X = 2;
-    private static final int LEVEL_Y = 4;
-    // XP overview
-    private static final int XP_OVERVIEW_X = 2;
-    private static final int XP_OVERVIEW_Y = 17;
-    // Abort Mission Icon
-    private static final int ABORT_MISSION_ICON_X = 1;
-    private static final int ABORT_MISSION_ICON_Y = 6;
-    // Abort Mission Label
-    private static final int ABORT_MISSION_LABEL_X = 53;
-    private static final int ABORT_MISSION_LABEL_Y = 13;
     // Money
     private static final int MONEY_X = 25;
     private static final int MONEY_Y = 4;
@@ -114,10 +100,6 @@ public class SideCockpit {
 
     private AbsolutePanel mainPanel;
     private AbsolutePanel levelPanel;
-    private HTML level;
-    private HTML xpOverview;
-    private HTML abortMissionLabel;
-    private Image abortMissionIcon;
     private Label money;
     private Label itemLimit;
     private ProgressBar energyBar;
@@ -127,6 +109,8 @@ public class SideCockpit {
     private Label debugFrameRate;
     private QuestProgressCockpit questProgressCockpit;
     private InformationCockpit informationCockpit;
+    private SideCockpitRealGame sideCockpitRealGame;
+    private SideCockpitMission sideCockpitMission;
 
     public static SideCockpit getInstance() {
         return INSTANCE;
@@ -138,7 +122,6 @@ public class SideCockpit {
     private SideCockpit() {
         questProgressCockpit = new QuestProgressCockpit();
         setupPanels();
-        setupLevelPart();
         setupMoney();
         setupItemLimit();
         setDebugPanel();
@@ -159,54 +142,8 @@ public class SideCockpit {
         levelPanel = new AbsolutePanel();
         levelPanel.getElement().getStyle().setBackgroundImage("url(" + ImageHandler.getCockpitImageUrl("cockpit.png") + ")");
         levelPanel.getElement().getStyle().setProperty("backgroundPosition", "-" + Integer.toString(LEVEL_PANEL_X) + "px 0");
-        levelPanel.getElement().getStyle().setFontSize(11, Style.Unit.PX);
         preventEvents(levelPanel);
         levelPanel.setPixelSize(LEVEL_PANEL_W, LEVEL_PANEL_H);
-    }
-
-    private void setupLevelPart() {
-        level = new HTML();
-        level.setTitle(ToolTips.TOOL_TIP_LEVEL);
-        level.getElement().getStyle().setColor(TEXT_COLOR);
-        levelPanel.add(level, LEVEL_X, LEVEL_Y);
-        xpOverview = new HTML();
-        xpOverview.setTitle(ToolTips.TOOL_TIP_XP_OVERVIEW);
-        xpOverview.getElement().getStyle().setColor(TEXT_COLOR);
-        levelPanel.add(xpOverview, XP_OVERVIEW_X, XP_OVERVIEW_Y);
-        abortMissionIcon = ImageHandler.getCockpitImage("abortmission.png");
-        abortMissionIcon.setTitle(ToolTips.TOOL_TIP_ABORT_MISSION);
-        abortMissionIcon.getElement().getStyle().setCursor(Style.Cursor.POINTER);
-        abortMissionIcon.addMouseDownHandler(new MouseDownHandler() {
-            @Override
-            public void onMouseDown(MouseDownEvent event) {
-                abortMission();
-            }
-        });
-        levelPanel.add(abortMissionIcon, ABORT_MISSION_ICON_X, ABORT_MISSION_ICON_Y);
-        abortMissionLabel = new HTML("Abort<br />Mission");
-        abortMissionLabel.setTitle(ToolTips.TOOL_TIP_ABORT_MISSION);
-        abortMissionLabel.getElement().getStyle().setColor("#FF0000");
-        abortMissionLabel.getElement().getStyle().setCursor(Style.Cursor.POINTER);
-        abortMissionLabel.getElement().getStyle().setFontSize(13, Style.Unit.PX);
-        abortMissionLabel.getElement().getStyle().setProperty("fontFamily", "Arial, Helvetica, sans-serif");
-        abortMissionLabel.getElement().getStyle().setFontWeight(Style.FontWeight.BOLD);
-        abortMissionLabel.addMouseDownHandler(new MouseDownHandler() {
-            @Override
-            public void onMouseDown(MouseDownEvent event) {
-                abortMission();
-            }
-        });
-        levelPanel.add(abortMissionLabel, ABORT_MISSION_LABEL_X, ABORT_MISSION_LABEL_Y);
-    }
-
-    private void abortMission() {
-        ClickHandler clickHandler = new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                ClientLevelHandler.getInstance().abortMission();
-            }
-        };
-        DialogManager.showDialog(new YesNoDialog("Abort Mission", "Do you really want to abort this Mission?", "Abort", clickHandler, "Cancel", null), DialogManager.Type.QUEUE_ABLE);
     }
 
     private void setupMoney() {
@@ -357,7 +294,9 @@ public class SideCockpit {
     }
 
     public void setLevel(LevelScope levelScope) {
-        level.setHTML("<b>Level:</b> " + levelScope.getNumber());
+        if (sideCockpitRealGame != null) {
+            sideCockpitRealGame.setLevel(levelScope);
+        }
         onStateChanged();
     }
 
@@ -375,7 +314,9 @@ public class SideCockpit {
     }
 
     public void setXp(int xp, int xp2LevelUp) {
-        xpOverview.setHTML("<b>XP:</b> " + xp + " / " + xp2LevelUp);
+        if (sideCockpitRealGame != null) {
+            sideCockpitRealGame.setXp(xp, xp2LevelUp);
+        }
     }
 
     public void onStateChanged() {
@@ -424,36 +365,34 @@ public class SideCockpit {
         }, MouseDownEvent.getType());
     }
 
-    public Rectangle getAreaMainPanel() {
-        return new Rectangle(mainPanel.getAbsoluteLeft(), mainPanel.getAbsoluteTop(), mainPanel.getOffsetWidth(), mainPanel.getOffsetHeight());
-    }
-
-    public Rectangle getAreaLevelPanel() {
-        return new Rectangle(levelPanel.getAbsoluteLeft(), levelPanel.getAbsoluteTop(), levelPanel.getOffsetWidth(), levelPanel.getOffsetHeight());
-    }
-
-    public QuestProgressCockpit getQuestProgressCockpit() {
-        return questProgressCockpit;
-    }
-
     public void onBoxPicked(BoxPickedPacket boxPickedPacket) {
         informationCockpit.showBoxPicked(boxPickedPacket.getHtml());
     }
 
     public void initMission(SimulationInfo simulationInfo) {
-        level.setVisible(!simulationInfo.isAbortable());
-        xpOverview.setVisible(false);
-        abortMissionLabel.setVisible(simulationInfo.isAbortable());
-        abortMissionIcon.setVisible(simulationInfo.isAbortable());
+        if (sideCockpitRealGame != null) {
+            levelPanel.remove(sideCockpitRealGame);
+            sideCockpitRealGame = null;
+        }
+        if (sideCockpitMission == null) {
+            sideCockpitMission = new SideCockpitMission();
+            levelPanel.add(sideCockpitMission, REAL_GAME_MISSION_X, REAL_GAME_MISSION_Y);
+        }
+        sideCockpitMission.setAbortable(simulationInfo.isAbortable());
         questProgressCockpit.enableQuestControl(false);
     }
 
     public void initRealGame(RealGameInfo realGameInfo) {
-        level.setVisible(true);
-        xpOverview.setVisible(true);
-        abortMissionLabel.setVisible(false);
-        abortMissionIcon.setVisible(false);
+        if (sideCockpitMission != null) {
+            levelPanel.remove(sideCockpitMission);
+            sideCockpitMission = null;
+        }
+        if (sideCockpitRealGame == null) {
+            sideCockpitRealGame = new SideCockpitRealGame();
+            levelPanel.add(sideCockpitRealGame, REAL_GAME_MISSION_X, REAL_GAME_MISSION_Y);
+        }
+        sideCockpitRealGame.setXp(realGameInfo.getXpPacket().getXp(), realGameInfo.getXpPacket().getXp2LevelUp());
+        sideCockpitRealGame.setLevel(realGameInfo.getLevelScope());
         questProgressCockpit.enableQuestControl(true);
-        setXp(realGameInfo.getXpPacket().getXp(), realGameInfo.getXpPacket().getXp2LevelUp());
     }
 }
