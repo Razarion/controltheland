@@ -224,13 +224,6 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         timer.schedule(MIN_DELAY_BETWEEN_POLL);
     }
 
-    public void stopSyncInfoPoll() {
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-    }
-
     private void pollSyncInfo() {
         if (movableServiceAsync == null) {
             return;
@@ -245,6 +238,10 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
 
             @Override
             public void onSuccess(List<Packet> packets) {
+                if(gameEngineMode != GameEngineMode.SLAVE) {
+                    // Probably an answer is very late and a tutorial has already been started
+                    return;
+                }
                 Perfmon.getInstance().onEntered(PerfmonEnum.SYNC_HANDLE_PACKETS);
                 try {
                     disconnectionCount = 0;
@@ -584,6 +581,15 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
     @Override
     public GameEngineMode getGameEngineMode() {
         return gameEngineMode;
+    }
+
+    public void clear() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        gameEngineMode = null;
+        commandQueue.clear();
     }
 
     class VoidAsyncCallback implements AsyncCallback<Void> {
