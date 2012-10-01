@@ -47,7 +47,7 @@ import java.util.Map;
 @Component("statisticsService")
 public class StatisticsServiceImpl implements StatisticsService {
     private interface EntryEvaluator {
-        void onEntry(int score, DbLevel dbLevel, int xp, String userName, Long upTime, Integer itemCount, Integer money, StatisticsEntry statisticsEntry, UserState userState);
+        void onEntry(int score, DbLevel dbLevel, int xp, String userName, String planetName, Long upTime, Integer itemCount, Integer money, StatisticsEntry statisticsEntry, UserState userState);
     }
 
     @Autowired
@@ -123,7 +123,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public void onBaseKilled(SimpleBase target, SimpleBase actor) {
-        if(actor == null) {
+        if (actor == null) {
             // Kill all bot items
             return;
         }
@@ -223,6 +223,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             Integer money = null;
             Integer itemCount = null;
             Long upTime = null;
+            String planetName = null;
             if (userState.isRegistered()) {
                 userName = userState.getUser();
             }
@@ -233,6 +234,9 @@ public class StatisticsServiceImpl implements StatisticsService {
                 upTime = userState.getBase().getUpTime();
                 itemCount = userState.getBase().getItemCount();
                 money = (int) Math.round(userState.getBase().getAccountBalance());
+                if (userState.getBase().getPlanet() != null) {
+                    planetName = userState.getBase().getPlanet().getPlanetServices().getPlanetInfo().getName();
+                }
             }
 
             DbLevel level = userGuidanceService.getDbLevel(userState);
@@ -241,6 +245,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                     level,
                     userState.getXp(),
                     userName,
+                    planetName,
                     upTime,
                     itemCount,
                     money,
@@ -254,11 +259,12 @@ public class StatisticsServiceImpl implements StatisticsService {
         final List<CurrentStatisticEntry> entries = new ArrayList<>();
         iterateOfAllEntries(new EntryEvaluator() {
             @Override
-            public void onEntry(int score, DbLevel dbLevel, int xp, String userName, Long upTime, Integer itemCount, Integer money, StatisticsEntry statisticsEntry, UserState userState) {
+            public void onEntry(int score, DbLevel dbLevel, int xp, String userName, String planetName, Long upTime, Integer itemCount, Integer money, StatisticsEntry statisticsEntry, UserState userState) {
                 entries.add(new CurrentStatisticEntry(score,
                         dbLevel,
                         xp,
                         userName,
+                        planetName,
                         upTime,
                         itemCount,
                         money,
@@ -274,9 +280,10 @@ public class StatisticsServiceImpl implements StatisticsService {
         final List<CurrentStatisticEntryInfo> entries = new ArrayList<>();
         iterateOfAllEntries(new EntryEvaluator() {
             @Override
-            public void onEntry(int score, DbLevel dbLevel, int xp, String userName, Long upTime, Integer itemCount, Integer money, StatisticsEntry statisticsEntry, UserState userState) {
+            public void onEntry(int score, DbLevel dbLevel, int xp, String userName, String planetName, Long upTime, Integer itemCount, Integer money, StatisticsEntry statisticsEntry, UserState userState) {
                 entries.add(new CurrentStatisticEntryInfo(score,
                         userName,
+                        planetName,
                         itemCount,
                         money,
                         statisticsEntry.getKilledStructureBot() + statisticsEntry.getKilledStructurePlayer() + statisticsEntry.getKilledUnitsBot() + statisticsEntry.getKilledUnitsPlayer(),

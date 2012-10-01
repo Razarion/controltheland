@@ -26,9 +26,10 @@ public class HighscoreTable extends Composite {
     private static HighscoreTableUiBinder uiBinder = GWT.create(HighscoreTableUiBinder.class);
     @UiField(provided = true)
     DataGrid<CurrentStatisticEntryInfo> dataGrid = new DataGrid<CurrentStatisticEntryInfo>();
-    @UiField 
+    @UiField
     TextButton findMeButton;
-    @UiField TextButton refreshButton;
+    @UiField
+    TextButton refreshButton;
     private ListDataProvider<CurrentStatisticEntryInfo> dataProvider;
     private Column<CurrentStatisticEntryInfo, Number> rankColumn;
     private CurrentStatisticEntryInfo myEntry;
@@ -38,13 +39,13 @@ public class HighscoreTable extends Composite {
     }
 
     public interface DataGridResource extends DataGrid.Resources {
-        @Source({ DataGrid.Style.DEFAULT_CSS, "DataGridOverride.css" })
+        @Source({DataGrid.Style.DEFAULT_CSS, "DataGridOverride.css"})
         DataGrid.Style dataGridStyle();
-      };
-    
+    }
+
     public HighscoreTable(HighscoreDialog highscoreDialog) {
         this.highscoreDialog = highscoreDialog;
-        dataGrid = new DataGrid<CurrentStatisticEntryInfo>(10, (DataGrid.Resources)GWT.create(DataGridResource.class));
+        dataGrid = new DataGrid<CurrentStatisticEntryInfo>(10, (DataGrid.Resources) GWT.create(DataGridResource.class));
         initWidget(uiBinder.createAndBindUi(this));
         dataGrid.setSelectionModel(new SingleSelectionModel<CurrentStatisticEntryInfo>());
         dataProvider = new ListDataProvider<CurrentStatisticEntryInfo>();
@@ -55,9 +56,9 @@ public class HighscoreTable extends Composite {
     public void setHighscore(Collection<CurrentStatisticEntryInfo> highscore) {
         dataProvider.getList().clear();
         myEntry = null;
-        for(CurrentStatisticEntryInfo currentStatisticEntryInfo :highscore) {
+        for (CurrentStatisticEntryInfo currentStatisticEntryInfo : highscore) {
             dataProvider.getList().add(currentStatisticEntryInfo);
-            if(currentStatisticEntryInfo.isMy()) {
+            if (currentStatisticEntryInfo.isMy()) {
                 myEntry = currentStatisticEntryInfo;
             }
         }
@@ -70,7 +71,7 @@ public class HighscoreTable extends Composite {
         ColumnSortEvent.fire(dataGrid, dataGrid.getColumnSortList());
         showMe(); // TODO not working
     }
-    
+
     private void setupColumns() {
         // rank column
         rankColumn = new Column<CurrentStatisticEntryInfo, Number>(new NumberCell()) {
@@ -92,15 +93,24 @@ public class HighscoreTable extends Composite {
         scoreColumn.setSortable(true);
         dataGrid.addColumn(scoreColumn, "Score");
         // user name column
-        Column<CurrentStatisticEntryInfo, String> userNameColumn =  new Column<CurrentStatisticEntryInfo, String>(new TextCell()) {
+        Column<CurrentStatisticEntryInfo, String> userNameColumn = new Column<CurrentStatisticEntryInfo, String>(new TextCell()) {
 
             @Override
             public String getValue(CurrentStatisticEntryInfo statInfo) {
                 return statInfo.getUserName();
             }
-        }; 
+        };
         dataGrid.setColumnWidth(userNameColumn, "15em");
         dataGrid.addColumn(userNameColumn, "Player");
+        // planet column
+        Column<CurrentStatisticEntryInfo, String> planetColumn = new Column<CurrentStatisticEntryInfo, String>(new TextCell()) {
+
+            @Override
+            public String getValue(CurrentStatisticEntryInfo statInfo) {
+                return statInfo.getPlanet();
+            }
+        };
+        dataGrid.addColumn(planetColumn, "Planet");
         // itemCount column
         Column<CurrentStatisticEntryInfo, Number> itemColumn = new Column<CurrentStatisticEntryInfo, Number>(new NumberCell()) {
 
@@ -181,7 +191,7 @@ public class HighscoreTable extends Composite {
         };
         created.setSortable(true);
         dataGrid.addColumn(created, "Created");
-        
+
         // Rank sorting
         ColumnSortEvent.ListHandler<CurrentStatisticEntryInfo> rankSortHandler = new ColumnSortEvent.ListHandler<CurrentStatisticEntryInfo>(dataProvider.getList());
         rankSortHandler.setComparator(rankColumn, new HighscoreComparatorInt() {
@@ -329,16 +339,16 @@ public class HighscoreTable extends Composite {
 
     @UiHandler("findMeButton")
     void onFindMeButtonClick(ClickEvent event) {
-        showMe() ;
+        showMe();
     }
-    
+
     private void showMe() {
-        if(myEntry != null) {
+        if (myEntry != null) {
             dataGrid.getRowElement(dataProvider.getList().indexOf(myEntry)).scrollIntoView();
             dataGrid.getSelectionModel().setSelected(myEntry, true);
         }
     }
-    
+
     @UiHandler("refreshButton")
     void onRefreshButtonClick(ClickEvent event) {
         Connection.getInstance().loadCurrentStatisticEntryInfos(highscoreDialog);

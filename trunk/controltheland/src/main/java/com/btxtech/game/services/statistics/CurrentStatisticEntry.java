@@ -16,6 +16,7 @@ public class CurrentStatisticEntry extends SimpleCrudChild {
     private DbLevel level;
     private int xp;
     private String userName;
+    private String planetName;
     private Long baseUpTime;
     private Integer itemCount;
     private Integer money;
@@ -34,11 +35,12 @@ public class CurrentStatisticEntry extends SimpleCrudChild {
     private int basesLostBot;
     private int basesLostPlayer;
 
-    public CurrentStatisticEntry(int score, DbLevel level, int xp, String userName, Long baseUpTime, Integer itemCount, Integer money, StatisticsEntry statisticsEntry) {
+    public CurrentStatisticEntry(int score, DbLevel level, int xp, String userName, String planetName, Long baseUpTime, Integer itemCount, Integer money, StatisticsEntry statisticsEntry) {
         this.level = level;
         this.xp = xp;
         this.score = score;
         this.userName = userName;
+        this.planetName = planetName;
         this.baseUpTime = baseUpTime;
         this.itemCount = itemCount;
         this.money = money;
@@ -80,6 +82,10 @@ public class CurrentStatisticEntry extends SimpleCrudChild {
 
     public String getUserName() {
         return userName;
+    }
+
+    public String getPlanetName() {
+        return planetName;
     }
 
     public Long getBaseUpTime() {

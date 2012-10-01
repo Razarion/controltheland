@@ -17,11 +17,12 @@ public class TestCurrentStatisticEntry {
         DbLevel dbLevel = new DbLevel();
         dbLevel.setNumber(2);
         dbLevel.setXp(100);
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(2150, dbLevel, 15, "base1", (long) 100, 1, 10, new StatisticsEntry());
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(2150, dbLevel, 15, "base1", "Planet1", (long) 100, 1, 10, new StatisticsEntry());
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(2150, currentStatisticEntry.getScore());
         Assert.assertEquals(15, currentStatisticEntry.getXp());
         Assert.assertEquals("base1", currentStatisticEntry.getUserName());
+        Assert.assertEquals("Planet1", currentStatisticEntry.getPlanetName());
         Assert.assertEquals(100, (long) currentStatisticEntry.getBaseUpTime());
         Assert.assertEquals(1, (int) currentStatisticEntry.getItemCount());
         Assert.assertEquals(10, (int) currentStatisticEntry.getMoney());
@@ -59,11 +60,12 @@ public class TestCurrentStatisticEntry {
         DbLevel dbLevel = new DbLevel();
         dbLevel.setNumber(3);
         dbLevel.setXp(15);
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(3999, dbLevel, 16, null, null, null, null, new StatisticsEntry());
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(3999, dbLevel, 16, null,null, null, null, null, new StatisticsEntry());
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(3999, currentStatisticEntry.getScore());
         Assert.assertEquals(16, currentStatisticEntry.getXp());
         Assert.assertEquals(null, currentStatisticEntry.getUserName());
+        Assert.assertEquals(null, currentStatisticEntry.getPlanetName());
         Assert.assertEquals(null, currentStatisticEntry.getBaseUpTime());
         Assert.assertEquals(null, currentStatisticEntry.getItemCount());
         Assert.assertEquals(null, currentStatisticEntry.getMoney());
@@ -101,11 +103,12 @@ public class TestCurrentStatisticEntry {
         DbLevel dbLevel = new DbLevel();
         dbLevel.setNumber(9);
         dbLevel.setXp(123098);
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", (long) 1234, 12, 109, new StatisticsEntry());
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", "Planet2", (long) 1234, 12, 109, new StatisticsEntry());
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(9441, currentStatisticEntry.getScore());
         Assert.assertEquals(54321, currentStatisticEntry.getXp());
         Assert.assertEquals("base2", currentStatisticEntry.getUserName());
+        Assert.assertEquals("Planet2", currentStatisticEntry.getPlanetName());
         Assert.assertEquals(1234, (long) currentStatisticEntry.getBaseUpTime());
         Assert.assertEquals(12, (int) currentStatisticEntry.getItemCount());
         Assert.assertEquals(109, (int) currentStatisticEntry.getMoney());
@@ -145,11 +148,12 @@ public class TestCurrentStatisticEntry {
         dbLevel.setXp(123098);
         StatisticsEntry statisticsEntry = new StatisticsEntry();
         statisticsEntry.increaseKilledStructureBot();
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", (long) 1234, 12, 109, statisticsEntry);
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", "Planet1", (long) 1234, 12, 109, statisticsEntry);
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(9441, currentStatisticEntry.getScore());
         Assert.assertEquals(54321, currentStatisticEntry.getXp());
         Assert.assertEquals("base2", currentStatisticEntry.getUserName());
+        Assert.assertEquals("Planet1", currentStatisticEntry.getPlanetName());
         Assert.assertEquals(1234, (long) currentStatisticEntry.getBaseUpTime());
         Assert.assertEquals(12, (int) currentStatisticEntry.getItemCount());
         Assert.assertEquals(109, (int) currentStatisticEntry.getMoney());
@@ -190,11 +194,12 @@ public class TestCurrentStatisticEntry {
         StatisticsEntry statisticsEntry = new StatisticsEntry();
         statisticsEntry.increaseKilledUnitsBot();
         statisticsEntry.increaseKilledUnitsBot();
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", (long) 1234, 12, 109, statisticsEntry);
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", "Planet2", (long) 1234, 12, 109, statisticsEntry);
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(9441, currentStatisticEntry.getScore());
         Assert.assertEquals(54321, currentStatisticEntry.getXp());
         Assert.assertEquals("base2", currentStatisticEntry.getUserName());
+        Assert.assertEquals("Planet2", currentStatisticEntry.getPlanetName());
         Assert.assertEquals(1234, (long) currentStatisticEntry.getBaseUpTime());
         Assert.assertEquals(12, (int) currentStatisticEntry.getItemCount());
         Assert.assertEquals(109, (int) currentStatisticEntry.getMoney());
@@ -236,7 +241,7 @@ public class TestCurrentStatisticEntry {
         statisticsEntry.increaseKilledStructurePlayer();
         statisticsEntry.increaseKilledStructurePlayer();
         statisticsEntry.increaseKilledStructurePlayer();
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", (long) 1234, 12, 109, statisticsEntry);
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2",null, (long) 1234, 12, 109, statisticsEntry);
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(9441, currentStatisticEntry.getScore());
         Assert.assertEquals(54321, currentStatisticEntry.getXp());
@@ -283,7 +288,7 @@ public class TestCurrentStatisticEntry {
         statisticsEntry.increaseKilledUnitsPlayer();
         statisticsEntry.increaseKilledUnitsPlayer();
         statisticsEntry.increaseKilledUnitsPlayer();
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", (long) 1234, 12, 109, statisticsEntry);
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2",null , (long) 1234, 12, 109, statisticsEntry);
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(9441, currentStatisticEntry.getScore());
         Assert.assertEquals(54321, currentStatisticEntry.getXp());
@@ -336,7 +341,7 @@ public class TestCurrentStatisticEntry {
         statisticsEntry.increaseKilledUnitsPlayer();
         statisticsEntry.increaseKilledUnitsPlayer();
         statisticsEntry.increaseKilledUnitsPlayer();
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", (long) 1234, 12, 109, statisticsEntry);
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2",null , (long) 1234, 12, 109, statisticsEntry);
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(9441, currentStatisticEntry.getScore());
         Assert.assertEquals(54321, currentStatisticEntry.getXp());
@@ -380,7 +385,7 @@ public class TestCurrentStatisticEntry {
         dbLevel.setXp(123098);
         StatisticsEntry statisticsEntry = new StatisticsEntry();
         statisticsEntry.increaseLostStructureBot();
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", (long) 1234, 12, 109, statisticsEntry);
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2",null , (long) 1234, 12, 109, statisticsEntry);
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(9441, currentStatisticEntry.getScore());
         Assert.assertEquals(54321, currentStatisticEntry.getXp());
@@ -425,7 +430,7 @@ public class TestCurrentStatisticEntry {
         StatisticsEntry statisticsEntry = new StatisticsEntry();
         statisticsEntry.increaseLostUnitsBot();
         statisticsEntry.increaseLostUnitsBot();
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", (long) 1234, 12, 109, statisticsEntry);
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2",null , (long) 1234, 12, 109, statisticsEntry);
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(9441, currentStatisticEntry.getScore());
         Assert.assertEquals(54321, currentStatisticEntry.getXp());
@@ -471,7 +476,7 @@ public class TestCurrentStatisticEntry {
         statisticsEntry.increaseLostStructurePlayer();
         statisticsEntry.increaseLostStructurePlayer();
         statisticsEntry.increaseLostStructurePlayer();
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", (long) 1234, 12, 109, statisticsEntry);
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2",null , (long) 1234, 12, 109, statisticsEntry);
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(9441, currentStatisticEntry.getScore());
         Assert.assertEquals(54321, currentStatisticEntry.getXp());
@@ -518,7 +523,7 @@ public class TestCurrentStatisticEntry {
         statisticsEntry.increaseLostUnitsPlayer();
         statisticsEntry.increaseLostUnitsPlayer();
         statisticsEntry.increaseLostUnitsPlayer();
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", (long) 1234, 12, 109, statisticsEntry);
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2",null , (long) 1234, 12, 109, statisticsEntry);
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(9441, currentStatisticEntry.getScore());
         Assert.assertEquals(54321, currentStatisticEntry.getXp());
@@ -571,7 +576,7 @@ public class TestCurrentStatisticEntry {
         statisticsEntry.increaseLostStructurePlayer();
         statisticsEntry.increaseLostStructurePlayer();
         statisticsEntry.increaseLostStructurePlayer();
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", (long) 1234, 12, 109, statisticsEntry);
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2",null , (long) 1234, 12, 109, statisticsEntry);
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(9441, currentStatisticEntry.getScore());
         Assert.assertEquals(54321, currentStatisticEntry.getXp());
@@ -615,7 +620,7 @@ public class TestCurrentStatisticEntry {
         dbLevel.setXp(123098);
         StatisticsEntry statisticsEntry = new StatisticsEntry();
         statisticsEntry.increaseBuiltStructures();
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", (long) 1234, 12, 109, statisticsEntry);
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2",null , (long) 1234, 12, 109, statisticsEntry);
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(9441, currentStatisticEntry.getScore());
         Assert.assertEquals(54321, currentStatisticEntry.getXp());
@@ -660,7 +665,7 @@ public class TestCurrentStatisticEntry {
         StatisticsEntry statisticsEntry = new StatisticsEntry();
         statisticsEntry.increaseBuiltUnits();
         statisticsEntry.increaseBuiltUnits();
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", (long) 1234, 12, 109, statisticsEntry);
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2",null , (long) 1234, 12, 109, statisticsEntry);
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(9441, currentStatisticEntry.getScore());
         Assert.assertEquals(54321, currentStatisticEntry.getXp());
@@ -710,7 +715,7 @@ public class TestCurrentStatisticEntry {
         statisticsEntry.increaseBuiltStructures();
         statisticsEntry.increaseBuiltStructures();
         statisticsEntry.increaseBuiltStructures();
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", (long) 1234, 12, 109, statisticsEntry);
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2",null , (long) 1234, 12, 109, statisticsEntry);
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(9441, currentStatisticEntry.getScore());
         Assert.assertEquals(54321, currentStatisticEntry.getXp());
@@ -754,7 +759,7 @@ public class TestCurrentStatisticEntry {
         dbLevel.setXp(123098);
         StatisticsEntry statisticsEntry = new StatisticsEntry();
         statisticsEntry.increaseBasesDestroyedBot();
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", (long) 1234, 12, 109, statisticsEntry);
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2",null , (long) 1234, 12, 109, statisticsEntry);
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(9441, currentStatisticEntry.getScore());
         Assert.assertEquals(54321, currentStatisticEntry.getXp());
@@ -799,7 +804,7 @@ public class TestCurrentStatisticEntry {
         StatisticsEntry statisticsEntry = new StatisticsEntry();
         statisticsEntry.increaseBasesDestroyedPlayer();
         statisticsEntry.increaseBasesDestroyedPlayer();
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", (long) 1234, 12, 109, statisticsEntry);
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2",null , (long) 1234, 12, 109, statisticsEntry);
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(9441, currentStatisticEntry.getScore());
         Assert.assertEquals(54321, currentStatisticEntry.getXp());
@@ -847,7 +852,7 @@ public class TestCurrentStatisticEntry {
         statisticsEntry.increaseBasesDestroyedBot();
         statisticsEntry.increaseBasesDestroyedPlayer();
         statisticsEntry.increaseBasesDestroyedPlayer();
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", (long) 1234, 12, 109, statisticsEntry);
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2",null , (long) 1234, 12, 109, statisticsEntry);
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(9441, currentStatisticEntry.getScore());
         Assert.assertEquals(54321, currentStatisticEntry.getXp());
@@ -891,7 +896,7 @@ public class TestCurrentStatisticEntry {
         dbLevel.setXp(123098);
         StatisticsEntry statisticsEntry = new StatisticsEntry();
         statisticsEntry.increaseBasesLostBot();
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", (long) 1234, 12, 109, statisticsEntry);
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2",null , (long) 1234, 12, 109, statisticsEntry);
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(9441, currentStatisticEntry.getScore());
         Assert.assertEquals(54321, currentStatisticEntry.getXp());
@@ -936,7 +941,7 @@ public class TestCurrentStatisticEntry {
         StatisticsEntry statisticsEntry = new StatisticsEntry();
         statisticsEntry.increaseBasesLostPlayer();
         statisticsEntry.increaseBasesLostPlayer();
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", (long) 1234, 12, 109, statisticsEntry);
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2",null , (long) 1234, 12, 109, statisticsEntry);
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(9441, currentStatisticEntry.getScore());
         Assert.assertEquals(54321, currentStatisticEntry.getXp());
@@ -984,7 +989,7 @@ public class TestCurrentStatisticEntry {
         statisticsEntry.increaseBasesLostBot();
         statisticsEntry.increaseBasesLostBot();
         statisticsEntry.increaseBasesLostBot();
-        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2", (long) 1234, 12, 109, statisticsEntry);
+        CurrentStatisticEntry currentStatisticEntry = new CurrentStatisticEntry(9441, dbLevel, 54321, "base2",null , (long) 1234, 12, 109, statisticsEntry);
         Assert.assertEquals(dbLevel, currentStatisticEntry.getLevel());
         Assert.assertEquals(9441, currentStatisticEntry.getScore());
         Assert.assertEquals(54321, currentStatisticEntry.getXp());
