@@ -20,6 +20,7 @@ public class CurrentStatisticEntryInfo implements Serializable {
     private int basesLost;
     private int created;
     private boolean isMy;
+    private String planet;
 
     /**
      * Used by GWT
@@ -27,10 +28,11 @@ public class CurrentStatisticEntryInfo implements Serializable {
     CurrentStatisticEntryInfo() {
     }
 
-    public CurrentStatisticEntryInfo(int score, String userName, Integer itemCount, Integer money, int killed, int killedPve, int killedPvp, int basesKilled, int basesLost, int created, boolean isMy) {
+    public CurrentStatisticEntryInfo(int score, String userName, String planet, Integer itemCount, Integer money, int killed, int killedPve, int killedPvp, int basesKilled, int basesLost, int created, boolean isMy) {
         this.score = score;
         this.userName = userName;
         this.itemCount = itemCount;
+        this.planet = planet;
         this.money = money;
         this.killed = killed;
         this.killedPve = killedPve;
@@ -55,6 +57,10 @@ public class CurrentStatisticEntryInfo implements Serializable {
 
     public String getUserName() {
         return userName;
+    }
+
+    public String getPlanet() {
+        return planet;
     }
 
     public Integer getItemCount() {
