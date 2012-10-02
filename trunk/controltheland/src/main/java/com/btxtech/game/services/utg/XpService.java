@@ -27,8 +27,4 @@ public interface XpService {
     void onItemKilled(SimpleBase actorBase, SyncBaseItem killedItem, PlanetServices planetServices);
 
     void onReward(UserState userState, int deltaXp);
-
-    DbXpSettings getXpPointSettings();
-
-    void saveXpPointSettings(DbXpSettings dbXpSettings);
 }

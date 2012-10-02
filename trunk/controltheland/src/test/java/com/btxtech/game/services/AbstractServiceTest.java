@@ -88,7 +88,6 @@ import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelItemTypeLimitation;
 import com.btxtech.game.services.utg.DbLevelTask;
-import com.btxtech.game.services.utg.DbXpSettings;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.XpService;
 import com.btxtech.game.services.utg.condition.DbComparisonItemCount;
@@ -765,8 +764,6 @@ abstract public class AbstractServiceTest {
         setupMinimalTerrain(dbPlanet1);
         // QuestHubs
         setupOneLevel(dbPlanet1);
-        // Xp
-        setupXpSettings();
 
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet1);
         planetSystemService.activate();
@@ -785,8 +782,6 @@ abstract public class AbstractServiceTest {
         setupMinimalTerrain(dbPlanet1);
         // QuestHubs
         setupOneLevel(dbPlanet1);
-        // Xp
-        setupXpSettings();
         // Resource
         setupResource1(dbPlanet1, 1, new Rectangle(5000, 5000, 300, 300));
 
@@ -814,8 +809,6 @@ abstract public class AbstractServiceTest {
         setupComplexTerrain2(dbPlanet3);
         // User Guidance
         setupMultipleLevels(dbPlanet1, dbPlanet2, dbPlanet3);
-        // Xp
-        setupXpSettings();
         // Resource fields
         setupResource1(dbPlanet1, 10, new Rectangle(5000, 5000, 1000, 1000));
         setupResource1(dbPlanet2, 5, new Rectangle(5000, 5000, 1000, 1000));
@@ -906,6 +899,7 @@ abstract public class AbstractServiceTest {
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(1);
+        dbBaseItemType.setXpOnKilling(1);
         // DbBuilderType
         DbBuilderType dbBuilderType = new DbBuilderType();
         dbBuilderType.setProgress(1000);
@@ -934,6 +928,7 @@ abstract public class AbstractServiceTest {
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(2);
+        dbBaseItemType.setXpOnKilling(2);
         // DbBuilderType
         DbFactoryType dbFactoryType = new DbFactoryType();
         dbFactoryType.setProgress(1000);
@@ -1720,17 +1715,6 @@ abstract public class AbstractServiceTest {
             }
             Thread.sleep(100);
         }
-    }
-
-    // ------------------- DbXpSettings Config --------------------
-
-    protected DbXpSettings setupXpSettings() {
-        DbXpSettings dbXpSettings = xpServic.getXpPointSettings();
-        dbXpSettings.setKillPriceFactor(1);
-        dbXpSettings.setKillQueuePeriod(20);
-        dbXpSettings.setKillQueueSize(10000);
-        xpServic.saveXpPointSettings(dbXpSettings);
-        return dbXpSettings;
     }
 
     // ------------------- Setup Resource --------------------

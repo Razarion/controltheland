@@ -133,7 +133,6 @@ public class MgmtPage extends MgmtWebPage {
         toolPages.add(new LinkAndName("Attack Matrix", AttackMatrix.class));
         toolPages.add(new LinkAndName("User Tracking", SessionTable.class));
         toolPages.add(new LinkAndName("Bases", BasesTable.class));
-        toolPages.add(new LinkAndName("XP Settings", XpSettingsEditor.class));
         toolPages.add(new LinkAndName("Levels", LevelTable.class));
         toolPages.add(new LinkAndName("Planets", PlanetTable.class));
         toolPages.add(new LinkAndName("Tutorial", TutorialTable.class));
