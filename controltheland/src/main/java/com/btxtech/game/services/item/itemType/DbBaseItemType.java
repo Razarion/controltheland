@@ -45,6 +45,7 @@ import javax.persistence.OneToOne;
 public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
     private int health;
     private int price;
+    private int xpOnKilling;
     private int buildup;
     private double dropBoxPossibility;
     private int boxPickupRange;
@@ -94,6 +95,14 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
     @Override
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    public int getXpOnKilling() {
+        return xpOnKilling;
+    }
+
+    public void setXpOnKilling(int xpOnKilling) {
+        this.xpOnKilling = xpOnKilling;
     }
 
     @Override
@@ -278,6 +287,7 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
         BaseItemType baseItemType = new BaseItemType();
         setupItemType(baseItemType);
         baseItemType.setPrice(price);
+        baseItemType.setXpOnKilling(xpOnKilling);
         baseItemType.setHealth(health);
         baseItemType.setBuildup(buildup);
         baseItemType.setDropBoxPossibility(dropBoxPossibility);

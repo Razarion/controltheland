@@ -30,7 +30,7 @@
     <context:annotation-config/>
     <aop:aspectj-autoproxy/>
     <context:component-scan base-package="com.btxtech.game"/>
-    <context:property-placeholder location="classpath:/spring.properties"/>
+    <context:property-placeholder location="classpath:/spring.properties,classpath:/springconstants.properties"/>
 
     <!-- Database -->
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>

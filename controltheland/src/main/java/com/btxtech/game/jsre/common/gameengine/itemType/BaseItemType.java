@@ -22,6 +22,7 @@ public class BaseItemType extends ItemType {
     private int health;
     private int price;
     private int buildup;
+    private int xpOnKilling;
     private MovableType movableType;
     private WeaponType weaponType;
     private FactoryType factoryType;
@@ -182,12 +183,21 @@ public class BaseItemType extends ItemType {
         this.buildup = buildup;
     }
 
+    public int getXpOnKilling() {
+        return xpOnKilling;
+    }
+
+    public void setXpOnKilling(int xpOnKilling) {
+        this.xpOnKilling = xpOnKilling;
+    }
+
     @Override
     public void changeTo(ItemType itemType) {
         super.changeTo(itemType);
         BaseItemType baseItemType = (BaseItemType) itemType;
         health = baseItemType.health;
         price = baseItemType.price;
+        xpOnKilling = baseItemType.xpOnKilling;
         buildup = baseItemType.buildup;
         upgradeable = baseItemType.upgradeable;
         upgradeProgress = baseItemType.upgradeProgress;

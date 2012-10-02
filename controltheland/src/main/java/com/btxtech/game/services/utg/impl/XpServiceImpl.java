@@ -22,7 +22,6 @@ import com.btxtech.game.services.common.QueueWorker;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.DbXpSettings;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.XpService;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
@@ -30,8 +29,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -52,7 +51,11 @@ public class XpServiceImpl implements XpService {
     private UserGuidanceService userGuidanceService;
     @Autowired
     private PlanetSystemService planetSystemService;
-    private DbXpSettings dbXpSettings;
+    @Value(value = "${xpService.killQueuePeriod}")
+    private long killQueuePeriodMs;
+    @Value(value = "${xpService.killQueueSize}")
+    private int killQueueSize;
+
     private Log log = LogFactory.getLog(XpServiceImpl.class);
     private XpPerKillQueueWorker xpPerKillQueueWorker;
 
@@ -68,19 +71,19 @@ public class XpServiceImpl implements XpService {
                 if (xpPerKill.getPlanetServices().getBaseService().isAbandoned(xpPerKill.getActorBase())) {
                     continue;
                 }
-                sumUpXpPerBase(baseXpHashMap, xpPerKill.getActorBase(), xpPerKill.getKilledItem(), dbXpSettings.getKillPriceFactor());
+                sumUpXpPerBase(baseXpHashMap, xpPerKill.getActorBase(), xpPerKill.getKilledItem());
             }
 
             increaseXpPerBase(baseXpHashMap);
         }
     }
 
-    private void sumUpXpPerBase(HashMap<SimpleBase, Integer> xpIncreasePreBase, SimpleBase base, SyncBaseItem syncBaseItem, double factor) {
+    private void sumUpXpPerBase(HashMap<SimpleBase, Integer> xpIncreasePreBase, SimpleBase base, SyncBaseItem syncBaseItem) {
         Integer xp = xpIncreasePreBase.get(base);
         if (xp == null) {
             xp = 0;
         }
-        xp += (int) (syncBaseItem.getBaseItemType().getPrice() * factor);
+        xp += syncBaseItem.getBaseItemType().getXpOnKilling();
         xpIncreasePreBase.put(base, xp);
     }
 
@@ -143,38 +146,8 @@ public class XpServiceImpl implements XpService {
         serverConditionService.onIncreaseXp(userState, deltaXp);
     }
 
-    @Override
-    public DbXpSettings getXpPointSettings() {
-        DbXpSettings dbXpSettings;
-        List<DbXpSettings> settings = HibernateUtil.loadAll(sessionFactory, DbXpSettings.class);
-        if (settings.isEmpty()) {
-            log.warn("No DbXpSettings found in DB. Will be created.");
-            dbXpSettings = new DbXpSettings();
-            dbXpSettings.setKillPriceFactor(0.1);
-            dbXpSettings.setKillQueuePeriod(2000);
-            dbXpSettings.setKillQueueSize(10000);
-            sessionFactory.getCurrentSession().saveOrUpdate(dbXpSettings);
-        } else if (settings.size() != 1) {
-            log.warn("More then one DbXpSettings found in DB.");
-            dbXpSettings = settings.get(0);
-        } else {
-            dbXpSettings = settings.get(0);
-        }
-        return dbXpSettings;
-    }
-
-    @Transactional
-    @Override
-    public void saveXpPointSettings(DbXpSettings dbXpSettings) {
-        DbXpSettings original = getXpPointSettings();
-        original.fill(dbXpSettings);
-        sessionFactory.getCurrentSession().save(original);
-        activateXpSettings();
-    }
-
     private void activateXpSettings() {
-        dbXpSettings = getXpPointSettings();
         stop();
-        xpPerKillQueueWorker = new XpPerKillQueueWorker(dbXpSettings.getKillQueuePeriod(), dbXpSettings.getKillQueueSize());
+        xpPerKillQueueWorker = new XpPerKillQueueWorker(killQueuePeriodMs, killQueueSize);
     }
 }

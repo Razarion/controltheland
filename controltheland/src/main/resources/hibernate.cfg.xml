@@ -75,7 +75,6 @@
         <mapping class="com.btxtech.game.services.tutorial.DbTaskAllowedItem"/>
         <mapping class="com.btxtech.game.services.tutorial.DbItemTypeAndPosition"/>
         <!-- User Guidance -->
-        <mapping class="com.btxtech.game.services.utg.DbXpSettings"/>
         <mapping class="com.btxtech.game.services.utg.DbLevel"/>
         <mapping class="com.btxtech.game.services.utg.DbLevelTask"/>
         <mapping class="com.btxtech.game.services.utg.DbLevelItemTypeLimitation"/>

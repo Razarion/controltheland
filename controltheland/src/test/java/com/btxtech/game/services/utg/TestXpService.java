@@ -5,9 +5,10 @@ import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.item.ServerItemTypeService;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.services.utg.impl.XpServiceImpl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,56 +26,9 @@ public class TestXpService extends AbstractServiceTest {
     @Autowired
     private UserService userService;
     @Autowired
-    private XpService xpService;
+    private ServerItemTypeService serverItemTypeService;
     @Autowired
     private PlanetSystemService planetSystemService;
-
-    @Test
-    @DirtiesContext
-    public void testSetupXp() throws Exception {
-        // Verify settings from configureMinimalGame
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        DbXpSettings dbXpSettings = xpService.getXpPointSettings();
-        Assert.assertEquals(0.1, dbXpSettings.getKillPriceFactor(), 0.0001);
-        Assert.assertEquals(2000, dbXpSettings.getKillQueuePeriod());
-        Assert.assertEquals(10000, dbXpSettings.getKillQueueSize());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbXpSettings = new DbXpSettings();
-        dbXpSettings.setKillPriceFactor(0.1);
-        dbXpSettings.setKillQueuePeriod(100);
-        dbXpSettings.setKillQueueSize(1000);
-        xpService.saveXpPointSettings(dbXpSettings);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Verify
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbXpSettings = xpService.getXpPointSettings();
-        Assert.assertEquals(0.1, dbXpSettings.getKillPriceFactor(), 0.0001);
-        Assert.assertEquals(100, dbXpSettings.getKillQueuePeriod());
-        Assert.assertEquals(1000, dbXpSettings.getKillQueueSize());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Check activate with no session
-        ((XpServiceImpl) deAopProxy(xpService)).start();
-
-        // Verify
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbXpSettings = xpService.getXpPointSettings();
-        Assert.assertEquals(0.1, dbXpSettings.getKillPriceFactor(), 0.0001);
-        Assert.assertEquals(100, dbXpSettings.getKillQueuePeriod());
-        Assert.assertEquals(1000, dbXpSettings.getKillQueueSize());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
 
     @Test
     @DirtiesContext
@@ -83,13 +37,13 @@ public class TestXpService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbXpSettings dbXpSettings = new DbXpSettings();
-        dbXpSettings.setKillPriceFactor(2);
-        dbXpSettings.setKillQueuePeriod(50);
-        dbXpSettings.setKillQueueSize(1000);
-        xpService.saveXpPointSettings(dbXpSettings);
+        DbBaseItemType dbBaseItemType = serverItemTypeService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID);
+        dbBaseItemType.setXpOnKilling(11);
+        serverItemTypeService.getDbItemTypeCrud().updateDbChild(dbBaseItemType);
+        serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+
 
         // Create target
         Collection<Id> targets = createTargets(20);
@@ -119,8 +73,8 @@ public class TestXpService extends AbstractServiceTest {
             }
 
         }
-        Thread.sleep(100);
-        Assert.assertEquals(40, userService.getUserState().getXp());
+        Thread.sleep(200);
+        Assert.assertEquals(220, userService.getUserState().getXp());
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

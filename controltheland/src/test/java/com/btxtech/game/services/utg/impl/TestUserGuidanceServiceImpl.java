@@ -116,7 +116,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
     @DirtiesContext
     public void levelUpUserOfflinePassivelyAttacksOtherUnit() throws Exception {
         BaseItemType mockBaseItemType = EasyMock.createStrictMock(BaseItemType.class);
-        EasyMock.expect(mockBaseItemType.getPrice()).andReturn(1000);
+        EasyMock.expect(mockBaseItemType.getXpOnKilling()).andReturn(1000);
 
         SyncBaseItem mockSyncBaseItem = EasyMock.createStrictMock(SyncBaseItem.class);
         EasyMock.expect(mockSyncBaseItem.getBaseItemType()).andReturn(mockBaseItemType);
