@@ -1,0 +1,50 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.planetText {
+			color: #C7C4BB;
+			font-size: 12px;
+			font-family: Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+		
+		.singleplayerText {
+			color: #C7C4BB;
+			font-size: 9px;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+		
+		.abort {
+			color: #FF0000;
+			font-size: 14px;
+			font-family: Arial, Helvetica, sans-serif;
+			font-weight: bold;
+			cursor: pointer;
+		}
+		
+	</ui:style>
+	<ui:with field='res'
+		type='com.btxtech.game.jsre.client.cockpit.images.SideCockpitImageBundle' />
+	<g:VerticalPanel>
+		<g:HorizontalPanel>
+			<g:Cell verticalAlignment="ALIGN_BOTTOM">
+				<g:Image resource='{res.planet2}' width="28px" />
+			</g:Cell>
+			<g:Cell verticalAlignment="ALIGN_BOTTOM">
+				<g:VerticalPanel>
+				<g:Cell verticalAlignment="ALIGN_BOTTOM">
+					<g:InlineLabel text="Mission" styleName="{style.planetText}"/>
+				</g:Cell>
+				<g:InlineLabel text="Singleplayer" styleName="{style.singleplayerText}"/>
+			</g:VerticalPanel>
+			</g:Cell>
+		</g:HorizontalPanel>
+		<g:HorizontalPanel>
+			<g:Image resource='{res.abort}' width="28px" styleName="{style.abort}" ui:field="abortImage" />
+			<g:Cell verticalAlignment="ALIGN_MIDDLE">
+				<g:InlineLabel text="Abort" styleName="{style.abort}" ui:field="abortLabel" />
+			</g:Cell>
+		</g:HorizontalPanel>
+	</g:VerticalPanel>
+</ui:UiBinder> 
