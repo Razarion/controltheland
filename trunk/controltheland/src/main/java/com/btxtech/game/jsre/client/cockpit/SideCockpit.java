@@ -393,6 +393,7 @@ public class SideCockpit {
         }
         sideCockpitRealGame.setXp(realGameInfo.getXpPacket().getXp(), realGameInfo.getXpPacket().getXp2LevelUp());
         sideCockpitRealGame.setLevel(realGameInfo.getLevelScope());
+        sideCockpitRealGame.setPlanetName(realGameInfo.getPlanetInfo().getName());
         questProgressCockpit.enableQuestControl(true);
     }
 }
