@@ -1,14 +1,18 @@
 package com.btxtech.game.jsre.client.cockpit;
 
+import com.btxtech.game.jsre.client.dialogs.DialogManager;
+import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
+import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class SideCockpitMission extends Composite {
 
@@ -32,11 +36,21 @@ public class SideCockpitMission extends Composite {
 
     @UiHandler("abortImage")
     void onAbortImageClick(ClickEvent event) {
-        System.out.println("onImageClick");
+        abortMission();
     }
 
     @UiHandler("abortLabel")
     void onAbortLabelClick(ClickEvent event) {
-        System.out.println("onInlineLabelClick");
+        abortMission();
+    }
+
+    private void abortMission() {
+        ClickHandler clickHandler = new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                ClientLevelHandler.getInstance().abortMission();
+            }
+        };
+        DialogManager.showDialog(new YesNoDialog("Abort Mission", "Do you really want to abort this Mission?", "Abort", clickHandler, "Cancel", null), DialogManager.Type.QUEUE_ABLE);
     }
 }
