@@ -5,6 +5,7 @@ import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.Planet;
 import com.btxtech.game.services.planet.db.DbPlanet;
+import org.junit.Ignore;
 
 import java.util.Collection;
 
@@ -13,6 +14,7 @@ import java.util.Collection;
  * Date: 03.09.12
  * Time: 18:04
  */
+@Ignore
 public class TestPlanetHelper implements Planet {
     private ServerPlanetServices serverPlanetServices;
 
