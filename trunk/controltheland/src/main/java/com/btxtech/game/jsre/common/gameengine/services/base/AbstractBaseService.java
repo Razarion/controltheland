@@ -42,10 +42,6 @@ public interface AbstractBaseService {
 
     Collection<BaseAttributes> getAllBaseAttributes();
 
-    int getHouseSpace(SimpleBase simpleBase);
-
-    int getItemCount(SimpleBase simpleBase);
-
     int getItemCount(SimpleBase simpleBase, int itemTypeId) throws NoSuchItemTypeException;
 
     void checkItemLimit4ItemAdding(BaseItemType newItemType, SimpleBase simpleBase) throws ItemLimitExceededException, HouseSpaceExceededException, NoSuchItemTypeException;
@@ -56,9 +52,13 @@ public interface AbstractBaseService {
 
     boolean isLevelLimitation4ItemTypeExceeded(BaseItemType newItemType, int toAddCount, SimpleBase simpleBase) throws NoSuchItemTypeException;
 
-    boolean isHouseSpaceExceeded(SimpleBase simpleBase);
+    int getUsedHouseSpace(SimpleBase simpleBase);
 
-    boolean isHouseSpaceExceeded(SimpleBase simpleBase, int itemCountToAdd);
+    int getHouseSpace(SimpleBase simpleBase);
+
+    boolean isHouseSpaceExceeded(SimpleBase simpleBase, BaseItemType toBeBuiltType);
+
+    boolean isHouseSpaceExceeded(SimpleBase simpleBase, BaseItemType toBeBuiltType, int itemCountToAdd);
 
     boolean isAlive(SimpleBase base);
 

@@ -272,7 +272,7 @@ public class SideCockpit {
     public void updateItemLimit() {
         if (itemLimit != null) {
             StringBuilder builder = new StringBuilder();
-            builder.append(ClientBase.getInstance().getOwnItemCount());
+            builder.append(ClientBase.getInstance().getUsedHouseSpace(ClientBase.getInstance().getSimpleBase()));
             builder.append("/");
             builder.append(ClientBase.getInstance().getHouseSpace() + ClientPlanetServices.getInstance().getPlanetInfo().getHouseSpace());
             itemLimit.setText(builder.toString());

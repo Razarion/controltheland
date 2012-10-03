@@ -54,6 +54,7 @@ import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbBuilderType;
 import com.btxtech.game.services.item.itemType.DbFactoryType;
 import com.btxtech.game.services.item.itemType.DbHarvesterType;
+import com.btxtech.game.services.item.itemType.DbHouseType;
 import com.btxtech.game.services.item.itemType.DbItemContainerType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
@@ -176,6 +177,8 @@ abstract public class AbstractServiceTest {
     protected static int TEST_CONTAINER_ITEM_ID = -1;
     protected static final String TEST_SIMPLE_BUILDING = "TEST_SIMPLE_BUILDING";
     protected static int TEST_SIMPLE_BUILDING_ID = -1;
+    protected static final String TEST_HOUSE = "TEST_HOUSE";
+    protected static int TEST_HOUSE_ID = -1;
     protected static final String TEST_RESOURCE_ITEM = "TestResourceItem";
     protected static int TEST_RESOURCE_ITEM_ID = -1;
     protected static final String TEST_HARVESTER_ITEM = "TEST_HARVESTER_ITEM";
@@ -828,6 +831,7 @@ abstract public class AbstractServiceTest {
         createHarvesterItemType();
         createAttackBaseItemType();
         createContainerBaseItemType();
+        createHouseItemType();
         createFactoryBaseItemType();
         createBuilderBaseItemType();
         finishAttackBaseItemType();
@@ -843,6 +847,7 @@ abstract public class AbstractServiceTest {
         createHarvesterItemType();
         createAttackBaseItemType();
         createContainerBaseItemType();
+        createHouseItemType();
         createFactoryBaseItemType();
         createBuilderBaseItemType();
         createSimpleBuilding();
@@ -869,6 +874,7 @@ abstract public class AbstractServiceTest {
         createHarvesterItemType();
         createAttackBaseItemType();
         createContainerBaseItemType();
+        createHouseItemType();
         createFactoryBaseItemType();
         createBuilderBaseItemType();
         createSimpleBuilding();
@@ -900,12 +906,14 @@ abstract public class AbstractServiceTest {
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(1);
         dbBaseItemType.setXpOnKilling(1);
+        dbBaseItemType.setConsumingHouseSpace(1);
         // DbBuilderType
         DbBuilderType dbBuilderType = new DbBuilderType();
         dbBuilderType.setProgress(1000);
         dbBuilderType.setRange(100);
         Set<DbBaseItemType> ableToBuild = new HashSet<DbBaseItemType>();
         ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_FACTORY_ITEM_ID));
+        ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_HOUSE_ID));
         dbBuilderType.setAbleToBuild(ableToBuild);
         dbBaseItemType.setDbBuilderType(dbBuilderType);
         // DbMovableType
@@ -929,6 +937,7 @@ abstract public class AbstractServiceTest {
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(2);
         dbBaseItemType.setXpOnKilling(2);
+        dbBaseItemType.setConsumingHouseSpace(2);
         // DbBuilderType
         DbFactoryType dbFactoryType = new DbFactoryType();
         dbFactoryType.setProgress(1000);
@@ -956,6 +965,7 @@ abstract public class AbstractServiceTest {
         dbBaseItemType.setPrice(3);
         dbBaseItemType.setImageWidth(80);
         dbBaseItemType.setImageHeight(100);
+        dbBaseItemType.setConsumingHouseSpace(2);
         // DbWeaponType
         DbWeaponType dbWeaponType = new DbWeaponType();
         dbWeaponType.setRange(100);
@@ -1049,6 +1059,25 @@ abstract public class AbstractServiceTest {
         serverItemTypeService.saveDbItemType(dbBaseItemType);
         serverItemTypeService.activate();
         TEST_SIMPLE_BUILDING_ID = dbBaseItemType.getId();
+        return dbBaseItemType;
+    }
+
+    protected DbBaseItemType createHouseItemType() {
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        setupImages(dbBaseItemType, 1);
+        dbBaseItemType.setName(TEST_HOUSE);
+        dbBaseItemType.setTerrainType(TerrainType.LAND);
+        dbBaseItemType.setBounding(new BoundingBox(80, 80, ANGELS_1));
+        dbBaseItemType.setHealth(10);
+        dbBaseItemType.setBuildup(10);
+        // DbHouse
+        DbHouseType dbHouseType = new DbHouseType();
+        dbHouseType.setSpace(10);
+        dbBaseItemType.setDbHouseType(dbHouseType);
+
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.activate();
+        TEST_HOUSE_ID = dbBaseItemType.getId();
         return dbBaseItemType;
     }
 
@@ -1171,6 +1200,9 @@ abstract public class AbstractServiceTest {
         DbPlanetItemTypeLimitation simpleBuilding = dbPlanet.getItemLimitationCrud().createDbChild();
         simpleBuilding.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_SIMPLE_BUILDING_ID));
         simpleBuilding.setCount(10);
+        DbPlanetItemTypeLimitation house = dbPlanet.getItemLimitationCrud().createDbChild();
+        house.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_HOUSE_ID));
+        house.setCount(10);
 
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
         TEST_PLANET_1_ID = dbPlanet.getId();
@@ -1390,6 +1422,9 @@ abstract public class AbstractServiceTest {
         DbLevelItemTypeLimitation simpleBuilding = dbLevel.getItemTypeLimitationCrud().createDbChild();
         simpleBuilding.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_SIMPLE_BUILDING_ID));
         simpleBuilding.setCount(10);
+        DbLevelItemTypeLimitation house = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        house.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_HOUSE_ID));
+        house.setCount(10);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         userGuidanceService.activateLevels();
         TEST_LEVEL_2_REAL_ID = dbLevel.getId();

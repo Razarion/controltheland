@@ -47,6 +47,7 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
     private int price;
     private int xpOnKilling;
     private int buildup;
+    private int consumingHouseSpace;
     private double dropBoxPossibility;
     private int boxPickupRange;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -103,6 +104,14 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
 
     public void setXpOnKilling(int xpOnKilling) {
         this.xpOnKilling = xpOnKilling;
+    }
+
+    public int getConsumingHouseSpace() {
+        return consumingHouseSpace;
+    }
+
+    public void setConsumingHouseSpace(int consumingHouseSpace) {
+        this.consumingHouseSpace = consumingHouseSpace;
     }
 
     @Override
@@ -289,6 +298,7 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
         baseItemType.setPrice(price);
         baseItemType.setXpOnKilling(xpOnKilling);
         baseItemType.setHealth(health);
+        baseItemType.setConsumingHouseSpace(consumingHouseSpace);
         baseItemType.setBuildup(buildup);
         baseItemType.setDropBoxPossibility(dropBoxPossibility);
         baseItemType.setBoxPickupRange(boxPickupRange);

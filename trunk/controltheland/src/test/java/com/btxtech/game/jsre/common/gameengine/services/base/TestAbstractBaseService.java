@@ -120,7 +120,7 @@ public class TestAbstractBaseService {
         }
 
         @Override
-        public int getItemCount(SimpleBase simpleBase) {
+        public int getUsedHouseSpace(SimpleBase simpleBase) {
             return 0;
         }
 
@@ -166,7 +166,7 @@ public class TestAbstractBaseService {
 
         @Override
         protected GlobalServices getGlobalServices() {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
+            return null;
         }
 
         @Override

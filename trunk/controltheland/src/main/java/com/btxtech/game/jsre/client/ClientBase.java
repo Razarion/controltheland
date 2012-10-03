@@ -229,7 +229,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         if (ClientBase.getInstance().isMyOwnBase(simpleBase)
                 && !ClientBase.getInstance().isBot(simpleBase)
                 && (Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE || Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER)) {
-            if (isHouseSpaceExceeded(simpleBase)) {
+            if (isHouseSpaceExceeded(simpleBase, toBeBuiltType)) {
                 UnfrequentDialog.open(UnfrequentDialog.Type.SPACE_LIMIT);
                 return false;
             }
@@ -276,12 +276,6 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     }
 
     @Override
-    public int getItemCount(SimpleBase simpleBase) {
-        check4OwnBase(simpleBase);
-        return ownItemCount;
-    }
-
-    @Override
     public int getItemCount(SimpleBase simpleBase, int itemTypeId) throws NoSuchItemTypeException {
         check4OwnBase(simpleBase);
         BaseItemType baseItemType = (BaseItemType) ItemTypeContainer.getInstance().getItemType(itemTypeId);
@@ -291,6 +285,16 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         } else {
             return 0;
         }
+    }
+
+    @Override
+    public int getUsedHouseSpace(SimpleBase simpleBase) {
+        check4OwnBase(simpleBase);
+        int usedHouseSpace = 0;
+        for (Map.Entry<BaseItemType, Integer> entry : myItemTypeCount.entrySet()) {
+            usedHouseSpace += entry.getKey().getConsumingHouseSpace() * entry.getValue();
+        }
+        return usedHouseSpace;
     }
 
     public void recalculate4FakedHouseSpace(SyncBaseItem affectedSyncItem) {

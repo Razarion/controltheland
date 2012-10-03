@@ -23,6 +23,7 @@ public class BaseItemType extends ItemType {
     private int price;
     private int buildup;
     private int xpOnKilling;
+    private int consumingHouseSpace;
     private MovableType movableType;
     private WeaponType weaponType;
     private FactoryType factoryType;
@@ -191,6 +192,14 @@ public class BaseItemType extends ItemType {
         this.xpOnKilling = xpOnKilling;
     }
 
+    public int getConsumingHouseSpace() {
+        return consumingHouseSpace;
+    }
+
+    public void setConsumingHouseSpace(int consumingHouseSpace) {
+        this.consumingHouseSpace = consumingHouseSpace;
+    }
+
     @Override
     public void changeTo(ItemType itemType) {
         super.changeTo(itemType);
@@ -199,6 +208,7 @@ public class BaseItemType extends ItemType {
         price = baseItemType.price;
         xpOnKilling = baseItemType.xpOnKilling;
         buildup = baseItemType.buildup;
+        consumingHouseSpace = baseItemType.consumingHouseSpace;
         upgradeable = baseItemType.upgradeable;
         upgradeProgress = baseItemType.upgradeProgress;
         dropBoxPossibility = baseItemType.dropBoxPossibility;

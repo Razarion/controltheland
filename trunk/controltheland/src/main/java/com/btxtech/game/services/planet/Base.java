@@ -20,8 +20,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.user.UserState;
 
-import javax.persistence.Transient;
-import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,21 +29,18 @@ import java.util.Set;
  * Date: May 31, 2009
  * Time: 8:16:46 PM
  */
-public class Base implements Serializable {
+public class Base {
     private double accountBalance;
     private Date startTime;
     private boolean abandoned = false;
     private int baseId;
     private UserState userState;
     private Planet planet;
-    @Transient
     private final Object syncObject = new Object();
-    @Transient
     private final HashSet<SyncBaseItem> items = new HashSet<>();
-    @Transient
     private SimpleBase simpleBase;
-    @Transient
     private int houseSpace = 0;
+    private int usedHouseSpace = 0;
 
     public Base(Planet planet, int baseId) {
         startTime = new Date();
@@ -177,11 +172,26 @@ public class Base implements Serializable {
                 }
             }
         }
+        updateUsedHouseSpace();
         return oldSpace != houseSpace;
+    }
+
+    private void updateUsedHouseSpace() {
+        int newUsedHouseSpace = 0;
+        synchronized (items) {
+            for (SyncBaseItem syncBaseItem : items) {
+                newUsedHouseSpace += syncBaseItem.getBaseItemType().getConsumingHouseSpace();
+            }
+        }
+        usedHouseSpace = newUsedHouseSpace;
     }
 
     public int getHouseSpace() {
         return houseSpace;
+    }
+
+    public int getUsedHouseSpace() {
+        return usedHouseSpace;
     }
 
     public UserState getUserState() {
