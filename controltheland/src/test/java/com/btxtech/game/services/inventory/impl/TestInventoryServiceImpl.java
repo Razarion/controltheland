@@ -841,7 +841,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         List<SyncItem> syncItems = serverPlanetServices.getItemService().getItemsCopy();
-        // TODO failed on 27.07.2012, 29.09.2012
+        // TODO failed on 27.07.2012, 29.09.2012, 03.10.2012
         Assert.assertEquals(1, syncItems.size());
         SyncBoxItem boxItem = (SyncBoxItem) syncItems.get(0);
 

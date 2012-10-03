@@ -60,6 +60,7 @@ public class BaseItemTypeEditor extends MgmtWebPage {
         form.add(new TextField<String>("health"));
         form.add(new TextField<String>("price"));
         form.add(new TextField<Integer>("xpOnKilling"));
+        form.add(new TextField<Integer>("consumingHouseSpace"));
         form.add(new TextField<Double>("buildup"));
         form.add(new DropDownChoice<>("terrainType", Arrays.asList(TerrainType.values())));
         form.add(new BaseItemTypePanel("upgradable"));

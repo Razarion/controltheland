@@ -3,11 +3,14 @@ package com.btxtech.game.services.planet.impl;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.common.impl.ServerGlobalServicesImpl;
+import com.btxtech.game.services.item.ServerItemTypeService;
+import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.AllianceService;
@@ -30,6 +33,10 @@ public class TestBaseService extends AbstractServiceTest {
     private PlanetSystemService planetSystemService;
     @Autowired
     private ServerGlobalServices serverGlobalServices;
+    @Autowired
+    private ServerItemTypeService serverItemTypeService;
+    @Autowired
+    private MgmtService mgmtService;
 
     @Test
     @DirtiesContext
@@ -139,7 +146,7 @@ public class TestBaseService extends AbstractServiceTest {
         BaseService baseService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService();
 
         AllianceService allianceServiceMock = EasyMock.createStrictMock(AllianceService.class);
-        setPrivateField(ServerGlobalServicesImpl.class, serverGlobalServices,"allianceService",allianceServiceMock);
+        setPrivateField(ServerGlobalServicesImpl.class, serverGlobalServices, "allianceService", allianceServiceMock);
         EasyMock.replay(allianceServiceMock);
 
         beginHttpSession();
@@ -160,7 +167,7 @@ public class TestBaseService extends AbstractServiceTest {
         BaseService baseService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService();
 
         AllianceService allianceServiceMock = EasyMock.createStrictMock(AllianceService.class);
-        setPrivateField(ServerGlobalServicesImpl.class, serverGlobalServices,"allianceService",allianceServiceMock);
+        setPrivateField(ServerGlobalServicesImpl.class, serverGlobalServices, "allianceService", allianceServiceMock);
         allianceServiceMock.onBaseCreatedOrDeleted("U1");
         allianceServiceMock.onBaseCreatedOrDeleted("U1");
         EasyMock.replay(allianceServiceMock);
@@ -176,6 +183,132 @@ public class TestBaseService extends AbstractServiceTest {
         endHttpSession();
 
         EasyMock.verify(allianceServiceMock);
+    }
+
+    @Test
+    @DirtiesContext
+    public void houseSpace() throws Exception {
+        configureSimplePlanetNoResources();
+        BaseItemType builderType = (BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID);
+        BaseItemType factoryType = (BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID);
+        BaseItemType houseType = (BaseItemType) serverItemTypeService.getItemType(TEST_HOUSE_ID);
+        BaseItemType attackType = (BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        SimpleBase simpleBase = getMyBase(); // Setup connection
+        BaseService baseService = planetSystemService.getServerPlanetServices().getBaseService();
+        Assert.assertEquals(1, baseService.getUsedHouseSpace(simpleBase));
+        Assert.assertEquals(0, baseService.getHouseSpace(simpleBase));
+        Assert.assertFalse(baseService.isHouseSpaceExceeded(simpleBase, builderType, 19));
+        Assert.assertTrue(baseService.isHouseSpaceExceeded(simpleBase, builderType, 20));
+        Assert.assertFalse(baseService.isHouseSpaceExceeded(simpleBase, factoryType, 9));
+        Assert.assertTrue(baseService.isHouseSpaceExceeded(simpleBase, factoryType, 11));
+        Assert.assertFalse(baseService.isHouseSpaceExceeded(simpleBase, houseType, 100));
+        Assert.assertFalse(baseService.isHouseSpaceExceeded(simpleBase, attackType, 9));
+        Assert.assertTrue(baseService.isHouseSpaceExceeded(simpleBase, attackType, 11));
+        // Build
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone(TEST_PLANET_1_ID);
+        Assert.assertEquals(3, baseService.getUsedHouseSpace(simpleBase));
+        Assert.assertEquals(0, baseService.getHouseSpace(simpleBase));
+        // Build
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1500, 1500), TEST_HOUSE_ID);
+        waitForActionServiceDone(TEST_PLANET_1_ID);
+        assertWholeItemCount(TEST_PLANET_1_ID, 3);
+        Assert.assertEquals(3, baseService.getUsedHouseSpace(simpleBase));
+        Assert.assertEquals(10, baseService.getHouseSpace(simpleBase));
+        // Fabricate
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone(TEST_PLANET_1_ID);
+        assertWholeItemCount(TEST_PLANET_1_ID, 4);
+        Assert.assertEquals(5, baseService.getUsedHouseSpace(simpleBase));
+        Assert.assertEquals(10, baseService.getHouseSpace(simpleBase));
+        Assert.assertFalse(baseService.isHouseSpaceExceeded(simpleBase, builderType, 25));
+        Assert.assertTrue(baseService.isHouseSpaceExceeded(simpleBase, builderType, 26));
+        Assert.assertFalse(baseService.isHouseSpaceExceeded(simpleBase, factoryType, 12));
+        Assert.assertTrue(baseService.isHouseSpaceExceeded(simpleBase, factoryType, 13));
+        Assert.assertFalse(baseService.isHouseSpaceExceeded(simpleBase, houseType, 100));
+        Assert.assertFalse(baseService.isHouseSpaceExceeded(simpleBase, attackType, 12));
+        Assert.assertTrue(baseService.isHouseSpaceExceeded(simpleBase, attackType, 13));
+        // Sell
+        getMovableService().sellItem(getFirstSynItemId(TEST_FACTORY_ITEM_ID));
+        assertWholeItemCount(TEST_PLANET_1_ID, 3);
+        Assert.assertEquals(3, baseService.getUsedHouseSpace(simpleBase));
+        Assert.assertEquals(10, baseService.getHouseSpace(simpleBase));
+        // Sell
+        getMovableService().sellItem(getFirstSynItemId(TEST_ATTACK_ITEM_ID));
+        assertWholeItemCount(TEST_PLANET_1_ID, 2);
+        Assert.assertEquals(1, baseService.getUsedHouseSpace(simpleBase));
+        Assert.assertEquals(10, baseService.getHouseSpace(simpleBase));
+        // Sell
+        getMovableService().sellItem(getFirstSynItemId(TEST_HOUSE_ID));
+        assertWholeItemCount(TEST_PLANET_1_ID, 1);
+        Assert.assertEquals(1, baseService.getUsedHouseSpace(simpleBase));
+        Assert.assertEquals(0, baseService.getHouseSpace(simpleBase));
+        Assert.assertFalse(baseService.isHouseSpaceExceeded(simpleBase, builderType, 19));
+        Assert.assertTrue(baseService.isHouseSpaceExceeded(simpleBase, builderType, 20));
+        Assert.assertFalse(baseService.isHouseSpaceExceeded(simpleBase, factoryType, 9));
+        Assert.assertTrue(baseService.isHouseSpaceExceeded(simpleBase, factoryType, 11));
+        Assert.assertFalse(baseService.isHouseSpaceExceeded(simpleBase, houseType, 100));
+        Assert.assertFalse(baseService.isHouseSpaceExceeded(simpleBase, attackType, 9));
+        Assert.assertTrue(baseService.isHouseSpaceExceeded(simpleBase, attackType, 11));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+
+    @Test
+    @DirtiesContext
+    public void houseSpaceRestore() throws Exception {
+        configureSimplePlanetNoResources();
+        BaseItemType builderType = (BaseItemType) serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID);
+        BaseItemType factoryType = (BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID);
+        BaseItemType houseType = (BaseItemType) serverItemTypeService.getItemType(TEST_HOUSE_ID);
+        BaseItemType attackType = (BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "test", "test", "test");
+        userService.login("U1", "test");
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone(TEST_PLANET_1_ID);
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1500, 1500), TEST_HOUSE_ID);
+        waitForActionServiceDone(TEST_PLANET_1_ID);
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone(TEST_PLANET_1_ID);
+        assertWholeItemCount(TEST_PLANET_1_ID, 4);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.restore(mgmtService.getBackupSummary().get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        SimpleBase simpleBase = getMyBase(); // Setup connection
+        BaseService baseService = planetSystemService.getServerPlanetServices().getBaseService();
+        Assert.assertEquals(5, baseService.getUsedHouseSpace(simpleBase));
+        Assert.assertEquals(10, baseService.getHouseSpace(simpleBase));
+        Assert.assertFalse(baseService.isHouseSpaceExceeded(simpleBase, builderType, 25));
+        Assert.assertTrue(baseService.isHouseSpaceExceeded(simpleBase, builderType, 26));
+        Assert.assertFalse(baseService.isHouseSpaceExceeded(simpleBase, factoryType, 12));
+        Assert.assertTrue(baseService.isHouseSpaceExceeded(simpleBase, factoryType, 13));
+        Assert.assertFalse(baseService.isHouseSpaceExceeded(simpleBase, houseType, 100));
+        Assert.assertFalse(baseService.isHouseSpaceExceeded(simpleBase, attackType, 12));
+        Assert.assertTrue(baseService.isHouseSpaceExceeded(simpleBase, attackType, 13));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
 }

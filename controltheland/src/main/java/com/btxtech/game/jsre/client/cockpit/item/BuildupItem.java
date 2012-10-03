@@ -86,7 +86,7 @@ public class BuildupItem extends Composite {
                 enableState = EnableState.DISABLED_LEVEL_EXCEEDED;
                 return;
             }
-            if (ClientBase.getInstance().isHouseSpaceExceeded(ClientBase.getInstance().getSimpleBase())) {
+            if (ClientBase.getInstance().isHouseSpaceExceeded(ClientBase.getInstance().getSimpleBase(), itemType)) {
                 enableState = EnableState.DISABLED_HOUSE_SPACE_EXCEEDED;
                 return;
             }

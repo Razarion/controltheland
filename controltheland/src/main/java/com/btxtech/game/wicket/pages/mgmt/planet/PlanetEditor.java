@@ -20,12 +20,14 @@ import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
 import com.btxtech.game.wicket.uiservices.ResourceItemTypePanel;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import com.btxtech.game.wicket.uiservices.TerrainPanel;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
@@ -87,6 +89,19 @@ public class PlanetEditor extends MgmtWebPage {
                 return getParent().getItemLimitationCrud();
             }
         };
+        form.add(new Label("consumedHouseSpace", new AbstractReadOnlyModel<Integer>() {
+            @Override
+            public Integer getObject() {
+                int consumedHouseSpace = 0;
+                for (DbPlanetItemTypeLimitation dbPlanetItemTypeLimitation : form.getModelObject().getItemLimitationCrud().readDbChildren()) {
+                    if(dbPlanetItemTypeLimitation.getDbBaseItemType() != null) {
+                        consumedHouseSpace += dbPlanetItemTypeLimitation.getDbBaseItemType().getConsumingHouseSpace() * dbPlanetItemTypeLimitation.getCount();
+                    }
+                }
+                return consumedHouseSpace;
+            }
+        }));
+
         // Terrain
         form.add(new TerrainPanel("dbTerrainSetting", new TerrainLinkHelper(dbPlanet)));
         // Region Resource

@@ -254,9 +254,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     public void onItemCreated(SyncBaseItem syncItem) {
         Base base = getBase(syncItem);
         base.addItem(syncItem);
-        if (syncItem.hasSyncHouse() && syncItem.isReady()) {
-            handleHouseSpaceChanged(getBase(syncItem));
-        }
+        handleHouseSpaceChanged(getBase(syncItem));
     }
 
     @Override
@@ -283,9 +281,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
                 serverGlobalServices.getAllianceService().onBaseCreatedOrDeleted(userName);
             }
         } else {
-            if (syncItem.hasSyncHouse()) {
-                handleHouseSpaceChanged(base);
-            }
+            handleHouseSpaceChanged(base);
         }
     }
 
@@ -472,11 +468,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public int getTotalHouseSpace() {
-        return planetServices.getPlanetInfo().getHouseSpace() + getBase().getHouseSpace();
-    }
-
-    @Override
     public void onSessionTimedOut(UserState userState) {
         Base base = userState.getBase();
         if (base == null || userState.isRegistered()) {
@@ -486,13 +477,13 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public int getHouseSpace(SimpleBase simpleBase) {
-        return getBaseThrow(simpleBase).getHouseSpace();
+    public int getUsedHouseSpace(SimpleBase simpleBase) {
+        return getBaseThrow(simpleBase).getUsedHouseSpace();
     }
 
     @Override
-    public int getItemCount(SimpleBase simpleBase) {
-        return getBaseThrow(simpleBase).getItemCount();
+    public int getHouseSpace(SimpleBase simpleBase) {
+        return getBaseThrow(simpleBase).getHouseSpace();
     }
 
     @Override
@@ -512,7 +503,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
 
     @Override
     public boolean isItemLimit4ItemAddingAllowed(BaseItemType newItemType, SimpleBase simpleBase) throws NoSuchItemTypeException {
-        return isBot(simpleBase) || isAbandoned(simpleBase) || (!isLevelLimitation4ItemTypeExceeded(newItemType, simpleBase) && !isHouseSpaceExceeded(simpleBase));
+        return isBot(simpleBase) || isAbandoned(simpleBase) || (!isLevelLimitation4ItemTypeExceeded(newItemType, simpleBase) && !isHouseSpaceExceeded(simpleBase, newItemType));
     }
 
     @Override

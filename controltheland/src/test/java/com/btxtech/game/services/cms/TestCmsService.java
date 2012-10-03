@@ -1850,12 +1850,12 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
-        tester.assertLabel("form:content:table:rows:5:cells:1:cell", "TestFactoryItem");
-        tester.assertLabel("form:content:table:rows:5:cells:2:cell:link:label", "Details");
-        tester.assertLabel("form:content:table:rows:8:cells:1:cell", "TestResourceItem");
-        tester.assertLabel("form:content:table:rows:8:cells:2:cell:link:label", "Details");
+        tester.assertLabel("form:content:table:rows:6:cells:1:cell", "TestFactoryItem");
+        tester.assertLabel("form:content:table:rows:6:cells:2:cell:link:label", "Details");
+        tester.assertLabel("form:content:table:rows:9:cells:1:cell", "TestResourceItem");
+        tester.assertLabel("form:content:table:rows:9:cells:2:cell:link:label", "Details");
         // Click link
-        tester.clickLink("form:content:table:rows:5:cells:2:cell:link");
+        tester.clickLink("form:content:table:rows:6:cells:2:cell:link");
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TestFactoryItem");
         tester.assertLabel("form:content:table:rows:2:cells:2:cell", "1000.0");
         tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:1:cell", "TEST_HARVESTER_ITEM");
@@ -1879,7 +1879,7 @@ public class TestCmsService extends AbstractServiceTest {
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
         tester.debugComponentTrees();
-        tester.clickLink("form:content:table:rows:8:cells:2:cell:link");
+        tester.clickLink("form:content:table:rows:9:cells:2:cell:link");
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TestResourceItem");
         tester.assertLabel("form:content:table:rows:2:cells:2:cell", "3");
 
@@ -1901,7 +1901,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbPage.setName("Home");
 
         DbContentList dbContentList = new DbContentList();
-        dbContentList.setRowsPerPage(5);
+        dbContentList.setRowsPerPage(6);
         dbContentList.init(userService);
         dbPage.setContentAndAccessWrites(dbContentList);
         dbContentList.setSpringBeanName("serverItemTypeService");
@@ -1962,10 +1962,11 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
-        tester.assertLabel("form:content:table:rows:5:cells:1:cell", "TestFactoryItem");
-        tester.assertLabel("form:content:table:rows:5:cells:2:cell:link:label", "Details");
+        tester.debugComponentTrees();
+        tester.assertLabel("form:content:table:rows:6:cells:1:cell", "TestFactoryItem");
+        tester.assertLabel("form:content:table:rows:6:cells:2:cell:link:label", "Details");
         // Click link
-        tester.clickLink("form:content:table:rows:5:cells:2:cell:link");
+        tester.clickLink("form:content:table:rows:6:cells:2:cell:link");
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TestFactoryItem");
         tester.assertLabel("form:content:table:rows:2:cells:2:cell", "1000.0");
         tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:1:cell", "TEST_HARVESTER_ITEM");
@@ -2005,7 +2006,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbPage.setName("Home");
 
         DbContentList dbContentList = new DbContentList();
-        dbContentList.setRowsPerPage(5);
+        dbContentList.setRowsPerPage(20);
         dbContentList.init(userService);
         dbPage.setContentAndAccessWrites(dbContentList);
         dbContentList.setSpringBeanName("serverItemTypeService");
@@ -2066,10 +2067,11 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
-        tester.assertLabel("form:content:table:rows:5:cells:1:cell", "TestFactoryItem");
-        tester.assertLabel("form:content:table:rows:5:cells:2:cell:link:label", "Details");
+        tester.debugComponentTrees();
+        tester.assertLabel("form:content:table:rows:6:cells:1:cell", "TestFactoryItem");
+        tester.assertLabel("form:content:table:rows:6:cells:2:cell:link:label", "Details");
         // Click link
-        tester.clickLink("form:content:table:rows:5:cells:2:cell:link");
+        tester.clickLink("form:content:table:rows:6:cells:2:cell:link");
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TestFactoryItem");
         tester.assertLabel("form:content:table:rows:2:cells:2:cell", "1000.0");
         tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:1:cell:link:label", "TEST_HARVESTER_ITEM");
@@ -2317,11 +2319,12 @@ public class TestCmsService extends AbstractServiceTest {
         tester.clickLink("form:content:navigation:nextLink");
         tester.clickLink("form:content:navigation:nextLink");
         tester.clickLink("form:content:navigation:nextLink");
+        tester.clickLink("form:content:navigation:nextLink");
         tester.assertLabel("form:content:navigation:previousLink:previousLabel", "previous");
         tester.assertEnabled("form:content:navigation:previousLink:previousLabel");
         tester.assertEnabled("form:content:navigation:previousLink");
         pageParameters = new PageParameters("page=1");
-        pageParameters.put("childId", 6);
+        pageParameters.put("childId", 7);
         pageParameters.put("detailId", "1");
         assertBookmarkablePageLink(tester, "form:content:navigation:previousLink", CmsPage.class, pageParameters);
 
@@ -2340,7 +2343,7 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertEnabled("form:content:navigation:previousLink:previousLabel");
         tester.assertEnabled("form:content:navigation:previousLink");
         pageParameters = new PageParameters("page=1");
-        pageParameters.put("childId", 5);
+        pageParameters.put("childId", 6);
         pageParameters.put("detailId", "1");
         assertBookmarkablePageLink(tester, "form:content:navigation:previousLink", CmsPage.class, pageParameters);
 
@@ -2353,7 +2356,7 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertEnabled("form:content:navigation:nextLink:nextLabel");
         tester.assertEnabled("form:content:navigation:nextLink");
         pageParameters = new PageParameters("page=1");
-        pageParameters.put("childId", 7);
+        pageParameters.put("childId", 8);
         pageParameters.put("detailId", "1");
         assertBookmarkablePageLink(tester, "form:content:navigation:nextLink", CmsPage.class, pageParameters);
 

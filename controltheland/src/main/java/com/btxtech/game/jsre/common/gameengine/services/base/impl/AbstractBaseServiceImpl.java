@@ -185,7 +185,7 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         if (isLevelLimitation4ItemTypeExceeded(newItemType, simpleBase)) {
             throw new ItemLimitExceededException();
         }
-        if (isHouseSpaceExceeded(simpleBase)) {
+        if (isHouseSpaceExceeded(simpleBase, newItemType)) {
             throw new HouseSpaceExceededException();
         }
     }
@@ -207,13 +207,13 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
     }
 
     @Override
-    public boolean isHouseSpaceExceeded(SimpleBase simpleBase) {
-        return getItemCount(simpleBase) >= getHouseSpace(simpleBase) + getPlanetServices().getPlanetInfo().getHouseSpace();
+    public boolean isHouseSpaceExceeded(SimpleBase simpleBase, BaseItemType toBeBuiltType) {
+        return isHouseSpaceExceeded(simpleBase, toBeBuiltType, 1);
     }
 
     @Override
-    public boolean isHouseSpaceExceeded(SimpleBase simpleBase, int itemCountToAdd) {
-        return getItemCount(simpleBase) + itemCountToAdd > getHouseSpace(simpleBase) + getPlanetServices().getPlanetInfo().getHouseSpace();
+    public boolean isHouseSpaceExceeded(SimpleBase simpleBase, BaseItemType toBeBuiltType, int itemCountToAdd) {
+        return getUsedHouseSpace(simpleBase) + itemCountToAdd * toBeBuiltType.getConsumingHouseSpace() > getHouseSpace(simpleBase) + getPlanetServices().getPlanetInfo().getHouseSpace();
     }
 
     @Override

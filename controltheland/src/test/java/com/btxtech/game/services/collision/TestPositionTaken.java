@@ -9,6 +9,7 @@ import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.db.DbPlanet;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,15 @@ public class TestPositionTaken extends AbstractServiceTest {
     @DirtiesContext
     public void testMultipleAttackNoOverlapping() throws Exception {
         configureSimplePlanetNoResources();
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID);
+        dbPlanet.setHouseSpace(1000);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
+        planetSystemService.deactivatePlanet(TEST_PLANET_1_ID);
+        planetSystemService.activatePlanet(TEST_PLANET_1_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
 
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
