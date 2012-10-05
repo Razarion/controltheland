@@ -27,7 +27,7 @@ public class TestAngelCorrection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void toItemAngelSameTileLoop1() throws Throwable {
-        BoundingBox boundingBox = new BoundingBox(0, 0, ANGELS_24);
+        BoundingBox boundingBox = new BoundingBox(0, ANGELS_24);
         Index start = new Index(1000, 1000);
         Index destination = new Index(3000, 3000);
         Index middle = new Index(2000, 2000);
@@ -49,7 +49,7 @@ public class TestAngelCorrection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void toItemAngelSameTileLoop2() throws Throwable {
-        BoundingBox boundingBox = new BoundingBox(0, 0, ANGELS_24_2);
+        BoundingBox boundingBox = new BoundingBox(0, ANGELS_24_2);
         Index start = new Index(1000, 1000);
         Index destination = new Index(3000, 3000);
         Index middle = new Index(2000, 2000);
@@ -71,7 +71,7 @@ public class TestAngelCorrection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void toItemAngelSameTile1() throws Throwable {
-        BoundingBox boundingBox = new BoundingBox(0, 0, ANGELS_24_2);
+        BoundingBox boundingBox = new BoundingBox(0, ANGELS_24_2);
         Index start = new Index(2538, 1311);
         Index destination = new Index(841, 1348);
 

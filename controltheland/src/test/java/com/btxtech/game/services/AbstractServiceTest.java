@@ -901,7 +901,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_START_BUILDER_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(80, 80, ANGELS_24));
+        dbBaseItemType.setBounding(new BoundingBox(80, ANGELS_24));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(1);
@@ -932,7 +932,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbBaseItemType, 1);
         dbBaseItemType.setName(TEST_FACTORY_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(80, 80, ANGELS_1));
+        dbBaseItemType.setBounding(new BoundingBox(80, ANGELS_1));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(2);
@@ -959,7 +959,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_ATTACK_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(80, 80, ANGELS_24));
+        dbBaseItemType.setBounding(new BoundingBox(80, ANGELS_24));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(3);
@@ -999,7 +999,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_ATTACK_ITEM_2);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(80, 80, ANGELS_24));
+        dbBaseItemType.setBounding(new BoundingBox(80, ANGELS_24));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(3);
@@ -1028,7 +1028,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_CONTAINER_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(80, 80, ANGELS_24));
+        dbBaseItemType.setBounding(new BoundingBox(80, ANGELS_24));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         // DbItemContainerType
@@ -1052,7 +1052,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbBaseItemType, 1);
         dbBaseItemType.setName(TEST_SIMPLE_BUILDING);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(80, 80, ANGELS_1));
+        dbBaseItemType.setBounding(new BoundingBox(80, ANGELS_1));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
 
@@ -1067,7 +1067,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbBaseItemType, 1);
         dbBaseItemType.setName(TEST_HOUSE);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(80, 80, ANGELS_1));
+        dbBaseItemType.setBounding(new BoundingBox(80, ANGELS_1));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         // DbHouse
@@ -1097,7 +1097,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbResourceItemType, 1);
         dbResourceItemType.setName(TEST_RESOURCE_ITEM);
         dbResourceItemType.setTerrainType(TerrainType.LAND);
-        dbResourceItemType.setBounding(new BoundingBox(80, 80, ANGELS_1));
+        dbResourceItemType.setBounding(new BoundingBox(80, ANGELS_1));
         dbResourceItemType.setAmount(3);
 
         serverItemTypeService.saveDbItemType(dbResourceItemType);
@@ -1111,7 +1111,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_HARVESTER_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(80, 80, ANGELS_24));
+        dbBaseItemType.setBounding(new BoundingBox(80, ANGELS_24));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(4);
@@ -1148,7 +1148,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbBoxItemType, 1);
         dbBoxItemType.setName(TEST_BOX_ITEM_1);
         dbBoxItemType.setTerrainType(TerrainType.LAND);
-        dbBoxItemType.setBounding(new BoundingBox(80, 80, ANGELS_1));
+        dbBoxItemType.setBounding(new BoundingBox(80, ANGELS_1));
         dbBoxItemType.setTtl(100);
 
         serverItemTypeService.saveDbItemType(dbBoxItemType);
@@ -1162,7 +1162,7 @@ abstract public class AbstractServiceTest {
         setupImages(dbBoxItemType, 1);
         dbBoxItemType.setName(TEST_BOX_ITEM_2);
         dbBoxItemType.setTerrainType(TerrainType.LAND);
-        dbBoxItemType.setBounding(new BoundingBox(80, 80, ANGELS_1));
+        dbBoxItemType.setBounding(new BoundingBox(80, ANGELS_1));
         dbBoxItemType.setTtl(5000);
 
         serverItemTypeService.saveDbItemType(dbBoxItemType);

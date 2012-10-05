@@ -34,8 +34,6 @@ public interface DbItemTypeI {
 
     int getImageHeight();
 
-    int getBoundingBoxWidth();
-
     int getBuildupSteps();
 
     void setBuildupSteps(int buildupSteps);
@@ -68,5 +66,7 @@ public interface DbItemTypeI {
 
     void setDemolitionAnimationDuration(int demolitionAnimationDuration);
 
-    int getBoundingBoxHeight();
+    int getBoundingBoxRadius();
+
+    void setBoundingBoxRadius(int boundingBoxRadius);
 }

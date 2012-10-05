@@ -2,15 +2,11 @@ package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Line;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * User: beat
@@ -153,11 +149,7 @@ public class SyncItemArea {
     }
 
     public void turnTo(SyncItemArea target) {
-        if (contains(target)) {
-            turnTo(target.getPosition());
-            return;
-        }
-        turnTo(getTurnToAngel(target));
+        turnTo(target.getPosition());
     }
 
     public double getTurnToAngel(Index destination) {
@@ -168,33 +160,9 @@ public class SyncItemArea {
         return getPosition().getAngleToNord(destination);
     }
 
-    public double getTurnToAngel(SyncItemArea target) {
-        if (contains(target)) {
-            turnTo(target.getPosition());
-            return getBoundingBox().getCosmeticAngel();
-        }
-        Index rotPosition = getPosition().rotateCounterClock(target.getPosition(), -target.getAngel());
-        Rectangle targetRectangle = target.getBoundingBox().getRectangle(target.getPosition());
-
-        Index rotPosOnRect = targetRectangle.getNearestPointInclusive(rotPosition);
-        Index posOnRect = rotPosOnRect.rotateCounterClock(target.getPosition(), target.getAngel());
-
-        return getTurnToAngel(posOnRect);
+    public double getTurnToAngel(SyncItemArea destination) {
+        return getTurnToAngel(destination.getPosition());
     }
-
-    public Collection<Line> getLines() {
-        Index p1 = getCorner1();
-        Index p2 = getCorner2();
-        Index p3 = getCorner3();
-        Index p4 = getCorner4();
-        List<Line> lines = new ArrayList<Line>();
-        lines.add(new Line(p1, p2));
-        lines.add(new Line(p2, p3));
-        lines.add(new Line(p3, p4));
-        lines.add(new Line(p4, p1));
-        return lines;
-    }
-
 
     public boolean contains(SyncItemArea syncItemArea) {
         if (!hasPosition()) {
@@ -205,31 +173,11 @@ public class SyncItemArea {
         }
 
         // Increase performance
-        if (getPosition().getDistance(syncItemArea.getPosition()) > (getBoundingBox().getMaxRadiusDouble() + syncItemArea.getBoundingBox().getMaxRadiusDouble())) {
-            return false;
-        }
-
-        Collection<Line> otherLines = syncItemArea.getLines();
-
-        for (Line line : getLines()) {
-            for (Line otherLine : otherLines) {
-                if (line.getCross(otherLine) != null) {
-                    return true;
-                }
-            }
-        }
-
-        // Check completely inside
-        if (getBoundingBox().getArea() < syncItemArea.getBoundingBox().getArea()) {
-            return syncItemArea.contains(getPosition());
-        } else {
-            return contains(syncItemArea.getPosition());
-        }
+        return getPosition().getDistance(syncItemArea.getPosition()) <= (getBoundingBox().getRadius() + syncItemArea.getBoundingBox().getRadius());
     }
 
     public boolean contains(Index position) {
-        Index rotPoint = position.rotateCounterClock(getPosition(), -getAngel());
-        return getBoundingBox().contains(getPosition(), rotPoint);
+        return getPosition().getDistance(position) <= getBoundingBox().getRadius();
     }
 
     public boolean contains(SyncItem syncItem) {
@@ -237,7 +185,7 @@ public class SyncItemArea {
     }
 
     /**
-     * Move this SyncItemArea to the given position and
+     * Move this SyncItemArea to the given position and check contains
      *
      * @param syncItem        to check against
      * @param positionToCheck position to move this to
@@ -282,25 +230,12 @@ public class SyncItemArea {
             return true;
         }
         Rectangle biggestScope = Rectangle.generateRectangleFromMiddlePoint(rectangle.getCenter(),
-                rectangle.getWidth() + 2 * boundingBox.getMaxDiameter(),
-                rectangle.getHeight() + 2 * boundingBox.getMaxDiameter());
-        if (!biggestScope.contains(getPosition())) {
+                rectangle.getWidth() + boundingBox.getDiameter(),
+                rectangle.getHeight() + boundingBox.getDiameter());
+        if(!biggestScope.containsExclusive(getPosition())) {
             return false;
         }
-        Collection<Line> lines = getLines();
-        for (Line line : rectangle.getLines()) {
-            for (Line otherLine : lines) {
-                if (line.getCross(otherLine) != null) {
-                    return true;
-                }
-            }
-        }
-        // Check completely inside
-        if (getBoundingBox().getArea() < rectangle.getArea()) {
-            return rectangle.containsExclusive(getPosition());
-        } else {
-            return contains(rectangle.getCenter());
-        }
+        return rectangle.getNearestPoint(getPosition()).getDistanceDouble(getPosition()) <= boundingBox.getRadius();
     }
 
     public boolean positionReached(Index destination) {
@@ -311,9 +246,7 @@ public class SyncItemArea {
         if (contains(position)) {
             return 0;
         }
-        Index rotPos = position.rotateCounterClock(getPosition(), -getAngel());
-        Index nearestPoint = getBoundingBox().getRectangle(getPosition()).getNearestPointInclusive(rotPos);
-        return rotPos.getDistanceDouble(nearestPoint);
+        return getPosition().getDistance(position) - getBoundingBox().getRadius();
     }
 
     public double getDistance(SyncItem syncItem) {
@@ -336,19 +269,7 @@ public class SyncItemArea {
         if (contains(syncItemArea)) {
             return 0;
         }
-        Index otherP1 = syncItemArea.getCorner1().rotateCounterClock(getPosition(), -getAngel());
-        Index otherP2 = syncItemArea.getCorner2().rotateCounterClock(getPosition(), -getAngel());
-        Index otherP3 = syncItemArea.getCorner3().rotateCounterClock(getPosition(), -getAngel());
-        Index otherP4 = syncItemArea.getCorner4().rotateCounterClock(getPosition(), -getAngel());
-
-        Rectangle rectangle = getBoundingBox().getRectangle(getPosition());
-
-        double d1 = rectangle.getShortestDistanceToLine(otherP1, otherP2);
-        double d2 = rectangle.getShortestDistanceToLine(otherP2, otherP3);
-        double d3 = rectangle.getShortestDistanceToLine(otherP3, otherP4);
-        double d4 = rectangle.getShortestDistanceToLine(otherP4, otherP1);
-
-        return Math.min(Math.min(d1, d2), Math.min(d3, d4));
+        return getPosition().getDistanceDouble(syncItemArea.getPosition()) - getBoundingBox().getRadius() - syncItemArea.getBoundingBox().getRadius();
     }
 
     public boolean isInRange(int range, SyncItem target) {
@@ -369,22 +290,6 @@ public class SyncItemArea {
 
     public void setCosmeticsAngel() {
         setAngel(getBoundingBox().getCosmeticAngel());
-    }
-
-    public Index getCorner1() {
-        return getPosition().add(getBoundingBox().getCorner1()).rotateCounterClock(getPosition(), angel);
-    }
-
-    public Index getCorner2() {
-        return getPosition().add(getBoundingBox().getCorner2()).rotateCounterClock(getPosition(), angel);
-    }
-
-    public Index getCorner3() {
-        return getPosition().add(getBoundingBox().getCorner3()).rotateCounterClock(getPosition(), angel);
-    }
-
-    public Index getCorner4() {
-        return getPosition().add(getBoundingBox().getCorner4()).rotateCounterClock(getPosition(), angel);
     }
 
     public BoundingBox getBoundingBox() {

@@ -29,21 +29,15 @@ public class BoundingBoxPanel extends Composite implements UpdateListener {
     @UiField
     Button right;
     @UiField
-    IntegerBox widthField;
-    @UiField
-    IntegerBox heightField;
+    IntegerBox radiusField;
     @UiField
     Button applyButton;
     @UiField
     IntegerBox angels;
     @UiField
-    Button widthPlus;
+    Button radiusPlus;
     @UiField
-    Button widthMinus;
-    @UiField
-    Button heightPlus;
-    @UiField
-    Button heightMinus;
+    Button radiusMinus;
     @UiField
     IntegerBox currentAngelField;
     @UiField
@@ -73,27 +67,15 @@ public class BoundingBoxPanel extends Composite implements UpdateListener {
         ItemTypeEditorModel.getInstance().setNewAngels(angelCount);
     }
 
-    @UiHandler("widthPlus")
+    @UiHandler("radiusPlus")
     void onWidthPlusClick(ClickEvent event) {
-        ItemTypeEditorModel.getInstance().getBoundingBox().setWidth(ItemTypeEditorModel.getInstance().getBoundingBox().getWidth() + 1);
+        ItemTypeEditorModel.getInstance().getBoundingBox().setRadius(ItemTypeEditorModel.getInstance().getBoundingBox().getRadius() + 1);
         ItemTypeEditorModel.getInstance().fireUpdate();
     }
 
-    @UiHandler("widthMinus")
+    @UiHandler("radiusMinus")
     void onWidthMinusClick(ClickEvent event) {
-        ItemTypeEditorModel.getInstance().getBoundingBox().setWidth(ItemTypeEditorModel.getInstance().getBoundingBox().getWidth() - 1);
-        ItemTypeEditorModel.getInstance().fireUpdate();
-    }
-
-    @UiHandler("heightPlus")
-    void onHeightPlusClick(ClickEvent event) {
-        ItemTypeEditorModel.getInstance().getBoundingBox().setHeight(ItemTypeEditorModel.getInstance().getBoundingBox().getHeight() + 1);
-        ItemTypeEditorModel.getInstance().fireUpdate();
-    }
-
-    @UiHandler("heightMinus")
-    void onHeightMinusClick(ClickEvent event) {
-        ItemTypeEditorModel.getInstance().getBoundingBox().setHeight(ItemTypeEditorModel.getInstance().getBoundingBox().getHeight() - 1);
+        ItemTypeEditorModel.getInstance().getBoundingBox().setRadius(ItemTypeEditorModel.getInstance().getBoundingBox().getRadius() - 1);
         ItemTypeEditorModel.getInstance().fireUpdate();
     }
 
@@ -117,18 +99,6 @@ public class BoundingBoxPanel extends Composite implements UpdateListener {
         ItemTypeEditorModel.getInstance().fireUpdate();
     }
 
-    @UiHandler("widthField")
-    void onWidthFieldChange(ChangeEvent event) {
-        ItemTypeEditorModel.getInstance().getBoundingBox().setWidth(widthField.getValue());
-        ItemTypeEditorModel.getInstance().fireUpdate();
-    }
-
-    @UiHandler("heightField")
-    void onHeightFieldChange(ChangeEvent event) {
-        ItemTypeEditorModel.getInstance().getBoundingBox().setHeight(heightField.getValue());
-        ItemTypeEditorModel.getInstance().fireUpdate();
-    }
-
     @UiHandler("left")
     void onLeftClick(ClickEvent event) {
         ItemTypeEditorModel.getInstance().increaseCurrentAngelIndex();
@@ -143,8 +113,7 @@ public class BoundingBoxPanel extends Composite implements UpdateListener {
     public void onModelUpdate() {
         angels.setValue(ItemTypeEditorModel.getInstance().getBoundingBox().getAngelCount());
         currentAngelIndex.setText((ItemTypeEditorModel.getInstance().getCurrentAngelIndex() + 1) + " of " + (ItemTypeEditorModel.getInstance().getBoundingBox().getAngelCount()));
-        widthField.setValue(ItemTypeEditorModel.getInstance().getBoundingBox().getWidth());
-        heightField.setValue(ItemTypeEditorModel.getInstance().getBoundingBox().getHeight());
+        radiusField.setValue(ItemTypeEditorModel.getInstance().getBoundingBox().getRadius());
         currentAngelField.setValue((int) Math.round(MathHelper.radToGrad(ItemTypeEditorModel.getInstance().getBoundingBox().getAngels()[ItemTypeEditorModel.getInstance().getCurrentAngelIndex()])));
         imageWidthLabel.setText(Integer.toString(ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getImageWidth()));
         imageHeightLabel.setText(Integer.toString(ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getImageHeight()));

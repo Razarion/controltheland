@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.itemtypeeditor;
 
+import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.google.gwt.canvas.dom.client.Context2d;
 
@@ -15,10 +16,7 @@ public class BoundingBoxVisualisation extends AbstractVisualisation {
         context2d.save();
         context2d.setStrokeStyle("#FF0000");
         context2d.beginPath();
-        context2d.moveTo(syncItemArea.getCorner1().getX(), syncItemArea.getCorner1().getY());
-        context2d.lineTo(syncItemArea.getCorner2().getX(), syncItemArea.getCorner2().getY());
-        context2d.lineTo(syncItemArea.getCorner3().getX(), syncItemArea.getCorner3().getY());
-        context2d.lineTo(syncItemArea.getCorner4().getX(), syncItemArea.getCorner4().getY());
+        context2d.arc(syncItemArea.getPosition().getX(), syncItemArea.getPosition().getY(), syncItemArea.getBoundingBox().getRadius(), 0, MathHelper.ONE_RADIANT);
         context2d.closePath();
         context2d.stroke();
         context2d.restore();

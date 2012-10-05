@@ -26,9 +26,10 @@ import java.util.List;
  * Date: 15.05.2011
  * Time: 21:02:28
  */
-public class RoundedRectangleAttackFormation implements AttackFormation {
+public class CircleAttackFormation implements AttackFormation {
     private static final int MAX_TRIES = 10000;
     private static final double OVERBOOKED_ANGEL = MathHelper.EIGHTH_RADIANT;
+    public static final double DISTANCE = 3.0;
 
     private enum Mode {
         FINDING_START,
@@ -43,25 +44,26 @@ public class RoundedRectangleAttackFormation implements AttackFormation {
     private Mode mode = Mode.FINDING_START;
     private boolean counterClockWise;
     private double startAngel;
-    private RoundedRectangleAttackFormationTrack counterClockwiseTrackRoundedRectangle;
-    private RoundedRectangleAttackFormationTrack clockwiseTrackRoundedRectangle;
+    private CircleAttackFormationTrack counterClockwiseTrackCircle;
+    private CircleAttackFormationTrack clockwiseTrackCircle;
     private double overbookedAngel;
     private double overbookedDeltaAngel;
     private int overbookedRange;
     private int maxDiameter;
 
-    RoundedRectangleAttackFormation(SyncItemArea target, double startAngel, List<AttackFormationItem> attackFormationItems, int maxDiameter, int range) {
+    CircleAttackFormation(SyncItemArea target, double startAngel, List<AttackFormationItem> attackFormationItems, int maxDiameter, int range) {
         this.target = target;
         this.attackFormationItems = attackFormationItems;
         this.maxDiameter = maxDiameter;
         this.startAngel = MathHelper.normaliseAngel(startAngel);
 
         overbookedAngel = MathHelper.normaliseAngel(this.startAngel - OVERBOOKED_ANGEL);
-        overbookedRange = target.getBoundingBox().getMaxDiameter() + range + maxDiameter;
-        overbookedDeltaAngel = Math.atan((maxDiameter + Segment.DISTANCE) / 2.0 / overbookedRange) * 2.0;
+        overbookedRange = target.getBoundingBox().getDiameter() + range + maxDiameter + (int) DISTANCE;
+        overbookedDeltaAngel = Math.atan((maxDiameter + DISTANCE) / 2.0 / overbookedRange) * 2.0;
 
-        counterClockwiseTrackRoundedRectangle = new RoundedRectangleAttackFormationTrack(startAngel, target, range, true);
-        clockwiseTrackRoundedRectangle = new RoundedRectangleAttackFormationTrack(startAngel, target, range, false);
+        int totalRadius = range + target.getBoundingBox().getRadius();
+        counterClockwiseTrackCircle = new CircleAttackFormationTrack(startAngel, target, totalRadius, true);
+        clockwiseTrackCircle = new CircleAttackFormationTrack(startAngel, target, totalRadius, false);
     }
 
     @Override
@@ -72,8 +74,8 @@ public class RoundedRectangleAttackFormation implements AttackFormation {
     @Override
     public void lastAccepted() {
         if (mode == Mode.FINDING_START) {
-            counterClockwiseTrackRoundedRectangle.setLast(start);
-            clockwiseTrackRoundedRectangle.setLast(start);
+            counterClockwiseTrackCircle.setLast(start);
+            clockwiseTrackCircle.setLast(start);
             mode = Mode.PLACING_AROUND_TARGET;
         }
         attackFormationItems.remove(0);
@@ -97,9 +99,9 @@ public class RoundedRectangleAttackFormation implements AttackFormation {
     private AttackFormationItem findStart() {
         AttackFormationItem attackFormationItem = attackFormationItems.get(0);
         if (counterClockWise) {
-            start = counterClockwiseTrackRoundedRectangle.getStartPoint(attackFormationItem);
+            start = counterClockwiseTrackCircle.getStartPoint(attackFormationItem);
         } else {
-            start = clockwiseTrackRoundedRectangle.getStartPoint(attackFormationItem);
+            start = clockwiseTrackCircle.getStartPoint(attackFormationItem);
         }
         counterClockWise = !counterClockWise;
         return returnNextAttackFormationItemInRange(start);
@@ -109,9 +111,9 @@ public class RoundedRectangleAttackFormation implements AttackFormation {
         AttackFormationItem attackFormationItem = attackFormationItems.get(0);
         SyncItemArea syncItemArea;
         if (counterClockWise) {
-            syncItemArea = counterClockwiseTrackRoundedRectangle.getNextPoint(attackFormationItem);
+            syncItemArea = counterClockwiseTrackCircle.getNextPoint(attackFormationItem);
         } else {
-            syncItemArea = clockwiseTrackRoundedRectangle.getNextPoint(attackFormationItem);
+            syncItemArea = clockwiseTrackCircle.getNextPoint(attackFormationItem);
         }
         if (checkOverbooked()) {
             mode = Mode.OVERBOOKED;
@@ -134,8 +136,8 @@ public class RoundedRectangleAttackFormation implements AttackFormation {
         overbookedAngel += overbookedDeltaAngel;
         if (!MathHelper.isInSection(overbookedAngel, startAngel - MathHelper.EIGHTH_RADIANT, MathHelper.EIGHTH_RADIANT * 2.0)) {
             overbookedAngel = startAngel - MathHelper.EIGHTH_RADIANT;
-            overbookedRange += maxDiameter + Segment.DISTANCE;
-            overbookedDeltaAngel = Math.atan((maxDiameter + Segment.DISTANCE) / 2.0 / overbookedRange) * 2.0;
+            overbookedRange += maxDiameter + DISTANCE;
+            overbookedDeltaAngel = Math.atan((maxDiameter + DISTANCE) / 2.0 / overbookedRange) * 2.0;
         }
         AttackFormationItem attackFormationItem = attackFormationItems.get(0);
         attackFormationItem.setDestinationHint(center);
@@ -144,7 +146,7 @@ public class RoundedRectangleAttackFormation implements AttackFormation {
     }
 
     private boolean checkOverbooked() {
-        return counterClockwiseTrackRoundedRectangle.getLast().contains(clockwiseTrackRoundedRectangle.getLast());
+        return counterClockwiseTrackCircle.getLast().contains(clockwiseTrackCircle.getLast());
     }
 
     private void checkMaxTries(SyncBaseItem itemToPlace) {
@@ -159,11 +161,11 @@ public class RoundedRectangleAttackFormation implements AttackFormation {
         }
     }
 
-    public RoundedRectangleAttackFormationTrack getCounterClockwiseTrack() {
-        return counterClockwiseTrackRoundedRectangle;
+    public CircleAttackFormationTrack getCounterClockwiseTrack() {
+        return counterClockwiseTrackCircle;
     }
 
-    public RoundedRectangleAttackFormationTrack getClockwiseTrack() {
-        return clockwiseTrackRoundedRectangle;
+    public CircleAttackFormationTrack getClockwiseTrack() {
+        return clockwiseTrackCircle;
     }
 }

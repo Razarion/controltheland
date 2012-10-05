@@ -47,11 +47,11 @@ public class TestItemServiceImpl extends AbstractServiceTest {
 
 
         ItemType itemType1 = serverItemTypeService.getItemType(TEST_HARVESTER_ITEM_ID);
-        itemType1.setBoundingBox(new BoundingBox(80, 80, ANGELS_24));
+        itemType1.setBoundingBox(new BoundingBox(80, ANGELS_24));
         serverPlanetServices.getItemService().createSyncObject(itemType1, new Index(4486, 1279), null, base1, 0);
 
         ItemType itemType2 = serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
-        itemType2.setBoundingBox(new BoundingBox(36, 56, ANGELS_24));
+        itemType2.setBoundingBox(new BoundingBox(36, ANGELS_24));
         SyncItem syncItem2 = serverPlanetServices.getItemService().createSyncObject(itemType2, new Index(1396, 2225), null, base2, 0);
 
 
@@ -78,14 +78,14 @@ public class TestItemServiceImpl extends AbstractServiceTest {
 
 
         ItemType itemType1 = serverItemTypeService.getItemType(TEST_HARVESTER_ITEM_ID);
-        itemType1.setBoundingBox(new BoundingBox(182, 120, ANGELS_24));
-        serverPlanetServices.getItemService().createSyncObject(itemType1, new Index(2820, 2626), null, base1, 0);
+        itemType1.setBoundingBox(new BoundingBox(100, ANGELS_24));
+        serverPlanetServices.getItemService().createSyncObject(itemType1, new Index(2800, 2600), null, base1, 0);
 
         ItemType itemType2 = serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
-        itemType2.setBoundingBox(new BoundingBox(54, 60, ANGELS_24));
+        itemType2.setBoundingBox(new BoundingBox(200, ANGELS_24));
         SyncItem syncItem2 = serverPlanetServices.getItemService().createSyncObject(itemType2, new Index(2940, 2609), null, base2, 0);
 
-        Assert.assertFalse(serverPlanetServices.getItemService().isSyncItemOverlapping(syncItem2, new Index(2940, 2609), null, null));
-        Assert.assertTrue(serverPlanetServices.getItemService().isSyncItemOverlapping(syncItem2, new Index(2940, 2609), 0.2053953891897674, null));
+        Assert.assertTrue(serverPlanetServices.getItemService().isSyncItemOverlapping(syncItem2, new Index(2500, 2600), null, null));
+        Assert.assertFalse(serverPlanetServices.getItemService().isSyncItemOverlapping(syncItem2, new Index(2499, 2600), 0.2053953891897674, null));
     }
 }

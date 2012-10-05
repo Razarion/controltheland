@@ -70,7 +70,7 @@ public class TestPathFinding extends AbstractServiceTest {
     public void testPath1() throws Exception {
         configureOneLevelOnePlaneComplexTerrain();
         CollisionService collisionService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getCollisionService();
-        Path path = collisionService.setupPathToDestination(new Index(800, 3400), new Index(2000, 2700), TerrainType.LAND, new BoundingBox(0, 0, ANGELS_24));
+        Path path = collisionService.setupPathToDestination(new Index(800, 3400), new Index(2000, 2700), TerrainType.LAND, new BoundingBox(0, ANGELS_24));
         assertPathNotInTerrainImage(path);
         // assertPathCanBeReduced(path); Do this may later
     }
@@ -80,7 +80,7 @@ public class TestPathFinding extends AbstractServiceTest {
     public void testPathSameStartAndDest() throws Exception {
         configureOneLevelOnePlaneComplexTerrain();
         CollisionService collisionService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getCollisionService();
-        Path path = collisionService.setupPathToDestination(new Index(800, 3400), new Index(800, 3400), TerrainType.LAND, new BoundingBox(0, 0, ANGELS_24));
+        Path path = collisionService.setupPathToDestination(new Index(800, 3400), new Index(800, 3400), TerrainType.LAND, new BoundingBox(0, ANGELS_24));
         assertPathNotInTerrainImage(path);
         Assert.assertEquals(1, path.getPath().size());
         Assert.assertEquals(new Index(800, 3400), path.getPath().get(0));
@@ -91,12 +91,12 @@ public class TestPathFinding extends AbstractServiceTest {
     public void testPathDifferentTerrains() throws Exception {
         configureOneLevelOnePlaneComplexTerrain2();
         CollisionService collisionService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getCollisionService();
-        SyncItemArea target = new BoundingBox(100, 100, ANGELS_24).createSyntheticSyncItemArea(new Index(2750, 350));
+        SyncItemArea target = new BoundingBox(100, ANGELS_24).createSyntheticSyncItemArea(new Index(2750, 350));
         List<AttackFormationItem> attacker = new ArrayList<>();
         attacker.add(new AttackFormationItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1450, 350), new Id(0, 0, 0)), 250));
         attacker = collisionService.setupDestinationHints(target, TerrainType.WATER, attacker);
-        Assert.assertEquals(new Index(2412, 306), attacker.get(0).getDestinationHint());
-        Assert.assertEquals(-1.570796326794, attacker.get(0).getDestinationAngel(), 0.001);
+        Assert.assertEquals(new Index(2378, 136), attacker.get(0).getDestinationHint());
+        Assert.assertEquals(4.190352700775026, attacker.get(0).getDestinationAngel(), 0.001);
         Assert.assertTrue(attacker.get(0).isInRange());
     }
 

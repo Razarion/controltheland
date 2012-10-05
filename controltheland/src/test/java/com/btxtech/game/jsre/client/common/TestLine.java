@@ -199,68 +199,6 @@ public class TestLine {
     }
 
     @Test
-    public void testCross3() {
-        Line line = new Line(new Index(1810, 2628), new Index(1810, 2532));
-        Assert.assertEquals(new Index(1810, 2533), line.getCross(4.884017048765569, new Index(1538, 2580)));
-
-        line = new Line(new Index(800, 540), new Index(800, 460));
-        Assert.assertEquals(new Index(800, 530), line.getCross(4.61238898038469, new Index(500, 500)));
-
-        line = new Line(new Index(1407, 1742), new Index(1607, 1736));
-        Assert.assertEquals(new Index(1407, 1742), line.getCross(2.774999999999963, new Index(1500, 1500)));
-    }
-
-    @Test
-    public void testPerpendicular1() {
-        Index cross = new Index(200, 200);
-        Index otherSide = new Index(200, 100);
-        Line line = new Line(new Index(100, 300), new Index(300, 100));
-        Index result = line.getPerpendicular(cross, 141, otherSide);
-        Assert.assertEquals(new Index(300, 300), result);
-
-        otherSide = new Index(200, 300);
-        result = line.getPerpendicular(cross, 141, otherSide);
-        Assert.assertEquals(new Index(100, 100), result);
-
-        line = new Line(new Index(599, 261), new Index(399, 262));
-        result = line.getPerpendicular(new Index(500, 261), 40, new Index(500, 500));
-        Assert.assertEquals(new Index(500, 221), result);
-    }
-
-    @Test
-    public void testPerpendicular2() {
-        // m = 0
-        Index cross = new Index(200, 200);
-        Index otherSide = new Index(200, 100);
-        Line line = new Line(new Index(100, 200), new Index(400, 200));
-        Index result = line.getPerpendicular(cross, 50, otherSide);
-        Assert.assertEquals(new Index(200, 250), result);
-
-        otherSide = new Index(200, 300);
-        line = new Line(new Index(100, 200), new Index(400, 200));
-        result = line.getPerpendicular(cross, 50, otherSide);
-        Assert.assertEquals(new Index(200, 150), result);
-
-        otherSide = new Index(500, 500);
-        cross = new Index(500, 350);
-        line = new Line(new Index(600, 350), new Index(400, 350));
-        result = line.getPerpendicular(cross, 100, otherSide);
-        Assert.assertEquals(new Index(500, 250), result);
-
-        // m = infinite
-        otherSide = new Index(50, 50);
-        cross = new Index(200, 200);
-        line = new Line(new Index(200, 100), new Index(200, 400));
-        result = line.getPerpendicular(cross, 100, otherSide);
-        Assert.assertEquals(new Index(300, 200), result);
-
-        otherSide = new Index(300, 50);
-        line = new Line(new Index(200, 100), new Index(200, 400));
-        result = line.getPerpendicular(cross, 100, otherSide);
-        Assert.assertEquals(new Index(100, 200), result);
-    }
-
-    @Test
     public void testGetPoint() {
         Index reference = new Index(200, 300);
         Line line = new Line(new Index(100, 100), new Index(400, 400));

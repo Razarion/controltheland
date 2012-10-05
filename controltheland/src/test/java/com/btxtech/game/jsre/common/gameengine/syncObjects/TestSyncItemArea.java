@@ -1,234 +1,99 @@
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.MathHelper;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.debug.DebugService;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * User: beat
  * Date: 23.08.2011
  * Time: 17:18:42
  */
-public class TestSyncItemArea extends AbstractServiceTest {
-    @Autowired
-    private DebugService debugService;
+public class TestSyncItemArea {
 
     @Test
-    @DirtiesContext
-    public void testStrait() {
-        BoundingBox boundingBox = new BoundingBox(100, 100, ANGELS_24);
-        SyncItemArea syncItemArea1 = new SyncItemArea(boundingBox, new Index(300, 300));
-        Assert.assertEquals(new Index(250, 250), syncItemArea1.getCorner1());
-        Assert.assertEquals(new Index(250, 350), syncItemArea1.getCorner2());
-        Assert.assertEquals(new Index(350, 350), syncItemArea1.getCorner3());
-        Assert.assertEquals(new Index(350, 250), syncItemArea1.getCorner4());
-    }
-
-    @Test
-    @DirtiesContext
-    public void testRotated() {
-        BoundingBox boundingBox = new BoundingBox(100, 150, ANGELS_24);
-        SyncItemArea syncItemArea1 = new SyncItemArea(boundingBox, new Index(300, 300));
-        syncItemArea1.setAngel(MathHelper.gradToRad(10));
-        Assert.assertEquals(new Index(238, 235), syncItemArea1.getCorner1());
-        Assert.assertEquals(new Index(264, 383), syncItemArea1.getCorner2());
-        Assert.assertEquals(new Index(362, 365), syncItemArea1.getCorner3());
-        Assert.assertEquals(new Index(336, 217), syncItemArea1.getCorner4());
-    }
-
-    @Test
-    @DirtiesContext
-    public void testInRangePosition() {
-        BoundingBox boundingBox = new BoundingBox(200, 200, ANGELS_24);
+    public void testContains() {
+        BoundingBox boundingBox = new BoundingBox(200, AbstractServiceTest.ANGELS_24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(400, 400));
-        Assert.assertTrue(syncItemArea.isInRange(100, new Index(200, 400)));
-        Assert.assertTrue(syncItemArea.isInRange(101, new Index(200, 400)));
-        Assert.assertTrue(syncItemArea.isInRange(1000, new Index(200, 400)));
-        Assert.assertFalse(syncItemArea.isInRange(10, new Index(200, 400)));
-        Assert.assertFalse(syncItemArea.isInRange(99, new Index(200, 400)));
-        // TODO test angel != 0
+        Assert.assertTrue(syncItemArea.contains(new Index(400, 300)));
+        Assert.assertTrue(syncItemArea.contains(new Index(400, 201)));
+        Assert.assertTrue(syncItemArea.contains(new Index(400, 200)));
+        Assert.assertFalse(syncItemArea.contains(new Index(400, 100)));
+        Assert.assertTrue(syncItemArea.contains(new Index(280, 300)));
+        Assert.assertTrue(syncItemArea.contains(new Index(232, 295)));
+        Assert.assertTrue(syncItemArea.contains(new Index(272, 246)));
+        Assert.assertTrue(syncItemArea.contains(new Index(272, 246)));
+        Assert.assertFalse(syncItemArea.contains(new Index(316, 217)));
+        Assert.assertTrue(syncItemArea.contains(new Index(438, 586)));
+        Assert.assertFalse(syncItemArea.contains(new Index(549, 535)));
     }
 
     @Test
-    @DirtiesContext
+    public void testContainsRectangle() {
+        Rectangle rectangle = new Rectangle(1000, 1000, 500, 400);
+        BoundingBox boundingBox = new BoundingBox(100, AbstractServiceTest.ANGELS_24);
+        //Inside
+        Assert.assertTrue(new SyncItemArea(boundingBox, new Index(1200, 1200)).contains(rectangle));
+        Assert.assertTrue(new SyncItemArea(boundingBox, new Index(1300, 1300)).contains(rectangle));
+        // Edge
+        Assert.assertTrue(new SyncItemArea(boundingBox, new Index(900, 1000)).contains(rectangle));
+        Assert.assertFalse(new SyncItemArea(boundingBox, new Index(899, 1000)).contains(rectangle));
+        Assert.assertTrue(new SyncItemArea(boundingBox, new Index(1000, 900)).contains(rectangle));
+        Assert.assertFalse(new SyncItemArea(boundingBox, new Index(1000, 899)).contains(rectangle));
+        Assert.assertTrue(new SyncItemArea(boundingBox, new Index(1510, 1000)).contains(rectangle));
+        Assert.assertFalse(new SyncItemArea(boundingBox, new Index(1601, 1000)).contains(rectangle));
+        Assert.assertTrue(new SyncItemArea(boundingBox, new Index(1000, 1410)).contains(rectangle));
+        Assert.assertFalse(new SyncItemArea(boundingBox, new Index(1000, 1501)).contains(rectangle));
+        // Corners
+        Assert.assertTrue(new SyncItemArea(boundingBox, new Index(1000, 1000)).contains(rectangle));
+        Assert.assertTrue(new SyncItemArea(boundingBox, new Index(930, 930)).contains(rectangle));
+        Assert.assertFalse(new SyncItemArea(boundingBox, new Index(929, 929)).contains(rectangle));
+        Assert.assertTrue(new SyncItemArea(boundingBox, new Index(1000, 1399)).contains(rectangle));
+        Assert.assertTrue(new SyncItemArea(boundingBox, new Index(930, 1469)).contains(rectangle));
+        Assert.assertFalse(new SyncItemArea(boundingBox, new Index(929, 1470)).contains(rectangle));
+        Assert.assertTrue(new SyncItemArea(boundingBox, new Index(1499, 1000)).contains(rectangle));
+        Assert.assertTrue(new SyncItemArea(boundingBox, new Index(1569, 930)).contains(rectangle));
+        Assert.assertFalse(new SyncItemArea(boundingBox, new Index(1570, 929)).contains(rectangle));
+        Assert.assertTrue(new SyncItemArea(boundingBox, new Index(1499, 1399)).contains(rectangle));
+        Assert.assertTrue(new SyncItemArea(boundingBox, new Index(1569, 1469)).contains(rectangle));
+        Assert.assertFalse(new SyncItemArea(boundingBox, new Index(1570, 1470)).contains(rectangle));
+    }
+
+    @Test
     public void testInRange() {
-        BoundingBox boundingBox = new BoundingBox(80, 80, ANGELS_24);
-        SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(5000, 5200));
+        BoundingBox boundingBox = new BoundingBox(100, AbstractServiceTest.ANGELS_24);
+        SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(1000, 1000));
 
         BaseItemType baseItemType = new BaseItemType();
-        baseItemType.setBoundingBox(new BoundingBox(80, 80, ANGELS_24));
-        Assert.assertTrue(syncItemArea.isInRange(10, new Index(5000, 5290), baseItemType));
-        // TODO test angel != 0
+        baseItemType.setBoundingBox(new BoundingBox(200, AbstractServiceTest.ANGELS_24));
+        Assert.assertTrue(syncItemArea.isInRange(700, new Index(1000, 1000), baseItemType));
+        Assert.assertTrue(syncItemArea.isInRange(700, new Index(1000, 2000), baseItemType));
+        Assert.assertTrue(syncItemArea.isInRange(701, new Index(1000, 2000), baseItemType));
+        Assert.assertFalse(syncItemArea.isInRange(699, new Index(1000, 2000), baseItemType));
     }
 
     @Test
-    @DirtiesContext
-    public void testInRangePositionInside() {
-        BoundingBox boundingBox = new BoundingBox(200, 200, ANGELS_24);
-        SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(300, 300));
-        Assert.assertTrue(syncItemArea.isInRange(100, new Index(300, 300)));
-        Assert.assertTrue(syncItemArea.isInRange(1, new Index(300, 300)));
-        Assert.assertTrue(syncItemArea.isInRange(0, new Index(300, 300)));
+    public void testInRangePosition() {
+        BoundingBox boundingBox = new BoundingBox(200, AbstractServiceTest.ANGELS_24);
+        SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(1000, 1000));
 
-        syncItemArea = new SyncItemArea(boundingBox, new Index(201, 201));
-        Assert.assertTrue(syncItemArea.isInRange(100, new Index(300, 300)));
-        Assert.assertTrue(syncItemArea.isInRange(1, new Index(300, 300)));
-        Assert.assertTrue(syncItemArea.isInRange(0, new Index(300, 300)));
-
-        syncItemArea = new SyncItemArea(boundingBox, new Index(399, 399));
-        Assert.assertTrue(syncItemArea.isInRange(100, new Index(300, 300)));
-        Assert.assertTrue(syncItemArea.isInRange(1, new Index(300, 300)));
-        Assert.assertTrue(syncItemArea.isInRange(0, new Index(300, 300)));
-        // TODO test angel != 0
+        Assert.assertTrue(syncItemArea.isInRange(100, new Index(1000, 1000)));
+        Assert.assertTrue(syncItemArea.isInRange(0, new Index(1200, 1000)));
+        Assert.assertTrue(syncItemArea.isInRange(100, new Index(1300, 1000)));
+        Assert.assertTrue(syncItemArea.isInRange(101, new Index(1300, 1000)));
+        Assert.assertFalse(syncItemArea.isInRange(99, new Index(1300, 1000)));
     }
 
     @Test
-    @DirtiesContext
-    public void testInRangeSyncItem__TMP() throws Exception {
-        configureSimplePlanetNoResources();
-        // TODO test angel != 0
-
-        BoundingBox boundingBox = new BoundingBox(200, 200, ANGELS_24);
-        SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(400, 400));
-        double max = 0;
-        double min = Double.POSITIVE_INFINITY;
-        for (double angel = 0; angel <= 360.0; angel += 0.5) {
-            syncItemArea.turnTo(MathHelper.gradToRad(angel));
-            double distance = syncItemArea.getDistance(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 640), new Id(1, 1, 1)));
-            System.out.println(angel + ":" + distance);
-            if (distance > max) {
-                max = distance;
-            }
-            if (min > distance) {
-                min = distance;
-            }
-        }
-    }
-
-    @Test
-    @DirtiesContext
-    public void testInRangeSyncItem() throws Exception {
-        configureSimplePlanetNoResources();
-
-        assertSameDistance(45, 102);
-        assertSameDistance(0, 160);
-        // TODO more angel test
-
-//
-//        Assert.assertTrue(syncItemArea.isInRange(100, createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(1, 1, 1))));
-//        Assert.assertTrue(syncItemArea.isInRange(100, createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 640), new Id(1, 1, 1))));
-//
-//        ItemType targetItemType = serverItemService.getItemType(TEST_SIMPLE_BUILDING_ID);
-//        targetItemType.setBoundingBox(new BoundingBox(100, 100, 200, 80, 1));
-//        SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(1500, 1500), new Id(1, -100, -100));
-//        target.getSyncItemArea().turnTo(MathHelper.gradToRad(0));
-//
-//        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1500, 1220), new Id(2, -100, -100));
-//        syncBaseItem.getSyncItemArea().turnTo(MathHelper.gradToRad(0));
-//        Assert.assertTrue(syncBaseItem.getSyncItemArea().isInRange(200, target.getSyncItemArea()));
-//
-//        targetItemType = serverItemService.getItemType(TEST_SIMPLE_BUILDING_ID);
-//        targetItemType.setBoundingBox(new BoundingBox(100, 100, 200, 80, 1));
-//        target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(1500, 1500), new Id(1, -100, -100));
-//        target.getSyncItemArea().turnTo(MathHelper.gradToRad(14.32394487827058));
-/////////////////
-//        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1572, 1771), new Id(2, -100, -100));
-//        syncBaseItem.getSyncItemArea().turnTo(MathHelper.gradToRad(194.80565034447966));
-//
-//        ItemType targetItemType = serverItemService.getItemType(TEST_SIMPLE_BUILDING_ID);
-//        targetItemType.setBoundingBox(new BoundingBox(100, 100, 200, 80, 1));
-//        SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(1500, 1500), new Id(1, -100, -100));
-//        target.getSyncItemArea().turnTo(MathHelper.gradToRad(14.32394487827058));
-//
-//        System.out.println(syncBaseItem.getSyncItemArea().getDistance(target.getSyncItemArea()));
-//        debugService.drawSyncItemArea(syncBaseItem.getSyncItemArea(), Color.BLACK);
-//        debugService.drawSyncItemArea(target.getSyncItemArea(), Color.BLACK);
-//        debugService.waitForClose();
-        //Assert.assertTrue(syncBaseItem.getSyncItemArea().isInRange(200, target.getSyncItemArea()));
-    }
-
-    private void assertSameDistance(double startAngel, int distance) throws Exception {
-        for (double attackerAngel = startAngel; attackerAngel <= 360.0; attackerAngel += 90) {
-            for (double targetAngel = startAngel; targetAngel <= 360.0; targetAngel += 90) {
-                BoundingBox boundingBox = new BoundingBox(200, 200, ANGELS_24);
-                SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(400, 400));
-                syncItemArea.turnTo(MathHelper.gradToRad(attackerAngel));
-
-                SyncBaseItem target = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 700), new Id(1, 1, 1));
-                target.getSyncItemArea().turnTo(MathHelper.gradToRad(targetAngel));
-
-                Assert.assertEquals(distance, syncItemArea.getDistanceRounded(target));
-            }
-        }
-    }
-
-    @Test
-    @DirtiesContext
-    public void testInRangeSyncItemArea() throws Exception {
-        configureSimplePlanetNoResources();
-
-        BoundingBox boundingBox = new BoundingBox(200, 200, ANGELS_24);
-        SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(400, 400));
-        BoundingBox boundingBoxTarget = new BoundingBox(100, 100, ANGELS_24);
-        Assert.assertTrue(syncItemArea.isInRange(100, new SyncItemArea(boundingBoxTarget, new Index(400, 400))));
-        Assert.assertTrue(syncItemArea.isInRange(100, new SyncItemArea(boundingBoxTarget, new Index(150, 400))));
-        Assert.assertFalse(syncItemArea.isInRange(99, new SyncItemArea(boundingBoxTarget, new Index(150, 400))));
-        // TODO test angel != 0
-    }
-
-    @Test
-    @DirtiesContext
     public void getDistanceToPoint() throws Exception {
-        BoundingBox boundingBox = new BoundingBox(200, 200, ANGELS_24);
-        SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(500, 500));
-        Assert.assertEquals(300, syncItemArea.getDistance(new Index(100, 500)), 0.001);
-        syncItemArea.setAngel(MathHelper.gradToRad(90));
-        Assert.assertEquals(300, syncItemArea.getDistance(new Index(100, 500)), 0.001);
-        syncItemArea.setAngel(MathHelper.gradToRad(180));
-        Assert.assertEquals(300, syncItemArea.getDistance(new Index(100, 500)), 0.001);
-        syncItemArea.setAngel(MathHelper.gradToRad(270));
-        Assert.assertEquals(300, syncItemArea.getDistance(new Index(100, 500)), 0.001);
-
-        syncItemArea.setAngel(MathHelper.gradToRad(45));
-        Assert.assertEquals(258.801, syncItemArea.getDistance(new Index(100, 500)), 0.001);
-        syncItemArea.setAngel(MathHelper.gradToRad(135));
-        Assert.assertEquals(258.801, syncItemArea.getDistance(new Index(100, 500)), 0.001);
-        syncItemArea.setAngel(MathHelper.gradToRad(225));
-        Assert.assertEquals(258.801, syncItemArea.getDistance(new Index(100, 500)), 0.001);
-        syncItemArea.setAngel(MathHelper.gradToRad(315));
-        Assert.assertEquals(258.801, syncItemArea.getDistance(new Index(100, 500)), 0.001);
-
-        syncItemArea.setAngel(MathHelper.gradToRad(60));
-        Assert.assertEquals(265.54848, syncItemArea.getDistance(new Index(100, 500)), 0.001);
-        syncItemArea.setAngel(MathHelper.gradToRad(150));
-        Assert.assertEquals(265.54848, syncItemArea.getDistance(new Index(100, 500)), 0.001);
-        syncItemArea.setAngel(MathHelper.gradToRad(240));
-        Assert.assertEquals(265.54848, syncItemArea.getDistance(new Index(100, 500)), 0.001);
-        syncItemArea.setAngel(MathHelper.gradToRad(330));
-        Assert.assertEquals(265.54848, syncItemArea.getDistance(new Index(100, 500)), 0.001);
-
-        boundingBox = new BoundingBox(300, 100, ANGELS_24);
-        syncItemArea = new SyncItemArea(boundingBox, new Index(300, 200));
-        Assert.assertEquals(250, syncItemArea.getDistance(new Index(400, 500)), 0.001);
-        syncItemArea.setAngel(MathHelper.gradToRad(10));
-        Assert.assertEquals(263, syncItemArea.getDistance(new Index(400, 500)), 0.001);
-        syncItemArea.setAngel(MathHelper.gradToRad(35));
-        Assert.assertEquals(253, syncItemArea.getDistance(new Index(400, 500)), 0.001);
-        syncItemArea.setAngel(MathHelper.gradToRad(111));
-        Assert.assertEquals(166, syncItemArea.getDistance(new Index(400, 500)), 0.001);
-
-        boundingBox = new BoundingBox(300, 300, ANGELS_24);
-        syncItemArea = new SyncItemArea(boundingBox, new Index(400, 400));
-        Assert.assertEquals(0, syncItemArea.getDistance(new Index(400, 500)), 0.001);
-        syncItemArea.setAngel(MathHelper.gradToRad(359));
-        Assert.assertEquals(0, syncItemArea.getDistance(new Index(400, 500)), 0.001);
+        BoundingBox boundingBox = new BoundingBox(200, AbstractServiceTest.ANGELS_24);
+        SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(1000, 1000));
+        Assert.assertEquals(300, syncItemArea.getDistance(new Index(1000, 500)), 0.001);
+        Assert.assertEquals(200, syncItemArea.getDistance(new Index(1000, 600)), 0.001);
+        Assert.assertEquals(0, syncItemArea.getDistance(new Index(1000, 1000)), 0.001);
     }
-
 }

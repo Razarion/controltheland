@@ -468,6 +468,12 @@ public class ItemTypeEditorModel {
                     cutBuildupToCorrectLength();
                     cutRuntimeToCorrectLength();
                     cutDemolitionToCorrectLength();
+                    ///--- Setup Base
+                    ClientBase.getInstance().setBase(MY_BASE);
+                    Collection<BaseAttributes> allBaseAttributes = new ArrayList<BaseAttributes>();
+                    allBaseAttributes.add(new BaseAttributes(MY_BASE, "MyBase", false));
+                    allBaseAttributes.add(new BaseAttributes(ENEMY_BASE, "Enemy", false));
+                    ClientBase.getInstance().setAllBaseAttributes(allBaseAttributes);
                     ///--- Setup div
                     TerrainView.uglySuppressRadar = true;
                     Connection.getInstance().init4ItemTypeEditor();
@@ -478,7 +484,7 @@ public class ItemTypeEditorModel {
                     ClientLevelHandler.getInstance().setLevel(new LevelScope(PlanetInfo.EDITOR_PLANET_ID, 0, 0, null, 0));
                     ///--- Setup terrain
                     ArrayList<SurfaceImage> surfaceImages = new ArrayList<SurfaceImage>();
-                    if(itemType.getTerrainType() == null) {
+                    if (itemType.getTerrainType() == null) {
                         throw new IllegalArgumentException("ItemTypeEditorModel: No surface type specified");
                     }
                     surfaceImages.add(new SurfaceImage(itemType.getTerrainType().getSurfaceTypes().get(0), 23, "#00FF00"));
@@ -498,12 +504,6 @@ public class ItemTypeEditorModel {
                     Collection<ItemType> itemTypes = new ArrayList<ItemType>();
                     itemTypes.add(itemType);
                     ItemTypeContainer.getInstance().setItemTypes(itemTypes);
-                    ///--- Setup Base
-                    ClientBase.getInstance().setBase(MY_BASE);
-                    Collection<BaseAttributes> allBaseAttributes = new ArrayList<BaseAttributes>();
-                    allBaseAttributes.add(new BaseAttributes(MY_BASE, "MyBase", false));
-                    allBaseAttributes.add(new BaseAttributes(ENEMY_BASE, "Enemy", false));
-                    ClientBase.getInstance().setAllBaseAttributes(allBaseAttributes);
                     // Item
                     createSyncItem();
                     // Finish initialisation
@@ -618,7 +618,7 @@ public class ItemTypeEditorModel {
     private void setTargetPosition() {
         if (target != null) {
             double angel = boundingBox.angelIndexToAngel(currentAngelIndex);
-            Index targetPos = syncItem.getSyncItemArea().getPosition().getPointFromAngelToNord(angel, (double) (weaponType.getRange() + boundingBox.getHeight()) * 0.75);
+            Index targetPos = syncItem.getSyncItemArea().getPosition().getPointFromAngelToNord(angel, (double) (weaponType.getRange() + 2 * boundingBox.getRadius()) * 0.75);
             targetPos = Index.createSaveIndex(targetPos);
             target.getSyncItemArea().setPosition(targetPos);
         }

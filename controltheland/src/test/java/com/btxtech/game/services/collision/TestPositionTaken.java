@@ -60,13 +60,13 @@ public class TestPositionTaken extends AbstractServiceTest {
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(400, 400), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 9; i++) {
             sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
             waitForActionServiceDone();
         }
 
         List<Id> allIds = getAllSynItemId(TEST_ATTACK_ITEM_ID);
-        Assert.assertEquals(10, allIds.size());
+        Assert.assertEquals(9, allIds.size());
 
         int range = ((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID)).getWeaponType().getRange();
         List<AttackFormationItem> attackFormationItemList = new ArrayList<>();
