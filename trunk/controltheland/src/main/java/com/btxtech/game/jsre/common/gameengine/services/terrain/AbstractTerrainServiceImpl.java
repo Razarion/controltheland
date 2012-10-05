@@ -221,8 +221,8 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
     @Override
     public boolean isFree(Index middlePoint, ItemType itemType) {
         return isFree(middlePoint,
-                itemType.getBoundingBox().getWidth(),
-                itemType.getBoundingBox().getHeight(),
+                itemType.getBoundingBox().getRadius(),
+                itemType.getBoundingBox().getRadius(),
                 itemType.getTerrainType().getSurfaceTypes());
     }
 
@@ -257,24 +257,23 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
     @Override
     public Index correctPosition(SyncItem syncItem, Index position) {
         int x;
-        int halfWidth = syncItem.getSyncItemArea().getBoundingBox().getWidth() / 2;
-        if (position.getX() - halfWidth < 0) {
+        int radius = syncItem.getSyncItemArea().getBoundingBox().getRadius();
+        if (position.getX() - radius < 0) {
             log.warning("Corrected min x position for: " + syncItem);
-            x = halfWidth;
-        } else if (position.getX() + halfWidth > terrainSettings.getPlayFieldXSize()) {
+            x = radius;
+        } else if (position.getX() + radius > terrainSettings.getPlayFieldXSize()) {
             log.warning("Corrected max x position for: " + syncItem);
-            x = terrainSettings.getPlayFieldXSize() - halfWidth;
+            x = terrainSettings.getPlayFieldXSize() - radius;
         } else {
             x = position.getX();
         }
         int y;
-        int halfHeight = syncItem.getSyncItemArea().getBoundingBox().getHeight() / 2;
-        if (position.getY() - halfHeight < 0) {
+        if (position.getY() - radius < 0) {
             log.warning("Corrected min y position for: " + syncItem);
-            y = halfHeight;
-        } else if (position.getY() + halfHeight > terrainSettings.getPlayFieldYSize()) {
+            y = radius;
+        } else if (position.getY() + radius > terrainSettings.getPlayFieldYSize()) {
             log.warning("Corrected max y position for: " + syncItem);
-            y = terrainSettings.getPlayFieldYSize() - halfHeight;
+            y = terrainSettings.getPlayFieldYSize() - radius;
         } else {
             y = position.getY();
         }

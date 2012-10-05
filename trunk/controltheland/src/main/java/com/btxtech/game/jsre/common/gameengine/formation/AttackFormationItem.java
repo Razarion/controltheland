@@ -81,6 +81,6 @@ public class AttackFormationItem {
 
     @Override
     public String toString() {
-        return "RoundedRectangleAttackFormation destinationHint: " + destinationHint + " inRange: " + inRange + " destinationAngel: " + destinationAngel;
+        return "AttackFormationItem destinationHint: " + destinationHint + " inRange: " + inRange + " destinationAngel: " + destinationAngel;
     }
 }

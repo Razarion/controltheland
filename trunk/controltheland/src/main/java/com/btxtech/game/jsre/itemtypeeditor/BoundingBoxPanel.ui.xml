@@ -26,25 +26,13 @@
             </g:row>
             <g:row>
                 <g:customCell>
-                    <g:InlineLabel text="Width"/>
+                    <g:InlineLabel text="Radius"/>
                 </g:customCell>
                 <g:customCell>
                 	<g:HorizontalPanel>
-                		<g:IntegerBox ui:field="widthField"/>
-                        <g:Button text="+" ui:field="widthPlus"/>
-                		<g:Button text="-" ui:field="widthMinus"/>
-                	</g:HorizontalPanel>
-                </g:customCell>
-            </g:row>
-            <g:row>
-                <g:customCell>
-                    <g:InlineLabel text="Height"/>
-                </g:customCell>
-                <g:customCell>
-                	<g:HorizontalPanel>
-                		<g:IntegerBox ui:field="heightField"/>
-                		<g:Button text="+" ui:field="heightPlus"/>
-                		<g:Button text="-" ui:field="heightMinus"/>
+                		<g:IntegerBox ui:field="radiusField"/>
+                        <g:Button text="+" ui:field="radiusPlus"/>
+                		<g:Button text="-" ui:field="radiusMinus"/>
                 	</g:HorizontalPanel>
                 </g:customCell>
             </g:row>

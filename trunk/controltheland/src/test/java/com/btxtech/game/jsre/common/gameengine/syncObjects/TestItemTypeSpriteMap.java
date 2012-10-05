@@ -15,7 +15,7 @@ import org.junit.Test;
 public class TestItemTypeSpriteMap {
     @Test
     public void testRuntime() {
-        BoundingBox boundingBox = new BoundingBox(80, 120, new double[]{0.0, 0.1, 0.2, 0.3, 0.4});
+        BoundingBox boundingBox = new BoundingBox(80, new double[]{0.0, 0.1, 0.2, 0.3, 0.4});
         ItemTypeSpriteMap itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 100, 200, 4, 3, 25, 4, 30, 5, 6, 40);
 
         SyncItemArea syncItemArea = EasyMock.createNiceMock(SyncItemArea.class);

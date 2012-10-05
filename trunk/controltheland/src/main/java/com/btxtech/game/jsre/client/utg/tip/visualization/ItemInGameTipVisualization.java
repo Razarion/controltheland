@@ -17,8 +17,7 @@ public class ItemInGameTipVisualization implements GameTipVisualization {
 
     public ItemInGameTipVisualization(SyncItem syncItem) {
         this.syncItem = syncItem;
-        itemRadius = (int) syncItem.getSyncItemArea().getBoundingBox().getMinRadius();
-
+        itemRadius = syncItem.getSyncItemArea().getBoundingBox().getRadius();
     }
 
     @Override

@@ -562,7 +562,7 @@ public class TestHistoryService extends AbstractServiceTest {
         setupImages(dbBoxItemType, 1);
         dbBoxItemType.setName("Box Item");
         dbBoxItemType.setTerrainType(TerrainType.LAND);
-        dbBoxItemType.setBounding(new BoundingBox(80, 80, ANGELS_1));
+        dbBoxItemType.setBounding(new BoundingBox(80, ANGELS_1));
         dbBoxItemType.setTtl(5000);
         serverItemTypeService.saveDbItemType(dbBoxItemType);
         serverItemTypeService.activate();

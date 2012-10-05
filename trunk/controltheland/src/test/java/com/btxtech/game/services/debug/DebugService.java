@@ -13,11 +13,10 @@
 
 package com.btxtech.game.services.debug;
 
-import com.btxtech.game.jsre.client.common.Arc;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Line;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.common.gameengine.formation.Segment;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 
 import java.awt.*;
@@ -37,10 +36,6 @@ public interface DebugService {
 
     void drawLines(Collection<Line> lines);
     
-    void drawArc(Arc arc, Color color);
-
-    void drawSegments(Collection<Segment> segments);
-
     void drawSyncItemArea(SyncItemArea syncItemArea, Color color);
 
     void drawPosition(Index position, Color color);
@@ -48,4 +43,6 @@ public interface DebugService {
     void drawPosition(Index position);
 
     void waitForClose();
+
+    void displayOverlapping(java.util.List<SyncBaseItem> attackers);
 }

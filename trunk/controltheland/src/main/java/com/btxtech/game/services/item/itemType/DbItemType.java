@@ -71,8 +71,7 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbItemTypeImage> itemTypeImages;
     private TerrainType terrainType;
-    private int boundingBoxWidth;
-    private int boundingBoxHeight;
+    private int boundingBoxRadius;
     private int imageWidth;
     private int imageHeight;
     private int buildupSteps;
@@ -245,13 +244,13 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
     }
 
     @Override
-    public int getBoundingBoxWidth() {
-        return boundingBoxWidth;
+    public int getBoundingBoxRadius() {
+        return boundingBoxRadius;
     }
 
     @Override
-    public int getBoundingBoxHeight() {
-        return boundingBoxHeight;
+    public void setBoundingBoxRadius(int boundingBoxRadius) {
+        this.boundingBoxRadius = boundingBoxRadius;
     }
 
     public void setImageWidth(int imageWidth) {
@@ -289,7 +288,7 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
     public BoundingBox createBoundingBox() {
         double[] angelsCopy = ArrayUtils.toPrimitive(angels.toArray(new Double[angels.size()]));
         Arrays.sort(angelsCopy);
-        return new BoundingBox(boundingBoxWidth, boundingBoxHeight, angelsCopy);
+        return new BoundingBox(boundingBoxRadius, angelsCopy);
     }
 
     public ItemTypeSpriteMap createItemTypeSpriteMap(BoundingBox boundingBox) {
@@ -299,8 +298,7 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
     }
 
     public void setBounding(BoundingBox boundingBox) {
-        boundingBoxWidth = boundingBox.getWidth();
-        boundingBoxHeight = boundingBox.getHeight();
+        boundingBoxRadius = boundingBox.getRadius();
         angels = Arrays.asList(ArrayUtils.toObject(boundingBox.getAngels()));
     }
 

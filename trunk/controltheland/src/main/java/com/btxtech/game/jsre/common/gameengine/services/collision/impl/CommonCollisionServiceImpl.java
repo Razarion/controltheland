@@ -147,38 +147,33 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
 
     @Override
     public Index getRallyPoint(SyncBaseItem factory, Collection<ItemType> ableToBuild) {
-        int maxWidth = 0;
-        int maxHeight = 0;
+        int maxRadius = 0;
         Collection<TerrainType> types = new ArrayList<TerrainType>();
 
         for (ItemType itemType : ableToBuild) {
-            if (itemType.getBoundingBox().getWidth() > maxWidth) {
-                maxWidth = itemType.getBoundingBox().getWidth();
-            }
-            if (itemType.getBoundingBox().getHeight() > maxHeight) {
-                maxHeight = itemType.getBoundingBox().getHeight();
+            if (itemType.getBoundingBox().getRadius() > maxRadius) {
+                maxRadius = itemType.getBoundingBox().getRadius();
             }
             types.add(itemType.getTerrainType());
         }
         return getFreeRandomPosition(factory,
-                maxWidth,
-                maxHeight,
+                maxRadius,
                 TerrainType.leastCommonMultiple(types),
-                factory.getItemType().getBoundingBox().getMaxRadius(),
+                factory.getItemType().getBoundingBox().getRadius(),
                 MAX_RANGE_RALLY_POINT);
     }
 
-    private Index getFreeRandomPosition(SyncBaseItem origin, int itemFreeWidth, int itemFreeHeight, Collection<SurfaceType> allowedSurfaces, int targetMinRange, int targetMaxRange) {
+    private Index getFreeRandomPosition(SyncBaseItem origin, int maxRadius, Collection<SurfaceType> allowedSurfaces, int targetMinRange, int targetMaxRange) {
         int delta = (targetMaxRange - targetMinRange) / STEPS_DISTANCE;
         for (int distance = 0; distance < (targetMaxRange - targetMinRange); distance += delta) {
             for (double angel = 0.0; angel < 2.0 * Math.PI; angel += (2.0 * Math.PI / STEPS_ANGEL)) {
                 Index point = origin.getSyncItemArea().getPosition().getPointFromAngelToNord(angel, distance + targetMinRange);
 
-                if (!getServices().getTerrainService().isFree(point, itemFreeWidth, itemFreeHeight, allowedSurfaces)) {
+                if (!getServices().getTerrainService().isFree(point, maxRadius, maxRadius, allowedSurfaces)) {
                     continue;
                 }
 
-                Rectangle rectangle = Rectangle.generateRectangleFromMiddlePoint(point, itemFreeWidth, itemFreeHeight);
+                Rectangle rectangle = Rectangle.generateRectangleFromMiddlePoint(point, maxRadius, maxRadius);
                 if (getServices().getItemService().hasItemsInRectangle(rectangle)) {
                     continue;
                 }
@@ -188,8 +183,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
 
         throw new IllegalStateException("Can not find free position."
                 + "Origin: " + origin
-                + " itemFreeWidth: " + itemFreeWidth
-                + " itemFreeHeight: " + itemFreeHeight
+                + " maxRadius: " + maxRadius
                 + " allowedSurfaces: " + SurfaceType.toString(allowedSurfaces)
                 + " targetMinRange: " + targetMinRange
                 + " targetMaxRange: " + targetMaxRange);
@@ -215,10 +209,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
                     continue;
                 }
             } else {
-                int width = itemFreeRange + itemType.getBoundingBox().getWidth();
-                int height = itemFreeRange + itemType.getBoundingBox().getHeight();
-                Index start = point.sub(new Index(width / 2, height / 2));
-                Rectangle rectangle = new Rectangle(start.getX(), start.getY(), width, height);
+                Rectangle rectangle = Rectangle.generateRectangleFromMiddlePoint(point, itemType.getBoundingBox().getRadius(), itemType.getBoundingBox().getRadius());
                 if (getServices().getItemService().hasItemsInRectangle(rectangle)) {
                     continue;
                 }
@@ -247,10 +238,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
                     continue;
                 }
             } else {
-                int width = itemFreeRange + itemType.getBoundingBox().getWidth();
-                int height = itemFreeRange + itemType.getBoundingBox().getHeight();
-                Index start = absolutePosition.sub(new Index(width / 2, height / 2));
-                Rectangle rectangle = new Rectangle(start.getX(), start.getY(), width, height);
+                Rectangle rectangle = Rectangle.generateRectangleFromMiddlePoint(absolutePosition, itemType.getBoundingBox().getRadius(), itemType.getBoundingBox().getRadius());
                 if (getServices().getItemService().hasItemsInRectangle(rectangle)) {
                     continue;
                 }

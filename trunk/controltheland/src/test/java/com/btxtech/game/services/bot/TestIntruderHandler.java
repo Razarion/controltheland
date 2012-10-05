@@ -105,7 +105,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
         SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-2, -2, 0));
 
         ActionService mockActionService = EasyMock.createStrictMock(ActionService.class);
-        mockActionService.attack(EasyMock.eq(defender), EasyMock.eq(intruder), EasyMock.eq(new Index(1001, 822)), EasyMock.eq(3.141592653589793, 0.1), EasyMock.eq(true));
+        mockActionService.attack(EasyMock.eq(defender), EasyMock.eq(intruder), EasyMock.eq(new Index(1154, 792)), EasyMock.eq(2.504273846247413, 0.1), EasyMock.eq(true));
 
         ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
         EasyMock.expect(mockServerItemService.getEnemyItems(botBase, region)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
@@ -145,7 +145,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
 
         ActionService mockActionService = EasyMock.createStrictMock(ActionService.class);
         testServices.setActionService(mockActionService);
-        mockActionService.attack(EasyMock.eq(defender), EasyMock.eq(intruder), EasyMock.eq(new Index(1001, 822)), EasyMock.eq(3.141592653589793, 0.1), EasyMock.eq(true));
+        mockActionService.attack(EasyMock.eq(defender), EasyMock.eq(intruder), EasyMock.eq(new Index(1154, 792)), EasyMock.eq(2.504273846247413, 0.1), EasyMock.eq(true));
 
         BotEnragementState mockEnragementState = EasyMock.createStrictMock(BotEnragementState.class);
         BotSyncBaseItem defenderBotItem = new BotSyncBaseItem(defender, null, testServices);
@@ -185,7 +185,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
         TestPlanetServices testServices = new TestPlanetServices();
 
         ActionService mockActionService = EasyMock.createStrictMock(ActionService.class);
-        mockActionService.attack(EasyMock.eq(defender), EasyMock.eq(intruder), EasyMock.eq(new Index(1001, 822)), EasyMock.eq(3.141592653589793, 0.1), EasyMock.eq(true));
+        mockActionService.attack(EasyMock.eq(defender), EasyMock.eq(intruder), EasyMock.eq(new Index(1154, 792)), EasyMock.eq(2.504273846247413, 0.1), EasyMock.eq(true));
         testServices.setActionService(mockActionService);
 
         BotEnragementState mockEnragementState = EasyMock.createStrictMock(BotEnragementState.class);
@@ -228,8 +228,8 @@ public class TestIntruderHandler extends AbstractServiceTest {
         TestPlanetServices testServices = new TestPlanetServices();
 
         ActionService mockActionService = EasyMock.createStrictMock(ActionService.class);
-        mockActionService.attack(EasyMock.eq(attacker), EasyMock.eq(intruder), EasyMock.eq(new Index(1001, 822)), EasyMock.eq(3.141592653589793, 0.1), EasyMock.eq(true));
-        mockActionService.attack(EasyMock.eq(attacker), EasyMock.eq(intruder), EasyMock.eq(new Index(1001, 822)), EasyMock.eq(3.141592653589793, 0.1), EasyMock.eq(true));
+        mockActionService.attack(EasyMock.eq(attacker), EasyMock.eq(intruder), EasyMock.eq(new Index(1154, 792)), EasyMock.eq(2.504273846247413, 0.1), EasyMock.eq(true));
+        mockActionService.attack(EasyMock.eq(attacker), EasyMock.eq(intruder), EasyMock.eq(new Index(1154, 792)), EasyMock.eq(2.504273846247413, 0.1), EasyMock.eq(true));
         testServices.setActionService(mockActionService);
 
         BotEnragementState mockEnragementState = EasyMock.createStrictMock(BotEnragementState.class);
@@ -272,10 +272,10 @@ public class TestIntruderHandler extends AbstractServiceTest {
         TestPlanetServices testServices = new TestPlanetServices();
 
         ActionService mockActionService = EasyMock.createStrictMock(ActionService.class);
-        mockActionService.attack(EasyMock.eq(attacker), EasyMock.eq(intruder), EasyMock.eq(new Index(1001, 822)), EasyMock.eq(3.141592653589793, 0.1), EasyMock.eq(true));
+        mockActionService.attack(EasyMock.eq(attacker), EasyMock.eq(intruder), EasyMock.eq(new Index(1154, 792)), EasyMock.eq(2.504273846247413, 0.1), EasyMock.eq(true));
         //noinspection ThrowableInstanceNeverThrown
         EasyMock.expectLastCall().andThrow(new RuntimeException());
-        mockActionService.attack(EasyMock.eq(attacker), EasyMock.eq(intruder), EasyMock.eq(new Index(1001, 822)), EasyMock.eq(3.141592653589793, 0.1), EasyMock.eq(true));
+        mockActionService.attack(EasyMock.eq(attacker), EasyMock.eq(intruder), EasyMock.eq(new Index(1154, 792)), EasyMock.eq(2.504273846247413, 0.1), EasyMock.eq(true));
         testServices.setActionService(mockActionService);
 
         BotEnragementState mockEnragementState = EasyMock.createStrictMock(BotEnragementState.class);
@@ -318,10 +318,10 @@ public class TestIntruderHandler extends AbstractServiceTest {
         TestPlanetServices testServices = new TestPlanetServices();
 
         ActionService mockActionService = EasyMock.createStrictMock(ActionService.class);
-        mockActionService.attack(EasyMock.eq(attacker), EasyMock.eq(intruder1), EasyMock.eq(new Index(1001, 822)), EasyMock.eq(3.141592653589793, 0.1), EasyMock.eq(true));
+        mockActionService.attack(EasyMock.eq(attacker), EasyMock.eq(intruder1), EasyMock.eq(new Index(1154, 792)), EasyMock.eq(2.504273846247413, 0.1), EasyMock.eq(true));
         //noinspection ThrowableInstanceNeverThrown
         EasyMock.expectLastCall().andThrow(new RuntimeException());
-        mockActionService.attack(EasyMock.eq(attacker), EasyMock.eq(intruder1), EasyMock.eq(new Index(1001, 822)), EasyMock.eq(3.141592653589793, 0.1), EasyMock.eq(true));
+        mockActionService.attack(EasyMock.eq(attacker), EasyMock.eq(intruder1), EasyMock.eq(new Index(1154, 792)), EasyMock.eq(2.504273846247413, 0.1), EasyMock.eq(true));
         testServices.setActionService(mockActionService);
 
         BotEnragementState mockEnragementState = EasyMock.createStrictMock(BotEnragementState.class);

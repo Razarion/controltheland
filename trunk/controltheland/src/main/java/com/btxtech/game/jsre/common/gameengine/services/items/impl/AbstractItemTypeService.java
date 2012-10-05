@@ -31,8 +31,7 @@ import java.util.List;
  */
 abstract public class AbstractItemTypeService implements ItemTypeService {
     private final HashMap<Integer, ItemType> itemTypes = new HashMap<Integer, ItemType>();
-    private int maxItemWidth;
-    private int maxItemHeight;
+    private int maxItemRadius;
     private int maxItemDiameter;
 
     @Override
@@ -129,27 +128,18 @@ abstract public class AbstractItemTypeService implements ItemTypeService {
     }
 
     private void calculateMaxItemDimension() {
-        maxItemWidth = 0;
-        maxItemHeight = 0;
+        maxItemRadius = 0;
         for (ItemType itemType : itemTypes.values()) {
-            if (itemType.getBoundingBox().getWidth() > maxItemWidth) {
-                maxItemWidth = itemType.getBoundingBox().getWidth();
-            }
-            if (itemType.getBoundingBox().getHeight() > maxItemHeight) {
-                maxItemHeight = itemType.getBoundingBox().getHeight();
+            if (itemType.getBoundingBox().getRadius() > maxItemRadius) {
+                maxItemRadius = itemType.getBoundingBox().getRadius();
             }
         }
-        maxItemDiameter = (int) MathHelper.getPythagoras(maxItemWidth, maxItemHeight);
+        maxItemDiameter = maxItemRadius * 2;
     }
 
     @Override
-    public int getMaxItemWidth() {
-        return maxItemWidth;
-    }
-
-    @Override
-    public int getMaxItemHeight() {
-        return maxItemHeight;
+    public int getMaxItemRadius() {
+        return maxItemRadius;
     }
 
     @Override

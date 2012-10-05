@@ -70,7 +70,7 @@ public class Rectangle implements Serializable {
     }
 
     /**
-     * Returns true if the given position is in the rectangle the rectangle
+     * Returns true if the given position is in the rectangle
      *
      * @param position to check
      * @return true if adjoins or contains position

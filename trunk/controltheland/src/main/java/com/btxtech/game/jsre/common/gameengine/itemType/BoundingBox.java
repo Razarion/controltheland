@@ -1,7 +1,6 @@
 package com.btxtech.game.jsre.common.gameengine.itemType;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 
@@ -13,10 +12,9 @@ import java.io.Serializable;
  * Time: 13:00:05
  */
 public class BoundingBox implements Serializable {
-    private int width;
-    private int height;
+    private int radius;
+    private int diameter;
     private double[] angels;
-    private int maxDiameter;
     private int cosmeticAngelIndex;
     private double cosmeticAngel;
 
@@ -26,10 +24,9 @@ public class BoundingBox implements Serializable {
     protected BoundingBox() {
     }
 
-    public BoundingBox(int width, int height, double[] angels) {
-        this.width = width;
-        this.height = height;
-        setupMaxDiameter();
+    public BoundingBox(int radius, double[] angels) {
+        this.radius = radius;
+        diameter = 2 * radius;
         this.angels = angels;
         if (angels.length == 0) {
             cosmeticAngelIndex = 0;
@@ -40,58 +37,17 @@ public class BoundingBox implements Serializable {
         }
     }
 
-    public void setWidth(int width) {
-        this.width = width;
-        setupMaxDiameter();
+    public int getRadius() {
+        return radius;
     }
 
-    public void setHeight(int height) {
-        this.height = height;
-        setupMaxDiameter();
+    public void setRadius(int radius) {
+        this.radius = radius;
+        diameter = 2 * radius;
     }
 
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getMaxRadius() {
-        return getMaxDiameter() / 2;
-    }
-
-    public double getMaxRadiusDouble() {
-        return (double) getMaxDiameter() / 2.0;
-    }
-
-    public int getMaxDiameter() {
-        return maxDiameter;
-    }
-
-    private void setupMaxDiameter() {
-        maxDiameter = (int) Math.round(MathHelper.getPythagoras(width, height));
-    }
-
-    public int getMinDiameter() {
-        return Math.min(width, height);
-    }
-
-    public double getMinRadius() {
-        return Math.min(width, height) / 2.0;
-    }
-
-    public boolean contains(Index middle, Rectangle rectangle) {
-        return getRectangle(middle).adjoinsEclusive(rectangle);
-    }
-
-    public boolean contains(Index middle, Index point) {
-        return getRectangle(middle).containsExclusive(point);
-    }
-
-    public Rectangle getRectangle(Index middle) {
-        return Rectangle.generateRectangleFromMiddlePoint(middle, width, height);
+    public int getDiameter() {
+        return diameter;
     }
 
     public boolean isTurnable() {
@@ -106,14 +62,6 @@ public class BoundingBox implements Serializable {
         return cosmeticAngelIndex;
     }
 
-    public int getEffectiveWidth() {
-        return width;
-    }
-
-    public int getEffectiveHeight() {
-        return height;
-    }
-
     public SyncItemArea createSyntheticSyncItemArea(Index destination) {
         SyncItemArea syncItemArea = new SyncItemArea(this, null);
         syncItemArea.setPositionNoCheck(destination);
@@ -124,30 +72,6 @@ public class BoundingBox implements Serializable {
         SyncItemArea syncItemArea = createSyntheticSyncItemArea(destination);
         syncItemArea.setAngel(angel);
         return syncItemArea;
-    }
-
-    public int getArea() {
-        return width * height;
-    }
-
-    public Index getCorner1() {
-        return new Index(-width / 2, -height / 2);
-    }
-
-    public Index getCorner2() {
-        return new Index(-width / 2, height / 2);
-    }
-
-    public Index getCorner3() {
-        return new Index(width / 2, height / 2);
-    }
-
-    public Index getCorner4() {
-        return new Index(width / 2, -height / 2);
-    }
-
-    public int getSmallerstSide() {
-        return Math.min(width, height);
     }
 
     public double getAllowedAngel(double angel) {
@@ -237,6 +161,6 @@ public class BoundingBox implements Serializable {
 
     @Override
     public String toString() {
-        return "BoundingBox: width: " + width + " height: " + height + " angels: " + angels.length;
+        return "BoundingBox: radius: " + radius + " angels: " + angels.length;
     }
 }

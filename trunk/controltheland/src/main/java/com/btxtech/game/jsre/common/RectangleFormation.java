@@ -28,8 +28,7 @@ public class RectangleFormation {
     //Making own index to prevent negative value exception
     private int lastX;
     private int lastY;
-    private int distanceX = 0;
-    private int distanceY = 0;
+    private int maxDiameter = 0;
     private int lineCount = 0;
     private int linePartCount = 1;
     private int currentLinePartCount = 0;
@@ -37,13 +36,11 @@ public class RectangleFormation {
     public RectangleFormation(Index origin, Collection<SyncBaseItem> syncBaseItems) {
         this.origin = origin;
         for (SyncBaseItem syncBaseItem : syncBaseItems) {
-            if (syncBaseItem.getItemType().getBoundingBox().getMaxDiameter() > distanceX) {
-                distanceX = syncBaseItem.getItemType().getBoundingBox().getMaxDiameter();
-            }
-            if (syncBaseItem.getItemType().getBoundingBox().getMaxDiameter() > distanceY) {
-                distanceY = syncBaseItem.getItemType().getBoundingBox().getMaxDiameter();
+            if (syncBaseItem.getItemType().getBoundingBox().getDiameter() > maxDiameter) {
+                maxDiameter = syncBaseItem.getItemType().getBoundingBox().getDiameter();
             }
         }
+        maxDiameter++;
     }
 
     public Index calculateNextEntry() {
@@ -56,7 +53,7 @@ public class RectangleFormation {
         currentLinePartCount++;
         if (lineCount % 4 == 1) {
             // X side increase
-            lastX += distanceX;
+            lastX += maxDiameter;
             if (currentLinePartCount == linePartCount) {
                 lineCount++;
                 currentLinePartCount = 0;
@@ -64,7 +61,7 @@ public class RectangleFormation {
             return returnIndex();
         } else if (lineCount % 4 == 2) {
             //Y side increase
-            lastY += distanceY;
+            lastY += maxDiameter;
             if (currentLinePartCount == linePartCount) {
                 lineCount++;
                 linePartCount++;
@@ -73,7 +70,7 @@ public class RectangleFormation {
             return returnIndex();
         } else if (lineCount % 4 == 3) {
             //X side decrease
-            lastX -= distanceX;
+            lastX -= maxDiameter;
             if (currentLinePartCount == linePartCount) {
                 lineCount++;
                 currentLinePartCount = 0;
@@ -81,7 +78,7 @@ public class RectangleFormation {
             return returnIndex();
         } else {
             //Y side decrease
-            lastY -= distanceY;
+            lastY -= maxDiameter;
             if (currentLinePartCount == linePartCount) {
                 lineCount++;
                 linePartCount++;

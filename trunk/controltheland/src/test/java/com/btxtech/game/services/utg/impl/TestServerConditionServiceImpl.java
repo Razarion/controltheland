@@ -324,7 +324,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         sendMoveCommand(container, new Index(1100, 1100));
         waitForActionServiceDone();
         sendUnloadContainerCommand(container, new Index(1000, 1000));
-        waitForActionServiceDone(); // TODO crashed here (Count 2), 02.20.2012, 02.20.2012
+        waitForActionServiceDone(); // TODO crashed here (Count 2), 02.20.2012, 02.20.2012, 05.10.2012
         assertActorAndIdentifierAndClear(userService.getUserState(), 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -463,6 +463,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         userService.login("U1", "test");
         Assert.assertEquals(2, userGuidanceService.getQuestOverview().getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
+        // TODO failed 05.10.2012
         assertAndSetTimeRemaining();
         Thread.sleep(100);
         Assert.assertEquals(1, userGuidanceService.getQuestOverview().getQuestInfos().size());

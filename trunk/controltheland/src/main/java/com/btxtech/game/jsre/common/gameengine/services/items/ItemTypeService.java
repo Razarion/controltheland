@@ -21,10 +21,7 @@ public interface ItemTypeService {
 
     List<BaseItemType> ableToBuild(BaseItemType toBeBuilt);
 
-    int getMaxItemWidth();
-
-    int getMaxItemHeight();
+    int getMaxItemRadius();
 
     int getMaxItemDiameter();
-
 }

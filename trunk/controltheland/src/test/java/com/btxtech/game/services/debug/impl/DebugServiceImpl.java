@@ -13,25 +13,23 @@
 
 package com.btxtech.game.services.debug.impl;
 
-import com.btxtech.game.jsre.client.common.Arc;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Line;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.MathHelper;
-import com.btxtech.game.jsre.common.gameengine.formation.Segment;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.btxtech.game.services.debug.DebugService;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * User: beat
@@ -50,7 +48,6 @@ public class DebugServiceImpl implements DebugService {
     private final Map<Line, Color> lineColorMap = new HashMap<Line, Color>();
     private final Map<SyncItemArea, Color> syncItemAreaColorMap = new HashMap<SyncItemArea, Color>();
     private final Map<Index, Color> indexColorMap = new HashMap<Index, Color>();
-    private final Map<Arc, Color> arcColorMap = new HashMap<Arc, Color>();
     private Thread blockedThread;
     private Label mousePosition;
 
@@ -82,7 +79,6 @@ public class DebugServiceImpl implements DebugService {
                     privatePaintGrid(g);
                     privatePaintRectangles(g);
                     privatePaintLines(g);
-                    privatePaintArcs(g);
                     privatePaintSyncItemArea(g);
                     privatePaintIndexes(g);
                 }
@@ -146,18 +142,11 @@ public class DebugServiceImpl implements DebugService {
         for (Map.Entry<SyncItemArea, Color> entry : syncItemAreaColorMap.entrySet()) {
             graphics.setColor(entry.getValue());
             SyncItemArea syncItemArea = entry.getKey();
-            Index index1 = syncItemArea.getCorner1();
-            Index index2 = syncItemArea.getCorner2();
-            graphics.drawLine(index1.getX(), index1.getY(), index2.getX(), index2.getY());
-            index1 = syncItemArea.getCorner2();
-            index2 = syncItemArea.getCorner3();
-            graphics.drawLine(index1.getX(), index1.getY(), index2.getX(), index2.getY());
-            index1 = syncItemArea.getCorner3();
-            index2 = syncItemArea.getCorner4();
-            graphics.drawLine(index1.getX(), index1.getY(), index2.getX(), index2.getY());
-            index1 = syncItemArea.getCorner4();
-            index2 = syncItemArea.getCorner1();
-            graphics.drawLine(index1.getX(), index1.getY(), index2.getX(), index2.getY());
+            graphics.drawArc(syncItemArea.getPosition().getX() - syncItemArea.getBoundingBox().getRadius(),
+                    syncItemArea.getPosition().getY() - syncItemArea.getBoundingBox().getRadius(),
+                    syncItemArea.getBoundingBox().getDiameter(),
+                    syncItemArea.getBoundingBox().getDiameter(),
+                    0, 360);
         }
     }
 
@@ -174,19 +163,6 @@ public class DebugServiceImpl implements DebugService {
             graphics.setColor(entry.getValue());
             Line line = entry.getKey();
             graphics.drawLine(line.getPoint1().getX(), line.getPoint1().getY(), line.getPoint2().getX(), line.getPoint2().getY());
-        }
-    }
-
-    private void privatePaintArcs(Graphics graphics) {
-        for (Map.Entry<Arc, Color> entry : arcColorMap.entrySet()) {
-            graphics.setColor(entry.getValue());
-            Arc arc = entry.getKey();
-            graphics.drawArc(arc.getUpperLeftCorner().getX(),
-                    arc.getUpperLeftCorner().getY(),
-                    (int) Math.round(2.0 * arc.getRadius()),
-                    (int) Math.round(2.0 * arc.getRadius()),
-                    (int) MathHelper.radToGrad(arc.getMiddle().getAngleToNord(arc.getStart()) + MathHelper.QUARTER_RADIANT),
-                    (int) MathHelper.radToGrad(arc.getAngel()));
         }
     }
 
@@ -238,31 +214,6 @@ public class DebugServiceImpl implements DebugService {
     }
 
     @Override
-    public void drawArc(Arc arc, Color color) {
-        synchronized (rectangleColorMap) {
-            arcColorMap.put(arc, color);
-        }
-        update();
-    }
-
-
-    @Override
-    public void drawSegments(Collection<Segment> segments) {
-        for (Segment segment : segments) {
-            synchronized (rectangleColorMap) {
-                if (segment instanceof Line) {
-                    lineColorMap.put((Line) segment, Color.BLUE);
-                } else if (segment instanceof Arc) {
-                    arcColorMap.put((Arc) segment, Color.BLUE);
-                } else {
-                    throw new IllegalArgumentException("Unknown segment type: " + segment);
-                }
-            }
-        }
-        update();
-    }
-
-    @Override
     public void drawSyncItemArea(SyncItemArea syncItemArea, Color color) {
         synchronized (rectangleColorMap) {
             syncItemAreaColorMap.put(syncItemArea, color);
@@ -281,5 +232,23 @@ public class DebugServiceImpl implements DebugService {
     @Override
     public void drawPosition(Index position) {
         drawPosition(position, Color.RED);
+    }
+
+
+    @Override
+    public void displayOverlapping(java.util.List<SyncBaseItem> attackers) {
+        for (int i = 0, attackersSize = attackers.size(); i < attackersSize; i++) {
+            SyncBaseItem attackerToCheck = attackers.get(i);
+            for (int j = i + 1; j < attackersSize; j++) {
+                SyncBaseItem attacker = attackers.get(j);
+                if (attackerToCheck.getSyncItemArea().contains(attacker)) {
+                    System.out.println("Overlap: [" + i + "]" + attackerToCheck + " ------ [" + j + "]" + attacker);
+                    drawSyncItemArea(attacker.getSyncItemArea(), Color.RED);
+                    drawPosition(attacker.getSyncItemArea().getPosition(), Color.RED);
+                    drawSyncItemArea(attackerToCheck.getSyncItemArea(), Color.RED);
+                    drawPosition(attackerToCheck.getSyncItemArea().getPosition(), Color.RED);
+                }
+            }
+        }
     }
 }

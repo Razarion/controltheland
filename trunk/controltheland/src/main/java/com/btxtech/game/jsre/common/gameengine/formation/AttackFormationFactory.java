@@ -17,13 +17,14 @@ public class AttackFormationFactory {
 
         for (AttackFormationItem attackFormationItem : attackFormationItems) {
             BaseItemType baseItemType = attackFormationItem.getSyncBaseItem().getBaseItemType();
-            if (baseItemType.getBoundingBox().getMaxDiameter() > maxDiameter) {
-                maxDiameter = baseItemType.getBoundingBox().getMaxDiameter();
+            if (baseItemType.getBoundingBox().getDiameter() > maxDiameter) {
+                maxDiameter = baseItemType.getBoundingBox().getDiameter();
             }
             if (attackFormationItem.getRange() < range) {
                 range = attackFormationItem.getRange();
             }
         }
-        return new RoundedRectangleAttackFormation(target, startAngel, attackFormationItems, maxDiameter, range);
+        range--; // To prevent any rounding faults
+        return new CircleAttackFormation(target, startAngel, attackFormationItems, maxDiameter, range);
     }
 }
