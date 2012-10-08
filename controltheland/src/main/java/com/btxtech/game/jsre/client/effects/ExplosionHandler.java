@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.effects;
 
+import com.btxtech.game.jsre.client.NoSuchClipException;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -20,6 +21,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -29,6 +32,7 @@ import java.util.Iterator;
 public class ExplosionHandler {
     private static final ExplosionHandler INSTANCE = new ExplosionHandler();
     private ArrayList<Explosion> explosions = new ArrayList<Explosion>();
+    private Logger log = Logger.getLogger(ExplosionHandler.class.getName());
 
     public static ExplosionHandler getInstance() {
         return INSTANCE;
@@ -42,7 +46,11 @@ public class ExplosionHandler {
 
     public void onExplosion(SyncItem syncItem) {
         if (syncItem.getSyncItemArea().contains(TerrainView.getInstance().getViewRect())) {
-            explosions.add(new Explosion(syncItem));
+            try {
+                explosions.add(new Explosion(syncItem));
+            } catch (NoSuchClipException e) {
+                log.log(Level.SEVERE, "ExplosionHandler.onExplosion", e);
+            }
         }
     }
 
@@ -50,8 +58,8 @@ public class ExplosionHandler {
         Collection<Explosion> explosions = new ArrayList<Explosion>();
         for (Iterator<Explosion> iterator = this.explosions.iterator(); iterator.hasNext(); ) {
             Explosion explosion = iterator.next();
-            explosion.setTimeStamp(timeStamp);
-            if (explosion.isInTime() && explosion.isInViewRect(viewRect)) {
+            explosion.prepareRender(timeStamp, viewRect);
+            if (explosion.isPlaying() && explosion.isInViewRect()) {
                 explosions.add(explosion);
             } else {
                 iterator.remove();

@@ -48,12 +48,13 @@ import com.btxtech.game.services.connection.ServerGlobalConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
 import com.btxtech.game.services.item.ServerItemTypeService;
+import com.btxtech.game.services.media.ClipService;
+import com.btxtech.game.services.media.SoundService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.NoSuchPlanetException;
 import com.btxtech.game.services.planet.PlanetSystemService;
-import com.btxtech.game.services.sound.SoundService;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.terrain.TerrainDbUtil;
 import com.btxtech.game.services.terrain.TerrainImageService;
@@ -104,6 +105,8 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     private StatisticsService statisticsService;
     @Autowired
     private SoundService soundService;
+    @Autowired
+    private ClipService clipService;
     @Autowired
     private PlanetSystemService planetSystemService;
 
@@ -167,7 +170,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         try {
             planetSystemService.continuePlanet(startUuid);
             RealGameInfo realGameInfo = new RealGameInfo();
-            setCommonInfo(realGameInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService);
+            setCommonInfo(realGameInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService, clipService);
             ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices();
             Base base = serverPlanetServices.getBaseService().getBase();
             realGameInfo.setBase(base.getSimpleBase());
@@ -196,7 +199,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             SimulationInfo simulationInfo = new SimulationInfo();
             DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialConfig(levelTaskId);
             // Common
-            setCommonInfo(simulationInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService);
+            setCommonInfo(simulationInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService, clipService);
             simulationInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(serverItemTypeService));
             simulationInfo.setLevelTaskId(levelTaskId);
             simulationInfo.setLevelTaskTitel(userGuidanceService.getDbLevel().getLevelTaskCrud().readDbChild(levelTaskId).getName());
@@ -223,13 +226,15 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         }
     }
 
-    public static void setCommonInfo(GameInfo gameInfo, UserService userService, ServerItemTypeService serverItemTypeService, MgmtService mgmtService, CmsUiService cmsUiService, SoundService soundService) {
+    public static void setCommonInfo(GameInfo gameInfo, UserService userService, ServerItemTypeService serverItemTypeService, MgmtService mgmtService, CmsUiService cmsUiService, SoundService soundService, ClipService clipService) {
         gameInfo.setRegistered(userService.isRegistered());
         gameInfo.setItemTypes(serverItemTypeService.getItemTypes());
         StartupData startupData = mgmtService.getStartupData();
         gameInfo.setRegisterDialogDelay(startupData.getRegisterDialogDelay());
         gameInfo.setPredefinedUrls(cmsUiService.getPredefinedUrls());
         gameInfo.setCommonSoundInfo(soundService.getCommonSoundInfo());
+        gameInfo.setClipLibrary(clipService.getClipLibrary());
+        gameInfo.setCommonClipInfo(clipService.getCommonClipInfo());
     }
 
     @Override

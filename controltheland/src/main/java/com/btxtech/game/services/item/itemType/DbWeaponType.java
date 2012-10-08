@@ -18,7 +18,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.common.ReadonlyCollectionContentProvider;
 import com.btxtech.game.services.common.Utils;
-import com.btxtech.game.services.sound.DbSound;
+import com.btxtech.game.services.media.DbSound;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

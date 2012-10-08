@@ -1,8 +1,8 @@
 package com.btxtech.game.controllers;
 
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.sound.DbSound;
-import com.btxtech.game.services.sound.SoundService;
+import com.btxtech.game.services.media.DbSound;
+import com.btxtech.game.services.media.SoundService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

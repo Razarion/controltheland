@@ -138,9 +138,13 @@
         <mapping class="com.btxtech.game.services.inventory.DbBoxRegion"/>
         <mapping class="com.btxtech.game.services.inventory.DbBoxRegionCount"/>
         <mapping class="com.btxtech.game.services.inventory.impl.DbInventoryNewUser"/>
-        <!-- Sound -->
-        <mapping class="com.btxtech.game.services.sound.DbSound"/>
-        <mapping class="com.btxtech.game.services.sound.DbCommonSound"/>
+        <!-- Media -->
+        <mapping class="com.btxtech.game.services.media.DbSound"/>
+        <mapping class="com.btxtech.game.services.media.DbCommonSound"/>
+        <mapping class="com.btxtech.game.services.media.DbImageSpriteMap"/>
+        <mapping class="com.btxtech.game.services.media.DbImageSpriteMapFrame"/>
+        <mapping class="com.btxtech.game.services.media.DbClip"/>
+        <mapping class="com.btxtech.game.services.media.DbCommonClip"/>
         <!-- Planet -->
         <mapping class="com.btxtech.game.services.planet.db.DbPlanet"/>
         <mapping class="com.btxtech.game.services.planet.db.DbPlanetItemTypeLimitation"/>

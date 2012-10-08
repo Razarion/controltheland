@@ -2,10 +2,9 @@ package com.btxtech.game.controllers;
 
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.common.ClientDateUtil;
-import com.btxtech.game.services.sound.DbSound;
-import com.btxtech.game.services.sound.SoundService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.btxtech.game.services.common.ExceptionHandler;
+import com.btxtech.game.services.media.DbSound;
+import com.btxtech.game.services.media.SoundService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
@@ -25,7 +24,6 @@ import java.io.OutputStream;
 public class SoundController implements Controller {
     @Autowired
     private SoundService soundService;
-    private Log log = LogFactory.getLog(SoundController.class);
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
@@ -60,8 +58,8 @@ public class SoundController implements Controller {
         } catch (IOException e) {
             // Connection lost -> ignore
         } catch (Exception e) {
+            ExceptionHandler.handleException(e);
             httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            log.error("", e);
         }
         return null;
     }

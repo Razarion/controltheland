@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.info.ClipInfo;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
@@ -101,6 +102,16 @@ public class ImageHandler {
         url.append(Constants.ITEM_TYPE_SPRITE_MAP_ID);
         url.append("=");
         url.append(itemId);
+        return url.toString();
+    }
+
+    public static String getClipSpriteMapUrl(ClipInfo clipInfo) {
+        StringBuilder url = new StringBuilder();
+        url.append(Constants.IMAGE_SPRITE_MAP_PATH);
+        url.append("?");
+        url.append(Constants.IMAGE_SPRITE_MAP_ID);
+        url.append("=");
+        url.append(clipInfo.getSpriteMapId());
         return url.toString();
     }
 

@@ -16,7 +16,7 @@ import com.btxtech.game.services.item.itemType.DbMovableType;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbSpecialType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
-import com.btxtech.game.services.sound.DbSound;
+import com.btxtech.game.services.media.DbSound;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.SoundPanel;
 import org.apache.wicket.markup.html.form.Button;

@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.common.info.ClipInfo;
 import com.btxtech.game.jsre.client.common.info.CommonSoundInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -156,9 +157,9 @@ public class SoundHandler implements SelectionListener {
         }
     }
 
-    public void playItemExplode() {
-        if (commonSoundInfo.getExplosionSoundId() != null) {
-            playSound(commonSoundInfo.getExplosionSoundId(), false);
+    public void playClipSound(ClipInfo clipInfo) {
+        if (clipInfo.hasSoundId()) {
+            playSound(clipInfo.getSoundId(), false);
         }
     }
 

@@ -1,8 +1,8 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.common.CrudRootServiceHelper;
-import com.btxtech.game.services.sound.DbCommonSound;
-import com.btxtech.game.services.sound.SoundService;
+import com.btxtech.game.services.media.DbCommonSound;
+import com.btxtech.game.services.media.SoundService;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import com.btxtech.game.wicket.uiservices.SoundPanel;
 import org.apache.wicket.markup.html.form.DropDownChoice;
