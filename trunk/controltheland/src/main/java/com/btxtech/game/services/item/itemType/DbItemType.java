@@ -21,7 +21,7 @@ import com.btxtech.game.jsre.itemtypeeditor.ItemTypeImageInfo;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
-import com.btxtech.game.services.sound.DbSound;
+import com.btxtech.game.services.media.DbSound;
 import com.btxtech.game.services.user.UserService;
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Cascade;

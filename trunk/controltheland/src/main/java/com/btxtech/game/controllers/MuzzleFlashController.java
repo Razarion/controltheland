@@ -15,10 +15,9 @@ package com.btxtech.game.controllers;
 
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.common.ClientDateUtil;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbItemTypeImageData;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
@@ -38,7 +37,6 @@ import java.io.OutputStream;
 public class MuzzleFlashController implements Controller {
     @Autowired
     private ServerItemTypeService serverItemTypeService;
-    private Log log = LogFactory.getLog(MuzzleFlashController.class);
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
@@ -60,7 +58,8 @@ public class MuzzleFlashController implements Controller {
         } catch (IOException e) {
             // Connection lost -> ignore
         } catch (Exception e) {
-            log.error("", e);
+            ExceptionHandler.handleException(e);
+            httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
         return null;
     }

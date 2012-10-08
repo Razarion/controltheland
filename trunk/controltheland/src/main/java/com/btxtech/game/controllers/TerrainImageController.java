@@ -14,11 +14,10 @@
 package com.btxtech.game.controllers;
 
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.services.terrain.TerrainImageService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
@@ -38,7 +37,6 @@ import java.io.OutputStream;
 public class TerrainImageController implements Controller {
     @Autowired
     private TerrainImageService terrainService;
-    private Log log = LogFactory.getLog(TerrainImageController.class);
 
 
     @Override
@@ -73,14 +71,9 @@ public class TerrainImageController implements Controller {
         } catch (IOException e) {
             // Connection lost -> ignore
         } catch (Exception e) {
-            log.error("", e);
-            handleBadRequest(httpServletResponse);
+            ExceptionHandler.handleException(e);
+            httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
         return null;
     }
-
-    private void handleBadRequest(HttpServletResponse httpServletResponse) throws IOException {
-        httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
-    }
-
 }

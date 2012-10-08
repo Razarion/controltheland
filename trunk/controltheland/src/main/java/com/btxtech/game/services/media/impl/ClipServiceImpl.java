@@ -1,0 +1,149 @@
+package com.btxtech.game.services.media.impl;
+
+import com.btxtech.game.jsre.client.common.info.ClipInfo;
+import com.btxtech.game.jsre.client.common.info.CommonClipInfo;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.common.ExceptionHandler;
+import com.btxtech.game.services.common.HibernateUtil;
+import com.btxtech.game.services.common.ImageHolder;
+import com.btxtech.game.services.media.ClipService;
+import com.btxtech.game.services.media.DbClip;
+import com.btxtech.game.services.media.DbCommonClip;
+import com.btxtech.game.services.media.DbImageSpriteMap;
+import com.btxtech.game.services.media.DbImageSpriteMapFrame;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+/**
+ * User: beat
+ * Date: 07.10.12
+ * Time: 18:45
+ */
+@Component(value = "clipService")
+public class ClipServiceImpl implements ClipService {
+    @Autowired
+    private CrudRootServiceHelper<DbClip> clipLibraryCrud;
+    @Autowired
+    private CrudRootServiceHelper<DbCommonClip> commonClipCrud;
+    @Autowired
+    private CrudRootServiceHelper<DbImageSpriteMap> imageSpriteMapCrud;
+    @Autowired
+    private SessionFactory sessionFactory;
+    private final Map<Integer, ImageHolder> imageSpriteMapCache = new HashMap<>();
+
+    @PostConstruct
+    public void setup() {
+        clipLibraryCrud.init(DbClip.class);
+        commonClipCrud.init(DbCommonClip.class);
+        imageSpriteMapCrud.init(DbImageSpriteMap.class);
+        HibernateUtil.openSession4InternalCall(sessionFactory);
+        try {
+            activateImageSpriteMapCache();
+        } finally {
+            HibernateUtil.closeSession4InternalCall(sessionFactory);
+        }
+    }
+
+    @Override
+    public CrudRootServiceHelper<DbClip> getClipLibraryCrud() {
+        return clipLibraryCrud;
+    }
+
+    @Override
+    public CrudRootServiceHelper<DbCommonClip> getCommonClipCrud() {
+        return commonClipCrud;
+    }
+
+    @Override
+    public CrudRootServiceHelper<DbImageSpriteMap> getImageSpriteMapCrud() {
+        return imageSpriteMapCrud;
+    }
+
+    @Override
+    public Collection<ClipInfo> getClipLibrary() {
+        Collection<ClipInfo> clipLibrary = new ArrayList<>();
+        for (DbClip dbClip : clipLibraryCrud.readDbChildren()) {
+            clipLibrary.add(dbClip.createClipInfo());
+        }
+        return clipLibrary;
+    }
+
+    @Override
+    public CommonClipInfo getCommonClipInfo() {
+        CommonClipInfo commonClipInfo = new CommonClipInfo();
+        for (DbCommonClip dbCommonClip : commonClipCrud.readDbChildren()) {
+            try {
+                commonClipInfo.add(dbCommonClip.getType(), dbCommonClip.getDbClip().getId());
+            } catch (Exception e) {
+                ExceptionHandler.handleException(e);
+            }
+        }
+        return commonClipInfo;
+    }
+
+    @Override
+    public ImageHolder getImageSpriteMap(int imageSpriteMapId) {
+        synchronized (imageSpriteMapCache) {
+            ImageHolder imageHolder = imageSpriteMapCache.get(imageSpriteMapId);
+            if (imageHolder == null) {
+                throw new IllegalArgumentException("No image sprite map for id: " + imageSpriteMapId);
+            }
+            return imageHolder;
+        }
+    }
+
+    public void activateImageSpriteMapCache() {
+        Map<Integer, ImageHolder> tmpMap = new HashMap<>();
+        for (DbImageSpriteMap dbImageSpriteMap : imageSpriteMapCrud.readDbChildren()) {
+            try {
+                tmpMap.put(dbImageSpriteMap.getId(), setupSpriteMap(dbImageSpriteMap));
+            } catch (Exception e) {
+                ExceptionHandler.handleException(e);
+            }
+        }
+
+        synchronized (imageSpriteMapCache) {
+            imageSpriteMapCache.clear();
+            imageSpriteMapCache.putAll(tmpMap);
+        }
+    }
+
+    private ImageHolder setupSpriteMap(DbImageSpriteMap dbImageSpriteMap) throws IOException {
+        byte[] masterImageData = dbImageSpriteMap.getImageSpriteMapFrames().get(0).getData();
+        Iterator<ImageReader> iter = ImageIO.getImageReaders(ImageIO.createImageInputStream(new ByteArrayInputStream(masterImageData)));
+        // Get the format name
+        if (!iter.hasNext()) {
+            throw new IllegalArgumentException("Can not find image reader: " + dbImageSpriteMap);
+        }
+        ImageReader imageReader = iter.next();
+        BufferedImage masterImage = ImageIO.read(new ByteArrayInputStream(masterImageData));
+        BufferedImage spriteMap = new BufferedImage(dbImageSpriteMap.getFrameWidth() * dbImageSpriteMap.getImageSpriteMapFrames().size(), dbImageSpriteMap.getFrameHeight(), masterImage.getType());
+        int xPos = 0;
+        for (DbImageSpriteMapFrame dbImageSpriteMapFrame : dbImageSpriteMap.getImageSpriteMapFrames()) {
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(dbImageSpriteMapFrame.getData()));
+            boolean done = spriteMap.createGraphics().drawImage(image, xPos, 0, null);
+            if (!done) {
+                throw new IllegalStateException("setupSpriteMApAndAddToCache() image could not be drawn. dbImageSpriteMap: " + dbImageSpriteMap + " dbImageSpriteMapFrame: " + dbImageSpriteMapFrame);
+            }
+            xPos += dbImageSpriteMap.getFrameWidth();
+
+        }
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ImageIO.write(spriteMap, imageReader.getFormatName(), outputStream);
+        return new ImageHolder(outputStream.toByteArray(), imageReader.getOriginatingProvider().getMIMETypes()[0]);
+    }
+}

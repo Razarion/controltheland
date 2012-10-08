@@ -1,4 +1,4 @@
-package com.btxtech.game.services.sound;
+package com.btxtech.game.services.media;
 
 import com.btxtech.game.jsre.client.common.info.CommonSoundInfo;
 import com.btxtech.game.services.common.CrudRootServiceHelper;

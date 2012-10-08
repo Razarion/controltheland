@@ -13,6 +13,7 @@
 
 package com.btxtech.game.controllers;
 
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import org.apache.commons.logging.Log;
@@ -50,7 +51,8 @@ public class StatisticsController implements Controller {
             httpServletResponse.setContentLength(LoadScriptCommunicationController.PIXEL_BYTES.length);
             httpServletResponse.getOutputStream().close();
         } catch (Exception e) {
-            log.error("", e);
+            ExceptionHandler.handleException(e);
+            httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
         return null;
     }

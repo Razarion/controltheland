@@ -1,4 +1,4 @@
-package com.btxtech.game.services.sound;
+package com.btxtech.game.services.media;
 
 import com.btxtech.game.jsre.client.common.info.CommonSoundInfo;
 import com.btxtech.game.services.AbstractServiceTest;
@@ -224,7 +224,6 @@ public class TestSoundService extends AbstractServiceTest {
         Assert.assertNull(commonSoundInfo.getBackgroundMusicSoundId());
         Assert.assertNull(commonSoundInfo.getBuildingLostSoundId());
         Assert.assertNull(commonSoundInfo.getBuildingKilledSoundId());
-        Assert.assertNull(commonSoundInfo.getExplosionSoundId());
         Assert.assertNull(commonSoundInfo.getUnitLostSoundId());
         Assert.assertNull(commonSoundInfo.getUnitKilledSoundId());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -249,7 +248,6 @@ public class TestSoundService extends AbstractServiceTest {
         Assert.assertEquals(SOUND1_ID, (int) commonSoundInfo.getBackgroundMusicSoundId());
         Assert.assertEquals(SOUND2_ID, (int) commonSoundInfo.getBuildingLostSoundId());
         Assert.assertNull(commonSoundInfo.getBuildingKilledSoundId());
-        Assert.assertNull(commonSoundInfo.getExplosionSoundId());
         Assert.assertNull(commonSoundInfo.getUnitLostSoundId());
         Assert.assertNull(commonSoundInfo.getUnitKilledSoundId());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -274,7 +272,6 @@ public class TestSoundService extends AbstractServiceTest {
         commonSound.setDbSound(soundService.getSoundLibraryCrud().readDbChild(SOUND2_ID));
         soundService.getCommonSoundCrud().updateDbChild(commonSound);
         commonSound = soundService.getCommonSoundCrud().createDbChild();
-        commonSound.setType(DbCommonSound.Type.EXPLOSION);
         commonSound.setDbSound(soundService.getSoundLibraryCrud().readDbChild(SOUND1_ID));
         soundService.getCommonSoundCrud().updateDbChild(commonSound);
         commonSound = soundService.getCommonSoundCrud().createDbChild();
@@ -291,7 +288,6 @@ public class TestSoundService extends AbstractServiceTest {
         Assert.assertEquals(SOUND2_ID, (int) commonSoundInfo.getBuildingLostSoundId());
         Assert.assertEquals(SOUND1_ID, (int) commonSoundInfo.getUnitKilledSoundId());
         Assert.assertEquals(SOUND2_ID, (int) commonSoundInfo.getBuildingKilledSoundId());
-        Assert.assertEquals(SOUND1_ID, (int) commonSoundInfo.getExplosionSoundId());
         Assert.assertEquals(SOUND2_ID, (int) commonSoundInfo.getBackgroundMusicSoundId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

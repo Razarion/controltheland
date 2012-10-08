@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.control.task;
 
+import com.btxtech.game.jsre.client.ClientClipHandler;
 import com.btxtech.game.jsre.client.ClientEnergyService;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
@@ -42,6 +43,7 @@ public abstract class GameEngineStartupTask extends AbstractStartupTask {
                 gameInfo.getTerrainImageBackground());
         gameInfo.freePositionAndRects();
         ItemTypeContainer.getInstance().setItemTypes(gameInfo.getItemTypes());
+        ClientClipHandler.getInstance().inti(gameInfo);
     }
 
     protected void deltaSetupGameStructure(GameInfo gameInfo) {
@@ -55,5 +57,6 @@ public abstract class GameEngineStartupTask extends AbstractStartupTask {
                 gameInfo.getTerrainImageBackground());
         gameInfo.freePositionAndRects();
         ItemTypeContainer.getInstance().addDeltaItemTypes(gameInfo.getItemTypes());
+        ClientClipHandler.getInstance().inti(gameInfo);
     }
 }

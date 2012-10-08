@@ -1,7 +1,7 @@
 package com.btxtech.game.wicket.uiservices;
 
-import com.btxtech.game.services.sound.DbSound;
-import com.btxtech.game.services.sound.SoundService;
+import com.btxtech.game.services.media.DbSound;
+import com.btxtech.game.services.media.SoundService;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;

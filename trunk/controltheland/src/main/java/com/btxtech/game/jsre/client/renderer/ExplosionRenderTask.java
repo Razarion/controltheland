@@ -1,18 +1,15 @@
 package com.btxtech.game.jsre.client.renderer;
 
-import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.common.info.ClipInfo;
 import com.btxtech.game.jsre.client.effects.Explosion;
 import com.btxtech.game.jsre.client.effects.ExplosionHandler;
-import com.btxtech.game.jsre.common.ImageLoader;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
-
-import java.util.Map;
 
 /**
  * User: beat
@@ -21,8 +18,6 @@ import java.util.Map;
  */
 public class ExplosionRenderTask extends AbstractRenderTask {
     private Context2d context2d;
-    private ImageElement imageElement;
-    private ImageLoader<Integer> imageLoader;
 
     public ExplosionRenderTask(Context2d context2d) {
         this.context2d = context2d;
@@ -30,10 +25,6 @@ public class ExplosionRenderTask extends AbstractRenderTask {
 
     @Override
     public void render(long timeStamp, Rectangle viewRect, Rectangle tileViewRect) {
-        if (imageElement == null) {
-            loadImage();
-            return;
-        }
         for (Explosion explosion : ExplosionHandler.getInstance().getExplosions(timeStamp, viewRect)) {
             // Draw Item
             if (explosion.isItemVisible()) {
@@ -58,31 +49,23 @@ public class ExplosionRenderTask extends AbstractRenderTask {
                 }
             }
             // Draw Explosion
-            context2d.setGlobalAlpha(explosion.getAlpha());
-            int relativeX = explosion.getAbsoluteImageStart().getX() - viewRect.getX();
-            int relativeY = explosion.getAbsoluteImageStart().getY() - viewRect.getY();
-            context2d.drawImage(imageElement,
-                    0, 0, // Source pos
-                    80, 80, // Source size
-                    relativeX, relativeY,// Canvas pos
-                    explosion.getFrameWidth(), explosion.getFrameHeight() // Canvas size
-            );
-            context2d.setGlobalAlpha(1.0);
-        }
-    }
-
-    private void loadImage() {
-        if (imageLoader != null) {
-            return;
-        }
-        imageLoader = new ImageLoader<Integer>();
-        imageLoader.addImageUrl(ImageHandler.getExplosion(), 1);
-        imageLoader.startLoading(new ImageLoader.Listener<Integer>() {
-            @Override
-            public void onLoaded(Map<Integer, ImageElement> imageElements) {
-                imageElement = imageElements.get(1);
-                imageLoader = null;
+            ClipInfo clipInfo = explosion.getClipInfo();
+            ImageElement imageElement = ClipLoaderContainer.getInstance().getImage(clipInfo);
+            if (imageElement == null) {
+                return;
             }
-        });
+
+            context2d.drawImage(imageElement,
+                    explosion.getSpriteMapXOffset(), // Source x pos
+                    explosion.getSpriteMapYOffset(), // Source y pos
+                    clipInfo.getFrameWidth(),  // Source width
+                    clipInfo.getFrameHeight(), // Source height
+                    explosion.getRelativeImageStartX(),// Canvas y pos
+                    explosion.getRelativeImageStartY(),// Canvas y pos
+                    clipInfo.getFrameWidth(), // Destination width
+                    clipInfo.getFrameHeight() // Destination height
+            );
+        }
+        ClipLoaderContainer.getInstance().startLoad();
     }
 }

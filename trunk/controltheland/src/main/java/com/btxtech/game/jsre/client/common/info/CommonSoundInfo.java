@@ -12,7 +12,6 @@ public class CommonSoundInfo implements Serializable {
     private Integer buildingLostSoundId;
     private Integer unitKilledSoundId;
     private Integer buildingKilledSoundId;
-    private Integer explosionSoundId;
     private Integer backgroundMusicSoundId;
 
     public Integer getUnitLostSoundId() {
@@ -45,14 +44,6 @@ public class CommonSoundInfo implements Serializable {
 
     public void setBuildingKilledSoundId(Integer buildingKilledSoundId) {
         this.buildingKilledSoundId = buildingKilledSoundId;
-    }
-
-    public Integer getExplosionSoundId() {
-        return explosionSoundId;
-    }
-
-    public void setExplosionSoundId(Integer explosionSoundId) {
-        this.explosionSoundId = explosionSoundId;
     }
 
     public Integer getBackgroundMusicSoundId() {

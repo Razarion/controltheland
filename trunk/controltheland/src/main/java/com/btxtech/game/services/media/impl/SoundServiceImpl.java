@@ -1,10 +1,10 @@
-package com.btxtech.game.services.sound.impl;
+package com.btxtech.game.services.media.impl;
 
 import com.btxtech.game.jsre.client.common.info.CommonSoundInfo;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
-import com.btxtech.game.services.sound.DbCommonSound;
-import com.btxtech.game.services.sound.DbSound;
-import com.btxtech.game.services.sound.SoundService;
+import com.btxtech.game.services.media.DbCommonSound;
+import com.btxtech.game.services.media.DbSound;
+import com.btxtech.game.services.media.SoundService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,9 +58,6 @@ public class SoundServiceImpl implements SoundService {
                         break;
                     case BUILDING_KILLED:
                         commonSoundInfo.setBuildingKilledSoundId(dbCommonSound.getDbSound().getId());
-                        break;
-                    case EXPLOSION:
-                        commonSoundInfo.setExplosionSoundId(dbCommonSound.getDbSound().getId());
                         break;
                     case BACKGROUND_MUSIC:
                         commonSoundInfo.setBackgroundMusicSoundId(dbCommonSound.getDbSound().getId());

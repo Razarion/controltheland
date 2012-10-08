@@ -2,8 +2,8 @@ package com.btxtech.game.crudtabletest;
 
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.sound.DbSound;
-import com.btxtech.game.services.sound.SoundService;
+import com.btxtech.game.services.media.DbSound;
+import com.btxtech.game.services.media.SoundService;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.TerrainImageService;
 import com.btxtech.game.wicket.pages.mgmt.SoundLibrary;

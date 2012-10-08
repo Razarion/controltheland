@@ -1,4 +1,4 @@
-package com.btxtech.game.services.sound;
+package com.btxtech.game.services.media;
 
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.user.UserService;
@@ -23,7 +23,6 @@ public class DbCommonSound implements CrudChild {
         BUILDING_LOST,
         UNIT_KILLED,
         BUILDING_KILLED,
-        EXPLOSION,
         BACKGROUND_MUSIC
     }
 

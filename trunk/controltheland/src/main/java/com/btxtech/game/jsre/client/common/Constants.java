@@ -46,6 +46,10 @@ public class Constants {
     public static final String SOUND_CODEC_TYPE_MP3 = "audio/mpeg";
     public static final String SOUND_CODEC_TYPE_OGG = "audio/ogg";
 
+    // Image sprite map
+    public static final String IMAGE_SPRITE_MAP_PATH = "/spring/sprites";
+    public static final String IMAGE_SPRITE_MAP_ID = "id";
+
     // Tutorial
     public static final String TUTORIAL_RESOURCE_URL = "/spring/tutorial";
     public static final String TUTORIAL_RESOURCE_ID = "id";
