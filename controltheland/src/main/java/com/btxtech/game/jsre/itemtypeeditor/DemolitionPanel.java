@@ -59,7 +59,7 @@ public class DemolitionPanel extends Composite implements ItemTypeEditorModel.Up
         demolitionStepField.setValue(ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getDemolitionSteps());
         animationFrameField.setValue(ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getDemolitionAnimationFrames());
         animationDurationField.setValue(ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getDemolitionAnimationDuration());
-        stepTable.clear();
+        stepTable.removeAllRows();
         for (int step = 0; step < ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getDemolitionSteps(); step++) {
             stepTable.setWidget(step, 0, new DemolitionStepImageTable(step));
         }

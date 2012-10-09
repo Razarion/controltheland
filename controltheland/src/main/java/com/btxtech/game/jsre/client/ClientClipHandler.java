@@ -3,6 +3,7 @@ package com.btxtech.game.jsre.client;
 import com.btxtech.game.jsre.client.common.info.ClipInfo;
 import com.btxtech.game.jsre.client.common.info.CommonClipInfo;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
+import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
 import com.google.gwt.user.client.Random;
 
 import java.util.HashMap;
@@ -17,8 +18,9 @@ import java.util.Map;
 public class ClientClipHandler {
     private static final ClientClipHandler INSTANCE = new ClientClipHandler();
     private Map<Integer, ClipInfo> clipCache = new HashMap<Integer, ClipInfo>();
+    private Map<Integer, ImageSpriteMapInfo> imageSpriteMapCache = new HashMap<Integer, ImageSpriteMapInfo>();
     private Map<CommonClipInfo.Type, List<Integer>> commonClips = new HashMap<CommonClipInfo.Type, List<Integer>>();
-
+    
     public static ClientClipHandler getInstance() {
         return INSTANCE;
     }
@@ -51,10 +53,21 @@ public class ClientClipHandler {
         return clipInfo;
     }
 
+    public ImageSpriteMapInfo getImageSpriteMapInfo(int imageSpriteMapInfoId) throws NoSuchImageSpriteMapInfoException {
+        ImageSpriteMapInfo imageSpriteMapInfo = imageSpriteMapCache.get(imageSpriteMapInfoId);
+        if (imageSpriteMapInfo == null) {
+            throw new NoSuchImageSpriteMapInfoException(imageSpriteMapInfoId);
+        }
+        return imageSpriteMapInfo;
+    }
+
     public void inti(GameInfo gameInfo) {
         for (ClipInfo clipInfo : gameInfo.getClipLibrary()) {
             clipCache.put(clipInfo.getClipId(), clipInfo);
         }
         commonClips.putAll(gameInfo.getCommonClipInfo().getCommonClips());
+        for (ImageSpriteMapInfo imageSpriteMapInfo : gameInfo.getImageSpriteMapLibrary()) {
+            imageSpriteMapCache.put(imageSpriteMapInfo.getId(), imageSpriteMapInfo);
+        }
     }
 }

@@ -44,7 +44,8 @@ public abstract class GameInfo implements TerrainInfo, Serializable {
     private Collection<ItemType> itemTypes;
     private Map<CmsUtil.CmsPredefinedPage, String> predefinedUrls;
     private CommonSoundInfo commonSoundInfo;
-    private Collection<ClipInfo> clipLibrary;
+    private Collection<ImageSpriteMapInfo> imageSpriteMapLibrary;
+    private Collection<ClipInfo> clipLibrary;    
     private CommonClipInfo commonClipInfo;
 
     public TerrainSettings getTerrainSettings() {
@@ -154,5 +155,13 @@ public abstract class GameInfo implements TerrainInfo, Serializable {
 
     public void setCommonClipInfo(CommonClipInfo commonClipInfo) {
         this.commonClipInfo = commonClipInfo;
+    }
+
+    public Collection<ImageSpriteMapInfo> getImageSpriteMapLibrary() {
+        return imageSpriteMapLibrary;
+    }
+
+    public void setImageSpriteMapLibrary(Collection<ImageSpriteMapInfo> imageSpriteMapLibrary) {
+        this.imageSpriteMapLibrary = imageSpriteMapLibrary;
     }
 }

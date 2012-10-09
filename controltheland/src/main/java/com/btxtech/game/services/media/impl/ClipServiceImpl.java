@@ -2,6 +2,7 @@ package com.btxtech.game.services.media.impl;
 
 import com.btxtech.game.jsre.client.common.info.ClipInfo;
 import com.btxtech.game.jsre.client.common.info.CommonClipInfo;
+import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
@@ -71,6 +72,15 @@ public class ClipServiceImpl implements ClipService {
     @Override
     public CrudRootServiceHelper<DbImageSpriteMap> getImageSpriteMapCrud() {
         return imageSpriteMapCrud;
+    }
+
+    @Override
+    public Collection<ImageSpriteMapInfo> getImageSpriteMapLibrary() {
+        Collection<ImageSpriteMapInfo> imageSpriteMapInfos = new ArrayList<>();
+        for (DbImageSpriteMap imageSpriteMap : imageSpriteMapCrud.readDbChildren()) {
+            imageSpriteMapInfos.add(imageSpriteMap.createImageSpriteMapInfo());
+        }
+        return imageSpriteMapInfos;
     }
 
     @Override

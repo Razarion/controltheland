@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.client.effects;
 
-import com.btxtech.game.jsre.client.NoSuchClipException;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -48,7 +47,7 @@ public class ExplosionHandler {
         if (syncItem.getSyncItemArea().contains(TerrainView.getInstance().getViewRect())) {
             try {
                 explosions.add(new Explosion(syncItem));
-            } catch (NoSuchClipException e) {
+            } catch (Exception e) {
                 log.log(Level.SEVERE, "ExplosionHandler.onExplosion", e);
             }
         }

@@ -233,6 +233,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         gameInfo.setRegisterDialogDelay(startupData.getRegisterDialogDelay());
         gameInfo.setPredefinedUrls(cmsUiService.getPredefinedUrls());
         gameInfo.setCommonSoundInfo(soundService.getCommonSoundInfo());
+        gameInfo.setImageSpriteMapLibrary(clipService.getImageSpriteMapLibrary());
         gameInfo.setClipLibrary(clipService.getClipLibrary());
         gameInfo.setCommonClipInfo(clipService.getCommonClipInfo());
     }
