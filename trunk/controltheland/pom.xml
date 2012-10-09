@@ -375,6 +375,7 @@
                                 <module>com.btxtech.game.jsre.RegionEditor</module>
                                 <module>com.btxtech.game.jsre.Playback</module>
                                 <module>com.btxtech.game.jsre.ItemTypeEditor</module>
+                                <module>com.btxtech.game.jsre.ImageSpriteMapEditor</module>
                             </modules>
                         </configuration>
                         <goals>

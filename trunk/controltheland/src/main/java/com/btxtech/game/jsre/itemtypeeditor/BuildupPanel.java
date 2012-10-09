@@ -42,7 +42,7 @@ public class BuildupPanel extends Composite implements ItemTypeEditorModel.Updat
         buildupStepFiled.setValue(ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getBuildupSteps());
         animationFrameField.setValue(ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getBuildupAnimationFrames());
         animationDurationField.setValue(ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getBuildupAnimationDuration());
-        imageTable.clear();
+        imageTable.removeAllRows();
         for (int frame = 0; frame < ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getBuildupAnimationFrames(); frame++) {
             for (int step = 0; step < ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getBuildupSteps(); step++) {
                 DropImage dropImage = ItemTypeEditorModel.getInstance().getDropImage(0, step, frame, ItemTypeSpriteMap.SyncObjectState.BUILD_UP);

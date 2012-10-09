@@ -3,6 +3,7 @@ package com.btxtech.game.jsre.client.renderer;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.ClipInfo;
+import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
 import com.btxtech.game.jsre.client.effects.Explosion;
 import com.btxtech.game.jsre.client.effects.ExplosionHandler;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
@@ -49,8 +50,8 @@ public class ExplosionRenderTask extends AbstractRenderTask {
                 }
             }
             // Draw Explosion
-            ClipInfo clipInfo = explosion.getClipInfo();
-            ImageElement imageElement = ClipLoaderContainer.getInstance().getImage(clipInfo);
+            ImageSpriteMapInfo imageSpriteMapInfo = explosion.getImageSpriteMapInfo();
+            ImageElement imageElement = ImageSpriteMapContainer.getInstance().getImage(imageSpriteMapInfo);
             if (imageElement == null) {
                 return;
             }
@@ -58,14 +59,14 @@ public class ExplosionRenderTask extends AbstractRenderTask {
             context2d.drawImage(imageElement,
                     explosion.getSpriteMapXOffset(), // Source x pos
                     explosion.getSpriteMapYOffset(), // Source y pos
-                    clipInfo.getFrameWidth(),  // Source width
-                    clipInfo.getFrameHeight(), // Source height
+                    imageSpriteMapInfo.getFrameWidth(),  // Source width
+                    imageSpriteMapInfo.getFrameHeight(), // Source height
                     explosion.getRelativeImageStartX(),// Canvas y pos
                     explosion.getRelativeImageStartY(),// Canvas y pos
-                    clipInfo.getFrameWidth(), // Destination width
-                    clipInfo.getFrameHeight() // Destination height
+                    imageSpriteMapInfo.getFrameWidth(), // Destination width
+                    imageSpriteMapInfo.getFrameHeight() // Destination height
             );
         }
-        ClipLoaderContainer.getInstance().startLoad();
+        ImageSpriteMapContainer.getInstance().startLoad();
     }
 }

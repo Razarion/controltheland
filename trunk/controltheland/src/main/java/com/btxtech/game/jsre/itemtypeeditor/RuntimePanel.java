@@ -50,7 +50,7 @@ public class RuntimePanel extends Composite implements UpdateListener {
     public void onModelUpdate() {
         animationFrameField.setValue(ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getRuntimeAnimationFrames());
         animationDurationField.setValue(ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getRuntimeAnimationDuration());
-        imageTable.clear();
+        imageTable.removeAllRows();
         for (int frame = 0; frame < ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getRuntimeAnimationFrames(); frame++) {
             for (int angel = 0; angel < ItemTypeEditorModel.getInstance().getBoundingBox().getAngelCount(); angel++) {
                 DropImage dropImage = ItemTypeEditorModel.getInstance().getDropImage(angel, 0, frame, ItemTypeSpriteMap.SyncObjectState.RUN_TIME);

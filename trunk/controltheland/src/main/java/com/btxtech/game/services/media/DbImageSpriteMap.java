@@ -1,6 +1,7 @@
 package com.btxtech.game.services.media;
 
 import com.btxtech.game.jsre.client.common.info.ClipInfo;
+import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
@@ -104,12 +105,13 @@ public class DbImageSpriteMap implements CrudChild, CrudParent {
         return imageSpriteMapFrames;
     }
 
-    public void fillClipInfo(ClipInfo clipInfo) {
-        clipInfo.setSpriteMapId(id);
-        clipInfo.setFrameCount(frameCount);
-        clipInfo.setFrameWidth(frameWidth);
-        clipInfo.setFrameHeight(frameHeight);
-        clipInfo.setFrameTime(frameTime);
+    public ImageSpriteMapInfo createImageSpriteMapInfo() {
+        ImageSpriteMapInfo imageSpriteMapInfo = new ImageSpriteMapInfo(id);
+        imageSpriteMapInfo.setFrameCount(frameCount);
+        imageSpriteMapInfo.setFrameWidth(frameWidth);
+        imageSpriteMapInfo.setFrameHeight(frameHeight);
+        imageSpriteMapInfo.setFrameTime(frameTime);
+        return imageSpriteMapInfo;
     }
 
     @Override

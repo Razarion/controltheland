@@ -76,7 +76,7 @@ public class DbClip implements CrudChild {
             throw new IllegalStateException("dbImageSpriteMap is not set. Clip Id: " + id);
         }
         ClipInfo clipInfo = new ClipInfo(id);
-        dbImageSpriteMap.fillClipInfo(clipInfo);
+        clipInfo.setSpriteMapId(dbImageSpriteMap.getId());
         if (dbSound != null) {
             clipInfo.setSoundId(dbSound.getId());
         }

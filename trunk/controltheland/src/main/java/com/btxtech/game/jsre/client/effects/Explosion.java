@@ -15,11 +15,13 @@ package com.btxtech.game.jsre.client.effects;
 
 import com.btxtech.game.jsre.client.ClientClipHandler;
 import com.btxtech.game.jsre.client.NoSuchClipException;
+import com.btxtech.game.jsre.client.NoSuchImageSpriteMapInfoException;
 import com.btxtech.game.jsre.client.SoundHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.ClipInfo;
 import com.btxtech.game.jsre.client.common.info.CommonClipInfo;
+import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 /**
@@ -36,25 +38,26 @@ public class Explosion {
     private boolean insideViewRect;
     private boolean playing;
     private SyncItem syncItem;
-    private ClipInfo clipInfo;
+    private ImageSpriteMapInfo imageSpriteMapInfo;
     private Index spriteMapOffset;
 
-    public Explosion(SyncItem syncItem) throws NoSuchClipException {
+    public Explosion(SyncItem syncItem) throws NoSuchClipException, NoSuchImageSpriteMapInfoException {
         this.syncItem = syncItem;
         startTime = System.currentTimeMillis();
-        clipInfo = ClientClipHandler.getInstance().getClipInfo(CommonClipInfo.Type.EXPLOSION);
+        ClipInfo clipInfo = ClientClipHandler.getInstance().getClipInfo(CommonClipInfo.Type.EXPLOSION);
+        imageSpriteMapInfo = ClientClipHandler.getInstance().getImageSpriteMapInfo(clipInfo.getSpriteMapId());
         SoundHandler.getInstance().playClipSound(clipInfo);
-        explosionViewRect = Rectangle.generateRectangleFromMiddlePoint(syncItem.getSyncItemArea().getPosition(), clipInfo.getFrameWidth(), clipInfo.getFrameHeight());
+        explosionViewRect = Rectangle.generateRectangleFromMiddlePoint(syncItem.getSyncItemArea().getPosition(), imageSpriteMapInfo.getFrameWidth(), imageSpriteMapInfo.getFrameHeight());
     }
 
     public void prepareRender(long timeStamp, Rectangle viewRect) {
-        insideViewRect = viewRect.adjoins(this.explosionViewRect);
+        insideViewRect = viewRect.adjoins(this.explosionViewRect);      
         playing = false;
         if (!insideViewRect) {
             return;
         }
 
-        int newFrame = clipInfo.getFrame(timeStamp - startTime);
+        int newFrame = imageSpriteMapInfo.getFrame(timeStamp - startTime);
         playing = newFrame >= 0;
         if (!playing) {
             return;
@@ -64,7 +67,7 @@ public class Explosion {
         }
         frame = newFrame;
         relativeImageStart = explosionViewRect.getStart().sub(viewRect.getStart());
-        spriteMapOffset = clipInfo.getSpriteMapOffset(frame);
+        spriteMapOffset = imageSpriteMapInfo.getSpriteMapOffset(frame);
     }
 
     public boolean isPlaying() {
@@ -83,8 +86,8 @@ public class Explosion {
         return frame <= REMOVE_ITEM;
     }
 
-    public ClipInfo getClipInfo() {
-        return clipInfo;
+    public ImageSpriteMapInfo getImageSpriteMapInfo() {
+        return imageSpriteMapInfo;
     }
 
     public int getSpriteMapXOffset() {
