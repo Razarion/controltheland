@@ -13,10 +13,13 @@
 
 package com.btxtech.game.wicket.uiservices;
 
+import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
@@ -62,5 +65,16 @@ public class InventoryItemPanel extends Panel {
                 // Ignore
             }
         }, Integer.class));
+        add(new Label("name", new AbstractReadOnlyModel<String>() {
+            @Override
+            public String getObject() {
+                DbInventoryItem dbInventoryItem = (DbInventoryItem) getDefaultModelObject();
+                if (dbInventoryItem != null) {
+                    return dbInventoryItem.getName();
+                } else {
+                    return null;
+                }
+            }
+        }));
     }
 }
