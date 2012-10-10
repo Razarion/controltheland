@@ -1,24 +1,19 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.jsre.client.SoundHandler;
-import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.jsre.mapeditor.TerrainEditorAsync;
+import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.imagespritemapeditor.ImageSpriteMapAccessAsync;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.media.ClipService;
 import com.btxtech.game.services.media.DbImageSpriteMap;
-import com.btxtech.game.services.media.DbSound;
-import com.btxtech.game.services.media.SoundService;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
-
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.upload.FileUpload;
-import org.apache.wicket.markup.html.form.upload.FileUploadField;
+import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -33,7 +28,7 @@ public class ImageSpriteMapLibrary extends MgmtWebPage {
     public ImageSpriteMapLibrary() {
         add(new FeedbackPanel("msgs"));
 
-        Form form = new Form("form"); 
+        Form form = new Form("form");
         add(form);
 
         new CrudRootTableHelper<DbImageSpriteMap>("imageSpriteMaps", "saveImageSpriteMaps", "createImageSpriteMap", true, form, false) {
@@ -42,6 +37,17 @@ public class ImageSpriteMapLibrary extends MgmtWebPage {
             protected void extendedPopulateItem(final Item<DbImageSpriteMap> dbimageSpriteMap) {
                 displayId(dbimageSpriteMap);
                 super.extendedPopulateItem(dbimageSpriteMap);
+                dbimageSpriteMap.add(new Label("spriteMapSize", new AbstractReadOnlyModel<Double>() {
+                    @Override
+                    public Double getObject() {
+                        try {
+                            return clipService.getImageSpriteMap(dbimageSpriteMap.getModelObject().getId()).getData().length / 1000.0;
+                        } catch (Exception e) {
+                            return 0.0;
+                        }
+                    }
+                }));
+                dbimageSpriteMap.add(new ExternalLink("spriteMapLink", ImageHandler.getImageSpriteMapUrl(dbimageSpriteMap.getModelObject().getId())));
             }
 
             @Override
@@ -51,10 +57,17 @@ public class ImageSpriteMapLibrary extends MgmtWebPage {
 
             @Override
             protected void onEditSubmit(DbImageSpriteMap dbImageSpriteMap) {
-                PageParameters pageParameters =new PageParameters();
-                pageParameters.add(TerrainEditorAsync.REGION_ID, Integer.toString(dbImageSpriteMap.getId())); // TODO
+                PageParameters pageParameters = new PageParameters();
+                pageParameters.add(ImageSpriteMapAccessAsync.IMAGE_SPRITE_MAP_ID, Integer.toString(dbImageSpriteMap.getId()));
                 setResponsePage(ImageSpriteMapEditor.class, pageParameters);
             }
         };
+
+        form.add(new Button("activate") {
+            @Override
+            public void onSubmit() {
+                clipService.activateImageSpriteMapCache();
+            }
+        });
     }
 }

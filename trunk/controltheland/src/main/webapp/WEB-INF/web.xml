@@ -94,6 +94,15 @@
         <url-pattern>/pathfinding/itemTypeAccess</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>imagespritemapaccess-dispatcher</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.ImageSpriteMapAccessImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>imagespritemapaccess-dispatcher</servlet-name>
+        <url-pattern>/imagespritemapeditor/imageSpriteMapAccess</url-pattern>
+    </servlet-mapping>
+
     <!-- GWT Logging -->
     <servlet>
         <servlet-name>gameRemoteLogging</servlet-name>

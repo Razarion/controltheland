@@ -106,13 +106,13 @@ public class ImageHandler {
     }
 
 
-    public static String getImageSpriteMapUrl(ImageSpriteMapInfo imageSpriteMapInfo) {
+    public static String getImageSpriteMapUrl(int imageSpriteMapInfoId) {
         StringBuilder url = new StringBuilder();
         url.append(Constants.IMAGE_SPRITE_MAP_PATH);
         url.append("?");
         url.append(Constants.IMAGE_SPRITE_MAP_ID);
         url.append("=");
-        url.append(imageSpriteMapInfo.getId());
+        url.append(imageSpriteMapInfoId);
         return url.toString();
     }
 

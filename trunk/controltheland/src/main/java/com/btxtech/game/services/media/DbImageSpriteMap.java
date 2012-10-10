@@ -1,11 +1,11 @@
 package com.btxtech.game.services.media;
 
-import com.btxtech.game.jsre.client.common.info.ClipInfo;
 import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.wicket.pages.mgmt.Html5ImagesUploadConverter;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
@@ -13,7 +13,9 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +35,10 @@ public class DbImageSpriteMap implements CrudChild, CrudParent {
     private int frameWidth;
     private int frameHeight;
     private int frameTime;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "dbImageSpriteMap", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "dbImageSpriteMap_id")
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    @OrderColumn(name = "frame")
     private List<DbImageSpriteMapFrame> imageSpriteMapFrames;
     @Transient
     private CrudListChildServiceHelper<DbImageSpriteMapFrame> imageSpriteMapFrameCrud;
@@ -112,6 +116,30 @@ public class DbImageSpriteMap implements CrudChild, CrudParent {
         imageSpriteMapInfo.setFrameHeight(frameHeight);
         imageSpriteMapInfo.setFrameTime(frameTime);
         return imageSpriteMapInfo;
+    }
+
+    public void setFrames(String[] overriddenImages) {
+        while (getImageSpriteMapFrameCrud().readDbChildren().size() < overriddenImages.length) {
+            getImageSpriteMapFrameCrud().createDbChild();
+        }
+
+        while (getImageSpriteMapFrameCrud().readDbChildren().size() > overriddenImages.length) {
+            getImageSpriteMapFrameCrud().deleteDbChild(getImageSpriteMapFrameCrud().readDbChildren().get(getImageSpriteMapFrameCrud().readDbChildren().size() - 1));
+        }
+
+        List<DbImageSpriteMapFrame> framesFromDb = getImageSpriteMapFrameCrud().readDbChildren();
+        if (overriddenImages.length != framesFromDb.size()) {
+            throw new IllegalStateException();
+        }
+
+        for (int i = 0; i < overriddenImages.length; i++) {
+            String overriddenImage = overriddenImages[i];
+            if (overriddenImage == null) {
+                continue;
+            }
+            byte[] imageData = Html5ImagesUploadConverter.convertInlineImage(overriddenImage).convertBase64ToBytes();
+            framesFromDb.get(i).setData(imageData);
+        }
     }
 
     @Override

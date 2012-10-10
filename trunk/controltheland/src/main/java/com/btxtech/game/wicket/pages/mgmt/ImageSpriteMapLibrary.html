@@ -13,12 +13,16 @@
 			<tr>
 				<th bgcolor="#dadada">Id</th>
 				<th bgcolor="#dadada">Name [Internal]</th>
-				<th bgcolor="#dadada">Edit</th>
+                <th bgcolor="#dadada">Image size [KBytes]</th>
+                <th bgcolor="#dadada">View</th>
+                <th bgcolor="#dadada">Edit</th>
 				<th bgcolor="#dadada">Delete</th>
 			</tr>
 			<tr wicket:id="imageSpriteMaps">
 				<td wicket:id="id" />
 				<td><input wicket:id="name" type="text" size="20"></td>
+                <td wicket:id="spriteMapSize"></td>
+                <td><a target="_blank" wicket:id="spriteMapLink">View Spritemap</a></td>
 				<td valign="center"><input type="submit" value="Edit"
 					wicket:id="edit" /></td>
 				<td valign="center"><input type="submit" value="Delete"
@@ -26,7 +30,9 @@
 			</tr>
 		</table>
 		<input type="submit" value="Save" wicket:id="saveImageSpriteMaps" />
-		<input type="submit" value="Create" wicket:id="createImageSpriteMap" />
+        <input type="submit" value="Create" wicket:id="createImageSpriteMap" />
+        <br>
+        <input type="submit" value="Activate" wicket:id="activate" />
 	</form>
 
 </body>

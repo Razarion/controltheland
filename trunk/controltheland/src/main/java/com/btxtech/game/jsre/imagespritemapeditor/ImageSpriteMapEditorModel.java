@@ -2,9 +2,13 @@ package com.btxtech.game.jsre.imagespritemapeditor;
 
 import java.util.List;
 
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootPanel;
 
@@ -12,6 +16,7 @@ public class ImageSpriteMapEditorModel {
     private ImageSpriteMapInfo imageSpriteMapInfo;
     private ImageSpriteMapEditorGui imageSpriteMapEditorGui;
     private String[] overriddenImages;
+    private ImageSpriteMapAccessAsync imageSpriteMapAccessAsync = GWT.create(ImageSpriteMapAccess.class);
 
     public void setFrameCount(int frameCount) {
         if (imageSpriteMapInfo.getFrameCount() != frameCount) {
@@ -47,14 +52,7 @@ public class ImageSpriteMapEditorModel {
     }
 
     public boolean isFrameOverriden(int frame) {
-        if (overriddenImages == null) {
-            return false;
-        }
-        if (frame < overriddenImages.length) {
-            return overriddenImages[frame] != null;
-        } else {
-            return false;
-        }
+        return overriddenImages != null && frame < overriddenImages.length && overriddenImages[frame] != null;
     }
     
     public void overrideImages(int frame, List<String> base64ImageDatas) {
@@ -100,12 +98,33 @@ public class ImageSpriteMapEditorModel {
         imageSpriteMapEditorGui.update();
     }
 
-    public void load() {
-        // TODO onImageSpriteMapInfoLoaded();
+    public void load(int imageSpriteMapId) {
+        imageSpriteMapAccessAsync.loadImageSpriteMapInfo(imageSpriteMapId, new AsyncCallback<ImageSpriteMapInfo>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                GwtCommon.handleException(caught);
+            }
+
+            @Override
+            public void onSuccess(ImageSpriteMapInfo result) {
+                onImageSpriteMapInfoLoaded(result);
+            }
+        });
     }
     
-    public void save() {
-        // TODO Auto-generated method stub
-        
+    public void save(final HasEnabled hasEnabled) {
+        hasEnabled.setEnabled(false);
+        imageSpriteMapAccessAsync.saveImageSpriteMapInfo(imageSpriteMapInfo, overriddenImages, new AsyncCallback<Void>(){
+            @Override
+            public void onFailure(Throwable caught) {
+                GwtCommon.handleException(caught);
+                hasEnabled.setEnabled(true);
+            }
+
+            @Override
+            public void onSuccess(Void result) {
+                hasEnabled.setEnabled(true);
+            }
+        });
     }
 }
