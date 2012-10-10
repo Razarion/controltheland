@@ -9,10 +9,6 @@
         <webroots>
           <root url="file://$MODULE_DIR$/src/main/webapp" relative="/" />
         </webroots>
-        <sourceRoots>
-          <root url="file://$MODULE_DIR$/src/main/java" />
-          <root url="file://$MODULE_DIR$/src/main/resources" />
-        </sourceRoots>
       </configuration>
     </facet>
     <facet type="gwt" name="GWT">
@@ -61,11 +57,13 @@
       <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/WEB-INF/deploy" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/WEB-INF/lib" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/game" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/imagespritemapeditor" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/itemtypeeditor" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/mapeditor" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/mapview" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/pathfinding" />
       <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/playback" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/regioneditor" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="module-library">
