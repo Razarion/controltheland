@@ -272,9 +272,6 @@ public class TestSoundService extends AbstractServiceTest {
         commonSound.setDbSound(soundService.getSoundLibraryCrud().readDbChild(SOUND2_ID));
         soundService.getCommonSoundCrud().updateDbChild(commonSound);
         commonSound = soundService.getCommonSoundCrud().createDbChild();
-        commonSound.setDbSound(soundService.getSoundLibraryCrud().readDbChild(SOUND1_ID));
-        soundService.getCommonSoundCrud().updateDbChild(commonSound);
-        commonSound = soundService.getCommonSoundCrud().createDbChild();
         commonSound.setType(DbCommonSound.Type.BACKGROUND_MUSIC);
         commonSound.setDbSound(soundService.getSoundLibraryCrud().readDbChild(SOUND2_ID));
         soundService.getCommonSoundCrud().updateDbChild(commonSound);
