@@ -30,7 +30,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
  * Time: 2:28:42 PM
  */
 public class Explosion {
-    private static final int REMOVE_ITEM = 10;
+    private static final int REMOVE_ITEM = 3;
     private int frame = -1;
     private long startTime;
     private Rectangle explosionViewRect;
