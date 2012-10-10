@@ -40,7 +40,11 @@ public class SecondPanel extends Panel {
 
             @Override
             public void setObject(Integer minutes) {
-                setDefaultModelObject(minutes * ClientDateUtil.MILLIS_IN_SECOND);
+                if(minutes != null) {
+                    setDefaultModelObject(minutes * ClientDateUtil.MILLIS_IN_SECOND);
+                }  else {
+                    setDefaultModelObject(null);
+                }
             }
 
             @Override
