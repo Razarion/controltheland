@@ -40,7 +40,11 @@ public class MinutePanel extends Panel {
 
             @Override
             public void setObject(Integer minutes) {
-                setDefaultModelObject(minutes * ClientDateUtil.MILLIS_IN_MINUTE);
+                if (minutes != null) {
+                    setDefaultModelObject(minutes * ClientDateUtil.MILLIS_IN_MINUTE);
+                } else {
+                    setDefaultModelObject(null);
+                }
             }
 
             @Override
