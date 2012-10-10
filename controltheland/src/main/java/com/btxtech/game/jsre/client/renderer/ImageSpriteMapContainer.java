@@ -22,6 +22,6 @@ public class ImageSpriteMapContainer extends ImageLoaderContainer<ImageSpriteMap
 
     @Override
     protected String getUrl(ImageSpriteMapInfo imageSpriteMapInfo) {
-        return ImageHandler.getImageSpriteMapUrl(imageSpriteMapInfo);
+        return ImageHandler.getImageSpriteMapUrl(imageSpriteMapInfo.getId());
     }
 }

@@ -35,6 +35,7 @@
             <props>
                 <prop key="terrain">terrainImageController</prop>
                 <prop key="item">itemImageController</prop>
+                <prop key="sprites">imageSpriteMapController</prop>
                 <prop key="muzzle">muzzleFlashController</prop>
                 <prop key="statJS">statisticsController</prop>
                 <prop key="lsc">loadScriptCommunicationController</prop>

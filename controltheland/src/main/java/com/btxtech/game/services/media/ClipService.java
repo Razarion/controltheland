@@ -27,5 +27,9 @@ public interface ClipService {
     CommonClipInfo getCommonClipInfo();
 
     ImageHolder getImageSpriteMap(int imageSpriteMapId);
+
+    void saveImageSpriteMap(ImageSpriteMapInfo imageSpriteMapInfo, String[] overriddenImages);
+
+    void activateImageSpriteMapCache();
 }
     

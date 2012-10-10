@@ -23,9 +23,6 @@ public class DbImageSpriteMapFrame implements CrudChild<DbImageSpriteMap> {
     private Integer id;
     @Column(length = 500000)
     private byte[] data;
-    @OrderBy
-    @SuppressWarnings({"UnusedDeclaration"})
-    private int frame;
     @ManyToOne(fetch = FetchType.LAZY)
     private DbImageSpriteMap dbImageSpriteMap;
 

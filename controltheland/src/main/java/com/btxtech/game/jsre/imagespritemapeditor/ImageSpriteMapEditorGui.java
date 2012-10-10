@@ -37,8 +37,10 @@ public class ImageSpriteMapEditorGui extends Composite {
     Button playButton;
     @UiField
     Button stopButton;
-    @UiField SimpleCheckBox loopCheckbox;
-    @UiField Button saveButton;
+    @UiField
+    SimpleCheckBox loopCheckbox;
+    @UiField
+    Button saveButton;
     private ImageSpriteMapEditorModel imageSpriteMapEditorModel;
     private ImageSpriteMapEditorRenderer spriteMapEditorRenderer;
 
@@ -96,11 +98,14 @@ public class ImageSpriteMapEditorGui extends Composite {
     void onStopButtonClick(ClickEvent event) {
         spriteMapEditorRenderer.stop();
     }
+
     @UiHandler("loopCheckbox")
     void onLoopCheckboxClick(ClickEvent event) {
         spriteMapEditorRenderer.setLoop(loopCheckbox.getValue());
     }
+
     @UiHandler("saveButton")
     void onSaveButtonClick(ClickEvent event) {
+        imageSpriteMapEditorModel.save(saveButton);
     }
 }

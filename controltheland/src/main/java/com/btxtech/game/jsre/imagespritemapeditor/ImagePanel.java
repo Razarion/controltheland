@@ -1,9 +1,9 @@
 package com.btxtech.game.jsre.imagespritemapeditor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DataTransfer;
 import com.google.gwt.event.dom.client.DragEnterEvent;
@@ -20,12 +20,15 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ImagePanel extends Composite implements DropHandler, DragOverHandler, DragEnterHandler {
 
     private static ImagePanelUiBinder uiBinder = GWT.create(ImagePanelUiBinder.class);
     @UiField
     Label noImageLabel;
-    @UiField
+    @UiField(provided = true)
     Image serverImage;
     @UiField
     Image clientImage;
@@ -38,6 +41,9 @@ public class ImagePanel extends Composite implements DropHandler, DragOverHandle
     }
 
     public ImagePanel(int frame, ImageSpriteMapEditorModel imageSpriteMapEditorModel) {
+        ImageSpriteMapInfo imageSpriteMapInfo = imageSpriteMapEditorModel.getImageSpriteMapInfo();
+        Index offset = imageSpriteMapInfo.getSpriteMapOffset(frame);
+        serverImage = new Image(ImageHandler.getImageSpriteMapUrl(imageSpriteMapInfo.getId()), offset.getX(), offset.getY(), imageSpriteMapInfo.getFrameWidth(), imageSpriteMapInfo.getFrameHeight());
         initWidget(uiBinder.createAndBindUi(this));
         this.frame = frame;
         this.imageSpriteMapEditorModel = imageSpriteMapEditorModel;
@@ -48,12 +54,17 @@ public class ImagePanel extends Composite implements DropHandler, DragOverHandle
             clientImage.addDragOverHandler(this);
             clientImage.addDragEnterHandler(this);
         } else {
-            // TODO take image from sprite map
-            // TODO or if is not available
-            noImageLabel.addDropHandler(this);
-            noImageLabel.addDragOverHandler(this);
-            noImageLabel.addDragEnterHandler(this);
-            noImageLabel.setVisible(true);
+            if (imageSpriteMapInfo.getFrameWidth() > 0 && imageSpriteMapInfo.getFrameWidth() > 0) {
+                serverImage.addDropHandler(this);
+                serverImage.addDragOverHandler(this);
+                serverImage.addDragEnterHandler(this);
+                serverImage.setVisible(true);
+            } else {
+                noImageLabel.addDropHandler(this);
+                noImageLabel.addDragOverHandler(this);
+                noImageLabel.addDragEnterHandler(this);
+                noImageLabel.setVisible(true);
+            }
         }
     }
 
@@ -64,23 +75,23 @@ public class ImagePanel extends Composite implements DropHandler, DragOverHandle
     }
 
     private native int evaluateDroppedData(DataTransfer dataTransfer, ImagePanel callback) /*-{
-		var imageCount = 0;
-		for ( var i = 0; i < dataTransfer.files.length; i++) {
-			var file = dataTransfer.files[i];
-			if (!file.type.match('image.*')) {
-				continue;
-			}
-			var reader = new FileReader();
-			imageCount++;
-			// Closure to capture the file information.
-			reader.onload = (function(theFile) {
-				return function(e) {
-					$entry(@com.btxtech.game.jsre.imagespritemapeditor.ImagePanel::staticLoadCallback(Ljava/lang/String;Lcom/btxtech/game/jsre/imagespritemapeditor/ImagePanel;)(e.target.result, callback));
-				};
-			})(file);
-			reader.readAsDataURL(file);
-		}
-		return imageCount;
+        var imageCount = 0;
+        for (var i = 0; i < dataTransfer.files.length; i++) {
+            var file = dataTransfer.files[i];
+            if (!file.type.match('image.*')) {
+                continue;
+            }
+            var reader = new FileReader();
+            imageCount++;
+            // Closure to capture the file information.
+            reader.onload = (function (theFile) {
+                return function (e) {
+                    $entry(@com.btxtech.game.jsre.imagespritemapeditor.ImagePanel::staticLoadCallback(Ljava/lang/String;Lcom/btxtech/game/jsre/imagespritemapeditor/ImagePanel;)(e.target.result, callback));
+                };
+            })(file);
+            reader.readAsDataURL(file);
+        }
+        return imageCount;
     }-*/;
 
     private static void staticLoadCallback(String base64ImageData, ImagePanel callback) {

@@ -14,6 +14,12 @@ public class ClipInfo implements Serializable {
     private int spriteMapId;
     private Integer soundId;
 
+    /**
+     * Used by GWT
+     */
+    ClipInfo() {
+    }
+
     public ClipInfo(int clipId) {
         this.clipId = clipId;
     }

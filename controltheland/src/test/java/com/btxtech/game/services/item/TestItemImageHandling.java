@@ -1,6 +1,5 @@
 package com.btxtech.game.services.item;
 
-import com.btxtech.game.controllers.ItemImageController;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -40,19 +39,19 @@ import java.util.List;
  * Time: 23:36:24
  */
 public class TestItemImageHandling extends AbstractServiceTest {
-    private static final String INLINE_IMAGE_1 = "data:image/png;base64,xxxx";
-    private static final String MIME_IMAGE_1 = "image/png";
-    private static final byte[] IMAGE_DATA_1 = new byte[]{-57, 28, 113};
-    private static final String INLINE_IMAGE_2 = "data:image/loeli;base64,iVBORw0KGgoAAAANS";
-    private static final String MIME_IMAGE_2 = "image/loeli";
-    private static final byte[] IMAGE_DATA_2 = new byte[]{-119, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 0};
-    private static final String INLINE_IMAGE_3 = "data:image/jpg;base64,iVBOdseedc";
-    private static final String MIME_IMAGE_3 = "image/jpg";
-    private static final byte[] IMAGE_DATA_3 = new byte[]{-119, 80, 78, 118, -57, -98, 0, 0};
-    private static final String INLINE_IMAGE_4 = "data:image/gif;base64,wrefdfs";
-    private static final String MIME_IMAGE_4 = "image/gif";
-    private static final byte[] IMAGE_DATA_4 = new byte[]{-62, -73, -97, 0, 0, 0};
-    private static final String INLINE_IMAGE_5 = "data:image/png;base64," +
+    public static final String INLINE_IMAGE_1 = "data:image/png;base64,xxxx";
+    public static final String MIME_IMAGE_1 = "image/png";
+    public static final byte[] IMAGE_DATA_1 = new byte[]{-57, 28, 113};
+    public static final String INLINE_IMAGE_2 = "data:image/loeli;base64,iVBORw0KGgoAAAANS";
+    public static final String MIME_IMAGE_2 = "image/loeli";
+    public static final byte[] IMAGE_DATA_2 = new byte[]{-119, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 0};
+    public static final String INLINE_IMAGE_3 = "data:image/jpg;base64,iVBOdseedc";
+    public static final String MIME_IMAGE_3 = "image/jpg";
+    public static final byte[] IMAGE_DATA_3 = new byte[]{-119, 80, 78, 118, -57, -98, 0, 0};
+    public static final String INLINE_IMAGE_4 = "data:image/gif;base64,wrefdfs";
+    public static final String MIME_IMAGE_4 = "image/gif";
+    public static final byte[] IMAGE_DATA_4 = new byte[]{-62, -73, -97, 0, 0, 0};
+    public static final String INLINE_IMAGE_5 = "data:image/png;base64," +
             "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABGdBTUEAANbY1E9YMgAAABl0" +
             "RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAGAUExURcDYv1C8WdPrtIDAeWqk" +
             "Oqnd2VLWaOX0x7ftwZzZlIjGxr7gxanLkdfu1FumybHSsJ3Cutbyx4S9fm2paMrq0Lfo1L/a" +
@@ -77,8 +76,6 @@ public class TestItemImageHandling extends AbstractServiceTest {
 
     @Autowired
     private ServerItemTypeService serverItemTypeService;
-    @Autowired
-    private ItemImageController itemImageController;
 
     @Test
     @DirtiesContext
@@ -755,9 +752,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
         endHttpSession();
     }
 
-    private void assertBufferedImage(String expectedFileName, BufferedImage spriteMap, int xOffset) throws IOException {
+    public static void assertBufferedImage(String expectedFileName, BufferedImage spriteMap, int xOffset) throws IOException {
         final double MAX_DIFF = 1.0;
-        BufferedImage expected = ImageIO.read(getClass().getResource(expectedFileName).openStream());
+        BufferedImage expected = ImageIO.read(TestItemImageHandling.class.getResource(expectedFileName).openStream());
         BufferedImage actual = spriteMap.getSubimage(xOffset, 0, expected.getWidth(), expected.getHeight());
         Assert.assertEquals("Image width is not same", expected.getWidth(), actual.getWidth());
         Assert.assertEquals("Image height is not same", expected.getHeight(), actual.getHeight());
@@ -805,7 +802,7 @@ public class TestItemImageHandling extends AbstractServiceTest {
         DbBaseItemType dbBaseItemType = serverItemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID);
         DbWeaponType dbWeaponType = dbBaseItemType.getDbWeaponType();
         WeaponType weaponType = dbWeaponType.createWeaponType(3);
-        BoundingBox  boundingBox = dbBaseItemType.createBoundingBox();
+        BoundingBox boundingBox = dbBaseItemType.createBoundingBox();
         ItemTypeSpriteMap itemTypeSpriteMap = dbBaseItemType.createItemTypeSpriteMap(boundingBox);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

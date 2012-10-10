@@ -12,13 +12,17 @@ import com.btxtech.game.services.media.DbClip;
 import com.btxtech.game.services.media.DbCommonClip;
 import com.btxtech.game.services.media.DbImageSpriteMap;
 import com.btxtech.game.services.media.DbImageSpriteMapFrame;
+import com.btxtech.game.services.user.SecurityRoles;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -116,6 +120,7 @@ public class ClipServiceImpl implements ClipService {
         }
     }
 
+    @Override
     public void activateImageSpriteMapCache() {
         Map<Integer, ImageHolder> tmpMap = new HashMap<>();
         for (DbImageSpriteMap dbImageSpriteMap : imageSpriteMapCrud.readDbChildren()) {
@@ -143,17 +148,32 @@ public class ClipServiceImpl implements ClipService {
         BufferedImage masterImage = ImageIO.read(new ByteArrayInputStream(masterImageData));
         BufferedImage spriteMap = new BufferedImage(dbImageSpriteMap.getFrameWidth() * dbImageSpriteMap.getImageSpriteMapFrames().size(), dbImageSpriteMap.getFrameHeight(), masterImage.getType());
         int xPos = 0;
+        Graphics2D graphics2D = spriteMap.createGraphics();
         for (DbImageSpriteMapFrame dbImageSpriteMapFrame : dbImageSpriteMap.getImageSpriteMapFrames()) {
-            BufferedImage image = ImageIO.read(new ByteArrayInputStream(dbImageSpriteMapFrame.getData()));
-            boolean done = spriteMap.createGraphics().drawImage(image, xPos, 0, null);
-            if (!done) {
-                throw new IllegalStateException("setupSpriteMApAndAddToCache() image could not be drawn. dbImageSpriteMap: " + dbImageSpriteMap + " dbImageSpriteMapFrame: " + dbImageSpriteMapFrame);
+            if(dbImageSpriteMapFrame.getData() != null && dbImageSpriteMapFrame.getData().length > 0) {
+                BufferedImage image = ImageIO.read(new ByteArrayInputStream(dbImageSpriteMapFrame.getData()));
+                boolean done = graphics2D.drawImage(image, xPos, 0, null);
+                if (!done) {
+                    throw new IllegalStateException("setupSpriteMApAndAddToCache() image could not be drawn. dbImageSpriteMap: " + dbImageSpriteMap + " dbImageSpriteMapFrame: " + dbImageSpriteMapFrame);
+                }
             }
             xPos += dbImageSpriteMap.getFrameWidth();
-
         }
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ImageIO.write(spriteMap, imageReader.getFormatName(), outputStream);
         return new ImageHolder(outputStream.toByteArray(), imageReader.getOriginatingProvider().getMIMETypes()[0]);
+    }
+
+    @Override
+    @Transactional
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
+    public void saveImageSpriteMap(ImageSpriteMapInfo imageSpriteMapInfo, String[] overriddenImages) {
+        DbImageSpriteMap dbImageSpriteMap = imageSpriteMapCrud.readDbChild(imageSpriteMapInfo.getId());
+        dbImageSpriteMap.setFrameCount(overriddenImages.length);
+        dbImageSpriteMap.setFrameWidth(imageSpriteMapInfo.getFrameWidth());
+        dbImageSpriteMap.setFrameHeight(imageSpriteMapInfo.getFrameHeight());
+        dbImageSpriteMap.setFrameTime(imageSpriteMapInfo.getFrameTime());
+        dbImageSpriteMap.setFrames(overriddenImages);
+        imageSpriteMapCrud.updateDbChild(dbImageSpriteMap);
     }
 }

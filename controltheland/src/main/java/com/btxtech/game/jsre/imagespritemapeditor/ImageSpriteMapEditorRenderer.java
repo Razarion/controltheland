@@ -45,16 +45,19 @@ public class ImageSpriteMapEditorRenderer {
     }
 
     private void doRender(long timeStamp) {
-        if(imageSpriteMapEditorModel == null) {
+        if (imageSpriteMapEditorModel == null) {
             return;
         }
-        long playTime = System.currentTimeMillis() - startTime;
-
         ImageSpriteMapInfo imageSpriteMapInfo = imageSpriteMapEditorModel.getImageSpriteMapInfo();
+        if (imageSpriteMapInfo == null) {
+            return;
+        }
+        long playTime = timeStamp - startTime;
+
         int frame = imageSpriteMapInfo.getFrame(playTime);
         if (frame < 0) {
-            if(loop) {
-                play(); 
+            if (loop) {
+                play();
             }
             return;
         }
@@ -64,17 +67,21 @@ public class ImageSpriteMapEditorRenderer {
             canvas.getContext2d().drawImage(ImageElement.as(image.getElement()), 0, 0);
         } else {
             ImageElement imageElement = ImageSpriteMapContainer.getInstance().getImage(imageSpriteMapInfo);
-            Index offset = imageSpriteMapInfo.getSpriteMapOffset(frame);
-                canvas.getContext2d().drawImage(imageElement,
-                offset.getX(), // Source x pos
-                offset.getY(), // Source y pos
-                imageSpriteMapInfo.getFrameWidth(), // Source width
-                imageSpriteMapInfo.getFrameHeight(), // Source height
-                0,// Canvas y pos 
-                0,// Canvas y pos 
-                imageSpriteMapInfo.getFrameWidth(), // Destination width 
-                imageSpriteMapInfo.getFrameHeight() // Destination height 
-            );
+            if (imageElement != null) {
+                Index offset = imageSpriteMapInfo.getSpriteMapOffset(frame);
+                if (offset.getX() + imageSpriteMapInfo.getFrameWidth() <= imageElement.getWidth() && offset.getY() + imageSpriteMapInfo.getFrameHeight() <= imageElement.getHeight()) {
+                    canvas.getContext2d().drawImage(imageElement,
+                            offset.getX(), // Source x pos
+                            offset.getY(), // Source y pos
+                            imageSpriteMapInfo.getFrameWidth(), // Source width
+                            imageSpriteMapInfo.getFrameHeight(), // Source height
+                            0,// Canvas y pos
+                            0,// Canvas y pos
+                            imageSpriteMapInfo.getFrameWidth(), // Destination width
+                            imageSpriteMapInfo.getFrameHeight() // Destination height
+                    );
+                }
+            }
             ImageSpriteMapContainer.getInstance().startLoad();
         }
     }
