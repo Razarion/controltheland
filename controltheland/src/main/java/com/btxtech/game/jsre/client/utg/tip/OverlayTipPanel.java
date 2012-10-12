@@ -42,7 +42,7 @@ public class OverlayTipPanel {
     public void close() {
         if (canvas != null) {
             MapWindow.getAbsolutePanel().remove(canvas);
-            Renderer.getInstance().startOverlayRenderTask(overlayTipRenderTask);
+            Renderer.getInstance().stopOverlayRenderTask(overlayTipRenderTask);
             canvas = null;
         }
     }
