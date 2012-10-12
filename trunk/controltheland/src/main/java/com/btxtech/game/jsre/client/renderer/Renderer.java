@@ -4,9 +4,11 @@ import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainUtil;
 import com.btxtech.game.jsre.common.perfmon.Perfmon;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.google.gwt.animation.client.AnimationScheduler;
+import com.google.gwt.dom.client.CanvasElement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -126,7 +128,11 @@ public class Renderer {
 
     private void doRender(long timeStamp) {
         Rectangle viewRect = TerrainView.getInstance().getViewRect();
-        Rectangle tileViewRect = TerrainView.getInstance().getTerrainHandler().convertToTilePositionRoundUp(viewRect);
+        Rectangle tileViewRect = TerrainUtil.convertToTilePositionRoundUp(viewRect);
+        CanvasElement canvasElement = TerrainView.getInstance().getContext2d().getCanvas();
+        // Set canvas size due to chrome crash
+        canvasElement.setWidth(viewRect.getWidth());
+        canvasElement.setHeight(viewRect.getHeight());
         for (AbstractRenderTask renderTask : gameRenderTasks) {
             try {
                 renderTask.render(timeStamp, viewRect, tileViewRect);
@@ -138,7 +144,7 @@ public class Renderer {
 
     private void doOverlayRender(long timeStamp) {
         Rectangle viewRect = TerrainView.getInstance().getViewRect();
-        Rectangle tileViewRect = TerrainView.getInstance().getTerrainHandler().convertToTilePositionRoundUp(viewRect);
+        Rectangle tileViewRect = TerrainUtil.convertToTilePositionRoundUp(viewRect);
         for (AbstractRenderTask renderTask : overlayRenderTasks) {
             try {
                 renderTask.render(timeStamp, viewRect, tileViewRect);

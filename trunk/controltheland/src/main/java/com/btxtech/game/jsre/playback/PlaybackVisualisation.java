@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.RootPanel;
 
@@ -55,10 +56,6 @@ public class PlaybackVisualisation {
             throw new Html5NotSupportedException("PlaybackVisualisation: Canvas not supported.");
         }
         Canvas windowsCanvas = Canvas.createIfSupported();
-        mouseCanvas.setCoordinateSpaceWidth(1920);
-        mouseCanvas.setCoordinateSpaceHeight(1200);
-        windowsCanvas.setCoordinateSpaceWidth(1920);
-        windowsCanvas.setCoordinateSpaceHeight(1200);
         mouseContext2d = mouseCanvas.getContext2d();
         windowsContext2d = windowsCanvas.getContext2d();
         AbsolutePanel absolutePanel = new AbsolutePanel();
@@ -73,11 +70,24 @@ public class PlaybackVisualisation {
     }
 
     public void play() {
-        mouseContext2d.clearRect(0, 0, 1920, 1200);
+        if (mouseContext2d.getCanvas().getWidth() != Window.getClientWidth()) {
+            mouseContext2d.getCanvas().setWidth(Window.getClientWidth());
+        }
+        if (mouseContext2d.getCanvas().getHeight() != Window.getClientHeight()) {
+            mouseContext2d.getCanvas().setHeight(Window.getClientHeight());
+        }
+        mouseContext2d.clearRect(0, 0, mouseContext2d.getCanvas().getWidth(), mouseContext2d.getCanvas().getHeight());
         mouseContext2d.beginPath();
         mouseContext2d.setLineWidth(1);
         mouseContext2d.setStrokeStyle(ColorConstants.WHITE);
-        windowsContext2d.clearRect(0, 0, 1920, 1200);
+
+        if (windowsContext2d.getCanvas().getWidth() != Window.getClientWidth()) {
+            windowsContext2d.getCanvas().setWidth(Window.getClientWidth());
+        }
+        if (windowsContext2d.getCanvas().getHeight() != Window.getClientHeight()) {
+            windowsContext2d.getCanvas().setHeight(Window.getClientHeight());
+        }
+        windowsContext2d.clearRect(0, 0, windowsContext2d.getCanvas().getWidth(), windowsContext2d.getCanvas().getHeight());
         windowsContext2d.setLineWidth(5);
         windowsContext2d.setStrokeStyle(ColorConstants.YELLOW);
         windowsContext2d.strokeRect(playbackInfo.getEventTrackingStart().getScrollLeft(),
@@ -109,7 +119,13 @@ public class PlaybackVisualisation {
     }
 
     public void displayBrowserWindow(BrowserWindowTracking browserWindowTracking) {
-        windowsContext2d.clearRect(0, 0, 1920, 1200);
+        if (windowsContext2d.getCanvas().getWidth() != Window.getClientWidth()) {
+            windowsContext2d.getCanvas().setWidth(Window.getClientWidth());
+        }
+        if (windowsContext2d.getCanvas().getHeight() != Window.getClientHeight()) {
+            windowsContext2d.getCanvas().setHeight(Window.getClientHeight());
+        }
+        windowsContext2d.clearRect(0, 0, windowsContext2d.getCanvas().getWidth(), windowsContext2d.getCanvas().getHeight());
         windowsContext2d.strokeRect(browserWindowTracking.getScrollLeft(),
                 browserWindowTracking.getScrollTop(),
                 browserWindowTracking.getClientWidth(),

@@ -82,7 +82,7 @@ public class TerrainView {
 
     private void scrollDeltaSafe(int scrollX, int scrollY) {
         Index safeDelta = TerrainScrollHandler.calculateSafeDelta(scrollX, scrollY, terrainHandler.getTerrainSettings(), getViewRect());
-        if(!safeDelta.isNull()) {
+        if (!safeDelta.isNull()) {
             viewOriginLeft = viewOriginLeft + safeDelta.getX();
             viewOriginTop = viewOriginTop + safeDelta.getY();
             fireScrollEvent(safeDelta.getX(), safeDelta.getY());
@@ -157,7 +157,7 @@ public class TerrainView {
     }
 
     public void moveToMiddle(Index startPoint) {
-        if(parent == null) {
+        if (parent == null) {
             return;
         }
         int left = startPoint.getX() - parent.getOffsetWidth() / 2 - viewOriginLeft;
@@ -211,12 +211,8 @@ public class TerrainView {
     }
 
     public void updateSize() {
-        viewWidth = parent.getOffsetWidth();
-        viewHeight = parent.getOffsetHeight();
-        canvas.setCoordinateSpaceWidth(viewWidth);
-        canvas.setCoordinateSpaceHeight(viewHeight);
-        canvas.setCoordinateSpaceWidth(viewWidth);
-        canvas.setCoordinateSpaceHeight(viewHeight);
+        viewWidth = Window.getClientWidth();
+        viewHeight = Window.getClientHeight();
     }
 
     private void fireScrollEvent(int deltaLeft, int deltaTop) {
