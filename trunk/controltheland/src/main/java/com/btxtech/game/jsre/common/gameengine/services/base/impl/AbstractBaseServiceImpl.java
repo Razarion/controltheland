@@ -200,7 +200,7 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         return getItemCount(simpleBase, newItemType.getId()) + toAddCount > getLimitation4ItemType(simpleBase, newItemType);
     }
 
-    private int getLimitation4ItemType(SimpleBase simpleBase, BaseItemType itemType) {
+    public int getLimitation4ItemType(SimpleBase simpleBase, BaseItemType itemType) {
         int levelCount = getGlobalServices().getCommonUserGuidanceService().getLevelScope(simpleBase).getLimitation4ItemType(itemType.getId());
         int planetCount = getPlanetServices().getPlanetInfo().getLimitation4ItemType(itemType.getId());
         return Math.min(levelCount, planetCount);

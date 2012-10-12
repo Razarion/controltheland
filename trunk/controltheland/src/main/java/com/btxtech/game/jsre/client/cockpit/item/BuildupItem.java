@@ -24,8 +24,11 @@ public class BuildupItem extends Composite {
     Image image;
     @UiField
     Label priceLabel;
+    @UiField Label itemLimitLabel;
     private EnableState enableState;
     private BaseItemType itemType;
+    private int itemCount;
+    private int itemLimit;
 
     interface BuildupItemUiBinder extends UiBinder<Widget, BuildupItem> {
     }
@@ -82,6 +85,8 @@ public class BuildupItem extends Composite {
 
     private void discoverEnableState() {
         try {
+            itemCount = ClientBase.getInstance().getItemCount(ClientBase.getInstance().getSimpleBase(), itemType.getId()); 
+            itemLimit = ClientBase.getInstance().getLimitation4ItemType(ClientBase.getInstance().getSimpleBase(), itemType);
             if (ClientBase.getInstance().isLevelLimitation4ItemTypeExceeded(itemType, ClientBase.getInstance().getSimpleBase())) {
                 enableState = EnableState.DISABLED_LEVEL_EXCEEDED;
                 return;
@@ -109,6 +114,7 @@ public class BuildupItem extends Composite {
         } else {
             image.getElement().getStyle().setOpacity(0.5);
         }
+        itemLimitLabel.setText(itemCount + "/" + itemLimit);
     }
 
     public void onMoneyChanged(double accountBalance) {
