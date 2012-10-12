@@ -277,6 +277,7 @@ public class SideCockpit {
             builder.append(ClientBase.getInstance().getHouseSpace() + ClientPlanetServices.getInstance().getPlanetInfo().getHouseSpace());
             itemLimit.setText(builder.toString());
         }
+        onStateChanged();
     }
 
     public void updateMoney() {
