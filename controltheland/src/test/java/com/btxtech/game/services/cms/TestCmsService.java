@@ -3585,6 +3585,7 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertLabel("form:content:table:rows:2:cells:1:cell", "2");
         tester.assertLabel("form:content:table:rows:2:cells:2:cell", "2");
         tester.assertLabel("form:content:table:rows:2:cells:3:cell", "aaa");
+        // TODO failed on 12.10.2012 junit.framework.ComparisonFailure: null expected:<1:00:0[0]> but was:<1:00:0[1]>
         tester.assertLabel("form:content:table:rows:2:cells:4:cell", "1:00:00");
         tester.assertLabel("form:content:table:rows:2:cells:5:cell", "2");
         tester.assertLabel("form:content:table:rows:2:cells:6:cell", "1234");
