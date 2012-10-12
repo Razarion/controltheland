@@ -35,6 +35,7 @@ public class LifecyclePanel extends Panel {
         add(new Label("level", lifecycleTrackingInfo.getLevel()));
         add(new Label("levelTaskName", lifecycleTrackingInfo.getLevelTaskName()));
         add(new Label("startTime", DateUtil.formatDateTime(new Date(lifecycleTrackingInfo.getStartServer()))));
+        add(new Label("startUuid", lifecycleTrackingInfo.getStartUuid()));
         add(new ListView<DbStartupTask>("startup", lifecycleTrackingInfo.getGameStartups()) {
             @Override
             protected void populateItem(ListItem<DbStartupTask> gameStartupListItem) {
