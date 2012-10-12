@@ -47,6 +47,14 @@ public class Game implements EntryPoint {
         return isDebug;
     }
 
+    /**
+     * Enable debug
+     * Shall only be used from playback
+     */
+    public static void setDebug() {
+        isDebug = true;
+    }
+
     private GameStartupSeq getStartupSeqFromHtml() {
         RootPanel div = getStartupInformation();
         String startSeqStr = div.getElement().getAttribute(STARTUP_SEQ_ID);

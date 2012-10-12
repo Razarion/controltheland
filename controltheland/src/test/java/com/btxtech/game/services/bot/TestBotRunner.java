@@ -290,6 +290,7 @@ public class TestBotRunner extends AbstractServiceTest {
 
         assertWholeItemCount(TEST_PLANET_1_ID, 0);
         Thread.sleep(250);
+        // TODO failed on 12.12.2012
         assertWholeItemCount(TEST_PLANET_1_ID, 3);
         Assert.assertEquals("Bot4", serverPlanetServices.getBaseService().getBaseName(botRunner.getBase()));
 
