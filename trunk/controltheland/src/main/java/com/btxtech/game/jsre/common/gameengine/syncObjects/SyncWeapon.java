@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
@@ -24,10 +25,13 @@ import com.btxtech.game.jsre.common.packets.SyncItemInfo;
  * Time: 16:02:26
  */
 public class SyncWeapon extends SyncBaseAbility {
+    private static final long CHECK_DELTA = 1000;
     private WeaponType weaponType;
     private Id target;
     private boolean followTarget;
     private double reloadProgress;
+    private Index targetPosition;
+    private long targetPositionLastCheck;
 
     public SyncWeapon(WeaponType weaponType, SyncBaseItem syncBaseItem) {
         super(syncBaseItem);
@@ -64,11 +68,27 @@ public class SyncWeapon extends SyncBaseAbility {
                 throw new IllegalArgumentException("Weapon is followTarget but has now SyncMovable: " + getSyncBaseItem());
             }
 
+            SyncBaseItem targetItem = (SyncBaseItem) getPlanetServices().getItemService().getItem(target);
+
+            // Check if target has moved away
+            if (targetPositionLastCheck + CHECK_DELTA < System.currentTimeMillis() && followTarget && getSyncBaseItem().hasSyncMovable() && isNewPathRecalculationAllowed()) {
+                if (targetPosition != null) {
+                    if (!targetPosition.equals(targetItem.getSyncItemArea().getPosition())) {
+                        targetPosition = targetItem.getSyncItemArea().getPosition();
+                        recalculateNewPath(weaponType.getRange(), targetItem.getSyncItemArea(), targetItem.getTerrainType());
+                        getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+                        return getSyncBaseItem().getSyncMovable().tickMove(factor);
+                    }
+                }
+                targetPosition = targetItem.getSyncItemArea().getPosition();
+                targetPositionLastCheck = System.currentTimeMillis();
+            }
+
             if (followTarget && getSyncBaseItem().hasSyncMovable() && getSyncBaseItem().getSyncMovable().tickMove(factor)) {
                 return true;
             }
 
-            SyncBaseItem targetItem = (SyncBaseItem) getPlanetServices().getItemService().getItem(target);
+
             if (!followTarget && !isInRange(targetItem)) {
                 stop();
                 return returnFalseIfReloaded();
@@ -93,8 +113,7 @@ public class SyncWeapon extends SyncBaseAbility {
                 reloadProgress = 0;
             }
             return true;
-        }
-        catch (ItemDoesNotExistException ignore) {
+        } catch (ItemDoesNotExistException ignore) {
             // It has may be killed
             stop();
             return returnFalseIfReloaded();
@@ -112,6 +131,8 @@ public class SyncWeapon extends SyncBaseAbility {
 
     public void stop() {
         target = null;
+        targetPosition = null;
+        targetPositionLastCheck = 0;
         if (getSyncBaseItem().hasSyncMovable()) {
             getSyncBaseItem().getSyncMovable().stop();
         }
@@ -144,6 +165,8 @@ public class SyncWeapon extends SyncBaseAbility {
         this.target = attackCommand.getTarget();
         followTarget = attackCommand.isFollowTarget();
         setPathToDestinationIfSyncMovable(attackCommand.getPathToDestination());
+        targetPosition = null;
+        targetPositionLastCheck = 0;
     }
 
     public boolean isItemTypeAllowed(SyncBaseItem target) {
