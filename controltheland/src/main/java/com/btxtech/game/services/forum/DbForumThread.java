@@ -32,6 +32,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -51,13 +52,14 @@ public class DbForumThread implements CrudChild<DbCategory>, CrudParent {
     private User user;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "dbForumThread", fetch = FetchType.LAZY)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-    @OrderBy("postDate ASC")
     private List<DbPost> posts;
     @ManyToOne
     @JoinColumn(name = "categoryId", nullable = false)
     private DbCategory dbCategory;
     @Transient
     private CrudListChildServiceHelper<DbPost> postCrud;
+    @Transient
+    private CrudListChildServiceHelper<DbPost> postCrudLastDate;
 
     @Override
     public Serializable getId() {
@@ -95,7 +97,7 @@ public class DbForumThread implements CrudChild<DbCategory>, CrudParent {
     @Override
     public void init(UserService userService) {
         date = new Date();
-        posts = new ArrayList<DbPost>();
+        posts = new ArrayList<>();
         // There is never an empty thread
         getPostCrud().createDbChild(userService);
     }
@@ -112,16 +114,43 @@ public class DbForumThread implements CrudChild<DbCategory>, CrudParent {
 
     public CrudListChildServiceHelper<DbPost> getPostCrud() {
         if (postCrud == null) {
-            postCrud = new CrudListChildServiceHelper<DbPost>(posts, DbPost.class, this, "user", null);
+            postCrud = new CrudListChildServiceHelper<>(posts, DbPost.class, this, "user", new Comparator<DbPost>() {
+                @Override
+                public int compare(DbPost o1, DbPost o2) {
+                    Date d1 = o1.getDate();
+                    Date d2 = o2.getDate();
+                    if (d1 == null && d2 == null) {
+                        return 0;
+                    } else if (d1 == null) {
+                        return -1;
+                    } else if (d2 == null) {
+                        return 1;
+                    } else {
+                        return d1.compareTo(d2);
+                    }
+                }
+            });
         }
         return postCrud;
     }
 
+    private CrudListChildServiceHelper<DbPost> getPostCrudLastDate() {
+        if (postCrudLastDate == null) {
+            postCrudLastDate = new CrudListChildServiceHelper<>(posts, DbPost.class, this, "user", new ForumComparator<DbPost>() {
+                @Override
+                protected Date getDate(DbPost dbPost) {
+                    return dbPost.getDate();
+                }
+            });
+        }
+        return postCrudLastDate;
+    }
+
     public Date getLastPost() {
-        if (getPostCrud().readDbChildren().isEmpty()) {
+        if (getPostCrudLastDate().readDbChildren().isEmpty()) {
             return null;
         } else {
-            return getPostCrud().readDbChildren().get(0).getDate();
+            return getPostCrudLastDate().readDbChildren().get(0).getDate();
         }
     }
 
