@@ -2,6 +2,7 @@ package com.btxtech.game.jsre.client.renderer;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.cockpit.Group;
+import com.btxtech.game.jsre.client.cockpit.ItemMouseOverHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
@@ -43,10 +44,14 @@ public class ItemRenderTask extends AbstractRenderTask {
             if (syncItem instanceof SyncBaseItem) {
                 SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
                 if (ownSelection != null && ownSelection.contains(syncBaseItem) || syncItem.equals(targetSelection)) {
-                    showHealthBar(itemTypeSpriteMap, relativeImagePosition, syncBaseItem);
+                    showHealthBar(itemTypeSpriteMap, relativeImagePosition, syncBaseItem, 1.0);
                 }
                 showMarker(itemTypeSpriteMap, relativeImagePosition, syncBaseItem);
                 showProgressBar(itemTypeSpriteMap, relativeImagePosition, syncBaseItem);
+                SyncBaseItem mouseOverItem = ItemMouseOverHandler.getInstance().getMouseOver();
+                if(syncBaseItem.equals(mouseOverItem) && (ownSelection == null || !ownSelection.contains(mouseOverItem))) {
+                    showHealthBar(itemTypeSpriteMap, relativeImagePosition, mouseOverItem, 0.5);
+                }
             }
 
             Index offset = itemTypeSpriteMap.getItemTypeImageOffset(syncItem, timeStamp);
@@ -93,7 +98,8 @@ public class ItemRenderTask extends AbstractRenderTask {
         context2d.fillRect(relativeImagePosition.getX(), relativeImagePosition.getY() + itemTypeSpriteMap.getImageHeight() - 7, 4, 4);
     }
 
-    private void showHealthBar(ItemTypeSpriteMap itemTypeSpriteMap, Index relativeImagePosition, SyncBaseItem syncBaseItem) {
+    private void showHealthBar(ItemTypeSpriteMap itemTypeSpriteMap, Index relativeImagePosition, SyncBaseItem syncBaseItem, double alpha) {
+        context2d.setGlobalAlpha(alpha);
         context2d.setLineWidth(2);
         context2d.setStrokeStyle("#FF0000");
         context2d.beginPath();
@@ -105,5 +111,6 @@ public class ItemRenderTask extends AbstractRenderTask {
         context2d.moveTo(relativeImagePosition.getX(), relativeImagePosition.getY() + itemTypeSpriteMap.getImageHeight() - 3);
         context2d.lineTo(relativeImagePosition.getX() + itemTypeSpriteMap.getImageWidth() * syncBaseItem.getNormalizedHealth(), relativeImagePosition.getY() + itemTypeSpriteMap.getImageHeight() - 3);
         context2d.stroke();
+        context2d.setGlobalAlpha(1.0);
     }
 }

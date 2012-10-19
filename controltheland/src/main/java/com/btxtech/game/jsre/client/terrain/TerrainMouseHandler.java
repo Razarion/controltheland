@@ -10,6 +10,7 @@ import com.btxtech.game.jsre.client.cockpit.CockpitMode;
 import com.btxtech.game.jsre.client.cockpit.CursorHandler;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.GroupSelectionFrame;
+import com.btxtech.game.jsre.client.cockpit.ItemMouseOverHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.item.ToBeBuildPlacer;
@@ -290,6 +291,7 @@ public class TerrainMouseHandler implements MouseMoveHandler {
             int absoluteX = event.getRelativeX(canvas.getElement()) + terrainView.getViewOriginLeft();
             int absoluteY = event.getRelativeY(canvas.getElement()) + terrainView.getViewOriginTop();
 
+            ItemMouseOverHandler.getInstance().setMouseOver(null);
             if (CockpitMode.getInstance().hasGroupSelectionFrame()) {
                 CockpitMode.getInstance().getGroupSelectionFrame().onMove(absoluteX, absoluteY);
             } else if (CockpitMode.getInstance().hasInventoryItemPlacer()) {
@@ -299,6 +301,7 @@ public class TerrainMouseHandler implements MouseMoveHandler {
                 CursorHandler.getInstance().noCursor();
             } else {
                 SyncItem syncItem = ItemContainer.getInstance().getItemAtAbsolutePosition(new Index(absoluteX, absoluteY));
+                ItemMouseOverHandler.getInstance().setMouseOver(syncItem);
                 CursorHandler.getInstance().handleMouseMove(syncItem, absoluteX, absoluteY);
             }
 
