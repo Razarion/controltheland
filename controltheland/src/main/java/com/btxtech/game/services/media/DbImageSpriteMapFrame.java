@@ -70,7 +70,7 @@ public class DbImageSpriteMapFrame implements CrudChild<DbImageSpriteMap> {
 
         DbImageSpriteMapFrame that = (DbImageSpriteMapFrame) o;
 
-        return id != null && !id.equals(that.id);
+        return id != null && id.equals(that.id);
     }
 
     @Override

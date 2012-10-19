@@ -20,7 +20,6 @@ import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.info.ClipInfo;
 import com.btxtech.game.jsre.client.common.info.CommonSoundInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
@@ -106,12 +105,6 @@ public class SoundHandler implements SelectionListener {
             }
         } catch (Exception e) {
             log.log(Level.SEVERE, "SoundHandler.stop()", e);
-        }
-    }
-
-    public void playMuzzleFlashSound(BaseItemType baseItemType) {
-        if (baseItemType.getWeaponType().getSoundId() != null) {
-            playSound(baseItemType.getWeaponType().getSoundId(), false);
         }
     }
 

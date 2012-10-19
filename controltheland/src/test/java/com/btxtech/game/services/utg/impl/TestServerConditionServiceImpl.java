@@ -316,7 +316,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         Id container = getFirstSynItemId(TEST_CONTAINER_ITEM_ID);
         sendMoveCommand(container, new Index(400, 400)); // Prevent container move over other unit
         waitForActionServiceDone();
-        sendMoveCommand(builder, new Index(300, 300));
+        sendMoveCommand(builder, new Index(220, 400));
         waitForActionServiceDone();
         sendContainerLoadCommand(builder, container);
         waitForActionServiceDone();

@@ -13,11 +13,15 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
+import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: beat
@@ -30,8 +34,10 @@ public class SyncWeapon extends SyncBaseAbility {
     private Id target;
     private boolean followTarget;
     private double reloadProgress;
-    private Index targetPosition;
-    private long targetPositionLastCheck;
+    private Index targetPosition; // Not Synchronized
+    private long targetPositionLastCheck; // Not Synchronized
+    private List<DecimalPosition> projectilePositions; // Not Synchronized
+    private Index projectileTarget; // Not Synchronized
 
     public SyncWeapon(WeaponType weaponType, SyncBaseItem syncBaseItem) {
         super(syncBaseItem);
@@ -55,11 +61,42 @@ public class SyncWeapon extends SyncBaseAbility {
             reloadProgress += factor;
         }
 
-        if (target != null) {
+        if (projectilePositions != null) {
+            return tickProjectile(factor) || returnFalseIfReloaded();
+        } else if (target != null) {
             return tickAttack(factor);
         } else {
             return returnFalseIfReloaded();
         }
+    }
+
+    private boolean tickProjectile(double factor) {
+        for (int i = 0, projectilePositionSize = projectilePositions.size(); i < projectilePositionSize; i++) {
+            DecimalPosition projectilePosition = projectilePositions.get(i);
+            if (getWeaponType().getProjectileSpeed() != null) {
+                projectilePosition = projectilePosition.getPointWithDistance(factor * (double) getWeaponType().getProjectileSpeed(), projectileTarget, false);
+                projectilePositions.set(i, projectilePosition);
+            }
+            if (projectilePosition.getPosition().equals(projectileTarget)) {
+                projectileDetonation();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void projectileDetonation() {
+        getSyncBaseItem().fireItemChanged(SyncItemListener.Change.PROJECTILE_DETONATION);
+        try {
+            SyncBaseItem targetItem = (SyncBaseItem) getPlanetServices().getItemService().getItem(target);
+            targetItem.decreaseHealth(weaponType.getDamage() * reloadProgress / weaponType.getReloadTime(), getSyncBaseItem().getBase());
+            targetItem.onAttacked(getSyncBaseItem());
+        } catch (ItemDoesNotExistException e) {
+            // Ignore
+        }
+        reloadProgress = 0;
+        projectilePositions = null;
+        projectileTarget = null;
     }
 
     private boolean tickAttack(double factor) {
@@ -107,10 +144,16 @@ public class SyncWeapon extends SyncBaseAbility {
 
             getSyncItemArea().turnTo(targetItem);
             if (reloadProgress >= weaponType.getReloadTime()) {
-                handleAttackState();
-                targetItem.decreaseHealth(weaponType.getDemage() * reloadProgress / weaponType.getReloadTime(), getSyncBaseItem().getBase());
-                targetItem.onAttacked(getSyncBaseItem());
-                reloadProgress = 0;
+                projectilePositions = new ArrayList<DecimalPosition>();
+                int angleIndex = getSyncItemArea().getAngelIndex();
+                for (Index[] indexes : weaponType.getMuzzleFlashPositions()) {
+                    projectilePositions.add(new DecimalPosition(getSyncItemArea().getPosition().add(indexes[angleIndex])));
+                }
+                projectileTarget = targetItem.getSyncItemArea().getPosition();
+                getSyncBaseItem().fireItemChanged(SyncItemListener.Change.ON_FIRING);
+                if (weaponType.getProjectileSpeed() == null) {
+                    projectileDetonation();
+                }
             }
             return true;
         } catch (ItemDoesNotExistException ignore) {
@@ -125,14 +168,12 @@ public class SyncWeapon extends SyncBaseAbility {
 
     }
 
-    private void handleAttackState() {
-        getSyncBaseItem().fireItemChanged(SyncItemListener.Change.ON_ATTACK);
-    }
-
     public void stop() {
         target = null;
         targetPosition = null;
         targetPositionLastCheck = 0;
+        projectilePositions = null;
+        projectileTarget = null;
         if (getSyncBaseItem().hasSyncMovable()) {
             getSyncBaseItem().getSyncMovable().stop();
         }
@@ -167,6 +208,8 @@ public class SyncWeapon extends SyncBaseAbility {
         setPathToDestinationIfSyncMovable(attackCommand.getPathToDestination());
         targetPosition = null;
         targetPositionLastCheck = 0;
+        projectilePositions = null;
+        projectileTarget = null;
     }
 
     public boolean isItemTypeAllowed(SyncBaseItem target) {
@@ -219,5 +262,17 @@ public class SyncWeapon extends SyncBaseAbility {
 
     public void setReloadProgress(double reloadProgress) {
         this.reloadProgress = reloadProgress;
+    }
+
+    public Index getProjectilePosition(int muzzleFlashNr) {
+        if (projectilePositions != null) {
+            return projectilePositions.get(muzzleFlashNr).getPosition();
+        } else {
+            return null;
+        }
+    }
+
+    public Index getProjectileTarget() {
+        return projectileTarget;
     }
 }

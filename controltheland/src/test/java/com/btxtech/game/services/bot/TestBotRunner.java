@@ -18,6 +18,8 @@ import com.btxtech.game.services.history.DbHistoryElement;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.planet.db.DbPlanet;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,6 +41,7 @@ public class TestBotRunner extends AbstractServiceTest {
     private ServerItemTypeService serverItemTypeService;
     @Autowired
     private PlanetSystemService planetSystemService;
+    private Log log = LogFactory.getLog(TestBotRunner.class);
 
     @Test
     @DirtiesContext
@@ -342,18 +345,22 @@ public class TestBotRunner extends AbstractServiceTest {
         botItems.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 3, true, createRegion(new Rectangle(0, 0, 1000, 1000), 1), false, null, false, null));
         List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
         botEnragementStateConfigs.add(new BotEnragementStateConfig("NormalTest", botItems, null));
-        BotConfig botConfig = new BotConfig(1, 10, botEnragementStateConfigs, createRegion(new Rectangle(0, 0, 4000, 4000), 1), "Bot4", 40L, 70L, 100L, 120L);
+        BotConfig botConfig = new BotConfig(1, 10, botEnragementStateConfigs, createRegion(new Rectangle(0, 0, 4000, 4000), 1), "Bot4", 30L, 50L, 100L, 120L);
 
         EasyMock.replay(mockListener);
 
         BotRunner botRunner = new ServerBotRunner(botConfig, serverPlanetServices, mockListener);
+        log.error("Start");
         botRunner.start();
+        log.error("assertWholeItemCount 1");
         assertWholeItemCount(TEST_PLANET_1_ID, 0);
 
         Thread.sleep(100);
+        log.error("assertWholeItemCount 2");
         assertWholeItemCount(TEST_PLANET_1_ID, 3);
 
         botRunner.kill();
+        log.error("assertWholeItemCount 3");
         assertWholeItemCount(TEST_PLANET_1_ID, 0);
 
         for (int i = 0; i < 200; i++) {

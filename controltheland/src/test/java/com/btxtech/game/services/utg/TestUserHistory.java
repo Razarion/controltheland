@@ -123,6 +123,8 @@ public class TestUserHistory extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         SimpleBase target = getMyBase(); // Setup connection
+        sendMoveCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000));
+        waitForActionServiceDone();
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -143,14 +145,16 @@ public class TestUserHistory extends AbstractServiceTest {
         endHttpSession();
 
         List<DbUserHistory> dbUserHistories = getUserHistory();
-        Assert.assertEquals(6, dbUserHistories.size());
+        Assert.assertEquals(8, dbUserHistories.size());
         Assert.assertEquals("U1", dbUserHistories.get(0).getBaseName());
         Assert.assertNotNull(dbUserHistories.get(0).getBaseDefeated());
         Assert.assertNotNull(dbUserHistories.get(1).getLoggedOut());
         Assert.assertNotNull(dbUserHistories.get(2).getGameEntered());
-        Assert.assertNotNull(dbUserHistories.get(3).getBaseCreated());
-        Assert.assertNotNull(dbUserHistories.get(4).getLoggedIn());
-        Assert.assertNotNull(dbUserHistories.get(5).getCreated());
+        Assert.assertNotNull(dbUserHistories.get(3).getGameLeft());
+        Assert.assertNotNull(dbUserHistories.get(4).getGameEntered());
+        Assert.assertNotNull(dbUserHistories.get(5).getBaseCreated());
+        Assert.assertNotNull(dbUserHistories.get(6).getLoggedIn());
+        Assert.assertNotNull(dbUserHistories.get(7).getCreated());
     }
 
     @SuppressWarnings("unchecked")

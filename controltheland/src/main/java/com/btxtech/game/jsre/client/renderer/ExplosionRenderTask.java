@@ -2,8 +2,6 @@ package com.btxtech.game.jsre.client.renderer;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.common.info.ClipInfo;
-import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
 import com.btxtech.game.jsre.client.effects.Explosion;
 import com.btxtech.game.jsre.client.effects.ExplosionHandler;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
@@ -17,7 +15,7 @@ import com.google.gwt.dom.client.ImageElement;
  * Date: 31.07.12
  * Time: 19:43
  */
-public class ExplosionRenderTask extends AbstractRenderTask {
+public class ExplosionRenderTask extends AbstractClipRenderTask {
     private Context2d context2d;
 
     public ExplosionRenderTask(Context2d context2d) {
@@ -50,23 +48,7 @@ public class ExplosionRenderTask extends AbstractRenderTask {
                 }
             }
             // Draw Explosion
-            ImageSpriteMapInfo imageSpriteMapInfo = explosion.getImageSpriteMapInfo();
-            ImageElement imageElement = ImageSpriteMapContainer.getInstance().getImage(imageSpriteMapInfo);
-            if (imageElement == null) {
-                return;
-            }
-
-            context2d.drawImage(imageElement,
-                    explosion.getSpriteMapXOffset(), // Source x pos
-                    explosion.getSpriteMapYOffset(), // Source y pos
-                    imageSpriteMapInfo.getFrameWidth(),  // Source width
-                    imageSpriteMapInfo.getFrameHeight(), // Source height
-                    explosion.getRelativeImageStartX(),// Canvas y pos
-                    explosion.getRelativeImageStartY(),// Canvas y pos
-                    imageSpriteMapInfo.getFrameWidth(), // Destination width
-                    imageSpriteMapInfo.getFrameHeight() // Destination height
-            );
+            renderClip(context2d, explosion);
         }
-        ImageSpriteMapContainer.getInstance().startLoad();
     }
 }

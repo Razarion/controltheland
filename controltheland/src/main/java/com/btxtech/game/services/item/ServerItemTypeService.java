@@ -13,7 +13,6 @@ import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
-import com.btxtech.game.services.item.itemType.DbItemTypeImageData;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 
@@ -54,8 +53,6 @@ public interface ServerItemTypeService extends ItemTypeService {
     DbItemTypeImage getCmsDbItemTypeImage(int itemTypeId) throws NoSuchItemTypeException;
 
     ImageHolder getItemTypeSpriteMap(int itemTypeId);
-
-    DbItemTypeImageData getMuzzleFlashImage(int itemTypeId);
 
     ItemType getItemType(DbItemType dbItemType);
 

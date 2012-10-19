@@ -21,7 +21,7 @@ import java.io.Serializable;
  */
 @Entity(name = "ITEM_WEAPON_TYPE_MUZZLE_POSITION")
 @TypeDefs({@TypeDef(name = "index", typeClass = IndexUserType.class)})
-public class DbWeaponTypeMuzzlePosition implements Serializable {
+public class DbWeaponTypeMuzzlePosition {
     @Id
     @GeneratedValue
     private Integer id;

@@ -16,7 +16,7 @@ import java.util.Collection;
  * Time: 19:56:39
  */
 @Entity(name = "ITEM_WEAPON_TYPE_MUZZLE")
-public class DbWeaponTypeMuzzle implements Serializable {
+public class DbWeaponTypeMuzzle {
     @Id
     @GeneratedValue
     private Integer id;

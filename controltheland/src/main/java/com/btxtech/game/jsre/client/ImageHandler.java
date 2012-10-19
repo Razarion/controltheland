@@ -116,20 +116,6 @@ public class ImageHandler {
         return url.toString();
     }
 
-    public static String getMuzzleFlashImageUrl(BaseItemType baseItemType) {
-        StringBuilder url = new StringBuilder();
-        url.append(Constants.MUZZLE_ITEM_IMAGE_URL);
-        url.append("?");
-        url.append(Constants.ITEM_TYPE_ID);
-        url.append("=");
-        url.append(baseItemType.getId());
-        url.append("&");
-        url.append(Constants.TYPE);
-        url.append("=");
-        url.append(Constants.TYPE_IMAGE);
-        return url.toString();
-    }
-
     public static String getSurfaceImagesUrl(int id) {
         StringBuilder url = new StringBuilder();
         url.append(Constants.TERRAIN_CONTROLLER_URL);
