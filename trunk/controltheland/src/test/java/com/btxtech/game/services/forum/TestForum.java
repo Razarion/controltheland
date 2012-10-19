@@ -12,6 +12,7 @@
  */
 package com.btxtech.game.services.forum;
 
+import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
@@ -212,7 +213,46 @@ public class TestForum extends AbstractServiceTest {
         Assert.assertEquals("PostName4", dbPosts.get(1).getName());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-        
+    }
+
+
+    @Test
+    @DirtiesContext
+    public void testLastPost() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "test", "test", "test");
+        userService.login("U1", "test");
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        fillForum(forumService, userService);
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbSubForum> subForumCrud = forumService.getSubForumCrud();
+        DbSubForum dbSubForum = CommonJava.getFirst(subForumCrud.readDbChildren());
+        DbForumThread dbForumThread = dbSubForum.getCategoryCrud().readDbChildren().get(0).getForumThreadCrud().readDbChildren().get(0);
+        DbPost oldPost = dbForumThread.getPostCrud().createDbChild(userService);
+        Thread.sleep(100); // Dates should be different
+        DbPost newPost = dbForumThread.getPostCrud().createDbChild(userService);
+        subForumCrud.updateDbChild(dbSubForum);
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbSubForum = CommonJava.getFirst(subForumCrud.readDbChildren());
+        dbForumThread = dbSubForum.getCategoryCrud().readDbChildren().get(0).getForumThreadCrud().readDbChildren().get(0);
+        oldPost = dbForumThread.getPostCrud().readDbChild(oldPost.getId());
+        newPost = dbForumThread.getPostCrud().readDbChild(newPost.getId());
+        Assert.assertEquals(newPost.getDate(), dbForumThread.getLastPost());
+        Assert.assertEquals(newPost.getDate(), dbForumThread.getPostCrud().readDbChildren().get(0).getDate());
+        Assert.assertEquals(oldPost.getDate(), dbForumThread.getPostCrud().readDbChildren().get(1).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        endHttpSession();
     }
 
 }
