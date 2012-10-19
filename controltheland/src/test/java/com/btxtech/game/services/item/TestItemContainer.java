@@ -46,8 +46,7 @@ public class TestItemContainer extends AbstractServiceTest {
         SyncItemContainer syncItemContainer = container.getSyncItemContainer();
 
         sendMoveCommand(containerId, new Index(5000, 5000));
-        waitForActionServiceDone();
-        sendMoveCommand(builderId, new Index(5100, 5100));
+        sendMoveCommand(builderId, new Index(5000, 5180));
         waitForActionServiceDone();
 
         Assert.assertEquals(0, syncItemContainer.getContainedItems().size());
