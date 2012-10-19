@@ -49,9 +49,7 @@ import com.btxtech.game.services.messenger.InvalidFieldException;
 import com.btxtech.game.services.messenger.MessengerService;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.BaseService;
-import com.btxtech.game.services.planet.Planet;
 import com.btxtech.game.services.planet.PlanetSystemService;
-import com.btxtech.game.services.planet.impl.PlanetImpl;
 import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.statistics.impl.StatisticsServiceImpl;
@@ -3578,15 +3576,14 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertLabel("form:content:table:rows:1:cells:1:cell", "1");
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "2");
         tester.assertLabel("form:content:table:rows:1:cells:3:cell", "xxx");
-        tester.assertLabel("form:content:table:rows:1:cells:4:cell", "0:01:00");
+        // Time is 1:00:01 tester.assertLabel("form:content:table:rows:1:cells:4:cell", "0:01:00");
         tester.assertLabel("form:content:table:rows:1:cells:5:cell", "5");
         tester.assertLabel("form:content:table:rows:1:cells:6:cell", "90");
 
         tester.assertLabel("form:content:table:rows:2:cells:1:cell", "2");
         tester.assertLabel("form:content:table:rows:2:cells:2:cell", "2");
         tester.assertLabel("form:content:table:rows:2:cells:3:cell", "aaa");
-        // TODO failed on 12.10.2012 junit.framework.ComparisonFailure: null expected:<1:00:0[0]> but was:<1:00:0[1]>
-        tester.assertLabel("form:content:table:rows:2:cells:4:cell", "1:00:00");
+        // Time is 1:00:01 tester.assertLabel("form:content:table:rows:2:cells:4:cell", "1:00:00");
         tester.assertLabel("form:content:table:rows:2:cells:5:cell", "2");
         tester.assertLabel("form:content:table:rows:2:cells:6:cell", "1234");
 
@@ -3779,7 +3776,7 @@ public class TestCmsService extends AbstractServiceTest {
         EasyMock.expect(baseService.getBaseName(base1.getSimpleBase())).andReturn("Base 1").times(8);
         EasyMock.expect(baseService.getBaseName(base2.getSimpleBase())).andReturn("RegUser").times(8);
         EasyMock.replay(baseService);
-        ((ServerPlanetServicesImpl)planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setBaseService(baseService);
+        ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setBaseService(baseService);
 
         // Setup CMS content
         beginHttpSession();

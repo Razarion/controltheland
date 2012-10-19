@@ -3,10 +3,9 @@ package com.btxtech.game.services.item;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.item.itemType.DbItemTypeImageData;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
-import com.btxtech.game.services.media.DbSound;
-import com.btxtech.game.services.media.SoundService;
+import com.btxtech.game.services.media.ClipService;
+import com.btxtech.game.services.media.DbClip;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,23 +20,19 @@ public class TestWeaponType extends AbstractServiceTest {
     @Autowired
     private ServerItemTypeService serverItemTypeService;
     @Autowired
-    private SoundService soundService;
+    private ClipService clipService;
 
     @Test
     @DirtiesContext
-    public void weaponTypeSound() throws Exception {
+    public void weaponMuzzleFlashClip() throws Exception {
         configureSimplePlanetNoResources();
         // Verify
         BaseItemType baseItemType = (BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
-        Assert.assertNull(baseItemType.getWeaponType().getSoundId());
+        Assert.assertNull(baseItemType.getWeaponType().getMuzzleFlashClipId());
+        // Create clip
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbSound sound1 = soundService.getSoundLibraryCrud().createDbChild();
-        sound1.setName("sound1");
-        sound1.setDataMp3(new byte[]{0, 1, 2, 3});
-        sound1.setDataOgg(new byte[]{4, 5, 6, 7});
-        soundService.getSoundLibraryCrud().updateDbChild(sound1);
-        int soundId = sound1.getId();
+        DbClip dbClip = clipService.getClipLibraryCrud().createDbChild();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Create
@@ -45,42 +40,13 @@ public class TestWeaponType extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID);
         DbWeaponType dbWeaponType = dbBaseItemType.getDbWeaponType();
-        dbWeaponType.setSound(soundService.getSoundLibraryCrud().readDbChild(soundId));
+        dbWeaponType.setMuzzleFlashClip(clipService.getClipLibraryCrud().readDbChild(dbClip.getId()));
         serverItemTypeService.getDbItemTypeCrud().updateDbChild(dbBaseItemType);
         serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
         baseItemType = (BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
-        Assert.assertEquals(soundId, (int) baseItemType.getWeaponType().getSoundId());
+        Assert.assertEquals(dbClip.getId(), baseItemType.getWeaponType().getMuzzleFlashClipId());
     }
-
-    @Test
-    @DirtiesContext
-    public void weaponTypeImage() throws Exception {
-        configureSimplePlanetNoResources();
-
-        // Create
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID);
-        DbWeaponType dbWeaponType = dbBaseItemType.getDbWeaponType();
-        DbItemTypeImageData itemTypeImageData = new DbItemTypeImageData();
-        itemTypeImageData.setContentType("xxx/yyy");
-        itemTypeImageData.setData(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9});
-        dbWeaponType.setMuzzleFlashImageData(itemTypeImageData);
-        serverItemTypeService.getDbItemTypeCrud().updateDbChild(dbBaseItemType);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        // Verify
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID);
-        dbWeaponType = dbBaseItemType.getDbWeaponType();
-        Assert.assertArrayEquals(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9}, dbWeaponType.getMuzzleFlashImageData().getData());
-        Assert.assertEquals("xxx/yyy", dbWeaponType.getMuzzleFlashImageData().getContentType());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
 }

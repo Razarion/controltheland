@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.itemtypeeditor;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientClipHandler;
 import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ImageHandler;
@@ -9,6 +10,8 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.common.info.ClipInfo;
+import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
@@ -516,6 +519,17 @@ public class ItemTypeEditorModel {
                 } catch (Throwable t) {
                     log.log(Level.SEVERE, "Can not start ItemTypeEditor", t);
                 }
+            }
+        });
+        itemTypeAccess.loadGameInfoLight(new AsyncCallback<GameInfo>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                log.log(Level.SEVERE, "itemTypeAccess.loadGameInfoLight call failed", caught);
+            }
+
+            @Override
+            public void onSuccess(GameInfo gameInfo) {
+                ClientClipHandler.getInstance().inti(gameInfo);
             }
         });
     }

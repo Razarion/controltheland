@@ -28,14 +28,12 @@ import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
-import com.btxtech.game.services.item.itemType.DbItemTypeImageData;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.services.user.SecurityRoles;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +68,6 @@ public class ServerItemTypeServiceImpl extends AbstractItemTypeService implement
     private SessionFactory sessionFactory;
     private Log log = LogFactory.getLog(ServerItemTypeServiceImpl.class);
     private HashMap<Integer, ImageHolder> itemTypeSpriteMaps = new HashMap<>();
-    private HashMap<Integer, DbItemTypeImageData> muzzleItemTypeImages = new HashMap<>();
 
     @PostConstruct
     public void setup() {
@@ -79,8 +76,7 @@ public class ServerItemTypeServiceImpl extends AbstractItemTypeService implement
             HibernateUtil.openSession4InternalCall(sessionFactory);
             activate();
         } catch (Throwable t) {
-            log.error("", t);
-        } finally {
+            log.error("", t);        } finally {
             HibernateUtil.closeSession4InternalCall(sessionFactory);
         }
     }
@@ -176,16 +172,11 @@ public class ServerItemTypeServiceImpl extends AbstractItemTypeService implement
         Collection<DbItemType> dbItemTypes = getDbItemTypes();
         ArrayList<ItemType> itemTypes = new ArrayList<>();
         itemTypeSpriteMaps.clear();
-        //buildupStepsImages.clear();
-        muzzleItemTypeImages.clear();
         for (DbItemType dbItemType : dbItemTypes) {
             try {
                 ItemType itemType = dbItemType.createItemType();
                 itemTypes.add(itemType);
                 addItemTypeImages(dbItemType, itemType);
-                if (dbItemType instanceof DbBaseItemType) {
-                    addMuzzleEffect((DbBaseItemType) dbItemType);
-                }
             } catch (RuntimeException e) {
                 log.error("Can not activate item type: " + dbItemType.getName() + " id: " + dbItemType.getId());
                 throw e;
@@ -325,18 +316,6 @@ public class ServerItemTypeServiceImpl extends AbstractItemTypeService implement
         }
     }
 
-    private void addMuzzleEffect(DbBaseItemType dbItemType) {
-        if (dbItemType.getDbWeaponType() == null) {
-            return;
-        }
-        // Image
-        if (muzzleItemTypeImages.containsKey(dbItemType.getId())) {
-            throw new IllegalArgumentException("Item Type Images already exits: " + dbItemType);
-        }
-        Hibernate.initialize(dbItemType.getDbWeaponType().getMuzzleFlashImageData());
-        muzzleItemTypeImages.put(dbItemType.getId(), dbItemType.getDbWeaponType().getMuzzleFlashImageData());
-    }
-
     @Override
     public DbItemType getDbItemType(int itemTypeId) {
         return HibernateUtil.get(sessionFactory, DbItemType.class, itemTypeId);
@@ -391,15 +370,6 @@ public class ServerItemTypeServiceImpl extends AbstractItemTypeService implement
             throw new IllegalArgumentException("Sprite map for item type id does not exist: " + itemTypeId);
         }
         return imageHolder;
-    }
-
-    @Override
-    public DbItemTypeImageData getMuzzleFlashImage(int itemTypeId) {
-        DbItemTypeImageData dbItemTypeImageData = muzzleItemTypeImages.get(itemTypeId);
-        if (dbItemTypeImageData == null) {
-            throw new IllegalArgumentException("Muzzle image does not exist: " + itemTypeId);
-        }
-        return dbItemTypeImageData;
     }
 
     @Override

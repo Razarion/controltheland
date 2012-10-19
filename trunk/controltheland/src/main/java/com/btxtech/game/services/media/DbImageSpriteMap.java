@@ -149,7 +149,7 @@ public class DbImageSpriteMap implements CrudChild, CrudParent {
 
         DbImageSpriteMap that = (DbImageSpriteMap) o;
 
-        return id != null && !id.equals(that.id);
+        return id != null && id.equals(that.id);
     }
 
     public CrudListChildServiceHelper<DbImageSpriteMapFrame> getImageSpriteMapFrameCrud() {

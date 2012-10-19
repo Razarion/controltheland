@@ -33,9 +33,6 @@ public class Constants {
 
     // Item Images
     public static final String ITEM_IMAGE_URL = "/spring/item";
-    public static final String MUZZLE_ITEM_IMAGE_URL = "/spring/muzzle";
-    public static final String TYPE = "type";
-    public static final String TYPE_IMAGE = "img";
     public static final String ITEM_TYPE_ID = "id";
     public static final String ITEM_TYPE_SPRITE_MAP_ID = "idsm";
 

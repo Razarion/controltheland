@@ -13,6 +13,8 @@
 
 package com.btxtech.game.jsre.itemtypeeditor;
 
+import com.btxtech.game.jsre.client.common.info.ClipInfo;
+import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
@@ -33,4 +35,6 @@ public interface ItemTypeAccess extends RemoteService {
     ItemType getItemType(int itemTypeId) throws NoSuchItemTypeException;
 
     void saveItemTypeProperties(int itemTypeId, BoundingBox boundingBox, ItemTypeSpriteMap itemTypeSpriteMap, WeaponType weaponType, Collection<ItemTypeImageInfo> buildupImages, Collection<ItemTypeImageInfo> runtimeImages, Collection<ItemTypeImageInfo> demolitionImages) throws NoSuchItemTypeException;
+
+    GameInfo loadGameInfoLight();
 }

@@ -1,5 +1,7 @@
 package com.btxtech.game.services.gwt;
 
+import com.btxtech.game.jsre.client.common.info.GameInfo;
+import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
@@ -8,6 +10,7 @@ import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeExce
 import com.btxtech.game.jsre.itemtypeeditor.ItemTypeAccess;
 import com.btxtech.game.jsre.itemtypeeditor.ItemTypeImageInfo;
 import com.btxtech.game.services.item.ServerItemTypeService;
+import com.btxtech.game.services.media.ClipService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +25,18 @@ import java.util.Collection;
 public class ItemTypeAccessImpl extends AutowiredRemoteServiceServlet implements ItemTypeAccess {
     @Autowired
     private ServerItemTypeService serverItemTypeService;
+    @Autowired
+    private ClipService clipService;
     private Log log = LogFactory.getLog(ItemTypeAccessImpl.class);
 
     @Override
     public ItemType getItemType(int itemTypeId) throws NoSuchItemTypeException {
-        return serverItemTypeService.getDbItemType(itemTypeId).createItemType();
+        try {
+            return serverItemTypeService.getDbItemType(itemTypeId).createItemType();
+        } catch (Exception e) {
+            log.error("", e);
+            return null;
+        }
     }
 
     @Override
@@ -36,6 +46,22 @@ public class ItemTypeAccessImpl extends AutowiredRemoteServiceServlet implements
         } catch (NoSuchItemTypeException | RuntimeException e) {
             log.error("", e);
             throw e;
+        } catch (Exception e) {
+            log.error("", e);
+        }
+    }
+
+    @Override
+    public GameInfo loadGameInfoLight() {
+        try {
+            GameInfo gameInfo = new RealGameInfo();
+            gameInfo.setImageSpriteMapLibrary(clipService.getImageSpriteMapLibrary());
+            gameInfo.setClipLibrary(clipService.getClipLibrary());
+            gameInfo.setCommonClipInfo(clipService.getCommonClipInfo());
+            return gameInfo;
+        } catch (Exception e) {
+            log.error("", e);
+            throw null;
         }
     }
 }

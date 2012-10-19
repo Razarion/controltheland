@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket>
+<head>
+    <title>Ability Editor</title>
+</head>
+<body>
+<h1>Ability Editor</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="form">
+    <table border="0" cellSpacing="1" cellPadding="0">
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Movable</td>
+            <td valign="top" wicket:id="dbMovableType"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Weapon</td>
+            <td valign="top" wicket:id="dbWeaponType"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Launcher</td>
+            <td valign="top" wicket:id="dbLauncherType"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Factory</td>
+            <td valign="top" wicket:id="dbFactoryType"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Harvester</td>
+            <td valign="top" wicket:id="dbHarvesterType"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Builder</td>
+            <td valign="top" wicket:id="dbBuilderType"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Consumer</td>
+            <td valign="top" wicket:id="dbConsumerType"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Generator</td>
+            <td valign="top" wicket:id="dbGeneratorType"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Item Container</td>
+            <td valign="top" wicket:id="dbItemContainerType"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">House</td>
+            <td valign="top" wicket:id="dbHouseType"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Special</td>
+            <td valign="top" wicket:id="dbSpecialType"></td>
+        </tr>
+    </table>
+    <br>
+    <input type="submit" wicket:id="save" value="Save">
+    <input type="submit" wicket:id="back" value="Back">
+</form>
+</body>
+</html>

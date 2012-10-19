@@ -25,15 +25,16 @@ import java.util.Collection;
  */
 public class WeaponType implements Serializable {
     private int range;
-    private int demage;
+    private int damage;
     private double reloadTime;
-    private Integer soundId;
-    private int muzzleFlashWidth;
-    private int muzzleFlashLength;
-    private boolean stretchMuzzleFlashToTarget;
     private Collection<Integer> allowedItemTypes;
+    // Pixel per second
+    private Integer projectileSpeed;
     // dimension 1: muzzle nr, dimension 2: image nr
     private Index[][] muzzleFlashPositions;
+    private Integer muzzleFlashClipId;
+    private Integer projectileClipId;
+    private Integer projectileDetonationClipId;
 
     /**
      * Used by GWT
@@ -41,26 +42,26 @@ public class WeaponType implements Serializable {
     WeaponType() {
     }
 
-    public WeaponType(int range, int demage, double reloadTime, Integer soundId, int muzzleFlashWidth, int muzzleFlashLength, boolean stretchMuzzleFlashToTarget, Collection<Integer> allowedItemTypes, Index[][] muzzleFlashPositions) {
+    public WeaponType(int range, Integer projectileSpeed, int damage, double reloadTime, Integer muzzleFlashClipId, Integer projectileClipId, Integer projectileDetonationClipId, Collection<Integer> allowedItemTypes, Index[][] muzzleFlashPositions) {
         this.range = range;
-        this.demage = demage;
+        this.projectileSpeed = projectileSpeed;
+        this.damage = damage;
         this.reloadTime = reloadTime;
-        this.soundId = soundId;
-        this.muzzleFlashWidth = muzzleFlashWidth;
-        this.muzzleFlashLength = muzzleFlashLength;
-        this.stretchMuzzleFlashToTarget = stretchMuzzleFlashToTarget;
+        this.muzzleFlashClipId = muzzleFlashClipId;
+        this.projectileClipId = projectileClipId;
+        this.projectileDetonationClipId = projectileDetonationClipId;
         this.allowedItemTypes = allowedItemTypes;
         this.muzzleFlashPositions = muzzleFlashPositions;
     }
 
     public void changeTo(WeaponType weaponType) {
         range = weaponType.range;
-        demage = weaponType.demage;
+        projectileSpeed = weaponType.projectileSpeed;
+        damage = weaponType.damage;
         reloadTime = weaponType.reloadTime;
-        soundId = weaponType.soundId;
-        muzzleFlashWidth = weaponType.muzzleFlashWidth;
-        muzzleFlashLength = weaponType.muzzleFlashLength;
-        stretchMuzzleFlashToTarget = weaponType.stretchMuzzleFlashToTarget;
+        muzzleFlashClipId = weaponType.muzzleFlashClipId;
+        projectileClipId = weaponType.projectileClipId;
+        projectileDetonationClipId = weaponType.projectileDetonationClipId;
         allowedItemTypes = weaponType.allowedItemTypes;
         muzzleFlashPositions = weaponType.muzzleFlashPositions;
     }
@@ -69,40 +70,40 @@ public class WeaponType implements Serializable {
         return range;
     }
 
-    public double getDemage() {
-        return demage;
+    public Integer getProjectileSpeed() {
+        return projectileSpeed;
+    }
+
+    public double getDamage() {
+        return damage;
     }
 
     public double getReloadTime() {
         return reloadTime;
     }
 
-    public Integer getSoundId() {
-        return soundId;
+    public Integer getMuzzleFlashClipId() {
+        return muzzleFlashClipId;
     }
 
-    public int getMuzzleFlashWidth() {
-        return muzzleFlashWidth;
+    public Integer getProjectileClipId() {
+        return projectileClipId;
     }
 
-    public int getMuzzleFlashLength() {
-        return muzzleFlashLength;
-    }
-
-    public boolean stretchMuzzleFlashToTarget() {
-        return stretchMuzzleFlashToTarget;
+    public Integer getProjectileDetonationClipId() {
+        return projectileDetonationClipId;
     }
 
     public boolean isItemTypeAllowed(int itemTypeId) {
         return allowedItemTypes.contains(itemTypeId);
     }
 
-    public Index getMuzzleFlashPosition(int muzzleNr, int imageNr) {
-        return muzzleFlashPositions[muzzleNr][imageNr];
+    public Index getMuzzleFlashPosition(int muzzleNr, int angelIndex) {
+        return muzzleFlashPositions[muzzleNr][angelIndex];
     }
 
-    public void setMuzzleFlashPosition(int muzzleNr, int imageNr, Index position) {
-        muzzleFlashPositions[muzzleNr][imageNr] = position;
+    public void setMuzzleFlashPosition(int muzzleNr, int angelIndex, Index position) {
+        muzzleFlashPositions[muzzleNr][angelIndex] = position;
     }
 
     public int getMuzzleFlashCount() {

@@ -59,7 +59,7 @@ import java.util.Set;
 @Entity(name = "ITEM_TYPE")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
-public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild, CrudParent {
+public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
     @Id
     @GeneratedValue
     private Integer id;

@@ -72,13 +72,4 @@ public class ItemsUtil {
         return result;
     }
 
-    public static DbProjectileItemType getProjectileItemType4Id(int id, Collection<DbProjectileItemType> dbProjectileItemTypes) {
-        for (DbProjectileItemType dbProjectileItemType : dbProjectileItemTypes) {
-            if (dbProjectileItemType.getId() == id) {
-                return dbProjectileItemType;
-            }
-        }
-        throw new IllegalArgumentException("Projectile Item type does not exist: " + id);
-    }
-
 }

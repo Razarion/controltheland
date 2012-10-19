@@ -15,4 +15,8 @@ public class NoSuchClipException extends Exception {
     public NoSuchClipException(int clipId) {
         super("No clip for id: " + clipId);
     }
+
+    public NoSuchClipException(String s) {
+        super(s);
+    }
 }

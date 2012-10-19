@@ -141,34 +141,6 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
         gameInfo.setTerrainImages(new ArrayList<TerrainImage>());
     }
 
-    private BaseItemType createAttackItem() {
-        BaseItemType baseItemType = new BaseItemType();
-        baseItemType.setId(2);
-        baseItemType.setId(AbstractGwtTest.ITEM_ATTACKER);
-        baseItemType.setHealth(10);
-        baseItemType.setBoundingBox(new BoundingBox(60, AbstractServiceTest.ANGELS_24));
-        baseItemType.setMovableType(new MovableType(100));
-        Collection<Integer> allowedItemTypes = new ArrayList<Integer>();
-        allowedItemTypes.add(AbstractGwtTest.ITEM_ATTACKER);
-        allowedItemTypes.add(AbstractGwtTest.ITEM_DEFENSE_TOWER);
-        baseItemType.setWeaponType(new WeaponType(100, 1, 0.1, 0, 0, 0, false, allowedItemTypes, null));
-        return baseItemType;
-    }
-
-    private BaseItemType createDefenseTower() {
-        BaseItemType baseItemType = new BaseItemType();
-        baseItemType.setId(3);
-        baseItemType.setId(AbstractGwtTest.ITEM_DEFENSE_TOWER);
-        baseItemType.setHealth(20);
-        baseItemType.setBoundingBox(new BoundingBox(80, AbstractServiceTest.ANGELS_24));
-        Collection<Integer> allowedItemTypes = new ArrayList<Integer>();
-        allowedItemTypes.add(AbstractGwtTest.ITEM_ATTACKER);
-        allowedItemTypes.add(AbstractGwtTest.ITEM_DEFENSE_TOWER);
-        allowedItemTypes.add(AbstractGwtTest.ITEM_MOVABLE);
-        baseItemType.setWeaponType(new WeaponType(100, 1, 0.1, 0, 0, 0, false, allowedItemTypes, null));
-        return baseItemType;
-    }
-
     @Override
     public void log(String message, Date date) {
         System.out.println("MockMovableService.log: " + date + " message: " + message);

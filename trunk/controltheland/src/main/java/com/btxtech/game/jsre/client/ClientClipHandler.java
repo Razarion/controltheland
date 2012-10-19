@@ -4,6 +4,8 @@ import com.btxtech.game.jsre.client.common.info.ClipInfo;
 import com.btxtech.game.jsre.client.common.info.CommonClipInfo;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.google.gwt.user.client.Random;
 
 import java.util.HashMap;
@@ -20,7 +22,7 @@ public class ClientClipHandler {
     private Map<Integer, ClipInfo> clipCache = new HashMap<Integer, ClipInfo>();
     private Map<Integer, ImageSpriteMapInfo> imageSpriteMapCache = new HashMap<Integer, ImageSpriteMapInfo>();
     private Map<CommonClipInfo.Type, List<Integer>> commonClips = new HashMap<CommonClipInfo.Type, List<Integer>>();
-    
+
     public static ClientClipHandler getInstance() {
         return INSTANCE;
     }
@@ -49,6 +51,57 @@ public class ClientClipHandler {
         ClipInfo clipInfo = clipCache.get(clipId);
         if (clipInfo == null) {
             throw new NoSuchClipException(clipId);
+        }
+        return clipInfo;
+    }
+
+    public ClipInfo getMuzzleFireClipInfo(BaseItemType baseItemType) throws NoSuchClipException {
+        WeaponType weaponType = baseItemType.getWeaponType();
+        if (weaponType == null) {
+            throw new NoSuchClipException("BaseItemType " + baseItemType.getName() + " does not have a weapon");
+        }
+        Integer muzzleFlashClipId = weaponType.getMuzzleFlashClipId();
+        if (muzzleFlashClipId == null) {
+            throw new NoSuchClipException("BaseItemType " + baseItemType.getName() + " does not have a muzzle flash clip configured");
+        }
+
+        ClipInfo clipInfo = clipCache.get(muzzleFlashClipId);
+        if (clipInfo == null) {
+            throw new NoSuchClipException(muzzleFlashClipId);
+        }
+        return clipInfo;
+    }
+
+    public ClipInfo getProjectileClipInfo(BaseItemType baseItemType) throws NoSuchClipException {
+        WeaponType weaponType = baseItemType.getWeaponType();
+        if (weaponType == null) {
+            throw new NoSuchClipException("BaseItemType " + baseItemType.getName() + " does not have a weapon");
+        }
+        Integer projectileClipId = weaponType.getProjectileClipId();
+        if (projectileClipId == null) {
+            throw new NoSuchClipException("BaseItemType " + baseItemType.getName() + " does not have a projectile clip configured");
+        }
+
+        ClipInfo clipInfo = clipCache.get(projectileClipId);
+        if (clipInfo == null) {
+            throw new NoSuchClipException(projectileClipId);
+        }
+        return clipInfo;
+    }
+
+    public ClipInfo getProjectileDetonationClipInfo(BaseItemType baseItemType) throws NoSuchClipException {
+        WeaponType weaponType = baseItemType.getWeaponType();
+        if (weaponType == null) {
+            throw new NoSuchClipException("BaseItemType " + baseItemType.getName() + " does not have a weapon");
+        }
+        Integer projectileDetonationClipId = weaponType.getProjectileDetonationClipId();
+        if (projectileDetonationClipId == null) {
+            throw new NoSuchClipException("BaseItemType " + baseItemType.getName() + " does not have a projectile detonation clip configured");
+        }
+
+        ClipInfo clipInfo = clipCache.get(projectileDetonationClipId);
+        if (clipInfo == null) {
+            throw new NoSuchClipException(projectileDetonationClipId);
         }
         return clipInfo;
     }

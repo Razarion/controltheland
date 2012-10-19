@@ -26,8 +26,8 @@ import com.btxtech.game.jsre.client.bot.ClientBotService;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.effects.AttackHandler;
 import com.btxtech.game.jsre.client.effects.ExplosionHandler;
-import com.btxtech.game.jsre.client.effects.MuzzleFlashHandler;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
@@ -430,10 +430,12 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
                 }
                 SelectionHandler.getInstance().refresh();
                 break;
-            case ON_ATTACK:
-                MuzzleFlashHandler.getInstance().onAttack(syncItem);
+            case ON_FIRING:
+                AttackHandler.getInstance().onFiring((SyncBaseItem) syncItem);
                 break;
-
+            case PROJECTILE_DETONATION:
+                AttackHandler.getInstance().onProjectileDetonation((SyncBaseItem) syncItem);
+                break;
         }
     }
 }

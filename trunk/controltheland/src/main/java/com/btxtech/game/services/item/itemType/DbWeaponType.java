@@ -18,7 +18,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.common.ReadonlyCollectionContentProvider;
 import com.btxtech.game.services.common.Utils;
-import com.btxtech.game.services.media.DbSound;
+import com.btxtech.game.services.media.DbClip;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -31,8 +31,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -44,7 +42,7 @@ import java.util.Set;
  * Time: 15:09:34
  */
 @Entity(name = "ITEM_WEAPON_TYPE")
-public class DbWeaponType implements Serializable {
+public class DbWeaponType {
     @Id
     @GeneratedValue
     private Integer id;
@@ -52,14 +50,6 @@ public class DbWeaponType implements Serializable {
     private int range;
     private int damage;
     private double reloadTime;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private DbItemTypeImageData muzzleFlashImageData;
-    @Column(nullable = false, columnDefinition = "INT default '0'")
-    private int muzzleFlashWidth;
-    @Column(nullable = false, columnDefinition = "INT default '0'")
-    private int muzzleFlashLength;
-    @Column(nullable = false)
-    private boolean stretchMuzzleFlashToTarget;
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "ITEM_WEAPON_TYPE_ALLOWED_ITEM_TYPE",
             joinColumns = @JoinColumn(name = "weaponItemTypeId"),
@@ -69,7 +59,12 @@ public class DbWeaponType implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "weaponType", orphanRemoval = true)
     private Collection<DbWeaponTypeMuzzle> muzzles;
     @ManyToOne(fetch = FetchType.LAZY)
-    private DbSound sound;
+    private DbClip muzzleFlashClip;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbClip projectileClip;
+    private Integer projectileSpeed;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbClip projectileDetonationClip;
 
     public int getRange() {
         return range;
@@ -77,6 +72,14 @@ public class DbWeaponType implements Serializable {
 
     public void setRange(int range) {
         this.range = range;
+    }
+
+    public Integer getProjectileSpeed() {
+        return projectileSpeed;
+    }
+
+    public void setProjectileSpeed(Integer projectileSpeed) {
+        this.projectileSpeed = projectileSpeed;
     }
 
     public int getDamage() {
@@ -95,53 +98,37 @@ public class DbWeaponType implements Serializable {
         this.reloadTime = reloadTime;
     }
 
-    public int getMuzzleFlashWidth() {
-        return muzzleFlashWidth;
-    }
-
-    public void setMuzzleFlashWidth(int muzzleFlashWidth) {
-        this.muzzleFlashWidth = muzzleFlashWidth;
-    }
-
-    public int getMuzzleFlashLength() {
-        return muzzleFlashLength;
-    }
-
-    public void setMuzzleFlashLength(int muzzleFlashLength) {
-        this.muzzleFlashLength = muzzleFlashLength;
-    }
-
-    public boolean isStretchMuzzleFlashToTarget() {
-        return stretchMuzzleFlashToTarget;
-    }
-
-    public void setStretchMuzzleFlashToTarget(boolean stretchMuzzleFlashToTarget) {
-        this.stretchMuzzleFlashToTarget = stretchMuzzleFlashToTarget;
-    }
-
     public ContentProvider<DbBaseItemType> getAllowedItemTypeCrud() {
-        return new ReadonlyCollectionContentProvider<DbBaseItemType>(allowedItemTypes);
+        return new ReadonlyCollectionContentProvider<>(allowedItemTypes);
     }
 
-    public DbItemTypeImageData getMuzzleFlashImageData() {
-        return muzzleFlashImageData;
+    public DbClip getMuzzleFlashClip() {
+        return muzzleFlashClip;
     }
 
-    public void setMuzzleFlashImageData(DbItemTypeImageData muzzleFlashImageData) {
-        this.muzzleFlashImageData = muzzleFlashImageData;
+    public void setMuzzleFlashClip(DbClip muzzleFlashClip) {
+        this.muzzleFlashClip = muzzleFlashClip;
     }
 
-    public DbSound getSound() {
-        return sound;
+    public DbClip getProjectileClip() {
+        return projectileClip;
     }
 
-    public void setSound(DbSound sound) {
-        this.sound = sound;
+    public void setProjectileClip(DbClip projectileClip) {
+        this.projectileClip = projectileClip;
+    }
+
+    public DbClip getProjectileDetonationClip() {
+        return projectileDetonationClip;
+    }
+
+    public void setProjectileDetonationClip(DbClip projectileDetonationClip) {
+        this.projectileDetonationClip = projectileDetonationClip;
     }
 
     public WeaponType createWeaponType(int imageCount) {
         if (muzzles == null) {
-            muzzles = new ArrayList<DbWeaponTypeMuzzle>();
+            muzzles = new ArrayList<>();
         }
         int length = muzzles.size() == 0 ? 1 : muzzles.size();
         Index[][] muzzleFlashPositions = new Index[length][];
@@ -162,12 +149,12 @@ public class DbWeaponType implements Serializable {
         }
 
         return new WeaponType(range,
+                projectileSpeed,
                 damage,
                 reloadTime,
-                sound != null ? sound.getId() : null,
-                muzzleFlashWidth,
-                muzzleFlashLength,
-                stretchMuzzleFlashToTarget,
+                muzzleFlashClip != null ? muzzleFlashClip.getId() : null,
+                projectileClip != null ? projectileClip.getId() : null,
+                projectileDetonationClip != null ? projectileDetonationClip.getId() : null,
                 Utils.dbBaseItemTypesToInts(allowedItemTypes),
                 muzzleFlashPositions);
     }
@@ -209,7 +196,7 @@ public class DbWeaponType implements Serializable {
 
     public Collection<DbBaseItemType> getAllowedItemTypes() {
         if (allowedItemTypes == null) {
-            allowedItemTypes = new HashSet<DbBaseItemType>();
+            allowedItemTypes = new HashSet<>();
         }
         return allowedItemTypes;
     }

@@ -51,7 +51,6 @@
         <mapping class="com.btxtech.game.services.item.itemType.DbConsumerType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbGeneratorType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbSpecialType"/>
-        <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeImageData"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbItemContainerType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbHouseType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbLauncherType"/>

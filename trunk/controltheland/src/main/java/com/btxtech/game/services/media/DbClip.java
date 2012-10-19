@@ -90,7 +90,7 @@ public class DbClip implements CrudChild {
 
         DbClip that = (DbClip) o;
 
-        return id != null && !id.equals(that.id);
+        return id != null && id.equals(that.id);
     }
 
     @Override
