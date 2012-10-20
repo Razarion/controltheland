@@ -112,9 +112,15 @@ public class SyncWeapon extends SyncBaseAbility {
                 if (targetPosition != null) {
                     if (!targetPosition.equals(targetItem.getSyncItemArea().getPosition())) {
                         targetPosition = targetItem.getSyncItemArea().getPosition();
-                        recalculateNewPath(weaponType.getRange(), targetItem.getSyncItemArea(), targetItem.getTerrainType());
-                        getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
-                        return getSyncBaseItem().getSyncMovable().tickMove(factor);
+                        targetPositionLastCheck = System.currentTimeMillis();
+                        if (isInRange(targetItem)) {
+                            doAttack(targetItem);
+                            return true;
+                        } else {
+                            recalculateNewPath(weaponType.getRange(), targetItem.getSyncItemArea(), targetItem.getTerrainType());
+                            getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+                            return getSyncBaseItem().getSyncMovable().tickMove(factor);
+                        }
                     }
                 }
                 targetPosition = targetItem.getSyncItemArea().getPosition();
@@ -142,24 +148,28 @@ public class SyncWeapon extends SyncBaseAbility {
                 }
             }
 
-            getSyncItemArea().turnTo(targetItem);
-            if (reloadProgress >= weaponType.getReloadTime()) {
-                projectilePositions = new ArrayList<DecimalPosition>();
-                int angleIndex = getSyncItemArea().getAngelIndex();
-                for (Index[] indexes : weaponType.getMuzzleFlashPositions()) {
-                    projectilePositions.add(new DecimalPosition(getSyncItemArea().getPosition().add(indexes[angleIndex])));
-                }
-                projectileTarget = targetItem.getSyncItemArea().getPosition();
-                getSyncBaseItem().fireItemChanged(SyncItemListener.Change.ON_FIRING);
-                if (weaponType.getProjectileSpeed() == null) {
-                    projectileDetonation();
-                }
-            }
+            doAttack(targetItem);
             return true;
         } catch (ItemDoesNotExistException ignore) {
             // It has may be killed
             stop();
             return returnFalseIfReloaded();
+        }
+    }
+
+    private void doAttack(SyncBaseItem targetItem) {
+        getSyncItemArea().turnTo(targetItem);
+        if (reloadProgress >= weaponType.getReloadTime()) {
+            projectilePositions = new ArrayList<DecimalPosition>();
+            int angleIndex = getSyncItemArea().getAngelIndex();
+            for (Index[] indexes : weaponType.getMuzzleFlashPositions()) {
+                projectilePositions.add(new DecimalPosition(getSyncItemArea().getPosition().add(indexes[angleIndex])));
+            }
+            projectileTarget = targetItem.getSyncItemArea().getPosition();
+            getSyncBaseItem().fireItemChanged(SyncItemListener.Change.ON_FIRING);
+            if (weaponType.getProjectileSpeed() == null) {
+                projectileDetonation();
+            }
         }
     }
 
