@@ -1,6 +1,7 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
+import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.NoConnectionException;
@@ -60,11 +61,11 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     private SyncBaseItem building1B1;
     private SyncBaseItem builder1B2;
     private SimpleBase progressBase;
-    private String progressString;
+    private QuestProgressInfo questProgressInfo;
 
     @Before
     public void before() throws Exception {
-        progressString = null;
+        questProgressInfo = null;
         progressBase = null;
         setPrivateStaticField(AbstractSyncItemComparison.class, "MIN_SEND_DELAY", 0);
         configureSimplePlanetNoResources();
@@ -111,17 +112,17 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     }
 
     private void assertClearProgressString() {
-        Assert.assertNull(progressString);
+        Assert.assertNull(questProgressInfo);
     }
 
     private void assertAndClearProgressString(String expected, SimpleBase simpleBase) {
-        Assert.assertEquals(expected, progressString);
+        Assert.assertEquals(expected, questProgressInfo);
         Assert.assertEquals(simpleBase, progressBase);
-        progressString = null;
+        questProgressInfo = null;
     }
 
     private void assertProgressStringFromService(String expected) {
-        Assert.assertEquals(expected, serverConditionService.getProgressHtml(userState1, 1));
+        Assert.assertEquals(expected, serverConditionService.getQuestProgressInfo(userState1, 1));
     }
 
     @Test
@@ -489,7 +490,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
             }
         });
 
-        Assert.assertEquals("", serverConditionService.getProgressHtml(userState1, 1));
+        Assert.assertEquals("", serverConditionService.getQuestProgressInfo(userState1, 1));
         assertClearActorAndIdentifier();
         builder1B1.getSyncItemArea().setPosition(new Index(600, 600));
         serverConditionService.onSyncItemDeactivated(builder1B1);
@@ -922,8 +923,8 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     @Override
     public void sendPacket(SimpleBase base, Packet packet) {
         this.progressBase = base;
-        this.progressString = ((LevelTaskPacket) packet).getActiveQuestProgress();
-        System.out.println("progressString: " + progressString);
+        this.questProgressInfo = ((LevelTaskPacket) packet).getQuestProgressInfo();
+        System.out.println("progressString: " + questProgressInfo);
     }
 
     @Override

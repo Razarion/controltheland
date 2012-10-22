@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.SplashManager;
+import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualtsationModel;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
@@ -285,7 +286,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                     SplashManager.getInstance().onLevelUp();
                     QuestDialog.updateQuestDialog();
                 } else if (packet instanceof LevelTaskPacket) {
-                    ClientLevelHandler.getInstance().setLevelTask((LevelTaskPacket) packet);
+                    QuestVisualtsationModel.getInstance().setLevelTask((LevelTaskPacket) packet);
                     QuestDialog.updateQuestDialog();
                 } else if (packet instanceof HouseSpacePacket) {
                     HouseSpacePacket houseSpacePacket = (HouseSpacePacket) packet;

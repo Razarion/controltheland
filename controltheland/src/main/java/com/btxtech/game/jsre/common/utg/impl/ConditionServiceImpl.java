@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.utg.impl;
 
+import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
@@ -124,13 +125,13 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
     }
 
     @Override
-    public String getProgressHtml(A a, I i) {
+    public QuestProgressInfo getQuestProgressInfo(A a, I i) {
         try {
             AbstractConditionTrigger<A, I> abstractConditionTrigger = getActorConditionsPrivate(a, i);
-            return abstractConditionTrigger.getAbstractComparison().createProgressHtml();
+            return abstractConditionTrigger.getAbstractComparison().getQuestProgressInfo();
         } catch (Exception e) {
             log.log(Level.SEVERE, "ConditionServiceImpl.getProgressHtml()", e);
-            return "Internal error!";
+            return null;
         }
     }
 

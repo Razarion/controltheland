@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.SplashManager;
+import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualtsationModel;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupScreen;
@@ -45,7 +46,6 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
     private static final ClientLevelHandler INSTANCE = new ClientLevelHandler();
     private LevelScope levelScope;
     private Integer nextTaskId;
-    private QuestInfo currentQuest;
     private static Logger log = Logger.getLogger(ClientLevelHandler.class.getName());
 
     /**
@@ -61,34 +61,10 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
     public void setLevel(LevelScope levelScope) {
         // Setup values
         this.levelScope = levelScope;
-        if (levelScope.getPlanetId() != null && levelScope.getPlanetId() != ClientPlanetServices.getInstance().getPlanetInfo().getPlanetId()) {
-            SideCockpit.getInstance().setWrongPlanet(true);
-            moveToNextPlanet();
-        } else {
-            SideCockpit.getInstance().setWrongPlanet(false);
-        }
+        QuestVisualtsationModel.getInstance().onLevelChange(levelScope);
         // Setup GUI
         SideCockpit.getInstance().setLevel(levelScope);
         SideCockpit.getInstance().updateItemLimit();
-    }
-
-    public void setLevelTask(LevelTaskPacket levelTaskPacket) {
-        if (levelTaskPacket == null) {
-            currentQuest = null;
-            SideCockpit.getInstance().setNoActiveQuest();
-        } else if (levelTaskPacket.isCompleted()) {
-            SplashManager.getInstance().onLevelTaskCone();
-            currentQuest = null;
-            SideCockpit.getInstance().setNoActiveQuest();
-        } else {
-            if (levelTaskPacket.getQuestInfo() != null) {
-                currentQuest = levelTaskPacket.getQuestInfo();
-                if (currentQuest.getType() == QuestInfo.Type.MISSION) {
-                    startMission();
-                }
-            }
-            SideCockpit.getInstance().setActiveQuest(currentQuest, levelTaskPacket.getActiveQuestProgress());
-        }
     }
 
     @Override
@@ -111,13 +87,17 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
             RootPanel div = Game.getStartupInformation();
             String taskIdString = div.getElement().getAttribute(Game.LEVEL_TASK_ID);
             if (taskIdString == null || taskIdString.trim().isEmpty()) {
-                throw new IllegalStateException("Unable to find LevelTakId in Game.html");
+                throw new IllegalStateException("Unable to find LevelTaskId in Game.html");
             } else {
                 return Integer.parseInt(taskIdString);
             }
         }
     }
 
+    public void setNextTaskId(int nextTaskId) {
+        this.nextTaskId = nextTaskId;
+    }
+    
     public void onTutorialFlow(GameFlow gameFlow) {
         nextTaskId = null;
         switch (gameFlow.getType()) {
@@ -131,51 +111,5 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
             default:
                 throw new IllegalArgumentException("Unknown GameFlow Type: " + gameFlow.getType());
         }
-    }
-
-    public void abortMission() {
-        if (Connection.getInstance().getGameEngineMode() != GameEngineMode.MASTER) {
-            log.warning("Attempt to abort the real game");
-            return;
-        }
-        StartupScreen.getInstance().fadeOutAndStart(GameStartupSeq.WARM_REAL);
-    }
-
-    public void startMission() {
-        if (currentQuest == null || currentQuest.getType() != QuestInfo.Type.MISSION) {
-            log.warning("ClientLevelHandler.startMission() currentQuest == null");
-            return;
-        }
-        if (currentQuest.getType() != QuestInfo.Type.MISSION) {
-            log.warning("ClientLevelHandler.startMission() currentQuest.getType() != QuestInfo.Type.MISSION");
-            return;
-        }
-        if (Connection.getInstance().getGameEngineMode() != GameEngineMode.SLAVE) {
-            log.warning("Attempt to start a mission inside another mission.");
-            return;
-        }
-
-        YesNoDialog yesNoDialog = new YesNoDialog("Start Mission", "Compete in a single player mission on a different planet. You can return to this base at any time.", "Start", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                nextTaskId = currentQuest.getId();
-                StartupScreen.getInstance().fadeOutAndStart(GameStartupSeq.WARM_SIMULATED);
-            }
-        }, "Cancel", null);
-        DialogManager.showDialog(yesNoDialog, DialogManager.Type.QUEUE_ABLE);
-    }
-
-    public boolean hasActiveQuest() {
-        return currentQuest != null;
-    }
-
-    public void moveToNextPlanet() {
-        YesNoDialog yesNoDialog = new YesNoDialog("Next Planet", "Leave your base and move to the next planet?", "GO!", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                Connection.getInstance().surrenderBase();
-            }
-        }, "Cancel", null);
-        DialogManager.showDialog(yesNoDialog, DialogManager.Type.QUEUE_ABLE);
     }
 }

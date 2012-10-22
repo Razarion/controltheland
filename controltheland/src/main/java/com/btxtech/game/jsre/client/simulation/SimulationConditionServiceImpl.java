@@ -16,7 +16,8 @@ package com.btxtech.game.jsre.client.simulation;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientGlobalServices;
 import com.btxtech.game.jsre.client.ClientPlanetServices;
-import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
+import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
+import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualtsationModel;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
@@ -147,7 +148,7 @@ public class SimulationConditionServiceImpl extends ConditionServiceImpl<SimpleB
     @Override
     public void sendProgressUpdate(SimpleBase a, Void i) {
         LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
-        levelTaskPacket.setActiveQuestProgress(SimulationConditionServiceImpl.getInstance().getProgressHtml(a, i));
-        ClientLevelHandler.getInstance().setLevelTask(levelTaskPacket);
+        levelTaskPacket.setQuestProgressInfo(SimulationConditionServiceImpl.getInstance().getQuestProgressInfo(a, i));
+        QuestVisualtsationModel.getInstance().setLevelTask(levelTaskPacket);
     }
 }

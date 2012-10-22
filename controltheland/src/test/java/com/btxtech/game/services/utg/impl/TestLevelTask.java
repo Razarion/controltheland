@@ -1,5 +1,6 @@
 package com.btxtech.game.services.utg.impl;
 
+import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
@@ -49,7 +50,7 @@ public class TestLevelTask extends AbstractServiceTest {
         mockServerConditionService.activateCondition(eqConditionConfig(ConditionTrigger.XP_INCREASED, CountComparisonConfig.class), EasyMock.eq(userState), EasyMock.<Integer>isNull());
         mockServerConditionService.deactivateActorCondition(userState, 1);
         mockServerConditionService.activateCondition(eqConditionConfig(ConditionTrigger.BASE_KILLED, CountComparisonConfig.class), EasyMock.eq(userState), EasyMock.eq(2));
-        EasyMock.expect(mockServerConditionService.getProgressHtml(userState, 2)).andReturn("test");
+        EasyMock.expect(mockServerConditionService.getQuestProgressInfo(userState, 2)).andReturn(new QuestProgressInfo());
         mockServerConditionService.activateCondition(eqConditionConfig(ConditionTrigger.TUTORIAL, null), EasyMock.eq(userState), EasyMock.eq(3));
         mockServerConditionService.onTutorialFinished(userState, 3);
         mockServerConditionService.activateCondition(eqConditionConfig(ConditionTrigger.TUTORIAL, null), EasyMock.eq(userState), EasyMock.eq(1));

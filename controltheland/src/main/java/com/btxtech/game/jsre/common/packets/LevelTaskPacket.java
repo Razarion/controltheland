@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.common.packets;
 
+import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 
 /**
@@ -9,7 +10,7 @@ import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
  */
 public class LevelTaskPacket extends Packet{
     private QuestInfo questInfo;
-    private String activeQuestProgress;
+    private QuestProgressInfo questProgressInfo;
     private boolean completed;
 
     public QuestInfo getQuestInfo() {
@@ -20,12 +21,13 @@ public class LevelTaskPacket extends Packet{
         this.questInfo = questInfo;
     }
 
-    public String getActiveQuestProgress() {
-        return activeQuestProgress;
+
+    public QuestProgressInfo getQuestProgressInfo() {
+        return questProgressInfo;
     }
 
-    public void setActiveQuestProgress(String activeQuestProgress) {
-        this.activeQuestProgress = activeQuestProgress;
+    public void setQuestProgressInfo(QuestProgressInfo questProgressInfo) {
+        this.questProgressInfo = questProgressInfo;
     }
 
     public boolean isCompleted() {

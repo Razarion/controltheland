@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.utg.condition;
 
+import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
@@ -74,7 +75,7 @@ public abstract class AbstractSyncItemComparison implements AbstractComparison {
         }
     }
 
-    @Override
+    @Deprecated
     public String createProgressHtml() {
         if (metaTemplate == null) {
             return "";
@@ -88,6 +89,11 @@ public abstract class AbstractSyncItemComparison implements AbstractComparison {
             }
         }
         return builder.toString();
+    }
+
+    @Override
+    public QuestProgressInfo getQuestProgressInfo() {
+        throw new UnsupportedOperationException();
     }
 
     private void prepareMetaProgressTamplate(String htmlProgressTamplate) {

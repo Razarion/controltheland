@@ -13,6 +13,8 @@
 
 package com.btxtech.game.jsre.common.utg.condition;
 
+import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
+
 /**
  * User: beat
  * Date: 27.12.2010
@@ -33,5 +35,5 @@ public interface AbstractComparison {
 
     void restoreFromGenericComparisonValue(GenericComparisonValueContainer genericComparisonValueContainer);
 
-    String createProgressHtml();
+    QuestProgressInfo getQuestProgressInfo();
 }
