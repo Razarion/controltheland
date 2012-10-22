@@ -107,7 +107,6 @@ public class SideCockpit {
     private ExtendedCustomButton sellButton;
     private Label debugPosition;
     private Label debugFrameRate;
-    private QuestProgressCockpit questProgressCockpit;
     private InformationCockpit informationCockpit;
     private SideCockpitRealGame sideCockpitRealGame;
     private SideCockpitMission sideCockpitMission;
@@ -120,7 +119,6 @@ public class SideCockpit {
      * Singleton
      */
     private SideCockpit() {
-        questProgressCockpit = new QuestProgressCockpit();
         setupPanels();
         setupMoney();
         setupItemLimit();
@@ -301,19 +299,6 @@ public class SideCockpit {
         onStateChanged();
     }
 
-
-    public void setActiveQuest(QuestInfo questInfo, String activeQuestProgress) {
-        questProgressCockpit.setActiveQuest(questInfo, activeQuestProgress);
-    }
-
-    public void setNoActiveQuest() {
-        questProgressCockpit.setNoActiveQuest();
-    }
-
-    public void setWrongPlanet(boolean move) {
-        questProgressCockpit.setWrongPlanet(move);
-    }
-
     public void setXp(int xp, int xp2LevelUp) {
         if (sideCockpitRealGame != null) {
             sideCockpitRealGame.setXp(xp, xp2LevelUp);
@@ -344,7 +329,6 @@ public class SideCockpit {
         mainPanel.getElement().getStyle().setZIndex(Constants.Z_INDEX_SIDE_COCKPIT);
         parent.add(levelPanel, LEVEL_PANEL_X, 0);
         levelPanel.getElement().getStyle().setZIndex(Constants.Z_INDEX_SIDE_COCKPIT);
-        questProgressCockpit.addToParent(parent);
         informationCockpit.setPatent(parent);
     }
 
@@ -380,7 +364,6 @@ public class SideCockpit {
             levelPanel.add(sideCockpitMission, REAL_GAME_MISSION_X, REAL_GAME_MISSION_Y);
         }
         sideCockpitMission.setAbortable(simulationInfo.isAbortable());
-        questProgressCockpit.enableQuestControl(false);
     }
 
     public void initRealGame(RealGameInfo realGameInfo) {
@@ -395,6 +378,5 @@ public class SideCockpit {
         sideCockpitRealGame.setXp(realGameInfo.getXpPacket().getXp(), realGameInfo.getXpPacket().getXp2LevelUp());
         sideCockpitRealGame.setLevel(realGameInfo.getLevelScope());
         sideCockpitRealGame.setPlanetName(realGameInfo.getPlanetInfo().getName());
-        questProgressCockpit.enableQuestControl(true);
     }
 }

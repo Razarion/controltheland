@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.client.dialogs.quest;
 
 import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualtsationModel;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
@@ -43,7 +44,7 @@ public class QuestPlate extends Composite {
 
     @UiHandler("button")
     void onButtonClick(ClickEvent event) {
-        if (ClientLevelHandler.getInstance().hasActiveQuest()) {
+        if (QuestVisualtsationModel.getInstance().hasActiveQuest()) {
             ClickHandler clickHandler = new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {

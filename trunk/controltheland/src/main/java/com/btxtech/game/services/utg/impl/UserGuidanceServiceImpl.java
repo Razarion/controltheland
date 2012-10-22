@@ -304,7 +304,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     @Override
     public void setLevelForNewUser(UserState userState) {
         List<DbLevel> levels = new ArrayList<>(dbLevelCrud.readDbChildren());
-        if(levels.isEmpty()) {
+        if (levels.isEmpty()) {
             throw new IllegalStateException("No level defined");
         }
         DbLevel dbLevel = new ArrayList<>(dbLevelCrud.readDbChildren()).get(0);
@@ -501,7 +501,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         }
     }
 
-
     @Override
     public InvalidLevelStateException createInvalidLevelState() {
         if (isStartRealGame()) {
@@ -545,7 +544,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
             LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
             levelTaskPacket.setQuestInfo(dbLevelTask.createQuestInfo());
             if (!dbLevelTask.isDbTutorialConfig()) {
-                levelTaskPacket.setActiveQuestProgress(serverConditionService.getProgressHtml(userState, dbLevelTask.getId()));
+                levelTaskPacket.setQuestProgressInfo(serverConditionService.getQuestProgressInfo(userState, dbLevelTask.getId()));
             }
             userState.getBase().getPlanet().getPlanetServices().getConnectionService().sendPacket(userState.getBase().getSimpleBase(), levelTaskPacket);
         }
@@ -575,7 +574,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
             LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
             levelTaskPacket.setQuestInfo(activeTask.createQuestInfo());
             if (!activeTask.isDbTutorialConfig()) {
-                levelTaskPacket.setActiveQuestProgress(serverConditionService.getProgressHtml(userState, activeTask.getId()));
+                levelTaskPacket.setQuestProgressInfo(serverConditionService.getQuestProgressInfo(userState, activeTask.getId()));
             }
             realGameInfo.setLevelTaskPacket(levelTaskPacket);
         }

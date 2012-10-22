@@ -13,16 +13,13 @@
 
 package com.btxtech.game.jsre.common.utg;
 
+import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 
 /**
- * User: beat
- * Date: 28.12.2010
- * Time: 18:14:41
- * A: Actor
- * I: Identifier
+ * User: beat Date: 28.12.2010 Time: 18:14:41 A: Actor I: Identifier
  */
 public interface ConditionService<A, I> {
     void setConditionServiceListener(ConditionServiceListener<A, I> conditionServiceListener);
@@ -37,7 +34,7 @@ public interface ConditionService<A, I> {
 
     void sendProgressUpdate(A a, I i);
 
-    String getProgressHtml(A a, I i);
+    QuestProgressInfo getQuestProgressInfo(A a, I i);
 
     void onSyncItemKilled(SimpleBase actor, SyncBaseItem killedItem);
 

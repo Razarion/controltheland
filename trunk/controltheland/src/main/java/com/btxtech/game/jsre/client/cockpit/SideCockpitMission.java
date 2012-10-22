@@ -1,8 +1,8 @@
 package com.btxtech.game.jsre.client.cockpit;
 
+import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualtsationModel;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
-import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -48,7 +48,7 @@ public class SideCockpitMission extends Composite {
         ClickHandler clickHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                ClientLevelHandler.getInstance().abortMission();
+                QuestVisualtsationModel.getInstance().abortMission();
             }
         };
         DialogManager.showDialog(new YesNoDialog("Abort Mission", "Do you really want to abort this Mission?", "Abort", clickHandler, "Cancel", null), DialogManager.Type.QUEUE_ABLE);

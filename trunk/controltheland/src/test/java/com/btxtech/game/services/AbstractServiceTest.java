@@ -580,7 +580,7 @@ abstract public class AbstractServiceTest {
             LevelTaskPacket expected = (LevelTaskPacket) expectedPacket;
             LevelTaskPacket received = (LevelTaskPacket) receivedPacket;
             Assert.assertEquals(expected.isCompleted(), received.isCompleted());
-            Assert.assertEquals(expected.getActiveQuestProgress(), received.getActiveQuestProgress());
+            Assert.assertEquals(expected.getQuestProgressInfo(), received.getQuestProgressInfo());
             Assert.assertEquals(expected.getQuestInfo(), received.getQuestInfo());
         } else if (expectedPacket instanceof LevelPacket) {
             LevelPacket expected = (LevelPacket) expectedPacket;

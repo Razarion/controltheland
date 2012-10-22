@@ -343,7 +343,7 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
         AbstractComparison abstractComparison = getActorConditionsPrivate(actor, identifier).getAbstractComparison();
         if (abstractComparison != null && actor.getBase() != null) {
             LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
-            levelTaskPacket.setActiveQuestProgress(abstractComparison.createProgressHtml());
+            levelTaskPacket.setQuestProgressInfo(abstractComparison.getQuestProgressInfo());
             actor.getBase().getPlanet().getPlanetServices().getConnectionService().sendPacket(actor.getBase().getSimpleBase(), levelTaskPacket);
         }
     }
