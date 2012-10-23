@@ -74,7 +74,7 @@ public class DbSyncItemTypeComparisonConfig extends DbAbstractComparisonConfig i
             itemTypeCount.put(serverItemTypeService.getItemType(dbComparisonItemCount.getItemType()), dbComparisonItemCount.getCount());
         }
 
-        return new SyncItemTypeComparisonConfig(itemTypeCount, getHtmlProgressTemplate());
+        return new SyncItemTypeComparisonConfig(itemTypeCount);
     }
 
     @Override

@@ -12,6 +12,7 @@ public class QuestInfo implements Serializable {
     private String title;
     private String description;
     private int xp;
+    private String additionDescription;
     private int gold;
     private Type type;
     private int id;
@@ -23,9 +24,10 @@ public class QuestInfo implements Serializable {
     QuestInfo() {
     }
 
-    public QuestInfo(String title, String description, int xp, int gold, int id, Type type, Index radarPosition) {
+    public QuestInfo(String title, String description, String additionDescription, int xp, int gold, int id, Type type, Index radarPosition) {
         this.title = title;
         this.description = description;
+        this.additionDescription = additionDescription;
         this.gold = gold;
         this.xp = xp;
         this.id = id;
@@ -61,8 +63,8 @@ public class QuestInfo implements Serializable {
         return radarPosition;
     }
 
-    public void setRadarPosition(Index radarPosition) {
-        this.radarPosition = radarPosition;
+    public String getAdditionDescription() {
+        return additionDescription;
     }
 
     @Override
@@ -76,6 +78,7 @@ public class QuestInfo implements Serializable {
                 && id == questInfo.id
                 && xp == questInfo.xp
                 && !(description != null ? !description.equals(questInfo.description) : questInfo.description != null)
+                && !(additionDescription != null ? !additionDescription.equals(questInfo.additionDescription) : questInfo.additionDescription != null)
                 && !(radarPosition != null ? !radarPosition.equals(questInfo.radarPosition) : questInfo.radarPosition != null)
                 && !(title != null ? !title.equals(questInfo.title) : questInfo.title != null)
                 && type == questInfo.type;
@@ -85,6 +88,7 @@ public class QuestInfo implements Serializable {
     public int hashCode() {
         int result = title != null ? title.hashCode() : 0;
         result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (additionDescription != null ? additionDescription.hashCode() : 0);
         result = 31 * result + xp;
         result = 31 * result + gold;
         result = 31 * result + (type != null ? type.hashCode() : 0);
@@ -98,6 +102,7 @@ public class QuestInfo implements Serializable {
         return "QuestInfo{" +
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
+                ", additionDescription='" + additionDescription + '\'' +
                 ", xp=" + xp +
                 ", gold=" + gold +
                 ", type=" + type +

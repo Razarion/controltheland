@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.utg.condition;
 
+import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 /**
@@ -24,8 +25,7 @@ public class CountComparison extends AbstractSyncItemComparison {
     private double count;
     private double countTotal;
 
-    public CountComparison(int count, String htmlProgressTamplate) {
-        super(htmlProgressTamplate);
+    public CountComparison(int count) {
         this.count = count;
         countTotal = count;
     }
@@ -65,11 +65,7 @@ public class CountComparison extends AbstractSyncItemComparison {
     }
 
     @Override
-    protected String getValue(char parameter, Integer number) {
-        if (parameter == TEMPLATE_PARAMETER_COUNT) {
-            return Integer.toString((int) (countTotal - count));
-        } else {
-            throw new IllegalArgumentException("CountComparison.getValue() parameter is not known: " + parameter);
-        }
+    public void fillQuestProgressInfo(QuestProgressInfo questProgressInfo) {
+        questProgressInfo.setAmount(new QuestProgressInfo.Amount((int) (countTotal - count), (int) countTotal));
     }
 }

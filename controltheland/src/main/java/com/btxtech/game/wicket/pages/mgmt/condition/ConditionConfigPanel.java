@@ -19,6 +19,7 @@ import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.wicket.uiservices.IndexPanel;
 import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
+import com.btxtech.game.wicket.uiservices.WysiwygEditor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -145,6 +146,31 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
             }
         });
         add(radarPositionHint);
+
+        WysiwygEditor additionalDescription = new WysiwygEditor("additionalDescription");
+        additionalDescription.setDefaultModel(new IModel<String>() {
+            @Override
+            public String getObject() {
+                if (ConditionConfigPanel.this.getDefaultModelObject() != null) {
+                    return ((DbConditionConfig) ConditionConfigPanel.this.getDefaultModelObject()).getAdditionalDescription();
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public void setObject(String string) {
+                if (ConditionConfigPanel.this.getDefaultModelObject() != null) {
+                    ((DbConditionConfig) ConditionConfigPanel.this.getDefaultModelObject()).setAdditionalDescription(string);
+                }
+            }
+
+            @Override
+            public void detach() {
+            }
+        });
+        add(additionalDescription);
+
         setupComparisonFields(terrainLinkHelper);
     }
 

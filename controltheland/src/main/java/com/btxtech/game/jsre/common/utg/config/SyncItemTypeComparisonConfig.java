@@ -28,7 +28,6 @@ import java.util.Map;
  */
 public class SyncItemTypeComparisonConfig implements AbstractComparisonConfig {
     private Map<ItemType, Integer> itemTypeCount;
-    private String htmlProgressTamplate;
 
     /**
      * Used by GWT
@@ -36,13 +35,12 @@ public class SyncItemTypeComparisonConfig implements AbstractComparisonConfig {
     public SyncItemTypeComparisonConfig() {
     }
 
-    public SyncItemTypeComparisonConfig(Map<ItemType, Integer> itemTypeCount, String htmlProgressTamplate) {
+    public SyncItemTypeComparisonConfig(Map<ItemType, Integer> itemTypeCount) {
         this.itemTypeCount = itemTypeCount;
-        this.htmlProgressTamplate = htmlProgressTamplate;
     }
 
     @Override
     public AbstractComparison createAbstractComparison(PlanetServices planetServices, SimpleBase simpleBase) {
-        return new SyncItemTypeComparison(itemTypeCount, htmlProgressTamplate);
+        return new SyncItemTypeComparison(itemTypeCount);
     }
 }

@@ -47,6 +47,5 @@ public class CountComparisonConfigPanel extends Panel {
             }
         }));
         add(new TextField("count"));
-        add(new HtmlProgressTemplatePanel("progressText"));
     }
 }

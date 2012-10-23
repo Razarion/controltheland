@@ -100,7 +100,7 @@ public class DbItemTypePositionComparisonConfig extends DbAbstractComparisonConf
         if (this.region != null) {
             region = this.region.createRegion();
         }
-        return new ItemTypePositionComparisonConfig(itemTypeCount, region, timeInMs, addExistingItems, getHtmlProgressTemplate());
+        return new ItemTypePositionComparisonConfig(itemTypeCount, region, timeInMs, addExistingItems);
     }
 
     @Override

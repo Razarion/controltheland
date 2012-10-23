@@ -86,7 +86,7 @@ public class DbLevelTask implements CrudChild<DbLevel> {
 
     public ConditionConfig createConditionConfig(ServerItemTypeService serverItemTypeService) {
         if (dbTutorialConfig != null) {
-            return new ConditionConfig(ConditionTrigger.TUTORIAL, null, null);
+            return new ConditionConfig(ConditionTrigger.TUTORIAL, null, null, null);
         } else if (dbConditionConfig != null) {
             return dbConditionConfig.createConditionConfig(serverItemTypeService);
         } else {
@@ -127,7 +127,7 @@ public class DbLevelTask implements CrudChild<DbLevel> {
     }
 
     public QuestInfo createQuestInfo() {
-        return new QuestInfo(name, html, xp, money, id, isDbTutorialConfig() ? QuestInfo.Type.MISSION : QuestInfo.Type.QUEST, getRadarHint());
+        return new QuestInfo(name, html, null, xp, money, id, isDbTutorialConfig() ? QuestInfo.Type.MISSION : QuestInfo.Type.QUEST, getRadarHint());
     }
 
     private Index getRadarHint() {

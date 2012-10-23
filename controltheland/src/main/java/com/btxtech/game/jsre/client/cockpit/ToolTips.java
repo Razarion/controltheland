@@ -16,7 +16,6 @@ public class ToolTips {
     public static final String TOOL_TIP_QUEST_OVERVIEW = "Available quests";
     public static final String TOOL_TIP_MISSION_OVERVIEW = "Available missions";
     public static final String TOOL_TIP_XP_OVERVIEW = "XP and XP to level up";
-    public static final String TOOL_TIP_OPEN_QUEST_DIALOG = "Open the quest dialog";
     public static final String TOOL_TIP_SKIP_QUEST = "Skip current quest and start the next quest";
     // Buttons
     public static final String TOOL_TIP_INVENTORY = "Inventory";

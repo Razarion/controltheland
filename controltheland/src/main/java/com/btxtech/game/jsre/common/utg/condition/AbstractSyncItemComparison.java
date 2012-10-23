@@ -27,17 +27,10 @@ public abstract class AbstractSyncItemComparison implements AbstractComparison {
     public static final String SHARP = "#";
     private static int MIN_SEND_DELAY = 3000;
     private AbstractConditionTrigger abstractConditionTrigger;
-    private List<ProgressTemplateElement> metaTemplate;
     private long lastProgressSendTime;
     private GlobalServices globalServices;
 
     protected abstract void privateOnSyncItem(SyncItem syncItem);
-
-    protected abstract String getValue(char parameter, Integer number);
-
-    protected AbstractSyncItemComparison(String htmlProgressTamplate) {
-        prepareMetaProgressTamplate(htmlProgressTamplate);
-    }
 
     public final void onSyncItem(SyncItem syncItem) {
         privateOnSyncItem(syncItem);
@@ -63,100 +56,12 @@ public abstract class AbstractSyncItemComparison implements AbstractComparison {
     }
 
     protected void onProgressChanged() {
-        if (metaTemplate == null || metaTemplate.isEmpty()) {
-            return;
-        }
         if (lastProgressSendTime + MIN_SEND_DELAY > System.currentTimeMillis()) {
             return;
         }
         if (globalServices != null) {
             globalServices.getConditionService().sendProgressUpdate(abstractConditionTrigger.getActor(), abstractConditionTrigger.getIdentifier());
             lastProgressSendTime = System.currentTimeMillis();
-        }
-    }
-
-    @Deprecated
-    public String createProgressHtml() {
-        if (metaTemplate == null) {
-            return "";
-        }
-        StringBuilder builder = new StringBuilder();
-        for (ProgressTemplateElement templateElement : metaTemplate) {
-            if (templateElement.isParameter()) {
-                builder.append(getValue(templateElement.getParameter(), templateElement.getNumber()));
-            } else {
-                builder.append(templateElement.getString());
-            }
-        }
-        return builder.toString();
-    }
-
-    @Override
-    public QuestProgressInfo getQuestProgressInfo() {
-        throw new UnsupportedOperationException();
-    }
-
-    private void prepareMetaProgressTamplate(String htmlProgressTamplate) {
-        if (htmlProgressTamplate == null || htmlProgressTamplate.isEmpty()) {
-            return;
-        }
-        metaTemplate = new ArrayList<ProgressTemplateElement>();
-
-        int fromIndex = 0;
-        while (fromIndex < htmlProgressTamplate.length()) {
-            int startIndex = htmlProgressTamplate.indexOf(SHARP, fromIndex);
-            if (startIndex < 0) {
-                metaTemplate.add(new ProgressTemplateElement(htmlProgressTamplate, fromIndex, htmlProgressTamplate.length(), false));
-                break;
-            } else {
-                if (fromIndex < startIndex) {
-                    metaTemplate.add(new ProgressTemplateElement(htmlProgressTamplate, fromIndex, startIndex, false));
-                }
-                int endIndex = htmlProgressTamplate.length();
-                for (int i = startIndex + 1; i < htmlProgressTamplate.length(); i++) {
-                    if (!Character.isLetterOrDigit(htmlProgressTamplate.charAt(i))) {
-                        endIndex = i;
-                        break;
-                    }
-                }
-                metaTemplate.add(new ProgressTemplateElement(htmlProgressTamplate, startIndex, endIndex, true));
-                fromIndex = endIndex;
-            }
-        }
-
-    }
-
-    class ProgressTemplateElement {
-        private String string;
-        private boolean isParameter;
-        private char parameter;
-        private Integer number;
-
-        public ProgressTemplateElement(String wholeString, int beginIndex, int endIndex, boolean isParameter) {
-            this.string = wholeString.substring(beginIndex, endIndex);
-            this.isParameter = isParameter;
-            if (isParameter) {
-                parameter = Character.toUpperCase(string.charAt(1));
-                if (string.length() > 2) {
-                    number = Integer.parseInt(string.substring(2));
-                }
-            }
-        }
-
-        public boolean isParameter() {
-            return isParameter;
-        }
-
-        public String getString() {
-            return string;
-        }
-
-        public char getParameter() {
-            return parameter;
-        }
-
-        public Integer getNumber() {
-            return number;
         }
     }
 }

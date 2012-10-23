@@ -81,6 +81,5 @@ public class SyncItemTypeComparisonConfigPanel extends Panel {
                 return getParent().getCrudDbComparisonItemCount();
             }
         };
-        add(new HtmlProgressTemplatePanel("progressText"));
     }
 }

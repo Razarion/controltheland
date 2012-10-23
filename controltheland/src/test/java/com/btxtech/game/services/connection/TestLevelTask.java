@@ -1,8 +1,10 @@
 package com.btxtech.game.services.connection;
 
+import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.packets.LevelPacket;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
+import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -39,20 +41,20 @@ public class TestLevelTask extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
         LevelTaskPacket levelTaskPacket = getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket();
-        Assert.assertEquals(new QuestInfo(TEST_LEVEL_TASK_1_2_REAL_NAME, "Descr2", 100, 10, TEST_LEVEL_TASK_1_2_REAL_ID, QuestInfo.Type.QUEST, null), levelTaskPacket.getQuestInfo());
+        Assert.assertEquals(new QuestInfo(TEST_LEVEL_TASK_1_2_REAL_NAME, "Descr2", null, 100, 10, TEST_LEVEL_TASK_1_2_REAL_ID, QuestInfo.Type.QUEST, null), levelTaskPacket.getQuestInfo());
         Assert.assertFalse(levelTaskPacket.isCompleted());
-        Assert.assertEquals("Money: 0 of 3", levelTaskPacket.getQuestProgressInfo());
+        assertQuestProgressInfo(levelTaskPacket.getQuestProgressInfo(), ConditionTrigger.MONEY_INCREASED, 0, 3);
         serverConditionService.onMoneyIncrease(getMyBase(), 11);
         levelTaskPacket = getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket();
-        Assert.assertEquals(new QuestInfo(TEST_LEVEL_TASK_2_2_REAL_NAME, "Descr222", 120, 80, TEST_LEVEL_TASK_2_2_REAL_ID, QuestInfo.Type.QUEST, null), levelTaskPacket.getQuestInfo());
+        Assert.assertEquals(new QuestInfo(TEST_LEVEL_TASK_2_2_REAL_NAME, "Descr222", null, 120, 80, TEST_LEVEL_TASK_2_2_REAL_ID, QuestInfo.Type.QUEST, null), levelTaskPacket.getQuestInfo());
         Assert.assertFalse(levelTaskPacket.isCompleted());
-        Assert.assertEquals("build 0", levelTaskPacket.getQuestProgressInfo());
+        assertQuestProgressInfo(levelTaskPacket.getQuestProgressInfo(), ConditionTrigger.SYNC_ITEM_BUILT, 0, 2);
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_3_REAL_ID);
         levelTaskPacket = getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket();
-        Assert.assertEquals(new QuestInfo("Task3Level2", "DecrTask3Level2", 100, 10, TEST_LEVEL_TASK_1_3_REAL_ID, QuestInfo.Type.QUEST, null), levelTaskPacket.getQuestInfo());
+        Assert.assertEquals(new QuestInfo("Task3Level2", "DecrTask3Level2", null, 100, 10, TEST_LEVEL_TASK_1_3_REAL_ID, QuestInfo.Type.QUEST, null), levelTaskPacket.getQuestInfo());
         userGuidanceService.activateQuest(TEST_LEVEL_TASK_3_3_SIMULATED_ID);
         levelTaskPacket = getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket();
-        Assert.assertEquals(new QuestInfo(TEST_LEVEL_TASK_3_3_SIMULATED_NAME, "Task3Level2Descr", 2, 0, TEST_LEVEL_TASK_3_3_SIMULATED_ID, QuestInfo.Type.MISSION, null), levelTaskPacket.getQuestInfo());
+        Assert.assertEquals(new QuestInfo(TEST_LEVEL_TASK_3_3_SIMULATED_NAME, "Task3Level2Descr", null, 2, 0, TEST_LEVEL_TASK_3_3_SIMULATED_ID, QuestInfo.Type.MISSION, null), levelTaskPacket.getQuestInfo());
         // No quests / missions
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_4_REAL_ID);
         userGuidanceServiceImpl.conditionPassed(getUserState(), TEST_LEVEL_TASK_1_4_REAL_ID);
@@ -80,7 +82,7 @@ public class TestLevelTask extends AbstractServiceTest {
         Assert.assertEquals(1, levelTaskPackets.size());
         Assert.assertFalse(levelTaskPackets.get(0).isCompleted());
         Assert.assertNull(levelTaskPackets.get(0).getQuestInfo());
-        Assert.assertEquals("Money: 1 of 3", levelTaskPackets.get(0).getQuestProgressInfo());
+        assertQuestProgressInfo(levelTaskPackets.get(0).getQuestProgressInfo(), ConditionTrigger.MONEY_INCREASED, 1, 3);
         serverConditionService.onMoneyIncrease(getMyBase(), 3);
         levelTaskPackets = getPackages(LevelTaskPacket.class);
         Assert.assertEquals(2, levelTaskPackets.size());
@@ -88,19 +90,19 @@ public class TestLevelTask extends AbstractServiceTest {
         Assert.assertNull(levelTaskPackets.get(0).getQuestInfo());
         Assert.assertNull(levelTaskPackets.get(0).getQuestProgressInfo());
         Assert.assertFalse(levelTaskPackets.get(1).isCompleted());
-        Assert.assertEquals(new QuestInfo(TEST_LEVEL_TASK_2_2_REAL_NAME, "Descr222", 120, 80, TEST_LEVEL_TASK_2_2_REAL_ID, QuestInfo.Type.QUEST, null), levelTaskPackets.get(1).getQuestInfo());
-        Assert.assertEquals("build 0", levelTaskPackets.get(1).getQuestProgressInfo());
+        Assert.assertEquals(new QuestInfo(TEST_LEVEL_TASK_2_2_REAL_NAME, "Descr222", null, 120, 80, TEST_LEVEL_TASK_2_2_REAL_ID, QuestInfo.Type.QUEST, null), levelTaskPackets.get(1).getQuestInfo());
+        assertQuestProgressInfo(levelTaskPackets.get(1).getQuestProgressInfo(), ConditionTrigger.SYNC_ITEM_BUILT, 0, 2);
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_3_REAL_ID);
         levelTaskPackets = getPackages(LevelTaskPacket.class);
         Assert.assertEquals(1, levelTaskPackets.size());
         Assert.assertFalse(levelTaskPackets.get(0).isCompleted());
-        Assert.assertEquals(new QuestInfo("Task3Level2", "DecrTask3Level2", 100, 10, TEST_LEVEL_TASK_1_3_REAL_ID, QuestInfo.Type.QUEST, null), levelTaskPackets.get(0).getQuestInfo());
-        Assert.assertEquals("", levelTaskPackets.get(0).getQuestProgressInfo());
+        Assert.assertEquals(new QuestInfo("Task3Level2", "DecrTask3Level2", null, 100, 10, TEST_LEVEL_TASK_1_3_REAL_ID, QuestInfo.Type.QUEST, null), levelTaskPackets.get(0).getQuestInfo());
+        assertQuestProgressInfo(levelTaskPackets.get(0).getQuestProgressInfo(), ConditionTrigger.MONEY_INCREASED, 0, 200);
         userGuidanceService.activateQuest(TEST_LEVEL_TASK_3_3_SIMULATED_ID);
         levelTaskPackets = getPackages(LevelTaskPacket.class);
         Assert.assertEquals(1, levelTaskPackets.size());
         Assert.assertFalse(levelTaskPackets.get(0).isCompleted());
-        Assert.assertEquals(new QuestInfo(TEST_LEVEL_TASK_3_3_SIMULATED_NAME, "Task3Level2Descr", 2, 0, TEST_LEVEL_TASK_3_3_SIMULATED_ID, QuestInfo.Type.MISSION, null), levelTaskPackets.get(0).getQuestInfo());
+        Assert.assertEquals(new QuestInfo(TEST_LEVEL_TASK_3_3_SIMULATED_NAME, "Task3Level2Descr", null, 2, 0, TEST_LEVEL_TASK_3_3_SIMULATED_ID, QuestInfo.Type.MISSION, null), levelTaskPackets.get(0).getQuestInfo());
         Assert.assertNull(levelTaskPackets.get(0).getQuestProgressInfo());
         // No quests / missions
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_4_REAL_ID);
@@ -114,6 +116,12 @@ public class TestLevelTask extends AbstractServiceTest {
         Assert.assertNull(levelTaskPackets.get(0).getQuestProgressInfo());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+    }
+
+    private void assertQuestProgressInfo(QuestProgressInfo questProgressInfo, ConditionTrigger conditionTrigger, int amount, int totalAmount) {
+        Assert.assertEquals(conditionTrigger, questProgressInfo.getConditionTrigger());
+        Assert.assertEquals(amount, questProgressInfo.getAmount().getAmount());
+        Assert.assertEquals(totalAmount, questProgressInfo.getAmount().getTotalAmount());
     }
 
 }
