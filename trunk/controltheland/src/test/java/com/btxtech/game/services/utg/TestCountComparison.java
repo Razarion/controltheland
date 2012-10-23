@@ -94,21 +94,27 @@ public class TestCountComparison extends AbstractServiceTest implements ServerCo
         Assert.assertNull(questProgressInfo);
     }
 
-    private void assertAndClearProgressString(String expected, SimpleBase simpleBase) {
-        Assert.assertEquals(expected, questProgressInfo);
+    private void assertAndClearProgressString(ConditionTrigger conditionTrigger, int amount, int totalAmount, SimpleBase simpleBase) {
+        Assert.assertEquals(conditionTrigger, questProgressInfo.getConditionTrigger());
+        Assert.assertEquals(amount, questProgressInfo.getAmount().getAmount());
+        Assert.assertEquals(totalAmount, questProgressInfo.getAmount().getTotalAmount());
         Assert.assertEquals(simpleBase, progressBase);
         questProgressInfo = null;
     }
 
-    private void assertProgressStringFromService(String expected) {
-        Assert.assertEquals(expected, serverConditionService.getQuestProgressInfo(userState1, 1));
+
+    private void assertProgressStringFromService(ConditionTrigger conditionTrigger, int amount, int totalAmount) {
+        QuestProgressInfo questProgressInfo = serverConditionService.getQuestProgressInfo(userState1, 1);
+        Assert.assertEquals(conditionTrigger, questProgressInfo.getConditionTrigger());
+        Assert.assertEquals(amount, questProgressInfo.getAmount().getAmount());
+        Assert.assertEquals(totalAmount, questProgressInfo.getAmount().getTotalAmount());
     }
 
     @Test
     @DirtiesContext
     public void test1Money() throws Exception {
         // Does not make any sense
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.MONEY_INCREASED, new CountComparisonConfig(1, "Money #C / 1"), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.MONEY_INCREASED, new CountComparisonConfig(1), null, null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -118,22 +124,22 @@ public class TestCountComparison extends AbstractServiceTest implements ServerCo
                 TestCountComparison.this.identifier = identifier;
             }
         });
-        assertProgressStringFromService("Money 0 / 1");
+        assertProgressStringFromService(ConditionTrigger.MONEY_INCREASED, 0, 1);
         assertClearProgressString();
         assertClearActorAndIdentifier();
         serverConditionService.onMoneyIncrease(base1.getSimpleBase(), 0.5);
         assertClearActorAndIdentifier();
-        assertAndClearProgressString("Money 0 / 1", base1.getSimpleBase());
+        assertAndClearProgressString(ConditionTrigger.MONEY_INCREASED, 0, 1, base1.getSimpleBase());
         serverConditionService.onMoneyIncrease(base1.getSimpleBase(), 0.5);
         assertActorAndIdentifierAndClear(userState1, 1);
-        assertAndClearProgressString("Money 1 / 1", base1.getSimpleBase());
+        assertAndClearProgressString(ConditionTrigger.MONEY_INCREASED, 1, 1, base1.getSimpleBase());
     }
 
     @Test
     @DirtiesContext
     public void test100Money() throws Exception {
         // Does not make any sense
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.MONEY_INCREASED, new CountComparisonConfig(100, "#C / 100"), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.MONEY_INCREASED, new CountComparisonConfig(100), null, null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -143,25 +149,25 @@ public class TestCountComparison extends AbstractServiceTest implements ServerCo
                 TestCountComparison.this.identifier = identifier;
             }
         });
-        assertProgressStringFromService("0 / 100");
+        assertProgressStringFromService(ConditionTrigger.MONEY_INCREASED, 0, 100);
         assertClearProgressString();
         assertClearActorAndIdentifier();
         serverConditionService.onMoneyIncrease(base1.getSimpleBase(), 0.5);
         assertClearActorAndIdentifier();
-        assertAndClearProgressString("0 / 100", base1.getSimpleBase());
+        assertAndClearProgressString(ConditionTrigger.MONEY_INCREASED, 0, 100, base1.getSimpleBase());
         serverConditionService.onMoneyIncrease(base1.getSimpleBase(), 2.5);
         assertClearActorAndIdentifier();
-        assertAndClearProgressString("3 / 100", base1.getSimpleBase());
+        assertAndClearProgressString(ConditionTrigger.MONEY_INCREASED, 3, 100, base1.getSimpleBase());
         serverConditionService.onMoneyIncrease(base1.getSimpleBase(), 97);
         assertActorAndIdentifierAndClear(userState1, 1);
-        assertAndClearProgressString("100 / 100", base1.getSimpleBase());
+        assertAndClearProgressString(ConditionTrigger.MONEY_INCREASED, 100, 100, base1.getSimpleBase());
     }
 
     @Test
     @DirtiesContext
     public void test1Built() throws Exception {
         // Does not make any sense
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new CountComparisonConfig(1, "Item#C"), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new CountComparisonConfig(1), null, null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -171,19 +177,19 @@ public class TestCountComparison extends AbstractServiceTest implements ServerCo
                 TestCountComparison.this.identifier = identifier;
             }
         });
-        assertProgressStringFromService("Item0");
+        assertProgressStringFromService(ConditionTrigger.SYNC_ITEM_BUILT, 0, 1);
         assertClearProgressString();
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemBuilt(building1B1);
         assertActorAndIdentifierAndClear(userState1, 1);
-        assertAndClearProgressString("Item1", base1.getSimpleBase());
+        assertAndClearProgressString(ConditionTrigger.SYNC_ITEM_BUILT, 1, 1, base1.getSimpleBase());
     }
 
     @Test
     @DirtiesContext
     public void test3Built() throws Exception {
         // Does not make any sense
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new CountComparisonConfig(3, "Item#C / 3"), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new CountComparisonConfig(3), null, null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -193,18 +199,18 @@ public class TestCountComparison extends AbstractServiceTest implements ServerCo
                 TestCountComparison.this.identifier = identifier;
             }
         });
-        assertProgressStringFromService("Item0 / 3");
+        assertProgressStringFromService(ConditionTrigger.SYNC_ITEM_BUILT, 0, 3);
         assertClearProgressString();
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemBuilt(building1B1);
         assertClearActorAndIdentifier();
-        assertAndClearProgressString("Item1 / 3", base1.getSimpleBase());
+        assertAndClearProgressString(ConditionTrigger.SYNC_ITEM_BUILT, 1, 3, base1.getSimpleBase());
         serverConditionService.onSyncItemBuilt(building1B1);
         assertClearActorAndIdentifier();
-        assertAndClearProgressString("Item2 / 3", base1.getSimpleBase());
+        assertAndClearProgressString(ConditionTrigger.SYNC_ITEM_BUILT, 2, 3, base1.getSimpleBase());
         serverConditionService.onSyncItemBuilt(building1B1);
         assertActorAndIdentifierAndClear(userState1, 1);
-        assertAndClearProgressString("Item3 / 3", base1.getSimpleBase());
+        assertAndClearProgressString(ConditionTrigger.SYNC_ITEM_BUILT, 3, 3, base1.getSimpleBase());
     }
 
 

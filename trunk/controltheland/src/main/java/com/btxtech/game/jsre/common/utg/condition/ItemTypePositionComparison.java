@@ -13,13 +13,12 @@
 
 package com.btxtech.game.jsre.common.utg.condition;
 
-import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
-import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
@@ -43,8 +42,7 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
     private Long fulfilledTimeStamp;
 
     public ItemTypePositionComparison(Map<ItemType, Integer> itemTypes, Region region, Integer time, boolean addExistingItems, PlanetServices planetServices,
-                                      SimpleBase simpleBase, String htmlProgressTamplate) {
-        super(htmlProgressTamplate);
+                                      SimpleBase simpleBase) {
         this.itemTypes = itemTypes;
         this.region = region;
         this.time = time;
@@ -186,54 +184,41 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
         }
     }
 
+
     @Override
-    protected String getValue(char parameter, Integer number) {
-        if (parameter == TEMPLATE_PARAMETER_COUNT) {
-            if (number == null) {
-                throw new IllegalArgumentException("ItemTypePositionComparison.getValue() number is null");
-            }
-            ItemType itemType;
-            try {
-                itemType = getGlobalServices().getItemTypeService().getItemType(number);
-            } catch (NoSuchItemTypeException e) {
-                throw new IllegalArgumentException("ItemTypePositionComparison.getValue() no such item type id: " + number);
-            }
-            if (!itemTypes.containsKey(itemType)) {
-                throw new IllegalArgumentException("ItemTypePositionComparison.getValue() item type is unknown in the comparision: " + itemType);
-            }
-            int count = 0;
-            synchronized (fulfilledItems) {
-                verifyFulfilledItems();
-                for (SyncItem fulfilledItem : fulfilledItems) {
-                    if (fulfilledItem.getItemType().equals(itemType)) {
-                        count++;
-                    }
-                }
-            }
-            return Integer.toString(count);
-        } else if (parameter == TEMPLATE_PARAMETER_TIME) {
+    public void fillQuestProgressInfo(QuestProgressInfo questProgressInfo) {
+        // Add time
+        if (time != null) {
+            int amount = 0;
             if (fulfilledTimeStamp != null) {
-                long remainingTime = time - (System.currentTimeMillis() - fulfilledTimeStamp);
-                if (remainingTime <= 0) {
-                    return "0";
-                } else if (remainingTime < ClientDateUtil.MILLIS_IN_MINUTE) {
-                    return "1";
-                } else {
-                    return ClientDateUtil.dateToMinuteString(remainingTime);
+                amount = (int) ((System.currentTimeMillis() - fulfilledTimeStamp) / ClientDateUtil.MILLIS_IN_MINUTE);
+                if (amount < ClientDateUtil.MILLIS_IN_MINUTE) {
+                    amount = 1;
                 }
-            } else {
-                return "-";
             }
-        } else if (parameter == TEMPLATE_PARAMETER_ITEM_IMAGE) {
-            try {
-                ItemType itemType = getGlobalServices().getItemTypeService().getItemType(number);
-                return ImageHandler.getQuestProgressItemTypeImageString(itemType);
-            } catch (NoSuchItemTypeException e) {
-                throw new IllegalArgumentException("ItemTypePositionComparison.getValue() no such item type id: " + number);
-            }
-        } else {
-            throw new IllegalArgumentException("ItemTypePositionComparison.getValue() parameter is not known: " + parameter);
+            questProgressInfo.setAmount(new QuestProgressInfo.Amount(amount, (int) (time / ClientDateUtil.MILLIS_IN_MINUTE)));
         }
+        // Items
+        synchronized (fulfilledItems) {
+            verifyFulfilledItems();
+        }
+        Map<Integer, QuestProgressInfo.Amount> itemIdAmounts = new HashMap<Integer, QuestProgressInfo.Amount>();
+        for (Map.Entry<ItemType, Integer> entry : itemTypes.entrySet()) {
+            QuestProgressInfo.Amount amount = new QuestProgressInfo.Amount(getAmount(entry.getKey()), entry.getValue());
+            itemIdAmounts.put(entry.getKey().getId(), amount);
+        }
+        questProgressInfo.setItemIdAmounts(itemIdAmounts);
     }
 
+    private int getAmount(ItemType itemType) {
+        int amount = 0;
+        synchronized (fulfilledItems) {
+            for (SyncItem fulfilledItem : fulfilledItems) {
+                if (fulfilledItem.getItemType().equals(itemType)) {
+                    amount++;
+                }
+            }
+        }
+        return amount;
+    }
 }

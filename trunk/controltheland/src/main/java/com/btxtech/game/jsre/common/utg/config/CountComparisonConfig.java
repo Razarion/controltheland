@@ -25,7 +25,6 @@ import com.btxtech.game.jsre.common.utg.condition.CountComparison;
  */
 public class CountComparisonConfig implements AbstractComparisonConfig {
     private int count;
-    private String htmlProgressTamplate;
 
     /**
      * Used by GWT
@@ -33,13 +32,12 @@ public class CountComparisonConfig implements AbstractComparisonConfig {
     protected CountComparisonConfig() {
     }
 
-    public CountComparisonConfig(int count, String htmlProgressTamplate) {
+    public CountComparisonConfig(int count) {
         this.count = count;
-        this.htmlProgressTamplate = htmlProgressTamplate;
     }
 
     @Override
     public AbstractComparison createAbstractComparison(PlanetServices planetServices, SimpleBase simpleBase) {
-        return new CountComparison(count, htmlProgressTamplate);
+        return new CountComparison(count);
     }
 }

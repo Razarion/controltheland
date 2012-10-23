@@ -16,7 +16,6 @@ package com.btxtech.game.jsre.client.simulation;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualtsationModel;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
-import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
@@ -35,7 +34,7 @@ public class Task {
         ClientBase.getInstance().setAccountBalance(taskConfig.getMoney());
         SimulationConditionServiceImpl.getInstance().activateCondition(taskConfig.getConditionConfig(), ClientBase.getInstance().getSimpleBase(), null);
         LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
-        levelTaskPacket.setQuestInfo(new QuestInfo(taskConfig.getName(), null, 0, 0, 0, QuestInfo.Type.QUEST, taskConfig.getConditionConfig().getRadarPositionHint()));
+        levelTaskPacket.setQuestInfo(new QuestInfo(taskConfig.getName(), null, taskConfig.getConditionConfig().getAdditionalDescription(), 0, 0, 0, QuestInfo.Type.MISSION, taskConfig.getConditionConfig().getRadarPositionHint()));
         levelTaskPacket.setQuestProgressInfo(SimulationConditionServiceImpl.getInstance().getQuestProgressInfo(ClientBase.getInstance().getSimpleBase(), null));
         QuestVisualtsationModel.getInstance().setLevelTask(levelTaskPacket);
         GameTipManager.getInstance().start(taskConfig.getGameTipConfig());

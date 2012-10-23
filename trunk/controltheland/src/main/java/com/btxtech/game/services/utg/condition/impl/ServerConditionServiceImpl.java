@@ -341,9 +341,12 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
     @Override
     public void sendProgressUpdate(UserState actor, Integer identifier) {
         AbstractComparison abstractComparison = getActorConditionsPrivate(actor, identifier).getAbstractComparison();
-        if (abstractComparison != null && actor.getBase() != null) {
+        if (abstractComparison != null
+                && actor.getBase() != null
+                && abstractComparison.getAbstractConditionTrigger().getConditionTrigger() != ConditionTrigger.XP_INCREASED
+                && abstractComparison.getAbstractConditionTrigger().getConditionTrigger() != ConditionTrigger.TUTORIAL) {
             LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
-            levelTaskPacket.setQuestProgressInfo(abstractComparison.getQuestProgressInfo());
+            levelTaskPacket.setQuestProgressInfo(getQuestProgressInfo(actor, identifier));
             actor.getBase().getPlanet().getPlanetServices().getConnectionService().sendPacket(actor.getBase().getSimpleBase(), levelTaskPacket);
         }
     }

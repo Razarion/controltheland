@@ -128,7 +128,9 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
     public QuestProgressInfo getQuestProgressInfo(A a, I i) {
         try {
             AbstractConditionTrigger<A, I> abstractConditionTrigger = getActorConditionsPrivate(a, i);
-            return abstractConditionTrigger.getAbstractComparison().getQuestProgressInfo();
+            QuestProgressInfo questProgressInfo = new QuestProgressInfo(abstractConditionTrigger.getConditionTrigger());
+            abstractConditionTrigger.getAbstractComparison().fillQuestProgressInfo(questProgressInfo);
+            return questProgressInfo;
         } catch (Exception e) {
             log.log(Level.SEVERE, "ConditionServiceImpl.getProgressHtml()", e);
             return null;

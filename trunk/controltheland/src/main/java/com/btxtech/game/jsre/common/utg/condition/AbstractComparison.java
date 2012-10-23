@@ -21,10 +21,6 @@ import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
  * Time: 17:25:49
  */
 public interface AbstractComparison {
-    static final char TEMPLATE_PARAMETER_COUNT = 'C';
-    static final char TEMPLATE_PARAMETER_TIME = 'T';
-    static final char TEMPLATE_PARAMETER_ITEM_IMAGE = 'I';
-
     boolean isFulfilled();
 
     <A, I> AbstractConditionTrigger<A, I> getAbstractConditionTrigger();
@@ -35,5 +31,5 @@ public interface AbstractComparison {
 
     void restoreFromGenericComparisonValue(GenericComparisonValueContainer genericComparisonValueContainer);
 
-    QuestProgressInfo getQuestProgressInfo();
+    void fillQuestProgressInfo(QuestProgressInfo questProgressInfo);
 }

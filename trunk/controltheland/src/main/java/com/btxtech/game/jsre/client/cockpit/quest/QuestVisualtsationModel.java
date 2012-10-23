@@ -41,19 +41,19 @@ public class QuestVisualtsationModel {
         } else {
             if (levelTaskPacket.getQuestInfo() != null) {
                 currentQuest = levelTaskPacket.getQuestInfo();
-                if (currentQuest.getType() == QuestInfo.Type.MISSION) {
+                if (Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE && currentQuest.getType() == QuestInfo.Type.MISSION) {
                     startMission();
                 }
             }
         }
-        updateType(levelTaskPacket.getQuestProgressInfo());
+        updateType(levelTaskPacket);
     }
 
-    private void updateType(QuestProgressInfo questProgressInfo) {
+    private void updateType(LevelTaskPacket levelTaskPacket) {
         if (listener != null) {
             listener.updateType(currentQuest);
-            if (questProgressInfo != null) {
-                listener.updateQuestProgress(questProgressInfo);
+            if (levelTaskPacket != null && levelTaskPacket.getQuestProgressInfo() != null) {
+                listener.updateQuestProgress(levelTaskPacket.getQuestProgressInfo());
             }
         }
     }
@@ -117,7 +117,7 @@ public class QuestVisualtsationModel {
     }
 
     public boolean isShowStartMission() {
-        return currentQuest != null && currentQuest.getType() == QuestInfo.Type.MISSION;
+        return currentQuest != null && currentQuest.getType() == QuestInfo.Type.MISSION && Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE;
     }
 
     public boolean isNextPlanet() {

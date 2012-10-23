@@ -13,9 +13,8 @@
 
 package com.btxtech.game.jsre.common.utg.condition;
 
-import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 import java.util.HashMap;
@@ -28,8 +27,7 @@ public class SyncItemTypeComparison extends AbstractSyncItemComparison {
     private Map<ItemType, Integer> remaining;
     private Map<ItemType, Integer> total;
 
-    public SyncItemTypeComparison(Map<ItemType, Integer> itemType, String htmlProgressTamplate) {
-        super(htmlProgressTamplate);
+    public SyncItemTypeComparison(Map<ItemType, Integer> itemType) {
         remaining = new HashMap<ItemType, Integer>(itemType);
         total = new HashMap<ItemType, Integer>(itemType);
     }
@@ -80,36 +78,16 @@ public class SyncItemTypeComparison extends AbstractSyncItemComparison {
     }
 
     @Override
-    protected String getValue(char parameter, Integer number) {
-        if (parameter == TEMPLATE_PARAMETER_COUNT) {
-            if (number == null) {
-                throw new IllegalArgumentException("SyncItemTypeComparison.getValue() number is null");
+    public void fillQuestProgressInfo(QuestProgressInfo questProgressInfo) {
+        Map<Integer, QuestProgressInfo.Amount> itemIdAmounts = new HashMap<Integer, QuestProgressInfo.Amount>();
+        for (Map.Entry<ItemType, Integer> entry : total.entrySet()) {
+            Integer remaining = this.remaining.get(entry.getKey());
+            if (remaining == null) {
+                remaining = 0;
             }
-            ItemType itemType;
-            try {
-                itemType = getGlobalServices().getItemTypeService().getItemType(number);
-            } catch (NoSuchItemTypeException e) {
-                throw new IllegalArgumentException("SyncItemTypeComparison.getValue() no such item type id: " + number);
-            }
-            Integer totalCount = total.get(itemType);
-            if (totalCount == null) {
-                throw new IllegalArgumentException("SyncItemTypeComparison.getValue() item type is unknown in the comparision: " + itemType);
-            }
-            Integer remainingCount = remaining.get(itemType);
-            if (remainingCount == null) {
-                return totalCount.toString();
-            } else {
-                return Integer.toString(totalCount - remainingCount);
-            }
-        } else if (parameter == TEMPLATE_PARAMETER_ITEM_IMAGE) {
-            try {
-                ItemType itemType = getGlobalServices().getItemTypeService().getItemType(number);
-                return ImageHandler.getQuestProgressItemTypeImageString(itemType);
-            } catch (NoSuchItemTypeException e) {
-                throw new IllegalArgumentException("SyncItemTypeComparison.getValue() no such item type id: " + number);
-            }
-        } else {
-            throw new IllegalArgumentException("SyncItemTypeComparison.getValue() parameter is not known: " + parameter);
+            int amount = entry.getValue() - remaining;
+            itemIdAmounts.put(entry.getKey().getId(), new QuestProgressInfo.Amount(amount, entry.getValue()));
         }
+        questProgressInfo.setItemIdAmounts(itemIdAmounts);
     }
 }

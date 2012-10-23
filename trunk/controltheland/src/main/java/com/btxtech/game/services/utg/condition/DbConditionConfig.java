@@ -50,6 +50,8 @@ public class DbConditionConfig implements Serializable {
     @org.hibernate.annotations.Type(type = "index")
     @Columns(columns = {@Column(name = "xRadarPositionHin"), @Column(name = "yRadarPositionHin")})
     private Index radarPositionHint;
+    @Column(length = 5000)
+    private String  additionalDescription;
     @Transient
     private ConditionConfig conditionConfig;
 
@@ -89,6 +91,14 @@ public class DbConditionConfig implements Serializable {
         this.radarPositionHint = radarPositionHint;
     }
 
+    public String getAdditionalDescription() {
+        return additionalDescription;
+    }
+
+    public void setAdditionalDescription(String additionalDescription) {
+        this.additionalDescription = additionalDescription;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -115,7 +125,7 @@ public class DbConditionConfig implements Serializable {
         if (conditionTrigger.isComparisonNeeded()) {
             abstractComparisonConfig = dbAbstractComparisonConfig.createComparisonConfig(serverItemTypeService);
         }
-        conditionConfig = new ConditionConfig(conditionTrigger, abstractComparisonConfig, radarPositionHint);
+        conditionConfig = new ConditionConfig(conditionTrigger, abstractComparisonConfig, radarPositionHint, additionalDescription);
         return conditionConfig;
     }
 }

@@ -30,7 +30,6 @@ import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.CountComparisonConfig;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
-import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
@@ -223,7 +222,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     }
 
     private void activateConditions4Level(UserState userState, DbLevel dbLevel) {
-        ConditionConfig levelCondition = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(dbLevel.getXp(), null), null);
+        ConditionConfig levelCondition = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(dbLevel.getXp()), null, null);
         serverConditionService.activateCondition(levelCondition, userState, null);
     }
 
@@ -492,7 +491,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     }
 
     private void activateConditionsRestore(UserState userState, DbLevel dbLevel, DbLevelTask activeQuest) {
-        ConditionConfig levelCondition = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(dbLevel.getXp(), null), null);
+        ConditionConfig levelCondition = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(dbLevel.getXp()), null, null);
         serverConditionService.activateCondition(levelCondition, userState, null);
 
         if (activeQuest != null) {

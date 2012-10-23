@@ -26,6 +26,7 @@ public class ConditionConfig implements Serializable {
     private ConditionTrigger conditionTrigger;
     private AbstractComparisonConfig abstractComparisonConfig;
     private Index radarPositionHint;
+    private String additionalDescription;
 
     /**
      * Used by GWT
@@ -33,10 +34,11 @@ public class ConditionConfig implements Serializable {
     protected ConditionConfig() {
     }
 
-    public ConditionConfig(ConditionTrigger conditionTrigger, AbstractComparisonConfig abstractComparisonConfig, Index radarPositionHint) {
+    public ConditionConfig(ConditionTrigger conditionTrigger, AbstractComparisonConfig abstractComparisonConfig, Index radarPositionHint, String additionalDescription) {
         this.conditionTrigger = conditionTrigger;
         this.abstractComparisonConfig = abstractComparisonConfig;
         this.radarPositionHint = radarPositionHint;
+        this.additionalDescription = additionalDescription;
     }
 
     public ConditionTrigger getConditionTrigger() {
@@ -49,5 +51,9 @@ public class ConditionConfig implements Serializable {
 
     public Index getRadarPositionHint() {
         return radarPositionHint;
+    }
+
+    public String getAdditionalDescription() {
+        return additionalDescription;
     }
 }

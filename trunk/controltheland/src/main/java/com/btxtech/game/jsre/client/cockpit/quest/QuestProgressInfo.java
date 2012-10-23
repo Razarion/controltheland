@@ -9,13 +9,19 @@ public class QuestProgressInfo implements Serializable {
     private ConditionTrigger conditionTrigger;
     private Map<Integer, Amount> itemIdAmounts;
     private Amount amount;
-    
-    public ConditionTrigger getConditionTrigger() {
-        return conditionTrigger;
+
+    /**
+     * Used by GWT
+     */
+    QuestProgressInfo() {
     }
 
-    public void setConditionTrigger(ConditionTrigger conditionTrigger) {
+    public QuestProgressInfo(ConditionTrigger conditionTrigger) {
         this.conditionTrigger = conditionTrigger;
+    }
+
+    public ConditionTrigger getConditionTrigger() {
+        return conditionTrigger;
     }
 
     public Map<Integer, Amount> getItemIdAmounts() {
@@ -34,9 +40,15 @@ public class QuestProgressInfo implements Serializable {
         this.amount = amount;
     }
 
-    public class Amount {
+    public static class Amount implements Serializable {
         private int amount;
         private int totalAmount;
+
+        /**
+         * Used by GWT
+         */
+        Amount() {
+        }
 
         public Amount(int amount, int totalAmount) {
             this.amount = amount;

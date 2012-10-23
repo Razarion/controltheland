@@ -105,14 +105,29 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
         Assert.assertNull(questProgressInfo);
     }
 
-    private void assertAndClearProgressString(String expected, SimpleBase simpleBase) {
-        Assert.assertEquals(expected, questProgressInfo);
+    private void assertQuestProgressInfoFromService(ConditionTrigger conditionTrigger, Map<Integer, QuestProgressInfo.Amount> expectedAmountMap) {
+        QuestProgressInfo questProgressInfo = serverConditionService.getQuestProgressInfo(userState1, 1);
+        assertQuestProgressInfo(conditionTrigger, expectedAmountMap, questProgressInfo);
+    }
+
+    private void assertAndClearQuestProgressInfo(ConditionTrigger conditionTrigger, Map<Integer, QuestProgressInfo.Amount> expectedAmountMap, SimpleBase simpleBase) {
+        assertQuestProgressInfo(conditionTrigger, expectedAmountMap, questProgressInfo);
         Assert.assertEquals(simpleBase, progressBase);
         questProgressInfo = null;
     }
 
-    private void assertProgressStringFromService(String expected) {
-        Assert.assertEquals(expected, serverConditionService.getQuestProgressInfo(userState1, 1));
+    private void assertQuestProgressInfo(ConditionTrigger conditionTrigger, Map<Integer, QuestProgressInfo.Amount> expectedAmountMap, QuestProgressInfo questProgressInfo) {
+        Assert.assertEquals(conditionTrigger, questProgressInfo.getConditionTrigger());
+        Map<Integer, QuestProgressInfo.Amount> actualAmountMap = questProgressInfo.getItemIdAmounts();
+        Assert.assertEquals(expectedAmountMap.size(), actualAmountMap.size());
+        for (Map.Entry<Integer, QuestProgressInfo.Amount> entry : expectedAmountMap.entrySet()) {
+            QuestProgressInfo.Amount expectedAmount = actualAmountMap.get(entry.getKey());
+            if (expectedAmount == null) {
+                Assert.fail("No actual entry for: " + entry.getKey());
+            }
+            Assert.assertEquals(entry.getValue().getAmount(), expectedAmount.getAmount());
+            Assert.assertEquals(entry.getValue().getTotalAmount(), expectedAmount.getTotalAmount());
+        }
     }
 
     @Test
@@ -120,7 +135,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
     public void build1Item() throws Exception {
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new SyncItemTypeComparisonConfig(itemTypes, "Item #C" + builder1B1.getBaseItemType().getId()), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new SyncItemTypeComparisonConfig(itemTypes), null, null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -130,14 +145,19 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
                 TestSyncItemTypeComparison.this.identifier = identifier;
             }
         });
-        assertProgressStringFromService("Item 0");
+
+        Map<Integer, QuestProgressInfo.Amount> expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(0, 1));
+        assertQuestProgressInfoFromService(ConditionTrigger.SYNC_ITEM_BUILT, expectedAmountMap);
         assertClearProgressString();
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemBuilt(builder1B2);
         assertClearProgressString();
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemBuilt(builder1B1);
-        assertAndClearProgressString("Item 1", base1.getSimpleBase());
+        expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(1, 1));
+        assertAndClearQuestProgressInfo(ConditionTrigger.SYNC_ITEM_BUILT, expectedAmountMap, base1.getSimpleBase());
         assertActorAndIdentifierAndClear(userState1, 1);
     }
 
@@ -146,7 +166,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
     public void build3Item() throws Exception {
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new SyncItemTypeComparisonConfig(itemTypes, "Item #C" + builder1B1.getBaseItemType().getId()), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new SyncItemTypeComparisonConfig(itemTypes), null, null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -156,20 +176,28 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
                 TestSyncItemTypeComparison.this.identifier = identifier;
             }
         });
-        assertProgressStringFromService("Item 0");
+        Map<Integer, QuestProgressInfo.Amount> expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(0, 3));
+        assertQuestProgressInfoFromService(ConditionTrigger.SYNC_ITEM_BUILT, expectedAmountMap);
         assertClearProgressString();
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemBuilt(builder1B1);
-        assertAndClearProgressString("Item 1", base1.getSimpleBase());
+        expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(1, 3));
+        assertAndClearQuestProgressInfo(ConditionTrigger.SYNC_ITEM_BUILT, expectedAmountMap, base1.getSimpleBase());
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemBuilt(builder1B2);
         assertClearProgressString();
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemBuilt(builder1B1);
-        assertAndClearProgressString("Item 2", base1.getSimpleBase());
+        expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(2, 3));
+        assertAndClearQuestProgressInfo(ConditionTrigger.SYNC_ITEM_BUILT, expectedAmountMap, base1.getSimpleBase());
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemBuilt(builder1B1);
-        assertAndClearProgressString("Item 3", base1.getSimpleBase());
+        expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(3, 3));
+        assertAndClearQuestProgressInfo(ConditionTrigger.SYNC_ITEM_BUILT, expectedAmountMap, base1.getSimpleBase());
         assertActorAndIdentifierAndClear(userState1, 1);
     }
 
@@ -179,8 +207,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 2);
         itemTypes.put(attacker1B1.getBaseItemType(), 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new SyncItemTypeComparisonConfig(itemTypes, "Item #C" + builder1B1.getBaseItemType().getId()
-                + " #C" + attacker1B1.getBaseItemType().getId()), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_BUILT, new SyncItemTypeComparisonConfig(itemTypes), null, null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -190,20 +217,32 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
                 TestSyncItemTypeComparison.this.identifier = identifier;
             }
         });
-        assertProgressStringFromService("Item 0 0");
+        Map<Integer, QuestProgressInfo.Amount> expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(0, 2));
+        expectedAmountMap.put(TEST_ATTACK_ITEM_ID, new QuestProgressInfo.Amount(0, 1));
+        assertQuestProgressInfoFromService(ConditionTrigger.SYNC_ITEM_BUILT, expectedAmountMap);
         assertClearProgressString();
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemBuilt(builder1B1);
-        assertAndClearProgressString("Item 1 0", base1.getSimpleBase());
+        expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(1, 2));
+        expectedAmountMap.put(TEST_ATTACK_ITEM_ID, new QuestProgressInfo.Amount(0, 1));
+        assertAndClearQuestProgressInfo(ConditionTrigger.SYNC_ITEM_BUILT, expectedAmountMap, base1.getSimpleBase());
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemBuilt(builder1B2);
         assertClearProgressString();
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemBuilt(attacker1B1);
-        assertAndClearProgressString("Item 1 1", base1.getSimpleBase());
+        expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(1, 2));
+        expectedAmountMap.put(TEST_ATTACK_ITEM_ID, new QuestProgressInfo.Amount(1, 1));
+        assertAndClearQuestProgressInfo(ConditionTrigger.SYNC_ITEM_BUILT, expectedAmountMap, base1.getSimpleBase());
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemBuilt(builder1B1);
-        assertAndClearProgressString("Item 2 1", base1.getSimpleBase());
+        expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(2, 2));
+        expectedAmountMap.put(TEST_ATTACK_ITEM_ID, new QuestProgressInfo.Amount(1, 1));
+        assertAndClearQuestProgressInfo(ConditionTrigger.SYNC_ITEM_BUILT, expectedAmountMap, base1.getSimpleBase());
         assertActorAndIdentifierAndClear(userState1, 1);
     }
 
@@ -212,7 +251,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
     public void killed1Item() throws Exception {
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new SyncItemTypeComparisonConfig(itemTypes, "Kill #C" + builder1B2.getBaseItemType().getId()), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new SyncItemTypeComparisonConfig(itemTypes), null, null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -222,14 +261,18 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
                 TestSyncItemTypeComparison.this.identifier = identifier;
             }
         });
-        assertProgressStringFromService("Kill 0");
+        Map<Integer, QuestProgressInfo.Amount> expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(0, 1));
+        assertQuestProgressInfoFromService(ConditionTrigger.SYNC_ITEM_KILLED, expectedAmountMap);
         assertClearProgressString();
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemKilled(base2.getSimpleBase(), builder1B1);
         assertClearProgressString();
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemKilled(base1.getSimpleBase(), builder1B2);
-        assertAndClearProgressString("Kill 1", base1.getSimpleBase());
+        expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(1, 1));
+        assertAndClearQuestProgressInfo(ConditionTrigger.SYNC_ITEM_KILLED, expectedAmountMap, base1.getSimpleBase());
         assertActorAndIdentifierAndClear(userState1, 1);
     }
 
@@ -238,7 +281,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
     public void killed3Item() throws Exception {
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new SyncItemTypeComparisonConfig(itemTypes, "Kill #C" + builder1B2.getBaseItemType().getId()), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new SyncItemTypeComparisonConfig(itemTypes), null, null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -248,20 +291,28 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
                 TestSyncItemTypeComparison.this.identifier = identifier;
             }
         });
-        assertProgressStringFromService("Kill 0");
+        Map<Integer, QuestProgressInfo.Amount> expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(0, 3));
+        assertQuestProgressInfoFromService(ConditionTrigger.SYNC_ITEM_KILLED, expectedAmountMap);
         assertClearProgressString();
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemKilled(base2.getSimpleBase(), builder1B1);
         assertClearProgressString();
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemKilled(base1.getSimpleBase(), builder1B2);
-        assertAndClearProgressString("Kill 1", base1.getSimpleBase());
+        expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(1, 3));
+        assertAndClearQuestProgressInfo(ConditionTrigger.SYNC_ITEM_KILLED, expectedAmountMap, base1.getSimpleBase());
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemKilled(base1.getSimpleBase(), builder1B2);
-        assertAndClearProgressString("Kill 2", base1.getSimpleBase());
+        expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(2, 3));
+        assertAndClearQuestProgressInfo(ConditionTrigger.SYNC_ITEM_KILLED, expectedAmountMap, base1.getSimpleBase());
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemKilled(base1.getSimpleBase(), builder1B2);
-        assertAndClearProgressString("Kill 3", base1.getSimpleBase());
+        expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(3, 3));
+        assertAndClearQuestProgressInfo(ConditionTrigger.SYNC_ITEM_KILLED, expectedAmountMap, base1.getSimpleBase());
         assertActorAndIdentifierAndClear(userState1, 1);
     }
 
@@ -271,8 +322,7 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
         itemTypes.put(attacker1B1.getBaseItemType(), 1);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new SyncItemTypeComparisonConfig(itemTypes, "Kill #C" + builder1B2.getBaseItemType().getId()
-                + " #C" + attacker1B1.getBaseItemType().getId()), null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, new SyncItemTypeComparisonConfig(itemTypes), null, null);
         serverConditionService.activateCondition(conditionConfig, userState1, 1);
 
         serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
@@ -282,23 +332,38 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
                 TestSyncItemTypeComparison.this.identifier = identifier;
             }
         });
-        assertProgressStringFromService("Kill 0 0");
+        Map<Integer, QuestProgressInfo.Amount> expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(0, 3));
+        expectedAmountMap.put(TEST_ATTACK_ITEM_ID, new QuestProgressInfo.Amount(0, 1));
+        assertQuestProgressInfoFromService(ConditionTrigger.SYNC_ITEM_KILLED, expectedAmountMap);
         assertClearProgressString();
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemKilled(base2.getSimpleBase(), builder1B1);
         assertClearProgressString();
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemKilled(base1.getSimpleBase(), builder1B2);
-        assertAndClearProgressString("Kill 1 0", base1.getSimpleBase());
+        expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(1, 3));
+        expectedAmountMap.put(TEST_ATTACK_ITEM_ID, new QuestProgressInfo.Amount(0, 1));
+        assertAndClearQuestProgressInfo(ConditionTrigger.SYNC_ITEM_KILLED, expectedAmountMap, base1.getSimpleBase());
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemKilled(base1.getSimpleBase(), builder1B2);
-        assertAndClearProgressString("Kill 2 0", base1.getSimpleBase());
+        expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(2, 3));
+        expectedAmountMap.put(TEST_ATTACK_ITEM_ID, new QuestProgressInfo.Amount(0, 1));
+        assertAndClearQuestProgressInfo(ConditionTrigger.SYNC_ITEM_KILLED, expectedAmountMap, base1.getSimpleBase());
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemKilled(base1.getSimpleBase(), attacker1B1);
-        assertAndClearProgressString("Kill 2 1", base1.getSimpleBase());
+        expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(2, 3));
+        expectedAmountMap.put(TEST_ATTACK_ITEM_ID, new QuestProgressInfo.Amount(1, 1));
+        assertAndClearQuestProgressInfo(ConditionTrigger.SYNC_ITEM_KILLED, expectedAmountMap, base1.getSimpleBase());
         assertClearActorAndIdentifier();
         serverConditionService.onSyncItemKilled(base1.getSimpleBase(), builder1B2);
-        assertAndClearProgressString("Kill 3 1", base1.getSimpleBase());
+        expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(3, 3));
+        expectedAmountMap.put(TEST_ATTACK_ITEM_ID, new QuestProgressInfo.Amount(1, 1));
+        assertAndClearQuestProgressInfo(ConditionTrigger.SYNC_ITEM_KILLED, expectedAmountMap, base1.getSimpleBase());
         assertActorAndIdentifierAndClear(userState1, 1);
     }
 

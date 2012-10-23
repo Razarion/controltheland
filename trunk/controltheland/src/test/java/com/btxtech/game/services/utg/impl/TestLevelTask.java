@@ -50,7 +50,7 @@ public class TestLevelTask extends AbstractServiceTest {
         mockServerConditionService.activateCondition(eqConditionConfig(ConditionTrigger.XP_INCREASED, CountComparisonConfig.class), EasyMock.eq(userState), EasyMock.<Integer>isNull());
         mockServerConditionService.deactivateActorCondition(userState, 1);
         mockServerConditionService.activateCondition(eqConditionConfig(ConditionTrigger.BASE_KILLED, CountComparisonConfig.class), EasyMock.eq(userState), EasyMock.eq(2));
-        EasyMock.expect(mockServerConditionService.getQuestProgressInfo(userState, 2)).andReturn(new QuestProgressInfo());
+        EasyMock.expect(mockServerConditionService.getQuestProgressInfo(userState, 2)).andReturn(new QuestProgressInfo(ConditionTrigger.BASE_KILLED));
         mockServerConditionService.activateCondition(eqConditionConfig(ConditionTrigger.TUTORIAL, null), EasyMock.eq(userState), EasyMock.eq(3));
         mockServerConditionService.onTutorialFinished(userState, 3);
         mockServerConditionService.activateCondition(eqConditionConfig(ConditionTrigger.TUTORIAL, null), EasyMock.eq(userState), EasyMock.eq(1));

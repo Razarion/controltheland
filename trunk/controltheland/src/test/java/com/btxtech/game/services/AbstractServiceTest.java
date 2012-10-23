@@ -1587,7 +1587,6 @@ abstract public class AbstractServiceTest {
         dbConditionConfig.setConditionTrigger(ConditionTrigger.MONEY_INCREASED);
         DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
         dbCountComparisonConfig.setCount(3);
-        dbCountComparisonConfig.setHtmlProgressTemplate("Money: #C of 3");
         dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
         dbLevelTask.setDbConditionConfig(dbConditionConfig);
         return dbLevelTask;
@@ -1638,7 +1637,6 @@ abstract public class AbstractServiceTest {
         dbConditionConfig.setConditionTrigger(ConditionTrigger.SYNC_ITEM_BUILT);
         DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
         dbCountComparisonConfig.setCount(2);
-        dbCountComparisonConfig.setHtmlProgressTemplate("build #C");
         dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
         dbLevelTask.setDbConditionConfig(dbConditionConfig);
         return dbLevelTask;

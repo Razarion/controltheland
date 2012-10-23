@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.common.utg.config;
 
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -33,7 +32,6 @@ public class ItemTypePositionComparisonConfig implements AbstractComparisonConfi
     private Region region;
     private Integer time;
     private boolean addExistingItems;
-    private String htmlProgressTamplate;
 
     /**
      * Used by GWT
@@ -41,12 +39,11 @@ public class ItemTypePositionComparisonConfig implements AbstractComparisonConfi
     public ItemTypePositionComparisonConfig() {
     }
 
-    public ItemTypePositionComparisonConfig(Map<ItemType, Integer> itemTypes, Region region, Integer time, boolean addExistingItems, String htmlProgressTamplate) {
+    public ItemTypePositionComparisonConfig(Map<ItemType, Integer> itemTypes, Region region, Integer time, boolean addExistingItems) {
         this.itemTypes = itemTypes;
         this.region = region;
         this.time = time;
         this.addExistingItems = addExistingItems;
-        this.htmlProgressTamplate = htmlProgressTamplate;
     }
 
     @Override
@@ -54,6 +51,6 @@ public class ItemTypePositionComparisonConfig implements AbstractComparisonConfi
         if (planetServices == null) {
             throw new IllegalArgumentException("PlanetServices is not allowed to be null on a ItemTypePositionComparisonConfig");
         }
-        return new ItemTypePositionComparison(itemTypes, region, time, addExistingItems, planetServices, simpleBase, htmlProgressTamplate);
+        return new ItemTypePositionComparison(itemTypes, region, time, addExistingItems, planetServices, simpleBase);
     }
 }

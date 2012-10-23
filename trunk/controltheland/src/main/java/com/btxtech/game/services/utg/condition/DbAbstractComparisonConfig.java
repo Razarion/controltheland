@@ -38,8 +38,8 @@ public abstract class DbAbstractComparisonConfig implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-    @Column(length = 1000)
-    private String htmlProgressTemplate;
+    @Column(length = 1000, name = "htmlProgressTemplate")
+    private String additionalInfo;
 
     public abstract AbstractComparisonConfig createComparisonConfig(ServerItemTypeService serverItemTypeService);
 
@@ -68,11 +68,11 @@ public abstract class DbAbstractComparisonConfig implements Serializable {
         return createCopy();
     }
 
-    public String getHtmlProgressTemplate() {
-        return htmlProgressTemplate;
+    public String getAdditionalInfo() {
+        return additionalInfo;
     }
 
-    public void setHtmlProgressTemplate(String htmlProgressTamplate) {
-        this.htmlProgressTemplate = htmlProgressTamplate;
+    public void setAdditionalInfo(String additionalInfo) {
+        this.additionalInfo = additionalInfo;
     }
 }
