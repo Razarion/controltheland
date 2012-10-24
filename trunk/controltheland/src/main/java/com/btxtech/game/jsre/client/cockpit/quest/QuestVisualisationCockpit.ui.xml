@@ -17,10 +17,17 @@
     </ui:style>
     <g:VerticalPanel styleName="{style.plate}">
         <g:Label ui:field="titleLabel" styleName="{style.title}"/>
-        <g:SimplePanel ui:field="mainPanel"/>
+        <g:Cell horizontalAlignment="ALIGN_CENTER">
+        	<g:SimplePanel ui:field="mainPanel"/>
+        </g:Cell>
         <g:Cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-            <g:Button text="Quest Dialog" ui:field="questDialogButton"
+        	<g:HorizontalPanel>
+        		<g:Cell verticalAlignment="ALIGN_MIDDLE" horizontalAlignment="ALIGN_CENTER">
+        			<g:Button text="Quest Dialog" ui:field="questDialogButton"
                       title="Open the quest dialog"/>
+        		</g:Cell>
+        		<g:CheckBox text="Visualise" ui:field="visualiseCheckBox"/>
+        </g:HorizontalPanel>
         </g:Cell>
     </g:VerticalPanel>
 </ui:UiBinder> 
