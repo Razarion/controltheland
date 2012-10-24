@@ -21,6 +21,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 
 public class QuestVisualisationCockpit extends Composite {
 
@@ -31,6 +33,7 @@ public class QuestVisualisationCockpit extends Composite {
     Button questDialogButton;
     @UiField
     SimplePanel mainPanel;
+    @UiField CheckBox visualiseCheckBox;
     private QuestVisualisationPanel questVisualisationPanel;
     private static Logger log = Logger.getLogger(QuestVisualisationCockpit.class.getName());
 
@@ -90,4 +93,7 @@ public class QuestVisualisationCockpit extends Composite {
         }
     }
 
+    @UiHandler("visualiseCheckBox")
+    void onVisualiseCheckBoxValueChange(ValueChangeEvent event) {
+    }
 }
