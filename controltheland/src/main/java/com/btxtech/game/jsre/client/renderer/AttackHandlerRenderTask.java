@@ -5,7 +5,10 @@ import com.btxtech.game.jsre.client.effects.AttackHandler;
 import com.btxtech.game.jsre.client.effects.Detonation;
 import com.btxtech.game.jsre.client.effects.MuzzleFlash;
 import com.btxtech.game.jsre.client.effects.Projectile;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.canvas.dom.client.Context2d;
+
+import java.util.Collection;
 
 /**
  * User: beat
@@ -20,7 +23,7 @@ public class AttackHandlerRenderTask extends AbstractClipRenderTask {
     }
 
     @Override
-    public void render(long timeStamp, Rectangle viewRect, Rectangle tileViewRect) {
+    public void render(long timeStamp, Collection<SyncItem> itemsInView, Rectangle viewRect, Rectangle tileViewRect) {
         for (Projectile projectile : AttackHandler.getInstance().getProjectilesInRegion(timeStamp, viewRect)) {
             renderClip(context2d, projectile);
         }

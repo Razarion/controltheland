@@ -3,14 +3,17 @@ package com.btxtech.game.jsre.client.renderer;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainUtil;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.perfmon.Perfmon;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.google.gwt.animation.client.AnimationScheduler;
 import com.google.gwt.dom.client.CanvasElement;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,6 +51,7 @@ public class Renderer {
         gameRenderTasks.add(new SelectionFrameRenderTask(TerrainView.getInstance().getContext2d()));
         gameRenderTasks.add(new InventoryItemPlacerRenderTask(TerrainView.getInstance().getContext2d()));
         gameRenderTasks.add(new InGameTipRenderTask(TerrainView.getInstance().getContext2d()));
+        gameRenderTasks.add(new InGameQuestVisualisationRenderTask(TerrainView.getInstance().getContext2d()));
         gameRenderTasks.add(new SplashRenderTask(TerrainView.getInstance().getContext2d()));
     }
 
@@ -133,9 +137,10 @@ public class Renderer {
         // Set canvas size due to chrome crash
         canvasElement.setWidth(viewRect.getWidth());
         canvasElement.setHeight(viewRect.getHeight());
+        Collection<SyncItem> itemsInView = ItemContainer.getInstance().getItemsInRectangleFastIncludingDead(viewRect); // TODO clips off items if the middle is no longer in the view rect
         for (AbstractRenderTask renderTask : gameRenderTasks) {
             try {
-                renderTask.render(timeStamp, viewRect, tileViewRect);
+                renderTask.render(timeStamp, itemsInView, viewRect, tileViewRect);
             } catch (Exception e) {
                 log.log(Level.SEVERE, "Renderer.doRender()", e);
             }
@@ -147,7 +152,7 @@ public class Renderer {
         Rectangle tileViewRect = TerrainUtil.convertToTilePositionRoundUp(viewRect);
         for (AbstractRenderTask renderTask : overlayRenderTasks) {
             try {
-                renderTask.render(timeStamp, viewRect, tileViewRect);
+                renderTask.render(timeStamp, null, viewRect, tileViewRect);
             } catch (Exception e) {
                 log.log(Level.SEVERE, "Renderer.doOverlayRender()", e);
             }

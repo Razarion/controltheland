@@ -14,6 +14,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -21,8 +22,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 
 public class QuestVisualisationCockpit extends Composite {
 
@@ -33,7 +32,8 @@ public class QuestVisualisationCockpit extends Composite {
     Button questDialogButton;
     @UiField
     SimplePanel mainPanel;
-    @UiField CheckBox visualiseCheckBox;
+    @UiField
+    CheckBox visualiseCheckBox;
     private QuestVisualisationPanel questVisualisationPanel;
     private static Logger log = Logger.getLogger(QuestVisualisationCockpit.class.getName());
 
@@ -76,6 +76,8 @@ public class QuestVisualisationCockpit extends Composite {
             mainPanel.setWidget(questVisualisationPanel);
             titleLabel.setText(questInfo.getTitle());
         }
+        visualiseCheckBox.setValue(true);
+        QuestVisualtsationModel.getInstance().setShowInGameVisualisation(true);
         questDialogButton.setVisible(Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE);
     }
 
@@ -94,6 +96,7 @@ public class QuestVisualisationCockpit extends Composite {
     }
 
     @UiHandler("visualiseCheckBox")
-    void onVisualiseCheckBoxValueChange(ValueChangeEvent event) {
+    void onVisualiseCheckBoxClick(ClickEvent event) {
+        QuestVisualtsationModel.getInstance().setShowInGameVisualisation(visualiseCheckBox.getValue());
     }
 }

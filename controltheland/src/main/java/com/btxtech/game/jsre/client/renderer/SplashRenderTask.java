@@ -4,8 +4,11 @@ import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.cockpit.SplashImage;
 import com.btxtech.game.jsre.client.cockpit.SplashManager;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
+
+import java.util.Collection;
 
 /**
  * User: beat
@@ -27,7 +30,7 @@ public class SplashRenderTask extends AbstractRenderTask {
     }
 
     @Override
-    public void render(long timeStamp, Rectangle viewRect, final Rectangle tileViewRect) {
+    public void render(long timeStamp, Collection<SyncItem> itemsInView, Rectangle viewRect, final Rectangle tileViewRect) {
         SplashImage splashImage = SplashManager.getInstance().getCurrentSplash(timeStamp);
         if (splashImage == null) {
             return;

@@ -759,6 +759,7 @@ public class TestLevelCrud extends AbstractServiceTest {
         dbLevelTask12.setMoney(22);
         DbConditionConfig dbConditionConfig = new DbConditionConfig();
         dbConditionConfig.setRadarPositionHint(new Index(100, 200));
+        dbConditionConfig.setAdditionalDescription("dbConditionConfig2");
         dbLevelTask12.setDbConditionConfig(dbConditionConfig);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel1);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -769,7 +770,7 @@ public class TestLevelCrud extends AbstractServiceTest {
         QuestInfo questInfo1 = userGuidanceService.getDbLevelCrud().readDbChild(dbLevel1.getId()).getLevelTaskCrud().readDbChildren().get(0).createQuestInfo();
         QuestInfo questInfo2 = userGuidanceService.getDbLevelCrud().readDbChild(dbLevel1.getId()).getLevelTaskCrud().readDbChildren().get(1).createQuestInfo();
         Assert.assertEquals(new QuestInfo("name1", "html1", null, 11, 12, dbLevelTask11.getId(), QuestInfo.Type.MISSION, null), questInfo1);
-        Assert.assertEquals(new QuestInfo("name2", "html2", null, 21, 22, dbLevelTask12.getId(), QuestInfo.Type.QUEST, new Index(100, 200)), questInfo2);
+        Assert.assertEquals(new QuestInfo("name2", "html2", "dbConditionConfig2", 21, 22, dbLevelTask12.getId(), QuestInfo.Type.QUEST, new Index(100, 200)), questInfo2);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

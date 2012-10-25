@@ -14,6 +14,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
 
+import java.util.Collection;
+
 /**
  * User: beat
  * Date: 29.07.12
@@ -27,11 +29,11 @@ public class ItemRenderTask extends AbstractRenderTask {
     }
 
     @Override
-    public void render(long timeStamp, Rectangle viewRect, Rectangle tileViewRect) {
+    public void render(long timeStamp, Collection<SyncItem> itemsInView, Rectangle viewRect, Rectangle tileViewRect) {
         context2d.setFillStyle("#999999");
         Group ownSelection = SelectionHandler.getInstance().getOwnSelection();
         SyncItem targetSelection = SelectionHandler.getInstance().getSelectedTargetSyncItem();
-        for (SyncItem syncItem : ItemContainer.getInstance().getItemsInRectangleFastIncludingDead(viewRect)) { // TODO clips off items if the middle is no longer in the view rect
+        for (SyncItem syncItem : itemsInView) {
             ImageElement imageElement = ItemTypeImageLoaderContainer.getInstance().getImage(syncItem.getItemType());
             if (imageElement == null) {
                 continue;

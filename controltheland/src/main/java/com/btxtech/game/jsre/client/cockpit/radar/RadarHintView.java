@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
  * Date: 22.12.2009
  * Time: 21:52:27
  */
+@Deprecated
 public class RadarHintView extends MiniMap {
     private static final int EDGE_LENGTH = 15;
     private boolean color = true;
