@@ -124,6 +124,7 @@ public class TestBotService extends AbstractServiceTest {
 
         // Wait for bot to complete
         waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
+        // TODO failed on: 25.10.2012, 25.10.2012
         assertBaseCount(TEST_PLANET_1_ID, 1);
         assertWholeItemCount(TEST_PLANET_1_ID, 4);
     }
