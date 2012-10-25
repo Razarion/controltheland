@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.common.ObjectHolder;
 import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
@@ -43,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -57,10 +59,8 @@ abstract public class AbstractItemService implements ItemService {
     /**
      * Iterates over all sync items
      *
-     *
-     *
      * @param includeNoPosition include items which have no position (e.g. items which are inside a container)
-     * @param includeDead includes dead items (isAlive = false)
+     * @param includeDead       includes dead items (isAlive = false)
      * @param defaultReturn     if iteration is finished without an aport, this param is returned
      * @param itemHandler       see ItemHandler
      * @return the parameter from the itemHandler or the defaultReturn
@@ -481,6 +481,63 @@ abstract public class AbstractItemService implements ItemService {
             }
         });
         return items;
+    }
+
+    @Override
+    public SyncBaseItem getNearestEnemyItem(final Index middle, final Set<Integer> filter, final SimpleBase simpleBase) {
+        final ObjectHolder<SyncBaseItem> itemObjectHolder = new ObjectHolder<SyncBaseItem>();
+        iterateOverItems(false, false, null, new ItemHandler<Void>() {
+            int nearestDistance = Integer.MAX_VALUE;
+
+            @Override
+            public Void handleItem(SyncItem syncItem) {
+                if (!(syncItem instanceof SyncBaseItem)) {
+                    return null;
+                }
+                SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
+
+                if (filter != null && !filter.contains(syncBaseItem.getBaseItemType().getId())) {
+                    return null;
+                }
+
+                if (!syncBaseItem.isEnemy(simpleBase)) {
+                    return null;
+                }
+
+                int distance = middle.getDistance(syncBaseItem.getSyncItemArea().getPosition());
+                if (distance < nearestDistance) {
+                    nearestDistance = distance;
+                    itemObjectHolder.setObject(syncBaseItem);
+                }
+
+                return null;
+            }
+        });
+        return itemObjectHolder.getObject();
+    }
+
+    @Override
+    public SyncResourceItem getNearestResourceItem(final Index middle) {
+        final ObjectHolder<SyncResourceItem> itemObjectHolder = new ObjectHolder<SyncResourceItem>();
+        iterateOverItems(false, false, null, new ItemHandler<Void>() {
+            int nearestDistance = Integer.MAX_VALUE;
+
+            @Override
+            public Void handleItem(SyncItem syncItem) {
+                if (!(syncItem instanceof SyncResourceItem)) {
+                    return null;
+                }
+
+                int distance = middle.getDistance(syncItem.getSyncItemArea().getPosition());
+                if (distance < nearestDistance) {
+                    nearestDistance = distance;
+                    itemObjectHolder.setObject((SyncResourceItem) syncItem);
+                }
+
+                return null;
+            }
+        });
+        return itemObjectHolder.getObject();
     }
 
     @Override

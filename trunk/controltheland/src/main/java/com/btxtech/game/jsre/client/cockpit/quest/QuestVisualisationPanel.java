@@ -88,7 +88,7 @@ public class QuestVisualisationPanel extends Composite {
             } else {
                 progressTable.setWidget(row, 1, new Image(QuestVisualisationImageBundle.INSTANCE.exclamation()));
             }
-            progressTable.setText(row, 2, amount.getAmount() + " / " + amount.getTotalAmount());
+            progressTable.setText(row, 2, amount.getAmount() + "/" + amount.getTotalAmount());
             String itemName = "";
             try {
                 ItemType itemType = ItemTypeContainer.getInstance().getItemType(itemId);
@@ -112,6 +112,7 @@ public class QuestVisualisationPanel extends Composite {
         } else {
             progressTable.setWidget(row, 1, new Image(QuestVisualisationImageBundle.INSTANCE.exclamation()));
         }
-        progressTable.setText(row, 3, amount.getAmount() + " / " + amount.getTotalAmount() + " " + actionWord);
+        progressTable.setText(row, 2, amount.getAmount() + "/" + amount.getTotalAmount());
+        progressTable.setText(row, 4, actionWord);
     }
 }

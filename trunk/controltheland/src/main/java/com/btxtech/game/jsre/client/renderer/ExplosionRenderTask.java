@@ -10,6 +10,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
 
+import java.util.Collection;
+
 /**
  * User: beat
  * Date: 31.07.12
@@ -23,7 +25,7 @@ public class ExplosionRenderTask extends AbstractClipRenderTask {
     }
 
     @Override
-    public void render(long timeStamp, Rectangle viewRect, Rectangle tileViewRect) {
+    public void render(long timeStamp, Collection<SyncItem> itemsInView, Rectangle viewRect, Rectangle tileViewRect) {
         for (Explosion explosion : ExplosionHandler.getInstance().getExplosions(timeStamp, viewRect)) {
             // Draw Item
             if (explosion.isItemVisible()) {

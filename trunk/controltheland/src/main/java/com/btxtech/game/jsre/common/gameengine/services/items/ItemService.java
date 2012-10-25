@@ -29,9 +29,11 @@ import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededEx
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * User: beat
@@ -88,6 +90,10 @@ public interface ItemService {
     Collection<SyncBaseItem> getBaseItemsInRectangle(Region region, SimpleBase simpleBase, Collection<BaseItemType> baseItemTypeFilter);
 
     boolean hasItemsInRectangle(Rectangle rectangle);
+
+    SyncBaseItem getNearestEnemyItem(final Index middle, final Set<Integer> filter, final SimpleBase simpleBase);
+
+    SyncResourceItem getNearestResourceItem(final Index middle);
 
     void killSyncItems(Collection<SyncItem> syncItems);
 

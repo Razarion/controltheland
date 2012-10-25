@@ -5,6 +5,9 @@ import com.google.gwt.canvas.dom.client.CanvasGradient;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.CanvasElement;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * User: beat
  * Date: 24.08.12
@@ -31,10 +34,19 @@ public class CanvasElementLibrary {
     public static final String MOUSE_PRIMARY_COLOR = "#BDB991";
     public static final String MOUSE_SECONDARY_COLOR = "#B0B0B0";
     public static final String MOUSE_THIRD_COLOR = "#6B6B6B";
+    // CORNERS
+    public static final int CORNER_LINE_THICKNESS = 2;
+    public static final int CORNER_LENGTH = 8;
+    public static final int CORNER_TOTAL_LENGTH = 2 * CORNER_LINE_THICKNESS + CORNER_LENGTH;
 
     private static CanvasElement arrowCanvasElement;
     private static CanvasElement mouseCanvasElement;
     private static CanvasElement mouseDownCanvasElement;
+
+    private static Map<String, CanvasElement> tlCorners = new HashMap<String, CanvasElement>();
+    private static Map<String, CanvasElement> trCorners = new HashMap<String, CanvasElement>();
+    private static Map<String, CanvasElement> blCorners = new HashMap<String, CanvasElement>();
+    private static Map<String, CanvasElement> brCorners = new HashMap<String, CanvasElement>();
 
 
     public static CanvasElement getArrow() {
@@ -169,6 +181,114 @@ public class CanvasElementLibrary {
         context2d.fill();
         mouseDownCanvasElement = canvas.getCanvasElement();
         return mouseDownCanvasElement;
+    }
+
+    public static CanvasElement getTlCorner(String color) {
+        CanvasElement tlCorner = tlCorners.get(color);
+        if (tlCorner == null) {
+            tlCorner = createTlCorner(color);
+            tlCorners.put(color, tlCorner);
+        }
+        return tlCorner;
+    }
+
+    public static CanvasElement getTrCorner(String color) {
+        CanvasElement trCorner = trCorners.get(color);
+        if (trCorner == null) {
+            trCorner = createTrCorner(color);
+            trCorners.put(color, trCorner);
+        }
+        return trCorner;
+    }
+
+    public static CanvasElement getBlCorner(String color) {
+        CanvasElement blCorner = blCorners.get(color);
+        if (blCorner == null) {
+            blCorner = createBlCorner(color);
+            blCorners.put(color, blCorner);
+        }
+        return blCorner;
+    }
+
+    public static CanvasElement getBrCorner(String color) {
+        CanvasElement brCorner = brCorners.get(color);
+        if (brCorner == null) {
+            brCorner = createBrCorner(color);
+            brCorners.put(color, brCorner);
+        }
+        return brCorner;
+    }
+
+    private static CanvasElement createTlCorner(String color) {
+        Canvas canvas = Canvas.createIfSupported();
+        canvas.setCoordinateSpaceWidth(CORNER_TOTAL_LENGTH);
+        canvas.setCoordinateSpaceHeight(CORNER_TOTAL_LENGTH);
+        Context2d context2d = canvas.getContext2d();
+        context2d.setStrokeStyle(color);
+        context2d.setLineWidth(CORNER_LINE_THICKNESS);
+        context2d.translate(CORNER_LINE_THICKNESS, CORNER_LINE_THICKNESS);
+        context2d.beginPath();
+        context2d.moveTo(0, CORNER_LENGTH);
+        context2d.lineTo(0, 0);
+        context2d.lineTo(CORNER_LENGTH, 0);
+        context2d.setShadowBlur(3);
+        context2d.setShadowColor("black");
+        context2d.stroke();
+        return canvas.getCanvasElement();
+    }
+
+    private static CanvasElement createTrCorner(String color) {
+        Canvas canvas = Canvas.createIfSupported();
+        canvas.setCoordinateSpaceWidth(CORNER_TOTAL_LENGTH);
+        canvas.setCoordinateSpaceHeight(CORNER_TOTAL_LENGTH);
+        Context2d context2d = canvas.getContext2d();
+        context2d.setStrokeStyle(color);
+        context2d.setLineWidth(CORNER_LINE_THICKNESS);
+        context2d.translate(CORNER_LINE_THICKNESS, CORNER_LINE_THICKNESS);
+        context2d.beginPath();
+        context2d.moveTo(0, 0);
+        context2d.lineTo(CORNER_LENGTH, 0);
+        context2d.lineTo(CORNER_LENGTH, CORNER_LENGTH);
+        context2d.setShadowBlur(3);
+        context2d.setShadowColor("black");
+        context2d.stroke();
+        return canvas.getCanvasElement();
+    }
+
+    private static CanvasElement createBlCorner(String color) {
+        Canvas canvas = Canvas.createIfSupported();
+        canvas.setCoordinateSpaceWidth(CORNER_TOTAL_LENGTH);
+        canvas.setCoordinateSpaceHeight(CORNER_TOTAL_LENGTH);
+        Context2d context2d = canvas.getContext2d();
+        context2d.setStrokeStyle(color);
+        context2d.setLineWidth(CORNER_LINE_THICKNESS);
+        context2d.translate(CORNER_LINE_THICKNESS, CORNER_LINE_THICKNESS);
+        context2d.beginPath();
+        context2d.moveTo(0, 0);
+        context2d.lineTo(0, CORNER_LENGTH);
+        context2d.lineTo(CORNER_LENGTH, CORNER_LENGTH);
+        context2d.setShadowBlur(3);
+        context2d.setShadowColor("black");
+        context2d.stroke();
+        return canvas.getCanvasElement();
+    }
+
+    private static CanvasElement createBrCorner(String color) {
+        Canvas canvas = Canvas.createIfSupported();
+        canvas.setCoordinateSpaceWidth(CORNER_TOTAL_LENGTH);
+        canvas.setCoordinateSpaceHeight(CORNER_TOTAL_LENGTH);
+        Context2d context2d = canvas.getContext2d();
+        context2d.setStrokeStyle(color);
+        context2d.setLineWidth(CORNER_LINE_THICKNESS);
+        context2d.translate(CORNER_LINE_THICKNESS, CORNER_LINE_THICKNESS);
+        context2d.beginPath();
+        context2d.moveTo(0, CORNER_LENGTH);
+        context2d.lineTo(CORNER_LENGTH, CORNER_LENGTH);
+        context2d.lineTo(CORNER_LENGTH, 0);
+        context2d.setShadowBlur(3);
+        context2d.setShadowColor("black");
+        context2d.stroke();
+        return canvas.getCanvasElement();
     }
 
 }

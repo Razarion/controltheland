@@ -6,6 +6,7 @@
             background: rgba(0, 0, 0, 0.5);
             padding: 0 10px 10px 10px;
             max-width: 20%;
+            display: block;
         }
 
         .title {
@@ -14,20 +15,27 @@
             font-family: Arial, Helvetica, sans-serif;
             margin-bottom: 10px;
         }
+
+        .text {
+            color: #C7C4BB;
+            font-size: 12px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
     </ui:style>
     <g:VerticalPanel styleName="{style.plate}">
         <g:Label ui:field="titleLabel" styleName="{style.title}"/>
         <g:Cell horizontalAlignment="ALIGN_CENTER">
-        	<g:SimplePanel ui:field="mainPanel"/>
+            <g:SimplePanel ui:field="mainPanel"/>
         </g:Cell>
         <g:Cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-        	<g:HorizontalPanel>
-        		<g:Cell verticalAlignment="ALIGN_MIDDLE" horizontalAlignment="ALIGN_CENTER">
-        			<g:Button text="Quest Dialog" ui:field="questDialogButton"
-                      title="Open the quest dialog"/>
-        		</g:Cell>
-        		<g:CheckBox text="Visualise" ui:field="visualiseCheckBox"/>
-        </g:HorizontalPanel>
+            <g:HorizontalPanel>
+                <g:Cell verticalAlignment="ALIGN_MIDDLE" horizontalAlignment="ALIGN_CENTER">
+                    <g:Button text="Quest Dialog" ui:field="questDialogButton"
+                              title="Open the quest dialog"/>
+                </g:Cell>
+                <g:CheckBox text="Visualise" ui:field="visualiseCheckBox"
+                            title="Switch in game quest visualisation on and off" styleName="{style.text}"/>
+            </g:HorizontalPanel>
         </g:Cell>
     </g:VerticalPanel>
 </ui:UiBinder> 

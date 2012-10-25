@@ -3,9 +3,12 @@ package com.btxtech.game.jsre.client.renderer;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.CanvasPattern;
 import com.google.gwt.canvas.dom.client.Context2d;
+
+import java.util.Collection;
 
 /**
  * User: beat
@@ -34,7 +37,7 @@ public class SelectionFrameRenderTask extends AbstractRenderTask {
     }
 
     @Override
-    public void render(long timeStamp, Rectangle viewRect, final Rectangle tileViewRect) {
+    public void render(long timeStamp, Collection<SyncItem> itemsInView, Rectangle viewRect, final Rectangle tileViewRect) {
         if (!CockpitMode.getInstance().hasGroupSelectionFrame()) {
             return;
         }

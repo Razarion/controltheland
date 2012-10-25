@@ -6,8 +6,11 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryItemPlacer;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
+
+import java.util.Collection;
 
 /**
  * User: beat
@@ -22,7 +25,7 @@ public class InventoryItemPlacerRenderTask extends AbstractRenderTask {
     }
 
     @Override
-    public void render(long timeStamp, Rectangle viewRect, final Rectangle tileViewRect) {
+    public void render(long timeStamp, Collection<SyncItem> itemsInView, Rectangle viewRect, final Rectangle tileViewRect) {
         if (!CockpitMode.getInstance().hasInventoryItemPlacer()) {
             return;
         }

@@ -164,7 +164,9 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
     @Override
     public void onSyncItemDeactivated(SyncBaseItem syncBaseItem) {
         A actor = getActor(syncBaseItem.getBase());
-        triggerSyncItem(actor, ConditionTrigger.SYNC_ITEM_POSITION, syncBaseItem);
+        if (syncBaseItem.isReady()) {
+            triggerSyncItem(actor, ConditionTrigger.SYNC_ITEM_POSITION, syncBaseItem);
+        }
     }
 
     @Override

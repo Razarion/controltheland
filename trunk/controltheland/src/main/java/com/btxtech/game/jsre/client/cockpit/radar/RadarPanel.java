@@ -398,6 +398,7 @@ public class RadarPanel implements TerrainScrollListener {
         return radarMode;
     }
 
+    @Deprecated
     public void showHint(SyncBaseItem enemyBaseItem) {
         questHint = null;
         showQuest.setEnabled(false);

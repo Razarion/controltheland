@@ -191,8 +191,10 @@ public class ItemTypePositionComparison extends AbstractSyncItemComparison imple
         if (time != null) {
             int amount = 0;
             if (fulfilledTimeStamp != null) {
-                amount = (int) ((System.currentTimeMillis() - fulfilledTimeStamp) / ClientDateUtil.MILLIS_IN_MINUTE);
-                if (amount < ClientDateUtil.MILLIS_IN_MINUTE) {
+                long longAmount = System.currentTimeMillis() - fulfilledTimeStamp;
+                if(longAmount > ClientDateUtil.MILLIS_IN_MINUTE) {
+                    amount = (int) (longAmount / ClientDateUtil.MILLIS_IN_MINUTE);
+                } else {
                     amount = 1;
                 }
             }

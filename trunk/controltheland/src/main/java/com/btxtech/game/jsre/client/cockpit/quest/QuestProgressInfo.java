@@ -3,6 +3,7 @@ package com.btxtech.game.jsre.client.cockpit.quest;
 import java.io.Serializable;
 import java.util.Map;
 
+import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 
 public class QuestProgressInfo implements Serializable {

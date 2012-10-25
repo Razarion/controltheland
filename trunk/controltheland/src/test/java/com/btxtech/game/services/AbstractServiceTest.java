@@ -364,6 +364,7 @@ abstract public class AbstractServiceTest {
 
     protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id, GlobalServices globalServices, PlanetServices planetServices, SimpleBase simpleBase) throws Exception {
         SyncBaseItem syncBaseItem = new SyncBaseItem(id, null, (BaseItemType) serverItemTypeService.getItemType(itemTypeId), globalServices, planetServices, simpleBase);
+        syncBaseItem.setBuildup(1.0);
         syncBaseItem.getSyncItemArea().setPosition(position);
         return syncBaseItem;
     }
@@ -373,9 +374,7 @@ abstract public class AbstractServiceTest {
     }
 
     protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id, SimpleBase simpleBase) throws Exception {
-        SyncBaseItem syncBaseItem = createSyncBaseItem(itemTypeId, position, id, createMockGlobalServices(), createMockPlanetServices(), simpleBase);
-        syncBaseItem.setBuildup(1.0);
-        return syncBaseItem;
+        return createSyncBaseItem(itemTypeId, position, id, createMockGlobalServices(), createMockPlanetServices(), simpleBase);
     }
 
     protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id) throws Exception {

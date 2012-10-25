@@ -127,14 +127,13 @@ public class DbLevelTask implements CrudChild<DbLevel> {
     }
 
     public QuestInfo createQuestInfo() {
-        return new QuestInfo(name, html, null, xp, money, id, isDbTutorialConfig() ? QuestInfo.Type.MISSION : QuestInfo.Type.QUEST, getRadarHint());
-    }
-
-    private Index getRadarHint() {
-        if (dbConditionConfig == null) {
-            return null;
+        String additionalDescription = null;
+        Index radarPositionHint = null;
+        if(dbConditionConfig != null) {
+            additionalDescription = dbConditionConfig.getAdditionalDescription();
+            radarPositionHint = dbConditionConfig.getRadarPositionHint();
         }
-        return dbConditionConfig.getRadarPositionHint();
+        return new QuestInfo(name, html, additionalDescription, xp, money, id, isDbTutorialConfig() ? QuestInfo.Type.MISSION : QuestInfo.Type.QUEST, radarPositionHint);
     }
 
     @Override

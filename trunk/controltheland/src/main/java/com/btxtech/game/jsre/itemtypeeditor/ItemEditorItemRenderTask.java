@@ -10,6 +10,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
 
+import java.util.Collection;
+
 /**
  * User: beat
  * Date: 29.07.12
@@ -23,7 +25,7 @@ public class ItemEditorItemRenderTask extends AbstractRenderTask {
     }
 
     @Override
-    public void render(long timeStamp, Rectangle viewRect, Rectangle tileViewRect) {
+    public void render(long timeStamp, Collection<SyncItem> itemsInView, Rectangle viewRect, Rectangle tileViewRect) {
         for (SyncItem syncItem : ItemContainer.getInstance().getItemsInRectangleFast(viewRect)) {
             ItemTypeSpriteMap itemTypeSpriteMap = syncItem.getItemType().getItemTypeSpriteMap();
             ItemTypeSpriteMap.SyncObjectState syncObjectState = itemTypeSpriteMap.getSyncObjectState(syncItem);

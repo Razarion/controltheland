@@ -56,7 +56,9 @@ public class TestBuilder extends AbstractServiceTest {
             @Override
             public SyncItem answer() throws Throwable {
                 Id id2 = new Id(2, 1, 1);
-                return createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(5000, 5350), id2, null, planetServicesMock);
+                SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(5000, 5350), id2, null, planetServicesMock);
+                syncBaseItem.setBuildup(0.0);
+                return syncBaseItem;
             }
         }).once();
         EasyMock.replay(serverItemServiceMock);
