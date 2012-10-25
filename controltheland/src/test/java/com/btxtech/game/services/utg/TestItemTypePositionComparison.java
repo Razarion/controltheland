@@ -217,6 +217,38 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
 
     @Test
     @DirtiesContext
+    public void singleItemTypeNotReady() throws Exception {
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
+        itemTypes.put(builder1B1.getBaseItemType(), 1);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, null, null, false), null, null);
+        serverConditionService.activateCondition(conditionConfig, userState1, 1);
+
+        serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
+            @Override
+            public void conditionPassed(UserState actor, Integer identifier) {
+                TestItemTypePositionComparison.this.actor = actor;
+                TestItemTypePositionComparison.this.identifier = identifier;
+            }
+        });
+
+        Map<Integer, QuestProgressInfo.Amount> expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(0, 1));
+        assertQuestProgressInfoFromService(ConditionTrigger.SYNC_ITEM_POSITION, expectedAmountMap);
+        assertClearActorAndIdentifier();
+        builder1B1.setBuildup(0.0);
+        serverConditionService.onSyncItemDeactivated(builder1B1);
+        assertClearProgressString();
+        assertClearActorAndIdentifier();
+        builder1B1.setBuildup(1.0);
+        serverConditionService.onSyncItemDeactivated(builder1B1);
+        expectedAmountMap = new HashMap<>();
+        expectedAmountMap.put(TEST_START_BUILDER_ITEM_ID, new QuestProgressInfo.Amount(1, 1));
+        assertAndClearQuestProgressInfo(ConditionTrigger.SYNC_ITEM_POSITION, expectedAmountMap, base1.getSimpleBase());
+        assertActorAndIdentifierAndClear(userState1, 1);
+    }
+
+    @Test
+    @DirtiesContext
     public void multipleItemTypes1() throws Exception {
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 3);
