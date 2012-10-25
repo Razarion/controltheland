@@ -478,7 +478,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         userService.login("U1", "test");
         Assert.assertEquals(2, userGuidanceService.getQuestOverview().getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
-        // TODO failed 05.10.2012
+        // TODO failed 05.10.2012, 25.10.2012
         assertAndSetTimeRemaining();
         Thread.sleep(100);
         Assert.assertEquals(1, userGuidanceService.getQuestOverview().getQuestInfos().size());

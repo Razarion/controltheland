@@ -158,6 +158,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         }
 
         criteria.addOrder(Order.desc("timeStamp"));
+        criteria.addOrder(Order.desc("id"));
         List<DbSessionDetail> browserDetails = criteria.list();
 
         for (DbSessionDetail browserDetail : browserDetails) {
