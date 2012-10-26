@@ -1,20 +1,13 @@
-package com.btxtech.game.services.inventory;
+package com.btxtech.game.services.planet.db;
 
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
-import com.btxtech.game.services.common.db.RectangleUserType;
-import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.terrain.DbRegion;
 import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;

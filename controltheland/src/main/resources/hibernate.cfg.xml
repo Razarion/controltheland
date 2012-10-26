@@ -134,8 +134,8 @@
         <mapping class="com.btxtech.game.services.inventory.DbInventoryItem"/>
         <mapping class="com.btxtech.game.services.inventory.DbInventoryArtifact"/>
         <mapping class="com.btxtech.game.services.inventory.DbInventoryArtifactCount"/>
-        <mapping class="com.btxtech.game.services.inventory.DbBoxRegion"/>
-        <mapping class="com.btxtech.game.services.inventory.DbBoxRegionCount"/>
+        <mapping class="com.btxtech.game.services.planet.db.DbBoxRegion"/>
+        <mapping class="com.btxtech.game.services.planet.db.DbBoxRegionCount"/>
         <mapping class="com.btxtech.game.services.inventory.impl.DbInventoryNewUser"/>
         <!-- Media -->
         <mapping class="com.btxtech.game.services.media.DbSound"/>

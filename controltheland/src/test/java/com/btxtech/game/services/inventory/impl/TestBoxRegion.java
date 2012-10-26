@@ -1,6 +1,6 @@
 package com.btxtech.game.services.inventory.impl;
 
-import com.btxtech.game.services.inventory.DbBoxRegion;
+import com.btxtech.game.services.planet.db.DbBoxRegion;
 import junit.framework.Assert;
 import org.junit.Test;
 

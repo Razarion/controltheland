@@ -1,4 +1,4 @@
-package com.btxtech.game.services.inventory;
+package com.btxtech.game.services.planet.db;
 
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
@@ -27,7 +27,7 @@ public class DbBoxRegionCount implements CrudChild<DbBoxRegion> {
     private DbBoxRegion dbBoxRegion;
     @Column(name = "theCount")
     private int count;
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private DbBoxItemType dbBoxItemType;
 
     @Override

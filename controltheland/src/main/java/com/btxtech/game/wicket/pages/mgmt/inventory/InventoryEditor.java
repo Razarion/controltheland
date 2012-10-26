@@ -1,7 +1,6 @@
 package com.btxtech.game.wicket.pages.mgmt.inventory;
 
 import com.btxtech.game.services.common.CrudRootServiceHelper;
-import com.btxtech.game.services.inventory.DbBoxRegion;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
@@ -11,9 +10,10 @@ import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import com.btxtech.game.wicket.uiservices.InventoryArtifactPanel;
 import com.btxtech.game.wicket.uiservices.InventoryImageResource;
 import com.btxtech.game.wicket.uiservices.InventoryItemPanel;
-import com.btxtech.game.wicket.uiservices.MinutePanel;
-import com.btxtech.game.wicket.uiservices.RectanglePanel;
-import org.apache.wicket.markup.html.form.Button;
+import com.btxtech.game.wicket.uiservices.ItemTypesReadonlyPanel;
+import com.btxtech.game.wicket.uiservices.PlanetsReadonlyPanel;
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
@@ -22,6 +22,7 @@ import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.util.Arrays;
@@ -50,6 +51,8 @@ public class InventoryEditor extends MgmtWebPage {
                 dbInventoryArtifactItem.add(InventoryImageResource.createArtifactImage("image", dbInventoryArtifactItem.getModelObject()));
                 super.extendedPopulateItem(dbInventoryArtifactItem);
                 dbInventoryArtifactItem.add(new DropDownChoice<>("rareness", Arrays.asList(DbInventoryArtifact.Rareness.values())));
+                dbInventoryArtifactItem.add(new PlanetsReadonlyPanel("planets"));
+                dbInventoryArtifactItem.add(new ItemTypesReadonlyPanel("baseItemTypes"));
                 dbInventoryArtifactItem.add(new FileUploadField("upload", new IModel<FileUpload>() {
 
                     @Override
@@ -72,7 +75,8 @@ public class InventoryEditor extends MgmtWebPage {
                     public void detach() {
                     }
                 }));
-
+                // alternating row color
+                dbInventoryArtifactItem.add(new AttributeModifier("class", true, new Model<>(dbInventoryArtifactItem.getIndex() % 2 == 0 ? "even" : "odd")));
             }
 
             @Override
@@ -89,6 +93,11 @@ public class InventoryEditor extends MgmtWebPage {
                 dbInventoryItemItem.add(new TextField("razarionCoast"));
                 dbInventoryItemItem.add(InventoryImageResource.createItemImage("image", dbInventoryItemItem.getModelObject()));
                 super.extendedPopulateItem(dbInventoryItemItem);
+                dbInventoryItemItem.add(new Label("razarionCostViaArtifacts"));
+                dbInventoryItemItem.add(new PlanetsReadonlyPanel("planetsViaArtifact"));
+                dbInventoryItemItem.add(new ItemTypesReadonlyPanel("baseItemTypesViaArtifact"));
+                dbInventoryItemItem.add(new PlanetsReadonlyPanel("planets"));
+                dbInventoryItemItem.add(new ItemTypesReadonlyPanel("baseItemTypes"));
                 dbInventoryItemItem.add(new FileUploadField("upload", new IModel<FileUpload>() {
 
                     @Override
@@ -111,7 +120,8 @@ public class InventoryEditor extends MgmtWebPage {
                     public void detach() {
                     }
                 }));
-
+                // alternating row color
+                dbInventoryItemItem.add(new AttributeModifier("class", true, new Model<>(dbInventoryItemItem.getIndex() % 2 == 0 ? "even" : "odd")));
             }
 
             @Override

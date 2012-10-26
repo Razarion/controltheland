@@ -4,7 +4,7 @@ import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
-import com.btxtech.game.services.inventory.DbBoxRegion;
+import com.btxtech.game.services.planet.db.DbBoxRegion;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.planet.db.DbPlanetItemTypeLimitation;

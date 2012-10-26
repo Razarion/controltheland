@@ -11,6 +11,8 @@ import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemTypePossibility;
 import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.db.DbBoxRegion;
+import com.btxtech.game.services.planet.db.DbBoxRegionCount;
 import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.terrain.DbRegion;
 import com.btxtech.game.services.user.UserService;
@@ -140,10 +142,12 @@ public class TestInventoryService extends AbstractServiceTest {
 
         DbInventoryArtifact dbInventoryArtifact2 = globalInventoryService.getArtifactCrud().createDbChild();
         dbInventoryArtifact2.setName("Artifact2");
+        dbInventoryArtifact2.setRazarionCoast(2);
         globalInventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact2);
 
         DbInventoryArtifact dbInventoryArtifact3 = globalInventoryService.getArtifactCrud().createDbChild();
         dbInventoryArtifact3.setName("Artifact3");
+        dbInventoryArtifact3.setRazarionCoast(3);
         globalInventoryService.getArtifactCrud().updateDbChild(dbInventoryArtifact3);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -214,6 +218,7 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertEquals(100, itemList.get(0).getGoldAmount());
         Assert.assertEquals("imageData22", itemList.get(0).getImageContentType());
         Assert.assertEquals(43, (int) itemList.get(0).getRazarionCoast());
+        Assert.assertEquals(2, (int)itemList.get(0).getRazarionCostViaArtifacts());
         Assert.assertArrayEquals(new byte[]{1, 3, 4, 6, 7, 9}, itemList.get(0).getImageData());
         Assert.assertEquals(userGuidanceService.getDbLevel(TEST_LEVEL_2_REAL_ID), itemList.get(0).getGoldLevel());
         List<DbInventoryArtifactCount> dbInventoryArtifactCountFromDb = new ArrayList<>(itemList.get(0).getArtifactCountCrud().readDbChildren());
@@ -226,6 +231,7 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertEquals("GoldItem2", itemList.get(1).getName());
         Assert.assertEquals(10, itemList.get(1).getGoldAmount());
         Assert.assertNull(itemList.get(1).getRazarionCoast());
+        Assert.assertNull(itemList.get(1).getRazarionCostViaArtifacts());
         Assert.assertEquals("imageData33", itemList.get(1).getImageContentType());
         Assert.assertArrayEquals(new byte[]{6, 7, 9}, itemList.get(1).getImageData());
         Assert.assertEquals(userGuidanceService.getDbLevel(TEST_LEVEL_2_REAL_ID), itemList.get(1).getGoldLevel());
@@ -237,6 +243,7 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertEquals("ItemType1", itemList.get(2).getName());
         Assert.assertEquals(2, itemList.get(2).getBaseItemTypeCount());
         Assert.assertEquals(108, (int) itemList.get(2).getRazarionCoast());
+        Assert.assertEquals(3, (int)itemList.get(2).getRazarionCostViaArtifacts());
         Assert.assertEquals(TEST_ATTACK_ITEM_ID, (int) itemList.get(2).getDbBaseItemType().getId());
         dbInventoryArtifactCountFromDb = new ArrayList<>(itemList.get(2).getArtifactCountCrud().readDbChildren());
         Assert.assertEquals(2, dbInventoryArtifactCountFromDb.size());
@@ -248,6 +255,7 @@ public class TestInventoryService extends AbstractServiceTest {
         Assert.assertEquals("ItemType2", itemList.get(3).getName());
         Assert.assertEquals(1, itemList.get(3).getBaseItemTypeCount());
         Assert.assertNull(itemList.get(3).getRazarionCoast());
+        Assert.assertEquals(13, (int)itemList.get(3).getRazarionCostViaArtifacts());
         Assert.assertEquals(TEST_FACTORY_ITEM_ID, (int) itemList.get(3).getDbBaseItemType().getId());
         dbInventoryArtifactCountFromDb = new ArrayList<>(itemList.get(3).getArtifactCountCrud().readDbChildren());
         Assert.assertEquals(3, dbInventoryArtifactCountFromDb.size());
