@@ -3,6 +3,7 @@ package com.btxtech.game.services.item.itemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoxItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.planet.db.DbBoxRegionCount;
 import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
 
@@ -11,7 +12,9 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +32,11 @@ public class DbBoxItemType extends DbItemType {
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     @JoinColumn(name = "dbBoxItemType", nullable = false)
     private Collection<DbBoxItemTypePossibility> dbBoxItemTypePossibilities;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "dbBoxItemType")
+    private Collection<DbBoxRegionCount> dbBoxRegionCounts;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "dbBoxItemType")
+    private Collection<DbBaseItemType> dbBaseItemTypes;
+
 
     @Transient
     private CrudChildServiceHelper<DbBoxItemTypePossibility> boxPossibilityCrud;
@@ -60,6 +68,14 @@ public class DbBoxItemType extends DbItemType {
     public void init(UserService userService) {
         super.init(userService);
         dbBoxItemTypePossibilities = new ArrayList<>();
+    }
+
+    public Collection<DbBoxRegionCount> getDbBoxRegionCounts() {
+        return dbBoxRegionCounts;
+    }
+
+    public Collection<DbBaseItemType> getDbBaseItemTypes() {
+        return dbBaseItemTypes;
     }
 
     @Override

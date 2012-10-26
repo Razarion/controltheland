@@ -6,7 +6,6 @@ import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
-import com.btxtech.game.services.inventory.DbBoxRegion;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.terrain.DbRegion;
 import com.btxtech.game.services.terrain.DbTerrainSetting;

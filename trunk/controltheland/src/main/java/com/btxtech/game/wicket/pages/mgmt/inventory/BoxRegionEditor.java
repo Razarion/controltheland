@@ -15,8 +15,8 @@ package com.btxtech.game.wicket.pages.mgmt.inventory;
 
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
-import com.btxtech.game.services.inventory.DbBoxRegion;
-import com.btxtech.game.services.inventory.DbBoxRegionCount;
+import com.btxtech.game.services.planet.db.DbBoxRegion;
+import com.btxtech.game.services.planet.db.DbBoxRegionCount;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.pages.mgmt.planet.PlanetTable;
 import com.btxtech.game.wicket.uiservices.BoxItemTypePanel;

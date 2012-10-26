@@ -6,6 +6,11 @@ import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.itemType.DbBoxItemType;
+import com.btxtech.game.services.item.itemType.DbBoxItemTypePossibility;
+import com.btxtech.game.services.planet.db.DbBoxRegion;
+import com.btxtech.game.services.planet.db.DbBoxRegionCount;
+import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.DbLevel;
 import org.hibernate.annotations.Cascade;
@@ -24,6 +29,7 @@ import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -56,6 +62,8 @@ public class DbInventoryItem implements CrudChild, CrudParent {
     @JoinColumn(name = "dbInventoryItem", nullable = false)
     private Collection<DbInventoryArtifactCount> artifactCounts;
     private Integer razarionCoast;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "dbInventoryItem")
+    private Collection<DbBoxItemTypePossibility> dbBoxItemTypePossibilities;
 
     @Transient
     private CrudChildServiceHelper<DbInventoryArtifactCount> artifactCountCrud;
@@ -161,6 +169,85 @@ public class DbInventoryItem implements CrudChild, CrudParent {
         return artifactCountCrud;
     }
 
+    public Integer getRazarionCostViaArtifacts() {
+        Integer cost = null;
+        for (DbInventoryArtifactCount dbInventoryArtifactCount : getArtifactCountCrud().readDbChildren()) {
+            DbInventoryArtifact dbInventoryArtifact = dbInventoryArtifactCount.getDbInventoryArtifact();
+            if (dbInventoryArtifact != null && dbInventoryArtifact.getRazarionCoast() != null && dbInventoryArtifactCount.getCount() > 0) {
+                if (cost == null) {
+                    cost = 0;
+                }
+                cost += (dbInventoryArtifact.getRazarionCoast() * dbInventoryArtifactCount.getCount());
+            }
+        }
+        return cost;
+    }
+
+    public Collection<DbPlanet> getPlanetsViaArtifact() {
+        Collection<DbPlanet> dbPlanets = new HashSet<>();
+        for (DbInventoryArtifactCount dbInventoryArtifactCount : getArtifactCountCrud().readDbChildren()) {
+            DbInventoryArtifact dbInventoryArtifact = dbInventoryArtifactCount.getDbInventoryArtifact();
+            if (dbInventoryArtifact != null) {
+                Collection<DbPlanet> planets = dbInventoryArtifact.getPlanets();
+                if (planets != null) {
+                    dbPlanets.addAll(planets);
+                }
+            }
+        }
+        return dbPlanets;
+    }
+
+    public Collection<DbPlanet> getPlanets() {
+        Collection<DbPlanet> dbPlanets = new HashSet<>();
+        if (dbBoxItemTypePossibilities == null) {
+            return dbPlanets;
+        }
+        for (DbBoxItemTypePossibility dbBoxItemTypePossibility : dbBoxItemTypePossibilities) {
+            DbBoxItemType dbBoxItemType = dbBoxItemTypePossibility.getParent();
+            if (dbBoxItemType != null) {
+                Collection<DbBoxRegionCount> dbBoxRegionCounts = dbBoxItemType.getDbBoxRegionCounts();
+                if (dbBoxRegionCounts == null) {
+                    continue;
+                }
+                for (DbBoxRegionCount dbBoxRegionCount : dbBoxRegionCounts) {
+                    if (dbBoxRegionCount == null) {
+                        continue;
+                    }
+                    DbBoxRegion dbBoxRegion = dbBoxRegionCount.getParent();
+                    if (dbBoxRegion != null) {
+                        DbPlanet dbPlanet = dbBoxRegion.getParent();
+                        if (dbPlanet != null) {
+                            dbPlanets.add(dbPlanet);
+                        }
+                    }
+                }
+            }
+        }
+        return dbPlanets;
+    }
+    public Collection<DbBaseItemType> getBaseItemTypes() {
+        Collection<DbBaseItemType> dbBaseItemTypes = new HashSet<>();
+        if (dbBoxItemTypePossibilities == null) {
+            return dbBaseItemTypes;
+        }
+        for (DbBoxItemTypePossibility dbBoxItemTypePossibility : dbBoxItemTypePossibilities) {
+            DbBoxItemType dbBoxItemType = dbBoxItemTypePossibility.getParent();
+            if (dbBoxItemType != null) {
+                Collection<DbBaseItemType> baseItemTypes = dbBoxItemType.getDbBaseItemTypes();
+                if (baseItemTypes == null) {
+                    continue;
+                }
+                for (DbBaseItemType dbBaseItemType : baseItemTypes) {
+                    if (dbBaseItemType == null) {
+                        continue;
+                    }
+                    dbBaseItemTypes.add(dbBaseItemType);
+                }
+            }
+        }
+        return dbBaseItemTypes;
+    }
+
     public InventoryItemInfo generateInventoryItemInfo(Map<Integer, InventoryArtifactInfo> allArtifacts) {
         Map<InventoryArtifactInfo, Integer> artifacts = new HashMap<>();
         for (DbInventoryArtifactCount dbInventoryArtifactCount : getArtifactCountCrud().readDbChildren()) {
@@ -178,6 +265,20 @@ public class DbInventoryItem implements CrudChild, CrudParent {
                 itemFreeRange,
                 goldAmount,
                 razarionCoast);
+    }
+
+    public Collection<DbBaseItemType> getBaseItemTypesViaArtifact() {
+        Collection<DbBaseItemType> dbBaseItemTypes = new HashSet<>();
+        for (DbInventoryArtifactCount dbInventoryArtifactCount : getArtifactCountCrud().readDbChildren()) {
+            DbInventoryArtifact dbInventoryArtifact = dbInventoryArtifactCount.getDbInventoryArtifact();
+            if (dbInventoryArtifact != null) {
+                Collection<DbBaseItemType> types = dbInventoryArtifact.getBaseItemTypes();
+                if (types != null) {
+                    dbBaseItemTypes.addAll(types);
+                }
+            }
+        }
+        return dbBaseItemTypes;
     }
 
     @Override

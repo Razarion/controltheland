@@ -2,6 +2,12 @@ package com.btxtech.game.services.inventory;
 
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryArtifactInfo;
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.itemType.DbBoxItemType;
+import com.btxtech.game.services.item.itemType.DbBoxItemTypePossibility;
+import com.btxtech.game.services.planet.db.DbBoxRegion;
+import com.btxtech.game.services.planet.db.DbBoxRegionCount;
+import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.user.UserService;
 
 import javax.persistence.Basic;
@@ -10,6 +16,9 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * User: beat
@@ -45,6 +54,8 @@ public class DbInventoryArtifact implements CrudChild {
     @Basic(fetch = FetchType.LAZY)
     private byte[] imageData;
     private Integer razarionCoast;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "dbInventoryArtifact")
+    private Collection<DbBoxItemTypePossibility> dbBoxItemTypePossibilities;
 
     @Override
     public Integer getId() {
@@ -110,6 +121,58 @@ public class DbInventoryArtifact implements CrudChild {
 
     public void setRazarionCoast(Integer razarionCoast) {
         this.razarionCoast = razarionCoast;
+    }
+
+    public Collection<DbPlanet> getPlanets() {
+        Collection<DbPlanet> dbPlanets = new HashSet<>();
+        if (dbBoxItemTypePossibilities == null) {
+            return dbPlanets;
+        }
+        for (DbBoxItemTypePossibility dbBoxItemTypePossibility : dbBoxItemTypePossibilities) {
+            DbBoxItemType dbBoxItemType = dbBoxItemTypePossibility.getParent();
+            if (dbBoxItemType != null) {
+                Collection<DbBoxRegionCount> dbBoxRegionCounts = dbBoxItemType.getDbBoxRegionCounts();
+                if (dbBoxRegionCounts == null) {
+                    continue;
+                }
+                for (DbBoxRegionCount dbBoxRegionCount : dbBoxRegionCounts) {
+                    if (dbBoxRegionCount == null) {
+                        continue;
+                    }
+                    DbBoxRegion dbBoxRegion = dbBoxRegionCount.getParent();
+                    if (dbBoxRegion != null) {
+                        DbPlanet dbPlanet = dbBoxRegion.getParent();
+                        if (dbPlanet != null) {
+                            dbPlanets.add(dbPlanet);
+                        }
+                    }
+                }
+            }
+        }
+        return dbPlanets;
+    }
+
+    public Collection<DbBaseItemType> getBaseItemTypes() {
+        Collection<DbBaseItemType> dbBaseItemTypes = new HashSet<>();
+        if (dbBoxItemTypePossibilities == null) {
+            return dbBaseItemTypes;
+        }
+        for (DbBoxItemTypePossibility dbBoxItemTypePossibility : dbBoxItemTypePossibilities) {
+            DbBoxItemType dbBoxItemType = dbBoxItemTypePossibility.getParent();
+            if (dbBoxItemType != null) {
+                Collection<DbBaseItemType> baseItemTypes = dbBoxItemType.getDbBaseItemTypes();
+                if (baseItemTypes == null) {
+                    continue;
+                }
+                for (DbBaseItemType dbBaseItemType : baseItemTypes) {
+                    if (dbBaseItemType == null) {
+                        continue;
+                    }
+                    dbBaseItemTypes.add(dbBaseItemType);
+                }
+            }
+        }
+        return dbBaseItemTypes;
     }
 
     @Override
