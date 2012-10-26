@@ -52,6 +52,7 @@ public class DbConditionConfig implements Serializable {
     private Index radarPositionHint;
     @Column(length = 5000)
     private String  additionalDescription;
+    private boolean hideQuestProgress;
     @Transient
     private ConditionConfig conditionConfig;
 
@@ -99,6 +100,14 @@ public class DbConditionConfig implements Serializable {
         this.additionalDescription = additionalDescription;
     }
 
+    public boolean isHideQuestProgress() {
+        return hideQuestProgress;
+    }
+
+    public void setHideQuestProgress(boolean hideQuestProgress) {
+        this.hideQuestProgress = hideQuestProgress;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -125,7 +134,7 @@ public class DbConditionConfig implements Serializable {
         if (conditionTrigger.isComparisonNeeded()) {
             abstractComparisonConfig = dbAbstractComparisonConfig.createComparisonConfig(serverItemTypeService);
         }
-        conditionConfig = new ConditionConfig(conditionTrigger, abstractComparisonConfig, radarPositionHint, additionalDescription);
+        conditionConfig = new ConditionConfig(conditionTrigger, abstractComparisonConfig, radarPositionHint, additionalDescription, hideQuestProgress);
         return conditionConfig;
     }
 }

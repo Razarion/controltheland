@@ -86,7 +86,7 @@ public class DbLevelTask implements CrudChild<DbLevel> {
 
     public ConditionConfig createConditionConfig(ServerItemTypeService serverItemTypeService) {
         if (dbTutorialConfig != null) {
-            return new ConditionConfig(ConditionTrigger.TUTORIAL, null, null, null);
+            return new ConditionConfig(ConditionTrigger.TUTORIAL, null, null, null, false);
         } else if (dbConditionConfig != null) {
             return dbConditionConfig.createConditionConfig(serverItemTypeService);
         } else {
@@ -129,11 +129,13 @@ public class DbLevelTask implements CrudChild<DbLevel> {
     public QuestInfo createQuestInfo() {
         String additionalDescription = null;
         Index radarPositionHint = null;
+        boolean hideQuestProgress = false;
         if(dbConditionConfig != null) {
             additionalDescription = dbConditionConfig.getAdditionalDescription();
             radarPositionHint = dbConditionConfig.getRadarPositionHint();
+            hideQuestProgress = dbConditionConfig.isHideQuestProgress();
         }
-        return new QuestInfo(name, html, additionalDescription, xp, money, id, isDbTutorialConfig() ? QuestInfo.Type.MISSION : QuestInfo.Type.QUEST, radarPositionHint);
+        return new QuestInfo(name, html, additionalDescription, xp, money, id, isDbTutorialConfig() ? QuestInfo.Type.MISSION : QuestInfo.Type.QUEST, radarPositionHint, hideQuestProgress);
     }
 
     @Override

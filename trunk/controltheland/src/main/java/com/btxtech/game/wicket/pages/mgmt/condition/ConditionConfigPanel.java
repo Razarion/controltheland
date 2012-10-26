@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.IFormModelUpdateListener;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -170,6 +171,29 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
             }
         });
         add(additionalDescription);
+
+        CheckBox hideQuestProgress = new CheckBox("hideQuestProgress");
+        hideQuestProgress.setDefaultModel(new IModel<Boolean>() {
+            @Override
+            public Boolean getObject() {
+                return ConditionConfigPanel.this.getDefaultModelObject() != null
+                        && ((DbConditionConfig) ConditionConfigPanel.this.getDefaultModelObject()).isHideQuestProgress();
+            }
+
+            @Override
+            public void setObject(Boolean object) {
+                if (ConditionConfigPanel.this.getDefaultModelObject() != null) {
+                    ((DbConditionConfig) ConditionConfigPanel.this.getDefaultModelObject()).setHideQuestProgress(object);
+                }
+            }
+
+            @Override
+            public void detach() {
+            }
+        });
+        add(hideQuestProgress);
+
+
 
         setupComparisonFields(terrainLinkHelper);
     }

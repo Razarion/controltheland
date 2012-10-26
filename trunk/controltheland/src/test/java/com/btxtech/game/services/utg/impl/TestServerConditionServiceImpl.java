@@ -86,9 +86,9 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
 
         ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setBaseService(baseServiceMock);
 
-        ConditionConfig conditionTutorial = new ConditionConfig(ConditionTrigger.TUTORIAL, null, null, null);
-        ConditionConfig conditionXp = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(30), null, null);
-        ConditionConfig conditionMoney = new ConditionConfig(ConditionTrigger.MONEY_INCREASED, new CountComparisonConfig(80), null, null);
+        ConditionConfig conditionTutorial = new ConditionConfig(ConditionTrigger.TUTORIAL, null, null, null, false);
+        ConditionConfig conditionXp = new ConditionConfig(ConditionTrigger.XP_INCREASED, new CountComparisonConfig(30), null, null, false);
+        ConditionConfig conditionMoney = new ConditionConfig(ConditionTrigger.MONEY_INCREASED, new CountComparisonConfig(80), null, null, false);
 
         serverConditionService.activateCondition(conditionXp, userState1, null);
         serverConditionService.activateCondition(conditionTutorial, userState1, 1);
@@ -213,7 +213,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         });
         serverConditionService.onBaseDeleted(simpleBase1);
         Assert.assertFalse(passed);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.BASE_KILLED, new CountComparisonConfig(1), null, null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.BASE_KILLED, new CountComparisonConfig(1), null, null, false);
         serverConditionService.activateCondition(conditionConfig, userState, 1);
         serverConditionService.onBaseDeleted(simpleBase2);
         Assert.assertFalse(passed);
@@ -272,7 +272,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         });
         serverConditionService.onBaseDeleted(simpleBase1);
         Assert.assertFalse(passed);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.BASE_KILLED, new CountComparisonConfig(2), null, null);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.BASE_KILLED, new CountComparisonConfig(2), null, null, false);
         serverConditionService.activateCondition(conditionConfig, userState, 1);
         Assert.assertFalse(passed);
         serverConditionService.onBaseDeleted(simpleBase1);
@@ -301,7 +301,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         identifier = null;
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1);
-        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, createRegion(new Rectangle(500, 500, 1000, 1000), 1), null, false), null, null), userService.getUserState(), 1);
+        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, createRegion(new Rectangle(500, 500, 1000, 1000), 1), null, false), null, null, false), userService.getUserState(), 1);
         assertClearActorAndIdentifier();
         sendMoveCommand(builder, new Index(700, 700));
         waitForActionServiceDone();
@@ -309,14 +309,14 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
 
         itemTypes = new HashMap<>();
         itemTypes.put(serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), 1);
-        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, createRegion(new Rectangle(500, 500, 1000, 1000), 1), null, false), null, null), userService.getUserState(), 1);
+        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, createRegion(new Rectangle(500, 500, 1000, 1000), 1), null, false), null, null, false), userService.getUserState(), 1);
         sendBuildCommand(builder, new Index(900, 900), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         assertActorAndIdentifierAndClear(userService.getUserState(), 1);
 
         itemTypes = new HashMap<>();
         itemTypes.put(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 1);
-        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, createRegion(new Rectangle(500, 500, 1000, 1000), 1), null, false), null, null), userService.getUserState(), 1);
+        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, createRegion(new Rectangle(500, 500, 1000, 1000), 1), null, false), null, null, false), userService.getUserState(), 1);
         Id factory = getFirstSynItemId(TEST_FACTORY_ITEM_ID);
         sendFactoryCommand(factory, TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
@@ -324,7 +324,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
 
         itemTypes = new HashMap<>();
         itemTypes.put(serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1);
-        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes,createRegion( new Rectangle(500, 500, 1000, 1000), 1), null, false), null, null), userService.getUserState(), 1);
+        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes,createRegion( new Rectangle(500, 500, 1000, 1000), 1), null, false), null, null, false), userService.getUserState(), 1);
 
         sendFactoryCommand(factory, TEST_CONTAINER_ITEM_ID);
         waitForActionServiceDone();

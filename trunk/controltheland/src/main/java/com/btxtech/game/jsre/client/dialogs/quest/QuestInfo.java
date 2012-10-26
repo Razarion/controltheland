@@ -17,6 +17,7 @@ public class QuestInfo implements Serializable {
     private Type type;
     private int id;
     private Index radarPosition;
+    private boolean hideQuestProgress;
 
     /**
      * Used by GWT
@@ -24,7 +25,7 @@ public class QuestInfo implements Serializable {
     QuestInfo() {
     }
 
-    public QuestInfo(String title, String description, String additionDescription, int xp, int gold, int id, Type type, Index radarPosition) {
+    public QuestInfo(String title, String description, String additionDescription, int xp, int gold, int id, Type type, Index radarPosition, boolean hideQuestProgress) {
         this.title = title;
         this.description = description;
         this.additionDescription = additionDescription;
@@ -33,6 +34,7 @@ public class QuestInfo implements Serializable {
         this.id = id;
         this.type = type;
         this.radarPosition = radarPosition;
+        this.hideQuestProgress = hideQuestProgress;
     }
 
     public String getTitle() {
@@ -67,6 +69,10 @@ public class QuestInfo implements Serializable {
         return additionDescription;
     }
 
+    public boolean isHideQuestProgress() {
+        return hideQuestProgress;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -75,10 +81,11 @@ public class QuestInfo implements Serializable {
         QuestInfo questInfo = (QuestInfo) o;
 
         return gold == questInfo.gold
+                && hideQuestProgress == questInfo.hideQuestProgress
                 && id == questInfo.id
                 && xp == questInfo.xp
-                && !(description != null ? !description.equals(questInfo.description) : questInfo.description != null)
                 && !(additionDescription != null ? !additionDescription.equals(questInfo.additionDescription) : questInfo.additionDescription != null)
+                && !(description != null ? !description.equals(questInfo.description) : questInfo.description != null)
                 && !(radarPosition != null ? !radarPosition.equals(questInfo.radarPosition) : questInfo.radarPosition != null)
                 && !(title != null ? !title.equals(questInfo.title) : questInfo.title != null)
                 && type == questInfo.type;
@@ -88,12 +95,13 @@ public class QuestInfo implements Serializable {
     public int hashCode() {
         int result = title != null ? title.hashCode() : 0;
         result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (additionDescription != null ? additionDescription.hashCode() : 0);
         result = 31 * result + xp;
+        result = 31 * result + (additionDescription != null ? additionDescription.hashCode() : 0);
         result = 31 * result + gold;
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + id;
         result = 31 * result + (radarPosition != null ? radarPosition.hashCode() : 0);
+        result = 31 * result + (hideQuestProgress ? 1 : 0);
         return result;
     }
 
@@ -108,6 +116,7 @@ public class QuestInfo implements Serializable {
                 ", type=" + type +
                 ", id=" + id +
                 ", radarPosition=" + radarPosition +
+                ", hideQuestProgress=" + hideQuestProgress +
                 '}';
     }
 }
