@@ -66,6 +66,7 @@ public class MessengerServiceImpl implements MessengerService {
         criteria.add(Restrictions.eq("user", userService.getUser()));
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         criteria.addOrder(Order.desc("sent"));
+        criteria.addOrder(Order.desc("id"));
         return criteria.list();
     }
 
