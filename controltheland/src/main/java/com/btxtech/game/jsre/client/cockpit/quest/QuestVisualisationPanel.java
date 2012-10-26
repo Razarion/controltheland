@@ -31,6 +31,7 @@ public class QuestVisualisationPanel extends Composite {
     @UiField
     FlexTable progressTable;
     private static Logger log = Logger.getLogger(QuestVisualisationPanel.class.getName());
+    private boolean hideQuestProgress;
 
     interface QuestVisualisationPanelUiBinder extends UiBinder<Widget, QuestVisualisationPanel> {
     }
@@ -38,10 +39,15 @@ public class QuestVisualisationPanel extends Composite {
     public QuestVisualisationPanel(QuestInfo questInfo) {
         initWidget(uiBinder.createAndBindUi(this));
         descriptionHtml.setHTML(questInfo.getAdditionDescription());
+        hideQuestProgress = questInfo.isHideQuestProgress();
     }
 
     public void update(QuestProgressInfo questProgressInfo) {
         progressTable.removeAllRows();
+
+        if (hideQuestProgress) {
+            return;
+        }
 
         switch (questProgressInfo.getConditionTrigger()) {
             case BASE_KILLED:

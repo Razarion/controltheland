@@ -459,7 +459,7 @@ public class TestLevelCrud extends AbstractServiceTest {
         Assert.assertEquals("setAdditionalDescription", conditionConfig.getAdditionalDescription());
         ItemTypePositionComparisonConfig itemTypePositionComparisonConfig = (ItemTypePositionComparisonConfig) conditionConfig.getAbstractComparisonConfig();
         Region region = (Region) getPrivateField(ItemTypePositionComparisonConfig.class, itemTypePositionComparisonConfig, "region");
-        Assert.assertEquals((int)dbRegion.getId(), region.getId());
+        Assert.assertEquals((int) dbRegion.getId(), region.getId());
         Integer time = (Integer) getPrivateField(ItemTypePositionComparisonConfig.class, itemTypePositionComparisonConfig, "time");
         Assert.assertEquals((int) time, 10 * 60 * 1000);
         Map<ItemType, Integer> itemTypes = (Map<ItemType, Integer>) getPrivateField(ItemTypePositionComparisonConfig.class, itemTypePositionComparisonConfig, "itemTypes");
@@ -760,6 +760,7 @@ public class TestLevelCrud extends AbstractServiceTest {
         DbConditionConfig dbConditionConfig = new DbConditionConfig();
         dbConditionConfig.setRadarPositionHint(new Index(100, 200));
         dbConditionConfig.setAdditionalDescription("dbConditionConfig2");
+        dbConditionConfig.setHideQuestProgress(true);
         dbLevelTask12.setDbConditionConfig(dbConditionConfig);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel1);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -769,8 +770,8 @@ public class TestLevelCrud extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         QuestInfo questInfo1 = userGuidanceService.getDbLevelCrud().readDbChild(dbLevel1.getId()).getLevelTaskCrud().readDbChildren().get(0).createQuestInfo();
         QuestInfo questInfo2 = userGuidanceService.getDbLevelCrud().readDbChild(dbLevel1.getId()).getLevelTaskCrud().readDbChildren().get(1).createQuestInfo();
-        Assert.assertEquals(new QuestInfo("name1", "html1", null, 11, 12, dbLevelTask11.getId(), QuestInfo.Type.MISSION, null), questInfo1);
-        Assert.assertEquals(new QuestInfo("name2", "html2", "dbConditionConfig2", 21, 22, dbLevelTask12.getId(), QuestInfo.Type.QUEST, new Index(100, 200)), questInfo2);
+        Assert.assertEquals(new QuestInfo("name1", "html1", null, 11, 12, dbLevelTask11.getId(), QuestInfo.Type.MISSION, null, false), questInfo1);
+        Assert.assertEquals(new QuestInfo("name2", "html2", "dbConditionConfig2", 21, 22, dbLevelTask12.getId(), QuestInfo.Type.QUEST, new Index(100, 200), true), questInfo2);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

@@ -27,18 +27,19 @@ public class ConditionConfig implements Serializable {
     private AbstractComparisonConfig abstractComparisonConfig;
     private Index radarPositionHint;
     private String additionalDescription;
-
+    private boolean hideQuestProgress;
     /**
      * Used by GWT
      */
     protected ConditionConfig() {
     }
 
-    public ConditionConfig(ConditionTrigger conditionTrigger, AbstractComparisonConfig abstractComparisonConfig, Index radarPositionHint, String additionalDescription) {
+    public ConditionConfig(ConditionTrigger conditionTrigger, AbstractComparisonConfig abstractComparisonConfig, Index radarPositionHint, String additionalDescription, boolean hideQuestProgress) {
         this.conditionTrigger = conditionTrigger;
         this.abstractComparisonConfig = abstractComparisonConfig;
         this.radarPositionHint = radarPositionHint;
         this.additionalDescription = additionalDescription;
+        this.hideQuestProgress = hideQuestProgress;
     }
 
     public ConditionTrigger getConditionTrigger() {
@@ -55,5 +56,9 @@ public class ConditionConfig implements Serializable {
 
     public String getAdditionalDescription() {
         return additionalDescription;
+    }
+
+    public boolean isHideQuestProgress() {
+        return hideQuestProgress;
     }
 }
