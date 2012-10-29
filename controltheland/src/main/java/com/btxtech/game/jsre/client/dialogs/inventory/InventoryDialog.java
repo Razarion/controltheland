@@ -14,9 +14,10 @@ import java.util.logging.Logger;
  */
 public class InventoryDialog extends Dialog {
     private static InventoryDialog staticInstance;
-    private Inventory inventory;
+    // private Inventory inventory;
     private Logger log = Logger.getLogger(InventoryDialog.class.getName());
     private InventoryInfo inventoryInfo;
+    private MainTabbedPanel mainTabbedPanel;
 
     public InventoryDialog() {
         super("Inventory");
@@ -24,33 +25,25 @@ public class InventoryDialog extends Dialog {
 
     @Override
     protected void setupPanel(VerticalPanel dialogVPanel) {
-        inventory = new Inventory(this);
-        dialogVPanel.add(inventory);
+        mainTabbedPanel = new MainTabbedPanel(this);
+        dialogVPanel.add(mainTabbedPanel);
         Connection.getInstance().loadInventory(this);
         staticInstance = this;
     }
 
     public void onItemsReceived(InventoryInfo inventoryInfo) {
-        if (inventory == null) {
-            log.warning("InventoryDialog.onItemsReceived() inventory == null");
-            return;
-        }
         if (inventoryInfo == null) {
             log.warning("InventoryDialog.onItemsReceived() inventoryInfo == null");
             return;
         }
         this.inventoryInfo = inventoryInfo;
-        inventory.setRazarionAmount(inventoryInfo.getRazarion());
-        inventory.clearAllItemPlates();
-        for (Map.Entry<InventoryItemInfo, Integer> entry : inventoryInfo.getOwnInventoryItems().entrySet()) {
-            inventory.addItemPlate(entry.getKey(), entry.getValue());
-        }
-        inventory.clearAllGroundPlates();
-        for (InventoryItemInfo inventoryItemInfo : inventoryInfo.getAllInventoryItemInfos()) {
-            if (inventoryItemInfo.hasArtifacts()) {
-                inventory.addGroundPlate(inventoryItemInfo, inventoryInfo.getOwnInventoryArtifacts());
-            }
-        }
+        mainTabbedPanel.setRazarionAmount(inventoryInfo.getRazarion());
+        mainTabbedPanel.displayInventory(inventoryInfo.getOwnInventoryItems());
+        mainTabbedPanel.displayWorkshop(inventoryInfo, inventoryInfo.getAllInventoryItemInfos());
+        mainTabbedPanel.displayDealerItems(inventoryInfo, inventoryInfo.getAllInventoryItemInfos());
+        mainTabbedPanel.displayDealerFunds(inventoryInfo, inventoryInfo.getAllInventoryItemInfos());
+        mainTabbedPanel.displayDealerArtifacts(inventoryInfo, inventoryInfo.getAllInventoryArtifactInfos());
+        
         center();
     }
 
@@ -68,5 +61,10 @@ public class InventoryDialog extends Dialog {
 
     public InventoryInfo getInventoryInfo() {
         return inventoryInfo;
+    }
+
+    public void updateRazarion(Integer razarion) {
+        // TODO Auto-generated method stub
+        
     }
 }

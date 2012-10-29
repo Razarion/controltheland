@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class MarketItem extends Composite implements HasText {
     private static MarketItemUiBinder uiBinder = GWT.create(MarketItemUiBinder.class);
     private InventoryItemInfo inventoryItemInfo;
-    private MarketDialog marketDialog;
+    private InventoryDialog inventoryDialog;
     private int inventoryItemId;
 
     interface MarketItemUiBinder extends UiBinder<Widget, MarketItem> {
@@ -32,9 +32,9 @@ public class MarketItem extends Composite implements HasText {
     @UiField
     Image image;
 
-    public MarketItem(InventoryItemInfo inventoryItemInfo, int razarion, MarketDialog marketDialog) {
+    public MarketItem(InventoryItemInfo inventoryItemInfo, int razarion, InventoryDialog inventoryDialog) {
         this.inventoryItemInfo = inventoryItemInfo;
-        this.marketDialog = marketDialog;
+        this.inventoryDialog = inventoryDialog;
         initWidget(uiBinder.createAndBindUi(this));
         coastLabel.setText("Coast: " + inventoryItemInfo.getRazarionCoast());
         itemNameLabel.setText(inventoryItemInfo.getInventoryItemName());
@@ -49,7 +49,7 @@ public class MarketItem extends Composite implements HasText {
 
     @UiHandler("buyItemButton")
     void onClick(ClickEvent e) {
-        Connection.getInstance().buyInventoryItem(inventoryItemId, marketDialog);
+        Connection.getInstance().buyInventoryItem(inventoryItemId, inventoryDialog);
     }
 
     public void setText(String text) {

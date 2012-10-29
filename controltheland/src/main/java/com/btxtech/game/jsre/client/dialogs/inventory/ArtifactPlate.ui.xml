@@ -8,7 +8,7 @@
 
         .statustext {
             color: black;
-            font-size: 11px;
+            font-size: 10px;
             font-family: Arial, Helvetica, sans-serif;
             font-weight: bold;
             text-shadow: 1px 1px 1px #000000;
@@ -19,8 +19,8 @@
             z-index: 1;
         }
     </ui:style>
-    <g:VerticalPanel width="40px" height="" ui:field="panel">
-        <g:Label text="???" ui:field="label" styleName="{style.statustext}" width="40px" height=""/>
-        <g:Image ui:field="image" styleName="{style.imagestyle}" width="40px" height="40px"/>
+    <g:VerticalPanel ui:field="panel">
+        <g:Label text="???" ui:field="label" styleName="{style.statustext}"/>
+        <g:Image ui:field="image" styleName="{style.imagestyle}" width="20px" height="20px"/>
     </g:VerticalPanel>
 </ui:UiBinder>

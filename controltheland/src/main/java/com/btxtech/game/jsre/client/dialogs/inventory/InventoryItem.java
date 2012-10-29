@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
+import com.btxtech.game.jsre.client.dialogs.Dialog;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.item.ItemTypeContainer;
@@ -24,8 +25,8 @@ import com.google.gwt.user.client.ui.Widget;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ItemPlate extends Composite implements HasText {
-    private static ItemPlateUiBinder uiBinder = GWT.create(ItemPlateUiBinder.class);
+public class InventoryItem extends Composite implements HasText {
+    private static InventoryItemUiBinder uiBinder = GWT.create(InventoryItemUiBinder.class);
     @UiField
     Label itemNameLabel;
     @UiField
@@ -35,15 +36,15 @@ public class ItemPlate extends Composite implements HasText {
     @UiField
     Button useItemButton;
     private InventoryItemInfo inventoryItemInfo;
-    private InventoryDialog inventoryDialog;
-    private Logger log = Logger.getLogger(ItemPlate.class.getName());
+    private Dialog dialog;
+    private Logger log = Logger.getLogger(InventoryItem.class.getName());
 
-    interface ItemPlateUiBinder extends UiBinder<Widget, ItemPlate> {
+    interface InventoryItemUiBinder extends UiBinder<Widget, InventoryItem> {
     }
 
-    public ItemPlate(InventoryItemInfo inventoryItemInfo, int ownCount, InventoryDialog inventoryDialog) {
+    public InventoryItem(InventoryItemInfo inventoryItemInfo, int ownCount, Dialog dialog) {
         this.inventoryItemInfo = inventoryItemInfo;
-        this.inventoryDialog = inventoryDialog;
+        this.dialog = dialog;
         initWidget(uiBinder.createAndBindUi(this));
         itemNameLabel.setText(inventoryItemInfo.getInventoryItemName());
         countLabel.setText("You own: " + ownCount);
@@ -59,7 +60,7 @@ public class ItemPlate extends Composite implements HasText {
 
     @UiHandler("useItemButton")
     void onButtonClick(ClickEvent event) {
-        inventoryDialog.close();
+        dialog.close();
         if (inventoryItemInfo.hasBaseItemTypeId()) {
             BaseItemType baseItemType;
             try {
