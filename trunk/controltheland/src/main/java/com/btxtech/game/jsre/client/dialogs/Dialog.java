@@ -42,7 +42,6 @@ public abstract class Dialog extends DialogBox {
     }
 
     protected void setupDialog() {
-        setAnimationEnabled(true);
         VerticalPanel dialogVPanel = new VerticalPanel();
         setupPanel(dialogVPanel);
         dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);

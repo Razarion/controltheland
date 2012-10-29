@@ -13,6 +13,14 @@
 
 package com.btxtech.game.jsre.client;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.SplashManager;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualtsationModel;
@@ -36,7 +44,6 @@ import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.highscore.HighscoreDialog;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
-import com.btxtech.game.jsre.client.dialogs.inventory.MarketDialog;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestDialog;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -81,14 +88,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -297,7 +296,6 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                 } else if (packet instanceof BoxPickedPacket) {
                     SideCockpit.getInstance().onBoxPicked((BoxPickedPacket) packet);
                     InventoryDialog.onBoxPicket();
-                    MarketDialog.onBoxPicket();
                 } else if (packet instanceof XpPacket) {
                     XpPacket xpPacket = (XpPacket) packet;
                     SideCockpit.getInstance().setXp(xpPacket.getXp(), xpPacket.getXp2LevelUp());
@@ -699,7 +697,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         }
     }
 
-    public void buyInventoryItem(int inventoryItemId, final MarketDialog marketDialog) {
+    public void buyInventoryItem(int inventoryItemId, final InventoryDialog inventoryDialog) {
         if (movableServiceAsync != null) {
             movableServiceAsync.buyInventoryItem(inventoryItemId, new AsyncCallback<Integer>() {
                 @Override
@@ -709,13 +707,13 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
 
                 @Override
                 public void onSuccess(Integer razarion) {
-                    marketDialog.updateRazarion(razarion);
+                    inventoryDialog.updateRazarion(razarion);
                 }
             });
         }
     }
 
-    public void buyInventoryArtifact(int inventoryArtifactId, final MarketDialog marketDialog) {
+    public void buyInventoryArtifact(int inventoryArtifactId, final InventoryDialog inventoryDialog) {
         if (movableServiceAsync != null) {
             movableServiceAsync.buyInventoryArtifact(inventoryArtifactId, new AsyncCallback<Integer>() {
                 @Override
@@ -725,14 +723,14 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
 
                 @Override
                 public void onSuccess(Integer razarion) {
-                    marketDialog.updateRazarion(razarion);
+                    inventoryDialog.updateRazarion(razarion);
                 }
             });
         }
     }
 
 
-    public void loadRazarion(final MarketDialog marketDialog) {
+    public void loadRazarion(final InventoryDialog inventoryDialog) {
         if (movableServiceAsync != null) {
             movableServiceAsync.loadRazarion(new AsyncCallback<Integer>() {
                 @Override
@@ -742,7 +740,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
 
                 @Override
                 public void onSuccess(Integer razarion) {
-                    marketDialog.updateRazarion(razarion);
+                    inventoryDialog.updateRazarion(razarion);
                 }
             });
         }

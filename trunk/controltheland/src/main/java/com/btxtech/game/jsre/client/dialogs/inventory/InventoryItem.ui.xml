@@ -34,32 +34,33 @@
             font-weight: bold;
         }
 
-        .coastLabel {
+        .youown {
             color: black;
             font-size: 11px;
             font-family: Arial, Helvetica, sans-serif;
             font-weight: bold;
         }
+
     </ui:style>
-    <g:VerticalPanel styleName="{style.itemplate}"  width="130px" height="100px">
+    <g:VerticalPanel  styleName="{style.itemplate}" width="130px" height="100px">
     	<g:Cell horizontalAlignment="ALIGN_CENTER">
     		<g:Label text="???" styleName="{style.itemlabel}" ui:field="itemNameLabel"/>
     	</g:Cell>
         <g:Cell verticalAlignment="ALIGN_BOTTOM">
             <g:HorizontalPanel>
             	<g:Cell verticalAlignment="ALIGN_BOTTOM">
-            		<g:Image styleName="{style.image}" ui:field="image" width="50px" height="50px"/>
+            		<g:Image styleName="{style.image}" ui:field="image" width="50px" height="50px" />
             	</g:Cell>
-                <g:Cell verticalAlignment="ALIGN_MIDDLE">
-                    <g:VerticalPanel>
+            	<g:Cell verticalAlignment="ALIGN_MIDDLE">
+            		<g:VerticalPanel>
                         <g:Cell verticalAlignment="ALIGN_MIDDLE">
-                            <g:Label text="???" styleName="{style.coastLabel}" ui:field="coastLabel"/>
+                            <g:Label text="???" styleName="{style.youown}" ui:field="countLabel"/>
                         </g:Cell>
                         <g:Cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-                            <g:Button text="Buy" ui:field="buyItemButton"/>
+                            <g:Button text="Use Item" ui:field="useItemButton"/>
                         </g:Cell>
                     </g:VerticalPanel>
-                </g:Cell>
+            	</g:Cell>
             </g:HorizontalPanel>
         </g:Cell>
     </g:VerticalPanel>

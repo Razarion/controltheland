@@ -2,6 +2,7 @@ package com.btxtech.game.jsre.client.dialogs.inventory;
 
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.dialogs.Dialog;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -16,8 +17,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import java.util.Map;
 
-public class GroundPlate extends Composite implements HasText {
-    private static GroundPlateUiBinder uiBinder = GWT.create(GroundPlateUiBinder.class);
+public class WorkshopPlate extends Composite implements HasText {
+    private static WorkshopPlateUiBinder uiBinder = GWT.create(WorkshopPlateUiBinder.class);
     private static final int ARTIFACT_ROWS = 2;
     @UiField
     Image image;
@@ -28,10 +29,10 @@ public class GroundPlate extends Composite implements HasText {
     private int inventoryItemId;
     private InventoryDialog inventoryDialog;
 
-    interface GroundPlateUiBinder extends UiBinder<Widget, GroundPlate> {
+    interface WorkshopPlateUiBinder extends UiBinder<Widget, WorkshopPlate> {
     }
 
-    public GroundPlate(InventoryItemInfo inventoryItemInfo, Map<InventoryArtifactInfo, Integer> ownArtifact, InventoryDialog inventoryDialog) {
+    public WorkshopPlate(InventoryItemInfo inventoryItemInfo, Map<InventoryArtifactInfo, Integer> ownArtifact, InventoryDialog inventoryDialog) {
         this.inventoryDialog = inventoryDialog;
         initWidget(uiBinder.createAndBindUi(this));
         image.setUrl(ImageHandler.getInventoryItemUrl(inventoryItemInfo.getInventoryItemId()));
@@ -47,8 +48,8 @@ public class GroundPlate extends Composite implements HasText {
                 isReadyForAssemble = false;
             }
             
-            int row = artifactNumber % 2;
-            int column = artifactNumber / 2;
+            int row = artifactNumber / 2;
+            int column = artifactNumber % 2;
             
             artifacts.setWidget(row, column, new ArtifactPlate(entry.getKey().getInventoryArtifactName(),
                     ImageHandler.getInventoryArtifactUrl(entry.getKey().getInventoryArtifactId()),

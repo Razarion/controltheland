@@ -41,15 +41,10 @@ public class ArtifactPlate extends Composite implements HasText {
     public void setStatus(int available, int needed) {
         label.setText(available + "/" + needed);
         Style style = label.getElement().getStyle();
-        if (available == 0) {
+        if (needed > available) {
             style.setColor("#FF0000");
-            image.getElement().getStyle().setOpacity(0.3);
-        } else if (needed > available) {
-            style.setColor("#FFFF00");
-            image.getElement().getStyle().setOpacity(1);
         } else {
             style.setColor("#00FF00");
-            image.getElement().getStyle().setOpacity(1);
         }
     }
 }

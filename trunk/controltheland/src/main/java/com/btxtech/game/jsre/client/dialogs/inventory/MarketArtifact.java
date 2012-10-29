@@ -26,14 +26,14 @@ public class MarketArtifact extends Composite implements HasText {
     Button buyArtifactButton;
     private int inventoryArtifactId;
     private InventoryArtifactInfo inventoryArtifactInfo;
-    private MarketDialog marketDialog;
+    private InventoryDialog inventoryDialog;
 
     interface MarketArtifactUiBinder extends UiBinder<Widget, MarketArtifact> {
     }
 
-    public MarketArtifact(InventoryArtifactInfo inventoryArtifactInfo, int razarion, MarketDialog marketDialog) {
+    public MarketArtifact(InventoryArtifactInfo inventoryArtifactInfo, int razarion, InventoryDialog inventoryDialog) {
         this.inventoryArtifactInfo = inventoryArtifactInfo;
-        this.marketDialog = marketDialog;
+        this.inventoryDialog = inventoryDialog;
         initWidget(uiBinder.createAndBindUi(this));
         coastLabel.setText("Coast: " + inventoryArtifactInfo.getRazarionCoast());
         artifactNameLabel.setText(inventoryArtifactInfo.getInventoryArtifactName());
@@ -48,7 +48,7 @@ public class MarketArtifact extends Composite implements HasText {
 
     @UiHandler("buyArtifactButton")
     void onClick(ClickEvent e) {
-        Connection.getInstance().buyInventoryArtifact(inventoryArtifactId, marketDialog);
+        Connection.getInstance().buyInventoryArtifact(inventoryArtifactId, inventoryDialog);
     }
 
     public void setText(String text) {
