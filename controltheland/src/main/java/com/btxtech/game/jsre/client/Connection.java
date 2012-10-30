@@ -13,14 +13,6 @@
 
 package com.btxtech.game.jsre.client;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.SplashManager;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualtsationModel;
@@ -88,6 +80,14 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -238,7 +238,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
 
             @Override
             public void onSuccess(List<Packet> packets) {
-                if(gameEngineMode != GameEngineMode.SLAVE) {
+                if (gameEngineMode != GameEngineMode.SLAVE) {
                     // Probably an answer is very late and a tutorial has already been started
                     return;
                 }
@@ -649,9 +649,9 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         }
     }
 
-    public void loadInventory(final InventoryDialog inventoryDialog) {
+    public void loadInventory(Integer filterPlanetId, boolean filterLevel, final InventoryDialog inventoryDialog) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.getInventory(new AsyncCallback<InventoryInfo>() {
+            movableServiceAsync.getInventory(filterPlanetId, filterLevel, new AsyncCallback<InventoryInfo>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     handleDisconnection("loadInventory", caught);
@@ -665,9 +665,9 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         }
     }
 
-    public void assembleInventoryItem(int inventoryItemId, final InventoryDialog inventoryDialog) {
+    public void assembleInventoryItem(int inventoryItemId, Integer filterPlanetId, boolean filterLevel, final InventoryDialog inventoryDialog) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.assembleInventoryItem(inventoryItemId, new AsyncCallback<InventoryInfo>() {
+            movableServiceAsync.assembleInventoryItem(inventoryItemId, filterPlanetId, filterLevel, new AsyncCallback<InventoryInfo>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     handleDisconnection("assembleInventoryItem", caught);
@@ -697,50 +697,33 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         }
     }
 
-    public void buyInventoryItem(int inventoryItemId, final InventoryDialog inventoryDialog) {
+    public void buyInventoryItem(int inventoryItemId, Integer filterPlanetId, boolean filterLevel, final InventoryDialog inventoryDialog) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.buyInventoryItem(inventoryItemId, new AsyncCallback<Integer>() {
+            movableServiceAsync.buyInventoryItem(inventoryItemId, filterPlanetId, filterLevel, new AsyncCallback<InventoryInfo>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     handleDisconnection("buyInventoryItem", caught);
                 }
 
                 @Override
-                public void onSuccess(Integer razarion) {
-                    inventoryDialog.updateRazarion(razarion);
+                public void onSuccess(InventoryInfo inventoryInfo) {
+                    inventoryDialog.onItemsReceived(inventoryInfo);
                 }
             });
         }
     }
 
-    public void buyInventoryArtifact(int inventoryArtifactId, final InventoryDialog inventoryDialog) {
+    public void buyInventoryArtifact(int inventoryArtifactId, Integer filterPlanetId, boolean filterLevel, final InventoryDialog inventoryDialog) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.buyInventoryArtifact(inventoryArtifactId, new AsyncCallback<Integer>() {
+            movableServiceAsync.buyInventoryArtifact(inventoryArtifactId, filterPlanetId, filterLevel, new AsyncCallback<InventoryInfo>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     handleDisconnection("buyInventoryArtifact", caught);
                 }
 
                 @Override
-                public void onSuccess(Integer razarion) {
-                    inventoryDialog.updateRazarion(razarion);
-                }
-            });
-        }
-    }
-
-
-    public void loadRazarion(final InventoryDialog inventoryDialog) {
-        if (movableServiceAsync != null) {
-            movableServiceAsync.loadRazarion(new AsyncCallback<Integer>() {
-                @Override
-                public void onFailure(Throwable caught) {
-                    handleDisconnection("loadRazarion", caught);
-                }
-
-                @Override
-                public void onSuccess(Integer razarion) {
-                    inventoryDialog.updateRazarion(razarion);
+                public void onSuccess(InventoryInfo inventoryInfo) {
+                    inventoryDialog.onItemsReceived(inventoryInfo);
                 }
             });
         }

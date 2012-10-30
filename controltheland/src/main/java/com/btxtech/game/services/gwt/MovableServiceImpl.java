@@ -182,6 +182,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             realGameInfo.setAllBases(planetSystemService.getServerPlanetServices(base.getSimpleBase()).getBaseService().getAllBaseAttributes());
             realGameInfo.setHouseSpace(base.getHouseSpace());
             realGameInfo.setPlanetInfo(planetSystemService.getServerPlanetServices(base.getSimpleBase()).getPlanetInfo());
+            realGameInfo.setAllPlanets(planetSystemService.getAllPlanetLiteInfos());
             userGuidanceService.fillRealGameInfo(realGameInfo);
             realGameInfo.setAllianceOffers(allianceService.getPendingAllianceOffers());
             return realGameInfo;
@@ -377,9 +378,9 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public InventoryInfo getInventory() {
+    public InventoryInfo getInventory(Integer filterPlanetId, boolean filterLevel) {
         try {
-            return globalInventoryService.getInventory();
+            return globalInventoryService.getInventory(filterPlanetId, filterLevel);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return null;
@@ -387,10 +388,10 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public InventoryInfo assembleInventoryItem(int inventoryItemId) {
+    public InventoryInfo assembleInventoryItem(int inventoryItemId, Integer filterPlanetId, boolean filterLevel) {
         try {
             globalInventoryService.assembleInventoryItem(inventoryItemId);
-            return globalInventoryService.getInventory();
+            return globalInventoryService.getInventory(filterPlanetId, filterLevel);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return null;
@@ -407,32 +408,32 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public int buyInventoryItem(int inventoryItemId) {
+    public InventoryInfo buyInventoryItem(int inventoryItemId, Integer filterPlanetId, boolean filterLevel) {
         try {
-            return globalInventoryService.buyInventoryItem(inventoryItemId);
+            globalInventoryService.buyInventoryItem(inventoryItemId);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
-            return userService.getUserState().getRazarion();
+        }
+        try {
+            return globalInventoryService.getInventory(filterPlanetId, filterLevel);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
         }
     }
 
     @Override
-    public int buyInventoryArtifact(int inventoryArtifactId) {
+    public InventoryInfo buyInventoryArtifact(int inventoryArtifactId, Integer filterPlanetId, boolean filterLevel) {
         try {
-            return globalInventoryService.buyInventoryArtifact(inventoryArtifactId);
+            globalInventoryService.buyInventoryArtifact(inventoryArtifactId);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
-            return 0;
         }
-    }
-
-    @Override
-    public int loadRazarion() {
         try {
-            return userService.getUserState().getRazarion();
+            return globalInventoryService.getInventory(filterPlanetId, filterLevel);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
-            return 0;
+            return null;
         }
     }
 

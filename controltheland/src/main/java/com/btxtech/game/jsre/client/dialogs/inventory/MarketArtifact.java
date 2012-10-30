@@ -35,7 +35,7 @@ public class MarketArtifact extends Composite implements HasText {
         this.inventoryArtifactInfo = inventoryArtifactInfo;
         this.inventoryDialog = inventoryDialog;
         initWidget(uiBinder.createAndBindUi(this));
-        coastLabel.setText("Coast: " + inventoryArtifactInfo.getRazarionCoast());
+        coastLabel.setText("Cost: " + inventoryArtifactInfo.getRazarionCoast());
         artifactNameLabel.setText(inventoryArtifactInfo.getInventoryArtifactName());
         inventoryArtifactId = inventoryArtifactInfo.getInventoryArtifactId();
         image.setUrl(ImageHandler.getInventoryArtifactUrl(inventoryArtifactId));
@@ -48,7 +48,7 @@ public class MarketArtifact extends Composite implements HasText {
 
     @UiHandler("buyArtifactButton")
     void onClick(ClickEvent e) {
-        Connection.getInstance().buyInventoryArtifact(inventoryArtifactId, inventoryDialog);
+        Connection.getInstance().buyInventoryArtifact(inventoryArtifactId, inventoryDialog.getFilterPlanetId(), inventoryDialog.isFilterLevel(), inventoryDialog);
     }
 
     public void setText(String text) {

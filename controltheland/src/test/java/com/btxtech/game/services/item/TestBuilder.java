@@ -74,7 +74,7 @@ public class TestBuilder extends AbstractServiceTest {
         EasyMock.replay(abstractBaseServiceMock);
 
         PlanetInfo planetInfo = new PlanetInfo();
-        planetInfo.setPlanetId(1);
+        planetInfo.setPlanetIdAndName(1, null);
 
         planetServicesMock = EasyMock.createNiceMock(PlanetServices.class);
         EasyMock.expect(planetServicesMock.getItemService()).andReturn(serverItemServiceMock).anyTimes();

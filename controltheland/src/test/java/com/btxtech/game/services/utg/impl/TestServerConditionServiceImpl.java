@@ -162,6 +162,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
     @DirtiesContext
     public void baseDeleted() throws Exception {
         PlanetInfo planetInfo = new PlanetInfo();
+        planetInfo.setPlanetIdAndName(0, null);
         ServerPlanetServicesImpl serverPlanetServices = new ServerPlanetServicesImpl();
         serverPlanetServices.setPlanetInfo(planetInfo);
         TestPlanetHelper testPlanetHelper = new TestPlanetHelper();
@@ -225,6 +226,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
     @DirtiesContext
     public void baseDeleted2() throws Exception {
         PlanetInfo planetInfo = new PlanetInfo();
+        planetInfo.setPlanetIdAndName(0, null);
         ServerPlanetServicesImpl serverPlanetServices = new ServerPlanetServicesImpl();
         serverPlanetServices.setPlanetInfo(planetInfo);
         TestPlanetHelper testPlanetHelper = new TestPlanetHelper();
@@ -339,7 +341,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         sendMoveCommand(container, new Index(1100, 1100));
         waitForActionServiceDone();
         sendUnloadContainerCommand(container, new Index(1000, 1000));
-        waitForActionServiceDone(); // TODO crashed almost always here FIX THIS!!!: 02.20.2012, 02.20.2012, 05.10.2012, 12.10.2012
+        waitForActionServiceDone(); // TODO crashed almost always here FIX THIS!!!: 02.20.2012, 02.20.2012, 05.10.2012, 12.10.2012, 29.10.2012, 30.10.2012
         assertActorAndIdentifierAndClear(userService.getUserState(), 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

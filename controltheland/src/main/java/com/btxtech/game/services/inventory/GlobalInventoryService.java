@@ -29,11 +29,11 @@ public interface GlobalInventoryService {
 
     void assembleInventoryItem(int inventoryItemId);
 
-    int buyInventoryItem(int inventoryItemId);
+    void buyInventoryItem(int inventoryItemId);
 
-    int buyInventoryArtifact(int inventoryArtifactId);
+    void buyInventoryArtifact(int inventoryArtifactId);
 
-    InventoryInfo getInventory();
+    InventoryInfo getInventory(Integer filterPlanetId, boolean filterLevel);
 
     void setupNewUserState(UserState userState);
 

@@ -99,17 +99,15 @@ public interface MovableService extends RemoteService {
 
     Collection<String> getAllAlliances();
 
-    InventoryInfo getInventory();
+    InventoryInfo getInventory(Integer filterPlanetId, boolean filterLevel);
 
-    InventoryInfo assembleInventoryItem(int inventoryItemId);
+    InventoryInfo assembleInventoryItem(int inventoryItemId, Integer filterPlanetId, boolean filterLevel);
 
     void useInventoryItem(int inventoryItemId, Collection<Index> positionToBePlaced);
 
-    int buyInventoryItem(int inventoryItemId);
+    InventoryInfo buyInventoryItem(int inventoryItemId, Integer filterPlanetId, boolean filterLevel);
 
-    int buyInventoryArtifact(int inventoryArtifactId);
-
-    int loadRazarion();
+    InventoryInfo buyInventoryArtifact(int inventoryArtifactId, Integer filterPlanetId, boolean filterLevel);
 
     QuestOverview loadQuestOverview();
 

@@ -36,7 +36,7 @@ public class MarketItem extends Composite implements HasText {
         this.inventoryItemInfo = inventoryItemInfo;
         this.inventoryDialog = inventoryDialog;
         initWidget(uiBinder.createAndBindUi(this));
-        coastLabel.setText("Coast: " + inventoryItemInfo.getRazarionCoast());
+        coastLabel.setText("Cost: " + inventoryItemInfo.getRazarionCoast());
         itemNameLabel.setText(inventoryItemInfo.getInventoryItemName());
         inventoryItemId = inventoryItemInfo.getInventoryItemId();
         image.setUrl(ImageHandler.getInventoryItemUrl(inventoryItemId));
@@ -49,7 +49,7 @@ public class MarketItem extends Composite implements HasText {
 
     @UiHandler("buyItemButton")
     void onClick(ClickEvent e) {
-        Connection.getInstance().buyInventoryItem(inventoryItemId, inventoryDialog);
+        Connection.getInstance().buyInventoryItem(inventoryItemId, inventoryDialog.getFilterPlanetId(), inventoryDialog.isFilterLevel(), inventoryDialog);
     }
 
     public void setText(String text) {

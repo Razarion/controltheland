@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client.common.info;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
@@ -23,6 +24,7 @@ import com.btxtech.game.jsre.common.packets.XpPacket;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * User: beat
@@ -41,6 +43,7 @@ public class RealGameInfo extends GameInfo {
     private XpPacket xpPacket;
     private LevelScope levelScope;
     private PlanetInfo planetInfo;
+    private List<PlanetLiteInfo> allPlanets;
 
     public SimpleBase getBase() {
         return base;
@@ -128,5 +131,13 @@ public class RealGameInfo extends GameInfo {
 
     public void setPlanetInfo(PlanetInfo planetInfo) {
         this.planetInfo = planetInfo;
+    }
+
+    public List<PlanetLiteInfo> getAllPlanets() {
+        return allPlanets;
+    }
+
+    public void setAllPlanets(List<PlanetLiteInfo> allPlanets) {
+        this.allPlanets = allPlanets;
     }
 }
