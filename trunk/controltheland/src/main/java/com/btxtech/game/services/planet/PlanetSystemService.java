@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.TerrainInfo;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -86,4 +87,6 @@ public interface PlanetSystemService {
     void saveTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int planetId);
 
     Collection<Planet> getAllPlanets();
+
+    List<PlanetLiteInfo> getAllPlanetLiteInfos();
 }

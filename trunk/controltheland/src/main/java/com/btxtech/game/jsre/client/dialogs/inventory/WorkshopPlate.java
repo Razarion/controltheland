@@ -2,7 +2,6 @@ package com.btxtech.game.jsre.client.dialogs.inventory;
 
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.jsre.client.dialogs.Dialog;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -47,10 +46,10 @@ public class WorkshopPlate extends Composite implements HasText {
             if (ownCount < entry.getValue()) {
                 isReadyForAssemble = false;
             }
-            
+
             int row = artifactNumber / 2;
             int column = artifactNumber % 2;
-            
+
             artifacts.setWidget(row, column, new ArtifactPlate(entry.getKey().getInventoryArtifactName(),
                     ImageHandler.getInventoryArtifactUrl(entry.getKey().getInventoryArtifactId()),
                     ownCount,
@@ -70,6 +69,6 @@ public class WorkshopPlate extends Composite implements HasText {
 
     @UiHandler("assembleButton")
     void onButtonClick(ClickEvent event) {
-        Connection.getInstance().assembleInventoryItem(inventoryItemId, inventoryDialog);
+        Connection.getInstance().assembleInventoryItem(inventoryItemId, inventoryDialog.getFilterPlanetId(), inventoryDialog.isFilterLevel(), inventoryDialog);
     }
 }

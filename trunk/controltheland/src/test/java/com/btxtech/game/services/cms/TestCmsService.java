@@ -3438,7 +3438,7 @@ public class TestCmsService extends AbstractServiceTest {
         userStates.add(userState);
 
         PlanetInfo planetInfo = new PlanetInfo();
-        planetInfo.setPlanetId(1);
+        planetInfo.setPlanetIdAndName(1, null);
         ServerPlanetServicesImpl serverPlanetServices = new ServerPlanetServicesImpl();
         serverPlanetServices.setPlanetInfo(planetInfo);
         TestPlanetHelper planet = new TestPlanetHelper();
@@ -3732,7 +3732,7 @@ public class TestCmsService extends AbstractServiceTest {
         List<UserState> userStates = new ArrayList<>();
 
         PlanetInfo planetInfo = new PlanetInfo();
-        planetInfo.setPlanetId(1);
+        planetInfo.setPlanetIdAndName(1, null);
         ServerPlanetServicesImpl serverPlanetServices = new ServerPlanetServicesImpl();
         serverPlanetServices.setPlanetInfo(planetInfo);
         TestPlanetHelper planet = new TestPlanetHelper();

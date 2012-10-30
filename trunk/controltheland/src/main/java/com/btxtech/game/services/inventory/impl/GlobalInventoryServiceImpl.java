@@ -1,6 +1,7 @@
 package com.btxtech.game.services.inventory.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryArtifactInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryItemInfo;
@@ -14,6 +15,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.packets.BoxPickedPacket;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
@@ -26,8 +28,10 @@ import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemTypePossibility;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
@@ -65,6 +69,8 @@ public class GlobalInventoryServiceImpl implements GlobalInventoryService {
     private UserService userService;
     @Autowired
     private PlanetSystemService planetSystemService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
     private Log log = LogFactory.getLog(GlobalInventoryServiceImpl.class);
 
     @PostConstruct
@@ -129,7 +135,7 @@ public class GlobalInventoryServiceImpl implements GlobalInventoryService {
     }
 
     @Override
-    public int buyInventoryItem(int inventoryItemId) {
+    public void buyInventoryItem(int inventoryItemId) {
         DbInventoryItem dbInventoryItem = itemCrud.readDbChild(inventoryItemId);
         UserState userState = userService.getUserState();
         if (dbInventoryItem.getRazarionCoast() == null) {
@@ -141,11 +147,10 @@ public class GlobalInventoryServiceImpl implements GlobalInventoryService {
         userState.subRazarion(dbInventoryItem.getRazarionCoast());
         userState.addInventoryItem(dbInventoryItem.getId());
         historyService.addInventoryItemBought(userState, dbInventoryItem.getName(), dbInventoryItem.getRazarionCoast());
-        return userState.getRazarion();
     }
 
     @Override
-    public int buyInventoryArtifact(int inventoryArtifactId) {
+    public void buyInventoryArtifact(int inventoryArtifactId) {
         DbInventoryArtifact dbInventoryArtifact = artifactCrud.readDbChild(inventoryArtifactId);
         UserState userState = userService.getUserState();
         if (dbInventoryArtifact.getRazarionCoast() == null) {
@@ -157,15 +162,22 @@ public class GlobalInventoryServiceImpl implements GlobalInventoryService {
         userState.subRazarion(dbInventoryArtifact.getRazarionCoast());
         userState.addInventoryArtifact(dbInventoryArtifact.getId());
         historyService.addInventoryArtifactBought(userState, dbInventoryArtifact.getName(), dbInventoryArtifact.getRazarionCoast());
-        return userState.getRazarion();
     }
 
     @Override
-    public InventoryInfo getInventory() {
+    public InventoryInfo getInventory(Integer filterPlanetId, boolean filterLevel) {
         InventoryInfo inventoryInfo = new InventoryInfo();
         UserState userState = userService.getUserState();
-        Map<Integer, InventoryArtifactInfo> allArtifacts = getAllInventoryArtifactInfoFromDb();
-        Map<Integer, InventoryItemInfo> allItems = getAllInventoryItemsInfoFromDb(allArtifacts);
+        DbPlanet dbPlanet = null;
+        if (filterPlanetId != null) {
+            dbPlanet = planetSystemService.getDbPlanetCrud().readDbChild(filterPlanetId);
+        }
+        LevelScope levelScope = null;
+        if (filterLevel) {
+            levelScope = userGuidanceService.getLevelScope();
+        }
+        Map<Integer, InventoryArtifactInfo> allArtifacts = getAllInventoryArtifactInfoFromDb(dbPlanet);
+        Map<Integer, InventoryItemInfo> allItems = getAllInventoryItemsInfoFromDb(allArtifacts, dbPlanet, levelScope);
 
         // Set razarion
         inventoryInfo.setRazarion(userState.getRazarion());
@@ -176,27 +188,33 @@ public class GlobalInventoryServiceImpl implements GlobalInventoryService {
         // Set own artifacts
         Map<InventoryArtifactInfo, Integer> ownInventoryArtifacts = new HashMap<>();
         for (Integer artifactId : userState.getInventoryArtifactIds()) {
-            InventoryArtifactInfo inventoryArtifactInfo = allArtifacts.get(artifactId);
-            if (inventoryArtifactInfo == null) {
-                throw new IllegalStateException("InventoryArtifactInfo does not exist: " + artifactId);
+            try {
+                InventoryArtifactInfo inventoryArtifactInfo = allArtifacts.get(artifactId);
+                if (inventoryArtifactInfo == null) {
+                    // Not available in filtered collection
+                    continue;
+                }
+                if (ownInventoryArtifacts.containsKey(inventoryArtifactInfo)) {
+                    continue;
+                }
+                ownInventoryArtifacts.put(inventoryArtifactInfo, Collections.frequency(userState.getInventoryArtifactIds(), artifactId));
+            } catch (Exception e) {
+                ExceptionHandler.handleException(e, "Unable setup own artifact info. Id: " + artifactId);
             }
-            if (ownInventoryArtifacts.containsKey(inventoryArtifactInfo)) {
-                continue;
-            }
-            ownInventoryArtifacts.put(inventoryArtifactInfo, Collections.frequency(userState.getInventoryArtifactIds(), artifactId));
         }
         inventoryInfo.setOwnInventoryArtifacts(ownInventoryArtifacts);
         // Set own items
         Map<InventoryItemInfo, Integer> ownInventoryItems = new HashMap<>();
         for (Integer itemId : userState.getInventoryItemIds()) {
-            InventoryItemInfo inventoryItemInfo = allItems.get(itemId);
-            if (inventoryItemInfo == null) {
-                throw new IllegalStateException("InventoryItemInfo does not exist: " + itemId);
+            try {
+                InventoryItemInfo inventoryItemInfo = itemCrud.readDbChild(itemId).generateInventoryItemInfo(null);
+                if (ownInventoryItems.containsKey(inventoryItemInfo)) {
+                    continue;
+                }
+                ownInventoryItems.put(inventoryItemInfo, Collections.frequency(userState.getInventoryItemIds(), itemId));
+            } catch (Exception e) {
+                ExceptionHandler.handleException(e, "Unable setup own item info. Id: " + itemId);
             }
-            if (ownInventoryItems.containsKey(inventoryItemInfo)) {
-                continue;
-            }
-            ownInventoryItems.put(inventoryItemInfo, Collections.frequency(userState.getInventoryItemIds(), itemId));
         }
         inventoryInfo.setOwnInventoryItems(ownInventoryItems);
 
@@ -222,18 +240,38 @@ public class GlobalInventoryServiceImpl implements GlobalInventoryService {
         }
     }
 
-    private Map<Integer, InventoryArtifactInfo> getAllInventoryArtifactInfoFromDb() {
+    private Map<Integer, InventoryArtifactInfo> getAllInventoryArtifactInfoFromDb(DbPlanet planetFilter) {
         Map<Integer, InventoryArtifactInfo> result = new HashMap<>();
         for (DbInventoryArtifact dbInventoryArtifact : artifactCrud.readDbChildren()) {
+            if (planetFilter != null && !dbInventoryArtifact.getPlanets().contains(planetFilter)) {
+                continue;
+            }
             result.put(dbInventoryArtifact.getId(), dbInventoryArtifact.generateInventoryArtifactInfo());
         }
         return result;
     }
 
-    private Map<Integer, InventoryItemInfo> getAllInventoryItemsInfoFromDb(Map<Integer, InventoryArtifactInfo> allArtifacts) {
+    private Map<Integer, InventoryItemInfo> getAllInventoryItemsInfoFromDb(Map<Integer, InventoryArtifactInfo> allArtifacts, DbPlanet planetFilter, LevelScope levelScope) {
         Map<Integer, InventoryItemInfo> result = new HashMap<>();
         for (DbInventoryItem dbInventoryItem : itemCrud.readDbChildren()) {
-            result.put(dbInventoryItem.getId(), dbInventoryItem.generateInventoryItemInfo(allArtifacts));
+            Collection<DbPlanet> planets = dbInventoryItem.getPlanets();
+            Collection<DbPlanet> planetsViaArtifact = dbInventoryItem.getPlanetsViaArtifact();
+            if (!planets.isEmpty() || !planetsViaArtifact.isEmpty()) {
+                if (planetFilter != null && !(planets.contains(planetFilter) || planetsViaArtifact.contains(planetFilter))) {
+                    continue;
+                }
+            }
+
+            DbBaseItemType dbBaseItemType = dbInventoryItem.getDbBaseItemType();
+            if (levelScope != null && dbBaseItemType != null && levelScope.getLimitation4ItemType(dbBaseItemType.getId()) == 0) {
+                continue;
+            }
+
+            try {
+                result.put(dbInventoryItem.getId(), dbInventoryItem.generateInventoryItemInfo(allArtifacts));
+            } catch (Exception e) {
+                ExceptionHandler.handleException(e, "Unable generating inventory info: " + dbInventoryItem);
+            }
         }
         return result;
     }

@@ -73,6 +73,4 @@ public abstract class Dialog extends DialogBox {
     }
 
     abstract protected void setupPanel(VerticalPanel dialogVPanel);
-
-
 }

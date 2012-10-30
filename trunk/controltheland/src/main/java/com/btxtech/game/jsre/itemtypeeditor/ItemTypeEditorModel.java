@@ -482,7 +482,7 @@ public class ItemTypeEditorModel {
                     Connection.getInstance().init4ItemTypeEditor();
                     PlanetInfo planetInfo = new PlanetInfo();
                     planetInfo.setRadarMode(RadarMode.NONE);
-                    planetInfo.setPlanetId(PlanetInfo.EDITOR_PLANET_ID);
+                    planetInfo.setPlanetIdAndName(PlanetInfo.EDITOR_PLANET_ID, null);
                     ClientPlanetServices.getInstance().setPlanetInfo(planetInfo);
                     ClientLevelHandler.getInstance().setLevel(new LevelScope(PlanetInfo.EDITOR_PLANET_ID, 0, 0, null, 0));
                     ///--- Setup terrain

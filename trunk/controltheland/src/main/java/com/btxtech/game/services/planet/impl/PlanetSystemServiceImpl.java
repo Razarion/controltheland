@@ -4,9 +4,9 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.common.CommonJava;
-import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -366,5 +366,14 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
     @Override
     public Collection<Planet> getAllPlanets() {
         return new ArrayList<Planet>(planetImpls.values());
+    }
+
+    @Override
+    public List<PlanetLiteInfo> getAllPlanetLiteInfos() {
+        List<PlanetLiteInfo> planetLiteInfos = new ArrayList<>();
+        for (PlanetImpl planet : planetImpls.values()) {
+            planetLiteInfos.add(planet.getPlanetServices().getPlanetInfo().getPlanetLiteInfo());
+        }
+        return planetLiteInfos;
     }
 }

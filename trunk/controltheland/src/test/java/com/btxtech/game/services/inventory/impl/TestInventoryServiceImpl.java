@@ -24,8 +24,6 @@ import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.common.impl.ServerGlobalServicesImpl;
 import com.btxtech.game.services.history.DbHistoryElement;
 import com.btxtech.game.services.history.HistoryService;
-import com.btxtech.game.services.planet.db.DbBoxRegion;
-import com.btxtech.game.services.planet.db.DbBoxRegionCount;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryArtifactCount;
 import com.btxtech.game.services.inventory.DbInventoryItem;
@@ -42,6 +40,8 @@ import com.btxtech.game.services.planet.CollisionService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.planet.ServerItemService;
 import com.btxtech.game.services.planet.ServerTerrainService;
+import com.btxtech.game.services.planet.db.DbBoxRegion;
+import com.btxtech.game.services.planet.db.DbBoxRegionCount;
 import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.planet.impl.InventoryServiceImpl;
 import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
@@ -83,7 +83,6 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     private ServerGlobalServices serverGlobalServices;
     @Autowired
     private RegionService regionService;
-    //private Log log = LogFactory.getLog(TestInventoryServiceImpl.class);
 
     @Test
     @DirtiesContext
@@ -288,7 +287,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(boxItemType2, region2, 100, true, false)).andReturn(new Index(100, 100));
         serverPlanetServices.setCollisionService(mockCollisionService);
 
-        EasyMock.replay(mockHistoryService, mockServerItemService, mockCollisionService, mockSyncBoxItem1, mockSyncBoxItem2, mockSyncBoxItem3, mockSyncBoxItem4, mockSyncBoxItem5, mockSyncBoxItem6,  mockSyncBoxItem7);
+        EasyMock.replay(mockHistoryService, mockServerItemService, mockCollisionService, mockSyncBoxItem1, mockSyncBoxItem2, mockSyncBoxItem3, mockSyncBoxItem4, mockSyncBoxItem5, mockSyncBoxItem6, mockSyncBoxItem7);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         setPrivateField(ServerGlobalServicesImpl.class, serverGlobalServices, "historyService", mockHistoryService);
@@ -1180,7 +1179,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         // Verify new
-        InventoryInfo inventoryInfo = globalInventoryService.getInventory();
+        InventoryInfo inventoryInfo = globalInventoryService.getInventory(null, false);
         Assert.assertEquals(0, inventoryInfo.getRazarion());
         Assert.assertTrue(inventoryInfo.getOwnInventoryArtifacts().isEmpty());
         Assert.assertTrue(inventoryInfo.getOwnInventoryItems().isEmpty());
@@ -1191,7 +1190,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         userState.setRazarion(15);
         userState.addInventoryArtifact(dbInventoryArtifact1.getId());
         // Verify
-        inventoryInfo = globalInventoryService.getInventory();
+        inventoryInfo = globalInventoryService.getInventory(null, false);
         Assert.assertEquals(15, inventoryInfo.getRazarion());
         Assert.assertEquals(1, inventoryInfo.getOwnInventoryArtifacts().size());
         Assert.assertEquals(1, (int) inventoryInfo.getOwnInventoryArtifacts().get(dbInventoryArtifact1.generateInventoryArtifactInfo()));
@@ -1203,7 +1202,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         userState.addInventoryArtifact(dbInventoryArtifact1.getId());
         userState.addInventoryArtifact(dbInventoryArtifact2.getId());
         // Verify
-        inventoryInfo = globalInventoryService.getInventory();
+        inventoryInfo = globalInventoryService.getInventory(null, false);
         Assert.assertEquals(15, inventoryInfo.getRazarion());
         Assert.assertEquals(2, inventoryInfo.getOwnInventoryArtifacts().size());
         Assert.assertEquals(2, (int) inventoryInfo.getOwnInventoryArtifacts().get(dbInventoryArtifact1.generateInventoryArtifactInfo()));
@@ -1215,7 +1214,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         userState = userService.getUserState();
         userState.addInventoryItem(dbInventoryItem2.getId());
         // Verify
-        inventoryInfo = globalInventoryService.getInventory();
+        inventoryInfo = globalInventoryService.getInventory(null, false);
         Assert.assertEquals(15, inventoryInfo.getRazarion());
         Assert.assertEquals(2, inventoryInfo.getOwnInventoryArtifacts().size());
         Assert.assertEquals(2, (int) inventoryInfo.getOwnInventoryArtifacts().get(dbInventoryArtifact1.generateInventoryArtifactInfo()));
@@ -1229,7 +1228,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         userState.addInventoryItem(dbInventoryItem2.getId());
         userState.addInventoryItem(dbInventoryItem1.getId());
         // Verify
-        inventoryInfo = globalInventoryService.getInventory();
+        inventoryInfo = globalInventoryService.getInventory(null, false);
         Assert.assertEquals(15, inventoryInfo.getRazarion());
         Assert.assertEquals(2, inventoryInfo.getOwnInventoryArtifacts().size());
         Assert.assertEquals(2, (int) inventoryInfo.getOwnInventoryArtifacts().get(dbInventoryArtifact1.generateInventoryArtifactInfo()));
@@ -1239,6 +1238,75 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(1, (int) inventoryInfo.getOwnInventoryItems().get(dbInventoryItem1.generateInventoryItemInfo(allArtifacts)));
         Assert.assertEquals(2, inventoryInfo.getAllInventoryItemInfos().size());
         Assert.assertEquals(3, inventoryInfo.getAllInventoryArtifactInfos().size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void getInventoryFilter() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // Artifacts
+        DbInventoryArtifact dbInventoryArtifact1 = globalInventoryService.getArtifactCrud().createDbChild();
+        DbInventoryArtifact dbInventoryArtifact2 = globalInventoryService.getArtifactCrud().createDbChild();
+        DbInventoryArtifact dbInventoryArtifact3 = globalInventoryService.getArtifactCrud().createDbChild();
+        // Items
+        DbInventoryItem dbInventoryItem1 = globalInventoryService.getItemCrud().createDbChild();
+        dbInventoryItem1.setDbBaseItemType(serverItemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        DbInventoryArtifactCount dbInventoryArtifactCount1 = dbInventoryItem1.getArtifactCountCrud().createDbChild();
+        dbInventoryArtifactCount1.setCount(1);
+        dbInventoryArtifactCount1.setDbInventoryArtifact(dbInventoryArtifact1);
+        dbInventoryArtifactCount1 = dbInventoryItem1.getArtifactCountCrud().createDbChild();
+        dbInventoryArtifactCount1.setCount(2);
+        dbInventoryArtifactCount1.setDbInventoryArtifact(dbInventoryArtifact2);
+        globalInventoryService.getItemCrud().updateDbChild(dbInventoryItem1);
+        DbInventoryItem dbInventoryItem2 = globalInventoryService.getItemCrud().createDbChild();
+        DbInventoryArtifactCount dbInventoryArtifactCount2 = dbInventoryItem2.getArtifactCountCrud().createDbChild();
+        dbInventoryArtifactCount2.setCount(3);
+        dbInventoryArtifactCount2.setDbInventoryArtifact(dbInventoryArtifact3);
+        globalInventoryService.getItemCrud().updateDbChild(dbInventoryItem2);
+        // Create Box
+        DbBoxItemType dbBoxItemType1 = createDbBoxItemType1();
+        DbBoxItemTypePossibility dbBoxItemTypePossibility1 = dbBoxItemType1.getBoxPossibilityCrud().createDbChild();
+        dbBoxItemTypePossibility1.setDbInventoryArtifact(dbInventoryArtifact1);
+        dbBoxItemTypePossibility1.setPossibility(1.0);
+        DbBoxItemTypePossibility dbBoxItemTypePossibility2 = dbBoxItemType1.getBoxPossibilityCrud().createDbChild();
+        dbBoxItemTypePossibility2.setDbInventoryArtifact(dbInventoryArtifact2);
+        dbBoxItemTypePossibility2.setPossibility(1.0);
+        serverItemTypeService.saveDbItemType(dbBoxItemType1);
+        // Create Planet 1 with box region
+        DbPlanet dbPlanet1 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID);
+        DbBoxRegion dbBoxRegion1 = dbPlanet1.getBoxRegionCrud().createDbChild();
+        dbBoxRegion1.setRegion(createDbRegion(new Rectangle(1, 2, 10, 20)));
+        DbBoxRegionCount dbBoxRegionCount1 = dbBoxRegion1.getBoxRegionCountCrud().createDbChild();
+        dbBoxRegionCount1.setDbBoxItemType(dbBoxItemType1);
+        dbBoxRegionCount1.setCount(10);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet1);
+        // Create Planet 2 with box region
+        DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().createDbChild();
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getMyBase(); // Create Base
+        // Verify new
+        InventoryInfo inventoryInfo = globalInventoryService.getInventory(null, false);
+        Assert.assertEquals(2, inventoryInfo.getAllInventoryItemInfos().size());
+        Assert.assertEquals(3, inventoryInfo.getAllInventoryArtifactInfos().size());
+        inventoryInfo = globalInventoryService.getInventory(null, true);
+        Assert.assertEquals(2, inventoryInfo.getAllInventoryItemInfos().size());
+        Assert.assertEquals(3, inventoryInfo.getAllInventoryArtifactInfos().size());
+        inventoryInfo = globalInventoryService.getInventory(dbPlanet1.getId(), true);
+        Assert.assertEquals(1, inventoryInfo.getAllInventoryItemInfos().size());
+        Assert.assertEquals(2, inventoryInfo.getAllInventoryArtifactInfos().size());
+        inventoryInfo = globalInventoryService.getInventory(dbPlanet2.getId(), true);
+        Assert.assertEquals(0, inventoryInfo.getAllInventoryItemInfos().size());
+        Assert.assertEquals(0, inventoryInfo.getAllInventoryArtifactInfos().size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -1490,8 +1558,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         }
         Assert.assertFalse(userService.getUserState().hasInventoryItemId(dbInventoryItem1.getId()));
         userService.getUserState().addRazarion(100);
-        int razarion = globalInventoryService.buyInventoryItem(dbInventoryItem1.getId());
-        Assert.assertEquals(34, razarion);
+        globalInventoryService.buyInventoryItem(dbInventoryItem1.getId());
         Assert.assertEquals(34, userService.getUserState().getRazarion());
         Assert.assertEquals(1, userService.getUserState().getInventoryItemIds().size());
         Assert.assertTrue(userService.getUserState().hasInventoryItemId(dbInventoryItem1.getId()));
@@ -1546,8 +1613,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         }
         Assert.assertTrue(userService.getUserState().getInventoryArtifactIds().isEmpty());
         userService.getUserState().addRazarion(24);
-        int razarion = globalInventoryService.buyInventoryArtifact(dbInventoryArtifact1.getId());
-        Assert.assertEquals(12, razarion);
+        globalInventoryService.buyInventoryArtifact(dbInventoryArtifact1.getId());
         Assert.assertEquals(12, userService.getUserState().getRazarion());
         Assert.assertEquals(1, userService.getUserState().getInventoryArtifactIds().size());
         Assert.assertEquals(dbInventoryArtifact1.getId(), CommonJava.getFirst(userService.getUserState().getInventoryArtifactIds()));

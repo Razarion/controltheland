@@ -13,27 +13,22 @@ import java.util.Map;
 public class PlanetInfo implements Serializable {
     public static final int MISSION_PLANET_ID = -1;
     public static final int EDITOR_PLANET_ID = -2;
-    private int planetId;
-    private String name;
+    private PlanetLiteInfo planetLiteInfo;
     private int maxMoney;
     private int houseSpace;
     private Map<Integer, Integer> itemTypeLimitation;
     private RadarMode radarMode;
 
     public int getPlanetId() {
-        return planetId;
+        return planetLiteInfo.getPlanetId();
     }
 
-    public void setPlanetId(int planetId) {
-        this.planetId = planetId;
+    public void setPlanetIdAndName(int planetId, String name) {
+        planetLiteInfo = new PlanetLiteInfo(planetId, name);
     }
 
     public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        return planetLiteInfo.getName();
     }
 
     public int getMaxMoney() {
@@ -71,5 +66,9 @@ public class PlanetInfo implements Serializable {
 
     public void setRadarMode(RadarMode radarMode) {
         this.radarMode = radarMode;
+    }
+
+    public PlanetLiteInfo getPlanetLiteInfo() {
+        return planetLiteInfo;
     }
 }

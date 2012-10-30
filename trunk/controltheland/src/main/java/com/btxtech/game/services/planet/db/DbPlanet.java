@@ -2,6 +2,7 @@ package com.btxtech.game.services.planet.db;
 
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
@@ -218,8 +219,7 @@ public class DbPlanet implements CrudChild, CrudParent {
 
     public PlanetInfo createPlanetInfo() {
         PlanetInfo planetInfo = new PlanetInfo();
-        planetInfo.setPlanetId(id);
-        planetInfo.setName(name);
+        planetInfo.setPlanetIdAndName(id, name);
         planetInfo.setHouseSpace(houseSpace);
         planetInfo.setMaxMoney(maxMoney);
         Map<Integer, Integer> itemTypeLimitation = new HashMap<>();

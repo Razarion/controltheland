@@ -1,23 +1,29 @@
 package com.btxtech.game.jsre.client.dialogs.inventory;
 
-import java.util.Collection;
-import java.util.Map;
-
-import com.btxtech.game.jsre.client.dialogs.Dialog;
+import com.btxtech.game.jsre.client.ClientPlanetServices;
+import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.common.info.GameInfo;
+import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.Widget;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.logging.Logger;
 
 public class MainTabbedPanel extends Composite {
+    private static final String FILTER_CURRENT = "_FILTER_CURRENT";
+    private static final String FILTER_ALL = "_FILTER_ALL";
     private static final int INVENTORY_COLUMS = 3;
     private static final int WORKSHOP_COLUMS = 3;
     private static final int DEALER_ITEMS_COLUMS = 3;
@@ -37,9 +43,12 @@ public class MainTabbedPanel extends Composite {
     FlexTable fundsTable;
     @UiField
     TabPanel dealerPanel;
-    @UiField Label razarionLabel;
-    @UiField ListBox filterListBox;
+    @UiField
+    Label razarionLabel;
+    @UiField
+    ListBox filterListBox;
     private InventoryDialog inventoryDialog;
+    private Logger log = Logger.getLogger(MainTabbedPanel.class.getName());
 
     interface MainTabbedPanelUiBinder extends UiBinder<Widget, MainTabbedPanel> {
     }
@@ -49,12 +58,20 @@ public class MainTabbedPanel extends Composite {
         this.inventoryDialog = inventoryDialog;
         tabPanel.selectTab(0);
         dealerPanel.selectTab(0);
-        filterListBox.addItem("Current Planet & Level", "value 1");
-        filterListBox.addItem("Sirus", "value 2");
-        filterListBox.addItem("Planet2", "value 3");
-        filterListBox.addItem("Planet3", "value 4");
-        filterListBox.addItem("All", "value 5");
-        
+        setupFilter();
+    }
+
+    private void setupFilter() {
+        GameInfo gameInfo = Connection.getInstance().getGameInfo();
+        if (!(gameInfo instanceof RealGameInfo)) {
+            log.severe("MainTabbedPanel.setupFilter() gameInfo is not instance of RealGameInfo");
+            return;
+        }
+        filterListBox.addItem("Current Planet & Level", FILTER_CURRENT);
+        for (PlanetLiteInfo planetLiteInfo : ((RealGameInfo) gameInfo).getAllPlanets()) {
+            filterListBox.addItem(planetLiteInfo.getName(), Integer.toString(planetLiteInfo.getPlanetId()));
+        }
+        filterListBox.addItem("All", FILTER_ALL);
     }
 
     public void setRazarionAmount(int razarion) {
@@ -140,8 +157,17 @@ public class MainTabbedPanel extends Composite {
             }
         }
     }
+
     @UiHandler("filterListBox")
     void onFilterListBoxChange(ChangeEvent event) {
-        System.out.println("filterListBox: " + filterListBox.getSelectedIndex());
+        String value = filterListBox.getValue(filterListBox.getSelectedIndex());
+        if (value.equals(FILTER_CURRENT)) {
+            inventoryDialog.setFilter(ClientPlanetServices.getInstance().getPlanetInfo().getPlanetId(), true);
+        } else if (value.equals(FILTER_ALL)) {
+            inventoryDialog.setFilter(null, false);
+        } else {
+            inventoryDialog.setFilter(Integer.parseInt(value), false);
+        }
+        inventoryDialog.reload();
     }
 }

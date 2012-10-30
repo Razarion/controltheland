@@ -1,10 +1,10 @@
 package com.btxtech.game.jsre.client.dialogs.inventory;
 
+import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.dialogs.Dialog;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -14,10 +14,11 @@ import java.util.logging.Logger;
  */
 public class InventoryDialog extends Dialog {
     private static InventoryDialog staticInstance;
-    // private Inventory inventory;
     private Logger log = Logger.getLogger(InventoryDialog.class.getName());
     private InventoryInfo inventoryInfo;
     private MainTabbedPanel mainTabbedPanel;
+    private Integer filterPlanetId;
+    private boolean filterLevel;
 
     public InventoryDialog() {
         super("Inventory");
@@ -27,7 +28,9 @@ public class InventoryDialog extends Dialog {
     protected void setupPanel(VerticalPanel dialogVPanel) {
         mainTabbedPanel = new MainTabbedPanel(this);
         dialogVPanel.add(mainTabbedPanel);
-        Connection.getInstance().loadInventory(this);
+        filterPlanetId = ClientPlanetServices.getInstance().getPlanetInfo().getPlanetId();
+        filterLevel = true;
+        Connection.getInstance().loadInventory(filterPlanetId, filterLevel, this);
         staticInstance = this;
     }
 
@@ -43,7 +46,7 @@ public class InventoryDialog extends Dialog {
         mainTabbedPanel.displayDealerItems(inventoryInfo, inventoryInfo.getAllInventoryItemInfos());
         mainTabbedPanel.displayDealerFunds(inventoryInfo, inventoryInfo.getAllInventoryItemInfos());
         mainTabbedPanel.displayDealerArtifacts(inventoryInfo, inventoryInfo.getAllInventoryArtifactInfos());
-        
+
         center();
     }
 
@@ -55,16 +58,24 @@ public class InventoryDialog extends Dialog {
 
     public static void onBoxPicket() {
         if (staticInstance != null) {
-            Connection.getInstance().loadInventory(staticInstance);
+            Connection.getInstance().loadInventory(staticInstance.filterPlanetId, staticInstance.filterLevel, staticInstance);
         }
     }
 
-    public InventoryInfo getInventoryInfo() {
-        return inventoryInfo;
+    public void setFilter(Integer filterPlanetId, boolean filterLevel) {
+        this.filterPlanetId = filterPlanetId;
+        this.filterLevel = filterLevel;
     }
 
-    public void updateRazarion(Integer razarion) {
-        // TODO Auto-generated method stub
-        
+    public void reload() {
+        Connection.getInstance().loadInventory(staticInstance.filterPlanetId, staticInstance.filterLevel, staticInstance);
+    }
+
+    public Integer getFilterPlanetId() {
+        return filterPlanetId;
+    }
+
+    public boolean isFilterLevel() {
+        return filterLevel;
     }
 }

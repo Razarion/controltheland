@@ -13,9 +13,10 @@ public class ExceptionHandler {
     private static Log log = LogFactory.getLog(ExceptionHandler.class);
     private static UserService userService;
 
-    public static void handleException(Throwable t) {
+    public static void handleException(Throwable t, String message) {
         log.error("--------------------------------------------------------------------");
         log.error("Thread: " + Thread.currentThread().getName());
+        log.error("Message: " + message);
         if (userService != null) {
             try {
                 log.error("Session Id:" + userService.getUserState().getSessionId());
@@ -27,6 +28,10 @@ public class ExceptionHandler {
             log.error("UserService not initialised");
         }
         log.error("", t);
+    }
+
+    public static void handleException(Throwable t) {
+        handleException(t, null);
     }
 
     public static void init(UserService userService) {

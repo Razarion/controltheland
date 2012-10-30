@@ -225,6 +225,7 @@ public class DbInventoryItem implements CrudChild, CrudParent {
         }
         return dbPlanets;
     }
+
     public Collection<DbBaseItemType> getBaseItemTypes() {
         Collection<DbBaseItemType> dbBaseItemTypes = new HashSet<>();
         if (dbBoxItemTypePossibilities == null) {
@@ -250,12 +251,14 @@ public class DbInventoryItem implements CrudChild, CrudParent {
 
     public InventoryItemInfo generateInventoryItemInfo(Map<Integer, InventoryArtifactInfo> allArtifacts) {
         Map<InventoryArtifactInfo, Integer> artifacts = new HashMap<>();
-        for (DbInventoryArtifactCount dbInventoryArtifactCount : getArtifactCountCrud().readDbChildren()) {
-            InventoryArtifactInfo inventoryArtifactInfo = allArtifacts.get(dbInventoryArtifactCount.getDbInventoryArtifact().getId());
-            if (inventoryArtifactInfo == null) {
-                throw new IllegalStateException("InventoryArtifactInfo does not exist: " + dbInventoryArtifactCount.getDbInventoryArtifact().getId());
+        if (allArtifacts != null) {
+            for (DbInventoryArtifactCount dbInventoryArtifactCount : getArtifactCountCrud().readDbChildren()) {
+                InventoryArtifactInfo inventoryArtifactInfo = allArtifacts.get(dbInventoryArtifactCount.getDbInventoryArtifact().getId());
+                if (inventoryArtifactInfo == null) {
+                    throw new IllegalStateException("InventoryArtifactInfo does not exist: " + dbInventoryArtifactCount.getDbInventoryArtifact().getId());
+                }
+                artifacts.put(inventoryArtifactInfo, dbInventoryArtifactCount.getCount());
             }
-            artifacts.put(inventoryArtifactInfo, dbInventoryArtifactCount.getCount());
         }
         return new InventoryItemInfo(name,
                 id,

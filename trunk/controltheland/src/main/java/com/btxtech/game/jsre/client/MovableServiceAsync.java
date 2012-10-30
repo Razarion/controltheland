@@ -94,17 +94,15 @@ public interface MovableServiceAsync {
 
     void getAllAlliances(AsyncCallback<Collection<String>> asyncCallback);
 
-    void getInventory(AsyncCallback<InventoryInfo> asyncCallback);
+    void getInventory(Integer filterPlanetId, boolean filterLevel, AsyncCallback<InventoryInfo> asyncCallback);
 
-    void assembleInventoryItem(int inventoryItemId, AsyncCallback<InventoryInfo> asyncCallback);
+    void assembleInventoryItem(int inventoryItemId, Integer filterPlanetId, boolean filterLevel, AsyncCallback<InventoryInfo> asyncCallback);
 
     void useInventoryItem(int inventoryItemId, Collection<Index> positionToBePlaced, AsyncCallback<Void> asyncCallback);
 
-    void buyInventoryItem(int inventoryItemId, AsyncCallback<Integer> asyncCallback);
+    void buyInventoryItem(int inventoryItemId, Integer filterPlanetId, boolean filterLevel, AsyncCallback<InventoryInfo> asyncCallback);
 
-    void buyInventoryArtifact(int inventoryArtifactId, AsyncCallback<Integer> asyncCallback);
-
-    void loadRazarion(AsyncCallback<Integer> asyncCallback);
+    void buyInventoryArtifact(int inventoryArtifactId, Integer filterPlanetId, boolean filterLevel, AsyncCallback<InventoryInfo> asyncCallback);
 
     void loadQuestOverview(AsyncCallback<QuestOverview> async);
 
