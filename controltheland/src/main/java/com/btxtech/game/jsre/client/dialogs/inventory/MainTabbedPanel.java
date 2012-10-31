@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 import java.util.Collection;
 import java.util.Map;
 import java.util.logging.Logger;
+import com.google.gwt.user.client.ui.SimplePanel;
 
 public class MainTabbedPanel extends Composite {
     private static final String FILTER_CURRENT = "_FILTER_CURRENT";
@@ -47,6 +48,7 @@ public class MainTabbedPanel extends Composite {
     Label razarionLabel;
     @UiField
     ListBox filterListBox;
+    @UiField SimplePanel buyPanel;
     private InventoryDialog inventoryDialog;
     private Logger log = Logger.getLogger(MainTabbedPanel.class.getName());
 
@@ -59,6 +61,7 @@ public class MainTabbedPanel extends Composite {
         tabPanel.selectTab(0);
         dealerPanel.selectTab(0);
         setupFilter();
+        buyPanel.setWidget(new BuyPanel(inventoryDialog));
     }
 
     private void setupFilter() {

@@ -55,7 +55,7 @@
                 </g:TabPanel>
             </g:Tab>
             <g:Tab text="Buy">
-                <g:FlexTable width="5cm" height="3cm"/>
+            	<g:SimplePanel width="10cm" height="8cm" ui:field="buyPanel"/>
             </g:Tab>
         </g:TabPanel>
     </g:VerticalPanel>

@@ -228,7 +228,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     public static void setCommonInfo(GameInfo gameInfo, UserService userService, ServerItemTypeService serverItemTypeService, MgmtService mgmtService, CmsUiService cmsUiService, SoundService soundService, ClipService clipService) {
-        gameInfo.setRegistered(userService.isRegistered());
+        gameInfo.setUserName(userService.getUserName());
         gameInfo.setItemTypes(serverItemTypeService.getItemTypes());
         StartupData startupData = mgmtService.getStartupData();
         gameInfo.setRegisterDialogDelay(startupData.getRegisterDialogDelay());
