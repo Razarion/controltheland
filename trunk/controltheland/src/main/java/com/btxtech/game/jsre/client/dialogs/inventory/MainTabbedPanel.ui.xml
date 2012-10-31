@@ -55,7 +55,7 @@
                 </g:TabPanel>
             </g:Tab>
             <g:Tab text="Buy">
-            	<g:SimplePanel width="10cm" height="8cm" ui:field="buyPanel"/>
+            	<g:SimplePanel width="11cm" height="8cm" ui:field="buyPanel"/>
             </g:Tab>
         </g:TabPanel>
     </g:VerticalPanel>
