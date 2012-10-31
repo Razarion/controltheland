@@ -75,5 +75,22 @@ public class InventoryArtifactPanel extends Panel {
                 }
             }
         }));
+        add(new Label("rareness", new AbstractReadOnlyModel<String>() {
+            @Override
+            public String getObject() {
+                DbInventoryArtifact dbInventoryArtifact = (DbInventoryArtifact) getDefaultModelObject();
+                if (dbInventoryArtifact != null) {
+                    if (dbInventoryArtifact.getRareness() != null) {
+                        return "[" + dbInventoryArtifact.getRareness().name() + "]";
+                    } else {
+                        return "[]";
+                    }
+                } else {
+                    return null;
+                }
+
+            }
+        }));
+
     }
 }
