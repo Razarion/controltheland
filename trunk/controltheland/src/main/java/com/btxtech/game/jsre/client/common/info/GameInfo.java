@@ -39,7 +39,7 @@ public abstract class GameInfo implements TerrainInfo, Serializable {
     private Collection<SurfaceImage> surfaceImages;
     private Collection<TerrainImage> terrainImages;
     private TerrainImageBackground terrainImageBackground;
-    private boolean registered;
+    private String userName;
     private int registerDialogDelay;
     private Collection<ItemType> itemTypes;
     private Map<CmsUtil.CmsPredefinedPage, String> predefinedUrls;
@@ -101,20 +101,20 @@ public abstract class GameInfo implements TerrainInfo, Serializable {
         this.terrainImageBackground = terrainImageBackground;
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
     public int getRegisterDialogDelayInS() {
         return registerDialogDelay * 1000;
     }
 
     public void setRegisterDialogDelay(int registerDialogDelay) {
         this.registerDialogDelay = registerDialogDelay;
-    }
-
-    public boolean isRegistered() {
-        return registered;
-    }
-
-    public void setRegistered(boolean registered) {
-        this.registered = registered;
     }
 
     public Collection<ItemType> getItemTypes() {

@@ -100,7 +100,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
     public static final int STATISTIC_DELAY = 10000;
     private static final String CONNECTION_DIALOG = "Lost connection to game server. Try to reload the page. You may have to login again.";
     public static final Connection INSTANCE = new Connection();
-    private boolean isRegistered;
+    private String userName;
     private GameInfo gameInfo;
     private Collection<SyncItemInfo> syncInfos;
     private ArrayList<BaseCommand> commandQueue = new ArrayList<BaseCommand>();
@@ -494,11 +494,15 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
     }
 
     public boolean isRegistered() {
-        return isRegistered;
+        return userName != null;
     }
 
-    public void setRegistered(boolean registered) {
-        isRegistered = registered;
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 
     public GameInfo getGameInfo() {
@@ -634,7 +638,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
     }
 
     public void getAllAlliances(final AllianceDialog allianceDialog) {
-        if (movableServiceAsync != null && isRegistered) {
+        if (movableServiceAsync != null && isRegistered()) {
             movableServiceAsync.getAllAlliances(new AsyncCallback<Collection<String>>() {
                 @Override
                 public void onFailure(Throwable caught) {

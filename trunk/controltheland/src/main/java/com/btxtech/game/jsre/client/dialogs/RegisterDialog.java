@@ -133,7 +133,7 @@ public class RegisterDialog extends Dialog {
 
             @Override
             public void onSuccess(Void aVoid) {
-                Connection.getInstance().setRegistered(true);
+                Connection.getInstance().setUserName(userName.getText());
                 hide(true);
             }
         });
