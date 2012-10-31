@@ -66,6 +66,8 @@ public interface HistoryService {
 
     void addRazarionFromBox(UserState userState, int razarion);
 
+    void addRazarionBought(UserState userState, int razarionBought);
+
     void addInventoryItemFromBox(UserState userState, String inventoryItemName);
 
     void addInventoryArtifactFromBox(UserState userState, String inventoryArtifactName);

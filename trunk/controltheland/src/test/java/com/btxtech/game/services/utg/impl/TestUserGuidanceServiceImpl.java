@@ -9,6 +9,9 @@ import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.common.ReadonlyListContentProvider;
+import com.btxtech.game.services.history.DisplayHistoryElement;
+import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.planet.db.DbPlanet;
@@ -45,6 +48,8 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
     private PlanetSystemService planetSystemService;
     @Autowired
     private TutorialService tutorialService;
+    @Autowired
+    private HistoryService historyService;
 
     @Test
     @DirtiesContext
@@ -352,5 +357,37 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(2, questOverview.getMissionsDone());
         Assert.assertEquals(2, questOverview.getTotalMissions());
         Assert.assertEquals(0, questOverview.getQuestInfos().size());
+    }
+
+    @Test
+    @DirtiesContext
+    public void buyRazarion() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "xxx", "xxx", "");
+        userService.login("U1", "xxx");
+        UserState userState = getUserState();
+        Assert.assertEquals(0, userState.getRazarion());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.razarionBought(100, userState);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "xxx");
+        Assert.assertEquals(100, userState.getRazarion());
+        ReadonlyListContentProvider<DisplayHistoryElement> history = historyService.getNewestHistoryElements();
+        Assert.assertEquals(1, history.readDbChildren().size());
+        Assert.assertEquals("Bought Razarion 100 via PayPal", history.readDbChildren().get(0).getMessage());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
     }
 }

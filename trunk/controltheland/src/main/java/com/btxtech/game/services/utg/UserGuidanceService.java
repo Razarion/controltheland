@@ -72,5 +72,7 @@ public interface UserGuidanceService extends CommonUserGuidanceService {
 
     QuestOverview getQuestOverview();
 
+    void razarionBought(int razarionBought, UserState userState);
+
     int getXp2LevelUp(UserState userState);
 }

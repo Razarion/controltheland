@@ -443,6 +443,15 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     }
 
     @Override
+    public void razarionBought(int razarionBought, UserState userState) {
+        if (!userState.isRegistered()) {
+            throw new IllegalStateException("Unregistered user can not buy Razarion: " + userState);
+        }
+        userState.addRazarion(razarionBought);
+        historyService.addRazarionBought(userState, razarionBought);
+    }
+
+    @Override
     public void createAndAddBackup(DbUserState dbUserState, UserState userState) {
         DbLevel dbLevel = getDbLevel(userState);
         Collection<DbLevelTask> tasksDone = new ArrayList<>();
