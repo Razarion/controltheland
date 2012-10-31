@@ -60,6 +60,7 @@ public class UserStateEditor extends MgmtWebPage {
     private StatisticsService statisticsService;
     private Integer dbLevelId;
     private Integer xp;
+    private Integer razarionBought;
 
     public UserStateEditor(UserState userState) {
         final int userStateHash = userState.hashCode();
@@ -89,11 +90,42 @@ public class UserStateEditor extends MgmtWebPage {
         add(form);
 
         form.add(new Label("sessionId"));
+        form.add(new Label("userName"));
+        setupRazarionBought(form);
         setupLevel(form);
         setupInventoryItem(form);
         setupInventoryArtifact(form);
         setupRazarion(form);
         setupHighScore(form);
+    }
+
+    private void setupRazarionBought(final Form<UserState> form) {
+        form.add(new TextField<>("razarionBought", new IModel<Integer>() {
+            @Override
+            public Integer getObject() {
+                return razarionBought;
+            }
+
+            @Override
+            public void setObject(Integer integer) {
+                razarionBought = integer;
+            }
+
+            @Override
+            public void detach() {
+                razarionBought = null;
+            }
+        }, Integer.class));
+        form.add(new Button("activateRazarionBought") {
+
+            @Override
+            public void onSubmit() {
+                if (razarionBought != null) {
+                    userGuidanceService.razarionBought(razarionBought, form.getModelObject());
+                    razarionBought = null;
+                }
+            }
+        });
     }
 
     private void setupLevel(final Form<UserState> form) {

@@ -330,7 +330,7 @@ public class HistoryServiceImpl implements HistoryService {
                     null,
                     DbHistoryElement.Source.BOT,
                     position, null, null, null, null, null));
-        }  else {
+        } else {
             HibernateUtil.openSession4InternalCall(sessionFactory);
             try {
                 save(new DbHistoryElement(DbHistoryElement.Type.BOX_DROPPED,
@@ -382,6 +382,24 @@ public class HistoryServiceImpl implements HistoryService {
                 DbHistoryElement.Source.HUMAN,
                 null,
                 razarion,
+                userState.getRazarion(), null, null, null));
+    }
+
+    @Override
+    public void addRazarionBought(UserState userState, int razarionBought) {
+        save(new DbHistoryElement(DbHistoryElement.Type.RAZARION_BOUGHT,
+                userService.getUser(userState),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                razarionBought,
                 userState.getRazarion(), null, null, null));
     }
 
@@ -534,7 +552,7 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     private String getSessionId(SimpleBase simpleBase) {
-        if(simpleBase == null) {
+        if (simpleBase == null) {
             return null;
         }
         UserState userState = planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getUserState(simpleBase);
@@ -761,6 +779,9 @@ public class HistoryServiceImpl implements HistoryService {
                 break;
             case BOT_ENRAGE_UP:
                 displayHistoryElement.setMessage("You have angered " + dbHistoryElement.getBotName() + ": " + dbHistoryElement.getBotInfo());
+                break;
+            case RAZARION_BOUGHT:
+                displayHistoryElement.setMessage("Bought Razarion " + dbHistoryElement.getDeltaRazarion() + " via PayPal");
                 break;
             default:
                 displayHistoryElement.setMessage("Internal error 10");

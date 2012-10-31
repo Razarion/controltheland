@@ -30,6 +30,16 @@
             <td bgcolor="#dadada">Session Id</td>
             <td wicket:id="sessionId" colspan="2"/>
         </tr>
+        <tr>
+            <td bgcolor="#dadada">User Name</td>
+            <td wicket:id="userName" colspan="2"/>
+        </tr>
+        <td bgcolor="#aaaaaa" colspan="3" valign="top">Razarion bought via PayPal (adds history entry)</td>
+        <tr>
+            <td bgcolor="#dadada">Razarion bought</td>
+            <td><input type="text" wicket:id="razarionBought" size="4"/></td>
+            <td><input type="submit" wicket:id="activateRazarionBought" value="Activate"></td>
+        </tr>
         <td bgcolor="#aaaaaa" colspan="3" valign="top">Level</td>
         <tr>
             <td bgcolor="#dadada">Level</td>
@@ -110,7 +120,7 @@
             <td><input type="submit" wicket:id="addArtifactIdBtn" value="Add"></td>
         </tr>
         <tr>
-            <td bgcolor="#dadada">Razarion</td>
+            <td bgcolor="#dadada">Razarion<br>should not be used if Razarion<br>was bought via PayPal</td>
             <td><input type="text" wicket:id="razarion" size="4"/></td>
             <td><input type="submit" wicket:id="activateRazarion" value="Activate"></td>
         </tr>
