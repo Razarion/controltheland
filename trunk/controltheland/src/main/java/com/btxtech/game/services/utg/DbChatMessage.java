@@ -15,6 +15,7 @@ package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.common.packets.ChatMessage;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -34,6 +35,7 @@ public class DbChatMessage implements Serializable {
     private Date timeStamp;
     private String sessionId;
     private String name;
+    @Column(length = 1000)
     private String message;
 
     /**
