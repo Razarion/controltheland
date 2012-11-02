@@ -2057,4 +2057,23 @@ abstract public class AbstractServiceTest {
         System.out.println("------------------------------------------------------------------------------------------");
     }
 
+    public void assertQueryDb(String sql, String expected) {
+        final StringBuilder data = new StringBuilder();
+        jdbcTemplate.query(sql, new RowMapper<Void>() {
+            @Override
+            public Void mapRow(ResultSet resultSet, int i) throws SQLException {
+                ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+                int columnCount = resultSetMetaData.getColumnCount();
+                for (int column = 0; column < columnCount; column++) {
+                    data.append(resultSet.getString(column + 1));
+                    if (column + 1 < columnCount) {
+                        data.append(",");
+                    }
+                }
+                return null;
+            }
+        });
+        Assert.assertEquals(expected, data.toString());
+    }
+
 }

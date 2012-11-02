@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.client.common.info.CommonClipInfo;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.google.gwt.user.client.Random;
 
@@ -33,6 +34,14 @@ public class ClientClipHandler {
     private ClientClipHandler() {
     }
 
+    public ClipInfo getClipInfo(int clipId) throws NoSuchClipException {
+        ClipInfo clipInfo = clipCache.get(clipId);
+        if (clipInfo == null) {
+            throw new NoSuchClipException(clipId);
+        }
+        return clipInfo;
+    }
+
     public ClipInfo getClipInfo(CommonClipInfo.Type explosion) throws NoSuchClipException {
         List<Integer> clipIds = commonClips.get(explosion);
         if (clipIds == null || clipIds.isEmpty()) {
@@ -47,14 +56,6 @@ public class ClientClipHandler {
         return getClipInfo(clipId);
     }
 
-    public ClipInfo getClipInfo(int clipId) throws NoSuchClipException {
-        ClipInfo clipInfo = clipCache.get(clipId);
-        if (clipInfo == null) {
-            throw new NoSuchClipException(clipId);
-        }
-        return clipInfo;
-    }
-
     public ClipInfo getMuzzleFireClipInfo(BaseItemType baseItemType) throws NoSuchClipException {
         WeaponType weaponType = baseItemType.getWeaponType();
         if (weaponType == null) {
@@ -64,12 +65,7 @@ public class ClientClipHandler {
         if (muzzleFlashClipId == null) {
             throw new NoSuchClipException("BaseItemType " + baseItemType.getName() + " does not have a muzzle flash clip configured");
         }
-
-        ClipInfo clipInfo = clipCache.get(muzzleFlashClipId);
-        if (clipInfo == null) {
-            throw new NoSuchClipException(muzzleFlashClipId);
-        }
-        return clipInfo;
+        return getClipInfo(muzzleFlashClipId);
     }
 
     public ClipInfo getProjectileClipInfo(BaseItemType baseItemType) throws NoSuchClipException {
@@ -82,11 +78,7 @@ public class ClientClipHandler {
             throw new NoSuchClipException("BaseItemType " + baseItemType.getName() + " does not have a projectile clip configured");
         }
 
-        ClipInfo clipInfo = clipCache.get(projectileClipId);
-        if (clipInfo == null) {
-            throw new NoSuchClipException(projectileClipId);
-        }
-        return clipInfo;
+        return getClipInfo(projectileClipId);
     }
 
     public ClipInfo getProjectileDetonationClipInfo(BaseItemType baseItemType) throws NoSuchClipException {
@@ -99,11 +91,11 @@ public class ClientClipHandler {
             throw new NoSuchClipException("BaseItemType " + baseItemType.getName() + " does not have a projectile detonation clip configured");
         }
 
-        ClipInfo clipInfo = clipCache.get(projectileDetonationClipId);
-        if (clipInfo == null) {
-            throw new NoSuchClipException(projectileDetonationClipId);
-        }
-        return clipInfo;
+        return getClipInfo(projectileDetonationClipId);
+    }
+
+    public ClipInfo getItemClipPositionClipInfo(ItemClipPosition itemClipPosition) throws NoSuchClipException {
+        return getClipInfo(itemClipPosition.getClipId());
     }
 
     public ImageSpriteMapInfo getImageSpriteMapInfo(int imageSpriteMapInfoId) throws NoSuchImageSpriteMapInfoException {

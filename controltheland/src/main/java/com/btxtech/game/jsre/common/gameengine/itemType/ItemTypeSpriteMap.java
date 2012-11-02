@@ -5,6 +5,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * User: beat
@@ -30,6 +32,7 @@ public class ItemTypeSpriteMap implements Serializable {
     private int demolitionSteps;
     private int demolitionAnimationFrames;
     private int demolitionAnimationDuration;
+    private Map<Integer, Collection<ItemClipPosition>> demolitionStepClips;
     private BoundingBox boundingBox;
     private Index cosmeticImageOffset;
     private int spriteWidth;
@@ -51,7 +54,7 @@ public class ItemTypeSpriteMap implements Serializable {
                              int runtimeAnimationDuration,
                              int demolitionSteps,
                              int demolitionAnimationFrames,
-                             int demolitionAnimationDuration) {
+                             int demolitionAnimationDuration, Map<Integer, Collection<ItemClipPosition>> demolitionStepClips) {
         this.boundingBox = boundingBox;
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
@@ -63,6 +66,7 @@ public class ItemTypeSpriteMap implements Serializable {
         this.demolitionSteps = demolitionSteps;
         this.demolitionAnimationFrames = demolitionAnimationFrames;
         this.demolitionAnimationDuration = demolitionAnimationDuration;
+        this.demolitionStepClips = demolitionStepClips;
         runtimeXOffset = imageWidth * buildupSteps * buildupAnimationFrames;
         demolitionXOffset = runtimeXOffset + imageWidth * boundingBox.getAngelCount() * runtimeAnimationFrames;
         cosmeticImageOffset = getRuntimeImageOffset(boundingBox.getCosmeticAngelIndex(), 0);
@@ -215,23 +219,6 @@ public class ItemTypeSpriteMap implements Serializable {
         return new Index(imageWidth / 2, imageHeight / 2);
     }
 
-    /*   public Index getMiddleFromImage(Index offset) {
-    return getMiddleFromImage().add(offset);
-}    */
-
-/*    public Index getTopLeftFromImage(Index offset) {
-        return offset.sub(getMiddleFromImage());
-    }  */
-
-
-/*    public static int getCosmeticImageIndex(int angelCount) {
-        if (angelCount > 1) {
-            return angelCount / 8;
-        } else {
-            return 0;
-        }
-    } */
-
     /**
      * The cosmetic image index starts with 0.
      *
@@ -310,5 +297,17 @@ public class ItemTypeSpriteMap implements Serializable {
 
     public int getSpriteHeight() {
         return spriteHeight;
+    }
+
+    public Collection<ItemClipPosition> getDemolitionClipIds(SyncBaseItem syncBaseItem) {
+        if (demolitionStepClips == null) {
+            return null;
+        }
+        int demolitionStep = getDemolitionStep(syncBaseItem);
+        return demolitionStepClips.get(demolitionStep);
+    }
+
+    public Map<Integer, Collection<ItemClipPosition>> getDemolitionStepClips() {
+        return demolitionStepClips;
     }
 }
