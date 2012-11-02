@@ -1,6 +1,7 @@
 package com.btxtech.game.services.item;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
@@ -17,6 +18,7 @@ import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * User: beat
@@ -58,6 +60,12 @@ public interface ServerItemTypeService extends ItemTypeService {
 
     CrudRootServiceHelper<DbItemType> getDbItemTypeCrud();
 
-    void saveItemTypeProperties(int itemTypeId, BoundingBox boundingBox, ItemTypeSpriteMap itemTypeSpriteMap, WeaponType weaponType, Collection<ItemTypeImageInfo> buildupImages, Collection<ItemTypeImageInfo> runtimeImages, Collection<ItemTypeImageInfo> demolitionImages) throws NoSuchItemTypeException;
-
+     void saveItemTypeProperties(int itemTypeId,
+                                 BoundingBox boundingBox,
+                                 ItemTypeSpriteMap itemTypeSpriteMap,
+                                 WeaponType weaponType,
+                                 Collection<ItemTypeImageInfo> buildupImages,
+                                 Collection<ItemTypeImageInfo> runtimeImages,
+                                 Collection<ItemTypeImageInfo> demolitionImages,
+                                 Map<Integer, Collection<ItemClipPosition>> demolitionStepClips) throws NoSuchItemTypeException;
 }

@@ -40,14 +40,14 @@ public class TestItemImageController extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         BoundingBox boundingBox = new BoundingBox(10, new double[]{0.0});
-        ItemTypeSpriteMap itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 64, 64, 0, 0, 0, 1, 0, 0, 0, 0);
+        ItemTypeSpriteMap itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 64, 64, 0, 0, 0, 1, 0, 0, 0, 0, null);
         serverItemTypeService.saveItemTypeProperties(dbBaseItemType.getId(),
                 boundingBox,
                 itemTypeSpriteMap,
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList());
+                Arrays.<ItemTypeImageInfo>asList(), null);
         serverItemTypeService.activate();
         int itemTypeId = dbBaseItemType.getId();
         endHttpRequestAndOpenSessionInViewFilter();

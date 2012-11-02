@@ -14,6 +14,7 @@
 package com.btxtech.game.services.item.impl;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
@@ -30,6 +31,7 @@ import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
+import com.btxtech.game.services.media.ClipService;
 import com.btxtech.game.services.user.SecurityRoles;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -54,6 +56,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -66,6 +69,8 @@ public class ServerItemTypeServiceImpl extends AbstractItemTypeService implement
     private CrudRootServiceHelper<DbItemType> dbItemTypeCrud;
     @Autowired
     private SessionFactory sessionFactory;
+    @Autowired
+    private ClipService clipService;
     private Log log = LogFactory.getLog(ServerItemTypeServiceImpl.class);
     private HashMap<Integer, ImageHolder> itemTypeSpriteMaps = new HashMap<>();
 
@@ -107,13 +112,14 @@ public class ServerItemTypeServiceImpl extends AbstractItemTypeService implement
     @Override
     @Transactional
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void saveItemTypeProperties(int itemTypeId, BoundingBox boundingBox, ItemTypeSpriteMap itemTypeSpriteMap, WeaponType weaponType, Collection<ItemTypeImageInfo> buildupImages, Collection<ItemTypeImageInfo> runtimeImages, Collection<ItemTypeImageInfo> demolitionImages) throws NoSuchItemTypeException {
+    public void saveItemTypeProperties(int itemTypeId, BoundingBox boundingBox, ItemTypeSpriteMap itemTypeSpriteMap, WeaponType weaponType, Collection<ItemTypeImageInfo> buildupImages, Collection<ItemTypeImageInfo> runtimeImages, Collection<ItemTypeImageInfo> demolitionImages, Map<Integer, Collection<ItemClipPosition>> demolitionStepClips) throws NoSuchItemTypeException {
         DbItemType dbItemType = getDbItemType(itemTypeId);
         if (dbItemType == null) {
             throw new NoSuchItemTypeException(itemTypeId);
         }
         dbItemType.setBounding(boundingBox);
         dbItemType.setTypeSpriteMap(itemTypeSpriteMap);
+        dbItemType.saveDemolitionStepClips(demolitionStepClips, clipService);
         if (dbItemType instanceof DbBaseItemType && ((DbBaseItemType) dbItemType).getDbWeaponType() != null) {
             saveWeaponType(dbItemType, weaponType);
         }

@@ -14,6 +14,7 @@
 package com.btxtech.game.services.item.itemType;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
@@ -21,6 +22,7 @@ import com.btxtech.game.jsre.itemtypeeditor.ItemTypeImageInfo;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
+import com.btxtech.game.services.media.ClipService;
 import com.btxtech.game.services.media.DbSound;
 import com.btxtech.game.services.user.UserService;
 import org.apache.commons.lang.ArrayUtils;
@@ -42,13 +44,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -93,6 +96,9 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
     private DbSound buildupSound;
     @ManyToOne(fetch = FetchType.LAZY)
     private DbSound commandSound;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "itemType", orphanRemoval = true)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    private Collection<DbItemTypeDemolitionClips> itemTypeDemolitionClips;
 
     @Transient
     private CrudChildServiceHelper<DbItemTypeImage> itemTypeImageCrud;
@@ -294,7 +300,22 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
     public ItemTypeSpriteMap createItemTypeSpriteMap(BoundingBox boundingBox) {
         return new ItemTypeSpriteMap(boundingBox, imageWidth, imageHeight, buildupSteps,
                 buildupAnimationFrames, buildupAnimationDuration, runtimeAnimationFrames,
-                runtimeAnimationDuration, demolitionSteps, demolitionAnimationFrames, demolitionAnimationDuration);
+                runtimeAnimationDuration, demolitionSteps, demolitionAnimationFrames,
+                demolitionAnimationDuration, demolitionStepClips());
+    }
+
+    private Map<Integer, Collection<ItemClipPosition>> demolitionStepClips() {
+        if (itemTypeDemolitionClips == null || itemTypeDemolitionClips.isEmpty()) {
+            return null;
+        }
+        Map<Integer, Collection<ItemClipPosition>> demolitionStepClips = new HashMap<>();
+        for (DbItemTypeDemolitionClips dbItemTypeDemolitionClips : this.itemTypeDemolitionClips) {
+            Collection<ItemClipPosition> itemClipPositions = dbItemTypeDemolitionClips.createItemClips();
+            if (itemClipPositions != null) {
+                demolitionStepClips.put(dbItemTypeDemolitionClips.getDemolitionStep(), itemClipPositions);
+            }
+        }
+        return demolitionStepClips;
     }
 
     public void setBounding(BoundingBox boundingBox) {
@@ -313,6 +334,19 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
         demolitionSteps = itemTypeSpriteMap.getDemolitionSteps();
         demolitionAnimationFrames = itemTypeSpriteMap.getDemolitionAnimationFrames();
         demolitionAnimationDuration = itemTypeSpriteMap.getDemolitionAnimationDuration();
+    }
+
+    public void saveDemolitionStepClips(Map<Integer, Collection<ItemClipPosition>> demolitionStepClips, ClipService clipService) {
+        if(demolitionStepClips == null) {
+            return;
+        }
+        CrudChildServiceHelper<DbItemTypeDemolitionClips> crud = new CrudChildServiceHelper<>(itemTypeDemolitionClips, DbItemTypeDemolitionClips.class, this);
+        crud.deleteAllChildren();
+        for (Map.Entry<Integer, Collection<ItemClipPosition>> entry : demolitionStepClips.entrySet()) {
+            DbItemTypeDemolitionClips dbItemTypeDemolitionClips = crud.createDbChild();
+            dbItemTypeDemolitionClips.setDemolitionStep(entry.getKey());
+            dbItemTypeDemolitionClips.setClips(entry.getValue(), clipService);
+        }
     }
 
     public void saveImages(Collection<ItemTypeImageInfo> buildupImages, Collection<ItemTypeImageInfo> runtimeImages, Collection<ItemTypeImageInfo> demolitionImages) {
@@ -468,6 +502,7 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
         itemTypeImages = new HashSet<>();
         angels = new ArrayList<>();
         angels.add(0.0);
+        itemTypeDemolitionClips = new ArrayList<>();
     }
 
     public List<Double> getAngels() {

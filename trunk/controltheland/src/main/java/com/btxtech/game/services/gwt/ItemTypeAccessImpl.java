@@ -42,7 +42,7 @@ public class ItemTypeAccessImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public void saveItemTypeProperties(int itemTypeId, BoundingBox boundingBox, ItemTypeSpriteMap itemTypeSpriteMap, WeaponType weaponType, Collection<ItemTypeImageInfo> buildupImages, Collection<ItemTypeImageInfo> runtimeImages, Collection<ItemTypeImageInfo> demolitionImages) throws NoSuchItemTypeException {
         try {
-            serverItemTypeService.saveItemTypeProperties(itemTypeId, boundingBox, itemTypeSpriteMap, weaponType, buildupImages, runtimeImages, demolitionImages);
+            serverItemTypeService.saveItemTypeProperties(itemTypeId, boundingBox, itemTypeSpriteMap, weaponType, buildupImages, runtimeImages, demolitionImages, null);
         } catch (NoSuchItemTypeException | RuntimeException e) {
             log.error("", e);
             throw e;
