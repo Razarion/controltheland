@@ -310,4 +310,9 @@ public class ItemTypeSpriteMap implements Serializable {
     public Map<Integer, Collection<ItemClipPosition>> getDemolitionStepClips() {
         return demolitionStepClips;
     }
+
+	public void setDemolitionStepClips(
+			Map<Integer, Collection<ItemClipPosition>> demolitionStepClips) {
+		this.demolitionStepClips = demolitionStepClips;
+	}
 }

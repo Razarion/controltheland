@@ -259,6 +259,16 @@ public class GwtCommon {
         return (int) Math.floor(intObject);
     }
 
+    /**
+     * See checkInt
+     * @param integer to correct
+     * @return corrected integer
+     */
+    public static int correctInt(int integer) {
+        return (int) Math.floor(integer);
+    }
+
+    
     public static void dumpStackToServer(String message) {
         log.log(Level.SEVERE, "Dump Stack: " + message, new Exception("StackTrace"));
     }
