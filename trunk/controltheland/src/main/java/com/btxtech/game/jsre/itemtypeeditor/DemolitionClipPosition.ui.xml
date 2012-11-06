@@ -1,0 +1,52 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		
+	</ui:style>
+	<g:VerticalPanel>
+		<g:Grid>
+			<g:row>
+				<g:customCell>
+					<g:Label text="Clip Id"/>
+				</g:customCell>
+				<g:customCell>
+					<g:IntegerBox ui:field="clipIdBox" visibleLength="5"/>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell>
+					<g:Label text="X Position"/>
+				</g:customCell>
+				<g:customCell>
+					<g:HorizontalPanel>
+						<g:IntegerBox visibleLength="5" ui:field="xPositionBox"/>
+						<g:Cell verticalAlignment="ALIGN_MIDDLE">
+							<g:Button text="+" ui:field="xPosPlusButton"/>
+						</g:Cell>
+						<g:Cell verticalAlignment="ALIGN_MIDDLE">
+							<g:Button text="-" ui:field="xPosMinusButton"/>
+						</g:Cell>
+					</g:HorizontalPanel>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell>
+					<g:Label text="Y Position"/>
+				</g:customCell>
+				<g:customCell>
+					<g:HorizontalPanel>
+						<g:IntegerBox ui:field="yPositionBox" visibleLength="5"/>
+						<g:Cell verticalAlignment="ALIGN_MIDDLE">
+							<g:Button text="+" ui:field="yPosPlusButton"/>
+						</g:Cell>
+						<g:Cell verticalAlignment="ALIGN_MIDDLE">
+							<g:Button text="-" ui:field="yPosMinusButton"/>
+						</g:Cell>
+					</g:HorizontalPanel>
+				</g:customCell>
+			</g:row>
+		</g:Grid>
+		<g:SimplePanel ui:field="positionPanel"/>
+	</g:VerticalPanel>
+</ui:UiBinder> 

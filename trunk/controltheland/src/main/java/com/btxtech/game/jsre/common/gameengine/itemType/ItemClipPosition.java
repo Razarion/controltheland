@@ -15,9 +15,9 @@ public class ItemClipPosition implements Serializable {
     private Index[] positions;
 
     /**
-     * Used by GWT
+     * Do not delete. Used by GWT
      */
-    ItemClipPosition() {
+    public ItemClipPosition() {
     }
 
     public ItemClipPosition(int clipId, Index[] positions) {
@@ -29,11 +29,19 @@ public class ItemClipPosition implements Serializable {
         return clipId;
     }
 
+    public void setClipId(int clipId) {
+        this.clipId = clipId;
+    }
+
     public Index getOffset(SyncBaseItem syncBaseItem) {
         return positions[syncBaseItem.getSyncItemArea().getAngelIndex()];
     }
 
     public Index[] getPositions() {
         return positions;
+    }
+
+    public void setPositions(Index[] positions) {
+        this.positions = positions;
     }
 }

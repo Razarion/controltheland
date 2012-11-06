@@ -11,6 +11,9 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.CaptionPanel;
 
 public class DemolitionPanel extends Composite implements ItemTypeEditorModel.UpdateListener {
 
@@ -22,11 +25,21 @@ public class DemolitionPanel extends Composite implements ItemTypeEditorModel.Up
     @UiField
     Button demolitionStepButton;
     @UiField
-    IntegerBox animationFrameField;
+    CaptionPanel demolitionClipPanel;
     @UiField
-    Button animationFrameButton;
+    Label currentStepLabel;
     @UiField
-    IntegerBox animationDurationField;
+    CaptionPanel itemImagePanel;
+    @UiField
+    Button previousStepButton;
+    @UiField
+    Button nextStepButton;
+    @UiField
+    Button rotationLeftButton;
+    @UiField
+    Label currentAngelIndexFiled;
+    @UiField
+    Button rotationRightButton;
 
     interface DemolitionPanelUiBinder extends UiBinder<Widget, DemolitionPanel> {
     }
@@ -34,6 +47,8 @@ public class DemolitionPanel extends Composite implements ItemTypeEditorModel.Up
     public DemolitionPanel() {
         initWidget(uiBinder.createAndBindUi(this));
         ItemTypeEditorModel.getInstance().addUpdateListener(this);
+        demolitionClipPanel.setContentWidget(new DemolitionClipPanel());
+        itemImagePanel.setContentWidget(new DemolitionItemImagePanel());
     }
 
     @UiHandler("demolitionStepButton")
@@ -42,26 +57,41 @@ public class DemolitionPanel extends Composite implements ItemTypeEditorModel.Up
         ItemTypeEditorModel.getInstance().cutDemolitionToCorrectLength();
     }
 
-    @UiHandler("animationFrameButton")
-    void onAnimationFrameButtonClick(ClickEvent event) {
-        ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().setDemolitionAnimationFrames(animationFrameField.getValue());
-        ItemTypeEditorModel.getInstance().cutDemolitionToCorrectLength();
-    }
-
-    @UiHandler("animationDurationField")
-    void onAnimationDurationFieldChange(ChangeEvent event) {
-        ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().setDemolitionAnimationDuration(animationDurationField.getValue());
-        ItemTypeEditorModel.getInstance().fireUpdate();
-    }
-
     @Override
     public void onModelUpdate() {
-        demolitionStepField.setValue(ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getDemolitionSteps());
-        animationFrameField.setValue(ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getDemolitionAnimationFrames());
-        animationDurationField.setValue(ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getDemolitionAnimationDuration());
-        stepTable.removeAllRows();
-        for (int step = 0; step < ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getDemolitionSteps(); step++) {
-            stepTable.setWidget(step, 0, new DemolitionStepImageTable(step));
+        int demolitionSteps = ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getDemolitionSteps();
+        demolitionStepField.setValue(demolitionSteps);
+        currentAngelIndexFiled.setText((ItemTypeEditorModel.getInstance().getCurrentAngelIndex() + 1) + "/"
+                + (ItemTypeEditorModel.getInstance().getBoundingBox().getAngelCount()));
+        if (demolitionSteps == 0) {
+            currentStepLabel.setText("-");
+            nextStepButton.setEnabled(false);
+            previousStepButton.setEnabled(false);
+        } else {
+            currentStepLabel.setText((ItemTypeEditorModel.getInstance().getCurrentDemolitionStep() + 1) + "/" + (demolitionSteps));
+            nextStepButton.setEnabled(true);
+            previousStepButton.setEnabled(true);
         }
+
+    }
+
+    @UiHandler("previousStepButton")
+    void onPreviousStepButtonClick(ClickEvent event) {
+        ItemTypeEditorModel.getInstance().previousDemolitionStep();
+    }
+
+    @UiHandler("nextStepButton")
+    void onNextStepButtonClick(ClickEvent event) {
+        ItemTypeEditorModel.getInstance().nextDemolitionStep();
+    }
+
+    @UiHandler("rotationLeftButton")
+    void onRotationLeftButtonClick(ClickEvent event) {
+        ItemTypeEditorModel.getInstance().increaseCurrentAngelIndex();
+    }
+
+    @UiHandler("rotationRightButton")
+    void onRotationRightButtonClick(ClickEvent event) {
+        ItemTypeEditorModel.getInstance().decreaseCurrentAngelIndex();
     }
 }
