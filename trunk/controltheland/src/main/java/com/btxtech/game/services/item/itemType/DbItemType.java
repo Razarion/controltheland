@@ -14,13 +14,14 @@
 package com.btxtech.game.services.item.itemType;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
+import com.btxtech.game.jsre.common.gameengine.itemType.DemolitionStepSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.itemtypeeditor.ItemTypeImageInfo;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.media.ClipService;
 import com.btxtech.game.services.media.DbSound;
@@ -47,11 +48,10 @@ import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -82,9 +82,6 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
     private int buildupAnimationDuration;
     private int runtimeAnimationFrames;
     private int runtimeAnimationDuration;
-    private int demolitionSteps;
-    private int demolitionAnimationFrames;
-    private int demolitionAnimationDuration;
     @ElementCollection
     @CollectionTable(name = "ITEM_TYPE_ANGELS",
             joinColumns = @JoinColumn(name = "itemTypeId"))
@@ -98,7 +95,7 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
     private DbSound commandSound;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "itemType", orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-    private Collection<DbItemTypeDemolitionClips> itemTypeDemolitionClips;
+    private List<DbItemTypeDemolitionStep> itemTypeDemolitionSteps;
 
     @Transient
     private CrudChildServiceHelper<DbItemTypeImage> itemTypeImageCrud;
@@ -220,36 +217,6 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
     }
 
     @Override
-    public int getDemolitionSteps() {
-        return demolitionSteps;
-    }
-
-    @Override
-    public void setDemolitionSteps(int demolitionSteps) {
-        this.demolitionSteps = demolitionSteps;
-    }
-
-    @Override
-    public int getDemolitionAnimationFrames() {
-        return demolitionAnimationFrames;
-    }
-
-    @Override
-    public void setDemolitionAnimationFrames(int demolitionAnimationFrames) {
-        this.demolitionAnimationFrames = demolitionAnimationFrames;
-    }
-
-    @Override
-    public int getDemolitionAnimationDuration() {
-        return demolitionAnimationDuration;
-    }
-
-    @Override
-    public void setDemolitionAnimationDuration(int demolitionAnimationDuration) {
-        this.demolitionAnimationDuration = demolitionAnimationDuration;
-    }
-
-    @Override
     public int getBoundingBoxRadius() {
         return boundingBoxRadius;
     }
@@ -300,22 +267,7 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
     public ItemTypeSpriteMap createItemTypeSpriteMap(BoundingBox boundingBox) {
         return new ItemTypeSpriteMap(boundingBox, imageWidth, imageHeight, buildupSteps,
                 buildupAnimationFrames, buildupAnimationDuration, runtimeAnimationFrames,
-                runtimeAnimationDuration, demolitionSteps, demolitionAnimationFrames,
-                demolitionAnimationDuration, demolitionStepClips());
-    }
-
-    private Map<Integer, Collection<ItemClipPosition>> demolitionStepClips() {
-        if (itemTypeDemolitionClips == null || itemTypeDemolitionClips.isEmpty()) {
-            return null;
-        }
-        Map<Integer, Collection<ItemClipPosition>> demolitionStepClips = new HashMap<>();
-        for (DbItemTypeDemolitionClips dbItemTypeDemolitionClips : this.itemTypeDemolitionClips) {
-            Collection<ItemClipPosition> itemClipPositions = dbItemTypeDemolitionClips.createItemClips();
-            if (itemClipPositions != null) {
-                demolitionStepClips.put(dbItemTypeDemolitionClips.getDemolitionStep(), itemClipPositions);
-            }
-        }
-        return demolitionStepClips;
+                runtimeAnimationDuration, createDemolitionSteps());
     }
 
     public void setBounding(BoundingBox boundingBox) {
@@ -323,7 +275,7 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
         angels = Arrays.asList(ArrayUtils.toObject(boundingBox.getAngels()));
     }
 
-    public void setTypeSpriteMap(ItemTypeSpriteMap itemTypeSpriteMap) {
+    public void setTypeSpriteMap(ItemTypeSpriteMap itemTypeSpriteMap, ClipService clipService) {
         imageWidth = itemTypeSpriteMap.getImageWidth();
         imageHeight = itemTypeSpriteMap.getImageHeight();
         buildupSteps = itemTypeSpriteMap.getBuildupSteps();
@@ -331,21 +283,43 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
         buildupAnimationDuration = itemTypeSpriteMap.getBuildupAnimationDuration();
         runtimeAnimationFrames = itemTypeSpriteMap.getRuntimeAnimationFrames();
         runtimeAnimationDuration = itemTypeSpriteMap.getRuntimeAnimationDuration();
-        demolitionSteps = itemTypeSpriteMap.getDemolitionSteps();
-        demolitionAnimationFrames = itemTypeSpriteMap.getDemolitionAnimationFrames();
-        demolitionAnimationDuration = itemTypeSpriteMap.getDemolitionAnimationDuration();
+        saveDemolitionSteps(itemTypeSpriteMap.getDemolitionSteps(), clipService);
     }
 
-    public void saveDemolitionStepClips(Map<Integer, Collection<ItemClipPosition>> demolitionStepClips, ClipService clipService) {
-        if(demolitionStepClips == null) {
+    private DemolitionStepSpriteMap[] createDemolitionSteps() {
+        CrudListChildServiceHelper<DbItemTypeDemolitionStep> crud = getDemolitionCrud();
+        if (crud == null) {
+            return null;
+        }
+        List<DemolitionStepSpriteMap> demolitionStepList = new ArrayList<>();
+        for (DbItemTypeDemolitionStep dbItemTypeDemolitionStep : crud.readDbChildren()) {
+            demolitionStepList.add(dbItemTypeDemolitionStep.createDemolitionStepSpriteMap());
+        }
+        return demolitionStepList.toArray(new DemolitionStepSpriteMap[demolitionStepList.size()]);
+    }
+
+    private CrudListChildServiceHelper<DbItemTypeDemolitionStep> getDemolitionCrud() {
+        if (itemTypeDemolitionSteps == null || itemTypeDemolitionSteps.isEmpty()) {
+            return null;
+        }
+        return new CrudListChildServiceHelper<>(itemTypeDemolitionSteps, DbItemTypeDemolitionStep.class, this, null, new Comparator<DbItemTypeDemolitionStep>() {
+            @Override
+            public int compare(DbItemTypeDemolitionStep o1, DbItemTypeDemolitionStep o2) {
+                return Integer.compare(o1.getStep(), o2.getStep());
+            }
+        });
+    }
+
+    private void saveDemolitionSteps(DemolitionStepSpriteMap[] demolitionStepSpriteMap, ClipService clipService) {
+        CrudListChildServiceHelper<DbItemTypeDemolitionStep> crud = new CrudListChildServiceHelper<>(itemTypeDemolitionSteps, DbItemTypeDemolitionStep.class, this);
+        crud.deleteAllChildren();
+        if (demolitionStepSpriteMap == null) {
             return;
         }
-        CrudChildServiceHelper<DbItemTypeDemolitionClips> crud = new CrudChildServiceHelper<>(itemTypeDemolitionClips, DbItemTypeDemolitionClips.class, this);
-        crud.deleteAllChildren();
-        for (Map.Entry<Integer, Collection<ItemClipPosition>> entry : demolitionStepClips.entrySet()) {
-            DbItemTypeDemolitionClips dbItemTypeDemolitionClips = crud.createDbChild();
-            dbItemTypeDemolitionClips.setDemolitionStep(entry.getKey());
-            dbItemTypeDemolitionClips.setClips(entry.getValue(), clipService);
+        for (int i = 0; i < demolitionStepSpriteMap.length; i++) {
+            DemolitionStepSpriteMap demolitionStep = demolitionStepSpriteMap[i];
+            DbItemTypeDemolitionStep dbItemTypeDemolitionStep = crud.createDbChild();
+            dbItemTypeDemolitionStep.setDemolitionStepSpriteMap(demolitionStep, i, clipService);
         }
     }
 
@@ -354,37 +328,6 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
         addImages(runtimeImages, ItemTypeSpriteMap.SyncObjectState.RUN_TIME);
         addImages(demolitionImages, ItemTypeSpriteMap.SyncObjectState.DEMOLITION);
         correctImageEntries();
-        verifyImageEntries();
-    }
-
-    private void verifyImageEntries() {
-        int buildupImages = 0;
-        int runtimeImages = 0;
-        int demolitionImages = 0;
-        for (DbItemTypeImage itemTypeImage : itemTypeImages) {
-            switch (itemTypeImage.getType()) {
-                case BUILD_UP:
-                    buildupImages++;
-                    break;
-                case RUN_TIME:
-                    runtimeImages++;
-                    break;
-                case DEMOLITION:
-                    demolitionImages++;
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unknown SyncObjectState: " + itemTypeImage.getType() + " itemType: " + this);
-            }
-        }
-        if (buildupImages != buildupSteps * buildupAnimationFrames) {
-            throw new IllegalStateException("Buildup image count is wrong. Configured: " + (buildupSteps * buildupAnimationFrames) + " Actual: " + buildupImages + " itemType: " + this);
-        }
-        if (runtimeImages != angels.size() * runtimeAnimationFrames) {
-            throw new IllegalStateException("Runtime image count is wrong. Configured: " + (angels.size() * runtimeAnimationFrames) + " Actual: " + runtimeImages + " itemType: " + this);
-        }
-        if (demolitionImages != angels.size() * demolitionSteps * demolitionAnimationFrames) {
-            throw new IllegalStateException("Demolition image count is wrong. Configured: " + (angels.size() * demolitionSteps * demolitionAnimationFrames) + " Actual: " + demolitionImages + " itemType: " + this);
-        }
     }
 
     private void addImages(Collection<ItemTypeImageInfo> itemTypeImageInfos, ItemTypeSpriteMap.SyncObjectState syncObjectState) {
@@ -392,7 +335,6 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
             removeImage(itemTypeImageInfo, syncObjectState);
             DbItemTypeImage dbItemTypeImage = getItemTypeImageCrud().createDbChild();
             dbItemTypeImage.setItemTypeImageInfo(itemTypeImageInfo, syncObjectState);
-            itemTypeImages.add(dbItemTypeImage);
         }
     }
 
@@ -424,6 +366,12 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
     }
 
     private void correctImageEntries() {
+        List<DbItemTypeDemolitionStep> demolitionAnimationFrames = null;
+        CrudListChildServiceHelper<DbItemTypeDemolitionStep> crud = getDemolitionCrud();
+        if (crud != null) {
+            demolitionAnimationFrames = crud.readDbChildren();
+        }
+
         for (Iterator<DbItemTypeImage> iterator = itemTypeImages.iterator(); iterator.hasNext(); ) {
             DbItemTypeImage itemTypeImage = iterator.next();
             switch (itemTypeImage.getType()) {
@@ -452,11 +400,11 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
                         iterator.remove();
                         continue;
                     }
-                    if (itemTypeImage.getStep() >= demolitionSteps) {
+                    if (demolitionAnimationFrames == null || itemTypeImage.getStep() >= demolitionAnimationFrames.size()) {
                         iterator.remove();
                         continue;
                     }
-                    if (itemTypeImage.getFrame() >= demolitionAnimationFrames) {
+                    if (itemTypeImage.getFrame() >= demolitionAnimationFrames.get(itemTypeImage.getStep()).getAnimationFrames()) {
                         iterator.remove();
                         continue;
                     }
@@ -502,7 +450,7 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
         itemTypeImages = new HashSet<>();
         angels = new ArrayList<>();
         angels.add(0.0);
-        itemTypeDemolitionClips = new ArrayList<>();
+        itemTypeDemolitionSteps = new ArrayList<>();
     }
 
     public List<Double> getAngels() {

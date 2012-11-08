@@ -6,7 +6,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * User: beat
@@ -29,10 +28,8 @@ public class ItemTypeSpriteMap implements Serializable {
     private int runtimeAnimationFrames;
     private int runtimeAnimationDuration;
     private int demolitionXOffset;
-    private int demolitionSteps;
-    private int demolitionAnimationFrames;
-    private int demolitionAnimationDuration;
-    private Map<Integer, Collection<ItemClipPosition>> demolitionStepClips;
+    private DemolitionStepSpriteMap[] demolitionSteps;
+    private int demolitionFramesPerAngel;
     private BoundingBox boundingBox;
     private Index cosmeticImageOffset;
     private int spriteWidth;
@@ -52,9 +49,7 @@ public class ItemTypeSpriteMap implements Serializable {
                              int buildupAnimationDuration,
                              int runtimeAnimationFrames,
                              int runtimeAnimationDuration,
-                             int demolitionSteps,
-                             int demolitionAnimationFrames,
-                             int demolitionAnimationDuration, Map<Integer, Collection<ItemClipPosition>> demolitionStepClips) {
+                             DemolitionStepSpriteMap[] demolitionSteps) {
         this.boundingBox = boundingBox;
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
@@ -64,13 +59,11 @@ public class ItemTypeSpriteMap implements Serializable {
         this.runtimeAnimationFrames = runtimeAnimationFrames;
         this.runtimeAnimationDuration = runtimeAnimationDuration;
         this.demolitionSteps = demolitionSteps;
-        this.demolitionAnimationFrames = demolitionAnimationFrames;
-        this.demolitionAnimationDuration = demolitionAnimationDuration;
-        this.demolitionStepClips = demolitionStepClips;
         runtimeXOffset = imageWidth * buildupSteps * buildupAnimationFrames;
         demolitionXOffset = runtimeXOffset + imageWidth * boundingBox.getAngelCount() * runtimeAnimationFrames;
         cosmeticImageOffset = getRuntimeImageOffset(boundingBox.getCosmeticAngelIndex(), 0);
-        spriteWidth = imageWidth * (buildupSteps * buildupAnimationFrames + boundingBox.getAngelCount() * runtimeAnimationFrames + boundingBox.getAngelCount() * demolitionSteps * demolitionAnimationFrames);
+        setupDemolitionFramesPerAngel();
+        spriteWidth = imageWidth * (buildupSteps * buildupAnimationFrames + boundingBox.getAngelCount() * runtimeAnimationFrames + boundingBox.getAngelCount() * demolitionFramesPerAngel);
         spriteHeight = imageHeight;
     }
 
@@ -86,7 +79,7 @@ public class ItemTypeSpriteMap implements Serializable {
             } else if (syncBaseItem.isHealthy()) {
                 return SyncObjectState.RUN_TIME;
             } else {
-                if (demolitionSteps > 0) {
+                if (demolitionSteps != null && demolitionSteps.length > 0) {
                     return SyncObjectState.DEMOLITION;
                 } else {
                     return SyncObjectState.RUN_TIME;
@@ -161,28 +154,57 @@ public class ItemTypeSpriteMap implements Serializable {
     }
 
     public Index getDemolitionImageOffsetFromFrame(int angelIndex, int step, int animationFrame) {
-        return new Index(demolitionXOffset + imageWidth * (demolitionAnimationFrames * (angelIndex * demolitionSteps + step) + animationFrame), 0);
+        int totalDemolitionAnimationFrames = demolitionFramesPerAngel * angelIndex;
+        for (int i = 0; i < step; i++) {
+            totalDemolitionAnimationFrames += demolitionSteps[i].getAnimationFrames();
+        }
+        return new Index(demolitionXOffset + (totalDemolitionAnimationFrames + animationFrame) * imageWidth, 0);
+    }
+
+    private void setupDemolitionFramesPerAngel() {
+        demolitionFramesPerAngel = 0;
+        int demolitionStepCount = getDemolitionStepCount();
+        for (int i = 0; i < demolitionStepCount; i++) {
+            DemolitionStepSpriteMap demolitionStepSpriteMaps = demolitionSteps[i];
+            demolitionFramesPerAngel += demolitionStepSpriteMaps.getAnimationFrames();
+        }
     }
 
     public Index getDemolitionImageOffset(SyncBaseItem syncBaseItem, long timeStamp) {
-        int step = getDemolitionStep(syncBaseItem);
+        int step = getDemolitionStep4ItemImage(syncBaseItem);
+        if (step < 0) {
+            return getRuntimeImageOffset(syncBaseItem, timeStamp);
+        }
         int angelIndex = boundingBox.angelToAngelIndex(syncBaseItem.getSyncItemArea().getAngel());
-        int animationFrame = getDemolitionAnimationFrame(timeStamp);
+        int animationFrame = getDemolitionAnimationFrame(step, timeStamp);
         return getDemolitionImageOffsetFromFrame(angelIndex, step, animationFrame);
     }
 
-    public int getDemolitionAnimationFrame(long timeStamp) {
+    public int getDemolitionAnimationFrame(int step, long timeStamp) {
         int animationFrame = 0;
-        if (demolitionAnimationDuration > 0) {
-            long iteration = timeStamp / demolitionAnimationDuration;
-            animationFrame = (int) (iteration % demolitionAnimationFrames);
+        DemolitionStepSpriteMap demolitionStepSpriteMap = getDemolitionStepSpriteMap(step);
+        if (demolitionStepSpriteMap.getAnimationDuration() > 0) {
+            long iteration = timeStamp / demolitionStepSpriteMap.getAnimationDuration();
+            animationFrame = (int) (iteration % demolitionStepSpriteMap.getAnimationFrames());
         }
         return animationFrame;
     }
 
-    public int getDemolitionStep(SyncItem syncItem) {
+    public int getDemolitionStep4ItemImage(SyncItem syncItem) {
         if (syncItem instanceof SyncBaseItem) {
-            return (int) (demolitionSteps * (1.0 - ((SyncBaseItem) syncItem).getNormalizedHealth()));
+            int step = (int) (getDemolitionStepCount() * (1.0 - ((SyncBaseItem) syncItem).getNormalizedHealth()));
+            while (step >= 0 && demolitionSteps[step].getAnimationFrames() == 0) {
+                step--;
+            }
+            return step;
+        } else {
+            return 0;
+        }
+    }
+
+    public int getDemolitionStep4Clip(SyncItem syncItem) {
+        if (syncItem instanceof SyncBaseItem) {
+            return (int) (getDemolitionStepCount() * (1.0 - ((SyncBaseItem) syncItem).getNormalizedHealth()));
         } else {
             return 0;
         }
@@ -247,30 +269,6 @@ public class ItemTypeSpriteMap implements Serializable {
         return runtimeAnimationFrames;
     }
 
-    public int getDemolitionAnimationFrames() {
-        return demolitionAnimationFrames;
-    }
-
-    public void setDemolitionAnimationFrames(int demolitionAnimationFrames) {
-        this.demolitionAnimationFrames = demolitionAnimationFrames;
-    }
-
-    public int getDemolitionSteps() {
-        return demolitionSteps;
-    }
-
-    public void setDemolitionSteps(int demolitionSteps) {
-        this.demolitionSteps = demolitionSteps;
-    }
-
-    public int getDemolitionAnimationDuration() {
-        return demolitionAnimationDuration;
-    }
-
-    public void setDemolitionAnimationDuration(int demolitionAnimationDuration) {
-        this.demolitionAnimationDuration = demolitionAnimationDuration;
-    }
-
     public int getRuntimeAnimationDuration() {
         return runtimeAnimationDuration;
     }
@@ -299,20 +297,38 @@ public class ItemTypeSpriteMap implements Serializable {
         return spriteHeight;
     }
 
+    public int getDemolitionStepCount() {
+        if (demolitionSteps != null) {
+            return demolitionSteps.length;
+        } else {
+            return 0;
+        }
+    }
+
+    public DemolitionStepSpriteMap getDemolitionStepSpriteMap(int step) {
+        if (demolitionSteps == null || demolitionSteps.length == 0) {
+            return null;
+        } else {
+            return demolitionSteps[step];
+        }
+    }
+
     public Collection<ItemClipPosition> getDemolitionClipIds(SyncBaseItem syncBaseItem) {
-        if (demolitionStepClips == null) {
+        if (demolitionSteps == null) {
             return null;
         }
-        int demolitionStep = getDemolitionStep(syncBaseItem);
-        return demolitionStepClips.get(demolitionStep);
+        return demolitionSteps[getDemolitionStep4Clip(syncBaseItem)].getItemClipPositions();
     }
 
-    public Map<Integer, Collection<ItemClipPosition>> getDemolitionStepClips() {
-        return demolitionStepClips;
+    public DemolitionStepSpriteMap[] getDemolitionSteps() {
+        return demolitionSteps;
     }
 
-	public void setDemolitionStepClips(
-			Map<Integer, Collection<ItemClipPosition>> demolitionStepClips) {
-		this.demolitionStepClips = demolitionStepClips;
-	}
+    public void setDemolitionSteps(DemolitionStepSpriteMap[] demolitionSteps) {
+        this.demolitionSteps = demolitionSteps;
+    }
+
+    public int getDemolitionFramesPerAngel() {
+        return demolitionFramesPerAngel;
+    }
 }

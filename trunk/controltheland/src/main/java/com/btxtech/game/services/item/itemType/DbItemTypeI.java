@@ -54,18 +54,6 @@ public interface DbItemTypeI {
 
     void setRuntimeAnimationDuration(int runtimeAnimationDuration);
 
-    int getDemolitionSteps();
-
-    void setDemolitionSteps(int demolitionSteps);
-
-    int getDemolitionAnimationFrames();
-
-    void setDemolitionAnimationFrames(int demolitionAnimationFrames);
-
-    int getDemolitionAnimationDuration();
-
-    void setDemolitionAnimationDuration(int demolitionAnimationDuration);
-
     int getBoundingBoxRadius();
 
     void setBoundingBoxRadius(int boundingBoxRadius);

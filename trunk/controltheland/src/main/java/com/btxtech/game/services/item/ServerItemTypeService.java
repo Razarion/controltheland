@@ -66,6 +66,5 @@ public interface ServerItemTypeService extends ItemTypeService {
                                  WeaponType weaponType,
                                  Collection<ItemTypeImageInfo> buildupImages,
                                  Collection<ItemTypeImageInfo> runtimeImages,
-                                 Collection<ItemTypeImageInfo> demolitionImages,
-                                 Map<Integer, Collection<ItemClipPosition>> demolitionStepClips) throws NoSuchItemTypeException;
+                                 Collection<ItemTypeImageInfo> demolitionImages) throws NoSuchItemTypeException;
 }

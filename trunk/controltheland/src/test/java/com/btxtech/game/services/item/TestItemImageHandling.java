@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.DemolitionStepSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
@@ -132,9 +133,8 @@ public class TestItemImageHandling extends AbstractServiceTest {
         Assert.assertEquals(0, itemTypeSpriteMap.getBuildupAnimationDuration());
         Assert.assertEquals(0, itemTypeSpriteMap.getRuntimeAnimationFrames());
         Assert.assertEquals(0, itemTypeSpriteMap.getRuntimeAnimationDuration());
-        Assert.assertEquals(0, itemTypeSpriteMap.getDemolitionSteps());
-        Assert.assertEquals(0, itemTypeSpriteMap.getDemolitionAnimationFrames());
-        Assert.assertEquals(0, itemTypeSpriteMap.getDemolitionAnimationDuration());
+        Assert.assertNull(itemTypeSpriteMap.getDemolitionSteps());
+        Assert.assertEquals(0, itemTypeSpriteMap.getDemolitionStepCount());
         Assert.assertEquals(new Index(0, 0), itemTypeSpriteMap.getCosmeticImageOffset());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -143,7 +143,7 @@ public class TestItemImageHandling extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         boundingBox = new BoundingBox(10, new double[]{0.0});
-        itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, MIME_IMAGE_5_WIDTH, MIME_IMAGE_5_HEIGHT, 0, 0, 0, 1, 0, 0, 0, 0, null);
+        itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, MIME_IMAGE_5_WIDTH, MIME_IMAGE_5_HEIGHT, 0, 0, 0, 1, 0, null);
         ItemTypeImageInfo runtimeImageInf = new ItemTypeImageInfo(0, 0, 0, INLINE_IMAGE_5);
         serverItemTypeService.saveItemTypeProperties(dbBaseItemType.getId(),
                 boundingBox,
@@ -151,7 +151,7 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 null,
                 Collections.<ItemTypeImageInfo>emptyList(),
                 Collections.<ItemTypeImageInfo>singletonList(runtimeImageInf),
-                Collections.<ItemTypeImageInfo>emptyList(), null);
+                Collections.<ItemTypeImageInfo>emptyList());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -180,9 +180,8 @@ public class TestItemImageHandling extends AbstractServiceTest {
         Assert.assertEquals(0, itemTypeSpriteMap.getBuildupAnimationDuration());
         Assert.assertEquals(1, itemTypeSpriteMap.getRuntimeAnimationFrames());
         Assert.assertEquals(0, itemTypeSpriteMap.getRuntimeAnimationDuration());
-        Assert.assertEquals(0, itemTypeSpriteMap.getDemolitionSteps());
-        Assert.assertEquals(0, itemTypeSpriteMap.getDemolitionAnimationFrames());
-        Assert.assertEquals(0, itemTypeSpriteMap.getDemolitionAnimationDuration());
+        Assert.assertNull(itemTypeSpriteMap.getDemolitionSteps());
+        Assert.assertEquals(0, itemTypeSpriteMap.getDemolitionStepCount());
         Assert.assertEquals(new Index(0, 0), itemTypeSpriteMap.getCosmeticImageOffset());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -191,7 +190,7 @@ public class TestItemImageHandling extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         boundingBox = new BoundingBox(10, new double[]{0.0, 0.1});
-        itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, MIME_IMAGE_5_WIDTH, MIME_IMAGE_5_HEIGHT, 0, 0, 0, 1, 0, 0, 0, 0, null);
+        itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, MIME_IMAGE_5_WIDTH, MIME_IMAGE_5_HEIGHT, 0, 0, 0, 1, 0, null);
         runtimeImageInf = new ItemTypeImageInfo(1, 0, 0, INLINE_IMAGE_5);
         serverItemTypeService.saveItemTypeProperties(dbBaseItemType.getId(),
                 boundingBox,
@@ -199,7 +198,7 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 null,
                 Collections.<ItemTypeImageInfo>emptyList(),
                 Collections.<ItemTypeImageInfo>singletonList(runtimeImageInf),
-                Collections.<ItemTypeImageInfo>emptyList(), null);
+                Collections.<ItemTypeImageInfo>emptyList());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -228,9 +227,8 @@ public class TestItemImageHandling extends AbstractServiceTest {
         Assert.assertEquals(0, itemTypeSpriteMap.getBuildupAnimationDuration());
         Assert.assertEquals(1, itemTypeSpriteMap.getRuntimeAnimationFrames());
         Assert.assertEquals(0, itemTypeSpriteMap.getRuntimeAnimationDuration());
-        Assert.assertEquals(0, itemTypeSpriteMap.getDemolitionSteps());
-        Assert.assertEquals(0, itemTypeSpriteMap.getDemolitionAnimationFrames());
-        Assert.assertEquals(0, itemTypeSpriteMap.getDemolitionAnimationDuration());
+        Assert.assertNull(itemTypeSpriteMap.getDemolitionSteps());
+        Assert.assertEquals(0, itemTypeSpriteMap.getDemolitionStepCount());
         Assert.assertEquals(new Index(0, 0), itemTypeSpriteMap.getCosmeticImageOffset());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -239,7 +237,7 @@ public class TestItemImageHandling extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         boundingBox = new BoundingBox(10, new double[]{0.0, 0.1});
-        itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, MIME_IMAGE_5_WIDTH, MIME_IMAGE_5_HEIGHT, 1, 1, 0, 1, 0, 0, 0, 0, null);
+        itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, MIME_IMAGE_5_WIDTH, MIME_IMAGE_5_HEIGHT, 1, 1, 0, 1, 0, null);
         ItemTypeImageInfo buildupImage = new ItemTypeImageInfo(1, 0, 0, INLINE_IMAGE_5);
         serverItemTypeService.saveItemTypeProperties(dbBaseItemType.getId(),
                 boundingBox,
@@ -247,7 +245,7 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 null,
                 Collections.<ItemTypeImageInfo>singletonList(buildupImage),
                 Collections.<ItemTypeImageInfo>emptyList(),
-                Collections.<ItemTypeImageInfo>emptyList(), null);
+                Collections.<ItemTypeImageInfo>emptyList());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -276,9 +274,8 @@ public class TestItemImageHandling extends AbstractServiceTest {
         Assert.assertEquals(0, itemTypeSpriteMap.getBuildupAnimationDuration());
         Assert.assertEquals(1, itemTypeSpriteMap.getRuntimeAnimationFrames());
         Assert.assertEquals(0, itemTypeSpriteMap.getRuntimeAnimationDuration());
-        Assert.assertEquals(0, itemTypeSpriteMap.getDemolitionSteps());
-        Assert.assertEquals(0, itemTypeSpriteMap.getDemolitionAnimationFrames());
-        Assert.assertEquals(0, itemTypeSpriteMap.getDemolitionAnimationDuration());
+        Assert.assertNull(itemTypeSpriteMap.getDemolitionSteps());
+        Assert.assertEquals(0, itemTypeSpriteMap.getDemolitionStepCount());
         Assert.assertEquals(new Index(16, 0), itemTypeSpriteMap.getCosmeticImageOffset());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -287,7 +284,7 @@ public class TestItemImageHandling extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         boundingBox = new BoundingBox(10, new double[]{0.0, 0.1});
-        itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, MIME_IMAGE_5_WIDTH, MIME_IMAGE_5_HEIGHT, 1, 1, 10, 1, 101, 1, 1, 123, null);
+        itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, MIME_IMAGE_5_WIDTH, MIME_IMAGE_5_HEIGHT, 1, 1, 10, 1, 101, new DemolitionStepSpriteMap[]{new DemolitionStepSpriteMap(1, 123, null)});
         ItemTypeImageInfo demolition1 = new ItemTypeImageInfo(0, 0, 0, INLINE_IMAGE_5);
         ItemTypeImageInfo demolition2 = new ItemTypeImageInfo(1, 0, 0, INLINE_IMAGE_5);
         serverItemTypeService.saveItemTypeProperties(dbBaseItemType.getId(),
@@ -296,7 +293,7 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 null,
                 Collections.<ItemTypeImageInfo>emptyList(),
                 Collections.<ItemTypeImageInfo>emptyList(),
-                Arrays.asList(demolition1, demolition2), null);
+                Arrays.asList(demolition1, demolition2));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -325,9 +322,9 @@ public class TestItemImageHandling extends AbstractServiceTest {
         Assert.assertEquals(10, itemTypeSpriteMap.getBuildupAnimationDuration());
         Assert.assertEquals(1, itemTypeSpriteMap.getRuntimeAnimationFrames());
         Assert.assertEquals(101, itemTypeSpriteMap.getRuntimeAnimationDuration());
-        Assert.assertEquals(1, itemTypeSpriteMap.getDemolitionSteps());
-        Assert.assertEquals(1, itemTypeSpriteMap.getDemolitionAnimationFrames());
-        Assert.assertEquals(123, itemTypeSpriteMap.getDemolitionAnimationDuration());
+        Assert.assertEquals(1, itemTypeSpriteMap.getDemolitionStepCount());
+        Assert.assertEquals(1, itemTypeSpriteMap.getDemolitionSteps()[0].getAnimationFrames());
+        Assert.assertEquals(123, itemTypeSpriteMap.getDemolitionSteps()[0].getAnimationDuration());
         Assert.assertEquals(new Index(16, 0), itemTypeSpriteMap.getCosmeticImageOffset());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -353,14 +350,14 @@ public class TestItemImageHandling extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         BoundingBox boundingBox = new BoundingBox(10, new double[]{0.0, 0.1});
-        ItemTypeSpriteMap itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 100, 100, 0, 0, 0, 1, 0, 0, 0, 0, null);
+        ItemTypeSpriteMap itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 100, 100, 0, 0, 0, 1, 0, null);
         serverItemTypeService.saveItemTypeProperties(dbBaseItemType.getId(),
                 boundingBox,
                 itemTypeSpriteMap,
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.asList(new ItemTypeImageInfo(0, 0, 0, INLINE_IMAGE_1), new ItemTypeImageInfo(1, 0, 0, INLINE_IMAGE_2)),
-                Arrays.<ItemTypeImageInfo>asList(), null);
+                Arrays.<ItemTypeImageInfo>asList());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
@@ -376,14 +373,14 @@ public class TestItemImageHandling extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         boundingBox = new BoundingBox(10, new double[]{0.0, 0.1, 0.2, 0.3});
-        itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 100, 100, 0, 0, 0, 1, 0, 0, 0, 0, null);
+        itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 100, 100, 0, 0, 0, 1, 0, null);
         serverItemTypeService.saveItemTypeProperties(dbBaseItemType.getId(),
                 boundingBox,
                 itemTypeSpriteMap,
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.asList(new ItemTypeImageInfo(2, 0, 0, INLINE_IMAGE_3), new ItemTypeImageInfo(3, 0, 0, INLINE_IMAGE_4)),
-                Arrays.<ItemTypeImageInfo>asList(), null);
+                Arrays.<ItemTypeImageInfo>asList());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
@@ -401,14 +398,14 @@ public class TestItemImageHandling extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         boundingBox = new BoundingBox(10, new double[]{0.0, 0.1});
-        itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 100, 100, 0, 0, 0, 1, 0, 0, 0, 0, null);
+        itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 100, 100, 0, 0, 0, 1, 0, null);
         serverItemTypeService.saveItemTypeProperties(dbBaseItemType.getId(),
                 boundingBox,
                 itemTypeSpriteMap,
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList(), null);
+                Arrays.<ItemTypeImageInfo>asList());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
@@ -424,14 +421,14 @@ public class TestItemImageHandling extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         boundingBox = new BoundingBox(10, new double[]{0.0, 0.1});
-        itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 100, 100, 0, 0, 0, 1, 0, 0, 0, 0, null);
+        itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 100, 100, 0, 0, 0, 1, 0, null);
         serverItemTypeService.saveItemTypeProperties(dbBaseItemType.getId(),
                 boundingBox,
                 itemTypeSpriteMap,
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.asList(new ItemTypeImageInfo(0, 0, 0, INLINE_IMAGE_3)),
-                Arrays.<ItemTypeImageInfo>asList(), null);
+                Arrays.<ItemTypeImageInfo>asList());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
@@ -447,14 +444,14 @@ public class TestItemImageHandling extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         boundingBox = new BoundingBox(10, new double[]{0.0, 0.1});
-        itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 100, 100, 1, 1, 0, 1, 0, 0, 0, 0, null);
+        itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 100, 100, 1, 1, 0, 1, 0, null);
         serverItemTypeService.saveItemTypeProperties(dbBaseItemType.getId(),
                 boundingBox,
                 itemTypeSpriteMap,
                 null,
                 Arrays.asList(new ItemTypeImageInfo(0, 0, 0, INLINE_IMAGE_4)),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList(), null);
+                Arrays.<ItemTypeImageInfo>asList());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
@@ -471,14 +468,14 @@ public class TestItemImageHandling extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         boundingBox = new BoundingBox(10, new double[]{0.0, 0.1});
-        itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 100, 100, 1, 1, 0, 1, 0, 1, 2, 0, null);
+        itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 100, 100, 1, 1, 0, 1, 0, new DemolitionStepSpriteMap[]{new DemolitionStepSpriteMap(2, 0, null)});
         serverItemTypeService.saveItemTypeProperties(dbBaseItemType.getId(),
                 boundingBox,
                 itemTypeSpriteMap,
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.asList(new ItemTypeImageInfo(0, 0, 0, INLINE_IMAGE_1), new ItemTypeImageInfo(0, 0, 1, INLINE_IMAGE_2), new ItemTypeImageInfo(1, 0, 0, INLINE_IMAGE_3), new ItemTypeImageInfo(1, 0, 1, INLINE_IMAGE_4)), null);
+                Arrays.asList(new ItemTypeImageInfo(0, 0, 0, INLINE_IMAGE_1), new ItemTypeImageInfo(0, 0, 1, INLINE_IMAGE_2), new ItemTypeImageInfo(1, 0, 0, INLINE_IMAGE_3), new ItemTypeImageInfo(1, 0, 1, INLINE_IMAGE_4)));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
@@ -499,14 +496,14 @@ public class TestItemImageHandling extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         boundingBox = new BoundingBox(10, new double[]{0.0});
-        itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 100, 100, 0, 0, 0, 1, 0, 0, 0, 0, null);
+        itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 100, 100, 0, 0, 0, 1, 0, null);
         serverItemTypeService.saveItemTypeProperties(dbBaseItemType.getId(),
                 boundingBox,
                 itemTypeSpriteMap,
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList(), null);
+                Arrays.<ItemTypeImageInfo>asList());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
@@ -571,14 +568,14 @@ public class TestItemImageHandling extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         BoundingBox boundingBox = new BoundingBox(10, new double[]{0.0, 0.1});
-        ItemTypeSpriteMap itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 64, 64, 2, 2, 0, 2, 0, 2, 2, 0, null);
+        ItemTypeSpriteMap itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 64, 64, 2, 2, 0, 2, 0, new DemolitionStepSpriteMap[]{new DemolitionStepSpriteMap(2, 0, null), new DemolitionStepSpriteMap(2, 0, null)});
         serverItemTypeService.saveItemTypeProperties(dbBaseItemType.getId(),
                 boundingBox,
                 itemTypeSpriteMap,
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList(), null);
+                Arrays.<ItemTypeImageInfo>asList());
         serverItemTypeService.activate();
         int itemTypeId = dbBaseItemType.getId();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -637,14 +634,14 @@ public class TestItemImageHandling extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         BoundingBox boundingBox = new BoundingBox(10, new double[]{0.0});
-        ItemTypeSpriteMap itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 64, 64, 0, 0, 0, 1, 0, 0, 0, 0, null);
+        ItemTypeSpriteMap itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 64, 64, 0, 0, 0, 1, 0, null);
         serverItemTypeService.saveItemTypeProperties(dbBaseItemType.getId(),
                 boundingBox,
                 itemTypeSpriteMap,
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList(), null);
+                Arrays.<ItemTypeImageInfo>asList());
         serverItemTypeService.activate();
         int itemTypeId = dbBaseItemType.getId();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -692,14 +689,14 @@ public class TestItemImageHandling extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         BoundingBox boundingBox = new BoundingBox(10, new double[]{0.0, 0.1});
-        ItemTypeSpriteMap itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 64, 64, 2, 2, 0, 2, 0, 2, 2, 0, null);
+        ItemTypeSpriteMap itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 64, 64, 2, 2, 0, 2, 0, new DemolitionStepSpriteMap[]{new DemolitionStepSpriteMap(2, 0, null), new DemolitionStepSpriteMap(2, 0, null)});
         serverItemTypeService.saveItemTypeProperties(dbBaseItemType.getId(),
                 boundingBox,
                 itemTypeSpriteMap,
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList(), null);
+                Arrays.<ItemTypeImageInfo>asList());
         serverItemTypeService.activate();
         int itemTypeId = dbBaseItemType.getId();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -729,14 +726,14 @@ public class TestItemImageHandling extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         BoundingBox boundingBox = new BoundingBox(10, new double[]{0.0});
-        ItemTypeSpriteMap itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 64, 64, 0, 0, 0, 1, 0, 0, 0, 0, null);
+        ItemTypeSpriteMap itemTypeSpriteMap = new ItemTypeSpriteMap(boundingBox, 64, 64, 0, 0, 0, 1, 0, null);
         serverItemTypeService.saveItemTypeProperties(dbBaseItemType.getId(),
                 boundingBox,
                 itemTypeSpriteMap,
                 null,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList(), null);
+                Arrays.<ItemTypeImageInfo>asList());
         serverItemTypeService.activate();
         int itemTypeId = dbBaseItemType.getId();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -819,7 +816,7 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 weaponType,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList(), null);
+                Arrays.<ItemTypeImageInfo>asList());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -843,7 +840,7 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 weaponType,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList(), null);
+                Arrays.<ItemTypeImageInfo>asList());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -874,7 +871,7 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 weaponType,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList(), null);
+                Arrays.<ItemTypeImageInfo>asList());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -908,7 +905,7 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 weaponType,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList(), null);
+                Arrays.<ItemTypeImageInfo>asList());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -938,7 +935,7 @@ public class TestItemImageHandling extends AbstractServiceTest {
                 weaponType,
                 Arrays.<ItemTypeImageInfo>asList(),
                 Arrays.<ItemTypeImageInfo>asList(),
-                Arrays.<ItemTypeImageInfo>asList(), null);
+                Arrays.<ItemTypeImageInfo>asList());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

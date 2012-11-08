@@ -39,8 +39,8 @@ public class DemolitionClipPanel extends Composite implements UpdateListener {
 
     @Override
     public void onModelUpdate() {
-        if (ItemTypeEditorModel.getInstance().getCurrrentDemolitionClipSize() > 0) {
-            currentClipLabel.setText((currentClip + 1) + "/" + ItemTypeEditorModel.getInstance().getCurrrentDemolitionClipSize());
+        if (ItemTypeEditorModel.getInstance().getCurrentDemolitionClipSize() > 0) {
+            currentClipLabel.setText((currentClip + 1) + "/" + ItemTypeEditorModel.getInstance().getCurrentDemolitionClipSize());
             ItemClipPosition itemClipPosition = ItemTypeEditorModel.getInstance().getCurrentDemolitionItemClipPosition(currentClip);
             if (itemClipPosition != null) {
                 clipPositionPanel.setContentWidget(new DemolitionClipPosition(itemClipPosition));
@@ -57,25 +57,25 @@ public class DemolitionClipPanel extends Composite implements UpdateListener {
             nextClipButton.setEnabled(false);
             deleteClipButton.setEnabled(false);
         }
-        createClipButton.setEnabled(ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getDemolitionSteps() > 0);
+        createClipButton.setEnabled(ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getDemolitionStepCount() > 0);
     }
 
     @UiHandler("deleteClipButton")
     void onDeleteClipButtonClick(ClickEvent event) {
-        currentClip = ItemTypeEditorModel.getInstance().deleteCurrrentDemolitionClip(currentClip);
+        currentClip = ItemTypeEditorModel.getInstance().deleteCurrentDemolitionClip(currentClip);
         onModelUpdate();
     }
 
     @UiHandler("createClipButton")
     void onCreateClipButtonClick(ClickEvent event) {
-        ItemTypeEditorModel.getInstance().createCurrrentDemolitionClip();
+        ItemTypeEditorModel.getInstance().createCurrentDemolitionClip();
         onModelUpdate();
     }
 
     @UiHandler("nextClipButton")
     void onNextClipButtonClick(ClickEvent event) {
         currentClip++;
-        if (currentClip >= ItemTypeEditorModel.getInstance().getCurrrentDemolitionClipSize()) {
+        if (currentClip >= ItemTypeEditorModel.getInstance().getCurrentDemolitionClipSize()) {
             currentClip = 0;
         }
         onModelUpdate();
@@ -85,7 +85,7 @@ public class DemolitionClipPanel extends Composite implements UpdateListener {
     void onPreviousClipButtonClick(ClickEvent event) {
         currentClip--;
         if (currentClip < 0) {
-            currentClip = ItemTypeEditorModel.getInstance().getCurrrentDemolitionClipSize() - 1;
+            currentClip = ItemTypeEditorModel.getInstance().getCurrentDemolitionClipSize() - 1;
         }
         onModelUpdate();
     }

@@ -26,6 +26,6 @@
 				</g:customCell>
 			</g:row>
 		</g:Grid>
-		<g:FlexTable ui:field="imageTable"/>
+		<g:FlexTable ui:field="imageTable" borderWidth="1"/>
 	</g:VerticalPanel>
 </ui:UiBinder> 
