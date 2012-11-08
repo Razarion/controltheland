@@ -25,6 +25,7 @@ import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.DemolitionStepSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
@@ -53,13 +54,10 @@ import com.google.gwt.user.client.ui.RootPanel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.hibernate.validator.util.privilegedactions.GetAnnotationParameter;
 
 public class ItemTypeEditorModel {
     public static final SimpleBase MY_BASE = new SimpleBase(1, PlanetInfo.EDITOR_PLANET_ID);
@@ -168,34 +166,34 @@ public class ItemTypeEditorModel {
         if (isImageOverridden(angelIndex, step, animationFrame, syncObjectState)) {
             ItemTypeImageInfo imageInfo;
             switch (syncObjectState) {
-            case BUILD_UP:
-                imageInfo = buildupImages[step][animationFrame];
-                break;
-            case RUN_TIME:
-                imageInfo = runtimeImages[angelIndex][animationFrame];
-                break;
-            case DEMOLITION:
-                imageInfo = demolitionImages[angelIndex][step][animationFrame];
-                break;
-            default:
-                throw new IllegalArgumentException("ItemTypeEditorModel.getImage() unknown SyncObjectState1: " + syncObjectState);
+                case BUILD_UP:
+                    imageInfo = buildupImages[step][animationFrame];
+                    break;
+                case RUN_TIME:
+                    imageInfo = runtimeImages[angelIndex][animationFrame];
+                    break;
+                case DEMOLITION:
+                    imageInfo = demolitionImages[angelIndex][step][animationFrame];
+                    break;
+                default:
+                    throw new IllegalArgumentException("ItemTypeEditorModel.getImage() unknown SyncObjectState1: " + syncObjectState);
             }
             return new DropImage(imageInfo.getBase64ImageData(), angelIndex, step, animationFrame, syncObjectState);
         } else {
             if (spriteMapImageElement != null) {
                 Index offset;
                 switch (syncObjectState) {
-                case BUILD_UP:
-                    offset = itemTypeSpriteMap.getBuildupImageOffsetFromFrame(step, animationFrame);
-                    break;
-                case RUN_TIME:
-                    offset = itemTypeSpriteMap.getRuntimeImageOffsetFromFrame(angelIndex, animationFrame);
-                    break;
-                case DEMOLITION:
-                    offset = itemTypeSpriteMap.getDemolitionImageOffsetFromFrame(angelIndex, step, animationFrame);
-                    break;
-                default:
-                    throw new IllegalArgumentException("ItemTypeEditorModel.getImage() unknown SyncObjectState2: " + syncObjectState);
+                    case BUILD_UP:
+                        offset = itemTypeSpriteMap.getBuildupImageOffsetFromFrame(step, animationFrame);
+                        break;
+                    case RUN_TIME:
+                        offset = itemTypeSpriteMap.getRuntimeImageOffsetFromFrame(angelIndex, animationFrame);
+                        break;
+                    case DEMOLITION:
+                        offset = itemTypeSpriteMap.getDemolitionImageOffsetFromFrame(angelIndex, step, animationFrame);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("ItemTypeEditorModel.getImage() unknown SyncObjectState2: " + syncObjectState);
                 }
                 return new DropImage(spriteMapImageElement.getSrc(), offset.getX(), offset.getY(), itemTypeSpriteMap.getImageWidth(),
                         itemTypeSpriteMap.getImageHeight(), angelIndex, step, animationFrame, syncObjectState);
@@ -219,25 +217,50 @@ public class ItemTypeEditorModel {
     }
 
     public void cutDemolitionToCorrectLength() {
-        demolitionImages = new ItemTypeImageInfo[boundingBox.getAngelCount()][itemTypeSpriteMap.getDemolitionSteps()][itemTypeSpriteMap
-                .getDemolitionAnimationFrames()];
+        int maxAnimationFrame = 0;
+        if (itemTypeSpriteMap.getDemolitionSteps() != null) {
+            for (DemolitionStepSpriteMap demolitionStepSpriteMap : itemTypeSpriteMap.getDemolitionSteps()) {
+                maxAnimationFrame = Math.max(maxAnimationFrame, demolitionStepSpriteMap.getAnimationFrames());
+            }
+        }
+        demolitionImages = new ItemTypeImageInfo[boundingBox.getAngelCount()][itemTypeSpriteMap.getDemolitionStepCount()][maxAnimationFrame];
+        fireUpdate();
+    }
+
+    public void setDemolitionStepsLength(int steps) {
+        if (steps == 0) {
+            itemTypeSpriteMap.setDemolitionSteps(null);
+        } else {
+            DemolitionStepSpriteMap[] demolitionStepSpriteMaps = new DemolitionStepSpriteMap[steps];
+            if (itemTypeSpriteMap.getDemolitionSteps() != null) {
+                System.arraycopy(itemTypeSpriteMap.getDemolitionSteps(), 0, demolitionStepSpriteMaps, 0, Math.min(steps, itemTypeSpriteMap.getDemolitionSteps().length));
+            }
+            for (int i = 0, demolitionStepSpriteMapsLength = demolitionStepSpriteMaps.length; i < demolitionStepSpriteMapsLength; i++) {
+                if (demolitionStepSpriteMaps[i] == null) {
+                    demolitionStepSpriteMaps[i] = new DemolitionStepSpriteMap();
+                }
+
+            }
+            itemTypeSpriteMap.setDemolitionSteps(demolitionStepSpriteMaps);
+        }
+        cutDemolitionToCorrectLength();
         fireUpdate();
     }
 
     public void overrideImages(boolean overrideFrame, int angelIndex, int step, int frame, ItemTypeSpriteMap.SyncObjectState syncObjectState,
-            List<String> base64ImageDatas) {
+                               List<String> base64ImageDatas) {
         switch (syncObjectState) {
-        case BUILD_UP:
-            overrideBuildupImages(overrideFrame, step, frame, base64ImageDatas);
-            break;
-        case RUN_TIME:
-            overrideRuntimeImages(overrideFrame, angelIndex, frame, base64ImageDatas);
-            break;
-        case DEMOLITION:
-            overrideDemolitionImages(overrideFrame, angelIndex, step, frame, base64ImageDatas);
-            break;
-        default:
-            throw new IllegalArgumentException("DropImage.finalizeDrop() unknown syncObjectState: " + syncObjectState);
+            case BUILD_UP:
+                overrideBuildupImages(overrideFrame, step, frame, base64ImageDatas);
+                break;
+            case RUN_TIME:
+                overrideRuntimeImages(overrideFrame, angelIndex, frame, base64ImageDatas);
+                break;
+            case DEMOLITION:
+                overrideDemolitionImages(overrideFrame, angelIndex, step, frame, base64ImageDatas);
+                break;
+            default:
+                throw new IllegalArgumentException("DropImage.finalizeDrop() unknown syncObjectState: " + syncObjectState);
         }
     }
 
@@ -341,14 +364,18 @@ public class ItemTypeEditorModel {
 
     public boolean isImageOverridden(int angelIndex, int step, int frame, ItemTypeSpriteMap.SyncObjectState syncObjectState) {
         switch (syncObjectState) {
-        case BUILD_UP:
-            return buildupImages[step][frame] != null;
-        case RUN_TIME:
-            return runtimeImages.length > 0 && runtimeImages[0].length > 0 && runtimeImages[angelIndex][frame] != null;
-        case DEMOLITION:
-            return demolitionImages[angelIndex][step][frame] != null;
-        default:
-            throw new IllegalArgumentException("ItemTypeEditorModel.isImageOverridden() unknown syncObjectState: " + syncObjectState);
+            case BUILD_UP:
+                return buildupImages[step][frame] != null;
+            case RUN_TIME:
+                return runtimeImages.length > 0 && runtimeImages[0].length > 0 && runtimeImages[angelIndex][frame] != null;
+            case DEMOLITION:
+                if (itemTypeSpriteMap.getDemolitionSteps()[step].getAnimationFrames() > 0) {
+                    return demolitionImages[angelIndex][step][frame] != null;
+                } else {
+                    return runtimeImages.length > 0 && runtimeImages[0].length > 0 && runtimeImages[angelIndex][frame] != null;
+                }
+            default:
+                throw new IllegalArgumentException("ItemTypeEditorModel.isImageOverridden() unknown syncObjectState: " + syncObjectState);
         }
 
     }
@@ -360,17 +387,17 @@ public class ItemTypeEditorModel {
         }
         Image image;
         switch (syncObjectState) {
-        case BUILD_UP:
-            image = new Image(buildupImages[step][frame].getBase64ImageData());
-            break;
-        case RUN_TIME:
-            image = new Image(runtimeImages[angelIndex][frame].getBase64ImageData());
-            break;
-        case DEMOLITION:
-            image = new Image(demolitionImages[angelIndex][step][frame].getBase64ImageData());
-            break;
-        default:
-            throw new IllegalArgumentException("ItemTypeEditorModel.isImageOverridden() unknown syncObjectState: " + syncObjectState);
+            case BUILD_UP:
+                image = new Image(buildupImages[step][frame].getBase64ImageData());
+                break;
+            case RUN_TIME:
+                image = new Image(runtimeImages[angelIndex][frame].getBase64ImageData());
+                break;
+            case DEMOLITION:
+                image = new Image(demolitionImages[angelIndex][step][frame].getBase64ImageData());
+                break;
+            default:
+                throw new IllegalArgumentException("ItemTypeEditorModel.isImageOverridden() unknown syncObjectState: " + syncObjectState);
         }
         return ImageElement.as(image.getElement());
     }
@@ -396,18 +423,18 @@ public class ItemTypeEditorModel {
         ItemTypeAccessAsync itemTypeAccess = GWT.create(ItemTypeAccess.class);
         itemTypeAccess.saveItemTypeProperties(itemTypeId, boundingBox, itemTypeSpriteMap, weaponType, generateBuildupImageCollection(),
                 generateRuntimeImageCollection(), generateDemolitionImageCollection(), new AsyncCallback<Void>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        button.setEnabled(true);
-                        log.log(Level.SEVERE, "saveItemTypeProperties call failed", caught);
-                        DialogManager.showDialog(new MessageDialog("Failure", "Save failed! " + caught.getMessage()), DialogManager.Type.PROMPTLY);
-                    }
+            @Override
+            public void onFailure(Throwable caught) {
+                button.setEnabled(true);
+                log.log(Level.SEVERE, "saveItemTypeProperties call failed", caught);
+                DialogManager.showDialog(new MessageDialog("Failure", "Save failed! " + caught.getMessage()), DialogManager.Type.PROMPTLY);
+            }
 
-                    @Override
-                    public void onSuccess(Void result) {
-                        button.setEnabled(true);
-                    }
-                });
+            @Override
+            public void onSuccess(Void result) {
+                button.setEnabled(true);
+            }
+        });
     }
 
     private Collection<ItemTypeImageInfo> generateBuildupImageCollection() {
@@ -496,7 +523,7 @@ public class ItemTypeEditorModel {
                             surfaceRects, surfaceImages, new ArrayList<TerrainImage>(), null);
                     TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
                     TerrainView.getInstance().addToParent(MapWindow.getAbsolutePanel());
-                    TerrainView.getInstance().getTerrainHandler().createTerrainTileField(Collections.<TerrainImagePosition> emptyList(), surfaceRects);
+                    TerrainView.getInstance().getTerrainHandler().createTerrainTileField(Collections.<TerrainImagePosition>emptyList(), surfaceRects);
                     Renderer.getInstance().overrideItemRenderTask(new ItemEditorItemRenderTask(TerrainView.getInstance().getContext2d()));
                     // /--- Setup Item Container
                     Collection<ItemType> itemTypes = new ArrayList<ItemType>();
@@ -649,8 +676,8 @@ public class ItemTypeEditorModel {
     public void previousDemolitionStep() {
         currentDemolitionStep--;
         if (currentDemolitionStep < 0) {
-            if (itemTypeSpriteMap.getDemolitionSteps() > 0) {
-                currentDemolitionStep = itemTypeSpriteMap.getDemolitionSteps() - 1;
+            if (itemTypeSpriteMap.getDemolitionStepCount() > 0) {
+                currentDemolitionStep = itemTypeSpriteMap.getDemolitionStepCount() - 1;
             }
         }
         fireUpdate();
@@ -658,7 +685,7 @@ public class ItemTypeEditorModel {
 
     public void nextDemolitionStep() {
         currentDemolitionStep++;
-        if (currentDemolitionStep >= itemTypeSpriteMap.getDemolitionSteps()) {
+        if (currentDemolitionStep >= itemTypeSpriteMap.getDemolitionStepCount()) {
             currentDemolitionStep = 0;
         }
         fireUpdate();
@@ -668,17 +695,61 @@ public class ItemTypeEditorModel {
         return currentDemolitionStep;
     }
 
-    public Collection<ItemClipPosition> getCurrrentDemolitionClips() {
-        Map<Integer, Collection<ItemClipPosition>> itemClips = ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getDemolitionStepClips();
-        if (itemClips != null && itemClips.containsKey(currentDemolitionStep)) {
-            return itemClips.get(currentDemolitionStep);
+    public int getCurrentDemolitionAnimationFrames() {
+        DemolitionStepSpriteMap demolitionStepSpriteMap = getCurrentDemolitionStepSpriteMap();
+        if (demolitionStepSpriteMap != null) {
+            return demolitionStepSpriteMap.getAnimationFrames();
+        } else {
+            return 0;
+        }
+    }
+
+    public void setCurrentDemolitionAnimationFrames(int frames) {
+        DemolitionStepSpriteMap demolitionStepSpriteMap = getCurrentDemolitionStepSpriteMap();
+        if (demolitionStepSpriteMap == null) {
+            throw new IllegalStateException("ItemTypeEditorModel.setCurrentDemolitionAnimationFrames() Current demolition step is not defined");
+        }
+        demolitionStepSpriteMap.setAnimationFrames(frames);
+        ItemTypeImageInfo[] tmpDemolitionFrames = demolitionImages[currentAngelIndex][currentDemolitionStep];
+        demolitionImages[currentAngelIndex][currentDemolitionStep] = new ItemTypeImageInfo[frames];
+        if (tmpDemolitionFrames != null) {
+            System.arraycopy(tmpDemolitionFrames, 0, demolitionImages[currentAngelIndex][currentDemolitionStep], 0, Math.min(frames, tmpDemolitionFrames.length));
+        }
+        fireUpdate();
+    }
+
+    public int getCurrentDemolitionAnimationDuration() {
+        DemolitionStepSpriteMap demolitionStepSpriteMap = getCurrentDemolitionStepSpriteMap();
+        if (demolitionStepSpriteMap != null) {
+            return demolitionStepSpriteMap.getAnimationDuration();
+        } else {
+            return 0;
+        }
+    }
+
+    public void setCurrentDemolitionAnimationDuration(int duration) {
+        DemolitionStepSpriteMap demolitionStepSpriteMap = getCurrentDemolitionStepSpriteMap();
+        if (demolitionStepSpriteMap == null) {
+            throw new IllegalStateException("ItemTypeEditorModel.setCurrentDemolitionAnimationDuration() Current demolition step is not defined");
+        }
+        demolitionStepSpriteMap.setAnimationDuration(duration);
+    }
+
+    public DemolitionStepSpriteMap getCurrentDemolitionStepSpriteMap() {
+        return ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getDemolitionStepSpriteMap(currentDemolitionStep);
+    }
+
+    public Collection<ItemClipPosition> getCurrentDemolitionClips() {
+        DemolitionStepSpriteMap demolitionStepSpriteMap = getCurrentDemolitionStepSpriteMap();
+        if (demolitionStepSpriteMap != null) {
+            return demolitionStepSpriteMap.getItemClipPositions();
         } else {
             return null;
         }
     }
 
-    public int getCurrrentDemolitionClipSize() {
-        Collection<ItemClipPosition> itemDemolitionClips = getCurrrentDemolitionClips();
+    public int getCurrentDemolitionClipSize() {
+        Collection<ItemClipPosition> itemDemolitionClips = getCurrentDemolitionClips();
         if (itemDemolitionClips != null) {
             return itemDemolitionClips.size();
         } else {
@@ -686,29 +757,25 @@ public class ItemTypeEditorModel {
         }
     }
 
-    public void createCurrrentDemolitionClip() {
-        Collection<ItemClipPosition> clips = getCurrrentDemolitionClips();
+    public void createCurrentDemolitionClip() {
+        Collection<ItemClipPosition> clips = getCurrentDemolitionClips();
         if (clips == null) {
+            DemolitionStepSpriteMap[] demolitionStepSpriteMap = ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getDemolitionSteps();
             clips = new ArrayList<ItemClipPosition>();
-            Map<Integer, Collection<ItemClipPosition>> demolitionClips = ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getDemolitionStepClips();
-            if (demolitionClips == null) {
-                demolitionClips = new HashMap<Integer, Collection<ItemClipPosition>>();
-                ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().setDemolitionStepClips(demolitionClips);
-            }
-            demolitionClips.put(currentDemolitionStep, clips);
+            demolitionStepSpriteMap[currentDemolitionStep].setItemClipPositions(clips);
         }
         clips.add(new ItemClipPosition());
 
     }
 
-    public int deleteCurrrentDemolitionClip(int currentClip) {
+    public int deleteCurrentDemolitionClip(int currentClip) {
         ItemClipPosition itemClipPosition = getCurrentDemolitionItemClipPosition(currentClip);
         if (itemClipPosition == null) {
             return currentClip;
         }
-        getCurrrentDemolitionClips().remove(itemClipPosition);
-        if (currentClip >= getCurrrentDemolitionClips().size()) {
-            currentClip = getCurrrentDemolitionClips().size() - 1;
+        getCurrentDemolitionClips().remove(itemClipPosition);
+        if (currentClip >= getCurrentDemolitionClips().size()) {
+            currentClip = getCurrentDemolitionClips().size() - 1;
         }
         if (currentClip < 0) {
             currentClip = 0;
@@ -717,7 +784,7 @@ public class ItemTypeEditorModel {
     }
 
     public ItemClipPosition getCurrentDemolitionItemClipPosition(int clipNumber) {
-        Collection<ItemClipPosition> itemDemolitionClips = getCurrrentDemolitionClips();
+        Collection<ItemClipPosition> itemDemolitionClips = getCurrentDemolitionClips();
         if (itemDemolitionClips != null) {
             return new ArrayList<ItemClipPosition>(itemDemolitionClips).get(clipNumber);
         } else {

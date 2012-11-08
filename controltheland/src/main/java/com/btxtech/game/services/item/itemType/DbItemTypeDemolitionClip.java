@@ -15,6 +15,7 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -30,12 +31,12 @@ import java.util.List;
  */
 @Entity(name = "ITEM_TYPE_DEMOLITION_CLIP")
 @TypeDefs({@TypeDef(name = "index", typeClass = IndexUserType.class)})
-public class DbItemTypeDemolitionClip implements CrudChild<DbItemTypeDemolitionClips> {
+public class DbItemTypeDemolitionClip implements CrudChild<DbItemTypeDemolitionStep> {
     @Id
     @GeneratedValue
     private Integer id;
-    @ManyToOne
-    private DbItemTypeDemolitionClips dbItemTypeDemolitionClips;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbItemTypeDemolitionStep dbItemTypeDemolitionStep;
     @ManyToOne
     private DbClip dbClip;
     @ElementCollection
@@ -66,13 +67,13 @@ public class DbItemTypeDemolitionClip implements CrudChild<DbItemTypeDemolitionC
     }
 
     @Override
-    public void setParent(DbItemTypeDemolitionClips dbItemTypeDemolitionClips) {
-        this.dbItemTypeDemolitionClips = dbItemTypeDemolitionClips;
+    public void setParent(DbItemTypeDemolitionStep dbItemTypeDemolitionStep) {
+        this.dbItemTypeDemolitionStep = dbItemTypeDemolitionStep;
     }
 
     @Override
-    public DbItemTypeDemolitionClips getParent() {
-        return dbItemTypeDemolitionClips;
+    public DbItemTypeDemolitionStep getParent() {
+        return dbItemTypeDemolitionStep;
     }
 
     public DbClip getDbClip() {

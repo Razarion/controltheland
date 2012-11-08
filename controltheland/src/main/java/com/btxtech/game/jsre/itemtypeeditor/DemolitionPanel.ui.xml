@@ -54,6 +54,5 @@
 		<g:CaptionPanel ui:field="demolitionClipPanel"
 			captionText="Clips" />
 		<g:CaptionPanel captionText="Item Images" ui:field="itemImagePanel" />
-		<g:FlexTable ui:field="stepTable" />
 	</g:VerticalPanel>
 </ui:UiBinder> 

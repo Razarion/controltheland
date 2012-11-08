@@ -43,6 +43,9 @@ public class DropImage extends Image {
         this.step = step;
         this.frame = frame;
         this.syncObjectState = syncObjectState;
+        getElement().getStyle().setProperty("minWidth", "20px");
+        getElement().getStyle().setProperty("minHeight", "20px");
+        getElement().getStyle().setBackgroundColor("#CCCCCC");
         addDropHandler(new DropHandler() {
             @Override
             public void onDrop(final DropEvent event) {

@@ -3,6 +3,7 @@ package com.btxtech.game.jsre.itemtypeeditor;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -14,6 +15,7 @@ public class DemolitionClipPositionVisualisation extends AbstractVisualisation {
 
     public DemolitionClipPositionVisualisation(final ItemClipPosition currentItemClipPosition, final DemolitionClipPosition demolitionClipPosition) {
         this.currentItemClipPosition = currentItemClipPosition;
+        setStepAndSyncObjectState(ItemTypeEditorModel.getInstance().getCurrentDemolitionStep(), ItemTypeSpriteMap.SyncObjectState.DEMOLITION);
         getCanvas().addMouseDownHandler(new MouseDownHandler() {
             @Override
             public void onMouseDown(MouseDownEvent event) {

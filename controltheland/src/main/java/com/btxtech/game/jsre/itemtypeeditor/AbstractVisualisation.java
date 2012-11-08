@@ -18,6 +18,8 @@ public abstract class AbstractVisualisation implements ItemTypeEditorModel.Updat
     private static final int WIDTH = 400;
     private static final int HEIGHT = 400;
     protected static final Index MIDDLE = new Index(WIDTH / 2, HEIGHT / 2);
+    private ItemTypeSpriteMap.SyncObjectState syncObjectState = ItemTypeSpriteMap.SyncObjectState.RUN_TIME;
+    private int step = 0;
 
     private Canvas canvas;
     private Context2d context2d;
@@ -36,6 +38,11 @@ public abstract class AbstractVisualisation implements ItemTypeEditorModel.Updat
         return canvas;
     }
 
+    protected void setStepAndSyncObjectState(int step, ItemTypeSpriteMap.SyncObjectState syncObjectState) {
+        this.step = step;
+        this.syncObjectState = syncObjectState;
+    }
+
     @Override
     public void onModelUpdate() {
         final ItemType itemType = ItemTypeEditorModel.getInstance().getItemType();
@@ -43,14 +50,31 @@ public abstract class AbstractVisualisation implements ItemTypeEditorModel.Updat
         SyncItemArea syncItemArea = itemType.getBoundingBox().createSyntheticSyncItemArea(new Index(WIDTH / 2, HEIGHT / 2), angel);
 
         context2d.clearRect(0, 0, WIDTH, HEIGHT);
-        if (ItemTypeEditorModel.getInstance().isImageOverridden(ItemTypeEditorModel.getInstance().getCurrentAngelIndex(), 0, 0, ItemTypeSpriteMap.SyncObjectState.RUN_TIME)) {
-            ImageElement imageElement = ItemTypeEditorModel.getInstance().getImageElement(ItemTypeEditorModel.getInstance().getCurrentAngelIndex(), 0, 0, ItemTypeSpriteMap.SyncObjectState.RUN_TIME);
+        if (ItemTypeEditorModel.getInstance().isImageOverridden(ItemTypeEditorModel.getInstance().getCurrentAngelIndex(), step, 0, syncObjectState)) {
+            ImageElement imageElement = ItemTypeEditorModel.getInstance().getImageElement(ItemTypeEditorModel.getInstance().getCurrentAngelIndex(), 0, 0, syncObjectState);
             Index destination = MIDDLE.sub(imageElement.getWidth() / 2, imageElement.getHeight() / 2);
             context2d.drawImage(imageElement, destination.getX(), destination.getY());
         } else {
             if (ItemTypeEditorModel.getInstance().getSpriteMapImageElement() != null) {
                 ItemTypeSpriteMap itemTypeSpriteMap = ItemTypeEditorModel.getInstance().getItemTypeSpriteMap();
-                Index offset = ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getRuntimeImageOffset(ItemTypeEditorModel.getInstance().getCurrentAngelIndex(), 0);
+                Index offset;
+                switch (syncObjectState) {
+                    case BUILD_UP:
+                        offset = ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getBuildupImageOffsetFromFrame(step, 0);
+                        break;
+                    case RUN_TIME:
+                        offset = ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getRuntimeImageOffset(ItemTypeEditorModel.getInstance().getCurrentAngelIndex(), 0);
+                        break;
+                    case DEMOLITION:
+                        if(itemTypeSpriteMap.getDemolitionSteps()[step].getAnimationFrames() > 0) {
+                            offset = ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getDemolitionImageOffsetFromFrame(ItemTypeEditorModel.getInstance().getCurrentAngelIndex(), step, 0);
+                        } else {
+                            offset = ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getRuntimeImageOffset(ItemTypeEditorModel.getInstance().getCurrentAngelIndex(), 0);
+                        }
+                        break;
+                    default:
+                        throw new IllegalArgumentException("AbstractVisualisation.onModelUpdate() Unknown ItemTypeSpriteMap.SyncObjectState: " + syncObjectState);
+                }
                 Index destination = MIDDLE.sub(itemTypeSpriteMap.getImageWidth() / 2, itemTypeSpriteMap.getImageHeight() / 2);
                 context2d.drawImage(ItemTypeEditorModel.getInstance().getSpriteMapImageElement(),
                         offset.getX(), // the x coordinate of the upper-left corner of the source rectangle

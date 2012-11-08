@@ -1,25 +1,20 @@
 package com.btxtech.game.jsre.itemtypeeditor;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.IntegerBox;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.CaptionPanel;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.IntegerBox;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
 public class DemolitionPanel extends Composite implements ItemTypeEditorModel.UpdateListener {
 
     private static DemolitionPanelUiBinder uiBinder = GWT.create(DemolitionPanelUiBinder.class);
-    @UiField
-    FlexTable stepTable;
     @UiField
     IntegerBox demolitionStepField;
     @UiField
@@ -53,16 +48,14 @@ public class DemolitionPanel extends Composite implements ItemTypeEditorModel.Up
 
     @UiHandler("demolitionStepButton")
     void onDemolitionStepButtonClick(ClickEvent event) {
-        ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().setDemolitionSteps(demolitionStepField.getValue());
-        ItemTypeEditorModel.getInstance().cutDemolitionToCorrectLength();
+        ItemTypeEditorModel.getInstance().setDemolitionStepsLength(demolitionStepField.getValue());
     }
 
     @Override
     public void onModelUpdate() {
-        int demolitionSteps = ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getDemolitionSteps();
+        int demolitionSteps = ItemTypeEditorModel.getInstance().getItemTypeSpriteMap().getDemolitionStepCount();
         demolitionStepField.setValue(demolitionSteps);
-        currentAngelIndexFiled.setText((ItemTypeEditorModel.getInstance().getCurrentAngelIndex() + 1) + "/"
-                + (ItemTypeEditorModel.getInstance().getBoundingBox().getAngelCount()));
+        currentAngelIndexFiled.setText((ItemTypeEditorModel.getInstance().getCurrentAngelIndex() + 1) + "/" + (ItemTypeEditorModel.getInstance().getBoundingBox().getAngelCount()));
         if (demolitionSteps == 0) {
             currentStepLabel.setText("-");
             nextStepButton.setEnabled(false);

@@ -3,6 +3,7 @@ package com.btxtech.game.services.item;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.DemolitionStepSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -12,7 +13,7 @@ import com.btxtech.game.jsre.itemtypeeditor.ItemTypeImageInfo;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.item.itemType.DbItemTypeDemolitionClip;
-import com.btxtech.game.services.item.itemType.DbItemTypeDemolitionClips;
+import com.btxtech.game.services.item.itemType.DbItemTypeDemolitionStep;
 import com.btxtech.game.services.media.ClipService;
 import org.hibernate.SessionFactory;
 import org.junit.Assert;
@@ -23,8 +24,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * User: beat
@@ -78,8 +77,7 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
                 attacker.getWeaponType(),
                 Collections.<ItemTypeImageInfo>emptyList(),
                 Collections.<ItemTypeImageInfo>emptyList(),
-                Collections.<ItemTypeImageInfo>emptyList(),
-                null);
+                Collections.<ItemTypeImageInfo>emptyList());
         serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -87,7 +85,8 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         ItemTypeSpriteMap itemTypeSpriteMap = serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID).getItemTypeSpriteMap();
-        Assert.assertNull(itemTypeSpriteMap.getDemolitionStepClips());
+        Assert.assertEquals(0, itemTypeSpriteMap.getDemolitionStepCount());
+        Assert.assertNull(itemTypeSpriteMap.getDemolitionSteps());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -106,19 +105,17 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         BaseItemType attacker = (BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
-        Map<Integer, Collection<ItemClipPosition>> demolitionStepClips = new HashMap<>();
         Collection<ItemClipPosition> itemClipPositions = new ArrayList<>();
         itemClipPositions.add(new ItemClipPosition(clipId1, POSITION_1));
-        demolitionStepClips.put(0, itemClipPositions);
-        attacker.getItemTypeSpriteMap().setDemolitionSteps(3);
+        DemolitionStepSpriteMap[] demolitionStepSpriteMaps = {new DemolitionStepSpriteMap(3, 200, itemClipPositions)};
+        attacker.getItemTypeSpriteMap().setDemolitionSteps(demolitionStepSpriteMaps);
         serverItemTypeService.saveItemTypeProperties(attacker.getId(),
                 attacker.getBoundingBox(),
                 attacker.getItemTypeSpriteMap(),
                 attacker.getWeaponType(),
                 Collections.<ItemTypeImageInfo>emptyList(),
                 Collections.<ItemTypeImageInfo>emptyList(),
-                Collections.<ItemTypeImageInfo>emptyList(),
-                demolitionStepClips);
+                Collections.<ItemTypeImageInfo>emptyList());
         serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -126,7 +123,10 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         ItemTypeSpriteMap itemTypeSpriteMap = serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID).getItemTypeSpriteMap();
-        Assert.assertEquals(1, itemTypeSpriteMap.getDemolitionStepClips().size());
+        Assert.assertEquals(1, itemTypeSpriteMap.getDemolitionStepCount());
+        Assert.assertEquals(1, itemTypeSpriteMap.getDemolitionSteps().length);
+        Assert.assertEquals(3, itemTypeSpriteMap.getDemolitionSteps()[0].getAnimationFrames());
+        Assert.assertEquals(200, itemTypeSpriteMap.getDemolitionSteps()[0].getAnimationDuration());
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(-1, -1, -1));
         syncBaseItem.setHealth(0.8 * (double) syncBaseItem.getBaseItemType().getHealth());
         Collection<ItemClipPosition> itemClipPositionsDemolition1 = itemTypeSpriteMap.getDemolitionClipIds(syncBaseItem);
@@ -153,29 +153,25 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         BaseItemType attacker = (BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
-        Map<Integer, Collection<ItemClipPosition>> demolitionStepClips = new HashMap<>();
-        Collection<ItemClipPosition> itemClipPositions = new ArrayList<>();
-        itemClipPositions.add(new ItemClipPosition(clipId1, POSITION_1));
-        itemClipPositions.add(new ItemClipPosition(clipId2, POSITION_2));
-        itemClipPositions.add(new ItemClipPosition(clipId3, POSITION_1));
-        demolitionStepClips.put(0, itemClipPositions);
-        itemClipPositions = new ArrayList<>();
-        itemClipPositions.add(new ItemClipPosition(clipId3, POSITION_2));
-        itemClipPositions.add(new ItemClipPosition(clipId1, POSITION_1));
-        demolitionStepClips.put(1, itemClipPositions);
-        itemClipPositions = new ArrayList<>();
-        itemClipPositions.add(new ItemClipPosition(clipId1, POSITION_1));
-        itemClipPositions.add(new ItemClipPosition(clipId2, POSITION_2));
-        demolitionStepClips.put(2, itemClipPositions);
-        attacker.getItemTypeSpriteMap().setDemolitionSteps(3);
+        Collection<ItemClipPosition> itemClipPositions1 = new ArrayList<>();
+        itemClipPositions1.add(new ItemClipPosition(clipId1, POSITION_1));
+        itemClipPositions1.add(new ItemClipPosition(clipId2, POSITION_2));
+        itemClipPositions1.add(new ItemClipPosition(clipId3, POSITION_1));
+        Collection<ItemClipPosition> itemClipPositions2 = new ArrayList<>();
+        itemClipPositions2.add(new ItemClipPosition(clipId3, POSITION_2));
+        itemClipPositions2.add(new ItemClipPosition(clipId1, POSITION_1));
+        Collection<ItemClipPosition> itemClipPositions3 = new ArrayList<>();
+        itemClipPositions3.add(new ItemClipPosition(clipId1, POSITION_1));
+        itemClipPositions3.add(new ItemClipPosition(clipId2, POSITION_2));
+        DemolitionStepSpriteMap[] demolitionStepSpriteMaps = {new DemolitionStepSpriteMap(11, 201, itemClipPositions1), new DemolitionStepSpriteMap(12, 202, itemClipPositions2), new DemolitionStepSpriteMap(13, 203, itemClipPositions3)};
+        attacker.getItemTypeSpriteMap().setDemolitionSteps(demolitionStepSpriteMaps);
         serverItemTypeService.saveItemTypeProperties(attacker.getId(),
                 attacker.getBoundingBox(),
                 attacker.getItemTypeSpriteMap(),
                 attacker.getWeaponType(),
                 Collections.<ItemTypeImageInfo>emptyList(),
                 Collections.<ItemTypeImageInfo>emptyList(),
-                Collections.<ItemTypeImageInfo>emptyList(),
-                demolitionStepClips);
+                Collections.<ItemTypeImageInfo>emptyList());
         serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -183,8 +179,11 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         ItemTypeSpriteMap itemTypeSpriteMap = serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID).getItemTypeSpriteMap();
-        Assert.assertEquals(3, itemTypeSpriteMap.getDemolitionStepClips().size());
+        Assert.assertEquals(3, itemTypeSpriteMap.getDemolitionStepCount());
+        Assert.assertEquals(3, itemTypeSpriteMap.getDemolitionSteps().length);
         // Test step 0
+        Assert.assertEquals(11, itemTypeSpriteMap.getDemolitionSteps()[0].getAnimationFrames());
+        Assert.assertEquals(201, itemTypeSpriteMap.getDemolitionSteps()[0].getAnimationDuration());
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(-1, -1, -1));
         syncBaseItem.setHealth(0.75 * (double) syncBaseItem.getBaseItemType().getHealth());
         Collection<ItemClipPosition> itemClipPositionsDemolition1 = itemTypeSpriteMap.getDemolitionClipIds(syncBaseItem);
@@ -196,6 +195,8 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
         ItemClipPosition itemClipPosition3 = getItemClipPosition(clipId3, itemClipPositionsDemolition1);
         Assert.assertArrayEquals(POSITION_1, itemClipPosition3.getPositions());
         // Test step 1
+        Assert.assertEquals(12, itemTypeSpriteMap.getDemolitionSteps()[1].getAnimationFrames());
+        Assert.assertEquals(202, itemTypeSpriteMap.getDemolitionSteps()[1].getAnimationDuration());
         syncBaseItem.setHealth(0.5 * (double) syncBaseItem.getBaseItemType().getHealth());
         Collection<ItemClipPosition> itemClipPositionsDemolition2 = itemTypeSpriteMap.getDemolitionClipIds(syncBaseItem);
         Assert.assertEquals(2, itemClipPositionsDemolition2.size());
@@ -204,6 +205,8 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
         itemClipPosition2 = getItemClipPosition(clipId1, itemClipPositionsDemolition2);
         Assert.assertArrayEquals(POSITION_1, itemClipPosition2.getPositions());
         // Test step 2
+        Assert.assertEquals(13, itemTypeSpriteMap.getDemolitionSteps()[2].getAnimationFrames());
+        Assert.assertEquals(203, itemTypeSpriteMap.getDemolitionSteps()[2].getAnimationDuration());
         syncBaseItem.setHealth(0.25 * (double) syncBaseItem.getBaseItemType().getHealth());
         Collection<ItemClipPosition> itemClipPositionsDemolition3 = itemTypeSpriteMap.getDemolitionClipIds(syncBaseItem);
         Assert.assertEquals(2, itemClipPositionsDemolition3.size());
@@ -228,36 +231,32 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         BaseItemType attacker = (BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
-        Map<Integer, Collection<ItemClipPosition>> demolitionStepClips = new HashMap<>();
-        Collection<ItemClipPosition> itemClipPositions = new ArrayList<>();
-        itemClipPositions.add(new ItemClipPosition(clipId1, POSITION_1));
-        itemClipPositions.add(new ItemClipPosition(clipId2, POSITION_2));
-        itemClipPositions.add(new ItemClipPosition(clipId3, POSITION_1));
-        demolitionStepClips.put(0, itemClipPositions);
-        itemClipPositions = new ArrayList<>();
-        itemClipPositions.add(new ItemClipPosition(clipId3, POSITION_2));
-        itemClipPositions.add(new ItemClipPosition(clipId1, POSITION_1));
-        demolitionStepClips.put(1, itemClipPositions);
-        itemClipPositions = new ArrayList<>();
-        itemClipPositions.add(new ItemClipPosition(clipId1, POSITION_1));
-        itemClipPositions.add(new ItemClipPosition(clipId2, POSITION_2));
-        demolitionStepClips.put(2, itemClipPositions);
-        attacker.getItemTypeSpriteMap().setDemolitionSteps(3);
+        Collection<ItemClipPosition> itemClipPositions1 = new ArrayList<>();
+        itemClipPositions1.add(new ItemClipPosition(clipId1, POSITION_1));
+        itemClipPositions1.add(new ItemClipPosition(clipId2, POSITION_2));
+        itemClipPositions1.add(new ItemClipPosition(clipId3, POSITION_1));
+        Collection<ItemClipPosition> itemClipPositions2 = new ArrayList<>();
+        itemClipPositions2.add(new ItemClipPosition(clipId3, POSITION_2));
+        itemClipPositions2.add(new ItemClipPosition(clipId1, POSITION_1));
+        Collection<ItemClipPosition> itemClipPositions3 = new ArrayList<>();
+        itemClipPositions3.add(new ItemClipPosition(clipId1, POSITION_1));
+        itemClipPositions3.add(new ItemClipPosition(clipId2, POSITION_2));
+        DemolitionStepSpriteMap[] demolitionStepSpriteMaps = {new DemolitionStepSpriteMap(11, 201, itemClipPositions1), new DemolitionStepSpriteMap(12, 202, itemClipPositions2), new DemolitionStepSpriteMap(13, 203, itemClipPositions3)};
+        attacker.getItemTypeSpriteMap().setDemolitionSteps(demolitionStepSpriteMaps);
         serverItemTypeService.saveItemTypeProperties(attacker.getId(),
                 attacker.getBoundingBox(),
                 attacker.getItemTypeSpriteMap(),
                 attacker.getWeaponType(),
                 Collections.<ItemTypeImageInfo>emptyList(),
                 Collections.<ItemTypeImageInfo>emptyList(),
-                Collections.<ItemTypeImageInfo>emptyList(),
-                demolitionStepClips);
+                Collections.<ItemTypeImageInfo>emptyList());
         serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(3, HibernateUtil.loadAll(sessionFactory, DbItemTypeDemolitionClips.class).size());
+        Assert.assertEquals(3, HibernateUtil.loadAll(sessionFactory, DbItemTypeDemolitionStep.class).size());
         Assert.assertEquals(7, HibernateUtil.loadAll(sessionFactory, DbItemTypeDemolitionClip.class).size());
         assertQueryDb("SELECT COUNT(*) FROM ITEM_TYPE_DEMOLITION_CLIP_POSITION", "168");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -266,55 +265,29 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         attacker = (BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
+        itemClipPositions1 = new ArrayList<>();
+        itemClipPositions1.add(new ItemClipPosition(clipId3, POSITION_2));
+        itemClipPositions1.add(new ItemClipPosition(clipId1, POSITION_2));
+        itemClipPositions2 = new ArrayList<>();
+        itemClipPositions2.add(new ItemClipPosition(clipId3, POSITION_1));
+        itemClipPositions2.add(new ItemClipPosition(clipId2, POSITION_1));
+        itemClipPositions2.add(new ItemClipPosition(clipId1, POSITION_2));
+        demolitionStepSpriteMaps = new DemolitionStepSpriteMap[]{new DemolitionStepSpriteMap(11, 201, itemClipPositions1), new DemolitionStepSpriteMap(12, 202, itemClipPositions2)};
+        attacker.getItemTypeSpriteMap().setDemolitionSteps(demolitionStepSpriteMaps);
         serverItemTypeService.saveItemTypeProperties(attacker.getId(),
                 attacker.getBoundingBox(),
                 attacker.getItemTypeSpriteMap(),
                 attacker.getWeaponType(),
                 Collections.<ItemTypeImageInfo>emptyList(),
                 Collections.<ItemTypeImageInfo>emptyList(),
-                Collections.<ItemTypeImageInfo>emptyList(),
-                null);
+                Collections.<ItemTypeImageInfo>emptyList());
         serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(3, HibernateUtil.loadAll(sessionFactory, DbItemTypeDemolitionClips.class).size());
-        Assert.assertEquals(7, HibernateUtil.loadAll(sessionFactory, DbItemTypeDemolitionClip.class).size());
-        assertQueryDb("SELECT COUNT(*) FROM ITEM_TYPE_DEMOLITION_CLIP_POSITION", "168");
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        // Setup 3
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        attacker = (BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
-        demolitionStepClips = new HashMap<>();
-        itemClipPositions = new ArrayList<>();
-        itemClipPositions.add(new ItemClipPosition(clipId3, POSITION_2));
-        itemClipPositions.add(new ItemClipPosition(clipId1, POSITION_2));
-        demolitionStepClips.put(0, itemClipPositions);
-        itemClipPositions = new ArrayList<>();
-        itemClipPositions.add(new ItemClipPosition(clipId3, POSITION_1));
-        itemClipPositions.add(new ItemClipPosition(clipId2, POSITION_1));
-        itemClipPositions.add(new ItemClipPosition(clipId1, POSITION_2));
-        demolitionStepClips.put(2, itemClipPositions);
-        attacker.getItemTypeSpriteMap().setDemolitionSteps(3);
-        serverItemTypeService.saveItemTypeProperties(attacker.getId(),
-                attacker.getBoundingBox(),
-                attacker.getItemTypeSpriteMap(),
-                attacker.getWeaponType(),
-                Collections.<ItemTypeImageInfo>emptyList(),
-                Collections.<ItemTypeImageInfo>emptyList(),
-                Collections.<ItemTypeImageInfo>emptyList(),
-                demolitionStepClips);
-        serverItemTypeService.activate();
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        // Verify
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(2, HibernateUtil.loadAll(sessionFactory, DbItemTypeDemolitionClips.class).size());
+        Assert.assertEquals(2, HibernateUtil.loadAll(sessionFactory, DbItemTypeDemolitionStep.class).size());
         Assert.assertEquals(5, HibernateUtil.loadAll(sessionFactory, DbItemTypeDemolitionClip.class).size());
         assertQueryDb("SELECT COUNT(*) FROM ITEM_TYPE_DEMOLITION_CLIP_POSITION", "120");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -323,7 +296,8 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         ItemTypeSpriteMap itemTypeSpriteMap = serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID).getItemTypeSpriteMap();
-        Assert.assertEquals(2, itemTypeSpriteMap.getDemolitionStepClips().size());
+        Assert.assertEquals(2, itemTypeSpriteMap.getDemolitionStepCount());
+        Assert.assertEquals(2, itemTypeSpriteMap.getDemolitionSteps().length);
         // Test step 0
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(-1, -1, -1));
         syncBaseItem.setHealth(0.75 * (double) syncBaseItem.getBaseItemType().getHealth());
@@ -334,10 +308,6 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
         ItemClipPosition itemClipPosition2 = getItemClipPosition(clipId1, itemClipPositionsDemolition1);
         Assert.assertArrayEquals(POSITION_2, itemClipPosition2.getPositions());
         // Test step 1
-        syncBaseItem.setHealth(0.5 * (double) syncBaseItem.getBaseItemType().getHealth());
-        Collection<ItemClipPosition> itemClipPositionsDemolition2 = itemTypeSpriteMap.getDemolitionClipIds(syncBaseItem);
-        Assert.assertNull(itemClipPositionsDemolition2);
-        // Test step 2
         syncBaseItem.setHealth(0.25 * (double) syncBaseItem.getBaseItemType().getHealth());
         Collection<ItemClipPosition> itemClipPositionsDemolition3 = itemTypeSpriteMap.getDemolitionClipIds(syncBaseItem);
         Assert.assertEquals(3, itemClipPositionsDemolition3.size());
@@ -353,23 +323,21 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         attacker = (BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
-        demolitionStepClips = new HashMap<>();
-        attacker.getItemTypeSpriteMap().setDemolitionSteps(3);
+        attacker.getItemTypeSpriteMap().setDemolitionSteps(null);
         serverItemTypeService.saveItemTypeProperties(attacker.getId(),
                 attacker.getBoundingBox(),
                 attacker.getItemTypeSpriteMap(),
                 attacker.getWeaponType(),
                 Collections.<ItemTypeImageInfo>emptyList(),
                 Collections.<ItemTypeImageInfo>emptyList(),
-                Collections.<ItemTypeImageInfo>emptyList(),
-                demolitionStepClips);
+                Collections.<ItemTypeImageInfo>emptyList());
         serverItemTypeService.activate();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(0, HibernateUtil.loadAll(sessionFactory, DbItemTypeDemolitionClips.class).size());
+        Assert.assertEquals(0, HibernateUtil.loadAll(sessionFactory, DbItemTypeDemolitionStep.class).size());
         Assert.assertEquals(0, HibernateUtil.loadAll(sessionFactory, DbItemTypeDemolitionClip.class).size());
         assertQueryDb("SELECT COUNT(*) FROM ITEM_TYPE_DEMOLITION_CLIP_POSITION", "0");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -378,7 +346,8 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         itemTypeSpriteMap = serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID).getItemTypeSpriteMap();
-        Assert.assertNull(itemTypeSpriteMap.getDemolitionStepClips());
+        Assert.assertEquals(0, itemTypeSpriteMap.getDemolitionStepCount());
+        Assert.assertNull(itemTypeSpriteMap.getDemolitionSteps());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

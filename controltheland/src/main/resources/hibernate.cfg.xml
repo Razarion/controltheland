@@ -55,7 +55,7 @@
         <mapping class="com.btxtech.game.services.item.itemType.DbHouseType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbLauncherType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeDemolitionClip"/>
-        <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeDemolitionClips"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeDemolitionStep"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbComparisonItemCount"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbConditionConfig"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbCountComparisonConfig"/>

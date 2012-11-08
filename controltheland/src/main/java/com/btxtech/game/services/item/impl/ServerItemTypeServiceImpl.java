@@ -112,14 +112,13 @@ public class ServerItemTypeServiceImpl extends AbstractItemTypeService implement
     @Override
     @Transactional
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void saveItemTypeProperties(int itemTypeId, BoundingBox boundingBox, ItemTypeSpriteMap itemTypeSpriteMap, WeaponType weaponType, Collection<ItemTypeImageInfo> buildupImages, Collection<ItemTypeImageInfo> runtimeImages, Collection<ItemTypeImageInfo> demolitionImages, Map<Integer, Collection<ItemClipPosition>> demolitionStepClips) throws NoSuchItemTypeException {
+    public void saveItemTypeProperties(int itemTypeId, BoundingBox boundingBox, ItemTypeSpriteMap itemTypeSpriteMap, WeaponType weaponType, Collection<ItemTypeImageInfo> buildupImages, Collection<ItemTypeImageInfo> runtimeImages, Collection<ItemTypeImageInfo> demolitionImages) throws NoSuchItemTypeException {
         DbItemType dbItemType = getDbItemType(itemTypeId);
         if (dbItemType == null) {
             throw new NoSuchItemTypeException(itemTypeId);
         }
         dbItemType.setBounding(boundingBox);
-        dbItemType.setTypeSpriteMap(itemTypeSpriteMap);
-        dbItemType.saveDemolitionStepClips(demolitionStepClips, clipService);
+        dbItemType.setTypeSpriteMap(itemTypeSpriteMap, clipService);
         if (dbItemType instanceof DbBaseItemType && ((DbBaseItemType) dbItemType).getDbWeaponType() != null) {
             saveWeaponType(dbItemType, weaponType);
         }
@@ -286,7 +285,7 @@ public class ServerItemTypeServiceImpl extends AbstractItemTypeService implement
             ItemTypeSpriteMap itemTypeSpriteMap = itemType.getItemTypeSpriteMap();
             int totalImageCount = itemTypeSpriteMap.getBuildupSteps() * itemTypeSpriteMap.getBuildupAnimationFrames();
             totalImageCount += itemType.getBoundingBox().getAngelCount() * itemTypeSpriteMap.getRuntimeAnimationFrames();
-            totalImageCount += itemType.getBoundingBox().getAngelCount() * itemTypeSpriteMap.getDemolitionSteps() * itemTypeSpriteMap.getDemolitionAnimationFrames();
+            totalImageCount += itemType.getBoundingBox().getAngelCount() * itemTypeSpriteMap.getDemolitionFramesPerAngel();
             BufferedImage spriteMap = new BufferedImage(dbItemType.getImageWidth() * totalImageCount, dbItemType.getImageHeight(), masterImage.getType());
             int xPos = 0;
             String contentType = exampleImage.getContentType();

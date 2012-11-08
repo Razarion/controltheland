@@ -47,8 +47,14 @@ public class ItemEditorItemRenderTask extends AbstractRenderTask {
                     break;
                 case DEMOLITION:
                     angelIndex = syncItem.getSyncItemArea().getAngelIndex();
-                    step = itemTypeSpriteMap.getDemolitionStep(syncItem);
-                    frame = itemTypeSpriteMap.getDemolitionAnimationFrame(timeStamp);
+                    step = itemTypeSpriteMap.getDemolitionStep4ItemImage(syncItem);
+                    if (step < 0) {
+                        step = 0;
+                        frame = itemTypeSpriteMap.getRuntimeAnimationFrame(timeStamp);
+                        syncObjectState = ItemTypeSpriteMap.SyncObjectState.RUN_TIME;
+                    }  else {
+                        frame = itemTypeSpriteMap.getDemolitionAnimationFrame(step, timeStamp);
+                    }
                     break;
                 default:
                     throw new IllegalArgumentException("ItemTypeSpriteMap.getItemTypeImageOffset() unknown SyncObjectState: " + syncObjectState);
