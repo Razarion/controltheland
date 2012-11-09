@@ -101,7 +101,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     @Type(type = "index")
     @Columns(columns = {@Column(name = "tipXTerrainPositionHint"), @Column(name = "tipYTerrainPositionHint")})
     private Index tipTerrainPositionHint;
-
+    private boolean tipShowWatchQuestVisualisationCockpit;
 
     @Transient
     private CrudChildServiceHelper<DbItemTypeAndPosition> itemTypeAndPositionCrudHelper;
@@ -223,6 +223,14 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         this.tipTerrainPositionHint = tipTerrainPositionHint;
     }
 
+    public boolean isTipShowWatchQuestVisualisationCockpit() {
+        return tipShowWatchQuestVisualisationCockpit;
+    }
+
+    public void setTipShowWatchQuestVisualisationCockpit(boolean tipShowWatchQuestVisualisationCockpit) {
+        this.tipShowWatchQuestVisualisationCockpit = tipShowWatchQuestVisualisationCockpit;
+    }
+
     public TaskConfig createTaskConfig(ServerItemTypeService serverItemTypeService) {
         ArrayList<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<>();
         for (DbItemTypeAndPosition dbItemTypeAndPosition : getItemCrudServiceHelper().readDbChildren()) {
@@ -266,6 +274,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         gameTipConfig.setToBeBuiltId(tipToBeBuilt != null ? tipToBeBuilt.getId() : 0);
         gameTipConfig.setTerrainPositionHint(tipTerrainPositionHint);
         gameTipConfig.setResourceId(tipResource != null ? tipResource.getId() : 0);
+        gameTipConfig.setHighlightQuestVisualisationCockpit(tipShowWatchQuestVisualisationCockpit);
         return gameTipConfig;
     }
 

@@ -26,12 +26,12 @@ public class ItemCockpitGameOverlayTipVisualization implements GameTipVisualizat
     }
 
     @Override
-    public Index getArrowHotSpot(Rectangle viewRect) {
+    public Index getArrowHotSpot(Rectangle viewRect, long timeStamp) {
         return buildupPositionHotSpot;
     }
 
     @Override
-    public Index getMousePosition(Rectangle viewRect) {
+    public Index getMousePosition(Rectangle viewRect, long timeStamp) {
         return mousePosition;
     }
 

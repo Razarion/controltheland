@@ -32,6 +32,7 @@ import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
 import com.btxtech.game.wicket.uiservices.ResourceItemTypePanel;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
@@ -151,6 +152,7 @@ public class TaskEditor extends MgmtWebPage {
         form.add(new BaseItemTypePanel("tipToBeBuilt"));
         form.add(new ResourceItemTypePanel("tipResource"));
         form.add(new IndexPanel("tipTerrainPositionHint"));
+        form.add(new CheckBox("tipShowWatchQuestVisualisationCockpit"));
 
 
         form.add(new Button("save") {

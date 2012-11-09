@@ -21,13 +21,13 @@ public class ItemInGameTipVisualization implements GameTipVisualization {
     }
 
     @Override
-    public Index getArrowHotSpot(Rectangle viewRect) {
+    public Index getArrowHotSpot(Rectangle viewRect, long timeStamp) {
         return syncItem.getSyncItemArea().getPosition().sub(viewRect.getStart()).add(itemRadius, 0);
     }
 
     @Override
-    public Index getMousePosition(Rectangle viewRect) {
-        return getArrowHotSpot(viewRect).add(CanvasElementLibrary.ARROW_HEIGHT + 10, -CanvasElementLibrary.MOUSE_HEIGHT_TOTAL / 2);
+    public Index getMousePosition(Rectangle viewRect, long timeStamp) {
+        return getArrowHotSpot(viewRect, timeStamp).add(CanvasElementLibrary.ARROW_HEIGHT + 10, -CanvasElementLibrary.MOUSE_HEIGHT_TOTAL / 2);
     }
 
     @Override
