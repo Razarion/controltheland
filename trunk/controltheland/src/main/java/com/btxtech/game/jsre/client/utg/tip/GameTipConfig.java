@@ -30,6 +30,7 @@ public class GameTipConfig implements Serializable {
     private int toBeBuiltId;
     private int resourceId;
     private Index terrainPositionHint;
+    private boolean highlightQuestVisualisationCockpit;
 
     public Tip getTip() {
         return tip;
@@ -69,5 +70,13 @@ public class GameTipConfig implements Serializable {
 
     public void setResourceId(int resourceId) {
         this.resourceId = resourceId;
+    }
+
+    public boolean isHighlightQuestVisualisationCockpit() {
+        return highlightQuestVisualisationCockpit;
+    }
+
+    public void setHighlightQuestVisualisationCockpit(boolean highlightQuestVisualisationCockpit) {
+        this.highlightQuestVisualisationCockpit = highlightQuestVisualisationCockpit;
     }
 }

@@ -1,7 +1,11 @@
 package com.btxtech.game.services.tutorial;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
+import com.btxtech.game.jsre.common.tutorial.TaskConfig;
+import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
@@ -11,6 +15,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.List;
 
 /**
  * User: beat
@@ -126,4 +132,73 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
 
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void createTutorialConfig() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbTutorialConfig> tutorialCrud = tutorialService.getDbTutorialCrudRootServiceHelper();
+        DbTutorialConfig dbTutorialConfig = tutorialCrud.createDbChild();
+        dbTutorialConfig.setTracking(true);
+        dbTutorialConfig.setShowTip(true);
+        dbTutorialConfig.setWidth(200);
+        dbTutorialConfig.setHeight(100);
+        dbTutorialConfig.setOwnBaseName("ownbase");
+        CrudChildServiceHelper<DbTaskConfig> crudChildServiceHelper = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper();
+        DbTaskConfig dbTaskConfig = crudChildServiceHelper.createDbChild();
+        ruTutorialServiceHelper.updateDbEntity(dbTutorialConfig);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbTutorialConfig = ruTutorialServiceHelper.readDbChild(dbTutorialConfig.getId(), DbTutorialConfig.class);
+        dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig.getId());
+        dbTaskConfig.setName("name1");
+        dbTaskConfig.setScroll(new Index(1, 2));
+        dbTaskConfig.setHouseCount(5);
+        dbTaskConfig.setMoney(100);
+        dbTaskConfig.setMaxMoney(10000);
+        dbTaskConfig.setRadarMode(RadarMode.MAP);
+        dbTaskConfig.setTip(GameTipConfig.Tip.FABRICATE);
+        dbTaskConfig.setTipActor(serverItemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        dbTaskConfig.setTipResource(serverItemTypeService.getDbResourceItemType(TEST_RESOURCE_ITEM_ID));
+        dbTaskConfig.setTipTerrainPositionHint(new Index(321, 987));
+        dbTaskConfig.setTipToBeBuilt(serverItemTypeService.getDbBaseItemType(TEST_CONTAINER_ITEM_ID));
+        dbTaskConfig.setTipShowWatchQuestVisualisationCockpit(true);
+        ruTutorialServiceHelper.updateDbEntity(dbTutorialConfig);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbTutorialConfig = ruTutorialServiceHelper.readDbChild(dbTutorialConfig.getId(), DbTutorialConfig.class);
+        TutorialConfig tutorialConfig = dbTutorialConfig.getTutorialConfig(serverItemTypeService);
+        Assert.assertEquals("ownbase", tutorialConfig.getOwnBaseName());
+        Assert.assertTrue(tutorialConfig.isEventTracking());
+        Assert.assertTrue(tutorialConfig.isShowTip());
+        Assert.assertEquals(200, tutorialConfig.getWidth());
+        Assert.assertEquals(100, tutorialConfig.getHeight());
+        List<TaskConfig> taskConfigs = tutorialConfig.getTasks();
+        Assert.assertEquals(1, taskConfigs.size());
+        TaskConfig taskConfig = taskConfigs.get(0);
+        Assert.assertEquals(100, taskConfig.getMoney());
+        PlanetInfo planetInfo = taskConfig.createPlanetInfo();
+        Assert.assertEquals(5, planetInfo.getHouseSpace());
+        Assert.assertEquals(10000, planetInfo.getMaxMoney());
+        Assert.assertEquals(RadarMode.MAP, planetInfo.getRadarMode());
+        GameTipConfig gameTipConfig = taskConfig.getGameTipConfig();
+        Assert.assertEquals(TEST_ATTACK_ITEM_ID, gameTipConfig.getActor());
+        Assert.assertEquals(TEST_RESOURCE_ITEM_ID, gameTipConfig.getResourceId());
+        Assert.assertEquals(TEST_CONTAINER_ITEM_ID, gameTipConfig.getToBeBuiltId());
+        Assert.assertEquals(new Index(321, 987), gameTipConfig.getTerrainPositionHint());
+        Assert.assertEquals(GameTipConfig.Tip.FABRICATE, gameTipConfig.getTip());
+        Assert.assertTrue(gameTipConfig.isHighlightQuestVisualisationCockpit());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 }

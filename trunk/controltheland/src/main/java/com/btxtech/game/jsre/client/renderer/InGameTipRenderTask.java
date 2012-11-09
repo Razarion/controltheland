@@ -45,16 +45,18 @@ public class InGameTipRenderTask extends AbstractRenderTask {
         }
         // Render Arrow
         context2d.save();
-        Index relativeArrowPosition = gameTipVisualization.getArrowHotSpot(viewRect);
+        Index relativeArrowPosition = gameTipVisualization.getArrowHotSpot(viewRect, timeStamp);
         context2d.translate(relativeArrowPosition.getX(), relativeArrowPosition.getY());
         context2d.rotate(gameTipVisualization.getArrowAngel());
         context2d.drawImage(CanvasElementLibrary.getArrow(), -CanvasElementLibrary.ARROW_WIDTH_TOTAL / 2, 0);
         context2d.restore();
         // Render Mouse
-        Index relativeMousePosition = gameTipVisualization.getMousePosition(viewRect);
-        context2d.drawImage(CanvasElementLibrary.getMouse(), relativeMousePosition.getX(), relativeMousePosition.getY());
-        if (timeStamp / 300 % 2 == 0) {
-            context2d.drawImage(CanvasElementLibrary.getMouseButtonDown(), relativeMousePosition.getX(), relativeMousePosition.getY());
+        Index relativeMousePosition = gameTipVisualization.getMousePosition(viewRect, timeStamp);
+        if (relativeMousePosition != null) {
+            context2d.drawImage(CanvasElementLibrary.getMouse(), relativeMousePosition.getX(), relativeMousePosition.getY());
+            if (timeStamp / 300 % 2 == 0) {
+                context2d.drawImage(CanvasElementLibrary.getMouseButtonDown(), relativeMousePosition.getX(), relativeMousePosition.getY());
+            }
         }
     }
 }

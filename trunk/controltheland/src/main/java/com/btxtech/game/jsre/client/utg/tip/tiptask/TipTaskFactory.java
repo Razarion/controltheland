@@ -1,6 +1,5 @@
 package com.btxtech.game.jsre.client.utg.tip.tiptask;
 
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.utg.tip.GameTipConfig;
 import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
 
@@ -16,35 +15,44 @@ public class TipTaskFactory {
     public static List<AbstractTipTask> create(GameTipManager gameTipManager, GameTipConfig gameTipConfig) {
         switch (gameTipConfig.getTip()) {
             case BUILD:
-                return createBuiltFactory(gameTipManager, gameTipConfig.getActor(), gameTipConfig.getToBeBuiltId(), gameTipConfig.getTerrainPositionHint());
+                return createBuiltFactory(gameTipManager, gameTipConfig);
             case FABRICATE:
-                return createFactorizeUnit(gameTipManager, gameTipConfig.getActor(), gameTipConfig.getToBeBuiltId());
+                return createFactorizeUnit(gameTipManager, gameTipConfig);
             case GET_RESOURCE:
-                return createGetResource(gameTipManager, gameTipConfig.getActor(), gameTipConfig.getResourceId());
+                return createGetResource(gameTipManager, gameTipConfig);
             default:
                 throw new IllegalArgumentException("TipTaskFactory: unknown tip: " + gameTipConfig.getTip());
         }
     }
 
-    private static List<AbstractTipTask> createBuiltFactory(GameTipManager gameTipManager, int builderTypeId, int toBeBuiltId, Index terrainPositionHint) {
+    private static List<AbstractTipTask> createBuiltFactory(GameTipManager gameTipManager, GameTipConfig gameTipConfig) {
         List<AbstractTipTask> tasks = new ArrayList<AbstractTipTask>();
-        tasks.add(new SelectTipTask(gameTipManager, builderTypeId));
-        tasks.add(new ToBeBuildPlacerTipTask(gameTipManager, toBeBuiltId));
-        tasks.add(new SendBuildCommandTipTask(gameTipManager, toBeBuiltId, terrainPositionHint));
+        tasks.add(new SelectTipTask(gameTipManager, gameTipConfig.getActor()));
+        tasks.add(new ToBeBuildPlacerTipTask(gameTipManager, gameTipConfig.getToBeBuiltId()));
+        tasks.add(new SendBuildCommandTipTask(gameTipManager, gameTipConfig.getToBeBuiltId(), gameTipConfig.getTerrainPositionHint()));
+        addHighlightQuestVisualisationCockpit(gameTipManager, gameTipConfig, tasks);
         return tasks;
     }
 
-    private static List<AbstractTipTask> createFactorizeUnit(GameTipManager gameTipManager, int factoryTypeId, int toBeBuiltId) {
+    private static List<AbstractTipTask> createFactorizeUnit(GameTipManager gameTipManager, GameTipConfig gameTipConfig) {
         List<AbstractTipTask> tasks = new ArrayList<AbstractTipTask>();
-        tasks.add(new SelectTipTask(gameTipManager, factoryTypeId));
-        tasks.add(new SendFactorizeCommandTipTask(gameTipManager, toBeBuiltId));
+        tasks.add(new SelectTipTask(gameTipManager, gameTipConfig.getActor()));
+        tasks.add(new SendFactorizeCommandTipTask(gameTipManager, gameTipConfig.getToBeBuiltId()));
+        addHighlightQuestVisualisationCockpit(gameTipManager, gameTipConfig, tasks);
         return tasks;
     }
 
-    private static List<AbstractTipTask> createGetResource(GameTipManager gameTipManager, int actor, int resourceId) {
+    private static List<AbstractTipTask> createGetResource(GameTipManager gameTipManager, GameTipConfig gameTipConfig) {
         List<AbstractTipTask> tasks = new ArrayList<AbstractTipTask>();
-        tasks.add(new SelectTipTask(gameTipManager, actor));
-        tasks.add(new SendMoneyCollectCommandTipTask(gameTipManager, resourceId));
+        tasks.add(new SelectTipTask(gameTipManager, gameTipConfig.getActor()));
+        tasks.add(new SendMoneyCollectCommandTipTask(gameTipManager, gameTipConfig.getResourceId()));
+        addHighlightQuestVisualisationCockpit(gameTipManager, gameTipConfig, tasks);
         return tasks;
+    }
+
+    private static void addHighlightQuestVisualisationCockpit(GameTipManager gameTipManager, GameTipConfig gameTipConfig, List<AbstractTipTask> tasks) {
+        if (gameTipConfig.isHighlightQuestVisualisationCockpit()) {
+            tasks.add(new WatchQuestVisualisationCockpitTipTask(gameTipManager));
+        }
     }
 }

@@ -24,8 +24,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class QuestVisualisationCockpit extends Composite {
-
     private static QuestVisualisationCockpitUiBinder uiBinder = GWT.create(QuestVisualisationCockpitUiBinder.class);
+    private static final QuestVisualisationCockpit INSTANCE = new QuestVisualisationCockpit();
     @UiField
     Label titleLabel;
     @UiField
@@ -40,10 +40,17 @@ public class QuestVisualisationCockpit extends Composite {
     interface QuestVisualisationCockpitUiBinder extends UiBinder<Widget, QuestVisualisationCockpit> {
     }
 
-    public QuestVisualisationCockpit() {
+    /**
+     * Singleton
+     */
+    private QuestVisualisationCockpit() {
         initWidget(uiBinder.createAndBindUi(this));
         QuestVisualtsationModel.getInstance().setListener(this);
         questDialogButton.setStyleName("singleButton");
+    }
+
+    public static QuestVisualisationCockpit getInstance() {
+        return INSTANCE;
     }
 
     public void addToParent(AbsolutePanel parent) {

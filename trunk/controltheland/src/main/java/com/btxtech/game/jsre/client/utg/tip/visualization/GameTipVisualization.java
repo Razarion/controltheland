@@ -11,7 +11,7 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 public interface GameTipVisualization {
     double getArrowAngel();
 
-    Index getArrowHotSpot(Rectangle viewRect);
+    Index getArrowHotSpot(Rectangle viewRect, long timeStamp);
 
-    Index getMousePosition(Rectangle viewRect);
+    Index getMousePosition(Rectangle viewRect, long timeStamp);
 }
