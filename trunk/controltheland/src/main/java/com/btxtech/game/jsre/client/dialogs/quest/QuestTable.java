@@ -7,16 +7,15 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.Label;
 
 public class QuestTable extends Composite {
 
     private static QuestTableUiBinder uiBinder = GWT.create(QuestTableUiBinder.class);
     @UiField
     FlexTable questTable;
-    @UiField
-    HTML quests;
-    @UiField
-    HTML missions;
+    @UiField Label questCountLabel;
+    @UiField Label missionCountLabel;
 
     interface QuestTableUiBinder extends UiBinder<Widget, QuestTable> {
     }
@@ -26,8 +25,8 @@ public class QuestTable extends Composite {
     }
 
     public void displayQuestOverview(QuestDialog questDialog, QuestOverview questOverview) {
-        quests.setHTML("Quests: " + questOverview.getQuestsDone() + "/" + questOverview.getTotalQuests());
-        missions.setHTML("Missions: " + questOverview.getMissionsDone() + "/" + questOverview.getTotalMissions());
+        questCountLabel.setText("Quests: " + questOverview.getQuestsDone() + "/" + questOverview.getTotalQuests());
+        missionCountLabel.setText("Missions: " + questOverview.getMissionsDone() + "/" + questOverview.getTotalMissions());
         questTable.clear();
         for (QuestInfo questInfo : questOverview.getQuestInfos()) {
             switch (questInfo.getType()) {

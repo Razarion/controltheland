@@ -45,7 +45,7 @@
 
     <g:HorizontalPanel styleName="{style.itemplate}"
                        spacing="5" width="100%">
-        <g:Cell verticalAlignment="ALIGN_MIDDLE">
+        <g:Cell verticalAlignment="ALIGN_MIDDLE" width="50px">
             <g:Image resource='{res.mission}'/>
         </g:Cell>
         <g:Cell verticalAlignment="ALIGN_MIDDLE">
@@ -60,10 +60,8 @@
                 </g:Cell>
             </g:VerticalPanel>
         </g:Cell>
-        <g:Cell verticalAlignment="ALIGN_MIDDLE">
-            <g:FlowPanel>
-                <g:Button ui:field="button" text="Go"/>
-            </g:FlowPanel>
+        <g:Cell verticalAlignment="ALIGN_MIDDLE" horizontalAlignment="ALIGN_RIGHT">
+        	<g:Button ui:field="button" text="Go"/>
         </g:Cell>
     </g:HorizontalPanel>
 </ui:UiBinder> 
