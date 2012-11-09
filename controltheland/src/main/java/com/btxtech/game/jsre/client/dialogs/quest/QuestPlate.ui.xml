@@ -52,7 +52,7 @@
 
     <g:HorizontalPanel styleName="{style.itemplate}"
                        spacing="5" width="100%">
-        <g:Cell verticalAlignment="ALIGN_MIDDLE">
+        <g:Cell verticalAlignment="ALIGN_MIDDLE" width="50px">
             <g:Image resource='{res.quest}'/>
         </g:Cell>
         <g:Cell verticalAlignment="ALIGN_MIDDLE">
@@ -65,10 +65,8 @@
                 </g:DisclosurePanel>
             </g:VerticalPanel>
         </g:Cell>
-        <g:Cell verticalAlignment="ALIGN_MIDDLE">
-            <g:FlowPanel>
-                <g:Button ui:field="button" text="Activate"/>
-            </g:FlowPanel>
+        <g:Cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_MIDDLE">
+        	<g:Button ui:field="button" text="Activate"/>
         </g:Cell>
     </g:HorizontalPanel>
 </ui:UiBinder> 
