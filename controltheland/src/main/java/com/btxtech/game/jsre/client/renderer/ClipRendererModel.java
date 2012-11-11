@@ -71,11 +71,11 @@ public class ClipRendererModel {
                 return;
             }
         }
+        relativeImageMiddle = absoluteClipMiddle.sub(viewRect.getStart());
         if (newFrame == frame) {
             return;
         }
         frame = newFrame;
-        relativeImageMiddle = absoluteClipMiddle.sub(viewRect.getStart());
         spriteMapOffset = imageSpriteMapInfo.getSpriteMapOffset(frame);
     }
 

@@ -28,7 +28,7 @@ public abstract class AbstractClipRenderTask extends AbstractRenderTask {
                 clipRendererModel.getSpriteMapYOffset(), // Source y pos
                 imageSpriteMapInfo.getFrameWidth(),  // Source width
                 imageSpriteMapInfo.getFrameHeight(), // Source height
-                -clipRendererModel.getXOffset(),// Canvas y pos
+                -clipRendererModel.getXOffset(),// Canvas x pos
                 -clipRendererModel.getYOffset() + (clipRendererModel.getMaxHeight() != null ? imageSpriteMapInfo.getFrameHeight() - clipRendererModel.getMaxHeight() : 0),// Canvas y pos
                 imageSpriteMapInfo.getFrameWidth(), // Destination width
                 clipRendererModel.getMaxHeight() != null ? clipRendererModel.getMaxHeight() : imageSpriteMapInfo.getFrameHeight() // Destination height
