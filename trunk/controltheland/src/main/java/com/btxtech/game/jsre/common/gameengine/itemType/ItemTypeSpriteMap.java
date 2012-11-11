@@ -192,7 +192,7 @@ public class ItemTypeSpriteMap implements Serializable {
 
     public int getDemolitionStep4ItemImage(SyncItem syncItem) {
         if (syncItem instanceof SyncBaseItem) {
-            int step = (int) (getDemolitionStepCount() * (1.0 - ((SyncBaseItem) syncItem).getNormalizedHealth()));
+            int step = getDemolitionStep(syncItem);
             while (step >= 0 && demolitionSteps[step].getAnimationFrames() == 0) {
                 step--;
             }
@@ -202,11 +202,15 @@ public class ItemTypeSpriteMap implements Serializable {
         }
     }
 
-    public int getDemolitionStep4Clip(SyncItem syncItem) {
+    public int getDemolitionStep(SyncItem syncItem) {
         if (syncItem instanceof SyncBaseItem) {
-            return (int) (getDemolitionStepCount() * (1.0 - ((SyncBaseItem) syncItem).getNormalizedHealth()));
+            if (syncItem.isAlive()) {
+                return (int) (getDemolitionStepCount() * (1.0 - ((SyncBaseItem) syncItem).getNormalizedHealth()));
+            } else {
+                return getDemolitionStepCount() - 1;
+            }
         } else {
-            return 0;
+            throw new IllegalStateException("Only SyncBaseItem do have a demolition step: " + syncItem);
         }
     }
 
@@ -317,7 +321,7 @@ public class ItemTypeSpriteMap implements Serializable {
         if (demolitionSteps == null) {
             return null;
         }
-        return demolitionSteps[getDemolitionStep4Clip(syncBaseItem)].getItemClipPositions();
+        return demolitionSteps[getDemolitionStep(syncBaseItem)].getItemClipPositions();
     }
 
     public DemolitionStepSpriteMap[] getDemolitionSteps() {
