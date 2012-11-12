@@ -143,11 +143,7 @@ public class ItemTypeEditorModel {
         if (currentAngelIndex >= ItemTypeEditorModel.getInstance().getBoundingBox().getAngelCount()) {
             currentAngelIndex = 0;
         }
-        ItemTypeEditorModel.getInstance().fireUpdate();
-        setTargetPosition();
-        if (moving) {
-            executeMoveCommand();
-        }
+        updateAngelIndex();
     }
 
     public void decreaseCurrentAngelIndex() {
@@ -155,10 +151,17 @@ public class ItemTypeEditorModel {
         if (currentAngelIndex < 0) {
             currentAngelIndex = ItemTypeEditorModel.getInstance().getBoundingBox().getAngelCount() - 1;
         }
+        updateAngelIndex();
+    }
+
+    private void updateAngelIndex() {
         ItemTypeEditorModel.getInstance().fireUpdate();
         setTargetPosition();
         if (moving) {
             executeMoveCommand();
+        }
+        if( getBoundingBox().getAngelCount() > 1) {
+            syncItem.getSyncItemArea().setAngel(getBoundingBox().getAngels()[currentAngelIndex]);
         }
     }
 
