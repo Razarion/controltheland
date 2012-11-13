@@ -66,12 +66,13 @@ public class RadarPanel implements TerrainScrollListener {
     private RadarFrameView radarFrameView;
     private RadarHintView radarHintView;
     private RadarItemView radarItemView;
+    private AttackVisualisation attackVisualisation;
     private HTML noRadarPanel;
     private boolean hasEnergy = false;
     private RadarMode levelRadarMode = RadarMode.NONE;
     private RadarMode itemRadarMode = RadarMode.NONE;
     private Set<SyncBaseItem> radarModeItems = new HashSet<SyncBaseItem>();
-    private ExtendedCustomButton showQuest;
+    private ExtendedCustomButton showAttack;
     private Index questHint;
     private ExtendedCustomButton left;
     private ExtendedCustomButton right;
@@ -117,15 +118,21 @@ public class RadarPanel implements TerrainScrollListener {
         radarItemView.getCanvas().setVisible(false);
         absolutePanel.add(radarItemView.getCanvas(), RADAR_X, RADAR_Y);
 
+        // Attack visualisation
+        attackVisualisation = new AttackVisualisation(RADAR_WIDTH, RADAR_HEIGHT);
+        attackVisualisation.getCanvas().getElement().getStyle().setZIndex(3);
+        attackVisualisation.getCanvas().setVisible(false);
+        absolutePanel.add(attackVisualisation.getCanvas(), RADAR_X, RADAR_Y);
+
         // Hint view
         radarHintView = new RadarHintView(RADAR_WIDTH, RADAR_HEIGHT);
-        radarHintView.getCanvas().getElement().getStyle().setZIndex(3);
+        radarHintView.getCanvas().getElement().getStyle().setZIndex(4);
         radarHintView.getCanvas().setVisible(false);
         absolutePanel.add(radarHintView.getCanvas(), RADAR_X, RADAR_Y);
 
         // Frame view
         radarFrameView = new RadarFrameView(RADAR_WIDTH, RADAR_HEIGHT);
-        radarFrameView.getCanvas().getElement().getStyle().setZIndex(4);
+        radarFrameView.getCanvas().getElement().getStyle().setZIndex(5);
         radarFrameView.getCanvas().setVisible(false);
         absolutePanel.add(radarFrameView.getCanvas(), RADAR_X, RADAR_Y);
 
@@ -188,17 +195,14 @@ public class RadarPanel implements TerrainScrollListener {
                 moveToMainWindowMiddle();
             }
         }), ZOOM_HOME_X, ZOOM_HOME_Y);
-        showQuest = new ExtendedCustomButton("zoom-quest", false, ToolTips.TOOL_TIP_ZOOM_QUEST, new ClickHandler() {
+        showAttack = new ExtendedCustomButton("zoom-attack", true, ToolTips.TOOL_TIP_ZOOM_ATTACKS, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                if (questHint != null) {
-                    setScale(ScaleStep.DEFAULT);
-                    TerrainView.getInstance().moveToMiddle(questHint);
-                }
+                attackVisualisation.activate(showAttack.isDown());
             }
         });
-        showQuest.setSupportDisabled();
-        absolutePanel.add(showQuest, ZOOM_QUEST_X, ZOOM_QUEST_Y);
+        showAttack.setDownState(true);
+        absolutePanel.add(showAttack, ZOOM_QUEST_X, ZOOM_QUEST_Y);
     }
 
     private void moveToMainWindowMiddle() {
@@ -228,6 +232,7 @@ public class RadarPanel implements TerrainScrollListener {
         radarFrameView.setAbsoluteViewRectMiddle(middle);
         radarHintView.setAbsoluteViewRectMiddle(middle);
         radarItemView.setAbsoluteViewRectMiddle(middle);
+        attackVisualisation.setAbsoluteViewRectMiddle(middle);
     }
 
     private void setViewRect(Index viewOrigin) {
@@ -235,6 +240,7 @@ public class RadarPanel implements TerrainScrollListener {
         radarFrameView.setAbsoluteViewRect(viewOrigin);
         radarHintView.setAbsoluteViewRect(viewOrigin);
         radarItemView.setAbsoluteViewRect(viewOrigin);
+        attackVisualisation.setAbsoluteViewRect(viewOrigin);
     }
 
     private ScaleStep getScale() {
@@ -246,6 +252,7 @@ public class RadarPanel implements TerrainScrollListener {
         radarFrameView.setScale(scale);
         radarHintView.setScale(scale);
         radarItemView.setScale(scale);
+        attackVisualisation.setScale(scale);
     }
 
     private void handleRadarState() {
@@ -266,6 +273,9 @@ public class RadarPanel implements TerrainScrollListener {
         }
         if (radarHintView != null) {
             radarHintView.getCanvas().setVisible(showMap);
+        }
+        if (attackVisualisation != null) {
+            attackVisualisation.getCanvas().setVisible(showMap);
         }
 
         boolean showUnits = RadarMode.MAP_AND_UNITS.sameOrHigher(mode);
@@ -302,12 +312,12 @@ public class RadarPanel implements TerrainScrollListener {
         radarFrameView.onTerrainSettings(terrainSettings);
         radarHintView.onTerrainSettings(terrainSettings);
         radarItemView.onTerrainSettings(terrainSettings);
+        attackVisualisation.onTerrainSettings(terrainSettings);
         // set defaults
         if (Connection.getInstance().getGameEngineMode() == null) {
             // In editors
             setScale(ScaleStep.WHOLE_MAP);
             moveToMainWindowMiddle();
-            showQuest.setVisible(false);
             left.setVisible(true);
             right.setVisible(true);
             up.setVisible(true);
@@ -317,8 +327,6 @@ public class RadarPanel implements TerrainScrollListener {
         } else if (Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE) {
             setScale(ScaleStep.DEFAULT);
             moveToMainWindowMiddle();
-            showQuest.setVisible(true);
-            showQuest.setEnabled(questHint != null);
             left.setVisible(true);
             right.setVisible(true);
             up.setVisible(true);
@@ -327,7 +335,6 @@ public class RadarPanel implements TerrainScrollListener {
             zoomOut.setVisible(true);
         } else {
             setScale(ScaleStep.WHOLE_MAP_MISSION);
-            showQuest.setVisible(false);
             left.setVisible(false);
             right.setVisible(false);
             up.setVisible(false);
@@ -383,6 +390,9 @@ public class RadarPanel implements TerrainScrollListener {
         if (radarItemView != null) {
             radarItemView.cleanup();
         }
+        if(attackVisualisation != null) {
+            attackVisualisation.cleanup();
+        }
     }
 
     private RadarMode findHighestRadarMode() {
@@ -401,13 +411,11 @@ public class RadarPanel implements TerrainScrollListener {
     @Deprecated
     public void showHint(SyncBaseItem enemyBaseItem) {
         questHint = null;
-        showQuest.setEnabled(false);
         radarHintView.showHint(enemyBaseItem);
     }
 
     public void showHint(Index position) {
         questHint = position;
-        showQuest.setEnabled(true);
         radarHintView.showHint(position);
         setScale(ScaleStep.DEFAULT);
         moveToMiddle(questHint);
@@ -415,7 +423,6 @@ public class RadarPanel implements TerrainScrollListener {
 
     public void hideHint() {
         questHint = null;
-        showQuest.setEnabled(false);
         radarHintView.hideHint();
     }
 
@@ -445,4 +452,12 @@ public class RadarPanel implements TerrainScrollListener {
         }
     }
 
+    public void onwItemUnderAttack(SyncBaseItem target) {
+        if(attackVisualisation != null) {
+            attackVisualisation.onwItemUnderAttack(target);
+        }
+        if(showAttack.isDown() && getScale() != ScaleStep.WHOLE_MAP) {
+            setScale(ScaleStep.WHOLE_MAP);
+        }
+    }
 }

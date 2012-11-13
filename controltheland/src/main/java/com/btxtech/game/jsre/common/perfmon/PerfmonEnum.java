@@ -43,7 +43,8 @@ public enum PerfmonEnum {
     ITEM_MOUSE_OUT("Item Mouse out"),
     ITEM_MOUSE_UP("Item Mouse up"),
     RENDERER("Renderer"),
-    RENDERER_OVERLAY("Renderer Overlay");
+    RENDERER_OVERLAY("Renderer Overlay"),
+    RADAR_ATTACK_VISUALISATION("Radar Attack Visualisation");
 
     private String displayName;
 

@@ -32,7 +32,8 @@ public interface SyncItemListener {
         CONTAINED_IN_CHANGED,
         CONTAINER_COUNT_CHANGED,
         LAUNCHER_PROGRESS,
-        PROJECTILE_DETONATION
+        PROJECTILE_DETONATION,
+        UNDER_ATTACK
     }
 
     void onItemChanged(Change change, SyncItem syncItem);

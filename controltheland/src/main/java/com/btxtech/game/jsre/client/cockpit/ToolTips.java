@@ -28,7 +28,7 @@ public class ToolTips {
     public static final String TOOL_TIP_ZOOM_IN = "Zoom in";
     public static final String TOOL_TIP_ZOOM_OUT = "Zoom out";
     public static final String TOOL_TIP_ZOOM_HOME = "Zoom to home base";
-    public static final String TOOL_TIP_ZOOM_QUEST = "Zoom to quest";
+    public static final String TOOL_TIP_ZOOM_ATTACKS = "Auto zoom to attacks";
     public static final String TOOL_TIP_LOCK_RADAR_TO_MAIN = "Lock the radar view to the main window";
     public static final String TOOL_TIP_RADAR_PAGE_LEFT = "Page left";
     public static final String TOOL_TIP_RADAR_PAGE_RIGHT = "Page right";

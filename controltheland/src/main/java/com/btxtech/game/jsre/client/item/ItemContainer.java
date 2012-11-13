@@ -433,6 +433,11 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
             case ON_FIRING:
                 AttackHandler.getInstance().onFiring((SyncBaseItem) syncItem);
                 break;
+            case UNDER_ATTACK:
+                if(ClientBase.getInstance().isMyOwnProperty((SyncBaseItem) syncItem)) {
+                    RadarPanel.getInstance().onwItemUnderAttack((SyncBaseItem) syncItem);
+                }
+                break;
             case PROJECTILE_DETONATION:
                 AttackHandler.getInstance().onProjectileDetonation((SyncBaseItem) syncItem);
                 break;
