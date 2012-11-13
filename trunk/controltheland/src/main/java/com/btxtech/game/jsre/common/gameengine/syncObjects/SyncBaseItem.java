@@ -719,6 +719,7 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
     }
 
     public void onAttacked(SyncBaseItem syncBaseItem) {
+        fireItemChanged(SyncItemListener.Change.UNDER_ATTACK);
         if (getPlanetServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
             return;
         }
