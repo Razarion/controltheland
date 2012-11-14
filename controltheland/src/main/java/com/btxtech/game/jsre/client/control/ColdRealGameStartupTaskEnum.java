@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client.control;
 
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.GuiStartupTask;
+import com.btxtech.game.jsre.client.control.task.ImageSpriteMapPreloaderStartupTask;
 import com.btxtech.game.jsre.client.control.task.InitItemStartupTask;
 import com.btxtech.game.jsre.client.control.task.LoadRealGameInfoStartupTask;
 import com.btxtech.game.jsre.client.control.task.LoadStartJsAbstractStartupTask;
@@ -47,6 +48,11 @@ public enum ColdRealGameStartupTaskEnum implements StartupTaskEnum {
         @Override
         public AbstractStartupTask createTask() {
             return new RealStartupTask(this);
+        }},
+    PRELOAD_IMAGE_SPRITE_MAPS("Preload image sprite maps") {
+        @Override
+        public AbstractStartupTask createTask() {
+            return new ImageSpriteMapPreloaderStartupTask(this);
         }},
     LOAD_UNITS("Load Units") {
         @Override

@@ -3,7 +3,7 @@ package com.btxtech.game.services.media;
 import com.btxtech.game.controllers.ImageSpriteMapController;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.info.ClipInfo;
-import com.btxtech.game.jsre.client.common.info.CommonClipInfo;
+import com.btxtech.game.jsre.client.common.info.PreloadedImageSpriteMapInfo;
 import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.services.AbstractServiceTest;
@@ -321,78 +321,85 @@ public class TestClipService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void commonClipsCrud() throws Exception {
+    public void preloadedImageSpriteMapCrud() throws Exception {
         // Setup sprite map and sound
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbClip dbClip1 = clipService.getClipLibraryCrud().createDbChild();
-        DbClip dbClip2 = clipService.getClipLibraryCrud().createDbChild();
+        DbImageSpriteMap dbImageSpriteMap1 = clipService.getImageSpriteMapCrud().createDbChild();
+        DbImageSpriteMap dbImageSpriteMap2 = clipService.getImageSpriteMapCrud().createDbChild();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Setup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(0, clipService.getCommonClipCrud().readDbChildren().size());
-        DbCommonClip dbCommonClip1 = clipService.getCommonClipCrud().createDbChild();
-        dbCommonClip1.setDbClip(dbClip1);
-        clipService.getCommonClipCrud().updateDbChild(dbCommonClip1);
+        Assert.assertEquals(0, clipService.getPreloadedSpriteMapCrud().readDbChildren().size());
+        PreloadedImageSpriteMap preloadedImageSpriteMap1 = clipService.getPreloadedSpriteMapCrud().createDbChild();
+        preloadedImageSpriteMap1.setDbImageSpriteMap(dbImageSpriteMap1);
+        preloadedImageSpriteMap1.setType(PreloadedImageSpriteMapInfo.Type.DETONATION);
+        clipService.getPreloadedSpriteMapCrud().updateDbChild(preloadedImageSpriteMap1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(1, clipService.getCommonClipCrud().readDbChildren().size());
-        dbCommonClip1 = clipService.getCommonClipCrud().readDbChild(dbCommonClip1.getId());
-        Assert.assertEquals(dbClip1.getId(), dbCommonClip1.getDbClip().getId());
+        Assert.assertEquals(1, clipService.getPreloadedSpriteMapCrud().readDbChildren().size());
+        preloadedImageSpriteMap1 = clipService.getPreloadedSpriteMapCrud().readDbChild(preloadedImageSpriteMap1.getId());
+        Assert.assertEquals(dbImageSpriteMap1.getId(), preloadedImageSpriteMap1.getDbImageSpriteMap().getId());
+        Assert.assertEquals(PreloadedImageSpriteMapInfo.Type.DETONATION, preloadedImageSpriteMap1.getType());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Modify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbCommonClip dbCommonClip2 = clipService.getCommonClipCrud().createDbChild();
-        dbCommonClip2.setDbClip(dbClip2);
-        clipService.getCommonClipCrud().updateDbChild(dbCommonClip2);
+        PreloadedImageSpriteMap preloadedImageSpriteMap2 = clipService.getPreloadedSpriteMapCrud().createDbChild();
+        preloadedImageSpriteMap2.setDbImageSpriteMap(dbImageSpriteMap2);
+        preloadedImageSpriteMap2.setType(PreloadedImageSpriteMapInfo.Type.EXPLOSION);
+        clipService.getPreloadedSpriteMapCrud().updateDbChild(preloadedImageSpriteMap2);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(2, clipService.getCommonClipCrud().readDbChildren().size());
-        dbCommonClip1 = clipService.getCommonClipCrud().readDbChild(dbCommonClip1.getId());
-        Assert.assertEquals(dbClip1.getId(), dbCommonClip1.getDbClip().getId());
-        dbCommonClip2 = clipService.getCommonClipCrud().readDbChild(dbCommonClip2.getId());
-        Assert.assertEquals(dbClip2.getId(), dbCommonClip2.getDbClip().getId());
+        Assert.assertEquals(2, clipService.getPreloadedSpriteMapCrud().readDbChildren().size());
+        preloadedImageSpriteMap1 = clipService.getPreloadedSpriteMapCrud().readDbChild(preloadedImageSpriteMap1.getId());
+        Assert.assertEquals(dbImageSpriteMap1.getId(), preloadedImageSpriteMap1.getDbImageSpriteMap().getId());
+        Assert.assertEquals(PreloadedImageSpriteMapInfo.Type.DETONATION, preloadedImageSpriteMap1.getType());
+        preloadedImageSpriteMap2 = clipService.getPreloadedSpriteMapCrud().readDbChild(preloadedImageSpriteMap2.getId());
+        Assert.assertEquals(dbImageSpriteMap2.getId(), preloadedImageSpriteMap2.getDbImageSpriteMap().getId());
+        Assert.assertEquals(PreloadedImageSpriteMapInfo.Type.EXPLOSION, preloadedImageSpriteMap2.getType());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Modify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        dbCommonClip1 = clipService.getCommonClipCrud().readDbChild(dbCommonClip1.getId());
-        clipService.getCommonClipCrud().deleteDbChild(dbCommonClip1);
-        dbCommonClip2 = clipService.getCommonClipCrud().readDbChild(dbCommonClip2.getId());
-        dbCommonClip2.setDbClip(dbClip1);
-        clipService.getCommonClipCrud().updateDbChild(dbCommonClip2);
+        preloadedImageSpriteMap1 = clipService.getPreloadedSpriteMapCrud().readDbChild(preloadedImageSpriteMap1.getId());
+        clipService.getPreloadedSpriteMapCrud().deleteDbChild(preloadedImageSpriteMap1);
+        preloadedImageSpriteMap2 = clipService.getPreloadedSpriteMapCrud().readDbChild(preloadedImageSpriteMap2.getId());
+        preloadedImageSpriteMap2.setDbImageSpriteMap(dbImageSpriteMap1);
+        preloadedImageSpriteMap2.setType(PreloadedImageSpriteMapInfo.Type.MUZZLE_FLASH);
+        clipService.getPreloadedSpriteMapCrud().updateDbChild(preloadedImageSpriteMap2);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(1, clipService.getCommonClipCrud().readDbChildren().size());
-        dbCommonClip2 = clipService.getCommonClipCrud().readDbChild(dbCommonClip2.getId());
-        Assert.assertEquals(dbClip1.getId(), dbCommonClip2.getDbClip().getId());
+        Assert.assertEquals(1, clipService.getPreloadedSpriteMapCrud().readDbChildren().size());
+        preloadedImageSpriteMap2 = clipService.getPreloadedSpriteMapCrud().readDbChild(preloadedImageSpriteMap2.getId());
+        Assert.assertEquals(dbImageSpriteMap1.getId(), preloadedImageSpriteMap2.getDbImageSpriteMap().getId());
+        Assert.assertEquals(PreloadedImageSpriteMapInfo.Type.MUZZLE_FLASH, preloadedImageSpriteMap2.getType());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Modify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        dbCommonClip2 = clipService.getCommonClipCrud().readDbChild(dbCommonClip2.getId());
-        clipService.getCommonClipCrud().deleteDbChild(dbCommonClip2);
+        preloadedImageSpriteMap2 = clipService.getPreloadedSpriteMapCrud().readDbChild(preloadedImageSpriteMap2.getId());
+        clipService.getPreloadedSpriteMapCrud().deleteDbChild(preloadedImageSpriteMap2);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(0, clipService.getCommonClipCrud().readDbChildren().size());
+        Assert.assertEquals(0, clipService.getPreloadedSpriteMapCrud().readDbChildren().size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -405,7 +412,7 @@ public class TestClipService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
-        Assert.assertEquals(0, realGameInfo.getCommonClipInfo().getCommonClips().size());
+        Assert.assertEquals(0, realGameInfo.getPreloadedImageSpriteMapInfo().getPreloadedImageSpriteMapInfo().size());
         Assert.assertEquals(0, realGameInfo.getClipLibrary().size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -423,10 +430,10 @@ public class TestClipService extends AbstractServiceTest {
         dbClip1.setDbImageSpriteMap(dbImageSpriteMap1);
         dbClip1.setDbSound(dbSound1);
         clipService.getClipLibraryCrud().updateDbChild(dbClip1);
-        DbCommonClip dbCommonClip1 = clipService.getCommonClipCrud().createDbChild();
-        dbCommonClip1.setDbClip(dbClip1);
-        dbCommonClip1.setType(CommonClipInfo.Type.EXPLOSION);
-        clipService.getCommonClipCrud().updateDbChild(dbCommonClip1);
+        PreloadedImageSpriteMap preloadedImageSpriteMap1 = clipService.getPreloadedSpriteMapCrud().createDbChild();
+        preloadedImageSpriteMap1.setDbImageSpriteMap(dbImageSpriteMap1);
+        preloadedImageSpriteMap1.setType(PreloadedImageSpriteMapInfo.Type.MUZZLE_FLASH);
+        clipService.getPreloadedSpriteMapCrud().updateDbChild(preloadedImageSpriteMap1);
         DbImageSpriteMap dbImageSpriteMap2 = clipService.getImageSpriteMapCrud().createDbChild();
         dbImageSpriteMap2.setFrameCount(11);
         dbImageSpriteMap2.setFrameWidth(12);
@@ -436,10 +443,10 @@ public class TestClipService extends AbstractServiceTest {
         DbClip dbClip2 = clipService.getClipLibraryCrud().createDbChild();
         dbClip2.setDbImageSpriteMap(dbImageSpriteMap2);
         clipService.getClipLibraryCrud().updateDbChild(dbClip2);
-        DbCommonClip dbCommonClip2 = clipService.getCommonClipCrud().createDbChild();
-        dbCommonClip2.setDbClip(dbClip2);
-        dbCommonClip2.setType(CommonClipInfo.Type.EXPLOSION);
-        clipService.getCommonClipCrud().updateDbChild(dbCommonClip2);
+        PreloadedImageSpriteMap preloadedImageSpriteMap2 = clipService.getPreloadedSpriteMapCrud().createDbChild();
+        preloadedImageSpriteMap2.setDbImageSpriteMap(dbImageSpriteMap2);
+        preloadedImageSpriteMap2.setType(PreloadedImageSpriteMapInfo.Type.EXPLOSION);
+        clipService.getPreloadedSpriteMapCrud().updateDbChild(preloadedImageSpriteMap2);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
@@ -460,19 +467,17 @@ public class TestClipService extends AbstractServiceTest {
         // Clip
         Assert.assertEquals(2, realGameInfo.getClipLibrary().size());
         ClipInfo clipInfo1 = (ClipInfo) realGameInfo.getClipLibrary().toArray()[0];
-        Assert.assertEquals((int) dbClip1.getId(), clipInfo1.getClipId());
+        Assert.assertEquals((int) dbImageSpriteMap1.getId(), clipInfo1.getClipId());
         Assert.assertEquals((int) dbImageSpriteMap1.getId(), clipInfo1.getSpriteMapId());
         Assert.assertEquals((int) dbSound1.getId(), (int) clipInfo1.getSoundId());
         ClipInfo clipInfo2 = (ClipInfo) realGameInfo.getClipLibrary().toArray()[1];
-        Assert.assertEquals((int) dbClip2.getId(), clipInfo2.getClipId());
+        Assert.assertEquals((int) dbImageSpriteMap2.getId(), clipInfo2.getClipId());
         Assert.assertEquals((int) dbImageSpriteMap2.getId(), clipInfo2.getSpriteMapId());
         Assert.assertNull(clipInfo2.getSoundId());
-        // Common clips
-        Assert.assertEquals(1, realGameInfo.getCommonClipInfo().getCommonClips().size());
-        List<Integer> commonExplosionClips = realGameInfo.getCommonClipInfo().getCommonClips().get(CommonClipInfo.Type.EXPLOSION);
-        Assert.assertEquals(2, commonExplosionClips.size());
-        Assert.assertEquals(dbClip1.getId(), commonExplosionClips.get(0));
-        Assert.assertEquals(dbClip2.getId(), commonExplosionClips.get(1));
+        // Preloaded sprite maps
+        Assert.assertEquals(2, realGameInfo.getPreloadedImageSpriteMapInfo().getPreloadedImageSpriteMapInfo().size());
+        Assert.assertEquals(dbImageSpriteMap1.getId(), realGameInfo.getPreloadedImageSpriteMapInfo().getPreloadedImageSpriteMapInfo().get(PreloadedImageSpriteMapInfo.Type.MUZZLE_FLASH));
+        Assert.assertEquals(dbImageSpriteMap2.getId(), realGameInfo.getPreloadedImageSpriteMapInfo().getPreloadedImageSpriteMapInfo().get(PreloadedImageSpriteMapInfo.Type.EXPLOSION));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

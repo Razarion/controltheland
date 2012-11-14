@@ -7,6 +7,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.ClipInfo;
 import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
+import com.btxtech.game.jsre.client.common.info.PreloadedImageSpriteMapInfo;
 
 /**
  * User: beat
@@ -30,6 +31,7 @@ public class ClipRendererModel {
     private boolean loop;
     private boolean noYMiddle;
     private Integer maxHeight;
+    private ImageSpriteMapInfo preLoadedSpriteMapInfo;
 
     protected void initAndPlaySound(ClipInfo clipInfo, Index absoluteMiddle, double rotation, boolean loop) throws NoSuchImageSpriteMapInfoException {
         this.loop = loop;
@@ -43,6 +45,10 @@ public class ClipRendererModel {
             yOffset = imageSpriteMapInfo.getFrameHeight() / 2;
         }
         SoundHandler.getInstance().playClipSound(clipInfo);
+    }
+
+    protected void setPreLoadedSpriteMapInfo(PreloadedImageSpriteMapInfo.Type preloaded) throws NoSuchImageSpriteMapInfoException {
+        preLoadedSpriteMapInfo = ClientClipHandler.getInstance().getPreloadedImageSpriteMapInfo(preloaded);
     }
 
     protected void setNoYMiddle() {
@@ -143,5 +149,9 @@ public class ClipRendererModel {
 
     public Integer getMaxHeight() {
         return maxHeight;
+    }
+
+    public ImageSpriteMapInfo getPreLoadedSpriteMapInfo() {
+        return preLoadedSpriteMapInfo;
     }
 }

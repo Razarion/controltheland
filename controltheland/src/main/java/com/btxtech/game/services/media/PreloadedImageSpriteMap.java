@@ -1,6 +1,6 @@
 package com.btxtech.game.services.media;
 
-import com.btxtech.game.jsre.client.common.info.CommonClipInfo;
+import com.btxtech.game.jsre.client.common.info.PreloadedImageSpriteMapInfo;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.user.UserService;
 
@@ -17,15 +17,15 @@ import javax.persistence.ManyToOne;
  * Date: 15.08.12
  * Time: 13:50
  */
-@Entity(name = "CLIP_COMMON")
-public class DbCommonClip implements CrudChild {
+@Entity(name = "IMAGE_SPRITE_MAP_PRELOADED")
+public class PreloadedImageSpriteMap implements CrudChild {
     @Id
     @GeneratedValue
     private Integer id;
     @Enumerated(EnumType.STRING)
-    private CommonClipInfo.Type type;
+    private PreloadedImageSpriteMapInfo.Type type;
     @ManyToOne(fetch = FetchType.LAZY)
-    private DbClip dbClip;
+    private DbImageSpriteMap dbImageSpriteMap;
 
     @Override
     public Integer getId() {
@@ -47,11 +47,11 @@ public class DbCommonClip implements CrudChild {
         throw new UnsupportedOperationException();
     }
 
-    public CommonClipInfo.Type getType() {
+    public PreloadedImageSpriteMapInfo.Type getType() {
         return type;
     }
 
-    public void setType(CommonClipInfo.Type type) {
+    public void setType(PreloadedImageSpriteMapInfo.Type type) {
         this.type = type;
     }
 
@@ -65,12 +65,12 @@ public class DbCommonClip implements CrudChild {
         return null;
     }
 
-    public DbClip getDbClip() {
-        return dbClip;
+    public DbImageSpriteMap getDbImageSpriteMap() {
+        return dbImageSpriteMap;
     }
 
-    public void setDbClip(DbClip dbClip) {
-        this.dbClip = dbClip;
+    public void setDbImageSpriteMap(DbImageSpriteMap dbImageSpriteMap) {
+        this.dbImageSpriteMap = dbImageSpriteMap;
     }
 
     @Override
@@ -78,7 +78,7 @@ public class DbCommonClip implements CrudChild {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        DbCommonClip that = (DbCommonClip) o;
+        PreloadedImageSpriteMap that = (PreloadedImageSpriteMap) o;
 
         return id != null && id.equals(that.getId());
     }

@@ -32,6 +32,7 @@ public abstract class ItemType implements Serializable {
     private Integer selectionSound;
     private Integer buildupSound;
     private Integer commandSound;
+    private Integer explosionClipId;
 
     public int getId() {
         return id;
@@ -105,6 +106,14 @@ public abstract class ItemType implements Serializable {
         this.commandSound = commandSound;
     }
 
+    public Integer getExplosionClipId() {
+        return explosionClipId;
+    }
+
+    public void setExplosionClipId(Integer explosionClipId) {
+        this.explosionClipId = explosionClipId;
+    }
+
     public void changeTo(ItemType itemType) {
         if (id != itemType.id) {
             throw new IllegalArgumentException("Id must be the same: " + id + ":" + itemType.id);
@@ -117,6 +126,7 @@ public abstract class ItemType implements Serializable {
         selectionSound = itemType.selectionSound;
         buildupSound = itemType.buildupSound;
         commandSound = itemType.commandSound;
+        explosionClipId = itemType.explosionClipId;
     }
 
     @Override

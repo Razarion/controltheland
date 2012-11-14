@@ -4,20 +4,33 @@ import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
 
+import java.util.logging.Logger;
+
 /**
  * User: beat
  * Date: 31.07.12
  * Time: 19:43
  */
 public abstract class AbstractClipRenderTask extends AbstractRenderTask {
+    private Logger log = Logger.getLogger(AbstractClipRenderTask.class.getName());
+
     public void renderClip(Context2d context2d, ClipRendererModel clipRendererModel) {
-        // Draw Explosion
+        // Load Image
         ImageSpriteMapInfo imageSpriteMapInfo = clipRendererModel.getImageSpriteMapInfo();
         ImageElement imageElement = ImageSpriteMapContainer.getInstance().getImage(imageSpriteMapInfo);
         if (imageElement == null) {
             ImageSpriteMapContainer.getInstance().startLoad();
-            return;
+            imageSpriteMapInfo = clipRendererModel.getPreLoadedSpriteMapInfo();
+            if (imageSpriteMapInfo == null) {
+                return;
+            }
+            imageElement = ImageSpriteMapContainer.getInstance().getImage(imageSpriteMapInfo);
+            if (imageElement == null) {
+                log.warning("AbstractClipRenderTask.renderClip() preloaded clip is not available: " + imageSpriteMapInfo.getId());
+                return;
+            }
         }
+        // Draw Explosion
         context2d.save();
         context2d.translate(clipRendererModel.getRelativeImageMiddleX(), clipRendererModel.getRelativeImageMiddleY());
         if (clipRendererModel.isRotated()) {

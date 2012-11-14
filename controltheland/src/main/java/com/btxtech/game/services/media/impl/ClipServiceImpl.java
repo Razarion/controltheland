@@ -1,17 +1,17 @@
 package com.btxtech.game.services.media.impl;
 
 import com.btxtech.game.jsre.client.common.info.ClipInfo;
-import com.btxtech.game.jsre.client.common.info.CommonClipInfo;
 import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
+import com.btxtech.game.jsre.client.common.info.PreloadedImageSpriteMapInfo;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ImageHolder;
 import com.btxtech.game.services.media.ClipService;
 import com.btxtech.game.services.media.DbClip;
-import com.btxtech.game.services.media.DbCommonClip;
 import com.btxtech.game.services.media.DbImageSpriteMap;
 import com.btxtech.game.services.media.DbImageSpriteMapFrame;
+import com.btxtech.game.services.media.PreloadedImageSpriteMap;
 import com.btxtech.game.services.user.SecurityRoles;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ public class ClipServiceImpl implements ClipService {
     @Autowired
     private CrudRootServiceHelper<DbClip> clipLibraryCrud;
     @Autowired
-    private CrudRootServiceHelper<DbCommonClip> commonClipCrud;
+    private CrudRootServiceHelper<PreloadedImageSpriteMap> preloadedSpriteMapCrud;
     @Autowired
     private CrudRootServiceHelper<DbImageSpriteMap> imageSpriteMapCrud;
     @Autowired
@@ -53,7 +53,7 @@ public class ClipServiceImpl implements ClipService {
     @PostConstruct
     public void setup() {
         clipLibraryCrud.init(DbClip.class);
-        commonClipCrud.init(DbCommonClip.class);
+        preloadedSpriteMapCrud.init(PreloadedImageSpriteMap.class);
         imageSpriteMapCrud.init(DbImageSpriteMap.class);
         HibernateUtil.openSession4InternalCall(sessionFactory);
         try {
@@ -69,8 +69,8 @@ public class ClipServiceImpl implements ClipService {
     }
 
     @Override
-    public CrudRootServiceHelper<DbCommonClip> getCommonClipCrud() {
-        return commonClipCrud;
+    public CrudRootServiceHelper<PreloadedImageSpriteMap> getPreloadedSpriteMapCrud() {
+        return preloadedSpriteMapCrud;
     }
 
     @Override
@@ -97,16 +97,16 @@ public class ClipServiceImpl implements ClipService {
     }
 
     @Override
-    public CommonClipInfo getCommonClipInfo() {
-        CommonClipInfo commonClipInfo = new CommonClipInfo();
-        for (DbCommonClip dbCommonClip : commonClipCrud.readDbChildren()) {
+    public PreloadedImageSpriteMapInfo getPreloadedImageSpriteMapInfo() {
+        PreloadedImageSpriteMapInfo preloadedImageSpriteMapInfo = new PreloadedImageSpriteMapInfo();
+        for (PreloadedImageSpriteMap preloadedImageSpriteMap : preloadedSpriteMapCrud.readDbChildren()) {
             try {
-                commonClipInfo.add(dbCommonClip.getType(), dbCommonClip.getDbClip().getId());
+                preloadedImageSpriteMapInfo.add(preloadedImageSpriteMap.getType(), preloadedImageSpriteMap.getDbImageSpriteMap().getId());
             } catch (Exception e) {
                 ExceptionHandler.handleException(e);
             }
         }
-        return commonClipInfo;
+        return preloadedImageSpriteMapInfo;
     }
 
     @Override
@@ -150,7 +150,7 @@ public class ClipServiceImpl implements ClipService {
         int xPos = 0;
         Graphics2D graphics2D = spriteMap.createGraphics();
         for (DbImageSpriteMapFrame dbImageSpriteMapFrame : dbImageSpriteMap.getImageSpriteMapFrames()) {
-            if(dbImageSpriteMapFrame.getData() != null && dbImageSpriteMapFrame.getData().length > 0) {
+            if (dbImageSpriteMapFrame.getData() != null && dbImageSpriteMapFrame.getData().length > 0) {
                 BufferedImage image = ImageIO.read(new ByteArrayInputStream(dbImageSpriteMapFrame.getData()));
                 boolean done = graphics2D.drawImage(image, xPos, 0, null);
                 if (!done) {

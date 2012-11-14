@@ -57,7 +57,7 @@ public class ItemTypeAccessImpl extends AutowiredRemoteServiceServlet implements
             GameInfo gameInfo = new RealGameInfo();
             gameInfo.setImageSpriteMapLibrary(clipService.getImageSpriteMapLibrary());
             gameInfo.setClipLibrary(clipService.getClipLibrary());
-            gameInfo.setCommonClipInfo(clipService.getCommonClipInfo());
+            gameInfo.setPreloadedImageSpriteMapInfo(clipService.getPreloadedImageSpriteMapInfo());
             return gameInfo;
         } catch (Exception e) {
             log.error("", e);

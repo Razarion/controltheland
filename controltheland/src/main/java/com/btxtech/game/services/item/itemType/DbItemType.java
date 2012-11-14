@@ -24,6 +24,7 @@ import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.media.ClipService;
+import com.btxtech.game.services.media.DbClip;
 import com.btxtech.game.services.media.DbSound;
 import com.btxtech.game.services.user.UserService;
 import org.apache.commons.lang.ArrayUtils;
@@ -96,6 +97,8 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "itemType", orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private List<DbItemTypeDemolitionStep> itemTypeDemolitionSteps;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbClip explosionClip;
 
     @Transient
     private CrudChildServiceHelper<DbItemTypeImage> itemTypeImageCrud;
@@ -256,6 +259,14 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
 
     public void setCommandSound(DbSound commandSound) {
         this.commandSound = commandSound;
+    }
+
+    public DbClip getExplosionClip() {
+        return explosionClip;
+    }
+
+    public void setExplosionClip(DbClip explosionClip) {
+        this.explosionClip = explosionClip;
     }
 
     public BoundingBox createBoundingBox() {
@@ -428,6 +439,7 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
         itemType.setSelectionSound(selectionSound != null ? selectionSound.getId() : null);
         itemType.setBuildupSound(buildupSound != null ? buildupSound.getId() : null);
         itemType.setCommandSound(commandSound != null ? commandSound.getId() : null);
+        itemType.setExplosionClipId(explosionClip != null ? explosionClip.getId() : null);
     }
 
     @Override
@@ -437,12 +449,12 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
 
         DbItemType that = (DbItemType) o;
 
-        return !(id != null ? !id.equals(that.id) : that.id != null);
+        return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : System.identityHashCode(this);
+        return id != null ? id : System.identityHashCode(this);
     }
 
     @Override

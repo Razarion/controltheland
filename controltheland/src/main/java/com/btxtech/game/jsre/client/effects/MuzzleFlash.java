@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.ClientClipHandler;
 import com.btxtech.game.jsre.client.NoSuchClipException;
 import com.btxtech.game.jsre.client.NoSuchImageSpriteMapInfoException;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.info.PreloadedImageSpriteMapInfo;
 import com.btxtech.game.jsre.client.renderer.ClipRendererModel;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -39,6 +40,7 @@ public class MuzzleFlash extends ClipRendererModel {
         Index muzzleStart = baseItemType.getWeaponType().getMuzzleFlashPosition(muzzleFlashNr, angelIndex);
         Index absoluteMuzzleStart = syncBaseItem.getSyncItemArea().getPosition().add(muzzleStart);
         initAndPlaySound(ClientClipHandler.getInstance().getMuzzleFireClipInfo(baseItemType), absoluteMuzzleStart, angel, false);
+        setPreLoadedSpriteMapInfo(PreloadedImageSpriteMapInfo.Type.MUZZLE_FLASH);
     }
 
     public SyncBaseItem getSyncBaseItem() {
