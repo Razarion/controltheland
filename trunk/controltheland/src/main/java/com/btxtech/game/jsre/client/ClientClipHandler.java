@@ -1,9 +1,10 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.info.ClipInfo;
-import com.btxtech.game.jsre.client.common.info.CommonClipInfo;
+import com.btxtech.game.jsre.client.common.info.PreloadedImageSpriteMapInfo;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
+import com.btxtech.game.jsre.client.renderer.ImageSpriteMapContainer;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
@@ -22,7 +23,7 @@ public class ClientClipHandler {
     private static final ClientClipHandler INSTANCE = new ClientClipHandler();
     private Map<Integer, ClipInfo> clipCache = new HashMap<Integer, ClipInfo>();
     private Map<Integer, ImageSpriteMapInfo> imageSpriteMapCache = new HashMap<Integer, ImageSpriteMapInfo>();
-    private Map<CommonClipInfo.Type, List<Integer>> commonClips = new HashMap<CommonClipInfo.Type, List<Integer>>();
+    private Map<PreloadedImageSpriteMapInfo.Type, Integer> preloadedImageSpriteMapInfo = new HashMap<PreloadedImageSpriteMapInfo.Type, Integer>();
 
     public static ClientClipHandler getInstance() {
         return INSTANCE;
@@ -40,20 +41,6 @@ public class ClientClipHandler {
             throw new NoSuchClipException(clipId);
         }
         return clipInfo;
-    }
-
-    public ClipInfo getClipInfo(CommonClipInfo.Type explosion) throws NoSuchClipException {
-        List<Integer> clipIds = commonClips.get(explosion);
-        if (clipIds == null || clipIds.isEmpty()) {
-            throw new NoSuchClipException(explosion);
-        }
-        int clipId;
-        if (clipIds.size() == 1) {
-            clipId = clipIds.get(0);
-        } else {
-            clipId = clipIds.get(Random.nextInt(clipIds.size()));
-        }
-        return getClipInfo(clipId);
     }
 
     public ClipInfo getMuzzleFireClipInfo(BaseItemType baseItemType) throws NoSuchClipException {
@@ -106,11 +93,30 @@ public class ClientClipHandler {
         return imageSpriteMapInfo;
     }
 
+    public ImageSpriteMapInfo getPreloadedImageSpriteMapInfo(PreloadedImageSpriteMapInfo.Type preloaded) throws NoSuchImageSpriteMapInfoException {
+        Integer id = preloadedImageSpriteMapInfo.get(preloaded);
+        if(id == null) {
+            throw new NoSuchImageSpriteMapInfoException(preloaded);
+        }
+        return getImageSpriteMapInfo(id);
+    }
+
+    public void preloadImageSpriteMaps() {
+        for (Integer id : preloadedImageSpriteMapInfo.values()) {
+            try {
+                ImageSpriteMapContainer.getInstance().getImage(getImageSpriteMapInfo(id));
+            } catch (NoSuchImageSpriteMapInfoException e) {
+                GwtCommon.handleException("ClientClipHandler.preloadImageSpriteMaps()", e);
+            }
+        }
+        ImageSpriteMapContainer.getInstance().startLoad();
+    }
+
     public void inti(GameInfo gameInfo) {
         for (ClipInfo clipInfo : gameInfo.getClipLibrary()) {
             clipCache.put(clipInfo.getClipId(), clipInfo);
         }
-        commonClips.putAll(gameInfo.getCommonClipInfo().getCommonClips());
+        preloadedImageSpriteMapInfo.putAll(gameInfo.getPreloadedImageSpriteMapInfo().getPreloadedImageSpriteMapInfo());
         for (ImageSpriteMapInfo imageSpriteMapInfo : gameInfo.getImageSpriteMapLibrary()) {
             imageSpriteMapCache.put(imageSpriteMapInfo.getId(), imageSpriteMapInfo);
         }

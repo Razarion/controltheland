@@ -148,6 +148,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(TEST_LEVEL_2_REAL_ID, userState.getDbLevelId());
         xpService.onItemKilled(userState.getBase().getSimpleBase(), mockSyncBaseItem, planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID));
         Thread.sleep(100);
+        // TODO failed on 14.11.2012
         Assert.assertEquals(TEST_LEVEL_3_REAL_ID, userState.getDbLevelId());
     }
 

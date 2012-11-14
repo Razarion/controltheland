@@ -1,6 +1,6 @@
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.common.info.CommonClipInfo;
+import com.btxtech.game.jsre.client.common.info.PreloadedImageSpriteMapInfo;
 
 /**
  * User: beat
@@ -8,7 +8,7 @@ import com.btxtech.game.jsre.client.common.info.CommonClipInfo;
  * Time: 13:51
  */
 public class NoSuchClipException extends Exception {
-    public NoSuchClipException(CommonClipInfo.Type explosion) {
+    public NoSuchClipException(PreloadedImageSpriteMapInfo.Type explosion) {
         super("No common clip: " + explosion);
     }
 

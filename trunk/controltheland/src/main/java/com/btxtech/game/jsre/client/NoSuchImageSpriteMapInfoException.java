@@ -1,6 +1,6 @@
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.common.info.CommonClipInfo;
+import com.btxtech.game.jsre.client.common.info.PreloadedImageSpriteMapInfo;
 
 /**
  * User: beat
@@ -10,5 +10,9 @@ import com.btxtech.game.jsre.client.common.info.CommonClipInfo;
 public class NoSuchImageSpriteMapInfoException extends Exception {
     public NoSuchImageSpriteMapInfoException(int imageSpriteMapId) {
         super("No image sprite map info for id: " + imageSpriteMapId);
+    }
+
+    public NoSuchImageSpriteMapInfoException(PreloadedImageSpriteMapInfo.Type preloaded) {
+        super("No preloaded image sprite map info for: " + preloaded);
     }
 }

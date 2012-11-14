@@ -1,20 +1,27 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.common.info.PreloadedImageSpriteMapInfo;
 import com.btxtech.game.jsre.imagespritemapeditor.ImageSpriteMapAccessAsync;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.media.ClipService;
 import com.btxtech.game.services.media.DbImageSpriteMap;
+import com.btxtech.game.services.media.PreloadedImageSpriteMap;
+import com.btxtech.game.wicket.uiservices.ClipPanel;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
+import com.btxtech.game.wicket.uiservices.ImageSpriteMapPanel;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import java.util.Arrays;
 
 /**
  * User: beat
@@ -69,5 +76,26 @@ public class ImageSpriteMapLibrary extends MgmtWebPage {
                 clipService.activateImageSpriteMapCache();
             }
         });
+
+
+        Form preloadedForm = new Form("preloadedForm");
+        add(preloadedForm);
+        new CrudRootTableHelper<PreloadedImageSpriteMap>("preloadedImageSpriteMaps", "savePreloadedImageSpriteMaps", "createPreloadedImageSpriteMap", false, preloadedForm, false) {
+
+            @Override
+            protected void extendedPopulateItem(final Item<PreloadedImageSpriteMap> dbCommonClipItem) {
+                displayId(dbCommonClipItem);
+                dbCommonClipItem.add(new DropDownChoice<>("type", Arrays.asList(PreloadedImageSpriteMapInfo.Type.values())));
+                dbCommonClipItem.add(new ImageSpriteMapPanel("dbImageSpriteMap"));
+            }
+
+            @Override
+            protected CrudRootServiceHelper<PreloadedImageSpriteMap> getCrudRootServiceHelperImpl() {
+                return clipService.getPreloadedSpriteMapCrud();
+            }
+
+        };
+
+
     }
 }

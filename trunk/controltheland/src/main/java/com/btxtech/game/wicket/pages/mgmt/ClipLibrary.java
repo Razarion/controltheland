@@ -1,11 +1,10 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.jsre.client.common.info.CommonClipInfo;
+import com.btxtech.game.jsre.client.common.info.PreloadedImageSpriteMapInfo;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.media.ClipService;
 import com.btxtech.game.services.media.DbClip;
-import com.btxtech.game.services.media.DbCommonClip;
-import com.btxtech.game.services.media.DbCommonSound;
+import com.btxtech.game.services.media.PreloadedImageSpriteMap;
 import com.btxtech.game.wicket.uiservices.ClipPanel;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import com.btxtech.game.wicket.uiservices.ImageSpriteMapPanel;
@@ -49,25 +48,5 @@ public class ClipLibrary extends MgmtWebPage {
             }
 
         };
-
-        Form commonClipForm = new Form("commonClipForm");
-        add(commonClipForm);
-
-        new CrudRootTableHelper<DbCommonClip>("commonClips", "saveCommonClips", "createCommonClip", false, commonClipForm, false) {
-
-            @Override
-            protected void extendedPopulateItem(final Item<DbCommonClip> dbCommonClipItem) {
-                displayId(dbCommonClipItem);
-                dbCommonClipItem.add(new DropDownChoice<>("type", Arrays.asList(CommonClipInfo.Type.values())));
-                dbCommonClipItem.add(new ClipPanel("dbClip"));
-            }
-
-            @Override
-            protected CrudRootServiceHelper<DbCommonClip> getCrudRootServiceHelperImpl() {
-                return clipService.getCommonClipCrud();
-            }
-
-        };
-
     }
 }

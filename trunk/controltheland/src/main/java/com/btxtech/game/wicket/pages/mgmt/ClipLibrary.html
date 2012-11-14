@@ -29,25 +29,5 @@
     <input type="submit" value="Create" wicket:id="createClip"/>
 </form>
 
-<form wicket:id="commonClipForm">
-    <h2>Common Clips</h2>
-    <table cellpadding="1" cellspacing="1" border="0">
-        <tr>
-            <th bgcolor="#dadada">Id</th>
-            <th bgcolor="#dadada">Type</th>
-            <th bgcolor="#dadada">Clip</th>
-            <th bgcolor="#dadada">Delete</th>
-        </tr>
-        <tr wicket:id="commonClips">
-            <td wicket:id="id"/>
-            <td valign="top"><select wicket:id="type" size="1"></select></td>
-            <td wicket:id="dbClip"></td>
-            <td valign="center"><input type="submit" value="Delete" wicket:id="delete"/></td>
-        </tr>
-    </table>
-    <input type="submit" value="Save" wicket:id="saveCommonClips"/>
-    <input type="submit" value="Create" wicket:id="createCommonClip"/>
-</form>
-
 </body>
 </html>

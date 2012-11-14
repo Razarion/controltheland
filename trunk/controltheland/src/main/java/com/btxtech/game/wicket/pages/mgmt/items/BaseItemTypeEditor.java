@@ -20,6 +20,7 @@ import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.pages.mgmt.items.abilities.BaseItemTypeAbilityEditor;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.BoxItemTypePanel;
+import com.btxtech.game.wicket.uiservices.ClipPanel;
 import com.btxtech.game.wicket.uiservices.PercentPanel;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
@@ -69,6 +70,7 @@ public class BaseItemTypeEditor extends MgmtWebPage {
         form.add(new TextField<Integer>("boxPickupRange"));
         form.add(new PercentPanel("dropBoxPossibility"));
         form.add(new BoxItemTypePanel("dbBoxItemType"));
+        form.add(new ClipPanel("explosionClip"));
 
         form.add(new Button("editAbilities") {
             @Override

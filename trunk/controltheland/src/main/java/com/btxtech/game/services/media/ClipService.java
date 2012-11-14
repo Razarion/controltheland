@@ -1,7 +1,7 @@
 package com.btxtech.game.services.media;
 
 import com.btxtech.game.jsre.client.common.info.ClipInfo;
-import com.btxtech.game.jsre.client.common.info.CommonClipInfo;
+import com.btxtech.game.jsre.client.common.info.PreloadedImageSpriteMapInfo;
 import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.ImageHolder;
@@ -16,7 +16,7 @@ import java.util.Collection;
 public interface ClipService {
     CrudRootServiceHelper<DbClip> getClipLibraryCrud();
 
-    CrudRootServiceHelper<DbCommonClip> getCommonClipCrud();
+    CrudRootServiceHelper<PreloadedImageSpriteMap> getPreloadedSpriteMapCrud();
 
     CrudRootServiceHelper<DbImageSpriteMap> getImageSpriteMapCrud();
 
@@ -24,7 +24,7 @@ public interface ClipService {
 
     Collection<ClipInfo> getClipLibrary();
 
-    CommonClipInfo getCommonClipInfo();
+    PreloadedImageSpriteMapInfo getPreloadedImageSpriteMapInfo();
 
     ImageHolder getImageSpriteMap(int imageSpriteMapId);
 

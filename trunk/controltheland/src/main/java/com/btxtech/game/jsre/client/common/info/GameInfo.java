@@ -46,7 +46,7 @@ public abstract class GameInfo implements TerrainInfo, Serializable {
     private CommonSoundInfo commonSoundInfo;
     private Collection<ImageSpriteMapInfo> imageSpriteMapLibrary;
     private Collection<ClipInfo> clipLibrary;    
-    private CommonClipInfo commonClipInfo;
+    private PreloadedImageSpriteMapInfo preloadedImageSpriteMapInfo;
 
     public TerrainSettings getTerrainSettings() {
         return terrainSettings;
@@ -149,12 +149,12 @@ public abstract class GameInfo implements TerrainInfo, Serializable {
         this.clipLibrary = clipLibrary;
     }
 
-    public CommonClipInfo getCommonClipInfo() {
-        return commonClipInfo;
+    public PreloadedImageSpriteMapInfo getPreloadedImageSpriteMapInfo() {
+        return preloadedImageSpriteMapInfo;
     }
 
-    public void setCommonClipInfo(CommonClipInfo commonClipInfo) {
-        this.commonClipInfo = commonClipInfo;
+    public void setPreloadedImageSpriteMapInfo(PreloadedImageSpriteMapInfo preloadedImageSpriteMapInfo) {
+        this.preloadedImageSpriteMapInfo = preloadedImageSpriteMapInfo;
     }
 
     public Collection<ImageSpriteMapInfo> getImageSpriteMapLibrary() {

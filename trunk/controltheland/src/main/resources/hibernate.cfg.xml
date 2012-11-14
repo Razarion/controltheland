@@ -145,7 +145,7 @@
         <mapping class="com.btxtech.game.services.media.DbImageSpriteMap"/>
         <mapping class="com.btxtech.game.services.media.DbImageSpriteMapFrame"/>
         <mapping class="com.btxtech.game.services.media.DbClip"/>
-        <mapping class="com.btxtech.game.services.media.DbCommonClip"/>
+        <mapping class="com.btxtech.game.services.media.PreloadedImageSpriteMap"/>
         <!-- Planet -->
         <mapping class="com.btxtech.game.services.planet.db.DbPlanet"/>
         <mapping class="com.btxtech.game.services.planet.db.DbPlanetItemTypeLimitation"/>
