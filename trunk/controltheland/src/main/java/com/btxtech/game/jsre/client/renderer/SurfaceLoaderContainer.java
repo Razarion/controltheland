@@ -1,7 +1,6 @@
-package com.btxtech.game.jsre.mapeditor.render;
+package com.btxtech.game.jsre.client.renderer;
 
 import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.jsre.client.renderer.ImageLoaderContainer;
 
 /**
  * User: beat

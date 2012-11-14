@@ -23,7 +23,7 @@ import java.util.Map;
  * Date: 05.02.2010
  * Time: 22:28:01
  */
-public abstract class AbstractTerrainImageServiceImpl implements AbstractTerrainImageService {
+public class CommonTerrainImageServiceImpl implements CommonTerrainImageService {
     private Map<Integer, TerrainImage> terrainImages = new HashMap<Integer, TerrainImage>();
     private Map<Integer, SurfaceImage> surfaceImages = new HashMap<Integer, SurfaceImage>();
     private TerrainImageBackground terrainImageBackground;

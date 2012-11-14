@@ -81,7 +81,6 @@ public class PathfindingEntry implements EntryPoint {
                         miniTerrain.onTerrainChanged();
                     }
                 });
-                TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
                 miniTerrain.onTerrainSettings(terrainInfo.getTerrainSettings());
                 miniTerrain.onTerrainChanged();
                 pathMiniMap.onTerrainSettings(terrainInfo.getTerrainSettings());

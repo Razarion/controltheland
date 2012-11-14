@@ -2,6 +2,7 @@ package com.btxtech.game.jsre.mapeditor.render;
 
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.renderer.SurfaceLoaderContainer;
 import com.btxtech.game.jsre.mapeditor.MapEditorModel;
 import com.btxtech.game.jsre.mapeditor.SurfaceModifier;
 import com.btxtech.game.jsre.mapeditor.TerrainImageSurfaceGroup;

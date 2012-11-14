@@ -98,7 +98,6 @@ public class TerrainEditorConnection {
                 terrainInfo.getSurfaceImages(),
                 terrainInfo.getTerrainImages(),
                 terrainInfo.getTerrainImageBackground());
-        TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
         RadarPanel.getInstance().onTerrainSettings(terrainInfo.getTerrainSettings());
         RadarPanel.getInstance().getRadarFrameView().onScroll(mapEditorModel.getViewRectangle().getX(), mapEditorModel.getViewRectangle().getY(), mapEditorModel.getViewRectangle().getWidth(), mapEditorModel.getViewRectangle().getHeight(), 0, 0);
         mapEditorRenderer.start();

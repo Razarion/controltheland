@@ -129,7 +129,7 @@ public class TerrainData {
     }
 
     private Rectangle getTerrainImagePositionRectangle(TerrainImagePosition terrainImagePosition) {
-        TerrainImage terrainImage = TerrainView.getInstance().getTerrainHandler().getTerrainImageHandler().getTerrainImage(terrainImagePosition.getImageId());
+        TerrainImage terrainImage = TerrainView.getInstance().getTerrainHandler().getCommonTerrainImageService().getTerrainImage(terrainImagePosition.getImageId());
         return new Rectangle(terrainImagePosition.getTileIndex().getX(),
                 terrainImagePosition.getTileIndex().getY(),
                 terrainImage.getTileWidth(),

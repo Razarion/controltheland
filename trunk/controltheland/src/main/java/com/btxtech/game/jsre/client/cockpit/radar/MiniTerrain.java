@@ -15,6 +15,9 @@ package com.btxtech.game.jsre.client.cockpit.radar;
 
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.renderer.ImageLoaderContainer;
+import com.btxtech.game.jsre.client.renderer.SurfaceLoaderContainer;
+import com.btxtech.game.jsre.client.renderer.TerrainImageLoaderContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainHandler;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -34,7 +37,7 @@ import java.util.logging.Logger;
  * Date: 22.12.2009
  * Time: 12:43:55
  */
-public class MiniTerrain extends MiniMap implements TerrainListener {
+public class MiniTerrain extends MiniMap implements TerrainListener, ImageLoaderContainer.LoadListener {
     private Logger log = Logger.getLogger(MiniTerrain.class.getName());
 
     public MiniTerrain(int width, int height) {
@@ -42,6 +45,8 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
         getCanvas().getElement().getStyle().setBackgroundColor("#000000");
         if (!TerrainView.uglySuppressRadar) {
             TerrainView.getInstance().getTerrainHandler().addTerrainListener(this);
+            TerrainImageLoaderContainer.getInstance().addLoadListener(this);
+            SurfaceLoaderContainer.getInstance().addLoadListener(this);
         }
     }
 
@@ -71,7 +76,7 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
         final int tileHeight = Constants.TERRAIN_TILE_HEIGHT * yTileIncrease;
         TerrainView.getInstance().getTerrainHandler().iteratorOverAllTerrainTiles(tileRect, new AbstractTerrainService.TerrainTileEvaluator() {
             TerrainHandler terrainHandler = TerrainView.getInstance().getTerrainHandler();
-            TerrainImageBackground terrainImageBackground = terrainHandler.getTerrainImageHandler().getTerrainImageBackground();
+            TerrainImageBackground terrainImageBackground = terrainHandler.getCommonTerrainImageService().getTerrainImageBackground();
 
             @Override
             public void evaluate(int x, int y, TerrainTile terrainTile) {
@@ -96,9 +101,9 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
                 }
 
                 if (terrainTile.isSurface()) {
-                    context2d.setFillStyle(terrainHandler.getTerrainImageHandler().getSurfaceImage(terrainTile.getImageId()).getHtmlBackgroundColor());
+                    context2d.setFillStyle(terrainHandler.getCommonTerrainImageService().getSurfaceImage(terrainTile.getImageId()).getHtmlBackgroundColor());
                 } else {
-                    SurfaceType surfaceType = terrainHandler.getTerrainImageHandler().getTerrainImage(terrainTile.getImageId()).getSurfaceType(terrainTile.getTileXOffset(), terrainTile.getTileYOffset());
+                    SurfaceType surfaceType = terrainHandler.getCommonTerrainImageService().getTerrainImage(terrainTile.getImageId()).getSurfaceType(terrainTile.getTileXOffset(), terrainTile.getTileYOffset());
                     context2d.setFillStyle(terrainImageBackground.get(terrainTile.getImageId(), surfaceType));
                 }
 
@@ -119,15 +124,12 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
         final int scrollYOffset = getViewOrigin().getY() % Constants.TERRAIN_TILE_HEIGHT;
         final int tileWidth = Constants.TERRAIN_TILE_WIDTH;
         final int tileHeight = Constants.TERRAIN_TILE_HEIGHT;
+        final TerrainHandler terrainHandler = TerrainView.getInstance().getTerrainHandler();
+        final TerrainImageBackground terrainImageBackground = terrainHandler.getCommonTerrainImageService().getTerrainImageBackground();
         TerrainView.getInstance().getTerrainHandler().iteratorOverAllTerrainTiles(tileRect, new AbstractTerrainService.TerrainTileEvaluator() {
-            TerrainHandler terrainHandler = TerrainView.getInstance().getTerrainHandler();
 
             @Override
             public void evaluate(int x, int y, TerrainTile terrainTile) {
-                if (terrainTile == null) {
-                    return;
-                }
-
                 int relativeX = TerrainUtil.getAbsolutXForTerrainTile(x - tileRect.getX());
                 int imageWidth = tileWidth;
                 if (relativeX == 0) {
@@ -145,44 +147,65 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
                 }
 
                 ImageElement imageElement;
-                if (terrainTile.isSurface()) {
-                    imageElement = terrainHandler.getTerrainImageHandler().getSurfaceImageElement(terrainTile.getImageId());
+                if (terrainTile == null) {
+                    imageElement = null;
+                } else if (terrainTile.isSurface()) {
+                    imageElement = SurfaceLoaderContainer.getInstance().getImage(terrainTile.getImageId());
                 } else {
-                    imageElement = terrainHandler.getTerrainImageHandler().getTerrainImageElement(terrainTile.getImageId());
+                    imageElement = TerrainImageLoaderContainer.getInstance().getImage(terrainTile.getImageId());
                 }
                 if (imageElement == null || imageElement.getWidth() == 0 || imageElement.getHeight() == 0) {
-                    return;
-                }
+                    // Image is not loaded or no image
+                    if (terrainTile != null) {
+                        if (terrainTile.isSurface()) {
+                            context2d.setFillStyle(terrainHandler.getCommonTerrainImageService().getSurfaceImage(terrainTile.getImageId()).getHtmlBackgroundColor());
+                        } else {
+                            SurfaceType surfaceType = terrainHandler.getCommonTerrainImageService().getTerrainImage(terrainTile.getImageId()).getSurfaceType(terrainTile.getTileXOffset(), terrainTile.getTileYOffset());
+                            context2d.setFillStyle(terrainImageBackground.get(terrainTile.getImageId(), surfaceType));
+                        }
+                    } else {
+                        // No Image
+                        context2d.setFillStyle("#000000");
+                    }
+                    context2d.fillRect(relativeX, relativeY, imageWidth, imageHeight);
+                } else {
+                    int sourceXOffset = TerrainUtil.getAbsolutXForTerrainTile(terrainTile.getTileXOffset());
+                    int sourceYOffset = TerrainUtil.getAbsolutYForTerrainTile(terrainTile.getTileYOffset());
+                    if (relativeX == 0) {
+                        sourceXOffset += scrollXOffset;
+                    }
+                    if (relativeY == 0) {
+                        sourceYOffset += scrollYOffset;
+                    }
 
-                int sourceXOffset = TerrainUtil.getAbsolutXForTerrainTile(terrainTile.getTileXOffset());
-                int sourceYOffset = TerrainUtil.getAbsolutYForTerrainTile(terrainTile.getTileYOffset());
-                if (relativeX == 0) {
-                    sourceXOffset += scrollXOffset;
-                }
-                if (relativeY == 0) {
-                    sourceYOffset += scrollYOffset;
-                }
+                    if (terrainTile.isSurface()) {
+                        sourceXOffset = sourceXOffset % imageElement.getWidth();
+                        sourceYOffset = sourceYOffset % imageElement.getHeight();
+                    }
 
-                if (terrainTile.isSurface()) {
-                    sourceXOffset = sourceXOffset % imageElement.getWidth();
-                    sourceYOffset = sourceYOffset % imageElement.getHeight();
-                }
-
-                try {
-                    context2d.drawImage(imageElement,
-                            sourceXOffset, //the start X position in the source image
-                            sourceYOffset, //the start Y position in the source image
-                            imageWidth, //the width in the source image you want to sample
-                            imageHeight, //the height in the source image you want to sample
-                            Math.round((double) relativeX * getScaleValue()) + getXShiftRadarPixel(), //the start X position in the destination image
-                            Math.round((double) relativeY * getScaleValue()) + getYShiftRadarPixel(), //the start Y position in the destination image
-                            Math.ceil((double) imageWidth * getScaleValue()), //the width of drawn image in the destination
-                            Math.ceil((double) imageHeight * getScaleValue()) // the height of the drawn image in the destination
-                    );
-                } catch (Throwable t) {
-                    log.log(Level.SEVERE, "MiniTerrain.drawImages() error in canvas drawImage", t);
+                    try {
+                        context2d.drawImage(imageElement,
+                                sourceXOffset, //the start X position in the source image
+                                sourceYOffset, //the start Y position in the source image
+                                imageWidth, //the width in the source image you want to sample
+                                imageHeight, //the height in the source image you want to sample
+                                Math.round((double) relativeX * getScaleValue()) + getXShiftRadarPixel(), //the start X position in the destination image
+                                Math.round((double) relativeY * getScaleValue()) + getYShiftRadarPixel(), //the start Y position in the destination image
+                                Math.ceil((double) imageWidth * getScaleValue()), //the width of drawn image in the destination
+                                Math.ceil((double) imageHeight * getScaleValue()) // the height of the drawn image in the destination
+                        );
+                    } catch (Throwable t) {
+                        log.log(Level.SEVERE, "MiniTerrain.drawImages() error in canvas drawImage", t);
+                    }
                 }
             }
         });
+        TerrainImageLoaderContainer.getInstance().startLoad();
+        SurfaceLoaderContainer.getInstance().startLoad();
+    }
+
+    @Override
+    public void onLoaded() {
+        draw();
     }
 }

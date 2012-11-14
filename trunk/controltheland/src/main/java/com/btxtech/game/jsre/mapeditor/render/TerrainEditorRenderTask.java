@@ -1,6 +1,8 @@
 package com.btxtech.game.jsre.mapeditor.render;
 
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.renderer.SurfaceLoaderContainer;
+import com.btxtech.game.jsre.client.renderer.TerrainImageLoaderContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainHandler;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;

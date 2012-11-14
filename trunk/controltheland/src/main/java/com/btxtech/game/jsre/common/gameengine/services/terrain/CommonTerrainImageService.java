@@ -20,7 +20,7 @@ import java.util.Collection;
  * Date: 21.11.2009
  * Time: 14:23:09
  */
-public interface AbstractTerrainImageService {
+public interface CommonTerrainImageService {
     Collection<TerrainImage> getTerrainImages();
 
     Collection<SurfaceImage> getSurfaceImages();

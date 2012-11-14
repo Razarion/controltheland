@@ -14,7 +14,7 @@
 package com.btxtech.game.services.terrain.impl;
 
 import com.btxtech.game.jsre.common.TerrainInfo;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainImageServiceImpl;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.CommonTerrainImageServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImageBackground;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
@@ -37,7 +37,7 @@ import java.util.HashMap;
  * Time: 11:56:20 AM
  */
 @Component
-public class TerrainImageServiceImpl extends AbstractTerrainImageServiceImpl implements TerrainImageService {
+public class TerrainImageServiceImpl extends CommonTerrainImageServiceImpl implements TerrainImageService {
     @Autowired
     private CrudRootServiceHelper<DbTerrainImageGroup> dbTerrainImageGroupCrudRootServiceHelper;
     @Autowired

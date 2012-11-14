@@ -24,7 +24,7 @@ public class TestAbstractTerrainServiceImpl {
     public void createSurfaceTypeField1() {
         AbstractTerrainServiceImpl abstractTerrainService = new AbstractTerrainServiceImpl() {
             @Override
-            protected AbstractTerrainImageService getAbstractTerrainImageService() {
+            protected CommonTerrainImageService getCommonTerrainImageService() {
                 return null;  //To change body of implemented methods use File | Settings | File Templates.
             }
         };
@@ -42,12 +42,12 @@ public class TestAbstractTerrainServiceImpl {
 
     @Test
     public void createSurfaceTypeField2() {
-        final AbstractTerrainImageServiceImpl abstractTerrainImageService = new AbstractTerrainImageServiceImpl() {
+        final CommonTerrainImageServiceImpl commonTerrainImageService = new CommonTerrainImageServiceImpl() {
         };
         AbstractTerrainServiceImpl abstractTerrainService = new AbstractTerrainServiceImpl() {
             @Override
-            protected AbstractTerrainImageService getAbstractTerrainImageService() {
-                return abstractTerrainImageService;
+            protected CommonTerrainImageService getCommonTerrainImageService() {
+                return commonTerrainImageService;
             }
         };
         abstractTerrainService.setTerrainSettings(new TerrainSettings(20, 20));
@@ -57,10 +57,10 @@ public class TestAbstractTerrainServiceImpl {
         tileSurfaceTypes[0][1] = SurfaceType.WATER;
         tileSurfaceTypes[1][0] = SurfaceType.LAND_COAST;
         tileSurfaceTypes[1][1] = SurfaceType.LAND;
-        abstractTerrainImageService.putTerrainImage(new TerrainImage(0, 2, 2, tileSurfaceTypes));
+        commonTerrainImageService.putTerrainImage(new TerrainImage(0, 2, 2, tileSurfaceTypes));
 
-        abstractTerrainImageService.putSurfaceImage(new SurfaceImage(SurfaceType.LAND, 0, ""));
-        abstractTerrainImageService.putSurfaceImage(new SurfaceImage(SurfaceType.WATER, 1, ""));
+        commonTerrainImageService.putSurfaceImage(new SurfaceImage(SurfaceType.LAND, 0, ""));
+        commonTerrainImageService.putSurfaceImage(new SurfaceImage(SurfaceType.WATER, 1, ""));
 
         List<TerrainImagePosition> terrainImagePositions = new ArrayList<>();
         terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), 0, TerrainImagePosition.ZIndex.LAYER_1));

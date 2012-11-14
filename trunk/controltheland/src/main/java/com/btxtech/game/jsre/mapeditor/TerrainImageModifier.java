@@ -42,7 +42,7 @@ public class TerrainImageModifier {
 
     public TerrainImageModifier(TerrainImagePosition terrainImagePosition, Index absolutePosition, Rectangle viewRectangle, TerrainData terrainData) {
         this.terrainImagePosition = terrainImagePosition;
-        TerrainImage terrainImage = TerrainView.getInstance().getTerrainHandler().getTerrainImageHandler().getTerrainImage(terrainImagePosition.getImageId());
+        TerrainImage terrainImage = TerrainView.getInstance().getTerrainHandler().getCommonTerrainImageService().getTerrainImage(terrainImagePosition.getImageId());
         width = TerrainUtil.getAbsolutXForTerrainTile(terrainImage.getTileWidth());
         height = TerrainUtil.getAbsolutYForTerrainTile(terrainImage.getTileHeight());
         absoluteGridPosition = TerrainUtil.getAbsolutIndexForTerrainTileIndex(terrainImagePosition.getTileIndex());
