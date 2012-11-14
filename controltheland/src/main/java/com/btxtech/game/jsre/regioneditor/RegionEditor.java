@@ -115,7 +115,6 @@ public class RegionEditor implements EntryPoint {
                 miniTerrain.onTerrainChanged();
             }
         });
-        TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
         miniTerrain.onTerrainSettings(terrainInfo.getTerrainSettings());
         miniTerrain.onTerrainChanged();
         miniTerrain.setScale(ScaleStep.WHOLE_MAP_MISSION);

@@ -17,7 +17,6 @@ import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.control.StartupTaskEnumHtmlHelper;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.GuiStartupTask;
-import com.btxtech.game.jsre.client.control.task.LoadMapImageStartupTask;
 
 /**
  * User: beat
@@ -39,11 +38,6 @@ public enum ColdPlaybackStartupTaskEnum implements StartupTaskEnum {
         @Override
         public AbstractStartupTask createTask() {
             return new InitStartupTask(this);
-        }},
-    LOAD_MAP("Load Map") {
-        @Override
-        public AbstractStartupTask createTask() {
-            return new LoadMapImageStartupTask(this);
         }},
     RUN("Run") {
         @Override

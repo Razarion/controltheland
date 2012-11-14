@@ -4,7 +4,10 @@ import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainHandler;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImageBackground;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainTile;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainUtil;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
@@ -41,15 +44,12 @@ public class TerrainRenderTask extends AbstractRenderTask {
         final int scrollYOffset = viewRect.getY() % Constants.TERRAIN_TILE_HEIGHT;
         final int tileWidth = Constants.TERRAIN_TILE_WIDTH;
         final int tileHeight = Constants.TERRAIN_TILE_HEIGHT;
+        final TerrainImageBackground terrainImageBackground = terrainHandler.getCommonTerrainImageService().getTerrainImageBackground();
 
         terrainHandler.iteratorOverAllTerrainTiles(tileViewRect, new AbstractTerrainService.TerrainTileEvaluator() {
             @Override
             public void evaluate(int x, int y, TerrainTile terrainTile) {
-                if (terrainTile == null) {
-                    return;
-                }
-
-                int relativeX = terrainHandler.getAbsolutXForTerrainTile(x - tileViewRect.getX());
+                int relativeX = TerrainUtil.getAbsolutXForTerrainTile(x - tileViewRect.getX());
                 int imageWidth = tileWidth;
                 if (relativeX == 0) {
                     imageWidth = tileWidth - scrollXOffset;
@@ -57,7 +57,7 @@ public class TerrainRenderTask extends AbstractRenderTask {
                     relativeX -= scrollXOffset;
                 }
 
-                int relativeY = terrainHandler.getAbsolutYForTerrainTile(y - tileViewRect.getY());
+                int relativeY = TerrainUtil.getAbsolutYForTerrainTile(y - tileViewRect.getY());
                 int imageHeight = tileHeight;
                 if (relativeY == 0) {
                     imageHeight = tileHeight - scrollYOffset;
@@ -66,45 +66,61 @@ public class TerrainRenderTask extends AbstractRenderTask {
                 }
 
                 ImageElement imageElement;
-                if (terrainTile.isSurface()) {
-                    imageElement = terrainHandler.getTerrainImageHandler().getSurfaceImageElement(terrainTile.getImageId());
+                if (terrainTile == null) {
+                    imageElement = null;
+                } else if (terrainTile.isSurface()) {
+                    imageElement = SurfaceLoaderContainer.getInstance().getImage(terrainTile.getImageId());
                 } else {
-                    imageElement = terrainHandler.getTerrainImageHandler().getTerrainImageElement(terrainTile.getImageId());
+                    imageElement = TerrainImageLoaderContainer.getInstance().getImage(terrainTile.getImageId());
                 }
                 if (imageElement == null || imageElement.getWidth() == 0 || imageElement.getHeight() == 0) {
-                    return;
-                }
+                    // Image is not loaded or no image
+                    if (terrainTile != null) {
+                        if (terrainTile.isSurface()) {
+                            context2d.setFillStyle(terrainHandler.getCommonTerrainImageService().getSurfaceImage(terrainTile.getImageId()).getHtmlBackgroundColor());
+                        } else {
+                            SurfaceType surfaceType = terrainHandler.getCommonTerrainImageService().getTerrainImage(terrainTile.getImageId()).getSurfaceType(terrainTile.getTileXOffset(), terrainTile.getTileYOffset());
+                            context2d.setFillStyle(terrainImageBackground.get(terrainTile.getImageId(), surfaceType));
+                        }
+                    } else {
+                        // No Image
+                        context2d.setFillStyle("#000000");
+                    }
+                    context2d.fillRect(relativeX, relativeY, imageWidth, imageHeight);
+                } else {
+                    int sourceXOffset = TerrainUtil.getAbsolutXForTerrainTile(terrainTile.getTileXOffset());
+                    int sourceYOffset = TerrainUtil.getAbsolutYForTerrainTile(terrainTile.getTileYOffset());
+                    if (relativeX == 0) {
+                        sourceXOffset += scrollXOffset;
+                    }
+                    if (relativeY == 0) {
+                        sourceYOffset += scrollYOffset;
+                    }
 
-                int sourceXOffset = terrainHandler.getAbsolutXForTerrainTile(terrainTile.getTileXOffset());
-                int sourceYOffset = terrainHandler.getAbsolutYForTerrainTile(terrainTile.getTileYOffset());
-                if (relativeX == 0) {
-                    sourceXOffset += scrollXOffset;
-                }
-                if (relativeY == 0) {
-                    sourceYOffset += scrollYOffset;
-                }
+                    if (terrainTile.isSurface()) {
+                        sourceXOffset = sourceXOffset % imageElement.getWidth();
+                        sourceYOffset = sourceYOffset % imageElement.getHeight();
+                    }
 
-                if (terrainTile.isSurface()) {
-                    sourceXOffset = sourceXOffset % imageElement.getWidth();
-                    sourceYOffset = sourceYOffset % imageElement.getHeight();
-                }
-
-                try {
-                    context2d.drawImage(imageElement,
-                            sourceXOffset, //the start X position in the source image
-                            sourceYOffset, //the start Y position in the source image
-                            imageWidth, //the width in the source image you want to sample
-                            imageHeight, //the height in the source image you want to sample
-                            relativeX, //the start X position in the destination image
-                            relativeY, //the start Y position in the destination image
-                            imageWidth, //the width of drawn image in the destination
-                            imageHeight // the height of the drawn image in the destination
-                    );
-                } catch (Throwable t) {
-                    logCanvasError(t, imageElement, sourceXOffset, sourceYOffset, imageWidth, imageHeight, relativeX, relativeY, imageWidth, imageHeight);
+                    try {
+                        context2d.drawImage(imageElement,
+                                sourceXOffset, //the start X position in the source image
+                                sourceYOffset, //the start Y position in the source image
+                                imageWidth, //the width in the source image you want to sample
+                                imageHeight, //the height in the source image you want to sample
+                                relativeX, //the start X position in the destination image
+                                relativeY, //the start Y position in the destination image
+                                imageWidth, //the width of drawn image in the destination
+                                imageHeight // the height of the drawn image in the destination
+                        );
+                    } catch (Throwable t) {
+                        logCanvasError(t, imageElement, sourceXOffset, sourceYOffset, imageWidth, imageHeight, relativeX, relativeY, imageWidth, imageHeight);
+                    }
                 }
             }
         });
+        TerrainImageLoaderContainer.getInstance().startLoad();
+        SurfaceLoaderContainer.getInstance().startLoad();
     }
 
     private void logCanvasError(Throwable t, ImageElement imageElement, int srcXStart, int srcYStart, int srcXWidth, int srcYWidth, int posX, int posY, int imageWidth, int imageHeight) {

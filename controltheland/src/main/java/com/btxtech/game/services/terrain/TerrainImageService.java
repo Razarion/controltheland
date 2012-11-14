@@ -13,18 +13,16 @@
 
 package com.btxtech.game.services.terrain;
 
-import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.common.TerrainInfo;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainImageService;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.CommonTerrainImageService;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
-import com.btxtech.game.services.tutorial.DbTutorialConfig;
 
 /**
  * User: beat
  * Date: May 22, 2009
  * Time: 11:55:20 AM
  */
-public interface TerrainImageService extends AbstractTerrainImageService {
+public interface TerrainImageService extends CommonTerrainImageService {
     DbTerrainImage getDbTerrainImage(int id);
 
     DbSurfaceImage getDbSurfaceImage(int id);

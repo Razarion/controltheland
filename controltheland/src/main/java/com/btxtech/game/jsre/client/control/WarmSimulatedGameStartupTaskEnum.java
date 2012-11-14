@@ -15,7 +15,6 @@ package com.btxtech.game.jsre.client.control;
 
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.ClearGame;
-import com.btxtech.game.jsre.client.control.task.LoadMapImageStartupTask;
 import com.btxtech.game.jsre.client.control.task.LoadSimulationInfoStartupTask;
 import com.btxtech.game.jsre.client.control.task.RunSimulationStartupTask;
 import com.btxtech.game.jsre.client.control.task.SimulationDeltaStartupTask;
@@ -40,11 +39,6 @@ public enum WarmSimulatedGameStartupTaskEnum implements StartupTaskEnum {
         @Override
         public AbstractStartupTask createTask() {
             return new SimulationDeltaStartupTask(this);
-        }},
-    LOAD_MAP("Load delta Map") {
-        @Override
-        public AbstractStartupTask createTask() {
-            return new LoadMapImageStartupTask(this);
         }},
     RUN_SIMULATED_GAME("Run simulated Game") {
         @Override

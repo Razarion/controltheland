@@ -524,7 +524,6 @@ public class ItemTypeEditorModel {
                     surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, SIM_WIDTH / 100, SIM_HEIGHT / 100), 23));
                     TerrainView.getInstance().setupTerrain(new TerrainSettings(SIM_WIDTH / 100, SIM_HEIGHT / 100), new ArrayList<TerrainImagePosition>(),
                             surfaceRects, surfaceImages, new ArrayList<TerrainImage>(), null);
-                    TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
                     TerrainView.getInstance().addToParent(MapWindow.getAbsolutePanel());
                     TerrainView.getInstance().getTerrainHandler().createTerrainTileField(Collections.<TerrainImagePosition>emptyList(), surfaceRects);
                     Renderer.getInstance().overrideItemRenderTask(new ItemEditorItemRenderTask(TerrainView.getInstance().getContext2d()));

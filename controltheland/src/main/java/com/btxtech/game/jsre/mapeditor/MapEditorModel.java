@@ -276,7 +276,7 @@ public class MapEditorModel implements TerrainScrollHandler.ScrollExecutor, Mous
     private Rectangle getAbsoluteTerrainImageRect(Index absoluteIndex, TerrainImagePosition.ZIndex zIndex) {
         TerrainImagePosition terrainImagePosition = terrainData.getTerrainImagePosition(zIndex, absoluteIndex.getX(), absoluteIndex.getY());
         if (terrainImagePosition != null) {
-            TerrainImage terrainImage = TerrainView.getInstance().getTerrainHandler().getTerrainImageHandler().getTerrainImage(terrainImagePosition.getImageId());
+            TerrainImage terrainImage = TerrainView.getInstance().getTerrainHandler().getCommonTerrainImageService().getTerrainImage(terrainImagePosition.getImageId());
             return TerrainUtil.convertToAbsolutePosition(new Rectangle(terrainImagePosition.getTileIndex().getX(),
                     terrainImagePosition.getTileIndex().getY(),
                     terrainImage.getTileWidth(),

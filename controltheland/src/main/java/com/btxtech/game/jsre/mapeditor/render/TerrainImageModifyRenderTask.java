@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.mapeditor.render;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.renderer.TerrainImageLoaderContainer;
 import com.btxtech.game.jsre.mapeditor.MapEditorModel;
 import com.btxtech.game.jsre.mapeditor.TerrainImageModifier;
 import com.btxtech.game.jsre.mapeditor.TerrainImageSurfaceGroup;

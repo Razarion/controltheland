@@ -14,7 +14,7 @@
 package com.btxtech.game.services.planet.impl;
 
 import com.btxtech.game.jsre.client.common.info.GameInfo;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainImageService;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.CommonTerrainImageService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
@@ -72,7 +72,7 @@ public class ServerTerrainServiceImpl extends AbstractTerrainServiceImpl impleme
     }
 
     @Override
-    protected AbstractTerrainImageService getAbstractTerrainImageService() {
+    protected CommonTerrainImageService getCommonTerrainImageService() {
         return serverGlobalServices.getTerrainImageService();
     }
 

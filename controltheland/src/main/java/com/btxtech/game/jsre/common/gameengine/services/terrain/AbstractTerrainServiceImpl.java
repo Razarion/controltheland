@@ -37,7 +37,7 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
     private TerrainSettings terrainSettings;
     private Logger log = Logger.getLogger(AbstractTerrainServiceImpl.class.getName());
 
-    protected abstract AbstractTerrainImageService getAbstractTerrainImageService();
+    protected abstract CommonTerrainImageService getCommonTerrainImageService();
 
     @Override
     public TerrainTile[][] getTerrainTileField() {
@@ -294,7 +294,7 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
             if (surfaceRect.getTileWidth() == 0 || surfaceRect.getTileHeight() == 0) {
                 continue;
             }
-            SurfaceImage surfaceImage = getAbstractTerrainImageService().getSurfaceImage(surfaceRect.getSurfaceImageId());
+            SurfaceImage surfaceImage = getCommonTerrainImageService().getSurfaceImage(surfaceRect.getSurfaceImageId());
             SurfaceType surfaceType = surfaceImage.getSurfaceType();
             int endX = surfaceRect.getTileWidth() + surfaceRect.getTileIndex().getX();
             for (int x = surfaceRect.getTileIndex().getX(); x < endX; x++) {
@@ -335,7 +335,7 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
     }
 
     private void fillTerrainTypeMap(TerrainTile[][] terrainTileField, TerrainImagePosition terrainImagePosition) {
-        TerrainImage terrainImage = getAbstractTerrainImageService().getTerrainImage(terrainImagePosition.getImageId());
+        TerrainImage terrainImage = getCommonTerrainImageService().getTerrainImage(terrainImagePosition.getImageId());
         Index imageIndex = terrainImagePosition.getTileIndex();
         SurfaceType[][] surfaceTypes = terrainImage.getSurfaceTypes();
         for (int x = 0; x < surfaceTypes.length; x++) {
@@ -357,6 +357,7 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
             }
         }
     }
+
 
 
 }
