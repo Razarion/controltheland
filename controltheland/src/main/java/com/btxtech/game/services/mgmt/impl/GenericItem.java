@@ -27,6 +27,7 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -49,9 +50,9 @@ public abstract class GenericItem {
     @Id
     @GeneratedValue
     private Integer id;
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private BackupEntry backupEntry;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private DbItemType itemType;
     @Type(type = "id")
     @Columns(columns = {@Column(name = "ownId"), @Column(name = "parentId"), @Column(name = "childIndex")})
