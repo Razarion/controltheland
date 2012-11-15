@@ -35,13 +35,13 @@ public class DbUserState {
     @Id
     @GeneratedValue
     private Integer id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private DbBase base;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private DbLevel currentLevel;
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private BackupEntry backupEntry;
     private int xp;
     private boolean sendResurrectionMessage;
