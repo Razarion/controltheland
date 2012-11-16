@@ -478,17 +478,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserState getUserState() {
         if (session.getUserState() == null) {
-            UserState userState = new UserState();
+            UserState userState = createUserState(getUserFromSecurityContext());
             userState.setSessionId(session.getSessionId());
-            userState.setUser(getUserFromSecurityContext());
             session.setUserState(userState);
-            synchronized (userStates) {
-                userStates.add(userState);
-            }
-            userGuidanceService.setLevelForNewUser(userState);
-            globalInventoryService.setupNewUserState(userState);
         }
         return session.getUserState();
+    }
+
+    @Override
+    public UserState createUserState(String userName) {
+        UserState userState = new UserState();
+        synchronized (userStates) {
+            userStates.add(userState);
+        }
+        userGuidanceService.setLevelForNewUser(userState);
+        globalInventoryService.setupNewUserState(userState);
+        userState.setUser(userName);
+        return userState;
     }
 
     @Override
