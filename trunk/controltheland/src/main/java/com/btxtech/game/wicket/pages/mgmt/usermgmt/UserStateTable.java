@@ -23,9 +23,11 @@ import com.btxtech.game.wicket.uiservices.LevelReadonlyPanel;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.util.List;
@@ -40,6 +42,7 @@ public class UserStateTable extends MgmtWebPage {
     private UserService userService;
     @SpringBean
     private PlanetSystemService planetSystemService;
+    private String userName4Creation;
 
     public UserStateTable() {
         add(new FeedbackPanel("msgs"));
@@ -84,6 +87,33 @@ public class UserStateTable extends MgmtWebPage {
                         setResponsePage(new UserStateEditor(item.getModelObject()));
                     }
                 });
+            }
+        });
+
+        form.add(new TextField<>("userName4Creation", new IModel<String>() {
+            @Override
+            public String getObject() {
+                return userName4Creation;
+            }
+
+            @Override
+            public void setObject(String object) {
+                userName4Creation = object;
+            }
+
+            @Override
+            public void detach() {
+                userName4Creation = null;
+            }
+        }));
+
+        form.add(new Button("createUserState") {
+
+            @Override
+            public void onSubmit() {
+                if (userName4Creation != null) {
+                    userService.createUserState(userService.getUser(userName4Creation).getUsername());
+                }
             }
         });
     }

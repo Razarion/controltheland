@@ -82,4 +82,6 @@ public interface UserService extends UserDetailsService {
     Collection<DbPageAccessControl> getDbPageAccessControls();
 
     InvalidNickName isNickNameValid(String nickName);
+
+    UserState createUserState(String userName);
 }

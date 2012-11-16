@@ -459,7 +459,11 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
             Collection<Integer> taskIds = levelTaskDone.get(userState);
             if (taskIds != null) {
                 for (Integer taskId : taskIds) {
-                    tasksDone.add(dbLevel.getLevelTaskCrud().readDbChild(taskId));
+                    try {
+                        tasksDone.add(dbLevel.getLevelTaskCrud().readDbChild(taskId));
+                    } catch (Exception e) {
+                        log.error("", e);
+                    }
                 }
             }
         }
