@@ -33,6 +33,6 @@ public class PositionTakenException extends RuntimeException {
     }
 
     public PositionTakenException(Index position, ItemType itemType) {
-        super("The position is not free: " + position + " for itemTypeId: " + itemType);
+        super("The position is not free: " + position + " for itemType: " + itemType);
     }
 }
