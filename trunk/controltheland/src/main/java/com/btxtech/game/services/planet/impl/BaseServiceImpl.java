@@ -106,7 +106,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         BaseItemType startItem = (BaseItemType) serverGlobalServices.getItemTypeService().getItemType(dbBaseItemType.getId());
         sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());
         Index startPoint = planetServices.getCollisionService().getFreeRandomPosition(startItem, region, startItemFreeRange, true, false);
-        SyncBaseItem syncBaseItem = (SyncBaseItem) planetServices.getItemService().createSyncObject(startItem, startPoint, null, base.getSimpleBase(), 0);
+        SyncBaseItem syncBaseItem = (SyncBaseItem) planetServices.getItemService().createSyncObject(startItem, startPoint, null, base.getSimpleBase());
         syncBaseItem.setBuildup(1.0);
         syncBaseItem.getSyncItemArea().setCosmeticsAngel();
         if (userState.isRegistered()) {

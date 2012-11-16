@@ -179,7 +179,7 @@ public class BotItemContainer {
         BaseItemType toBeBuilt = botItemConfig.getBaseItemType();
         if (botItemConfig.isCreateDirectly()) {
             Index position = planetServices.getCollisionService().getFreeRandomPosition(toBeBuilt, getSafeRegion(botItemConfig.getRegion()), 0, false, true);
-            SyncBaseItem newItem = (SyncBaseItem) planetServices.getItemService().createSyncObject(toBeBuilt, position, null, simpleBase, 0);
+            SyncBaseItem newItem = (SyncBaseItem) planetServices.getItemService().createSyncObject(toBeBuilt, position, null, simpleBase);
             newItem.setBuildup(1.0);
             add(newItem, botItemConfig);
         } else {

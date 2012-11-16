@@ -39,7 +39,7 @@ public class TestRectangleFormation extends AbstractServiceTest {
 
         Collection<SyncBaseItem> syncBaseItems = new ArrayList<>();
         for (int i = 1; i < 20; i++) {
-            syncBaseItems.add(createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(1500, 1500), new Id(i, -100, -100)));
+            syncBaseItems.add(createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(1500, 1500), new Id(i, -100)));
         }
 
         RectangleFormation rectangleFormation = new RectangleFormation(new Index(500, 500), syncBaseItems);
@@ -48,7 +48,7 @@ public class TestRectangleFormation extends AbstractServiceTest {
             while (pos == null) {
                 pos = rectangleFormation.calculateNextEntry();
             }
-            SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, pos, new Id(100, -100, -100));
+            SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, pos, new Id(100, -100));
             attackers.add(syncBaseItem);
         }
         assertOverlapping(attackers);

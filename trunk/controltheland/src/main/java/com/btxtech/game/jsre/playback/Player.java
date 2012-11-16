@@ -132,7 +132,7 @@ public class Player {
 
     private void displaySyncItemInfoFrame(SyncItemInfo syncItemInfo) {
         try {
-            ItemContainer.getInstance().sychronize(syncItemInfo);
+            ItemContainer.getInstance().doSynchronize(Collections.singletonList(syncItemInfo));
         } catch (Exception e) {
             GwtCommon.handleException(e);
         }

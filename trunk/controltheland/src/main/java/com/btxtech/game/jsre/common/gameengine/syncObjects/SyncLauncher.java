@@ -109,7 +109,7 @@ public class SyncLauncher extends SyncBaseAbility {
             throw new IllegalStateException(this + " range too big for projectile");
         }
 
-        SyncProjectileItem projectile = (SyncProjectileItem) getPlanetServices().getItemService().createSyncObject(getProjectileItemType(), getSyncItemArea().getPosition(), getSyncBaseItem(), getSyncBaseItem().getBase(), 0);
+        SyncProjectileItem projectile = (SyncProjectileItem) getPlanetServices().getItemService().createSyncObject(getProjectileItemType(), getSyncItemArea().getPosition(), getSyncBaseItem(), getSyncBaseItem().getBase());
         if (projectile != null) {
             getSyncItemArea().turnTo(command.getTarget());
             buildup = 0;

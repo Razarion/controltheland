@@ -175,7 +175,7 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
             }
 
             for (Index position : positionToBePlaced) {
-                SyncBaseItem syncBaseItem = (SyncBaseItem) serverPlanetServices.getItemService().createSyncObject(baseItemType, position, null, simpleBase, 0);
+                SyncBaseItem syncBaseItem = (SyncBaseItem) serverPlanetServices.getItemService().createSyncObject(baseItemType, position, null, simpleBase);
                 syncBaseItem.setBuildup(1.0);
             }
         } else {
@@ -202,7 +202,7 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
 
     private void dropBox(Index position, BoxItemType boxItemType, SyncBaseItem dropper) {
         try {
-            SyncBoxItem syncBoxItem = (SyncBoxItem) serverPlanetServices.getItemService().createSyncObject(boxItemType, position, null, null, 0);
+            SyncBoxItem syncBoxItem = (SyncBoxItem) serverPlanetServices.getItemService().createSyncObject(boxItemType, position, null, null);
             synchronized (syncBoxItems) {
                 syncBoxItems.add(syncBoxItem);
             }

@@ -47,12 +47,12 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
         final TestPlanetServices testPlanetServices = new TestPlanetServices();
 
         SimpleBase simpleBase1 = new SimpleBase(1, 1);
-        SyncBaseItem intruder = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1000, 1000), new Id(1, 0, 0), simpleBase1);
+        SyncBaseItem intruder = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1000, 1000), new Id(1, 0), simpleBase1);
 
         SimpleBase simpleBase2 = new SimpleBase(2, 1);
-        SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(2, 0, 0), simpleBase2);
+        SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(2, 0), simpleBase2);
         setPrivateField(SyncItem.class, defender, "planetServices", testPlanetServices);
-        SyncBaseItem defender2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(3, 0, 0), simpleBase2);
+        SyncBaseItem defender2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(3, 0), simpleBase2);
         setPrivateField(SyncItem.class, defender2, "planetServices", testPlanetServices);
 
         ItemService itemServiceMock = EasyMock.createStrictMock(ItemService.class);
@@ -146,11 +146,11 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
         final TestPlanetServices testServices = new TestPlanetServices();
 
         SimpleBase simpleBase1 = new SimpleBase(1, 1);
-        SyncBaseItem intruder = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1000, 1000), new Id(1, 0, 0), simpleBase1);
+        SyncBaseItem intruder = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1000, 1000), new Id(1, 0), simpleBase1);
 
         SimpleBase simpleBase2 = new SimpleBase(2, 1);
-        SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(2, 0, 0), simpleBase2);
-        SyncBaseItem defender2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(3, 0, 0), simpleBase2);
+        SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(2, 0), simpleBase2);
+        SyncBaseItem defender2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(3, 0), simpleBase2);
 
         ItemService itemServiceMock = EasyMock.createStrictMock(ItemService.class);
         testServices.setItemService(itemServiceMock);
@@ -234,13 +234,13 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
         final TestPlanetServices testServices = new TestPlanetServices();
 
         SimpleBase simpleBotBase1 = new SimpleBase(1, 1);
-        SyncBaseItem intruderBot = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1000, 1000), new Id(1, 0, 0), simpleBotBase1);
+        SyncBaseItem intruderBot = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1000, 1000), new Id(1, 0), simpleBotBase1);
         setPrivateField(SyncItem.class, intruderBot, "planetServices", testServices);
 
         SimpleBase simpleBase2 = new SimpleBase(2, 1);
-        SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(2, 0, 0), simpleBase2);
+        SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(2, 0), simpleBase2);
         setPrivateField(SyncItem.class, defender, "planetServices", testServices);
-        SyncBaseItem defender2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(3, 0, 0), simpleBase2);
+        SyncBaseItem defender2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(3, 0), simpleBase2);
         setPrivateField(SyncItem.class, defender2, "planetServices", testServices);
 
         ItemService itemServiceMock = EasyMock.createStrictMock(ItemService.class);
@@ -334,13 +334,13 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
         final TestPlanetServices testServices = new TestPlanetServices();
 
         SimpleBase simpleBase1 = new SimpleBase(1, 1);
-        SyncBaseItem intruder = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1000, 1000), new Id(1, 0, 0), simpleBase1);
+        SyncBaseItem intruder = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1000, 1000), new Id(1, 0), simpleBase1);
         setPrivateField(SyncItem.class, intruder, "planetServices", testServices);
 
         SimpleBase simpleBotBase2 = new SimpleBase(2, 1);
-        SyncBaseItem defenderBot = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(2, 0, 0), simpleBotBase2);
+        SyncBaseItem defenderBot = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(2, 0), simpleBotBase2);
         setPrivateField(SyncItem.class, defenderBot, "planetServices", testServices);
-        SyncBaseItem defenderBot2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(3, 0, 0), simpleBotBase2);
+        SyncBaseItem defenderBot2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(3, 0), simpleBotBase2);
         setPrivateField(SyncItem.class, defenderBot2, "planetServices", testServices);
 
         ItemService itemServiceMock = EasyMock.createStrictMock(ItemService.class);
@@ -434,13 +434,13 @@ public class TestCommonActionServiceImpl extends AbstractServiceTest {
         final TestPlanetServices testServices = new TestPlanetServices();
 
         SimpleBase simpleBotBase1 = new SimpleBase(1, 1);
-        SyncBaseItem intruderBot = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1000, 1000), new Id(1, 0, 0), simpleBotBase1);
+        SyncBaseItem intruderBot = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1000, 1000), new Id(1, 0), simpleBotBase1);
         setPrivateField(SyncItem.class, intruderBot, "planetServices", testServices);
 
         SimpleBase simpleBotBase2 = new SimpleBase(2, 1);
-        SyncBaseItem defenderBot = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(2, 0, 0), simpleBotBase2);
+        SyncBaseItem defenderBot = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(2, 0), simpleBotBase2);
         setPrivateField(SyncItem.class, defenderBot, "planetServices", testServices);
-        SyncBaseItem defenderBot2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(3, 0, 0), simpleBotBase2);
+        SyncBaseItem defenderBot2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1100, 1100), new Id(3, 0), simpleBotBase2);
         setPrivateField(SyncItem.class, defenderBot2, "planetServices", testServices);
 
         ItemService itemServiceMock = EasyMock.createStrictMock(ItemService.class);

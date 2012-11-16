@@ -13,6 +13,8 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
+import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -38,7 +40,6 @@ public class SyncFactory extends SyncBaseAbility {
     private FactoryType factoryType;
     private BaseItemType toBeBuiltType;
     private double buildup;
-    private int createdChildCount;
     private Index rallyPoint;
     private Logger log = Logger.getLogger(SyncFactory.class.getName());
 
@@ -69,12 +70,15 @@ public class SyncFactory extends SyncBaseAbility {
             buildup += buildFactor;
             getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS);
             if (buildup >= 1.0) {
+                if (getPlanetServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
+                    // Wait for server to create currentBuildup
+                    return true;
+                }
                 if (!getPlanetServices().getBaseService().isItemLimit4ItemAddingAllowed(toBeBuiltType, getSyncBaseItem().getBase())) {
                     return true;
                 }
-                SyncBaseItem item = (SyncBaseItem) getPlanetServices().getItemService().createSyncObject(toBeBuiltType, rallyPoint, getSyncBaseItem(), getSyncBaseItem().getBase(), createdChildCount);
+                SyncBaseItem item = (SyncBaseItem) getPlanetServices().getItemService().createSyncObject(toBeBuiltType, rallyPoint, getSyncBaseItem(), getSyncBaseItem().getBase());
                 item.setBuildup(buildup);
-                createdChildCount++;
                 stop();
                 if (item.hasSyncMovable() && item.getSyncMovable().onFinished()) {
                     getPlanetServices().getActionService().syncItemActivated(item);
@@ -107,7 +111,6 @@ public class SyncFactory extends SyncBaseAbility {
             toBeBuiltType = null;
         }
         buildup = syncItemInfo.getFactoryBuildupProgress();
-        createdChildCount = syncItemInfo.getCreatedChildCount();
         rallyPoint = syncItemInfo.getRallyPoint();
     }
 
@@ -117,7 +120,6 @@ public class SyncFactory extends SyncBaseAbility {
             syncItemInfo.setToBeBuiltTypeId(toBeBuiltType.getId());
         }
         syncItemInfo.setFactoryBuildupProgress(buildup);
-        syncItemInfo.setCreatedChildCount(createdChildCount);
         syncItemInfo.setRallyPoint(Index.saveCopy(rallyPoint));
     }
 
@@ -139,20 +141,12 @@ public class SyncFactory extends SyncBaseAbility {
         }
     }
 
-    public int getCreatedChildCount() {
-        return createdChildCount;
-    }
-
     public void setToBeBuiltType(BaseItemType toBeBuiltType) {
         this.toBeBuiltType = toBeBuiltType;
     }
 
     public void setBuildupProgress(double buildup) {
         this.buildup = buildup;
-    }
-
-    public void setCreatedChildCount(int createdChildCount) {
-        this.createdChildCount = createdChildCount;
     }
 
     public Index getRallyPoint() {

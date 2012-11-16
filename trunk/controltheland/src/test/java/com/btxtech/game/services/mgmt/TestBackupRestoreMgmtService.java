@@ -657,7 +657,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         for (int i = 0; i < ITEM_COUNT; i++) {
             ItemType itemType = getRandomItemType();
             System.out.println("Creating: " + (i + 1) + " of " + ITEM_COUNT);
-            serverPlanetServices.getItemService().createSyncObject(itemType, getRandomPosition(itemType), null, getBase(itemType), 0);
+            serverPlanetServices.getItemService().createSyncObject(itemType, getRandomPosition(itemType), null, getBase(itemType));
         }
         mgmtService.backup();
     }

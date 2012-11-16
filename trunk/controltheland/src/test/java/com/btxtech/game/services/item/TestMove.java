@@ -54,7 +54,7 @@ public class TestMove extends AbstractServiceTest {
         serverPlanetServices.setServerItemService(serverItemServiceMock);
         serverPlanetServices.setTerrainService(mockTerrainService);
 
-        Id id = new Id(1, 1, 1);
+        Id id = new Id(1, 1);
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(2000, 2000), id, testGlobalServices, serverPlanetServices);
         SyncMovable syncMovable = syncBaseItem.getSyncMovable();
         // Set speed to 100

@@ -65,8 +65,8 @@ public class TestSyncBaseItem extends AbstractServiceTest {
         SyncBaseItem syncBaseItem2 = (SyncBaseItem) planetServices.getItemService().getItem(getFirstSynItemId(base2.getSimpleBase(), TEST_START_BUILDER_ITEM_ID));
         SyncBaseItem syncBaseItem3 = (SyncBaseItem) planetServices.getItemService().getItem(getFirstSynItemId(base3.getSimpleBase(), TEST_START_BUILDER_ITEM_ID));
         SyncBaseItem syncBaseItem4 = (SyncBaseItem) planetServices.getItemService().getItem(getFirstSynItemId(base4.getSimpleBase(), TEST_START_BUILDER_ITEM_ID));
-        SyncBaseItem botSyncBaseItem1 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1000, 1000), new Id(100, 0, 0), globalServices, planetServices, botBase1);
-        SyncBaseItem botSyncBaseItem2 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1100, 1100), new Id(101, 0, 0), globalServices, planetServices, botBase2);
+        SyncBaseItem botSyncBaseItem1 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1000, 1000), new Id(100, 0), globalServices, planetServices, botBase1);
+        SyncBaseItem botSyncBaseItem2 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(1100, 1100), new Id(101, 0), globalServices, planetServices, botBase2);
 
         Collection<SimpleBase> alliancesBase1 = new HashSet<>();
         alliancesBase1.add(base2.getSimpleBase());

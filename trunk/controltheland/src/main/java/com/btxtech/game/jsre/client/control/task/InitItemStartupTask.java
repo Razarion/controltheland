@@ -14,11 +14,9 @@
 package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.Connection;
-import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 
 /**
  * User: beat
@@ -33,13 +31,7 @@ public class InitItemStartupTask extends AbstractStartupTask {
 
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
-        for (SyncItemInfo syncInfo : Connection.getInstance().getAndClearSyncInfos()) {
-            try {
-                ItemContainer.getInstance().sychronize(syncInfo);
-            } catch (Throwable t) {
-                GwtCommon.handleException(t);
-            }
-        }
+        ItemContainer.getInstance().doSynchronize(Connection.getInstance().getAndClearSyncInfos());
         TerrainView.getInstance().moveToHome();
     }
 }

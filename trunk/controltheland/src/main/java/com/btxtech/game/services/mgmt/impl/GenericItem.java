@@ -55,7 +55,7 @@ public abstract class GenericItem {
     @ManyToOne(fetch = FetchType.LAZY)
     private DbItemType itemType;
     @Type(type = "id")
-    @Columns(columns = {@Column(name = "ownId"), @Column(name = "parentId"), @Column(name = "childIndex")})
+    @Columns(columns = {@Column(name = "ownId"), @Column(name = "parentId")})
     private com.btxtech.game.jsre.common.gameengine.syncObjects.Id itemId;
     @Type(type = "index")
     @Columns(columns = {@Column(name = "xPos"), @Column(name = "yPos")})

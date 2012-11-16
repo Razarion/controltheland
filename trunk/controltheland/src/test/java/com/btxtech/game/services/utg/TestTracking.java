@@ -546,7 +546,7 @@ public class TestTracking extends AbstractServiceTest {
         SyncItemInfo syncItemInfo = new SyncItemInfo();
         syncItemInfo.setStartUuid(uuid);
         syncItemInfo.setAmount(0.5);
-        syncItemInfo.setId(new Id(1, 1, 1));
+        syncItemInfo.setId(new Id(1, 1));
         setPrivateField(SyncItemInfo.class, syncItemInfo, "clientTimeStamp", 1200L);
         itemInfos.add(syncItemInfo);
         // Selection
@@ -613,7 +613,7 @@ public class TestTracking extends AbstractServiceTest {
         SyncItemInfo syncItemInfo = new SyncItemInfo();
         syncItemInfo.setStartUuid(uuid);
         syncItemInfo.setFollowTarget(true);
-        syncItemInfo.setId(new Id(2, 2, 2));
+        syncItemInfo.setId(new Id(2, 2));
         setPrivateField(SyncItemInfo.class, syncItemInfo, "clientTimeStamp", 2000L);
         syncItemInfos.add(syncItemInfo);
         // Selection
@@ -736,7 +736,7 @@ public class TestTracking extends AbstractServiceTest {
         Assert.assertEquals(5, playbackInfo.getEventTrackingItems().get(4).getEventType());
         // SyncItemInfos
         Assert.assertEquals(1, playbackInfo.getSyncItemInfos().size());
-        Assert.assertEquals(new Id(1, 1, 1), playbackInfo.getSyncItemInfos().get(0).getId());
+        Assert.assertEquals(new Id(1, 1), playbackInfo.getSyncItemInfos().get(0).getId());
         Assert.assertEquals(0.5, playbackInfo.getSyncItemInfos().get(0).getAmount(), 0.001);
         // Selection
         Assert.assertEquals(1, playbackInfo.getSelectionTrackingItems().size());
@@ -810,7 +810,7 @@ public class TestTracking extends AbstractServiceTest {
         Assert.assertEquals(5, playbackInfo.getEventTrackingItems().get(4).getXPos());
         // Commands
         Assert.assertEquals(1, playbackInfo.getSyncItemInfos().size());
-        Assert.assertEquals(new Id(2, 2, 2), playbackInfo.getSyncItemInfos().get(0).getId());
+        Assert.assertEquals(new Id(2, 2), playbackInfo.getSyncItemInfos().get(0).getId());
         Assert.assertTrue(playbackInfo.getSyncItemInfos().get(0).isFollowTarget());
         // Selection
         Assert.assertEquals(2, playbackInfo.getSelectionTrackingItems().size());

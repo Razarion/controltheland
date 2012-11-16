@@ -372,8 +372,8 @@ public class TestHistoryService extends AbstractServiceTest {
         SimpleBase humanBase2 = new SimpleBase(2, 1);
         SimpleBase botBase1 = new SimpleBase(3, 1);
         SimpleBase botBase2 = new SimpleBase(4, 1);
-        SyncBaseItem humanBaseItem = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(500, 500), new Id(1, 1, 1), humanBase1);
-        SyncBaseItem botBaseItem = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(500, 500), new Id(2, 1, 1), botBase1);
+        SyncBaseItem humanBaseItem = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(500, 500), new Id(1, 1), humanBase1);
+        SyncBaseItem botBaseItem = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(500, 500), new Id(2, 1), botBase1);
 
         BaseService baseService = EasyMock.createNiceMock(BaseService.class);
         EasyMock.expect(baseService.isBot(humanBase1)).andReturn(false).anyTimes();
@@ -571,8 +571,8 @@ public class TestHistoryService extends AbstractServiceTest {
         userService.createUser("u1", "xxx", "xxx", "");
         userService.login("u1", "xxx");
         SimpleBase simpleBase = getMyBase();
-        SyncBoxItem syncBoxItem = createSyncBoxItem(dbBoxItemType.getId(), new Index(1000, 1000), new Id(1, 1, 1));
-        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(2000, 2000), new Id(2, 2, 2), simpleBase);
+        SyncBoxItem syncBoxItem = createSyncBoxItem(dbBoxItemType.getId(), new Index(1000, 1000), new Id(1, 1));
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(2000, 2000), new Id(2, 2), simpleBase);
 
         // System entry historyService.addBoxDropped(syncBoxItem, new Index(1000, 1000), null);
         // System entry historyService.addBoxDropped(syncBoxItem, new Index(1000, 1000), syncBaseItem);

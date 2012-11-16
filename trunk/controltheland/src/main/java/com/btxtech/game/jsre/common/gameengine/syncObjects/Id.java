@@ -21,9 +21,8 @@ import java.io.Serializable;
  * Time: 8:38:29 PM
  */
 public class Id implements Serializable {
-    private Integer id;
+    private int id;
     private int parentId;
-    private int childIndex;
     private long userTimeStamp;
     public static final int NO_ID = 0;
     public static final int SIMULATION_ID = -1;
@@ -31,37 +30,13 @@ public class Id implements Serializable {
     /**
      * Used by GWT
      */
-    private Id() {
+    Id() {
 
     }
 
-    public Id(int id, int parentId, int childIndex) {
+    public Id(int id, int parentId) {
         this.id = id;
         this.parentId = parentId;
-        this.childIndex = childIndex;
-    }
-
-    public Id(int parentId, int childIndex) {
-        this.parentId = parentId;
-        this.childIndex = childIndex;
-    }
-
-    public void synchronize(Id otherId) {
-        if (parentId != otherId.parentId || childIndex != otherId.childIndex) {
-            throw new IllegalArgumentException(this + " index are not synchron parentId: " + parentId +
-                    " otherId.parentId: " + otherId.parentId +
-                    " childIndex: " + childIndex + " otherId.childIndex: " + otherId.childIndex);
-        }
-
-        if (otherId.id == null) {
-            throw new IllegalArgumentException(this + " otherId.id is nll");
-        }
-
-        if (id != null && !id.equals(otherId.id)) {
-            throw new IllegalArgumentException(this + " are not equal id: " + id + " other.id: " + otherId.id);
-        }
-
-        id = otherId.id;
     }
 
     @Override
@@ -69,36 +44,24 @@ public class Id implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Id id1 = (Id) o;
-        if (id != null && id1.id != null) {
-            return id.equals(id1.id);
-        }
-
-        return childIndex == id1.childIndex && parentId == id1.parentId;
-
+        Id other = (Id) o;
+        return id == other.id;
     }
 
     @Override
     public int hashCode() {
-        int result = parentId;
-        result = 31 * result + childIndex;
+        int result = id;
+        result = 31 * result + parentId;
         return result;
     }
 
     @Override
     public String toString() {
-        return "Id [id: " + id + " parentId: " + parentId + " childIndex: " + childIndex + "]";
+        return "Id [id: " + id + " parentId: " + parentId + "]";
     }
 
     public int getId() {
-        if (id == null) {
-            throw new IllegalStateException(this + " id is null in getter");
-        }
         return id;
-    }
-
-    public boolean isSynchronized() {
-        return id != null;
     }
 
     public int getParentId() {
@@ -107,10 +70,6 @@ public class Id implements Serializable {
 
     public boolean hasParent() {
         return parentId != NO_ID;
-    }
-
-    public int getChildIndex() {
-        return childIndex;
     }
 
     public long getUserTimeStamp() {

@@ -127,7 +127,7 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
         Assert.assertEquals(1, itemTypeSpriteMap.getDemolitionSteps().length);
         Assert.assertEquals(3, itemTypeSpriteMap.getDemolitionSteps()[0].getAnimationFrames());
         Assert.assertEquals(200, itemTypeSpriteMap.getDemolitionSteps()[0].getAnimationDuration());
-        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(-1, -1, -1));
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(-1, -1));
         syncBaseItem.setHealth(0.8 * (double) syncBaseItem.getBaseItemType().getHealth());
         Collection<ItemClipPosition> itemClipPositionsDemolition1 = itemTypeSpriteMap.getDemolitionClipIds(syncBaseItem);
         Assert.assertEquals(1, itemClipPositionsDemolition1.size());
@@ -184,7 +184,7 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
         // Test step 0
         Assert.assertEquals(11, itemTypeSpriteMap.getDemolitionSteps()[0].getAnimationFrames());
         Assert.assertEquals(201, itemTypeSpriteMap.getDemolitionSteps()[0].getAnimationDuration());
-        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(-1, -1, -1));
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(-1, -1));
         syncBaseItem.setHealth(0.75 * (double) syncBaseItem.getBaseItemType().getHealth());
         Collection<ItemClipPosition> itemClipPositionsDemolition1 = itemTypeSpriteMap.getDemolitionClipIds(syncBaseItem);
         Assert.assertEquals(3, itemClipPositionsDemolition1.size());
@@ -299,7 +299,7 @@ public class TestItemTypeDemolitionClip extends AbstractServiceTest {
         Assert.assertEquals(2, itemTypeSpriteMap.getDemolitionStepCount());
         Assert.assertEquals(2, itemTypeSpriteMap.getDemolitionSteps().length);
         // Test step 0
-        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(-1, -1, -1));
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(-1, -1));
         syncBaseItem.setHealth(0.75 * (double) syncBaseItem.getBaseItemType().getHealth());
         Collection<ItemClipPosition> itemClipPositionsDemolition1 = itemTypeSpriteMap.getDemolitionClipIds(syncBaseItem);
         Assert.assertEquals(2, itemClipPositionsDemolition1.size());

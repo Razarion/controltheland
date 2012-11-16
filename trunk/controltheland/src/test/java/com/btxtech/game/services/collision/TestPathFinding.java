@@ -93,7 +93,7 @@ public class TestPathFinding extends AbstractServiceTest {
         CollisionService collisionService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getCollisionService();
         SyncItemArea target = new BoundingBox(100, ANGELS_24).createSyntheticSyncItemArea(new Index(2750, 350));
         List<AttackFormationItem> attacker = new ArrayList<>();
-        attacker.add(new AttackFormationItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1450, 350), new Id(0, 0, 0)), 250));
+        attacker.add(new AttackFormationItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1450, 350), new Id(0, 0)), 250));
         attacker = collisionService.setupDestinationHints(target, TerrainType.WATER, attacker);
         Assert.assertEquals(new Index(2378, 136), attacker.get(0).getDestinationHint());
         Assert.assertEquals(4.190352700775026, attacker.get(0).getDestinationAngel(), 0.001);

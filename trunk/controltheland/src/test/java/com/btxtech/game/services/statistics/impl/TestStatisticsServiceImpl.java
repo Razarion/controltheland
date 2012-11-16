@@ -283,7 +283,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         SimpleBase botBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(1, 1, null, null, "bot", null, null, null, null));
-        Id targetBotFactory = serverPlanetServices.getItemService().createSyncObject(serverItemTypeService.getItemType(TEST_FACTORY_ITEM), new Index(3000, 1000), null, botBase, 0).getId();
+        Id targetBotFactory = serverPlanetServices.getItemService().createSyncObject(serverItemTypeService.getItemType(TEST_FACTORY_ITEM), new Index(3000, 1000), null, botBase).getId();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -312,7 +312,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         botBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(1, 1, null, null, "bot", null, null, null, null));
-        Id targetBotUnit = serverPlanetServices.getItemService().createSyncObject(serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), new Index(3000, 2000), null, botBase, 0).getId();
+        Id targetBotUnit = serverPlanetServices.getItemService().createSyncObject(serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), new Index(3000, 2000), null, botBase).getId();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -349,7 +349,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
 
         // Fake a bot unit and attack unit
         botBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(1, 1, null, null, "bot", null, null, null, null));
-        SyncBaseItem botAttackUnit = (SyncBaseItem) serverPlanetServices.getItemService().createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(3000, 2000), null, botBase, 0);
+        SyncBaseItem botAttackUnit = (SyncBaseItem) serverPlanetServices.getItemService().createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(3000, 2000), null, botBase);
         botAttackUnit.setHealth(Integer.MAX_VALUE);
         sendAttackCommand(botAttackUnit.getId(), u1AttackerId, TEST_PLANET_1_ID);
         waitForActionServiceDone(TEST_PLANET_1_ID);

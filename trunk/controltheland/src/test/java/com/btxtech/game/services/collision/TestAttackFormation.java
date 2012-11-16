@@ -44,9 +44,9 @@ public class TestAttackFormation extends AbstractServiceTest {
 
         ItemType targetItemType = serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID);
         targetItemType.setBoundingBox(new BoundingBox(200, ANGELS_24));
-        SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(1500, 1500), new Id(1, -100, -100));
+        SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(1500, 1500), new Id(1, -100));
 
-        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(2, -100, -100));
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(2, -100));
 
         int count = 15;
         int range = 200;
@@ -68,7 +68,7 @@ public class TestAttackFormation extends AbstractServiceTest {
                     attackers.add(target);
                     while (attackFormation.hasNext()) {
                         AttackFormationItem attackFormationItem = attackFormation.calculateNextEntry();
-                        SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, attackFormationItem.getDestinationHint(), new Id(2, -100, -100));
+                        SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, attackFormationItem.getDestinationHint(), new Id(2, -100));
                         attacker.getSyncItemArea().turnTo(attackFormationItem.getDestinationAngel());
                         if (attackFormationItem.isInRange()) {
                             Assert.assertTrue("Not in range: " + attacker.getSyncItemArea().getDistance(target.getSyncItemArea()), attacker.getSyncItemArea().getDistanceRounded(target.getSyncItemArea()) <= range);
@@ -100,11 +100,11 @@ public class TestAttackFormation extends AbstractServiceTest {
 
         ItemType targetItemType = serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID);
         targetItemType.setBoundingBox(new BoundingBox(200, ANGELS_24));
-        SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(1500, 1500), new Id(1, -100, -100));
+        SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(1500, 1500), new Id(1, -100));
 
         //ItemType attackItemType = serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
         //attackItemType.setBoundingBox(new BoundingBox(100, 100, 80, 80, 24));
-        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(2, -100, -100));
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(2, -100));
 
         double targetAngel = MathHelper.gradToRad(31.512678732195273);
         double attackerAngel = MathHelper.gradToRad(0);
@@ -128,7 +128,7 @@ public class TestAttackFormation extends AbstractServiceTest {
 
         while (attackFormation.hasNext()) {
             AttackFormationItem attackFormationItem = attackFormation.calculateNextEntry();
-            SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, attackFormationItem.getDestinationHint(), new Id(2, -100, -100));
+            SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, attackFormationItem.getDestinationHint(), new Id(2, -100));
             attacker.getSyncItemArea().turnTo(attackFormationItem.getDestinationAngel());
             if (attackFormationItem.isInRange()) {
                 //debugService.drawSyncItemArea(attacker.getSyncItemArea(), Color.GREEN);
@@ -165,9 +165,9 @@ public class TestAttackFormation extends AbstractServiceTest {
 
         ItemType targetItemType = serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID);
         targetItemType.setBoundingBox(new BoundingBox(200, ANGELS_24));
-        SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(1500, 1500), new Id(1, -100, -100));
+        SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(1500, 1500), new Id(1, -100));
 
-        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(2, -100, -100));
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(2, -100));
 
         double targetAngel = MathHelper.gradToRad(31.512678732195273);
         double attackerAngel = MathHelper.gradToRad(0);
@@ -189,7 +189,7 @@ public class TestAttackFormation extends AbstractServiceTest {
 
         while (attackFormation.hasNext()) {
             AttackFormationItem attackFormationItem = attackFormation.calculateNextEntry();
-            SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, attackFormationItem.getDestinationHint(), new Id(2, -100, -100));
+            SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, attackFormationItem.getDestinationHint(), new Id(2, -100));
             attacker.getSyncItemArea().turnTo(attackFormationItem.getDestinationAngel());
             if (attackFormationItem.isInRange()) {
                 double distance = attacker.getSyncItemArea().getDistanceRounded(target.getSyncItemArea());
@@ -211,11 +211,11 @@ public class TestAttackFormation extends AbstractServiceTest {
 
         ItemType targetItemType = serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID);
         targetItemType.setBoundingBox(new BoundingBox(80, ANGELS_24));
-        SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(500, 500), new Id(1, -100, -100));
+        SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(500, 500), new Id(1, -100));
 
         ItemType attackItemType = serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
         attackItemType.setBoundingBox(new BoundingBox(38, ANGELS_24));
-        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(2, -100, -100));
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(2, -100));
 
         double targetAngel = 0;
         double attackerAngel = 0;
@@ -236,7 +236,7 @@ public class TestAttackFormation extends AbstractServiceTest {
 
         while (attackFormation.hasNext()) {
             AttackFormationItem attackFormationItem = attackFormation.calculateNextEntry();
-            SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, attackFormationItem.getDestinationHint(), new Id(2, -100, -100));
+            SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, attackFormationItem.getDestinationHint(), new Id(2, -100));
             attacker.getSyncItemArea().turnTo(attackFormationItem.getDestinationAngel());
             if (attackFormationItem.isInRange()) {
                 Assert.assertFalse("Not in range", attacker.getSyncItemArea().getDistance(target.getSyncItemArea()) > range);
@@ -274,8 +274,8 @@ public class TestAttackFormation extends AbstractServiceTest {
     public void testFormationWithNegativePosition() throws Exception {
         configureSimplePlanetNoResources();
         List<SyncBaseItem> attackers = new ArrayList<>();
-        SyncBaseItem target = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 200), new Id(1, -100, -100));
-        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(2, -100, -100));
+        SyncBaseItem target = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 200), new Id(1, -100));
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(2, -100));
 
         List<AttackFormationItem> items = new ArrayList<>();
         for (int i = 0; i < 19; i++) {
@@ -290,7 +290,7 @@ public class TestAttackFormation extends AbstractServiceTest {
                 continue;
             }
 
-            SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, attackFormationItem.getDestinationHint(), new Id(3, -100, -100));
+            SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, attackFormationItem.getDestinationHint(), new Id(3, -100));
 
             attacker.getSyncItemArea().turnTo(target);
             attackFormation.lastAccepted();
@@ -309,9 +309,9 @@ public class TestAttackFormation extends AbstractServiceTest {
 
         ItemType targetItemType = serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
         targetItemType.setBoundingBox(new BoundingBox(40, ANGELS_24));
-        SyncBaseItem target = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(350, 400), new Id(1, -100, -100));
+        SyncBaseItem target = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(350, 400), new Id(1, -100));
 
-        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(1, -100, -100));
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(1, -100));
 
         int range = 160;
         double targetAngel = 0;
@@ -330,7 +330,7 @@ public class TestAttackFormation extends AbstractServiceTest {
                     attackers.add(target);
                     while (attackFormation.hasNext()) {
                         AttackFormationItem attackFormationItem = attackFormation.calculateNextEntry();
-                        SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, attackFormationItem.getDestinationHint(), new Id(2, -100, -100));
+                        SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, attackFormationItem.getDestinationHint(), new Id(2, -100));
                         attacker.getSyncItemArea().turnTo(attackFormationItem.getDestinationAngel());
 
                         if (attacker.getSyncItemArea().contains(blockingRect1) || attacker.getSyncItemArea().contains(blockingRect2)) {

@@ -33,7 +33,7 @@ import java.sql.Types;
 public class IdUserType implements UserType {
     @Override
     public int[] sqlTypes() {
-        return new int[]{Types.INTEGER, Types.INTEGER, Types.INTEGER};
+        return new int[]{Types.INTEGER, Types.INTEGER};
     }
 
     @Override
@@ -43,13 +43,7 @@ public class IdUserType implements UserType {
 
     @Override
     public boolean equals(Object o1, Object o2) throws HibernateException {
-        if (o1 == o2) {
-            return true;
-        } else if (o1 == null || o2 == null) {
-            return false;
-        } else {
-            return o1.equals(o2);
-        }
+        return o1 == o2 || !(o1 == null || o2 == null) && o1.equals(o2);
     }
 
     @Override
@@ -60,27 +54,15 @@ public class IdUserType implements UserType {
     @Override
     public Object nullSafeGet(ResultSet resultSet, String[] names, SessionImplementor sessionImplementor, Object owner) throws HibernateException, SQLException {
         int id = resultSet.getInt(names[0]);
-        boolean hasId = !resultSet.wasNull();
-
         int parentId = resultSet.getInt(names[1]);
-        int childIndex = resultSet.getInt(names[2]);
-        if (hasId) {
-            return new Id(id, parentId, childIndex);
-        } else {
-            return new Id(parentId, childIndex);
-        }
+        return new Id(id, parentId);
     }
 
     @Override
     public void nullSafeSet(PreparedStatement statement, Object o, int columnIndex, SessionImplementor sessionImplementor) throws HibernateException, SQLException {
         Id id = (Id) o;
-        if (id.isSynchronized()) {
-            statement.setInt(columnIndex, id.getId());
-        } else {
-            statement.setNull(columnIndex, Types.INTEGER);
-        }
+        statement.setInt(columnIndex, id.getId());
         statement.setInt(columnIndex + 1, id.getParentId());
-        statement.setInt(columnIndex + 2, id.getChildIndex());
     }
 
     @Override
