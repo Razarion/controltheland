@@ -71,14 +71,14 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
         userState1.setDbLevelId(TEST_LEVEL_2_REAL_ID);
         base1 = new Base(userState1, planetSystemService.getPlanet(TEST_PLANET_1_ID), 1);
         int itemId = 0;
-        builder1B1 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockGlobalServices(), createMockPlanetServices(), base1.getSimpleBase());
-        attacker1B1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockGlobalServices(), createMockPlanetServices(), base1.getSimpleBase());
+        builder1B1 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(++itemId, 0), createMockGlobalServices(), createMockPlanetServices(), base1.getSimpleBase());
+        attacker1B1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(++itemId, 0), createMockGlobalServices(), createMockPlanetServices(), base1.getSimpleBase());
 
         UserState userState2 = new UserState();
         userState2.setUser("TestUser2");
         userState2.setDbLevelId(TEST_LEVEL_2_REAL_ID);
         base2 = new Base(userState2, planetSystemService.getPlanet(TEST_PLANET_1_ID), 2);
-        builder1B2 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(++itemId, 0, 0), createMockGlobalServices(), createMockPlanetServices(), base2.getSimpleBase());
+        builder1B2 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(++itemId, 0), createMockGlobalServices(), createMockPlanetServices(), base2.getSimpleBase());
 
         BaseService baseServiceMock = EasyMock.createNiceMock(BaseService.class);
         EasyMock.expect(baseServiceMock.getUserState(base1.getSimpleBase())).andReturn(userState1).anyTimes();

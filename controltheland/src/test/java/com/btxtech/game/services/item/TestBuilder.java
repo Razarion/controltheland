@@ -1,5 +1,6 @@
 package com.btxtech.game.services.item;
 
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.MathHelper;
@@ -51,11 +52,10 @@ public class TestBuilder extends AbstractServiceTest {
         EasyMock.expect(serverItemServiceMock.createSyncObject(EasyMock.<ItemType>anyObject(),
                 EasyMock.<Index>anyObject(),
                 EasyMock.<SyncBaseItem>anyObject(),
-                EasyMock.<SimpleBase>anyObject(),
-                EasyMock.anyInt())).andAnswer(new IAnswer<SyncItem>() {
+                EasyMock.<SimpleBase>anyObject())).andAnswer(new IAnswer<SyncItem>() {
             @Override
             public SyncItem answer() throws Throwable {
-                Id id2 = new Id(2, 1, 1);
+                Id id2 = new Id(2, 1);
                 SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(5000, 5350), id2, null, planetServicesMock);
                 syncBaseItem.setBuildup(0.0);
                 return syncBaseItem;
@@ -68,6 +68,7 @@ public class TestBuilder extends AbstractServiceTest {
         EasyMock.replay(terrainServiceMock);
 
         ServerConnectionService connectionServiceMock = EasyMock.createNiceMock(ServerConnectionService.class);
+        EasyMock.expect(connectionServiceMock.getGameEngineMode()).andReturn(GameEngineMode.MASTER).anyTimes();
         EasyMock.replay(connectionServiceMock);
 
         AbstractBaseService abstractBaseServiceMock = EasyMock.createNiceMock(AbstractBaseService.class);
@@ -86,7 +87,7 @@ public class TestBuilder extends AbstractServiceTest {
 
         TestGlobalServices testGlobalServices = new TestGlobalServices();
 
-        Id id = new Id(1, 1, 1);
+        Id id = new Id(1, 1);
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(5000, 5000), id, testGlobalServices, planetServicesMock);
         SyncMovable syncMovable = syncBaseItem.getSyncMovable();
         // Set speed to 100
@@ -156,7 +157,7 @@ public class TestBuilder extends AbstractServiceTest {
     public void testFinalizeBuild() throws Exception {
         SyncBaseItem syncBaseItem = createSyncBuilderItem();
 
-        Id id2 = new Id(2, 1, 1);
+        Id id2 = new Id(2, 1);
         SyncBaseItem buildupBaseItem = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(5000, 5290), id2, null, planetServicesMock);
         buildupBaseItem.setBuildup(0.5);
         List<Index> path = new ArrayList<>();

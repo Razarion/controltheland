@@ -76,7 +76,7 @@ public class RegionResource {
         try {
             for (int i = 0; i < count; i++) {
                 Index position = planetServices.getCollisionService().getFreeRandomPosition(resourceType, region, minDistanceToItems, true, false);
-                SyncItem syncItem = planetServices.getItemService().createSyncObject(resourceType, position, null, null, 0);
+                SyncItem syncItem = planetServices.getItemService().createSyncObject(resourceType, position, null, null);
                 synchronized (syncResourceItems) {
                     syncResourceItems.add((SyncResourceItem) syncItem);
                 }

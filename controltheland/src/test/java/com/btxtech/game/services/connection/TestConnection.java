@@ -43,7 +43,7 @@ public class TestConnection extends AbstractServiceTest {
         configureSimplePlanetNoResources();
 
         Connection connection = new Connection("1234", null);
-        SyncBaseItem attackItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1, 1));
+        SyncBaseItem attackItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1));
         connection.sendBaseSyncItem(attackItem);
         AccountBalancePacket accountBalancePacket = new AccountBalancePacket();
         accountBalancePacket.setAccountBalance(112);

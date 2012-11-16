@@ -13,6 +13,8 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
+import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
@@ -36,7 +38,6 @@ public class SyncBuilder extends SyncBaseAbility {
     private SyncBaseItem currentBuildup;
     private Index toBeBuildPosition;
     private BaseItemType toBeBuiltType;
-    private int createdChildCount;
 
     public SyncBuilder(BuilderType builderType, SyncBaseItem syncBaseItem) {
         super(syncBaseItem);
@@ -74,15 +75,17 @@ public class SyncBuilder extends SyncBaseAbility {
         }
 
         if (currentBuildup == null) {
+            if (getPlanetServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
+                // Wait for server to create currentBuildup
+                return true;
+            }
             if (toBeBuiltType == null || toBeBuildPosition == null) {
                 throw new IllegalArgumentException("Invalid attributes |" + toBeBuiltType + "|" + toBeBuildPosition);
             }
-
             getPlanetServices().getItemService().checkBuildingsInRect(toBeBuiltType, toBeBuildPosition);
-
             try {
-                currentBuildup = (SyncBaseItem) getPlanetServices().getItemService().createSyncObject(toBeBuiltType, toBeBuildPosition, getSyncBaseItem(), getSyncBaseItem().getBase(), createdChildCount);
-                createdChildCount++;
+                currentBuildup = (SyncBaseItem) getPlanetServices().getItemService().createSyncObject(toBeBuiltType, toBeBuildPosition, getSyncBaseItem(), getSyncBaseItem().getBase());
+                getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
             } catch (ItemLimitExceededException e) {
                 stop();
                 return false;
@@ -137,14 +140,19 @@ public class SyncBuilder extends SyncBaseAbility {
     }
 
     @Override
-    public void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException {
+    public void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException, ItemDoesNotExistException {
         toBeBuildPosition = syncItemInfo.getToBeBuildPosition();
         if (syncItemInfo.getToBeBuiltTypeId() != null) {
             toBeBuiltType = (BaseItemType) getGlobalServices().getItemTypeService().getItemType(syncItemInfo.getToBeBuiltTypeId());
         } else {
             toBeBuiltType = null;
         }
-        createdChildCount = syncItemInfo.getCreatedChildCount();
+        Id currentBuildupId = syncItemInfo.getCurrentBuildup();
+        if (currentBuildupId != null) {
+            currentBuildup = (SyncBaseItem) getPlanetServices().getItemService().getItem(currentBuildupId);
+        } else {
+            currentBuildup = null;
+        }
     }
 
     @Override
@@ -153,7 +161,9 @@ public class SyncBuilder extends SyncBaseAbility {
         if (toBeBuiltType != null) {
             syncItemInfo.setToBeBuiltTypeId(toBeBuiltType.getId());
         }
-        syncItemInfo.setCreatedChildCount(createdChildCount);
+        if (currentBuildup != null) {
+            syncItemInfo.setCurrentBuildup(currentBuildup.getId());
+        }
     }
 
     public void executeCommand(BuilderCommand builderCommand) throws NoSuchItemTypeException {
@@ -191,10 +201,6 @@ public class SyncBuilder extends SyncBaseAbility {
         return toBeBuiltType;
     }
 
-    public int getCreatedChildCount() {
-        return createdChildCount;
-    }
-
     public SyncBaseItem getCurrentBuildup() {
         return currentBuildup;
     }
@@ -209,10 +215,6 @@ public class SyncBuilder extends SyncBaseAbility {
 
     public void setToBeBuiltType(BaseItemType toBeBuiltType) {
         this.toBeBuiltType = toBeBuiltType;
-    }
-
-    public void setCreatedChildCount(int createdChildCount) {
-        this.createdChildCount = createdChildCount;
     }
 
     public BuilderType getBuilderType() {

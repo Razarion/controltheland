@@ -33,7 +33,6 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.itemType.ProjectileItemType;
 import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
@@ -69,7 +68,6 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
     public static final int CLEANUP_INTERVALL = 3000;
     private static final ItemContainer INSATNCE = new ItemContainer();
     private HashMap<Id, SyncItem> items = new HashMap<Id, SyncItem>();
-    private HashMap<Id, SyncItem> orphanItems = new HashMap<Id, SyncItem>();
     private HashMap<Id, SyncItem> seeminglyDeadItems = new HashMap<Id, SyncItem>();
     private int itemId = 1;
     private static Logger log = Logger.getLogger(ItemContainer.class.getName());
@@ -81,15 +79,6 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
         Timer timer = new TimerPerfmon(PerfmonEnum.ITEM_CONTAINER) {
             @Override
             public void runPerfmon() {
-                for (Iterator<Map.Entry<Id, SyncItem>> it = orphanItems.entrySet().iterator(); it.hasNext(); ) {
-                    Map.Entry<Id, SyncItem> entry = it.next();
-                    long insertTime = entry.getKey().getUserTimeStamp();
-                    if (insertTime + CLEANUP_INTERVALL < System.currentTimeMillis()) {
-                        it.remove();
-                        items.remove(entry.getKey());
-                        // TODO in-comment if fixed: GwtCommon.sendLogToServer("Orphan item removed due timeout: " + entry.getValue().getSyncItem());
-                    }
-                }
                 for (Iterator<Map.Entry<Id, SyncItem>> it = seeminglyDeadItems.entrySet().iterator(); it.hasNext(); ) {
                     Map.Entry<Id, SyncItem> entry = it.next();
                     long insertTime = entry.getKey().getUserTimeStamp();
@@ -104,47 +93,83 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
         timer.scheduleRepeating(CLEANUP_INTERVALL);
     }
 
-    public void sychronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException, ItemDoesNotExistException {
-        SyncItem syncItem = items.get(syncItemInfo.getId());
 
-        if (syncItemInfo.isAlive()) {
-            if (syncItem == null) {
-                syncItem = createAndAddItem(syncItemInfo.getId(), syncItemInfo.getPosition(), syncItemInfo.getItemTypeId(), syncItemInfo.getBase());
-                if (syncItem instanceof SyncBaseItem) {
-                    ClientBase.getInstance().onItemCreated((SyncBaseItem) syncItem);
-                }
-            } else {
-                // Check for  Teleportation effect
-                Index localPos = syncItem.getSyncItemArea().getPosition();
-                Index syncPos = syncItemInfo.getPosition();
-                if (localPos != null && syncPos != null) {
-                    int distance = localPos.getDistance(syncPos);
-                    if (distance > 200) {
-                        GwtCommon.sendLogToServer("Teleportation detected. Distance: " + distance + " Info:" + syncItemInfo + " | Item:" + syncItem);
-                    }
-                }
-                // It was a orphan until now
-                SyncItem orphanItem = orphanItems.remove(syncItem.getId());
-                if (orphanItem != null) {
-                    if (syncItem instanceof SyncBaseItem) {
-                        ClientBase.getInstance().onItemCreated((SyncBaseItem) syncItem);
-                    }
-                }
+    public void doSynchronize(Collection<SyncItemInfo> syncItemInfo) {
+        for (SyncItemInfo itemInfo : syncItemInfo) {
+            try {
+                addSynchronize(itemInfo);
+            } catch (Exception e) {
+               GwtCommon.handleException("ItemContainer.doSynchronize() in addSynchronize", e);
             }
-            syncItem.synchronize(syncItemInfo);
-            checkSpecialChanged(syncItem);
-            if (syncItem instanceof SyncTickItem) {
-                ActionHandler.getInstance().syncItemActivated((SyncTickItem) syncItem);
+        }
+        for (SyncItemInfo itemInfo : syncItemInfo) {
+            try {
+                synchronize(itemInfo);
+            } catch (Exception e) {
+               GwtCommon.handleException("ItemContainer.doSynchronize() in synchronize", e);
             }
-        } else {
-            if (syncItem != null) {
-                definitelyKillItem(syncItem, true, syncItemInfo.isExplode(), syncItemInfo.getKilledBy());
+        }
+        for (SyncItemInfo itemInfo : syncItemInfo) {
+            try {
+                removeSynchronize(itemInfo);
+            } catch (Exception e) {
+               GwtCommon.handleException("ItemContainer.doSynchronize() in removeSynchronize", e);
             }
         }
     }
 
+    private void addSynchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException {
+        SyncItem syncItem = items.get(syncItemInfo.getId());
+        if (syncItem != null) {
+            return;
+        }
+        if (syncItemInfo.isAlive()) {
+            syncItem = createAndAddItem(syncItemInfo.getId(), syncItemInfo.getPosition(), syncItemInfo.getItemTypeId(), syncItemInfo.getBase());
+            if (syncItem instanceof SyncBaseItem) {
+                ClientBase.getInstance().onItemCreated((SyncBaseItem) syncItem);
+            }
+        }
+    }
+
+    private void removeSynchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException {
+        SyncItem syncItem = items.get(syncItemInfo.getId());
+        if (syncItem == null) {
+            return;
+        }
+        if (!syncItemInfo.isAlive()) {
+            definitelyKillItem(syncItem, true, syncItemInfo.isExplode(), syncItemInfo.getKilledBy());
+        }
+    }
+
+    private void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException, ItemDoesNotExistException {
+        SyncItem syncItem = items.get(syncItemInfo.getId());
+        if (syncItem == null) {
+            throw new IllegalStateException("SyncItem is null syncItemInfo: " + syncItemInfo);
+        }
+
+        // Check for  Teleportation effect
+        Index localPos = syncItem.getSyncItemArea().getPosition();
+        Index syncPos = syncItemInfo.getPosition();
+        if (localPos != null && syncPos != null) {
+            int distance = localPos.getDistance(syncPos);
+            if (distance > 200) {
+                GwtCommon.sendLogToServer("Teleportation detected. Distance: " + distance + " Info:" + syncItemInfo + " | Item:" + syncItem);
+            }
+        }
+
+        syncItem.synchronize(syncItemInfo);
+        checkSpecialChanged(syncItem);
+        if (syncItem instanceof SyncTickItem) {
+            ActionHandler.getInstance().syncItemActivated((SyncTickItem) syncItem);
+        }
+    }
+
     @Override
-    public SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
+    public SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
+        if (Connection.getInstance().getGameEngineMode() != GameEngineMode.MASTER) {
+            throw new IllegalStateException("ItemContainer.createSyncObject() should not be called if game engine mode is not master: " + Connection.getInstance().getGameEngineMode());
+        }
+
         if (toBeBuilt instanceof BaseItemType
                 && ClientBase.getInstance().isMyOwnBase(base)
                 && !ClientBase.getInstance().isBot(base)
@@ -156,37 +181,22 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
         if (creator != null) {
             parentId = creator.getId().getId();
         }
-        if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
-            Id id = createId(parentId, createdChildCount);
-            syncItem = createAndAddItem(id, position, toBeBuilt.getId(), base);
-            id.setUserTimeStamp(System.currentTimeMillis());
-            if (syncItem instanceof SyncBaseItem) {
-                SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
-                ActionHandler.getInstance().addGuardingBaseItem(syncBaseItem);
-                ActionHandler.getInstance().interactionGuardingItems(syncBaseItem);
-                ClientBase.getInstance().onItemCreated(syncBaseItem);
-            }
-            Connection.getInstance().sendSyncInfo(syncItem);
-        } else {
-            Id id = new Id(parentId, createdChildCount);
-            syncItem = items.get(id);
-            if (syncItem != null) {
-                return syncItem;
-            }
-            if (toBeBuilt instanceof ProjectileItemType) {
-                // New idea, return null on the client. Create new items only on the server
-                return null;
-            }
-            syncItem = createAndAddItem(id, position, toBeBuilt.getId(), base);
-            id.setUserTimeStamp(System.currentTimeMillis());
-            orphanItems.put(id, syncItem);
+        Id id = createId(parentId);
+        syncItem = createAndAddItem(id, position, toBeBuilt.getId(), base);
+        id.setUserTimeStamp(System.currentTimeMillis());
+        if (syncItem instanceof SyncBaseItem) {
+            SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
+            ActionHandler.getInstance().addGuardingBaseItem(syncBaseItem);
+            ActionHandler.getInstance().interactionGuardingItems(syncBaseItem);
+            ClientBase.getInstance().onItemCreated(syncBaseItem);
         }
+        Connection.getInstance().sendSyncInfo(syncItem);
         return syncItem;
     }
 
-    private Id createId(int parentId, int createdChildCount) {
+    private Id createId(int parentId) {
         itemId++;
-        return new Id(itemId, parentId, createdChildCount);
+        return new Id(itemId, parentId);
     }
 
     public SyncBaseItem getSimulationItem(int intId) {
@@ -199,7 +209,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
     }
 
     public SyncItem createSimulationSyncObject(ItemTypeAndPosition itemTypeAndPosition) throws NoSuchItemTypeException {
-        Id id = createId(Id.SIMULATION_ID, Id.SIMULATION_ID);
+        Id id = createId(Id.SIMULATION_ID);
         if (items.containsKey(id)) {
             throw new IllegalStateException(this + " simulated id is already used: " + id);
         }
@@ -221,7 +231,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
     }
 
     public SyncItem createItemTypeEditorSyncObject(SimpleBase simpleBase, int itemTypeId, Index position) throws NoSuchItemTypeException {
-        Id id = createId(Id.SIMULATION_ID, Id.SIMULATION_ID);
+        Id id = createId(Id.SIMULATION_ID);
         if (items.containsKey(id)) {
             throw new IllegalStateException(this + " simulated id is already used: " + id);
         }
@@ -335,9 +345,6 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
     @Override
     protected <T> T iterateOverItems(boolean includeNoPosition, boolean includeDead, T defaultReturn, ItemHandler<T> itemHandler) {
         for (SyncItem syncItem : items.values()) {
-            if (orphanItems.containsKey(syncItem.getId())) {
-                continue;
-            }
             if (!includeDead && !syncItem.isAlive()) {
                 continue;
             }
@@ -387,7 +394,6 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
 
     public void clear() {
         items.clear();
-        orphanItems.clear();
         seeminglyDeadItems.clear();
     }
 
@@ -434,7 +440,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
                 AttackHandler.getInstance().onFiring((SyncBaseItem) syncItem);
                 break;
             case UNDER_ATTACK:
-                if(ClientBase.getInstance().isMyOwnProperty((SyncBaseItem) syncItem)) {
+                if (ClientBase.getInstance().isMyOwnProperty((SyncBaseItem) syncItem)) {
                     RadarPanel.getInstance().onwItemUnderAttack((SyncBaseItem) syncItem);
                 }
                 break;

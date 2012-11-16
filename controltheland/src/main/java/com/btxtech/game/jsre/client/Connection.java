@@ -264,12 +264,13 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         if (packets == null) {
             return;
         }
+        Collection<SyncItemInfo> syncItemInfos = new ArrayList<SyncItemInfo>();
         for (Packet packet : packets) {
             try {
                 if (packet instanceof BaseChangedPacket) {
                     ClientBase.getInstance().onBaseChangedPacket((BaseChangedPacket) packet);
                 } else if (packet instanceof SyncItemInfo) {
-                    ItemContainer.getInstance().sychronize((SyncItemInfo) packet);
+                    syncItemInfos.add((SyncItemInfo) packet);
                 } else if (packet instanceof Message) {
                     Message message = (Message) packet;
                     DialogManager.showDialog(new MessageDialog("Message", message.getMessage(), message.isShowRegisterDialog()), DialogManager.Type.QUEUE_ABLE);
@@ -306,6 +307,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                 GwtCommon.handleException(t);
             }
         }
+        ItemContainer.getInstance().doSynchronize(syncItemInfos);
     }
 
 
@@ -401,9 +403,6 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
 
     public void sellItem(SyncBaseItem syncBaseItem) {
         if (gameEngineMode == GameEngineMode.SLAVE) {
-            if (!syncBaseItem.getId().isSynchronized()) {
-                return;
-            }
             if (movableServiceAsync != null) {
                 movableServiceAsync.sellItem(syncBaseItem.getId(), new VoidAsyncCallback("sellItem"));
             }

@@ -272,14 +272,12 @@ public class GenericItemConverter {
             if (item.getSyncBuilder().getToBeBuiltType() != null) {
                 genericItem.setToBeBuilt((DbBaseItemType) dbItemTypeCache.get(item.getSyncBuilder().getToBeBuiltType().getId()));
             }
-            genericItem.setCreatedChildCount(item.getSyncBuilder().getCreatedChildCount());
         }
         if (item.hasSyncFactory()) {
             if (item.getSyncFactory().getToBeBuiltType() != null) {
                 genericItem.setToBeBuilt((DbBaseItemType) dbItemTypeCache.get(item.getSyncFactory().getToBeBuiltType().getId()));
             }
             genericItem.setBuildupProgress((int) item.getSyncFactory().getBuildupProgress());
-            genericItem.setCreatedChildCount(item.getSyncFactory().getCreatedChildCount());
             genericItem.setRallyPoint(item.getSyncFactory().getRallyPoint());
         }
         if (item.hasSyncWeapon()) {
@@ -392,14 +390,12 @@ public class GenericItemConverter {
             if (genericItem.getToBeBuilt() != null) {
                 item.getSyncBuilder().setToBeBuiltType((BaseItemType) genericItem.getToBeBuilt().createItemType());
             }
-            item.getSyncBuilder().setCreatedChildCount(genericItem.getCreatedChildCount());
         }
         if (item.hasSyncFactory()) {
             if (genericItem.getToBeBuilt() != null) {
                 item.getSyncFactory().setToBeBuiltType((BaseItemType) genericItem.getToBeBuilt().createItemType());
             }
             item.getSyncFactory().setBuildupProgress(genericItem.getBuildupProgress());
-            item.getSyncFactory().setCreatedChildCount(genericItem.getCreatedChildCount());
             item.getSyncFactory().setRallyPoint(genericItem.getRallyPoint());
         }
         if (item.hasSyncWeapon()) {

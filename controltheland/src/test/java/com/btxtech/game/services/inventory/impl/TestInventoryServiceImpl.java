@@ -166,11 +166,11 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         setPrivateField(ServerGlobalServicesImpl.class, serverGlobalServices, "historyService", mockHistoryService);
         // ServerItemService
         ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
-        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem1);
+        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull())).andReturn(mockSyncBoxItem1);
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem1), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
-        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem2);
+        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull())).andReturn(mockSyncBoxItem2);
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem2), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
-        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem3);
+        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull())).andReturn(mockSyncBoxItem3);
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem3), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
         serverPlanetServices.setServerItemService(mockServerItemService);
 
@@ -253,21 +253,21 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         BoxItemType boxItemType1 = (BoxItemType) serverItemTypeService.getItemType(TEST_BOX_ITEM_1_ID);
         BoxItemType boxItemType2 = (BoxItemType) serverItemTypeService.getItemType(TEST_BOX_ITEM_2_ID);
 
-        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem1);
-        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem2);
+        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull())).andReturn(mockSyncBoxItem1);
+        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull())).andReturn(mockSyncBoxItem2);
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem1), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem2), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
 
-        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem3);
-        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem4);
+        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull())).andReturn(mockSyncBoxItem3);
+        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull())).andReturn(mockSyncBoxItem4);
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem3), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem4), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
 
-        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType2), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem7);
+        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType2), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull())).andReturn(mockSyncBoxItem7);
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem7), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
 
-        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem5);
-        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem6);
+        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull())).andReturn(mockSyncBoxItem5);
+        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull())).andReturn(mockSyncBoxItem6);
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem5), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem6), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
 
@@ -354,9 +354,9 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         // ServerItemService
         ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
         BoxItemType boxItemType1 = (BoxItemType) serverItemTypeService.getItemType(TEST_BOX_ITEM_1_ID);
-        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem1);
-        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem2);
-        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem3);
+        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull())).andReturn(mockSyncBoxItem1);
+        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull())).andReturn(mockSyncBoxItem2);
+        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull())).andReturn(mockSyncBoxItem3);
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem3), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem2), (SimpleBase) EasyMock.isNull(), EasyMock.eq(true), EasyMock.eq(false));
 
@@ -485,7 +485,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         EasyMock.expect(mockBaseService.getUserState(simpleBase)).andReturn(mockUserState);
         // ServerItemService
         ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
-        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull(), EasyMock.eq(0))).andReturn(mockSyncBoxItem1);
+        EasyMock.expect(mockServerItemService.createSyncObject(EasyMock.eq(boxItemType1), (Index) EasyMock.anyObject(), (SyncBaseItem) EasyMock.isNull(), (SimpleBase) EasyMock.isNull())).andReturn(mockSyncBoxItem1);
         mockServerItemService.killSyncItem(EasyMock.eq(mockSyncBoxItem1), EasyMock.eq(simpleBase), EasyMock.eq(true), EasyMock.eq(false));
 
         CollisionService mockCollisionService = EasyMock.createStrictMock(CollisionService.class);
@@ -628,7 +628,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         // ServerItemService
         ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
         BoxItemType boxItemType1 = (BoxItemType) serverItemTypeService.getItemType(TEST_BOX_ITEM_1_ID);
-        EasyMock.expect(mockServerItemService.createSyncObject(boxItemType1, new Index(100, 100), null, null, 0)).andReturn(mockSyncBoxItem1);
+        EasyMock.expect(mockServerItemService.createSyncObject(boxItemType1, new Index(100, 100), null, null)).andReturn(mockSyncBoxItem1);
         // ServerItemTypeService
         ServerItemTypeService mockServerItemTypeService = EasyMock.createStrictMock(ServerItemTypeService.class);
         EasyMock.expect(mockServerItemTypeService.getDbBaseItemType(1)).andReturn(dbDropperType);
@@ -1342,7 +1342,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
 
         Base base = new Base(planetSystemService.getPlanet(TEST_PLANET_1_ID), 1);
-        SyncBaseItem attackerItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(1, 1, 1));
+        SyncBaseItem attackerItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(1, 1));
         attackerItem.setBuildup(0.0);
 
         // ServerItemTypeService
@@ -1360,7 +1360,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         EasyMock.expect(mockServerItemService.hasEnemyInRange(base.getSimpleBase(), new Index(1000, 1000), 164)).andReturn(true);
         EasyMock.expect(mockServerItemService.hasEnemyInRange(base.getSimpleBase(), new Index(1000, 1000), 164)).andReturn(false);
         EasyMock.expect(mockServerItemService.hasItemsInRectangleFast(new Rectangle(960, 950, 80, 100))).andReturn(false);
-        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(1000, 1000), null, base.getSimpleBase(), 0)).andReturn(attackerItem);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(1000, 1000), null, base.getSimpleBase())).andReturn(attackerItem);
         serverPlanetServices.setServerItemService(mockServerItemService);
 
         // Terrain Service
@@ -1466,7 +1466,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        SyncBaseItem attackerItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(1, 1, 1));
+        SyncBaseItem attackerItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(1, 1));
         attackerItem.setBuildup(0.0);
 
         beginHttpSession();
@@ -1480,9 +1480,9 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
         EasyMock.expect(mockServerItemService.hasEnemyInRange(simpleBase, new Index(1100, 1100), 228)).andReturn(false);
         EasyMock.expect(mockServerItemService.hasItemsInRectangleFast(new Rectangle(1020, 1000, 160, 200))).andReturn(false);
-        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(1000, 1000), null, simpleBase, 0)).andReturn(attackerItem);
-        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(1200, 1000), null, simpleBase, 0)).andReturn(attackerItem);
-        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(1200, 1200), null, simpleBase, 0)).andReturn(attackerItem);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(1000, 1000), null, simpleBase)).andReturn(attackerItem);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(1200, 1000), null, simpleBase)).andReturn(attackerItem);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(1200, 1200), null, simpleBase)).andReturn(attackerItem);
         serverPlanetServices.setServerItemService(mockServerItemService);
         // Terrain Service
         ServerTerrainService mockTerrainService = EasyMock.createStrictMock(ServerTerrainService.class);

@@ -43,7 +43,7 @@ public class TestBotEnragementState extends AbstractServiceTest {
 
         SimpleBase botBase = new SimpleBase(1, 1);
         SimpleBase actorBase = new SimpleBase(2, 1);
-        SyncBaseItem botItem1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(200, 200), new Id(1, Id.NO_ID, 0), botBase);
+        SyncBaseItem botItem1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(200, 200), new Id(1, Id.NO_ID), botBase);
 
         Collection<BotItemConfig> botItems = new ArrayList<>();
         botItems.add(new BotItemConfig((BaseItemType) serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), 1, true, createRegion(new Rectangle(0, 0, 1000, 1000), 1), false, null, false, null));
@@ -60,7 +60,7 @@ public class TestBotEnragementState extends AbstractServiceTest {
         testServices.setBaseService(baseServiceMock);
 
         ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
-        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase, 0)).andReturn(botItem1);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase)).andReturn(botItem1);
         testServices.setItemService(mockServerItemService);
 
         CollisionService mockCollisionService = EasyMock.createStrictMock(CollisionService.class);
@@ -84,10 +84,10 @@ public class TestBotEnragementState extends AbstractServiceTest {
 
         SimpleBase botBase = new SimpleBase(1, 1);
         SimpleBase actorBase = new SimpleBase(2, 1);
-        SyncBaseItem botItem1State1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(200, 200), new Id(1, Id.NO_ID, 0), botBase);
-        SyncBaseItem botItem2State1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(200, 200), new Id(2, Id.NO_ID, 0), botBase);
-        SyncBaseItem botItem3State2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(3, Id.NO_ID, 0), botBase);
-        SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(4, Id.NO_ID, 0), actorBase);
+        SyncBaseItem botItem1State1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(200, 200), new Id(1, Id.NO_ID), botBase);
+        SyncBaseItem botItem2State1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(200, 200), new Id(2, Id.NO_ID), botBase);
+        SyncBaseItem botItem3State2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(3, Id.NO_ID), botBase);
+        SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(4, Id.NO_ID), actorBase);
 
         List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
         Collection<BotItemConfig> botItems = new ArrayList<>();
@@ -116,14 +116,14 @@ public class TestBotEnragementState extends AbstractServiceTest {
         testServices.setBaseService(baseServiceMock);
 
         ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
-        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase, 0)).andReturn(botItem1State1);
-        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase, 0)).andReturn(botItem2State1);
-        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase, 0)).andReturn(botItem1State1);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase)).andReturn(botItem1State1);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase)).andReturn(botItem2State1);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase)).andReturn(botItem1State1);
         mockServerItemService.killSyncItem(botItem2State1, null, true, false);
-        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(200, 200), null, botBase, 0)).andReturn(botItem3State2);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(200, 200), null, botBase)).andReturn(botItem3State2);
         mockServerItemService.killSyncItem(botItem3State2, null, true, false);
-        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase, 0)).andReturn(botItem1State1);
-        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase, 0)).andReturn(botItem2State1);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase)).andReturn(botItem1State1);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase)).andReturn(botItem2State1);
         testServices.setItemService(mockServerItemService);
 
         CollisionService mockCollisionService = EasyMock.createStrictMock(CollisionService.class);
@@ -166,9 +166,9 @@ public class TestBotEnragementState extends AbstractServiceTest {
 
         SimpleBase botBase = new SimpleBase(1, 1);
         SimpleBase actorBase = new SimpleBase(2, 1);
-        SyncBaseItem botItem1State1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(200, 200), new Id(1, Id.NO_ID, 0), botBase);
-        SyncBaseItem botItem2State1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(200, 200), new Id(2, Id.NO_ID, 0), botBase);
-        SyncBaseItem attacker1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(4, Id.NO_ID, 0), actorBase);
+        SyncBaseItem botItem1State1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(200, 200), new Id(1, Id.NO_ID), botBase);
+        SyncBaseItem botItem2State1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(200, 200), new Id(2, Id.NO_ID), botBase);
+        SyncBaseItem attacker1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(4, Id.NO_ID), actorBase);
 
         List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
         Collection<BotItemConfig> botItems = new ArrayList<>();
@@ -195,10 +195,10 @@ public class TestBotEnragementState extends AbstractServiceTest {
         testServices.setBaseService(baseServiceMock);
 
         ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
-        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase, 0)).andReturn(botItem1State1);
-        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase, 0)).andReturn(botItem2State1);
-        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase, 0)).andReturn(botItem1State1);
-        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase, 0)).andReturn(botItem1State1);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase)).andReturn(botItem1State1);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase)).andReturn(botItem2State1);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase)).andReturn(botItem1State1);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase)).andReturn(botItem1State1);
         mockServerItemService.killSyncItem(botItem2State1, null, true, false);
         testServices.setItemService(mockServerItemService);
 
@@ -246,10 +246,10 @@ public class TestBotEnragementState extends AbstractServiceTest {
         SimpleBase botBase = new SimpleBase(1, 1);
         SimpleBase actorBase1 = new SimpleBase(2, 1);
         SimpleBase actorBase2 = new SimpleBase(3, 1);
-        SyncBaseItem botItem1State1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(200, 200), new Id(1, Id.NO_ID, 0), botBase);
-        SyncBaseItem botItem2State1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(200, 200), new Id(2, Id.NO_ID, 0), botBase);
-        SyncBaseItem attacker1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(4, Id.NO_ID, 0), actorBase1);
-        SyncBaseItem attacker2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(5, Id.NO_ID, 0), actorBase2);
+        SyncBaseItem botItem1State1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(200, 200), new Id(1, Id.NO_ID), botBase);
+        SyncBaseItem botItem2State1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(200, 200), new Id(2, Id.NO_ID), botBase);
+        SyncBaseItem attacker1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(4, Id.NO_ID), actorBase1);
+        SyncBaseItem attacker2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(5, Id.NO_ID), actorBase2);
 
         List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
         Collection<BotItemConfig> botItems = new ArrayList<>();
@@ -276,10 +276,10 @@ public class TestBotEnragementState extends AbstractServiceTest {
         testServices.setBaseService(baseServiceMock);
 
         ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
-        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase, 0)).andReturn(botItem1State1);
-        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase, 0)).andReturn(botItem2State1);
-        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase, 0)).andReturn(botItem1State1);
-        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase, 0)).andReturn(botItem1State1);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase)).andReturn(botItem1State1);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase)).andReturn(botItem2State1);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase)).andReturn(botItem1State1);
+        EasyMock.expect(mockServerItemService.createSyncObject(serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID), new Index(200, 200), null, botBase)).andReturn(botItem1State1);
         mockServerItemService.killSyncItem(botItem2State1, null, true, false);
         testServices.setItemService(mockServerItemService);
 

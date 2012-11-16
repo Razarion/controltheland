@@ -16,7 +16,7 @@ public class TestSyncBoxItem {
         BoxItemType boxItemType = new BoxItemType();
         boxItemType.setTtl(150);
 
-        SyncBoxItem syncBoxItem = new SyncBoxItem(new Id(-1, -1, -1), new Index(1000, 1000), boxItemType, null, null);
+        SyncBoxItem syncBoxItem = new SyncBoxItem(new Id(-1, -1), new Index(1000, 1000), boxItemType, null, null);
         Assert.assertTrue(syncBoxItem.isAlive());
         Assert.assertTrue(syncBoxItem.isInTTL());
         Thread.sleep(160);

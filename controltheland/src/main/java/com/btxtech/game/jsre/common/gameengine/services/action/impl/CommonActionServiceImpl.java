@@ -61,13 +61,8 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
             log.severe("Can not send command: id is null");
             return true;
         }
-        if (!id.isSynchronized()) {
-            log.severe("Can not execute command: Id is not synchronized: ");
-            return true;
-        }
         return false;
     }
-
 
     protected boolean moveIfPathTargetUnreachable(SyncBaseItem syncBaseItem, Path path) {
         if (path.isDestinationReachable()) {

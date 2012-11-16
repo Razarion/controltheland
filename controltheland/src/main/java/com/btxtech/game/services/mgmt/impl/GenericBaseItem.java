@@ -44,7 +44,6 @@ public class GenericBaseItem extends GenericItem {
     @ManyToOne(fetch = FetchType.LAZY)
     private DbBaseItemType toBeBuilt;
     private Integer health;
-    private Integer createdChildCount;
     private Integer buildupProgress;
     private Boolean followTarget;
     private Double reloadProgress;
@@ -99,10 +98,6 @@ public class GenericBaseItem extends GenericItem {
         this.health = health;
     }
 
-    public void setCreatedChildCount(int createdChildCount) {
-        this.createdChildCount = createdChildCount;
-    }
-
     public void setBuildupProgress(int buildupProgress) {
         this.buildupProgress = buildupProgress;
     }
@@ -137,10 +132,6 @@ public class GenericBaseItem extends GenericItem {
 
     public Integer getHealth() {
         return health;
-    }
-
-    public Integer getCreatedChildCount() {
-        return createdChildCount;
     }
 
     public Integer getBuildupProgress() {

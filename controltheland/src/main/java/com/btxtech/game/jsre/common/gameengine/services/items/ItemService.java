@@ -49,7 +49,7 @@ public interface ItemService {
 
     void killSyncItem(SyncItem killedItem, SimpleBase actor, boolean force, boolean explode);
 
-    SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException;
+    SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException;
 
     boolean baseObjectExists(SyncItem currentBuildup);
 

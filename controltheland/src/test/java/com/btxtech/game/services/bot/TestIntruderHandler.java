@@ -67,7 +67,7 @@ public class TestIntruderHandler extends AbstractServiceTest {
 
         SimpleBase botBase = new SimpleBase(1, 1);
         Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
-        SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
+        SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1));
 
         BotEnragementState mockEnragementState = EasyMock.createStrictMock(BotEnragementState.class);
         EasyMock.expect(mockEnragementState.getAllIdleAttackers()).andReturn(Collections.<BotSyncBaseItem>emptyList());
@@ -101,8 +101,8 @@ public class TestIntruderHandler extends AbstractServiceTest {
 
         SimpleBase botBase = new SimpleBase(1, 1);
         Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
-        SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
-        SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-2, -2, 0));
+        SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1));
+        SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-2, -2));
 
         ActionService mockActionService = EasyMock.createStrictMock(ActionService.class);
         mockActionService.attack(EasyMock.eq(defender), EasyMock.eq(intruder), EasyMock.eq(new Index(1154, 792)), EasyMock.eq(2.504273846247413, 0.1), EasyMock.eq(true));
@@ -138,8 +138,8 @@ public class TestIntruderHandler extends AbstractServiceTest {
 
         SimpleBase botBase = new SimpleBase(1, 1);
         Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
-        SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
-        SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-2, -2, 0));
+        SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1));
+        SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-2, -2));
 
         TestPlanetServices testServices = new TestPlanetServices();
 
@@ -179,8 +179,8 @@ public class TestIntruderHandler extends AbstractServiceTest {
 
         SimpleBase botBase = new SimpleBase(1, 1);
         Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
-        SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
-        SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-2, -2, 0));
+        SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1));
+        SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-2, -2));
 
         TestPlanetServices testServices = new TestPlanetServices();
 
@@ -222,8 +222,8 @@ public class TestIntruderHandler extends AbstractServiceTest {
 
         SimpleBase botBase = new SimpleBase(1, 1);
         Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
-        SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
-        SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-2, -2, 0));
+        SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1));
+        SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-2, -2));
 
         TestPlanetServices testServices = new TestPlanetServices();
 
@@ -266,8 +266,8 @@ public class TestIntruderHandler extends AbstractServiceTest {
 
         SimpleBase botBase = new SimpleBase(1, 1);
         Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
-        SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
-        SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-2, -2, 0));
+        SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1));
+        SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-2, -2));
 
         TestPlanetServices testServices = new TestPlanetServices();
 
@@ -311,9 +311,9 @@ public class TestIntruderHandler extends AbstractServiceTest {
 
         SimpleBase botBase = new SimpleBase(1, 1);
         Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
-        SyncBaseItem intruder1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
-        SyncBaseItem intruder2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1500), new Id(-2, -1, 0));
-        SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-3, -2, 0));
+        SyncBaseItem intruder1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1));
+        SyncBaseItem intruder2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1500), new Id(-2, -1));
+        SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-3, -2));
 
         TestPlanetServices testServices = new TestPlanetServices();
 
@@ -356,22 +356,22 @@ public class TestIntruderHandler extends AbstractServiceTest {
         configureSimplePlanetNoResources();
 
         // Intruders
-        SyncBaseItem intruder1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1200), new Id(-1, -1, 0));
-        SyncBaseItem intruder2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1400), new Id(-2, -1, 0));
-        SyncBaseItem intruder3 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1600), new Id(-3, -1, 0));
-        SyncBaseItem intruder4 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1800), new Id(-4, -1, 0));
-        SyncBaseItem intruder5 = createSyncBaseItem(TEST_ATTACK_ITEM_ID_2, new Index(1000, 2000), new Id(-5, -1, 0));
+        SyncBaseItem intruder1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1200), new Id(-1, -1));
+        SyncBaseItem intruder2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1400), new Id(-2, -1));
+        SyncBaseItem intruder3 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1600), new Id(-3, -1));
+        SyncBaseItem intruder4 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1800), new Id(-4, -1));
+        SyncBaseItem intruder5 = createSyncBaseItem(TEST_ATTACK_ITEM_ID_2, new Index(1000, 2000), new Id(-5, -1));
 
         // Attackers
-        SyncBaseItem attacker1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(2000, 1200), new Id(-6, -2, 0));
+        SyncBaseItem attacker1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(2000, 1200), new Id(-6, -2));
         BotSyncBaseItem attackerBotItem1 = new BotSyncBaseItem(attacker1, null, null);
-        SyncBaseItem attacker2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(2000, 1400), new Id(-7, -2, 0));
+        SyncBaseItem attacker2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(2000, 1400), new Id(-7, -2));
         BotSyncBaseItem attackerBotItem2 = new BotSyncBaseItem(attacker2, null, null);
-        SyncBaseItem attacker3 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(2000, 1600), new Id(-8, -2, 0));
+        SyncBaseItem attacker3 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(2000, 1600), new Id(-8, -2));
         BotSyncBaseItem attackerBotItem3 = new BotSyncBaseItem(attacker3, null, null);
-        SyncBaseItem attacker4 = createSyncBaseItem(TEST_ATTACK_ITEM_ID_2, new Index(2000, 1800), new Id(-9, -2, 0));
+        SyncBaseItem attacker4 = createSyncBaseItem(TEST_ATTACK_ITEM_ID_2, new Index(2000, 1800), new Id(-9, -2));
         BotSyncBaseItem attackerBotItem4 = new BotSyncBaseItem(attacker4, null, null);
-        SyncBaseItem attacker5 = createSyncBaseItem(TEST_ATTACK_ITEM_ID_2, new Index(2000, 2000), new Id(-10, -2, 0));
+        SyncBaseItem attacker5 = createSyncBaseItem(TEST_ATTACK_ITEM_ID_2, new Index(2000, 2000), new Id(-10, -2));
         BotSyncBaseItem attackerBotItem5 = new BotSyncBaseItem(attacker5, null, null);
 
         Collection<SyncBaseItem> intruders;
@@ -534,8 +534,8 @@ public class TestIntruderHandler extends AbstractServiceTest {
 
         SimpleBase botBase = new SimpleBase(1, 1);
         Region region = createRegion(new Rectangle(0, 0, 2000, 2000), 1);
-        SyncBaseItem intruder1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
-        SyncBaseItem intruder2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1500), new Id(-2, -1, 0));
+        SyncBaseItem intruder1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1));
+        SyncBaseItem intruder2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1500), new Id(-2, -1));
 
         TestPlanetServices testServices = new TestPlanetServices();
 

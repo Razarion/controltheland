@@ -40,7 +40,7 @@ public class TestNeed extends AbstractServiceTest {
         Assert.assertEquals(1, need.getEffectiveItemNeed().size());
         Assert.assertEquals(1, (int) need.getEffectiveItemNeed().get(botItemConfig));
 
-        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(3000, 3000), new Id(1, Id.NO_ID, 0));
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(3000, 3000), new Id(1, Id.NO_ID));
         BotSyncBaseItem botSyncBaseItem = new BotSyncBaseItem(syncBaseItem, botItemConfig, null);
         need.onItemAdded(botSyncBaseItem);
         Assert.assertTrue(need.getEffectiveItemNeed().isEmpty());
@@ -72,7 +72,7 @@ public class TestNeed extends AbstractServiceTest {
         Assert.assertEquals(2, (int) need.getEffectiveItemNeed().get(botItemConfig2));
         Assert.assertEquals(1, (int) need.getEffectiveItemNeed().get(botItemConfig3));
 
-        SyncBaseItem syncBaseItem1 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(2900, 2900), new Id(1, Id.NO_ID, 0));
+        SyncBaseItem syncBaseItem1 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(2900, 2900), new Id(1, Id.NO_ID));
         BotSyncBaseItem botSyncBaseItem1 = new BotSyncBaseItem(syncBaseItem1, botItemConfig1, null);
         need.onItemAdded(botSyncBaseItem1);
         Assert.assertFalse(need.getEffectiveItemNeed().isEmpty());
@@ -80,7 +80,7 @@ public class TestNeed extends AbstractServiceTest {
         Assert.assertEquals(2, (int) need.getEffectiveItemNeed().get(botItemConfig2));
         Assert.assertEquals(1, (int) need.getEffectiveItemNeed().get(botItemConfig3));
 
-        SyncBaseItem syncBaseItem2 = createSyncBaseItem(TEST_HARVESTER_ITEM_ID, new Index(2500, 2500), new Id(2, Id.NO_ID, 0));
+        SyncBaseItem syncBaseItem2 = createSyncBaseItem(TEST_HARVESTER_ITEM_ID, new Index(2500, 2500), new Id(2, Id.NO_ID));
         BotSyncBaseItem botSyncBaseItem2 = new BotSyncBaseItem(syncBaseItem2, botItemConfig2, null);
         need.onItemAdded(botSyncBaseItem2);
         Assert.assertFalse(need.getEffectiveItemNeed().isEmpty());
@@ -88,14 +88,14 @@ public class TestNeed extends AbstractServiceTest {
         Assert.assertEquals(1, (int) need.getEffectiveItemNeed().get(botItemConfig2));
         Assert.assertEquals(1, (int) need.getEffectiveItemNeed().get(botItemConfig3));
 
-        SyncBaseItem syncBaseItem3 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(3100, 3100), new Id(3, 1, 0));
+        SyncBaseItem syncBaseItem3 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(3100, 3100), new Id(3, 1));
         BotSyncBaseItem botSyncBaseItem3 = new BotSyncBaseItem(syncBaseItem3, botItemConfig3, null);
         need.onItemAdded(botSyncBaseItem3);
         Assert.assertFalse(need.getEffectiveItemNeed().isEmpty());
         Assert.assertEquals(1, need.getEffectiveItemNeed().size());
         Assert.assertEquals(1, (int) need.getEffectiveItemNeed().get(botItemConfig2));
 
-        SyncBaseItem syncBaseItem4 = createSyncBaseItem(TEST_HARVESTER_ITEM_ID, new Index(2700, 2700), new Id(4, Id.NO_ID, 0));
+        SyncBaseItem syncBaseItem4 = createSyncBaseItem(TEST_HARVESTER_ITEM_ID, new Index(2700, 2700), new Id(4, Id.NO_ID));
         BotSyncBaseItem botSyncBaseItem4 = new BotSyncBaseItem(syncBaseItem4, botItemConfig2, null);
         need.onItemAdded(botSyncBaseItem4);
         Assert.assertTrue(need.getEffectiveItemNeed().isEmpty());
@@ -126,7 +126,7 @@ public class TestNeed extends AbstractServiceTest {
         Assert.assertEquals(1, need.getEffectiveItemNeed().size());
         Assert.assertEquals(1, (int) need.getEffectiveItemNeed().get(botItemConfig));
 
-        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(3000, 3000), new Id(1, Id.NO_ID, 0));
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(3000, 3000), new Id(1, Id.NO_ID));
         BotSyncBaseItem botSyncBaseItem = new BotSyncBaseItem(syncBaseItem, botItemConfig, null);
         need.onItemAdded(botSyncBaseItem);
         Assert.assertTrue(need.getEffectiveItemNeed().isEmpty());
@@ -150,7 +150,7 @@ public class TestNeed extends AbstractServiceTest {
         Assert.assertEquals(1, need.getEffectiveItemNeed().size());
         Assert.assertEquals(1, (int) need.getEffectiveItemNeed().get(botItemConfig));
 
-        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(3000, 3000), new Id(1, Id.NO_ID, 0));
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(3000, 3000), new Id(1, Id.NO_ID));
         BotSyncBaseItem botSyncBaseItem = new BotSyncBaseItem(syncBaseItem, botItemConfig, null);
         need.onItemAdded(botSyncBaseItem);
         Assert.assertTrue(need.getEffectiveItemNeed().isEmpty());

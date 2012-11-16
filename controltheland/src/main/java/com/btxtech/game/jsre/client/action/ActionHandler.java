@@ -130,7 +130,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                     iterator.remove();
                     activeItem.stop();
                     Connection.getInstance().sendSyncInfo(activeItem);
-                    // TODO in-comment if fixed: log.warning("PositionTakenException");
+                    log.warning("PositionTakenException: " + ife.getMessage());
                 } catch (PathCanNotBeFoundException e) {
                     iterator.remove();
                     activeItem.stop();

@@ -37,7 +37,7 @@ public class SyncItemInfo extends Packet {
     private Double angel;
     private Index toBeBuildPosition;
     private Integer toBeBuiltTypeId;
-    private int createdChildCount;
+    private Id currentBuildup;
     private Double factoryBuildupProgress;
     private Double projectileBuildupProgress;
     private Id target;
@@ -125,8 +125,8 @@ public class SyncItemInfo extends Packet {
         return toBeBuiltTypeId;
     }
 
-    public int getCreatedChildCount() {
-        return createdChildCount;
+    public Id getCurrentBuildup() {
+        return currentBuildup;
     }
 
     public Double getFactoryBuildupProgress() {
@@ -173,8 +173,8 @@ public class SyncItemInfo extends Packet {
         this.toBeBuiltTypeId = toBeBuiltTypeId;
     }
 
-    public void setCreatedChildCount(int createdChildCount) {
-        this.createdChildCount = createdChildCount;
+    public void setCurrentBuildup(Id currentBuildup) {
+        this.currentBuildup = currentBuildup;
     }
 
     public void setFactoryBuildupProgress(Double factoryBuildupProgress) {
@@ -356,7 +356,7 @@ public class SyncItemInfo extends Packet {
                 " angel:" + angel +
                 " toBeBuildPosition:" + toBeBuildPosition +
                 " toBeBuiltTypeId:" + toBeBuiltTypeId +
-                " createdChildCount:" + createdChildCount +
+                " currentBuildup:" + currentBuildup +
                 " buildupProgress:" + factoryBuildupProgress +
                 " target:" + target +
                 " health:" + health +

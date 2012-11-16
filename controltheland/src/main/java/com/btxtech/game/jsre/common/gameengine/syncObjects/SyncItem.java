@@ -58,7 +58,6 @@ public abstract class SyncItem {
 
     public void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException, ItemDoesNotExistException {
         syncItemArea.synchronize(syncItemInfo);
-        id.synchronize(syncItemInfo.getId());
     }
 
     public SyncItemInfo getSyncInfo() {

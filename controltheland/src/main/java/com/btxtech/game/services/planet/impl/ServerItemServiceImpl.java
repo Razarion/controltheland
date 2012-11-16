@@ -65,7 +65,7 @@ public class ServerItemServiceImpl extends AbstractItemService implements Server
     }
 
     @Override
-    public SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
+    public SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
         if (base != null && !serverPlanetServices.getBaseService().isAlive(base)) {
             throw new BaseDoesNotExistException(base);
         }
@@ -75,7 +75,7 @@ public class ServerItemServiceImpl extends AbstractItemService implements Server
             if (toBeBuilt instanceof BaseItemType && !serverPlanetServices.getBaseService().isBot(base) && !serverPlanetServices.getBaseService().isAbandoned(base)) {
                 serverPlanetServices.getBaseService().checkItemLimit4ItemAdding((BaseItemType) toBeBuilt, base);
             }
-            Id id = createId(creator, createdChildCount);
+            Id id = createId(creator);
             syncItem = newSyncItem(id, position, toBeBuilt.getId(), base, serverGlobalServices, serverPlanetServices);
             items.put(id, syncItem);
             if (syncItem instanceof SyncBaseItem) {
@@ -108,20 +108,19 @@ public class ServerItemServiceImpl extends AbstractItemService implements Server
         return syncItem;
     }
 
-    private Id createId(SyncItem parent, int childIndex) {
+    private Id createId(SyncItem parent) {
         int parentId;
         if (parent != null) {
             parentId = parent.getId().getId();
         } else {
             parentId = Id.NO_ID;
-            childIndex = Id.NO_ID;
         }
 
         if (lastId == Integer.MAX_VALUE) {
             throw new IllegalStateException("MAJOR ERROR!!! Number of id exeeded!!!");
         }
         lastId++;
-        return new Id(lastId, parentId, childIndex);
+        return new Id(lastId, parentId);
     }
 
     @Override
@@ -268,12 +267,7 @@ public class ServerItemServiceImpl extends AbstractItemService implements Server
                 }
                 SyncItem syncItem = (SyncItem) syncBaseObject;
                 items.put(syncItem.getId(), syncItem);
-                if (syncItem.getId().isSynchronized()) {
-                    int tmpId = syncItem.getId().getId();
-                    if (lastId < tmpId) {
-                        lastId = tmpId;
-                    }
-                }
+                lastId = Math.max(syncItem.getId().getId(), lastId);
             }
         }
         this.lastId = lastId + 1;
