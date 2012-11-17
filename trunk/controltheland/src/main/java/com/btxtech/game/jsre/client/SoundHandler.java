@@ -100,7 +100,6 @@ public class SoundHandler implements SelectionListener {
             for (Collection<Audio> audios : sounds.values()) {
                 for (Audio audio : audios) {
                     audio.pause();
-                    audio.setCurrentTime(0);
                 }
             }
         } catch (Exception e) {
@@ -176,36 +175,42 @@ public class SoundHandler implements SelectionListener {
     }
 
     private Audio getAudio(int soundId) {
-        Collection<Audio> available = sounds.get(soundId);
-        if (available == null) {
-            available = new ArrayList<Audio>();
-            sounds.put(soundId, available);
-        }
-        Audio audio = null;
-        for (Audio availableAudio : available) {
-            if (availableAudio.hasEnded()) {
-                audio = availableAudio;
-                break;
+        try {
+            Collection<Audio> available = sounds.get(soundId);
+            if (available == null) {
+                available = new ArrayList<Audio>();
+                sounds.put(soundId, available);
             }
-        }
-        if (audio != null) {
-            return audio;
-        }
-        if (available.size() < PARALLEL_PLAY_COUNT) {
-            audio = Audio.createIfSupported();
-            if (audio == null) {
-                if (logNoCreation) {
-                    log.severe("Audio not supported for sound id: " + soundId);
-                    logNoCreation = false;
+            Audio audio = null;
+            for (Audio availableAudio : available) {
+                if (availableAudio.hasEnded() || availableAudio.isPaused()) {
+                    audio = availableAudio;
+                    break;
                 }
+            }
+            if (audio != null) {
+                audio.setCurrentTime(0);
+                return audio;
+            }
+            if (available.size() < PARALLEL_PLAY_COUNT) {
+                audio = Audio.createIfSupported();
+                if (audio == null) {
+                    if (logNoCreation) {
+                        log.severe("Audio not supported for sound id: " + soundId);
+                        logNoCreation = false;
+                    }
+                    return null;
+                }
+                setVolume(audio);
+                audio.addSource(buildUrl(soundId, Constants.SOUND_CODEC_TYPE_MP3), AudioElement.TYPE_MP3);
+                audio.addSource(buildUrl(soundId, Constants.SOUND_CODEC_TYPE_OGG), AudioElement.TYPE_OGG);
+                available.add(audio);
+                return audio;
+            } else {
                 return null;
             }
-            setVolume(audio);
-            audio.addSource(buildUrl(soundId, Constants.SOUND_CODEC_TYPE_MP3), AudioElement.TYPE_MP3);
-            audio.addSource(buildUrl(soundId, Constants.SOUND_CODEC_TYPE_OGG), AudioElement.TYPE_OGG);
-            available.add(audio);
-            return audio;
-        } else {
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "SoundHandler.getAudio() + " + soundId, e);
             return null;
         }
     }
@@ -236,5 +241,4 @@ public class SoundHandler implements SelectionListener {
             playSelectionItemSound(syncBaseItem.getItemType());
         }
     }
-
 }
