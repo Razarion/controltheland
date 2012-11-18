@@ -52,7 +52,7 @@ public interface MovableServiceAsync {
 
     void surrenderBase(AsyncCallback<Void> async);
 
-    void log(String message, Date date, AsyncCallback async);
+    void sendDebug(Date date, String category, String message, AsyncCallback async);
 
     void sendCommands(List<BaseCommand> baseCommands, AsyncCallback async);
 

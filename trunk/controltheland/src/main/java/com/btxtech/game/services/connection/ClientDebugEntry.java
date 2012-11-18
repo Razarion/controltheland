@@ -24,8 +24,8 @@ import java.util.Date;
  * Date: Jul 31, 2009
  * Time: 9:03:13 PM
  */
-@Entity(name = "TRACKER_CLIENT_LOG_ENTRY")
-public class ClientLogEntry {
+@Entity(name = "TRACKER_CLIENT_DEBUG")
+public class ClientDebugEntry {
     @Id
     @GeneratedValue
     private Integer id;
@@ -38,28 +38,34 @@ public class ClientLogEntry {
     private String sessionId;
     @Column(nullable = false, length = 10000)
     private String message;
+    private String category;
 
-    public ClientLogEntry(String message, Date date, Session session, String baseName) {
-        this.message = message;
+    /**
+     * Used by hibernate
+     */
+    public ClientDebugEntry() {
+    }
+
+    public ClientDebugEntry(Date date, Session session, String baseName, String category, String message) {
         timeStamp = new Date();
         clientTimeStamp = date;
         userAgent = session.getUserAgent();
         sessionId = session.getSessionId();
-        try {
-            this.baseName = baseName;
-        } catch (Exception e) {
-            this.baseName = "???";
-        }
-    }
-
-    /**
-     * Used by hibernat
-     */
-    public ClientLogEntry() {
+        this.baseName = baseName;
+        this.category = category;
+        this.message = message;
     }
 
     public Date getTimeStamp() {
         return timeStamp;
+    }
+
+    public Date getClientTimeStamp() {
+        return clientTimeStamp;
+    }
+
+    public String getCategory() {
+        return category;
     }
 
     public String getMessage() {
@@ -82,17 +88,17 @@ public class ClientLogEntry {
     public boolean equals(Object o) {
         if (this == o) return true;
 
-        if (!(o instanceof ClientLogEntry)) return false;
+        if (!(o instanceof ClientDebugEntry)) return false;
 
-        ClientLogEntry logEntry = (ClientLogEntry) o;
+        ClientDebugEntry debugEntry = (ClientDebugEntry) o;
 
-        return !(id != null ? !id.equals(logEntry.id) : logEntry.id != null);
+        return id != null && id.equals(debugEntry.id);
 
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id : System.identityHashCode(this);
     }
 
     public String getFormatMessage() {
@@ -113,6 +119,10 @@ public class ClientLogEntry {
 
         builder.append("baseName: ");
         builder.append(baseName);
+        builder.append("\n");
+
+        builder.append("category: ");
+        builder.append(category);
         builder.append("\n");
 
         builder.append(message);

@@ -58,7 +58,7 @@ public interface MovableService extends RemoteService {
 
     void surrenderBase();
 
-    void log(String message, Date date);
+    void sendDebug(Date date, String category, String message);
 
     void sendCommands(List<BaseCommand> baseCommands);
 

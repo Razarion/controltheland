@@ -240,9 +240,9 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public void log(String message, Date date) {
+    public void sendDebug(Date date, String category, String message) {
         try {
-            serverGlobalConnectionService.clientLog(message, date);
+            serverGlobalConnectionService.saveClientDebug(date, category, message);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
         }

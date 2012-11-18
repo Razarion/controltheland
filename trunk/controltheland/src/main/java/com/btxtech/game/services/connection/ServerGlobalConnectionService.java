@@ -24,5 +24,5 @@ public interface ServerGlobalConnectionService {
 
     Collection<SimpleBase> getOnlineBases();
 
-    void clientLog(String message, Date date);
+    void saveClientDebug(Date date, String category, String message);
 }

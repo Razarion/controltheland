@@ -84,7 +84,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
                     long insertTime = entry.getKey().getUserTimeStamp();
                     if (insertTime + CLEANUP_INTERVALL < System.currentTimeMillis()) {
                         it.remove();
-                        GwtCommon.sendLogToServer("Can not definitely kill item due to missing ack from server: " + entry.getKey() + " " + entry.getValue());
+                        GwtCommon.sendDebug(GwtCommon.DEBUG_CATEGORY_DEFINITELY_KILL, "Can not definitely kill item due to missing ack from server: " + entry.getKey() + " " + entry.getValue());
                     }
 
                 }
@@ -153,7 +153,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
         if (localPos != null && syncPos != null) {
             int distance = localPos.getDistance(syncPos);
             if (distance > 200) {
-                GwtCommon.sendLogToServer("Teleportation detected. Distance: " + distance + " Info:" + syncItemInfo + " | Item:" + syncItem);
+                GwtCommon.sendDebug(GwtCommon.DEBUG_CATEGORY_TELEPORTATION, "Teleportation detected. Distance: " + distance + " Info:" + syncItemInfo + " | Item:" + syncItem);
             }
         }
 
@@ -281,7 +281,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
             syncItem.getId().setUserTimeStamp(System.currentTimeMillis());
             seeminglyDeadItems.put(syncItem.getId(), syncItem);
         } else {
-            GwtCommon.sendLogToServer("This should never happen: ItemContainer.killSyncItem() syncItem:" + syncItem + " actor:" + actor);
+            log.severe("This should never happen: ItemContainer.killSyncItem() syncItem:" + syncItem + " actor:" + actor);
         }
     }
 

@@ -245,7 +245,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
             if (syncBaseItem.hasSyncFactory()) {
                 fabricate(syncBaseItem, itemTypeToBuild);
             } else {
-                GwtCommon.sendLogToServer("ActionHandler.build(): can not cast to FactorySyncItem:" + syncBaseItem);
+                log.severe("ActionHandler.build(): can not cast to FactorySyncItem:" + syncBaseItem);
             }
         }
         Connection.getInstance().sendCommandQueue();
@@ -313,7 +313,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
 
     public void loadContainer(SyncBaseItem container, Collection<SyncBaseItem> items) {
         if (!container.hasSyncItemContainer()) {
-            GwtCommon.sendLogToServer("ActionHandler.loadContainer(): can not cast to ItemContainer:" + container);
+            log.severe("ActionHandler.loadContainer(): can not cast to ItemContainer:" + container);
             return;
         }
         GroupCommandHelperItemType<SyncBaseItem> commandHelperItemType = new GroupCommandHelperItemType<SyncBaseItem>() {

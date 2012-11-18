@@ -16,9 +16,8 @@ package com.btxtech.game.services.connection.impl;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.services.common.HibernateUtil;
-import com.btxtech.game.services.connection.ClientLogEntry;
+import com.btxtech.game.services.connection.ClientDebugEntry;
 import com.btxtech.game.services.connection.ConnectionStatistics;
-import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.connection.ServerGlobalConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.planet.Planet;
@@ -107,17 +106,15 @@ public class ServerGlobalConnectionServiceImpl implements ServerGlobalConnection
     }
 
     @Override
-    public void clientLog(String message, Date date) {
+    @Transactional
+    public void saveClientDebug(Date date, String category, String message) {
         try {
             String baseName = null;
-            try {
+            if (planetSystemService.getServerPlanetServices().getBaseService().hasBase()) {
                 baseName = planetSystemService.getServerPlanetServices().getBaseService().getBaseName();
-            } catch (NoBaseException e) {
-                // Ignore
             }
-            ClientLogEntry clientLogEntry = new ClientLogEntry(message, date, session, baseName);
-            // hibernateTemplate.saveOrUpdate(clientLogEntry);
-            log.info(clientLogEntry.getFormatMessage());
+            ClientDebugEntry clientDebugEntry = new ClientDebugEntry(date, session, baseName, category, message);
+            sessionFactory.getCurrentSession().saveOrUpdate(clientDebugEntry);
         } catch (Throwable t) {
             log.error("", t);
         }

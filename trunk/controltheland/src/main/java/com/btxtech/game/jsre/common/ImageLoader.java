@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.common;
 
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.dom.client.ImageElement;
@@ -120,7 +121,7 @@ public class ImageLoader<T> {
 
     private void checkProgress() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("----- Images still not loaded: ");
+        stringBuilder.append("Images still not loaded: ");
         stringBuilder.append(loadedImageCount);
         stringBuilder.append("/");
         stringBuilder.append(urls.size());
@@ -133,7 +134,7 @@ public class ImageLoader<T> {
                 stringBuilder.append('\n');
             }
         }
-        log.warning(stringBuilder.toString());
+        GwtCommon.sendDebug(GwtCommon.DEBUG_CATEGORY_IMAGE_LOADER, stringBuilder.toString());
         startTimer();
     }
 }
