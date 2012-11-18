@@ -1,0 +1,30 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.insidebutton {
+			position: relative;
+		}
+		
+		.image {
+			z-index: 1;
+		}
+		
+		.itemLimit {
+			z-index: 2;
+			font-size: 10px;
+			font-family: Arial, Helvetica, sans-serif;
+			background: rgba(0, 0, 0, 0.4);
+			color: #FFFFFF;
+		}
+	</ui:style>
+	<g:AbsolutePanel width="40px" height="40px"	styleName="{style.insidebutton}">
+		<g:at left="0" top="0">
+			<g:Image ui:field="image" width="40px" height="40px"
+				styleName="{style.image}" />
+		</g:at>
+		<g:at left="0" top="0">
+			<g:Label ui:field="itemLimitLabel" styleName="{style.itemLimit}" />
+		</g:at>
+	</g:AbsolutePanel>
+</ui:UiBinder> 

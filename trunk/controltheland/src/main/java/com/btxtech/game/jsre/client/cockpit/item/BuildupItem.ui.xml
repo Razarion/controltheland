@@ -13,28 +13,9 @@
 			font-family: Arial, Helvetica, sans-serif;
 		}
 		
-		.image {
-			z-index: 1;
-		}
-		
-		.itemLimit {
-			z-index: 2;
-			font-size: 10px;
-			font-family: Arial, Helvetica, sans-serif;
-			background: rgba(0, 0, 0, 0.4);
-			color: #FFFFFF;
-		}
 	</ui:style>
 	<g:VerticalPanel styleName="{style.platte}">
-		<g:AbsolutePanel width="40px" height="40px">
-			<g:at left="0" top="0">
-				<g:Image ui:field="image" width="40px" height="40px"
-					styleName="{style.image}" />
-			</g:at>
-			<g:at left="0" top="0">
-				<g:Label ui:field="itemLimitLabel" styleName="{style.itemLimit}" />
-			</g:at>
-		</g:AbsolutePanel>
+		<g:Button ui:field="button"/>
 		<g:Label ui:field="priceLabel" styleName="{style.price}" />
 	</g:VerticalPanel>
 </ui:UiBinder>
