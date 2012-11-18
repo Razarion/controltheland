@@ -8,7 +8,6 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.google.gwt.event.dom.client.MouseDownEvent;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,10 +26,10 @@ public class ToBeBuildPlacer {
     private String errorText;
     private Logger log = Logger.getLogger(ToBeBuildPlacer.class.getName());
 
-    public ToBeBuildPlacer(BaseItemType itemTypeToBuilt, Group builders, MouseDownEvent event) {
+    public ToBeBuildPlacer(BaseItemType itemTypeToBuilt, Group builders, Index relativeMiddlePos) {
         this.itemTypeToBuilt = itemTypeToBuilt;
         this.builders = builders;
-        relativeMiddlePos = new Index(event.getClientX(), event.getClientY());
+        this.relativeMiddlePos = relativeMiddlePos;
         checkPlacingForAllAllowed(TerrainView.getInstance().toAbsoluteIndex(relativeMiddlePos));
         setupErrorText();
     }

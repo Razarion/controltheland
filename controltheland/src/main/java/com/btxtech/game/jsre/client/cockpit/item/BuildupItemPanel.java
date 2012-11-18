@@ -13,6 +13,10 @@
 
 package com.btxtech.game.jsre.client.cockpit.item;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.btxtech.game.jsre.client.ClientGlobalServices;
 import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.GwtCommon;
@@ -26,8 +30,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -36,10 +38,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * User: beat Date: 15.11.2009 Time: 14:12:18
@@ -111,10 +109,10 @@ public class BuildupItemPanel extends Composite {
                 continue;
             }
             final BaseItemType itemType = (BaseItemType) ClientGlobalServices.getInstance().getItemTypeService().getItemType(itemTypeID);
-            itemsToBuild.add(setupBuildupBlock(itemType, new MouseDownHandler() {
+            itemsToBuild.add(setupBuildupBlock(itemType, new BuildupItem.ButtonListener() {
                 @Override
-                public void onMouseDown(MouseDownEvent event) {
-                    CockpitMode.getInstance().setToBeBuildPlacer(new ToBeBuildPlacer(itemType, constructionVehicles, event));
+                public void onButtonPressed(Index relativeMousePosition) {
+                    CockpitMode.getInstance().setToBeBuildPlacer(new ToBeBuildPlacer(itemType, constructionVehicles, relativeMousePosition));
                 }
             }));
         }
@@ -131,9 +129,9 @@ public class BuildupItemPanel extends Composite {
                 continue;
             }
             final BaseItemType itemType = (BaseItemType) ClientGlobalServices.getInstance().getItemTypeService().getItemType(itemTypeID);
-            itemsToBuild.add(setupBuildupBlock(itemType, new MouseDownHandler() {
+            itemsToBuild.add(setupBuildupBlock(itemType, new BuildupItem.ButtonListener() {
                 @Override
-                public void onMouseDown(MouseDownEvent event) {
+                public void onButtonPressed(Index relativeMousePosition) {
                     try {
                         ActionHandler.getInstance().fabricate(factories.getItems(), itemType);
                     } catch (NoSuchItemTypeException e) {
@@ -146,8 +144,8 @@ public class BuildupItemPanel extends Composite {
         scrollPanel.scrollToLeft();
     }
 
-    private Widget setupBuildupBlock(BaseItemType itemType, MouseDownHandler mouseDownHandler) {
-        BuildupItem buildupItem = new BuildupItem(itemType, mouseDownHandler);
+    private Widget setupBuildupBlock(BaseItemType itemType, BuildupItem.ButtonListener buttonListener) {
+        BuildupItem buildupItem = new BuildupItem(itemType, buttonListener);
         this.buildupItems.put(itemType.getId(), buildupItem);
         return buildupItem;
     }
