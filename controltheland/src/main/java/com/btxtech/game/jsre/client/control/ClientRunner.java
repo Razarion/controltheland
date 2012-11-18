@@ -164,7 +164,7 @@ public class ClientRunner {
         }
         failed = true;
         if (listeners.isEmpty()) {
-            GwtCommon.sendLogToServer(error);
+            log.severe("ClientRunner.onTaskFailed(): " + error);
         } else {
             for (StartupProgressListener listener : listeners) {
                 listener.onTaskFailed(abstractStartupTask, error, t);

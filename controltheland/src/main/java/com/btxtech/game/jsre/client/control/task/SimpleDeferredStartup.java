@@ -15,12 +15,16 @@ package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.GwtCommon;
 
+import java.util.logging.Logger;
+
 /**
  * User: beat
  * Date: 07.12.2010
  * Time: 21:45:05
  */
 public class SimpleDeferredStartup implements DeferredStartup {
+    private Logger log = Logger.getLogger(SimpleDeferredStartup.class.getName());
+
     @Override
     public void setDeferred() {
         // Ignore
@@ -38,7 +42,7 @@ public class SimpleDeferredStartup implements DeferredStartup {
 
     @Override
     public void failed(String error) {
-        GwtCommon.sendLogToServer(error);
+        log.severe("SimpleDeferredStartup.failed(): " + error);
     }
 
     @Override

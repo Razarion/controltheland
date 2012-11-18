@@ -9,13 +9,16 @@ import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.user.UserService;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,6 +29,8 @@ import java.util.List;
 public class TestConnection extends AbstractServiceTest {
     @Autowired
     private PlanetSystemService planetSystemService;
+    @Autowired
+    private UserService userService;
 
     @Test
     @DirtiesContext
@@ -232,6 +237,73 @@ public class TestConnection extends AbstractServiceTest {
         } catch (NoConnectionException e) {
             Assert.assertEquals(NoConnectionException.Type.BASE_SURRENDERED, e.getType());
         }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void sendDebug() throws Exception {
+        configureSimplePlanetNoResources();
+
+        Date clientDate = new Date(1000000);
+
+        Date serverBefore = new Date();
+        beginHttpSession();
+        String sessionId1 = getHttpSessionId();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getMovableService().sendDebug(clientDate, "CAT1", "Text Text");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        Date serverAfter = new Date();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<ClientDebugEntry> dbEntries = HibernateUtil.loadAll(getSessionFactory(), ClientDebugEntry.class);
+        Assert.assertEquals(1, dbEntries.size());
+        ClientDebugEntry debugEntry1 = dbEntries.get(0);
+        Assert.assertTrue(serverBefore.getTime() <= debugEntry1.getTimeStamp().getTime());
+        Assert.assertTrue(serverAfter.getTime() >= debugEntry1.getTimeStamp().getTime());
+        Assert.assertEquals(clientDate, debugEntry1.getClientTimeStamp());
+        Assert.assertEquals(sessionId1, debugEntry1.getSessionId());
+        Assert.assertNull(debugEntry1.getBaseName());
+        Assert.assertEquals("CAT1", debugEntry1.getCategory());
+        Assert.assertEquals("Text Text", debugEntry1.getMessage());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void sendDebugWithBase() throws Exception {
+        configureSimplePlanetNoResources();
+
+        Date clientDate = new Date(1000000);
+
+        Date serverBefore = new Date();
+        beginHttpSession();
+        String sessionId1 = getHttpSessionId();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("TestUser", "xxx", "xxx", "");
+        userService.login("TestUser", "xxx");
+        getMyBase(); // Opens a connection
+        getMovableService().sendDebug(clientDate, "CAT1", "Text Text");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        Date serverAfter = new Date();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<ClientDebugEntry> dbEntries = HibernateUtil.loadAll(getSessionFactory(), ClientDebugEntry.class);
+        Assert.assertEquals(1, dbEntries.size());
+        ClientDebugEntry debugEntry1 = dbEntries.get(0);
+        Assert.assertTrue(serverBefore.getTime() <= debugEntry1.getTimeStamp().getTime());
+        Assert.assertTrue(serverAfter.getTime() >= debugEntry1.getTimeStamp().getTime());
+        Assert.assertEquals(clientDate, debugEntry1.getClientTimeStamp());
+        Assert.assertEquals(sessionId1, debugEntry1.getSessionId());
+        Assert.assertEquals("TestUser", debugEntry1.getBaseName());
+        Assert.assertEquals("CAT1", debugEntry1.getCategory());
+        Assert.assertEquals("Text Text", debugEntry1.getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

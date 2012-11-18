@@ -415,9 +415,9 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         }
     }
 
-    public void log(String logMessage, Date date) {
+    public void sendDebug(Date date, String category, String message) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.log(logMessage, date, new VoidAsyncCallback("log"));
+            movableServiceAsync.sendDebug(date, category, message, new VoidAsyncCallback("sendDebug"));
         }
     }
 

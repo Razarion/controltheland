@@ -37,6 +37,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -57,6 +58,7 @@ public class TerrainView {
     private Context2d context2d;
     private AbsolutePanel parent;
     private TerrainHandler terrainHandler = new TerrainHandler();
+    private static Logger log = Logger.getLogger(TerrainView.class.getName());
 
     /**
      * Singleton
@@ -96,7 +98,7 @@ public class TerrainView {
                              Collection<TerrainImage> terrainImages,
                              TerrainImageBackground terrainImageBackground) {
         if (terrainSettings == null) {
-            GwtCommon.sendLogToServer("Invalid terrain settings");
+            log.severe("TerrainView.setupTerrain() terrainSettings == null");
             return;
         }
         deltaSetupTerrain(terrainSettings, terrainImagePositions, surfaceRects, surfaceImages, terrainImages, terrainImageBackground);
@@ -109,7 +111,7 @@ public class TerrainView {
                                   Collection<TerrainImage> terrainImages,
                                   TerrainImageBackground terrainImageBackground) {
         if (terrainSettings == null) {
-            GwtCommon.sendLogToServer("Invalid terrain settings for delta");
+            log.severe("TerrainView.deltaSetupTerrain() terrainSettings == null");
             return;
         }
         terrainHandler.setupTerrain(terrainSettings, terrainImagePositions, surfaceRects, surfaceImages, terrainImages, terrainImageBackground);
