@@ -33,7 +33,7 @@ public class ClientDebugEntry {
     private Date timeStamp;
     private Date clientTimeStamp;
     private String userAgent;
-    private String baseName;
+    private String userName;
     @Column(nullable = false)
     private String sessionId;
     @Column(nullable = false, length = 10000)
@@ -46,12 +46,12 @@ public class ClientDebugEntry {
     public ClientDebugEntry() {
     }
 
-    public ClientDebugEntry(Date date, Session session, String baseName, String category, String message) {
+    public ClientDebugEntry(Date date, Session session, String userName, String category, String message) {
         timeStamp = new Date();
         clientTimeStamp = date;
         userAgent = session.getUserAgent();
         sessionId = session.getSessionId();
-        this.baseName = baseName;
+        this.userName = userName;
         this.category = category;
         this.message = message;
     }
@@ -76,8 +76,8 @@ public class ClientDebugEntry {
         return userAgent;
     }
 
-    public String getBaseName() {
-        return baseName;
+    public String getUserName() {
+        return userName;
     }
 
     public String getSessionId() {
@@ -118,7 +118,7 @@ public class ClientDebugEntry {
         builder.append("\n");
 
         builder.append("baseName: ");
-        builder.append(baseName);
+        builder.append(userName);
         builder.append("\n");
 
         builder.append("category: ");

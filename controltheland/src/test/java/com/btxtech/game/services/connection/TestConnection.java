@@ -266,7 +266,7 @@ public class TestConnection extends AbstractServiceTest {
         Assert.assertTrue(serverAfter.getTime() >= debugEntry1.getTimeStamp().getTime());
         Assert.assertEquals(clientDate, debugEntry1.getClientTimeStamp());
         Assert.assertEquals(sessionId1, debugEntry1.getSessionId());
-        Assert.assertNull(debugEntry1.getBaseName());
+        Assert.assertNull(debugEntry1.getUserName());
         Assert.assertEquals("CAT1", debugEntry1.getCategory());
         Assert.assertEquals("Text Text", debugEntry1.getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -275,7 +275,7 @@ public class TestConnection extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void sendDebugWithBase() throws Exception {
+    public void sendDebugRegistered() throws Exception {
         configureSimplePlanetNoResources();
 
         Date clientDate = new Date(1000000);
@@ -301,7 +301,7 @@ public class TestConnection extends AbstractServiceTest {
         Assert.assertTrue(serverAfter.getTime() >= debugEntry1.getTimeStamp().getTime());
         Assert.assertEquals(clientDate, debugEntry1.getClientTimeStamp());
         Assert.assertEquals(sessionId1, debugEntry1.getSessionId());
-        Assert.assertEquals("TestUser", debugEntry1.getBaseName());
+        Assert.assertEquals("TestUser", debugEntry1.getUserName());
         Assert.assertEquals("CAT1", debugEntry1.getCategory());
         Assert.assertEquals("Text Text", debugEntry1.getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
