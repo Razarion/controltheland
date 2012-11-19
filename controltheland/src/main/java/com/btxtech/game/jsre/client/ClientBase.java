@@ -122,6 +122,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     @Override
     public void depositResource(double price, SimpleBase simpleBase) {
         if (this.simpleBase != null && this.simpleBase.equals(simpleBase)) {
+            SimulationConditionServiceImpl.getInstance().onMoneyIncrease(simpleBase, price);
             if (Connection.getInstance().getGameInfo() instanceof RealGameInfo) {
                 accountBalance += price;
                 if (accountBalance > ClientPlanetServices.getInstance().getPlanetInfo().getMaxMoney()) {
@@ -131,7 +132,6 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
                 accountBalance += price;
             }
             SideCockpit.getInstance().updateMoney();
-            SimulationConditionServiceImpl.getInstance().onMoneyIncrease(simpleBase, price);
         }
     }
 

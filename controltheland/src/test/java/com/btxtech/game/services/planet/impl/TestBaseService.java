@@ -4,22 +4,29 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.TestPlanetHelper;
 import com.btxtech.game.services.common.ServerGlobalServices;
+import com.btxtech.game.services.common.TestGlobalServices;
 import com.btxtech.game.services.common.impl.ServerGlobalServicesImpl;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.mgmt.MgmtService;
+import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.AllianceService;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.condition.ServerConditionService;
 import junit.framework.Assert;
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.Collections;
 
 /**
  * User: beat
@@ -311,4 +318,48 @@ public class TestBaseService extends AbstractServiceTest {
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void depositResource() throws Exception {
+        TestPlanetHelper testPlanetHelper = new TestPlanetHelper();
+        ServerPlanetServicesImpl serverPlanetServices = new ServerPlanetServicesImpl();
+        PlanetInfo planetInfo = new PlanetInfo();
+        planetInfo.setPlanetIdAndName(1, "TestPlanet");
+        planetInfo.setMaxMoney(10);
+        serverPlanetServices.setPlanetInfo(planetInfo);
+        testPlanetHelper.setServerPlanetServices(serverPlanetServices);
+
+        Base testBase = new Base(testPlanetHelper, 1);
+
+        ServerConditionService serverConditionServiceMock = EasyMock.createNiceMock(ServerConditionService.class);
+        EasyMock.replay(serverConditionServiceMock);
+
+        TestGlobalServices testGlobalServices = new TestGlobalServices();
+        testGlobalServices.setServerConditionService(serverConditionServiceMock);
+
+        BaseServiceImpl baseService = new BaseServiceImpl(testPlanetHelper);
+        baseService.init(serverPlanetServices, testGlobalServices);
+        baseService.restore(Collections.singletonList(testBase));
+
+        // Start Test
+        Assert.assertEquals(0.0, testBase.getAccountBalance());
+
+        baseService.depositResource(1.0, testBase.getSimpleBase());
+        Assert.assertEquals(1.0, testBase.getAccountBalance());
+        baseService.depositResource(9.0, testBase.getSimpleBase());
+        Assert.assertEquals(10.0, testBase.getAccountBalance());
+
+        testBase.setAccountBalance(0);
+        baseService.depositResource(20.0, testBase.getSimpleBase());
+        Assert.assertEquals(10.0, testBase.getAccountBalance());
+
+        testBase.setAccountBalance(10.0);
+        baseService.depositResource(5.0, testBase.getSimpleBase());
+        Assert.assertEquals(10.0, testBase.getAccountBalance());
+
+        testBase.setAccountBalance(11.0);
+        baseService.depositResource(1.0, testBase.getSimpleBase());
+        Assert.assertEquals(10.0, testBase.getAccountBalance());
+
+    }
 }

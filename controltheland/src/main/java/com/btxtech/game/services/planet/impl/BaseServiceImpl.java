@@ -370,11 +370,10 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     public void depositResource(double price, SimpleBase simpleBase) {
         Base base = getBase(simpleBase);
         if (!isBot(simpleBase) && !base.isAbandoned()) {
+            serverGlobalServices.getConditionService().onMoneyIncrease(base.getSimpleBase(), price);
             int maxMoney = planetServices.getPlanetInfo().getMaxMoney();
             double money = base.getAccountBalance();
-            if (money == maxMoney) {
-                return;
-            } else if (money > maxMoney) {
+            if (money > maxMoney) {
                 base.setAccountBalance(maxMoney);
             } else if (money + price > maxMoney) {
                 double amount = maxMoney - money;
@@ -382,7 +381,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             } else {
                 base.depositMoney(price);
             }
-            serverGlobalServices.getConditionService().onMoneyIncrease(base.getSimpleBase(), price);
         }
     }
 
