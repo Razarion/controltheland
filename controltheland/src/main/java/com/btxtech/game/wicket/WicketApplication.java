@@ -134,16 +134,29 @@ public class WicketApplication extends AuthenticatedWebApplication implements Ap
                 log.error("Session Id: " + session.getSessionId());
                 return cmsUiService.getPredefinedNotFound();
             } else if (CommonJava.getMostInnerThrowable(e) instanceof NoSuchChildException) {
-                log.error("", e);
+                printInfo(cause, e);
                 return cmsUiService.getPredefinedNotFound();
             } else if (CommonJava.getMostInnerThrowable(e) instanceof InvalidUrlException) {
-                log.error("", e);
+                printInfo(cause, e);
                 return cmsUiService.getPredefinedNotFound();
             } else {
                 log.error("", e);
                 return new CmsPage(new PageParameters());
             }
         }
+
+        private void printInfo(final Page cause, Exception e) {
+            log.error("------------------CMS Exception---------------------------------");
+            log.error("URL: " + getRequest().getURL());
+            log.error("Page: " + cause);
+            log.error("User Agent: " + session.getUserAgent());
+            log.error("Session Id: " + session.getSessionId());
+            log.error("Accept-Language: " + session.getRequest().getHeader("Accept-Language"));
+            log.error("IP: " + session.getRequest().getRemoteAddr());
+            log.error("Referer: " + session.getRequest().getHeader("Referer"));
+            log.error("", e);
+        }
+
     }
 
 }
