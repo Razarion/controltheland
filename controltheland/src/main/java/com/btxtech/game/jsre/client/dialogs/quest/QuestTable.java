@@ -27,7 +27,7 @@ public class QuestTable extends Composite {
     public void displayQuestOverview(QuestDialog questDialog, QuestOverview questOverview) {
         questCountLabel.setText("Quests: " + questOverview.getQuestsDone() + "/" + questOverview.getTotalQuests());
         missionCountLabel.setText("Missions: " + questOverview.getMissionsDone() + "/" + questOverview.getTotalMissions());
-        questTable.clear();
+        questTable.removeAllRows();
         for (QuestInfo questInfo : questOverview.getQuestInfos()) {
             switch (questInfo.getType()) {
                 case MISSION:
