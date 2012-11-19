@@ -169,7 +169,7 @@ public class PathfindingCockpit extends TopMapPanel {
     }
 
     public void clearPathTable() {
-        pathTable.clear();
+        pathTable.removeAllRows();
     }
 
     public void addPathTable(Index index) {
