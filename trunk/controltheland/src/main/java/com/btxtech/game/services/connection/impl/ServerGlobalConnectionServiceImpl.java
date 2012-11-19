@@ -108,16 +108,8 @@ public class ServerGlobalConnectionServiceImpl implements ServerGlobalConnection
     @Override
     @Transactional
     public void saveClientDebug(Date date, String category, String message) {
-        try {
-            String baseName = null;
-            if (planetSystemService.getServerPlanetServices().getBaseService().hasBase()) {
-                baseName = planetSystemService.getServerPlanetServices().getBaseService().getBaseName();
-            }
-            ClientDebugEntry clientDebugEntry = new ClientDebugEntry(date, session, baseName, category, message);
-            sessionFactory.getCurrentSession().saveOrUpdate(clientDebugEntry);
-        } catch (Throwable t) {
-            log.error("", t);
-        }
+        ClientDebugEntry clientDebugEntry = new ClientDebugEntry(date, session, userService.getUserState().getUser(), category, message);
+        sessionFactory.getCurrentSession().saveOrUpdate(clientDebugEntry);
     }
 
 }
