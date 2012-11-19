@@ -26,11 +26,13 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.google.gwt.dom.client.AudioElement;
+import com.google.gwt.dom.client.MediaElement;
 import com.google.gwt.media.client.Audio;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -182,7 +184,12 @@ public class SoundHandler implements SelectionListener {
                 sounds.put(soundId, available);
             }
             Audio audio = null;
-            for (Audio availableAudio : available) {
+            for (Iterator<Audio> iterator = available.iterator(); iterator.hasNext(); ) {
+                Audio availableAudio = iterator.next();
+                if (availableAudio.getNetworkState() == MediaElement.NETWORK_NO_SOURCE) {
+                    iterator.remove();
+                    continue;
+                }
                 if (availableAudio.hasEnded() || availableAudio.isPaused()) {
                     audio = availableAudio;
                     break;
@@ -210,7 +217,7 @@ public class SoundHandler implements SelectionListener {
                 return null;
             }
         } catch (Exception e) {
-            log.log(Level.SEVERE, "SoundHandler.getAudio() + " + soundId, e);
+            log.log(Level.SEVERE, "SoundHandler.getAudio() " + soundId, e);
             return null;
         }
     }

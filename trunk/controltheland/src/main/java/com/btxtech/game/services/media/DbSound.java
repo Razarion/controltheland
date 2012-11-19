@@ -88,4 +88,9 @@ public class DbSound implements CrudChild, Serializable {
     public int hashCode() {
         return id != null ? id : System.identityHashCode(this);
     }
+
+    @Override
+    public String toString() {
+        return "DbSound{id=" + id + ", name='" + name + "'}";
+    }
 }
