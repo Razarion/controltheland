@@ -82,6 +82,8 @@ public interface AbstractTerrainService {
 
     Index correctPosition(SyncItem syncItem, Index position);
 
+    Index correctPosition(int radius, Index position);
+
     void createTerrainTileField(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects);
 
     TerrainTile[][] getTerrainTileField();

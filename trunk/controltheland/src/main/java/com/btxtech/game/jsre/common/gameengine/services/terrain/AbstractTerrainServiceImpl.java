@@ -258,21 +258,27 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
     public Index correctPosition(SyncItem syncItem, Index position) {
         int x;
         int radius = syncItem.getSyncItemArea().getBoundingBox().getRadius();
+        Index correctedPosition = correctPosition(radius, position);
+        if(!correctedPosition.equals(position)) {
+            log.warning("Position for SyncItem has been corrected. Before: " + position + ". Corrected: " + correctedPosition + ". SyncItem: " + syncItem);
+        }
+        return correctedPosition;
+    }
+
+    @Override
+    public Index correctPosition(int radius, Index position) {
+        int x;
         if (position.getX() - radius < 0) {
-            log.warning("Corrected min x position for: " + syncItem);
             x = radius;
         } else if (position.getX() + radius > terrainSettings.getPlayFieldXSize()) {
-            log.warning("Corrected max x position for: " + syncItem);
             x = terrainSettings.getPlayFieldXSize() - radius;
         } else {
             x = position.getX();
         }
         int y;
         if (position.getY() - radius < 0) {
-            log.warning("Corrected min y position for: " + syncItem);
             y = radius;
         } else if (position.getY() + radius > terrainSettings.getPlayFieldYSize()) {
-            log.warning("Corrected max y position for: " + syncItem);
             y = terrainSettings.getPlayFieldYSize() - radius;
         } else {
             y = position.getY();
