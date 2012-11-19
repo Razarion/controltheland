@@ -169,7 +169,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
             return;
         }
         try {
-            RectangleFormation rectangleFormation = new RectangleFormation(destination, syncBaseItems);
+            RectangleFormation rectangleFormation = new RectangleFormation(destination, syncBaseItems, getPlanetServices().getTerrainService());
             for (SyncBaseItem syncBaseItem : syncBaseItems) {
                 if (syncBaseItem.hasSyncMovable()) {
                     Index pos = null;

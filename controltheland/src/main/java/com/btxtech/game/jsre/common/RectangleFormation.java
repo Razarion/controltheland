@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.common;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
 import java.util.Collection;
@@ -32,15 +33,15 @@ public class RectangleFormation {
     private int lineCount = 0;
     private int linePartCount = 1;
     private int currentLinePartCount = 0;
+    private AbstractTerrainService terrainService;
 
-    public RectangleFormation(Index origin, Collection<SyncBaseItem> syncBaseItems) {
-        this.origin = origin;
+    public RectangleFormation(Index origin, Collection<SyncBaseItem> syncBaseItems, AbstractTerrainService terrainService) {
+        this.terrainService = terrainService;
         for (SyncBaseItem syncBaseItem : syncBaseItems) {
-            if (syncBaseItem.getItemType().getBoundingBox().getDiameter() > maxDiameter) {
-                maxDiameter = syncBaseItem.getItemType().getBoundingBox().getDiameter();
-            }
+            maxDiameter = Math.max(syncBaseItem.getItemType().getBoundingBox().getDiameter(), maxDiameter);
         }
         maxDiameter++;
+        this.origin = terrainService.correctPosition(maxDiameter / 2, origin);
     }
 
     public Index calculateNextEntry() {
@@ -89,10 +90,12 @@ public class RectangleFormation {
     }
 
     private Index returnIndex() {
-        if (lastX < 0 || lastY < 0) {
-            return null;
+        Index position = new Index(lastX, lastY);
+        Index corrected = terrainService.correctPosition(maxDiameter / 2, position);
+        if (corrected.equals(position)) {
+            return position;
         } else {
-            return new Index(lastX, lastY);
+            return null;
         }
     }
 }
