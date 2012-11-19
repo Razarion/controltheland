@@ -15,10 +15,10 @@ import java.util.logging.Logger;
 public class InventoryDialog extends Dialog {
     private static InventoryDialog staticInstance;
     private Logger log = Logger.getLogger(InventoryDialog.class.getName());
-    private InventoryInfo inventoryInfo;
     private MainTabbedPanel mainTabbedPanel;
     private Integer filterPlanetId;
     private boolean filterLevel;
+    private boolean isCenterCalledOnce;
 
     public InventoryDialog() {
         super("Inventory");
@@ -39,7 +39,6 @@ public class InventoryDialog extends Dialog {
             log.warning("InventoryDialog.onItemsReceived() inventoryInfo == null");
             return;
         }
-        this.inventoryInfo = inventoryInfo;
         mainTabbedPanel.setRazarionAmount(inventoryInfo.getRazarion());
         mainTabbedPanel.displayInventory(inventoryInfo.getOwnInventoryItems());
         mainTabbedPanel.displayWorkshop(inventoryInfo, inventoryInfo.getAllInventoryItemInfos());
@@ -47,7 +46,10 @@ public class InventoryDialog extends Dialog {
         mainTabbedPanel.displayDealerFunds(inventoryInfo, inventoryInfo.getAllInventoryItemInfos());
         mainTabbedPanel.displayDealerArtifacts(inventoryInfo, inventoryInfo.getAllInventoryArtifactInfos());
 
-        center();
+        if (!isCenterCalledOnce) {
+            center();
+            isCenterCalledOnce = true;
+        }
     }
 
     @Override
