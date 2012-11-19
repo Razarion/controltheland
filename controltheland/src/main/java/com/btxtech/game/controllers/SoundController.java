@@ -5,6 +5,8 @@ import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.media.DbSound;
 import com.btxtech.game.services.media.SoundService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
@@ -24,6 +26,7 @@ import java.io.OutputStream;
 public class SoundController implements Controller {
     @Autowired
     private SoundService soundService;
+    private Log log = LogFactory.getLog(SoundController.class);
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
@@ -45,6 +48,8 @@ public class SoundController implements Controller {
                     throw new IllegalArgumentException("SoundResource: Codec:" + codec + " id: " + soundId);
             }
             if (data == null) {
+                log.warn("Sound: " + dbSound + " does not have data for Codec: " + codec);
+                httpServletResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return null;
             }
             httpServletResponse.setContentLength(data.length);
