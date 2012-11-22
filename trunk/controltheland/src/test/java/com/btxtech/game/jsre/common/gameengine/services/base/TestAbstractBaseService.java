@@ -51,17 +51,17 @@ public class TestAbstractBaseService {
         BaseAttributes baseAttributes3 = new BaseAttributes(base3, "base3", false);
         allBaseAttributes.add(baseAttributes3);
 
-        Set<BaseAttributes> alliances = new HashSet<>();
-        alliances.add(baseAttributes2);
-        alliances.add(baseAttributes3);
+        Set<SimpleBase> alliances = new HashSet<>();
+        alliances.add(baseAttributes2.getSimpleBase());
+        alliances.add(baseAttributes3.getSimpleBase());
         baseAttributes1.setAlliances(alliances);
 
         alliances = new HashSet<>();
-        alliances.add(baseAttributes1);
+        alliances.add(baseAttributes1.getSimpleBase());
         baseAttributes2.setAlliances(alliances);
 
         alliances = new HashSet<>();
-        alliances.add(baseAttributes1);
+        alliances.add(baseAttributes1.getSimpleBase());
         baseAttributes3.setAlliances(alliances);
 
         TestAbstractBaseServiceImpl abstractBaseService = new TestAbstractBaseServiceImpl();

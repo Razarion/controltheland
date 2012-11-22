@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
+import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
@@ -199,11 +200,13 @@ abstract public class AbstractServiceTest {
     protected static int TEST_LEVEL_2_REAL_ID = -1;
     protected static int TEST_LEVEL_3_REAL_ID = -1;
     protected static int TEST_LEVEL_4_REAL_ID = -1;
+    protected static int TEST_LEVEL_5_REAL_ID = -1;
     // Level numbers
     protected static final int TEST_LEVEL_1_SIMULATED = 1;
     protected static final int TEST_LEVEL_2_REAL = 2;
     protected static final int TEST_LEVEL_3_REAL = 3;
     protected static final int TEST_LEVEL_4_REAL = 4;
+    protected static final int TEST_LEVEL_5_REAL = 5;
     // Level Task ID
     protected static int TEST_LEVEL_TASK_1_1_SIMULATED_ID = -1;
     protected static int TEST_LEVEL_TASK_1_2_REAL_ID = -1;
@@ -561,60 +564,78 @@ abstract public class AbstractServiceTest {
             Assert.assertEquals(expectedPackets.length, receivedPackets.size());
         }
 
+
+
         for (Packet expectedPacket : expectedPackets) {
-            int index = receivedPackets.indexOf(expectedPacket);
-            if (index < 0) {
+            Packet receivedPacket = null;
+            for (Packet tmpReceivedPacket : receivedPackets) {
+                if(comparePacket(expectedPacket, tmpReceivedPacket)) {
+                    receivedPacket = tmpReceivedPacket;
+                    break;
+                }
+            }
+            if(receivedPacket == null) {
                 Assert.fail("Packet was not sent: " + expectedPacket);
             }
-            comparePacket(expectedPacket, receivedPackets.get(index));
+            receivedPackets.remove(receivedPacket);
         }
+
+        if(!receivedPackets.isEmpty()) {
+            Assert.fail("More packages sent than expected: " + receivedPackets);
+        }
+
     }
 
-    protected void comparePacket(Packet expectedPacket, Packet receivedPacket) {
+    protected boolean comparePacket(Packet expectedPacket, Packet receivedPacket) {
         if (expectedPacket instanceof AccountBalancePacket) {
             AccountBalancePacket expected = (AccountBalancePacket) expectedPacket;
             AccountBalancePacket received = (AccountBalancePacket) receivedPacket;
-            Assert.assertEquals(expected.getAccountBalance(), received.getAccountBalance(), 0.1);
+            return MathHelper.compareWithPrecision(expected.getAccountBalance(), received.getAccountBalance());
         } else if (expectedPacket instanceof LevelTaskPacket) {
-            LevelTaskPacket expected = (LevelTaskPacket) expectedPacket;
-            LevelTaskPacket received = (LevelTaskPacket) receivedPacket;
-            Assert.assertEquals(expected.isCompleted(), received.isCompleted());
-            Assert.assertEquals(expected.getQuestProgressInfo(), received.getQuestProgressInfo());
-            Assert.assertEquals(expected.getQuestInfo(), received.getQuestInfo());
+            throw new UnsupportedOperationException();
+            //  LevelTaskPacket expected = (LevelTaskPacket) expectedPacket;
+            //  LevelTaskPacket received = (LevelTaskPacket) receivedPacket;
+            //  return expected.isCompleted() == received.isCompleted() && ;
+            //  Assert.assertEquals(expected.getQuestProgressInfo(), received.getQuestProgressInfo());
+            //  Assert.assertEquals(expected.getQuestInfo(), received.getQuestInfo());
         } else if (expectedPacket instanceof LevelPacket) {
             LevelPacket expected = (LevelPacket) expectedPacket;
             LevelPacket received = (LevelPacket) receivedPacket;
-            Assert.assertEquals(expected.getLevel(), received.getLevel());
+            return expected.getLevel().equals(received.getLevel());
         } else if (expectedPacket instanceof XpPacket) {
             XpPacket expected = (XpPacket) expectedPacket;
             XpPacket received = (XpPacket) receivedPacket;
-            Assert.assertEquals(expected.getXp(), received.getXp());
-            Assert.assertEquals(expected.getXp2LevelUp(), received.getXp2LevelUp());
+            return expected.getXp() == received.getXp() && expected.getXp2LevelUp() == received.getXp2LevelUp();
         } else if (expectedPacket instanceof HouseSpacePacket) {
             HouseSpacePacket expected = (HouseSpacePacket) expectedPacket;
             HouseSpacePacket received = (HouseSpacePacket) receivedPacket;
-            Assert.assertEquals(expected.getHouseSpace(), received.getHouseSpace());
+            return expected.getHouseSpace() == received.getHouseSpace();
         } else if (expectedPacket instanceof Message) {
             Message expected = (Message) expectedPacket;
             Message received = (Message) receivedPacket;
-            Assert.assertEquals(expected.getMessage(), received.getMessage());
+            return expected.getMessage().equals(received.getMessage());
         } else if (expectedPacket instanceof BaseChangedPacket) {
             BaseChangedPacket expected = (BaseChangedPacket) expectedPacket;
             BaseChangedPacket received = (BaseChangedPacket) receivedPacket;
-            Assert.assertEquals(expected.getType(), received.getType());
-            Assert.assertEquals(expected.getBaseAttributes().getSimpleBase(), received.getBaseAttributes().getSimpleBase());
-            Assert.assertEquals(expected.getBaseAttributes().getSimpleBase(), received.getBaseAttributes().getSimpleBase());
-            Assert.assertEquals(expected.getBaseAttributes().getName(), received.getBaseAttributes().getName());
-            Assert.assertEquals(expected.getBaseAttributes().isBot(), received.getBaseAttributes().isBot());
-            Assert.assertEquals(expected.getBaseAttributes().isAbandoned(), received.getBaseAttributes().isAbandoned());
+            List<SimpleBase> alliances1 = new ArrayList<>(expected.getBaseAttributes().getAlliances());
+            List<SimpleBase> alliances2 = new ArrayList<>(received.getBaseAttributes().getAlliances());
+            alliances1.removeAll(alliances2);
+            return expected.getType() == received.getType()
+                    && expected.getBaseAttributes().getSimpleBase().equals(received.getBaseAttributes().getSimpleBase())
+                    && expected.getBaseAttributes().getName().equals(received.getBaseAttributes().getName())
+                    && expected.getBaseAttributes().isBot() == received.getBaseAttributes().isBot()
+                    && expected.getBaseAttributes().isAbandoned() == received.getBaseAttributes().isAbandoned()
+                    && expected.getBaseAttributes().getAlliances().size() == received.getBaseAttributes().getAlliances().size()
+                    && alliances1.isEmpty();
         } else if (expectedPacket instanceof ChatMessage) {
             ChatMessage expected = (ChatMessage) expectedPacket;
             ChatMessage received = (ChatMessage) receivedPacket;
-            Assert.assertEquals(expected.getMessage(), received.getMessage());
-            Assert.assertEquals(expected.getName(), received.getName());
-            Assert.assertEquals(expected.getMessageId(), received.getMessageId());
+            return expected.getMessage().equals(received.getMessage())
+                    && expected.getName().equals(received.getName())
+                    && expected.getMessageId() == received.getMessageId();
         } else {
             Assert.fail("Unhandled packet: " + expectedPacket);
+            return false;
         }
     }
 
@@ -810,7 +831,8 @@ abstract public class AbstractServiceTest {
         setupComplexTerrain(dbPlanet2);
         setupComplexTerrain2(dbPlanet3);
         // User Guidance
-        setupMultipleLevels(dbPlanet1, dbPlanet2, dbPlanet3);
+        setupMultipleLevels(dbPlanet1);
+        setupMultipleLevels2(dbPlanet2);
         // Resource fields
         setupResource1(dbPlanet1, 10, new Rectangle(5000, 5000, 1000, 1000));
         setupResource1(dbPlanet2, 5, new Rectangle(5000, 5000, 1000, 1000));
@@ -1429,7 +1451,7 @@ abstract public class AbstractServiceTest {
         TEST_LEVEL_2_REAL_ID = dbLevel.getId();
     }
 
-    private void setupMultipleLevels(DbPlanet dbPlanet1, DbPlanet dbPlanet2, DbPlanet dbPlanet3) throws Exception {
+    private void setupMultipleLevels(DbPlanet dbPlanet) throws Exception {
         // Setup Level - Task - Tutorial
         DbTutorialConfig tut1 = createTutorial1();
         DbLevel dbSimLevel = userGuidanceService.getDbLevelCrud().createDbChild();
@@ -1445,7 +1467,7 @@ abstract public class AbstractServiceTest {
         TEST_LEVEL_TASK_1_1_SIMULATED_ID = dbSimLevelTask.getId();
 
         DbLevel dbLevel1 = userGuidanceService.getDbLevelCrud().createDbChild();
-        dbLevel1.setDbPlanet(dbPlanet1);
+        dbLevel1.setDbPlanet(dbPlanet);
         dbLevel1.setNumber(TEST_LEVEL_2_REAL);
         dbLevel1.setXp(220);
         setLimitation(dbLevel1);
@@ -1454,7 +1476,7 @@ abstract public class AbstractServiceTest {
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel1);
 
         DbLevel dbLevel2 = userGuidanceService.getDbLevelCrud().createDbChild();
-        dbLevel2.setDbPlanet(dbPlanet1);
+        dbLevel2.setDbPlanet(dbPlanet);
         dbLevel2.setNumber(TEST_LEVEL_3_REAL);
         setLimitation(dbLevel2);
         dbLevel2.setXp(400);
@@ -1474,7 +1496,7 @@ abstract public class AbstractServiceTest {
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel2);
 
         DbLevel dbLevel3 = userGuidanceService.getDbLevelCrud().createDbChild();
-        dbLevel3.setDbPlanet(dbPlanet1);
+        dbLevel3.setDbPlanet(dbPlanet);
         dbLevel3.setXp(Integer.MAX_VALUE);
         dbLevel3.setNumber(TEST_LEVEL_4_REAL);
         setLimitation(dbLevel3);
@@ -1495,6 +1517,18 @@ abstract public class AbstractServiceTest {
         TEST_LEVEL_TASK_1_4_REAL_ID = dbLevelTask5.getId();
         TEST_LEVEL_TASK_2_4_REAL_ID = dbLevelTask6.getId();
 
+        userGuidanceService.activateLevels();
+    }
+
+    private void setupMultipleLevels2(DbPlanet dbPlanet2) throws Exception {
+        DbLevel dbLevel5 = userGuidanceService.getDbLevelCrud().createDbChild();
+        dbLevel5.setDbPlanet(dbPlanet2);
+        dbLevel5.setNumber(TEST_LEVEL_5_REAL);
+        dbLevel5.setXp(220);
+        setLimitation(dbLevel5);
+        userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel5);
+
+        TEST_LEVEL_5_REAL_ID = dbLevel5.getId();
         userGuidanceService.activateLevels();
     }
 

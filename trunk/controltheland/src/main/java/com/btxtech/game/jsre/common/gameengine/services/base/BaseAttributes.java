@@ -23,26 +23,28 @@ import java.util.Set;
  * User: beat
  * Date: 24.08.2010
  * Time: 22:05:59
+ *
+ *
+ * See
+ * http://code.google.com/p/google-web-toolkit/issues/detail?id=3577
+ *
  */
 public class BaseAttributes implements Serializable {
     private SimpleBase simpleBase;
     private String name;
     private boolean bot = false;
     private boolean abandoned;
-    private Set<BaseAttributes> alliances = new HashSet<BaseAttributes>();
-    private int id; // Due to GWT deserializing problem
-
+    private Set<SimpleBase> alliances = new HashSet<SimpleBase>();
     /**
      * Used by GWT
      */
-    public BaseAttributes() {
+    BaseAttributes() {
     }
 
     public BaseAttributes(SimpleBase simpleBase, String name, boolean abandoned) {
         this.simpleBase = simpleBase;
         this.name = name;
         this.abandoned = abandoned;
-        id = simpleBase.getBaseId();
     }
 
     public String getName() {
@@ -73,52 +75,25 @@ public class BaseAttributes implements Serializable {
         this.abandoned = abandoned;
     }
 
-    public boolean isAlliance(BaseAttributes other) {
+    public boolean isAlliance(SimpleBase other) {
         return alliances.contains(other);
     }
 
-    public void setAlliances(Set<BaseAttributes> alliances) {
+    public void setAlliances(Set<SimpleBase> alliances) {
         this.alliances = alliances;
     }
 
-    public Set<BaseAttributes> getAlliances() {
+    public Set<SimpleBase> getAlliances() {
         return alliances;
-    }
-
-    public void resetAlliancesDueToStrangeGwtBehavior() {
-        // Contains does not work properly in GWT, so force reload of HasSet
-        alliances = new HashSet<BaseAttributes>(alliances);
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BaseAttributes)) return false;
-
-        BaseAttributes that = (BaseAttributes) o;
-
-        return id == that.id;
-
-    }
-
-    @Override
-    public int hashCode() {
-        return id;
     }
 
     @Override
     public String toString() {
         StringBuilder allianceString = new StringBuilder();
         if (alliances != null) {
-            for (BaseAttributes alliance : alliances) {
-                allianceString.append(alliance.getName());
-                allianceString.append("(");
-                allianceString.append(alliance.getSimpleBase().getBaseId());
-                allianceString.append(",");
-                allianceString.append(alliance.id);
-                allianceString.append(")");
-                allianceString.append(":");
+            for (SimpleBase alliance : alliances) {
+                allianceString.append(alliance.getBaseId());
+                allianceString.append(";");
             }
         }
         return "BaseAttributes{" +
@@ -127,7 +102,6 @@ public class BaseAttributes implements Serializable {
                 ", bot=" + bot +
                 ", abandoned=" + abandoned +
                 ", alliances=" + allianceString +
-                ", id=" + id +
                 '}';
     }
 }

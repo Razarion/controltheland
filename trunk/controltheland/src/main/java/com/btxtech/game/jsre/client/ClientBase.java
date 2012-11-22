@@ -195,11 +195,9 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     public void onBaseChangedPacket(BaseChangedPacket baseChangedPacket) {
         switch (baseChangedPacket.getType()) {
             case CHANGED:
-                baseChangedPacket.getBaseAttributes().resetAlliancesDueToStrangeGwtBehavior();
                 updateBase(baseChangedPacket.getBaseAttributes());
                 break;
             case CREATED:
-                baseChangedPacket.getBaseAttributes().resetAlliancesDueToStrangeGwtBehavior();
                 createBase(baseChangedPacket.getBaseAttributes());
                 break;
             case REMOVED:

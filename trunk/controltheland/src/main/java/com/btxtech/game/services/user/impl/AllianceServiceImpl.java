@@ -160,6 +160,12 @@ public class AllianceServiceImpl implements AllianceService {
     }
 
     @Override
+    public void onMakeBaseAbandoned(SimpleBase simpleBase) {
+        planetSystemService.getServerPlanetServices(simpleBase).getBaseService().setAlliances(simpleBase, new ArrayList<SimpleBase>());
+        planetSystemService.getServerPlanetServices(simpleBase).getBaseService().sendAlliancesChanged(simpleBase);
+    }
+
+    @Override
     public Collection<String> getAllAlliances() {
         User user = userService.getUser();
         if (user == null) {
@@ -190,7 +196,13 @@ public class AllianceServiceImpl implements AllianceService {
         Collection<SimpleBase> allianceBases = new ArrayList<>();
         for (User allianceUser : user.getAlliances()) {
             SimpleBase allianceBase = getSimpleBase(allianceUser);
-            if (allianceBase != null && planetSystemService.getServerPlanetServices(allianceBase).getBaseService().isAlive(allianceBase)) {
+            if(allianceBase == null) {
+                continue;
+            }
+            if(allianceBase.getPlanetId() != simpleBase.getPlanetId()) {
+                continue;
+            }
+            if (planetSystemService.getServerPlanetServices(allianceBase).getBaseService().isAlive(allianceBase)) {
                 allianceBases.add(allianceBase);
             }
         }
