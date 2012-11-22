@@ -317,4 +317,11 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
     protected PlanetServices getPlanetServices() {
         return planetServices;
     }
+
+    @Override
+    public void onAllianceBroken(Collection<SyncBaseItem> idleAttackItems) {
+        for (SyncBaseItem idleAttackItem : idleAttackItems) {
+            checkGuardingItemHasEnemiesInRange(idleAttackItem);
+        }
+    }
 }

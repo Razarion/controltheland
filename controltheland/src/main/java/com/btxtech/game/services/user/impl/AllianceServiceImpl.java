@@ -5,7 +5,6 @@ import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ServerPlanetServices;
-import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.AllianceService;
@@ -122,7 +121,23 @@ public class AllianceServiceImpl implements AllianceService {
         updateBaseService(partnerUser);
         sendAllianceChanged(user);
         sendAllianceChanged(partnerUser);
+        handleNewEnemies(user, partnerUser);
         sendMessage(partnerUser, "The user " + user.getUsername() + " has broken the alliance", false);
+    }
+
+    private void handleNewEnemies(User user1, User user2) {
+        SimpleBase simpleBase1 = getSimpleBase(user1);
+        if(simpleBase1 == null) {
+            return;
+        }
+        SimpleBase simpleBase2 = getSimpleBase(user2);
+        if(simpleBase2 == null) {
+            return;
+        }
+        if(simpleBase1.getPlanetId() != simpleBase2.getPlanetId()) {
+            return;
+        }
+        planetSystemService.getServerPlanetServices(simpleBase1).getItemService().onAllianceBroken(simpleBase1, simpleBase2);
     }
 
     @Override

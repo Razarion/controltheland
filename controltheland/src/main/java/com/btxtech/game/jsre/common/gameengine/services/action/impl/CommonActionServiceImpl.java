@@ -438,7 +438,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         }
     }
 
-    private boolean checkGuardingItemHasEnemiesInRange(SyncBaseItem guardingItem) {
+    protected boolean checkGuardingItemHasEnemiesInRange(SyncBaseItem guardingItem) {
         SyncBaseItem target = getPlanetServices().getItemService().getFirstEnemyItemInRange(guardingItem);
         if (target != null) {
             defend(guardingItem, target);

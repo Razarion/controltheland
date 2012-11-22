@@ -107,6 +107,11 @@ public class SyncWeapon extends SyncBaseAbility {
 
             SyncBaseItem targetItem = (SyncBaseItem) getPlanetServices().getItemService().getItem(target);
 
+            if(!getPlanetServices().getBaseService().isEnemy(getSyncBaseItem(), targetItem)) {
+                // May the alliance state has changed
+                return false;
+            }
+
             // Check if target has moved away
             if (targetPositionLastCheck + CHECK_DELTA < System.currentTimeMillis() && followTarget && getSyncBaseItem().hasSyncMovable() && isNewPathRecalculationAllowed()) {
                 if (targetPosition != null) {
@@ -206,7 +211,7 @@ public class SyncWeapon extends SyncBaseAbility {
     public void executeCommand(AttackCommand attackCommand) throws ItemDoesNotExistException {
         SyncBaseItem target = (SyncBaseItem) getPlanetServices().getItemService().getItem(attackCommand.getTarget());
         if (!getSyncBaseItem().isEnemy(target)) {
-            throw new IllegalArgumentException(getSyncBaseItem() + " can not attack friendly target: " + target);
+            throw new IllegalArgumentException("Can not attack friendly target. Own: " + getSyncBaseItem() + " target: " + target);
         }
 
         if (!isItemTypeAllowed(target)) {

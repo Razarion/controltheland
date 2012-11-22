@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.planet;
 
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -36,4 +37,6 @@ public interface ServerItemService extends com.btxtech.game.jsre.common.gameengi
     void killSyncItemIds(Collection<Id> itemsToKill);
 
     void restore(Collection<SyncBaseObject> syncBaseObjects);
+
+    void onAllianceBroken(SimpleBase simpleBase1, SimpleBase simpleBase2);
 }
