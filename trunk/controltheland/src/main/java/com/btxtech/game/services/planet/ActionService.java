@@ -16,9 +16,11 @@ package com.btxtech.game.services.planet;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -40,4 +42,6 @@ public interface ActionService extends CommonActionService, SyncItemListener {
     void activate();
 
     void deactivate();
+
+    void onAllianceBroken(Collection<SyncBaseItem> idleAttackItems);
 }

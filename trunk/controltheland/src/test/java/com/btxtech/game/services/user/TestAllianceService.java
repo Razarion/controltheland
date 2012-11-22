@@ -1,5 +1,6 @@
 package com.btxtech.game.services.user;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -92,7 +93,7 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpSession();
 
         assertNoMessagesInPackets(connectionServiceTestHelper, simpleBase1);
-        assertMessageInPackets(connectionServiceTestHelper,simpleBase2, "The user u1 has accepted your alliance");
+        assertMessageInPackets(connectionServiceTestHelper, simpleBase2, "The user u1 has accepted your alliance");
         List<ServerConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelper.getPacketEntriesToAllBases(BaseChangedPacket.class);
         Assert.assertEquals(2, packets.size());
         assertAlliancesInPacketToAll(packets, simpleBase1, "u2");
@@ -333,7 +334,7 @@ public class TestAllianceService extends AbstractServiceTest {
 
         packets = connectionServiceTestHelper.getPacketEntriesToAllBases(BaseChangedPacket.class);
         Assert.assertEquals(3, packets.size());
-        Assert.assertEquals(BaseChangedPacket.Type.CREATED, ((BaseChangedPacket)packets.get(0).getPacket()).getType());
+        Assert.assertEquals(BaseChangedPacket.Type.CREATED, ((BaseChangedPacket) packets.get(0).getPacket()).getType());
         Assert.assertEquals(simpleBase3, ((BaseChangedPacket) packets.get(0).getPacket()).getBaseAttributes().getSimpleBase());
         Assert.assertEquals(BaseChangedPacket.Type.CHANGED, ((BaseChangedPacket) packets.get(1).getPacket()).getType());
         Assert.assertEquals(BaseChangedPacket.Type.CHANGED, ((BaseChangedPacket) packets.get(2).getPacket()).getType());
@@ -551,10 +552,10 @@ public class TestAllianceService extends AbstractServiceTest {
 
         List<ServerConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelperP1.getPacketEntriesToAllBases(BaseChangedPacket.class);
         Assert.assertEquals(3, packets.size());
-        Assert.assertEquals("Base 1",(((BaseChangedPacket)packets.get(0).getPacket()).getBaseAttributes()).getName());
-        Assert.assertEquals(BaseChangedPacket.Type.CHANGED,(((BaseChangedPacket)packets.get(0).getPacket()).getType()));
-        Assert.assertTrue(getBaseChangedPacket(packets.subList(1,3), simpleBase1P1).getAlliances().isEmpty());
-        Assert.assertTrue(getBaseChangedPacket(packets.subList(1,3), simpleBase2P1).getAlliances().isEmpty());
+        Assert.assertEquals("Base 1", (((BaseChangedPacket) packets.get(0).getPacket()).getBaseAttributes()).getName());
+        Assert.assertEquals(BaseChangedPacket.Type.CHANGED, (((BaseChangedPacket) packets.get(0).getPacket()).getType()));
+        Assert.assertTrue(getBaseChangedPacket(packets.subList(1, 3), simpleBase1P1).getAlliances().isEmpty());
+        Assert.assertTrue(getBaseChangedPacket(packets.subList(1, 3), simpleBase2P1).getAlliances().isEmpty());
 
         // U1 Move to next planet
         beginHttpSession();
@@ -573,9 +574,9 @@ public class TestAllianceService extends AbstractServiceTest {
 
         packets = connectionServiceTestHelperP2.getPacketEntriesToAllBases(BaseChangedPacket.class);
         Assert.assertEquals(2, packets.size());
-        Assert.assertEquals(BaseChangedPacket.Type.CREATED, ((BaseChangedPacket)packets.get(0).getPacket()).getType());
-        Assert.assertEquals("u1p2", ((BaseChangedPacket)packets.get(0).getPacket()).getBaseAttributes().getName());
-        Assert.assertEquals(simpleBase1P2, ((BaseChangedPacket)packets.get(0).getPacket()).getBaseAttributes().getSimpleBase());
+        Assert.assertEquals(BaseChangedPacket.Type.CREATED, ((BaseChangedPacket) packets.get(0).getPacket()).getType());
+        Assert.assertEquals("u1p2", ((BaseChangedPacket) packets.get(0).getPacket()).getBaseAttributes().getName());
+        Assert.assertEquals(simpleBase1P2, ((BaseChangedPacket) packets.get(0).getPacket()).getBaseAttributes().getSimpleBase());
         Assert.assertEquals(BaseChangedPacket.Type.CHANGED, ((BaseChangedPacket) packets.get(1).getPacket()).getType());
         Assert.assertTrue(((BaseChangedPacket) packets.get(1).getPacket()).getBaseAttributes().getAlliances().isEmpty());
 
@@ -592,9 +593,9 @@ public class TestAllianceService extends AbstractServiceTest {
 
         packets = connectionServiceTestHelperP1.getPacketEntriesToAllBases(BaseChangedPacket.class);
         Assert.assertEquals(2, packets.size());
-        Assert.assertEquals("Base 2",(((BaseChangedPacket)packets.get(0).getPacket()).getBaseAttributes()).getName());
-        Assert.assertEquals(BaseChangedPacket.Type.CHANGED,(((BaseChangedPacket)packets.get(0).getPacket()).getType()));
-        Assert.assertTrue(getBaseChangedPacket(packets.subList(1,2), simpleBase2P1).getAlliances().isEmpty());
+        Assert.assertEquals("Base 2", (((BaseChangedPacket) packets.get(0).getPacket()).getBaseAttributes()).getName());
+        Assert.assertEquals(BaseChangedPacket.Type.CHANGED, (((BaseChangedPacket) packets.get(0).getPacket()).getType()));
+        Assert.assertTrue(getBaseChangedPacket(packets.subList(1, 2), simpleBase2P1).getAlliances().isEmpty());
 
         packets = connectionServiceTestHelperP2.getPacketEntriesToAllBases(BaseChangedPacket.class);
         Assert.assertEquals(1, packets.size());
@@ -616,19 +617,69 @@ public class TestAllianceService extends AbstractServiceTest {
 
         packets = connectionServiceTestHelperP2.getPacketEntriesToAllBases(BaseChangedPacket.class);
         Assert.assertEquals(3, packets.size());
-        Assert.assertEquals(BaseChangedPacket.Type.CREATED, ((BaseChangedPacket)packets.get(0).getPacket()).getType());
-        Assert.assertEquals("u2p1", ((BaseChangedPacket)packets.get(0).getPacket()).getBaseAttributes().getName());
-        Assert.assertEquals(simpleBase2P2, ((BaseChangedPacket)packets.get(0).getPacket()).getBaseAttributes().getSimpleBase());
-        Assert.assertEquals(1, getBaseChangedPacket(packets.subList(1,3), simpleBase1P2).getAlliances().size());
-        Assert.assertTrue(getBaseChangedPacket(packets.subList(1,3), simpleBase1P2).isAlliance(simpleBase2P2));
-        Assert.assertEquals(1, getBaseChangedPacket(packets.subList(1,3), simpleBase2P2).getAlliances().size());
-        Assert.assertTrue(getBaseChangedPacket(packets.subList(1,3), simpleBase2P2).isAlliance(simpleBase1P2));
+        Assert.assertEquals(BaseChangedPacket.Type.CREATED, ((BaseChangedPacket) packets.get(0).getPacket()).getType());
+        Assert.assertEquals("u2p1", ((BaseChangedPacket) packets.get(0).getPacket()).getBaseAttributes().getName());
+        Assert.assertEquals(simpleBase2P2, ((BaseChangedPacket) packets.get(0).getPacket()).getBaseAttributes().getSimpleBase());
+        Assert.assertEquals(1, getBaseChangedPacket(packets.subList(1, 3), simpleBase1P2).getAlliances().size());
+        Assert.assertTrue(getBaseChangedPacket(packets.subList(1, 3), simpleBase1P2).isAlliance(simpleBase2P2));
+        Assert.assertEquals(1, getBaseChangedPacket(packets.subList(1, 3), simpleBase2P2).getAlliances().size());
+        Assert.assertTrue(getBaseChangedPacket(packets.subList(1, 3), simpleBase2P2).isAlliance(simpleBase1P2));
+    }
+
+    @Test
+    @DirtiesContext
+    public void breakAllianceAndAttack() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("u1", "xxx", "xxx", "");
+        userService.login("u1", "xxx");
+        SimpleBase simpleBase1 = getMyBase();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("u2", "xxx", "xxx", "");
+        userService.login("u2", "xxx");
+        SimpleBase simpleBase2 = getMyBase();
+        sendMoveCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(2000, 2000));
+        waitForActionServiceDone();
+        allianceService.proposeAlliance(simpleBase1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("u1", "xxx");
+        allianceService.acceptAllianceOffer("u2");
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(300, 300), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        sendMoveCommand(getFirstSynItemId(TEST_ATTACK_ITEM_ID), new Index(1800, 2000));
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("u2", "xxx");
+        allianceService.breakAlliance("u1");
+        assertWholeItemCount(TEST_PLANET_1_ID, 4);
+        waitForActionServiceDone();
+        assertWholeItemCount(TEST_PLANET_1_ID, 3);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        Assert.assertFalse(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService().isAlive(simpleBase2));
     }
 
     private BaseAttributes getBaseChangedPacket(List<ServerConnectionServiceTestHelper.PacketEntry> packets, SimpleBase simpleBase) {
         for (ServerConnectionServiceTestHelper.PacketEntry packet : packets) {
-            if(((BaseChangedPacket)packet.getPacket()).getBaseAttributes().getSimpleBase().equals(simpleBase)) {
-                return ((BaseChangedPacket)packet.getPacket()).getBaseAttributes();
+            if (((BaseChangedPacket) packet.getPacket()).getBaseAttributes().getSimpleBase().equals(simpleBase)) {
+                return ((BaseChangedPacket) packet.getPacket()).getBaseAttributes();
             }
         }
         Assert.fail("No BaseAttributes in packet found for base: " + simpleBase);
@@ -679,10 +730,10 @@ public class TestAllianceService extends AbstractServiceTest {
     private void assertAlliancesInPacketToAll(List<ServerConnectionServiceTestHelper.PacketEntry> packets, SimpleBase simpleBase, String... allianceNames) {
         for (ServerConnectionServiceTestHelper.PacketEntry packet : packets) {
             BaseChangedPacket baseChangedPacket = (BaseChangedPacket) packet.getPacket();
-            if(!baseChangedPacket.getBaseAttributes().getSimpleBase().equals(simpleBase)) {
+            if (!baseChangedPacket.getBaseAttributes().getSimpleBase().equals(simpleBase)) {
                 continue;
             }
-            if(baseChangedPacket.getType() != BaseChangedPacket.Type.CHANGED) {
+            if (baseChangedPacket.getType() != BaseChangedPacket.Type.CHANGED) {
                 continue;
             }
             Assert.assertEquals(allianceNames.length, baseChangedPacket.getBaseAttributes().getAlliances().size());
@@ -701,7 +752,7 @@ public class TestAllianceService extends AbstractServiceTest {
         List<ServerConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelper.getPacketEntriesToAllBases(BaseChangedPacket.class);
         for (ServerConnectionServiceTestHelper.PacketEntry packet : packets) {
             BaseChangedPacket baseChangedPacket = (BaseChangedPacket) packet.getPacket();
-            if(baseChangedPacket.getType() == BaseChangedPacket.Type.REMOVED) {
+            if (baseChangedPacket.getType() == BaseChangedPacket.Type.REMOVED) {
                 Assert.assertEquals(deletedBase, baseChangedPacket.getBaseAttributes().getSimpleBase());
                 return;
             }

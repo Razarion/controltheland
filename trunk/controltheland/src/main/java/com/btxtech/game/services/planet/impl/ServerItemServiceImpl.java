@@ -301,4 +301,38 @@ public class ServerItemServiceImpl extends AbstractItemService implements Server
     protected GlobalServices getGlobalServices() {
         return serverGlobalServices;
     }
+
+    @Override
+    public void onAllianceBroken(final SimpleBase simpleBase1, final SimpleBase simpleBase2) {
+        final Collection<SyncBaseItem> idleAttackItems = new ArrayList<>();
+        iterateOverItems(false, false, null, new ItemHandler<Void>() {
+            @Override
+            public Void handleItem(SyncItem syncItem) {
+                if (!(syncItem instanceof SyncBaseItem)) {
+                    return null;
+                }
+                SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
+
+                if(!syncBaseItem.hasSyncWeapon()) {
+                    return null;
+                }
+
+                if(!syncBaseItem.isIdle()) {
+                    return null;
+                }
+
+                if(syncBaseItem.getBase().equals(simpleBase1)) {
+                    idleAttackItems.add(syncBaseItem);
+                }
+
+                if(syncBaseItem.getBase().equals(simpleBase2)) {
+                    idleAttackItems.add(syncBaseItem);
+                }
+
+                return null;
+            }
+        });
+
+        serverPlanetServices.getActionService().onAllianceBroken(idleAttackItems);
+    }
 }
