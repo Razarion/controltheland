@@ -94,6 +94,7 @@ public class PathUserType implements UserType {
         }
 
         StringBuilder builder = new StringBuilder();
+        path = new ArrayList<>(path); // Prevent concurrent modification exception
         for (Index index : path) {
             builder.append(index.getX());
             builder.append(X_Y_DELIMITER);
