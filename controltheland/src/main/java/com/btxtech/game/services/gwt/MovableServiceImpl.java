@@ -65,8 +65,6 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -109,8 +107,6 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     private ClipService clipService;
     @Autowired
     private PlanetSystemService planetSystemService;
-
-    private Log log = LogFactory.getLog(MovableServiceImpl.class);
 
     @Override
     public void sendCommands(List<BaseCommand> baseCommands) {

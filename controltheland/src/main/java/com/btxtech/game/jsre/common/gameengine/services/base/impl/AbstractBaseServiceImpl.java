@@ -84,7 +84,6 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         synchronized (bases) {
             bases.clear();
             for (BaseAttributes baseAttributes : allBaseAttributes) {
-                baseAttributes.resetAlliancesDueToStrangeGwtBehavior();
                 bases.put(baseAttributes.getSimpleBase(), baseAttributes);
             }
         }
@@ -144,16 +143,7 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         if (baseAttributes == null) {
             throw new IllegalArgumentException(this + " base does not exits " + simpleBase);
         }
-        Set<BaseAttributes> allianceSet = new HashSet<BaseAttributes>();
-        for (SimpleBase alliance : alliances) {
-            BaseAttributes allianceBase = getBaseAttributes(alliance);
-            if (allianceBase != null) {
-                allianceSet.add(allianceBase);
-            } else {
-                log.warning("Base does not exist: " + alliance);
-            }
-        }
-        baseAttributes.setAlliances(allianceSet);
+        baseAttributes.setAlliances(new HashSet<SimpleBase>(alliances));
     }
 
     protected void setBaseAbandoned(SimpleBase simpleBase, boolean abandoned) {
@@ -245,6 +235,6 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         }
 
         return !(baseAttributes1.isBot() && baseAttributes2.isBot())
-                && (baseAttributes1.isBot() != baseAttributes2.isBot() || !baseAttributes1.isAlliance(baseAttributes2));
+                && (baseAttributes1.isBot() != baseAttributes2.isBot() || !baseAttributes1.isAlliance(baseAttributes2.getSimpleBase()));
     }
 }

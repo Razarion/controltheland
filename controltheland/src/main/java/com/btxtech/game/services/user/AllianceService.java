@@ -26,4 +26,6 @@ public interface AllianceService {
     Collection<String> getAllAlliances();
 
     void onBaseCreatedOrDeleted(String userName);
+
+    void onMakeBaseAbandoned(SimpleBase simpleBase);
 }

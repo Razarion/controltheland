@@ -142,6 +142,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         planetServices.getConnectionService().closeConnection(base.getSimpleBase(), NoConnectionException.Type.BASE_SURRENDERED);
         makeBaseAbandoned(base);
         if (userState.isRegistered()) {
+            serverGlobalServices.getAllianceService().onMakeBaseAbandoned(base.getSimpleBase());
             serverGlobalServices.getAllianceService().onBaseCreatedOrDeleted(userState.getUser());
         }
     }
@@ -427,7 +428,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             BaseChangedPacket baseChangedPacket = new BaseChangedPacket();
             baseChangedPacket.setType(BaseChangedPacket.Type.CHANGED);
             baseChangedPacket.setBaseAttributes(baseAttributes);
-            planetServices.getConnectionService().sendPacket(simpleBase, baseChangedPacket);
+            planetServices.getConnectionService().sendPacket(baseChangedPacket);
         } else {
             log.error("Base does not exist: " + simpleBase);
         }
