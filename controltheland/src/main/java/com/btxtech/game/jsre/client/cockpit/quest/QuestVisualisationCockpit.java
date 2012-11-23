@@ -2,6 +2,7 @@ package com.btxtech.game.jsre.client.cockpit.quest;
 
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
+import com.btxtech.game.jsre.client.cockpit.MinimizeButton;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestDialog;
@@ -35,6 +36,7 @@ public class QuestVisualisationCockpit extends Composite {
     @UiField
     CheckBox visualiseCheckBox;
     private QuestVisualisationPanel questVisualisationPanel;
+    private MinimizeButton minimizeButton = new MinimizeButton(true);
     private static Logger log = Logger.getLogger(QuestVisualisationCockpit.class.getName());
 
     interface QuestVisualisationCockpitUiBinder extends UiBinder<Widget, QuestVisualisationCockpit> {
@@ -45,6 +47,7 @@ public class QuestVisualisationCockpit extends Composite {
      */
     private QuestVisualisationCockpit() {
         initWidget(uiBinder.createAndBindUi(this));
+        minimizeButton.addWidgetToHide(this);
         QuestVisualtsationModel.getInstance().setListener(this);
         questDialogButton.setStyleName("singleButton");
     }
@@ -60,6 +63,12 @@ public class QuestVisualisationCockpit extends Composite {
         getElement().getStyle().clearLeft();
         getElement().getStyle().setTop(0, Style.Unit.PX);
         getElement().getStyle().setRight(0, Style.Unit.PX);
+        parent.add(minimizeButton, 0, 0);
+        minimizeButton.getElement().getStyle().setZIndex(Constants.Z_INDEX_SIDE_COCKPIT_MINIMIZE_BUTTON);
+        minimizeButton.getElement().getStyle().clearBottom();
+        minimizeButton.getElement().getStyle().clearLeft();
+        minimizeButton.getElement().getStyle().setTop(0, Style.Unit.PX);
+        minimizeButton.getElement().getStyle().setRight(0, Style.Unit.PX);
     }
 
     @UiHandler("questDialogButton")
@@ -83,6 +92,7 @@ public class QuestVisualisationCockpit extends Composite {
             mainPanel.setWidget(questVisualisationPanel);
             titleLabel.setText(questInfo.getTitle());
         }
+        minimizeButton.maximize();
         visualiseCheckBox.setValue(true);
         QuestVisualtsationModel.getInstance().setShowInGameVisualisation(true);
         questDialogButton.setVisible(Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE);

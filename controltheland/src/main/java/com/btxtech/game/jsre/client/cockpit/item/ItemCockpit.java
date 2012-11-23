@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.cockpit.Group;
+import com.btxtech.game.jsre.client.cockpit.MinimizeButton;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
 import com.btxtech.game.jsre.client.common.Constants;
@@ -40,6 +41,7 @@ public class ItemCockpit extends Composite implements SelectionListener {
     private static final ItemCockpit INSTANCE = new ItemCockpit();
     private boolean isActive = false;
     private BuildupItemPanel buildupItemPanel;
+    private MinimizeButton minimizeButton = new MinimizeButton(false);
 
     interface ItemCockpitUiBinder extends UiBinder<Widget, ItemCockpit> {
     }
@@ -53,16 +55,21 @@ public class ItemCockpit extends Composite implements SelectionListener {
      */
     private ItemCockpit() {
         initWidget(uiBinder.createAndBindUi(this));
+        minimizeButton.addWidgetToHide(this);
     }
 
     public void addToParentAndRegister(AbsolutePanel parentPanel) {
         if (Connection.getInstance().getGameEngineMode() != GameEngineMode.PLAYBACK) {
             SelectionHandler.getInstance().addSelectionListener(this);
             parentPanel.add(this, 10, 0);
-            setVisible(false);
             getElement().getStyle().setZIndex(Constants.Z_INDEX_ITEM_COCKPIT);
             getElement().getStyle().clearTop();
             getElement().getStyle().setBottom(10, Style.Unit.PX);
+            parentPanel.add(minimizeButton, 10, 0);
+            minimizeButton.setZIndex(Constants.Z_INDEX_ITEM_COCKPIT_MINIMIZE_BUTTON);
+            minimizeButton.getElement().getStyle().clearTop();
+            minimizeButton.getElement().getStyle().setBottom(10, Style.Unit.PX);
+            showPanel(false);
         }
     }
 
@@ -121,10 +128,11 @@ public class ItemCockpit extends Composite implements SelectionListener {
 
     @Override
     public void onTargetSelectionChanged(SyncItem selection) {
+        minimizeButton.maximize();
         cleanPanels();
         infoPanel.setWidget(new OtherInfoPanel(selection));
         isActive = true;
-        setVisible(true);
+        showPanel(true);
         ClientUserTracker.getInstance().onDialogAppears(this, "ItemCockpit");
     }
 
@@ -134,12 +142,13 @@ public class ItemCockpit extends Composite implements SelectionListener {
         if (isActive) {
             ClientUserTracker.getInstance().onDialogDisappears(this);
             isActive = false;
-            setVisible(false);
+            showPanel(false);
         }
     }
 
     @Override
     public void onOwnSelectionChanged(Group selectedGroup) {
+        minimizeButton.maximize();
         cleanPanels();
         if (selectedGroup.getCount() == 1) {
             activeOwnSingle(selectedGroup.getFirst());
@@ -152,7 +161,7 @@ public class ItemCockpit extends Composite implements SelectionListener {
             }
         }
         isActive = true;
-        setVisible(true);
+        showPanel(true);
         ClientUserTracker.getInstance().onDialogAppears(this, "ItemCockpit");
     }
 
@@ -167,4 +176,8 @@ public class ItemCockpit extends Composite implements SelectionListener {
         return new Rectangle(getAbsoluteLeft(), getAbsoluteTop(), getOffsetWidth(), getOffsetHeight()).contains(new Index(x, y));
     }
 
+    private void showPanel(boolean visible) {
+        setVisible(visible);
+        minimizeButton.setVisible(visible);
+    }
 }

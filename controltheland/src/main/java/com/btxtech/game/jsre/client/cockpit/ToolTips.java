@@ -24,6 +24,8 @@ public class ToolTips {
     public static final String TOOL_TIP_MUTE = "Mute sound";
     public static final String TOOL_TIP_TERMINAL = "Open your terminal page";
     public static final String TOOL_TIP_HIGH_SCORE = "Open the highscore page";
+    public static final String TOOL_TIP_MINIMIZE = "Minimize";
+    public static final String TOOL_TIP_MAXIMIZE = "Maximize";
     // radar
     public static final String TOOL_TIP_ZOOM_IN = "Zoom in";
     public static final String TOOL_TIP_ZOOM_OUT = "Zoom out";
