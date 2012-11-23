@@ -66,8 +66,7 @@ public class GameTipManager {
         this.currentTaskIndex = currentTaskIndex;
         AbstractTipTask currentTipTask = tasks.get(this.currentTaskIndex);
         currentTipTask.start();
-        GameTipVisualization visualization = gameTipVisualization = currentTipTask.createInGameTip();
-        startVisualization(visualization);
+        startVisualization(currentTipTask.createInGameTip());
     }
 
     public GameTipVisualization getGameTipVisualization() {

@@ -53,16 +53,18 @@ public class Constants {
 
     // zIndex
     public static final int Z_INDEX_STARTUP_SCREEN = 100; // Fix coded in Game.html
-    public static final int Z_INDEX_TIP = 13;
-    public static final int Z_INDEX_DIALOG = 12;
-    public static final int Z_INDEX_TIP_GAME_OVERLAY = 11;
-    public static final int Z_INDEX_GAME_OVERLAY = 10;
-    public static final int Z_INDEX_INFORMATION_COCKPIT = 9;
-    public static final int Z_INDEX_GROUP_SELECTION_FRAME = 8;
-    public static final int Z_INDEX_SPEECH_BUBBLE = 7;
-    public static final int Z_INDEX_PLACEABLE_PREVIEW = 6;
-    public static final int Z_INDEX_ITEM_COCKPIT = 5;
-    public static final int Z_INDEX_CHAT_COCKPIT = 4;
+    public static final int Z_INDEX_TIP = 15;
+    public static final int Z_INDEX_DIALOG = 14;
+    public static final int Z_INDEX_TIP_GAME_OVERLAY = 13;
+    public static final int Z_INDEX_GAME_OVERLAY = 12;
+    public static final int Z_INDEX_INFORMATION_COCKPIT = 11;
+    public static final int Z_INDEX_GROUP_SELECTION_FRAME = 10;
+    public static final int Z_INDEX_SPEECH_BUBBLE = 9;
+    public static final int Z_INDEX_PLACEABLE_PREVIEW = 8;
+    public static final int Z_INDEX_ITEM_COCKPIT_MINIMIZE_BUTTON = 7;
+    public static final int Z_INDEX_ITEM_COCKPIT = 6;
+    public static final int Z_INDEX_CHAT_COCKPIT = 5;
+    public static final int Z_INDEX_SIDE_COCKPIT_MINIMIZE_BUTTON = 4;
     public static final int Z_INDEX_SIDE_COCKPIT = 3;
     public static final int Z_INDEX_TERRAIN = 2;
     public static final int Z_INDEX_HIDDEN = 1;

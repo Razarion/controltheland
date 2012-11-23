@@ -48,6 +48,9 @@ public class SideCockpit {
     // RealGame or Mission panel
     private static final int REAL_GAME_MISSION_X = 2;
     private static final int REAL_GAME_MISSION_Y = 4;
+    // Minimize button
+    private static final int MINIMIZE_X = 0;
+    private static final int MINIMIZE_Y = 218;
     // Background Panels
     private static final int MAIN_PANEL_W = 227;
     private static final int MAIN_PANEL_H = 240;
@@ -110,6 +113,7 @@ public class SideCockpit {
     private InformationCockpit informationCockpit;
     private SideCockpitRealGame sideCockpitRealGame;
     private SideCockpitMission sideCockpitMission;
+    private MinimizeButton minimizeButton = new MinimizeButton(false);
 
     public static SideCockpit getInstance() {
         return INSTANCE;
@@ -136,12 +140,14 @@ public class SideCockpit {
         mainPanel.getElement().getStyle().setCursor(Style.Cursor.DEFAULT);
         preventEvents(mainPanel);
         mainPanel.setPixelSize(MAIN_PANEL_W, MAIN_PANEL_H);
+        minimizeButton.addWidgetToHide(mainPanel);
 
         levelPanel = new AbsolutePanel();
         levelPanel.getElement().getStyle().setBackgroundImage("url(" + ImageHandler.getCockpitImageUrl("cockpit.png") + ")");
         levelPanel.getElement().getStyle().setProperty("backgroundPosition", "-" + Integer.toString(LEVEL_PANEL_X) + "px 0");
         preventEvents(levelPanel);
         levelPanel.setPixelSize(LEVEL_PANEL_W, LEVEL_PANEL_H);
+        minimizeButton.addWidgetToHide(levelPanel);
     }
 
     private void setupMoney() {
@@ -330,6 +336,8 @@ public class SideCockpit {
         parent.add(levelPanel, LEVEL_PANEL_X, 0);
         levelPanel.getElement().getStyle().setZIndex(Constants.Z_INDEX_SIDE_COCKPIT);
         informationCockpit.setPatent(parent);
+        parent.add(minimizeButton, MINIMIZE_X, MINIMIZE_Y);
+        minimizeButton.setZIndex(Constants.Z_INDEX_SIDE_COCKPIT_MINIMIZE_BUTTON);
     }
 
     private void preventEvents(Widget widget) {
@@ -355,6 +363,7 @@ public class SideCockpit {
     }
 
     public void initMission(SimulationInfo simulationInfo) {
+        minimizeButton.maximize();
         if (sideCockpitRealGame != null) {
             levelPanel.remove(sideCockpitRealGame);
             sideCockpitRealGame = null;
@@ -367,6 +376,7 @@ public class SideCockpit {
     }
 
     public void initRealGame(RealGameInfo realGameInfo) {
+        minimizeButton.maximize();
         if (sideCockpitMission != null) {
             levelPanel.remove(sideCockpitMission);
             sideCockpitMission = null;
