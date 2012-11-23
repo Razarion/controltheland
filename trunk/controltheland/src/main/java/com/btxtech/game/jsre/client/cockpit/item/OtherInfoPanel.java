@@ -2,6 +2,7 @@ package com.btxtech.game.jsre.client.cockpit.item;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -51,7 +52,11 @@ public class OtherInfoPanel extends Composite {
         image = ImageHandler.getItemTypeImage(syncItem.getItemType(), 50, 50);
         initWidget(uiBinder.createAndBindUi(this));
         GwtCommon.preventDragImage(image);
-        itemTypeName.setText(syncItem.getItemType().getName());
+        if (Game.isDebug()) {
+            itemTypeName.setText(syncItem.getItemType().getName() + " {" + syncItem.getId() + "}");
+        } else {
+            itemTypeName.setText(syncItem.getItemType().getName());
+        }
         itemTypeDescr.setHTML(syncItem.getItemType().getDescription());
         offerAlliance.setVisible(false);
         friendImage.setVisible(false);
