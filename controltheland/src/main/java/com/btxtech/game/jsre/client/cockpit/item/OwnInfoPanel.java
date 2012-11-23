@@ -25,20 +25,25 @@ public class OwnInfoPanel extends Composite {
     Label itemTypeName;
     @UiField
     HTML itemTypeDescr;
-    @UiField Label countLabel;
+    @UiField
+    Label countLabel;
 
     interface OwnInfoPanelUiBinder extends UiBinder<Widget, OwnInfoPanel> {
     }
 
-    public OwnInfoPanel(BaseItemType baseItemType, int count) {
+    public OwnInfoPanel(BaseItemType baseItemType, int count, String debugInfo) {
         image = ImageHandler.getItemTypeImage(baseItemType, 50, 50);
         initWidget(uiBinder.createAndBindUi(this));
-        itemTypeName.setText(baseItemType.getName());
+        if (debugInfo != null) {
+            itemTypeName.setText(baseItemType.getName() + " " + debugInfo);
+        } else {
+            itemTypeName.setText(baseItemType.getName());
+        }
         itemTypeDescr.setHTML(baseItemType.getDescription());
-        if(count > 1) {
+        if (count > 1) {
             countLabel.setText(Integer.toString(count));
-        }else {
-            countLabel.setVisible(false); 
+        } else {
+            countLabel.setVisible(false);
         }
         GwtCommon.preventDragImage(image);
     }

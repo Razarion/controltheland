@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.client.cockpit.item;
 
 import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
@@ -66,7 +67,11 @@ public class ItemCockpit extends Composite implements SelectionListener {
     }
 
     private void activeOwnSingle(SyncBaseItem syncBaseItem) {
-        infoPanel.setWidget(new OwnInfoPanel(syncBaseItem.getBaseItemType(), 1));
+        String debugInfo = null;
+        if (Game.isDebug()) {
+            debugInfo = "{" + syncBaseItem.getId() + "}";
+        }
+        infoPanel.setWidget(new OwnInfoPanel(syncBaseItem.getBaseItemType(), 1, debugInfo));
         if (SpecialFunctionPanel.hasSpecialFuntion(syncBaseItem)) {
             specialFunctionPanel.setWidget(new SpecialFunctionPanel(syncBaseItem));
             specialFunctionPanel.setVisible(true);
@@ -80,7 +85,7 @@ public class ItemCockpit extends Composite implements SelectionListener {
     }
 
     private void activeOwnMultiSameType(BaseItemType baseItemType, Group group) {
-        infoPanel.setWidget(new OwnInfoPanel(baseItemType, group.getCount()));
+        infoPanel.setWidget(new OwnInfoPanel(baseItemType, group.getCount(), null));
         if (baseItemType.getFactoryType() != null || baseItemType.getBuilderType() != null) {
             buildupItemPanel = new BuildupItemPanel();
             buildupItemPanel.display(group);
