@@ -316,7 +316,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUser(SimpleBase simpleBase) {
-        if(simpleBase == null) {
+        if (simpleBase == null) {
             return null;
         }
         UserState userState = planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getUserState(simpleBase);
@@ -487,6 +487,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserState createUserState(String userName) {
+        if (userName != null) {
+            synchronized (userStates) {
+                for (UserState userState : userStates) {
+                    if (userState.getUser() != null && userState.getUser().equals(userName)) {
+                        throw new IllegalArgumentException("User already has a user state: " + userName);
+                    }
+                }
+            }
+        }
         UserState userState = new UserState();
         synchronized (userStates) {
             userStates.add(userState);
