@@ -93,6 +93,7 @@ public class DbHistoryElement implements Serializable {
     private Integer targetBaseId;
     private String targetBaseName;
     private String itemTypeName;
+    private Integer itemTypeId;
     private String levelName;
     private String levelTaskName;
     @Index(name = "GAME_HISTORY_INDEX_SESSION")
@@ -130,6 +131,7 @@ public class DbHistoryElement implements Serializable {
         targetBaseId = targetBase != null ? targetBase.getBaseId() : null;
         targetBaseName = targetBase != null ? planetSystemService.getServerPlanetServices(targetBase).getBaseService().getBaseName(targetBase) : null;
         itemTypeName = syncItem != null ? syncItem.getItemType().getName() : null;
+        itemTypeId =  syncItem != null ? syncItem.getId().getId() : null;
         levelName = level != null ? level.getName() : null;
         levelTaskName = levelTask != null ? levelTask.getName() : null;
         this.source = source;
@@ -168,6 +170,10 @@ public class DbHistoryElement implements Serializable {
 
     public String getItemTypeName() {
         return itemTypeName;
+    }
+
+    public Integer getItemTypeId() {
+        return itemTypeId;
     }
 
     public String getLevelName() {
