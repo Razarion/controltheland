@@ -1,11 +1,12 @@
 package com.btxtech.game.services.gwt;
 
-import com.google.gwt.logging.server.RemoteLoggingServiceUtil;
+import com.btxtech.game.services.user.UserService;
 import com.google.gwt.logging.server.StackTraceDeobfuscator;
 import com.google.gwt.logging.shared.RemoteLoggingService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -18,12 +19,10 @@ import java.util.logging.LogRecord;
  */
 public class ExtendedRemoteLoggingServiceImpl extends RemoteServiceServlet implements RemoteLoggingService {
     private static final String SYMBOL_PARAMETER_MAP = "symbolMapsDirectory";
+    @Autowired
+    private UserService userService;
     private Log log = LogFactory.getLog(ExtendedRemoteLoggingServiceImpl.class);
-
-    // No deobfuscator by default
     private static StackTraceDeobfuscator deobfuscator = null;
-    private static String loggerNameOverride = null;
-
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -43,26 +42,19 @@ public class ExtendedRemoteLoggingServiceImpl extends RemoteServiceServlet imple
         String strongName = getPermutationStrongName();
         try {
             log.error("-----------------ExtendedRemoteLoggingServiceImpl-----------------");
+            log.error("Thread: " + Thread.currentThread().getName());
             log.error("User Agent: " + perThreadRequest.get().getHeader("user-agent"));
             log.error("Session Id: " + perThreadRequest.get().getSession().getId());
-            RemoteLoggingServiceUtil.logOnServer(lr, strongName, deobfuscator, loggerNameOverride);
-        } catch (RemoteLoggingServiceUtil.RemoteLoggingException e) {
+            log.error("User:" + (userService.getUserState().getUser() != null ? userService.getUserState().getUser() : "unregistered"));
+            if (deobfuscator != null) {
+                lr = deobfuscator.deobfuscateLogRecord(lr, strongName);
+            }
+            log.error(lr.getMessage(), lr.getThrown());
+        } catch (Exception e) {
             log.error("Remote logging failed", e);
             return "Remote logging failed, check stack trace for details.";
         }
         return null;
-    }
-
-    /**
-     * By default, messages are logged to a logger that has the same name as
-     * the logger that created them on the client. If you want to log all messages
-     * from the client to a logger with another name, you can set the override
-     * using this method.
-     *
-     * @param override loggerNameOverride
-     */
-    public void setLoggerNameOverride(String override) {
-        loggerNameOverride = override;
     }
 
     /**
