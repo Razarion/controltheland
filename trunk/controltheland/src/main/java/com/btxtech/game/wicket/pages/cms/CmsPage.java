@@ -136,7 +136,6 @@ public class CmsPage extends WebPage implements IHeaderContributor {
             form.add(cmsUiService.getRootComponent(dbPage, "content", contentContext));
             add(new DisplayPageViewLink("componentTree", this));
         } catch (Exception e) {
-            log.error("Error displaying CMS page. PageParameters: " + pageParameters);
             throw new RuntimeException(e);
         }
     }
