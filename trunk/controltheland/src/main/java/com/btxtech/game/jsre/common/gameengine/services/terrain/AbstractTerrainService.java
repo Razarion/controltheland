@@ -35,44 +35,7 @@ public interface AbstractTerrainService {
 
     void addTerrainListener(TerrainListener terrainListener);
 
-    @Deprecated
-    Index getTerrainTileIndexForAbsPosition(int x, int y);
-
-    @Deprecated
-    int getTerrainTileIndexForAbsXPosition(int x);
-
-    @Deprecated
-    int getTerrainTileIndexForAbsYPosition(int y);
-
-    @Deprecated
-    Index getTerrainTileIndexForAbsPosition(Index absolutePos);
-
-    @Deprecated
-    Index getAbsolutIndexForTerrainTileIndex(Index tileIndex);
-
-    Index getTerrainTileIndexForAbsPositionRoundUp(Index absolutePos);
-
-    @Deprecated
-    Index getAbsolutIndexForTerrainTileIndex(int xTile, int yTile);
-
-    @Deprecated
-    int getAbsolutXForTerrainTile(int xTile);
-
-    @Deprecated
-    int getAbsolutYForTerrainTile(int yTile);
-
-    @Deprecated
-    Rectangle convertToTilePosition(Rectangle rectangle);
-
-    @Deprecated
-    Rectangle convertToTilePositionRoundUp(Rectangle rectangle);
-
-    @Deprecated
-    Rectangle convertToAbsolutePosition(Rectangle rectangle);
-
-    boolean isFreeZeroSize(Index point, ItemType itemType);
-
-    boolean isFree(Index middlePoint, int itemFreeWidth, int itemFreeHeight, Collection<SurfaceType> allowedSurfaces);
+    boolean isFree(Index middlePoint, int radius, Collection<SurfaceType> allowedSurfaces);
 
     boolean isFree(Index middlePoint, ItemType itemType);
 
