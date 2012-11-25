@@ -15,9 +15,9 @@ package com.btxtech.game.jsre.client.cockpit.radar;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainUtil;
 import com.google.gwt.animation.client.AnimationScheduler;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
@@ -125,7 +125,7 @@ public abstract class MiniMap implements MouseMoveHandler, MouseDownHandler, Mou
     }
 
     protected Rectangle getTileViewRectangle() {
-        return TerrainView.getInstance().getTerrainHandler().convertToTilePositionRoundUp(getAbsoluteViewRectangle());
+        return TerrainUtil.convertToTilePositionRoundUp(getAbsoluteViewRectangle());
     }
 
     protected int scaleAbsoluteRadarPosition(int absolute) {

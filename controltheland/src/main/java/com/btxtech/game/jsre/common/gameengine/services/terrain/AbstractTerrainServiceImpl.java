@@ -13,13 +13,11 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.terrain;
 
-import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.google.gwt.user.client.ui.Widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,11 +64,11 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
             startY = 0;
         }
         int endX = tileRect.getEndX();
-        if(endX > terrainSettings.getTileXCount()) {
+        if (endX > terrainSettings.getTileXCount()) {
             endX = terrainSettings.getTileXCount();
         }
         int endY = tileRect.getEndY();
-        if(endY > terrainSettings.getTileYCount()) {
+        if (endY > terrainSettings.getTileYCount()) {
             endY = terrainSettings.getTileYCount();
         }
 
@@ -109,7 +107,7 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
 
     public Collection<SurfaceType> getSurfaceTypeTilesInRegion(Rectangle absRectangle) {
         ArrayList<SurfaceType> surfaceTypes = new ArrayList<SurfaceType>();
-        Rectangle tileRect = convertToTilePositionRoundUp(absRectangle);
+        Rectangle tileRect = TerrainUtil.convertToTilePositionRoundUp(absRectangle);
 
         for (int x = tileRect.getX(); x < tileRect.getEndX(); x++) {
             for (int y = tileRect.getY(); y < tileRect.getEndY(); y++) {
@@ -121,99 +119,20 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
     }
 
     @Override
-    @Deprecated
-    public Index getTerrainTileIndexForAbsPosition(int x, int y) {
-        return new Index(x / Constants.TERRAIN_TILE_WIDTH, y / Constants.TERRAIN_TILE_HEIGHT);
-    }
-
-    @Override
-    @Deprecated
-    public int getTerrainTileIndexForAbsXPosition(int x) {
-        return x / Constants.TERRAIN_TILE_WIDTH;
-    }
-
-    @Override
-    @Deprecated
-    public int getTerrainTileIndexForAbsYPosition(int y) {
-        return y / Constants.TERRAIN_TILE_HEIGHT;
-    }
-
-    @Override
-    @Deprecated
-    public Index getTerrainTileIndexForAbsPosition(Index absolutePos) {
-        return new Index(absolutePos.getX() / Constants.TERRAIN_TILE_WIDTH, absolutePos.getY() / Constants.TERRAIN_TILE_HEIGHT);
-    }
-
-    @Override
-    @Deprecated
-    public Index getAbsolutIndexForTerrainTileIndex(Index tileIndex) {
-        return new Index(tileIndex.getX() * Constants.TERRAIN_TILE_WIDTH, tileIndex.getY() * Constants.TERRAIN_TILE_HEIGHT);
-    }
-
-    @Override
-    @Deprecated
-    public Index getTerrainTileIndexForAbsPositionRoundUp(Index absolutePos) {
-        return new Index((int) Math.ceil((double) absolutePos.getX() / (double) Constants.TERRAIN_TILE_WIDTH),
-                (int) Math.ceil((double) absolutePos.getY() / (double) Constants.TERRAIN_TILE_HEIGHT));
-    }
-
-    @Override
-    @Deprecated
-    public Index getAbsolutIndexForTerrainTileIndex(int xTile, int yTile) {
-        return new Index(xTile * Constants.TERRAIN_TILE_WIDTH, yTile * Constants.TERRAIN_TILE_HEIGHT);
-    }
-
-    @Override
-    @Deprecated
-    public int getAbsolutXForTerrainTile(int xTile) {
-        return xTile * Constants.TERRAIN_TILE_WIDTH;
-    }
-
-    @Override
-    @Deprecated
-    public int getAbsolutYForTerrainTile(int yTile) {
-        return yTile * Constants.TERRAIN_TILE_HEIGHT;
-    }
-
-    @Override
-    @Deprecated
-    public Rectangle convertToTilePosition(Rectangle rectangle) {
-        Index start = getTerrainTileIndexForAbsPosition(rectangle.getStart());
-        Index end = getTerrainTileIndexForAbsPosition(rectangle.getEnd());
-        return new Rectangle(start, end);
-    }
-
-    @Override
-    @Deprecated
-    public Rectangle convertToTilePositionRoundUp(Rectangle rectangle) {
-        Index start = getTerrainTileIndexForAbsPosition(rectangle.getStart());
-        Index end = getTerrainTileIndexForAbsPositionRoundUp(rectangle.getEnd());
-        return new Rectangle(start, end);
-    }
-
-    @Override
-    @Deprecated
-    public Rectangle convertToAbsolutePosition(Rectangle rectangle) {
-        Index start = getAbsolutIndexForTerrainTileIndex(rectangle.getStart());
-        Index end = getAbsolutIndexForTerrainTileIndex(rectangle.getEnd());
-        return new Rectangle(start, end);
-    }
-
-    @Override
-    public boolean isFree(Index middlePoint, int itemFreeWidth, int itemFreeHeight, Collection<SurfaceType> allowedSurfaces) {
-        int x = middlePoint.getX() - itemFreeWidth / 2;
-        int y = middlePoint.getY() - itemFreeHeight / 2;
+    public boolean isFree(Index middlePoint, int radius, Collection<SurfaceType> allowedSurfaces) {
+        int x = middlePoint.getX() - radius;
+        int y = middlePoint.getY() - radius;
 
         if (x < 0 || y < 0) {
             return false;
         }
-        if (x + itemFreeWidth > terrainSettings.getPlayFieldXSize()) {
+        if (x + radius * 2 > terrainSettings.getPlayFieldXSize()) {
             return false;
         }
-        if (y + itemFreeHeight > terrainSettings.getPlayFieldYSize()) {
+        if (y + radius * 2 > terrainSettings.getPlayFieldYSize()) {
             return false;
         }
-        Rectangle rectangle = new Rectangle(x, y, itemFreeWidth, itemFreeHeight);
+        Rectangle rectangle = new Rectangle(x, y, radius * 2, radius * 2);
         Collection<SurfaceType> surfaceTypes = getSurfaceTypeTilesInRegion(rectangle);
         return !surfaceTypes.isEmpty() && (allowedSurfaces == null || allowedSurfaces.containsAll(surfaceTypes));
     }
@@ -222,18 +141,12 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
     public boolean isFree(Index middlePoint, ItemType itemType) {
         return isFree(middlePoint,
                 itemType.getBoundingBox().getRadius(),
-                itemType.getBoundingBox().getRadius(),
                 itemType.getTerrainType().getSurfaceTypes());
     }
 
     @Override
-    public boolean isFreeZeroSize(Index point, ItemType itemType) {
-        return isFree(point, 1, 1, itemType.getTerrainType().getSurfaceTypes());
-    }
-
-    @Override
     public SurfaceType getSurfaceTypeAbsolute(Index absoluteIndex) {
-        Index tileIndex = getTerrainTileIndexForAbsPosition(absoluteIndex);
+        Index tileIndex = TerrainUtil.getTerrainTileIndexForAbsPosition(absoluteIndex);
         return getSurfaceType(tileIndex);
     }
 
@@ -250,16 +163,11 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
         }
     }
 
-    public Rectangle getRectangle4Widget(Widget widget) {
-        return new Rectangle(widget.getAbsoluteLeft(), widget.getAbsoluteTop(), widget.getOffsetWidth(), widget.getOffsetHeight());
-    }
-
     @Override
     public Index correctPosition(SyncItem syncItem, Index position) {
-        int x;
         int radius = syncItem.getSyncItemArea().getBoundingBox().getRadius();
         Index correctedPosition = correctPosition(radius, position);
-        if(!correctedPosition.equals(position)) {
+        if (!correctedPosition.equals(position)) {
             log.warning("Position for SyncItem has been corrected. Before: " + position + ". Corrected: " + correctedPosition + ". SyncItem: " + syncItem);
         }
         return correctedPosition;
@@ -363,7 +271,6 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
             }
         }
     }
-
 
 
 }

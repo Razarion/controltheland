@@ -21,7 +21,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 
-import java.awt.image.TileObserver;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -58,8 +57,8 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
             return path;
         }
 
-        Index tileStart = getServices().getTerrainService().getTerrainTileIndexForAbsPosition(start);
-        Index tileDestination = getServices().getTerrainService().getTerrainTileIndexForAbsPosition(destination);
+        Index tileStart = TerrainUtil.getTerrainTileIndexForAbsPosition(start);
+        Index tileDestination = TerrainUtil.getTerrainTileIndexForAbsPosition(destination);
 
         AStar aStar = AStar.findTilePath(getServices().getTerrainService().getTerrainTileField(), tileStart, tileDestination, terrainType.getSurfaceTypes());
         Path path = new Path(start, destination, aStar.isPathFound());
@@ -68,7 +67,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
             funnelAlgorithm = new FunnelAlgorithm(start, destination);
         } else {
             Index bestFitTile = aStar.getBestFitTile();
-            Index alternativeDestination = getServices().getTerrainService().getAbsolutIndexForTerrainTileIndex(bestFitTile);
+            Index alternativeDestination = TerrainUtil.getAbsolutIndexForTerrainTileIndex(bestFitTile);
             alternativeDestination.add(Constants.TERRAIN_TILE_WIDTH / 2, Constants.TERRAIN_TILE_HEIGHT / 2);
             path.setAlternativeDestination(alternativeDestination);
             funnelAlgorithm = new FunnelAlgorithm(start, alternativeDestination);
@@ -169,7 +168,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
             for (double angel = 0.0; angel < 2.0 * Math.PI; angel += (2.0 * Math.PI / STEPS_ANGEL)) {
                 Index point = origin.getSyncItemArea().getPosition().getPointFromAngelToNord(angel, distance + targetMinRange);
 
-                if (!getServices().getTerrainService().isFree(point, maxRadius, maxRadius, allowedSurfaces)) {
+                if (!getServices().getTerrainService().isFree(point, maxRadius, allowedSurfaces)) {
                     continue;
                 }
 

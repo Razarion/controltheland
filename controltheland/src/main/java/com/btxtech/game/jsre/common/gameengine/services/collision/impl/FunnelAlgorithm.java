@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,13 +35,13 @@ public class FunnelAlgorithm {
         int width = Constants.TERRAIN_TILE_WIDTH - 1;
         int height = Constants.TERRAIN_TILE_HEIGHT - 1;
 
-        tilePath.add(0, terrainService.getTerrainTileIndexForAbsPosition(start));
+        tilePath.add(0, TerrainUtil.getTerrainTileIndexForAbsPosition(start));
         //addStartPoints(tilePath.get(0), tilePath.get(1), terrainService, border1, border2);
-        tilePath.add(terrainService.getTerrainTileIndexForAbsPosition(destination));
+        tilePath.add(TerrainUtil.getTerrainTileIndexForAbsPosition(destination));
         Index previous = null;
         Index.Direction previousDirection = null;
         for (Index tile : tilePath) {
-            Index absTileStart = terrainService.getAbsolutIndexForTerrainTileIndex(tile);
+            Index absTileStart = TerrainUtil.getAbsolutIndexForTerrainTileIndex(tile);
             if (previous != null) {
                 Index.Direction newDirection = previous.getDirection(absTileStart);
                 if (previousDirection != null) {

@@ -2,6 +2,8 @@ package com.btxtech.game.services.terrain;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.items.ItemTypeService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImageBackground;
 import com.btxtech.game.services.AbstractServiceTest;
@@ -25,6 +27,8 @@ public class TestTerrainService extends AbstractServiceTest {
     private TerrainImageService terrainImageService;
     @Autowired
     private PlanetSystemService planetSystemService;
+    @Autowired
+    private ItemTypeService itemTypeService;
 
     @Test
     @DirtiesContext
@@ -34,13 +38,13 @@ public class TestTerrainService extends AbstractServiceTest {
 
         Collection<SurfaceType> allowedSurfaces = Arrays.asList(SurfaceType.LAND);
 
-        Assert.assertFalse(terrainService.isFree(new Index(49, 49), 100, 100, allowedSurfaces));
-        Assert.assertTrue(terrainService.isFree(new Index(50, 50), 100, 100, allowedSurfaces));
-        Assert.assertFalse(terrainService.isFree(new Index(1050, 50), 100, 100, allowedSurfaces));
+        Assert.assertFalse(terrainService.isFree(new Index(49, 49), 50, allowedSurfaces));
+        Assert.assertTrue(terrainService.isFree(new Index(50, 50), 50, allowedSurfaces));
+        Assert.assertFalse(terrainService.isFree(new Index(1050, 50), 50, allowedSurfaces));
 
-        Assert.assertTrue(terrainService.isFree(new Index(9950, 9950), 100, 100, allowedSurfaces));
-        Assert.assertFalse(terrainService.isFree(new Index(9951, 9950), 100, 100, allowedSurfaces));
-        Assert.assertFalse(terrainService.isFree(new Index(9950, 9951), 100, 100, allowedSurfaces));
+        Assert.assertTrue(terrainService.isFree(new Index(9950, 9950), 50, allowedSurfaces));
+        Assert.assertFalse(terrainService.isFree(new Index(9951, 9950), 50, allowedSurfaces));
+        Assert.assertFalse(terrainService.isFree(new Index(9950, 9951), 50, allowedSurfaces));
     }
 
     @Test
@@ -55,7 +59,7 @@ public class TestTerrainService extends AbstractServiceTest {
 
         for (int i = 100; i < 1500; i++) {
             Index index = new Index(i, 100);
-            Assert.assertEquals(!terrainImage1.adjoinsEclusive(new Rectangle(i - 50, 50, 100, 100)), terrainService.isFree(index, 100, 100, allowedSurfaces));
+            Assert.assertEquals(!terrainImage1.adjoinsEclusive(new Rectangle(i - 50, 50, 100, 100)), terrainService.isFree(index, 50, allowedSurfaces));
         }
     }
 
@@ -71,7 +75,7 @@ public class TestTerrainService extends AbstractServiceTest {
 
         for (int i = 100; i < 1500; i++) {
             Index index = new Index(100, i);
-            Assert.assertEquals(!terrainImage2.adjoinsEclusive(new Rectangle(50, i - 50, 100, 100)), terrainService.isFree(index, 100, 100, allowedSurfaces));
+            Assert.assertEquals(!terrainImage2.adjoinsEclusive(new Rectangle(50, i - 50, 100, 100)), terrainService.isFree(index, 50, allowedSurfaces));
         }
 
     }
@@ -191,6 +195,46 @@ public class TestTerrainService extends AbstractServiceTest {
         Assert.assertEquals("#000022", backgrounds.get(dbTerrainImage33.getId(), SurfaceType.LAND));
         Assert.assertEquals("#000023", backgrounds.get(dbTerrainImage33.getId(), SurfaceType.WATER_COAST));
         Assert.assertEquals("#FFFFFF", backgrounds.get(dbTerrainImage33.getId(), SurfaceType.LAND_COAST));
+    }
+
+    @Test
+    @DirtiesContext
+    public void testIsFreePlayFieldBorder() throws Exception {
+        configureSimplePlanetNoResources();
+        ServerTerrainService terrainService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getTerrainService();
+        ItemType radius80ItemType = itemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
+
+        Assert.assertFalse(terrainService.isFree(new Index(0, 0), radius80ItemType));
+        Assert.assertFalse(terrainService.isFree(new Index(0, 9999), radius80ItemType));
+        Assert.assertFalse(terrainService.isFree(new Index(9999, 0), radius80ItemType));
+        Assert.assertFalse(terrainService.isFree(new Index(9999, 9999), radius80ItemType));
+
+        Assert.assertFalse(terrainService.isFree(new Index(5000, 0), radius80ItemType));
+        Assert.assertFalse(terrainService.isFree(new Index(0, 5000), radius80ItemType));
+        Assert.assertFalse(terrainService.isFree(new Index(5000, 9999), radius80ItemType));
+        Assert.assertFalse(terrainService.isFree(new Index(9999, 5000), radius80ItemType));
+
+        Assert.assertFalse(terrainService.isFree(new Index(79, 79), radius80ItemType));
+        Assert.assertFalse(terrainService.isFree(new Index(80, 79), radius80ItemType));
+        Assert.assertFalse(terrainService.isFree(new Index(79, 80), radius80ItemType));
+        Assert.assertTrue(terrainService.isFree(new Index(80, 80), radius80ItemType));
+
+        Assert.assertFalse(terrainService.isFree(new Index(79, 9921), radius80ItemType));
+        Assert.assertFalse(terrainService.isFree(new Index(80, 9921), radius80ItemType));
+        Assert.assertFalse(terrainService.isFree(new Index(79, 9920), radius80ItemType));
+        Assert.assertTrue(terrainService.isFree(new Index(80, 9920), radius80ItemType));
+
+        Assert.assertFalse(terrainService.isFree(new Index(9921, 79), radius80ItemType));
+        Assert.assertFalse(terrainService.isFree(new Index(9920, 79), radius80ItemType));
+        Assert.assertFalse(terrainService.isFree(new Index(9921, 80), radius80ItemType));
+        Assert.assertTrue(terrainService.isFree(new Index(9920, 80), radius80ItemType));
+
+        Assert.assertFalse(terrainService.isFree(new Index(9921, 9921), radius80ItemType));
+        Assert.assertFalse(terrainService.isFree(new Index(9920, 9921), radius80ItemType));
+        Assert.assertFalse(terrainService.isFree(new Index(9921, 9920), radius80ItemType));
+        Assert.assertTrue(terrainService.isFree(new Index(9920, 9920), radius80ItemType));
+
+        Assert.assertTrue(terrainService.isFree(new Index(5000, 5000), radius80ItemType));
     }
 
 }
