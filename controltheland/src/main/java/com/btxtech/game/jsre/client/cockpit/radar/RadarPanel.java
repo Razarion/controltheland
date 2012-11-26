@@ -440,6 +440,10 @@ public class RadarPanel implements TerrainScrollListener {
     }
 
     private void moveToMiddle(int left, int top, int width, int height) {
+        if(miniTerrain == null || miniTerrain.getTerrainSettings() == null) {
+            // Browser-resize during startup
+            return;
+        }
         Index middle = new Index(left + width / 2, top + height / 2);
         if (!miniTerrain.getAbsoluteViewRectangle().contains(new Index(left, top))) {
             moveToMiddle(middle);
