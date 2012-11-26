@@ -16,7 +16,7 @@ package com.btxtech.game.controllers;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.services.common.ExceptionHandler;
-import com.btxtech.game.services.connection.Session;
+import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,22 +33,23 @@ public class LoadScriptCommunicationController implements Controller {
     public static final byte[] PIXEL_BYTES = org.apache.wicket.util.crypt.Base64.decodeBase64("R0lGODlhAQABAPAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==".getBytes());
     public static final String CONTENT_TYPE = "image/gif";
     @Autowired
-    private Session session;
-    @Autowired
     private UserTrackingService userTrackingService;
+    @Autowired
+    private UserService userService;
     private Log log = LogFactory.getLog(LoadScriptCommunicationController.class);
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         try {
             String message = httpServletRequest.getParameter(Constants.ERROR_KEY);
+            String pathName = httpServletRequest.getParameter(Constants.ERROR_PATH_NAME);
             if (ClientUserTracker.WINDOW_CLOSE.equals(message)) {
                 String startUuid = httpServletRequest.getParameter(ClientUserTracker.START_UUID);
                 userTrackingService.trackWindowsClosed(startUuid);
             } else {
                 log.error("------------------LoadScriptCommunication---------------------------------");
-                log.error("User Agent: " + session.getUserAgent());
-                log.error("Session Id: " + session.getSessionId());
+                ExceptionHandler.logParameters(log, userService);
+                log.error("Path name: " + pathName);
                 log.error(message);
             }
 

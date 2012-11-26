@@ -15,6 +15,7 @@ package com.btxtech.game.services.mgmt.impl;
 
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.mgmt.BackupSummary;
@@ -37,6 +38,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -84,6 +86,8 @@ public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
     private SessionFactory sessionFactory;
     @Autowired
     private PlanetSystemService planetSystemService;
+    @Autowired
+    private ApplicationContext applicationContext;
     private static Log log = LogFactory.getLog(MgmtServiceImpl.class);
     private StartupData startupData;
     private MemoryUsageContainer heapMemory = new MemoryUsageContainer(MEMORY_SAMPLE_SIZE);
@@ -279,6 +283,7 @@ public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
 
     @PostConstruct
     public void startup() {
+        ExceptionHandler.init(applicationContext);
         HibernateUtil.openSession4InternalCall(sessionFactory);
         try {
             if (!Utils.isTestModeStatic()) {
@@ -375,7 +380,7 @@ public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
             }
             isRunning = true;
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         } finally {
             HibernateUtil.closeSession4InternalCall(sessionFactory);
         }

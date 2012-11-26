@@ -17,6 +17,7 @@ package com.btxtech.game.services.user;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
+import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -84,4 +85,6 @@ public interface UserService extends UserDetailsService {
     InvalidNickName isNickNameValid(String nickName);
 
     UserState createUserState(String userName);
+
+    Session getSession4ExceptionHandler();
 }

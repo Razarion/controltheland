@@ -16,9 +16,9 @@ package com.btxtech.game.services.user.impl;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
-import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.connection.NoBaseException;
+import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
@@ -93,10 +93,6 @@ public class UserServiceImpl implements UserService {
 
     private final Collection<UserState> userStates = new ArrayList<>();
     private Log log = LogFactory.getLog(UserServiceImpl.class);
-
-    public UserServiceImpl() {
-        ExceptionHandler.init(this);
-    }
 
     @Override
     public boolean login(String userName, String password) throws AlreadyLoggedInException {
@@ -576,4 +572,14 @@ public class UserServiceImpl implements UserService {
         return dbPageAccessControls;
     }
 
+    @Override
+    public Session getSession4ExceptionHandler() {
+        try {
+            // To figure out if session is active
+            session.getCookieId();
+            return session;
+        } catch (Throwable t) {
+            return null;
+        }
+    }
 }

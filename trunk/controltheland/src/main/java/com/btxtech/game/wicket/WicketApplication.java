@@ -16,9 +16,10 @@ package com.btxtech.game.wicket;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.CommonJava;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.NoSuchChildException;
 import com.btxtech.game.services.common.Utils;
-import com.btxtech.game.services.connection.Session;
+import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsCssResource;
 import com.btxtech.game.wicket.pages.cms.CmsImageResource;
@@ -55,11 +56,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class WicketApplication extends AuthenticatedWebApplication implements ApplicationContextAware {
     @Autowired
-    private Session session;
+    private CmsUiService cmsUiService;
+    @Autowired
+    private UserService userService;
     private String configurationType;
     private Log log = LogFactory.getLog(WicketApplication.class);
-    @Autowired
-    private CmsUiService cmsUiService;
     private ApplicationContext applicationContext;
 
     @Override
@@ -127,11 +128,10 @@ public class WicketApplication extends AuthenticatedWebApplication implements Ap
         public final Page onRuntimeException(final Page cause, final RuntimeException e) {
             if (e instanceof PageExpiredException) {
                 log.error("------------------PageExpiredException---------------------------------");
-                log.error(e.getMessage());
+                ExceptionHandler.logParameters(log, userService);
                 log.error("URL: " + getRequest().getURL());
                 log.error("Page: " + cause);
-                log.error("User Agent: " + session.getUserAgent());
-                log.error("Session Id: " + session.getSessionId());
+                log.error(e.getMessage());
                 return cmsUiService.getPredefinedNotFound();
             } else if (CommonJava.getMostInnerThrowable(e) instanceof NoSuchChildException) {
                 printInfo(cause, e);
@@ -147,12 +147,9 @@ public class WicketApplication extends AuthenticatedWebApplication implements Ap
 
         private void printInfo(final Page cause, Exception e) {
             log.error("------------------CMS Exception---------------------------------");
+            ExceptionHandler.logParameters(log, userService);
             log.error("URL: " + getRequest().getURL());
             log.error("Page: " + cause);
-            log.error("User Agent: " + session.getUserAgent());
-            log.error("Session Id: " + session.getSessionId());
-            log.error("IP: " + session.getRequest().getRemoteAddr());
-            log.error("Referer: " + session.getRequest().getHeader("Referer"));
             log.error(CommonJava.getMostInnerThrowable(e));
         }
 

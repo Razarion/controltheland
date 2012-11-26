@@ -71,6 +71,7 @@ public class Constants {
 
     // Error
     public static final String ERROR_KEY = "e";
+    public static final String ERROR_PATH_NAME = "p";
 
     // Inventory Items
     public static final String INVENTORY_PATH = "/inventoryImg";
