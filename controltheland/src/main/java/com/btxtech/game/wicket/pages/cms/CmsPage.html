@@ -20,9 +20,10 @@
     <script type="text/javascript">
         window.onerror = handleError;
         function handleError(message, file, lineNumber) {
-            errorMessage = "InPageError(CmsPage):\n" + message + " File: " + file + " Linenumber: " + lineNumber;
+            errorMessage = encodeURI("InPageError(CmsPage):\n" + message + " File: " + file + " Linenumber: " + lineNumber);
+            pathname = encodeURI(window.location.pathname);
             var img = document.createElement('img');
-            img.src = '/spring/lsc?e=' + errorMessage + '&t=' + new Date().getTime();
+            img.src = '/spring/lsc?e=' + errorMessage + '&t=' + new Date().getTime() + '&p=' + pathname;
             document.body.appendChild(img);
             return true;
         }

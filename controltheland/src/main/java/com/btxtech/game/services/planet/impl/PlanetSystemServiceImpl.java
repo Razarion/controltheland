@@ -14,6 +14,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.common.ServerPlanetServices;
@@ -265,7 +266,7 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
             try {
                 createPlanet(dbPlanet);
             } catch (Exception e) {
-                log.error("Error during planet startup", e);
+                ExceptionHandler.handleException(e, "Error during planet startup");
             }
         }
     }

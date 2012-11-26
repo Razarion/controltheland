@@ -1,5 +1,6 @@
 package com.btxtech.game.services.gwt;
 
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.user.UserService;
 import com.google.gwt.logging.server.StackTraceDeobfuscator;
 import com.google.gwt.logging.shared.RemoteLoggingService;
@@ -45,10 +46,7 @@ public class ExtendedRemoteLoggingServiceImpl extends RemoteServiceServlet imple
         String strongName = getPermutationStrongName();
         try {
             log.error("-----------------ExtendedRemoteLoggingServiceImpl-----------------");
-            log.error("Thread: " + Thread.currentThread().getName());
-            log.error("User Agent: " + perThreadRequest.get().getHeader("user-agent"));
-            log.error("Session Id: " + perThreadRequest.get().getSession().getId());
-            log.error("User:" + (userService.getUserState().getUser() != null ? userService.getUserState().getUser() : "unregistered"));
+            ExceptionHandler.logParameters(log, userService);
             if (deobfuscator != null) {
                 lr = deobfuscator.deobfuscateLogRecord(lr, strongName);
             }
