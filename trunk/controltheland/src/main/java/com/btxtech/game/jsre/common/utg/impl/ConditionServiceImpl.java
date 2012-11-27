@@ -152,6 +152,7 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
     public void onSyncItemKilled(SimpleBase actorBase, SyncBaseItem killedItem) {
         A actor = getActor(actorBase);
         triggerSyncItem(actor, ConditionTrigger.SYNC_ITEM_KILLED, killedItem);
+        triggerSyncItem(actor, ConditionTrigger.SYNC_ITEM_POSITION, killedItem);
     }
 
     @Override
