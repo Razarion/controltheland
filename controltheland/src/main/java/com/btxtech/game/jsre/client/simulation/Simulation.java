@@ -143,6 +143,7 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
     public void cleanup() {
         activeTask = null;
         SimulationConditionServiceImpl.getInstance().setConditionServiceListener(null);
+        SimulationConditionServiceImpl.getInstance().deactivateAll();
         simulationInfo = null;
     }
 
