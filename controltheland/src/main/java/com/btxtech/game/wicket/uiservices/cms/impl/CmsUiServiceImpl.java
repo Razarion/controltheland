@@ -28,6 +28,7 @@ import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.common.ContentSortList;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.DateUtil;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.itemType.DbItemType;
@@ -432,7 +433,7 @@ public class CmsUiServiceImpl implements CmsUiService {
                 return new Label(componentId, "No content");
             }
         } catch (Exception e) {
-            log.error("DbContent: " + dbContent + " bean: " + bean + " id: " + componentId + " " + beanIdPathElement, e);
+            ExceptionHandler.handleException(e, "DbContent: " + dbContent + " bean: " + bean + " id: " + componentId + " " + beanIdPathElement);
             return new Label(componentId, "Error!");
         }
     }
