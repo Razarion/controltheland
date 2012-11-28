@@ -23,6 +23,7 @@ import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.GenericComparisonValueContainer;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
@@ -38,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,17 +66,39 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
     @Autowired
     private ServerGlobalServices serverGlobalServices;
     private long rate = 10000;
+    private long rateDeferredUpdate = 2000;
     private final Map<UserState, Collection<AbstractConditionTrigger<UserState, Integer>>> triggerMap = new HashMap<>();
     private ScheduledThreadPoolExecutor timer = new ScheduledThreadPoolExecutor(1, new CustomizableThreadFactory("ServerConditionServiceImpl timer "));
+    private ScheduledThreadPoolExecutor deferredUpdateTimer = new ScheduledThreadPoolExecutor(1, new CustomizableThreadFactory("ServerConditionServiceImpl deferred update timer "));
     private static Log log = LogFactory.getLog(ServerConditionServiceImpl.class);
     private ScheduledFuture scheduledFuture;
+    private ScheduledFuture deferredUpdateScheduledFuture;
+
+    @PostConstruct
+    public void postConstruct() {
+        try {
+            deferredUpdateScheduledFuture = timer.scheduleAtFixedRate(new Runnable() {
+                @Override
+                public void run() {
+                    sendDeferredUpdate();
+                }
+            }, rateDeferredUpdate, rateDeferredUpdate, TimeUnit.MILLISECONDS);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+        }
+    }
 
     @PreDestroy
     public void cleanup() {
         try {
             timer.shutdownNow();
+            deferredUpdateTimer.shutdownNow();
+            if (deferredUpdateScheduledFuture != null) {
+                deferredUpdateScheduledFuture.cancel(true);
+                deferredUpdateScheduledFuture = null;
+            }
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -347,7 +371,21 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
                 && abstractComparison.getAbstractConditionTrigger().getConditionTrigger() != ConditionTrigger.TUTORIAL) {
             LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
             levelTaskPacket.setQuestProgressInfo(getQuestProgressInfo(actor, identifier));
-            actor.getBase().getPlanet().getPlanetServices().getConnectionService().sendPacket(actor.getBase().getSimpleBase(), levelTaskPacket);
+            planetSystemService.getServerPlanetServices(actor).getConnectionService().sendPacket(actor.getBase().getSimpleBase(), levelTaskPacket);
+        }
+    }
+
+    private void sendDeferredUpdate() {
+        synchronized (triggerMap) {
+            for (Collection<AbstractConditionTrigger<UserState, Integer>> abstractConditionTriggers : triggerMap.values()) {
+                for (AbstractConditionTrigger<UserState, Integer> abstractConditionTrigger : abstractConditionTriggers) {
+                    AbstractComparison abstractComparison = abstractConditionTrigger.getAbstractComparison();
+                    if (abstractComparison == null) {
+                        continue;
+                    }
+                    abstractComparison.handleDeferredUpdate();
+                }
+            }
         }
     }
 }

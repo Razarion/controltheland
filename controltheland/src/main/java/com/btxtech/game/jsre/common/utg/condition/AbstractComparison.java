@@ -32,4 +32,6 @@ public interface AbstractComparison {
     void restoreFromGenericComparisonValue(GenericComparisonValueContainer genericComparisonValueContainer);
 
     void fillQuestProgressInfo(QuestProgressInfo questProgressInfo);
+
+    void handleDeferredUpdate();
 }

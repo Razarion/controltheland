@@ -13,22 +13,19 @@
 
 package com.btxtech.game.jsre.common.utg.condition;
 
-import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * User: beat Date: 12.01.2011 Time: 12:05:40
  */
 public abstract class AbstractSyncItemComparison implements AbstractComparison {
     public static final String SHARP = "#";
-    private static int MIN_SEND_DELAY = 3000;
+    private static int MIN_SEND_DELAY = 1000;
     private AbstractConditionTrigger abstractConditionTrigger;
     private long lastProgressSendTime;
     private GlobalServices globalServices;
+    private boolean hasUpdateToSend;
 
     protected abstract void privateOnSyncItem(SyncItem syncItem);
 
@@ -57,11 +54,20 @@ public abstract class AbstractSyncItemComparison implements AbstractComparison {
 
     protected void onProgressChanged() {
         if (lastProgressSendTime + MIN_SEND_DELAY > System.currentTimeMillis()) {
+            hasUpdateToSend = true;
             return;
         }
         if (globalServices != null) {
             globalServices.getConditionService().sendProgressUpdate(abstractConditionTrigger.getActor(), abstractConditionTrigger.getIdentifier());
             lastProgressSendTime = System.currentTimeMillis();
+            hasUpdateToSend = false;
+        }
+    }
+
+    @Override
+    public void handleDeferredUpdate() {
+        if (hasUpdateToSend) {
+            onProgressChanged();
         }
     }
 }
