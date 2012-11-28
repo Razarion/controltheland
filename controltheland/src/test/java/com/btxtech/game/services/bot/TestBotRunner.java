@@ -448,6 +448,7 @@ public class TestBotRunner extends AbstractServiceTest {
         }
         waitForActionServiceDone();
 
+        // TODO failed on 28.11.2012, 28.11.2012
         Assert.assertFalse(getAllHistoryEntriesOfType(DbHistoryElement.Type.BOT_ENRAGE_UP).isEmpty());
 
         endHttpRequestAndOpenSessionInViewFilter();
