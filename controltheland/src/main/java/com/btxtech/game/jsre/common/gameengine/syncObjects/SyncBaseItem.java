@@ -584,7 +584,7 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
     }
 
     public boolean isAlive() {
-        return health > 0;
+        return health > 0.0;
     }
 
     public boolean isHealthy() {

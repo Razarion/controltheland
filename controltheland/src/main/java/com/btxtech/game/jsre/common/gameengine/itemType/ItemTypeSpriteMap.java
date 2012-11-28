@@ -205,7 +205,14 @@ public class ItemTypeSpriteMap implements Serializable {
     public int getDemolitionStep(SyncItem syncItem) {
         if (syncItem instanceof SyncBaseItem) {
             if (syncItem.isAlive()) {
-                return (int) (getDemolitionStepCount() * (1.0 - ((SyncBaseItem) syncItem).getNormalizedHealth()));
+                int step = (int) (getDemolitionStepCount() * (1.0 - ((SyncBaseItem) syncItem).getNormalizedHealth()));
+                if (step >= getDemolitionStepCount()) {
+                    return getDemolitionStepCount() - 1;
+                } else if (step < 0) {
+                    return 0;
+                } else {
+                    return step;
+                }
             } else {
                 return getDemolitionStepCount() - 1;
             }
