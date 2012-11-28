@@ -1,5 +1,6 @@
 package com.btxtech.game.services.utg.impl;
 
+import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Rectangle;
@@ -7,6 +8,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
@@ -16,6 +18,7 @@ import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.CountComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.ItemTypePositionComparisonConfig;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.ServerConnectionServiceTestHelper;
 import com.btxtech.game.services.TestPlanetHelper;
 import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.item.ServerItemTypeService;
@@ -36,6 +39,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -326,7 +330,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
 
         itemTypes = new HashMap<>();
         itemTypes.put(serverItemTypeService.getItemType(TEST_START_BUILDER_ITEM_ID), 1);
-        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes,createRegion( new Rectangle(500, 500, 1000, 1000), 1), null, false), null, null, false), userService.getUserState(), 1);
+        serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, createRegion(new Rectangle(500, 500, 1000, 1000), 1), null, false), null, null, false), userService.getUserState(), 1);
 
         sendFactoryCommand(factory, TEST_CONTAINER_ITEM_ID);
         waitForActionServiceDone();
@@ -585,7 +589,49 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         userGuidanceService.activateQuest(TEST_LEVEL_TASK_1_4_REAL_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-
     }
 
+    @Test
+    @DirtiesContext
+    public void testDeferredUpdate() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        SimpleBase simpleBase = getMyBase();
+
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
+        itemTypes.put(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 10);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, null, null, false), null, null, false);
+        serverConditionService.activateCondition(conditionConfig, userService.getUserState(), 1);
+
+        ServerPlanetServicesImpl serverPlanetServices = (ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(simpleBase);
+        ServerConnectionServiceTestHelper serverConnectionServiceTestHelper = new ServerConnectionServiceTestHelper();
+        serverPlanetServices.setServerConnectionService(serverConnectionServiceTestHelper);
+
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1500, 1500), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+
+        List<SyncItem> factories = new ArrayList<>(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getItemService().getItems(serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), simpleBase));
+
+        sendFactoryCommand(factories.get(0).getId(), TEST_ATTACK_ITEM_ID);
+        sendFactoryCommand(factories.get(1).getId(), TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+
+        Thread.sleep(3100);
+
+        List<ServerConnectionServiceTestHelper.PacketEntry> packetEntries = serverConnectionServiceTestHelper.getPacketEntries(simpleBase, LevelTaskPacket.class);
+        Assert.assertEquals(2, packetEntries.size());
+        QuestProgressInfo questProgressInfo = ((LevelTaskPacket) packetEntries.get(0).getPacket()).getQuestProgressInfo();
+        Assert.assertEquals(1, questProgressInfo.getItemIdAmounts().get(TEST_ATTACK_ITEM_ID).getAmount());
+        questProgressInfo = ((LevelTaskPacket) packetEntries.get(1).getPacket()).getQuestProgressInfo();
+        Assert.assertEquals(2, questProgressInfo.getItemIdAmounts().get(TEST_ATTACK_ITEM_ID).getAmount());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+    }
 }

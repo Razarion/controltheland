@@ -144,6 +144,7 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
         activeTask = null;
         SimulationConditionServiceImpl.getInstance().setConditionServiceListener(null);
         SimulationConditionServiceImpl.getInstance().deactivateAll();
+        SimulationConditionServiceImpl.getInstance().stopUpdateTimer();
         simulationInfo = null;
     }
 

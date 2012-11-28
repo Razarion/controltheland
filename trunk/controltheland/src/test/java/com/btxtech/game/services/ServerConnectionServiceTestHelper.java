@@ -10,6 +10,8 @@ import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.planet.Base;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,6 +25,7 @@ import java.util.List;
  */
 public class ServerConnectionServiceTestHelper implements ServerConnectionService {
     private List<PacketEntry> packetEntries = new ArrayList<>();
+    private static Log log = LogFactory.getLog(ServerConnectionServiceTestHelper.class);
 
     @Override
     public boolean hasConnection(SimpleBase simpleBase) {
@@ -47,13 +50,13 @@ public class ServerConnectionServiceTestHelper implements ServerConnectionServic
     @Override
     public void sendPacket(SimpleBase base, Packet packet) {
         packetEntries.add(new PacketEntry(base, packet));
-        System.out.println("SimpleBase: " + base + " Packet: " + packet);
+        log.error("SimpleBase: " + base + " Packet: " + packet);
     }
 
     @Override
     public void sendPacket(Packet packet) {
         packetEntries.add(new PacketEntry(null, packet));
-        System.out.println("Packet: " + packet);
+        log.error("Packet to all: " + packet);
     }
 
     @Override
@@ -73,7 +76,7 @@ public class ServerConnectionServiceTestHelper implements ServerConnectionServic
 
     @Override
     public GameEngineMode getGameEngineMode() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return GameEngineMode.MASTER;
     }
 
     @Override

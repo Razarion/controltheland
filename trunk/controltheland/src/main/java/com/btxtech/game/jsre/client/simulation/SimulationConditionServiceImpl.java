@@ -16,7 +16,6 @@ package com.btxtech.game.jsre.client.simulation;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientGlobalServices;
 import com.btxtech.game.jsre.client.ClientPlanetServices;
-import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualtsationModel;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
@@ -43,6 +42,7 @@ public class SimulationConditionServiceImpl extends ConditionServiceImpl<SimpleB
     private AbstractConditionTrigger<SimpleBase, Void> abstractConditionTrigger;
     private int rate = 10000;
     private Timer timer;
+    private Timer deferredUpdateTimer;
 
     public static SimulationConditionServiceImpl getInstance() {
         return INSTANCE;
@@ -54,6 +54,18 @@ public class SimulationConditionServiceImpl extends ConditionServiceImpl<SimpleB
             throw new IllegalArgumentException("Only condition for own base can be saved");
         }
         this.abstractConditionTrigger = abstractConditionTrigger;
+        if (deferredUpdateTimer != null) {
+            deferredUpdateTimer = new Timer() {
+                @Override
+                public void run() {
+                    if (SimulationConditionServiceImpl.this.abstractConditionTrigger != null
+                            && SimulationConditionServiceImpl.this.abstractConditionTrigger.getAbstractComparison() != null) {
+                        sendProgressUpdate(SimulationConditionServiceImpl.this.abstractConditionTrigger.getActor(), null);
+                    }
+                }
+            };
+            deferredUpdateTimer.scheduleRepeating(2000);
+        }
     }
 
     @Override
@@ -150,5 +162,12 @@ public class SimulationConditionServiceImpl extends ConditionServiceImpl<SimpleB
         LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
         levelTaskPacket.setQuestProgressInfo(SimulationConditionServiceImpl.getInstance().getQuestProgressInfo(a, i));
         QuestVisualtsationModel.getInstance().setLevelTask(levelTaskPacket);
+    }
+
+    public void stopUpdateTimer() {
+        if (deferredUpdateTimer != null) {
+            deferredUpdateTimer.cancel();
+            deferredUpdateTimer = null;
+        }
     }
 }
