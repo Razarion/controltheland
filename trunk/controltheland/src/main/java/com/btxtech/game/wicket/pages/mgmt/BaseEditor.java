@@ -180,21 +180,21 @@ public class BaseEditor extends MgmtWebPage {
                     item.add(new Label("id", item.getModelObject().getId().toString()));
                     item.add(new Label("itemType", item.getModelObject().getItemType().getName()));
 
-                    item.add(new TextField<>("health", new IModel<String>() {
+                    item.add(new TextField<>("health", new IModel<Double>() {
                         @Override
-                        public String getObject() {
-                            return Integer.toString((int) item.getModelObject().getHealth());
+                        public Double getObject() {
+                            return item.getModelObject().getHealth();
                         }
 
                         @Override
-                        public void setObject(String health) {
-                            item.getModelObject().setHealth(Integer.parseInt(health));
+                        public void setObject(Double health) {
+                            item.getModelObject().setHealth(health);
                         }
 
                         @Override
                         public void detach() {
                         }
-                    }));
+                    }, Double.class));
 
                     item.add(new TextField<>("xPos", new IModel<String>() {
                         @Override
