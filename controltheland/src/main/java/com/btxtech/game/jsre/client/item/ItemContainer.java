@@ -99,21 +99,21 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
             try {
                 addSynchronize(itemInfo);
             } catch (Exception e) {
-               GwtCommon.handleException("ItemContainer.doSynchronize() in addSynchronize", e);
+                GwtCommon.handleException("ItemContainer.doSynchronize() in addSynchronize", e);
             }
         }
         for (SyncItemInfo itemInfo : syncItemInfo) {
             try {
                 synchronize(itemInfo);
             } catch (Exception e) {
-               GwtCommon.handleException("ItemContainer.doSynchronize() in synchronize", e);
+                GwtCommon.handleException("ItemContainer.doSynchronize() in synchronize", e);
             }
         }
         for (SyncItemInfo itemInfo : syncItemInfo) {
             try {
                 removeSynchronize(itemInfo);
             } catch (Exception e) {
-               GwtCommon.handleException("ItemContainer.doSynchronize() in removeSynchronize", e);
+                GwtCommon.handleException("ItemContainer.doSynchronize() in removeSynchronize", e);
             }
         }
     }
@@ -123,11 +123,9 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
         if (syncItem != null) {
             return;
         }
-        if (syncItemInfo.isAlive()) {
-            syncItem = createAndAddItem(syncItemInfo.getId(), syncItemInfo.getPosition(), syncItemInfo.getItemTypeId(), syncItemInfo.getBase());
-            if (syncItem instanceof SyncBaseItem) {
-                ClientBase.getInstance().onItemCreated((SyncBaseItem) syncItem);
-            }
+        syncItem = createAndAddItem(syncItemInfo.getId(), syncItemInfo.getPosition(), syncItemInfo.getItemTypeId(), syncItemInfo.getBase());
+        if (syncItem instanceof SyncBaseItem) {
+            ClientBase.getInstance().onItemCreated((SyncBaseItem) syncItem);
         }
     }
 
