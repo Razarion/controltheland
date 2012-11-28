@@ -2,6 +2,7 @@ package com.btxtech.game.services.common;
 
 import com.btxtech.game.services.AbstractServiceTest;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
@@ -27,6 +28,8 @@ public class TestExceptionHandler extends AbstractServiceTest {
         AbstractServiceTest.setPrivateStaticField(ExceptionHandler.class, "log", mockLog);
 
         ExceptionHandler.handleException(exception);
+
+        AbstractServiceTest.setPrivateStaticField(ExceptionHandler.class, "log", LogFactory.getLog(ExceptionHandler.class));
     }
 
     @Test
@@ -39,7 +42,7 @@ public class TestExceptionHandler extends AbstractServiceTest {
         mockLog.error("--------------------------------------------------------------------");
         mockLog.error("Thread: " + threadName);
         mockLog.error("User Agent: null");
-        mockLog.error("Session Id: 2");
+        mockLog.error(EasyMock.startsWith("Session Id: "));
         mockLog.error(EasyMock.startsWith("IP:"));
         mockLog.error("Referer: null");
         mockLog.error("User: unregistered");
@@ -54,6 +57,8 @@ public class TestExceptionHandler extends AbstractServiceTest {
         ExceptionHandler.handleException(exception);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+
+        AbstractServiceTest.setPrivateStaticField(ExceptionHandler.class, "log", LogFactory.getLog(ExceptionHandler.class));
     }
 
 }
