@@ -197,7 +197,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         PlanetSystemService planetSystemService = EasyMock.createStrictMock(PlanetSystemService.class);
         EasyMock.expect(planetSystemService.getServerPlanetServices(simpleBase1)).andReturn(serverPlanetServices);
         EasyMock.expect(planetSystemService.getServerPlanetServices(simpleBase2)).andReturn(serverPlanetServices);
-        EasyMock.expect(planetSystemService.getServerPlanetServices(simpleBase1)).andReturn(serverPlanetServices);
+        EasyMock.expect(planetSystemService.getServerPlanetServices(simpleBase1)).andReturn(serverPlanetServices).times(2);
         EasyMock.replay(planetSystemService);
         setPrivateField(ServerConditionServiceImpl.class, serverConditionService, "planetSystemService", planetSystemService);
 
@@ -257,7 +257,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
 
         // Mock PlanetSystemService
         PlanetSystemService planetSystemService = EasyMock.createStrictMock(PlanetSystemService.class);
-        EasyMock.expect(planetSystemService.getServerPlanetServices(simpleBase1)).andReturn(serverPlanetServices).times(3);
+        EasyMock.expect(planetSystemService.getServerPlanetServices(simpleBase1)).andReturn(serverPlanetServices).times(4);
         EasyMock.replay(planetSystemService);
         setPrivateField(ServerConditionServiceImpl.class, serverConditionService, "planetSystemService", planetSystemService);
 

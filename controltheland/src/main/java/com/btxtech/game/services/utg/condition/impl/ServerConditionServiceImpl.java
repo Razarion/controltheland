@@ -371,7 +371,7 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
                 && abstractComparison.getAbstractConditionTrigger().getConditionTrigger() != ConditionTrigger.TUTORIAL) {
             LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
             levelTaskPacket.setQuestProgressInfo(getQuestProgressInfo(actor, identifier));
-            planetSystemService.getServerPlanetServices(actor).getConnectionService().sendPacket(actor.getBase().getSimpleBase(), levelTaskPacket);
+            planetSystemService.getServerPlanetServices(actor.getBase().getSimpleBase()).getConnectionService().sendPacket(actor.getBase().getSimpleBase(), levelTaskPacket);
         }
     }
 
