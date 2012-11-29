@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.CmsSectionInfo;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbCmsImage;
+import com.btxtech.game.services.cms.NoDbContentInCacheException;
 import com.btxtech.game.services.cms.layout.DbContent;
 import com.btxtech.game.services.cms.layout.DbContentBook;
 import com.btxtech.game.services.cms.layout.DbContentBooleanExpressionImage;
@@ -304,7 +305,7 @@ public class CmsServiceImpl implements CmsService {
     public DbContent getDbContent(int contentId) {
         DbContent dbContent = contentCache.get(contentId);
         if (dbContent == null) {
-            throw new IllegalArgumentException("No content for id: " + contentId);
+            throw new NoDbContentInCacheException(contentId);
         }
         return dbContent;
     }
