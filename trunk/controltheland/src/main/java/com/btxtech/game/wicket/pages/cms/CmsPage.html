@@ -18,13 +18,14 @@
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <title wicket:id="title"/>
     <script type="text/javascript">
-        window.onerror = handleError;
-        function handleError(message, file, lineNumber) {
-            errorMessage = encodeURI("InPageError(CmsPage):\n" + message + " File: " + file + " Linenumber: " + lineNumber);
-            pathname = encodeURI(window.location.pathname);
-            var img = document.createElement('img');
-            img.src = '/spring/lsc?e=' + errorMessage + '&t=' + new Date().getTime() + '&p=' + pathname;
-            document.body.appendChild(img);
+        window.onerror = function(message, file, lineNumber) {
+            if(message != 'Script error' && lineNumber != 0) {
+                errorMessage = encodeURI("InPageError(CmsPage)\nMessage: " + message + "\nFile: " + file + "\nLinenumber: " + lineNumber);
+                pathname = encodeURI(window.location.pathname);
+                var img = document.createElement('img');
+                img.src = '/spring/lsc?e=' + errorMessage + '&t=' + new Date().getTime() + '&p=' + pathname;
+                document.body.appendChild(img);
+            }
             return true;
         }
     </script>
