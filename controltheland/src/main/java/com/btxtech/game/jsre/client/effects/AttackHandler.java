@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.client.effects;
 
-import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -54,7 +54,7 @@ public class AttackHandler {
                 }
             }
         } catch (Exception e) {
-            GwtCommon.handleException(e);
+            ClientExceptionHandler.handleExceptionOnlyOnce(e);
         }
     }
 
@@ -64,7 +64,7 @@ public class AttackHandler {
                 detonations.add(new Detonation(attacker));
             }
         } catch (Exception e) {
-            GwtCommon.handleException(e);
+            ClientExceptionHandler.handleExceptionOnlyOnce(e);
         }
     }
 

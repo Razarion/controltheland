@@ -304,7 +304,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }
             } catch (Throwable t) {
-                GwtCommon.handleException(t);
+                ClientExceptionHandler.handleException(t);
             }
         }
         ItemContainer.getInstance().doSynchronize(syncItemInfos);
@@ -483,7 +483,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
             }
         } else {
             GwtCommon.sendLogViaLoadScriptCommunication("Unknown Error (See GWT log for stack trace): " + message + " " + throwable.getMessage());
-            GwtCommon.handleException(throwable);
+            ClientExceptionHandler.handleException(throwable);
             return false;
         }
     }

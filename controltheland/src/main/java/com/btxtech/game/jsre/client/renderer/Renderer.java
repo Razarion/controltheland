@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.renderer;
 
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Rectangle;
@@ -15,8 +16,6 @@ import com.google.gwt.dom.client.CanvasElement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -25,7 +24,6 @@ import java.util.logging.Logger;
  */
 public class Renderer {
     private static final Renderer INSTANCE = new Renderer();
-    private Logger log = Logger.getLogger(Renderer.class.getName());
     private int frameCount = 0;
     private long nextFrameCountCalculation = 0;
     private int renderTime = 0;
@@ -83,7 +81,7 @@ public class Renderer {
                         renderTime += (int) (System.currentTimeMillis() - startTime);
                     }
                 } catch (Exception e) {
-                    log.log(Level.SEVERE, "Renderer Callback", e);
+                    ClientExceptionHandler.handleExceptionOnlyOnce("Renderer Callback", e);
                 } finally {
                     Perfmon.getInstance().onLeft(PerfmonEnum.RENDERER);
                     if (gameAnimationCallback != null) {
@@ -115,7 +113,7 @@ public class Renderer {
                         Perfmon.getInstance().onEntered(PerfmonEnum.RENDERER_OVERLAY);
                         doOverlayRender((long) timestamp);
                     } catch (Exception e) {
-                        log.log(Level.SEVERE, "Overlay Renderer Callback", e);
+                        ClientExceptionHandler.handleException("Overlay Renderer Callback", e);
                     } finally {
                         Perfmon.getInstance().onLeft(PerfmonEnum.RENDERER_OVERLAY);
                     }
@@ -143,7 +141,7 @@ public class Renderer {
             try {
                 renderTask.render(timeStamp, itemsInView, viewRect, tileViewRect);
             } catch (Exception e) {
-                log.log(Level.SEVERE, "Renderer.doRender()", e);
+                ClientExceptionHandler.handleExceptionOnlyOnce("Renderer.doRender()", e);
             }
         }
     }
@@ -155,7 +153,7 @@ public class Renderer {
             try {
                 renderTask.render(timeStamp, null, viewRect, tileViewRect);
             } catch (Exception e) {
-                log.log(Level.SEVERE, "Renderer.doOverlayRender()", e);
+                ClientExceptionHandler.handleExceptionOnlyOnce("Renderer.doOverlayRender()", e);
             }
         }
     }

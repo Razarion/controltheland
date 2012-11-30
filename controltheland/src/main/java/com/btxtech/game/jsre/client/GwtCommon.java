@@ -14,7 +14,6 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.ExceptionDialog;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
@@ -40,8 +39,6 @@ public class GwtCommon {
     public static final String DEBUG_CATEGORY_DEFINITELY_KILL = "CAN_NOT_DEFINITELY_KILL";
     public static final String DEBUG_CATEGORY_IMAGE_LOADER = "IMAGE_LOADER";
     public static final String DEBUG_CATEGORY_TELEPORTATION = "TELEPORTATION";
-    private static ExceptionDialog exceptionDialog;
-    private static Boolean isIe6;
     private static Boolean isIe;
     private static Boolean isOpera;
     private static Logger log = Logger.getLogger(GwtCommon.class.getName());
@@ -50,7 +47,7 @@ public class GwtCommon {
     public static void setUncaughtExceptionHandler() {
         GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
             public void onUncaughtException(Throwable t) {
-                handleException("GWT uncaught exception handler", t);
+                ClientExceptionHandler.handleException("GWT uncaught exception handler", t);
             }
         });
     }
@@ -62,46 +59,6 @@ public class GwtCommon {
         } else {
             return false;
         }
-    }
-
-    public static void handleException(Throwable t) {
-        handleException(null, t, false);
-    }
-
-    public static void handleException(String message, Throwable t) {
-        handleException(message, t, false);
-    }
-
-    public static void handleException(Throwable t, boolean showDialog) {
-        handleException(null, t, showDialog);
-    }
-
-    public static void handleException(String message, Throwable t, boolean showDialog) {
-        if (showDialog) {
-            if (exceptionDialog != null) {
-                exceptionDialog.hide(true);
-            }
-            exceptionDialog = new ExceptionDialog(t);
-            DialogManager.showDialog(exceptionDialog, DialogManager.Type.PROMPTLY);
-        }
-        if (!GWT.isProdMode()) {
-            t.printStackTrace();
-        }
-        sendExceptionToServer(message, t);
-    }
-
-    private static void sendExceptionToServer(String message, Throwable throwable) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(message);
-        if (throwable != null) {
-            builder.append(": ");
-            builder.append(throwable.getMessage());
-            builder.append(": ");
-            builder.append(throwable.getCause());
-            builder.append(": ");
-            builder.append(throwable.getClass());
-        }
-        log.log(Level.SEVERE, builder.toString(), throwable);
     }
 
     public static String setupStackTrace(String message, Throwable throwable) {
@@ -155,13 +112,6 @@ public class GwtCommon {
         } catch (Throwable ignore) {
             // Ignore
         }
-    }
-
-    public static boolean isIe6() {
-        if (isIe6 == null) {
-            isIe6 = Window.Navigator.getUserAgent().contains("msie 6");
-        }
-        return isIe6;
     }
 
     public static boolean isOpera() {

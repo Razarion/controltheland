@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client.item;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientEnergyService;
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.ClientGlobalServices;
 import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
@@ -99,21 +100,21 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
             try {
                 addSynchronize(itemInfo);
             } catch (Exception e) {
-                GwtCommon.handleException("ItemContainer.doSynchronize() in addSynchronize", e);
+                ClientExceptionHandler.handleException("ItemContainer.doSynchronize() in addSynchronize", e);
             }
         }
         for (SyncItemInfo itemInfo : syncItemInfo) {
             try {
                 synchronize(itemInfo);
             } catch (Exception e) {
-                GwtCommon.handleException("ItemContainer.doSynchronize() in synchronize", e);
+                ClientExceptionHandler.handleException("ItemContainer.doSynchronize() in synchronize", e);
             }
         }
         for (SyncItemInfo itemInfo : syncItemInfo) {
             try {
                 removeSynchronize(itemInfo);
             } catch (Exception e) {
-                GwtCommon.handleException("ItemContainer.doSynchronize() in removeSynchronize", e);
+                ClientExceptionHandler.handleException("ItemContainer.doSynchronize() in removeSynchronize", e);
             }
         }
     }

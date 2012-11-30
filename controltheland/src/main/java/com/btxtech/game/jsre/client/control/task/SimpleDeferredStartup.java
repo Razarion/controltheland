@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.client.control.task;
 
-import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 
 import java.util.logging.Logger;
 
@@ -37,7 +37,7 @@ public class SimpleDeferredStartup implements DeferredStartup {
 
     @Override
     public void failed(Throwable throwable) {
-        GwtCommon.handleException(throwable);
+        ClientExceptionHandler.handleException(throwable);
     }
 
     @Override

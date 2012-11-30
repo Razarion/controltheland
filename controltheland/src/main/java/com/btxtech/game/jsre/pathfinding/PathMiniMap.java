@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.pathfinding;
 
-import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniMap;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniMapMouseDownListener;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniMapMouseMoveListener;
@@ -117,7 +117,7 @@ public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener, Mi
                     path = ClientCollisionService.getInstance().setupPathToDestination(start, destination, TerrainType.LAND, boundingBox);
                 } catch (Throwable t) {
                     path = null;
-                    GwtCommon.handleException(t);
+                    ClientExceptionHandler.handleException(t);
                 }
             }
             draw();

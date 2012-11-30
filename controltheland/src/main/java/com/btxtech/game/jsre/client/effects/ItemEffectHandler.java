@@ -1,6 +1,6 @@
 package com.btxtech.game.jsre.client.effects;
 
-import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -63,7 +63,7 @@ public class ItemEffectHandler {
                             itemEffects.add(itemEffect);
                         }
                     } catch (Exception e) {
-                        GwtCommon.handleException("ItemEffectHandler.getClips()", e);
+                        ClientExceptionHandler.handleExceptionOnlyOnce("ItemEffectHandler.getClips()", e);
                     }
                 }
             }

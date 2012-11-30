@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
-import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -104,7 +104,7 @@ public abstract class SyncItem {
                 try {
                     syncItemListener.onItemChanged(change, this);
                 } catch (Throwable t) {
-                    GwtCommon.handleException("Unable to fire change for sync item: " + this, t);
+                    ClientExceptionHandler.handleException("Unable to fire change for sync item: " + this, t);
                 }
             }
         }

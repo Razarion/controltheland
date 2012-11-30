@@ -17,9 +17,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.ClientGlobalServices;
 import com.btxtech.game.jsre.client.ClientPlanetServices;
-import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
 import com.btxtech.game.jsre.client.cockpit.Group;
@@ -84,7 +84,7 @@ public class BuildupItemPanel extends Composite {
                 setupBuildupItemsFactory(group);
             }
         } catch (NoSuchItemTypeException e) {
-            GwtCommon.handleException(e);
+            ClientExceptionHandler.handleException(e);
         }
     }
 
@@ -96,7 +96,7 @@ public class BuildupItemPanel extends Composite {
                 setupBuildupItemsFactory(selectedGroup);
             }
         } catch (NoSuchItemTypeException e) {
-            GwtCommon.handleException(e);
+            ClientExceptionHandler.handleException(e);
         }
     }
 
@@ -135,7 +135,7 @@ public class BuildupItemPanel extends Composite {
                     try {
                         ActionHandler.getInstance().fabricate(factories.getItems(), itemType);
                     } catch (NoSuchItemTypeException e) {
-                        GwtCommon.handleException(e);
+                        ClientExceptionHandler.handleException(e);
                     }
                 }
             }));

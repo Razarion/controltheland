@@ -13,10 +13,10 @@
 
 package com.btxtech.game.jsre.regioneditor;
 
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniTerrain;
 import com.btxtech.game.jsre.client.cockpit.radar.ScaleStep;
-import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.Region;
@@ -52,7 +52,7 @@ public class RegionEditor implements EntryPoint {
             terrainEditor.getTutorialTerrainInfo(tutorialId, new AsyncCallback<TerrainInfo>() {
                 @Override
                 public void onFailure(Throwable throwable) {
-                    GwtCommon.handleException(throwable, true);
+                    ClientExceptionHandler.handleException(throwable, true);
                 }
 
                 @Override
@@ -66,7 +66,7 @@ public class RegionEditor implements EntryPoint {
             terrainEditor.getPlanetTerrainInfo(planetId, new AsyncCallback<TerrainInfo>() {
                 @Override
                 public void onFailure(Throwable throwable) {
-                    GwtCommon.handleException(throwable, true);
+                    ClientExceptionHandler.handleException(throwable, true);
                 }
 
                 @Override
@@ -85,7 +85,7 @@ public class RegionEditor implements EntryPoint {
         terrainEditor.loadRegionFromDb(regionId, new AsyncCallback<Region>() {
             @Override
             public void onFailure(Throwable throwable) {
-                GwtCommon.handleException(throwable, true);
+                ClientExceptionHandler.handleException(throwable, true);
             }
 
             @Override

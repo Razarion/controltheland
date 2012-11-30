@@ -14,9 +14,9 @@
 package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
-import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ParametrisedRunnable;
 import com.btxtech.game.jsre.client.bot.ClientBotService;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
@@ -95,7 +95,7 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
             try {
                 ItemContainer.getInstance().createSimulationSyncObject(itemTypeAndPosition);
             } catch (NoSuchItemTypeException e) {
-                GwtCommon.handleException(e);
+                ClientExceptionHandler.handleException(e);
             }
         }
 

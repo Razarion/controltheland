@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.playback;
 
-import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -134,7 +134,7 @@ public class Player {
         try {
             ItemContainer.getInstance().doSynchronize(Collections.singletonList(syncItemInfo));
         } catch (Exception e) {
-            GwtCommon.handleException(e);
+            ClientExceptionHandler.handleException(e);
         }
     }
 

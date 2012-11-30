@@ -13,8 +13,8 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.GameEngineMode;
-import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
@@ -216,7 +216,7 @@ public class SyncItemContainer extends SyncBaseAbility {
                 }
             }
         } catch (ItemDoesNotExistException e) {
-            GwtCommon.handleException(e);
+            ClientExceptionHandler.handleException(e);
         }
         return false;
     }

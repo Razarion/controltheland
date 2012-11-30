@@ -1,8 +1,7 @@
 package com.btxtech.game.jsre.mapeditor;
 
-import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
-import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.TerrainInfo;
 import com.btxtech.game.jsre.mapeditor.render.MapEditorRenderer;
@@ -65,7 +64,7 @@ public class TerrainEditorConnection {
         terrainEditorAsync.getTutorialTerrainInfo(terrainId, new AsyncCallback<com.btxtech.game.jsre.common.TerrainInfo>() {
             @Override
             public void onFailure(Throwable throwable) {
-                GwtCommon.handleException(throwable);
+                ClientExceptionHandler.handleException(throwable);
             }
 
             @Override
@@ -79,7 +78,7 @@ public class TerrainEditorConnection {
         terrainEditorAsync.getPlanetTerrainInfo(planetId, new AsyncCallback<com.btxtech.game.jsre.common.TerrainInfo>() {
             @Override
             public void onFailure(Throwable throwable) {
-                GwtCommon.handleException(throwable);
+                ClientExceptionHandler.handleException(throwable);
             }
 
             @Override
@@ -108,7 +107,7 @@ public class TerrainEditorConnection {
         terrainEditorAsync.getTerrainImageGroups(new AsyncCallback<Map<String, Collection<Integer>>>() {
             @Override
             public void onFailure(Throwable caught) {
-                GwtCommon.handleException(caught, true);
+                ClientExceptionHandler.handleException(caught, true);
             }
 
             @Override
@@ -123,7 +122,7 @@ public class TerrainEditorConnection {
         AsyncCallback<Void> voidAsyncCallback = new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable caught) {
-                GwtCommon.handleException(caught, true);
+                ClientExceptionHandler.handleException(caught, true);
                 hasEnabled.setEnabled(true);
             }
 

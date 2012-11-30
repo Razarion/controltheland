@@ -2,7 +2,7 @@ package com.btxtech.game.jsre.imagespritemapeditor;
 
 import java.util.List;
 
-import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.LoadEvent;
@@ -102,7 +102,7 @@ public class ImageSpriteMapEditorModel {
         imageSpriteMapAccessAsync.loadImageSpriteMapInfo(imageSpriteMapId, new AsyncCallback<ImageSpriteMapInfo>() {
             @Override
             public void onFailure(Throwable caught) {
-                GwtCommon.handleException(caught);
+                ClientExceptionHandler.handleException(caught);
             }
 
             @Override
@@ -117,7 +117,7 @@ public class ImageSpriteMapEditorModel {
         imageSpriteMapAccessAsync.saveImageSpriteMapInfo(imageSpriteMapInfo, overriddenImages, new AsyncCallback<Void>(){
             @Override
             public void onFailure(Throwable caught) {
-                GwtCommon.handleException(caught);
+                ClientExceptionHandler.handleException(caught);
                 hasEnabled.setEnabled(true);
             }
 

@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.terrain;
 
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.ExtendedAbsolutePanel;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
@@ -48,7 +49,7 @@ public class MapWindow {
                     Perfmon.getInstance().onEntered(PerfmonEnum.MAP_WINDOW_EVENT_PREVIEW);
                     handlePreviewNativeEvent(event);
                 } catch (Throwable t) {
-                    GwtCommon.handleException(t);
+                    ClientExceptionHandler.handleException(t);
                 } finally {
                     Perfmon.getInstance().onLeft(PerfmonEnum.MAP_WINDOW_EVENT_PREVIEW);
                 }

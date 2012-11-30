@@ -13,8 +13,8 @@
 
 package com.btxtech.game.jsre.client.dialogs;
 
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.Connection;
-import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
@@ -127,7 +127,7 @@ public class RegisterDialog extends Dialog {
                 } else if (throwable instanceof PasswordNotMatchException) {
                     DialogManager.showDialog(new MessageDialog("Registration failed", REGISTRATION_MATCH), DialogManager.Type.STACK_ABLE);
                 } else {
-                    GwtCommon.handleException(throwable);
+                    ClientExceptionHandler.handleException(throwable);
                 }
             }
 

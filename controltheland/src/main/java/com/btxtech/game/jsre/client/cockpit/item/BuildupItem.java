@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.client.cockpit.item;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -96,7 +97,7 @@ public class BuildupItem extends Composite {
                 return;
             }
         } catch (NoSuchItemTypeException e) {
-            GwtCommon.handleException(e);
+            ClientExceptionHandler.handleException(e);
             enableState = EnableState.ENABLE;
             return;
         }
