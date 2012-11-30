@@ -13,10 +13,10 @@
 
 package com.btxtech.game.jsre.pathfinding;
 
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniTerrain;
-import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.mapeditor.TerrainEditorAsync;
@@ -63,7 +63,7 @@ public class PathfindingEntry implements EntryPoint {
         pathfinding.getTerrainInfo(terrainId, new AsyncCallback<com.btxtech.game.jsre.common.TerrainInfo>() {
             @Override
             public void onFailure(Throwable throwable) {
-                GwtCommon.handleException(throwable);
+                ClientExceptionHandler.handleException(throwable);
             }
 
             @Override

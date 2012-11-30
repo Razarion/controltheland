@@ -14,7 +14,7 @@
 package com.btxtech.game.jsre.client.cockpit.item;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
 import com.btxtech.game.jsre.client.item.ItemTypeContainer;
@@ -66,7 +66,7 @@ public class SpecialFunctionPanel extends Composite {
                 BaseItemType upgradeTo = (BaseItemType) ItemTypeContainer.getInstance().getItemType(syncBaseItem.getBaseItemType().getUpgradeable());
                 upgradeButton.setEnabled(!ClientBase.getInstance().isLevelLimitation4ItemTypeExceeded(upgradeTo, ClientBase.getInstance().getSimpleBase()));
             } catch (NoSuchItemTypeException e) {
-                GwtCommon.handleException(e);
+                ClientExceptionHandler.handleException(e);
             }
         } else {
             upgradeButton.setVisible(false);

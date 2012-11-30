@@ -8,10 +8,8 @@ import com.btxtech.game.jsre.client.renderer.ImageSpriteMapContainer;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemClipPosition;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
-import com.google.gwt.user.client.Random;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -106,7 +104,7 @@ public class ClientClipHandler {
             try {
                 ImageSpriteMapContainer.getInstance().getImage(getImageSpriteMapInfo(id));
             } catch (NoSuchImageSpriteMapInfoException e) {
-                GwtCommon.handleException("ClientClipHandler.preloadImageSpriteMaps()", e);
+                ClientExceptionHandler.handleException("ClientClipHandler.preloadImageSpriteMaps()", e);
             }
         }
         ImageSpriteMapContainer.getInstance().startLoad();

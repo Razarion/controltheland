@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -229,7 +229,7 @@ public class Group {
                         return true;
                     }
                 } catch (NoSuchItemTypeException e) {
-                    GwtCommon.handleException(e);
+                    ClientExceptionHandler.handleException(e);
                 }
             }
         }

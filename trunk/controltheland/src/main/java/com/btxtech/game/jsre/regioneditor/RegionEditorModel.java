@@ -1,6 +1,6 @@
 package com.btxtech.game.jsre.regioneditor;
 
-import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniTerrain;
 import com.btxtech.game.jsre.client.cockpit.radar.ScaleStep;
 import com.btxtech.game.jsre.client.common.Index;
@@ -76,7 +76,7 @@ public class RegionEditorModel {
         terrainEditor.saveRegionToDb(region, new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable throwable) {
-                GwtCommon.handleException(throwable, true);
+                ClientExceptionHandler.handleException(throwable, true);
                 hasEnabled.setEnabled(true);
             }
 

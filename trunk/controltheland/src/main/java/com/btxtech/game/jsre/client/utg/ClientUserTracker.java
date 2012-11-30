@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.utg;
 
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.ClientGlobalServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
@@ -111,7 +112,7 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
                 try {
                     sendEventTrackerItems();
                 } catch (Throwable t) {
-                    GwtCommon.handleException(t);
+                    ClientExceptionHandler.handleException(t);
                 }
             }
         };

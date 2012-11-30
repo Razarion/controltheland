@@ -14,11 +14,11 @@
 package com.btxtech.game.jsre.client.action;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.ClientGlobalServices;
 import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
-import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.SoundHandler;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
@@ -142,7 +142,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                     Connection.getInstance().sendSyncInfo(activeItem);
                     log.warning("PlaceCanNotBeFoundException: " + e.getMessage());
                 } catch (Throwable throwable) {
-                    GwtCommon.handleException(throwable);
+                    ClientExceptionHandler.handleException(throwable);
                     activeItem.stop();
                     iterator.remove();
                     Connection.getInstance().sendSyncInfo(activeItem);

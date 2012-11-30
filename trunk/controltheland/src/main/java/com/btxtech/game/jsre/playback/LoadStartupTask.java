@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.playback;
 
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
@@ -43,7 +44,7 @@ public class LoadStartupTask extends AbstractStartupTask {
         playbackAsync.getPlaybackInfo(getStartUuid(), new AsyncCallback<PlaybackInfo>() {
             @Override
             public void onFailure(Throwable caught) {
-                GwtCommon.handleException(caught, true);
+                ClientExceptionHandler.handleException(caught, true);
                 deferredStartup.failed(caught);
             }
 

@@ -217,7 +217,7 @@ public class SoundHandler implements SelectionListener {
                 return null;
             }
         } catch (Exception e) {
-            log.log(Level.SEVERE, "SoundHandler.getAudio() " + soundId, e);
+            ClientExceptionHandler.handleExceptionOnlyOnce("SoundHandler.getAudio() " + soundId, e);
             return null;
         }
     }

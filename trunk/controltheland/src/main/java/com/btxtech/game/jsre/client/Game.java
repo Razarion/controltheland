@@ -39,7 +39,7 @@ public class Game implements EntryPoint {
             ClientGlobalServices.getInstance().getClientRunner().start(getStartupSeqFromHtml());
             Perfmon.getInstance().startTransmit(GwtCommon.getUrlIntegerParameter(PERFMON_PARAM));
         } catch (Throwable t) {
-            GwtCommon.handleException(t);
+            ClientExceptionHandler.handleException(t);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.renderer;
 
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainHandler;
@@ -13,8 +14,6 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
 
 import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -24,7 +23,6 @@ import java.util.logging.Logger;
 public class TerrainRenderTask extends AbstractRenderTask {
     private TerrainHandler terrainHandler;
     private Context2d context2d;
-    private Logger log = Logger.getLogger(TerrainRenderTask.class.getName());
 
     public TerrainRenderTask(TerrainHandler terrainHandler, Context2d context2d) {
         this.terrainHandler = terrainHandler;
@@ -164,6 +162,6 @@ public class TerrainRenderTask extends AbstractRenderTask {
         builder.append(imageHeight);
         builder.append("\n");
 
-        log.log(Level.SEVERE, builder.toString(), t);
+        ClientExceptionHandler.handleExceptionOnlyOnce(builder.toString(), t);
     }
 }

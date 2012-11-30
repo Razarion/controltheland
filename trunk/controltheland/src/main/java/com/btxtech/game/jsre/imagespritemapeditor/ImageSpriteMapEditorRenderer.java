@@ -1,6 +1,6 @@
 package com.btxtech.game.jsre.imagespritemapeditor;
 
-import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
 import com.btxtech.game.jsre.client.renderer.ImageSpriteMapContainer;
@@ -24,7 +24,7 @@ public class ImageSpriteMapEditorRenderer {
                 try {
                     doRender((long) timestamp);
                 } catch (Exception e) {
-                    GwtCommon.handleException(e);
+                    ClientExceptionHandler.handleException(e);
                 } finally {
                     if (renderCallback != null) {
                         AnimationScheduler.get().requestAnimationFrame(renderCallback, canvas.getElement());

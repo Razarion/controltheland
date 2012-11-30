@@ -1,6 +1,6 @@
 package com.btxtech.game.jsre.imagespritemapeditor;
 
-import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
@@ -98,7 +98,7 @@ public class ImagePanel extends Composite implements DropHandler, DragOverHandle
         try {
             callback.loadCallback(base64ImageData);
         } catch (Exception e) {
-            GwtCommon.handleException(e);
+            ClientExceptionHandler.handleException(e);
         }
     }
 
