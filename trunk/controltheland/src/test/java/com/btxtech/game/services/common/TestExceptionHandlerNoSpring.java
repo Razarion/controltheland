@@ -27,6 +27,7 @@ public class TestExceptionHandlerNoSpring {
         EasyMock.replay(mockLog);
         AbstractServiceTest.setPrivateStaticField(ExceptionHandler.class, "log", mockLog);
         ExceptionHandler.handleException(exception);
+        EasyMock.verify(mockLog);
 
         AbstractServiceTest.setPrivateStaticField(ExceptionHandler.class, "log", LogFactory.getLog(ExceptionHandler.class));
     }
@@ -44,6 +45,7 @@ public class TestExceptionHandlerNoSpring {
         EasyMock.replay(mockLog);
         AbstractServiceTest.setPrivateStaticField(ExceptionHandler.class, "log", mockLog);
         ExceptionHandler.handleException(exception, "test message");
+        EasyMock.verify(mockLog);
 
         AbstractServiceTest.setPrivateStaticField(ExceptionHandler.class, "log", LogFactory.getLog(ExceptionHandler.class));
     }
@@ -60,6 +62,7 @@ public class TestExceptionHandlerNoSpring {
         EasyMock.replay(mockLog);
         AbstractServiceTest.setPrivateStaticField(ExceptionHandler.class, "log", mockLog);
         ExceptionHandler.handleException(null, "test message");
+        EasyMock.verify(mockLog);
 
         AbstractServiceTest.setPrivateStaticField(ExceptionHandler.class, "log", LogFactory.getLog(ExceptionHandler.class));
     }
