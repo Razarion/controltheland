@@ -28,6 +28,7 @@ public class TestExceptionHandler extends AbstractServiceTest {
         AbstractServiceTest.setPrivateStaticField(ExceptionHandler.class, "log", mockLog);
 
         ExceptionHandler.handleException(exception);
+        EasyMock.verify(mockLog);
 
         AbstractServiceTest.setPrivateStaticField(ExceptionHandler.class, "log", LogFactory.getLog(ExceptionHandler.class));
     }
@@ -58,6 +59,7 @@ public class TestExceptionHandler extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
+        EasyMock.verify(mockLog);
         AbstractServiceTest.setPrivateStaticField(ExceptionHandler.class, "log", LogFactory.getLog(ExceptionHandler.class));
     }
 
