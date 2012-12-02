@@ -483,7 +483,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
             }
         } else {
             GwtCommon.sendLogViaLoadScriptCommunication("Unknown Error (See GWT log for stack trace): " + message + " " + throwable.getMessage());
-            ClientExceptionHandler.handleException(throwable);
+            ClientExceptionHandler.handleException(message, throwable);
             return false;
         }
     }
