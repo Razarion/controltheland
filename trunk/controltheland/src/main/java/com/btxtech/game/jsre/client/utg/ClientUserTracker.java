@@ -165,9 +165,9 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
     public void addEventTrackingItem(int xPos, int yPos, int eventType) {
         if (isCollecting) {
             eventTrackingItems.add(new EventTrackingItem(ClientGlobalServices.getInstance().getClientRunner().getStartUuid(),
-                    GwtCommon.checkInt(xPos, "addEventTrackingItem xPos"),
-                    GwtCommon.checkInt(yPos, "addEventTrackingItem yPos"),
-                    GwtCommon.checkInt(eventType, "addEventTrackingItem eventType")));
+                    GwtCommon.correctInt(xPos),
+                    GwtCommon.correctInt(yPos),
+                    GwtCommon.correctInt(eventType)));
         }
     }
 
@@ -175,12 +175,12 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
         if (isCollecting) {
             BrowserWindowTracking wind = new BrowserWindowTracking(
                     ClientGlobalServices.getInstance().getClientRunner().getStartUuid(),
-                    GwtCommon.checkInt(Window.getClientWidth(), "addBrowserWindowTracking Window.getClientWidth()"),
-                    GwtCommon.checkInt(Window.getClientHeight(), "addBrowserWindowTracking Window.getClientHeight()"),
-                    GwtCommon.checkInt(Window.getScrollLeft(), "addBrowserWindowTracking Window.getScrollLeft()"),
-                    GwtCommon.checkInt(Window.getScrollTop(), "addBrowserWindowTracking Window.getScrollTop()"),
-                    GwtCommon.checkInt(MapWindow.getAbsolutePanel().getOffsetWidth(), "addBrowserWindowTracking MapWindow.getAbsolutePanel().getOffsetWidth()"),
-                    GwtCommon.checkInt(MapWindow.getAbsolutePanel().getOffsetHeight(), "addBrowserWindowTracking MapWindow.getAbsolutePanel().getOffsetHeight()"));
+                    GwtCommon.correctInt(Window.getClientWidth()),
+                    GwtCommon.correctInt(Window.getClientHeight()),
+                    GwtCommon.correctInt(Window.getScrollLeft()),
+                    GwtCommon.correctInt(Window.getScrollTop()),
+                    GwtCommon.correctInt(MapWindow.getAbsolutePanel().getOffsetWidth()),
+                    GwtCommon.correctInt(MapWindow.getAbsolutePanel().getOffsetHeight()));
             browserWindowTrackings.add(wind);
         }
     }
@@ -241,8 +241,8 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
     public void onScroll(int left, int top, int width, int height, int deltaLeft, int deltaTop) {
         if (isCollecting) {
             terrainScrollTrackings.add(new TerrainScrollTracking(ClientGlobalServices.getInstance().getClientRunner().getStartUuid(),
-                    GwtCommon.checkInt(left, "onScroll left"),
-                    GwtCommon.checkInt(top, "onScroll top")));
+                    GwtCommon.correctInt(left),
+                    GwtCommon.correctInt(top)));
         }
     }
 
@@ -257,13 +257,13 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
 
             dialogTrackings.add(new DialogTracking(
                     ClientGlobalServices.getInstance().getClientRunner().getStartUuid(),
-                    GwtCommon.checkInt(widget.getAbsoluteLeft(), "onDialogAppears widget.getAbsoluteLeft()"),
-                    GwtCommon.checkInt(widget.getAbsoluteTop(), "onDialogAppears widget.getAbsoluteTop()"),
-                    GwtCommon.checkInt(widget.getOffsetWidth(), "onDialogAppears widget.getOffsetWidth()"),
-                    GwtCommon.checkInt(widget.getOffsetHeight(), "onDialogAppears widget.getOffsetHeight()"),
-                    GwtCommon.checkInt(zIndex, "onDialogAppears zIndex"),
+                    GwtCommon.correctInt(widget.getAbsoluteLeft()),
+                    GwtCommon.correctInt(widget.getAbsoluteTop()),
+                    GwtCommon.correctInt(widget.getOffsetWidth()),
+                    GwtCommon.correctInt(widget.getOffsetHeight()),
+                    GwtCommon.correctInt(zIndex),
                     description,
-                    GwtCommon.checkInt(System.identityHashCode(widget), "onDialogAppears System.identityHashCode(widget)")
+                    GwtCommon.correctInt(System.identityHashCode(widget))
             ));
         }
     }
