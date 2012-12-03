@@ -183,8 +183,8 @@ public class ChatCockpit extends AbsolutePanel implements ChatListener {
         getElement().getStyle().setZIndex(Constants.Z_INDEX_CHAT_COCKPIT);
         getElement().getStyle().clearTop();
         getElement().getStyle().clearLeft();
-        getElement().getStyle().setBottom(10, Style.Unit.PX);
-        getElement().getStyle().setRight(10, Style.Unit.PX);
+        getElement().getStyle().setBottom(0, Style.Unit.PX);
+        getElement().getStyle().setRight(0, Style.Unit.PX);
     }
 
     @Override

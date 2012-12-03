@@ -61,14 +61,14 @@ public class ItemCockpit extends Composite implements SelectionListener {
     public void addToParentAndRegister(AbsolutePanel parentPanel) {
         if (Connection.getInstance().getGameEngineMode() != GameEngineMode.PLAYBACK) {
             SelectionHandler.getInstance().addSelectionListener(this);
-            parentPanel.add(this, 10, 0);
+            parentPanel.add(this, 0, 0);
             getElement().getStyle().setZIndex(Constants.Z_INDEX_ITEM_COCKPIT);
             getElement().getStyle().clearTop();
-            getElement().getStyle().setBottom(10, Style.Unit.PX);
-            parentPanel.add(minimizeButton, 10, 0);
+            getElement().getStyle().setBottom(0, Style.Unit.PX);
+            parentPanel.add(minimizeButton, 0, 0);
             minimizeButton.setZIndex(Constants.Z_INDEX_ITEM_COCKPIT_MINIMIZE_BUTTON);
             minimizeButton.getElement().getStyle().clearTop();
-            minimizeButton.getElement().getStyle().setBottom(10, Style.Unit.PX);
+            minimizeButton.getElement().getStyle().setBottom(0, Style.Unit.PX);
             showPanel(false);
         }
     }
