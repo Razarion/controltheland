@@ -14,4 +14,10 @@ public interface GameTipVisualization {
     Index getArrowHotSpot(Rectangle viewRect, long timeStamp);
 
     Index getMousePosition(Rectangle viewRect, long timeStamp);
+
+    Index getItemMarkerMiddle(Rectangle viewRect);
+
+    Index getRelativeOutOfViewArrowHotSpot(Rectangle viewRect);
+
+    double getRelativeOutOfViewArrowAngel();
 }

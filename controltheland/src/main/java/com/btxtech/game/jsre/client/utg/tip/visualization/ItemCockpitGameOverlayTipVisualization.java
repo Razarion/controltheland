@@ -22,7 +22,7 @@ public class ItemCockpitGameOverlayTipVisualization implements GameTipVisualizat
         this.toBeBuiltTypeId = toBeBuiltTypeId;
         absoluteBuildupPositionHotSpot = ItemCockpit.getInstance().getAbsoluteMiddleTopPositionFromBuildupPanel(toBeBuiltTypeId);
         buildupPositionHotSpot = new Index(CanvasElementLibrary.ARROW_WIDTH_TOTAL / 2, OverlayTipPanel.HEIGHT);
-        mousePosition = new Index(buildupPositionHotSpot.getX() + CanvasElementLibrary.ARROW_LINE_WIDTH,0);
+        mousePosition = new Index(buildupPositionHotSpot.getX() + CanvasElementLibrary.ARROW_LINE_WIDTH, 0);
     }
 
     @Override
@@ -46,5 +46,20 @@ public class ItemCockpitGameOverlayTipVisualization implements GameTipVisualizat
 
     public Index getAbsoluteBuildupPositionHotSpot() {
         return absoluteBuildupPositionHotSpot;
+    }
+
+    @Override
+    public Index getItemMarkerMiddle(Rectangle viewRect) {
+        return null;
+    }
+
+    @Override
+    public Index getRelativeOutOfViewArrowHotSpot(Rectangle viewRect) {
+        return null;
+    }
+
+    @Override
+    public double getRelativeOutOfViewArrowAngel() {
+        return 0;
     }
 }

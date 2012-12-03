@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.renderer.CanvasElementLibrary;
 import com.btxtech.game.jsre.common.MathHelper;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 /**
@@ -14,6 +15,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 public class ItemInGameTipVisualization implements GameTipVisualization {
     private SyncItem syncItem;
     private int itemRadius;
+    private double relativeOutOfViewArrowAngel;
 
     public ItemInGameTipVisualization(SyncItem syncItem) {
         this.syncItem = syncItem;
@@ -33,5 +35,28 @@ public class ItemInGameTipVisualization implements GameTipVisualization {
     @Override
     public double getArrowAngel() {
         return -MathHelper.QUARTER_RADIANT;
+    }
+
+    @Override
+    public Index getItemMarkerMiddle(Rectangle viewRect) {
+        return (syncItem instanceof SyncBaseItem) ? syncItem.getSyncItemArea().getPosition().sub(viewRect.getStart()) : null;
+    }
+
+    @Override
+    public Index getRelativeOutOfViewArrowHotSpot(Rectangle viewRect) {
+        if(!(syncItem instanceof SyncBaseItem)) {
+            return null;
+        }
+        if(viewRect.contains(syncItem.getSyncItemArea().getPosition())) {
+            return null;
+        }
+        relativeOutOfViewArrowAngel = viewRect.getCenter().getAngleToNord(syncItem.getSyncItemArea().getPosition());
+
+        return viewRect.getCenter().getPointFromAngelToNord(relativeOutOfViewArrowAngel, 200).sub(viewRect.getStart());
+    }
+
+    @Override
+    public double getRelativeOutOfViewArrowAngel() {
+        return relativeOutOfViewArrowAngel;
     }
 }
