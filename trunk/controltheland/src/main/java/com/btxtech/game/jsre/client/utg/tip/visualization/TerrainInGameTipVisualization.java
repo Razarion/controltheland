@@ -35,4 +35,19 @@ public class TerrainInGameTipVisualization implements GameTipVisualization {
     public double getArrowAngel() {
         return -MathHelper.QUARTER_RADIANT;
     }
+
+    @Override
+    public Index getItemMarkerMiddle(Rectangle viewRect) {
+        return null;
+    }
+
+    @Override
+    public Index getRelativeOutOfViewArrowHotSpot(Rectangle viewRect) {
+        return null;
+    }
+
+    @Override
+    public double getRelativeOutOfViewArrowAngel() {
+        return 0;
+    }
 }

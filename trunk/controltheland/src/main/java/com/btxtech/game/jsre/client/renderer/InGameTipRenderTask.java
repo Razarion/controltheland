@@ -16,6 +16,7 @@ import java.util.Collection;
  * Time: 11:46
  */
 public class InGameTipRenderTask extends AbstractRenderTask {
+    private static final String ITEM_MARKER = "#00FF00";
     private static final int TERRAIN_HINT_LENGTH = 150;
     private static final String CORNER_COLOR = "#00FF00";
     private Context2d context2d;
@@ -57,6 +58,28 @@ public class InGameTipRenderTask extends AbstractRenderTask {
             if (timeStamp / 300 % 2 == 0) {
                 context2d.drawImage(CanvasElementLibrary.getMouseButtonDown(), relativeMousePosition.getX(), relativeMousePosition.getY());
             }
+        }
+        // Render edges
+        Index relativeItemMarker = gameTipVisualization.getItemMarkerMiddle(viewRect);
+        if(relativeItemMarker != null) {
+            int distance = (TERRAIN_HINT_LENGTH - (int) (TERRAIN_HINT_LENGTH * (timeStamp & 1000) / 1000.0)) / 2;
+            context2d.save();
+            context2d.translate(relativeItemMarker.getX(), relativeItemMarker.getY());
+            context2d.drawImage(CanvasElementLibrary.getTlCorner(ITEM_MARKER), -distance, -distance);
+            context2d.drawImage(CanvasElementLibrary.getTrCorner(ITEM_MARKER), distance, -distance);
+            context2d.drawImage(CanvasElementLibrary.getBlCorner(ITEM_MARKER), -distance, distance);
+            context2d.drawImage(CanvasElementLibrary.getBrCorner(ITEM_MARKER), distance, distance);
+            context2d.restore();
+        }
+        // Out of view arrow
+        Index outOfViewPosition = gameTipVisualization.getRelativeOutOfViewArrowHotSpot(viewRect);
+        if(outOfViewPosition != null) {
+            context2d.save();
+            context2d.translate(outOfViewPosition.getX(), outOfViewPosition.getY());
+            context2d.rotate(-gameTipVisualization.getRelativeOutOfViewArrowAngel());
+            int distance = (TERRAIN_HINT_LENGTH - (int) (TERRAIN_HINT_LENGTH * (timeStamp & 500) / 500.0)) / 2;
+            context2d.drawImage(CanvasElementLibrary.getArrow(), CanvasElementLibrary.ARROW_WIDTH_TOTAL / 2, distance);
+            context2d.restore();
         }
     }
 }

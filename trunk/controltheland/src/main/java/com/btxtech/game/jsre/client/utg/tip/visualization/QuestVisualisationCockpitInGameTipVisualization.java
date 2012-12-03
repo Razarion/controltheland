@@ -32,4 +32,19 @@ public class QuestVisualisationCockpitInGameTipVisualization implements GameTipV
     public double getArrowAngel() {
         return -MathHelper.THREE_QUARTER_RADIANT;
     }
+
+    @Override
+    public Index getItemMarkerMiddle(Rectangle viewRect) {
+        return null;
+    }
+
+    @Override
+    public Index getRelativeOutOfViewArrowHotSpot(Rectangle viewRect) {
+        return null;
+    }
+
+    @Override
+    public double getRelativeOutOfViewArrowAngel() {
+        return 0;
+    }
 }
