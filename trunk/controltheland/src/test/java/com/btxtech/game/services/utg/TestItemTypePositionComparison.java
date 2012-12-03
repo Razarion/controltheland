@@ -437,6 +437,34 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
 
     @Test
     @DirtiesContext
+    public void singleItemTypeRegionNoPosition() throws Exception {
+        Map<ItemType, Integer> itemTypes = new HashMap<>();
+        itemTypes.put(builder1B1.getBaseItemType(), 1);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, createRegion(new Rectangle(500, 500, 1000, 1000), 1), null,
+                false), null, null, false);
+        serverConditionService.activateCondition(conditionConfig, userState1, 1);
+
+        serverConditionService.setConditionServiceListener(new ConditionServiceListener<UserState, Integer>() {
+            @Override
+            public void conditionPassed(UserState actor, Integer identifier) {
+                TestItemTypePositionComparison.this.actor = actor;
+                TestItemTypePositionComparison.this.identifier = identifier;
+            }
+        });
+
+        assertClearActorAndIdentifier();
+        serverConditionService.onSyncItemDeactivated(builder1B1);
+        assertClearActorAndIdentifier();
+        builder1B1.getSyncItemArea().setPosition(null);
+        serverConditionService.onSyncItemDeactivated(builder1B1);
+        assertClearActorAndIdentifier();
+        builder1B1.getSyncItemArea().setPosition(new Index(600, 600));
+        serverConditionService.onSyncItemDeactivated(builder1B1);
+        assertActorAndIdentifierAndClear(userState1, 1);
+    }
+
+    @Test
+    @DirtiesContext
     public void multipleItemTypeRegion1() throws Exception {
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(builder1B1.getBaseItemType(), 2);

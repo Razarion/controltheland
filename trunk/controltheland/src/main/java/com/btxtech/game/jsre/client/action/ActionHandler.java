@@ -111,14 +111,19 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                 SyncTickItem activeItem = iterator.next();
                 try {
                     if (!activeItem.tick(factor)) {
-                        iterator.remove();
-                        activeItem.stop();
-                        if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
-                            ActionHandler.getInstance().addGuardingBaseItem(activeItem);
-                            Connection.getInstance().sendSyncInfo(activeItem);
-                            if (activeItem instanceof SyncBaseItem) {
-                                SimulationConditionServiceImpl.getInstance().onSyncItemDeactivated((SyncBaseItem) activeItem);
+                        try {
+                            iterator.remove();
+                            activeItem.stop();
+                            if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
+                                ActionHandler.getInstance().addGuardingBaseItem(activeItem);
+                                Connection.getInstance().sendSyncInfo(activeItem);
+                                if (activeItem instanceof SyncBaseItem) {
+                                    SimulationConditionServiceImpl.getInstance().onSyncItemDeactivated((SyncBaseItem) activeItem);
+                                }
                             }
+                        } catch (Throwable throwable) {
+                            ClientExceptionHandler.handleException(throwable);
+                            Connection.getInstance().sendSyncInfo(activeItem);
                         }
                     }
                 } catch (ItemDoesNotExistException ife) {
