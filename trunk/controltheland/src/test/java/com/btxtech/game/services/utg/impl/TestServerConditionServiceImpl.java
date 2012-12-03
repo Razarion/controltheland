@@ -345,7 +345,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         sendMoveCommand(container, new Index(1100, 1100));
         waitForActionServiceDone();
         sendUnloadContainerCommand(container, new Index(1000, 1000));
-        waitForActionServiceDone(); // TODO crashed almost always here FIX THIS!!!: 02.20.2012, 02.20.2012, 05.10.2012, 12.10.2012, 29.10.2012, 30.10.2012
+        waitForActionServiceDone(); // TODO crashed almost always here FIX THIS!!!: 02.20.2012, 02.20.2012, 05.10.2012, 12.10.2012, 29.10.2012, 30.10.2012, 03.12.2012
         assertActorAndIdentifierAndClear(userService.getUserState(), 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
