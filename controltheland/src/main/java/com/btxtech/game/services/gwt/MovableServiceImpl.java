@@ -202,7 +202,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             simulationInfo.setLevelTaskTitel(userGuidanceService.getDbLevel().getLevelTaskCrud().readDbChild(levelTaskId).getName());
             simulationInfo.setLevelNumber(userGuidanceService.getDbLevel().getNumber());
             simulationInfo.setAbortable(userGuidanceService.getDbLevel().hasDbPlanet());
-            simulationInfo.setSellAllowed(simulationInfo.isSellAllowed());
+            simulationInfo.setSellAllowed(dbTutorialConfig.isSellAllowed());
             // Terrain
             terrainImageService.setupTerrainImages(simulationInfo);
             TerrainDbUtil.loadTerrainFromDb(dbTutorialConfig.getDbTerrainSetting(), simulationInfo);
