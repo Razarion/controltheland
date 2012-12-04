@@ -26,6 +26,7 @@ public class SimulationInfo extends GameInfo {
     private int levelTaskId;
     private int levelNumber;
     private boolean abortable;
+    private boolean sellAllowed;
 
     public void setTutorialConfig(TutorialConfig tutorialConfig) {
         this.tutorialConfig = tutorialConfig;
@@ -65,5 +66,14 @@ public class SimulationInfo extends GameInfo {
 
     public void setAbortable(boolean abortable) {
         this.abortable = abortable;
+    }
+
+    @Override
+    public boolean isSellAllowed() {
+        return sellAllowed;
+    }
+
+    public void setSellAllowed(boolean sellAllowed) {
+        this.sellAllowed = sellAllowed;
     }
 }

@@ -140,4 +140,9 @@ public class RealGameInfo extends GameInfo {
     public void setAllPlanets(List<PlanetLiteInfo> allPlanets) {
         this.allPlanets = allPlanets;
     }
+
+    @Override
+    public boolean isSellAllowed() {
+        return true;
+    }
 }

@@ -164,4 +164,6 @@ public abstract class GameInfo implements TerrainInfo, Serializable {
     public void setImageSpriteMapLibrary(Collection<ImageSpriteMapInfo> imageSpriteMapLibrary) {
         this.imageSpriteMapLibrary = imageSpriteMapLibrary;
     }
+
+    public abstract boolean isSellAllowed();
 }

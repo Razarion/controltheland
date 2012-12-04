@@ -61,6 +61,7 @@ public class TutorialEditor extends MgmtWebPage {
         form.add(new TextField<String>("height"));
         form.add(new CheckBox("tracking"));
         form.add(new CheckBox("showTip"));
+        form.add(new CheckBox("sellAllowed"));
         form.add(new TerrainPanel("dbTerrainSetting", new TerrainLinkHelper(dbTutorialConfig)));
 
         new CrudChildTableHelper<DbTutorialConfig, DbTaskConfig>("taskTable", null, "createTask", true, form, true) {
