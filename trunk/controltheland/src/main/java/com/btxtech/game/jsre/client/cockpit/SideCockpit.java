@@ -259,7 +259,7 @@ public class SideCockpit {
     }
 
     private void setupSocialNetPanel() {
-        WebBrowserCustomButton facebookCommunity = new WebBrowserCustomButton("facebookcommunity", ToolTips.TOOL_TIP_FACEBOOK_COMMUNITY, "http://www.facebook.com/RazarionCommunity");
+        WebBrowserCustomButton facebookCommunity = new WebBrowserCustomButton("facebookcommunity", ToolTips.TOOL_TIP_FACEBOOK_COMMUNITY, "http://www.facebook.com/Razarion");
         mainPanel.add(facebookCommunity, BNT_FB_COMMUNITY_X, BNT_FB_COMMUNITY_Y);
         mainPanel.add(new ExtendedCustomButton("facebookinvite", false, ToolTips.TOOL_TIP_FACEBOOK_INVITE, new ClickHandler() {
             @Override
