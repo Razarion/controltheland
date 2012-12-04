@@ -21,7 +21,6 @@ import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.dialogs.highscore.HighscoreDialog;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;
-import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.FacebookUtils;
 import com.btxtech.game.jsre.common.ProgressBar;
 import com.btxtech.game.jsre.common.packets.BoxPickedPacket;
@@ -227,10 +226,15 @@ public class SideCockpit {
             @Override
             public void onClick(ClickEvent event) {
                 ExtendedCustomButton btn = (ExtendedCustomButton) event.getSource();
-                if (btn.isDown()) {
-                    CockpitMode.getInstance().setMode(CockpitMode.Mode.SELL);
+                if (Connection.getInstance().getGameInfo().isSellAllowed()) {
+                    if (btn.isDown()) {
+                        CockpitMode.getInstance().setMode(CockpitMode.Mode.SELL);
+                    } else {
+                        CockpitMode.getInstance().setMode(null);
+                    }
                 } else {
-                    CockpitMode.getInstance().setMode(null);
+                    DialogManager.showDialog(new MessageDialog("Sell", "Selling items is not allowed on this planet."), DialogManager.Type.QUEUE_ABLE);
+                    btn.setDownState(false);
                 }
             }
         });

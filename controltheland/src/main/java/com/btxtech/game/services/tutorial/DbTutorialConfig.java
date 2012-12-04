@@ -63,6 +63,7 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
     @Column(length = 50000)
     private String inGameHtml;
     private boolean showTip;
+    private boolean sellAllowed;
 
     @Transient
     private CrudChildServiceHelper<DbTaskConfig> dbTaskConfigCrudChildServiceHelper;
@@ -131,11 +132,20 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
         this.dbTerrainSetting = dbTerrainSetting;
     }
 
+    public boolean isSellAllowed() {
+        return sellAllowed;
+    }
+
+    public void setSellAllowed(boolean sellAllowed) {
+        this.sellAllowed = sellAllowed;
+    }
+
     public void init(UserService userService) {
         ownBaseName = "My Base";
         dbTaskConfigs = new ArrayList<>();
         dbTerrainSetting = new DbTerrainSetting();
         dbTerrainSetting.init(userService);
+        sellAllowed = true;
     }
 
     @Override
