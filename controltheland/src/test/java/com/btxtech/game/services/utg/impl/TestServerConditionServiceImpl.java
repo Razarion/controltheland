@@ -335,6 +335,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         sendFactoryCommand(factory, TEST_CONTAINER_ITEM_ID);
         waitForActionServiceDone();
         Id container = getFirstSynItemId(TEST_CONTAINER_ITEM_ID);
+        sendMoveCommand(getFirstSynItemId(TEST_ATTACK_ITEM_ID), new Index(2000, 2000)); // Prevent container move over other unit
         sendMoveCommand(container, new Index(400, 400)); // Prevent container move over other unit
         waitForActionServiceDone();
         sendMoveCommand(builder, new Index(220, 400));
@@ -345,7 +346,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         sendMoveCommand(container, new Index(1100, 1100));
         waitForActionServiceDone();
         sendUnloadContainerCommand(container, new Index(1000, 1000));
-        waitForActionServiceDone(); // TODO crashed almost always here FIX THIS!!!: 02.20.2012, 02.20.2012, 05.10.2012, 12.10.2012, 29.10.2012, 30.10.2012, 03.12.2012
+        waitForActionServiceDone(); // TODO crashed almost always here FIX THIS!!!: 02.20.2012, 02.20.2012, 05.10.2012, 12.10.2012, 29.10.2012, 30.10.2012, 03.12.2012, 04.12.2012, 05.12.2012, 05.12.2012
         assertActorAndIdentifierAndClear(userService.getUserState(), 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
