@@ -1131,7 +1131,7 @@ public class CmsUiServiceImpl implements CmsUiService {
                 }
             }
         } catch (Exception e) {
-            log.error("", e);
+            ExceptionHandler.handleException(e);
         }
     }
 
