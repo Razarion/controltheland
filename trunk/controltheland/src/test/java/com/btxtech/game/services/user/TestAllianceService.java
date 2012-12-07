@@ -669,6 +669,7 @@ public class TestAllianceService extends AbstractServiceTest {
         allianceService.breakAlliance("u1");
         assertWholeItemCount(TEST_PLANET_1_ID, 4);
         waitForActionServiceDone();
+        // TODO failed on 05.12.2012
         assertWholeItemCount(TEST_PLANET_1_ID, 3);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
