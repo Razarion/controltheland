@@ -20,6 +20,7 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import com.btxtech.game.wicket.uiservices.facebook.FacebookController;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.StatelessForm;
@@ -46,6 +47,8 @@ public class Register extends Panel {
             cmsUiService.setMessageResponsePage(this, "Already logged in as: " + userService.getUser().getUsername());
             return;
         }
+
+        add(new FacebookController("facebook", FacebookController.Type.REGISTER));
 
         StatelessForm<Register> form = new StatelessForm<Register>("newUserForm", new CompoundPropertyModel<Register>(this)) {
             @Override

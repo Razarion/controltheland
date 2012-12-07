@@ -18,6 +18,7 @@ import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import com.btxtech.game.wicket.uiservices.facebook.FacebookController;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeAction;
@@ -43,6 +44,7 @@ public class LoginBox extends Panel {
 
     public LoginBox(String id, boolean showRegisterLink) {
         super(id);
+        add(new FacebookController("facebook", FacebookController.Type.AUTO_LOGON));
         StatelessForm<LoginBox> form = new StatelessForm<LoginBox>("loginForm", new CompoundPropertyModel<LoginBox>(this)) {
             @Override
             protected void onSubmit() {

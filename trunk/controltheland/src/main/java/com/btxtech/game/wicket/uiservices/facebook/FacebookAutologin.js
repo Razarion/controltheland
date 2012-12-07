@@ -1,10 +1,3 @@
-/**
- * Created with IntelliJ IDEA.
- * User: beat
- * Date: 25.07.12
- * Time: 14:58
- * To change this template use File | Settings | File Templates.
- */
 window.fbAsyncInit = function () {
     FB.init({
         appId:'${FACEBOOK_APP_ID}', // App ID
@@ -14,7 +7,11 @@ window.fbAsyncInit = function () {
         xfbml:true  // parse XFBML
     });
 
-    // Additional initialization code here
+    FB.getLoginStatus(function (response) {
+        if (response.status === 'connected') {
+            window.location.href = '${FACEBOOK_START}' + '?signed_request=' + response.authResponse.signedRequest;
+        }
+    });
 };
 
 // Load the SDK Asynchronously
