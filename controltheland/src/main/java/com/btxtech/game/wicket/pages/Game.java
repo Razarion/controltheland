@@ -18,14 +18,13 @@ import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import com.btxtech.game.wicket.uiservices.facebook.FacebookController;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.apache.wicket.util.template.PackagedTextTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,7 +50,7 @@ public class Game extends WebPage {
             return;
         }
 
-        setupFacebookJsSdk();
+        add(new FacebookController("facebook", FacebookController.Type.GAME));
 
         GameStartupSeq gameStartupSeq;
 
@@ -66,14 +65,6 @@ public class Game extends WebPage {
         add(new Label("startupTaskText", gameStartupSeq.getAbstractStartupTaskEnum()[0].getStartupTaskEnumHtmlHelper().getNiceText()));
 
         setupStartupSeq(gameStartupSeq, levelTaskId);
-    }
-
-    private void setupFacebookJsSdk() {
-        PackagedTextTemplate jsTemplate = new PackagedTextTemplate(Game.class, "FacebookJavaScriptSdk.js");
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("FACEBOOK_APP_ID", cmsUiService.getFacebookAppId());
-        parameters.put("CHANNEL_URL", "//www.razarion.com/FacebookChannelFile.html");
-        add(new Label("facebookJsSkd", new Model<>(jsTemplate.asString(parameters))).setEscapeModelStrings(false));
     }
 
     private void setupStartupSeq(GameStartupSeq gameStartupSeq, Integer levelTaskId) {

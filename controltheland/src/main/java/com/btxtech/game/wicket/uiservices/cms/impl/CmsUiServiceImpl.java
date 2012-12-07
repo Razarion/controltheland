@@ -1125,7 +1125,6 @@ public class CmsUiServiceImpl implements CmsUiService {
                     Map<String, Object> parameters = new HashMap<>();
                     parameters.put("FACEBOOK_APP_ID", facebookAppId);
                     parameters.put("FACEBOOK_APP_NAMESPACE", facebookAppNameSpace);
-                    //parameters.put("FACEBOOK_APP_NAMESPACE", "testing_purposes");
                     parameters.put("FACEBOOK_PERMISSIONS", "");
                     component.add(new StringHeaderContributor(new JavaScriptTemplate(jsTemplate).asString(parameters)));
                 }

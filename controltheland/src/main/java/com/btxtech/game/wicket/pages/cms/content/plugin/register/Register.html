@@ -10,9 +10,23 @@
   ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~   GNU General Public License for more details.
   -->
-
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket>
+<head>
+    <title></title>
+</head>
+<body>
 <wicket:panel>
-    <h2>Create a new user account</h2>
+    <h2>Login via Facebook</h2>
+
+    <div wicket:id="facebook"></div>
+    <div id="loginState"></div>
+    <button class="fbconnectbutton" type="button" id="fbconnectbutton">
+        <span class="fbconnectbuttonBold">Connect</span> with <span class="fbconnectbuttonBold">Facebook</span>
+    </button>
+    ​
+    <h2>Register</h2>
 
     <form wicket:id="newUserForm">
         <table width="300px">
@@ -37,8 +51,8 @@
             </tr>
         </table>
     </form>
-
 </wicket:panel>
-
+</body>
+</html>
 
 

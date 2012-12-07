@@ -18,22 +18,8 @@
 </head>
 <body>
 <wicket:panel>
-    <div wicket:id="facebook"></div>
-    <table>
-        <form wicket:id="loginForm" style="padding-left:7px">
-            <tr>
-                <td>
-                    Logged in:
-                </td>
-                <td>
-                    <a href="LoginBox.html#" wicket:id="nameLink" class="account"><span wicket:id="name">name</span></a>
-                </td>
-                <td>
-                    <input type="submit" size="15" value="Logout" id="logoutButton"/>
-                </td>
-            </tr>
-        </form>
-    </table>
+    <div id="fb-root"></div>
+    <script wicket:id="facebookJsSkd" type="text/javascript"></script>
 </wicket:panel>
 </body>
 </html>
