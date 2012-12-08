@@ -40,6 +40,18 @@ public class FacebookUtil {
         }
     }
 
+    public static FacebookSignedRequest createAndCheckFacebookSignedRequest(String facebookAppSecret, String signedRequestParameter) {
+        String[] signedRequestParts = FacebookUtil.splitSignedRequest(signedRequestParameter);
+
+        FacebookSignedRequest facebookSignedRequest = FacebookUtil.getFacebookSignedRequest(signedRequestParts[1]);
+        if (!facebookSignedRequest.getAlgorithm().toUpperCase().equals("HMAC-SHA256")) {
+            throw new IllegalArgumentException("Invalid signature algorithm received: " + facebookSignedRequest.getAlgorithm());
+        }
+
+        FacebookUtil.checkSignature(facebookAppSecret, signedRequestParts[1], signedRequestParts[0]);
+        return facebookSignedRequest;
+    }
+
     public static String[] splitSignedRequest(String signedRequestParameter) {
         if (signedRequestParameter == null || signedRequestParameter.isEmpty()) {
             throw new IllegalArgumentException("Empty signed_request received");

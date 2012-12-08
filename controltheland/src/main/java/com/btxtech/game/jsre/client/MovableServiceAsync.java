@@ -62,6 +62,14 @@ public interface MovableServiceAsync {
 
     void register(String userName, String password, String confirmPassword, String email, AsyncCallback<Void> asyncCallback);
 
+    void createAndLoginFacebookUser(String signedRequestParameter, String nickname, AsyncCallback<Void> async);
+
+    void loginFacebookUser(String signedRequestParameter, AsyncCallback<String> async);
+
+    void isFacebookUserRegistered(String signedRequestParameter, AsyncCallback<Boolean> async);
+
+    void isNickNameValid(String nickname, AsyncCallback<InvalidNickName> async);
+
     void sendChatMessage(ChatMessage chatMessage, AsyncCallback<Void> asyncCallback);
 
     void pollChatMessages(Integer lastMessageId, AsyncCallback<List<ChatMessage>> asyncCallback);

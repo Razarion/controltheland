@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.user.impl;
 
+import com.btxtech.game.jsre.client.InvalidNickName;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
@@ -26,7 +27,6 @@ import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.DbPageAccessControl;
-import com.btxtech.game.services.user.InvalidNickName;
 import com.btxtech.game.services.user.NotAuthorizedException;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
@@ -128,7 +128,16 @@ public class UserServiceImpl implements UserService {
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, "", user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        ((WicketAuthenticatedWebSession) AuthenticatedWebSession.get()).setSignIn();
+        try {
+            ((WicketAuthenticatedWebSession) AuthenticatedWebSession.get()).setSignIn();
+        } catch (Exception e) {
+            // If coming from movable service, no wicket session available
+            Object o = session.getRequest().getSession().getAttribute("wicket:wicket:" + org.apache.wicket.Session.SESSION_ATTRIBUTE_NAME);
+            if (o == null) {
+                throw new RuntimeException("Wicket session not found");
+            }
+            ((WicketAuthenticatedWebSession) o).setSignIn();
+        }
         loginUser(user);
     }
 

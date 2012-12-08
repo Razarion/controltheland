@@ -442,3 +442,34 @@ td.box {
     text-shadow: 1px 1px 0px #0a131c;
 }
 
+#fbconnectbutton {
+    -moz-box-shadow:inset 1px 1px 2px 0px #afbede;
+    -webkit-box-shadow:inset 1px 1px 2px 0px #afbede;
+    box-shadow:inset 1px 1px 2px 0px #afbede;
+    background:#5b73a8;
+    border:1px solid #394ea3;
+    display:inline-block;
+    color:#ffffff;
+    font-family:'lucida grande',tahoma,verdana,arial,sans-serif;
+    font-size:13px;
+    padding:4px 6px;
+    text-decoration:none;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    width: auto;
+}
+
+#fbconnectbutton:hover {
+    background:#3d537d;
+}
+
+#fbconnectbutton:active {
+    position:relative;
+    top:1px;
+}
+
+.fbconnectbuttonBold{
+    font-weight: bold;
+}
+

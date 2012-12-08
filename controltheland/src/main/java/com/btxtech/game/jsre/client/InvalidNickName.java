@@ -1,13 +1,16 @@
-package com.btxtech.game.services.user;
+package com.btxtech.game.jsre.client;
+
+import java.io.Serializable;
 
 /**
  * User: beat
  * Date: 23.07.12
  * Time: 13:42
  */
-public enum InvalidNickName {
+public enum InvalidNickName implements Serializable {
     TO_SHORT("name must have at least 3 characters"),
-    ALREADY_USED("name has already been taken");
+    ALREADY_USED("name has already been taken"),
+    UNKNOWN_ERROR("Unable to create user");
     private String errorMsg;
 
     InvalidNickName(String errorMsg) {
