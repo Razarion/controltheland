@@ -1094,15 +1094,8 @@ public class CmsUiServiceImpl implements CmsUiService {
                 component.setResponsePage(Game.class, gamePageParameters);
             } else {
                 String signedRequestParameter = pageParameters.getString("signed_request");
-                String[] signedRequestParts = FacebookUtil.splitSignedRequest(signedRequestParameter);
 
-                FacebookSignedRequest facebookSignedRequest = FacebookUtil.getFacebookSignedRequest(signedRequestParts[1]);
-                if (!facebookSignedRequest.getAlgorithm().toUpperCase().equals("HMAC-SHA256")) {
-                    throw new IllegalArgumentException("Invalid signature algorithm received: " + facebookSignedRequest.getAlgorithm());
-                }
-
-                FacebookUtil.checkSignature(facebookAppSecret, signedRequestParts[1], signedRequestParts[0]);
-
+                FacebookSignedRequest facebookSignedRequest = FacebookUtil.createAndCheckFacebookSignedRequest(getFacebookAppSecret(), signedRequestParameter);
 
                 if (facebookSignedRequest.hasUserId()) {
                     // Is authorized by facebook

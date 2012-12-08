@@ -14,6 +14,7 @@
 package com.btxtech.game.services.user;
 
 
+import com.btxtech.game.jsre.client.InvalidNickName;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;

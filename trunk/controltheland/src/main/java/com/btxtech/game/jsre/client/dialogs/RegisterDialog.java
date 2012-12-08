@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client.dialogs;
 
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.common.FacebookUtils;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
@@ -27,6 +28,7 @@ import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CaptionPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -45,7 +47,7 @@ public class RegisterDialog extends Dialog {
     private static final String REGISTRATION_DIALOG = "<b>Attention:</b> if you continue without registration you will not be able to return to your base after you leave the game.";
     private static final String REGISTRATION_FILLED = "All fields must be filled in";
     private static final String REGISTRATION_MATCH = "Password and confirm password do not match";
-    private static final String REGISTRATION_EXISTS = "The user already exists";
+    public static final String REGISTRATION_EXISTS = "The user already exists";
     private static Timer timer;
     private TextBox userName;
     private TextBox email;
@@ -55,49 +57,26 @@ public class RegisterDialog extends Dialog {
     public RegisterDialog() {
         super("Register");
         setShowCloseButton(false);
-        getElement().getStyle().setWidth(300, Style.Unit.PX);
+        getElement().getStyle().setWidth(350, Style.Unit.PX);
     }
 
     @Override
     protected void setupPanel(VerticalPanel dialogVPanel) {
-        // Text
+        dialogVPanel.setSpacing(10);
         dialogVPanel.add(new HTML(REGISTRATION_DIALOG));
-
-        FlexTable grid = new FlexTable();
+        // Skip button
         Button skip = new Button("Skip");
-        grid.setWidget(0, 0, skip);
         skip.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 hide(true);
             }
         });
-        grid.getFlexCellFormatter().setColSpan(0, 0, 2);
-        grid.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER);
-        grid.setWidget(1, 0, new HTML("&nbsp")); // Spacer
-        grid.setWidget(2, 0, new Label("User name"));
-        userName = new TextBox();
-        grid.setWidget(2, 1, userName);
-        grid.setWidget(3, 0, new Label("Email"));
-        email = new TextBox();
-        grid.setWidget(3, 1, email);
-        grid.setWidget(4, 0, new Label("Password"));
-        password = new PasswordTextBox();
-        grid.setWidget(4, 1, password);
-        grid.setWidget(5, 0, new Label("Confirm password"));
-        confirmPassword = new PasswordTextBox();
-        grid.setWidget(5, 1, confirmPassword);
-        Button regsiter = new Button("Register");
-        grid.setWidget(6, 0, regsiter);
-        regsiter.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                register();
-            }
-        });
-        grid.getFlexCellFormatter().setColSpan(6, 0, 2);
-        grid.getFlexCellFormatter().setHorizontalAlignment(6, 0, HasHorizontalAlignment.ALIGN_CENTER);
-        dialogVPanel.add(grid);
+        dialogVPanel.add(skip);
+
+        facebookRegister(dialogVPanel);
+        normalRegsiter(dialogVPanel);
+
         addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
             public void onClose(CloseEvent<PopupPanel> popupPanelCloseEvent) {
@@ -106,6 +85,51 @@ public class RegisterDialog extends Dialog {
                 }
             }
         });
+
+    }
+
+    private void facebookRegister(VerticalPanel dialogVPanel) {
+        Button button = new Button("<span class='fbconnectbuttonBold'>Connect</span> with <span class='fbconnectbuttonBold'>Facebook</span>");
+        button.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                FacebookUtils.login(RegisterDialog.this);
+            }
+        });
+        button.getElement().setId("fbconnectbutton");
+        CaptionPanel captionPanel = new CaptionPanel("Register via Facebook");
+        captionPanel.add(button);
+        dialogVPanel.add(captionPanel);
+    }
+
+    private void normalRegsiter(VerticalPanel dialogVPanel) {
+        FlexTable grid = new FlexTable();
+        grid.setWidget(0, 0, new Label("User name"));
+        userName = new TextBox();
+        grid.setWidget(0, 1, userName);
+        grid.setWidget(1, 0, new Label("Email"));
+        email = new TextBox();
+        grid.setWidget(1, 1, email);
+        grid.setWidget(2, 0, new Label("Password"));
+        password = new PasswordTextBox();
+        grid.setWidget(2, 1, password);
+        grid.setWidget(3, 0, new Label("Confirm password"));
+        confirmPassword = new PasswordTextBox();
+        grid.setWidget(3, 1, confirmPassword);
+        Button regsiter = new Button("Register");
+        grid.setWidget(4, 0, regsiter);
+        regsiter.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                register();
+            }
+        });
+        grid.getFlexCellFormatter().setColSpan(4, 0, 2);
+        grid.getFlexCellFormatter().setHorizontalAlignment(4, 0, HasHorizontalAlignment.ALIGN_CENTER);
+
+        CaptionPanel captionPanel = new CaptionPanel("Direct registration");
+        captionPanel.add(grid);
+        dialogVPanel.add(captionPanel);
     }
 
     private void register() {

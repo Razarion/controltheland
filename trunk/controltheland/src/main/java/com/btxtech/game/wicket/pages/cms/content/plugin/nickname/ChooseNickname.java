@@ -14,7 +14,7 @@
 package com.btxtech.game.wicket.pages.cms.content.plugin.nickname;
 
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
-import com.btxtech.game.services.user.InvalidNickName;
+import com.btxtech.game.jsre.client.InvalidNickName;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.pages.Game;

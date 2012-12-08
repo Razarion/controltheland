@@ -14,6 +14,7 @@
 package com.btxtech.game.services.gwt;
 
 
+import com.btxtech.game.jsre.client.InvalidNickName;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
@@ -55,6 +56,8 @@ import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.NoSuchPlanetException;
 import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
+import com.btxtech.game.services.socialnet.facebook.FacebookUtil;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.terrain.TerrainDbUtil;
 import com.btxtech.game.services.terrain.TerrainImageService;
@@ -260,6 +263,53 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             ExceptionHandler.handleException(t);
         }
 
+    }
+
+    @Override
+    public void createAndLoginFacebookUser(String signedRequestParameter, String nickname) throws UserAlreadyExistsException {
+        try {
+            FacebookSignedRequest facebookSignedRequest = FacebookUtil.createAndCheckFacebookSignedRequest(cmsUiService.getFacebookAppSecret(), signedRequestParameter);
+            userService.createAndLoginFacebookUser(facebookSignedRequest, nickname);
+        } catch (UserAlreadyExistsException e) {
+            throw e;
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+        }
+
+    }
+
+    @Override
+    public String loginFacebookUser(String signedRequestParameter) throws UserAlreadyExistsException {
+        try {
+            FacebookSignedRequest facebookSignedRequest = FacebookUtil.createAndCheckFacebookSignedRequest(cmsUiService.getFacebookAppSecret(), signedRequestParameter);
+            userService.loginFacebookUser(facebookSignedRequest);
+            return userService.getUserName();
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
+        }
+    }
+
+    @Override
+    public boolean isFacebookUserRegistered(String signedRequestParameter) {
+        try {
+            FacebookSignedRequest facebookSignedRequest = FacebookUtil.createAndCheckFacebookSignedRequest(cmsUiService.getFacebookAppSecret(), signedRequestParameter);
+            return userService.isFacebookUserRegistered(facebookSignedRequest);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return false;
+        }
+
+    }
+
+    @Override
+    public InvalidNickName isNickNameValid(String nickname) {
+        try {
+            return userService.isNickNameValid(nickname);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return InvalidNickName.UNKNOWN_ERROR;
+        }
     }
 
     @Override

@@ -35,7 +35,7 @@ public class TestUserServiceFacebook extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void createLogin() throws Exception {
+    public void createLoginCms() throws Exception {
         configureSimplePlanetNoResources();
 
         beginHttpSession();
@@ -56,9 +56,11 @@ public class TestUserServiceFacebook extends AbstractServiceTest {
         FacebookSignedRequest facebookSignedRequest = new FacebookSignedRequest(null, 0, null, null, "12345");
         Assert.assertFalse(userService.isFacebookUserRegistered(facebookSignedRequest));
         Assert.assertFalse(userService.isFacebookLoggedIn(facebookSignedRequest));
+        Assert.assertTrue(userService.getAuthorities().isEmpty());
         userService.createAndLoginFacebookUser(facebookSignedRequest, "nickname");
         Assert.assertTrue(userService.isFacebookLoggedIn(facebookSignedRequest));
         Assert.assertTrue(userService.isFacebookUserRegistered(facebookSignedRequest));
+        Assert.assertFalse(userService.getAuthorities().isEmpty());
         Assert.assertEquals("nickname", userService.getUser().getUsername());
         userService.onSessionTimedOut(getUserState());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -69,12 +71,60 @@ public class TestUserServiceFacebook extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertTrue(userService.isFacebookUserRegistered(facebookSignedRequest));
         Assert.assertFalse(userService.isFacebookLoggedIn(facebookSignedRequest));
+        Assert.assertTrue(userService.getAuthorities().isEmpty());
         userService.loginFacebookUser(facebookSignedRequest);
         Assert.assertTrue(userService.isFacebookLoggedIn(facebookSignedRequest));
         Assert.assertTrue(userService.isFacebookUserRegistered(facebookSignedRequest));
+        Assert.assertFalse(userService.getAuthorities().isEmpty());
         Assert.assertEquals("nickname", userService.getUser().getUsername());
         userService.onSessionTimedOut(getUserState());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void createLoginMovableService() throws Exception {
+        configureSimplePlanetNoResources();
+
+        // Register FB user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        FacebookSignedRequest facebookSignedRequest = new FacebookSignedRequest(null, 0, null, null, "12345");
+        Assert.assertFalse(userService.isFacebookUserRegistered(facebookSignedRequest));
+        Assert.assertFalse(userService.isFacebookLoggedIn(facebookSignedRequest));
+        Assert.assertTrue(userService.getAuthorities().isEmpty());
+        userService.createAndLoginFacebookUser(facebookSignedRequest, "nickname");
+        Assert.assertTrue(userService.isFacebookLoggedIn(facebookSignedRequest));
+        Assert.assertTrue(userService.isFacebookUserRegistered(facebookSignedRequest));
+        Assert.assertFalse(userService.getAuthorities().isEmpty());
+        Assert.assertEquals("nickname", userService.getUser().getUsername());
+        userService.onSessionTimedOut(getUserState());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Login FB user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertTrue(userService.isFacebookUserRegistered(facebookSignedRequest));
+        Assert.assertFalse(userService.isFacebookLoggedIn(facebookSignedRequest));
+        Assert.assertFalse(userService.isFacebookLoggedIn(facebookSignedRequest));
+        userService.loginFacebookUser(facebookSignedRequest);
+        Assert.assertTrue(userService.isFacebookLoggedIn(facebookSignedRequest));
+        Assert.assertTrue(userService.isFacebookUserRegistered(facebookSignedRequest));
+        Assert.assertEquals("nickname", userService.getUser().getUsername());
+        Assert.assertFalse(userService.getAuthorities().isEmpty());
+        endHttpRequestAndOpenSessionInViewFilter();
+        // Same session
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertTrue(userService.isFacebookLoggedIn(facebookSignedRequest));
+        Assert.assertTrue(userService.isFacebookUserRegistered(facebookSignedRequest));
+        Assert.assertEquals("nickname", userService.getUser().getUsername());
+        Assert.assertFalse(userService.getAuthorities().isEmpty());
+        userService.onSessionTimedOut(getUserState());
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        endHttpSession();
+    }
+
 }

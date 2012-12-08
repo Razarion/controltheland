@@ -1,5 +1,6 @@
 package com.btxtech.game.mockservlet;
 
+import com.btxtech.game.jsre.client.InvalidNickName;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.AbstractGwtTest;
 import com.btxtech.game.jsre.client.common.Index;
@@ -163,6 +164,26 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     @Override
     public void register(String userName, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void createAndLoginFacebookUser(String signedRequestParameter, String nickname) throws UserAlreadyExistsException, PasswordNotMatchException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public String loginFacebookUser(String signedRequestParameter) throws UserAlreadyExistsException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public boolean isFacebookUserRegistered(String signedRequestParameter) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public InvalidNickName isNickNameValid(String nickname) throws UserAlreadyExistsException, PasswordNotMatchException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
