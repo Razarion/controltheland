@@ -1,8 +1,5 @@
 package com.btxtech.game.services.gwt;
 
-import com.btxtech.game.jsre.client.InvalidNickName;
-import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
-import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.web.context.WebApplicationContext;
