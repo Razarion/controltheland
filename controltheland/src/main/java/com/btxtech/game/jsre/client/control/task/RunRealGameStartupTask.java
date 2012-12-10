@@ -24,7 +24,7 @@ import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.btxtech.game.jsre.client.renderer.Renderer;
-import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
 
 /**
  * User: beat
@@ -48,5 +48,6 @@ public class RunRealGameStartupTask extends AbstractStartupTask {
         ClientAllianceHandler.getInstance().checkForPendingAlliances();
         Renderer.getInstance().start();
         SoundHandler.getInstance().start(Connection.getInstance().getGameInfo().getCommonSoundInfo());
+        TerrainView.getInstance().setFocus();
     }
 }
