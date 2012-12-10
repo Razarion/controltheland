@@ -44,6 +44,7 @@ import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.CommonJava;
+import com.btxtech.game.jsre.common.FacebookUtils;
 import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -285,6 +286,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                     ClientLevelHandler.getInstance().setLevel(((LevelPacket) packet).getLevel());
                     SplashManager.getInstance().onLevelUp();
                     QuestDialog.updateQuestDialog();
+                    FacebookUtils.postToFeedLevelUp(((LevelPacket) packet).getLevel());
                 } else if (packet instanceof LevelTaskPacket) {
                     QuestVisualtsationModel.getInstance().setLevelTask((LevelTaskPacket) packet);
                     QuestDialog.updateQuestDialog();

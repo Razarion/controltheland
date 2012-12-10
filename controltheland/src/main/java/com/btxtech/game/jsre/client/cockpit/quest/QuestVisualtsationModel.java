@@ -14,6 +14,7 @@ import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
+import com.btxtech.game.jsre.common.FacebookUtils;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
@@ -54,6 +55,7 @@ public class QuestVisualtsationModel {
             currentQuestProgressInfo = null;
             updateType();
         } else if (levelTaskPacket.isCompleted()) {
+            FacebookUtils.postToFeedLevelTaskDone(currentQuest);
             SplashManager.getInstance().onLevelTaskCone();
             currentQuest = null;
             currentQuestProgressInfo = null;

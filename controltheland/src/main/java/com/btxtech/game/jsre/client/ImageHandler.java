@@ -41,6 +41,8 @@ public class ImageHandler {
     public static final String BTN_DOWN_IMAGE = "-down.png";
     public static final String BTN_DISABLED_IMAGE = "-disabled.png";
     public static final String SPLASH_IMAGE_PREFIX = "/images/splash/";
+    public static final String RAZARION = "http://www.razarion.com/";
+    public static final String EXTERNAL_USED ="external_used";
 
     /**
      * Singleton
@@ -208,5 +210,9 @@ public class ImageHandler {
 
     public static Image getCockpitImage(String image) {
         return new Image(getCockpitImageUrl(image));
+    }
+
+    public static String getFacebookFeedImageUrl() {
+        return RAZARION + IMAGES + "/" + EXTERNAL_USED + "/RazarionMain4.jpg";
     }
 }

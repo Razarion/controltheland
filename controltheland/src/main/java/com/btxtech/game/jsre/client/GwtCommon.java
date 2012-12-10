@@ -14,7 +14,7 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.jsre.client.dialogs.ExceptionDialog;
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.ImageElement;
@@ -24,6 +24,7 @@ import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.StatusCodeException;
 import com.google.gwt.user.client.ui.Image;
@@ -235,5 +236,21 @@ public class GwtCommon {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    public static String getPredefinedUrl(CmsUtil.CmsPredefinedPage cmsPredefinedPage) {
+        return getUrlString(Connection.getInstance().getGameInfo().getPredefinedUrls().get(cmsPredefinedPage));
+    }
+
+    public static String getUrlString(String path) {
+        UrlBuilder urlBuilder = new UrlBuilder();
+        urlBuilder.setHost(Window.Location.getHost());
+        urlBuilder.setPath(path);
+
+        String port = Window.Location.getPort();
+        if (!port.isEmpty())
+            urlBuilder.setPort(Integer.parseInt(port));
+
+        return urlBuilder.buildString();
     }
 }

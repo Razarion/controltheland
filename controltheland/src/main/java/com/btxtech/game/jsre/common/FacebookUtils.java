@@ -1,10 +1,16 @@
 package com.btxtech.game.jsre.common;
 
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
+import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.GameEngineMode;
+import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.NickNameDialog;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -17,6 +23,7 @@ import java.util.logging.Logger;
  * Time: 17:15
  */
 public class FacebookUtils {
+    private static final String RAZARION_APP_URL = "https://apps.facebook.com/razarion/";
     private static Logger log = Logger.getLogger(FacebookUtils.class.getName());
 
     public static void invite() {
@@ -84,9 +91,71 @@ public class FacebookUtils {
         }
     }
 
+    public static void postToFeedLevelTaskDone(QuestInfo questInfo) {
+        try {
+            if (questInfo == null) {
+                return;
+            }
+            if (Connection.getInstance().getGameEngineMode() != GameEngineMode.SLAVE) {
+                return;
+            }
+            nativePostToFeed(Connection.getInstance().getUserName() + " completed a level task on Razarion",
+                    "'" + questInfo.getTitle() + "' completed on " + ClientPlanetServices.getInstance().getPlanetInfo().getName(),
+                    "Build your base, attack other players and gather resources. A browser multiplayer real-time strategy game.",
+                    GwtCommon.getPredefinedUrl(CmsUtil.CmsPredefinedPage.FACEBOOK_START),
+                    RAZARION_APP_URL,
+                    ImageHandler.getFacebookFeedImageUrl());
+        } catch (Exception e) {
+            ClientExceptionHandler.handleException("FacebookUtils.postToFeedLevelTaskDone()", e);
+        }
+    }
+
+    public static void postToFeedLevelUp(LevelScope levelScope) {
+        try {
+            if (levelScope == null) {
+                return;
+            }
+            if (Connection.getInstance().getGameEngineMode() != GameEngineMode.SLAVE) {
+                return;
+            }
+            nativePostToFeed(Connection.getInstance().getUserName() + " leveled up on Razarion",
+                    "Reached level " + levelScope.getNumber() + " on " + ClientPlanetServices.getInstance().getPlanetInfo().getName(),
+                    "Build your base, attack other players and gather resources. A browser multiplayer real-time strategy game.",
+                    GwtCommon.getPredefinedUrl(CmsUtil.CmsPredefinedPage.FACEBOOK_START),
+                    RAZARION_APP_URL,
+                    ImageHandler.getFacebookFeedImageUrl());
+        } catch (Exception e) {
+            ClientExceptionHandler.handleException("FacebookUtils.postToFeedLevelTaskDone()", e);
+
+        }
+    }
+
+    native private static void nativePostToFeed(String name, String caption, String description, String redirectUri, String link, String picture)/*-{
+        $wnd.FB.getLoginStatus(function (response) {
+            if (response.status === 'connected') {
+                var obj = {
+                    method:'feed',
+                    redirect_uri:redirectUri,
+                    link:link,
+                    picture:picture,
+                    name:name,
+                    caption:caption,
+                    description:description
+                };
+                $wnd.FB.ui(obj, $wnd.RazFacebookUtilFbCallbackPostToFeed);
+            }
+        });
+    }-*/;
+
+    public static void fbUiCallBackPostToFeed(JavaScriptObject object) {
+        log.severe("FacebookUtils.fbUiCallBackPostToFeed() " + object);
+    }
+
+
     public static native void exportStaticMethod() /*-{
         $wnd.RazFacebookUtilFbCallback = $entry(@com.btxtech.game.jsre.common.FacebookUtils::fbUiCallBack(Lcom/google/gwt/core/client/JavaScriptObject;));
         $wnd.RazFacebookUtilFbCallbackLogin = $entry(@com.btxtech.game.jsre.common.FacebookUtils::fbUiCallBackLoginResponse(Ljava/lang/String;Lcom/btxtech/game/jsre/client/dialogs/RegisterDialog;));
+        $wnd.RazFacebookUtilFbCallbackPostToFeed = $entry(@com.btxtech.game.jsre.common.FacebookUtils::fbUiCallBackPostToFeed(Lcom/google/gwt/core/client/JavaScriptObject;));
     }-*/;
 
 }
