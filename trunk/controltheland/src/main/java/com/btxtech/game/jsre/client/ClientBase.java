@@ -178,7 +178,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
             }
             return ENEMY_BASE_COLOR;
         } catch (Throwable t) {
-            log.log(Level.SEVERE, "getBaseHtmlColor() failed", t);
+            ClientExceptionHandler.handleExceptionOnlyOnce("getBaseHtmlColor() failed", t);
             return UNKNOWN_BASE_COLOR;
         }
     }

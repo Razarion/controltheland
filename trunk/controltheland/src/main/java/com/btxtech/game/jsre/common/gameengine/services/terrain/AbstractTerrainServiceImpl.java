@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.terrain;
 
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
@@ -78,7 +79,7 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
                     TerrainTile terrainTile = terrainTileField[x][y];
                     terrainTileEvaluator.evaluate(x, y, terrainTile);
                 } catch (Exception e) {
-                    log.log(Level.SEVERE, "AbstractTerrainServiceImpl.iteratorOverAllTerrainTiles()", e);
+                    ClientExceptionHandler.handleExceptionOnlyOnce("AbstractTerrainServiceImpl.iteratorOverAllTerrainTiles()", e);
                 }
             }
         }
