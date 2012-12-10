@@ -1136,4 +1136,9 @@ public class CmsUiServiceImpl implements CmsUiService {
     public String getFacebookAppId() {
         return facebookAppId;
     }
+
+    @Override
+    public String getFacebookAppNameSpace() {
+        return facebookAppNameSpace;
+    }
 }

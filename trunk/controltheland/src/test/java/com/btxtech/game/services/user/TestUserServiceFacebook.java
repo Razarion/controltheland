@@ -7,6 +7,7 @@ import com.btxtech.game.services.cms.page.DbPage;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import com.btxtech.game.wicket.WicketApplication;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
+import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import junit.framework.Assert;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
@@ -26,6 +27,8 @@ public class TestUserServiceFacebook extends AbstractServiceTest {
     private CmsService cmsService;
     @Autowired
     private WicketApplication wicketApplication;
+    @Autowired
+    private CmsUiService cmsUiService;
     private WicketTester tester;
 
     @Before
@@ -127,4 +130,9 @@ public class TestUserServiceFacebook extends AbstractServiceTest {
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void testFacebookProperties() throws Exception {
+        Assert.assertEquals("razarion", cmsUiService.getFacebookAppNameSpace());
+    }
 }
