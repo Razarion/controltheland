@@ -112,4 +112,6 @@ public interface CmsUiService {
     String getFacebookAppSecret();
 
     String getFacebookAppId();
+
+    String getFacebookAppNameSpace();
 }
