@@ -97,7 +97,8 @@ public class RegisterDialog extends Dialog {
             }
         });
         button.getElement().setId("fbconnectbutton");
-        CaptionPanel captionPanel = new CaptionPanel("Register via Facebook");
+        // In IE9 caption legend text color is black
+        CaptionPanel captionPanel = new CaptionPanel("<span style='color: #C7C4BB;'>Register via Facebook</span>", true);
         captionPanel.add(button);
         dialogVPanel.add(captionPanel);
     }
@@ -127,7 +128,8 @@ public class RegisterDialog extends Dialog {
         grid.getFlexCellFormatter().setColSpan(4, 0, 2);
         grid.getFlexCellFormatter().setHorizontalAlignment(4, 0, HasHorizontalAlignment.ALIGN_CENTER);
 
-        CaptionPanel captionPanel = new CaptionPanel("Direct registration");
+        // In IE9 caption legend text color is black
+        CaptionPanel captionPanel = new CaptionPanel("<span style='color: #C7C4BB;'>Direct registration</span>", true);
         captionPanel.add(grid);
         dialogVPanel.add(captionPanel);
     }
@@ -161,6 +163,12 @@ public class RegisterDialog extends Dialog {
                 hide(true);
             }
         });
+    }
+
+    @Override
+    protected void setupDialog() {
+        super.setupDialog();
+        userName.setFocus(true);
     }
 
     public static void showDialogRepeating() {

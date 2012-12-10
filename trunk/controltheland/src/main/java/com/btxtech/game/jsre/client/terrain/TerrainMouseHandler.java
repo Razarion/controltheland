@@ -52,6 +52,7 @@ public class TerrainMouseHandler implements MouseMoveHandler {
         canvas.addMouseDownHandler(new MouseDownHandler() {
             @Override
             public void onMouseDown(MouseDownEvent mouseDownEvent) {
+                TerrainView.getInstance().setFocus();
                 try {
                     Perfmon.getInstance().onEntered(PerfmonEnum.TERRAIN_MOUSE_DOWN);
                     ChatCockpit.getInstance().blurFocus();

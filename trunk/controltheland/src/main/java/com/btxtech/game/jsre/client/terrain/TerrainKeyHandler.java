@@ -1,13 +1,15 @@
 package com.btxtech.game.jsre.client.terrain;
 
-import com.btxtech.game.jsre.client.cockpit.ChatCockpit;
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
 import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 
 /**
@@ -46,37 +48,50 @@ public class TerrainKeyHandler implements KeyDownHandler, BlurHandler {
 
     public void handlePreviewNativeEvent(Event.NativePreviewEvent event) {
         if (event.getTypeInt() == Event.ONKEYDOWN) {
+
+            try {
+                // Prevent scrolling if event if from a text or password
+                if (Element.is(event.getNativeEvent().getEventTarget())) {
+                    com.google.gwt.dom.client.Element element = Element.as(event.getNativeEvent().getEventTarget());
+                    if (element instanceof InputElement) {
+                        String type = ((InputElement) element).getType();
+                        if (type != null) {
+                            if (type.equalsIgnoreCase("text")) {
+                                return;
+                            }
+                            if (type.equalsIgnoreCase("password")) {
+                                return;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                ClientExceptionHandler.handleExceptionOnlyOnce("TerrainKeyHandler.handlePreviewNativeEvent()", e);
+            }
+
             switch (event.getNativeEvent().getKeyCode()) {
                 case 65:
                 case KeyCodes.KEY_LEFT: {
-                    if (!ChatCockpit.getInstance().hasFocus()) {
-                        terrainScrollHandler.executeAutoScrollKey(TerrainScrollHandler.ScrollDirection.WEST, null);
-                        event.cancel(); // Prevent from scrolling the browser window
-                    }
+                    terrainScrollHandler.executeAutoScrollKey(TerrainScrollHandler.ScrollDirection.WEST, null);
+                    event.cancel(); // Prevent from scrolling the browser window
                     break;
                 }
                 case 68:
                 case KeyCodes.KEY_RIGHT: {
-                    if (!ChatCockpit.getInstance().hasFocus()) {
-                        terrainScrollHandler.executeAutoScrollKey(TerrainScrollHandler.ScrollDirection.EAST, null);
-                        event.cancel();
-                    }
+                    terrainScrollHandler.executeAutoScrollKey(TerrainScrollHandler.ScrollDirection.EAST, null);
+                    event.cancel();
                     break;
                 }
                 case 87:
                 case KeyCodes.KEY_UP: {
-                    if (!ChatCockpit.getInstance().hasFocus()) {
-                        terrainScrollHandler.executeAutoScrollKey(null, TerrainScrollHandler.ScrollDirection.NORTH);
-                        event.cancel();
-                    }
+                    terrainScrollHandler.executeAutoScrollKey(null, TerrainScrollHandler.ScrollDirection.NORTH);
+                    event.cancel();
                     break;
                 }
                 case 83:
                 case KeyCodes.KEY_DOWN: {
-                    if (!ChatCockpit.getInstance().hasFocus()) {
-                        terrainScrollHandler.executeAutoScrollKey(null, TerrainScrollHandler.ScrollDirection.SOUTH);
-                        event.cancel();
-                    }
+                    terrainScrollHandler.executeAutoScrollKey(null, TerrainScrollHandler.ScrollDirection.SOUTH);
+                    event.cancel();
                     break;
                 }
                 case KeyCodes.KEY_ESCAPE: {
@@ -87,34 +102,26 @@ public class TerrainKeyHandler implements KeyDownHandler, BlurHandler {
             switch (event.getNativeEvent().getKeyCode()) {
                 case 65:
                 case KeyCodes.KEY_LEFT: {
-                    if (!ChatCockpit.getInstance().hasFocus()) {
-                        terrainScrollHandler.executeAutoScrollKey(TerrainScrollHandler.ScrollDirection.STOP, null);
-                        event.cancel(); // Prevent from scrolling the browser window
-                    }
+                    terrainScrollHandler.executeAutoScrollKey(TerrainScrollHandler.ScrollDirection.STOP, null);
+                    event.cancel(); // Prevent from scrolling the browser window
                     break;
                 }
                 case 68:
                 case KeyCodes.KEY_RIGHT: {
-                    if (!ChatCockpit.getInstance().hasFocus()) {
-                        terrainScrollHandler.executeAutoScrollKey(TerrainScrollHandler.ScrollDirection.STOP, null);
-                        event.cancel();
-                    }
+                    terrainScrollHandler.executeAutoScrollKey(TerrainScrollHandler.ScrollDirection.STOP, null);
+                    event.cancel();
                     break;
                 }
                 case 87:
                 case KeyCodes.KEY_UP: {
-                    if (!ChatCockpit.getInstance().hasFocus()) {
-                        terrainScrollHandler.executeAutoScrollKey(null, TerrainScrollHandler.ScrollDirection.STOP);
-                        event.cancel();
-                    }
+                    terrainScrollHandler.executeAutoScrollKey(null, TerrainScrollHandler.ScrollDirection.STOP);
+                    event.cancel();
                     break;
                 }
                 case 83:
                 case KeyCodes.KEY_DOWN: {
-                    if (!ChatCockpit.getInstance().hasFocus()) {
-                        terrainScrollHandler.executeAutoScrollKey(null, TerrainScrollHandler.ScrollDirection.STOP);
-                        event.cancel();
-                    }
+                    terrainScrollHandler.executeAutoScrollKey(null, TerrainScrollHandler.ScrollDirection.STOP);
+                    event.cancel();
                     break;
                 }
             }
