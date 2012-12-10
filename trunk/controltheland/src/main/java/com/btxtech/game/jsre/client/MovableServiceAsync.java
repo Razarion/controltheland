@@ -64,7 +64,7 @@ public interface MovableServiceAsync {
 
     void createAndLoginFacebookUser(String signedRequestParameter, String nickname, AsyncCallback<Void> async);
 
-    void loginFacebookUser(String signedRequestParameter, AsyncCallback<String> async);
+    void loginFacebookUser(String signedRequestParameter, AsyncCallback<Void> async);
 
     void isFacebookUserRegistered(String signedRequestParameter, AsyncCallback<Boolean> async);
 

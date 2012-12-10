@@ -172,8 +172,8 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public String loginFacebookUser(String signedRequestParameter) throws UserAlreadyExistsException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public void loginFacebookUser(String signedRequestParameter) throws UserAlreadyExistsException {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
