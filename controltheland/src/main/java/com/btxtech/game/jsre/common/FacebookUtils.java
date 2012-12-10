@@ -6,6 +6,7 @@ import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.NickNameDialog;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.logging.Logger;
@@ -63,16 +64,15 @@ public class FacebookUtils {
                 public void onSuccess(Boolean result) {
                     if (result) {
                         if (Connection.getMovableServiceAsync() != null) {
-                            Connection.getMovableServiceAsync().loginFacebookUser(signedRequest, new AsyncCallback<String>() {
+                            Connection.getMovableServiceAsync().loginFacebookUser(signedRequest, new AsyncCallback<Void>() {
                                 @Override
                                 public void onFailure(Throwable caught) {
                                     ClientExceptionHandler.handleException("FacebookUtils.fbUiCallBackLoginResponse() loginFacebookUser", caught);
                                 }
 
                                 @Override
-                                public void onSuccess(String userName) {
-                                    Connection.getInstance().setUserName(userName);
-                                    registerDialog.hide();
+                                public void onSuccess(Void unused) {
+                                    Window.Location.reload();
                                 }
                             });
                         }

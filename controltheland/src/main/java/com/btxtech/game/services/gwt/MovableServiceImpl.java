@@ -279,14 +279,12 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public String loginFacebookUser(String signedRequestParameter) throws UserAlreadyExistsException {
+    public void loginFacebookUser(String signedRequestParameter) throws UserAlreadyExistsException {
         try {
             FacebookSignedRequest facebookSignedRequest = FacebookUtil.createAndCheckFacebookSignedRequest(cmsUiService.getFacebookAppSecret(), signedRequestParameter);
             userService.loginFacebookUser(facebookSignedRequest);
-            return userService.getUserName();
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
-            return null;
         }
     }
 
