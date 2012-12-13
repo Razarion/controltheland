@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.cockpit.radar;
 
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.Html5NotSupportedException;
@@ -333,8 +334,12 @@ public abstract class MiniMap implements MouseMoveHandler, MouseDownHandler, Mou
             AnimationScheduler.get().requestAnimationFrame(new AnimationScheduler.AnimationCallback() {
                 @Override
                 public void execute(double timestamp) {
-                    clear();
-                    render();
+                    try {
+                        clear();
+                        render();
+                    } catch (Exception e) {
+                        ClientExceptionHandler.handleExceptionOnlyOnce("MiniMap.draw() failed", e);
+                    }
                 }
             }, canvas.getElement());
         }

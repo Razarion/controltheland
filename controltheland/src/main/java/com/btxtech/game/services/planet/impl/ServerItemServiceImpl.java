@@ -187,6 +187,8 @@ public class ServerItemServiceImpl extends AbstractItemService implements Server
             serverGlobalServices.getHistoryService().addItemDestroyedEntry(actor, (SyncBaseItem) killedItem);
         }
 
+        // Send killed item before base is removed -> avoid no base for item error
+        serverPlanetServices.getConnectionService().sendSyncInfo(killedItem);
         synchronized (items) {
             if (items.remove(killedItem.getId()) == null) {
                 throw new IllegalStateException("Id does not exist: " + killedItem);
@@ -195,7 +197,6 @@ public class ServerItemServiceImpl extends AbstractItemService implements Server
                 serverPlanetServices.getBaseService().onItemDeleted((SyncBaseItem) killedItem, actor);
             }
         }
-        serverPlanetServices.getConnectionService().sendSyncInfo(killedItem);
 
         if (killedItem instanceof SyncBaseItem) {
             SyncBaseItem killedBaseItem = (SyncBaseItem) killedItem;
