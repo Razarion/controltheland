@@ -125,7 +125,7 @@ public class FacebookUtils {
                     RAZARION_APP_URL,
                     ImageHandler.getFacebookFeedImageUrl());
         } catch (Exception e) {
-            ClientExceptionHandler.handleException("FacebookUtils.postToFeedLevelTaskDone()", e);
+            ClientExceptionHandler.handleException("FacebookUtils.postToFeedLevelUp()", e);
 
         }
     }
