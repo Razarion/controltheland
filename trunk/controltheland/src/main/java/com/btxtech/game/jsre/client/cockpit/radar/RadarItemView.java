@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.cockpit.radar;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.ColorConstants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -84,24 +85,28 @@ public class RadarItemView extends MiniMap {
         }
 
         for (SyncItem syncItem : ItemContainer.getInstance().getItemsInRectangleFast(getAbsoluteViewRectangle())) {
-            if (syncItem instanceof SyncBaseItem) {
-                SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
-                Index pos = syncBaseItem.getSyncItemArea().getPosition();
-                if (pos == null) {
-                    continue;
+            try {
+                if (syncItem instanceof SyncBaseItem) {
+                    SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
+                    Index pos = syncBaseItem.getSyncItemArea().getPosition();
+                    if (pos == null) {
+                        continue;
+                    }
+                    getContext2d().setFillStyle(ClientBase.getInstance().getBaseHtmlColor(syncBaseItem.getBase()));
+                    if (ClientBase.getInstance().isMyOwnProperty(syncBaseItem)) {
+                        getContext2d().fillRect(absolute2RadarPositionX(pos), absolute2RadarPositionY(pos), ownSize, ownSize);
+                    } else if (ClientBase.getInstance().isEnemy(syncBaseItem)) {
+                        getContext2d().fillRect(absolute2RadarPositionX(pos), absolute2RadarPositionY(pos), baseItemSize, baseItemSize);
+                    } else {
+                        getContext2d().fillRect(absolute2RadarPositionX(pos), absolute2RadarPositionY(pos), ownSize, ownSize);
+                    }
+                } else if (syncItem instanceof SyncResourceItem) {
+                    Index pos = syncItem.getSyncItemArea().getPosition();
+                    getContext2d().setFillStyle(ColorConstants.WHITE);
+                    getContext2d().fillRect(absolute2RadarPositionX(pos), absolute2RadarPositionY(pos), resourceItemSize, resourceItemSize);
                 }
-                getContext2d().setFillStyle(ClientBase.getInstance().getBaseHtmlColor(syncBaseItem.getBase()));
-                if (ClientBase.getInstance().isMyOwnProperty(syncBaseItem)) {
-                    getContext2d().fillRect(absolute2RadarPositionX(pos), absolute2RadarPositionY(pos), ownSize, ownSize);
-                } else if (ClientBase.getInstance().isEnemy(syncBaseItem)) {
-                    getContext2d().fillRect(absolute2RadarPositionX(pos), absolute2RadarPositionY(pos), baseItemSize, baseItemSize);
-                } else {
-                    getContext2d().fillRect(absolute2RadarPositionX(pos), absolute2RadarPositionY(pos), ownSize, ownSize);
-                }
-            } else if (syncItem instanceof SyncResourceItem) {
-                Index pos = syncItem.getSyncItemArea().getPosition();
-                getContext2d().setFillStyle(ColorConstants.WHITE);
-                getContext2d().fillRect(absolute2RadarPositionX(pos), absolute2RadarPositionY(pos), resourceItemSize, resourceItemSize);
+            } catch (Exception e) {
+                ClientExceptionHandler.handleExceptionOnlyOnce("RadarItemView.render() failed", e);
             }
         }
     }
