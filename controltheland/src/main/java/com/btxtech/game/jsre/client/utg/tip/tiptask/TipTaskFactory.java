@@ -20,6 +20,10 @@ public class TipTaskFactory {
                 return createFactorizeUnit(gameTipManager, gameTipConfig);
             case GET_RESOURCE:
                 return createGetResource(gameTipManager, gameTipConfig);
+            case MOVE:
+                return createMove(gameTipManager, gameTipConfig);
+            case ATTACK:
+                return createAttack(gameTipManager, gameTipConfig);
             default:
                 throw new IllegalArgumentException("TipTaskFactory: unknown tip: " + gameTipConfig.getTip());
         }
@@ -46,6 +50,22 @@ public class TipTaskFactory {
         List<AbstractTipTask> tasks = new ArrayList<AbstractTipTask>();
         tasks.add(new SelectTipTask(gameTipManager, gameTipConfig.getActor()));
         tasks.add(new SendMoneyCollectCommandTipTask(gameTipManager, gameTipConfig.getResourceId()));
+        addHighlightQuestVisualisationCockpit(gameTipManager, gameTipConfig, tasks);
+        return tasks;
+    }
+
+    private static List<AbstractTipTask> createMove(GameTipManager gameTipManager, GameTipConfig gameTipConfig) {
+        List<AbstractTipTask> tasks = new ArrayList<AbstractTipTask>();
+        tasks.add(new SelectTipTask(gameTipManager, gameTipConfig.getActor()));
+        tasks.add(new SendMoveCommandTipTask(gameTipManager, gameTipConfig.getTerrainPositionHint()));
+        addHighlightQuestVisualisationCockpit(gameTipManager, gameTipConfig, tasks);
+        return tasks;
+    }
+
+    private static List<AbstractTipTask> createAttack(GameTipManager gameTipManager, GameTipConfig gameTipConfig) {
+        List<AbstractTipTask> tasks = new ArrayList<AbstractTipTask>();
+        tasks.add(new SelectTipTask(gameTipManager, gameTipConfig.getActor()));
+        tasks.add(new SendAttackCommandTipTask(gameTipManager, gameTipConfig.getActor()));
         addHighlightQuestVisualisationCockpit(gameTipManager, gameTipConfig, tasks);
         return tasks;
     }

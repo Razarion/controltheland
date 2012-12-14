@@ -16,7 +16,9 @@ public class GameTipConfig implements Serializable {
     public enum Tip {
         BUILD,
         FABRICATE,
-        GET_RESOURCE;
+        GET_RESOURCE,
+        MOVE,
+        ATTACK;
 
         public static List<Tip> getValuesIncludingNull() {
             List<Tip> tips = new ArrayList<Tip>(Arrays.asList(values()));
