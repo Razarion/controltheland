@@ -39,6 +39,7 @@ public class ClearGame extends AbstractStartupTask {
 
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
+        TerrainView.getInstance().cleanup();
         GameTipManager.getInstance().stop();
         Renderer.getInstance().stop();
         ClientChatHandler.getInstance().stop();

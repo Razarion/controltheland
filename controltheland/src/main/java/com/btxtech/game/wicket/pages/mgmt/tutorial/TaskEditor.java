@@ -61,6 +61,7 @@ public class TaskEditor extends MgmtWebPage {
         }));
         add(form);
 
+        form.add(new CheckBox("clearGame"));
         form.add(new IndexPanel("scroll"));
         form.add(new TextField("money"));
         form.add(new TextField("maxMoney"));

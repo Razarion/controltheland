@@ -29,12 +29,11 @@ public class GameCommon {
     public static void clearGame() {
         CockpitMode.getInstance().reset();
         ClientBotService.getInstance().clear();
-        ItemContainer.getInstance().clear();
         ActionHandler.getInstance().clear();
+        ItemContainer.getInstance().clear();
         SelectionHandler.getInstance().clearSelection();
         ClientBase.getInstance().cleanup();
         SoundHandler.getInstance().stop();
-        TerrainView.getInstance().cleanup();
     }
 
     
