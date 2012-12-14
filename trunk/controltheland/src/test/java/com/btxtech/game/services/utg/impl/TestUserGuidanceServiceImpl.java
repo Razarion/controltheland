@@ -188,12 +188,16 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
 
+        // Setup
         DbLevel dbSimLevel1 = userGuidanceService.getDbLevelCrud().createDbChild();
-        dbSimLevel1.setXp(1);
+        dbSimLevel1.setXp(2);
         dbSimLevel1.setNumber(1);
-        DbLevelTask dbSimLevelTask1 = dbSimLevel1.getLevelTaskCrud().createDbChild();
-        dbSimLevelTask1.setDbTutorialConfig(createTutorial1());
-        dbSimLevelTask1.setXp(1);
+        DbLevelTask dbSimLevelTask11 = dbSimLevel1.getLevelTaskCrud().createDbChild();
+        dbSimLevelTask11.setDbTutorialConfig(createTutorial1());
+        dbSimLevelTask11.setXp(1);
+        DbLevelTask dbSimLevelTask12 = dbSimLevel1.getLevelTaskCrud().createDbChild();
+        dbSimLevelTask12.setDbTutorialConfig(createTutorial1());
+        dbSimLevelTask12.setXp(1);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbSimLevel1);
 
         DbLevel dbSimLevel2 = userGuidanceService.getDbLevelCrud().createDbChild();
@@ -222,19 +226,26 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
+        // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertFalse(userGuidanceService.isStartRealGame());
-        Assert.assertEquals((int) dbSimLevelTask1.getId(), userGuidanceService.getDefaultLevelTaskId());
+        Assert.assertEquals((int) dbSimLevelTask11.getId(), userGuidanceService.getDefaultLevelTaskId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertFalse(userGuidanceService.isStartRealGame());
-        Assert.assertEquals((int) dbSimLevelTask1.getId(), userGuidanceService.getDefaultLevelTaskId());
+        Assert.assertEquals((int) dbSimLevelTask11.getId(), userGuidanceService.getDefaultLevelTaskId());
 
-        GameFlow gameFlow = userGuidanceService.onTutorialFinished(dbSimLevelTask1.getId());
+        GameFlow gameFlow = userGuidanceService.onTutorialFinished(dbSimLevelTask11.getId());
+        Assert.assertEquals(GameFlow.Type.START_NEXT_LEVEL_TASK_TUTORIAL, gameFlow.getType());
+        Assert.assertEquals((int) dbSimLevelTask12.getId(), gameFlow.getNextTutorialLevelTaskId());
+        Assert.assertFalse(userGuidanceService.isStartRealGame());
+        Assert.assertEquals((int) dbSimLevelTask12.getId(), userGuidanceService.getDefaultLevelTaskId());
+
+        gameFlow = userGuidanceService.onTutorialFinished(dbSimLevelTask12.getId());
         Assert.assertEquals(GameFlow.Type.START_NEXT_LEVEL_TASK_TUTORIAL, gameFlow.getType());
         Assert.assertEquals((int) dbSimLevelTask2.getId(), gameFlow.getNextTutorialLevelTaskId());
         Assert.assertFalse(userGuidanceService.isStartRealGame());

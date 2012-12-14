@@ -14,28 +14,16 @@
 package com.btxtech.game.jsre.client.utg;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.ClientPlanetServices;
-import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.Game;
-import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
-import com.btxtech.game.jsre.client.cockpit.SplashManager;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualtsationModel;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupScreen;
-import com.btxtech.game.jsre.client.dialogs.DialogManager;
-import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
-import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
-import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.RootPanel;
-
-import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -46,7 +34,6 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
     private static final ClientLevelHandler INSTANCE = new ClientLevelHandler();
     private LevelScope levelScope;
     private Integer nextTaskId;
-    private static Logger log = Logger.getLogger(ClientLevelHandler.class.getName());
 
     /**
      * Singleton
@@ -97,7 +84,7 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
     public void setNextTaskId(int nextTaskId) {
         this.nextTaskId = nextTaskId;
     }
-    
+
     public void onTutorialFlow(GameFlow gameFlow) {
         nextTaskId = null;
         switch (gameFlow.getType()) {

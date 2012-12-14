@@ -216,7 +216,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         if (newLevel.hasDbPlanet()) {
             return new GameFlow(GameFlow.Type.START_REAL_GAME, null);
         } else {
-            DbLevelTask dbLevelTask = newLevel.getFirstTutorialLevelTask();
+            DbLevelTask dbLevelTask = newLevel.getFirstTutorialLevelTask(levelTaskDone.get(userState));
             return new GameFlow(GameFlow.Type.START_NEXT_LEVEL_TASK_TUTORIAL, dbLevelTask.getId());
         }
     }
@@ -391,7 +391,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         if (dbLevel.hasDbPlanet()) {
             throw new IllegalArgumentException("If real game is required, no default tutorial LevelTask is is available");
         }
-        return dbLevel.getFirstTutorialLevelTask().getId();
+        return dbLevel.getFirstTutorialLevelTask(levelTaskDone.get(userService.getUserState())).getId();
     }
 
     @Override
