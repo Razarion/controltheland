@@ -44,7 +44,7 @@ public class MockMovableServiceTestTransporter extends MockMovableService {
         Map<Integer, Integer> itemTypeLimitation = new HashMap<Integer, Integer>();
         List<TaskConfig> taskConfigs = new ArrayList<TaskConfig>();
         taskConfigs.add(new TaskConfig(ownItems, null, null, 10, 100, 1000, "TestTask1", null, itemTypeLimitation, RadarMode.MAP, null));
-        TutorialConfig tutorialConfig = new TutorialConfig(taskConfigs, "MyTestBase", 500, 500, false, "", false);
+        TutorialConfig tutorialConfig = new TutorialConfig(taskConfigs, "", false, false, false);
         simulationInfo.setTutorialConfig(tutorialConfig);
         simulationInfo.setLevelNumber(1);
     }

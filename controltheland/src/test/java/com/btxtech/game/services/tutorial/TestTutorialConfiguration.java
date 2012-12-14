@@ -46,20 +46,18 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         DbTutorialConfig dbTutorialConfig = tutorialCrud.createDbChild();
         dbTutorialConfig.setTracking(true);
-        dbTutorialConfig.setHeight(100);
         dbTutorialConfig.setName("test");
         dbTutorialConfig.setOwnBaseName("ownbase");
-        dbTutorialConfig.setWidth(200);
+        dbTutorialConfig.setDisableScroll(true);
         ruTutorialServiceHelper.updateDbEntity(dbTutorialConfig);
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
         dbTutorialConfig = ruTutorialServiceHelper.readDbChild(dbTutorialConfig.getId(), DbTutorialConfig.class);
         Assert.assertTrue(dbTutorialConfig.isTracking());
-        Assert.assertEquals(100, dbTutorialConfig.getHeight());
         Assert.assertEquals("test", dbTutorialConfig.getName());
         Assert.assertEquals("ownbase", dbTutorialConfig.getOwnBaseName());
-        Assert.assertEquals(200, dbTutorialConfig.getWidth());
+        Assert.assertTrue(dbTutorialConfig.isDisableScroll());
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -144,8 +142,6 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         DbTutorialConfig dbTutorialConfig = tutorialCrud.createDbChild();
         dbTutorialConfig.setTracking(true);
         dbTutorialConfig.setShowTip(true);
-        dbTutorialConfig.setWidth(200);
-        dbTutorialConfig.setHeight(100);
         dbTutorialConfig.setOwnBaseName("ownbase");
         CrudChildServiceHelper<DbTaskConfig> crudChildServiceHelper = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper();
         DbTaskConfig dbTaskConfig = crudChildServiceHelper.createDbChild();
@@ -180,8 +176,7 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         Assert.assertEquals("ownbase", tutorialConfig.getOwnBaseName());
         Assert.assertTrue(tutorialConfig.isEventTracking());
         Assert.assertTrue(tutorialConfig.isShowTip());
-        Assert.assertEquals(200, tutorialConfig.getWidth());
-        Assert.assertEquals(100, tutorialConfig.getHeight());
+        Assert.assertFalse(tutorialConfig.isDisableScroll());
         List<TaskConfig> taskConfigs = tutorialConfig.getTasks();
         Assert.assertEquals(1, taskConfigs.size());
         TaskConfig taskConfig = taskConfigs.get(0);

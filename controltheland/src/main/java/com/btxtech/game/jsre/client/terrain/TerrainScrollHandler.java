@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.terrain;
 
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
@@ -35,6 +36,7 @@ public class TerrainScrollHandler {
     private ScrollDirection scrollDirectionX = ScrollDirection.STOP;
     private ScrollDirection scrollDirectionY = ScrollDirection.STOP;
     private ScrollExecutor scrollExecutor;
+    private boolean scrollDisabled;
     private Timer timer = new TimerPerfmon(PerfmonEnum.SCROLL) {
         @Override
         public void runPerfmon() {
@@ -46,7 +48,22 @@ public class TerrainScrollHandler {
         this.scrollExecutor = scrollExecutor;
     }
 
+    public void setScrollDisabled(boolean scrollDisabled) {
+        this.scrollDisabled = scrollDisabled;
+        if (scrollDisabled) {
+            try {
+                timer.cancel();
+            } catch (Exception e) {
+                ClientExceptionHandler.handleException("TerrainScrollHandler.setScrollDisabled()", e);
+            }
+        }
+    }
+
     public void executeAutoScrollKey(ScrollDirection tmpScrollDirectionX, ScrollDirection tmpScrollDirectionY) {
+        if (scrollDisabled) {
+            return;
+        }
+
         if (tmpScrollDirectionX != scrollDirectionXKey || tmpScrollDirectionY != scrollDirectionYKey) {
             if (tmpScrollDirectionX != null) {
                 scrollDirectionXKey = tmpScrollDirectionX;
@@ -59,6 +76,10 @@ public class TerrainScrollHandler {
     }
 
     public void executeAutoScrollMouse(ScrollDirection tmpScrollDirectionX, ScrollDirection tmpScrollDirectionY) {
+        if (scrollDisabled) {
+            return;
+        }
+
         if (tmpScrollDirectionX != scrollDirectionXMouse || tmpScrollDirectionY != scrollDirectionYMouse) {
             scrollDirectionXMouse = tmpScrollDirectionX;
             scrollDirectionYMouse = tmpScrollDirectionY;
@@ -67,6 +88,10 @@ public class TerrainScrollHandler {
     }
 
     public void handleMouseMoveScroll(int x, int y, int width, int height) {
+        if (scrollDisabled) {
+            return;
+        }
+
         ScrollDirection tmpScrollDirectionX = ScrollDirection.STOP;
         ScrollDirection tmpScrollDirectionY = ScrollDirection.STOP;
         if (x < SCROLL_AUTO_MOUSE_DETECTION_WIDTH) {
@@ -180,5 +205,14 @@ public class TerrainScrollHandler {
             return new Index(0, 0);
         }
         return new Index(deltaX, deltaY);
+    }
+
+    public void cleanup() {
+        scrollDisabled = false;
+        try {
+            timer.cancel();
+        } catch (Exception e) {
+            ClientExceptionHandler.handleException("TerrainScrollHandler.cleanup()", e);
+        }
     }
 }
