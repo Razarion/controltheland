@@ -17,6 +17,7 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.LevelActivationException;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.wicket.pages.mgmt.MgmtPage;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import org.apache.wicket.markup.html.form.Button;
@@ -71,7 +72,7 @@ public class LevelTable extends MgmtWebPage {
         form.add(new Button("back") {
             @Override
             public void onSubmit() {
-                setResponsePage(MgmtWebPage.class);
+                setResponsePage(MgmtPage.class);
             }
         });
     }
