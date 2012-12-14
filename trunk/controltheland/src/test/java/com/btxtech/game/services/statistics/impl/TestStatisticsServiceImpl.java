@@ -303,6 +303,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
+        // TODO failed 14.12.2012
         assertEntry(0, entries, 3012, TEST_LEVEL_3_REAL, 5, "u1", TEST_PLANET_1, (long) 1, 3, 1088, 1, 0, 1, 1, 0, 0, 0, 0, 1, 2, 1, 1, 0, 0);
         assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "u2", null, null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
         endHttpRequestAndOpenSessionInViewFilter();
