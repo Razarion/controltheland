@@ -39,10 +39,6 @@ public class SpecialType implements Serializable {
         return radarMode;
     }
 
-    public void setRadarMode(RadarMode radarMode) {
-        this.radarMode = radarMode;
-    }
-
     public void changeTo(SpecialType specialType) {
         radarMode = specialType.radarMode;
     }

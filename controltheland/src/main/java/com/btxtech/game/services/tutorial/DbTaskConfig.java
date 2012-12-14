@@ -81,6 +81,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     private int money;
     private int maxMoney;
     private int houseCount;
+    @Enumerated(EnumType.STRING)
     private RadarMode radarMode;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "dbTutorialConfig", insertable = false, updatable = false, nullable = false)

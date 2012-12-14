@@ -69,8 +69,8 @@ public class RadarPanel implements TerrainScrollListener {
     private AttackVisualisation attackVisualisation;
     private HTML noRadarPanel;
     private boolean hasEnergy = false;
-    private RadarMode levelRadarMode = RadarMode.NONE;
-    private RadarMode itemRadarMode = RadarMode.NONE;
+    private RadarMode levelRadarMode = RadarMode.DISABLED;
+    private RadarMode itemRadarMode = RadarMode.DISABLED;
     private Set<SyncBaseItem> radarModeItems = new HashSet<SyncBaseItem>();
     private ExtendedCustomButton showAttack;
     private Index questHint;
@@ -257,10 +257,14 @@ public class RadarPanel implements TerrainScrollListener {
 
     private void handleRadarState() {
         RadarMode mode;
-        if (hasEnergy) {
-            mode = RadarMode.getHigher(itemRadarMode, levelRadarMode);
+        if (levelRadarMode == RadarMode.DISABLED) {
+            mode = RadarMode.DISABLED;
         } else {
-            mode = levelRadarMode;
+            if (hasEnergy) {
+                mode = RadarMode.getHigher(itemRadarMode, levelRadarMode);
+            } else {
+                mode = levelRadarMode;
+            }
         }
 
         boolean showMap = RadarMode.MAP.sameOrHigher(mode);
@@ -284,7 +288,9 @@ public class RadarPanel implements TerrainScrollListener {
         }
 
         if (noRadarPanel != null) {
-            if (showMap) {
+            if (mode == RadarMode.DISABLED) {
+                noRadarPanel.setVisible(false);
+            } else if (showMap) {
                 noRadarPanel.setVisible(false);
             } else {
                 if (!hasEnergy) {
@@ -378,8 +384,8 @@ public class RadarPanel implements TerrainScrollListener {
 
     public void cleanup() {
         radarModeItems.clear();
-        itemRadarMode = RadarMode.NONE;
-        levelRadarMode = RadarMode.NONE;
+        itemRadarMode = RadarMode.DISABLED;
+        levelRadarMode = RadarMode.DISABLED;
 
         if (radarFrameView != null) {
             radarFrameView.cleanup();
@@ -390,7 +396,7 @@ public class RadarPanel implements TerrainScrollListener {
         if (radarItemView != null) {
             radarItemView.cleanup();
         }
-        if(attackVisualisation != null) {
+        if (attackVisualisation != null) {
             attackVisualisation.cleanup();
         }
     }
@@ -440,7 +446,7 @@ public class RadarPanel implements TerrainScrollListener {
     }
 
     private void moveToMiddle(int left, int top, int width, int height) {
-        if(miniTerrain == null || miniTerrain.getTerrainSettings() == null) {
+        if (miniTerrain == null || miniTerrain.getTerrainSettings() == null) {
             // Browser-resize during startup
             return;
         }
@@ -457,10 +463,10 @@ public class RadarPanel implements TerrainScrollListener {
     }
 
     public void onwItemUnderAttack(SyncBaseItem target) {
-        if(attackVisualisation != null) {
+        if (attackVisualisation != null) {
             attackVisualisation.onwItemUnderAttack(target);
         }
-        if(showAttack.isDown() && getScale() != ScaleStep.WHOLE_MAP) {
+        if (showAttack.isDown() && getScale() != ScaleStep.WHOLE_MAP) {
             setScale(ScaleStep.WHOLE_MAP);
         }
     }

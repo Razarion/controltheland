@@ -16,6 +16,8 @@ package com.btxtech.game.services.item.itemType;
 import com.btxtech.game.jsre.client.common.RadarMode;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.io.Serializable;
@@ -30,6 +32,7 @@ public class DbSpecialType implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
+    @Enumerated(EnumType.STRING)
     private RadarMode radarMode;
 
     public RadarMode getRadarMode() {
@@ -42,17 +45,21 @@ public class DbSpecialType implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         DbSpecialType that = (DbSpecialType) o;
 
-        return !(id != null ? !id.equals(that.id) : that.id != null);
+        return id != null && id.equals(that.id);
 
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id : System.identityHashCode(this);
     }
 }
