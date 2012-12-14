@@ -77,57 +77,115 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
     public void createDeleteTask() throws Exception {
         configureSimplePlanetNoResources();
 
+        // Create tutorial
         beginHttpSession();
-
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbTutorialConfig> tutorialCrud = tutorialService.getDbTutorialCrudRootServiceHelper();
         DbTutorialConfig dbTutorialConfig = tutorialCrud.createDbChild();
         endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
 
+        // Create task 1
+        beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().readDbChild(dbTutorialConfig.getId());
-        CrudChildServiceHelper<DbTaskConfig> crudChildServiceHelper = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper();
-        DbTaskConfig dbTaskConfig = crudChildServiceHelper.createDbChild();
+        DbTaskConfig dbTaskConfig1 = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild();
+        dbTaskConfig1.setName("name1");
+        dbTaskConfig1.setScroll(new Index(1, 2));
+        dbTaskConfig1.setHouseCount(5);
+        dbTaskConfig1.setTip(GameTipConfig.Tip.BUILD);
+        dbTaskConfig1.setTipActor(serverItemTypeService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
+        dbTaskConfig1.setTipResource(serverItemTypeService.getDbResourceItemType(TEST_RESOURCE_ITEM_ID));
+        dbTaskConfig1.setTipTerrainPositionHint(new Index(111, 222));
+        dbTaskConfig1.setTipToBeBuilt(serverItemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
         ruTutorialServiceHelper.updateDbEntity(dbTutorialConfig);
         endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
 
+        // Verify task 1
+        beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         dbTutorialConfig = ruTutorialServiceHelper.readDbChild(dbTutorialConfig.getId(), DbTutorialConfig.class);
-        dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig.getId());
-        dbTaskConfig.setName("name1");
-        dbTaskConfig.setScroll(new Index(1, 2));
-        dbTaskConfig.setHouseCount(5);
-        dbTaskConfig.setTip(GameTipConfig.Tip.BUILD);
-        dbTaskConfig.setTipActor(serverItemTypeService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
-        dbTaskConfig.setTipResource(serverItemTypeService.getDbResourceItemType(TEST_RESOURCE_ITEM_ID));
-        dbTaskConfig.setTipTerrainPositionHint(new Index(111, 222));
-        dbTaskConfig.setTipToBeBuilt(serverItemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        Assert.assertEquals(1, dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChildren().size());
+        dbTaskConfig1 = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig1.getId());
+        Assert.assertEquals("name1", dbTaskConfig1.getName());
+        Assert.assertEquals(new Index(1, 2), dbTaskConfig1.getScroll());
+        Assert.assertEquals(5, dbTaskConfig1.getHouseCount());
+        Assert.assertEquals(GameTipConfig.Tip.BUILD, dbTaskConfig1.getTip());
+        Assert.assertEquals(TEST_FACTORY_ITEM_ID, (int) dbTaskConfig1.getTipActor().getId());
+        Assert.assertEquals(TEST_RESOURCE_ITEM_ID, (int) dbTaskConfig1.getTipResource().getId());
+        Assert.assertEquals(new Index(111, 222), dbTaskConfig1.getTipTerrainPositionHint());
+        Assert.assertEquals(TEST_ATTACK_ITEM_ID, (int) dbTaskConfig1.getTipToBeBuilt().getId());
+        Assert.assertFalse(dbTaskConfig1.isClearGame());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Create task 2
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbTutorialConfig = ruTutorialServiceHelper.readDbChild(dbTutorialConfig.getId(), DbTutorialConfig.class);
+        DbTaskConfig dbTaskConfig2 = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild();
+        dbTaskConfig2.setName("name2");
+        dbTaskConfig2.setClearGame(true);
         ruTutorialServiceHelper.updateDbEntity(dbTutorialConfig);
         endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
 
+        // Verify task 1
+        beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         dbTutorialConfig = ruTutorialServiceHelper.readDbChild(dbTutorialConfig.getId(), DbTutorialConfig.class);
-        dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig.getId());
-        dbTaskConfig.setName("name1");
-        dbTaskConfig.setScroll(new Index(1, 2));
-        dbTaskConfig.setHouseCount(5);
-        ruTaskServiceHelper.updateDbEntity(dbTaskConfig);
+        Assert.assertEquals(2, dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChildren().size());
+        dbTaskConfig1 = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig1.getId());
+        Assert.assertEquals("name1", dbTaskConfig1.getName());
+        Assert.assertEquals(new Index(1, 2), dbTaskConfig1.getScroll());
+        Assert.assertEquals(5, dbTaskConfig1.getHouseCount());
+        Assert.assertEquals(GameTipConfig.Tip.BUILD, dbTaskConfig1.getTip());
+        Assert.assertEquals(TEST_FACTORY_ITEM_ID, (int) dbTaskConfig1.getTipActor().getId());
+        Assert.assertEquals(TEST_RESOURCE_ITEM_ID, (int) dbTaskConfig1.getTipResource().getId());
+        Assert.assertEquals(new Index(111, 222), dbTaskConfig1.getTipTerrainPositionHint());
+        Assert.assertEquals(TEST_ATTACK_ITEM_ID, (int) dbTaskConfig1.getTipToBeBuilt().getId());
+        Assert.assertFalse(dbTaskConfig1.isClearGame());
         endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
 
+        // Verify task 2
+        beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         dbTutorialConfig = ruTutorialServiceHelper.readDbChild(dbTutorialConfig.getId(), DbTutorialConfig.class);
-        dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig.getId());
-        Assert.assertEquals("name1", dbTaskConfig.getName());
-        Assert.assertEquals(new Index(1, 2), dbTaskConfig.getScroll());
-        Assert.assertEquals(5, dbTaskConfig.getHouseCount());
-
-        Assert.assertEquals(GameTipConfig.Tip.BUILD, dbTaskConfig.getTip());
-        Assert.assertEquals(TEST_FACTORY_ITEM_ID, (int) dbTaskConfig.getTipActor().getId());
-        Assert.assertEquals(TEST_RESOURCE_ITEM_ID, (int) dbTaskConfig.getTipResource().getId());
-        Assert.assertEquals(new Index(111, 222), dbTaskConfig.getTipTerrainPositionHint());
-        Assert.assertEquals(TEST_ATTACK_ITEM_ID, (int) dbTaskConfig.getTipToBeBuilt().getId());
+        Assert.assertEquals(2, dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChildren().size());
+        dbTaskConfig2 = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig2.getId());
+        Assert.assertEquals("name2", dbTaskConfig2.getName());
+        Assert.assertTrue(dbTaskConfig2.isClearGame());
         endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
 
+        // Delete task
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbTutorialConfig = ruTutorialServiceHelper.readDbChild(dbTutorialConfig.getId(), DbTutorialConfig.class);
+        dbTaskConfig2 = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig2.getId());
+        dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().deleteDbChild(dbTaskConfig2);
+        ruTutorialServiceHelper.updateDbEntity(dbTutorialConfig);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify task 1
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbTutorialConfig = ruTutorialServiceHelper.readDbChild(dbTutorialConfig.getId(), DbTutorialConfig.class);
+        Assert.assertEquals(1, dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChildren().size());
+        dbTaskConfig1 = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig1.getId());
+        Assert.assertEquals("name1", dbTaskConfig1.getName());
+        Assert.assertEquals(new Index(1, 2), dbTaskConfig1.getScroll());
+        Assert.assertEquals(5, dbTaskConfig1.getHouseCount());
+        Assert.assertEquals(GameTipConfig.Tip.BUILD, dbTaskConfig1.getTip());
+        Assert.assertEquals(TEST_FACTORY_ITEM_ID, (int) dbTaskConfig1.getTipActor().getId());
+        Assert.assertEquals(TEST_RESOURCE_ITEM_ID, (int) dbTaskConfig1.getTipResource().getId());
+        Assert.assertEquals(new Index(111, 222), dbTaskConfig1.getTipTerrainPositionHint());
+        Assert.assertEquals(TEST_ATTACK_ITEM_ID, (int) dbTaskConfig1.getTipToBeBuilt().getId());
+        Assert.assertFalse(dbTaskConfig1.isClearGame());
+        endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
 
@@ -165,6 +223,7 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         dbTaskConfig.setTipTerrainPositionHint(new Index(321, 987));
         dbTaskConfig.setTipToBeBuilt(serverItemTypeService.getDbBaseItemType(TEST_CONTAINER_ITEM_ID));
         dbTaskConfig.setTipShowWatchQuestVisualisationCockpit(true);
+        dbTaskConfig.setClearGame(true);
         ruTutorialServiceHelper.updateDbEntity(dbTutorialConfig);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -192,6 +251,7 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         Assert.assertEquals(new Index(321, 987), gameTipConfig.getTerrainPositionHint());
         Assert.assertEquals(GameTipConfig.Tip.FABRICATE, gameTipConfig.getTip());
         Assert.assertTrue(gameTipConfig.isHighlightQuestVisualisationCockpit());
+        Assert.assertTrue(taskConfig.isClearGame());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

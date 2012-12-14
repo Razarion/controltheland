@@ -43,6 +43,7 @@ public class TaskConfig implements Serializable {
     private RadarMode radarMode;
     private ConditionConfig conditionConfig;
     private GameTipConfig gameTipConfig;
+    private boolean clearGame;
 
     /**
      * Used by GWT
@@ -50,7 +51,7 @@ public class TaskConfig implements Serializable {
     public TaskConfig() {
     }
 
-    public TaskConfig(List<ItemTypeAndPosition> ownItems, Index scroll, ConditionConfig conditionConfig, int houseCount, int money, int maxMoney, String name, Collection<BotConfig> botConfigs, Map<Integer, Integer> itemTypeLimitation, RadarMode radarMode, GameTipConfig gameTipConfig) {
+    public TaskConfig(List<ItemTypeAndPosition> ownItems, Index scroll, ConditionConfig conditionConfig, int houseCount, int money, int maxMoney, String name, Collection<BotConfig> botConfigs, Map<Integer, Integer> itemTypeLimitation, RadarMode radarMode, GameTipConfig gameTipConfig, boolean clearGame) {
         this.ownItems = ownItems;
         this.scroll = scroll;
         this.conditionConfig = conditionConfig;
@@ -62,6 +63,7 @@ public class TaskConfig implements Serializable {
         this.itemTypeLimitation = itemTypeLimitation;
         this.radarMode = radarMode;
         this.gameTipConfig = gameTipConfig;
+        this.clearGame = clearGame;
     }
 
     public Collection<ItemTypeAndPosition> getOwnItems() {
@@ -90,6 +92,10 @@ public class TaskConfig implements Serializable {
 
     public LevelScope createLevelScope(int levelNumber) {
         return new LevelScope(PlanetInfo.MISSION_PLANET_ID, -1, levelNumber, itemTypeLimitation, 0);
+    }
+
+    public boolean isClearGame() {
+        return clearGame;
     }
 
     public PlanetInfo createPlanetInfo() {

@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.GameCommon;
 import com.btxtech.game.jsre.client.ParametrisedRunnable;
 import com.btxtech.game.jsre.client.bot.ClientBotService;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
@@ -51,6 +52,7 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
     private Task activeTask;
     private long taskTime;
     private long tutorialTime;
+    private TutorialConfig tutorialConfig;
 
     /**
      * Singleton
@@ -64,12 +66,11 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
 
     public void start() {
         simulationInfo = (SimulationInfo) Connection.getInstance().getGameInfo();
-        TutorialConfig tutorialConfig = simulationInfo.getTutorialConfig();
+        tutorialConfig = simulationInfo.getTutorialConfig();
         if (tutorialConfig == null) {
             return;
         }
         ClientBase.getInstance().setOwnBaseDestroyedListener(this);
-        ClientBase.getInstance().createOwnSimulationBaseIfNotExist(tutorialConfig.getOwnBaseName());
         SimulationConditionServiceImpl.getInstance().setConditionServiceListener(this);
         tutorialTime = System.currentTimeMillis();
         if (tutorialConfig.isEventTracking()) {
@@ -83,6 +84,10 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
     }
 
     private void processPreparation(TaskConfig taskConfig) {
+        if (taskConfig.isClearGame()) {
+            GameCommon.clearGame();
+        }
+        ClientBase.getInstance().createOwnSimulationBaseIfNotExist(tutorialConfig.getOwnBaseName());
         ClientPlanetServices.getInstance().setPlanetInfo(taskConfig.createPlanetInfo());
         ClientLevelHandler.getInstance().setLevel(taskConfig.createLevelScope(simulationInfo.getLevelNumber()));
         if (taskConfig.hasBots()) {

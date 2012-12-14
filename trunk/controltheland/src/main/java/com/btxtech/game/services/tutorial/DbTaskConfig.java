@@ -102,6 +102,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     @Columns(columns = {@Column(name = "tipXTerrainPositionHint"), @Column(name = "tipYTerrainPositionHint")})
     private Index tipTerrainPositionHint;
     private boolean tipShowWatchQuestVisualisationCockpit;
+    private boolean clearGame;
 
     @Transient
     private CrudChildServiceHelper<DbItemTypeAndPosition> itemTypeAndPositionCrudHelper;
@@ -231,6 +232,14 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         this.tipShowWatchQuestVisualisationCockpit = tipShowWatchQuestVisualisationCockpit;
     }
 
+    public boolean isClearGame() {
+        return clearGame;
+    }
+
+    public void setClearGame(boolean clearGame) {
+        this.clearGame = clearGame;
+    }
+
     public TaskConfig createTaskConfig(ServerItemTypeService serverItemTypeService) {
         ArrayList<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<>();
         for (DbItemTypeAndPosition dbItemTypeAndPosition : getItemCrudServiceHelper().readDbChildren()) {
@@ -261,7 +270,8 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
                 convertTaskBots(serverItemTypeService),
                 itemTypeLimitation,
                 radarMode,
-                createGameTipConfig());
+                createGameTipConfig(),
+                clearGame);
     }
 
     private GameTipConfig createGameTipConfig() {
