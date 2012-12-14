@@ -9,9 +9,10 @@ import java.util.List;
  * Time: 11:53:32
  */
 public enum RadarMode {
-    NONE(0),
-    MAP(1),
-    MAP_AND_UNITS(2);
+    DISABLED(0),
+    NONE(1),
+    MAP(2),
+    MAP_AND_UNITS(3);
     private int value;
 
     RadarMode(int value) {

@@ -16,6 +16,8 @@ import org.hibernate.annotations.Cascade;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -45,6 +47,7 @@ public class DbPlanet implements CrudChild, CrudParent {
     // ----- Scope -----
     private int maxMoney;
     private int houseSpace;
+    @Enumerated(EnumType.STRING)
     private RadarMode radarMode;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "dbPlanet", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
