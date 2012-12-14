@@ -55,13 +55,11 @@ public class TutorialEditor extends MgmtWebPage {
             }
         }));
         add(form);
-        form.add(new TextField<String>("inGameHtml"));
         form.add(new TextField<String>("ownBaseName"));
-        form.add(new TextField<String>("width"));
-        form.add(new TextField<String>("height"));
         form.add(new CheckBox("tracking"));
         form.add(new CheckBox("showTip"));
         form.add(new CheckBox("sellAllowed"));
+        form.add(new CheckBox("disableScroll"));
         form.add(new TerrainPanel("dbTerrainSetting", new TerrainLinkHelper(dbTutorialConfig)));
 
         new CrudChildTableHelper<DbTutorialConfig, DbTaskConfig>("taskTable", null, "createTask", true, form, true) {

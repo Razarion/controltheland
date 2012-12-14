@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.bot.ClientBotService;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
 
 /**
  * User: beat
@@ -33,6 +34,7 @@ public class GameCommon {
         SelectionHandler.getInstance().clearSelection();
         ClientBase.getInstance().cleanup();
         SoundHandler.getInstance().stop();
+        TerrainView.getInstance().cleanup();
     }
 
     

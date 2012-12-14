@@ -53,17 +53,14 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
     @JoinColumn(name = "dbTutorialConfig", nullable = false)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private List<DbTaskConfig> dbTaskConfigs;
-    private int width;
-    private int height;
     private String ownBaseName;
     private boolean tracking;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private DbTerrainSetting dbTerrainSetting;
-    @Column(length = 50000)
-    private String inGameHtml;
     private boolean showTip;
     private boolean sellAllowed;
+    private boolean disableScroll;
 
     @Transient
     private CrudChildServiceHelper<DbTaskConfig> dbTaskConfigCrudChildServiceHelper;
@@ -78,22 +75,6 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
     }
 
     public String getOwnBaseName() {
@@ -138,6 +119,14 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
 
     public void setSellAllowed(boolean sellAllowed) {
         this.sellAllowed = sellAllowed;
+    }
+
+    public boolean isDisableScroll() {
+        return disableScroll;
+    }
+
+    public void setDisableScroll(boolean disableScroll) {
+        this.disableScroll = disableScroll;
     }
 
     public void init(UserService userService) {
@@ -196,14 +185,6 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
         }
     }
 
-    public String getInGameHtml() {
-        return inGameHtml;
-    }
-
-    public void setInGameHtml(String inGameHtml) {
-        this.inGameHtml = inGameHtml;
-    }
-
     public boolean isShowTip() {
         return showTip;
     }
@@ -230,7 +211,7 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
             taskConfigs.add(dbTaskConfig.createTaskConfig(serverItemTypeService));
         }
 
-        return new TutorialConfig(taskConfigs, ownBaseName, width, height, tracking, inGameHtml, showTip);
+        return new TutorialConfig(taskConfigs, ownBaseName, tracking, showTip, disableScroll);
     }
 
 }

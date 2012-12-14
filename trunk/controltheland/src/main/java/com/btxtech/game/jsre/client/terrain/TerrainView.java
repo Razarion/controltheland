@@ -52,6 +52,7 @@ public class TerrainView {
     private int viewWidth = 1;
     private int viewHeight = 1;
     private ArrayList<TerrainScrollListener> terrainScrollListeners = new ArrayList<TerrainScrollListener>();
+    private TerrainScrollHandler terrainScrollHandler;
     private TerrainMouseHandler terrainMouseHandler;
     private TerrainKeyHandler terrainKeyHandler;
     private Canvas canvas;
@@ -71,7 +72,7 @@ public class TerrainView {
         canvas.setTabIndex(1); // IE9 need this to receive the focus
         context2d = canvas.getContext2d();
 
-        TerrainScrollHandler terrainScrollHandler = new TerrainScrollHandler();
+        terrainScrollHandler = new TerrainScrollHandler();
         terrainScrollHandler.setScrollExecutor(new TerrainScrollHandler.ScrollExecutor() {
             @Override
             public void moveDelta(int scrollX, int scrollY) {
@@ -252,5 +253,13 @@ public class TerrainView {
 
     public void setFocus() {
         canvas.setFocus(true);
+    }
+
+    public TerrainScrollHandler getTerrainScrollHandler() {
+        return terrainScrollHandler;
+    }
+
+    public void cleanup() {
+        terrainScrollHandler.cleanup();
     }
 }
