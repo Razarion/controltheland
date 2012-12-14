@@ -35,6 +35,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -211,11 +212,15 @@ public class DbLevel implements CrudChild, CrudParent {
         this.xp = xp;
     }
 
-    public DbLevelTask getFirstTutorialLevelTask() {
+    public DbLevelTask getFirstTutorialLevelTask(Collection<Integer> levelTaskDone) {
         for (DbLevelTask dbLevelTask : getLevelTaskCrud().readDbChildren()) {
-            if (dbLevelTask.isDbTutorialConfig()) {
-                return dbLevelTask;
+            if (!dbLevelTask.isDbTutorialConfig()) {
+                continue;
             }
+            if (levelTaskDone != null && levelTaskDone.contains(dbLevelTask.getId())) {
+                continue;
+            }
+            return dbLevelTask;
         }
         throw new IllegalStateException("No Tutorial Level Task configured for: " + this);
     }
