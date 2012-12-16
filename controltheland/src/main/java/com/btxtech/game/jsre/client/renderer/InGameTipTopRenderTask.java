@@ -15,14 +15,13 @@ import java.util.Collection;
  * Date: 29.07.12
  * Time: 11:46
  */
-public class InGameTipRenderTask extends AbstractRenderTask {
-    private static final String ITEM_MARKER = "#00FF00";
+public class InGameTipTopRenderTask extends AbstractRenderTask {
     private static final int TERRAIN_HINT_LENGTH = 150;
     private static final int ARROW_MOVE = 70;
     private static final String CORNER_COLOR = "#00FF00";
     private Context2d context2d;
 
-    public InGameTipRenderTask(Context2d context2d) {
+    public InGameTipTopRenderTask(Context2d context2d) {
         this.context2d = context2d;
     }
 
@@ -53,18 +52,6 @@ public class InGameTipRenderTask extends AbstractRenderTask {
         int distance = (ARROW_MOVE - (int) (ARROW_MOVE * (timeStamp & 500) / 500.0)) / 2;
         context2d.drawImage(CanvasElementLibrary.getSmallArrow(), -CanvasElementLibrary.SMALL_ARROW_WIDTH_TOTAL / 2, distance);
         context2d.restore();
-        // Render edges
-        Index relativeItemMarker = gameTipVisualization.getItemMarkerMiddle(viewRect);
-        if(relativeItemMarker != null) {
-            distance = (TERRAIN_HINT_LENGTH - (int) (TERRAIN_HINT_LENGTH * (timeStamp & 1000) / 1000.0)) / 2;
-            context2d.save();
-            context2d.translate(relativeItemMarker.getX(), relativeItemMarker.getY());
-            context2d.drawImage(CanvasElementLibrary.getTlCorner(ITEM_MARKER), -distance, -distance);
-            context2d.drawImage(CanvasElementLibrary.getTrCorner(ITEM_MARKER), distance, -distance);
-            context2d.drawImage(CanvasElementLibrary.getBlCorner(ITEM_MARKER), -distance, distance);
-            context2d.drawImage(CanvasElementLibrary.getBrCorner(ITEM_MARKER), distance, distance);
-            context2d.restore();
-        }
         // Out of view arrow
         Index outOfViewPosition = gameTipVisualization.getRelativeOutOfViewArrowHotSpot(viewRect);
         if(outOfViewPosition != null) {
