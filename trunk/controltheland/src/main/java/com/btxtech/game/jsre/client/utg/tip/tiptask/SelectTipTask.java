@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
+import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualtsationModel;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
 import com.btxtech.game.jsre.client.utg.tip.visualization.GameTipVisualization;
@@ -28,6 +29,7 @@ public class SelectTipTask extends AbstractTipTask implements SelectionListener 
     @Override
     public void start() {
         SelectionHandler.getInstance().addSelectionListener(this);
+        QuestVisualtsationModel.getInstance().setShowInGameVisualisation(false);
     }
 
     @Override
@@ -48,6 +50,7 @@ public class SelectTipTask extends AbstractTipTask implements SelectionListener 
     @Override
     public void cleanup() {
         SelectionHandler.getInstance().removeSelectionListener(this);
+        QuestVisualtsationModel.getInstance().setShowInGameVisualisation(true);
     }
 
     @Override
