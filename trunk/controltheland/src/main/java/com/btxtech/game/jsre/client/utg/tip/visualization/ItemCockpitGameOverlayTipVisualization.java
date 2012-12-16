@@ -16,23 +16,16 @@ public class ItemCockpitGameOverlayTipVisualization implements GameTipVisualizat
     private int toBeBuiltTypeId;
     private Index absoluteBuildupPositionHotSpot;
     private Index buildupPositionHotSpot;
-    private Index mousePosition;
 
     public ItemCockpitGameOverlayTipVisualization(int toBeBuiltTypeId) {
         this.toBeBuiltTypeId = toBeBuiltTypeId;
         absoluteBuildupPositionHotSpot = ItemCockpit.getInstance().getAbsoluteMiddleTopPositionFromBuildupPanel(toBeBuiltTypeId);
         buildupPositionHotSpot = new Index(CanvasElementLibrary.ARROW_WIDTH_TOTAL / 2, OverlayTipPanel.HEIGHT);
-        mousePosition = new Index(buildupPositionHotSpot.getX() + CanvasElementLibrary.ARROW_LINE_WIDTH, 0);
     }
 
     @Override
     public Index getArrowHotSpot(Rectangle viewRect, long timeStamp) {
         return buildupPositionHotSpot;
-    }
-
-    @Override
-    public Index getMousePosition(Rectangle viewRect, long timeStamp) {
-        return mousePosition;
     }
 
     @Override

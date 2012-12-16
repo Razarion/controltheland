@@ -14,6 +14,14 @@ import java.util.Map;
  * Time: 00:40
  */
 public class CanvasElementLibrary {
+    // Small Arrow
+    public static final int SMALL_ARROW_HEIGHT = 15;
+    public static final int SMALL_ARROW_WIDTH = 8;
+    public static final int SMALL_ARROW_NECK = 3;
+    public static final int SMALL_ARROW_HEAD_LENGTH = 10;
+    public static final int SMALL_ARROW_LINE_WIDTH = 1;
+    public static final int SMALL_ARROW_HEIGHT_TOTAL = SMALL_ARROW_HEIGHT * 2 + 2;
+    public static final int SMALL_ARROW_WIDTH_TOTAL = SMALL_ARROW_WIDTH * 2 + 2;
     // Arrow
     public static final int ARROW_HEIGHT = 30;
     public static final int ARROW_WIDTH = 15;
@@ -39,6 +47,7 @@ public class CanvasElementLibrary {
     public static final int CORNER_LENGTH = 8;
     public static final int CORNER_TOTAL_LENGTH = 2 * CORNER_LINE_THICKNESS + CORNER_LENGTH;
 
+    private static CanvasElement smallArrowCanvasElement;
     private static CanvasElement arrowCanvasElement;
     private static CanvasElement mouseCanvasElement;
     private static CanvasElement mouseDownCanvasElement;
@@ -85,6 +94,43 @@ public class CanvasElementLibrary {
         return arrowCanvasElement;
     }
 
+    public static CanvasElement getSmallArrow() {
+        if (smallArrowCanvasElement != null) {
+            return smallArrowCanvasElement;
+        }
+        Canvas canvas = Canvas.createIfSupported();
+        canvas.setCoordinateSpaceWidth(SMALL_ARROW_WIDTH_TOTAL);
+        canvas.setCoordinateSpaceHeight(SMALL_ARROW_HEIGHT_TOTAL);
+        Context2d context2d = canvas.getContext2d();
+        context2d.translate(SMALL_ARROW_WIDTH + SMALL_ARROW_LINE_WIDTH, SMALL_ARROW_HEIGHT + SMALL_ARROW_LINE_WIDTH);
+        context2d.setStrokeStyle("#985858");
+        context2d.beginPath();
+        context2d.moveTo(0, -SMALL_ARROW_HEIGHT);
+        context2d.lineTo(SMALL_ARROW_WIDTH, SMALL_ARROW_HEAD_LENGTH - SMALL_ARROW_HEIGHT);
+        context2d.lineTo(SMALL_ARROW_NECK, SMALL_ARROW_HEAD_LENGTH - SMALL_ARROW_HEIGHT);
+        context2d.lineTo(SMALL_ARROW_NECK, SMALL_ARROW_HEIGHT);
+        context2d.lineTo(-SMALL_ARROW_NECK, SMALL_ARROW_HEIGHT);
+        context2d.lineTo(-SMALL_ARROW_NECK, SMALL_ARROW_HEAD_LENGTH - SMALL_ARROW_HEIGHT);
+        context2d.lineTo(-SMALL_ARROW_WIDTH, SMALL_ARROW_HEAD_LENGTH - SMALL_ARROW_HEIGHT);
+        context2d.closePath();
+
+        context2d.setShadowBlur(3);
+        context2d.setShadowColor("black");
+        context2d.setLineJoin(Context2d.LineJoin.ROUND);
+        context2d.setLineWidth(SMALL_ARROW_LINE_WIDTH);
+        context2d.stroke();
+        context2d.setShadowBlur(0);
+
+        context2d.setFillStyle("#FFFFFF");
+        context2d.fill();
+        context2d.setLineJoin(Context2d.LineJoin.ROUND);
+        context2d.setLineWidth(SMALL_ARROW_LINE_WIDTH);
+        context2d.stroke();
+        smallArrowCanvasElement = canvas.getCanvasElement();
+        return smallArrowCanvasElement;
+    }
+
+    @Deprecated
     public static CanvasElement getMouse() {
         if (mouseCanvasElement != null) {
             return mouseCanvasElement;
@@ -160,6 +206,7 @@ public class CanvasElementLibrary {
         return mouseCanvasElement;
     }
 
+    @Deprecated
     public static CanvasElement getMouseButtonDown() {
         if (mouseDownCanvasElement != null) {
             return mouseDownCanvasElement;

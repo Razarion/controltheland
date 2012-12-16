@@ -2,7 +2,6 @@ package com.btxtech.game.jsre.client.utg.tip.visualization;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.renderer.CanvasElementLibrary;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -28,11 +27,6 @@ public class ItemInGameTipVisualization implements GameTipVisualization {
     }
 
     @Override
-    public Index getMousePosition(Rectangle viewRect, long timeStamp) {
-        return getArrowHotSpot(viewRect, timeStamp).add(CanvasElementLibrary.ARROW_HEIGHT + 10, -CanvasElementLibrary.MOUSE_HEIGHT_TOTAL / 2);
-    }
-
-    @Override
     public double getArrowAngel() {
         return -MathHelper.QUARTER_RADIANT;
     }
@@ -44,10 +38,10 @@ public class ItemInGameTipVisualization implements GameTipVisualization {
 
     @Override
     public Index getRelativeOutOfViewArrowHotSpot(Rectangle viewRect) {
-        if(!(syncItem instanceof SyncBaseItem)) {
+        if (!(syncItem instanceof SyncBaseItem)) {
             return null;
         }
-        if(viewRect.contains(syncItem.getSyncItemArea().getPosition())) {
+        if (viewRect.contains(syncItem.getSyncItemArea().getPosition())) {
             return null;
         }
         relativeOutOfViewArrowAngel = viewRect.getCenter().getAngleToNord(syncItem.getSyncItemArea().getPosition());

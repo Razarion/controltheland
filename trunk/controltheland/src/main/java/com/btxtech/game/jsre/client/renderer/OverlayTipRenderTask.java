@@ -16,6 +16,7 @@ import java.util.Collection;
  * Time: 11:46
  */
 public class OverlayTipRenderTask extends AbstractRenderTask {
+    private static final int ARROW_MOVE = 100;
     private Context2d context2d;
 
     public OverlayTipRenderTask(Context2d context2d) {
@@ -34,15 +35,9 @@ public class OverlayTipRenderTask extends AbstractRenderTask {
         Index relativeArrowPosition = overlayTipVisualization.getArrowHotSpot(viewRect, timeStamp);
         context2d.translate(relativeArrowPosition.getX(), relativeArrowPosition.getY());
         context2d.rotate(overlayTipVisualization.getArrowAngel());
-        context2d.drawImage(CanvasElementLibrary.getArrow(), -CanvasElementLibrary.ARROW_WIDTH_TOTAL / 2, 0);
+        int distance = (ARROW_MOVE - (int) (ARROW_MOVE * (timeStamp & 500) / 500.0)) / 2;
+        context2d.drawImage(CanvasElementLibrary.getArrow(), -CanvasElementLibrary.ARROW_WIDTH_TOTAL / 2, distance);
         context2d.restore();
-        // Render Mouse
-        // Render Mouse
-        Index relativeMousePosition = overlayTipVisualization.getMousePosition(viewRect, timeStamp);
-        context2d.drawImage(CanvasElementLibrary.getMouse(), relativeMousePosition.getX(), relativeMousePosition.getY());
-        if(timeStamp / 300 % 2 == 0) {
-            context2d.drawImage(CanvasElementLibrary.getMouseButtonDown(), relativeMousePosition.getX(), relativeMousePosition.getY());
-        }
     }
 
 }
