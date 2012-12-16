@@ -24,11 +24,6 @@ public class QuestVisualisationCockpitInGameTipVisualization implements GameTipV
     }
 
     @Override
-    public Index getMousePosition(Rectangle viewRect, long timeStamp) {
-        return null;
-    }
-
-    @Override
     public double getArrowAngel() {
         return -MathHelper.THREE_QUARTER_RADIANT;
     }
