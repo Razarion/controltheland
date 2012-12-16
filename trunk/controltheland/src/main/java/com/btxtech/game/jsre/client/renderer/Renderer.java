@@ -41,6 +41,7 @@ public class Renderer {
 
     private Renderer() {
         gameRenderTasks.add(new TerrainRenderTask(TerrainView.getInstance().getTerrainHandler(), TerrainView.getInstance().getContext2d()));
+        gameRenderTasks.add(new InGameTipBottomRenderTask(TerrainView.getInstance().getContext2d()));
         ItemRenderTask itemRenderTask = new ItemRenderTask(TerrainView.getInstance().getContext2d());
         gameRenderTasks.add(itemRenderTask);
         itemRenderTaskIndex = gameRenderTasks.indexOf(itemRenderTask);
@@ -49,7 +50,7 @@ public class Renderer {
         gameRenderTasks.add(new ExplosionRenderTask(TerrainView.getInstance().getContext2d()));
         gameRenderTasks.add(new SelectionFrameRenderTask(TerrainView.getInstance().getContext2d()));
         gameRenderTasks.add(new InventoryItemPlacerRenderTask(TerrainView.getInstance().getContext2d()));
-        gameRenderTasks.add(new InGameTipRenderTask(TerrainView.getInstance().getContext2d()));
+        gameRenderTasks.add(new InGameTipTopRenderTask(TerrainView.getInstance().getContext2d()));
         gameRenderTasks.add(new InGameQuestVisualisationRenderTask(TerrainView.getInstance().getContext2d()));
         gameRenderTasks.add(new SplashRenderTask(TerrainView.getInstance().getContext2d()));
     }
