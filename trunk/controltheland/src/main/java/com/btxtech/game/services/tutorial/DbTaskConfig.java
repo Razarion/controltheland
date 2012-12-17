@@ -102,6 +102,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     @Type(type = "index")
     @Columns(columns = {@Column(name = "tipXTerrainPositionHint"), @Column(name = "tipYTerrainPositionHint")})
     private Index tipTerrainPositionHint;
+    @Deprecated
     private boolean tipShowWatchQuestVisualisationCockpit;
     private boolean clearGame;
 
@@ -225,10 +226,12 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         this.tipTerrainPositionHint = tipTerrainPositionHint;
     }
 
+    @Deprecated
     public boolean isTipShowWatchQuestVisualisationCockpit() {
         return tipShowWatchQuestVisualisationCockpit;
     }
 
+    @Deprecated
     public void setTipShowWatchQuestVisualisationCockpit(boolean tipShowWatchQuestVisualisationCockpit) {
         this.tipShowWatchQuestVisualisationCockpit = tipShowWatchQuestVisualisationCockpit;
     }

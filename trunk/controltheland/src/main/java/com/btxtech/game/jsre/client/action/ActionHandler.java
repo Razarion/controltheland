@@ -71,6 +71,9 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
     public interface CommandListener {
         void onCommand(BaseCommand baseCommand);
     }
+    public interface IdleListener {
+        void onIdle(SyncBaseItem syncBaseItem);
+    }
 
     private final static ActionHandler INSTANCE = new ActionHandler();
     private static final int TICK_INTERVAL = 40;
@@ -80,6 +83,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
     private HashSet<SyncTickItem> tmpRemoveActiveItems = new HashSet<SyncTickItem>();
     private Logger log = Logger.getLogger(ActionHandler.class.getName());
     private CommandListener commandListener;
+    private IdleListener idleListener;
 
     public static ActionHandler getInstance() {
         return INSTANCE;
@@ -119,6 +123,9 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                                 Connection.getInstance().sendSyncInfo(activeItem);
                                 if (activeItem instanceof SyncBaseItem) {
                                     SimulationConditionServiceImpl.getInstance().onSyncItemDeactivated((SyncBaseItem) activeItem);
+                                    if(idleListener != null) {
+                                        idleListener.onIdle((SyncBaseItem) activeItem);
+                                    }
                                 }
                             }
                         } catch (Throwable throwable) {
@@ -458,5 +465,9 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
 
     public void setCommandListener(CommandListener commandListener) {
         this.commandListener = commandListener;
+    }
+
+    public void setIdleListener(IdleListener idleListener) {
+        this.idleListener = idleListener;
     }
 }

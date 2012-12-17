@@ -6,7 +6,6 @@ import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemTypeContainer;
-import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
 import com.btxtech.game.jsre.client.utg.tip.visualization.GameTipVisualization;
 import com.btxtech.game.jsre.client.utg.tip.visualization.ItemInGameTipVisualization;
 import com.btxtech.game.jsre.common.CommonJava;
@@ -24,8 +23,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectC
 public class SendMoneyCollectCommandTipTask extends AbstractTipTask implements SelectionListener, ActionHandler.CommandListener {
     private int toCollectFormId;
 
-    public SendMoneyCollectCommandTipTask(GameTipManager gameTipManager, int toCollectFormId) {
-        super(gameTipManager);
+    public SendMoneyCollectCommandTipTask(int toCollectFormId) {
         this.toCollectFormId = toCollectFormId;
     }
 
@@ -55,7 +53,7 @@ public class SendMoneyCollectCommandTipTask extends AbstractTipTask implements S
 
     public GameTipVisualization createInGameTip() throws NoSuchItemTypeException {
         ItemType resource = ItemTypeContainer.getInstance().getItemType(toCollectFormId);
-        SyncItem syncItem  = CommonJava.getFirst(ItemContainer.getInstance().getItems(resource, null));
+        SyncItem syncItem = CommonJava.getFirst(ItemContainer.getInstance().getItems(resource, null));
         return new ItemInGameTipVisualization(syncItem);
     }
 

@@ -27,6 +27,7 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
+import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
 import com.btxtech.game.jsre.client.utg.tip.dialog.TipManager;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -159,6 +160,7 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
         }
         long time = System.currentTimeMillis();
         ClientUserTracker.getInstance().onTaskFinished(simulationInfo.getLevelTaskId(), activeTask, time - taskTime, time);
+        GameTipManager.getInstance().stop();
         runNextTask(activeTask);
     }
 

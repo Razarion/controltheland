@@ -12,7 +12,7 @@ import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeExce
 public abstract class AbstractTipTask {
     private GameTipManager gameTipManager;
 
-    public AbstractTipTask(GameTipManager gameTipManager) {
+    public void setGameTipManager(GameTipManager gameTipManager) {
         this.gameTipManager = gameTipManager;
     }
 

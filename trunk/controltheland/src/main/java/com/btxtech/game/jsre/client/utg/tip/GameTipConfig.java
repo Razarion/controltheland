@@ -74,6 +74,7 @@ public class GameTipConfig implements Serializable {
         this.resourceId = resourceId;
     }
 
+    @Deprecated
     public boolean isHighlightQuestVisualisationCockpit() {
         return highlightQuestVisualisationCockpit;
     }
