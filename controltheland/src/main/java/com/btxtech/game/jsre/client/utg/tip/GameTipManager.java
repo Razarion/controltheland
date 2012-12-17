@@ -1,12 +1,12 @@
 package com.btxtech.game.jsre.client.utg.tip;
 
 import com.btxtech.game.jsre.client.utg.tip.tiptask.AbstractTipTask;
+import com.btxtech.game.jsre.client.utg.tip.tiptask.TipTaskContainer;
 import com.btxtech.game.jsre.client.utg.tip.tiptask.TipTaskFactory;
 import com.btxtech.game.jsre.client.utg.tip.visualization.GameTipVisualization;
 import com.btxtech.game.jsre.client.utg.tip.visualization.ItemCockpitGameOverlayTipVisualization;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,8 +19,7 @@ public class GameTipManager {
     private static final GameTipManager INSTANCE = new GameTipManager();
     private GameTipVisualization gameTipVisualization;
     private ItemCockpitGameOverlayTipVisualization overlayVisualization;
-    private List<AbstractTipTask> tasks;
-    private int currentTaskIndex;
+    private TipTaskContainer tipTaskContainer;
     private OverlayTipPanel overlayTipPanel = new OverlayTipPanel();
     private static Logger log = Logger.getLogger(GameTipManager.class.getName());
 
@@ -39,8 +38,8 @@ public class GameTipManager {
             if (gameTipConfig == null) {
                 return;
             }
-            tasks = TipTaskFactory.create(this, gameTipConfig);
-            startTipTask(0);
+            tipTaskContainer = TipTaskFactory.create(this, gameTipConfig);
+            startTipTask();
         } catch (Exception e) {
             log.log(Level.SEVERE, "GameTipManager.start()", e);
         }
@@ -48,23 +47,19 @@ public class GameTipManager {
 
     public void stop() {
         try {
-            if (tasks == null) {
+            if (tipTaskContainer == null) {
                 return;
             }
-            AbstractTipTask abstractTipTask = tasks.get(currentTaskIndex);
-            if (!abstractTipTask.isFulfilled()) {
-                abstractTipTask.cleanup();
-            }
+            tipTaskContainer.cleanup();
             cleanupVisualization();
-            tasks = null;
+            tipTaskContainer = null;
         } catch (Exception e) {
             log.log(Level.SEVERE, "GameTipManager.stop()", e);
         }
     }
 
-    private void startTipTask(int currentTaskIndex) throws NoSuchItemTypeException {
-        this.currentTaskIndex = currentTaskIndex;
-        AbstractTipTask currentTipTask = tasks.get(this.currentTaskIndex);
+    private void startTipTask() throws NoSuchItemTypeException {
+        AbstractTipTask currentTipTask = tipTaskContainer.getCurrentTask();
         currentTipTask.start();
         startVisualization(currentTipTask.createInGameTip());
     }
@@ -80,33 +75,25 @@ public class GameTipManager {
     public void onTaskFailed() {
         try {
             cleanupVisualization();
-            backtrackTask(currentTaskIndex - 1);
+            tipTaskContainer.backtrackTask();
+            startTipTask();
         } catch (Exception e) {
             log.log(Level.SEVERE, "GameTipManager.onTaskFailed()", e);
-        }
-    }
-
-    private void backtrackTask(int taskIndex) throws NoSuchItemTypeException {
-        if (taskIndex < 0) {
-            startTipTask(0);
-        } else {
-            AbstractTipTask task = tasks.get(taskIndex);
-            if (task.isFulfilled()) {
-                startTipTask(taskIndex + 1);
-            } else {
-                backtrackTask(taskIndex - 1);
-            }
         }
     }
 
     public void onSucceed() {
         try {
             cleanupVisualization();
-            int nextTaskIndex = currentTaskIndex + 1;
-            if (nextTaskIndex >= tasks.size()) {
-                return;
+            tipTaskContainer.next();
+            if (!tipTaskContainer.hasTip()) {
+                tipTaskContainer.activateFallback();
+                if (!tipTaskContainer.hasTip()) {
+                    tipTaskContainer = null;
+                    return;
+                }
             }
-            startTipTask(nextTaskIndex);
+            startTipTask();
         } catch (Exception e) {
             log.log(Level.SEVERE, "GameTipManager.onSucceed()", e);
         }

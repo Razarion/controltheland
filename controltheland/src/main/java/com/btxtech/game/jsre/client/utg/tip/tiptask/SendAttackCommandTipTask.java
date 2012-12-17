@@ -6,7 +6,6 @@ import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
 import com.btxtech.game.jsre.client.item.ItemContainer;
-import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
 import com.btxtech.game.jsre.client.utg.tip.visualization.GameTipVisualization;
 import com.btxtech.game.jsre.client.utg.tip.visualization.ItemInGameTipVisualization;
 import com.btxtech.game.jsre.common.CommonJava;
@@ -24,8 +23,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 public class SendAttackCommandTipTask extends AbstractTipTask implements SelectionListener, ActionHandler.CommandListener {
     private int actorItemTypeId;
 
-    public SendAttackCommandTipTask(GameTipManager gameTipManager, int actorItemTypeId) {
-        super(gameTipManager);
+    public SendAttackCommandTipTask(int actorItemTypeId) {
         this.actorItemTypeId = actorItemTypeId;
     }
 

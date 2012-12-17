@@ -1,14 +1,18 @@
 package com.btxtech.game.jsre.client.utg.tip.tiptask;
 
+import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
 import com.btxtech.game.jsre.client.cockpit.item.ToBeBuildPlacer;
-import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
+import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.utg.tip.visualization.GameTipVisualization;
 import com.btxtech.game.jsre.client.utg.tip.visualization.ItemCockpitGameOverlayTipVisualization;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+
+import java.util.Collection;
 
 /**
  * User: beat
@@ -18,8 +22,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 public class ToBeBuildPlacerTipTask extends AbstractTipTask implements CockpitMode.ToBeBuildPlacerListener, SelectionListener {
     private int itemTypeToBePlaced;
 
-    public ToBeBuildPlacerTipTask(GameTipManager gameTipManager, int itemTypeToBePlaced) {
-        super(gameTipManager);
+    public ToBeBuildPlacerTipTask(int itemTypeToBePlaced) {
         this.itemTypeToBePlaced = itemTypeToBePlaced;
     }
 
@@ -31,6 +34,12 @@ public class ToBeBuildPlacerTipTask extends AbstractTipTask implements CockpitMo
 
     @Override
     public boolean isFulfilled() {
+        Collection<SyncBaseItem> existingItems = ItemContainer.getInstance().getItems4BaseAndType(ClientBase.getInstance().getSimpleBase(), itemTypeToBePlaced);
+        for (SyncBaseItem existingItem : existingItems) {
+            if (!existingItem.isReady() & SelectionHandler.getInstance().atLeastOneItemTypeAllowed2FinalizeBuild(existingItem)) {
+                return true;
+            }
+        }
         ToBeBuildPlacer toBeBuildPlacer = CockpitMode.getInstance().getToBeBuildPlacer();
         return toBeBuildPlacer != null && toBeBuildPlacer.getItemTypeToBuilt().getId() == itemTypeToBePlaced;
     }

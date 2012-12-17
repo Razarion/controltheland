@@ -4,7 +4,6 @@ import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
-import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
 import com.btxtech.game.jsre.client.utg.tip.visualization.GameTipVisualization;
 import com.btxtech.game.jsre.client.utg.tip.visualization.ItemCockpitGameOverlayTipVisualization;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -19,8 +18,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryComman
 public class SendFactorizeCommandTipTask extends AbstractTipTask implements SelectionListener, ActionHandler.CommandListener {
     private int itemTypeToFactorized;
 
-    public SendFactorizeCommandTipTask(GameTipManager gameTipManager, int itemTypeToFactorized) {
-        super(gameTipManager);
+    public SendFactorizeCommandTipTask(int itemTypeToFactorized) {
         this.itemTypeToFactorized = itemTypeToFactorized;
     }
 

@@ -9,11 +9,8 @@ import com.btxtech.game.jsre.client.utg.tip.visualization.QuestVisualisationCock
  * Date: 09.11.12
  * Time: 12:53
  */
+@Deprecated
 public class WatchQuestVisualisationCockpitTipTask extends AbstractTipTask {
-    public WatchQuestVisualisationCockpitTipTask(GameTipManager gameTipManager) {
-        super(gameTipManager);
-    }
-
     @Override
     public void start() {
         // Ignore

@@ -6,7 +6,6 @@ import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualtsationModel;
 import com.btxtech.game.jsre.client.item.ItemContainer;
-import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
 import com.btxtech.game.jsre.client.utg.tip.visualization.GameTipVisualization;
 import com.btxtech.game.jsre.client.utg.tip.visualization.ItemInGameTipVisualization;
 import com.btxtech.game.jsre.common.CommonJava;
@@ -21,8 +20,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 public class SelectTipTask extends AbstractTipTask implements SelectionListener {
     private int itemTypeId;
 
-    public SelectTipTask(GameTipManager gameTipManager, int itemTypeId) {
-        super(gameTipManager);
+    public SelectTipTask(int itemTypeId) {
         this.itemTypeId = itemTypeId;
     }
 
