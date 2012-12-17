@@ -53,7 +53,7 @@ public class Task {
                 QuestVisualtsationModel.getInstance().setLevelTask(levelTaskPacket);
                 GameTipManager.getInstance().start(taskConfig.getGameTipConfig());
             }
-        }.schedule(1000);
+        }.schedule(200);
     }
 
     public TaskConfig getTaskConfig() {
