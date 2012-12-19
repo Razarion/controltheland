@@ -13,6 +13,7 @@ import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.markup.html.WebPage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -114,4 +115,6 @@ public interface CmsUiService {
     String getFacebookAppId();
 
     String getFacebookAppNameSpace();
+
+    void addLscErrorHandler(WebPage webPage, String displayErrorPrefix);
 }

@@ -45,6 +45,7 @@ public class Game extends WebPage {
 
     public Game(PageParameters parameters) {
         super(parameters);
+        cmsUiService.addLscErrorHandler(this, "InPageError(Game)");
         if (!userTrackingService.isHtml5Support()) {
             cmsUiService.setPredefinedResponsePage(this, CmsUtil.CmsPredefinedPage.NO_HTML5_BROWSER);
             return;
