@@ -380,7 +380,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
             movableServiceAsync.pollChatMessages(lastMessageId, new AsyncCallback<List<ChatMessage>>() {
                 @Override
                 public void onFailure(Throwable caught) {
-                    log.log(Level.SEVERE, "Chat message polling failed", caught);
+                    ClientExceptionHandler.handleExceptionOnlyOnce("Chat message polling failed", caught);
                 }
 
                 @Override
