@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.renderer;
 
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
@@ -26,7 +27,7 @@ public abstract class AbstractClipRenderTask extends AbstractRenderTask {
             }
             imageElement = ImageSpriteMapContainer.getInstance().getImage(imageSpriteMapInfo);
             if (imageElement == null) {
-                log.warning("AbstractClipRenderTask.renderClip() preloaded clip is not available: " + imageSpriteMapInfo.getId());
+                ClientExceptionHandler.handleExceptionOnlyOnce("AbstractClipRenderTask.renderClip() preloaded clip is not available: " + imageSpriteMapInfo.getId());
                 return;
             }
         }
