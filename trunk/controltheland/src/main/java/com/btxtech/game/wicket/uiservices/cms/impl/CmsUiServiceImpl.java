@@ -72,6 +72,7 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.behavior.StringHeaderContributor;
+import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebRequestCycle;
@@ -306,7 +307,7 @@ public class CmsUiServiceImpl implements CmsUiService {
                 beanIdPathElement = createBeanIdPathElement(pageParameters, dbContentList, beanIdPathElement);
             }
             Object bean = getDataProviderBean(beanIdPathElement);
-            if(bean == null) {
+            if (bean == null) {
                 throw new IllegalStateException("Unable get bean for beanIdPathElement: " + beanIdPathElement);
             }
             dbContent = dbContentList.getDbPropertyBook(bean.getClass());
@@ -1140,5 +1141,13 @@ public class CmsUiServiceImpl implements CmsUiService {
     @Override
     public String getFacebookAppNameSpace() {
         return facebookAppNameSpace;
+    }
+
+    @Override
+    public void addLscErrorHandler(WebPage webPage, String displayErrorPrefix) {
+        PackagedTextTemplate jsTemplate = new PackagedTextTemplate(CmsUiServiceImpl.class, "LscErrorHandler.js");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("DISPLAY_ERROR_PREFIX", displayErrorPrefix);
+        webPage.add(new StringHeaderContributor(new JavaScriptTemplate(jsTemplate).asString(parameters)));
     }
 }

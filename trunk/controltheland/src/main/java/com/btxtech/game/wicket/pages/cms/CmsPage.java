@@ -120,6 +120,7 @@ public class CmsPage extends WebPage implements IHeaderContributor {
             }
         }));
         try {
+            cmsUiService.addLscErrorHandler(this, "InPageError(CmsPage)");
             contentContext = new ContentContext(pageParameters);
             DbPage dbPage = (DbPage) getDefaultModelObject();
             if (dbPage.getPredefinedType() == CmsUtil.CmsPredefinedPage.FACEBOOK_START) {

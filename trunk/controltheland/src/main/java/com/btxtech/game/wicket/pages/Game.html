@@ -18,18 +18,6 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <link type="text/css" rel="stylesheet" href="Game.css">
     <title>Razarion</title>
-    <script type="text/javascript">
-        window.onerror = function(message, file, lineNumber) {
-            if(message != 'Script error' && lineNumber != 0) {
-                errorMessage = encodeURI("InPageError(Game)\nMessage: " + message + "\nFile: " + file + "\nLinenumber: " + lineNumber);
-                pathname = encodeURI(window.location.pathname);
-                var img = document.createElement('img');
-                img.src = '/spring/lsc?e=' + errorMessage + '&t=' + new Date().getTime() + '&p=' + pathname;
-                document.body.appendChild(img);
-            }
-            return true;
-        }
-    </script>
     <script type="text/javascript" language="javascript" src="game/game.nocache.js"></script>
 </head>
 
