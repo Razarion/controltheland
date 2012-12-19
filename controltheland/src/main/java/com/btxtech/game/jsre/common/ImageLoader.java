@@ -26,6 +26,7 @@ import java.util.logging.Logger;
  * This is a very tricky class. Different browsers handle the image loading different
  */
 public class ImageLoader<T> {
+    private static final int SEND_DEBUG_DELAY = 20000;
     public interface Listener<T> {
         void onLoaded(Map<T, ImageElement> imageElements);
     }
@@ -97,7 +98,7 @@ public class ImageLoader<T> {
                 checkProgress();
             }
         };
-        timer.schedule(10000);
+        timer.schedule(SEND_DEBUG_DELAY);
     }
 
     private void onImageLoaded(T userObject, Image image, Listener<T> listener) {

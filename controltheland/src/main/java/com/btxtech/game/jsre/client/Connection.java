@@ -433,12 +433,14 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
             if (disconnectionCount < MAX_DISCONNECTION_COUNT) {
                 return false;
             }
-            movableServiceAsync = null;
-            GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to HTTP status code 0: " + message);
-            MessageDialog messageDialog = new MessageDialog("Connection failed", CONNECTION_DIALOG);
-            messageDialog.setShowCloseButton(false);
-            messageDialog.setGlassEnabled(true);
-            DialogManager.showDialog(messageDialog, DialogManager.Type.PROMPTLY);
+            if (movableServiceAsync != null) {
+                movableServiceAsync = null;
+                GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to HTTP status code 0: " + message);
+                MessageDialog messageDialog = new MessageDialog("Connection failed", CONNECTION_DIALOG);
+                messageDialog.setShowCloseButton(false);
+                messageDialog.setGlassEnabled(true);
+                DialogManager.showDialog(messageDialog, DialogManager.Type.PROMPTLY);
+            }
             return true;
         }
 
