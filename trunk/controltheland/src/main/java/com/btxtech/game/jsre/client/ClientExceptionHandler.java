@@ -59,6 +59,10 @@ public class ClientExceptionHandler {
         handleExceptionOnlyOnce(null, t);
     }
 
+    public static void handleExceptionOnlyOnce(String message) {
+        handleExceptionOnlyOnce(message, null);
+    }
+
     private static void sendExceptionToServer(String message, Throwable throwable) {
         StringBuilder builder = new StringBuilder();
         builder.append(message);
