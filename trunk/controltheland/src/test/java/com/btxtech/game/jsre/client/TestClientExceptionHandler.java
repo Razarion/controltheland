@@ -135,13 +135,13 @@ public class TestClientExceptionHandler {
     @Test
     public void handleExceptionOnlyOnceOnlyMessage1() throws Exception {
         Logger mockLog = EasyMock.createStrictMock(Logger.class);
-        mockLog.log(Level.SEVERE, "!!Further exception will be suppressed!! xx1", (Throwable) null);
-        mockLog.log(Level.SEVERE, "!!Further exception will be suppressed!! xx2", (Throwable) null);
+        mockLog.log(Level.SEVERE, "!!Further exception will be suppressed!! yy1", (Throwable) null);
+        mockLog.log(Level.SEVERE, "!!Further exception will be suppressed!! yy2", (Throwable) null);
         EasyMock.replay(mockLog);
         AbstractServiceTest.setPrivateStaticField(ClientExceptionHandler.class, "log", mockLog);
 
-        ClientExceptionHandler.handleExceptionOnlyOnce("xx1");
-        ClientExceptionHandler.handleExceptionOnlyOnce("xx2");
+        ClientExceptionHandler.handleExceptionOnlyOnce("yy1");
+        ClientExceptionHandler.handleExceptionOnlyOnce("yy2");
         EasyMock.verify(mockLog);
 
         AbstractServiceTest.setPrivateStaticField(ClientExceptionHandler.class, "log", Logger.getLogger(ClientExceptionHandler.class.getName()));
@@ -150,12 +150,12 @@ public class TestClientExceptionHandler {
     @Test
     public void handleExceptionOnlyOnceOnlyMessage2() throws Exception {
         Logger mockLog = EasyMock.createStrictMock(Logger.class);
-        mockLog.log(Level.SEVERE, "!!Further exception will be suppressed!! xx1", (Throwable) null);
+        mockLog.log(Level.SEVERE, "!!Further exception will be suppressed!! zz1", (Throwable) null);
         EasyMock.replay(mockLog);
         AbstractServiceTest.setPrivateStaticField(ClientExceptionHandler.class, "log", mockLog);
 
-        ClientExceptionHandler.handleExceptionOnlyOnce("xx1");
-        ClientExceptionHandler.handleExceptionOnlyOnce("xx1");
+        ClientExceptionHandler.handleExceptionOnlyOnce("zz1");
+        ClientExceptionHandler.handleExceptionOnlyOnce("zz1");
         EasyMock.verify(mockLog);
 
         AbstractServiceTest.setPrivateStaticField(ClientExceptionHandler.class, "log", Logger.getLogger(ClientExceptionHandler.class.getName()));
