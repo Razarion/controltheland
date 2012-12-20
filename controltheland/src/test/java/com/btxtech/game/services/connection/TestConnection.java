@@ -36,10 +36,10 @@ public class TestConnection extends AbstractServiceTest {
     @DirtiesContext
     public void noPendingPackets() {
         Connection connection = new Connection("1234", null);
-        Assert.assertTrue(connection.getAndRemovePendingPackets().isEmpty());
-        Assert.assertTrue(connection.getAndRemovePendingPackets().isEmpty());
-        Assert.assertTrue(connection.getAndRemovePendingPackets().isEmpty());
-        Assert.assertTrue(connection.getAndRemovePendingPackets().isEmpty());
+        Assert.assertTrue(connection.getAndRemovePendingPackets(false).isEmpty());
+        Assert.assertTrue(connection.getAndRemovePendingPackets(false).isEmpty());
+        Assert.assertTrue(connection.getAndRemovePendingPackets(false).isEmpty());
+        Assert.assertTrue(connection.getAndRemovePendingPackets(false).isEmpty());
     }
 
     @Test
@@ -54,10 +54,36 @@ public class TestConnection extends AbstractServiceTest {
         accountBalancePacket.setAccountBalance(112);
         connection.sendPacket(accountBalancePacket);
 
-        List<Packet> packets = connection.getAndRemovePendingPackets();
+        List<Packet> packets = connection.getAndRemovePendingPackets(false);
         Assert.assertEquals(2, packets.size());
         Assert.assertTrue(packets.get(0) instanceof AccountBalancePacket);
         Assert.assertTrue(packets.get(1) instanceof SyncItemInfo);
+    }
+
+    @Test
+    @DirtiesContext
+    public void pendingPacketsResendLast() throws Exception {
+        configureSimplePlanetNoResources();
+
+        Connection connection = new Connection("1234", null);
+        SyncBaseItem attackItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1));
+        connection.sendBaseSyncItem(attackItem);
+        AccountBalancePacket accountBalancePacket = new AccountBalancePacket();
+        accountBalancePacket.setAccountBalance(112);
+        connection.sendPacket(accountBalancePacket);
+
+        List<Packet> packets = connection.getAndRemovePendingPackets(true);
+        Assert.assertEquals(2, packets.size());
+        Assert.assertTrue(packets.get(0) instanceof AccountBalancePacket);
+        Assert.assertTrue(packets.get(1) instanceof SyncItemInfo);
+
+        packets = connection.getAndRemovePendingPackets(true);
+        Assert.assertEquals(2, packets.size());
+        Assert.assertTrue(packets.get(0) instanceof AccountBalancePacket);
+        Assert.assertTrue(packets.get(1) instanceof SyncItemInfo);
+
+        packets = connection.getAndRemovePendingPackets(false);
+        Assert.assertEquals(0, packets.size());
     }
 
     @Test
@@ -180,9 +206,9 @@ public class TestConnection extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMovableService().getRealGameInfo(START_UID_1);
-        getMovableService().getSyncInfo(START_UID_1);
+        getMovableService().getSyncInfo(START_UID_1, false);
         try {
-            getMovableService().getSyncInfo(START_UID_2);
+            getMovableService().getSyncInfo(START_UID_2, false);
             Assert.fail("NoConnectionException expected");
         } catch (NoConnectionException e) {
             Assert.assertEquals(NoConnectionException.Type.ANOTHER_CONNECTION_EXISTS, e.getType());
@@ -199,25 +225,25 @@ public class TestConnection extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMovableService().getRealGameInfo(START_UID_1);
-        getMovableService().getSyncInfo(START_UID_1);
+        getMovableService().getSyncInfo(START_UID_1, false);
         getMovableService().getRealGameInfo(START_UID_2);
-        getMovableService().getSyncInfo(START_UID_2);
+        getMovableService().getSyncInfo(START_UID_2, false);
         try {
-            getMovableService().getSyncInfo(START_UID_1);
+            getMovableService().getSyncInfo(START_UID_1, false);
             Assert.fail("NoConnectionException expected");
         } catch (NoConnectionException e) {
             Assert.assertEquals(NoConnectionException.Type.ANOTHER_CONNECTION_EXISTS, e.getType());
         }
-        getMovableService().getSyncInfo(START_UID_2);
+        getMovableService().getSyncInfo(START_UID_2, false);
         getMovableService().getRealGameInfo(START_UID_1);
-        getMovableService().getSyncInfo(START_UID_1);
+        getMovableService().getSyncInfo(START_UID_1, false);
         try {
-            getMovableService().getSyncInfo(START_UID_2);
+            getMovableService().getSyncInfo(START_UID_2, false);
             Assert.fail("NoConnectionException expected");
         } catch (NoConnectionException e) {
             Assert.assertEquals(NoConnectionException.Type.ANOTHER_CONNECTION_EXISTS, e.getType());
         }
-        getMovableService().getSyncInfo(START_UID_1);
+        getMovableService().getSyncInfo(START_UID_1, false);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -232,7 +258,7 @@ public class TestConnection extends AbstractServiceTest {
         getMovableService().getRealGameInfo(START_UID_1);
         getMovableService().surrenderBase();
         try {
-            getMovableService().getSyncInfo(START_UID_1);
+            getMovableService().getSyncInfo(START_UID_1, false);
             Assert.fail("NoConnectionException expected");
         } catch (NoConnectionException e) {
             Assert.assertEquals(NoConnectionException.Type.BASE_SURRENDERED, e.getType());

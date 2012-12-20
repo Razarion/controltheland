@@ -36,7 +36,8 @@ public class Connection implements Serializable {
     private int noTickCount = 0;
     private NoConnectionException.Type closedReason;
     private String startUuid;
-    // private Log log = LogFactory.getLog(Connection.class);
+    private List<Packet> sentPackager = new ArrayList<>();
+
 
     public Connection(String sessionId, String startUuid) {
         this.sessionId = sessionId;
@@ -55,27 +56,29 @@ public class Connection implements Serializable {
         return startUuid;
     }
 
-    public List<Packet> getAndRemovePendingPackets() {
+    public List<Packet> getAndRemovePendingPackets(boolean resendLast) {
         tickCount++;
-        List<Packet> packets;
+        if (!resendLast) {
+            sentPackager.clear();
+        }
 
         synchronized (pendingPackets) {
-            packets = new ArrayList<>(pendingPackets);
+            sentPackager.addAll(pendingPackets);
             pendingPackets.clear();
         }
         synchronized (pendingSyncItem) {
             if (pendingSyncItem.isEmpty()) {
-                return packets;
+                return sentPackager;
             }
             for (SyncItem syncItem : pendingSyncItem) {
                 SyncItemInfo syncInfo = syncItem.getSyncInfo();
                 // log.debug("Send to client: " + base.getName() + " | " +
                 // syncInfo);
-                packets.add(syncInfo);
+                sentPackager.add(syncInfo);
             }
             pendingSyncItem.clear();
         }
-        return packets;
+        return sentPackager;
     }
 
     public void sendBaseSyncItem(SyncItem syncItem) {

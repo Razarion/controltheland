@@ -513,11 +513,11 @@ abstract public class AbstractServiceTest {
     // ------------------- Connection --------------------
 
     protected void clearPackets() throws Exception {
-        getMovableService().getSyncInfo(START_UID_1);
+        getMovableService().getSyncInfo(START_UID_1, false);
     }
 
     protected List<Packet> getPackagesIgnoreSyncItemInfoAndClear(boolean ignoreAccountBalancePackets) throws Exception {
-        List<Packet> receivedPackets = new ArrayList<Packet>(getMovableService().getSyncInfo(START_UID_1));
+        List<Packet> receivedPackets = new ArrayList<Packet>(getMovableService().getSyncInfo(START_UID_1, false));
         for (Iterator<Packet> iterator = receivedPackets.iterator(); iterator.hasNext(); ) {
             Packet packet = iterator.next();
             if (packet instanceof SyncItemInfo) {
@@ -531,7 +531,7 @@ abstract public class AbstractServiceTest {
 
     protected <T extends Packet> List<T> getPackages(Class<T> packetFilter) throws Exception {
         List<T> packets = new ArrayList<>();
-        List receivedPackets = new ArrayList<>(getMovableService().getSyncInfo(START_UID_1));
+        List receivedPackets = new ArrayList<>(getMovableService().getSyncInfo(START_UID_1, false));
         for (Object packet : receivedPackets) {
             if (packetFilter.isAssignableFrom(packet.getClass())) {
                 packets.add((T) packet);

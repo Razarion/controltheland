@@ -62,7 +62,7 @@ public interface MovableService extends RemoteService {
 
     void sendCommands(List<BaseCommand> baseCommands);
 
-    List<Packet> getSyncInfo(String startUuid) throws NoConnectionException;
+    List<Packet> getSyncInfo(String startUuid, boolean resendLast) throws NoConnectionException;
 
     Collection<SyncItemInfo> getAllSyncInfo();
 

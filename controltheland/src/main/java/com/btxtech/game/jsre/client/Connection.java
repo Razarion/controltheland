@@ -107,9 +107,9 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
     private ArrayList<BaseCommand> commandQueue = new ArrayList<BaseCommand>();
     private static Logger log = Logger.getLogger(Connection.class.getName());
     private GameEngineMode gameEngineMode;
-
     private MovableServiceAsync movableServiceAsync = GWT.create(MovableService.class);
     private Timer timer;
+    private boolean resendLast;
     private int disconnectionCount = 0;
 
     static public Connection getInstance() {
@@ -229,11 +229,11 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         if (movableServiceAsync == null) {
             return;
         }
-        movableServiceAsync.getSyncInfo(ClientGlobalServices.getInstance().getClientRunner().getStartUuid(), new AsyncCallback<List<Packet>>() {
+        movableServiceAsync.getSyncInfo(ClientGlobalServices.getInstance().getClientRunner().getStartUuid(), resendLast, new AsyncCallback<List<Packet>>() {
             @Override
             public void onFailure(Throwable throwable) {
                 if (!handleDisconnection("pollSyncInfo", throwable)) {
-                    scheduleTimer();
+                    scheduleTimer(true);
                 }
             }
 
@@ -249,14 +249,15 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                     handlePackets(packets);
                 } finally {
                     Perfmon.getInstance().onLeft(PerfmonEnum.SYNC_HANDLE_PACKETS);
-                    scheduleTimer();
+                    scheduleTimer(false);
                 }
             }
         });
     }
 
-    private void scheduleTimer() {
+    private void scheduleTimer(boolean resendLast) {
         if (timer != null) {
+            this.resendLast = resendLast;
             timer.schedule(MIN_DELAY_BETWEEN_POLL);
         }
     }

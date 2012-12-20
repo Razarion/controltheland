@@ -90,7 +90,7 @@ public class TestBaseService extends AbstractServiceTest {
         getMovableService().sellItem(id);
 
         try {
-            getMovableService().getSyncInfo(START_UID_1);
+            getMovableService().getSyncInfo(START_UID_1, false);
             Assert.fail("NoConnectionException expected");
         } catch (NoConnectionException e) {
             Assert.assertEquals(NoConnectionException.Type.BASE_LOST, e.getType());

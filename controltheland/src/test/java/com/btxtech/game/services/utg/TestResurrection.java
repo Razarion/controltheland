@@ -44,7 +44,7 @@ public class TestResurrection extends AbstractServiceTest {
         Assert.assertEquals(0, baseService.getBases().size());
 
         try {
-            getMovableService().getSyncInfo(START_UID_1);
+            getMovableService().getSyncInfo(START_UID_1, false);
             Assert.fail("Disconnection expected");
         } catch (NoConnectionException e) {
             Assert.assertEquals(NoConnectionException.Type.BASE_LOST, e.getType());
@@ -52,7 +52,7 @@ public class TestResurrection extends AbstractServiceTest {
 
         // Also second call should fail
         try {
-            getMovableService().getSyncInfo(START_UID_1);
+            getMovableService().getSyncInfo(START_UID_1, false);
             Assert.fail("Disconnection expected");
         } catch (NoConnectionException e) {
             Assert.assertEquals(NoConnectionException.Type.BASE_LOST, e.getType());

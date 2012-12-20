@@ -121,9 +121,9 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public List<Packet> getSyncInfo(String startUuid) throws NoConnectionException {
+    public List<Packet> getSyncInfo(String startUuid, boolean resendLast) throws NoConnectionException {
         try {
-            return planetSystemService.getServerPlanetServices().getConnectionService().getConnection(startUuid).getAndRemovePendingPackets();
+            return planetSystemService.getServerPlanetServices().getConnectionService().getConnection(startUuid).getAndRemovePendingPackets(resendLast);
         } catch (NoConnectionException e) {
             throw e;
         } catch (NoSuchPlanetException e) {
