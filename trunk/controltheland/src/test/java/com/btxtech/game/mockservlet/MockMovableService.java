@@ -152,7 +152,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public List<Packet> getSyncInfo(String startUuid) throws NoConnectionException {
+    public List<Packet> getSyncInfo(String startUuid, boolean resendLast) throws NoConnectionException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

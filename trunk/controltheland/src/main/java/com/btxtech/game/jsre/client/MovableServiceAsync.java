@@ -56,7 +56,7 @@ public interface MovableServiceAsync {
 
     void sendCommands(List<BaseCommand> baseCommands, AsyncCallback async);
 
-    void getSyncInfo(String startUuid, AsyncCallback<List<Packet>> async);
+    void getSyncInfo(String startUuid, boolean resendLast, AsyncCallback<List<Packet>> async);
 
     void getAllSyncInfo(AsyncCallback<Collection<SyncItemInfo>> async);
 
