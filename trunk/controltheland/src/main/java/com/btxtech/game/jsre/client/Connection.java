@@ -81,6 +81,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -558,6 +559,14 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         } else if (GwtCommon.checkAndReportHttpStatusCode0("onTaskFailed", cause)) {
             // Reload whole browser
             Window.Location.reload();
+        } else if (t instanceof IncompatibleRemoteServiceException) {
+            // Reload whole browser
+            new Timer() {
+                @Override
+                public void run() {
+                    Window.Location.reload();
+                }
+            }.schedule(1000);
         } else {
             log.log(java.util.logging.Level.SEVERE, "Startup task failed: '" + task.getTaskEnum().getStartupTaskEnumHtmlHelper().getNiceText() + "' error: " + error, t);
         }
