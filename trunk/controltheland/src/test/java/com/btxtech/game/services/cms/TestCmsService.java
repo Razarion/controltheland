@@ -4168,7 +4168,7 @@ public class TestCmsService extends AbstractServiceTest {
         parameters.add("page", Integer.toString(facebookPage.getId()));
         parameters.add("signed_request", "3RaYyXwkwhCc4OlVfDhAU9Y-O_pyqN4mgE7JyzPwcIc.eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsImlzc3VlZF9hdCI6MTM0MzE0NjYzOSwidXNlciI6eyJjb3VudHJ5IjoiY2giLCJsb2NhbGUiOiJlbl9VUyIsImFnZSI6eyJtaW4iOjIxfX19");
         Page page = tester.startPage(CmsPage.class, parameters);
-        StringHeaderContributor stringHeaderContributor = (StringHeaderContributor) page.getBehaviors().get(0);
+        StringHeaderContributor stringHeaderContributor = (StringHeaderContributor) page.getBehaviors().get(1);
         Assert.assertTrue(stringHeaderContributor.toString().contains("https://www.facebook.com/dialog/oauth/"));
         endHttpRequestAndOpenSessionInViewFilter();
         // User accepted
