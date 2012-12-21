@@ -126,11 +126,6 @@ public class BuildupItem extends Composite {
         }
     }
 
-    public void onStateChanged() {
-        discoverEnableState();
-        accomplishEnableState();
-    }
-
     @UiHandler("button")
     void onButtonMouseDown(MouseDownEvent event) {
         buttonListener.onButtonPressed(new Index(event.getX(), event.getY()));
