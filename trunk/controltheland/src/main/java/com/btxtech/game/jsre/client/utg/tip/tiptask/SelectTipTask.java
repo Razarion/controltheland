@@ -9,8 +9,12 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.utg.tip.visualization.GameTipVisualization;
 import com.btxtech.game.jsre.client.utg.tip.visualization.ItemInGameTipVisualization;
 import com.btxtech.game.jsre.common.CommonJava;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * User: beat
@@ -32,17 +36,12 @@ public class SelectTipTask extends AbstractTipTask implements SelectionListener 
 
     @Override
     public boolean isFulfilled() {
-        Group ownSelection = SelectionHandler.getInstance().getOwnSelection();
-        if (ownSelection == null) {
-            return false;
-        } else {
-            for (SyncBaseItem syncBaseItem : ownSelection.getItems()) {
-                if (syncBaseItem.getBaseItemType().getId() == itemTypeId) {
-                    return true;
-                }
-            }
+        Group selectedGroup = SelectionHandler.getInstance().getOwnSelection();
+        if(selectedGroup == null) {
             return false;
         }
+        Map<BaseItemType, Collection<SyncBaseItem>> selectedItems = selectedGroup.getGroupedItems();
+        return selectedItems.size() == 1 && CommonJava.getFirst(selectedItems.keySet()).getId() == itemTypeId;
     }
 
     @Override
@@ -63,13 +62,12 @@ public class SelectTipTask extends AbstractTipTask implements SelectionListener 
 
     @Override
     public void onOwnSelectionChanged(Group selectedGroup) {
-        for (SyncBaseItem syncBaseItem : selectedGroup.getItems()) {
-            if (syncBaseItem.getBaseItemType().getId() == itemTypeId) {
-                onSucceed();
-                return;
-            }
+        Map<BaseItemType, Collection<SyncBaseItem>> selectedItems = selectedGroup.getGroupedItems();
+        if (selectedItems.size() == 1 && CommonJava.getFirst(selectedItems.keySet()).getId() == itemTypeId) {
+            onSucceed();
+        } else {
+            onFailed();
         }
-        onFailed();
     }
 
     public GameTipVisualization createInGameTip() {
