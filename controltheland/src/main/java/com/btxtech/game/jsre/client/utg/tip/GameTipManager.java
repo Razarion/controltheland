@@ -60,6 +60,10 @@ public class GameTipManager {
 
     private void startTipTask() throws NoSuchItemTypeException {
         AbstractTipTask currentTipTask = tipTaskContainer.getCurrentTask();
+        if(currentTipTask.isFulfilled()) {
+            tipTaskContainer.next();
+            currentTipTask = tipTaskContainer.getCurrentTask();
+        }
         currentTipTask.start();
         startVisualization(currentTipTask.createInGameTip());
     }
