@@ -1,0 +1,21 @@
+<html>
+<body>
+<h3>Hallo ${user},</h3>
+
+<div>
+    Vielen Dank für die Registrierung bei Razarion. Bitte bestätige deine E-Mail-Adresse, indem du auf den folgenden
+    Link klickst:<br>
+    <a href="${link}">${link}</a>
+    <br>
+    <br>
+    Benutzername: ${user}
+    <br>
+    <br>
+    Wir freuen uns darauf, dich bei Razarion begrüßen zu dürfen!
+    <br>
+    <br>
+    Dein Razarion-Team
+</div>
+</body>
+</html>
+
