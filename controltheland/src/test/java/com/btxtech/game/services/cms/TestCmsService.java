@@ -2658,6 +2658,107 @@ public class TestCmsService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
+    public void testLoginNoUser() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        pageCrud.updateDbChild(dbPage);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        FormTester formTester = tester.newFormTester("header:loginBox:loginForm");
+        formTester.setValue("loginName", "U1");
+        formTester.setValue("loginPassowrd", "xxx");
+        formTester.submit();
+        tester.assertLabel("form:content:border:borderContent:message", "Login failed. Please try again.<br><br>Newly created accounts must be activated first. Check your email.");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testLoginNotVerified() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        registerService.register("U1", "xxx", "xxx", "fake");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        pageCrud.updateDbChild(dbPage);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        FormTester formTester = tester.newFormTester("header:loginBox:loginForm");
+        formTester.setValue("loginName", "U1");
+        formTester.setValue("loginPassowrd", "xxx");
+        formTester.submit();
+        tester.assertLabel("form:content:border:borderContent:message", "Login failed. Please try again.<br><br>Newly created accounts must be activated first. Check your email.");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testLogin() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "xxx", "xxx", "fake");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        pageCrud.updateDbChild(dbPage);
+        DbPage userPage = pageCrud.createDbChild();
+        userPage.setPredefinedType(CmsUtil.CmsPredefinedPage.USER_PAGE);
+        userPage.setName("USerPage");
+        pageCrud.updateDbChild(userPage);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        FormTester formTester = tester.newFormTester("header:loginBox:loginForm");
+        formTester.setValue("loginName", "U1");
+        formTester.setValue("loginPassowrd", "xxx");
+        formTester.submit();
+        tester.assertLabel("title","USerPage");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
     public void testCmsStringGenerator() throws Exception {
         Assert.assertEquals("Hallo 0", CmsStringGenerator.createNumberString(0, "Hallo 0", "Hallo 1", "Hallo $"));
         Assert.assertEquals("Hallo 1", CmsStringGenerator.createNumberString(1, "Hallo 0", "Hallo 1", "Hallo $"));

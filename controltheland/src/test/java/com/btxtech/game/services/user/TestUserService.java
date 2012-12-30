@@ -16,6 +16,8 @@ import org.springframework.test.annotation.DirtiesContext;
 public class TestUserService extends AbstractServiceTest {
     @Autowired
     private UserService userService;
+    @Autowired
+    private RegisterService registerService;
 
     @Test
     @DirtiesContext
@@ -349,6 +351,22 @@ public class TestUserService extends AbstractServiceTest {
         Assert.assertEquals(InvalidNickName.ALREADY_USED, userService.isNickNameValid("test"));
         Assert.assertNull(userService.isNickNameValid("test33"));
 
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void isRegistered() throws Exception {
+        configureMultiplePlanetsAndLevels();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertFalse(userService.isRegistered());
+        registerService.register("test", "xxx","xxx", "fake");
+        Assert.assertFalse(userService.isRegistered());
+        registerService.onVerificationPageCalled(userService.getUser().getVerificationId());
+        Assert.assertTrue(userService.isRegistered());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
