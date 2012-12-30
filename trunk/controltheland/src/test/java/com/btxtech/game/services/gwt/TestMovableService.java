@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.user.RegisterService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import junit.framework.Assert;
@@ -21,6 +22,8 @@ public class TestMovableService extends AbstractServiceTest {
     private UserGuidanceService userGuidanceService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private RegisterService registerService;
 
     @Test
     @DirtiesContext
@@ -80,6 +83,21 @@ public class TestMovableService extends AbstractServiceTest {
         } catch (InvalidLevelStateException invalidLevelStateException) {
             Assert.assertNull(invalidLevelStateException.getLevelTaskId());
         }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void getUnverifiedUser() throws Exception {
+        configureMultiplePlanetsAndLevels();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        registerService.register("U1", "xxx", "xxx", "fake");
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
+        Assert.assertEquals("U1", realGameInfo.getUserName());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
