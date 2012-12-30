@@ -1,16 +1,20 @@
 package com.btxtech.game.services.mgmt.impl;
 
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.statistics.StatisticsEntry;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.condition.DbGenericComparisonValue;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -35,8 +39,8 @@ public class DbUserState {
     @Id
     @GeneratedValue
     private Integer id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    @Column(name = "user_name")
+    private String user;
     @OneToOne(fetch = FetchType.LAZY)
     private DbBase base;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -78,7 +82,9 @@ public class DbUserState {
 
     public DbUserState(BackupEntry backupEntry, User user, UserState userState, DbLevel dbLevel, Collection<DbInventoryItem> inventoryItems, Collection<DbInventoryArtifact> inventoryArtifacts) {
         this.backupEntry = backupEntry;
-        this.user = user;
+        if (user != null) {
+            this.user = user.getUsername();
+        }
         xp = userState.getXp();
         razarion = userState.getRazarion();
         currentLevel = dbLevel;
@@ -87,10 +93,21 @@ public class DbUserState {
         this.inventoryArtifacts = inventoryArtifacts;
     }
 
-    public UserState createUserState() {
+    public UserState createUserState(UserService userService) {
         UserState userState = new UserState();
         if (user != null) {
-            userState.setUser(user.getUsername());
+            try {
+                User realUser = userService.getUser(user);
+                if (realUser != null) {
+                    userState.setUser(realUser.getUsername());
+                } else {
+                    LogFactory.getLog(DbUserState.class).warn("DbUserState.createUserState() user does not exist any longer: " + user);
+                    return null;
+                }
+            } catch (Throwable t) {
+                ExceptionHandler.handleException(t);
+                return null;
+            }
         }
         userState.setXp(xp);
         userState.setRazarion(razarion);
