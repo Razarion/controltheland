@@ -11,6 +11,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 public class Message extends Panel {
     public Message(String id, String message) {
         super(id);
-        add(new Label("message", message));
+        add(new Label("message", message).setEscapeModelStrings(false));
     }
 }

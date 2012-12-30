@@ -27,6 +27,9 @@ public class CmsUtil {
     public static final String LEVEL_SECTION = "level";
     public static final String LEVEL_TASK_SECTION = "leveltask";
 
+    // Keys
+    public static final String EMAIL_VERIFICATION_KEY = "verification_code";
+
     /**
      * User: beat
      * Date: 05.08.2011
@@ -43,8 +46,9 @@ public class CmsUtil {
         NOT_FOUND,
         LEVEL_TASK_DONE,
         FACEBOOK_START,
-        CHOOSE_NICKNAME
-    }
+        CHOOSE_NICKNAME,
+        EMAIL_VERIFICATION
+        }
 
     public static String getUrl4CmsPage(String id) {
         StringBuilder builder = new StringBuilder();

@@ -467,7 +467,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public void onSessionTimedOut(UserState userState) {
+    public void onUserStateRemoved(UserState userState) {
         Base base = userState.getBase();
         if (base == null || userState.isRegistered()) {
             return;

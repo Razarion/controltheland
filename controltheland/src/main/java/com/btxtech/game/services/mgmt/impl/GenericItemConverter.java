@@ -35,6 +35,7 @@ import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.Planet;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.statistics.StatisticsService;
+import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -111,6 +112,10 @@ public class GenericItemConverter {
         Set<DbUserState> dbUserStates = new HashSet<>();
         for (UserState userState : userService.getAllUserStates()) {
             if (!userState.isRegistered()) {
+                continue;
+            }
+            User user = userService.getUser(userState);
+            if (!user.isAccountNonLocked()) {
                 continue;
             }
             try {

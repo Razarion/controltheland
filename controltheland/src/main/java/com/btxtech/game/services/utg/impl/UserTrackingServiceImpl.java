@@ -377,6 +377,35 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             dbUserHistory.setSessionId(session.getSessionId());
             dbUserHistory.setCookieId(session.getCookieId());
             dbUserHistory.setCreated();
+            dbUserHistory.setVerificationId(user.getVerificationId());
+            dbUserHistory.setAwaitingVerificationDate(user.getAwaitingVerificationDate());
+            sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void onUserVerified(User user) {
+        try {
+            DbUserHistory dbUserHistory = new DbUserHistory(user);
+            dbUserHistory.setSessionId(session.getSessionId());
+            dbUserHistory.setCookieId(session.getCookieId());
+            dbUserHistory.setDeleteUnverifiedUser();
+            dbUserHistory.setVerificationId(user.getVerificationId());
+            sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public void onUnverifiedUserRemoved(User user) {
+        try {
+            DbUserHistory dbUserHistory = new DbUserHistory(user);
+            dbUserHistory.setVerified();
+            dbUserHistory.setVerificationId(user.getVerificationId());
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
             log.error("", t);

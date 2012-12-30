@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client.dialogs;
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.common.FacebookUtils;
+import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
@@ -47,9 +48,10 @@ public class RegisterDialog extends Dialog {
     private static final String REGISTRATION_DIALOG = "<b>Attention:</b> if you continue without registration you will not be able to return to your base after you leave the game.";
     private static final String REGISTRATION_FILLED = "All fields must be filled in";
     private static final String REGISTRATION_MATCH = "Password and confirm password do not match";
+    private static final String REGISTRATION_EMAIL_EXITS = "The email is already taken: ";
     public static final String REGISTRATION_EXISTS = "The user already exists";
     private static Timer timer;
-    private TextBox userName;
+    private NickNameField nickNameField;
     private TextBox email;
     private PasswordTextBox password;
     private PasswordTextBox confirmPassword;
@@ -75,7 +77,7 @@ public class RegisterDialog extends Dialog {
         dialogVPanel.add(skip);
 
         facebookRegister(dialogVPanel);
-        normalRegsiter(dialogVPanel);
+        normalRegister(dialogVPanel);
 
         addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
@@ -103,11 +105,11 @@ public class RegisterDialog extends Dialog {
         dialogVPanel.add(captionPanel);
     }
 
-    private void normalRegsiter(VerticalPanel dialogVPanel) {
+    private void normalRegister(VerticalPanel dialogVPanel) {
         FlexTable grid = new FlexTable();
         grid.setWidget(0, 0, new Label("User name"));
-        userName = new TextBox();
-        grid.setWidget(0, 1, userName);
+        nickNameField = new NickNameField(null);
+        grid.setWidget(0, 1, nickNameField);
         grid.setWidget(1, 0, new Label("Email"));
         email = new TextBox();
         grid.setWidget(1, 1, email);
@@ -117,9 +119,9 @@ public class RegisterDialog extends Dialog {
         grid.setWidget(3, 0, new Label("Confirm password"));
         confirmPassword = new PasswordTextBox();
         grid.setWidget(3, 1, confirmPassword);
-        Button regsiter = new Button("Register");
-        grid.setWidget(4, 0, regsiter);
-        regsiter.addClickHandler(new ClickHandler() {
+        Button register = new Button("Register");
+        grid.setWidget(4, 0, register);
+        register.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 register();
@@ -135,7 +137,7 @@ public class RegisterDialog extends Dialog {
     }
 
     private void register() {
-        if (userName.getText().isEmpty() || password.getText().isEmpty() || confirmPassword.getText().isEmpty()) {
+        if (nickNameField.getText().isEmpty() || email.getText().isEmpty() || password.getText().isEmpty() || confirmPassword.getText().isEmpty()) {
             DialogManager.showDialog(new MessageDialog("Registration failed", REGISTRATION_FILLED), DialogManager.Type.STACK_ABLE);
             return;
         }
@@ -145,13 +147,15 @@ public class RegisterDialog extends Dialog {
             return;
         }
 
-        Connection.getMovableServiceAsync().register(userName.getText(), password.getText(), confirmPassword.getText(), email.getText(), new AsyncCallback<Void>() {
+        Connection.getMovableServiceAsync().register(nickNameField.getText(), password.getText(), confirmPassword.getText(), email.getText(), new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable throwable) {
                 if (throwable instanceof UserAlreadyExistsException) {
                     DialogManager.showDialog(new MessageDialog("Registration failed", REGISTRATION_EXISTS), DialogManager.Type.STACK_ABLE);
                 } else if (throwable instanceof PasswordNotMatchException) {
                     DialogManager.showDialog(new MessageDialog("Registration failed", REGISTRATION_MATCH), DialogManager.Type.STACK_ABLE);
+                } else if (throwable instanceof EmailAlreadyExitsException) {
+                    DialogManager.showDialog(new MessageDialog("Registration failed", REGISTRATION_EMAIL_EXITS + ((EmailAlreadyExitsException)throwable).getEmail()), DialogManager.Type.STACK_ABLE);
                 } else {
                     ClientExceptionHandler.handleException(throwable);
                 }
@@ -159,8 +163,9 @@ public class RegisterDialog extends Dialog {
 
             @Override
             public void onSuccess(Void aVoid) {
-                Connection.getInstance().setUserName(userName.getText());
+                Connection.getInstance().setUserName(nickNameField.getText());
                 hide(true);
+                DialogManager.showDialog(new MessageDialog("Thank you for registering", "A confirmation email has been sent to " + email.getText() + ". Please click on the activation link to activate your account."), DialogManager.Type.PROMPTLY);
             }
         });
     }
@@ -168,7 +173,7 @@ public class RegisterDialog extends Dialog {
     @Override
     protected void setupDialog() {
         super.setupDialog();
-        userName.setFocus(true);
+        nickNameField.setFocus(true);
     }
 
     public static void showDialogRepeating() {

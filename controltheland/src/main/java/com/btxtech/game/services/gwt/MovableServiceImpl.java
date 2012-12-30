@@ -27,6 +27,7 @@ import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
+import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -64,6 +65,7 @@ import com.btxtech.game.services.terrain.TerrainImageService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.AllianceService;
+import com.btxtech.game.services.user.RegisterService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -110,6 +112,8 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     private ClipService clipService;
     @Autowired
     private PlanetSystemService planetSystemService;
+    @Autowired
+    private RegisterService registerService;
 
     @Override
     public void sendCommands(List<BaseCommand> baseCommands) {
@@ -249,15 +253,10 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public void register(String userName, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException {
+    public void register(String userName, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, EmailAlreadyExitsException {
         try {
-            userService.createUser(userName, password, confirmPassword, email);
-            Object o = session.getRequest().getSession().getAttribute("wicket:wicket:" + org.apache.wicket.Session.SESSION_ATTRIBUTE_NAME);
-            if (o == null) {
-                throw new Exception("Wicket session not found");
-            }
-            ((AuthenticatedWebSession) o).signIn(userName, password);
-        } catch (UserAlreadyExistsException | PasswordNotMatchException e) {
+            registerService.register(userName, password, confirmPassword, email);
+        } catch (UserAlreadyExistsException | PasswordNotMatchException |EmailAlreadyExitsException e) {
             throw e;
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);

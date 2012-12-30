@@ -232,9 +232,9 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
     }
 
     @Override
-    public void onSessionTimedOut(UserState userState) {
+    public void onUserStateRemoved(UserState userState) {
         if (userState.getBase() != null) {
-            getPlanet(userState).getPlanetServices().getBaseService().onSessionTimedOut(userState);
+            getPlanet(userState).getPlanetServices().getBaseService().onUserStateRemoved(userState);
         }
     }
 

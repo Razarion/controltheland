@@ -62,6 +62,10 @@ public interface UserTrackingService {
 
     void onUserCreated(User user);
 
+    void onUserVerified(User user);
+
+    void onUnverifiedUserRemoved(User user);
+
     void onUserLoggedIn(User user, UserState userState);
 
     void onUserLoggedOut(User user);

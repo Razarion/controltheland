@@ -3329,6 +3329,10 @@ public class TestCmsService extends AbstractServiceTest {
         dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.CHOOSE_NICKNAME);
         pageCrud.updateDbChild(dbPage);
 
+        dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION);
+        pageCrud.updateDbChild(dbPage);
+
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

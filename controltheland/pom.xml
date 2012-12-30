@@ -325,6 +325,12 @@
             <artifactId>jsoup</artifactId>
             <version>1.6.2</version>
         </dependency>
+        <!-- SMTP for testing -->
+        <dependency>
+            <groupId>org.subethamail</groupId>
+            <artifactId>subethasmtp</artifactId>
+            <version>3.1.7</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>ROOT</finalName>

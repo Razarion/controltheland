@@ -36,13 +36,13 @@ public class AllianceServiceImpl implements AllianceService {
     @Override
     public void proposeAlliance(SimpleBase partner) {
         User user = userService.getUser();
-        if (user == null) {
-            sendMessage(planetSystemService.getServerPlanetServices().getBaseService().getBase().getSimpleBase(), "Only registered user can form alliances.", true);
+        if (user == null || !user.isAccountNonLocked()) {
+            sendMessage(planetSystemService.getServerPlanetServices().getBaseService().getBase().getSimpleBase(), "Only registered user can form alliances.", user == null);
             return;
         }
         User partnerUser = userService.getUser(partner);
-        if (partnerUser == null) {
-            sendMessage(partner, user.getUsername() + " offers you an alliance. Only registered user can form alliances.", true);
+        if (partnerUser == null || !partnerUser.isAccountNonLocked()) {
+            sendMessage(partner, user.getUsername() + " offers you an alliance. Only registered user can form alliances.", partnerUser == null);
             sendMessage(user, "The player '" + planetSystemService.getServerPlanetServices(partner).getBaseService().getBaseName(partner) + "' is not registered. Only registered user can form alliances. Use the chat to persuade him to register!", false);
             return;
         }

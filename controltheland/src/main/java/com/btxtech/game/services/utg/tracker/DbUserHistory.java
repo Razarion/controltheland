@@ -31,8 +31,7 @@ public class DbUserHistory {
     @Id
     @GeneratedValue
     private Integer id;
-    @ManyToOne
-    private User user;
+    private String user;
     private Date created;
     private Date loggedIn;
     private Date loggedOut;
@@ -44,6 +43,10 @@ public class DbUserHistory {
     private String baseName;
     private String sessionId;
     private String cookieId;
+    private String verificationId;
+    private Date awaitingVerificationDate;
+    private Date verified;
+    private Date deleteUnverifiedUser;
 
     /**
      * Used by hibernate
@@ -52,7 +55,7 @@ public class DbUserHistory {
     }
 
     public DbUserHistory(User user) {
-        this.user = user;
+        this.user = user.getUsername();
     }
 
     public Date getCreated() {
@@ -143,8 +146,40 @@ public class DbUserHistory {
         this.cookieId = cookieId;
     }
 
-    public User getUser() {
+    public String getUser() {
         return user;
+    }
+
+    public String getVerificationId() {
+        return verificationId;
+    }
+
+    public void setVerificationId(String verificationId) {
+        this.verificationId = verificationId;
+    }
+
+    public Date getAwaitingVerificationDate() {
+        return awaitingVerificationDate;
+    }
+
+    public void setAwaitingVerificationDate(Date awaitingVerificationDate) {
+        this.awaitingVerificationDate = awaitingVerificationDate;
+    }
+
+    public Date getVerified() {
+        return verified;
+    }
+
+    public void setVerified() {
+        this.verified = new Date();
+    }
+
+    public Date getDeleteUnverifiedUser() {
+        return deleteUnverifiedUser;
+    }
+
+    public void setDeleteUnverifiedUser() {
+        deleteUnverifiedUser = new Date();
     }
 
     @Override
@@ -161,5 +196,4 @@ public class DbUserHistory {
     public int hashCode() {
         return id != null ? id.hashCode() : System.identityHashCode(this);
     }
-
 }

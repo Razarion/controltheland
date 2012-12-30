@@ -149,7 +149,8 @@ public class CmsUiServiceImpl implements CmsUiService {
         }
     }
 
-    private String getUrl4CmsPage(CmsUtil.CmsPredefinedPage predefinedType) {
+    @Override
+    public String getUrl4CmsPage(CmsUtil.CmsPredefinedPage predefinedType) {
         try {
             return CmsUtil.getUrl4CmsPage(Integer.toString(cmsService.getPredefinedDbPage(predefinedType).getId()));
         } catch (CmsPredefinedPageDoesNotExistException e) {
@@ -412,7 +413,7 @@ public class CmsUiServiceImpl implements CmsUiService {
             } else if (dbContent instanceof DbContentGameLink) {
                 return new ContentGameLink(componentId, (DbContentGameLink) dbContent);
             } else if (dbContent instanceof DbContentPlugin) {
-                Component component = ((DbContentPlugin) dbContent).getPluginEnum().createComponent(componentId);
+                Component component = ((DbContentPlugin) dbContent).getPluginEnum().createComponent(componentId, contentContext);
                 if (dbContent.getCssClass() != null) {
                     component.add(new SimpleAttributeModifier("class", dbContent.getCssClass()));
                 }
