@@ -10,6 +10,7 @@ import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.user.EmailIsAlreadyVerifiedException;
 import com.btxtech.game.services.user.RegisterService;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserDoesNotExitException;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -106,12 +107,12 @@ public class RegisterServiceImpl implements RegisterService {
 
     @Override
     @Transactional
-    public User onVerificationPageCalled(String verificationId) throws EmailIsAlreadyVerifiedException {
+    public User onVerificationPageCalled(String verificationId) throws EmailIsAlreadyVerifiedException, UserDoesNotExitException {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
         criteria.add(Restrictions.eq("verificationId", verificationId));
         List<User> users = criteria.list();
         if (users == null || users.isEmpty()) {
-            throw new IllegalArgumentException("No user with verification id: " + verificationId);
+            throw new UserDoesNotExitException(verificationId);
         } else if (users.size() > 1) {
             throw new IllegalArgumentException("More than one user with verification id found: " + verificationId);
         }

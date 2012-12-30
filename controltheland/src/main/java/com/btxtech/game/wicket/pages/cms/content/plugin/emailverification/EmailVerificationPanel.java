@@ -14,23 +14,15 @@
 package com.btxtech.game.wicket.pages.cms.content.plugin.emailverification;
 
 import com.btxtech.game.jsre.common.CmsUtil;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.user.EmailIsAlreadyVerifiedException;
 import com.btxtech.game.services.user.RegisterService;
-import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserDoesNotExitException;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
-import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import com.btxtech.game.wicket.uiservices.facebook.FacebookController;
-import org.apache.wicket.authentication.AuthenticatedWebSession;
-import org.apache.wicket.authorization.Action;
-import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.StatelessForm;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -52,7 +44,11 @@ public class EmailVerificationPanel extends Panel {
             userService.loginIfNotLoggedIn(user);
             add(new Label("message", "Thanks for registering"));
         } catch (EmailIsAlreadyVerifiedException e) {
-            add(new Label("message", "The email has already been verified"));
+            ExceptionHandler.handleException(e);
+            add(new Label("message", "The email confirmation has already been verified"));
+        } catch (UserDoesNotExitException e) {
+            ExceptionHandler.handleException(e);
+            add(new Label("message", "The email confirmation link you followed is invalid. Please re-register."));
         }
     }
 
