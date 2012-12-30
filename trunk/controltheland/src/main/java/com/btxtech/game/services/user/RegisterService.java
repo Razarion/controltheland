@@ -13,5 +13,5 @@ import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsEx
 public interface RegisterService {
     void register(String userName, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, EmailAlreadyExitsException;
 
-    User onVerificationPageCalled(String verificationId) throws EmailIsAlreadyVerifiedException;
+    User onVerificationPageCalled(String verificationId) throws EmailIsAlreadyVerifiedException, UserDoesNotExitException;
 }

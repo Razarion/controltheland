@@ -162,7 +162,7 @@ public class TestRegisterService extends AbstractServiceTest {
         try {
             registerService.onVerificationPageCalled("abcedefgahij");
             Assert.fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException e) {
+        } catch (UserDoesNotExitException e) {
             // Expected
         }
         endHttpRequestAndOpenSessionInViewFilter();

@@ -55,6 +55,7 @@ import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.statistics.impl.StatisticsServiceImpl;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.DbContentAccessControl;
+import com.btxtech.game.services.user.RegisterService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
@@ -118,6 +119,8 @@ public class TestCmsService extends AbstractServiceTest {
     private ServerItemTypeService serverItemTypeService;
     @Autowired
     private PlanetSystemService planetSystemService;
+    @Autowired
+    private RegisterService registerService;
 
     private WicketTester tester;
 
@@ -4202,8 +4205,160 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         endHttpSession();
-
-
     }
 
+    @Test
+    @DirtiesContext
+    public void testEmailVerificationPageOk() throws Exception {
+        configureSimplePlanetNoResources();
+        startFakeMailServer();
+
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        pageCrud.updateDbChild(dbPage);
+
+        DbPage dbEmail = pageCrud.createDbChild();
+        dbEmail.setPredefinedType(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION);
+        dbEmail.setName("Email");
+        DbContentPlugin contentPlugin = new DbContentPlugin();
+        contentPlugin.setPluginEnum(PluginEnum.EMAIL_VERIFICATION);
+        contentPlugin.init(userService);
+        dbEmail.setContentAndAccessWrites(contentPlugin);
+        pageCrud.updateDbChild(dbEmail);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Setup user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        registerService.register("U1", "xxx", "xxx", "xxx@yyy.com");
+        User user = userService.getUser();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+
+        PageParameters pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION);
+        pageParameters.put(CmsUtil.EMAIL_VERIFICATION_KEY, user.getVerificationId());
+        tester.startPage(CmsPage.class, pageParameters);
+        tester.assertLabel("form:content:message", "Thanks for registering");
+
+        tester.debugComponentTrees();
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        stopFakeMailServer();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testEmailVerificationPageAlreadyVerified() throws Exception {
+        configureSimplePlanetNoResources();
+        startFakeMailServer();
+
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        pageCrud.updateDbChild(dbPage);
+
+        DbPage dbEmail = pageCrud.createDbChild();
+        dbEmail.setPredefinedType(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION);
+        dbEmail.setName("Email");
+        DbContentPlugin contentPlugin = new DbContentPlugin();
+        contentPlugin.setPluginEnum(PluginEnum.EMAIL_VERIFICATION);
+        contentPlugin.init(userService);
+        dbEmail.setContentAndAccessWrites(contentPlugin);
+        pageCrud.updateDbChild(dbEmail);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Setup user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        registerService.register("U1", "xxx", "xxx", "xxx@yyy.com");
+        User user = userService.getUser();
+        registerService.onVerificationPageCalled(user.getVerificationId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+
+        PageParameters pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION);
+        pageParameters.put(CmsUtil.EMAIL_VERIFICATION_KEY, user.getVerificationId());
+        tester.startPage(CmsPage.class, pageParameters);
+        tester.assertLabel("form:content:message", "The email confirmation has already been verified");
+
+        tester.debugComponentTrees();
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        stopFakeMailServer();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testEmailVerificationPageInvalid() throws Exception {
+        configureSimplePlanetNoResources();
+
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        pageCrud.updateDbChild(dbPage);
+
+        DbPage dbEmail = pageCrud.createDbChild();
+        dbEmail.setPredefinedType(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION);
+        dbEmail.setName("Email");
+        DbContentPlugin contentPlugin = new DbContentPlugin();
+        contentPlugin.setPluginEnum(PluginEnum.EMAIL_VERIFICATION);
+        contentPlugin.init(userService);
+        dbEmail.setContentAndAccessWrites(contentPlugin);
+        pageCrud.updateDbChild(dbEmail);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+
+        PageParameters pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION);
+        pageParameters.put(CmsUtil.EMAIL_VERIFICATION_KEY, "abcedefgahijk");
+        tester.startPage(CmsPage.class, pageParameters);
+        tester.assertLabel("form:content:message", "The email confirmation link you followed is invalid. Please re-register.");
+
+        tester.debugComponentTrees();
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
 }
