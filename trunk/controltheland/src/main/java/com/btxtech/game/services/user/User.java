@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity(name = "USER")
 public class User implements UserDetails, Serializable, CrudParent {
@@ -82,6 +83,8 @@ public class User implements UserDetails, Serializable, CrudParent {
     @Enumerated(EnumType.STRING)
     private SocialNet socialNet;
     private String socialNetUserId;
+    private Date awaitingVerificationDate;
+    private String verificationId;
     @Transient
     private CrudChildServiceHelper<DbContentAccessControl> contentCrud;
     @Transient
@@ -234,6 +237,29 @@ public class User implements UserDetails, Serializable, CrudParent {
 
     public void setRoles(Set<String> roles) {
         this.roles = roles;
+    }
+
+    public void setAwaitingVerification() {
+        accountNonLocked = false;
+        awaitingVerificationDate = new Date();
+        verificationId = UUID.randomUUID().toString().toUpperCase();
+    }
+
+    public void setVerified() {
+        accountNonLocked = true;
+        awaitingVerificationDate = null;
+    }
+
+    public boolean isVerified() {
+        return awaitingVerificationDate == null;
+    }
+
+    public Date getAwaitingVerificationDate() {
+        return awaitingVerificationDate;
+    }
+
+    public String getVerificationId() {
+        return verificationId;
     }
 
     @Override

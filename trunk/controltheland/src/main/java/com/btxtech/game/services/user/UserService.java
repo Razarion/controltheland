@@ -16,6 +16,7 @@ package com.btxtech.game.services.user;
 
 import com.btxtech.game.jsre.client.InvalidNickName;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.services.connection.Session;
@@ -50,6 +51,8 @@ public interface UserService extends UserDetailsService {
     List<User> getAllUsers();
 
     void createUser(String name, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, AlreadyLoggedInException;
+
+    User createUnverifiedUser(String name, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, AlreadyLoggedInException, EmailAlreadyExitsException;
 
     void createAndLoginFacebookUser(FacebookSignedRequest facebookSignedRequest, String nickName) throws UserAlreadyExistsException, AlreadyLoggedInException;
 
@@ -88,4 +91,8 @@ public interface UserService extends UserDetailsService {
     UserState createUserState(String userName);
 
     Session getSession4ExceptionHandler();
+
+    void loginIfNotLoggedIn(User userToLogin);
+
+    void removeUserState(UserState userState);
 }

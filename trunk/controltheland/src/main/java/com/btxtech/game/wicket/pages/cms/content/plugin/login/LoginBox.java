@@ -53,7 +53,7 @@ public class LoginBox extends Panel {
                     if (session.signIn(loginName, loginPassowrd)) {
                         cmsUiService.setPredefinedResponsePage(this, CmsUtil.CmsPredefinedPage.USER_PAGE);
                     } else {
-                        cmsUiService.setMessageResponsePage(this, "Login failed. Please try again");
+                        cmsUiService.setMessageResponsePage(this, "Login failed. Please try again.<br><br>Newly created accounts must be activated first. Check your email.");
                     }
                 } catch (AlreadyLoggedInException e) {
                     cmsUiService.setMessageResponsePage(this, e.getMessage());
@@ -63,7 +63,7 @@ public class LoginBox extends Panel {
 
         form.add(new TextField<String>("loginName"));
         form.add(new PasswordTextField("loginPassowrd"));
-        form.add(new BookmarkablePageLink<CmsPage>("createAccountLink", CmsPage.class, cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.REGISTER)).setVisible(showRegisterLink));
+        // form.add(new BookmarkablePageLink<CmsPage>("createAccountLink", CmsPage.class, cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.REGISTER)).setVisible(showRegisterLink));
 
         add(form);
     }

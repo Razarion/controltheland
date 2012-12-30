@@ -117,4 +117,6 @@ public interface CmsUiService {
     String getFacebookAppNameSpace();
 
     void addLscErrorHandler(WebPage webPage, String displayErrorPrefix);
+
+    String getUrl4CmsPage(CmsUtil.CmsPredefinedPage predefinedType);
 }

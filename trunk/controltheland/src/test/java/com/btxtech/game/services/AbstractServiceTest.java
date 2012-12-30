@@ -98,6 +98,8 @@ import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import com.btxtech.game.wicket.pages.cms.CmsImageResource;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.behavior.IBehavior;
@@ -123,6 +125,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
@@ -131,8 +134,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.subethamail.wiser.Wiser;
 
 import javax.servlet.ServletRequest;
 import javax.sql.DataSource;
@@ -147,6 +154,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
 
@@ -289,6 +297,8 @@ abstract public class AbstractServiceTest {
     private MovableService movableService;
     private PlaybackServiceImpl playbackService;
     private JdbcTemplate jdbcTemplate;
+    private Wiser wiser;
+    private Log log = LogFactory.getLog(AbstractServiceTest.class);
 
     protected PlatformTransactionManager getTransactionManager() {
         return transactionManager;
@@ -565,22 +575,21 @@ abstract public class AbstractServiceTest {
         }
 
 
-
         for (Packet expectedPacket : expectedPackets) {
             Packet receivedPacket = null;
             for (Packet tmpReceivedPacket : receivedPackets) {
-                if(comparePacket(expectedPacket, tmpReceivedPacket)) {
+                if (comparePacket(expectedPacket, tmpReceivedPacket)) {
                     receivedPacket = tmpReceivedPacket;
                     break;
                 }
             }
-            if(receivedPacket == null) {
+            if (receivedPacket == null) {
                 Assert.fail("Packet was not sent: " + expectedPacket);
             }
             receivedPackets.remove(receivedPacket);
         }
 
-        if(!receivedPackets.isEmpty()) {
+        if (!receivedPackets.isEmpty()) {
             Assert.fail("More packages sent than expected: " + receivedPackets);
         }
 
@@ -2057,6 +2066,41 @@ abstract public class AbstractServiceTest {
         }
     }
 
+    // ---------- Mail Helper -------
+
+    public void startFakeMailServer() {
+        if (wiser != null) {
+            throw new IllegalStateException("Fake email server is already running");
+        }
+        wiser = new Wiser(2500);
+        wiser.start();
+
+
+        Map<String, JavaMailSenderImpl> ofType = applicationContext.getBeansOfType(org.springframework.mail.javamail.JavaMailSenderImpl.class);
+
+        for (Map.Entry<String, JavaMailSenderImpl> bean : ofType.entrySet()) {
+            //log.info(String.format("configuring mailsender %s to use local Wiser SMTP", bean.getKey()));
+            JavaMailSenderImpl mailSender = bean.getValue();
+            mailSender.setHost("localhost");
+            mailSender.setPort(wiser.getServer().getPort());
+        }
+    }
+
+    public void stopFakeMailServer() {
+        if (wiser == null) {
+            throw new IllegalStateException("Fake email server is not running");
+        }
+        wiser.stop();
+        wiser = null;
+    }
+
+    public Wiser getFakeMailServer() {
+        if (wiser == null) {
+            throw new IllegalStateException("Fake email server is not running");
+        }
+        return wiser;
+    }
+
     // ---------- DB Helper -------
     @Autowired
     public void setSessionFactory(DataSource dataSource) {
@@ -2108,6 +2152,15 @@ abstract public class AbstractServiceTest {
             }
         });
         Assert.assertEquals(expected, data.toString());
+    }
+
+    public void saveOrUpdateInTransaction(final Object object) {
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            public void doInTransactionWithoutResult(TransactionStatus status) {
+                sessionFactory.getCurrentSession().saveOrUpdate(object);
+            }
+        });
     }
 
 }

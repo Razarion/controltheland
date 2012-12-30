@@ -15,6 +15,7 @@ package com.btxtech.game.services.user.impl;
 
 import com.btxtech.game.jsre.client.InvalidNickName;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.services.common.HibernateUtil;
@@ -126,6 +127,10 @@ public class UserServiceImpl implements UserService {
         }
 
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, "", user.getAuthorities());
+        loginUserFull(user, authentication);
+    }
+
+    private void loginUserFull(User user, Authentication authentication) {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         try {
@@ -183,6 +188,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void loginIfNotLoggedIn(User userToLogin) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getPrincipal() == null) {
+            authentication = new UsernamePasswordAuthenticationToken(userToLogin, "", userToLogin.getAuthorities());
+            loginUserFull(userToLogin, authentication);
+        }
+    }
+
+    @Override
     public void onSessionTimedOut(UserState userState) {
         if (userState != null) {
             removeUserState(userState);
@@ -197,9 +211,10 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private void removeUserState(UserState userState) {
+    @Override
+    public void removeUserState(UserState userState) {
         userState.setSessionId(null);
-        planetSystemService.onSessionTimedOut(userState);
+        planetSystemService.onUserStateRemoved(userState);
         if (!userState.isRegistered()) {
             synchronized (userStates) {
                 userStates.remove(userState);
@@ -245,6 +260,58 @@ public class UserServiceImpl implements UserService {
         planetSystemService.onUserRegistered();
     }
 
+    /**
+     * This method creates a user and connect it to the current Base and UserState
+     * The user must be verified during a specific time or the user will be deleted
+     * <p/>
+     * After this method login must be called immediately!     *
+     *
+     * @param name            User name
+     * @param password        password
+     * @param confirmPassword confirm password
+     * @param email           email
+     * @throws UserAlreadyExistsException
+     * @throws PasswordNotMatchException
+     */
+    @Override
+    public User createUnverifiedUser(String name, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, AlreadyLoggedInException, EmailAlreadyExitsException {
+        if (getUserFromSecurityContext() != null) {
+            throw new AlreadyLoggedInException(getUserFromSecurityContext());
+        }
+
+        if (getUser(name) != null) {
+            throw new UserAlreadyExistsException();
+        }
+
+        if (!password.equals(confirmPassword)) {
+            throw new PasswordNotMatchException();
+        }
+
+        checkExits(email);
+
+        User user = new User();
+        String passwordHash = new Md5PasswordEncoder().encodePassword(password, md5HashSalt);
+        user.registerUser(name, passwordHash, email);
+        user.setAwaitingVerification();
+        privateSave(user);
+        userTrackingService.onUserCreated(user);
+
+        getUserState().setUser(name);
+        planetSystemService.onUserRegistered();
+
+        return user;
+    }
+
+    private void checkExits(String email) throws EmailAlreadyExitsException {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        criteria.add(Restrictions.eq("email", email));
+        List<User> users = criteria.list();
+        if (users != null && !users.isEmpty()) {
+            throw new EmailAlreadyExitsException(email);
+        }
+    }
+
     @Override
     public void createAndLoginFacebookUser(FacebookSignedRequest facebookSignedRequest, String nickName) throws UserAlreadyExistsException, AlreadyLoggedInException {
         if (getUserFromSecurityContext() != null) {
@@ -284,7 +351,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isRegistered() {
-        return hasUserState() && getUserState().isRegistered();
+        return hasUserState() && getUserState().isRegistered() && getUser().isAccountNonLocked();
     }
 
     @Override

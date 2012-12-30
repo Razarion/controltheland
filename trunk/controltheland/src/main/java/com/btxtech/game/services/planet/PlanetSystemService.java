@@ -52,7 +52,7 @@ public interface PlanetSystemService {
 
     void closeDbSession();
 
-    void onSessionTimedOut(UserState userState);
+    void onUserStateRemoved(UserState userState);
 
     void onUserRegistered();
 
