@@ -1,8 +1,12 @@
 package com.btxtech.game.services.user;
 
 import com.btxtech.game.jsre.common.ClientDateUtil;
+import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.planet.BaseService;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.impl.RegisterServiceImpl;
 import junit.framework.Assert;
 import org.junit.Test;
@@ -25,6 +29,8 @@ public class TestRegisterService extends AbstractServiceTest {
     private RegisterService registerService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private PlanetSystemService planetSystemService;
 
     @Test
     @DirtiesContext
@@ -178,16 +184,18 @@ public class TestRegisterService extends AbstractServiceTest {
         gregorianCalendar.add(GregorianCalendar.DAY_OF_YEAR, -1);
         gregorianCalendar.add(GregorianCalendar.SECOND, -10);
 
-
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "xxx", "xxx", "test.yyy@testXXX.com");
+        registerService.register("U1", "xxx", "xxx", "fake");
+        SimpleBase simpleBase = getMyBase();
         User user = userService.getUser();
         user.setAwaitingVerification();
         setPrivateField(User.class, user, "awaitingVerificationDate", gregorianCalendar.getTime());
         saveOrUpdateInTransaction(user);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+
+        Assert.assertFalse(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService().isAbandoned(simpleBase));
 
         setPrivateStaticField(RegisterServiceImpl.class, "CLEANUP_DELAY", 100);
         ((RegisterServiceImpl) deAopProxy(registerService)).cleanup();
@@ -200,6 +208,8 @@ public class TestRegisterService extends AbstractServiceTest {
         Assert.assertNull(userService.getUser("U1"));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+
+        Assert.assertTrue(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService().isAbandoned(simpleBase));
 
         setPrivateStaticField(RegisterServiceImpl.class, "CLEANUP_DELAY", 1 * ClientDateUtil.MILLIS_IN_DAY);
     }

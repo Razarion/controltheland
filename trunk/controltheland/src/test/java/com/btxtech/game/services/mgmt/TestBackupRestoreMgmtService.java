@@ -3,6 +3,7 @@ package com.btxtech.game.services.mgmt;
 import com.btxtech.game.jsre.client.AlreadyUsedException;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -22,8 +23,11 @@ import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.user.RegisterService;
+import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.user.impl.RegisterServiceImpl;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,6 +36,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
@@ -52,6 +57,8 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
     private UserService userService;
     @Autowired
     private PlanetSystemService planetSystemService;
+    @Autowired
+    private RegisterService registerService;
 
     @Test
     @DirtiesContext
@@ -369,8 +376,6 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         Assert.assertEquals(1, userService.getAllUserStates().size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-
-
     }
 
     @Test
@@ -543,6 +548,116 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         harvester = getFirstSynItemId(TEST_HARVESTER_ITEM_ID);
         harvesterItem = (SyncBaseItem) planetSystemService.getServerPlanetServices().getItemService().getItem(harvester);
         Assert.assertFalse(harvesterItem.getSyncHarvester().getTarget() != null);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void unverifiedUser() throws Exception {
+        configureSimplePlanetNoResources();
+        GregorianCalendar gregorianCalendar = new GregorianCalendar();
+        gregorianCalendar.add(GregorianCalendar.DAY_OF_YEAR, -1);
+        gregorianCalendar.add(GregorianCalendar.SECOND, -10);
+
+        // U1 reg user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        registerService.register("U1", "xxx", "xxx", "fake");
+        User user = userService.getUser();
+        user.setAwaitingVerification();
+        setPrivateField(User.class, user, "awaitingVerificationDate", gregorianCalendar.getTime());
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone(TEST_PLANET_1_ID);
+        sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_HARVESTER_ITEM_ID);
+        waitForActionServiceDone(TEST_PLANET_1_ID);
+        assertWholeItemCount(TEST_PLANET_1_ID, 3);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
+        List<Base> oldBases = serverPlanetServices.getBaseService().getBases();
+        List<UserState> oldUserStates = userService.getAllUserStates();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        assertBackupSummery(1, 3, 1, 1);
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<Base> newBases = serverPlanetServices.getBaseService().getBases();
+        List<UserState> newUserStates = userService.getAllUserStates();
+        Assert.assertEquals(1, newBases.size());
+        Assert.assertEquals(1, newUserStates.size());
+        verifyUserStates(newUserStates, oldUserStates);
+        verifyBases(newBases, oldBases);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Remove unverified users
+        setPrivateStaticField(RegisterServiceImpl.class, "CLEANUP_DELAY", 100);
+        ((RegisterServiceImpl) deAopProxy(registerService)).cleanup();
+        ((RegisterServiceImpl) deAopProxy(registerService)).init();
+        Thread.sleep(200);
+        setPrivateStaticField(RegisterServiceImpl.class, "CLEANUP_DELAY", 1 * ClientDateUtil.MILLIS_IN_DAY);
+
+        oldBases = serverPlanetServices.getBaseService().getBases();
+        oldUserStates = userService.getAllUserStates();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        assertBackupSummery(2, 3, 1, 0);
+        backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        newBases = serverPlanetServices.getBaseService().getBases();
+        newUserStates = userService.getAllUserStates();
+        Assert.assertEquals(1, newBases.size());
+        Assert.assertEquals(0, newUserStates.size());
+        verifyUserStates(newUserStates, oldUserStates);
+        verifyBases(newBases, oldBases);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Restore before user has been cleared
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(1).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        newBases = serverPlanetServices.getBaseService().getBases();
+        newUserStates = userService.getAllUserStates();
+        Assert.assertEquals(1, newBases.size());
+        Assert.assertEquals(0, newUserStates.size());
+        verifyUserStates(newUserStates, oldUserStates);
+        verifyBases(newBases, oldBases);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

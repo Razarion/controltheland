@@ -35,7 +35,6 @@ import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.Planet;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.statistics.StatisticsService;
-import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -114,10 +113,6 @@ public class GenericItemConverter {
             if (!userState.isRegistered()) {
                 continue;
             }
-            User user = userService.getUser(userState);
-            if (!user.isAccountNonLocked()) {
-                continue;
-            }
             try {
                 DbUserState dbUserState = createDbUserState(userState);
                 userGuidanceService.createAndAddBackup(dbUserState, userState);
@@ -164,8 +159,10 @@ public class GenericItemConverter {
 
         Map<DbUserState, UserState> userStates = new HashMap<>();
         for (DbUserState dbUserState : backupEntry.getUserStates()) {
-            UserState userState = dbUserState.createUserState();
-            userStates.put(dbUserState, userState);
+            UserState userState = dbUserState.createUserState(userService);
+            if (userState != null) {
+                userStates.put(dbUserState, userState);
+            }
         }
 
         Collection<GenericItem> genericItems = backupEntry.getItems();
