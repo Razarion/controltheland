@@ -4353,7 +4353,8 @@ public class TestCmsService extends AbstractServiceTest {
         PageParameters pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION);
         pageParameters.put(CmsUtil.EMAIL_VERIFICATION_KEY, user.getVerificationId());
         tester.startPage(CmsPage.class, pageParameters);
-        tester.assertLabel("form:content:message", "Thanks for registering");
+        tester.debugComponentTrees();
+        tester.assertLabel("form:content:border:borderContent:message", "Thanks for registering.");
 
         tester.debugComponentTrees();
 
@@ -4409,7 +4410,7 @@ public class TestCmsService extends AbstractServiceTest {
         PageParameters pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION);
         pageParameters.put(CmsUtil.EMAIL_VERIFICATION_KEY, user.getVerificationId());
         tester.startPage(CmsPage.class, pageParameters);
-        tester.assertLabel("form:content:message", "The email confirmation has already been verified");
+        tester.assertLabel("form:content:border:borderContent:message", "The email confirmation link you followed has already been verified.");
 
         tester.debugComponentTrees();
 
@@ -4455,7 +4456,7 @@ public class TestCmsService extends AbstractServiceTest {
         PageParameters pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION);
         pageParameters.put(CmsUtil.EMAIL_VERIFICATION_KEY, "abcedefgahijk");
         tester.startPage(CmsPage.class, pageParameters);
-        tester.assertLabel("form:content:message", "The email confirmation link you followed is invalid. Please re-register.");
+        tester.assertLabel("form:content:border:borderContent:message", "The email confirmation link you followed is invalid. Please re-register.");
 
         tester.debugComponentTrees();
 
