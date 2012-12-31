@@ -21,7 +21,7 @@ import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserDoesNotExitException;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
-import org.apache.wicket.markup.html.basic.Label;
+import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
@@ -35,6 +35,8 @@ public class EmailVerificationPanel extends Panel {
     private RegisterService registerService;
     @SpringBean
     private UserService userService;
+    @SpringBean
+    private CmsUiService cmsUiService;
 
     public EmailVerificationPanel(String id, ContentContext contentContext) {
         super(id);
@@ -42,13 +44,13 @@ public class EmailVerificationPanel extends Panel {
             String verificationId = contentContext.getPageParameters().getString(CmsUtil.EMAIL_VERIFICATION_KEY);
             User user = registerService.onVerificationPageCalled(verificationId);
             userService.loginIfNotLoggedIn(user);
-            add(new Label("message", "Thanks for registering"));
+            cmsUiService.setMessageResponsePage(this, "Thanks for registering.");
         } catch (EmailIsAlreadyVerifiedException e) {
             ExceptionHandler.handleException(e);
-            add(new Label("message", "The email confirmation has already been verified"));
+            cmsUiService.setMessageResponsePage(this, "The email confirmation link you followed has already been verified.");
         } catch (UserDoesNotExitException e) {
             ExceptionHandler.handleException(e);
-            add(new Label("message", "The email confirmation link you followed is invalid. Please re-register."));
+            cmsUiService.setMessageResponsePage(this, "The email confirmation link you followed is invalid. Please re-register.");
         }
     }
 
