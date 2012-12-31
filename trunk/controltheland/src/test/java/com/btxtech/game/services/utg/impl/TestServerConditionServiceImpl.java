@@ -283,6 +283,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         Assert.assertFalse(passed);
         serverConditionService.onBaseDeleted(simpleBase1);
         Assert.assertFalse(passed);
+        // TODO test failed (Unexpected method call getServerPlanetServices) 31.12.2012
         serverConditionService.onBaseDeleted(simpleBase1);
         Assert.assertTrue(passed);
     }
@@ -625,6 +626,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         Thread.sleep(3100);
 
         List<ServerConnectionServiceTestHelper.PacketEntry> packetEntries = serverConnectionServiceTestHelper.getPacketEntries(simpleBase, LevelTaskPacket.class);
+        // TODO test failed 31.12.2012
         Assert.assertEquals(2, packetEntries.size());
         QuestProgressInfo questProgressInfo = ((LevelTaskPacket) packetEntries.get(0).getPacket()).getQuestProgressInfo();
         Assert.assertEquals(1, questProgressInfo.getItemIdAmounts().get(TEST_ATTACK_ITEM_ID).getAmount());
