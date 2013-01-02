@@ -54,7 +54,7 @@ public class Register extends Panel {
             @Override
             protected void onSubmit() {
                 try {
-                    userService.createUser(name, password, confirmPassword, email);
+                    // TODO email verification userService.createUser(name, password, confirmPassword, email);
                     cmsUiService.getSecurityCmsUiService().signIn(name, password);
                     PageParameters parameters = new PageParameters();
                     if (!userGuidanceService.isStartRealGame()) {
@@ -77,6 +77,7 @@ public class Register extends Panel {
         form.add(new PasswordTextField("confirmPassword"));
         add(form);
 
+        throw new UnsupportedOperationException("Email registering not working here");
     }
 
     public void setName(String name) {
