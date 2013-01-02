@@ -57,6 +57,7 @@ public class TestUserServiceFacebook extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
         FacebookSignedRequest facebookSignedRequest = new FacebookSignedRequest(null, 0, null, null, "12345");
+        facebookSignedRequest.setEmail("email");
         Assert.assertFalse(userService.isFacebookUserRegistered(facebookSignedRequest));
         Assert.assertFalse(userService.isFacebookLoggedIn(facebookSignedRequest));
         Assert.assertTrue(userService.getAuthorities().isEmpty());
@@ -65,6 +66,7 @@ public class TestUserServiceFacebook extends AbstractServiceTest {
         Assert.assertTrue(userService.isFacebookUserRegistered(facebookSignedRequest));
         Assert.assertFalse(userService.getAuthorities().isEmpty());
         Assert.assertEquals("nickname", userService.getUser().getUsername());
+        Assert.assertEquals("email", userService.getUser().getEmail());
         userService.onSessionTimedOut(getUserState());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -80,6 +82,7 @@ public class TestUserServiceFacebook extends AbstractServiceTest {
         Assert.assertTrue(userService.isFacebookUserRegistered(facebookSignedRequest));
         Assert.assertFalse(userService.getAuthorities().isEmpty());
         Assert.assertEquals("nickname", userService.getUser().getUsername());
+        Assert.assertEquals("email", userService.getUser().getEmail());
         userService.onSessionTimedOut(getUserState());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -94,6 +97,7 @@ public class TestUserServiceFacebook extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         FacebookSignedRequest facebookSignedRequest = new FacebookSignedRequest(null, 0, null, null, "12345");
+        facebookSignedRequest.setEmail("email");
         Assert.assertFalse(userService.isFacebookUserRegistered(facebookSignedRequest));
         Assert.assertFalse(userService.isFacebookLoggedIn(facebookSignedRequest));
         Assert.assertTrue(userService.getAuthorities().isEmpty());
@@ -102,6 +106,7 @@ public class TestUserServiceFacebook extends AbstractServiceTest {
         Assert.assertTrue(userService.isFacebookUserRegistered(facebookSignedRequest));
         Assert.assertFalse(userService.getAuthorities().isEmpty());
         Assert.assertEquals("nickname", userService.getUser().getUsername());
+        Assert.assertEquals("email", userService.getUser().getEmail());
         userService.onSessionTimedOut(getUserState());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -116,6 +121,7 @@ public class TestUserServiceFacebook extends AbstractServiceTest {
         Assert.assertTrue(userService.isFacebookLoggedIn(facebookSignedRequest));
         Assert.assertTrue(userService.isFacebookUserRegistered(facebookSignedRequest));
         Assert.assertEquals("nickname", userService.getUser().getUsername());
+        Assert.assertEquals("email", userService.getUser().getEmail());
         Assert.assertFalse(userService.getAuthorities().isEmpty());
         endHttpRequestAndOpenSessionInViewFilter();
         // Same session
@@ -123,6 +129,7 @@ public class TestUserServiceFacebook extends AbstractServiceTest {
         Assert.assertTrue(userService.isFacebookLoggedIn(facebookSignedRequest));
         Assert.assertTrue(userService.isFacebookUserRegistered(facebookSignedRequest));
         Assert.assertEquals("nickname", userService.getUser().getUsername());
+        Assert.assertEquals("email", userService.getUser().getEmail());
         Assert.assertFalse(userService.getAuthorities().isEmpty());
         userService.onSessionTimedOut(getUserState());
         endHttpRequestAndOpenSessionInViewFilter();

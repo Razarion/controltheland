@@ -118,7 +118,7 @@ public class User implements UserDetails, Serializable, CrudParent {
         name = nickName;
         socialNet = SocialNet.FACEBOOK;
         socialNetUserId = facebookSignedRequest.getUserId();
-        // TODO this.email = facebookSignedRequest.get;
+        email = facebookSignedRequest.getEmail();
         registerDate = new Date();
     }
 

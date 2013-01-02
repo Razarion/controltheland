@@ -20,11 +20,13 @@ public class NickNameDialog extends Dialog implements NickNameField.ValidListene
     private NickNameField nickNameField;
     private Button connectButton;
     private final String signedRequestParameter;
+    private String email;
     private final RegisterDialog registerDialog;
 
-    public NickNameDialog(String signedRequestParameter, RegisterDialog registerDialog) {
+    public NickNameDialog(String signedRequestParameter, String email, RegisterDialog registerDialog) {
         super("Choose a nickname");
         this.signedRequestParameter = signedRequestParameter;
+        this.email = email;
         this.registerDialog = registerDialog;
         setShowCloseButton(true);
     }
@@ -41,7 +43,7 @@ public class NickNameDialog extends Dialog implements NickNameField.ValidListene
             public void onClick(ClickEvent event) {
                 connectButton.setEnabled(false);
                 if (Connection.getMovableServiceAsync() != null) {
-                    Connection.getMovableServiceAsync().createAndLoginFacebookUser(signedRequestParameter, nickNameField.getText(), new AsyncCallback<Void>() {
+                    Connection.getMovableServiceAsync().createAndLoginFacebookUser(signedRequestParameter, nickNameField.getText(), email, new AsyncCallback<Void>() {
                         @Override
                         public void onFailure(Throwable caught) {
                             connectButton.setEnabled(true);

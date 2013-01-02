@@ -8,11 +8,13 @@ window.fbAsyncInit = function () {
     });
 
     function login() {
-        FB.login(function (response) {
-            if (response.authResponse) {
-                window.location.href = '${FACEBOOK_START}' + '?signed_request=' + response.authResponse.signedRequest;
+        FB.login(function (response1) {
+            if (response1.authResponse) {
+                FB.api('/me', function (response2) {
+                    window.location.href = '${FACEBOOK_START}' + '?signed_request=' + response1.authResponse.signedRequest + '&email=' + encodeURI(response2.email);
+                });
             }
-        });
+        }, {scope:'email'});
     }
 
     FB.getLoginStatus(function (response) {

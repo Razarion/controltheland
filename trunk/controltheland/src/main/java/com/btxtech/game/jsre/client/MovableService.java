@@ -69,7 +69,7 @@ public interface MovableService extends RemoteService {
 
     void register(String userName, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, EmailAlreadyExitsException;
 
-    void createAndLoginFacebookUser(String signedRequestParameter, String nickname) throws UserAlreadyExistsException, PasswordNotMatchException;
+    void createAndLoginFacebookUser(String signedRequestParameter, String nickname, String email) throws UserAlreadyExistsException, PasswordNotMatchException;
 
     void loginFacebookUser(String signedRequestParameter) throws UserAlreadyExistsException;
 

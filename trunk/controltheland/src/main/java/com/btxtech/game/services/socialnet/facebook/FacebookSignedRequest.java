@@ -11,6 +11,7 @@ public class FacebookSignedRequest {
     private FacebookUser user;
     private String oauth_token; // camel notation does not work here
     private String user_id; // camel notation does not work here
+    private String email;
 
     public FacebookSignedRequest(String algorithm, long issuedAt, FacebookUser user, String oAuthToken, String userId) {
         this.algorithm = algorithm;
@@ -46,5 +47,13 @@ public class FacebookSignedRequest {
 
     public boolean hasUserId() {
         return user_id != null && !user_id.isEmpty();
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

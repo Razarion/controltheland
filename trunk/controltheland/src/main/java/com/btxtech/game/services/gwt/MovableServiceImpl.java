@@ -70,7 +70,6 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -265,9 +264,10 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public void createAndLoginFacebookUser(String signedRequestParameter, String nickname) throws UserAlreadyExistsException {
+    public void createAndLoginFacebookUser(String signedRequestParameter, String nickname, String email) throws UserAlreadyExistsException {
         try {
             FacebookSignedRequest facebookSignedRequest = FacebookUtil.createAndCheckFacebookSignedRequest(cmsUiService.getFacebookAppSecret(), signedRequestParameter);
+            facebookSignedRequest.setEmail(email);
             userService.createAndLoginFacebookUser(facebookSignedRequest, nickname);
         } catch (UserAlreadyExistsException e) {
             throw e;
