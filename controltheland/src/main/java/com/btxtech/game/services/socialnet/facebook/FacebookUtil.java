@@ -1,11 +1,21 @@
 package com.btxtech.game.services.socialnet.facebook;
 
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.socialnet.SocialUtil;
 import com.google.gson.Gson;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.wicket.util.crypt.Base64;
+import org.apache.wicket.util.io.IOUtils;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.client.ClientHttpRequest;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * User: beat
@@ -18,16 +28,16 @@ public class FacebookUtil {
         correctedInput = correctedInput.replace('_', '/');
         String padding = "";
         switch (correctedInput.length() % 4) {
-        case 0:
-            break;
-        case 1:
-            padding = "===";
-            break;
-        case 2:
-            padding = "==";
-            break;
-        default:
-            padding = "=";
+            case 0:
+                break;
+            case 1:
+                padding = "===";
+                break;
+            case 2:
+                padding = "==";
+                break;
+            default:
+                padding = "=";
         }
         return correctedInput + padding;
     }
@@ -76,6 +86,39 @@ public class FacebookUtil {
         byte[] calculatedSignature = SocialUtil.getHmacSha256Hash(secret, payload.getBytes());
         if (!ArrayUtils.isEquals(signature, calculatedSignature)) {
             throw new IllegalArgumentException("Signature does not match");
+        }
+    }
+
+    public static String doGraphApiCall4Email(String facebookUserId, String accessToken) throws IOException, URISyntaxException {
+        ClientHttpResponse clientHttpResponse = null;
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        try {
+            if (facebookUserId == null) {
+                throw new IllegalArgumentException("facebookUserId == null");
+            }
+            if (accessToken == null) {
+                throw new IllegalArgumentException("accessToken == null");
+            }
+            StringBuilder builder = new StringBuilder();
+            builder.append("https://graph.facebook.com");
+            builder.append("/");
+            builder.append(facebookUserId);
+            builder.append("?access_token=");
+            builder.append(accessToken);
+            builder.append("&fields=name,email");
+            ClientHttpRequest clientHttpRequest = factory.createRequest(new URI(builder.toString()), HttpMethod.GET);
+            clientHttpResponse = clientHttpRequest.execute();
+            if (clientHttpResponse.getStatusCode() == HttpStatus.OK) {
+                Gson gson = new Gson();
+                FacebookUserDetails facebookUserDetails = gson.fromJson(IOUtils.toString(clientHttpResponse.getBody()), FacebookUserDetails.class);
+                return facebookUserDetails.getEmail();
+            } else {
+                throw new IllegalStateException("Facebook graph call fails: " + clientHttpResponse.getStatusText() + " " + clientHttpResponse.getStatusCode() + "|" + builder.toString());
+            }
+        } finally {
+            if (clientHttpResponse != null) {
+                clientHttpResponse.close();
+            }
         }
     }
 }

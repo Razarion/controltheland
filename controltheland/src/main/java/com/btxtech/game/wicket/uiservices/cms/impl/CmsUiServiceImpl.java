@@ -1098,7 +1098,6 @@ public class CmsUiServiceImpl implements CmsUiService {
                 String signedRequestParameter = pageParameters.getString("signed_request");
 
                 FacebookSignedRequest facebookSignedRequest = FacebookUtil.createAndCheckFacebookSignedRequest(getFacebookAppSecret(), signedRequestParameter);
-
                 if (facebookSignedRequest.hasUserId()) {
                     // Is authorized by facebook
                     if (userService.isFacebookUserRegistered(facebookSignedRequest)) {
@@ -1111,6 +1110,13 @@ public class CmsUiServiceImpl implements CmsUiService {
                         }
                         component.setResponsePage(Game.class, gamePageParameters);
                     } else {
+                        String email;
+                        if (pageParameters.containsKey("email")) {
+                            email = pageParameters.getString("email");
+                        } else {
+                            email = FacebookUtil.doGraphApiCall4Email(facebookSignedRequest.getUserId(), facebookSignedRequest.getOAuthToken());
+                        }
+                        facebookSignedRequest.setEmail(email);
                         setFacebookSignedRequest(facebookSignedRequest);
                         setPredefinedResponsePage(component, CmsUtil.CmsPredefinedPage.CHOOSE_NICKNAME);
                     }
@@ -1120,7 +1126,7 @@ public class CmsUiServiceImpl implements CmsUiService {
                     Map<String, Object> parameters = new HashMap<>();
                     parameters.put("FACEBOOK_APP_ID", facebookAppId);
                     parameters.put("FACEBOOK_APP_NAMESPACE", facebookAppNameSpace);
-                    parameters.put("FACEBOOK_PERMISSIONS", "");
+                    parameters.put("FACEBOOK_PERMISSIONS", "email");
                     component.add(new StringHeaderContributor(new JavaScriptTemplate(jsTemplate).asString(parameters)));
                 }
             }

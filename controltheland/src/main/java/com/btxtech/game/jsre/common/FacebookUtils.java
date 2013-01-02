@@ -50,16 +50,18 @@ public class FacebookUtils {
             if (response.status === 'connected') {
                 $wnd.RazFacebookUtilFbCallbackLogin(response.authResponse.signedRequest, registerDialog);
             } else {
-                $wnd.FB.login(function (response) {
-                    if (response.authResponse) {
-                        $wnd.RazFacebookUtilFbCallbackLogin(response.authResponse.signedRequest, registerDialog);
+                $wnd.FB.login(function (response1) {
+                    if (response1.authResponse) {
+                        $wnd.FB.api('/me', function (response2) {
+                            $wnd.RazFacebookUtilFbCallbackLogin(response1.authResponse.signedRequest, response2.email, registerDialog);
+                        });
                     }
-                });
+                }, {scope:'email'});
             }
         });
     }-*/;
 
-    public static void fbUiCallBackLoginResponse(final String signedRequest, final RegisterDialog registerDialog) {
+    public static void fbUiCallBackLoginResponse(final String signedRequest, final String email, final RegisterDialog registerDialog) {
         if (Connection.getMovableServiceAsync() != null) {
             Connection.getMovableServiceAsync().isFacebookUserRegistered(signedRequest, new AsyncCallback<Boolean>() {
                 @Override
@@ -84,7 +86,7 @@ public class FacebookUtils {
                             });
                         }
                     } else {
-                        DialogManager.showDialog(new NickNameDialog(signedRequest, registerDialog), DialogManager.Type.STACK_ABLE);
+                        DialogManager.showDialog(new NickNameDialog(signedRequest, email, registerDialog), DialogManager.Type.STACK_ABLE);
                     }
                 }
             });
@@ -154,7 +156,7 @@ public class FacebookUtils {
 
     public static native void exportStaticMethod() /*-{
         $wnd.RazFacebookUtilFbCallback = $entry(@com.btxtech.game.jsre.common.FacebookUtils::fbUiCallBack(Lcom/google/gwt/core/client/JavaScriptObject;));
-        $wnd.RazFacebookUtilFbCallbackLogin = $entry(@com.btxtech.game.jsre.common.FacebookUtils::fbUiCallBackLoginResponse(Ljava/lang/String;Lcom/btxtech/game/jsre/client/dialogs/RegisterDialog;));
+        $wnd.RazFacebookUtilFbCallbackLogin = $entry(@com.btxtech.game.jsre.common.FacebookUtils::fbUiCallBackLoginResponse(Ljava/lang/String;Ljava/lang/String;Lcom/btxtech/game/jsre/client/dialogs/RegisterDialog;));
         $wnd.RazFacebookUtilFbCallbackPostToFeed = $entry(@com.btxtech.game.jsre.common.FacebookUtils::fbUiCallBackPostToFeed(Lcom/google/gwt/core/client/JavaScriptObject;));
     }-*/;
 

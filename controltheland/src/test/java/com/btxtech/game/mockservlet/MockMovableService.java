@@ -167,7 +167,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public void createAndLoginFacebookUser(String signedRequestParameter, String nickname) throws UserAlreadyExistsException, PasswordNotMatchException {
+    public void createAndLoginFacebookUser(String signedRequestParameter, String nickname, String email) throws UserAlreadyExistsException, PasswordNotMatchException {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
