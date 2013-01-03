@@ -111,15 +111,13 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("u1", "xxx", "xxx", "");
-        userService.login("u1", "xxx");
+        createAndLoginUser("U1");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("u2", "xxx", "xxx", "");
-        userService.login("u2", "xxx");
+        createAndLoginUser("U2");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -129,14 +127,14 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         List<CurrentStatisticEntry> entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u1", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u2", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "U1", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "U2", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("u1", "xxx");
+        loginUser("U1", "test");
         userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -147,15 +145,15 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "u1", TEST_PLANET_1, (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
-        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u2", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "U1", TEST_PLANET_1, (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "U2", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Build items
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("u2", "xxx");
+        loginUser("U2", "test");
         userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -168,8 +166,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "u1", TEST_PLANET_1, (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
-        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "u2", TEST_PLANET_1, (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "U1", TEST_PLANET_1, (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "U2", TEST_PLANET_1, (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -181,8 +179,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(3, entries.size());
-        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "u1", TEST_PLANET_1, (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
-        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "u2", TEST_PLANET_1, (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "U1", TEST_PLANET_1, (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "U2", TEST_PLANET_1, (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
         assertEntry(2, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, null, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -194,15 +192,15 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "u1", TEST_PLANET_1, (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
-        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "u2", TEST_PLANET_1, (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "U1", TEST_PLANET_1, (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "U2", TEST_PLANET_1, (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Build
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("u1", "xxx");
+        loginUser("U1", "test");
         userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_2_REAL_ID);
         Id u1Builder = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
         sendBuildCommand(u1Builder, new Index(3000, 3000), TEST_FACTORY_ITEM_ID);
@@ -221,15 +219,15 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 3000, TEST_LEVEL_3_REAL, 0, "u1", TEST_PLANET_1, (long) 1, 3, 1088, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0);
-        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "u2", TEST_PLANET_1, (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        assertEntry(0, entries, 3000, TEST_LEVEL_3_REAL, 0, "U1", TEST_PLANET_1, (long) 1, 3, 1088, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0);
+        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "U2", TEST_PLANET_1, (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // move away
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("u2", "xxx");
+        loginUser("U2", "test");
         Id target1 = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
         Id target2 = getFirstSynItemId(TEST_FACTORY_ITEM_ID);
         sendMoveCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 3000));
@@ -240,7 +238,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         // Kill builder
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("u1", "xxx");
+        loginUser("U1", "test");
         sendAttackCommand(getFirstSynItemId(TEST_ATTACK_ITEM_ID), target1);
         waitForActionServiceDone();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -253,15 +251,15 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 3002, TEST_LEVEL_3_REAL, 1, "u1", TEST_PLANET_1, (long) 1, 3, 1088, 0, 0, 0, 1, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0);
-        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "u2", TEST_PLANET_1, (long) 1, 1, 998, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0);
+        assertEntry(0, entries, 3002, TEST_LEVEL_3_REAL, 1, "U1", TEST_PLANET_1, (long) 1, 3, 1088, 0, 0, 0, 1, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0);
+        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "U2", TEST_PLANET_1, (long) 1, 1, 998, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Kill factory
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("u1", "xxx");
+        loginUser("U1", "test");
         sendAttackCommand(getFirstSynItemId(TEST_ATTACK_ITEM_ID), target2);
         waitForActionServiceDone();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -274,8 +272,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 3007, TEST_LEVEL_3_REAL, 3, "u1", TEST_PLANET_1, (long) 1, 3, 1088, 0, 0, 1, 1, 0, 0, 0, 0, 1, 2, 0, 1, 0, 0);
-        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "u2", null, null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
+        assertEntry(0, entries, 3007, TEST_LEVEL_3_REAL, 3, "U1", TEST_PLANET_1, (long) 1, 3, 1088, 0, 0, 1, 1, 0, 0, 0, 0, 1, 2, 0, 1, 0, 0);
+        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "U2", null, null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -290,7 +288,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         // Kill bot factory
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("u1", "xxx");
+        loginUser("U1", "test");
         sendAttackCommand(getFirstSynItemId(TEST_ATTACK_ITEM_ID), targetBotFactory);
         waitForActionServiceDone();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -304,8 +302,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
         // TODO failed 14.12.2012
-        assertEntry(0, entries, 3012, TEST_LEVEL_3_REAL, 5, "u1", TEST_PLANET_1, (long) 1, 3, 1088, 1, 0, 1, 1, 0, 0, 0, 0, 1, 2, 1, 1, 0, 0);
-        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "u2", null, null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
+        assertEntry(0, entries, 3012, TEST_LEVEL_3_REAL, 5, "U1", TEST_PLANET_1, (long) 1, 3, 1088, 1, 0, 1, 1, 0, 0, 0, 0, 1, 2, 1, 1, 0, 0);
+        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "U2", null, null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -320,7 +318,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         // Kill bot unit
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("u1", "xxx");
+        loginUser("U1", "test");
         Id u1AttackerId = getFirstSynItemId(TEST_ATTACK_ITEM_ID);
         sendAttackCommand(getFirstSynItemId(TEST_ATTACK_ITEM_ID), targetBotUnit);
         waitForActionServiceDone();
@@ -334,15 +332,15 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 3015, TEST_LEVEL_3_REAL, 6, "u1", TEST_PLANET_1, (long) 1, 3, 1088, 1, 1, 1, 1, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0);
-        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "u2", null, null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
+        assertEntry(0, entries, 3015, TEST_LEVEL_3_REAL, 6, "U1", TEST_PLANET_1, (long) 1, 3, 1088, 1, 1, 1, 1, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0);
+        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "U2", null, null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Move away
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("u1", "xxx");
+        loginUser("U1", "test");
         sendMoveCommand(u1AttackerId, new Index(1000, 4000));
         sendMoveCommand(u1Builder, new Index(2000, 4000));
         endHttpRequestAndOpenSessionInViewFilter();
@@ -362,8 +360,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 3015, TEST_LEVEL_3_REAL, 6, "u1", TEST_PLANET_1, (long) 1, 2, 1088, 1, 1, 1, 1, 0, 1, 0, 0, 1, 2, 2, 1, 0, 0);
-        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "u2", null, null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
+        assertEntry(0, entries, 3015, TEST_LEVEL_3_REAL, 6, "U1", TEST_PLANET_1, (long) 1, 2, 1088, 1, 1, 1, 1, 0, 1, 0, 0, 1, 2, 2, 1, 0, 0);
+        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "U2", null, null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -380,8 +378,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 3015, TEST_LEVEL_3_REAL, 6, "u1", null, null, null, null, 1, 1, 1, 1, 1, 2, 0, 0, 1, 2, 2, 1, 1, 0);
-        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "u2", null, null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
+        assertEntry(0, entries, 3015, TEST_LEVEL_3_REAL, 6, "U1", null, null, null, null, 1, 1, 1, 1, 1, 2, 0, 0, 1, 2, 2, 1, 1, 0);
+        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "U2", null, null, null, null, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -394,8 +392,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("u1", "xxx", "xxx", "");
-        userService.login("u1", "xxx");
+        createAndLoginUser("U1");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -404,13 +401,13 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         ReadonlyListContentProvider<CurrentStatisticEntry> provider = statisticsService.getCmsCurrentStatistics();
         List<CurrentStatisticEntry> entries = provider.readDbChildren();
         Assert.assertEquals(1, entries.size());
-        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u1", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "U1", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("u1", "xxx");
+        loginUser("U1", "test");
         userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -422,29 +419,29 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         provider = statisticsService.getCmsCurrentStatistics();
         entries = provider.readDbChildren();
         Assert.assertEquals(1, entries.size());
-        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "u1", TEST_PLANET_1, (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "U1", TEST_PLANET_1, (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Sell
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("u1", "xxx");
+        loginUser("U1", "test");
         serverPlanetServices.getItemService().sellItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
         provider = statisticsService.getCmsCurrentStatistics();
         entries = provider.readDbChildren();
         Assert.assertEquals(1, entries.size());
-        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "u1", TEST_PLANET_1, (long) 1, 1, 999, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "U1", TEST_PLANET_1, (long) 1, 1, 999, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Sell last unit
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("u1", "xxx");
+        loginUser("U1", "test");
         serverPlanetServices.getItemService().sellItem(getFirstSynItemId(TEST_FACTORY_ITEM_ID));
         provider = statisticsService.getCmsCurrentStatistics();
         entries = provider.readDbChildren();
         Assert.assertEquals(1, entries.size());
-        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "u1", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "U1", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -458,15 +455,13 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("u1", "xxx", "xxx", "");
-        userService.login("u1", "xxx");
+        createAndLoginUser("U1");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("u2", "xxx", "xxx", "");
-        userService.login("u2", "xxx");
+        createAndLoginUser("U2");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -476,8 +471,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         List<CurrentStatisticEntry> entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u1", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u2", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "U1", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "U2", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         //Backup
@@ -500,14 +495,14 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u1", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u2", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "U1", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "U2", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("u1", "xxx");
+        loginUser("U1", "test");
         userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -531,15 +526,15 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "u1", TEST_PLANET_1, (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
-        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u2", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "U1", TEST_PLANET_1, (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "U2", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Build items
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("u2", "xxx");
+        loginUser("U2", "test");
         userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -552,8 +547,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "u1", TEST_PLANET_1, (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
-        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "u2", TEST_PLANET_1, (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "U1", TEST_PLANET_1, (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "U2", TEST_PLANET_1, (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -565,8 +560,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(3, entries.size());
-        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "u1", TEST_PLANET_1, (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
-        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "u2", TEST_PLANET_1, (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "U1", TEST_PLANET_1, (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "U2", TEST_PLANET_1, (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
         assertEntry(2, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, null, null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         mgmtService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -586,15 +581,15 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "u1", TEST_PLANET_1, (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
-        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "u2", TEST_PLANET_1, (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "U1", TEST_PLANET_1, (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "U2", TEST_PLANET_1, (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Build
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("u1", "xxx");
+        loginUser("U1", "test");
         userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_2_REAL_ID);
         Id u1Builder = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
         sendBuildCommand(u1Builder, new Index(3000, 3000), TEST_FACTORY_ITEM_ID);
@@ -627,8 +622,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 3000, TEST_LEVEL_3_REAL, 0, "u1", TEST_PLANET_1, (long) 1, 3, 1088, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0);
-        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "u2", TEST_PLANET_1, (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        assertEntry(0, entries, 3000, TEST_LEVEL_3_REAL, 0, "U1", TEST_PLANET_1, (long) 1, 3, 1088, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0);
+        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "U2", TEST_PLANET_1, (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -646,8 +641,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u1", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u2", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(0, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "U1", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "U2", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -665,8 +660,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "u1", TEST_PLANET_1, (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
-        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "u2", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "U1", TEST_PLANET_1, (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+        assertEntry(1, entries, 1000, TEST_LEVEL_1_SIMULATED, 0, "U2", null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -684,8 +679,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         entries = provider.readDbChildren();
         orderByUserName(entries);
         Assert.assertEquals(2, entries.size());
-        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "u1", TEST_PLANET_1, (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
-        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "u2", TEST_PLANET_1, (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+        assertEntry(0, entries, 2000, TEST_LEVEL_2_REAL, 0, "U1", TEST_PLANET_1, (long) 1, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+        assertEntry(1, entries, 2000, TEST_LEVEL_2_REAL, 0, "U2", TEST_PLANET_1, (long) 1, 2, 998, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

@@ -34,8 +34,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // U1 no real base, second level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         Assert.assertEquals(TEST_LEVEL_1_SIMULATED, userGuidanceService.getDbLevel().getNumber());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -56,7 +55,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         Assert.assertEquals(TEST_LEVEL_1_SIMULATED, userGuidanceService.getDbLevel().getNumber());
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         Assert.assertEquals(TEST_LEVEL_2_REAL, userGuidanceService.getDbLevel().getNumber());
@@ -79,7 +78,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         Assert.assertEquals(TEST_LEVEL_2_REAL, userGuidanceService.getDbLevel().getNumber());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -94,8 +93,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // U1 no real base, second level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_3_REAL_ID);
         Assert.assertEquals(4, userGuidanceService.getQuestOverview().getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
@@ -112,7 +110,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         Assert.assertEquals(4, userGuidanceService.getQuestOverview().getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -129,7 +127,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         Assert.assertEquals(4, userGuidanceService.getQuestOverview().getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -138,7 +136,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         //Change
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         Assert.assertEquals(4, userGuidanceService.getQuestOverview().getQuestInfos().size());
         userGuidanceService.activateQuest(TEST_LEVEL_TASK_3_3_SIMULATED_ID);
         Assert.assertEquals(TEST_LEVEL_TASK_3_3_SIMULATED_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
@@ -155,7 +153,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         Assert.assertEquals(4, userGuidanceService.getQuestOverview().getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_3_3_SIMULATED_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -172,7 +170,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Verify & change
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         Assert.assertEquals(4, userGuidanceService.getQuestOverview().getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(1).getId());
@@ -207,7 +205,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Verify & change
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         Assert.assertEquals(3, userGuidanceService.getQuestOverview().getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(1).getId());
@@ -240,7 +238,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Verify & change
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         Assert.assertEquals(2, userGuidanceService.getQuestOverview().getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(1).getId());
@@ -251,8 +249,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // U2
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U2", "test", "test", "test");
-        userService.login("U2", "test");
+        createAndLoginUser("U2");
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_3_REAL_ID);
         Assert.assertEquals(4, userGuidanceService.getQuestOverview().getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(0).getId());
@@ -281,7 +278,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Verify U1
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         Assert.assertEquals(2, userGuidanceService.getQuestOverview().getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(1).getId());
@@ -294,7 +291,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Verify U2 & change
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U2", "test");
+        loginUser("U2", "test");
         Assert.assertEquals(4, userGuidanceService.getQuestOverview().getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(1).getId());
@@ -329,7 +326,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Verify U1
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         Assert.assertEquals(2, userGuidanceService.getQuestOverview().getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(1).getId());
@@ -340,7 +337,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Verify U2 & change
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U2", "test");
+        loginUser("U2", "test");
         Assert.assertEquals(3, userGuidanceService.getQuestOverview().getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_3_3_SIMULATED_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(1).getId());
@@ -373,7 +370,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Verify U1
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         Assert.assertEquals(2, userGuidanceService.getQuestOverview().getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(1).getId());
@@ -384,7 +381,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Verify U2 & change
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U2", "test");
+        loginUser("U2", "test");
         Assert.assertEquals(2, userGuidanceService.getQuestOverview().getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(1).getId());
@@ -415,7 +412,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Verify U1
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         Assert.assertEquals(2, userGuidanceService.getQuestOverview().getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(0).getId());
         Assert.assertEquals(TEST_LEVEL_TASK_2_3_REAL_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(1).getId());
@@ -426,7 +423,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Verify U2
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U2", "test");
+        loginUser("U2", "test");
         Assert.assertEquals(0, userGuidanceService.getQuestOverview().getQuestInfos().size());
         Assert.assertNull(getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -443,7 +440,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Verify U1
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         Assert.assertEquals(4, userGuidanceService.getQuestOverview().getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -452,7 +449,7 @@ public class TestLevelAndLevelTaskBackupRestore extends AbstractServiceTest {
         // Verify U2
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U2", "test");
+        loginUser("U2", "test");
         Assert.assertEquals(1, userGuidanceService.getQuestOverview().getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_1_SIMULATED_ID, userGuidanceService.getQuestOverview().getQuestInfos().get(0).getId());
         endHttpRequestAndOpenSessionInViewFilter();

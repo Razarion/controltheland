@@ -2,10 +2,8 @@ package com.btxtech.game.services.user;
 
 import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.impl.RegisterServiceImpl;
 import junit.framework.Assert;
@@ -81,7 +79,7 @@ public class TestRegisterService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "xxx", "xxx", "test.yyy@testXXX.com");
+        createUser("U1", "xxx", "test.yyy@testXXX.com");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -132,7 +130,7 @@ public class TestRegisterService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "xxx", "xxx", "test.yyy@testXXX.com");
+        createUser("U1", "xxx", "test.yyy@testXXX.com");
         User user = userService.getUser();
         user.setAwaitingVerification();
         String verificationId = userService.getUser().getVerificationId();

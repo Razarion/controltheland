@@ -48,8 +48,7 @@ public class TestActionService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         Id target = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
         sendBuildCommand(target, new Index(500, 100), TEST_FACTORY_ITEM_ID);
 

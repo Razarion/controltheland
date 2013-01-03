@@ -66,8 +66,7 @@ public class TestChat extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("User 1", "xxx", "xxx", "");
-        userService.login("User 1", "xxx");
+        createAndLoginUser("User 1");
         getMyBase(); // Setup connection
         Thread.sleep(1000); // Wait for the account balance package
         getPackagesIgnoreSyncItemInfoAndClear(false);

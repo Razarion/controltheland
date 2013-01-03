@@ -28,8 +28,7 @@ public class TestUserState extends AbstractServiceTest {
         // U1 no real base, first level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         userGuidanceService.getDefaultLevelTaskId();
 
         // Verify
@@ -55,8 +54,7 @@ public class TestUserState extends AbstractServiceTest {
         // U2 real base, second level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U2", "test", "test", "test");
-        userService.login("U2", "test");
+        createAndLoginUser("U2");
         int levelTaskId = userGuidanceService.getDefaultLevelTaskId();
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", levelTaskId, "", 0, 0);
 
@@ -117,8 +115,7 @@ public class TestUserState extends AbstractServiceTest {
         // U1 no real base, first level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         getMovableService().getRealGameInfo(START_UID_1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -147,8 +144,7 @@ public class TestUserState extends AbstractServiceTest {
         // U1 no real base, first level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         userGuidanceService.getDefaultLevelTaskId();
         // Verify
         List<UserState> userStates = userService.getAllUserStates();
@@ -169,7 +165,7 @@ public class TestUserState extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         // Verify
         userStates = userService.getAllUserStates();
         Assert.assertEquals(1, userStates.size());
@@ -190,7 +186,7 @@ public class TestUserState extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         // Verify
         userStates = userService.getAllUserStates();
         Assert.assertEquals(1, userStates.size());
@@ -225,8 +221,7 @@ public class TestUserState extends AbstractServiceTest {
         // U1 no real base, first level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         userGuidanceService.getDefaultLevelTaskId();
         // Verify
         List<UserState> userStates = userService.getAllUserStates();
@@ -256,7 +251,7 @@ public class TestUserState extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         // User logs in
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         // Verify
         userStates = userService.getAllUserStates();
         Assert.assertEquals(1, userStates.size());

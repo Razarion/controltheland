@@ -310,8 +310,7 @@ public class TestConnection extends AbstractServiceTest {
         beginHttpSession();
         String sessionId1 = getHttpSessionId();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("TestUser", "xxx", "xxx", "");
-        userService.login("TestUser", "xxx");
+        createAndLoginUser("TestUser");
         getMyBase(); // Opens a connection
         getMovableService().sendDebug(clientDate, "CAT1", "Text Text");
         endHttpRequestAndOpenSessionInViewFilter();

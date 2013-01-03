@@ -58,8 +58,7 @@ public class TestBackend extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("Admin", "admin", "admin", "");
-        userService.login("Admin", "admin");
+        createAndLoginUser("Admin", "admin");
         User user = userService.getUser();
         user.setRoles(Collections.singleton(SecurityRoles.ROLE_ADMINISTRATOR));
         userService.save(user);
@@ -68,7 +67,7 @@ public class TestBackend extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("Admin", "admin");
+        loginUser("Admin", "admin");
         try {
             // First call crashes. Wickets need to set up wicket-session first
             tester.startPage(MgmtPage.class);
@@ -87,5 +86,4 @@ public class TestBackend extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
-
 }

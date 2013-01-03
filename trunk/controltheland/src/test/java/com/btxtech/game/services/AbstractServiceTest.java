@@ -1803,6 +1803,33 @@ abstract public class AbstractServiceTest {
         return dbRegionResource;
     }
 
+    // -------------------  User --------------------
+
+    protected void createUser(String userName, String password, String email) {
+        try {
+            userService.createUser(userName, password, password, email);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected void createUser(String userName, String password) {
+        createUser(userName, password, "fakeemail");
+    }
+
+    protected void loginUser(String userName, String password) {
+        userService.login(userName, password);
+    }
+
+    protected void createAndLoginUser(String userName, String password) {
+        createUser(userName, password);
+        loginUser(userName, password);
+    }
+
+    protected void createAndLoginUser(String userName) {
+        createAndLoginUser(userName, "test");
+    }
+
     // ------------------- History helpers --------------------
 
     protected List<DbHistoryElement> getAllHistoryEntriesOfType(DbHistoryElement.Type type) throws Exception {

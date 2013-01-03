@@ -67,8 +67,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         // Create account
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         endHttpRequestAndOpenSessionInViewFilter();
         // Finish tutorial
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -109,7 +108,7 @@ public class TestHistoryService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         Assert.assertEquals(5, historyService.getNewestHistoryElements().readDbChildren().size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -123,8 +122,7 @@ public class TestHistoryService extends AbstractServiceTest {
         System.out.println("**** testCreateItem ****");
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -167,8 +165,7 @@ public class TestHistoryService extends AbstractServiceTest {
         System.out.println("**** testKillItem ****");
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("Target", "test", "test", "test");
-        userService.login("Target", "test");
+        createAndLoginUser("Target");
         SimpleBase targetBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
         sendMoveCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000));
         waitForActionServiceDone();
@@ -177,8 +174,7 @@ public class TestHistoryService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("Actor", "test", "test", "test");
-        userService.login("Actor", "test");
+        createAndLoginUser("Actor");
         SimpleBase actorBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
         sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), new Index(200, 200), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -237,8 +233,7 @@ public class TestHistoryService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("Actor", "test", "test", "test");
-        userService.login("Actor", "test");
+        createAndLoginUser("Actor");
         SimpleBase actorBase = getMovableService().getRealGameInfo(START_UID_2).getBase();
         sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), new Index(200, 200), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -276,8 +271,7 @@ public class TestHistoryService extends AbstractServiceTest {
         System.out.println("**** testKillByAnonymous ****");
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("Target", "test", "test", "test");
-        userService.login("Target", "test");
+        createAndLoginUser("Target");
         SimpleBase targetBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
         sendMoveCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000));
         waitForActionServiceDone();
@@ -299,7 +293,7 @@ public class TestHistoryService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("Target", "test");
+        loginUser("Target", "test");
         getMyBase(); // Connection -> resurrection
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -340,8 +334,7 @@ public class TestHistoryService extends AbstractServiceTest {
         System.out.println("**** testSellItem ****");
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("Actor", "test", "test", "test");
-        userService.login("Actor", "test");
+        createAndLoginUser("Actor");
         SimpleBase simpleBase = getMyBase();
         getMovableService().sellItem(getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID));
         endHttpRequestAndOpenSessionInViewFilter();
@@ -465,16 +458,14 @@ public class TestHistoryService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("u1", "xxx", "xxx", "");
-        userService.login("u1", "xxx");
+        createAndLoginUser("U1");
         SimpleBase simpleBase1 = getMyBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("u2", "xxx", "xxx", "");
-        userService.login("u2", "xxx");
+        createAndLoginUser("U2");
         SimpleBase simpleBase2 = getMyBase();
         allianceService.proposeAlliance(simpleBase1);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -482,17 +473,17 @@ public class TestHistoryService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("u1", "xxx");
-        allianceService.acceptAllianceOffer("u2");
-        allianceService.breakAlliance("u2");
+        loginUser("U1", "test");
+        allianceService.acceptAllianceOffer("U2");
+        allianceService.breakAlliance("U2");
         allianceService.proposeAlliance(simpleBase2);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("u2", "xxx");
-        allianceService.rejectAllianceOffer("u1");
+        loginUser("U2", "test");
+        allianceService.rejectAllianceOffer("U1");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -500,39 +491,39 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         // verify u1
-        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("u1"), 1000);
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 1000);
         System.out.println("----- u1 Target-----");
         for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
             System.out.println(displayHistoryElement);
         }
         Assert.assertEquals(7, displayHistoryElements.size());
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
-        Assert.assertEquals("Your alliance offer has been rejected by u2", displayHistoryElements.get(0).getMessage());
+        Assert.assertEquals("Your alliance offer has been rejected by U2", displayHistoryElements.get(0).getMessage());
         Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
-        Assert.assertEquals("You offered u2 an alliance", displayHistoryElements.get(1).getMessage());
+        Assert.assertEquals("You offered U2 an alliance", displayHistoryElements.get(1).getMessage());
         Assert.assertTrue(displayHistoryElements.get(2).getTimeStamp() >= displayHistoryElements.get(3).getTimeStamp());
-        Assert.assertEquals("You broke the alliance with u2", displayHistoryElements.get(2).getMessage());
+        Assert.assertEquals("You broke the alliance with U2", displayHistoryElements.get(2).getMessage());
         Assert.assertTrue(displayHistoryElements.get(3).getTimeStamp() >= displayHistoryElements.get(4).getTimeStamp());
-        Assert.assertEquals("You accepted an alliance with u2", displayHistoryElements.get(3).getMessage());
+        Assert.assertEquals("You accepted an alliance with U2", displayHistoryElements.get(3).getMessage());
         Assert.assertTrue(displayHistoryElements.get(4).getTimeStamp() >= displayHistoryElements.get(5).getTimeStamp());
-        Assert.assertEquals("u2 offered you an alliance", displayHistoryElements.get(4).getMessage());
+        Assert.assertEquals("U2 offered you an alliance", displayHistoryElements.get(4).getMessage());
         // verify u2
-        displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("u2"), 1000);
+        displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U2"), 1000);
         System.out.println("----- u2 Target-----");
         for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
             System.out.println(displayHistoryElement);
         }
         Assert.assertEquals(7, displayHistoryElements.size());
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
-        Assert.assertEquals("You rejected an alliance with u1", displayHistoryElements.get(0).getMessage());
+        Assert.assertEquals("You rejected an alliance with U1", displayHistoryElements.get(0).getMessage());
         Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
-        Assert.assertEquals("u1 offered you an alliance", displayHistoryElements.get(1).getMessage());
+        Assert.assertEquals("U1 offered you an alliance", displayHistoryElements.get(1).getMessage());
         Assert.assertTrue(displayHistoryElements.get(2).getTimeStamp() >= displayHistoryElements.get(3).getTimeStamp());
-        Assert.assertEquals("Your alliance has been broken by u1", displayHistoryElements.get(2).getMessage());
+        Assert.assertEquals("Your alliance has been broken by U1", displayHistoryElements.get(2).getMessage());
         Assert.assertTrue(displayHistoryElements.get(3).getTimeStamp() >= displayHistoryElements.get(4).getTimeStamp());
-        Assert.assertEquals("Your alliance offer has been accepted by u1", displayHistoryElements.get(3).getMessage());
+        Assert.assertEquals("Your alliance offer has been accepted by U1", displayHistoryElements.get(3).getMessage());
         Assert.assertTrue(displayHistoryElements.get(4).getTimeStamp() >= displayHistoryElements.get(5).getTimeStamp());
-        Assert.assertEquals("You offered u1 an alliance", displayHistoryElements.get(4).getMessage());
+        Assert.assertEquals("You offered U1 an alliance", displayHistoryElements.get(4).getMessage());
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -569,8 +560,7 @@ public class TestHistoryService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("u1", "xxx", "xxx", "");
-        userService.login("u1", "xxx");
+        createAndLoginUser("U1");
         SimpleBase simpleBase = getMyBase();
         SyncBoxItem syncBoxItem = createSyncBoxItem(dbBoxItemType.getId(), new Index(1000, 1000), new Id(1, 1));
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(2000, 2000), new Id(2, 2), simpleBase);
@@ -586,7 +576,7 @@ public class TestHistoryService extends AbstractServiceTest {
         historyService.addInventoryArtifactFromBox(userService.getUserState(), "inventoryArtifactName");
         historyService.addInventoryItemUsed(userService.getUserState(), "inventoryItemName");
 
-        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("u1"), 1000);
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 1000);
         System.out.println("----- u1 Target-----");
         for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
             System.out.println(displayHistoryElement);
@@ -622,8 +612,7 @@ public class TestHistoryService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("u1", "xxx", "xxx", "");
-        userService.login("u1", "xxx");
+        createAndLoginUser("U1");
         SimpleBase simpleBase = getMyBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -633,7 +622,7 @@ public class TestHistoryService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("u1"), 1000);
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 1000);
         System.out.println("----- u1 Target-----");
         for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
             System.out.println(displayHistoryElement);

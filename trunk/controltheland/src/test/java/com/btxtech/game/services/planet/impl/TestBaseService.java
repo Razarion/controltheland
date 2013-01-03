@@ -54,8 +54,7 @@ public class TestBaseService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertNull(userService.getUser());
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         // $1000
         SimpleBase simpleBase = getMyBase(); // Setup connection & create two account balance package
         Id id = getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID);
@@ -82,8 +81,7 @@ public class TestBaseService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertNull(userService.getUser());
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         SimpleBase simpleBase = getMyBase(); // Setup connection
         Id id = getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID);
         clearPackets();
@@ -108,8 +106,7 @@ public class TestBaseService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         SimpleBase simpleBase = getMyBase(); // Setup connection
         sendBuildCommand(getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID), new Index(100, 100), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -120,7 +117,7 @@ public class TestBaseService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         Assert.assertEquals(2, baseService.getBase().getItemCount());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -182,8 +179,7 @@ public class TestBaseService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         SimpleBase simpleBase = getMyBase(); // Setup connection
         waitForActionServiceDone();
         baseService.surrenderBase(baseService.getBase(simpleBase));
@@ -277,8 +273,7 @@ public class TestBaseService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone(TEST_PLANET_1_ID);
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1500, 1500), TEST_HOUSE_ID);
@@ -303,7 +298,7 @@ public class TestBaseService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         SimpleBase simpleBase = getMyBase(); // Setup connection
         BaseService baseService = planetSystemService.getServerPlanetServices().getBaseService();
         Assert.assertEquals(5, baseService.getUsedHouseSpace(simpleBase));

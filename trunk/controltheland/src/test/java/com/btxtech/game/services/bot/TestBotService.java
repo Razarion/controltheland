@@ -173,8 +173,7 @@ public class TestBotService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "xxx", "xxx", "");
-        userService.login("U1", "xxx");
+        createAndLoginUser("U1");
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(2000, 2000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
@@ -219,7 +218,7 @@ public class TestBotService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "xxx");
+        loginUser("U1", "xxx");
         sendMoveCommand(intruder, new Index(500, 500));
         waitForHistoryType(DbHistoryElement.Type.BOT_ENRAGE_UP);
         sendMoveCommand(intruder, new Index(5000, 5000));
