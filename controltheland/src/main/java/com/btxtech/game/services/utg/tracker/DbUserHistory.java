@@ -15,6 +15,7 @@ package com.btxtech.game.services.utg.tracker;
 
 import com.btxtech.game.services.user.User;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -31,6 +32,7 @@ public class DbUserHistory {
     @Id
     @GeneratedValue
     private Integer id;
+    @Column(name = "user_name")
     private String user;
     private Date created;
     private Date loggedIn;
