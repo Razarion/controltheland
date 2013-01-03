@@ -22,22 +22,19 @@ public class TestUser extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("u1", "xxx", "xxx", "");
-        userService.login("u1", "xxx");
+        createAndLoginUser("u1");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("u2", "xxx", "xxx", "");
-        userService.login("u2", "xxx");
+        createAndLoginUser("u2");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("u3", "xxx", "xxx", "");
-        userService.login("u3", "xxx");
+        createAndLoginUser("u3");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -238,22 +235,19 @@ public class TestUser extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("u1", "xxx", "xxx", "");
-        userService.login("u1", "xxx");
+        createAndLoginUser("u1");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("u2", "xxx", "xxx", "");
-        userService.login("u2", "xxx");
+        createAndLoginUser("u2");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("u3", "xxx", "xxx", "");
-        userService.login("u3", "xxx");
+        createAndLoginUser("u3");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

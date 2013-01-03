@@ -77,6 +77,7 @@ public class Register extends Panel {
         form.add(new PasswordTextField("confirmPassword"));
         add(form);
 
+        // TODO fix all uncommented test cases
         throw new UnsupportedOperationException("Email registering not working here");
     }
 

@@ -81,8 +81,7 @@ public class TestResurrection extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
 
         // Target
-        userService.createUser("U1", "test", "test", "");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         SimpleBase targetBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
         String targetName = baseService.getBaseName(targetBase);
         Id target = getFirstSynItemId(targetBase, TEST_START_BUILDER_ITEM_ID);
@@ -133,7 +132,7 @@ public class TestResurrection extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
 
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         SimpleBase targetBaseNew = getMovableService().getRealGameInfo(START_UID_1).getBase();
         Assert.assertFalse(targetBaseNew.equals(targetBase));
         Assert.assertEquals(2, baseService.getBases().size());

@@ -131,8 +131,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("u1", "xxx", "xxx", "");
-        userService.login("u1", "xxx");
+        createAndLoginUser("U1");
         UserState userState = userService.getUserState();
         userGuidanceService.promote(userState, TEST_LEVEL_2_REAL_ID);
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(2000, 2000), TEST_FACTORY_ITEM_ID);
@@ -159,8 +158,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("u1", "xxx", "xxx", "");
-        userService.login("u1", "xxx");
+        createAndLoginUser("U1");
         UserState userState = userService.getUserState();
         userGuidanceService.promote(userState, TEST_LEVEL_2_REAL_ID);
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(2000, 2000), TEST_FACTORY_ITEM_ID);
@@ -378,8 +376,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "xxx", "xxx", "");
-        userService.login("U1", "xxx");
+        createAndLoginUser("U1");
         UserState userState = getUserState();
         Assert.assertEquals(0, userState.getRazarion());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -393,7 +390,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "xxx");
+        loginUser("U1", "test");
         Assert.assertEquals(100, userState.getRazarion());
         ReadonlyListContentProvider<DisplayHistoryElement> history = historyService.getNewestHistoryElements();
         Assert.assertEquals(1, history.readDbChildren().size());

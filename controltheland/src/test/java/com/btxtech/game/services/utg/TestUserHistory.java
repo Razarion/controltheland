@@ -33,8 +33,7 @@ public class TestUserHistory extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -52,20 +51,19 @@ public class TestUserHistory extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         userService.logout();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -89,8 +87,7 @@ public class TestUserHistory extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -116,8 +113,7 @@ public class TestUserHistory extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();

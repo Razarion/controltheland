@@ -69,8 +69,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         // U1 no real base, first level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         userGuidanceService.getDbLevel();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -87,8 +86,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         // U2 real base, second level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U2", "test", "test", "test");
-        userService.login("U2", "test");
+        createAndLoginUser("U2");
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         SimpleBase u2Base = getMyBase();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
@@ -105,8 +103,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         // U3 real base, second level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U3", "test", "test", "test");
-        userService.login("U3", "test");
+        createAndLoginUser("U3");
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -140,6 +137,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        // TODO failed 03.01.2012
         assertBackupSummery(1, 5, 3, 3);
         mgmtService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -346,8 +344,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         // U1 reg user
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         SimpleBase realUser = getMyBase();
         Index buildPos = serverPlanetServices.getCollisionService().getFreeRandomPosition(serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
@@ -395,8 +392,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         // U1 no real base, second level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
         SimpleBase realUser = getMyBase();
         Id id = getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID);
@@ -423,7 +419,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         realUser = getMyBase();
         id = getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID);
         syncBaseItem = (SyncBaseItem) serverPlanetServices.getItemService().getItem(id);
@@ -450,7 +446,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         realUser = getMyBase();
         id = getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID);
         syncBaseItem = (SyncBaseItem) serverPlanetServices.getItemService().getItem(id);
@@ -513,8 +509,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         // U1 reg user
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone(TEST_PLANET_1_ID);
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_HARVESTER_ITEM_ID);
@@ -544,7 +539,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         harvester = getFirstSynItemId(TEST_HARVESTER_ITEM_ID);
         harvesterItem = (SyncBaseItem) planetSystemService.getServerPlanetServices().getItemService().getItem(harvester);
         Assert.assertFalse(harvesterItem.getSyncHarvester().getTarget() != null);

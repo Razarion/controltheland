@@ -28,9 +28,9 @@ public class TestUserService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         assertNotLoggedIn();
         Assert.assertNull(userService.getUser());
-        userService.createUser("U1", "test", "test", "test");
+        createUser("U1", "test");
         assertNotLoggedIn();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         Assert.assertEquals("U1", userService.getUser().getUsername());
         assertLoggedIn();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -55,7 +55,7 @@ public class TestUserService extends AbstractServiceTest {
         // Log in
         beginHttpRequestAndOpenSessionInViewFilter();
         assertNotLoggedIn();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         assertLoggedIn();
         Assert.assertEquals("U1", userService.getUser().getUsername());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -88,9 +88,9 @@ public class TestUserService extends AbstractServiceTest {
         // Create account
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertNull(userService.getUser());
-        userService.createUser("U2", "test", "test", "test");
+        createUser("U2", "test");
         assertNotLoggedIn();
-        userService.login("U2", "test");
+        loginUser("U2", "test");
         assertLoggedIn();
         Assert.assertEquals("U2", userService.getUser().getUsername());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -138,9 +138,9 @@ public class TestUserService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertNull(userService.getUser());
         assertNotLoggedIn();
-        userService.createUser("U1", "test", "test", "test");
+        createUser("U1", "test");
         assertNotLoggedIn();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         assertLoggedIn();
         Assert.assertEquals("U1", userService.getUser().getUsername());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -201,9 +201,9 @@ public class TestUserService extends AbstractServiceTest {
         // Create account
         beginHttpRequestAndOpenSessionInViewFilter();
         assertNotLoggedIn();
-        userService.createUser("U1", "test", "test", "test");
+        createUser("U1", "test");
         assertNotLoggedIn();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         assertLoggedIn();
         endHttpRequestAndOpenSessionInViewFilter();
         // Enter Game
@@ -245,9 +245,9 @@ public class TestUserService extends AbstractServiceTest {
         // Create account
         beginHttpRequestAndOpenSessionInViewFilter();
         assertNotLoggedIn();
-        userService.createUser("U1", "test", "test", "test");
+        createUser("U1", "test");
         assertNotLoggedIn();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         assertLoggedIn();
         endHttpRequestAndOpenSessionInViewFilter();
 
@@ -266,7 +266,7 @@ public class TestUserService extends AbstractServiceTest {
         // Log in
         beginHttpRequestAndOpenSessionInViewFilter();
         assertNotLoggedIn();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         assertLoggedIn();
         endHttpRequestAndOpenSessionInViewFilter();
 
@@ -285,10 +285,9 @@ public class TestUserService extends AbstractServiceTest {
         // U1 no real base, first level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         try {
-            userService.login("U1", "test");
+            loginUser("U1", "test");
             Assert.fail("AlreadyLoggedInException expected");
         } catch (AlreadyLoggedInException e) {
             // Expected
@@ -304,13 +303,14 @@ public class TestUserService extends AbstractServiceTest {
         // U1 no real base, first level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         try {
-            userService.createUser("U1", "test", "test", "test");
+            createUser("U1", "test");
             Assert.fail("AlreadyLoggedInException expected");
-        } catch (AlreadyLoggedInException e) {
-            // Expected
+        } catch (RuntimeException e) {
+            if(!(e.getCause() instanceof AlreadyLoggedInException)) {
+                Assert.fail("AlreadyLoggedInException expected");
+            }
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -338,8 +338,7 @@ public class TestUserService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("test", "xxx","xxx", null);
-        userService.login("test", "xxx");
+        createAndLoginUser("test");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

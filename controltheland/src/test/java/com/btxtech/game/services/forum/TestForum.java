@@ -60,8 +60,7 @@ public class TestForum extends AbstractServiceTest {
         beginHttpSession();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -78,8 +77,7 @@ public class TestForum extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         endHttpRequestAndOpenSessionInViewFilter();
 
         // Fill forum
@@ -115,7 +113,7 @@ public class TestForum extends AbstractServiceTest {
         // Add categories
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         subForumCrud = forumService.getSubForumCrud();
         subForum1 = subForumCrud.readDbChild(subForum1.getId());
         categoryCrud = subForum1.getCategoryCrud();
@@ -138,7 +136,7 @@ public class TestForum extends AbstractServiceTest {
         // Add thread and post
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         subForumCrud = forumService.getSubForumCrud();
         subForum1 = subForumCrud.readDbChild(subForum1.getId());
         category1 = subForum1.getCategoryCrud().readDbChild(category1.getId());
@@ -164,7 +162,7 @@ public class TestForum extends AbstractServiceTest {
         // Add thread and post
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         subForumCrud = forumService.getSubForumCrud();
         subForum1 = subForumCrud.readDbChild(subForum1.getId());
         category1 = subForum1.getCategoryCrud().readDbChild(category1.getId());
@@ -190,7 +188,7 @@ public class TestForum extends AbstractServiceTest {
         // Add post
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");
+        loginUser("U1", "test");
         subForumCrud = forumService.getSubForumCrud();
         subForum1 = subForumCrud.readDbChild(subForum1.getId());
         category1 = subForum1.getCategoryCrud().readDbChild(category1.getId());
@@ -224,8 +222,7 @@ public class TestForum extends AbstractServiceTest {
         beginHttpSession();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
+        createAndLoginUser("U1");
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
