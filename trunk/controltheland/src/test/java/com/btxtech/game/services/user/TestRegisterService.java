@@ -4,8 +4,10 @@ import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.impl.RegisterServiceImpl;
+import com.btxtech.game.services.utg.tracker.DbUserHistory;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.subethamail.wiser.WiserMessage;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -70,6 +73,20 @@ public class TestRegisterService extends AbstractServiceTest {
         Assert.assertEquals(setupMailContent(user.getVerificationId()), ((String) wiserMessage.getMimeMessage().getContent()).trim());
 
         stopFakeMailServer();
+
+        // User tracker history
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<DbUserHistory> historyElements = HibernateUtil.loadAll(getSessionFactory(), DbUserHistory.class);
+        Assert.assertEquals(1, historyElements.size());
+        Assert.assertEquals("U1", historyElements.get(0).getUser());
+        Assert.assertNull(historyElements.get(0).getVerified());
+        Assert.assertEquals(verificationId, historyElements.get(0).getVerificationId());
+        Assert.assertNotNull(historyElements.get(0).getAwaitingVerificationDate());
+        Assert.assertTrue(historyElements.get(0).getAwaitingVerificationDate().getTime() >= dateBefore.getTime());
+        Assert.assertTrue(historyElements.get(0).getAwaitingVerificationDate().getTime() <= dateAfter.getTime());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test
@@ -140,7 +157,9 @@ public class TestRegisterService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        Date dateBefore = new Date();
         registerService.onVerificationPageCalled(verificationId);
+        Date dateAfter = new Date();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -152,6 +171,19 @@ public class TestRegisterService extends AbstractServiceTest {
         Assert.assertEquals(verificationId, user.getVerificationId());
         Assert.assertNull(user.getAwaitingVerificationDate());
         Assert.assertTrue(user.isAccountNonLocked());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // User tracker history
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<DbUserHistory> historyElements = HibernateUtil.loadAll(getSessionFactory(), DbUserHistory.class);
+        Assert.assertEquals(2, historyElements.size());
+        Assert.assertEquals("U1", historyElements.get(1).getUser());
+        Assert.assertTrue(historyElements.get(1).getVerified().getTime() >= dateBefore.getTime());
+        Assert.assertTrue(historyElements.get(1).getVerified().getTime() <= dateAfter.getTime());
+        Assert.assertEquals(verificationId, historyElements.get(1).getVerificationId());
+        Assert.assertNull(historyElements.get(1).getAwaitingVerificationDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -188,6 +220,7 @@ public class TestRegisterService extends AbstractServiceTest {
         SimpleBase simpleBase = getMyBase();
         User user = userService.getUser();
         user.setAwaitingVerification();
+        String verificationId = userService.getUser().getVerificationId();
         setPrivateField(User.class, user, "awaitingVerificationDate", gregorianCalendar.getTime());
         saveOrUpdateInTransaction(user);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -195,10 +228,12 @@ public class TestRegisterService extends AbstractServiceTest {
 
         Assert.assertFalse(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService().isAbandoned(simpleBase));
 
+        Date dateBefore = new Date();
         setPrivateStaticField(RegisterServiceImpl.class, "CLEANUP_DELAY", 100);
         ((RegisterServiceImpl) deAopProxy(registerService)).cleanup();
         ((RegisterServiceImpl) deAopProxy(registerService)).init();
         Thread.sleep(200);
+        Date dateAfter = new Date();
 
         // Verify user
         beginHttpSession();
@@ -208,6 +243,20 @@ public class TestRegisterService extends AbstractServiceTest {
         endHttpSession();
 
         Assert.assertTrue(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService().isAbandoned(simpleBase));
+
+        // User tracker history
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<DbUserHistory> historyElements = HibernateUtil.loadAll(getSessionFactory(), DbUserHistory.class);
+        Assert.assertEquals(4, historyElements.size());
+        Assert.assertEquals("U1", historyElements.get(3).getUser());
+        Assert.assertTrue(historyElements.get(3).getDeleteUnverifiedUser().getTime() >= dateBefore.getTime());
+        Assert.assertTrue(historyElements.get(3).getDeleteUnverifiedUser().getTime() <= dateAfter.getTime());
+        Assert.assertEquals(verificationId, historyElements.get(3).getVerificationId());
+        Assert.assertNull(historyElements.get(3).getAwaitingVerificationDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
 
         setPrivateStaticField(RegisterServiceImpl.class, "CLEANUP_DELAY", 1 * ClientDateUtil.MILLIS_IN_DAY);
     }
