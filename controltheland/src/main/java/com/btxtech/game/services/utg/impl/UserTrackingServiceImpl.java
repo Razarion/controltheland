@@ -392,7 +392,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             DbUserHistory dbUserHistory = new DbUserHistory(user);
             dbUserHistory.setSessionId(session.getSessionId());
             dbUserHistory.setCookieId(session.getCookieId());
-            dbUserHistory.setDeleteUnverifiedUser();
+            dbUserHistory.setVerified();
             dbUserHistory.setVerificationId(user.getVerificationId());
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
@@ -404,7 +404,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     public void onUnverifiedUserRemoved(User user) {
         try {
             DbUserHistory dbUserHistory = new DbUserHistory(user);
-            dbUserHistory.setVerified();
+            dbUserHistory.setDeleteUnverifiedUser();
             dbUserHistory.setVerificationId(user.getVerificationId());
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
