@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.client.dialogs.inventory;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
@@ -47,7 +48,7 @@ public class InventoryItem extends Composite implements HasText {
         this.dialog = dialog;
         initWidget(uiBinder.createAndBindUi(this));
         itemNameLabel.setText(inventoryItemInfo.getInventoryItemName());
-        countLabel.setText("You own: " + ownCount);
+        countLabel.setText(ClientI18nHelper.CONSTANTS.youOwn(ownCount));
         image.setUrl(ImageHandler.getInventoryItemUrl(inventoryItemInfo.getInventoryItemId()));
     }
 
@@ -66,9 +67,9 @@ public class InventoryItem extends Composite implements HasText {
             try {
                 baseItemType = (BaseItemType) ItemTypeContainer.getInstance().getItemType(inventoryItemInfo.getBaseItemTypeId());
                 if (ClientBase.getInstance().isLevelLimitation4ItemTypeExceeded(baseItemType, inventoryItemInfo.getItemCount(), ClientBase.getInstance().getSimpleBase())) {
-                    DialogManager.showDialog(new MessageDialog("Use Item", baseItemType.getName() + " item limit is is exceeded."), DialogManager.Type.STACK_ABLE);
+                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.useItem(), ClientI18nHelper.CONSTANTS.useItemLimit(baseItemType.getName())), DialogManager.Type.STACK_ABLE);
                 } else if (ClientBase.getInstance().isHouseSpaceExceeded(ClientBase.getInstance().getSimpleBase(), baseItemType, inventoryItemInfo.getItemCount())) {
-                    DialogManager.showDialog(new MessageDialog("Use Item", "You do not have enough houses to  add new units or structures."), DialogManager.Type.STACK_ABLE);
+                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.useItem(), ClientI18nHelper.CONSTANTS.useItemHouseSpace()), DialogManager.Type.STACK_ABLE);
                 } else {
                     CockpitMode.getInstance().setInventoryItemPlacer(new InventoryItemPlacer(inventoryItemInfo));
                 }
@@ -79,7 +80,7 @@ public class InventoryItem extends Composite implements HasText {
             if (ClientBase.getInstance().isDepositResourceAllowed(inventoryItemInfo.getGoldAmount())) {
                 Connection.getInstance().useInventoryItem(inventoryItemInfo.getInventoryItemId(), null);
             } else {
-                DialogManager.showDialog(new MessageDialog("Use Item", "Maximal money limit exceeded."), DialogManager.Type.STACK_ABLE);
+                DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.useItem(), ClientI18nHelper.CONSTANTS.useItemMoney()), DialogManager.Type.STACK_ABLE);
             }
         }
     }

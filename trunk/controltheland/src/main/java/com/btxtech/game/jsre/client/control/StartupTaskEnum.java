@@ -30,4 +30,6 @@ public interface StartupTaskEnum extends Serializable {
     StartupTaskEnumHtmlHelper getStartupTaskEnumHtmlHelper();
 
     String name();
+
+    String getI18nText();
 }

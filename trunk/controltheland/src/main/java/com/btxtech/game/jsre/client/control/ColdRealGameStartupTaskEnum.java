@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.control;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.GuiStartupTask;
 import com.btxtech.game.jsre.client.control.task.ImageSpriteMapPreloaderStartupTask;
@@ -33,42 +34,90 @@ public enum ColdRealGameStartupTaskEnum implements StartupTaskEnum {
         @Override
         public AbstractStartupTask createTask() {
             return new LoadStartJsAbstractStartupTask(this);
-        }},
+        }
+
+        @Override
+        public String getI18nText() {
+            return ClientI18nHelper.CONSTANTS.startupLoadJavaScript();
+        }
+    },
     INIT_GUI("Init GUI") {
         @Override
         public AbstractStartupTask createTask() {
             return new GuiStartupTask(this);
-        }},
+        }
+
+        @Override
+        public String getI18nText() {
+            return ClientI18nHelper.CONSTANTS.startupInitGui();
+        }
+    },
     DOWNLOAD_GAME_INFO("Load real game information") {
         @Override
         public AbstractStartupTask createTask() {
             return new LoadRealGameInfoStartupTask(this);
-        }},
+        }
+
+        @Override
+        public String getI18nText() {
+            return ClientI18nHelper.CONSTANTS.startupLoadRealGameInfo();
+        }
+    },
     INIT_GAME("Init real Game") {
         @Override
         public AbstractStartupTask createTask() {
             return new RealStartupTask(this);
-        }},
+        }
+
+        @Override
+        public String getI18nText() {
+            return ClientI18nHelper.CONSTANTS.startupInitRealGame();
+        }
+    },
     PRELOAD_IMAGE_SPRITE_MAPS("Preload image sprite maps") {
         @Override
         public AbstractStartupTask createTask() {
             return new ImageSpriteMapPreloaderStartupTask(this);
-        }},
+        }
+
+        @Override
+        public String getI18nText() {
+            return ClientI18nHelper.CONSTANTS.startupPreloadImageSpriteMaps();
+        }
+    },
     LOAD_UNITS("Load Units") {
         @Override
         public AbstractStartupTask createTask() {
             return new LoadSyncInfoStartupTask(this);
-        }},
+        }
+
+        @Override
+        public String getI18nText() {
+            return ClientI18nHelper.CONSTANTS.startupLoadUnits();
+        }
+    },
     START_ACTION_HANDLER("Initialize Units") {
         @Override
         public AbstractStartupTask createTask() {
             return new InitItemStartupTask(this);
-        }},
+        }
+
+        @Override
+        public String getI18nText() {
+            return ClientI18nHelper.CONSTANTS.startupInitUnits();
+        }
+    },
     RUN_REAL_GAME("Run real Game") {
         @Override
         public AbstractStartupTask createTask() {
             return new RunRealGameStartupTask(this);
-        }};
+        }
+
+        @Override
+        public String getI18nText() {
+            return ClientI18nHelper.CONSTANTS.startupRunRealGame();
+        }
+    };
 
     private StartupTaskEnumHtmlHelper startupTaskEnumHtmlHelper;
 

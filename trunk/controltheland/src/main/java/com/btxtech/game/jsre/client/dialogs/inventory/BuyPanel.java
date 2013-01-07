@@ -3,6 +3,7 @@
  */
 package com.btxtech.game.jsre.client.dialogs.inventory;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
@@ -20,7 +21,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  */
 public class BuyPanel extends VerticalPanel {
     public BuyPanel(InventoryDialog inventoryDialog) {
-        add(createHtml("<h2>Buy Razarion via PayPal</h2>"));
+        add(createHtml(ClientI18nHelper.CONSTANTS.buyRazarionPaypal(), 16));
 
         if (Connection.getInstance().isRegistered()) {
             fillBuyOptions();
@@ -29,10 +30,10 @@ public class BuyPanel extends VerticalPanel {
         }
     }
 
-    private HTML createHtml(String htmlString) {
+    private HTML createHtml(String htmlString, int fontSite) {
         HTML html = new HTML(htmlString);
         html.getElement().getStyle().setColor("#C7C4BB");
-        html.getElement().getStyle().setFontSize(14, Style.Unit.PX);
+        html.getElement().getStyle().setFontSize(fontSite, Style.Unit.PX);
         html.getElement().getStyle().setProperty("fontFamily", "Arial, Helvetica, sans-serif");
         return html;
     }
@@ -41,22 +42,22 @@ public class BuyPanel extends VerticalPanel {
         FlexTable flexTable = new FlexTable();
         // 1000 Razarion
         flexTable.setWidget(0, 0, PayPalUtils.createBuyNowButton("PE44JA3J2AZ2J"));
-        flexTable.setWidget(0, 1, createHtml("1000 Razarion for 5$"));
+        flexTable.setWidget(0, 1, createHtml(ClientI18nHelper.CONSTANTS.buyRazarionPaypal1000(), 14));
         // 2200 Razarion
         flexTable.setWidget(1, 0, PayPalUtils.createBuyNowButton("T6UDKDH59Y43E"));
-        flexTable.setWidget(1, 1, createHtml("2200 Razarion for 10$.<br />You get 200 Razarion for free!"));
+        flexTable.setWidget(1, 1, createHtml(ClientI18nHelper.CONSTANTS.buyRazarionPaypal2200(), 14));
         // 4600 Razarion
         flexTable.setWidget(2, 0, PayPalUtils.createBuyNowButton("7LSHFG9LM88VL"));
-        flexTable.setWidget(2, 1, createHtml("4600 Razarion for 20$.<br />You get 600 Razarion for free!"));
+        flexTable.setWidget(2, 1, createHtml(ClientI18nHelper.CONSTANTS.buyRazarionPaypal4600(), 14));
         // 12500 Razarion
         flexTable.setWidget(3, 0, PayPalUtils.createBuyNowButton("YLVYNLXBSJXGY"));
-        flexTable.setWidget(3, 1, createHtml("12500 Razarion for 50$.<br />You get 2500 Razarion for free!"));
+        flexTable.setWidget(3, 1, createHtml(ClientI18nHelper.CONSTANTS.buyRazarionPaypal12500(), 14));
         add(flexTable);
     }
 
     private void fillUnregistered(final InventoryDialog inventoryDialog) {
-        add(new HTML("Only registered user can buy Razarion."));
-        add(new Button("Register", new ClickHandler() {
+        add(new HTML(ClientI18nHelper.CONSTANTS.buyRazarionPaypalOnlyRegistered()));
+        add(new Button(ClientI18nHelper.CONSTANTS.register(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {

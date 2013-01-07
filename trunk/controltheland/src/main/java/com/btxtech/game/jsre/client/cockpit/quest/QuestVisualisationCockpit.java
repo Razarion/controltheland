@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.cockpit.quest;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.cockpit.MinimizeButton;
@@ -80,7 +81,7 @@ public class QuestVisualisationCockpit extends Composite {
         questVisualisationPanel = null;
         if (QuestVisualtsationModel.getInstance().isNoQuest()) {
             mainPanel.clear();
-            titleLabel.setText("No active quest");
+            titleLabel.setText(ClientI18nHelper.CONSTANTS.noActiveQuest());
         } else if (QuestVisualtsationModel.getInstance().isShowStartMission()) {
             mainPanel.setWidget(new StartMissionPanel());
             titleLabel.setText(questInfo.getTitle());

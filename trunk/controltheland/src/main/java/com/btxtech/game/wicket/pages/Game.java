@@ -22,12 +22,10 @@ import com.btxtech.game.wicket.uiservices.facebook.FacebookController;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * User: beat
@@ -50,6 +48,8 @@ public class Game extends WebPage {
             cmsUiService.setPredefinedResponsePage(this, CmsUtil.CmsPredefinedPage.NO_HTML5_BROWSER);
             return;
         }
+
+        add(new WebMarkupContainer("metaGwtLocale").add(new SimpleAttributeModifier("content", "locale=" + getSession().getLocale().toString())));
 
         add(new FacebookController("facebook", FacebookController.Type.GAME));
 

@@ -1,5 +1,7 @@
 package com.btxtech.game.jsre.client.cockpit.item;
 
+import com.btxtech.game.jsre.client.ClientI18nConstants;
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.Group;
@@ -90,9 +92,9 @@ public class ToBeBuildPlacer {
 
     private void setupErrorText() {
         if (!isTerrainOk) {
-            errorText = "You can not place here";
+            errorText = ClientI18nHelper.CONSTANTS.notPlaceHere();
         } else if (!isItemsOk) {
-            errorText = "Not allowed to place on other items";
+            errorText =  ClientI18nHelper.CONSTANTS.notPlaceOver();
         } else {
             errorText = null;
         }

@@ -13,10 +13,10 @@
 
 package com.btxtech.game.jsre.client.cockpit.radar;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.GameEngineMode;
-import com.btxtech.game.jsre.client.cockpit.ToolTips;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
@@ -140,7 +140,7 @@ public class RadarPanel implements TerrainScrollListener {
     }
 
     private void setupControlPanel(AbsolutePanel absolutePanel) {
-        zoomIn = new ExtendedCustomButton("zoom-in", false, ToolTips.TOOL_TIP_ZOOM_IN, new ClickHandler() {
+        zoomIn = new ExtendedCustomButton("zoom-in", false, ClientI18nHelper.CONSTANTS.tooltipZoomIn(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 ScaleStep newScale = ScaleStep.zoomIn(getScale());
@@ -150,7 +150,7 @@ public class RadarPanel implements TerrainScrollListener {
             }
         });
         absolutePanel.add(zoomIn, ZOOM_IN_X, ZOOM_IN_Y);
-        zoomOut = new ExtendedCustomButton("zoom-out", false, ToolTips.TOOL_TIP_ZOOM_OUT, new ClickHandler() {
+        zoomOut = new ExtendedCustomButton("zoom-out", false, ClientI18nHelper.CONSTANTS.tooltipZoomOut(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 ScaleStep newScale = ScaleStep.zoomOut(getScale());
@@ -160,42 +160,42 @@ public class RadarPanel implements TerrainScrollListener {
             }
         });
         absolutePanel.add(zoomOut, ZOOM_OUT_X, ZOOM_OUT_Y);
-        left = new ExtendedCustomButton("arrowleft", false, ToolTips.TOOL_TIP_RADAR_PAGE_LEFT, new ClickHandler() {
+        left = new ExtendedCustomButton("arrowleft", false, ClientI18nHelper.CONSTANTS.tooltipRadarPageLeft(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 move(-1, 0);
             }
         });
         absolutePanel.add(left, PAGE_LEFT_X, PAGE_LEFT_Y);
-        right = new ExtendedCustomButton("arrowright", false, ToolTips.TOOL_TIP_RADAR_PAGE_RIGHT, new ClickHandler() {
+        right = new ExtendedCustomButton("arrowright", false, ClientI18nHelper.CONSTANTS.tooltipRadarPageRight(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 move(1, 0);
             }
         });
         absolutePanel.add(right, PAGE_RIGHT_X, PAGE_RIGHT_Y);
-        up = new ExtendedCustomButton("arrowup", false, ToolTips.TOOL_TIP_RADAR_PAGE_UP, new ClickHandler() {
+        up = new ExtendedCustomButton("arrowup", false, ClientI18nHelper.CONSTANTS.tooltipRadarPageUp(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 move(0, -1);
             }
         });
         absolutePanel.add(up, PAGE_UP_X, PAGE_UP_Y);
-        down = new ExtendedCustomButton("arrowdown", false, ToolTips.TOOL_TIP_RADAR_PAGE_DOWN, new ClickHandler() {
+        down = new ExtendedCustomButton("arrowdown", false, ClientI18nHelper.CONSTANTS.tooltipRadarPageDown(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 move(0, 1);
             }
         });
         absolutePanel.add(down, PAGE_DOWN_X, PAGE_DOWN_Y);
-        absolutePanel.add(new ExtendedCustomButton("zoom-home", false, ToolTips.TOOL_TIP_ZOOM_HOME, new ClickHandler() {
+        absolutePanel.add(new ExtendedCustomButton("zoom-home", false, ClientI18nHelper.CONSTANTS.tooltipZoomHome(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 TerrainView.getInstance().moveToHome();
                 moveToMainWindowMiddle();
             }
         }), ZOOM_HOME_X, ZOOM_HOME_Y);
-        showAttack = new ExtendedCustomButton("zoom-attack", true, ToolTips.TOOL_TIP_ZOOM_ATTACKS, new ClickHandler() {
+        showAttack = new ExtendedCustomButton("zoom-attack", true, ClientI18nHelper.CONSTANTS.tooltipZoomAttack(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 attackVisualisation.activate(showAttack.isDown());

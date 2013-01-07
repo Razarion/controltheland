@@ -25,7 +25,13 @@ public enum MultiTestTaskEnum implements StartupTaskEnum {
         @Override
         public AbstractStartupTask createTask() {
             return new SimpleStartupTestTask(this);
-        }},
+        }
+
+        @Override
+        public String getI18nText() {
+            throw new UnsupportedOperationException();
+        }
+    },
     DEFERRED("DEFERRED") {
         private DeferredStartupTestTask deferredStartupTestTask;
 
@@ -37,16 +43,32 @@ public enum MultiTestTaskEnum implements StartupTaskEnum {
         public DeferredStartupTestTask getTestDeferredStartupTask() {
             return deferredStartupTestTask;
         }
+
+        @Override
+        public String getI18nText() {
+            throw new UnsupportedOperationException();
+        }
     },
     SIMPLE_2("SIMPLE_2") {
         @Override
         public AbstractStartupTask createTask() {
             return new SimpleStartupTestTask(this);
-        }},
+        }
+
+        @Override
+        public String getI18nText() {
+            throw new UnsupportedOperationException();
+        }
+    },
     DEFERRED_BACKGROUND_FINISH("DEFERRED_BACKGROUND_FINISH") {
         @Override
         public AbstractStartupTask createTask() {
             return new DeferredBackgroundFinishStartupTestTask(this);
+        }
+
+        @Override
+        public String getI18nText() {
+            throw new UnsupportedOperationException();
         }
     },
     SIMPLE_3("SIMPLE_3") {
@@ -54,7 +76,11 @@ public enum MultiTestTaskEnum implements StartupTaskEnum {
         @Override
         public AbstractStartupTask createTask() {
             return new SimpleStartupTestTask(this);
+        }
 
+        @Override
+        public String getI18nText() {
+            throw new UnsupportedOperationException();
         }
     };
 

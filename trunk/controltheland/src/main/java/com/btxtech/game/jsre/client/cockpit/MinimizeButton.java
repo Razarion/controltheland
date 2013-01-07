@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.cockpit;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -43,10 +44,10 @@ public class MinimizeButton extends Image {
 
     private void setupIcon() {
         if (isMinimized) {
-            setTitle(ToolTips.TOOL_TIP_MINIMIZE);
+            setTitle(ClientI18nHelper.CONSTANTS.tooltipMaximize());
             setUrl(ImageHandler.getCockpitImageUrl(rightSide ? MINIMIZE_ICON : MAXIMIZE_ICON));
         } else {
-            setTitle(ToolTips.TOOL_TIP_MAXIMIZE);
+            setTitle(ClientI18nHelper.CONSTANTS.tooltipMinimize());
             setUrl(ImageHandler.getCockpitImageUrl(rightSide ? MAXIMIZE_ICON : MINIMIZE_ICON));
         }
     }

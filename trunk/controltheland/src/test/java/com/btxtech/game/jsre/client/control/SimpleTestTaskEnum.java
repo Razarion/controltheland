@@ -25,17 +25,20 @@ public enum SimpleTestTaskEnum implements StartupTaskEnum {
         @Override
         public AbstractStartupTask createTask() {
             return new SimpleStartupTestTask(this);
-        }},
+        }
+    },
     TEST_2("TEST_2") {
         @Override
         public AbstractStartupTask createTask() {
             return new SimpleStartupTestTask(this);
-        }},
+        }
+    },
     TEST_3("TEST_3") {
         @Override
         public AbstractStartupTask createTask() {
             return new SimpleStartupTestTask(this);
-        }};
+        }
+    };
 
 
     private StartupTaskEnumHtmlHelper startupTaskEnumHtmlHelper;
@@ -52,5 +55,10 @@ public enum SimpleTestTaskEnum implements StartupTaskEnum {
     @Override
     public StartupTaskEnumHtmlHelper getStartupTaskEnumHtmlHelper() {
         return startupTaskEnumHtmlHelper;
+    }
+
+    @Override
+    public String getI18nText() {
+        throw new UnsupportedOperationException();
     }
 }

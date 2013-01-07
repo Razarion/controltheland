@@ -1,5 +1,7 @@
 package com.btxtech.game.jsre.client.dialogs.highscore;
 
+import com.btxtech.game.jsre.client.ClientI18nConstants;
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.dialogs.Dialog;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -10,7 +12,7 @@ public class HighscoreDialog extends Dialog {
     private HighscoreTable highscoreTable;
 
     public HighscoreDialog() {
-        super("Highscore");
+        super(ClientI18nHelper.CONSTANTS.highScore());
     }
 
     @Override

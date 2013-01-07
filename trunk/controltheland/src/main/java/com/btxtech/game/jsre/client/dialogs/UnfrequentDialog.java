@@ -13,6 +13,8 @@
 
 package com.btxtech.game.jsre.client.dialogs;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
+
 import java.util.HashMap;
 
 /**
@@ -22,9 +24,9 @@ import java.util.HashMap;
  */
 public class UnfrequentDialog extends MessageDialog {
     public enum Type {
-        NO_MONEY("No money", "", 60 * 1000),
-        ITEM_LIMIT("Limitation", "You have to many items. Level up to get a bigger limit.", 60 * 1000),
-        SPACE_LIMIT("House space", "Space Limit Exceeded!. Build more houses to get more space.", 60 * 1000);
+        NO_MONEY(ClientI18nHelper.CONSTANTS.noMoney(), "", 60 * 1000),
+        ITEM_LIMIT(ClientI18nHelper.CONSTANTS.limitation(), ClientI18nHelper.CONSTANTS.tooManyItems(), 60 * 1000),
+        SPACE_LIMIT(ClientI18nHelper.CONSTANTS.houseSpace(), ClientI18nHelper.CONSTANTS.spaceLimitExceeded(), 60 * 1000);
         private String title;
         private String message;
         private int delay;

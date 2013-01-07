@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.dialogs;
 
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.common.FacebookUtils;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
@@ -45,11 +46,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * Time: 18:36:49
  */
 public class RegisterDialog extends Dialog {
-    private static final String REGISTRATION_DIALOG = "<b>Attention:</b> if you continue without registration you will not be able to return to your base after you leave the game.";
-    private static final String REGISTRATION_FILLED = "All fields must be filled in";
-    private static final String REGISTRATION_MATCH = "Password and confirm password do not match";
-    private static final String REGISTRATION_EMAIL_EXITS = "The email is already taken: ";
-    public static final String REGISTRATION_EXISTS = "The user already exists";
     private static Timer timer;
     private NickNameField nickNameField;
     private TextBox email;
@@ -57,7 +53,7 @@ public class RegisterDialog extends Dialog {
     private PasswordTextBox confirmPassword;
 
     public RegisterDialog() {
-        super("Register");
+        super(ClientI18nHelper.CONSTANTS.register());
         setShowCloseButton(false);
         getElement().getStyle().setWidth(350, Style.Unit.PX);
     }
@@ -65,9 +61,9 @@ public class RegisterDialog extends Dialog {
     @Override
     protected void setupPanel(VerticalPanel dialogVPanel) {
         dialogVPanel.setSpacing(10);
-        dialogVPanel.add(new HTML(REGISTRATION_DIALOG));
+        dialogVPanel.add(new HTML(ClientI18nHelper.CONSTANTS.registerText()));
         // Skip button
-        Button skip = new Button("Skip");
+        Button skip = new Button(ClientI18nHelper.CONSTANTS.skip());
         skip.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
@@ -100,26 +96,26 @@ public class RegisterDialog extends Dialog {
         });
         button.getElement().setId("fbconnectbutton");
         // In IE9 caption legend text color is black
-        CaptionPanel captionPanel = new CaptionPanel("<span style='color: #C7C4BB;'>Register via Facebook</span>", true);
+        CaptionPanel captionPanel = new CaptionPanel("<span style='color: #C7C4BB;'>" + ClientI18nHelper.CONSTANTS.registerFacebook() + "</span>", true);
         captionPanel.add(button);
         dialogVPanel.add(captionPanel);
     }
 
     private void normalRegister(VerticalPanel dialogVPanel) {
         FlexTable grid = new FlexTable();
-        grid.setWidget(0, 0, new Label("User name"));
+        grid.setWidget(0, 0, new Label(ClientI18nHelper.CONSTANTS.userName()));
         nickNameField = new NickNameField(null);
         grid.setWidget(0, 1, nickNameField);
-        grid.setWidget(1, 0, new Label("Email"));
+        grid.setWidget(1, 0, new Label(ClientI18nHelper.CONSTANTS.email()));
         email = new TextBox();
         grid.setWidget(1, 1, email);
-        grid.setWidget(2, 0, new Label("Password"));
+        grid.setWidget(2, 0, new Label(ClientI18nHelper.CONSTANTS.password()));
         password = new PasswordTextBox();
         grid.setWidget(2, 1, password);
-        grid.setWidget(3, 0, new Label("Confirm password"));
+        grid.setWidget(3, 0, new Label(ClientI18nHelper.CONSTANTS.confirmPassword()));
         confirmPassword = new PasswordTextBox();
         grid.setWidget(3, 1, confirmPassword);
-        Button register = new Button("Register");
+        Button register = new Button(ClientI18nHelper.CONSTANTS.register());
         grid.setWidget(4, 0, register);
         register.addClickHandler(new ClickHandler() {
             @Override
@@ -131,19 +127,19 @@ public class RegisterDialog extends Dialog {
         grid.getFlexCellFormatter().setHorizontalAlignment(4, 0, HasHorizontalAlignment.ALIGN_CENTER);
 
         // In IE9 caption legend text color is black
-        CaptionPanel captionPanel = new CaptionPanel("<span style='color: #C7C4BB;'>Direct registration</span>", true);
+        CaptionPanel captionPanel = new CaptionPanel("<span style='color: #C7C4BB;'>" + ClientI18nHelper.CONSTANTS.registerDirect() + "</span>", true);
         captionPanel.add(grid);
         dialogVPanel.add(captionPanel);
     }
 
     private void register() {
         if (nickNameField.getText().isEmpty() || email.getText().isEmpty() || password.getText().isEmpty() || confirmPassword.getText().isEmpty()) {
-            DialogManager.showDialog(new MessageDialog("Registration failed", REGISTRATION_FILLED), DialogManager.Type.STACK_ABLE);
+            DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.registrationFailed(), ClientI18nHelper.CONSTANTS.registrationFilled()), DialogManager.Type.STACK_ABLE);
             return;
         }
 
         if (!password.getText().equals(confirmPassword.getText())) {
-            DialogManager.showDialog(new MessageDialog("Registration failed", REGISTRATION_MATCH), DialogManager.Type.STACK_ABLE);
+            DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.registrationFailed(), ClientI18nHelper.CONSTANTS.registrationMatch()), DialogManager.Type.STACK_ABLE);
             return;
         }
 
@@ -151,11 +147,11 @@ public class RegisterDialog extends Dialog {
             @Override
             public void onFailure(Throwable throwable) {
                 if (throwable instanceof UserAlreadyExistsException) {
-                    DialogManager.showDialog(new MessageDialog("Registration failed", REGISTRATION_EXISTS), DialogManager.Type.STACK_ABLE);
+                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.registrationFailed(), ClientI18nHelper.CONSTANTS.registrationUser()), DialogManager.Type.STACK_ABLE);
                 } else if (throwable instanceof PasswordNotMatchException) {
-                    DialogManager.showDialog(new MessageDialog("Registration failed", REGISTRATION_MATCH), DialogManager.Type.STACK_ABLE);
+                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.registrationFailed(), ClientI18nHelper.CONSTANTS.registrationMatch()), DialogManager.Type.STACK_ABLE);
                 } else if (throwable instanceof EmailAlreadyExitsException) {
-                    DialogManager.showDialog(new MessageDialog("Registration failed", REGISTRATION_EMAIL_EXITS + ((EmailAlreadyExitsException)throwable).getEmail()), DialogManager.Type.STACK_ABLE);
+                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.registrationFailed(), ClientI18nHelper.CONSTANTS.registrationEmail(((EmailAlreadyExitsException) throwable).getEmail())), DialogManager.Type.STACK_ABLE);
                 } else {
                     ClientExceptionHandler.handleException(throwable);
                 }
@@ -165,7 +161,7 @@ public class RegisterDialog extends Dialog {
             public void onSuccess(Void aVoid) {
                 Connection.getInstance().setUserName(nickNameField.getText());
                 hide(true);
-                DialogManager.showDialog(new MessageDialog("Thank you for registering", "A confirmation email has been sent to " + email.getText() + ". Please click on the activation link to activate your account."), DialogManager.Type.PROMPTLY);
+                DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.registerThanks(), ClientI18nHelper.CONSTANTS.registerConfirmationEmailSent(email.getText())), DialogManager.Type.PROMPTLY);
             }
         });
     }

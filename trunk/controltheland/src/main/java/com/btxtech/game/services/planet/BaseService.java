@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.planet;
 
-import com.btxtech.game.jsre.client.AlreadyUsedException;
 import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
@@ -49,7 +48,7 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     Base getBaseCms();
 
-    Base createNewBase(UserState userState, DbBaseItemType dbBaseItemType, int startMoney, Region region, int startItemFreeRange) throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException;
+    Base createNewBase(UserState userState, DbBaseItemType dbBaseItemType, int startMoney, Region region, int startItemFreeRange) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException;
 
     void setBot(SimpleBase simpleBase, boolean bot);
 

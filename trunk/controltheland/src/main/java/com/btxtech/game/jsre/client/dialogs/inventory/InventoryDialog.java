@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.dialogs.inventory;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.dialogs.Dialog;
@@ -21,7 +22,7 @@ public class InventoryDialog extends Dialog {
     private boolean isCenterCalledOnce;
 
     public InventoryDialog() {
-        super("Inventory");
+        super(ClientI18nHelper.CONSTANTS.inventory());
     }
 
     @Override

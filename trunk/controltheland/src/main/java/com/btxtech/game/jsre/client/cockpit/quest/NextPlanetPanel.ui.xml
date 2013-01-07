@@ -11,13 +11,15 @@
 	
 	<ui:with field='res'
 		type='com.btxtech.game.jsre.client.cockpit.quest.images.QuestVisualisationImageBundle' />
-	
-	<g:VerticalPanel>
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+
+    <g:VerticalPanel>
 		<g:Cell horizontalAlignment="ALIGN_CENTER">
-			<g:Label text="Proceed to the next planet" styleName="{style.description}"/>
+			<g:Label text="{msg.nextPlanet}" styleName="{style.description}"/>
 		</g:Cell>
 		<g:Cell horizontalAlignment="ALIGN_CENTER">
-			<g:PushButton ui:field="startButton" title="Move to the next planet!">
+			<g:PushButton ui:field="startButton" title="{msg.tooltipNextPlanet}">
 			<g:upFace image='{res.startmissionUp}' />
 			<g:downFace image='{res.startmissionUp}' />
 		</g:PushButton>

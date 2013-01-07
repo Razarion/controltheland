@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.control;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.GuiStartupTask;
 import com.btxtech.game.jsre.client.control.task.ImageSpriteMapPreloaderStartupTask;
@@ -31,32 +32,63 @@ public enum ColdSimulatedGameStartupTaskEnum implements StartupTaskEnum {
         @Override
         public AbstractStartupTask createTask() {
             return new LoadStartJsAbstractStartupTask(this);
-        }},
+        }
+
+        @Override
+        public String getI18nText() {
+            return ClientI18nHelper.CONSTANTS.startupLoadJavaScript();
+        }
+    },
     INIT_GUI("Init GUI") {
         @Override
         public AbstractStartupTask createTask() {
             return new GuiStartupTask(this);
-        }},
+        }
+        @Override
+        public String getI18nText() {
+            return ClientI18nHelper.CONSTANTS.startupInitGui();
+        }
+    },
     DOWNLOAD_GAME_INFO("Load simulation game information") {
         @Override
         public AbstractStartupTask createTask() {
             return new LoadSimulationInfoStartupTask(this);
-        }},
+        }
+        @Override
+        public String getI18nText() {
+            return ClientI18nHelper.CONSTANTS.startupLoadSimulationGameInfo();
+        }
+    },
     INIT_GAME("Init simulated Game") {
         @Override
         public AbstractStartupTask createTask() {
             return new SimulationStartupTask(this);
-        }},
+        }
+        @Override
+        public String getI18nText() {
+            return ClientI18nHelper.CONSTANTS.startupInitSimulatedGame();
+        }
+    },
     PRELOAD_IMAGE_SPRITE_MAPS("Preload image sprite maps") {
         @Override
         public AbstractStartupTask createTask() {
             return new ImageSpriteMapPreloaderStartupTask(this);
-        }},
+        }
+        @Override
+        public String getI18nText() {
+            return ClientI18nHelper.CONSTANTS.startupPreloadImageSpriteMaps();
+        }
+    },
     RUN_SIMULATED_GAME("Run simulated Game") {
         @Override
         public AbstractStartupTask createTask() {
             return new RunSimulationStartupTask(this);
-        }};
+        }
+        @Override
+        public String getI18nText() {
+            return ClientI18nHelper.CONSTANTS.startupRunSimulatedGame();
+        }
+    };
 
     private StartupTaskEnumHtmlHelper startupTaskEnumHtmlHelper;
 

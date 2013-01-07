@@ -1,6 +1,5 @@
 package com.btxtech.game.services.mgmt;
 
-import com.btxtech.game.jsre.client.AlreadyUsedException;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.ClientDateUtil;
@@ -749,20 +748,20 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
     // @Test
 
-    public void testBackupSummary() throws AlreadyUsedException {
+    public void testBackupSummary() {
         mgmtService.getBackupSummary();
     }
 
     // @Test
 
-    public void testRestore() throws AlreadyUsedException, NoSuchItemTypeException {
+    public void testRestore() throws NoSuchItemTypeException {
         List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(0).getDate());
     }
 
     // @Test
 
-    public void testBigBackup() throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
+    public void testBigBackup() throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
         for (int i = 0; i < ITEM_COUNT; i++) {
             ItemType itemType = getRandomItemType();
@@ -772,7 +771,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         mgmtService.backup();
     }
 
-    private SimpleBase getBase(ItemType itemType) throws AlreadyUsedException, NoSuchItemTypeException {
+    private SimpleBase getBase(ItemType itemType) throws NoSuchItemTypeException {
         if (itemType instanceof ResourceType) {
             return null;
         } else {

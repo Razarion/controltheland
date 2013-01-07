@@ -20,7 +20,7 @@
         }
     </ui:style>
     <g:VerticalPanel ui:field="panel">
-        <g:Label text="???" ui:field="label" styleName="{style.statustext}"/>
+        <g:Label ui:field="label" styleName="{style.statustext}"/>
         <g:Image ui:field="image" styleName="{style.imagestyle}" width="20px" height="20px"/>
     </g:VerticalPanel>
 </ui:UiBinder>

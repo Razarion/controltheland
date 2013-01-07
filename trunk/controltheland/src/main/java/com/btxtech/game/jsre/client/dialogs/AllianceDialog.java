@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.dialogs;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.google.gwt.dom.client.Style;
@@ -34,7 +35,7 @@ public class AllianceDialog extends Dialog {
     private FlexTable allianceTable;
 
     public AllianceDialog() {
-        super("Alliance");
+        super(ClientI18nHelper.CONSTANTS.alliances());
     }
 
     @Override
@@ -42,9 +43,9 @@ public class AllianceDialog extends Dialog {
         VerticalPanel verticalPanel = new VerticalPanel();
         HTML html;
         if (Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE) {
-            html = new HTML("All alliances you have formed with other players. New alliances can be formed in the speech bubble of enemy units/structures.");
+            html = new HTML(ClientI18nHelper.CONSTANTS.alliancesAll());
         } else {
-            html = new HTML("All alliances you have formed with other players. <b>Not available on this planet.</b>");
+            html = new HTML(ClientI18nHelper.CONSTANTS.alliancesAllNotAvailable());
         }
         html.getElement().getStyle().setWidth(17, Style.Unit.EM);
         verticalPanel.add(html);
@@ -60,12 +61,12 @@ public class AllianceDialog extends Dialog {
             return;
         }
         if (alliances == null || alliances.isEmpty()) {
-            allianceTable.setText(1, 1, "You have no alliances");
+            allianceTable.setText(1, 1, ClientI18nHelper.CONSTANTS.alliancesNo());
         } else {
             for (final String alliance : alliances) {
                 int row = allianceTable.getRowCount() + 1;
                 allianceTable.setText(row, 1, alliance);
-                Button breakButton = new Button("Break", new ClickHandler() {
+                Button breakButton = new Button(ClientI18nHelper.CONSTANTS.breakAlliance(), new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent event) {
                         Connection.getInstance().breakAlliance(alliance);

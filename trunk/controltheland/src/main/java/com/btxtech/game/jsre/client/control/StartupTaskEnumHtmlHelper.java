@@ -61,4 +61,7 @@ public class StartupTaskEnumHtmlHelper implements Serializable {
     }
 
 
+    public String getI18nText() {
+        return startupTaskEnum.getI18nText();
+    }
 }

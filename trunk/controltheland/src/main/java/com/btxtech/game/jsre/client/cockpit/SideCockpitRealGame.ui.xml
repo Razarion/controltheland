@@ -29,27 +29,29 @@
 	</ui:style>
 	<ui:with field='res'
 		type='com.btxtech.game.jsre.client.cockpit.images.SideCockpitImageBundle' />
-	<g:VerticalPanel>
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+    <g:VerticalPanel>
 		<g:HorizontalPanel>
 			<g:Cell verticalAlignment="ALIGN_MIDDLE">
 				<g:Image resource='{res.planet}' />
 			</g:Cell>
 			<g:VerticalPanel>
-				<g:InlineLabel text="Sirius" ui:field="planetNameLabel" styleName="{style.planetText}" />
-				<g:InlineLabel text="Multiplayer Planet" styleName="{style.multiplayerText}" />
+				<g:InlineLabel ui:field="planetNameLabel" styleName="{style.planetText}" />
+				<g:InlineLabel text="{msg.multiplayer}" styleName="{style.multiplayerText}" />
 			</g:VerticalPanel>
 		</g:HorizontalPanel>
-		<g:HorizontalPanel>
+		<g:HorizontalPanel title="{msg.tooltipLevel}">
 			<g:Cell verticalAlignment="ALIGN_BOTTOM">
-				<g:InlineLabel text="Level:" styleName="{style.title}" />
+				<g:InlineLabel text="{msg.level}:" styleName="{style.title}" />
 			</g:Cell>
 			<g:Cell verticalAlignment="ALIGN_BOTTOM">
 				<g:InlineLabel ui:field="levelLabel" styleName="{style.label}"/>
 			</g:Cell>
 		</g:HorizontalPanel>
-		<g:HorizontalPanel title="Abort this mission and back to the main planet">
+		<g:HorizontalPanel title="{msg.tooltipXp}">
 			<g:Cell verticalAlignment="ALIGN_BOTTOM">
-				<g:InlineLabel text="XP:" styleName="{style.title}" />
+				<g:InlineLabel text="{msg.xp}:" styleName="{style.title}" />
 			</g:Cell>
 			<g:Cell verticalAlignment="ALIGN_BOTTOM">
 				<g:InlineLabel ui:field="xpLabel" styleName="{style.label}"/>

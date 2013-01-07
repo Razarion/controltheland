@@ -177,7 +177,7 @@ public class StartupScreen implements StartupProgressListener {
         progressBar.getStyle().setWidth(progress * MAX_PROGRESS, Style.Unit.EM);
 
         Element progressText = DOM.getElementById(PROGRESS_TEXT_ID);
-        progressText.setInnerText(taskEnum.getStartupTaskEnumHtmlHelper().getNiceText());
+        progressText.setInnerText(taskEnum.getStartupTaskEnumHtmlHelper().getI18nText());
     }
 
     @Override

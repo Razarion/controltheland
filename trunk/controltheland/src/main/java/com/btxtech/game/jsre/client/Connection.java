@@ -22,11 +22,7 @@ import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
-import com.btxtech.game.jsre.client.control.GameStartupSeq;
-import com.btxtech.game.jsre.client.control.StartupProgressListener;
-import com.btxtech.game.jsre.client.control.StartupScreen;
-import com.btxtech.game.jsre.client.control.StartupSeq;
-import com.btxtech.game.jsre.client.control.StartupTaskEnum;
+import com.btxtech.game.jsre.client.control.*;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.DeferredStartup;
 import com.btxtech.game.jsre.client.dialogs.AllianceDialog;
@@ -42,52 +38,25 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
-import com.btxtech.game.jsre.common.CmsUtil;
-import com.btxtech.game.jsre.common.CommonJava;
-import com.btxtech.game.jsre.common.FacebookUtils;
-import com.btxtech.game.jsre.common.Html5NotSupportedException;
-import com.btxtech.game.jsre.common.NoConnectionException;
-import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.StartupTaskInfo;
+import com.btxtech.game.jsre.common.*;
 import com.btxtech.game.jsre.common.gameengine.services.connection.CommonConnectionService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
-import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
-import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
-import com.btxtech.game.jsre.common.packets.BoxPickedPacket;
-import com.btxtech.game.jsre.common.packets.ChatMessage;
-import com.btxtech.game.jsre.common.packets.EnergyPacket;
-import com.btxtech.game.jsre.common.packets.HouseSpacePacket;
-import com.btxtech.game.jsre.common.packets.LevelPacket;
-import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
-import com.btxtech.game.jsre.common.packets.Message;
-import com.btxtech.game.jsre.common.packets.Packet;
-import com.btxtech.game.jsre.common.packets.SyncItemInfo;
-import com.btxtech.game.jsre.common.packets.XpPacket;
+import com.btxtech.game.jsre.common.packets.*;
 import com.btxtech.game.jsre.common.perfmon.Perfmon;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
-import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
-import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
-import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
-import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
-import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
+import com.btxtech.game.jsre.common.utg.tracking.*;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -100,7 +69,6 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
     public static final int MAX_DISCONNECTION_COUNT = 20;
     public static final int MIN_DELAY_BETWEEN_POLL = 200;
     public static final int STATISTIC_DELAY = 10000;
-    private static final String CONNECTION_DIALOG = "Lost connection to game server. Try to reload the page. You may have to login again.";
     public static final Connection INSTANCE = new Connection();
     private String userName;
     private GameInfo gameInfo;
@@ -276,7 +244,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                     syncItemInfos.add((SyncItemInfo) packet);
                 } else if (packet instanceof Message) {
                     Message message = (Message) packet;
-                    DialogManager.showDialog(new MessageDialog("Message", message.getMessage(), message.isShowRegisterDialog()), DialogManager.Type.QUEUE_ABLE);
+                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.message(), message.getMessage(), message.isShowRegisterDialog()), DialogManager.Type.QUEUE_ABLE);
                 } else if (packet instanceof AccountBalancePacket) {
                     AccountBalancePacket balancePacket = (AccountBalancePacket) packet;
                     ClientBase.getInstance().setAccountBalance(balancePacket.getAccountBalance());
@@ -438,7 +406,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
             if (movableServiceAsync != null) {
                 movableServiceAsync = null;
                 GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to HTTP status code 0: " + message);
-                MessageDialog messageDialog = new MessageDialog("Connection failed", CONNECTION_DIALOG);
+                MessageDialog messageDialog = new MessageDialog(ClientI18nHelper.CONSTANTS.connectionFailed(), ClientI18nHelper.CONSTANTS.connectionLost());
                 messageDialog.setShowCloseButton(false);
                 messageDialog.setGlassEnabled(true);
                 DialogManager.showDialog(messageDialog, DialogManager.Type.PROMPTLY);
@@ -449,13 +417,13 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         if (throwable instanceof NotYourBaseException) {
             movableServiceAsync = null;
             GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to NotYourBaseException: " + message);
-            DialogManager.showDialog(new MessageDialog("Wrong base", "Not your Base: Most likely you start another base in another browser window."), DialogManager.Type.PROMPTLY);
+            DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.wrongBase(), ClientI18nHelper.CONSTANTS.notYourBase()), DialogManager.Type.PROMPTLY);
             return true;
         } else if (throwable instanceof NoConnectionException) {
             switch (((NoConnectionException) throwable).getType()) {
                 case NON_EXISTENT: {
                     log.warning("Client disconnected due to non existing connection");
-                    MessageDialog messageDialog = new MessageDialog("Connection failed", "The server has my be restarted or you have been disconnected for more than 30 minutes. You most likely have to login again");
+                    MessageDialog messageDialog = new MessageDialog(ClientI18nHelper.CONSTANTS.connectionFailed(), ClientI18nHelper.CONSTANTS.connectionNone());
                     messageDialog.setShowCloseButton(false);
                     messageDialog.setGlassEnabled(true);
                     DialogManager.showDialog(messageDialog, DialogManager.Type.PROMPTLY);
@@ -469,7 +437,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                 }
                 case ANOTHER_CONNECTION_EXISTS: {
                     log.warning("Client disconnected due to another connection");
-                    MessageDialog messageDialog = new MessageDialog("Connection failed", "Connection to server lost. Most likely you start another browser or tab window.");
+                    MessageDialog messageDialog = new MessageDialog(ClientI18nHelper.CONSTANTS.connectionFailed(), ClientI18nHelper.CONSTANTS.connectionAnotherExits());
                     messageDialog.setGlassEnabled(true);
                     messageDialog.setShowCloseButton(false);
                     DialogManager.showDialog(messageDialog, DialogManager.Type.PROMPTLY);

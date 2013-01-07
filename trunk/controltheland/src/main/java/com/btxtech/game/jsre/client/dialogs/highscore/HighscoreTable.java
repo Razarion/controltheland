@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.dialogs.highscore;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.google.gwt.cell.client.NumberCell;
 import com.google.gwt.cell.client.TextCell;
@@ -82,7 +83,7 @@ public class HighscoreTable extends Composite {
             }
         };
         rankColumn.setSortable(true);
-        dataGrid.addColumn(rankColumn, "Rank");
+        dataGrid.addColumn(rankColumn, ClientI18nHelper.CONSTANTS.rank());
         // score column
         Column<CurrentStatisticEntryInfo, Number> scoreColumn = new Column<CurrentStatisticEntryInfo, Number>(new NumberCell()) {
             @Override
@@ -101,7 +102,7 @@ public class HighscoreTable extends Composite {
             }
         };
         dataGrid.setColumnWidth(userNameColumn, "15em");
-        dataGrid.addColumn(userNameColumn, "Player");
+        dataGrid.addColumn(userNameColumn, ClientI18nHelper.CONSTANTS.player());
         // planet column
         Column<CurrentStatisticEntryInfo, String> planetColumn = new Column<CurrentStatisticEntryInfo, String>(new TextCell()) {
 
@@ -110,7 +111,7 @@ public class HighscoreTable extends Composite {
                 return statInfo.getPlanet();
             }
         };
-        dataGrid.addColumn(planetColumn, "Planet");
+        dataGrid.addColumn(planetColumn, ClientI18nHelper.CONSTANTS.planet());
         // itemCount column
         Column<CurrentStatisticEntryInfo, Number> itemColumn = new Column<CurrentStatisticEntryInfo, Number>(new NumberCell()) {
 
@@ -120,7 +121,7 @@ public class HighscoreTable extends Composite {
             }
         };
         itemColumn.setSortable(true);
-        dataGrid.addColumn(itemColumn, "Items");
+        dataGrid.addColumn(itemColumn, ClientI18nHelper.CONSTANTS.items());
         // money column
         Column<CurrentStatisticEntryInfo, Number> moneyColumn = new Column<CurrentStatisticEntryInfo, Number>(new NumberCell()) {
 
@@ -130,7 +131,7 @@ public class HighscoreTable extends Composite {
             }
         };
         moneyColumn.setSortable(true);
-        dataGrid.addColumn(moneyColumn, "Money");
+        dataGrid.addColumn(moneyColumn, ClientI18nHelper.CONSTANTS.money());
         // killed column
         Column<CurrentStatisticEntryInfo, Number> killedColumn = new Column<CurrentStatisticEntryInfo, Number>(new NumberCell()) {
 
@@ -140,7 +141,7 @@ public class HighscoreTable extends Composite {
             }
         };
         killedColumn.setSortable(true);
-        dataGrid.addColumn(killedColumn, "Killed");
+        dataGrid.addColumn(killedColumn, ClientI18nHelper.CONSTANTS.killed());
         // killed pve column
         Column<CurrentStatisticEntryInfo, Number> killedPveColumn = new Column<CurrentStatisticEntryInfo, Number>(new NumberCell()) {
 
@@ -150,7 +151,7 @@ public class HighscoreTable extends Composite {
             }
         };
         killedPveColumn.setSortable(true);
-        dataGrid.addColumn(killedPveColumn, "Killed PvE");
+        dataGrid.addColumn(killedPveColumn, ClientI18nHelper.CONSTANTS.killedPve());
         // killed pvp column
         Column<CurrentStatisticEntryInfo, Number> killedPvpColumn = new Column<CurrentStatisticEntryInfo, Number>(new NumberCell()) {
 
@@ -160,7 +161,7 @@ public class HighscoreTable extends Composite {
             }
         };
         killedPvpColumn.setSortable(true);
-        dataGrid.addColumn(killedPvpColumn, "Killed PvP");
+        dataGrid.addColumn(killedPvpColumn, ClientI18nHelper.CONSTANTS.killedPvp());
         // bases killed column
         Column<CurrentStatisticEntryInfo, Number> basesKilled = new Column<CurrentStatisticEntryInfo, Number>(new NumberCell()) {
 
@@ -170,7 +171,7 @@ public class HighscoreTable extends Composite {
             }
         };
         basesKilled.setSortable(true);
-        dataGrid.addColumn(basesKilled, "Bases killed");
+        dataGrid.addColumn(basesKilled, ClientI18nHelper.CONSTANTS.basesKilled());
         // bases lost column
         Column<CurrentStatisticEntryInfo, Number> basesLost = new Column<CurrentStatisticEntryInfo, Number>(new NumberCell()) {
 
@@ -180,7 +181,7 @@ public class HighscoreTable extends Composite {
             }
         };
         basesLost.setSortable(true);
-        dataGrid.addColumn(basesLost, "Bases lost");
+        dataGrid.addColumn(basesLost, ClientI18nHelper.CONSTANTS.basesLost());
         // created column
         Column<CurrentStatisticEntryInfo, Number> created = new Column<CurrentStatisticEntryInfo, Number>(new NumberCell()) {
 
@@ -190,7 +191,7 @@ public class HighscoreTable extends Composite {
             }
         };
         created.setSortable(true);
-        dataGrid.addColumn(created, "Created");
+        dataGrid.addColumn(created, ClientI18nHelper.CONSTANTS.created());
 
         // Rank sorting
         ColumnSortEvent.ListHandler<CurrentStatisticEntryInfo> rankSortHandler = new ColumnSortEvent.ListHandler<CurrentStatisticEntryInfo>(dataProvider.getList());

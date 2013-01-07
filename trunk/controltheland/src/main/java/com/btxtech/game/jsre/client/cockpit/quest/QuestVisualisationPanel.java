@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.cockpit.quest;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.cockpit.quest.images.QuestVisualisationImageBundle;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
@@ -51,22 +52,22 @@ public class QuestVisualisationPanel extends Composite {
 
         switch (questProgressInfo.getConditionTrigger()) {
             case BASE_KILLED:
-                displayAmount(questProgressInfo.getAmount(), "bases destroyed");
+                displayAmount(questProgressInfo.getAmount(), ClientI18nHelper.CONSTANTS.questBasesKilled());
                 break;
             case MONEY_INCREASED:
-                displayAmount(questProgressInfo.getAmount(), "oli collected");
+                displayAmount(questProgressInfo.getAmount(), ClientI18nHelper.CONSTANTS.questOilCollected());
                 break;
             case SYNC_ITEM_BUILT:
-                displayItemAmount(questProgressInfo.getItemIdAmounts(), "built");
-                displayAmount(questProgressInfo.getAmount(), "units/structures built");
+                displayItemAmount(questProgressInfo.getItemIdAmounts(), ClientI18nHelper.CONSTANTS.questBuilt());
+                displayAmount(questProgressInfo.getAmount(), ClientI18nHelper.CONSTANTS.questUnitStructuresBuilt());
                 break;
             case SYNC_ITEM_KILLED:
-                displayItemAmount(questProgressInfo.getItemIdAmounts(), "destroyed");
-                displayAmount(questProgressInfo.getAmount(), "units/structures destroyed");
+                displayItemAmount(questProgressInfo.getItemIdAmounts(), ClientI18nHelper.CONSTANTS.questDestroyed());
+                displayAmount(questProgressInfo.getAmount(), ClientI18nHelper.CONSTANTS.questUnitStructuresDestroyed());
                 break;
             case SYNC_ITEM_POSITION:
-                displayItemAmount(questProgressInfo.getItemIdAmounts(), "available");
-                displayAmount(questProgressInfo.getAmount(), "minutes left");
+                displayItemAmount(questProgressInfo.getItemIdAmounts(), null);
+                displayAmount(questProgressInfo.getAmount(), ClientI18nHelper.CONSTANTS.questMinutesPast());
                 break;
             default:
                 log.severe("QuestVisualisationPanel.update() unknown ConditionTrigger: " + questProgressInfo.getConditionTrigger());
@@ -119,6 +120,8 @@ public class QuestVisualisationPanel extends Composite {
             progressTable.setWidget(row, 1, new Image(QuestVisualisationImageBundle.INSTANCE.exclamation()));
         }
         progressTable.setText(row, 2, amount.getAmount() + "/" + amount.getTotalAmount());
-        progressTable.setText(row, 4, actionWord);
+        if (actionWord != null) {
+            progressTable.setText(row, 4, actionWord);
+        }
     }
 }

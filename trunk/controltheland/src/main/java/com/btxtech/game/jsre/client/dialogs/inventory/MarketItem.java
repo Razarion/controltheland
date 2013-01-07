@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.dialogs.inventory;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.google.gwt.core.client.GWT;
@@ -36,7 +37,7 @@ public class MarketItem extends Composite implements HasText {
         this.inventoryItemInfo = inventoryItemInfo;
         this.inventoryDialog = inventoryDialog;
         initWidget(uiBinder.createAndBindUi(this));
-        coastLabel.setText("Cost: " + inventoryItemInfo.getRazarionCoast());
+        coastLabel.setText(ClientI18nHelper.CONSTANTS.cost(inventoryItemInfo.getRazarionCoast()));
         itemNameLabel.setText(inventoryItemInfo.getInventoryItemName());
         inventoryItemId = inventoryItemInfo.getInventoryItemId();
         image.setUrl(ImageHandler.getInventoryItemUrl(inventoryItemId));

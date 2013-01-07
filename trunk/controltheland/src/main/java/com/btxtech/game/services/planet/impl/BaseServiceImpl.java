@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.planet.impl;
 
-import com.btxtech.game.jsre.client.AlreadyUsedException;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
@@ -93,7 +92,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public Base createNewBase(UserState userState, DbBaseItemType dbBaseItemType, int startMoney, Region region, int startItemFreeRange) throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
+    public Base createNewBase(UserState userState, DbBaseItemType dbBaseItemType, int startMoney, Region region, int startItemFreeRange) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
         Base base;
         synchronized (bases) {
             lastBaseId++;

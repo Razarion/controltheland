@@ -22,6 +22,9 @@
             font-family: Arial, Helvetica, sans-serif;
         }
     </ui:style>
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+
     <g:SimplePanel styleName="{style.plate}">
         <g:VerticalPanel>
             <g:Label ui:field="titleLabel" styleName="{style.title}"/>
@@ -31,11 +34,11 @@
             <g:Cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
                 <g:HorizontalPanel>
                     <g:Cell verticalAlignment="ALIGN_MIDDLE" horizontalAlignment="ALIGN_CENTER">
-                        <g:Button text="Quest Dialog" ui:field="questDialogButton"
-                                  title="Open the quest dialog"/>
+                        <g:Button text="{msg.questDialog}" ui:field="questDialogButton"
+                                  title="{msg.tooltipQuestDialog}"/>
                     </g:Cell>
-                    <g:CheckBox text="Visualise" ui:field="visualiseCheckBox"
-                                title="Switch in game quest visualisation on and off" styleName="{style.text}"/>
+                    <g:CheckBox text="{msg.questVisualisation}" ui:field="visualiseCheckBox"
+                                title="{msg.tooltipQuestVisualisation}" styleName="{style.text}"/>
                 </g:HorizontalPanel>
             </g:Cell>
         </g:VerticalPanel>

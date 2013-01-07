@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.dialogs.inventory;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
@@ -70,15 +71,15 @@ public class MainTabbedPanel extends Composite {
             log.severe("MainTabbedPanel.setupFilter() gameInfo is not instance of RealGameInfo");
             return;
         }
-        filterListBox.addItem("Current Planet & Level", FILTER_CURRENT);
+        filterListBox.addItem(ClientI18nHelper.CONSTANTS.filterCurrent(), FILTER_CURRENT);
         for (PlanetLiteInfo planetLiteInfo : ((RealGameInfo) gameInfo).getAllPlanets()) {
             filterListBox.addItem(planetLiteInfo.getName(), Integer.toString(planetLiteInfo.getPlanetId()));
         }
-        filterListBox.addItem("All", FILTER_ALL);
+        filterListBox.addItem(ClientI18nHelper.CONSTANTS.filterAll(), FILTER_ALL);
     }
 
     public void setRazarionAmount(int razarion) {
-        razarionLabel.setText("Razarion: " + razarion);
+        razarionLabel.setText(ClientI18nHelper.CONSTANTS.razarionAmount(razarion));
 
     }
 
