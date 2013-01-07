@@ -117,7 +117,7 @@ public class RegisterServiceImpl implements RegisterService {
         }
         User user = users.get(0);
         if (user.isVerified()) {
-            throw new EmailIsAlreadyVerifiedException();
+            throw new EmailIsAlreadyVerifiedException(user.getVerificationId());
         }
         user.setVerified();
         sessionFactory.getCurrentSession().saveOrUpdate(user);

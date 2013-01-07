@@ -7,4 +7,7 @@ package com.btxtech.game.services.user;
  * Time: 15:13
  */
 public class EmailIsAlreadyVerifiedException extends Exception {
+    public EmailIsAlreadyVerifiedException(String verificationId) {
+        super("Email already verified: " + verificationId);
+    }
 }
