@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.client.cockpit.quest;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
@@ -89,11 +90,11 @@ public class QuestVisualtsationModel {
 
     public void startMission() {
         if (currentQuest == null || currentQuest.getType() != QuestInfo.Type.MISSION) {
-            log.warning("ClientLevelHandler.startMission() currentQuest == null");
+            log.warning("ClientLevelHandler.pressButtonWhenReady() currentQuest == null");
             return;
         }
         if (currentQuest.getType() != QuestInfo.Type.MISSION) {
-            log.warning("ClientLevelHandler.startMission() currentQuest.getType() != QuestInfo.Type.MISSION");
+            log.warning("ClientLevelHandler.pressButtonWhenReady() currentQuest.getType() != QuestInfo.Type.MISSION");
             return;
         }
         if (Connection.getInstance().getGameEngineMode() != GameEngineMode.SLAVE) {
@@ -101,7 +102,7 @@ public class QuestVisualtsationModel {
             return;
         }
 
-        YesNoDialog yesNoDialog = new YesNoDialog("Start Mission", "Compete in a single player mission on a different planet. You can return to this base at any time.", "Start", new ClickHandler() {
+        YesNoDialog yesNoDialog = new YesNoDialog(ClientI18nHelper.CONSTANTS.startMission(), ClientI18nHelper.CONSTANTS.competeMission(), ClientI18nHelper.CONSTANTS.start(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 ClientLevelHandler.getInstance().setNextTaskId(currentQuest.getId());
@@ -126,12 +127,12 @@ public class QuestVisualtsationModel {
 
     // Move to a user guidance class
     public void moveToNextPlanet() {
-        YesNoDialog yesNoDialog = new YesNoDialog("Next Planet", "Leave your base and move to the next planet?", "GO!", new ClickHandler() {
+        YesNoDialog yesNoDialog = new YesNoDialog(ClientI18nHelper.CONSTANTS.nextPlanet(), ClientI18nHelper.CONSTANTS.leaveBaseNextPlanet(), ClientI18nHelper.CONSTANTS.go(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 Connection.getInstance().surrenderBase();
             }
-        }, "Cancel", null);
+        }, ClientI18nHelper.CONSTANTS.cancel(), null);
         DialogManager.showDialog(yesNoDialog, DialogManager.Type.QUEUE_ABLE);
     }
 

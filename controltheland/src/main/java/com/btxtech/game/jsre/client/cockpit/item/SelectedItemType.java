@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.cockpit.item;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -30,7 +31,7 @@ public class SelectedItemType extends Composite {
         image = ImageHandler.getItemTypeImage(baseItemType, 40, 40);
         initWidget(uiBinder.createAndBindUi(this));
         countLabel.setText(Integer.toString(count));
-        setTitle("Select " + baseItemType.getName());
+        setTitle(ClientI18nHelper.CONSTANTS.tooltipSelect(baseItemType.getName()));
     }
 
     @UiHandler("image")

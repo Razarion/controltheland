@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.dialogs.quest;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.dialogs.Dialog;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -9,7 +10,7 @@ public class QuestDialog extends Dialog {
     private QuestTable questTable;
 
     public QuestDialog() {
-        super("Quests");
+        super(ClientI18nHelper.CONSTANTS.quests());
     }
 
     @Override

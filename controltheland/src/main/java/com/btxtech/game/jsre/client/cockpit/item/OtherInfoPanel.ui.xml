@@ -65,8 +65,10 @@
 	</ui:style>
 	<ui:with field='res'
 		type='com.btxtech.game.jsre.client.cockpit.item.ItemCokpitBundle' />
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
 
-	<g:HorizontalPanel width="100%">
+    <g:HorizontalPanel width="100%">
 		<g:Cell verticalAlignment="ALIGN_MIDDLE">
 			<g:Image ui:field="image" styleName="{style.itemtypeimage}" />
 		</g:Cell>
@@ -85,7 +87,7 @@
 						<g:Label ui:field="type" styleName="{style.itemtypedescr}" />
 					</g:Cell>
 					<g:Cell verticalAlignment="ALIGN_MIDDLE">
-						<g:Button text="Offer alliance" ui:field="offerAlliance"
+						<g:Button text="{msg.offerAlliance}" ui:field="offerAlliance"
 							styleName="{style.alliancebutton}" />
 					</g:Cell>
 				</g:HorizontalPanel>

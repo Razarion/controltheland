@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.dialogs;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -32,7 +33,7 @@ public class AllianceOfferDialog extends Dialog {
     private String userName;
 
     public AllianceOfferDialog(String userName) {
-        super("Alliance offer");
+        super(ClientI18nHelper.CONSTANTS.alliancesOffer());
         this.userName = userName;
         setShowCloseButton(false);
     }
@@ -40,17 +41,13 @@ public class AllianceOfferDialog extends Dialog {
     @Override
     protected void setupPanel(VerticalPanel dialogVPanel) {
         VerticalPanel verticalPanel = new VerticalPanel();
-        StringBuilder builder = new StringBuilder();
-        builder.append("The user <b>");
-        builder.append(userName);
-        builder.append("</b> has offered you an alliance.");
-        HTML html = new HTML(builder.toString());
+        HTML html = new HTML(ClientI18nHelper.CONSTANTS.alliancesOffered(userName));
         html.getElement().getStyle().setWidth(17, Style.Unit.EM);
         verticalPanel.add(html);
         HorizontalPanel buttonPanel = new HorizontalPanel();
         verticalPanel.add(buttonPanel);
         buttonPanel.getElement().getStyle().setMarginTop(20, Style.Unit.PX);
-        buttonPanel.add(new Button("Accept", new ClickHandler() {
+        buttonPanel.add(new Button(ClientI18nHelper.CONSTANTS.accept(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 Connection.getInstance().acceptAllianceOffer(userName);
@@ -58,7 +55,7 @@ public class AllianceOfferDialog extends Dialog {
             }
         }));
         buttonPanel.add(new HTML("&nbsp;&nbsp;&nbsp;"));  // Make gab between buttons
-        buttonPanel.add(new Button("Reject", new ClickHandler() {
+        buttonPanel.add(new Button(ClientI18nHelper.CONSTANTS.reject(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 Connection.getInstance().rejectAllianceOffer(userName);

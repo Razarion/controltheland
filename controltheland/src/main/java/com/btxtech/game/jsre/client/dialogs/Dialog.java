@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.dialogs;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -28,7 +29,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * Time: 3:19:00 PM
  */
 public abstract class Dialog extends DialogBox {
-    private static final String TOOL_TIP_CLOSE = "Close dialog";
     private boolean showCloseButton = true;
 
     protected Dialog(String title) {
@@ -47,14 +47,14 @@ public abstract class Dialog extends DialogBox {
         dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
         setWidget(dialogVPanel);
         if (showCloseButton) {
-            Button button = new Button("Close", new ClickHandler() {
+            Button button = new Button(ClientI18nHelper.CONSTANTS.close(), new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
                     close();
                 }
             });
             button.getElement().getStyle().setMarginTop(20, Style.Unit.PX);
-            button.setTitle(TOOL_TIP_CLOSE);
+            button.setTitle(ClientI18nHelper.CONSTANTS.tooltipCloseDialog());
             dialogVPanel.add(button);
             dialogVPanel.setCellHorizontalAlignment(button, HasHorizontalAlignment.ALIGN_CENTER);
             button.setFocus(true);

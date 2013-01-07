@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.dialogs.quest;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualtsationModel;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
@@ -38,7 +39,7 @@ public class QuestPlate extends Composite {
         initWidget(uiBinder.createAndBindUi(this));
         questId = info.getId();
         titel.setText(info.getTitle());
-        rewards.setText("Rewards: " + info.getGold() + " Gold, " + info.getXp() + " Xp");
+        rewards.setText(ClientI18nHelper.CONSTANTS.reward(info.getGold(), info.getXp()));
         description.setHTML(info.getDescription());
     }
 
@@ -52,7 +53,7 @@ public class QuestPlate extends Composite {
                     Connection.getInstance().activateQuest(questId);
                 }
             };
-            DialogManager.showDialog(new YesNoDialog("Activate Quest", "You have an active quest. Activate a new quest will abort the current quest.", "Activate", clickHandler, "Cancel", null), DialogManager.Type.STACK_ABLE);
+            DialogManager.showDialog(new YesNoDialog(ClientI18nHelper.CONSTANTS.activeQuest(), ClientI18nHelper.CONSTANTS.activeQuestAbort(), ClientI18nHelper.CONSTANTS.activate(), clickHandler, ClientI18nHelper.CONSTANTS.cancel(), null), DialogManager.Type.STACK_ABLE);
         } else {
             questDialog.close();
             Connection.getInstance().activateQuest(questId);

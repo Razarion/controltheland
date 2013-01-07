@@ -6,10 +6,12 @@
 	</ui:style>
 	<ui:with field='res'
 		type='com.btxtech.game.jsre.client.cockpit.item.ItemCokpitBundle' />
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
 
-	<g:VerticalPanel>
+    <g:VerticalPanel>
 		<g:HorizontalPanel>
-			<g:PushButton ui:field="unloadButton" title="Unload containing units">
+			<g:PushButton ui:field="unloadButton" title="{msg.tooltipUnloadContainer}">
 				<g:upFace image='{res.unloadButtonUp}' />
 				<g:downFace image='{res.unloadButtonDown}' />
 			</g:PushButton>
@@ -17,11 +19,11 @@
 				<g:Label ui:field="containedItems" />
 			</g:Cell>
 		</g:HorizontalPanel>
-		<g:PushButton ui:field="launchButton" title="Launch the missile">
+		<g:PushButton ui:field="launchButton" title="{msg.tooltipLaunchMissile}">
 			<g:upFace image='{res.launchButtonUp}' />
 			<g:downFace image='{res.launchButtonDown}' />
 		</g:PushButton>
-		<g:PushButton ui:field="upgradeButton" title="Upgrade this structure or unit">
+		<g:PushButton ui:field="upgradeButton" title="{msg.tooltipUpgrade}">
 			<g:upFace image='{res.upgradeButtonUp}' />
 			<g:upDisabledFace image='{res.upgradeButtonDisabledUp}' />
 			<g:downFace image='{res.upgradeButtonDown}' />

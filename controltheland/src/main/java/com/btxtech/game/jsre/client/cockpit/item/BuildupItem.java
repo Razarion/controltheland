@@ -2,6 +2,7 @@ package com.btxtech.game.jsre.client.cockpit.item;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -40,20 +41,41 @@ public class BuildupItem extends Composite {
     }
 
     private enum EnableState {
-        ENABLE(true, "Build", null),
-        DISABLED_LEVEL(false, "Build of", "not possible. Your are in the wrong level. Go to the next level!"),
-        DISABLED_LEVEL_EXCEEDED(false, "Build of", "not possible. Item limit exceeded. Go to the next level!"),
-        DISABLED_HOUSE_SPACE_EXCEEDED(false, "Build of", "not possible. Item limit exceeded. Build more houses!"),
-        DISABLED_MONEY(false, "Build of", "not possible. Not enough money. Earn more money!");
+        ENABLE(true) {
+            @Override
+            String lookup(String itemName) {
+                return ClientI18nHelper.CONSTANTS.tooltipBuild(itemName);
+            }
+        },
+        DISABLED_LEVEL(false) {
+            @Override
+            String lookup(String itemName) {
+                return ClientI18nHelper.CONSTANTS.tooltipNoBuildLevel(itemName);
+            }
+        },
+        DISABLED_LEVEL_EXCEEDED(false) {
+            @Override
+            String lookup(String itemName) {
+                return ClientI18nHelper.CONSTANTS.tooltipNoBuildLimit(itemName);
+            }
+        },
+        DISABLED_HOUSE_SPACE_EXCEEDED(false) {
+            @Override
+            String lookup(String itemName) {
+                return ClientI18nHelper.CONSTANTS.tooltipNoBuildHouseSpace(itemName);
+            }
+        },
+        DISABLED_MONEY(false) {
+            @Override
+            String lookup(String itemName) {
+                return ClientI18nHelper.CONSTANTS.tooltipNoBuildMoney(itemName);
+            }
+        };
 
         private boolean enabled;
-        private String text1;
-        private String text2;
 
-        EnableState(boolean enabled, String text1, String text2) {
+        EnableState(boolean enabled) {
             this.enabled = enabled;
-            this.text1 = text1;
-            this.text2 = text2;
         }
 
         public boolean isEnabled() {
@@ -61,16 +83,10 @@ public class BuildupItem extends Composite {
         }
 
         public String getToolTip(BaseItemType itemType) {
-            StringBuilder builder = new StringBuilder();
-            builder.append(text1);
-            builder.append(" ");
-            builder.append(itemType.getName());
-            builder.append(" ");
-            if (text2 != null) {
-                builder.append(text2);
-            }
-            return builder.toString();
+            return lookup(itemType.getName());
         }
+
+        abstract String lookup(String itemName);
     }
 
     public BuildupItem(BaseItemType itemType, final ButtonListener buttonListener) {

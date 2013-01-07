@@ -23,35 +23,56 @@ import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 public enum DeferredBackgroundTestTaskEnum implements StartupTaskEnum {
     TEST_1("TEST_1") {
         private DeferredStartupTestTask deferredStartupTestTask;
+
         @Override
         public AbstractStartupTask createTask() {
             deferredStartupTestTask = new DeferredStartupTestTask(this);
             return deferredStartupTestTask;
         }
+
         public DeferredStartupTestTask getTestDeferredStartupTask() {
             return deferredStartupTestTask;
+        }
+
+        @Override
+        public String getI18nText() {
+            throw new UnsupportedOperationException();
         }
     },
     TEST_2_BACKGROUND("TEST_2_BACKGROUND") {
         private DeferredStartupTestTask deferredStartupTestTask;
+
         @Override
         public AbstractStartupTask createTask() {
             deferredStartupTestTask = new DeferredBackgroundStartupTestTask(this);
             return deferredStartupTestTask;
         }
+
         public DeferredStartupTestTask getTestDeferredStartupTask() {
             return deferredStartupTestTask;
+        }
+
+        @Override
+        public String getI18nText() {
+            throw new UnsupportedOperationException();
         }
     },
     TEST_3("TEST_3") {
         private DeferredStartupTestTask deferredStartupTestTask;
+
         @Override
         public AbstractStartupTask createTask() {
             deferredStartupTestTask = new DeferredStartupTestTask(this);
             return deferredStartupTestTask;
         }
+
         public DeferredStartupTestTask getTestDeferredStartupTask() {
             return deferredStartupTestTask;
+        }
+
+        @Override
+        public String getI18nText() {
+            throw new UnsupportedOperationException();
         }
     },
     TEST_4("TEST_4") {
@@ -62,8 +83,14 @@ public enum DeferredBackgroundTestTaskEnum implements StartupTaskEnum {
             deferredStartupTestTask = new DeferredStartupTestTask(this);
             return deferredStartupTestTask;
         }
+
         public DeferredStartupTestTask getTestDeferredStartupTask() {
             return deferredStartupTestTask;
+        }
+
+        @Override
+        public String getI18nText() {
+            throw new UnsupportedOperationException();
         }
     };
 

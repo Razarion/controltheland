@@ -41,9 +41,13 @@
             font-weight: bold;
         }
     </ui:style>
+
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+
     <g:VerticalPanel styleName="{style.itemplate}"  width="130px" height="100px">
     	<g:Cell horizontalAlignment="ALIGN_CENTER">
-    		<g:Label text="???" styleName="{style.itemlabel}" ui:field="itemNameLabel"/>
+    		<g:Label styleName="{style.itemlabel}" ui:field="itemNameLabel"/>
     	</g:Cell>
         <g:Cell verticalAlignment="ALIGN_BOTTOM">
             <g:HorizontalPanel>
@@ -53,10 +57,10 @@
                 <g:Cell verticalAlignment="ALIGN_MIDDLE">
                     <g:VerticalPanel>
                         <g:Cell verticalAlignment="ALIGN_MIDDLE">
-                            <g:Label text="???" styleName="{style.coastLabel}" ui:field="coastLabel"/>
+                            <g:Label styleName="{style.coastLabel}" ui:field="coastLabel"/>
                         </g:Cell>
                         <g:Cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-                            <g:Button text="Buy" ui:field="buyItemButton"/>
+                            <g:Button text="{msg.buy}" ui:field="buyItemButton"/>
                         </g:Cell>
                     </g:VerticalPanel>
                 </g:Cell>

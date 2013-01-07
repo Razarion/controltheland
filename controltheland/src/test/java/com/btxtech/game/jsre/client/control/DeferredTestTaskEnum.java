@@ -23,24 +23,38 @@ import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 public enum DeferredTestTaskEnum implements StartupTaskEnum {
     TEST_1("TEST_1") {
         private DeferredStartupTestTask deferredStartupTestTask;
+
         @Override
         public AbstractStartupTask createTask() {
             deferredStartupTestTask = new DeferredStartupTestTask(this);
             return deferredStartupTestTask;
         }
+
         public DeferredStartupTestTask getTestDeferredStartupTask() {
             return deferredStartupTestTask;
+        }
+
+        @Override
+        public String getI18nText() {
+            throw new UnsupportedOperationException();
         }
     },
     TEST_2("TEST_2") {
         private DeferredStartupTestTask deferredStartupTestTask;
+
         @Override
         public AbstractStartupTask createTask() {
             deferredStartupTestTask = new DeferredStartupTestTask(this);
             return deferredStartupTestTask;
         }
+
         public DeferredStartupTestTask getTestDeferredStartupTask() {
             return deferredStartupTestTask;
+        }
+
+        @Override
+        public String getI18nText() {
+            throw new UnsupportedOperationException();
         }
     },
     TEST_3("TEST_3") {
@@ -51,8 +65,14 @@ public enum DeferredTestTaskEnum implements StartupTaskEnum {
             deferredStartupTestTask = new DeferredStartupTestTask(this);
             return deferredStartupTestTask;
         }
+
         public DeferredStartupTestTask getTestDeferredStartupTask() {
             return deferredStartupTestTask;
+        }
+
+        @Override
+        public String getI18nText() {
+            throw new UnsupportedOperationException();
         }
     };
 

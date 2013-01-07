@@ -13,10 +13,10 @@
 
 package com.btxtech.game.jsre.client.control;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.ClearGame;
 import com.btxtech.game.jsre.client.control.task.RunSimulationStartupTask;
-import com.btxtech.game.jsre.client.control.task.SimulationDeltaStartupTask;
 
 /**
  * User: beat
@@ -28,12 +28,24 @@ public enum WarmRestartSimulatedGameStartupTaskEnum implements StartupTaskEnum {
         @Override
         public AbstractStartupTask createTask() {
             return new ClearGame(this);
-        }},
+        }
+
+        @Override
+        public String getI18nText() {
+            return ClientI18nHelper.CONSTANTS.startupClearGame();
+        }
+    },
     RUN_SIMULATED_GAME("Run simulated Game") {
         @Override
         public AbstractStartupTask createTask() {
             return new RunSimulationStartupTask(this);
-        }};
+        }
+
+        @Override
+        public String getI18nText() {
+            return ClientI18nHelper.CONSTANTS.startupRunSimulatedGame();
+        }
+    };
 
     private StartupTaskEnumHtmlHelper startupTaskEnumHtmlHelper;
 

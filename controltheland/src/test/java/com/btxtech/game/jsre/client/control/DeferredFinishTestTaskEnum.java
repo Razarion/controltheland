@@ -31,11 +31,21 @@ public enum DeferredFinishTestTaskEnum implements StartupTaskEnum {
         public DeferredStartupTestTask getTestDeferredStartupTask() {
             return deferredStartupTestTask;
         }
+
+        @Override
+        public String getI18nText() {
+            throw new UnsupportedOperationException();
+        }
     },
     TEST_2_FINISH("TEST_2_FINISH") {
         @Override
         public AbstractStartupTask createTask() {
             return new DeferredFinishStartupTestTask(this);
+        }
+
+        @Override
+        public String getI18nText() {
+            throw new UnsupportedOperationException();
         }
     },
     TEST_3("TEST_3") {
@@ -48,6 +58,11 @@ public enum DeferredFinishTestTaskEnum implements StartupTaskEnum {
         }
         public DeferredStartupTestTask getTestDeferredStartupTask() {
             return deferredStartupTestTask;
+        }
+
+        @Override
+        public String getI18nText() {
+            throw new UnsupportedOperationException();
         }
     };
 

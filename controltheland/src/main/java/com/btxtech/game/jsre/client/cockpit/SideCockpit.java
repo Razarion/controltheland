@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ExtendedCustomButton;
@@ -151,14 +152,14 @@ public class SideCockpit {
 
     private void setupMoney() {
         money = new Label();
-        money.setTitle(ToolTips.TOOL_TIP_MONEY);
+        money.setTitle(ClientI18nHelper.CONSTANTS.tooltipMoney());
         money.getElement().getStyle().setColor(TEXT_COLOR);
         mainPanel.add(money, MONEY_X, MONEY_Y);
     }
 
     private void setupItemLimit() {
         itemLimit = new Label();
-        itemLimit.setTitle(ToolTips.TOOL_TIP_UNITS);
+        itemLimit.setTitle(ClientI18nHelper.CONSTANTS.tooltipUnitsAmount());
         itemLimit.getElement().getStyle().setColor(TEXT_COLOR);
         mainPanel.add(itemLimit, ITEM_LIMIT_X, ITEM_LIMIT_Y);
     }
@@ -179,13 +180,13 @@ public class SideCockpit {
     private void setupEnergy() {
         // Setup base
         energyBar = new ProgressBar();
-        energyBar.setTitle(ToolTips.TOOL_TIP_ENERGY);
+        energyBar.setTitle(ClientI18nHelper.CONSTANTS.tooltipEnergy());
         energyBar.setPixelSize(ENERGY_W, ENERGY_H);
         energyBar.setColors("red", "green");
         mainPanel.add(energyBar, ENERGY_X, ENERGY_Y);
         // Setup text
         energyText = new Label();
-        energyText.setTitle(ToolTips.TOOL_TIP_ENERGY);
+        energyText.setTitle(ClientI18nHelper.CONSTANTS.tooltipEnergy());
         energyText.getElement().getStyle().setColor(TEXT_COLOR);
         mainPanel.add(energyText, ENERGY_TEXT_X, ENERGY_TEXT_Y);
 
@@ -194,26 +195,26 @@ public class SideCockpit {
 
     private void setupRadar() {
         AbsolutePanel absolutePanel = RadarPanel.getInstance().createWidget(RADAR_W, RADAR_H);
-        absolutePanel.setTitle(ToolTips.TOOL_TIP_RADAR);
+        absolutePanel.setTitle(ClientI18nHelper.CONSTANTS.tooltipRadar());
         mainPanel.add(absolutePanel, RADAR_X, RADAR_Y);
     }
 
     private void setupButtonPanel() {
         // Inventory
-        ExtendedCustomButton inventory = new ExtendedCustomButton("inventoryButton", false, ToolTips.TOOL_TIP_INVENTORY, new ClickHandler() {
+        ExtendedCustomButton inventory = new ExtendedCustomButton("inventoryButton", false, ClientI18nHelper.CONSTANTS.tooltipInventory(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 if (Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE) {
                     DialogManager.showDialog(new InventoryDialog(), DialogManager.Type.QUEUE_ABLE);
                 } else {
-                    DialogManager.showDialog(new MessageDialog("Inventory", "Inventory is not available on this planet."), DialogManager.Type.QUEUE_ABLE);
+                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.inventory(), ClientI18nHelper.CONSTANTS.inventoryNotAvailable()), DialogManager.Type.QUEUE_ABLE);
                 }
             }
         });
         mainPanel.add(inventory, BNT_INVENTORY_X, BNT_INVENTORY_Y);
 
         //Alliance
-        ExtendedCustomButton alliance = new ExtendedCustomButton("allianceButton", false, ToolTips.TOOL_TIP_ALLIANCE, new ClickHandler() {
+        ExtendedCustomButton alliance = new ExtendedCustomButton("allianceButton", false, ClientI18nHelper.CONSTANTS.tooltipAlliances(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 DialogManager.showDialog(new AllianceDialog(), DialogManager.Type.QUEUE_ABLE);
@@ -222,7 +223,7 @@ public class SideCockpit {
         mainPanel.add(alliance, BNT_ALLIANCE_X, BNT_ALLIANCE_Y);
 
         // Sell button
-        sellButton = new ExtendedCustomButton("sellButton", true, ToolTips.TOOL_TIP_SELL, new ClickHandler() {
+        sellButton = new ExtendedCustomButton("sellButton", true, ClientI18nHelper.CONSTANTS.tooltipSell(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 ExtendedCustomButton btn = (ExtendedCustomButton) event.getSource();
@@ -233,14 +234,14 @@ public class SideCockpit {
                         CockpitMode.getInstance().setMode(null);
                     }
                 } else {
-                    DialogManager.showDialog(new MessageDialog("Sell", "Selling items is not allowed on this planet."), DialogManager.Type.QUEUE_ABLE);
+                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.sell(), ClientI18nHelper.CONSTANTS.sellNotAvailable()), DialogManager.Type.QUEUE_ABLE);
                     btn.setDownState(false);
                 }
             }
         });
         mainPanel.add(sellButton, BNT_SELL_X, BNT_SELL_Y);
         // Sell button
-        ExtendedCustomButton mute = new ExtendedCustomButton("speakerButton", true, ToolTips.TOOL_TIP_MUTE, new ClickHandler() {
+        ExtendedCustomButton mute = new ExtendedCustomButton("speakerButton", true, ClientI18nHelper.CONSTANTS.tooltipMute(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 ExtendedCustomButton btn = (ExtendedCustomButton) event.getSource();
@@ -249,7 +250,7 @@ public class SideCockpit {
         });
         mainPanel.add(mute, BNT_MUTE_X, BNT_MUTE_Y);
         // High score button
-        ExtendedCustomButton highScoreButton = new ExtendedCustomButton("highscoreButton", false, ToolTips.TOOL_TIP_HIGH_SCORE, new ClickHandler() {
+        ExtendedCustomButton highScoreButton = new ExtendedCustomButton("highscoreButton", false, ClientI18nHelper.CONSTANTS.tooltipHighScore(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 DialogManager.showDialog(new HighscoreDialog(), DialogManager.Type.QUEUE_ABLE);
@@ -259,9 +260,9 @@ public class SideCockpit {
     }
 
     private void setupSocialNetPanel() {
-        WebBrowserCustomButton facebookCommunity = new WebBrowserCustomButton("facebookcommunity", ToolTips.TOOL_TIP_FACEBOOK_COMMUNITY, "http://www.facebook.com/Razarion");
+        WebBrowserCustomButton facebookCommunity = new WebBrowserCustomButton("facebookcommunity", ClientI18nHelper.CONSTANTS.tooltipFacebookCommunity(), "http://www.facebook.com/Razarion");
         mainPanel.add(facebookCommunity, BNT_FB_COMMUNITY_X, BNT_FB_COMMUNITY_Y);
-        mainPanel.add(new ExtendedCustomButton("facebookinvite", false, ToolTips.TOOL_TIP_FACEBOOK_INVITE, new ClickHandler() {
+        mainPanel.add(new ExtendedCustomButton("facebookinvite", false, ClientI18nHelper.CONSTANTS.tooltipFacebookInvite(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 FacebookUtils.invite();

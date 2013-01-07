@@ -53,4 +53,9 @@ public enum SimpleExceptionTestTaskEnum implements StartupTaskEnum {
     public StartupTaskEnumHtmlHelper getStartupTaskEnumHtmlHelper() {
         return startupTaskEnumHtmlHelper;
     }
+
+    @Override
+    public String getI18nText() {
+        throw new UnsupportedOperationException();
+    }
 }

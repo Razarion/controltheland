@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.client.dialogs.inventory;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.common.Index;
@@ -91,11 +92,11 @@ public class InventoryItemPlacer {
 
     private void setupErrorText() {
         if (!inventoryItemPlacerChecker.isEnemiesOk()) {
-            errorText = "Enemy items are too near";
+            errorText = ClientI18nHelper.CONSTANTS.enemyTooNear();
         } else if (!inventoryItemPlacerChecker.isItemsOk()) {
-            errorText = "Not allowed to place on other items";
+            errorText = ClientI18nHelper.CONSTANTS.notPlaceOver();
         } else if (!inventoryItemPlacerChecker.isTerrainOk()) {
-            errorText = "You can not place here";
+            errorText = ClientI18nHelper.CONSTANTS.notPlaceHere();
         } else {
             errorText = null;
         }

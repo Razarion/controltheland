@@ -11,12 +11,15 @@
     <ui:with field='res'
              type='com.btxtech.game.jsre.client.cockpit.quest.images.QuestVisualisationImageBundle'/>
 
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+
     <g:VerticalPanel>
         <g:Cell horizontalAlignment="ALIGN_CENTER">
-            <g:Label text="Press the button when ready" styleName="{style.description}"/>
+            <g:Label text="{msg.pressButtonWhenReady}" styleName="{style.description}"/>
         </g:Cell>
         <g:Cell horizontalAlignment="ALIGN_CENTER">
-            <g:PushButton title="Start this mission now!" ui:field="startButton">
+            <g:PushButton title="{msg.tooltipStartMission}" ui:field="startButton">
                 <g:upFace image='{res.startmissionUp}'/>
                 <g:downFace image='{res.startmissionUp}'/>
             </g:PushButton>

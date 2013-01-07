@@ -1,6 +1,5 @@
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
-import com.btxtech.game.jsre.client.AlreadyUsedException;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
@@ -163,13 +162,13 @@ public class TestSyncBaseItem extends AbstractServiceTest {
         endHttpSession();
     }
 
-    private Base createBase(ServerPlanetServices baseService) throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
+    private Base createBase(ServerPlanetServices baseService) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
         UserState userState2 = new UserState();
         userState2.setDbLevelId(TEST_LEVEL_2_REAL_ID);
         return baseService.getBaseService().createNewBase(userState2, serverItemTypeService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID), 100, createSimpleRegion(1), 100);
     }
 
-    private SimpleBase createBotBase(ServerPlanetServices baseService) throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
+    private SimpleBase createBotBase(ServerPlanetServices baseService) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
         BotConfig botConfig = new BotConfig(1, 0, null, createSimpleRegion(1), "bot", null, null, null, null);
         return baseService.getBaseService().createBotBase(botConfig);
     }

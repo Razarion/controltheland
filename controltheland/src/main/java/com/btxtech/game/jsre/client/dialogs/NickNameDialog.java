@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.client.dialogs;
 
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -24,7 +25,7 @@ public class NickNameDialog extends Dialog implements NickNameField.ValidListene
     private final RegisterDialog registerDialog;
 
     public NickNameDialog(String signedRequestParameter, String email, RegisterDialog registerDialog) {
-        super("Choose a nickname");
+        super(ClientI18nHelper.CONSTANTS.chooseNickName());
         this.signedRequestParameter = signedRequestParameter;
         this.email = email;
         this.registerDialog = registerDialog;
@@ -36,7 +37,7 @@ public class NickNameDialog extends Dialog implements NickNameField.ValidListene
         FlexTable grid = new FlexTable();
         nickNameField = new NickNameField(this);
         grid.setWidget(0, 0, nickNameField);
-        connectButton = new Button("Register");
+        connectButton = new Button(ClientI18nHelper.CONSTANTS.register());
         grid.setWidget(1, 0, connectButton);
         connectButton.addClickHandler(new ClickHandler() {
             @Override
@@ -48,7 +49,7 @@ public class NickNameDialog extends Dialog implements NickNameField.ValidListene
                         public void onFailure(Throwable caught) {
                             connectButton.setEnabled(true);
                             if (caught instanceof UserAlreadyExistsException) {
-                                DialogManager.showDialog(new MessageDialog("Registration failed", RegisterDialog.REGISTRATION_EXISTS), DialogManager.Type.STACK_ABLE);
+                                DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.registrationFailed(), ClientI18nHelper.CONSTANTS.registrationUser()), DialogManager.Type.STACK_ABLE);
                             } else {
                                 ClientExceptionHandler.handleException("NickNameDialog.setupPanel() createAndLoginFacebookUser", caught);
                             }

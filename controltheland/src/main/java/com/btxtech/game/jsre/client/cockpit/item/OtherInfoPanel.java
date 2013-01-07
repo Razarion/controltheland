@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.client.cockpit.item;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GwtCommon;
@@ -64,15 +65,15 @@ public class OtherInfoPanel extends Composite {
         if (syncItem instanceof SyncBaseItem) {
             SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
             if (ClientBase.getInstance().isBot(syncBaseItem.getBase())) {
-                type.setText("Bot enemy");
+                type.setText(ClientI18nHelper.CONSTANTS.botEnemy());
                 enemyImage.setVisible(true);
             } else if (ClientBase.getInstance().isEnemy(syncBaseItem)) {
                 simpleBase = syncBaseItem.getBase();
-                type.setText("Player enemy");
+                type.setText(ClientI18nHelper.CONSTANTS.playerEnemy());
                 offerAlliance.setVisible(true);
                 enemyImage.setVisible(true);
             } else {
-                type.setText("Alliance member");
+                type.setText(ClientI18nHelper.CONSTANTS.allianceMember());
                 friendImage.setVisible(true);
             }
             baseName.setText(ClientBase.getInstance().getBaseName(syncBaseItem.getBase()));

@@ -28,22 +28,26 @@ public enum ColdPlaybackStartupTaskEnum implements StartupTaskEnum {
         @Override
         public AbstractStartupTask createTask() {
             return new LoadStartupTask(this);
-        }},
+        }
+    },
     INIT_GUI("Init GUI") {
         @Override
         public AbstractStartupTask createTask() {
             return new GuiStartupTask(this);
-        }},
+        }
+    },
     INIT_PLAYBACK("Init Playback") {
         @Override
         public AbstractStartupTask createTask() {
             return new InitStartupTask(this);
-        }},
+        }
+    },
     RUN("Run") {
         @Override
         public AbstractStartupTask createTask() {
             return new RunPlaybackStartupTask(this);
-        }};
+        }
+    };
 
 
     private StartupTaskEnumHtmlHelper startupTaskEnumHtmlHelper;
@@ -60,5 +64,10 @@ public enum ColdPlaybackStartupTaskEnum implements StartupTaskEnum {
     @Override
     public StartupTaskEnumHtmlHelper getStartupTaskEnumHtmlHelper() {
         return startupTaskEnumHtmlHelper;
+    }
+
+    @Override
+    public String getI18nText() {
+        return startupTaskEnumHtmlHelper.getNiceText();
     }
 }

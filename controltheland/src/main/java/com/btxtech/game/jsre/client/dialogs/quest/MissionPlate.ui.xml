@@ -42,6 +42,8 @@
 
     <ui:with field='res'
              type='com.btxtech.game.jsre.client.dialogs.quest.QuestImages'/>
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
 
     <g:HorizontalPanel styleName="{style.itemplate}"
                        spacing="5" width="100%">
@@ -61,7 +63,7 @@
             </g:VerticalPanel>
         </g:Cell>
         <g:Cell verticalAlignment="ALIGN_MIDDLE" horizontalAlignment="ALIGN_RIGHT">
-        	<g:Button ui:field="button" text="Go"/>
+        	<g:Button ui:field="button" text="{msg.activate}"/>
         </g:Cell>
     </g:HorizontalPanel>
 </ui:UiBinder> 

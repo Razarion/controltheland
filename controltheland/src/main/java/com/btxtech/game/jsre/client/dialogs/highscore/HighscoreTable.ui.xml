@@ -26,13 +26,16 @@
 				);
 		}
 	</ui:style>
-	<g:VerticalPanel styleName="{style.background}">
+
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+
+    <g:VerticalPanel styleName="{style.background}">
 		<p1:DataGrid width="83em"
 			height="300px" ui:field="dataGrid" keyboardSelectionPolicy="DISABLED" />
 		<g:HorizontalPanel>
-			<w:TextButton text="Find me" value="Find me" ui:field="findMeButton">New
-				button</w:TextButton>
-			<w:TextButton value="Refresh" text="Refresh" ui:field="refreshButton">New button</w:TextButton>
+			<w:TextButton text="{msg.findMe}" ui:field="findMeButton" />
+			<w:TextButton text="{msg.refresh}" ui:field="refreshButton" />
 		</g:HorizontalPanel>
 	</g:VerticalPanel>
 </ui:UiBinder> 

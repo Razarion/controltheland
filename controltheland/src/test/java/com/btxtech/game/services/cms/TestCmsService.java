@@ -71,7 +71,10 @@ import com.btxtech.game.wicket.uiservices.cms.impl.CmsUiServiceImpl;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.RequestCycle;
+import org.apache.wicket.Session;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.behavior.StringHeaderContributor;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.util.tester.FormTester;
@@ -89,6 +92,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -4447,6 +4451,34 @@ public class TestCmsService extends AbstractServiceTest {
 
         tester.debugComponentTrees();
 
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testLocale() throws Exception {
+        configureSimplePlanetNoResources();
+
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.ENGLISH);
+        testLocale("en");
+
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.GERMAN);
+        testLocale("de");
+    }
+
+    private void testLocale(String expectedLocale) {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(Game.class);
+        tester.assertRenderedPage(Game.class);
+        tester.assertComponent("metaGwtLocale", WebMarkupContainer.class);
+        WebMarkupContainer container = (WebMarkupContainer) tester.getComponentFromLastRenderedPage("metaGwtLocale");
+        SimpleAttributeModifier simpleAttributeModifier = (SimpleAttributeModifier) container.getBehaviors().get(0);
+        Assert.assertEquals("content", simpleAttributeModifier.getAttribute());
+        Assert.assertEquals("locale=" + expectedLocale, simpleAttributeModifier.getValue());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

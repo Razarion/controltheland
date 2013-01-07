@@ -2,10 +2,6 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui">
     <ui:style>
-        .important {
-            font-weight: bold;
-        }
-
         .itemplate {
             padding: 3px;
             border: 1px solid #ccc;
@@ -41,9 +37,13 @@
             font-weight: bold;
         }
     </ui:style>
+
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+
     <g:VerticalPanel styleName="{style.itemplate}"  width="120px" height="90px">
     	<g:Cell horizontalAlignment="ALIGN_CENTER">
-    		<g:Label text="???" styleName="{style.itemlabel}" ui:field="artifactNameLabel"/>
+    		<g:Label styleName="{style.itemlabel}" ui:field="artifactNameLabel"/>
     	</g:Cell>
         <g:Cell verticalAlignment="ALIGN_BOTTOM">
             <g:HorizontalPanel>
@@ -53,10 +53,10 @@
                 <g:Cell verticalAlignment="ALIGN_MIDDLE">
                     <g:VerticalPanel>
                         <g:Cell verticalAlignment="ALIGN_MIDDLE">
-                            <g:Label text="???" styleName="{style.coastLabel}" ui:field="coastLabel"/>
+                            <g:Label styleName="{style.coastLabel}" ui:field="coastLabel"/>
                         </g:Cell>
                         <g:Cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-                            <g:Button text="Buy" ui:field="buyArtifactButton"/>
+                            <g:Button text="{msg.buy}" ui:field="buyArtifactButton"/>
                         </g:Cell>
                     </g:VerticalPanel>
                 </g:Cell>

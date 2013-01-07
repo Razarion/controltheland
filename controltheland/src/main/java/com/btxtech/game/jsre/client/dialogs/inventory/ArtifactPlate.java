@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.dialogs.inventory;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -28,7 +29,7 @@ public class ArtifactPlate extends Composite implements HasText {
         image.setUrl(url);
         setStatus(available, needed);
         panel.getElement().getStyle().setBackgroundColor(bgColor);
-        panel.setTitle("Artifact: " + artifactName);
+        panel.setTitle(ClientI18nHelper.CONSTANTS.tooltipArtifact(artifactName));
     }
 
     public void setText(String text) {
