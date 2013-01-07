@@ -257,6 +257,45 @@ public class TestRegisterService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
+        // Create second user
+        dateBefore = new Date();
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        registerService.register("U1", "xxx", "xxx", "fake");
+        simpleBase = getMyBase();
+        user = userService.getUser();
+        user.setAwaitingVerification();
+        verificationId = userService.getUser().getVerificationId();
+        setPrivateField(User.class, user, "awaitingVerificationDate", gregorianCalendar.getTime());
+        saveOrUpdateInTransaction(user);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        Thread.sleep(200);
+        dateAfter = new Date();
+
+        Assert.assertTrue(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService().isAbandoned(simpleBase));
+
+        // Verify user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertNull(userService.getUser("U1"));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // User tracker history
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        historyElements = HibernateUtil.loadAll(getSessionFactory(), DbUserHistory.class);
+        Assert.assertEquals(8, historyElements.size());
+        Assert.assertEquals("U1", historyElements.get(7).getUser());
+        Assert.assertTrue(historyElements.get(7).getDeleteUnverifiedUser().getTime() >= dateBefore.getTime());
+        Assert.assertTrue(historyElements.get(7).getDeleteUnverifiedUser().getTime() <= dateAfter.getTime());
+        Assert.assertEquals(verificationId, historyElements.get(7).getVerificationId());
+        Assert.assertNull(historyElements.get(7).getAwaitingVerificationDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
 
         setPrivateStaticField(RegisterServiceImpl.class, "CLEANUP_DELAY", 1 * ClientDateUtil.MILLIS_IN_DAY);
     }

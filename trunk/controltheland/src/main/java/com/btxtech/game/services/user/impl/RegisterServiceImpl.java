@@ -35,7 +35,6 @@ import org.springframework.ui.velocity.VelocityEngineUtils;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeUtility;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -72,7 +71,7 @@ public class RegisterServiceImpl implements RegisterService {
     @PostConstruct
     public void init() {
         cleanupTimer = new ScheduledThreadPoolExecutor(1, new CustomizableThreadFactory("RegisterServiceImpl cleanup timer "));
-        cleanupTimer.schedule(new Runnable() {
+        cleanupTimer.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 HibernateUtil.openSession4InternalCall(sessionFactory);
@@ -84,7 +83,7 @@ public class RegisterServiceImpl implements RegisterService {
                     HibernateUtil.closeSession4InternalCall(sessionFactory);
                 }
             }
-        }, CLEANUP_DELAY, TimeUnit.MILLISECONDS);
+        }, CLEANUP_DELAY, CLEANUP_DELAY, TimeUnit.MILLISECONDS);
     }
 
     @PreDestroy
@@ -117,7 +116,7 @@ public class RegisterServiceImpl implements RegisterService {
             throw new IllegalArgumentException("More than one user with verification id found: " + verificationId);
         }
         User user = users.get(0);
-        if(user.isVerified()) {
+        if (user.isVerified()) {
             throw new EmailIsAlreadyVerifiedException();
         }
         user.setVerified();
