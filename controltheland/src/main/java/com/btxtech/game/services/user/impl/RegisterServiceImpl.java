@@ -157,7 +157,7 @@ public class RegisterServiceImpl implements RegisterService {
                 try {
                     removeUnverifiedUser(user);
                 } catch (Throwable throwable) {
-                    ExceptionHandler.handleException(throwable);
+                    ExceptionHandler.handleException(throwable, "Error removeUnverifiedUsers: " + user);
                 }
             }
         }
