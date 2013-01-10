@@ -142,7 +142,8 @@ public class MgmtPage extends MgmtWebPage {
         toolPages.add(new LinkAndName("Client Performance Monitor", ClientPerfmonTable.class));
         toolPages.add(new LinkAndName("Sound Library", SoundLibrary.class));
         toolPages.add(new LinkAndName("Image Sprite Map Library", ImageSpriteMapLibrary.class));
-        toolPages.add(new LinkAndName("Common Sounds", CommonSounds.class));        
+        toolPages.add(new LinkAndName("Common Sounds", CommonSounds.class));
         toolPages.add(new LinkAndName("Clip Library", ClipLibrary.class));
+        toolPages.add(new LinkAndName("Internationalisation", I18nMgmtPage.class));
     }
 }

@@ -35,6 +35,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -198,17 +199,17 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
         return "DbTutorialSetting: " + name;
     }
 
-    public TutorialConfig getTutorialConfig(ServerItemTypeService serverItemTypeService) {
+    public TutorialConfig getTutorialConfig(ServerItemTypeService serverItemTypeService, Locale locale) {
         if (tutorialConfig == null) {
-            tutorialConfig = createTutorialConfig(serverItemTypeService);
+            tutorialConfig = createTutorialConfig(serverItemTypeService, locale);
         }
         return tutorialConfig;
     }
 
-    private TutorialConfig createTutorialConfig(ServerItemTypeService serverItemTypeService) {
+    private TutorialConfig createTutorialConfig(ServerItemTypeService serverItemTypeService, Locale locale) {
         ArrayList<TaskConfig> taskConfigs = new ArrayList<>();
         for (DbTaskConfig dbTaskConfig : dbTaskConfigs) {
-            taskConfigs.add(dbTaskConfig.createTaskConfig(serverItemTypeService));
+            taskConfigs.add(dbTaskConfig.createTaskConfig(serverItemTypeService, locale));
         }
 
         return new TutorialConfig(taskConfigs, ownBaseName, tracking, showTip, disableScroll);

@@ -24,6 +24,7 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.user.UserState;
 
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -66,11 +67,11 @@ public interface UserGuidanceService extends CommonUserGuidanceService {
 
     InvalidLevelStateException createInvalidLevelState();
 
-    void fillRealGameInfo(RealGameInfo realGameInfo);
+    void fillRealGameInfo(RealGameInfo realGameInfo, Locale locale);
 
-    void activateQuest(int dbLevelTaskId);
+    void activateQuest(int dbLevelTaskId, Locale locale);
 
-    QuestOverview getQuestOverview();
+    QuestOverview getQuestOverview(Locale locale);
 
     void razarionBought(int razarionBought, UserState userState);
 

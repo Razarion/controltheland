@@ -72,6 +72,7 @@ import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -113,6 +114,8 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     private PlanetSystemService planetSystemService;
     @Autowired
     private RegisterService registerService;
+    @Autowired
+    private HttpServletRequest request;
 
     @Override
     public void sendCommands(List<BaseCommand> baseCommands) {
@@ -185,7 +188,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             realGameInfo.setHouseSpace(base.getHouseSpace());
             realGameInfo.setPlanetInfo(planetSystemService.getServerPlanetServices(base.getSimpleBase()).getPlanetInfo());
             realGameInfo.setAllPlanets(planetSystemService.getAllPlanetLiteInfos());
-            userGuidanceService.fillRealGameInfo(realGameInfo);
+            userGuidanceService.fillRealGameInfo(realGameInfo, request.getLocale());
             realGameInfo.setAllianceOffers(allianceService.getPendingAllianceOffers());
             return realGameInfo;
         } catch (InvalidLevelStateException invalidLevelStateException) {
@@ -203,9 +206,8 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialConfig(levelTaskId);
             // Common
             setCommonInfo(simulationInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService, clipService);
-            simulationInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(serverItemTypeService));
+            simulationInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(serverItemTypeService, request.getLocale()));
             simulationInfo.setLevelTaskId(levelTaskId);
-            simulationInfo.setLevelTaskTitel(userGuidanceService.getDbLevel().getLevelTaskCrud().readDbChild(levelTaskId).getName());
             simulationInfo.setLevelNumber(userGuidanceService.getDbLevel().getNumber());
             simulationInfo.setAbortable(userGuidanceService.getDbLevel().hasDbPlanet());
             simulationInfo.setSellAllowed(dbTutorialConfig.isSellAllowed());
@@ -484,7 +486,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public QuestOverview loadQuestOverview() {
         try {
-            return userGuidanceService.getQuestOverview();
+            return userGuidanceService.getQuestOverview(request.getLocale());
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return null;
@@ -494,7 +496,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public void activateQuest(int questId) {
         try {
-            userGuidanceService.activateQuest(questId);
+            userGuidanceService.activateQuest(questId, request.getLocale());
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
         }

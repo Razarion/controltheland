@@ -15,11 +15,12 @@ package com.btxtech.game.wicket.pages.mgmt.condition;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
+import com.btxtech.game.services.common.db.DbI18nString;
 import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
+import com.btxtech.game.wicket.uiservices.I18nStringWYSIWYGEditor;
 import com.btxtech.game.wicket.uiservices.IndexPanel;
 import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
-import com.btxtech.game.wicket.uiservices.WysiwygEditor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -28,6 +29,7 @@ import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.IFormModelUpdateListener;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 
 import java.util.List;
@@ -148,21 +150,14 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
         });
         add(radarPositionHint);
 
-        WysiwygEditor additionalDescription = new WysiwygEditor("additionalDescription");
-        additionalDescription.setDefaultModel(new IModel<String>() {
+        I18nStringWYSIWYGEditor i18nStringWYSIWYGEditor = new I18nStringWYSIWYGEditor("i18nAdditionalDescription");
+        i18nStringWYSIWYGEditor.setDefaultModel(new AbstractReadOnlyModel<DbI18nString>() {
             @Override
-            public String getObject() {
+            public DbI18nString getObject() {
                 if (ConditionConfigPanel.this.getDefaultModelObject() != null) {
-                    return ((DbConditionConfig) ConditionConfigPanel.this.getDefaultModelObject()).getAdditionalDescription();
+                    return ((DbConditionConfig) ConditionConfigPanel.this.getDefaultModelObject()).getI18nAdditionalDescription();
                 } else {
                     return null;
-                }
-            }
-
-            @Override
-            public void setObject(String string) {
-                if (ConditionConfigPanel.this.getDefaultModelObject() != null) {
-                    ((DbConditionConfig) ConditionConfigPanel.this.getDefaultModelObject()).setAdditionalDescription(string);
                 }
             }
 
@@ -170,7 +165,8 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
             public void detach() {
             }
         });
-        add(additionalDescription);
+        add(i18nStringWYSIWYGEditor);
+
 
         CheckBox hideQuestProgress = new CheckBox("hideQuestProgress");
         hideQuestProgress.setDefaultModel(new IModel<Boolean>() {
@@ -192,7 +188,6 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
             }
         });
         add(hideQuestProgress);
-
 
 
         setupComparisonFields(terrainLinkHelper);

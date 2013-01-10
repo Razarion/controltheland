@@ -30,6 +30,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * User: beat
@@ -201,14 +202,14 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
-        userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_2_REAL_ID);
+        userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_2_REAL_ID, Locale.ENGLISH);
         Id u1Builder = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
         sendBuildCommand(u1Builder, new Index(3000, 3000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         Id u1Factory = getFirstSynItemId(TEST_FACTORY_ITEM_ID);
         sendFactoryCommand(u1Factory, TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
-        userGuidanceService.activateQuest(TEST_LEVEL_TASK_1_2_REAL_ID);
+        userGuidanceService.activateQuest(TEST_LEVEL_TASK_1_2_REAL_ID, Locale.ENGLISH);
         serverPlanetServices.getBaseService().depositResource(3.0, getMyBase());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -590,14 +591,14 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
-        userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_2_REAL_ID);
+        userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_2_REAL_ID, Locale.ENGLISH);
         Id u1Builder = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
         sendBuildCommand(u1Builder, new Index(3000, 3000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         Id u1Factory = getFirstSynItemId(TEST_FACTORY_ITEM_ID);
         sendFactoryCommand(u1Factory, TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
-        userGuidanceService.activateQuest(TEST_LEVEL_TASK_1_2_REAL_ID);
+        userGuidanceService.activateQuest(TEST_LEVEL_TASK_1_2_REAL_ID, Locale.ENGLISH);
         serverPlanetServices.getBaseService().depositResource(3.0, getMyBase());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

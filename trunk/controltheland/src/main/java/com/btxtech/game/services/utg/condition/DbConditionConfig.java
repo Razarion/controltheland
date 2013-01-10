@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
+import com.btxtech.game.services.common.db.DbI18nString;
 import com.btxtech.game.services.common.db.IndexUserType;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import org.hibernate.annotations.Cascade;
@@ -26,11 +27,13 @@ import org.hibernate.annotations.TypeDef;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.util.Locale;
 
 /**
  * User: beat
@@ -50,8 +53,8 @@ public class DbConditionConfig implements Serializable {
     @org.hibernate.annotations.Type(type = "index")
     @Columns(columns = {@Column(name = "xRadarPositionHin"), @Column(name = "yRadarPositionHin")})
     private Index radarPositionHint;
-    @Column(length = 5000)
-    private String  additionalDescription;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private DbI18nString i18nAdditionalDescription = new DbI18nString();
     private boolean hideQuestProgress;
     @Transient
     private ConditionConfig conditionConfig;
@@ -92,12 +95,8 @@ public class DbConditionConfig implements Serializable {
         this.radarPositionHint = radarPositionHint;
     }
 
-    public String getAdditionalDescription() {
-        return additionalDescription;
-    }
-
-    public void setAdditionalDescription(String additionalDescription) {
-        this.additionalDescription = additionalDescription;
+    public DbI18nString getI18nAdditionalDescription() {
+        return i18nAdditionalDescription;
     }
 
     public boolean isHideQuestProgress() {
@@ -123,7 +122,7 @@ public class DbConditionConfig implements Serializable {
         return id != null ? id : System.identityHashCode(this);
     }
 
-    public ConditionConfig createConditionConfig(ServerItemTypeService serverItemTypeService) {
+    public ConditionConfig createConditionConfig(ServerItemTypeService serverItemTypeService, Locale locale) {
         if (conditionTrigger == null) {
             throw new IllegalStateException("conditionTrigger is null");
         }
@@ -134,7 +133,7 @@ public class DbConditionConfig implements Serializable {
         if (conditionTrigger.isComparisonNeeded()) {
             abstractComparisonConfig = dbAbstractComparisonConfig.createComparisonConfig(serverItemTypeService);
         }
-        conditionConfig = new ConditionConfig(conditionTrigger, abstractComparisonConfig, radarPositionHint, additionalDescription, hideQuestProgress);
+        conditionConfig = new ConditionConfig(conditionTrigger, abstractComparisonConfig, radarPositionHint, i18nAdditionalDescription.getString(locale), hideQuestProgress);
         return conditionConfig;
     }
 }

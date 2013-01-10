@@ -23,6 +23,7 @@ import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
+import com.btxtech.game.services.common.db.DbI18nString;
 import com.btxtech.game.services.common.db.IndexUserType;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
@@ -53,6 +54,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -68,6 +70,8 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     @GeneratedValue
     private Integer id;
     private String name;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private DbI18nString i18nTitle = new DbI18nString();
     @OneToMany(mappedBy = "dbTaskConfig", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<DbItemTypeAndPosition> items;
     @Type(type = "index")
@@ -244,7 +248,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         this.clearGame = clearGame;
     }
 
-    public TaskConfig createTaskConfig(ServerItemTypeService serverItemTypeService) {
+    public TaskConfig createTaskConfig(ServerItemTypeService serverItemTypeService, Locale locale) {
         ArrayList<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<>();
         for (DbItemTypeAndPosition dbItemTypeAndPosition : getItemCrudServiceHelper().readDbChildren()) {
             ItemTypeAndPosition itemTypeAndPosition = dbItemTypeAndPosition.createItemTypeAndPosition();
@@ -266,11 +270,11 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
 
         return new TaskConfig(itemTypeAndPositions,
                 scroll,
-                conditionConfig != null ? conditionConfig.createConditionConfig(serverItemTypeService) : null,
+                conditionConfig != null ? conditionConfig.createConditionConfig(serverItemTypeService, locale) : null,
                 houseCount,
                 money,
                 maxMoney,
-                name,
+                i18nTitle.getString(locale),
                 convertTaskBots(serverItemTypeService),
                 itemTypeLimitation,
                 radarMode,
@@ -330,6 +334,10 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
 
     public void setConditionConfig(DbConditionConfig conditionConfig) {
         this.conditionConfig = conditionConfig;
+    }
+
+    public DbI18nString getI18nTitle() {
+        return i18nTitle;
     }
 
     @Override

@@ -31,6 +31,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * User: beat
@@ -100,12 +101,12 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         // Level Up
         beginHttpRequestAndOpenSessionInViewFilter();
-        userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_2_REAL_ID);
+        userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_2_REAL_ID, Locale.ENGLISH);
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(200, 200), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_HARVESTER_ITEM_ID);
         waitForActionServiceDone();
-        userGuidanceService.activateQuest(TEST_LEVEL_TASK_1_2_REAL_ID);
+        userGuidanceService.activateQuest(TEST_LEVEL_TASK_1_2_REAL_ID, Locale.ENGLISH);
         sendCollectCommand(getFirstSynItemId(TEST_HARVESTER_ITEM_ID), getFirstSynItemId(TEST_RESOURCE_ITEM_ID));
         waitForActionServiceDone();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -293,7 +294,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         UserState userState = userService.getUserState();
-        QuestOverview questOverview = userGuidanceService.getQuestOverview();
+        QuestOverview questOverview = userGuidanceService.getQuestOverview(Locale.ENGLISH);
         Assert.assertEquals(0, questOverview.getQuestsDone());
         Assert.assertEquals(4, questOverview.getTotalQuests());
         Assert.assertEquals(0, questOverview.getMissionsDone());
@@ -306,7 +307,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         Assert.assertEquals("dbLevelTask4", questOverview.getQuestInfos().get(4).getTitle());
         Assert.assertEquals("dbLevelTask5", questOverview.getQuestInfos().get(5).getTitle());
         userGuidanceServiceImpl.conditionPassed(userState, dbLevelTask0.getId());
-        questOverview = userGuidanceService.getQuestOverview();
+        questOverview = userGuidanceService.getQuestOverview(Locale.ENGLISH);
         Assert.assertEquals(1, questOverview.getQuestsDone());
         Assert.assertEquals(4, questOverview.getTotalQuests());
         Assert.assertEquals(0, questOverview.getMissionsDone());
@@ -317,9 +318,9 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         Assert.assertEquals("dbLevelTask3", questOverview.getQuestInfos().get(2).getTitle());
         Assert.assertEquals("dbLevelTask4", questOverview.getQuestInfos().get(3).getTitle());
         Assert.assertEquals("dbLevelTask5", questOverview.getQuestInfos().get(4).getTitle());
-        userGuidanceService.activateQuest(dbLevelTask5.getId());
+        userGuidanceService.activateQuest(dbLevelTask5.getId(), Locale.ENGLISH);
         userGuidanceServiceImpl.conditionPassed(userState, dbLevelTask5.getId());
-        questOverview = userGuidanceService.getQuestOverview();
+        questOverview = userGuidanceService.getQuestOverview(Locale.ENGLISH);
         Assert.assertEquals(2, questOverview.getQuestsDone());
         Assert.assertEquals(4, questOverview.getTotalQuests());
         Assert.assertEquals(0, questOverview.getMissionsDone());
@@ -329,9 +330,9 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         Assert.assertEquals("dbLevelTask2", questOverview.getQuestInfos().get(1).getTitle());
         Assert.assertEquals("dbLevelTask3", questOverview.getQuestInfos().get(2).getTitle());
         Assert.assertEquals("dbLevelTask4", questOverview.getQuestInfos().get(3).getTitle());
-        userGuidanceService.activateQuest(dbLevelTask3.getId());
+        userGuidanceService.activateQuest(dbLevelTask3.getId(), Locale.ENGLISH);
         userGuidanceServiceImpl.conditionPassed(userState, dbLevelTask3.getId());
-        questOverview = userGuidanceService.getQuestOverview();
+        questOverview = userGuidanceService.getQuestOverview(Locale.ENGLISH);
         Assert.assertEquals(2, questOverview.getQuestsDone());
         Assert.assertEquals(4, questOverview.getTotalQuests());
         Assert.assertEquals(1, questOverview.getMissionsDone());
@@ -340,9 +341,9 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         Assert.assertEquals("dbLevelTask1", questOverview.getQuestInfos().get(0).getTitle());
         Assert.assertEquals("dbLevelTask2", questOverview.getQuestInfos().get(1).getTitle());
         Assert.assertEquals("dbLevelTask4", questOverview.getQuestInfos().get(2).getTitle());
-        userGuidanceService.activateQuest(dbLevelTask1.getId());
+        userGuidanceService.activateQuest(dbLevelTask1.getId(), Locale.ENGLISH);
         userGuidanceServiceImpl.conditionPassed(userState, dbLevelTask1.getId());
-        questOverview = userGuidanceService.getQuestOverview();
+        questOverview = userGuidanceService.getQuestOverview(Locale.ENGLISH);
         Assert.assertEquals(2, questOverview.getQuestsDone());
         Assert.assertEquals(4, questOverview.getTotalQuests());
         Assert.assertEquals(2, questOverview.getMissionsDone());
@@ -350,18 +351,18 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(2, questOverview.getQuestInfos().size());
         Assert.assertEquals("dbLevelTask2", questOverview.getQuestInfos().get(0).getTitle());
         Assert.assertEquals("dbLevelTask4", questOverview.getQuestInfos().get(1).getTitle());
-        userGuidanceService.activateQuest(dbLevelTask2.getId());
+        userGuidanceService.activateQuest(dbLevelTask2.getId(), Locale.ENGLISH);
         userGuidanceServiceImpl.conditionPassed(userState, dbLevelTask2.getId());
-        questOverview = userGuidanceService.getQuestOverview();
+        questOverview = userGuidanceService.getQuestOverview(Locale.ENGLISH);
         Assert.assertEquals(3, questOverview.getQuestsDone());
         Assert.assertEquals(4, questOverview.getTotalQuests());
         Assert.assertEquals(2, questOverview.getMissionsDone());
         Assert.assertEquals(2, questOverview.getTotalMissions());
         Assert.assertEquals(1, questOverview.getQuestInfos().size());
         Assert.assertEquals("dbLevelTask4", questOverview.getQuestInfos().get(0).getTitle());
-        userGuidanceService.activateQuest(dbLevelTask4.getId());
+        userGuidanceService.activateQuest(dbLevelTask4.getId(), Locale.ENGLISH);
         userGuidanceServiceImpl.conditionPassed(userState, dbLevelTask4.getId());
-        questOverview = userGuidanceService.getQuestOverview();
+        questOverview = userGuidanceService.getQuestOverview(Locale.ENGLISH);
         Assert.assertEquals(4, questOverview.getQuestsDone());
         Assert.assertEquals(4, questOverview.getTotalQuests());
         Assert.assertEquals(2, questOverview.getMissionsDone());
