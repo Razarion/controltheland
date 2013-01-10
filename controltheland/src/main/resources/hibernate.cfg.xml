@@ -149,6 +149,7 @@
         <!-- Planet -->
         <mapping class="com.btxtech.game.services.planet.db.DbPlanet"/>
         <mapping class="com.btxtech.game.services.planet.db.DbPlanetItemTypeLimitation"/>
-
+        <!-- Planet -->
+        <mapping class="com.btxtech.game.services.common.db.DbI18nString"/>
     </session-factory>
 </hibernate-configuration>

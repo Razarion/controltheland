@@ -18,6 +18,7 @@ import com.btxtech.game.services.planet.Base;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Locale;
 
 /**
  * User: beat
@@ -34,6 +35,7 @@ public class UserState implements Serializable {
     private int razarion;
     private Collection<Integer> inventoryItemIds = new ArrayList<>();
     private Collection<Integer> inventoryArtifactIds = new ArrayList<>();
+    private Locale locale;
 
     public boolean isRegistered() {
         return userName != null;
@@ -161,5 +163,13 @@ public class UserState implements Serializable {
 
     public void removeAllInventoryArtifactId(int inventoryArtifactId) {
         while(inventoryArtifactIds.remove(inventoryArtifactId)){}
+    }
+
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 }

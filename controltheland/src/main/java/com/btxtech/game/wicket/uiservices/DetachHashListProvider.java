@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public abstract class DetachHashListProvider<T> implements IDataProvider<T> {
     private List<T> list;
-    private Map<Integer, T> hashMap = new HashMap<Integer, T>();
+    private Map<Integer, T> hashMap = new HashMap<>();
 
     @Override
     public Iterator<? extends T> iterator(int first, int count) {
@@ -44,7 +44,7 @@ public abstract class DetachHashListProvider<T> implements IDataProvider<T> {
     @Override
     public IModel<T> model(T object) {
         final int hash = object.hashCode();
-        return new CompoundPropertyModel<T>(new IModel<T>() {
+        return new CompoundPropertyModel<>(new IModel<T>() {
             private T object;
 
             @Override

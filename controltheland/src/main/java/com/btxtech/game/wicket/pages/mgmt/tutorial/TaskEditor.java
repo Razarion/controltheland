@@ -26,6 +26,7 @@ import com.btxtech.game.wicket.pages.mgmt.bot.BotEditor;
 import com.btxtech.game.wicket.pages.mgmt.condition.ConditionConfigPanel;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
+import com.btxtech.game.wicket.uiservices.I18nStringEditor;
 import com.btxtech.game.wicket.uiservices.IndexPanel;
 import com.btxtech.game.wicket.uiservices.ItemTypePanel;
 import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
@@ -61,6 +62,7 @@ public class TaskEditor extends MgmtWebPage {
         }));
         add(form);
 
+        form.add(new I18nStringEditor("I18nTitle"));
         form.add(new CheckBox("clearGame"));
         form.add(new IndexPanel("scroll"));
         form.add(new TextField("money"));

@@ -30,6 +30,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -433,7 +434,7 @@ public class TestLevelCrud extends AbstractServiceTest {
         DbLevelTask dbLevelTask = dbLevel1.getLevelTaskCrud().createDbChild();
         dbLevelTask.setDbConditionConfig(dbConditionConfig1);
         dbConditionConfig1.setConditionTrigger(ConditionTrigger.SYNC_ITEM_POSITION);
-        dbConditionConfig1.setAdditionalDescription("setAdditionalDescription");
+        dbConditionConfig1.getI18nAdditionalDescription().putString("setAdditionalDescription");
         DbItemTypePositionComparisonConfig comparisonConfig = new DbItemTypePositionComparisonConfig();
         DbComparisonItemCount dbComparisonItemCount = comparisonConfig.getCrudDbComparisonItemCount().createDbChild();
         dbComparisonItemCount.setCount(1);
@@ -454,7 +455,7 @@ public class TestLevelCrud extends AbstractServiceTest {
         dbLevel1 = userGuidanceService.getDbLevel(dbLevel1.getId());
         dbLevelTask = CommonJava.getFirst(dbLevel1.getLevelTaskCrud().readDbChildren());
         dbConditionConfig1 = dbLevelTask.getDbConditionConfig();
-        ConditionConfig conditionConfig = dbConditionConfig1.createConditionConfig(serverItemTypeService);
+        ConditionConfig conditionConfig = dbConditionConfig1.createConditionConfig(serverItemTypeService, Locale.ENGLISH);
         Assert.assertEquals(ConditionTrigger.SYNC_ITEM_POSITION, conditionConfig.getConditionTrigger());
         Assert.assertEquals("setAdditionalDescription", conditionConfig.getAdditionalDescription());
         ItemTypePositionComparisonConfig itemTypePositionComparisonConfig = (ItemTypePositionComparisonConfig) conditionConfig.getAbstractComparisonConfig();
@@ -540,7 +541,7 @@ public class TestLevelCrud extends AbstractServiceTest {
         dbLevel1 = userGuidanceService.getDbLevel(dbLevel1.getId());
         dbLevelTask = CommonJava.getFirst(dbLevel1.getLevelTaskCrud().readDbChildren());
         dbConditionConfig1 = dbLevelTask.getDbConditionConfig();
-        ConditionConfig conditionConfig = dbConditionConfig1.createConditionConfig(serverItemTypeService);
+        ConditionConfig conditionConfig = dbConditionConfig1.createConditionConfig(serverItemTypeService, Locale.ENGLISH);
         Assert.assertEquals(ConditionTrigger.SYNC_ITEM_BUILT, conditionConfig.getConditionTrigger());
         SyncItemTypeComparisonConfig syncItemTypeComparisonConfig = (SyncItemTypeComparisonConfig) conditionConfig.getAbstractComparisonConfig();
         Map<ItemType, Integer> itemTypes = (Map<ItemType, Integer>) getPrivateField(SyncItemTypeComparisonConfig.class, syncItemTypeComparisonConfig, "itemTypeCount");
@@ -759,7 +760,7 @@ public class TestLevelCrud extends AbstractServiceTest {
         dbLevelTask12.setMoney(22);
         DbConditionConfig dbConditionConfig = new DbConditionConfig();
         dbConditionConfig.setRadarPositionHint(new Index(100, 200));
-        dbConditionConfig.setAdditionalDescription("dbConditionConfig2");
+        dbConditionConfig.getI18nAdditionalDescription().putString("dbConditionConfig2");
         dbConditionConfig.setHideQuestProgress(true);
         dbLevelTask12.setDbConditionConfig(dbConditionConfig);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel1);
@@ -768,8 +769,8 @@ public class TestLevelCrud extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        QuestInfo questInfo1 = userGuidanceService.getDbLevelCrud().readDbChild(dbLevel1.getId()).getLevelTaskCrud().readDbChildren().get(0).createQuestInfo();
-        QuestInfo questInfo2 = userGuidanceService.getDbLevelCrud().readDbChild(dbLevel1.getId()).getLevelTaskCrud().readDbChildren().get(1).createQuestInfo();
+        QuestInfo questInfo1 = userGuidanceService.getDbLevelCrud().readDbChild(dbLevel1.getId()).getLevelTaskCrud().readDbChildren().get(0).createQuestInfo(Locale.ENGLISH);
+        QuestInfo questInfo2 = userGuidanceService.getDbLevelCrud().readDbChild(dbLevel1.getId()).getLevelTaskCrud().readDbChildren().get(1).createQuestInfo(Locale.ENGLISH);
         Assert.assertEquals(new QuestInfo("name1", "html1", null, 11, 12, dbLevelTask11.getId(), QuestInfo.Type.MISSION, null, false), questInfo1);
         Assert.assertEquals(new QuestInfo("name2", "html2", "dbConditionConfig2", 21, 22, dbLevelTask12.getId(), QuestInfo.Type.QUEST, new Index(100, 200), true), questInfo2);
         endHttpRequestAndOpenSessionInViewFilter();

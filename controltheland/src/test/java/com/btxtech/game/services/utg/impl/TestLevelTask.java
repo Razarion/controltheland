@@ -25,6 +25,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.Locale;
+
 /**
  * User: beat
  * Date: 01.07.12
@@ -100,7 +102,7 @@ public class TestLevelTask extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.setLevelForNewUser(userState);
         Assert.assertEquals((int) dbLevelTask0.getId(), (int) getActiveQuestId());
-        userGuidanceService.activateQuest(dbLevelTask1.getId());
+        userGuidanceService.activateQuest(dbLevelTask1.getId(), Locale.ENGLISH);
         Assert.assertEquals((int) dbLevelTask1.getId(), (int) getActiveQuestId());
         userGuidanceServiceImpl.conditionPassed(userState, dbLevelTask1.getId());
         Assert.assertEquals((int) dbLevelTask2.getId(), (int) getActiveQuestId());
@@ -108,14 +110,14 @@ public class TestLevelTask extends AbstractServiceTest {
         userGuidanceServiceImpl.conditionPassed(userState, dbLevelTask2.getId());
         Assert.assertEquals((int) dbLevelTask0.getId(), (int) getActiveQuestId());
         try {
-            userGuidanceService.activateQuest(dbLevelTask1.getId());
+            userGuidanceService.activateQuest(dbLevelTask1.getId(), Locale.ENGLISH);
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
             Assert.assertEquals("DbLevelTask already done: DbLevelTask{id=2, name='dbLevelTask1}", e.getMessage());
         }
         Assert.assertEquals((int) dbLevelTask0.getId(), (int) getActiveQuestId());
         // Activate active level task
-        userGuidanceService.activateQuest(dbLevelTask0.getId());
+        userGuidanceService.activateQuest(dbLevelTask0.getId(), Locale.ENGLISH);
         Assert.assertEquals((int) dbLevelTask0.getId(), (int) getActiveQuestId());
         userGuidanceService.onTutorialFinished(dbLevelTask0.getId());
         userGuidanceServiceImpl.conditionPassed(userState, dbLevelTask0.getId());
@@ -129,7 +131,7 @@ public class TestLevelTask extends AbstractServiceTest {
 
     private Integer getActiveQuestId() {
         RealGameInfo realGameInfo = new RealGameInfo();
-        userGuidanceService.fillRealGameInfo(realGameInfo);
+        userGuidanceService.fillRealGameInfo(realGameInfo, Locale.ENGLISH);
         if (realGameInfo.getLevelTaskPacket() == null) {
             return null;
         }

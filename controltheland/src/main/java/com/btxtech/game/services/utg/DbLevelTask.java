@@ -20,6 +20,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import java.util.Locale;
 
 /**
  * User: beat
@@ -84,11 +85,11 @@ public class DbLevelTask implements CrudChild<DbLevel> {
         this.dbTutorialConfig = dbTutorialConfig;
     }
 
-    public ConditionConfig createConditionConfig(ServerItemTypeService serverItemTypeService) {
+    public ConditionConfig createConditionConfig(ServerItemTypeService serverItemTypeService, Locale locale) {
         if (dbTutorialConfig != null) {
             return new ConditionConfig(ConditionTrigger.TUTORIAL, null, null, null, false);
         } else if (dbConditionConfig != null) {
-            return dbConditionConfig.createConditionConfig(serverItemTypeService);
+            return dbConditionConfig.createConditionConfig(serverItemTypeService, locale);
         } else {
             return null;
         }
@@ -126,12 +127,12 @@ public class DbLevelTask implements CrudChild<DbLevel> {
         this.html = html;
     }
 
-    public QuestInfo createQuestInfo() {
+    public QuestInfo createQuestInfo(Locale locale) {
         String additionalDescription = null;
         Index radarPositionHint = null;
         boolean hideQuestProgress = false;
         if(dbConditionConfig != null) {
-            additionalDescription = dbConditionConfig.getAdditionalDescription();
+            additionalDescription = dbConditionConfig.getI18nAdditionalDescription().getString(locale);
             radarPositionHint = dbConditionConfig.getRadarPositionHint();
             hideQuestProgress = dbConditionConfig.isHideQuestProgress();
         }

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * User: beat
@@ -52,7 +53,7 @@ public class TestLevelTask extends AbstractServiceTest {
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_3_REAL_ID);
         levelTaskPacket = getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket();
         Assert.assertEquals(new QuestInfo("Task3Level2", "DecrTask3Level2", null, 100, 10, TEST_LEVEL_TASK_1_3_REAL_ID, QuestInfo.Type.QUEST, null, false), levelTaskPacket.getQuestInfo());
-        userGuidanceService.activateQuest(TEST_LEVEL_TASK_3_3_SIMULATED_ID);
+        userGuidanceService.activateQuest(TEST_LEVEL_TASK_3_3_SIMULATED_ID, Locale.ENGLISH);
         levelTaskPacket = getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket();
         Assert.assertEquals(new QuestInfo(TEST_LEVEL_TASK_3_3_SIMULATED_NAME, "Task3Level2Descr", null, 2, 0, TEST_LEVEL_TASK_3_3_SIMULATED_ID, QuestInfo.Type.MISSION, null, false), levelTaskPacket.getQuestInfo());
         // No quests / missions
@@ -98,7 +99,7 @@ public class TestLevelTask extends AbstractServiceTest {
         Assert.assertFalse(levelTaskPackets.get(0).isCompleted());
         Assert.assertEquals(new QuestInfo("Task3Level2", "DecrTask3Level2", null, 100, 10, TEST_LEVEL_TASK_1_3_REAL_ID, QuestInfo.Type.QUEST, null, false), levelTaskPackets.get(0).getQuestInfo());
         assertQuestProgressInfo(levelTaskPackets.get(0).getQuestProgressInfo(), ConditionTrigger.MONEY_INCREASED, 0, 200);
-        userGuidanceService.activateQuest(TEST_LEVEL_TASK_3_3_SIMULATED_ID);
+        userGuidanceService.activateQuest(TEST_LEVEL_TASK_3_3_SIMULATED_ID, Locale.ENGLISH);
         levelTaskPackets = getPackages(LevelTaskPacket.class);
         Assert.assertEquals(1, levelTaskPackets.size());
         Assert.assertFalse(levelTaskPackets.get(0).isCompleted());

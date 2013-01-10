@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -283,7 +284,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         Assert.assertFalse(passed);
         serverConditionService.onBaseDeleted(simpleBase1);
         Assert.assertFalse(passed);
-        // TODO test failed (Unexpected method call getServerPlanetServices) 31.12.2012, 02.01.2012
+        // TODO test failed (Unexpected method call getServerPlanetServices) 31.12.2012, 02.01.2013, 09.01.2013
         serverConditionService.onBaseDeleted(simpleBase1);
         Assert.assertTrue(passed);
     }
@@ -389,10 +390,10 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
         Assert.assertEquals(TEST_LEVEL_TASK_1_2_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
-        Assert.assertEquals(0, userGuidanceService.getQuestOverview().getMissionsDone());
-        Assert.assertEquals(0, userGuidanceService.getQuestOverview().getTotalMissions());
-        Assert.assertEquals(0, userGuidanceService.getQuestOverview().getQuestsDone());
-        Assert.assertEquals(2, userGuidanceService.getQuestOverview().getTotalQuests());
+        Assert.assertEquals(0, userGuidanceService.getQuestOverview(Locale.ENGLISH).getMissionsDone());
+        Assert.assertEquals(0, userGuidanceService.getQuestOverview(Locale.ENGLISH).getTotalMissions());
+        Assert.assertEquals(0, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestsDone());
+        Assert.assertEquals(2, userGuidanceService.getQuestOverview(Locale.ENGLISH).getTotalQuests());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Complete missions
@@ -402,10 +403,10 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         simpleBase1 = getMyBase();
         serverConditionService.onMoneyIncrease(simpleBase1, 1.0);
         Assert.assertEquals(TEST_LEVEL_TASK_2_2_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
-        Assert.assertEquals(0, userGuidanceService.getQuestOverview().getMissionsDone());
-        Assert.assertEquals(0, userGuidanceService.getQuestOverview().getTotalMissions());
-        Assert.assertEquals(1, userGuidanceService.getQuestOverview().getQuestsDone());
-        Assert.assertEquals(2, userGuidanceService.getQuestOverview().getTotalQuests());
+        Assert.assertEquals(0, userGuidanceService.getQuestOverview(Locale.ENGLISH).getMissionsDone());
+        Assert.assertEquals(0, userGuidanceService.getQuestOverview(Locale.ENGLISH).getTotalMissions());
+        Assert.assertEquals(1, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestsDone());
+        Assert.assertEquals(2, userGuidanceService.getQuestOverview(Locale.ENGLISH).getTotalQuests());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         //Backup
@@ -429,10 +430,10 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         waitForActionServiceDone();
         serverConditionService.onMoneyIncrease(simpleBase1, 1.0);
         Assert.assertEquals(TEST_LEVEL_TASK_2_2_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
-        Assert.assertEquals(0, userGuidanceService.getQuestOverview().getMissionsDone());
-        Assert.assertEquals(0, userGuidanceService.getQuestOverview().getTotalMissions());
-        Assert.assertEquals(1, userGuidanceService.getQuestOverview().getQuestsDone());
-        Assert.assertEquals(2, userGuidanceService.getQuestOverview().getTotalQuests());
+        Assert.assertEquals(0, userGuidanceService.getQuestOverview(Locale.ENGLISH).getMissionsDone());
+        Assert.assertEquals(0, userGuidanceService.getQuestOverview(Locale.ENGLISH).getTotalMissions());
+        Assert.assertEquals(1, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestsDone());
+        Assert.assertEquals(2, userGuidanceService.getQuestOverview(Locale.ENGLISH).getTotalQuests());
         // fulfill next task level
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(5000, 5000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -455,11 +456,11 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         createAndLoginUser("U1");
         UserState userState1 = userService.getUserState();
         userGuidanceService.promote(userState1, TEST_LEVEL_4_REAL_ID);
-        Assert.assertEquals(2, userGuidanceService.getQuestOverview().getQuestInfos().size());
+        Assert.assertEquals(2, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(600, 600), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
-        Assert.assertEquals(2, userGuidanceService.getQuestOverview().getQuestInfos().size());
+        Assert.assertEquals(2, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
         Thread.sleep(500);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -482,12 +483,12 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
-        Assert.assertEquals(2, userGuidanceService.getQuestOverview().getQuestInfos().size());
+        Assert.assertEquals(2, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_1_4_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
         // TODO failed 05.10.2012, 25.10.2012
         assertAndSetTimeRemaining();
         Thread.sleep(100);
-        Assert.assertEquals(1, userGuidanceService.getQuestOverview().getQuestInfos().size());
+        Assert.assertEquals(1, userGuidanceService.getQuestOverview(Locale.ENGLISH).getQuestInfos().size());
         Assert.assertEquals(TEST_LEVEL_TASK_2_4_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -532,7 +533,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
-        userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_4_REAL_ID);
+        userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_4_REAL_ID, Locale.ENGLISH);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         //Backup
@@ -552,7 +553,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
-        userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_4_REAL_ID);
+        userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_4_REAL_ID, Locale.ENGLISH);
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
@@ -561,7 +562,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
-        userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_4_REAL_ID);
+        userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_4_REAL_ID, Locale.ENGLISH);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         //Backup
@@ -581,11 +582,11 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
-        userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_4_REAL_ID);
+        userGuidanceService.activateQuest(TEST_LEVEL_TASK_2_4_REAL_ID, Locale.ENGLISH);
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(5000, 5000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
-        userGuidanceService.activateQuest(TEST_LEVEL_TASK_1_4_REAL_ID);
+        userGuidanceService.activateQuest(TEST_LEVEL_TASK_1_4_REAL_ID, Locale.ENGLISH);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -623,7 +624,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         Thread.sleep(3100);
 
         List<ServerConnectionServiceTestHelper.PacketEntry> packetEntries = serverConnectionServiceTestHelper.getPacketEntries(simpleBase, LevelTaskPacket.class);
-        // TODO test failed 31.12.2012, 02.01.2012
+        // TODO test failed 31.12.2012, 02.01.2013, 09.01.2013
         Assert.assertEquals(2, packetEntries.size());
         QuestProgressInfo questProgressInfo = ((LevelTaskPacket) packetEntries.get(0).getPacket()).getQuestProgressInfo();
         Assert.assertEquals(1, questProgressInfo.getItemIdAmounts().get(TEST_ATTACK_ITEM_ID).getAmount());

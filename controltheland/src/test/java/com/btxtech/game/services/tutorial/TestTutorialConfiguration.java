@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * User: beat
@@ -211,7 +212,7 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         dbTutorialConfig = ruTutorialServiceHelper.readDbChild(dbTutorialConfig.getId(), DbTutorialConfig.class);
         dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig.getId());
-        dbTaskConfig.setName("name1");
+        dbTaskConfig.getI18nTitle().putString("i18n title");
         dbTaskConfig.setScroll(new Index(1, 2));
         dbTaskConfig.setHouseCount(5);
         dbTaskConfig.setMoney(100);
@@ -231,7 +232,7 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         dbTutorialConfig = ruTutorialServiceHelper.readDbChild(dbTutorialConfig.getId(), DbTutorialConfig.class);
-        TutorialConfig tutorialConfig = dbTutorialConfig.getTutorialConfig(serverItemTypeService);
+        TutorialConfig tutorialConfig = dbTutorialConfig.getTutorialConfig(serverItemTypeService, Locale.ENGLISH);
         Assert.assertEquals("ownbase", tutorialConfig.getOwnBaseName());
         Assert.assertTrue(tutorialConfig.isEventTracking());
         Assert.assertTrue(tutorialConfig.isShowTip());
@@ -240,6 +241,7 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         Assert.assertEquals(1, taskConfigs.size());
         TaskConfig taskConfig = taskConfigs.get(0);
         Assert.assertEquals(100, taskConfig.getMoney());
+        Assert.assertEquals("i18n title", taskConfig.getName());
         PlanetInfo planetInfo = taskConfig.createPlanetInfo();
         Assert.assertEquals(5, planetInfo.getHouseSpace());
         Assert.assertEquals(10000, planetInfo.getMaxMoney());

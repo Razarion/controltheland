@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -143,15 +144,15 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         activateConditions4Level(userState, dbNextLevel);
         // Post processing
         userState.setXp(0);
-        activateNextUnDoneLevelTask(userState, null);
+        activateNextUnDoneLevelTask(userState, null, userState.getLocale());
     }
 
-    private void activateNextUnDoneLevelTask(UserState userState, DbLevelTask oldLevelTaskId) {
+    private void activateNextUnDoneLevelTask(UserState userState, DbLevelTask oldLevelTaskId, Locale locale) {
         DbLevelTask dbLevelTask = getNextUnDoneLevelTask(userState, oldLevelTaskId);
         if (dbLevelTask == null) {
             return;
         }
-        activateQuest(userState, dbLevelTask);
+        activateQuest(userState, dbLevelTask, locale);
     }
 
     private DbLevelTask getNextUnDoneLevelTask(UserState userState, DbLevelTask oldLevelTask) {
@@ -264,7 +265,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
 
         // Activate next quest / mission
         if (oldLevel.equals(getDbLevel(userState))) {
-            activateNextUnDoneLevelTask(userState, dbLevelTask);
+            activateNextUnDoneLevelTask(userState, dbLevelTask, userState.getLocale());
         }
     }
 
@@ -308,7 +309,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         }
         DbLevel dbLevel = new ArrayList<>(dbLevelCrud.readDbChildren()).get(0);
         userState.setDbLevelId(dbLevel.getId());
-        activateNextUnDoneLevelTask(userState, null);
+        activateNextUnDoneLevelTask(userState, null, userState.getLocale());
         activateConditions4Level(userState, dbLevel);
     }
 
@@ -408,7 +409,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     }
 
     @Override
-    public QuestOverview getQuestOverview() {
+    public QuestOverview getQuestOverview(Locale locale) {
         List<QuestInfo> levelQuests = new ArrayList<>();
         UserState userState = userService.getUserState();
         Collection<Integer> userLevelTaskDone = levelTaskDone.get(userState);
@@ -422,7 +423,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
             } else {
                 totalQuests++;
             }
-            QuestInfo questInfo = dbLevelTask.createQuestInfo();
+            QuestInfo questInfo = dbLevelTask.createQuestInfo(locale);
             if (userLevelTaskDone == null || !userLevelTaskDone.contains(dbLevelTask.getId())) {
                 levelQuests.add(questInfo);
             } else {
@@ -508,7 +509,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         serverConditionService.activateCondition(levelCondition, userState, null);
 
         if (activeQuest != null) {
-            serverConditionService.activateCondition(activeQuest.createConditionConfig(serverItemTypeService), userState, activeQuest.getId());
+            serverConditionService.activateCondition(activeQuest.createConditionConfig(serverItemTypeService, null), userState, activeQuest.getId());
             setActiveQuest(userState, activeQuest);
         }
     }
@@ -523,7 +524,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     }
 
     @Override
-    public void activateQuest(int dbLevelTaskId) {
+    public void activateQuest(int dbLevelTaskId, Locale locale) {
         UserState userState = userService.getUserState();
         DbLevelTask dbLevelTask = getDbLevel().getLevelTaskCrud().readDbChild(dbLevelTaskId);
         if (levelTaskDone.containsKey(userState) && levelTaskDone.get(userState).contains(dbLevelTaskId)) {
@@ -539,22 +540,22 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
             }
             deactivateLevelTask(getDbLevel().getLevelTaskCrud().readDbChild(activeQuestId));
         }
-        activateQuest(userState, dbLevelTask);
+        activateQuest(userState, dbLevelTask, locale);
     }
 
-    private void activateQuest(UserState userState, DbLevelTask dbLevelTask) {
+    private void activateQuest(UserState userState, DbLevelTask dbLevelTask, Locale locale) {
         if (levelTaskDone.containsKey(userState) && levelTaskDone.get(userState).contains(dbLevelTask.getId())) {
             throw new IllegalArgumentException("DbLevelTask already done: " + dbLevelTask);
         }
         if (activeQuestIds.containsKey(userState)) {
             throw new IllegalArgumentException("DbLevelTask already activated: " + activeQuestIds.containsKey(userState) + ". Can not activate new level task: " + dbLevelTask);
         }
-        serverConditionService.activateCondition(dbLevelTask.createConditionConfig(serverItemTypeService), userState, dbLevelTask.getId());
+        serverConditionService.activateCondition(dbLevelTask.createConditionConfig(serverItemTypeService, locale), userState, dbLevelTask.getId());
         setActiveQuest(userState, dbLevelTask);
         historyService.addLevelTaskActivated(userState, dbLevelTask);
         if (userState.getBase() != null) {
             LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
-            levelTaskPacket.setQuestInfo(dbLevelTask.createQuestInfo());
+            levelTaskPacket.setQuestInfo(dbLevelTask.createQuestInfo(locale));
             if (!dbLevelTask.isDbTutorialConfig()) {
                 levelTaskPacket.setQuestProgressInfo(serverConditionService.getQuestProgressInfo(userState, dbLevelTask.getId()));
             }
@@ -576,7 +577,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     }
 
     @Override
-    public void fillRealGameInfo(RealGameInfo realGameInfo) {
+    public void fillRealGameInfo(RealGameInfo realGameInfo, Locale locale) {
         DbLevel dbLevel = getDbLevel();
         UserState userState = userService.getUserState();
         // Level task
@@ -584,7 +585,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         if (activeLevelTaskId != null) {
             DbLevelTask activeTask = dbLevel.getLevelTaskCrud().readDbChild(activeLevelTaskId);
             LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
-            levelTaskPacket.setQuestInfo(activeTask.createQuestInfo());
+            levelTaskPacket.setQuestInfo(activeTask.createQuestInfo(locale));
             if (!activeTask.isDbTutorialConfig()) {
                 levelTaskPacket.setQuestProgressInfo(serverConditionService.getQuestProgressInfo(userState, activeTask.getId()));
             }

@@ -156,6 +156,7 @@ public class UserServiceImpl implements UserService {
         UserState userState = getUserState(user);
         if (userState != null) {
             userState.setSessionId(session.getSessionId());
+            userState.setLocale(session.getRequest().getLocale());
         }
         session.setUserState(userState);
         try {
@@ -552,6 +553,7 @@ public class UserServiceImpl implements UserService {
         if (session.getUserState() == null) {
             UserState userState = createUserState(getUserFromSecurityContext());
             userState.setSessionId(session.getSessionId());
+            userState.setLocale(session.getRequest().getLocale());
             session.setUserState(userState);
         }
         return session.getUserState();

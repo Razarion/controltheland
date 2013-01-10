@@ -46,6 +46,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * User: beat
@@ -82,7 +83,7 @@ public class PlaybackServiceImpl extends AutowiredRemoteServiceServlet implement
             MovableServiceImpl.setCommonInfo(playbackInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService, clipService);
             LifecycleTrackingInfo lifecycleTrackingInfo = userTrackingService.getLifecycleTrackingInfo(startUuid);
             DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialConfig4Tracking(lifecycleTrackingInfo.getLevelTaskId());
-            playbackInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(serverItemTypeService));
+            playbackInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(serverItemTypeService, Locale.ENGLISH));
             TerrainDbUtil.loadTerrainFromDb(dbTutorialConfig.getDbTerrainSetting(), playbackInfo);
             terrainImageService.setupTerrainImages(playbackInfo);
 
