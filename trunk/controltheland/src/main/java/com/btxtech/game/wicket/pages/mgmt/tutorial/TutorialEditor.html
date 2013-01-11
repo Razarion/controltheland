@@ -55,6 +55,7 @@
     <h2>Tasks</h2>
     <table cellpadding="1" cellspacing="1" border="0">
         <tr>
+            <th bgcolor="#dadada">id</th>
             <th bgcolor="#dadada">Name [internal only]</th>
             <th bgcolor="#dadada">Up</th>
             <th bgcolor="#dadada">Down</th>
@@ -63,6 +64,7 @@
         </tr>
 
         <tr wicket:id="taskTable">
+            <td wicket:id="id"/>
             <td><input type="text" wicket:id="name" size="20" maxlength="500"/></td>
             <td valign="center">
                 <input type="submit" value="Up" wicket:id="up"/>
