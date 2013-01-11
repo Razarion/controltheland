@@ -38,8 +38,6 @@ import java.util.Set;
  * Time: 12:26:58
  */
 public class RadarPanel implements TerrainScrollListener {
-    private static final String NO_POWER = "<br/>You do not have enough energy.";
-    private static final String NO_RADAR = "<br/>You do not have a radar building.";
     private static final int RADAR_X = 10;
     private static final int RADAR_Y = 18;
     private static final int RADAR_WIDTH = 150;
@@ -295,10 +293,10 @@ public class RadarPanel implements TerrainScrollListener {
             } else {
                 if (!hasEnergy) {
                     noRadarPanel.setVisible(true);
-                    noRadarPanel.setHTML(NO_POWER);
+                    noRadarPanel.setHTML("<br/>" + ClientI18nHelper.CONSTANTS.radarNoPower());
                 } else {
                     noRadarPanel.setVisible(true);
-                    noRadarPanel.setHTML(NO_RADAR);
+                    noRadarPanel.setHTML("<br/>" + ClientI18nHelper.CONSTANTS.radarNoRadarBuilding());
                 }
             }
         }
