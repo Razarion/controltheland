@@ -53,10 +53,8 @@ public class DbLevel implements CrudChild, CrudParent {
     private Integer id;
     @OrderBy
     @SuppressWarnings({"UnusedDeclaration"})
-    private int orderIndex; // TODO both number and order index needed
-    private int number; // TODO both number and order index needed
-    @Column(length = 50000)
-    private String html;
+    private int orderIndex;
+    private int number;
     @Column(length = 1000)
     private String internalDescription;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -96,14 +94,6 @@ public class DbLevel implements CrudChild, CrudParent {
 
     public void setName(String name) {
         throw new UnsupportedOperationException();
-    }
-
-    public String getHtml() {
-        return html;
-    }
-
-    public void setHtml(String html) {
-        this.html = html;
     }
 
     public String getInternalDescription() {

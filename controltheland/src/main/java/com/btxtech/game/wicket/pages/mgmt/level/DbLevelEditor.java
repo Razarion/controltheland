@@ -26,7 +26,7 @@ import com.btxtech.game.wicket.uiservices.CrudListChildTableHelper;
 import com.btxtech.game.wicket.uiservices.PlanetPanel;
 import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
 import com.btxtech.game.wicket.uiservices.RuModel;
-import com.btxtech.game.wicket.uiservices.WysiwygEditor;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
@@ -56,7 +56,7 @@ public class DbLevelEditor extends MgmtWebPage {
         }));
         add(form);
 
-        form.add(new WysiwygEditor("html"));
+        form.add(new Label("number"));
         form.add(new PlanetPanel("dbPlanet"));
         form.add(new TextField("xp"));
         // Scope

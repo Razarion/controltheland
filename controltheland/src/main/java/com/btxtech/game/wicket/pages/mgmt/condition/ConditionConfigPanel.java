@@ -150,7 +150,12 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
         });
         add(radarPositionHint);
 
-        I18nStringWYSIWYGEditor i18nStringWYSIWYGEditor = new I18nStringWYSIWYGEditor("i18nAdditionalDescription");
+        I18nStringWYSIWYGEditor i18nStringWYSIWYGEditor = new I18nStringWYSIWYGEditor("i18nAdditionalDescription") {
+            @Override
+            public boolean isVisible() {
+                return getDefaultModelObject() != null;
+            }
+        };
         i18nStringWYSIWYGEditor.setDefaultModel(new AbstractReadOnlyModel<DbI18nString>() {
             @Override
             public DbI18nString getObject() {
