@@ -67,7 +67,6 @@ public class TestLevelCrud extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbLevel dbLevel1 = userGuidanceService.getDbLevelCrud().createDbChild();
-        dbLevel1.setHtml("abcdef");
         dbLevel1.setInternalDescription("internal");
         dbLevel1.setNumber(1);
         dbLevel1.setXp(599);
@@ -91,7 +90,6 @@ public class TestLevelCrud extends AbstractServiceTest {
         Assert.assertEquals(1, dbLevels.size());
         DbLevel dbLevel = dbLevels.get(0);
         Assert.assertEquals("1", dbLevel.getName());
-        Assert.assertEquals("abcdef", dbLevel1.getHtml());
         Assert.assertEquals("internal", dbLevel1.getInternalDescription());
         Assert.assertEquals(1, dbLevel1.getNumber());
         Assert.assertEquals(2, dbLevel1.getLevelTaskCrud().readDbChildren().size());
@@ -112,7 +110,6 @@ public class TestLevelCrud extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbLevel dbLevel2 = userGuidanceService.getDbLevelCrud().createDbChild();
-        dbLevel2.setHtml("qwert");
         dbLevel2.setInternalDescription("internal2");
         dbLevel2.setNumber(2);
         dbLevel2.setXp(333);
@@ -131,7 +128,6 @@ public class TestLevelCrud extends AbstractServiceTest {
         Assert.assertEquals(2, dbLevels.size());
         dbLevel = dbLevels.get(0);
         Assert.assertEquals("1", dbLevel.getName());
-        Assert.assertEquals("abcdef", dbLevel1.getHtml());
         Assert.assertEquals("internal", dbLevel1.getInternalDescription());
         Assert.assertEquals(1, dbLevel1.getNumber());
         Assert.assertEquals(2, dbLevel1.getLevelTaskCrud().readDbChildren().size());
@@ -146,7 +142,6 @@ public class TestLevelCrud extends AbstractServiceTest {
         Assert.assertEquals(35, dbLevelTask12.getXp());
         Assert.assertEquals("dbLevelTask12", dbLevelTask12.getName());
         dbLevel2 = dbLevels.get(1);
-        Assert.assertEquals("qwert", dbLevel2.getHtml());
         Assert.assertEquals("internal2", dbLevel2.getInternalDescription());
         Assert.assertEquals(2, dbLevel2.getNumber());
         Assert.assertEquals(1, dbLevel2.getLevelTaskCrud().readDbChildren().size());
@@ -162,7 +157,6 @@ public class TestLevelCrud extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbLevel dbLevel3 = userGuidanceService.getDbLevelCrud().createDbChild();
-        dbLevel3.setHtml("abcdef3");
         dbLevel3.setInternalDescription("internal3");
         dbLevel3.setNumber(3);
         dbLevel3.setXp(74);
@@ -186,7 +180,6 @@ public class TestLevelCrud extends AbstractServiceTest {
         Assert.assertEquals(3, dbLevels.size());
         dbLevel = dbLevels.get(0);
         Assert.assertEquals("1", dbLevel.getName());
-        Assert.assertEquals("abcdef", dbLevel1.getHtml());
         Assert.assertEquals("internal", dbLevel1.getInternalDescription());
         Assert.assertEquals(1, dbLevel1.getNumber());
         Assert.assertEquals(2, dbLevel1.getLevelTaskCrud().readDbChildren().size());
@@ -201,7 +194,6 @@ public class TestLevelCrud extends AbstractServiceTest {
         Assert.assertEquals(35, dbLevelTask12.getXp());
         Assert.assertEquals("dbLevelTask12", dbLevelTask12.getName());
         dbLevel2 = dbLevels.get(1);
-        Assert.assertEquals("qwert", dbLevel2.getHtml());
         Assert.assertEquals("internal2", dbLevel2.getInternalDescription());
         Assert.assertEquals(2, dbLevel2.getNumber());
         Assert.assertEquals(1, dbLevel2.getLevelTaskCrud().readDbChildren().size());
@@ -211,7 +203,6 @@ public class TestLevelCrud extends AbstractServiceTest {
         Assert.assertEquals(39, dbLevelTask21.getXp());
         Assert.assertEquals("dbLevelTask21", dbLevelTask21.getName());
         dbLevel3 = dbLevels.get(2);
-        Assert.assertEquals("abcdef3", dbLevel3.getHtml());
         Assert.assertEquals("internal3", dbLevel3.getInternalDescription());
         Assert.assertEquals(3, dbLevel3.getNumber());
         Assert.assertEquals(2, dbLevel3.getLevelTaskCrud().readDbChildren().size());
@@ -244,7 +235,6 @@ public class TestLevelCrud extends AbstractServiceTest {
         dbLevels = new ArrayList<>(userGuidanceService.getDbLevelCrud().readDbChildren());
         Assert.assertEquals(3, dbLevels.size());
         dbLevel1 = dbLevels.get(0);
-        Assert.assertEquals("abcdef", dbLevel1.getHtml());
         Assert.assertEquals("internal", dbLevel1.getInternalDescription());
         Assert.assertEquals(1, dbLevel1.getNumber());
         Assert.assertEquals(2, dbLevel1.getLevelTaskCrud().readDbChildren().size());
@@ -259,7 +249,6 @@ public class TestLevelCrud extends AbstractServiceTest {
         Assert.assertEquals(35, dbLevelTask12.getXp());
         Assert.assertEquals("dbLevelTask12", dbLevelTask12.getName());
         dbLevel2 = dbLevels.get(1);
-        Assert.assertEquals("qwert", dbLevel2.getHtml());
         Assert.assertEquals("internal2", dbLevel2.getInternalDescription());
         Assert.assertEquals(2, dbLevel2.getNumber());
         Assert.assertEquals(1, dbLevel2.getLevelTaskCrud().readDbChildren().size());
@@ -269,7 +258,6 @@ public class TestLevelCrud extends AbstractServiceTest {
         Assert.assertEquals(39, dbLevelTask21.getXp());
         Assert.assertEquals("dbLevelTask21", dbLevelTask21.getName());
         dbLevel3 = dbLevels.get(2);
-        Assert.assertEquals("abcdef3", dbLevel3.getHtml());
         Assert.assertEquals("internal3", dbLevel3.getInternalDescription());
         Assert.assertEquals(3, dbLevel3.getNumber());
         Assert.assertEquals(2, dbLevel3.getLevelTaskCrud().readDbChildren().size());
@@ -302,7 +290,6 @@ public class TestLevelCrud extends AbstractServiceTest {
         dbLevels = new ArrayList<>(userGuidanceService.getDbLevelCrud().readDbChildren());
         Assert.assertEquals(2, dbLevels.size());
         dbLevel3 = dbLevels.get(1);
-        Assert.assertEquals("abcdef3", dbLevel3.getHtml());
         Assert.assertEquals("internal3", dbLevel3.getInternalDescription());
         Assert.assertEquals(3, dbLevel3.getNumber());
         Assert.assertEquals(2, dbLevel3.getLevelTaskCrud().readDbChildren().size());
@@ -335,7 +322,6 @@ public class TestLevelCrud extends AbstractServiceTest {
         dbLevels = new ArrayList<>(userGuidanceService.getDbLevelCrud().readDbChildren());
         Assert.assertEquals(2, dbLevels.size());
         dbLevel3 = dbLevels.get(1);
-        Assert.assertEquals("abcdef3", dbLevel3.getHtml());
         Assert.assertEquals("internal3", dbLevel3.getInternalDescription());
         Assert.assertEquals(3, dbLevel3.getNumber());
         Assert.assertEquals(1, dbLevel3.getLevelTaskCrud().readDbChildren().size());
@@ -361,7 +347,6 @@ public class TestLevelCrud extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         dbLevels = new ArrayList<>(userGuidanceService.getDbLevelCrud().readDbChildren());
         Assert.assertEquals(1, dbLevels.size());
-        Assert.assertEquals("qwert", dbLevels.get(0).getHtml());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
