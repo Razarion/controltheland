@@ -365,6 +365,8 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         assertBackupSummery(1, 3, 1, 1);
         List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        // TODO failed on: 11.01.2013
+        // com.btxtech.game.jsre.common.gameengine.services.collision.PlaceCanNotBeFoundException: Can not find free position. itemType: ItemType: TestResourceItem region Id: 5 itemFreeRange: 100
         mgmtService.restore(backupSummaries.get(0).getDate());
         waitForActionServiceDone(TEST_PLANET_1_ID);
         waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);

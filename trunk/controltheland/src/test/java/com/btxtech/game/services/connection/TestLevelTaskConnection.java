@@ -23,7 +23,7 @@ import java.util.Locale;
  * Date: 29.06.12
  * Time: 15:42
  */
-public class TestLevelTask extends AbstractServiceTest {
+public class TestLevelTaskConnection extends AbstractServiceTest {
     @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired

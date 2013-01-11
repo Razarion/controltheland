@@ -1468,6 +1468,7 @@ abstract public class AbstractServiceTest {
         dbSimLevel.setXp(1);
         DbLevelTask dbSimLevelTask = dbSimLevel.getLevelTaskCrud().createDbChild();
         dbSimLevelTask.setDbTutorialConfig(tut1);
+        dbSimLevelTask.getI18nTitle().putString(TEST_LEVEL_TASK_1_1_SIMULATED_NAME);
         dbSimLevelTask.setName(TEST_LEVEL_TASK_1_1_SIMULATED_NAME);
         dbSimLevelTask.getI18nDescription().putString("Description");
         dbSimLevelTask.setXp(1);
@@ -1496,11 +1497,13 @@ abstract public class AbstractServiceTest {
         DbLevelTask dbSimLevelTask2 = dbLevel2.getLevelTaskCrud().createDbChild();
         dbSimLevelTask2.setDbTutorialConfig(tut2);
         dbSimLevelTask2.setXp(2);
+        dbSimLevelTask2.getI18nTitle().putString(TEST_LEVEL_TASK_3_3_SIMULATED_NAME);
         dbSimLevelTask2.setName(TEST_LEVEL_TASK_3_3_SIMULATED_NAME);
         dbSimLevelTask2.getI18nDescription().putString("Task3Level2Descr");
         DbLevelTask dbSimLevelTask3 = dbLevel2.getLevelTaskCrud().createDbChild();
         dbSimLevelTask3.setDbTutorialConfig(tut3);
         dbSimLevelTask3.setXp(3);
+        dbSimLevelTask3.getI18nTitle().putString(TEST_LEVEL_TASK_4_3_SIMULATED_NAME);
         dbSimLevelTask3.setName(TEST_LEVEL_TASK_4_3_SIMULATED_NAME);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel2);
 
@@ -1619,6 +1622,7 @@ abstract public class AbstractServiceTest {
 
     private DbLevelTask setupCreateLevelTask1RealGameLevel(DbLevel dbLevel) {
         DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().createDbChild();
+        dbLevelTask.getI18nTitle().putString(TEST_LEVEL_TASK_1_2_REAL_NAME);
         dbLevelTask.setName(TEST_LEVEL_TASK_1_2_REAL_NAME);
         dbLevelTask.getI18nDescription().putString("Descr2");
         // Rewards
@@ -1636,6 +1640,7 @@ abstract public class AbstractServiceTest {
 
     private DbLevelTask setupCreateLevelTask3RealGameLevel(DbLevel dbLevel) {
         DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().createDbChild();
+        dbLevelTask.getI18nTitle().putString("Task3Level2");
         dbLevelTask.setName("Task3Level2");
         dbLevelTask.getI18nDescription().putString("DecrTask3Level2");
         // Rewards
@@ -1669,6 +1674,7 @@ abstract public class AbstractServiceTest {
 
     private DbLevelTask setupCreateLevelTask2RealGameLevel(DbLevel dbLevel) {
         DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().createDbChild();
+        dbLevelTask.getI18nTitle().putString(TEST_LEVEL_TASK_2_2_REAL_NAME);
         dbLevelTask.setName(TEST_LEVEL_TASK_2_2_REAL_NAME);
         dbLevelTask.getI18nDescription().putString("Descr222");
         // Rewards
