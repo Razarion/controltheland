@@ -29,6 +29,7 @@ import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
@@ -63,6 +64,11 @@ public class TutorialEditor extends MgmtWebPage {
         form.add(new TerrainPanel("dbTerrainSetting", new TerrainLinkHelper(dbTutorialConfig)));
 
         new CrudChildTableHelper<DbTutorialConfig, DbTaskConfig>("taskTable", null, "createTask", true, form, true) {
+            @Override
+            protected void extendedPopulateItem(Item<DbTaskConfig> item) {
+                displayId(item);
+                super.extendedPopulateItem(item);
+            }
 
             @Override
             protected void onEditSubmit(DbTaskConfig dbTaskConfig) {
