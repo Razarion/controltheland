@@ -104,8 +104,7 @@ public class QuestVisualisationPanel extends Composite {
             } catch (NoSuchItemTypeException e) {
                 log.log(Level.WARNING, "QuestVisualisationPanel.displayItemAmount()", e);
             }
-            progressTable.setWidget(row, 4, new HTML("<span style='font-weight:bold;'>" + itemName + "</span> " + actionWord));
-
+            progressTable.setWidget(row, 4, new HTML("<span style='font-weight:bold;'>" + itemName + "</span> " + (actionWord != null ? actionWord : "")));
         }
     }
 
