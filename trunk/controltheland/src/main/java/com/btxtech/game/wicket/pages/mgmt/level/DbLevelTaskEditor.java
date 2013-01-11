@@ -17,10 +17,11 @@ import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.pages.mgmt.condition.ConditionConfigPanel;
-import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
+import com.btxtech.game.wicket.uiservices.I18nStringEditor;
+import com.btxtech.game.wicket.uiservices.I18nStringWYSIWYGEditor;
 import com.btxtech.game.wicket.uiservices.RuModel;
+import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
 import com.btxtech.game.wicket.uiservices.TutorialPanel;
-import com.btxtech.game.wicket.uiservices.WysiwygEditor;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
@@ -40,7 +41,7 @@ public class DbLevelTaskEditor extends MgmtWebPage {
     public DbLevelTaskEditor(DbLevelTask dbLevelTask, TerrainLinkHelper terrainLinkHelper) {
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbLevelTask> form = new Form<DbLevelTask>("form", new CompoundPropertyModel<DbLevelTask>(new RuModel<DbLevelTask>(dbLevelTask, DbLevelTask.class) {
+        final Form<DbLevelTask> form = new Form<>("form", new CompoundPropertyModel<DbLevelTask>(new RuModel<DbLevelTask>(dbLevelTask, DbLevelTask.class) {
 
             @Override
             protected RuServiceHelper<DbLevelTask> getRuServiceHelper() {
@@ -49,7 +50,8 @@ public class DbLevelTaskEditor extends MgmtWebPage {
         }));
         add(form);
 
-        form.add(new WysiwygEditor("html"));
+        form.add(new I18nStringEditor("i18nTitle"));
+        form.add(new I18nStringWYSIWYGEditor("i18nDescription"));
         form.add(new TutorialPanel("dbTutorialConfig"));
         form.add(new ConditionConfigPanel("dbConditionConfig", terrainLinkHelper));
 

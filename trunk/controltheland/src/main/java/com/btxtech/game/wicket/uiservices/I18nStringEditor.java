@@ -1,8 +1,10 @@
 package com.btxtech.game.wicket.uiservices;
 
 import com.btxtech.game.services.common.db.DbI18nString;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 
 /**
@@ -30,6 +32,12 @@ public class I18nStringEditor extends Panel {
                 // Ignore
             }
         }));
+        add(new Label("id", new AbstractReadOnlyModel<Integer>() {
 
+            @Override
+            public Integer getObject() {
+                return ((DbI18nString) getDefaultModelObject()).getId();
+            }
+        }));
     }
 }

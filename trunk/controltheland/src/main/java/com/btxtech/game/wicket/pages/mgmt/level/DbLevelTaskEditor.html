@@ -25,8 +25,24 @@
 <form wicket:id="form">
     <table border="0" cellSpacing="1" cellPadding="0">
         <tr>
-            <td bgcolor="#dadada" valign="top">Mission Target Description</td>
-            <td wicket:id="html">content</td>
+            <td bgcolor="#aaaaaa" colspan="2" valign="top">Description</td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Title
+                <ul>
+                    <li>Displayed in Quest dialog</li>
+                    <li>Quest progress cockpit if is not a mission</li>
+                </ul>
+            </td>
+            <td wicket:id="i18nTitle">content</td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Mission Target Description
+                <ul>
+                    <li>Displayed in Quest dialog</li>
+                </ul>
+            </td>
+            <td wicket:id="i18nDescription">content</td>
         </tr>
         <tr>
             <td bgcolor="#aaaaaa" colspan="2" valign="top">Tutorial or Condition</td>

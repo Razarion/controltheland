@@ -73,12 +73,12 @@ public class TestLevelCrud extends AbstractServiceTest {
         DbLevelTask dbLevelTask11 = dbLevel1.getLevelTaskCrud().createDbChild();
         dbLevelTask11.setMoney(16);
         dbLevelTask11.setXp(34);
-        dbLevelTask11.setName("dbLevelTask11");
+        dbLevelTask11.getI18nTitle().putString("dbLevelTask11");
         dbLevelTask11.setDbTutorialConfig(tutorialService.getDbTutorialCrudRootServiceHelper().readDbChild(tut1.getId()));
         DbLevelTask dbLevelTask12 = dbLevel1.getLevelTaskCrud().createDbChild();
         dbLevelTask12.setMoney(17);
         dbLevelTask12.setXp(35);
-        dbLevelTask12.setName("dbLevelTask12");
+        dbLevelTask12.getI18nTitle().putString("dbLevelTask12");
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -97,12 +97,12 @@ public class TestLevelCrud extends AbstractServiceTest {
         dbLevelTask11 = dbLevel1.getLevelTaskCrud().readDbChild(dbLevelTask11.getId());
         Assert.assertEquals(16, dbLevelTask11.getMoney());
         Assert.assertEquals(34, dbLevelTask11.getXp());
-        Assert.assertEquals("dbLevelTask11", dbLevelTask11.getName());
+        Assert.assertEquals("dbLevelTask11", dbLevelTask11.getI18nTitle().getString());
         Assert.assertEquals(tut1.getId(), dbLevelTask11.getDbTutorialConfig().getId());
         dbLevelTask12 = dbLevel1.getLevelTaskCrud().readDbChild(dbLevelTask12.getId());
         Assert.assertEquals(17, dbLevelTask12.getMoney());
         Assert.assertEquals(35, dbLevelTask12.getXp());
-        Assert.assertEquals("dbLevelTask12", dbLevelTask12.getName());
+        Assert.assertEquals("dbLevelTask12", dbLevelTask12.getI18nTitle().getString());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -116,7 +116,7 @@ public class TestLevelCrud extends AbstractServiceTest {
         DbLevelTask dbLevelTask21 = dbLevel2.getLevelTaskCrud().createDbChild();
         dbLevelTask21.setMoney(17);
         dbLevelTask21.setXp(39);
-        dbLevelTask21.setName("dbLevelTask21");
+        dbLevelTask21.getI18nTitle().putString("dbLevelTask21");
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -135,12 +135,12 @@ public class TestLevelCrud extends AbstractServiceTest {
         dbLevelTask11 = dbLevel1.getLevelTaskCrud().readDbChild(dbLevelTask11.getId());
         Assert.assertEquals(16, dbLevelTask11.getMoney());
         Assert.assertEquals(34, dbLevelTask11.getXp());
-        Assert.assertEquals("dbLevelTask11", dbLevelTask11.getName());
+        Assert.assertEquals("dbLevelTask11", dbLevelTask11.getI18nTitle().getString());
         Assert.assertEquals(tut1.getId(), dbLevelTask11.getDbTutorialConfig().getId());
         dbLevelTask12 = dbLevel1.getLevelTaskCrud().readDbChild(dbLevelTask12.getId());
         Assert.assertEquals(17, dbLevelTask12.getMoney());
         Assert.assertEquals(35, dbLevelTask12.getXp());
-        Assert.assertEquals("dbLevelTask12", dbLevelTask12.getName());
+        Assert.assertEquals("dbLevelTask12", dbLevelTask12.getI18nTitle().getString());
         dbLevel2 = dbLevels.get(1);
         Assert.assertEquals("internal2", dbLevel2.getInternalDescription());
         Assert.assertEquals(2, dbLevel2.getNumber());
@@ -149,7 +149,7 @@ public class TestLevelCrud extends AbstractServiceTest {
         dbLevelTask21 = dbLevel2.getLevelTaskCrud().readDbChild(dbLevelTask21.getId());
         Assert.assertEquals(17, dbLevelTask21.getMoney());
         Assert.assertEquals(39, dbLevelTask21.getXp());
-        Assert.assertEquals("dbLevelTask21", dbLevelTask21.getName());
+        Assert.assertEquals("dbLevelTask21", dbLevelTask21.getI18nTitle().getString());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -163,12 +163,12 @@ public class TestLevelCrud extends AbstractServiceTest {
         DbLevelTask dbLevelTask31 = dbLevel3.getLevelTaskCrud().createDbChild();
         dbLevelTask31.setMoney(36);
         dbLevelTask31.setXp(87);
-        dbLevelTask31.setName("dbLevelTask31");
+        dbLevelTask31.getI18nTitle().putString("dbLevelTask31");
         dbLevelTask31.setDbTutorialConfig(tutorialService.getDbTutorialCrudRootServiceHelper().readDbChild(tut1.getId()));
         DbLevelTask dbLevelTask32 = dbLevel3.getLevelTaskCrud().createDbChild();
         dbLevelTask32.setMoney(18);
         dbLevelTask32.setXp(90);
-        dbLevelTask32.setName("dbLevelTask32");
+        dbLevelTask32.getI18nTitle().putString("dbLevelTask32");
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel3);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -187,12 +187,12 @@ public class TestLevelCrud extends AbstractServiceTest {
         dbLevelTask11 = dbLevel1.getLevelTaskCrud().readDbChild(dbLevelTask11.getId());
         Assert.assertEquals(16, dbLevelTask11.getMoney());
         Assert.assertEquals(34, dbLevelTask11.getXp());
-        Assert.assertEquals("dbLevelTask11", dbLevelTask11.getName());
+        Assert.assertEquals("dbLevelTask11", dbLevelTask11.getI18nTitle().getString());
         Assert.assertEquals(tut1.getId(), dbLevelTask11.getDbTutorialConfig().getId());
         dbLevelTask12 = dbLevel1.getLevelTaskCrud().readDbChild(dbLevelTask12.getId());
         Assert.assertEquals(17, dbLevelTask12.getMoney());
         Assert.assertEquals(35, dbLevelTask12.getXp());
-        Assert.assertEquals("dbLevelTask12", dbLevelTask12.getName());
+        Assert.assertEquals("dbLevelTask12", dbLevelTask12.getI18nTitle().getString());
         dbLevel2 = dbLevels.get(1);
         Assert.assertEquals("internal2", dbLevel2.getInternalDescription());
         Assert.assertEquals(2, dbLevel2.getNumber());
@@ -201,7 +201,7 @@ public class TestLevelCrud extends AbstractServiceTest {
         dbLevelTask21 = dbLevel2.getLevelTaskCrud().readDbChild(dbLevelTask21.getId());
         Assert.assertEquals(17, dbLevelTask21.getMoney());
         Assert.assertEquals(39, dbLevelTask21.getXp());
-        Assert.assertEquals("dbLevelTask21", dbLevelTask21.getName());
+        Assert.assertEquals("dbLevelTask21", dbLevelTask21.getI18nTitle().getString());
         dbLevel3 = dbLevels.get(2);
         Assert.assertEquals("internal3", dbLevel3.getInternalDescription());
         Assert.assertEquals(3, dbLevel3.getNumber());
@@ -210,12 +210,12 @@ public class TestLevelCrud extends AbstractServiceTest {
         dbLevelTask31 = dbLevel3.getLevelTaskCrud().readDbChild(dbLevelTask31.getId());
         Assert.assertEquals(36, dbLevelTask31.getMoney());
         Assert.assertEquals(87, dbLevelTask31.getXp());
-        Assert.assertEquals("dbLevelTask31", dbLevelTask31.getName());
+        Assert.assertEquals("dbLevelTask31", dbLevelTask31.getI18nTitle().getString());
         Assert.assertEquals(tut1.getId(), dbLevelTask31.getDbTutorialConfig().getId());
         dbLevelTask32 = dbLevel3.getLevelTaskCrud().readDbChild(dbLevelTask32.getId());
         Assert.assertEquals(18, dbLevelTask32.getMoney());
         Assert.assertEquals(90, dbLevelTask32.getXp());
-        Assert.assertEquals("dbLevelTask32", dbLevelTask32.getName());
+        Assert.assertEquals("dbLevelTask32", dbLevelTask32.getI18nTitle().getString());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -242,12 +242,12 @@ public class TestLevelCrud extends AbstractServiceTest {
         dbLevelTask11 = dbLevel1.getLevelTaskCrud().readDbChild(dbLevelTask11.getId());
         Assert.assertEquals(16, dbLevelTask11.getMoney());
         Assert.assertEquals(34, dbLevelTask11.getXp());
-        Assert.assertEquals("dbLevelTask11", dbLevelTask11.getName());
+        Assert.assertEquals("dbLevelTask11", dbLevelTask11.getI18nTitle().getString());
         Assert.assertEquals(tut1.getId(), dbLevelTask11.getDbTutorialConfig().getId());
         dbLevelTask12 = dbLevel1.getLevelTaskCrud().readDbChild(dbLevelTask12.getId());
         Assert.assertEquals(17, dbLevelTask12.getMoney());
         Assert.assertEquals(35, dbLevelTask12.getXp());
-        Assert.assertEquals("dbLevelTask12", dbLevelTask12.getName());
+        Assert.assertEquals("dbLevelTask12", dbLevelTask12.getI18nTitle().getString());
         dbLevel2 = dbLevels.get(1);
         Assert.assertEquals("internal2", dbLevel2.getInternalDescription());
         Assert.assertEquals(2, dbLevel2.getNumber());
@@ -256,7 +256,7 @@ public class TestLevelCrud extends AbstractServiceTest {
         dbLevelTask21 = dbLevel2.getLevelTaskCrud().readDbChild(dbLevelTask21.getId());
         Assert.assertEquals(17, dbLevelTask21.getMoney());
         Assert.assertEquals(39, dbLevelTask21.getXp());
-        Assert.assertEquals("dbLevelTask21", dbLevelTask21.getName());
+        Assert.assertEquals("dbLevelTask21", dbLevelTask21.getI18nTitle().getString());
         dbLevel3 = dbLevels.get(2);
         Assert.assertEquals("internal3", dbLevel3.getInternalDescription());
         Assert.assertEquals(3, dbLevel3.getNumber());
@@ -265,12 +265,12 @@ public class TestLevelCrud extends AbstractServiceTest {
         dbLevelTask31 = dbLevel3.getLevelTaskCrud().readDbChild(dbLevelTask31.getId());
         Assert.assertEquals(36, dbLevelTask31.getMoney());
         Assert.assertEquals(87, dbLevelTask31.getXp());
-        Assert.assertEquals("dbLevelTask31", dbLevelTask31.getName());
+        Assert.assertEquals("dbLevelTask31", dbLevelTask31.getI18nTitle().getString());
         Assert.assertEquals(tut1.getId(), dbLevelTask31.getDbTutorialConfig().getId());
         dbLevelTask32 = dbLevel3.getLevelTaskCrud().readDbChild(dbLevelTask32.getId());
         Assert.assertEquals(18, dbLevelTask32.getMoney());
         Assert.assertEquals(90, dbLevelTask32.getXp());
-        Assert.assertEquals("dbLevelTask32", dbLevelTask32.getName());
+        Assert.assertEquals("dbLevelTask32", dbLevelTask32.getI18nTitle().getString());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -297,12 +297,12 @@ public class TestLevelCrud extends AbstractServiceTest {
         dbLevelTask31 = dbLevel3.getLevelTaskCrud().readDbChild(dbLevelTask31.getId());
         Assert.assertEquals(36, dbLevelTask31.getMoney());
         Assert.assertEquals(87, dbLevelTask31.getXp());
-        Assert.assertEquals("dbLevelTask31", dbLevelTask31.getName());
+        Assert.assertEquals("dbLevelTask31", dbLevelTask31.getI18nTitle().getString());
         Assert.assertEquals(tut1.getId(), dbLevelTask31.getDbTutorialConfig().getId());
         dbLevelTask32 = dbLevel3.getLevelTaskCrud().readDbChild(dbLevelTask32.getId());
         Assert.assertEquals(18, dbLevelTask32.getMoney());
         Assert.assertEquals(90, dbLevelTask32.getXp());
-        Assert.assertEquals("dbLevelTask32", dbLevelTask32.getName());
+        Assert.assertEquals("dbLevelTask32", dbLevelTask32.getI18nTitle().getString());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -329,7 +329,7 @@ public class TestLevelCrud extends AbstractServiceTest {
         dbLevelTask31 = dbLevel3.getLevelTaskCrud().readDbChild(dbLevelTask31.getId());
         Assert.assertEquals(36, dbLevelTask31.getMoney());
         Assert.assertEquals(87, dbLevelTask31.getXp());
-        Assert.assertEquals("dbLevelTask31", dbLevelTask31.getName());
+        Assert.assertEquals("dbLevelTask31", dbLevelTask31.getI18nTitle().getString());
         Assert.assertEquals(tut1.getId(), dbLevelTask31.getDbTutorialConfig().getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -733,14 +733,14 @@ public class TestLevelCrud extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         DbLevel dbLevel1 = userGuidanceService.getDbLevelCrud().createDbChild();
         DbLevelTask dbLevelTask11 = dbLevel1.getLevelTaskCrud().createDbChild();
-        dbLevelTask11.setName("name1");
-        dbLevelTask11.setHtml("html1");
+        dbLevelTask11.getI18nTitle().putString("name1");
+        dbLevelTask11.getI18nDescription().putString("html1");
         dbLevelTask11.setXp(11);
         dbLevelTask11.setMoney(12);
         dbLevelTask11.setDbTutorialConfig(tutorialService.getDbTutorialCrudRootServiceHelper().readDbChild(tut1.getId()));
         DbLevelTask dbLevelTask12 = dbLevel1.getLevelTaskCrud().createDbChild();
-        dbLevelTask12.setName("name2");
-        dbLevelTask12.setHtml("html2");
+        dbLevelTask12.getI18nTitle().putString("name2");
+        dbLevelTask12.getI18nDescription().putString("html2");
         dbLevelTask12.setXp(21);
         dbLevelTask12.setMoney(22);
         DbConditionConfig dbConditionConfig = new DbConditionConfig();
