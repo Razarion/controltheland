@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.common.db.DbI18nString;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.user.UserService;
@@ -33,8 +34,10 @@ public class DbLevelTask implements CrudChild<DbLevel> {
     @GeneratedValue
     private Integer id;
     private String name;
-    @Column(length = 50000)
-    private String html;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private DbI18nString i18nTitle = new DbI18nString();
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private DbI18nString i18nDescription = new DbI18nString();
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "dbLevel", insertable = false, updatable = false, nullable = false)
     private DbLevel dbLevel;
@@ -119,12 +122,12 @@ public class DbLevelTask implements CrudChild<DbLevel> {
         this.dbConditionConfig = dbConditionConfig;
     }
 
-    public String getHtml() {
-        return html;
+    public DbI18nString getI18nTitle() {
+        return i18nTitle;
     }
 
-    public void setHtml(String html) {
-        this.html = html;
+    public DbI18nString getI18nDescription() {
+        return i18nDescription;
     }
 
     public QuestInfo createQuestInfo(Locale locale) {
@@ -136,7 +139,7 @@ public class DbLevelTask implements CrudChild<DbLevel> {
             radarPositionHint = dbConditionConfig.getRadarPositionHint();
             hideQuestProgress = dbConditionConfig.isHideQuestProgress();
         }
-        return new QuestInfo(name, html, additionalDescription, xp, money, id, isDbTutorialConfig() ? QuestInfo.Type.MISSION : QuestInfo.Type.QUEST, radarPositionHint, hideQuestProgress);
+        return new QuestInfo(i18nTitle.getString(locale), i18nDescription.getString(locale), additionalDescription, xp, money, id, isDbTutorialConfig() ? QuestInfo.Type.MISSION : QuestInfo.Type.QUEST, radarPositionHint, hideQuestProgress);
     }
 
     @Override
