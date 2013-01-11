@@ -91,6 +91,10 @@ public interface ClientI18nConstants extends Messages {
 
     String tooltipRadarPageDown();
 
+    String radarNoPower();
+
+    String radarNoRadarBuilding();
+
     // Dialogs
     String message();
 
