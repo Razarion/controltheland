@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.item.itemType;
 
+import com.btxtech.game.jsre.client.I18nString;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.DemolitionStepSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -23,6 +24,7 @@ import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
+import com.btxtech.game.services.common.db.DbI18nString;
 import com.btxtech.game.services.media.ClipService;
 import com.btxtech.game.services.media.DbClip;
 import com.btxtech.game.services.media.DbSound;
@@ -45,6 +47,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,9 +71,8 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
     @GeneratedValue
     private Integer id;
     private String name;
-    private String description;
-    private String proDescription;
-    private String contraDescription;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private DbI18nString dbI18nDescription = new DbI18nString();
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "itemType", orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbItemTypeImage> itemTypeImages;
@@ -115,38 +117,21 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
     }
 
     @Override
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
     public void setName(String name) {
         this.name = name;
     }
 
     @Override
-    public String getProDescription() {
-        return proDescription;
+    public DbI18nString getDbI18nDescription() {
+        return dbI18nDescription;
     }
 
-    @Override
-    public void setProDescription(String proDescription) {
-        this.proDescription = proDescription;
-    }
-
-    @Override
-    public String getContraDescription() {
-        return contraDescription;
-    }
-
-    @Override
-    public void setContraDescription(String contraDescription) {
-        this.contraDescription = contraDescription;
+    private I18nString createI18nString() {
+        if (dbI18nDescription != null) {
+            return dbI18nDescription.createI18nString();
+        } else {
+            return new I18nString(null);
+        }
     }
 
     @Override
@@ -431,7 +416,7 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
     protected void setupItemType(ItemType itemType) {
         itemType.setId(id);
         itemType.setName(getName());
-        itemType.setDescription(getDescription());
+        itemType.setDescription(createI18nString());
         BoundingBox boundingBox = createBoundingBox();
         itemType.setBoundingBox(boundingBox);
         itemType.setItemTypeSpriteMap(createItemTypeSpriteMap(boundingBox));

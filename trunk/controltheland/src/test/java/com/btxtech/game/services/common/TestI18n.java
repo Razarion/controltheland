@@ -1,5 +1,6 @@
 package com.btxtech.game.services.common;
 
+import com.btxtech.game.jsre.client.I18nString;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.cms.CmsService;
@@ -259,5 +260,47 @@ public class TestI18n extends AbstractServiceTest {
     private void assertTextAreaNull(WicketTester tester, String path) {
         TextArea textArea = (TextArea) tester.getComponentFromLastRenderedPage(path);
         Assert.assertNull(textArea.getModelObject());
+    }
+
+    @Test
+    @DirtiesContext
+    public void testCreateI18nString() throws Exception {
+        // Create
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbI18nString dbI18nString1 = new DbI18nString();
+        saveOrUpdateInTransaction(dbI18nString1);
+        DbI18nString dbI18nString2 = new DbI18nString();
+        dbI18nString2.putString("xxxxx2");
+        saveOrUpdateInTransaction(dbI18nString2);
+        DbI18nString dbI18nString3 = new DbI18nString();
+        dbI18nString3.putString("xxxxx3");
+        dbI18nString3.putString(Locale.GERMAN, "yyyyy3");
+        saveOrUpdateInTransaction(dbI18nString3);
+        DbI18nString dbI18nString4 = new DbI18nString();
+        saveOrUpdateInTransaction(dbI18nString4);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        I18nString i18nString1 = HibernateUtil.get(getSessionFactory(), DbI18nString.class, dbI18nString1.getId()).createI18nString();
+        I18nString i18nString2 = HibernateUtil.get(getSessionFactory(), DbI18nString.class, dbI18nString2.getId()).createI18nString();
+        I18nString i18nString3 = HibernateUtil.get(getSessionFactory(), DbI18nString.class, dbI18nString3.getId()).createI18nString();
+
+        Assert.assertEquals(null, i18nString1.getString());
+        Assert.assertEquals(null, i18nString1.getString(I18nString.Language.DEFAULT));
+        Assert.assertEquals(null, i18nString1.getString(I18nString.Language.DE));
+
+        Assert.assertEquals("xxxxx2", i18nString2.getString());
+        Assert.assertEquals("xxxxx2", i18nString2.getString(I18nString.Language.DEFAULT));
+        Assert.assertEquals("xxxxx2", i18nString2.getString(I18nString.Language.DE));
+
+        Assert.assertEquals("xxxxx3", i18nString3.getString());
+        Assert.assertEquals("xxxxx3", i18nString3.getString(I18nString.Language.DEFAULT));
+        Assert.assertEquals("yyyyy3", i18nString3.getString(I18nString.Language.DE));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
     }
 }

@@ -34,9 +34,7 @@ public class TestCreateModifyItems extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         dbResourceItemType = (DbResourceItemType) serverItemTypeService.getDbItemTypeCrud().readDbChild(dbResourceItemType.getId());
         dbResourceItemType.setAmount(22);
-        dbResourceItemType.setContraDescription("aaa");
-        dbResourceItemType.setProDescription("bbb");
-        dbResourceItemType.setDescription("ccc");
+        dbResourceItemType.getDbI18nDescription().putString("ccc");
         dbResourceItemType.setName("Hallo");
         dbResourceItemType.setTerrainType(TerrainType.LAND);
         dbResourceItemType.setBounding(new BoundingBox(3, new double[]{0.12}));
@@ -56,7 +54,7 @@ public class TestCreateModifyItems extends AbstractServiceTest {
         Assert.assertEquals(3, resourceType.getBoundingBox().getRadius());
         Assert.assertEquals(1, resourceType.getBoundingBox().getAngels().length);
         Assert.assertEquals(0.12, resourceType.getBoundingBox().getAngels()[0], 0.01);
-        Assert.assertEquals("ccc", resourceType.getDescription());
+        Assert.assertEquals("ccc", resourceType.getDescription().getString());
         Assert.assertEquals("Hallo", resourceType.getName());
 
         beginHttpSession();
@@ -64,9 +62,7 @@ public class TestCreateModifyItems extends AbstractServiceTest {
         dbResourceItemType = (DbResourceItemType) serverItemTypeService.getDbItemTypeCrud().readDbChild(dbResourceItemType.getId());
         Assert.assertEquals(22, dbResourceItemType.getAmount());
         Assert.assertEquals(3, dbResourceItemType.createBoundingBox().getRadius());
-        Assert.assertEquals("aaa", dbResourceItemType.getContraDescription());
-        Assert.assertEquals("bbb", dbResourceItemType.getProDescription());
-        Assert.assertEquals("ccc", dbResourceItemType.getDescription());
+        Assert.assertEquals("ccc", dbResourceItemType.getDbI18nDescription().getString());
         Assert.assertEquals(12, dbResourceItemType.getImageWidth());
         Assert.assertEquals(13, dbResourceItemType.getImageHeight());
         Assert.assertEquals("Hallo", dbResourceItemType.getName());
@@ -78,9 +74,7 @@ public class TestCreateModifyItems extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         dbResourceItemType = (DbResourceItemType) serverItemTypeService.getDbItemTypeCrud().readDbChild(dbResourceItemType.getId());
         dbResourceItemType.setAmount(23);
-        dbResourceItemType.setContraDescription("dddd");
-        dbResourceItemType.setProDescription("eeee");
-        dbResourceItemType.setDescription("ffff");
+        dbResourceItemType.getDbI18nDescription().putString("ffff");
         dbResourceItemType.setName("Ade");
         dbResourceItemType.setTerrainType(TerrainType.WATER);
         dbResourceItemType.setBounding(new BoundingBox(4, new double[]{0.13}));
@@ -102,7 +96,7 @@ public class TestCreateModifyItems extends AbstractServiceTest {
         Assert.assertEquals(4, resourceType.getBoundingBox().getRadius());
         Assert.assertEquals(1, resourceType.getBoundingBox().getAngels().length);
         Assert.assertEquals(0.13, resourceType.getBoundingBox().getAngels()[0], 0.1);
-        Assert.assertEquals("ffff", resourceType.getDescription());
+        Assert.assertEquals("ffff", resourceType.getDescription().getString());
         Assert.assertEquals("Ade", resourceType.getName());
 
         beginHttpSession();
@@ -110,9 +104,7 @@ public class TestCreateModifyItems extends AbstractServiceTest {
         dbResourceItemType = (DbResourceItemType) serverItemTypeService.getDbItemTypeCrud().readDbChild(dbResourceItemType.getId());
         Assert.assertEquals(23, dbResourceItemType.getAmount());
         Assert.assertEquals(4, dbResourceItemType.createBoundingBox().getRadius());
-        Assert.assertEquals("dddd", dbResourceItemType.getContraDescription());
-        Assert.assertEquals("eeee", dbResourceItemType.getProDescription());
-        Assert.assertEquals("ffff", dbResourceItemType.getDescription());
+        Assert.assertEquals("ffff", dbResourceItemType.getDbI18nDescription().getString());
         Assert.assertEquals(14, dbResourceItemType.getImageWidth());
         Assert.assertEquals(15, dbResourceItemType.getImageHeight());
         Assert.assertEquals("Ade", dbResourceItemType.getName());

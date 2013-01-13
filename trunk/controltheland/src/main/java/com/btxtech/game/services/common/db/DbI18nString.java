@@ -1,5 +1,6 @@
 package com.btxtech.game.services.common.db;
 
+import com.btxtech.game.jsre.client.I18nString;
 import org.apache.commons.lang.StringUtils;
 
 import javax.persistence.CollectionTable;
@@ -106,4 +107,11 @@ public class DbI18nString {
         return true;
     }
 
+    public I18nString createI18nString() {
+        Map<I18nString.Language, String> localizedStrings = new HashMap<>();
+        for (Map.Entry<String, String> entry : this.localizedStrings.entrySet()) {
+            localizedStrings.put(I18nString.convert(entry.getKey()), entry.getValue());
+        }
+        return new I18nString(localizedStrings);
+    }
 }

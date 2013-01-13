@@ -1,6 +1,7 @@
 package com.btxtech.game.services.item.itemType;
 
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.services.common.db.DbI18nString;
 
 /**
  * User: beat
@@ -12,19 +13,9 @@ public interface DbItemTypeI {
 
     String getName();
 
-    void setDescription(String description);
-
-    String getDescription();
+    DbI18nString getDbI18nDescription();
 
     void setName(String name);
-
-    String getProDescription();
-
-    void setProDescription(String proDescription);
-
-    String getContraDescription();
-
-    void setContraDescription(String contraDescription);
 
     TerrainType getTerrainType();
 
