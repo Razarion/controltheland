@@ -21,6 +21,7 @@ import com.btxtech.game.wicket.pages.mgmt.items.abilities.BaseItemTypeAbilityEdi
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.BoxItemTypePanel;
 import com.btxtech.game.wicket.uiservices.ClipPanel;
+import com.btxtech.game.wicket.uiservices.I18nStringWYSIWYGEditor;
 import com.btxtech.game.wicket.uiservices.PercentPanel;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
@@ -56,9 +57,7 @@ public class BaseItemTypeEditor extends MgmtWebPage {
 
         form.add(new ItemTypeImagePanel("itemTypeImagePanel", dbBaseItemType.getId()));
         form.add(new TextField<String>("name"));
-        form.add(new TextArea<String>("description"));
-        form.add(new TextArea<String>("proDescription"));
-        form.add(new TextArea<String>("contraDescription"));
+        form.add(new I18nStringWYSIWYGEditor("dbI18nDescription"));
         form.add(new TextField<String>("health"));
         form.add(new TextField<String>("price"));
         form.add(new TextField<Integer>("xpOnKilling"));

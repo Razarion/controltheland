@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
+import com.btxtech.game.wicket.uiservices.I18nStringWYSIWYGEditor;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -49,7 +50,7 @@ public class ResourceItemTypeEditor extends MgmtWebPage {
         add(form);
         form.add(new ItemTypeImagePanel("itemTypeImagePanel", dbResourceItemType.getId()));
         form.add(new TextField<String>("name"));
-        form.add(new TextField<String>("description"));
+        form.add(new I18nStringWYSIWYGEditor("dbI18nDescription"));
         form.add(new TextField<String>("amount"));
         form.add(new DropDownChoice<>("terrainType", Arrays.asList(TerrainType.values())));
 

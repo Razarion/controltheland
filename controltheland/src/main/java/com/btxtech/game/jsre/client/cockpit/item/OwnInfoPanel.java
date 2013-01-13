@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.cockpit.item;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -39,7 +40,7 @@ public class OwnInfoPanel extends Composite {
         } else {
             itemTypeName.setText(baseItemType.getName());
         }
-        itemTypeDescr.setHTML(baseItemType.getDescription());
+        itemTypeDescr.setHTML(ClientI18nHelper.getLocalizedString(baseItemType.getDescription()));
         if (count > 1) {
             countLabel.setText(Integer.toString(count));
         } else {

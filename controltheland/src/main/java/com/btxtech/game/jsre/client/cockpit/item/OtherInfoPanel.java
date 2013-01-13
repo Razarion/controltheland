@@ -58,7 +58,7 @@ public class OtherInfoPanel extends Composite {
         } else {
             itemTypeName.setText(syncItem.getItemType().getName());
         }
-        itemTypeDescr.setHTML(syncItem.getItemType().getDescription());
+        itemTypeDescr.setHTML(ClientI18nHelper.getLocalizedString(syncItem.getItemType().getDescription()));
         offerAlliance.setVisible(false);
         friendImage.setVisible(false);
         enemyImage.setVisible(false);

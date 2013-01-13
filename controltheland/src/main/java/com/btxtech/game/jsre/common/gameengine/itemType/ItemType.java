@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.itemType;
 
+import com.btxtech.game.jsre.client.I18nString;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 
 import java.io.Serializable;
@@ -25,7 +26,7 @@ import java.io.Serializable;
 public abstract class ItemType implements Serializable {
     private int id;
     private String name;
-    private String description;
+    private I18nString description;
     private TerrainType terrainType;
     private BoundingBox boundingBox;
     private ItemTypeSpriteMap itemTypeSpriteMap;
@@ -54,11 +55,11 @@ public abstract class ItemType implements Serializable {
         this.id = id;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(I18nString description) {
         this.description = description;
     }
 
-    public String getDescription() {
+    public I18nString getDescription() {
         return description;
     }
 
