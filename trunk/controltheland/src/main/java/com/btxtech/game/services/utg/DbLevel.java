@@ -55,8 +55,6 @@ public class DbLevel implements CrudChild, CrudParent {
     @SuppressWarnings({"UnusedDeclaration"})
     private int orderIndex;
     private int number;
-    @Column(length = 1000)
-    private String internalDescription;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "dbLevel", nullable = false)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
@@ -94,14 +92,6 @@ public class DbLevel implements CrudChild, CrudParent {
 
     public void setName(String name) {
         throw new UnsupportedOperationException();
-    }
-
-    public String getInternalDescription() {
-        return internalDescription;
-    }
-
-    public void setInternalDescription(String internalDescription) {
-        this.internalDescription = internalDescription;
     }
 
     @Override
