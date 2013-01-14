@@ -282,7 +282,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         SimpleBase botBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(1, 1, null, null, "bot", null, null, null, null));
-        Id targetBotFactory = serverPlanetServices.getItemService().createSyncObject(serverItemTypeService.getItemType(TEST_FACTORY_ITEM), new Index(3000, 1000), null, botBase).getId();
+        Id targetBotFactory = serverPlanetServices.getItemService().createSyncObject(serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), new Index(3000, 1000), null, botBase).getId();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

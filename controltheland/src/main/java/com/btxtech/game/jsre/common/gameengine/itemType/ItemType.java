@@ -26,6 +26,7 @@ import java.io.Serializable;
 public abstract class ItemType implements Serializable {
     private int id;
     private String name;
+    private I18nString i18Name;
     private I18nString description;
     private TerrainType terrainType;
     private BoundingBox boundingBox;
@@ -51,6 +52,10 @@ public abstract class ItemType implements Serializable {
         return name;
     }
 
+    public I18nString getI18Name() {
+        return i18Name;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -65,6 +70,10 @@ public abstract class ItemType implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setI18Name(I18nString i18Name) {
+        this.i18Name = i18Name;
     }
 
     public void setTerrainType(TerrainType terrainType) {
@@ -121,6 +130,7 @@ public abstract class ItemType implements Serializable {
         }
         boundingBox = itemType.boundingBox;
         name = itemType.name;
+        i18Name = itemType.i18Name;
         description = itemType.description;
         terrainType = itemType.terrainType;
         itemTypeSpriteMap = itemType.itemTypeSpriteMap;

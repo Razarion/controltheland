@@ -99,7 +99,7 @@ public class QuestVisualisationPanel extends Composite {
             String itemName = "";
             try {
                 ItemType itemType = ItemTypeContainer.getInstance().getItemType(itemId);
-                itemName = itemType.getName();
+                itemName = ClientI18nHelper.getLocalizedString(itemType.getI18Name());
                 progressTable.setWidget(row, 3, ImageHandler.getItemTypeImage(itemType, 30, 30));
             } catch (NoSuchItemTypeException e) {
                 log.log(Level.WARNING, "QuestVisualisationPanel.displayItemAmount()", e);

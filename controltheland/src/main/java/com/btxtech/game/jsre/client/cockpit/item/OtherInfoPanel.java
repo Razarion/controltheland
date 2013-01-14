@@ -54,9 +54,9 @@ public class OtherInfoPanel extends Composite {
         initWidget(uiBinder.createAndBindUi(this));
         GwtCommon.preventDragImage(image);
         if (Game.isDebug()) {
-            itemTypeName.setText(syncItem.getItemType().getName() + " {" + syncItem.getId() + "}");
+            itemTypeName.setText(ClientI18nHelper.getLocalizedString(syncItem.getItemType().getI18Name()) + " {" + syncItem.getId() + "}");
         } else {
-            itemTypeName.setText(syncItem.getItemType().getName());
+            itemTypeName.setText(ClientI18nHelper.getLocalizedString(syncItem.getItemType().getI18Name()));
         }
         itemTypeDescr.setHTML(ClientI18nHelper.getLocalizedString(syncItem.getItemType().getDescription()));
         offerAlliance.setVisible(false);

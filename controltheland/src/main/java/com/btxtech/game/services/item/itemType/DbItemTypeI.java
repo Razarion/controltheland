@@ -13,6 +13,8 @@ public interface DbItemTypeI {
 
     String getName();
 
+    DbI18nString getDbI18nName();
+
     DbI18nString getDbI18nDescription();
 
     void setName(String name);
