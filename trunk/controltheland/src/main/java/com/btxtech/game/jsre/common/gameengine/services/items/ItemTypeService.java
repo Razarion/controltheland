@@ -13,8 +13,6 @@ import java.util.List;
 public interface ItemTypeService {
     ItemType getItemType(int itemTypeId) throws NoSuchItemTypeException;
 
-    ItemType getItemType(String name) throws NoSuchItemTypeException;
-
     List<ItemType> getItemTypes();
 
     boolean areItemTypesLoaded();

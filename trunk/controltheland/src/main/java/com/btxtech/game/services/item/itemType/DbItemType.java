@@ -72,6 +72,8 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
     private Integer id;
     private String name;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private DbI18nString dbI18nName = new DbI18nString();
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private DbI18nString dbI18nDescription = new DbI18nString();
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "itemType", orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
@@ -122,13 +124,26 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
     }
 
     @Override
+    public DbI18nString getDbI18nName() {
+        return dbI18nName;
+    }
+
+    @Override
     public DbI18nString getDbI18nDescription() {
         return dbI18nDescription;
     }
 
-    private I18nString createI18nString() {
+    private I18nString createI18nDescription() {
         if (dbI18nDescription != null) {
             return dbI18nDescription.createI18nString();
+        } else {
+            return new I18nString(null);
+        }
+    }
+
+    private I18nString createI18nName() {
+        if (dbI18nName != null) {
+            return dbI18nName.createI18nString();
         } else {
             return new I18nString(null);
         }
@@ -416,7 +431,8 @@ public abstract class DbItemType implements DbItemTypeI, CrudChild, CrudParent {
     protected void setupItemType(ItemType itemType) {
         itemType.setId(id);
         itemType.setName(getName());
-        itemType.setDescription(createI18nString());
+        itemType.setI18Name(createI18nName());
+        itemType.setDescription(createI18nDescription());
         BoundingBox boundingBox = createBoundingBox();
         itemType.setBoundingBox(boundingBox);
         itemType.setItemTypeSpriteMap(createItemTypeSpriteMap(boundingBox));

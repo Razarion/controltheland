@@ -31,7 +31,7 @@ public class SelectedItemType extends Composite {
         image = ImageHandler.getItemTypeImage(baseItemType, 40, 40);
         initWidget(uiBinder.createAndBindUi(this));
         countLabel.setText(Integer.toString(count));
-        setTitle(ClientI18nHelper.CONSTANTS.tooltipSelect(baseItemType.getName()));
+        setTitle(ClientI18nHelper.CONSTANTS.tooltipSelect(ClientI18nHelper.getLocalizedString(baseItemType.getI18Name())));
     }
 
     @UiHandler("image")

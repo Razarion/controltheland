@@ -16,6 +16,7 @@ package com.btxtech.game.wicket.pages.mgmt.items;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
+import com.btxtech.game.wicket.uiservices.I18nStringEditor;
 import com.btxtech.game.wicket.uiservices.I18nStringWYSIWYGEditor;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
@@ -48,6 +49,7 @@ public class ProjectileItemTypeEditor extends MgmtWebPage {
 
         form.add(new ItemTypeImagePanel("itemTypeImagePanel", dbProjectileItemType.getId()));
         form.add(new TextField<String>("name"));
+        form.add(new I18nStringEditor("dbI18nName"));
         form.add(new I18nStringWYSIWYGEditor("dbI18nDescription"));
         form.add(new TextField<String>("price"));
         form.add(new TextField<Double>("buildup"));

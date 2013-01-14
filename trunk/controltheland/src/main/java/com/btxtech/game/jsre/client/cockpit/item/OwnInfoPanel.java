@@ -36,9 +36,9 @@ public class OwnInfoPanel extends Composite {
         image = ImageHandler.getItemTypeImage(baseItemType, 50, 50);
         initWidget(uiBinder.createAndBindUi(this));
         if (debugInfo != null) {
-            itemTypeName.setText(baseItemType.getName() + " " + debugInfo);
+            itemTypeName.setText(ClientI18nHelper.getLocalizedString(baseItemType.getI18Name()) + " " + debugInfo);
         } else {
-            itemTypeName.setText(baseItemType.getName());
+            itemTypeName.setText(ClientI18nHelper.getLocalizedString(baseItemType.getI18Name()));
         }
         itemTypeDescr.setHTML(ClientI18nHelper.getLocalizedString(baseItemType.getDescription()));
         if (count > 1) {

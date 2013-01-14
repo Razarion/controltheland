@@ -109,9 +109,10 @@ public class DbI18nString {
 
     public I18nString createI18nString() {
         Map<I18nString.Language, String> localizedStrings = new HashMap<>();
-        for (Map.Entry<String, String> entry : this.localizedStrings.entrySet()) {
-            localizedStrings.put(I18nString.convert(entry.getKey()), entry.getValue());
-        }
+        if (this.localizedStrings != null)
+            for (Map.Entry<String, String> entry : this.localizedStrings.entrySet()) {
+                localizedStrings.put(I18nString.convert(entry.getKey()), entry.getValue());
+            }
         return new I18nString(localizedStrings);
     }
 }

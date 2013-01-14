@@ -20,6 +20,7 @@ import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemTypePossibility;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
+import com.btxtech.game.wicket.uiservices.I18nStringEditor;
 import com.btxtech.game.wicket.uiservices.I18nStringWYSIWYGEditor;
 import com.btxtech.game.wicket.uiservices.InventoryArtifactPanel;
 import com.btxtech.game.wicket.uiservices.InventoryItemPanel;
@@ -58,6 +59,7 @@ public class BoxItemTypeEditor extends MgmtWebPage {
         add(form);
         form.add(new ItemTypeImagePanel("itemTypeImagePanel", dbBoxItemType.getId()));
         form.add(new TextField<String>("name"));
+        form.add(new I18nStringEditor("dbI18nName"));
         form.add(new I18nStringWYSIWYGEditor("dbI18nDescription"));
         form.add(new DropDownChoice<>("terrainType", Arrays.asList(TerrainType.values())));
         form.add(new MinutePanel("ttl"));

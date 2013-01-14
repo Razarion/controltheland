@@ -44,16 +44,6 @@ abstract public class AbstractItemTypeService implements ItemTypeService {
     }
 
     @Override
-    public ItemType getItemType(String name) throws NoSuchItemTypeException {
-        for (ItemType itemType : itemTypes.values()) {
-            if (itemType.getName().equals(name)) {
-                return itemType;
-            }
-        }
-        throw new NoSuchItemTypeException(name);
-    }
-
-    @Override
     public List<ItemType> getItemTypes() {
         return new ArrayList<ItemType>(itemTypes.values());
     }

@@ -83,7 +83,7 @@ public class BuildupItem extends Composite {
         }
 
         public String getToolTip(BaseItemType itemType) {
-            return lookup(itemType.getName());
+            return lookup(ClientI18nHelper.getLocalizedString(itemType.getI18Name()));
         }
 
         abstract String lookup(String itemName);

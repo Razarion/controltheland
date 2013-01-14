@@ -67,7 +67,7 @@ public class InventoryItem extends Composite implements HasText {
             try {
                 baseItemType = (BaseItemType) ItemTypeContainer.getInstance().getItemType(inventoryItemInfo.getBaseItemTypeId());
                 if (ClientBase.getInstance().isLevelLimitation4ItemTypeExceeded(baseItemType, inventoryItemInfo.getItemCount(), ClientBase.getInstance().getSimpleBase())) {
-                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.useItem(), ClientI18nHelper.CONSTANTS.useItemLimit(baseItemType.getName())), DialogManager.Type.STACK_ABLE);
+                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.useItem(), ClientI18nHelper.CONSTANTS.useItemLimit(ClientI18nHelper.getLocalizedString(baseItemType.getI18Name()))), DialogManager.Type.STACK_ABLE);
                 } else if (ClientBase.getInstance().isHouseSpaceExceeded(ClientBase.getInstance().getSimpleBase(), baseItemType, inventoryItemInfo.getItemCount())) {
                     DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.useItem(), ClientI18nHelper.CONSTANTS.useItemHouseSpace()), DialogManager.Type.STACK_ABLE);
                 } else {
