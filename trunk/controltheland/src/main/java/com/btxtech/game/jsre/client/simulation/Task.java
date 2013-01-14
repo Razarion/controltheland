@@ -43,6 +43,7 @@ public class Task {
                 levelTaskPacket.setQuestInfo(new QuestInfo(taskConfig.getName(),
                         null,
                         taskConfig.getConditionConfig().getAdditionalDescription(),
+                        null,
                         0,
                         0,
                         0,

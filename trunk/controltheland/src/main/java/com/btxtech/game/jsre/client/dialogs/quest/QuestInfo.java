@@ -11,6 +11,7 @@ public class QuestInfo implements Serializable {
 
     private String title;
     private String description;
+    private QuestTypeEnum questTypeEnum;
     private int xp;
     private String additionDescription;
     private int gold;
@@ -25,10 +26,11 @@ public class QuestInfo implements Serializable {
     QuestInfo() {
     }
 
-    public QuestInfo(String title, String description, String additionDescription, int xp, int gold, int id, Type type, Index radarPosition, boolean hideQuestProgress) {
+    public QuestInfo(String title, String description, String additionDescription, QuestTypeEnum questTypeEnum, int xp, int gold, int id, Type type, Index radarPosition, boolean hideQuestProgress) {
         this.title = title;
         this.description = description;
         this.additionDescription = additionDescription;
+        this.questTypeEnum = questTypeEnum;
         this.gold = gold;
         this.xp = xp;
         this.id = id;
@@ -73,6 +75,10 @@ public class QuestInfo implements Serializable {
         return hideQuestProgress;
     }
 
+    public QuestTypeEnum getQuestTypeEnum() {
+        return questTypeEnum;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -84,6 +90,7 @@ public class QuestInfo implements Serializable {
                 && hideQuestProgress == questInfo.hideQuestProgress
                 && id == questInfo.id
                 && xp == questInfo.xp
+                && !(questTypeEnum != null ? !questTypeEnum.equals(questInfo.questTypeEnum) : questInfo.questTypeEnum != null)
                 && !(additionDescription != null ? !additionDescription.equals(questInfo.additionDescription) : questInfo.additionDescription != null)
                 && !(description != null ? !description.equals(questInfo.description) : questInfo.description != null)
                 && !(radarPosition != null ? !radarPosition.equals(questInfo.radarPosition) : questInfo.radarPosition != null)
@@ -96,6 +103,7 @@ public class QuestInfo implements Serializable {
         int result = title != null ? title.hashCode() : 0;
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + xp;
+        result = 31 * result + (questTypeEnum != null ? questTypeEnum.hashCode() : 0);
         result = 31 * result + (additionDescription != null ? additionDescription.hashCode() : 0);
         result = 31 * result + gold;
         result = 31 * result + (type != null ? type.hashCode() : 0);
@@ -111,6 +119,7 @@ public class QuestInfo implements Serializable {
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", additionDescription='" + additionDescription + '\'' +
+                ", questTypeEnum='" + questTypeEnum + '\'' +
                 ", xp=" + xp +
                 ", gold=" + gold +
                 ", type=" + type +

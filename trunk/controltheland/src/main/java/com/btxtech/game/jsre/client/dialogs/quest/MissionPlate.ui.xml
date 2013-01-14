@@ -54,7 +54,7 @@
             <g:VerticalPanel>
                 <g:Label styleName="{style.titel}" ui:field="titel"/>
                 <g:Label styleName="{style.rewards}" ui:field="rewards"/>
-                <g:Cell width="">
+                <g:Cell>
                     <g:DisclosurePanel open="false">
                         <g:header>Details</g:header>
                         <g:HTML ui:field="description" styleName="{style.description}" width=""/>
