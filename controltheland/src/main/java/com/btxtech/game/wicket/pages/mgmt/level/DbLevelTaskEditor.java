@@ -13,6 +13,7 @@
 
 package com.btxtech.game.wicket.pages.mgmt.level;
 
+import com.btxtech.game.jsre.client.dialogs.quest.QuestTypeEnum;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
@@ -23,11 +24,14 @@ import com.btxtech.game.wicket.uiservices.RuModel;
 import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
 import com.btxtech.game.wicket.uiservices.TutorialPanel;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import java.util.Arrays;
 
 /**
  * User: beat
@@ -52,9 +56,9 @@ public class DbLevelTaskEditor extends MgmtWebPage {
 
         form.add(new I18nStringEditor("i18nTitle"));
         form.add(new I18nStringWYSIWYGEditor("i18nDescription"));
+        form.add(new DropDownChoice<>("questTypeEnum", Arrays.asList(QuestTypeEnum.values())));
         form.add(new TutorialPanel("dbTutorialConfig"));
         form.add(new ConditionConfigPanel("dbConditionConfig", terrainLinkHelper));
-
         // Reward
         form.add(new TextField("money"));
         form.add(new TextField("xp"));

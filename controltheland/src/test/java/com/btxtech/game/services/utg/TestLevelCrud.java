@@ -3,6 +3,7 @@ package com.btxtech.game.services.utg;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestTypeEnum;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -721,6 +722,7 @@ public class TestLevelCrud extends AbstractServiceTest {
         DbLevelTask dbLevelTask11 = dbLevel1.getLevelTaskCrud().createDbChild();
         dbLevelTask11.getI18nTitle().putString("name1");
         dbLevelTask11.getI18nDescription().putString("html1");
+        dbLevelTask11.setQuestTypeEnum(QuestTypeEnum.BOSS_PVE);
         dbLevelTask11.setXp(11);
         dbLevelTask11.setMoney(12);
         dbLevelTask11.setDbTutorialConfig(tutorialService.getDbTutorialCrudRootServiceHelper().readDbChild(tut1.getId()));
@@ -742,8 +744,8 @@ public class TestLevelCrud extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         QuestInfo questInfo1 = userGuidanceService.getDbLevelCrud().readDbChild(dbLevel1.getId()).getLevelTaskCrud().readDbChildren().get(0).createQuestInfo(Locale.ENGLISH);
         QuestInfo questInfo2 = userGuidanceService.getDbLevelCrud().readDbChild(dbLevel1.getId()).getLevelTaskCrud().readDbChildren().get(1).createQuestInfo(Locale.ENGLISH);
-        Assert.assertEquals(new QuestInfo("name1", "html1", null, 11, 12, dbLevelTask11.getId(), QuestInfo.Type.MISSION, null, false), questInfo1);
-        Assert.assertEquals(new QuestInfo("name2", "html2", "dbConditionConfig2", 21, 22, dbLevelTask12.getId(), QuestInfo.Type.QUEST, new Index(100, 200), true), questInfo2);
+        Assert.assertEquals(new QuestInfo("name1", "html1", null, QuestTypeEnum.BOSS_PVE, 11, 12, dbLevelTask11.getId(), QuestInfo.Type.MISSION, null, false), questInfo1);
+        Assert.assertEquals(new QuestInfo("name2", "html2", "dbConditionConfig2", null, 21, 22, dbLevelTask12.getId(), QuestInfo.Type.QUEST, new Index(100, 200), true), questInfo2);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

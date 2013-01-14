@@ -246,6 +246,22 @@ public interface ClientI18nConstants extends Messages {
 
     String go();
 
+    String questEnumPvp();
+
+    String questEnumPve();
+
+    String questEnumBossPve();
+
+    String questEnumMission();
+
+    String questEnumGather();
+
+    String questEnumMoney();
+
+    String questEnumBuildup();
+
+    String questEnumHoldTheBase();
+
     // No money dialog
     String noMoney();
 
