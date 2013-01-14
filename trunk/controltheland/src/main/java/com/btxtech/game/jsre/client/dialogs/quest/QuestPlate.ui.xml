@@ -54,16 +54,19 @@
 
     <g:HorizontalPanel styleName="{style.itemplate}"
                        spacing="5" width="100%">
-        <g:Cell verticalAlignment="ALIGN_MIDDLE" width="50px">
-            <g:Image resource='{res.quest}'/>
-        </g:Cell>
+    	<g:Image ui:field="icon"/>
         <g:Cell verticalAlignment="ALIGN_MIDDLE">
             <g:VerticalPanel>
                 <g:Label styleName="{style.titel}" ui:field="titel"/>
                 <g:Label styleName="{style.rewards}" ui:field="rewards"/>
                 <g:DisclosurePanel open="false">
                     <g:header>Details</g:header>
-                    <g:HTML ui:field="description" styleName="{style.description}"/>
+                    <g:VerticalPanel width="5cm" height="4cm">
+                    	<g:Label text="Quest type:" ui:field="typeTitleLabel"/>
+                    	<g:Label ui:field="typeLabel"/>
+                    	<g:Label text="Description:"/>
+        	<g:HTML ui:field="description" styleName="{style.description}"/>
+        </g:VerticalPanel>
                 </g:DisclosurePanel>
             </g:VerticalPanel>
         </g:Cell>

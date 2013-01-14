@@ -56,7 +56,7 @@ public enum QuestTypeEnum {
             return ClientI18nHelper.CONSTANTS.questEnumHoldTheBase();
         }
     },
-    NONE {
+    NONE {  
         @Override
         String getString() {
             return null;
@@ -64,4 +64,11 @@ public enum QuestTypeEnum {
     };
 
     abstract String getString();
+
+    public static boolean isVisible(QuestTypeEnum questTypeEnum) {
+        if(questTypeEnum == null) {
+            return false;
+        }
+        return questTypeEnum != NONE;
+    }
 }

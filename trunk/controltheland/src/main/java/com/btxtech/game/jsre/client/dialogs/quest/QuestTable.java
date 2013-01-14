@@ -31,17 +31,7 @@ public class QuestTable extends Composite {
         missionCountLabel.setText(ClientI18nHelper.CONSTANTS.missionOverview(questOverview.getMissionsDone(), questOverview.getTotalMissions()));
         questTable.removeAllRows();
         for (QuestInfo questInfo : questOverview.getQuestInfos()) {
-            switch (questInfo.getType()) {
-                case MISSION:
-                    questTable.setWidget(questTable.getRowCount(), 0, new MissionPlate(questInfo, questDialog));
-                    break;
-                case QUEST:
-                    questTable.setWidget(questTable.getRowCount(), 0, new QuestPlate(questInfo, questDialog));
-                    break;
-                default:
-                    throw new IllegalArgumentException("QuestTable: unknown type: " + questInfo.getType());
-
-            }
+            questTable.setWidget(questTable.getRowCount(), 0, new QuestPlate(questInfo, questDialog));
         }
     }
 }
