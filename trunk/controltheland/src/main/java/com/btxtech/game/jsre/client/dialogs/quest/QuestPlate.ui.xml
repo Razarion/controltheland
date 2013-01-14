@@ -18,7 +18,7 @@
             filter: literal("progid:DXImageTransform.Microsoft.gradient(startColorstr = '#F8F8F8', endColorstr = '#A0A0A0')");
         }
 
-        .titel {
+        .title {
             color: black;
             font-size: 16px;
             font-family: Arial, Helvetica, sans-serif;
@@ -31,20 +31,6 @@
             font-family: Arial, Helvetica, sans-serif;
             font-weight: bold;
         }
-
-        .description {
-            color: black;
-            font-size: 12px;
-            font-family: Arial, Helvetica, sans-serif;
-            font-weight: bold;
-        }
-
-        .active {
-            color: red;
-            font-size: 20px;
-            font-family: Arial, Helvetica, sans-serif;
-            font-weight: bold;
-        }
     </ui:style>
 
     <ui:with field='res'
@@ -52,26 +38,23 @@
     <ui:with field='msg'
              type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
 
-    <g:HorizontalPanel styleName="{style.itemplate}"
-                       spacing="5" width="100%">
-    	<g:Image ui:field="icon"/>
+    <g:HorizontalPanel styleName="{style.itemplate}" spacing="5" width="100%">
+        <g:Cell verticalAlignment="ALIGN_MIDDLE" width="50px">
+            <g:Image ui:field="icon"/>
+        </g:Cell>
         <g:Cell verticalAlignment="ALIGN_MIDDLE">
             <g:VerticalPanel>
-                <g:Label styleName="{style.titel}" ui:field="titel"/>
+                <g:Label styleName="{style.title}" ui:field="titel"/>
                 <g:Label styleName="{style.rewards}" ui:field="rewards"/>
                 <g:DisclosurePanel open="false">
                     <g:header>Details</g:header>
-                    <g:VerticalPanel width="5cm" height="4cm">
-                    	<g:Label text="Quest type:" ui:field="typeTitleLabel"/>
-                    	<g:Label ui:field="typeLabel"/>
-                    	<g:Label text="Description:"/>
-        	<g:HTML ui:field="description" styleName="{style.description}"/>
-        </g:VerticalPanel>
+                    <g:VerticalPanel width="5cm" height="4cm" ui:field="descriptionPanel">
+                    </g:VerticalPanel>
                 </g:DisclosurePanel>
             </g:VerticalPanel>
         </g:Cell>
         <g:Cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_MIDDLE">
-        	<g:Button ui:field="button" text="{msg.activate}"/>
+            <g:Button ui:field="button" text="{msg.activate}"/>
         </g:Cell>
     </g:HorizontalPanel>
 </ui:UiBinder> 

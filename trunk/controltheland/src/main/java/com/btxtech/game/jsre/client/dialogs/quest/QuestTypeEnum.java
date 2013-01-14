@@ -66,9 +66,6 @@ public enum QuestTypeEnum {
     abstract String getString();
 
     public static boolean isVisible(QuestTypeEnum questTypeEnum) {
-        if(questTypeEnum == null) {
-            return false;
-        }
-        return questTypeEnum != NONE;
+        return questTypeEnum != null && questTypeEnum != NONE;
     }
 }
