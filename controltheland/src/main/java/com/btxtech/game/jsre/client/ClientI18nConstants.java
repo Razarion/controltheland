@@ -72,6 +72,8 @@ public interface ClientI18nConstants extends Messages {
 
     String start();
 
+    String description();
+
     // Radar
     String tooltipRadar();
 
@@ -261,6 +263,8 @@ public interface ClientI18nConstants extends Messages {
     String questEnumBuildup();
 
     String questEnumHoldTheBase();
+
+    String questType();
 
     // No money dialog
     String noMoney();
