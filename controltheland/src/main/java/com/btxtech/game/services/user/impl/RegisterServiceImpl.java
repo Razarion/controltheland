@@ -7,6 +7,7 @@ import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchExc
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
+import com.btxtech.game.services.mgmt.ServerI18nHelper;
 import com.btxtech.game.services.user.EmailIsAlreadyVerifiedException;
 import com.btxtech.game.services.user.RegisterService;
 import com.btxtech.game.services.user.User;
@@ -66,6 +67,8 @@ public class RegisterServiceImpl implements RegisterService {
     private UserTrackingService userTrackingService;
     @Autowired
     private PlatformTransactionManager transactionManager;
+    @Autowired
+    private ServerI18nHelper serverI18nHelper;
     private ScheduledThreadPoolExecutor cleanupTimer;
 
     @PostConstruct
@@ -132,11 +135,15 @@ public class RegisterServiceImpl implements RegisterService {
                     MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
                     message.setTo(user.getEmail());
                     message.setFrom(REPLY_EMAIL);
-                    message.setSubject("Razarion - Bestätige deine E-Mail-Adresse");
+                    message.setSubject(serverI18nHelper.getString("emailSubject"));
                     Map<Object, Object> model = new HashMap<>();
-                    model.put("user", user.getUsername());
+                    model.put("greeting", serverI18nHelper.getString("emailVeriGreeting", new Object[]{user.getUsername()}));
+                    model.put("main", serverI18nHelper.getString("emailVeriMain"));
                     model.put("link", link);
-                    String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "com/btxtech/game/services/user/registration-confirmation.vm", model);
+                    model.put("user", serverI18nHelper.getString("emailVeriUser", new Object[]{user.getUsername()}));
+                    model.put("closing", serverI18nHelper.getString("emailVeriClosing"));
+                    model.put("razarionTeam", serverI18nHelper.getString("emailVeriRazarionTeam"));
+                    String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "com/btxtech/game/services/user/registration-confirmation.vm", "UTF-8", model);
                     message.setText(text, true);
                 }
             };

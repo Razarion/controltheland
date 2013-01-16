@@ -21,4 +21,10 @@
     <entry key="registerNoMatch">Password and confirm password do not match</entry>
     <entry key="alliancesOnlyRegistered">Only registered user can form alliances.</entry>
     <entry key="alliancesRejected">The user {0} has rejected your alliance.</entry>
+    <entry key="emailSubject">Razarion - Please confirm your Email address</entry>
+    <entry key="emailVeriGreeting">Hello {0}</entry>
+    <entry key="emailVeriMain">Thank you for registering at Razarion. Please follow the link below to confirm your email address:</entry>
+    <entry key="emailVeriUser">User name: {0}</entry>
+    <entry key="emailVeriClosing">We are pleased to be able to welcome you to Razarion</entry>
+    <entry key="emailVeriRazarionTeam">With kind regards your Razarion team</entry>
 </properties>

@@ -18,6 +18,7 @@ import org.subethamail.wiser.WiserMessage;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created with IntelliJ IDEA.
@@ -35,13 +36,14 @@ public class TestRegisterService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void register() throws Exception {
+    public void registerEn() throws Exception {
         startFakeMailServer();
 
         configureSimplePlanetNoResources();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        getMockHttpServletRequest().addPreferredLocale(Locale.ENGLISH);
         Date dateBefore = new Date();
         registerService.register("U1", "xxx", "xxx", "test.yyy@testXXX.com");
         Date dateAfter = new Date();
@@ -68,9 +70,9 @@ public class TestRegisterService extends AbstractServiceTest {
         WiserMessage wiserMessage = wiser.getMessages().get(0);
         Assert.assertEquals("test.yyy@testXXX.com", wiserMessage.getEnvelopeReceiver());
         Assert.assertEquals("no-reply@razarion.com", wiserMessage.getEnvelopeSender());
-        Assert.assertEquals("Razarion - Bestätige deine E-Mail-Adresse", wiserMessage.getMimeMessage().getSubject());
+        Assert.assertEquals("Razarion - Please confirm your Email address", wiserMessage.getMimeMessage().getSubject());
         Assert.assertEquals("text/html;charset=UTF-8", wiserMessage.getMimeMessage().getContentType());
-        Assert.assertEquals(setupMailContent(user.getVerificationId()), ((String) wiserMessage.getMimeMessage().getContent()).trim());
+        Assert.assertEquals(setupMailContentEn(user.getVerificationId()), ((String) wiserMessage.getMimeMessage().getContent()).trim());
 
         stopFakeMailServer();
 
@@ -87,6 +89,62 @@ public class TestRegisterService extends AbstractServiceTest {
         Assert.assertTrue(historyElements.get(0).getAwaitingVerificationDate().getTime() <= dateAfter.getTime());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void registerDe() throws Exception {
+        startFakeMailServer();
+
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getMockHttpServletRequest().addPreferredLocale(Locale.GERMAN);
+        registerService.register("U1", "xxx", "xxx", "test.yyy@testXXX.com");
+        User user = userService.getUser("U1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify Email
+        Wiser wiser = getFakeMailServer();
+        Assert.assertEquals(1, wiser.getMessages().size());
+        WiserMessage wiserMessage = wiser.getMessages().get(0);
+        Assert.assertEquals("test.yyy@testXXX.com", wiserMessage.getEnvelopeReceiver());
+        Assert.assertEquals("no-reply@razarion.com", wiserMessage.getEnvelopeSender());
+        Assert.assertEquals("Razarion - Bestätige deine E-Mail-Adresse", wiserMessage.getMimeMessage().getSubject());
+        Assert.assertEquals("text/html;charset=UTF-8", wiserMessage.getMimeMessage().getContentType());
+        Assert.assertEquals(setupMailContentDe(user.getVerificationId()), ((String) wiserMessage.getMimeMessage().getContent()).trim());
+
+        stopFakeMailServer();
+    }
+
+    @Test
+    @DirtiesContext
+    public void registerChinese() throws Exception {
+        startFakeMailServer();
+
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getMockHttpServletRequest().addPreferredLocale(Locale.CHINESE);
+        registerService.register("U1", "xxx", "xxx", "test.yyy@testXXX.com");
+        User user = userService.getUser("U1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify Email
+        Wiser wiser = getFakeMailServer();
+        Assert.assertEquals(1, wiser.getMessages().size());
+        WiserMessage wiserMessage = wiser.getMessages().get(0);
+        Assert.assertEquals("test.yyy@testXXX.com", wiserMessage.getEnvelopeReceiver());
+        Assert.assertEquals("no-reply@razarion.com", wiserMessage.getEnvelopeSender());
+        Assert.assertEquals("Razarion - Please confirm your Email address", wiserMessage.getMimeMessage().getSubject());
+        Assert.assertEquals("text/html;charset=UTF-8", wiserMessage.getMimeMessage().getContentType());
+        Assert.assertEquals(setupMailContentEn(user.getVerificationId()), ((String) wiserMessage.getMimeMessage().getContent()).trim());
+
+        stopFakeMailServer();
     }
 
     @Test
@@ -113,14 +171,14 @@ public class TestRegisterService extends AbstractServiceTest {
         endHttpSession();
     }
 
-    private String setupMailContent(String verifyCode) {
+    private String setupMailContentDe(String verifyCode) {
         return "<html>\r\n" +
                 "<body>\r\n" +
                 "<h3>Hallo U1,</h3>\r\n" +
                 "\r\n" +
                 "<div>\r\n" +
-                "    Vielen Dank f&uuml;r die Registrierung bei Razarion. Bitte best&auml;tige deine E-Mail-Adresse, indem du auf den folgenden\r\n" +
-                "    Link klickst:<br>\r\n" +
+                "    Vielen Dank für die Registrierung bei Razarion. Bitte bestätige deine E-Mail-Adresse, indem du auf den folgenden Link klickst:\r\n" +
+                "    <br>\r\n"  +
                 "    <a href=\"http://www.razarion.com/verification_code/" +
                 verifyCode +
                 "\">http://www.razarion.com/verification_code/" +
@@ -131,10 +189,33 @@ public class TestRegisterService extends AbstractServiceTest {
                 "    Benutzername: U1\r\n" +
                 "    <br>\r\n" +
                 "    <br>\r\n" +
-                "    Wir freuen uns darauf, dich bei Razarion begr&uuml;&szlig;en zu d&uuml;rfen!\r\n" +
+                "    Wir freuen uns darauf, dich bei Razarion begrüssen zu dürfen!\r\n" +
                 "    <br>\r\n" +
                 "    <br>\r\n" +
                 "    Dein Razarion-Team\r\n" +
+                "</div>\r\n" +
+                "</body>\r\n" +
+                "</html>".trim();
+    }
+
+    private String setupMailContentEn(String verifyCode) {
+        return "<html>\r\n" +
+                "<body>\r\n" +
+                "<h3>Hello U1,</h3>\r\n" +
+                "\r\n" +
+                "<div>\r\n" +
+                "    Thank you for registering at Razarion. Please follow the link below to confirm your email address:\r\n" +
+                "    <br>\r\n" +
+                "    <a href=\"http://www.razarion.com/verification_code/" + verifyCode + "\">http://www.razarion.com/verification_code/" + verifyCode + "</a>\r\n" +
+                "    <br>\r\n" +
+                "    <br>\r\n" +
+                "    User name: U1\r\n" +
+                "    <br>\r\n" +
+                "    <br>\r\n" +
+                "    We are pleased to be able to welcome you to Razarion\r\n" +
+                "    <br>\r\n" +
+                "    <br>\r\n" +
+                "    With kind regards your Razarion team\r\n" +
                 "</div>\r\n" +
                 "</body>\r\n" +
                 "</html>".trim();
