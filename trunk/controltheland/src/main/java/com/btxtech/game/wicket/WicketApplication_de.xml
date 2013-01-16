@@ -2,7 +2,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
     <comment>Support Email</comment>
-    <entry key="registerEmailVerified"> Dieser Bestätigungslink wurder vereits verifiziert.</entry>
+    <entry key="registerEmailVerified">Dieser Bestätigungslink wurder vereits verifiziert.</entry>
     <entry key="LOAD_JAVA_SCRIPT">Lade Java Script</entry>
     <entry key="registerThanks">Vielen Dank für die Registrierung</entry>
     <entry key="registerUserExists">Der gewünschte Benutzername existiert bereits</entry>
@@ -21,4 +21,10 @@
     <entry key="registerNoMatch">Passwort und bestätigungs Passwort sind nicht gleich</entry>
     <entry key="alliancesOnlyRegistered">Nur registrierte Benutzer können Allianzen eingehen.</entry>
     <entry key="alliancesRejected">Der Spieler {0}  hat die Allianz abgelehnt.</entry>
+    <entry key="emailSubject">Razarion - Bestätige deine E-Mail-Adresse</entry>
+    <entry key="emailVeriGreeting">Hallo {0}</entry>
+    <entry key="emailVeriMain">Vielen Dank für die Registrierung bei Razarion. Bitte bestätige deine E-Mail-Adresse, indem du auf den folgenden Link klickst:</entry>
+    <entry key="emailVeriUser">Benutzername: {0}</entry>
+    <entry key="emailVeriClosing">Wir freuen uns darauf, dich bei Razarion begrüssen zu dürfen!</entry>
+    <entry key="emailVeriRazarionTeam">Dein Razarion-Team</entry>
 </properties>
