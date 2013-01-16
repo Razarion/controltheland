@@ -257,6 +257,11 @@ public class TestCountComparison extends AbstractServiceTest implements ServerCo
     }
 
     @Override
+    public void sendMessage(SimpleBase simpleBase, String key, Object[] args, boolean showRegisterDialog) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
     public void sendSyncInfos(Collection<SyncBaseItem> syncItem) {
 
     }

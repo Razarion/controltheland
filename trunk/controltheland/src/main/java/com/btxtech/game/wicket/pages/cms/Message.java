@@ -2,6 +2,7 @@ package com.btxtech.game.wicket.pages.cms;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.StringResourceModel;
 
 /**
  * User: beat
@@ -9,8 +10,12 @@ import org.apache.wicket.markup.html.panel.Panel;
  * Time: 14:52:00
  */
 public class Message extends Panel {
-    public Message(String id, String message) {
+    public Message(String id, String key, String additionalParameter) {
         super(id);
-        add(new Label("message", message).setEscapeModelStrings(false));
+        Object[] args = null;
+        if (additionalParameter != null) {
+            args = new Object[]{additionalParameter};
+        }
+        add(new Label("message", new StringResourceModel(key, null, null, args, key)).setEscapeModelStrings(false));
     }
 }

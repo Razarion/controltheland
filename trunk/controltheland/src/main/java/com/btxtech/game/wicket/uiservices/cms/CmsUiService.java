@@ -44,7 +44,7 @@ public interface CmsUiService {
 
     void setPredefinedResponsePage(Component component, CmsUtil.CmsPredefinedPage predefinedType);
 
-    void setMessageResponsePage(Component component, String message);
+    void setMessageResponsePage(Component component, String key, String additionalParameter);
 
     void setResponsePage(Component component, int dbPageId);
 

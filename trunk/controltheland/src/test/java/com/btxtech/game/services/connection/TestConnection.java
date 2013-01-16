@@ -6,13 +6,13 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
+import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.planet.PlanetSystemService;
-import com.btxtech.game.services.user.UserService;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +20,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * User: beat
@@ -29,8 +30,6 @@ import java.util.List;
 public class TestConnection extends AbstractServiceTest {
     @Autowired
     private PlanetSystemService planetSystemService;
-    @Autowired
-    private UserService userService;
 
     @Test
     @DirtiesContext
@@ -329,6 +328,70 @@ public class TestConnection extends AbstractServiceTest {
         Assert.assertEquals("TestUser", debugEntry1.getUserName());
         Assert.assertEquals("CAT1", debugEntry1.getCategory());
         Assert.assertEquals("Text Text", debugEntry1.getMessage());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void sendPackageEn() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getMockHttpServletRequest().addPreferredLocale(Locale.ENGLISH);
+        SimpleBase simpleBase = getMyBase();
+        clearPackets();
+        planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().sendMessage(simpleBase, "alliancesOfferedNotRegistered", new Object[]{"Hallo"}, true);
+        Message message = new Message();
+        message.setMessage("The player Hallo is not registered. Only registered user can form alliances. Use the chat to persuade him to register!");
+        message.setShowRegisterDialog(true);
+        assertPackagesIgnoreSyncItemInfoAndClear(true, message);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void sendPackageDe() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getMockHttpServletRequest().addPreferredLocale(Locale.GERMAN);
+        SimpleBase simpleBase = getMyBase();
+        clearPackets();
+        planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().sendMessage(simpleBase, "alliancesOfferedNotRegistered", new Object[]{"Hallo"}, false);
+        Message message = new Message();
+        message.setMessage("Der Spieler Hallo ist nicht registriert. Nur registrierte Spieler können Allianzen eingehen. Benutze den Chat um den Spieler zum Registrieren zu überreden!");
+        message.setShowRegisterDialog(false);
+        assertPackagesIgnoreSyncItemInfoAndClear(true, message);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void sendPackageNoRequest() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getMockHttpServletRequest().addPreferredLocale(Locale.GERMAN);
+        final SimpleBase simpleBase = getMyBase();
+        clearPackets();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().sendMessage(simpleBase, "alliancesOfferedNotRegistered", new Object[]{"Hallo"}, false);
+            }
+        });
+        thread.start();
+        thread.join();
+        Message message = new Message();
+        message.setMessage("Der Spieler Hallo ist nicht registriert. Nur registrierte Spieler können Allianzen eingehen. Benutze den Chat um den Spieler zum Registrieren zu überreden!");
+        message.setShowRegisterDialog(false);
+        assertPackagesIgnoreSyncItemInfoAndClear(true, message);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

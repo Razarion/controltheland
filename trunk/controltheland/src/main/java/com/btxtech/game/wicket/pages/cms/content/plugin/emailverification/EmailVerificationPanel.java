@@ -44,13 +44,13 @@ public class EmailVerificationPanel extends Panel {
             String verificationId = contentContext.getPageParameters().getString(CmsUtil.EMAIL_VERIFICATION_KEY);
             User user = registerService.onVerificationPageCalled(verificationId);
             userService.loginIfNotLoggedIn(user);
-            cmsUiService.setMessageResponsePage(this, "Thanks for registering.");
+            cmsUiService.setMessageResponsePage(this, "registerThanks", null);
         } catch (EmailIsAlreadyVerifiedException e) {
             ExceptionHandler.handleException(e);
-            cmsUiService.setMessageResponsePage(this, "The email confirmation link you followed has already been verified.");
+            cmsUiService.setMessageResponsePage(this, "registerEmailVerified", null);
         } catch (UserDoesNotExitException e) {
             ExceptionHandler.handleException(e);
-            cmsUiService.setMessageResponsePage(this, "The email confirmation link you followed is invalid. Please re-register.");
+            cmsUiService.setMessageResponsePage(this, "registerConfirmationInvalid", null);
         }
     }
 

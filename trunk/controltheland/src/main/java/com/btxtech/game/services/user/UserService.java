@@ -95,4 +95,6 @@ public interface UserService extends UserDetailsService {
     void loginIfNotLoggedIn(User userToLogin);
 
     void removeUserState(UserState userState);
+
+    UserState getUserState(SimpleBase simpleBase);
 }

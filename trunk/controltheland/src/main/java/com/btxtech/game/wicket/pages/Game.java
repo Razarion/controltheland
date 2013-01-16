@@ -25,6 +25,8 @@ import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -63,7 +65,7 @@ public class Game extends WebPage {
             gameStartupSeq = GameStartupSeq.COLD_REAL;
         }
 
-        add(new Label("startupTaskText", gameStartupSeq.getAbstractStartupTaskEnum()[0].getStartupTaskEnumHtmlHelper().getNiceText()));
+        add(new Label("startupTaskText", new ResourceModel(gameStartupSeq.getAbstractStartupTaskEnum()[0].name(), gameStartupSeq.getAbstractStartupTaskEnum()[0].name())));
 
         setupStartupSeq(gameStartupSeq, levelTaskId);
     }

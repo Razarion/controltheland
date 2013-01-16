@@ -286,9 +286,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     private void sendDefeatedMessage(SyncBaseItem victim, SimpleBase actor) {
-        Message message = new Message();
-        message.setMessage("You defeated " + getBaseName(victim.getBase()));
-        planetServices.getConnectionService().sendPacket(actor, message);
+        planetServices.getConnectionService().sendMessage(actor, "youDefeated", new Object[]{getBaseName(victim.getBase())}, false);
     }
 
     @Override

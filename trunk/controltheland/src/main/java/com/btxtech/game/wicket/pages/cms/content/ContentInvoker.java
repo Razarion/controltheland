@@ -59,7 +59,7 @@ public class ContentInvoker extends Panel {
                     cmsUiService.invoke((DbContentInvoker) ContentInvoker.this.getDefaultModelObject(), parameters);
                     cmsUiService.setParentResponsePage(ContentInvoker.this, (DbContent) ContentInvoker.this.getDefaultModelObject(), beanIdPathElement);
                 } catch (InvocationTargetException e) {
-                    cmsUiService.setMessageResponsePage(ContentInvoker.this, e.getTargetException().getMessage());
+                    cmsUiService.setMessageResponsePage(ContentInvoker.this, "error", e.getTargetException().getMessage());
                 }
             }
         });

@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.connection.Connection;
@@ -150,6 +151,14 @@ public class ServerConnectionServiceImpl implements ServerConnectionService {
                 }
             }
         }
+    }
+
+    @Override
+    public void sendMessage(SimpleBase simpleBase, String key, Object[] args, boolean showRegisterDialog) {
+        Message message = new Message();
+        message.setMessage(serverGlobalServices.getServerI18nHelper().getStringNoRequest(simpleBase, key, args));
+        message.setShowRegisterDialog(showRegisterDialog);
+        sendPacket(simpleBase, message);
     }
 
     @Override

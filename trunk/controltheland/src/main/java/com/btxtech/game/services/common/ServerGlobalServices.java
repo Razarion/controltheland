@@ -6,6 +6,7 @@ import com.btxtech.game.services.connection.ServerGlobalConnectionService;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
 import com.btxtech.game.services.item.ServerItemTypeService;
+import com.btxtech.game.services.mgmt.ServerI18nHelper;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.terrain.TerrainImageService;
@@ -41,6 +42,8 @@ public interface ServerGlobalServices extends GlobalServices {
     XpService getXpService();
 
     ServerGlobalConnectionService getServerGlobalConnectionService();
+
+    ServerI18nHelper getServerI18nHelper();
 
     @Override
     ServerConditionService getConditionService();

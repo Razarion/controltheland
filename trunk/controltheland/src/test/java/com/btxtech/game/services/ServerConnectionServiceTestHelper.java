@@ -5,7 +5,6 @@ import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.ServerConnectionService;
@@ -15,7 +14,6 @@ import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -25,6 +23,7 @@ import java.util.List;
  */
 public class ServerConnectionServiceTestHelper implements ServerConnectionService {
     private List<PacketEntry> packetEntries = new ArrayList<>();
+    private List<MessageEntry> messageEntries = new ArrayList<>();
     private static Log log = LogFactory.getLog(ServerConnectionServiceTestHelper.class);
 
     @Override
@@ -57,6 +56,12 @@ public class ServerConnectionServiceTestHelper implements ServerConnectionServic
     public void sendPacket(Packet packet) {
         packetEntries.add(new PacketEntry(null, packet));
         log.error("Packet to all: " + packet);
+    }
+
+    @Override
+    public void sendMessage(SimpleBase simpleBase, String key, Object[] args, boolean showRegisterDialog) {
+        messageEntries.add(new MessageEntry(simpleBase, key, args, showRegisterDialog));
+        log.error("Packet to simpleBase: " + simpleBase + " key: " + key);
     }
 
     @Override
@@ -97,6 +102,14 @@ public class ServerConnectionServiceTestHelper implements ServerConnectionServic
         return packetEntries;
     }
 
+    public void clearMessageEntries() {
+        messageEntries.clear();
+    }
+
+    public List<MessageEntry> getMessageEntries() {
+        return messageEntries;
+    }
+
     public List<PacketEntry> getPacketEntries(SimpleBase simpleBase, Class<? extends Packet> filter) {
         List<PacketEntry> result = new ArrayList<>();
         for (PacketEntry packetEntry : packetEntries) {
@@ -117,6 +130,17 @@ public class ServerConnectionServiceTestHelper implements ServerConnectionServic
         return result;
     }
 
+    public List<MessageEntry> getMessageEntries(SimpleBase simpleBase) {
+        List<MessageEntry> result = new ArrayList<>();
+        for (MessageEntry messageEntry : messageEntries) {
+            if(messageEntry.getSimpleBase().equals(simpleBase)) {
+                result.add(messageEntry);
+            }
+        }
+        return result;
+    }
+
+
     public class PacketEntry {
         private SimpleBase simpleBase;
         private Packet packet;
@@ -132,6 +156,37 @@ public class ServerConnectionServiceTestHelper implements ServerConnectionServic
 
         public Packet getPacket() {
             return packet;
+        }
+    }
+
+    public class MessageEntry {
+        private SimpleBase simpleBase;
+        private String key;
+        private Object[] args;
+        private boolean showRegisterDialog;
+
+
+        public MessageEntry(SimpleBase simpleBase, String key, Object[] args, boolean showRegisterDialog) {
+            this.simpleBase = simpleBase;
+            this.key = key;
+            this.args = args;
+            this.showRegisterDialog = showRegisterDialog;
+        }
+
+        public SimpleBase getSimpleBase() {
+            return simpleBase;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public Object[] getArgs() {
+            return args;
+        }
+
+        public boolean isShowRegisterDialog() {
+            return showRegisterDialog;
         }
     }
 }

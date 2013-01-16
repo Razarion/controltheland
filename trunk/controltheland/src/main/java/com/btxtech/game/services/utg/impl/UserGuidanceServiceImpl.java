@@ -32,6 +32,7 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ServerItemTypeService;
+import com.btxtech.game.services.mgmt.ServerI18nHelper;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.PlanetSystemService;
@@ -79,6 +80,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     private ServerItemTypeService serverItemTypeService;
     @Autowired
     private XpService xpService;
+    @Autowired
+    private ServerI18nHelper serverI18nHelper;
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
     private Map<Integer, LevelScope> levelScopes = new HashMap<>();
     private final Map<UserState, Collection<Integer>> levelTaskDone = new HashMap<>();
@@ -100,9 +103,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
 
     @Override
     public void sendResurrectionMessage(SimpleBase simpleBase) {
-        Message message = new Message();
-        message.setMessage("You lost your base. A new base was created.");
-        planetSystemService.getServerPlanetServices(simpleBase).getConnectionService().sendPacket(simpleBase, message);
+        planetSystemService.getServerPlanetServices(simpleBase).getConnectionService().sendMessage(simpleBase, "baseLost", null,false);
     }
 
     @Override
