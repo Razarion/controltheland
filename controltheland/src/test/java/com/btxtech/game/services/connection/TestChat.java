@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * User: beat
@@ -102,6 +103,7 @@ public class TestChat extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        getMockHttpServletRequest().addPreferredLocale(Locale.ENGLISH);
         sendMessage("m1");
         sendMessage("m2");
         sendMessage("m3");
@@ -122,6 +124,22 @@ public class TestChat extends AbstractServiceTest {
         assertDbChatMessage("m1", "Guest", dbChatMessages.get(0));
         assertDbChatMessage("m2", "Guest", dbChatMessages.get(1));
         assertDbChatMessage("m3", "Guest", dbChatMessages.get(2));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testUnregUserTutorialDe() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getMockHttpServletRequest().addPreferredLocale(Locale.GERMAN);
+        sendMessage("m1");
+        List<ChatMessage> chatMessages = getMovableService().pollChatMessages(null);
+        Assert.assertEquals("Gast", chatMessages.get(0).getName());
+        Assert.assertEquals("m1", chatMessages.get(0).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

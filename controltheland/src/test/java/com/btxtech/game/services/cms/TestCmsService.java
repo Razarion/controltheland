@@ -71,12 +71,12 @@ import com.btxtech.game.wicket.uiservices.cms.impl.CmsUiServiceImpl;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.RequestCycle;
-import org.apache.wicket.Session;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.behavior.StringHeaderContributor;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.protocol.http.WebRequest;
+import org.apache.wicket.request.target.component.BookmarkablePageRequestTarget;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.easymock.EasyMock;
@@ -2670,6 +2670,8 @@ public class TestCmsService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.ENGLISH);
         tester.startPage(CmsPage.class);
         FormTester formTester = tester.newFormTester("header:loginBox:loginForm");
         formTester.setValue("loginName", "U1");
@@ -2705,6 +2707,8 @@ public class TestCmsService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.ENGLISH);
         tester.startPage(CmsPage.class);
         FormTester formTester = tester.newFormTester("header:loginBox:loginForm");
         formTester.setValue("loginName", "U1");
@@ -2749,7 +2753,7 @@ public class TestCmsService extends AbstractServiceTest {
         formTester.setValue("loginName", "U1");
         formTester.setValue("loginPassowrd", "xxx");
         formTester.submit();
-        tester.assertLabel("title","USerPage");
+        tester.assertLabel("title", "USerPage");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -3145,6 +3149,8 @@ public class TestCmsService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.ENGLISH);
         createAndLoginUser("U1");
         tester.startPage(CmsPage.class);
         tester.assertVisible("form:content:container:1:button");
@@ -3157,7 +3163,7 @@ public class TestCmsService extends AbstractServiceTest {
         formTester.setValue("content:listView:1:editor:field", "subject2");
         formTester.setValue("content:listView:2:editor:editor", "message message");
         formTester.submit("content:invoke");
-        tester.assertLabel("form:content:border:borderContent:message", "Unknown user: U5");
+        tester.assertLabel("form:content:border:borderContent:message", "Error: Unknown user: U5");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -4338,6 +4344,8 @@ public class TestCmsService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.ENGLISH);
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
 
@@ -4395,6 +4403,9 @@ public class TestCmsService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.ENGLISH);
+
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
 
@@ -4441,6 +4452,8 @@ public class TestCmsService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.ENGLISH);
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
 
@@ -4462,14 +4475,14 @@ public class TestCmsService extends AbstractServiceTest {
 
         tester.setupRequestAndResponse();
         tester.getWicketSession().setLocale(Locale.ENGLISH);
-        testLocale("en");
+        testLocale("en", "Loading java script");
 
         tester.setupRequestAndResponse();
         tester.getWicketSession().setLocale(Locale.GERMAN);
-        testLocale("de");
+        testLocale("de", "Lade Java Script");
     }
 
-    private void testLocale(String expectedLocale) {
+    private void testLocale(String expectedLocale, String startupTaskText) {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(Game.class);
@@ -4479,7 +4492,114 @@ public class TestCmsService extends AbstractServiceTest {
         SimpleAttributeModifier simpleAttributeModifier = (SimpleAttributeModifier) container.getBehaviors().get(0);
         Assert.assertEquals("content", simpleAttributeModifier.getAttribute());
         Assert.assertEquals("locale=" + expectedLocale, simpleAttributeModifier.getValue());
+        tester.assertLabel("startupTaskText", startupTaskText);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void testMessage() throws Exception {
+        configureSimplePlanetNoResources();
+        // Setup
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        pageCrud.updateDbChild(dbPage);
+        DbPage dbMessagePage = pageCrud.createDbChild();
+        dbMessagePage.setPredefinedType(CmsUtil.CmsPredefinedPage.MESSAGE);
+        dbMessagePage.setName("Message Page");
+        pageCrud.updateDbChild(dbMessagePage);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify En parameter
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.ENGLISH);
+        tester.startPage(CmsPage.class);
+        Page page = tester.getLastRenderedPage();
+        cmsUiService.setMessageResponsePage(page, "loginAlready", "KUH");
+        Assert.assertEquals(CmsPage.class, RequestCycle.get().getResponsePageClass());
+        BookmarkablePageRequestTarget requestTarget = (BookmarkablePageRequestTarget) RequestCycle.get().getRequestTarget();
+        tester.startPage(requestTarget.getPageClass(), requestTarget.getPageParameters());
+        tester.assertLabel("form:content:border:borderContent:message", "Already logged in as: KUH");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify chinese parameter
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.CHINESE);
+        tester.startPage(CmsPage.class);
+        page = tester.getLastRenderedPage();
+        cmsUiService.setMessageResponsePage(page, "loginAlready", "KUH");
+        Assert.assertEquals(CmsPage.class, RequestCycle.get().getResponsePageClass());
+        requestTarget = (BookmarkablePageRequestTarget) RequestCycle.get().getRequestTarget();
+        tester.startPage(requestTarget.getPageClass(), requestTarget.getPageParameters());
+        tester.assertLabel("form:content:border:borderContent:message", "Already logged in as: KUH");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify german parameter
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.GERMAN);
+        tester.startPage(CmsPage.class);
+        page = tester.getLastRenderedPage();
+        cmsUiService.setMessageResponsePage(page, "loginAlready", "KUH");
+        Assert.assertEquals(CmsPage.class, RequestCycle.get().getResponsePageClass());
+        requestTarget = (BookmarkablePageRequestTarget) RequestCycle.get().getRequestTarget();
+        tester.startPage(requestTarget.getPageClass(), requestTarget.getPageParameters());
+        tester.assertLabel("form:content:border:borderContent:message", "Bereits KUH als eingeloggt");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify En
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.ENGLISH);
+        tester.startPage(CmsPage.class);
+        page = tester.getLastRenderedPage();
+        cmsUiService.setMessageResponsePage(page, "registerConfirmationInvalid", null);
+        Assert.assertEquals(CmsPage.class, RequestCycle.get().getResponsePageClass());
+        requestTarget = (BookmarkablePageRequestTarget) RequestCycle.get().getRequestTarget();
+        tester.startPage(requestTarget.getPageClass(), requestTarget.getPageParameters());
+        tester.assertLabel("form:content:border:borderContent:message", "The email confirmation link you followed is invalid. Please re-register.");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify En no valid key
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.ENGLISH);
+        tester.startPage(CmsPage.class);
+        page = tester.getLastRenderedPage();
+        cmsUiService.setMessageResponsePage(page, "_____________thisIsAnInvalidKey___________", null);
+        Assert.assertEquals(CmsPage.class, RequestCycle.get().getResponsePageClass());
+        requestTarget = (BookmarkablePageRequestTarget) RequestCycle.get().getRequestTarget();
+        tester.startPage(requestTarget.getPageClass(), requestTarget.getPageParameters());
+        tester.assertLabel("form:content:border:borderContent:message", "_____________thisIsAnInvalidKey___________");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify umlaute
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.GERMAN);
+        tester.startPage(CmsPage.class);
+        page = tester.getLastRenderedPage();
+        cmsUiService.setMessageResponsePage(page, "registerUserExists", null);
+        Assert.assertEquals(CmsPage.class, RequestCycle.get().getResponsePageClass());
+        requestTarget = (BookmarkablePageRequestTarget) RequestCycle.get().getRequestTarget();
+        tester.startPage(requestTarget.getPageClass(), requestTarget.getPageParameters());
+        tester.assertLabel("form:content:border:borderContent:message", "Der gewünschte Benutzername existiert bereits");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 }

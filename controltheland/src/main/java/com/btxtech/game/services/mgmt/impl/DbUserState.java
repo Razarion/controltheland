@@ -1,6 +1,7 @@
 package com.btxtech.game.services.mgmt.impl;
 
 import com.btxtech.game.services.common.ExceptionHandler;
+import com.btxtech.game.services.common.db.IndexUserType;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.statistics.StatisticsEntry;
@@ -12,6 +13,9 @@ import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.condition.DbGenericComparisonValue;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.type.LocaleType;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -28,6 +32,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Locale;
 
 /**
  * User: beat
@@ -35,6 +40,7 @@ import java.util.Collection;
  * Time: 21:49:19
  */
 @Entity(name = "BACKUP_USER_STATUS")
+@TypeDef(name = "locale", typeClass = LocaleType.class)
 public class DbUserState {
     @Id
     @GeneratedValue
@@ -73,13 +79,15 @@ public class DbUserState {
             inverseJoinColumns = {@JoinColumn(name = "inventoryArtifact")})
     private Collection<DbInventoryArtifact> inventoryArtifacts;
     private int razarion;
+    @org.hibernate.annotations.Type(type = "locale")
+    private Locale locale;
 
     /**
      * Used by hibernate
      */
     protected DbUserState() {
     }
-
+                   //  testen
     public DbUserState(BackupEntry backupEntry, User user, UserState userState, DbLevel dbLevel, Collection<DbInventoryItem> inventoryItems, Collection<DbInventoryArtifact> inventoryArtifacts) {
         this.backupEntry = backupEntry;
         if (user != null) {
@@ -91,6 +99,7 @@ public class DbUserState {
         sendResurrectionMessage = userState.isSendResurrectionMessage();
         this.inventoryItems = inventoryItems;
         this.inventoryArtifacts = inventoryArtifacts;
+        locale = userState.getLocale();
     }
 
     public UserState createUserState(UserService userService) {
@@ -111,6 +120,8 @@ public class DbUserState {
         }
         userState.setXp(xp);
         userState.setRazarion(razarion);
+        userState.setLocale(locale);
+
         if (sendResurrectionMessage) {
             userState.setSendResurrectionMessage();
         }

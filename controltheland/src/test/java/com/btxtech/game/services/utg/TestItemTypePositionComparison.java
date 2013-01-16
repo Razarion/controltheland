@@ -1192,6 +1192,11 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     }
 
     @Override
+    public void sendMessage(SimpleBase simpleBase, String key, Object[] args, boolean showRegisterDialog) {
+
+    }
+
+    @Override
     public void sendSyncInfos(Collection<SyncBaseItem> syncItem) {
 
     }

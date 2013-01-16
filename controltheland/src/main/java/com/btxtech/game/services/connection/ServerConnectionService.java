@@ -43,6 +43,8 @@ public interface ServerConnectionService extends CommonConnectionService {
 
     void sendPacket(Packet packet);
 
+    void sendMessage(SimpleBase simpleBase, String key, Object[] args, boolean showRegisterDialog);
+
     void sendSyncInfos(Collection<SyncBaseItem> syncItem);
 
     Collection<SimpleBase> getOnlineBases();

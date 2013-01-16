@@ -254,9 +254,12 @@ public class CmsUiServiceImpl implements CmsUiService {
     }
 
     @Override
-    public void setMessageResponsePage(Component component, String message) {
+    public void setMessageResponsePage(Component component, String key, String additionalParameter) {
         PageParameters pageParameters = getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.MESSAGE);
-        pageParameters.put(CmsPage.MESSAGE_ID, message);
+        pageParameters.put(CmsPage.MESSAGE_ID, key);
+        if(additionalParameter != null) {
+            pageParameters.put(CmsPage.MESSAGE_ADDITIONAL_PARAMETER, additionalParameter);
+        }
         component.setResponsePage(CmsPage.class, pageParameters);
     }
 
@@ -321,7 +324,7 @@ public class CmsUiServiceImpl implements CmsUiService {
             dbContent = cmsService.getDbContent(pageParameters.getInt(CmsPage.INVOKE_ID));
             beanIdPathElement.setInvokePage(true);
         } else if (pageParameters.containsKey(CmsPage.MESSAGE_ID)) {
-            Message message = new Message("borderContent", pageParameters.getString(CmsPage.MESSAGE_ID));
+            Message message = new Message("borderContent", pageParameters.getString(CmsPage.MESSAGE_ID), pageParameters.getString(CmsPage.MESSAGE_ADDITIONAL_PARAMETER));
             return new BorderWrapper(componentId, message, "iBorder");
         }
         return getComponent(dbContent, null, componentId, beanIdPathElement, contentContext);

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>Support Email</comment>
+    <entry key="registerEmailVerified">The email confirmation link you followed has already been verified.</entry>
+    <entry key="LOAD_JAVA_SCRIPT">Loading java script</entry>
+    <entry key="registerThanks">Thanks for registering.</entry>
+    <entry key="registerUserExists">The user already exists</entry>
+    <entry key="alliancesAccepted">The user {0} has accepted your alliance.</entry>
+    <entry key="youDefeated">You defeated {0}</entry>
+    <entry key="alliancesBroken">The user {0} has broken the alliance.</entry>
+    <entry key="loginFailed">Login failed. Please try again.&lt;br&gt;&lt;br&gt;Newly created accounts must be activated first. Check your email.</entry>
+    <entry key="loginAlready">Already logged in as: {0}</entry>
+    <entry key="baseLost">You lost your base. A new base was created.</entry>
+    <entry key="guest">Guest</entry>
+    <entry key="registerConfirmationInvalid">The email confirmation link you followed is invalid. Please re-register.</entry>
+    <entry key="error">Error: {0}</entry>
+    <entry key="loadingGame">Loading game...</entry>
+    <entry key="alliancesOfferedNotRegistered">The player {0} is not registered. Only registered user can form alliances. Use the chat to persuade him to register!</entry>
+    <entry key="alliancesOfferedOnlyRegistered">{0} offers you an alliance. Only registered user can form alliances.</entry>
+    <entry key="registerNoMatch">Password and confirm password do not match</entry>
+    <entry key="alliancesOnlyRegistered">Only registered user can form alliances.</entry>
+    <entry key="alliancesRejected">The user {0} has rejected your alliance.</entry>
+</properties>

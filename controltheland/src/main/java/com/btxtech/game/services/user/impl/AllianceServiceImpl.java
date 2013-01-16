@@ -2,7 +2,6 @@ package com.btxtech.game.services.user.impl;
 
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
-import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.history.HistoryService;
@@ -37,13 +36,13 @@ public class AllianceServiceImpl implements AllianceService {
     public void proposeAlliance(SimpleBase partner) {
         User user = userService.getUser();
         if (user == null || !user.isAccountNonLocked()) {
-            sendMessage(planetSystemService.getServerPlanetServices().getBaseService().getBase().getSimpleBase(), "Only registered user can form alliances.", user == null);
+            sendMessage(planetSystemService.getServerPlanetServices().getBaseService().getBase().getSimpleBase(), "alliancesOnlyRegistered", null, user == null);
             return;
         }
         User partnerUser = userService.getUser(partner);
         if (partnerUser == null || !partnerUser.isAccountNonLocked()) {
-            sendMessage(partner, user.getUsername() + " offers you an alliance. Only registered user can form alliances.", partnerUser == null);
-            sendMessage(user, "The player '" + planetSystemService.getServerPlanetServices(partner).getBaseService().getBaseName(partner) + "' is not registered. Only registered user can form alliances. Use the chat to persuade him to register!", false);
+            sendMessage(partner, "alliancesOfferedOnlyRegistered", user.getUsername(), partnerUser == null);
+            sendMessage(user, "alliancesOfferedNotRegistered", planetSystemService.getServerPlanetServices(partner).getBaseService().getBaseName(partner), false);
             return;
         }
         if (partnerUser.getAlliances().contains(user)) {
@@ -80,7 +79,7 @@ public class AllianceServiceImpl implements AllianceService {
         updateBaseService(partnerUser);
         sendAllianceChanged(user);
         sendAllianceChanged(partnerUser);
-        sendMessage(partnerUser, "The user " + user.getUsername() + " has accepted your alliance", false);
+        sendMessage(partnerUser, "alliancesAccepted", user.getUsername(), false);
     }
 
     @Override
@@ -99,7 +98,7 @@ public class AllianceServiceImpl implements AllianceService {
         user.getAllianceOffers().remove(partnerUser);
         userService.save(user);
         historyService.addAllianceOfferRejected(user, partnerUser);
-        sendMessage(partnerUser, "The user " + user.getUsername() + " has rejected your alliance", false);
+        sendMessage(partnerUser, "alliancesRejected", user.getUsername(), false);
     }
 
     @Override
@@ -122,19 +121,19 @@ public class AllianceServiceImpl implements AllianceService {
         sendAllianceChanged(user);
         sendAllianceChanged(partnerUser);
         handleNewEnemies(user, partnerUser);
-        sendMessage(partnerUser, "The user " + user.getUsername() + " has broken the alliance", false);
+        sendMessage(partnerUser, "alliancesBroken", user.getUsername(), false);
     }
 
     private void handleNewEnemies(User user1, User user2) {
         SimpleBase simpleBase1 = getSimpleBase(user1);
-        if(simpleBase1 == null) {
+        if (simpleBase1 == null) {
             return;
         }
         SimpleBase simpleBase2 = getSimpleBase(user2);
-        if(simpleBase2 == null) {
+        if (simpleBase2 == null) {
             return;
         }
-        if(simpleBase1.getPlanetId() != simpleBase2.getPlanetId()) {
+        if (simpleBase1.getPlanetId() != simpleBase2.getPlanetId()) {
             return;
         }
         planetSystemService.getServerPlanetServices(simpleBase1).getItemService().onAllianceBroken(simpleBase1, simpleBase2);
@@ -211,10 +210,10 @@ public class AllianceServiceImpl implements AllianceService {
         Collection<SimpleBase> allianceBases = new ArrayList<>();
         for (User allianceUser : user.getAlliances()) {
             SimpleBase allianceBase = getSimpleBase(allianceUser);
-            if(allianceBase == null) {
+            if (allianceBase == null) {
                 continue;
             }
-            if(allianceBase.getPlanetId() != simpleBase.getPlanetId()) {
+            if (allianceBase.getPlanetId() != simpleBase.getPlanetId()) {
                 continue;
             }
             if (planetSystemService.getServerPlanetServices(allianceBase).getBaseService().isAlive(allianceBase)) {
@@ -233,17 +232,18 @@ public class AllianceServiceImpl implements AllianceService {
         planetSystemService.getServerPlanetServices(simpleBase).getBaseService().sendAlliancesChanged(simpleBase);
     }
 
-    private void sendMessage(User user, String message, boolean showRegisterDialog) {
+    private void sendMessage(User user, String key, String arg, boolean showRegisterDialog) {
         SimpleBase simpleBase = getSimpleBase(user);
-        sendMessage(simpleBase, message, showRegisterDialog);
+        sendMessage(simpleBase, key, arg, showRegisterDialog);
     }
 
-    private void sendMessage(SimpleBase simpleBase, String message, boolean showRegisterDialog) {
-        Message accepted = new Message();
-        accepted.setMessage(message);
-        accepted.setShowRegisterDialog(showRegisterDialog);
+    private void sendMessage(SimpleBase simpleBase, String key, String arg, boolean showRegisterDialog) {
         if (simpleBase != null) {
-            planetSystemService.getServerPlanetServices(simpleBase).getConnectionService().sendPacket(simpleBase, accepted);
+            Object[] args = null;
+            if (arg != null) {
+                args = new Object[]{arg};
+            }
+            planetSystemService.getServerPlanetServices(simpleBase).getConnectionService().sendMessage(simpleBase, key, args, showRegisterDialog);
         }
     }
 
@@ -255,7 +255,7 @@ public class AllianceServiceImpl implements AllianceService {
 
     private SimpleBase getSimpleBase(User user) {
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(user);
-        if(serverPlanetServices == null) {
+        if (serverPlanetServices == null) {
             return null;
         }
         return serverPlanetServices.getBaseService().getSimpleBase(user);

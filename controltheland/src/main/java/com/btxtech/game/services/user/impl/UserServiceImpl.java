@@ -392,11 +392,19 @@ public class UserServiceImpl implements UserService {
         if (simpleBase == null) {
             return null;
         }
-        UserState userState = planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getUserState(simpleBase);
+        UserState userState = getUserState(simpleBase);
         if (userState == null) {
             return null;
         }
         return getUser(userState);
+    }
+
+    @Override
+    public UserState getUserState(SimpleBase simpleBase) {
+        if (simpleBase == null) {
+            return null;
+        }
+        return planetSystemService.getServerPlanetServices(simpleBase).getBaseService().getUserState(simpleBase);
     }
 
     @Override

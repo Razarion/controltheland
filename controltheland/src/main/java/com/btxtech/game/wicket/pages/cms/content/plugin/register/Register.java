@@ -44,7 +44,7 @@ public class Register extends Panel {
     public Register(String id) {
         super(id);
         if (userService.isRegistered()) {
-            cmsUiService.setMessageResponsePage(this, "Already logged in as: " + userService.getUser().getUsername());
+            cmsUiService.setMessageResponsePage(this, "loginAlready", userService.getUser().getUsername());
             return;
         }
 
@@ -62,11 +62,11 @@ public class Register extends Panel {
                     }
                     setResponsePage(Game.class, parameters);
                 } catch (AlreadyLoggedInException e) {
-                    cmsUiService.setMessageResponsePage(this, e.getMessage());
+                    cmsUiService.setMessageResponsePage(this, "loginAlready", e.getUserName());
                 } catch (UserAlreadyExistsException e) {
-                    cmsUiService.setMessageResponsePage(this, "The user already exists");
+                    cmsUiService.setMessageResponsePage(this, "registerUserExists", null);
                 } catch (PasswordNotMatchException e) {
-                    cmsUiService.setMessageResponsePage(this, "Password and confirm password do not match");
+                    cmsUiService.setMessageResponsePage(this, "registerNoMatch", null);
                 }
             }
         };

@@ -50,6 +50,9 @@ public interface Session {
     void setUserState(UserState userState);
 
     @Deprecated
+    /**
+     * Use RequestHelper instead
+     */
     HttpServletRequest getRequest();
 
     EditMode getEditMode();

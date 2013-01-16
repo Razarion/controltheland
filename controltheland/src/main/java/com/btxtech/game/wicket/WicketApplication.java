@@ -72,6 +72,8 @@ public class WicketApplication extends AuthenticatedWebApplication implements Ap
     @Override
     protected void init() {
         super.init();
+        getMarkupSettings().setDefaultMarkupEncoding("UTF-8");
+        getRequestCycleSettings().setResponseRequestEncoding("UTF-8");
         addComponentInstantiationListener(new SpringComponentInjector(this, applicationContext, true));
         getApplicationSettings().setAccessDeniedPage(CmsPage.class);
         getSharedResources().add(CmsCssResource.CMS_SHARED_CSS_RESOURCES, new CmsCssResource());

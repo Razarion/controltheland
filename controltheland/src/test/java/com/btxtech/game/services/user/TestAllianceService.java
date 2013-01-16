@@ -7,7 +7,6 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
-import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.ServerConnectionServiceTestHelper;
 import com.btxtech.game.services.mgmt.MgmtService;
@@ -58,7 +57,7 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertNoMessagesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1));
+        assertNoMessages(connectionServiceTestHelper, new SimpleBase(1, 1));
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -68,6 +67,7 @@ public class TestAllianceService extends AbstractServiceTest {
         verifyAlliances();
         verifyAlliancesFromUser();
         connectionServiceTestHelper.clearReceivedPackets();
+        connectionServiceTestHelper.clearMessageEntries();
         allianceService.proposeAlliance(simpleBase1);
         verifyAllianceOffers();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -75,8 +75,8 @@ public class TestAllianceService extends AbstractServiceTest {
 
         assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1));
         assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(2, 1));
-        assertNoMessagesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1));
-        assertNoMessagesInPackets(connectionServiceTestHelper, new SimpleBase(2, 1));
+        assertNoMessages(connectionServiceTestHelper, new SimpleBase(1, 1));
+        assertNoMessages(connectionServiceTestHelper, new SimpleBase(2, 1));
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -85,6 +85,7 @@ public class TestAllianceService extends AbstractServiceTest {
         verifyAlliances();
         verifyAlliancesFromUser();
         connectionServiceTestHelper.clearReceivedPackets();
+        connectionServiceTestHelper.clearMessageEntries();
         allianceService.acceptAllianceOffer("u2");
         verifyAllianceOffers();
         verifyAlliances("u2");
@@ -92,13 +93,14 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertNoMessagesInPackets(connectionServiceTestHelper, simpleBase1);
-        assertMessageInPackets(connectionServiceTestHelper, simpleBase2, "The user u1 has accepted your alliance", false);
+        assertNoMessages(connectionServiceTestHelper, simpleBase1);
+        assertMessage(connectionServiceTestHelper, simpleBase2, "alliancesAccepted", "u1", false);
         List<ServerConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelper.getPacketEntriesToAllBases(BaseChangedPacket.class);
         Assert.assertEquals(2, packets.size());
         assertAlliancesInPacketToAll(packets, simpleBase1, "u2");
         assertAlliancesInPacketToAll(packets, simpleBase2, "u1");
         connectionServiceTestHelper.clearReceivedPackets();
+        connectionServiceTestHelper.clearMessageEntries();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -112,8 +114,8 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertNoMessagesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1));
-        assertMessageInPackets(connectionServiceTestHelper, new SimpleBase(2, 1), "The user u1 has broken the alliance", false);
+        assertNoMessages(connectionServiceTestHelper, new SimpleBase(1, 1));
+        assertMessage(connectionServiceTestHelper, new SimpleBase(2, 1), "alliancesBroken", "u1", false);
         packets = connectionServiceTestHelper.getPacketEntriesToAllBases(BaseChangedPacket.class);
         Assert.assertEquals(2, packets.size());
         assertAlliancesInPacketToAll(packets, simpleBase1);
@@ -169,8 +171,8 @@ public class TestAllianceService extends AbstractServiceTest {
 
         assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1));
         assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(2, 1));
-        assertNoMessagesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1));
-        assertNoMessagesInPackets(connectionServiceTestHelper, new SimpleBase(2, 1));
+        assertNoMessages(connectionServiceTestHelper, new SimpleBase(1, 1));
+        assertNoMessages(connectionServiceTestHelper, new SimpleBase(2, 1));
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -188,8 +190,8 @@ public class TestAllianceService extends AbstractServiceTest {
 
         assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1));
         assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(2, 1));
-        assertNoMessagesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1));
-        assertMessageInPackets(connectionServiceTestHelper, new SimpleBase(2, 1), "The user U1 has rejected your alliance", false);
+        assertNoMessages(connectionServiceTestHelper, new SimpleBase(1, 1));
+        assertMessage(connectionServiceTestHelper, new SimpleBase(2, 1), "alliancesRejected", "U1", false);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -241,8 +243,8 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertNoMessagesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1));
-        assertMessageInPackets(connectionServiceTestHelper, new SimpleBase(2, 1), "Only registered user can form alliances.", true);
+        assertNoMessages(connectionServiceTestHelper, new SimpleBase(1, 1));
+        assertMessage(connectionServiceTestHelper, new SimpleBase(2, 1), "alliancesOnlyRegistered", null, true);
     }
 
     @Test
@@ -273,8 +275,8 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertNoMessagesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1));
-        assertMessageInPackets(connectionServiceTestHelper, new SimpleBase(2, 1), "Only registered user can form alliances.", false);
+        assertNoMessages(connectionServiceTestHelper, new SimpleBase(1, 1));
+        assertMessage(connectionServiceTestHelper, new SimpleBase(2, 1), "alliancesOnlyRegistered", null, false);
         stopFakeMailServer();
     }
 
@@ -306,8 +308,8 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertMessageInPackets(connectionServiceTestHelper, new SimpleBase(1, 1), "u1 offers you an alliance. Only registered user can form alliances.", false);
-        assertMessageInPackets(connectionServiceTestHelper, new SimpleBase(2, 1), "The player 'u2' is not registered. Only registered user can form alliances. Use the chat to persuade him to register!", false);
+        assertMessage(connectionServiceTestHelper, new SimpleBase(1, 1), "alliancesOfferedOnlyRegistered", "u1", false);
+        assertMessage(connectionServiceTestHelper, new SimpleBase(2, 1), "alliancesOfferedNotRegistered", "u2", false);
         stopFakeMailServer();
     }
 
@@ -353,8 +355,8 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertNoMessagesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1));
-        assertMessageInPackets(connectionServiceTestHelper, new SimpleBase(2, 1), "The user U1 has accepted your alliance", false);
+        assertNoMessages(connectionServiceTestHelper, new SimpleBase(1, 1));
+        assertMessage(connectionServiceTestHelper, new SimpleBase(2, 1), "alliancesAccepted", "U1", false);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -363,6 +365,7 @@ public class TestAllianceService extends AbstractServiceTest {
         verifyAlliances("U1");
         verifyAlliancesFromUser("U1");
         connectionServiceTestHelper.clearReceivedPackets();
+        connectionServiceTestHelper.clearMessageEntries();
         getMovableService().sellItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -371,9 +374,10 @@ public class TestAllianceService extends AbstractServiceTest {
         Assert.assertEquals(2, packets.size()); // REMOVE and CHANGE packet
         assertAlliancesInPacketToAll(packets, simpleBase1);
         assertBaseDeletedPacket(connectionServiceTestHelper, simpleBase2);
-        assertNoMessagesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1));
-        assertNoMessagesInPackets(connectionServiceTestHelper, new SimpleBase(2, 1));
+        assertNoMessages(connectionServiceTestHelper, new SimpleBase(1, 1));
+        assertNoMessages(connectionServiceTestHelper, new SimpleBase(2, 1));
         connectionServiceTestHelper.clearReceivedPackets();
+        connectionServiceTestHelper.clearMessageEntries();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -404,8 +408,8 @@ public class TestAllianceService extends AbstractServiceTest {
         assertAlliancesInPacketToAll(packets, simpleBase1, "U2");
         assertAlliancesInPacketToAll(packets, simpleBase3, "U1");
 
-        assertNoMessagesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1));
-        assertNoMessagesInPackets(connectionServiceTestHelper, new SimpleBase(2, 1));
+        assertNoMessages(connectionServiceTestHelper, new SimpleBase(1, 1));
+        assertNoMessages(connectionServiceTestHelper, new SimpleBase(2, 1));
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -445,8 +449,8 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertMessageInPackets(connectionServiceTestHelper, simpleBase1, "u2 offers you an alliance. Only registered user can form alliances.", true);
-        assertMessageInPackets(connectionServiceTestHelper, simpleBase2, "The player 'Base 1' is not registered. Only registered user can form alliances. Use the chat to persuade him to register!", false);
+        assertMessage(connectionServiceTestHelper, simpleBase1, "alliancesOfferedOnlyRegistered", "u2", true);
+        assertMessage(connectionServiceTestHelper, simpleBase2, "alliancesOfferedNotRegistered", "Base 1", false);
 
     }
 
@@ -816,22 +820,28 @@ public class TestAllianceService extends AbstractServiceTest {
         Assert.fail("No delete BaseChangedPacket for base found");
     }
 
-    private void assertMessageInPackets(ServerConnectionServiceTestHelper connectionServiceTestHelper, SimpleBase myBase, String messages, boolean showRegisterButton) {
-        List<ServerConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelper.getPacketEntries(myBase, Message.class);
-        Assert.assertEquals(1, packets.size());
-        Message messagePacket = (Message) packets.get(0).getPacket();
-        Assert.assertEquals(messages, messagePacket.getMessage());
-        Assert.assertEquals(showRegisterButton, messagePacket.isShowRegisterDialog());
-    }
-
     private void assertNoAlliancesInPackets(ServerConnectionServiceTestHelper connectionServiceTestHelper, SimpleBase myBase) {
         List<ServerConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelper.getPacketEntries(myBase, BaseChangedPacket.class);
         Assert.assertEquals(0, packets.size());
     }
 
-    private void assertNoMessagesInPackets(ServerConnectionServiceTestHelper connectionServiceTestHelper, SimpleBase myBase) {
-        List<ServerConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelper.getPacketEntries(myBase, Message.class);
+    private void assertNoMessages(ServerConnectionServiceTestHelper connectionServiceTestHelper, SimpleBase myBase) {
+        List<ServerConnectionServiceTestHelper.MessageEntry> packets = connectionServiceTestHelper.getMessageEntries(myBase);
         Assert.assertEquals(0, packets.size());
     }
 
+    private void assertMessage(ServerConnectionServiceTestHelper connectionServiceTestHelper, SimpleBase myBase, String messages, String arg, boolean showRegisterButton) {
+        List<ServerConnectionServiceTestHelper.MessageEntry> packets = connectionServiceTestHelper.getMessageEntries(myBase);
+        Assert.assertEquals(1, packets.size());
+        ServerConnectionServiceTestHelper.MessageEntry messageEntry = packets.get(0);
+        Assert.assertEquals(myBase, messageEntry.getSimpleBase());
+        Assert.assertEquals(messages, messageEntry.getKey());
+        if (arg != null) {
+            Assert.assertEquals(1, messageEntry.getArgs().length);
+            Assert.assertEquals(arg, messageEntry.getArgs()[0]);
+        } else {
+            Assert.assertNull(messageEntry.getArgs());
+        }
+        Assert.assertEquals(showRegisterButton, messageEntry.isShowRegisterDialog());
+    }
 }

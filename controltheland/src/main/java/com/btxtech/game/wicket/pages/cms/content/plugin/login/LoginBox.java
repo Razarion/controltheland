@@ -16,7 +16,6 @@ package com.btxtech.game.wicket.pages.cms.content.plugin.login;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.SecurityRoles;
-import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import com.btxtech.game.wicket.uiservices.facebook.FacebookController;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
@@ -25,7 +24,6 @@ import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeActi
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.StatelessForm;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -53,10 +51,10 @@ public class LoginBox extends Panel {
                     if (session.signIn(loginName, loginPassowrd)) {
                         cmsUiService.setPredefinedResponsePage(this, CmsUtil.CmsPredefinedPage.USER_PAGE);
                     } else {
-                        cmsUiService.setMessageResponsePage(this, "Login failed. Please try again.<br><br>Newly created accounts must be activated first. Check your email.");
+                        cmsUiService.setMessageResponsePage(this, "loginFailed", null);
                     }
                 } catch (AlreadyLoggedInException e) {
-                    cmsUiService.setMessageResponsePage(this, e.getMessage());
+                    cmsUiService.setMessageResponsePage(this, "loginAlready", e.getUserName());
                 }
             }
         };

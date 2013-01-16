@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>Support Email</comment>
+    <entry key="registerEmailVerified"> Dieser Bestätigungslink wurder vereits verifiziert.</entry>
+    <entry key="LOAD_JAVA_SCRIPT">Lade Java Script</entry>
+    <entry key="registerThanks">Vielen Dank für die Registrierung</entry>
+    <entry key="registerUserExists">Der gewünschte Benutzername existiert bereits</entry>
+    <entry key="alliancesAccepted">Der Spieler {0} hat deine Allianz angenommen.</entry>
+    <entry key="youDefeated">Du hast {0} besiegt</entry>
+    <entry key="alliancesBroken">Der Spieler {0} hat die Allianz aufgehoben.</entry>
+    <entry key="loginFailed">Einloggen fehlgeschlagen. Bitte erneut versuchen.&lt;br&gt;&lt;br&gt;Neue Konten müssen zuerst via Email bestätigt werden. Bitte Email prüfen.</entry>
+    <entry key="loginAlready">Bereits {0} als eingeloggt</entry>
+    <entry key="baseLost">Deine Basis wurde ausgelöscht. Eine neue Basis wurde gestartet.</entry>
+    <entry key="guest">Gast</entry>
+    <entry key="registerConfirmationInvalid">Dieser Bestätigungslink Link ist ungültig. Bitte erneut registrieren.</entry>
+    <entry key="error">Fehler: {0}</entry>
+    <entry key="loadingGame">Lade Spiel...</entry>
+    <entry key="alliancesOfferedNotRegistered">Der Spieler {0} ist nicht registriert. Nur registrierte Spieler können Allianzen eingehen. Benutze den Chat um den Spieler zum Registrieren zu überreden!</entry>
+    <entry key="alliancesOfferedOnlyRegistered">{0} hat eine Allianz vorgeschlagen. Nur registrierte Benutzer können Allianzen eingehen.</entry>
+    <entry key="registerNoMatch">Passwort und bestätigungs Passwort sind nicht gleich</entry>
+    <entry key="alliancesOnlyRegistered">Nur registrierte Benutzer können Allianzen eingehen.</entry>
+    <entry key="alliancesRejected">Der Spieler {0}  hat die Allianz abgelehnt.</entry>
+</properties>

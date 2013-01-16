@@ -20,13 +20,12 @@ import com.btxtech.game.services.connection.ClientDebugEntry;
 import com.btxtech.game.services.connection.ConnectionStatistics;
 import com.btxtech.game.services.connection.ServerGlobalConnectionService;
 import com.btxtech.game.services.connection.Session;
+import com.btxtech.game.services.mgmt.ServerI18nHelper;
 import com.btxtech.game.services.planet.Planet;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -54,8 +53,9 @@ public class ServerGlobalConnectionServiceImpl implements ServerGlobalConnection
     private SessionFactory sessionFactory;
     @Autowired
     private PlanetSystemService planetSystemService;
+    @Autowired
+    private ServerI18nHelper serverI18nHelper;
     private ChatMessageQueue chatMessageQueue = new ChatMessageQueue();
-    private Log log = LogFactory.getLog(ServerGlobalConnectionServiceImpl.class);
 
     @Override
     public Session getSession() {
@@ -82,7 +82,7 @@ public class ServerGlobalConnectionServiceImpl implements ServerGlobalConnection
         } else if (userService.getUserState().getBase() != null) {
             name = planetSystemService.getServerPlanetServices().getBaseService().getBaseName();
         } else {
-            name = "Guest";
+            name = serverI18nHelper.getString("guest");
         }
         chatMessageQueue.initAndPutMessage(name, chatMessage);
         for (Planet planet : planetSystemService.getAllPlanets()) {

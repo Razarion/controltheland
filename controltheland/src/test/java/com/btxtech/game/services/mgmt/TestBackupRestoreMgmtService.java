@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -658,8 +659,52 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void testLocale() throws Exception {
+        configureSimplePlanetNoResources();
 
-    private void verifyUserStates(List<UserState> newUserStates, List<UserState> oldUserStates) {
+        // U1 reg user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getMockHttpServletRequest().addPreferredLocale(Locale.FRANCE);
+        createAndLoginUser("U1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // U2 reg user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getMockHttpServletRequest().addPreferredLocale(Locale.ENGLISH);
+        createAndLoginUser("U2");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // U3 reg user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getMockHttpServletRequest().addPreferredLocale(Locale.GERMAN);
+        createAndLoginUser("U3");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Backup
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Restore
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        Assert.assertEquals(Locale.FRANCE, userService.getUserState(userService.getUser("U1")).getLocale());
+        Assert.assertEquals(Locale.ENGLISH, userService.getUserState(userService.getUser("U2")).getLocale());
+        Assert.assertEquals(Locale.GERMAN, userService.getUserState(userService.getUser("U3")).getLocale());
+    }
+
+        private void verifyUserStates(List<UserState> newUserStates, List<UserState> oldUserStates) {
         Assert.assertEquals(oldUserStates.size(), newUserStates.size());
         for (UserState oldUserState : oldUserStates) {
             String oldUser = oldUserState.getUser();
