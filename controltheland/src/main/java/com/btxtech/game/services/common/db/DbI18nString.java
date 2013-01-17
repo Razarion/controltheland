@@ -115,4 +115,8 @@ public class DbI18nString {
             }
         return new I18nString(localizedStrings);
     }
+
+    public Map<String, String> getLocalizedStrings() {
+        return localizedStrings;
+    }
 }
