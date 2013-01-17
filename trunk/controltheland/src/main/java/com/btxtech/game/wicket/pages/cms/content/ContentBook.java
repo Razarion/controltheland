@@ -115,7 +115,7 @@ public class ContentBook extends Panel {
             columns.add(new HeaderlessColumn<DbContentRow>() {
                 @Override
                 public void populateItem(Item<ICellPopulator<DbContentRow>> cellItem, String componentId, IModel<DbContentRow> rowModel) {
-                    cellItem.add(new Label(componentId, rowModel.getObject().getName()));
+                    cellItem.add(new Label(componentId, rowModel.getObject().getDbI18nName().getString(getLocale())));
                 }
             });
         }

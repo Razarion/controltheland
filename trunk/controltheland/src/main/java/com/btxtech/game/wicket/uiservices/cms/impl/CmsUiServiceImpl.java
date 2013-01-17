@@ -29,6 +29,7 @@ import com.btxtech.game.services.common.ContentSortList;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.common.ExceptionHandler;
+import com.btxtech.game.services.common.db.DbI18nString;
 import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.itemType.DbItemType;
@@ -257,7 +258,7 @@ public class CmsUiServiceImpl implements CmsUiService {
     public void setMessageResponsePage(Component component, String key, String additionalParameter) {
         PageParameters pageParameters = getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.MESSAGE);
         pageParameters.put(CmsPage.MESSAGE_ID, key);
-        if(additionalParameter != null) {
+        if (additionalParameter != null) {
             pageParameters.put(CmsPage.MESSAGE_ADDITIONAL_PARAMETER, additionalParameter);
         }
         component.setResponsePage(CmsPage.class, pageParameters);
@@ -395,7 +396,7 @@ public class CmsUiServiceImpl implements CmsUiService {
             if (dbContent instanceof DbContentList) {
                 return new ContentList(componentId, (DbContentList) dbContent, beanIdPathElement, contentContext);
             } else if (dbContent instanceof DbExpressionProperty) {
-                return component4ExpressionProperty(componentId, ((DbExpressionProperty) dbContent), bean, beanIdPathElement);
+                return component4ExpressionProperty(componentId, ((DbExpressionProperty) dbContent), bean, beanIdPathElement, contentContext);
             } else if (dbContent instanceof DbContentDetailLink) {
                 return new ContentDetailLink(componentId, (DbContentDetailLink) dbContent, beanIdPathElement);
             } else if (dbContent instanceof DbContentContainer) {
@@ -458,10 +459,10 @@ public class CmsUiServiceImpl implements CmsUiService {
         }
     }
 
-    private Component component4ExpressionProperty(String id, DbExpressionProperty dbExpressionProperty, Object bean, BeanIdPathElement beanIdPathElement) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    private Component component4ExpressionProperty(String id, DbExpressionProperty dbExpressionProperty, Object bean, BeanIdPathElement beanIdPathElement, ContentContext contentContext) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Object value;
         try {
-            value = getValue(dbExpressionProperty, bean, beanIdPathElement);
+            value = getValue(dbExpressionProperty, bean, beanIdPathElement, contentContext);
         } catch (NestedNullException e) {
             return new Label(id, "-");
         } catch (NoSuchMethodException ie) {
@@ -552,14 +553,19 @@ public class CmsUiServiceImpl implements CmsUiService {
         }
     }
 
-    private Object getValue(DataProviderInfo dataProviderInfo, Object bean, BeanIdPathElement beanIdPathElement) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    private Object getValue(DataProviderInfo dataProviderInfo, Object bean, BeanIdPathElement beanIdPathElement, ContentContext contentContext) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         if (dataProviderInfo.getExpression().equals(CURRENT_PATH)) {
             return bean;
         } else {
             if (dataProviderInfo.getSpringBeanName() != null) {
                 bean = getDataProviderBean(beanIdPathElement);
             }
-            return PropertyUtils.getProperty(bean, beanIdPathElement.getExpression());
+            Object value = PropertyUtils.getProperty(bean, beanIdPathElement.getExpression());
+            if (value instanceof DbI18nString) {
+                return ((DbI18nString) value).getString(contentContext.getLocale());
+            } else {
+                return value;
+            }
         }
     }
 

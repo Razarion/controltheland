@@ -962,6 +962,58 @@ public class TestCmsService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
+    public void testDbContentRowI18n() throws Exception {
+        configureMultiplePlanetsAndLevels();
+
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        DbContentBook dbContentBook = new DbContentBook();
+        dbContentBook.init(userService);
+        dbPage.setContentAndAccessWrites(dbContentBook);
+        DbContentRow dbContentRow = dbContentBook.getRowCrud().createDbChild();
+        dbContentRow.getDbI18nName().putString("english");
+        dbContentRow.getDbI18nName().putString(Locale.GERMAN, "german");
+        DbContentStaticHtml dbContentStaticHtml = new DbContentStaticHtml();
+        dbContentStaticHtml.getDbI18nHtml().putString("xxx");
+        dbContentStaticHtml.setParent(dbContentRow);
+        dbContentRow.setDbContent(dbContentStaticHtml);
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.ENGLISH);
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell", "english");
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.GERMAN);
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell", "german");
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.CHINESE);
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell", "english");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
     public void testDynamicHtmlRead() throws Exception {
         configureSimplePlanetNoResources();
 
@@ -2202,6 +2254,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         DbContentRow dbContentRow = rowCrud.createDbChild();
         dbContentRow.setName("Name");
+        dbContentRow.getDbI18nName().putString("Name");
         DbExpressionProperty expProperty = new DbExpressionProperty();
         expProperty.setParent(dbContentRow);
         expProperty.setExpression("name");
@@ -2793,11 +2846,11 @@ public class TestCmsService extends AbstractServiceTest {
         DbPage dbPage = pageCrud.createDbChild();
         dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage.setName("Home2");
-        dbPage.getDbI18nName().putString("Home");
         pageCrud.updateDbChild(dbPage);
         DbPage userPage = pageCrud.createDbChild();
         userPage.setPredefinedType(CmsUtil.CmsPredefinedPage.USER_PAGE);
-        userPage.setName("USerPage");
+        userPage.setName("USerPage 2");
+        userPage.getDbI18nName().putString("USerPage");
         pageCrud.updateDbChild(userPage);
         cmsService.activateCms();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -3515,6 +3568,55 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void testExpressionPropertyI18n() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setName("Home");
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        DbExpressionProperty expressionProperty = new DbExpressionProperty();
+        dbPage.setContentAndAccessWrites(expressionProperty);
+        expressionProperty.init(userService);
+        expressionProperty.setSpringBeanName("testCmsBean");
+        expressionProperty.setExpression("dbI18nString");
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.ENGLISH);
+        tester.startPage(CmsPage.class);
+        tester.debugComponentTrees();
+        tester.assertLabel("form:content", "Hello");
+        tester.getWicketSession().setLocale(Locale.GERMAN);
+        tester.startPage(CmsPage.class);
+        tester.debugComponentTrees();
+        tester.assertLabel("form:content", "Hallo");
+        tester.getWicketSession().setLocale(Locale.CHINESE);
+        tester.startPage(CmsPage.class);
+        tester.debugComponentTrees();
+        tester.assertLabel("form:content", "Hello");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 
     @Test
     @DirtiesContext

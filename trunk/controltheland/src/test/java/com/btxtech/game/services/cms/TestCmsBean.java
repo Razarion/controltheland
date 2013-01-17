@@ -1,7 +1,10 @@
 package com.btxtech.game.services.cms;
 
+import com.btxtech.game.services.common.db.DbI18nString;
 import org.junit.Ignore;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 /**
  * User: beat
@@ -35,4 +38,10 @@ public class TestCmsBean {
         return 11;
     }
 
+    public DbI18nString getDbI18nString() {
+        DbI18nString dbI18nString = new DbI18nString();
+        dbI18nString.putString("Hello");
+        dbI18nString.putString(Locale.GERMAN, "Hallo");
+        return dbI18nString;
+    }
 }
