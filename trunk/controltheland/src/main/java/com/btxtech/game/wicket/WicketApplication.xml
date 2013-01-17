@@ -27,4 +27,5 @@
     <entry key="emailVeriUser">User name: {0}</entry>
     <entry key="emailVeriClosing">We are pleased to be able to welcome you to Razarion</entry>
     <entry key="emailVeriRazarionTeam">With kind regards your Razarion team</entry>
+    <entry key="loggedIn">Logged in</entry>
 </properties>
