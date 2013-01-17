@@ -4602,4 +4602,37 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void testFallbackLocale() throws Exception {
+        Locale.setDefault(Locale.CHINESE);
+        configureSimplePlanetNoResources();
+        // Setup
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        pageCrud.updateDbChild(dbPage);
+        DbPage dbMessagePage = pageCrud.createDbChild();
+        dbMessagePage.setPredefinedType(CmsUtil.CmsPredefinedPage.MESSAGE);
+        dbMessagePage.setName("Message Page");
+        pageCrud.updateDbChild(dbMessagePage);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify En parameter
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        Page page = tester.getLastRenderedPage();
+        cmsUiService.setMessageResponsePage(page, "loginAlready", "KUH");
+        Assert.assertEquals(CmsPage.class, RequestCycle.get().getResponsePageClass());
+        BookmarkablePageRequestTarget requestTarget = (BookmarkablePageRequestTarget) RequestCycle.get().getRequestTarget();
+        tester.startPage(requestTarget.getPageClass(), requestTarget.getPageParameters());
+        tester.assertLabel("form:content:border:borderContent:message", "Already logged in as: KUH");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
 }
