@@ -404,7 +404,7 @@ public class CmsUiServiceImpl implements CmsUiService {
                 return new ContentBook(componentId, (DbContentBook) dbContent, beanIdPathElement, contentContext);
             } else if (dbContent instanceof DbContentStaticHtml) {
                 DbContentStaticHtml dbContentStaticHtml = (DbContentStaticHtml) dbContent;
-                Component label = new Label(componentId, dbContentStaticHtml.getHtml()).setEscapeModelStrings(dbContentStaticHtml.getEditorType().isEscapeHtml());
+                Component label = new Label(componentId, dbContentStaticHtml.getDbI18nHtml().getString(contentContext.getLocale())).setEscapeModelStrings(dbContentStaticHtml.getEditorType().isEscapeHtml());
                 if (dbContent.getCssClass() != null) {
                     label.add(new SimpleAttributeModifier("class", dbContent.getCssClass()));
                 }

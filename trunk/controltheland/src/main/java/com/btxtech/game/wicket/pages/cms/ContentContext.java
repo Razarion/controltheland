@@ -6,6 +6,7 @@ import com.btxtech.game.services.cms.layout.DbExpressionProperty;
 import org.apache.wicket.PageParameters;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 /**
  * User: beat
@@ -14,13 +15,19 @@ import java.io.Serializable;
  */
 public class ContentContext implements Serializable {
     private PageParameters pageParameters;
+    private Locale locale;
 
-    public ContentContext(PageParameters pageParameters) {
+    public ContentContext(PageParameters pageParameters, Locale locale) {
         this.pageParameters = pageParameters;
+        this.locale = locale;
     }
 
     public PageParameters getPageParameters() {
         return pageParameters;
+    }
+
+    public Locale getLocale() {
+        return locale;
     }
 
     public String getContentSortInfoString(int contentListId) {
