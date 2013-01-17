@@ -1,5 +1,6 @@
 package com.btxtech.game.services.cms.layout;
 
+import com.btxtech.game.services.common.db.DbI18nString;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
@@ -21,6 +22,8 @@ public class DbContentRow extends DbContent {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "parent")
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private DbContent dbContent;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private DbI18nString dbI18nName = new DbI18nString();
 
     public DbContent getDbContent() {
         return dbContent;
@@ -28,6 +31,10 @@ public class DbContentRow extends DbContent {
 
     public void setDbContent(DbContent dbContent) {
         this.dbContent = dbContent;
+    }
+
+    public DbI18nString getDbI18nName() {
+        return dbI18nName;
     }
 
     @Override

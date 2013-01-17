@@ -21,7 +21,6 @@ import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.packets.LevelPacket;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
-import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.jsre.common.packets.XpPacket;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
@@ -32,7 +31,6 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ServerItemTypeService;
-import com.btxtech.game.services.mgmt.ServerI18nHelper;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.PlanetSystemService;
@@ -80,8 +78,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     private ServerItemTypeService serverItemTypeService;
     @Autowired
     private XpService xpService;
-    @Autowired
-    private ServerI18nHelper serverI18nHelper;
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
     private Map<Integer, LevelScope> levelScopes = new HashMap<>();
     private final Map<UserState, Collection<Integer>> levelTaskDone = new HashMap<>();

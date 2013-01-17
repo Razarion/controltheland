@@ -25,6 +25,7 @@ import com.btxtech.game.services.cms.layout.DbContentBooleanExpressionImage;
 import com.btxtech.game.services.cms.layout.DbContentGameLink;
 import com.btxtech.game.services.cms.layout.DbContentList;
 import com.btxtech.game.services.cms.layout.DbContentPageLink;
+import com.btxtech.game.services.cms.layout.DbContentRow;
 import com.btxtech.game.services.cms.layout.DbContentStaticHtml;
 import com.btxtech.game.services.cms.page.DbAds;
 import com.btxtech.game.services.cms.page.DbMenu;
@@ -188,6 +189,9 @@ public class CmsServiceImpl implements CmsService {
         }
         if(dbContent instanceof DbContentStaticHtml) {
             initializeI18n(((DbContentStaticHtml) dbContent).getDbI18nHtml());
+        }
+        if(dbContent instanceof DbContentRow) {
+            initializeI18n(((DbContentRow) dbContent).getDbI18nName());
         }
         if (dbContent instanceof DbContentBook) {
             DbContentBook dbContentBook = (DbContentBook) dbContent;

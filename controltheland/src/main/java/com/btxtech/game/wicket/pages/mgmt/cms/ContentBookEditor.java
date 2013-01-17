@@ -7,6 +7,7 @@ import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudListChildTableHelper;
+import com.btxtech.game.wicket.uiservices.I18nStringEditor;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Button;
@@ -55,7 +56,7 @@ public class ContentBookEditor extends MgmtWebPage {
 
             @Override
             protected void extendedPopulateItem(Item<DbContentRow> dbContentItem) {
-                super.extendedPopulateItem(dbContentItem);
+                dbContentItem.add(new I18nStringEditor("dbI18nName"));
                 displayId(dbContentItem);
             }
 
