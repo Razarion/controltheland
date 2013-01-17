@@ -213,6 +213,8 @@ public class CmsServiceImpl implements CmsService {
     private void initializeLazyDependencies(DbPage dbPage) {
         Hibernate.initialize(dbPage);
         Hibernate.initialize(dbPage.getStyle());
+        Hibernate.initialize(dbPage.getDbI18nName());
+        Hibernate.initialize(dbPage.getDbI18nName().getLocalizedStrings());
         initializeLazyMenu(dbPage.getMenu());
     }
 

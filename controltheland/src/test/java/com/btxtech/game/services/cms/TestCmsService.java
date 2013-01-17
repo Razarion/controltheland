@@ -2792,7 +2792,8 @@ public class TestCmsService extends AbstractServiceTest {
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage = pageCrud.createDbChild();
         dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
-        dbPage.setName("Home");
+        dbPage.setName("Home2");
+        dbPage.getDbI18nName().putString("Home");
         pageCrud.updateDbChild(dbPage);
         DbPage userPage = pageCrud.createDbChild();
         userPage.setPredefinedType(CmsUtil.CmsPredefinedPage.USER_PAGE);
@@ -2811,6 +2812,42 @@ public class TestCmsService extends AbstractServiceTest {
         formTester.setValue("loginPassowrd", "xxx");
         formTester.submit();
         tester.assertLabel("title", "USerPage");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+
+    @Test
+    @DirtiesContext
+    public void testPageTitleI18n() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home2");
+        dbPage.getDbI18nName().putString("English");
+        dbPage.getDbI18nName().putString(Locale.GERMAN, "German");
+        pageCrud.updateDbChild(dbPage);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.ENGLISH);
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("title", "English");
+        tester.getWicketSession().setLocale(Locale.GERMAN);
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("title", "German");
+        tester.getWicketSession().setLocale(Locale.CHINESE);
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("title", "English");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

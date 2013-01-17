@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.layout.DbContent;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.HibernateUtil;
+import com.btxtech.game.services.common.db.DbI18nString;
 import com.btxtech.game.services.user.UserService;
 
 import javax.persistence.CascadeType;
@@ -42,6 +43,8 @@ public class DbPage implements CrudChild {
     @ManyToOne(fetch = FetchType.LAZY)
     private DbMenu menu;
     private String name;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private DbI18nString dbI18nName = new DbI18nString();
     private CmsUtil.CmsPredefinedPage predefinedType;
     @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private DbContent content;
@@ -61,6 +64,10 @@ public class DbPage implements CrudChild {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    public DbI18nString getDbI18nName() {
+        return dbI18nName;
     }
 
     @Override
