@@ -5,6 +5,7 @@ import com.btxtech.game.services.cms.layout.DbContent;
 import com.btxtech.game.services.cms.page.DbPage;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
+import com.btxtech.game.wicket.uiservices.I18nStringEditor;
 import com.btxtech.game.wicket.uiservices.MenuSelector;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import com.btxtech.game.wicket.uiservices.StyleSelector;
@@ -42,6 +43,7 @@ public class PageEditor extends MgmtWebPage {
             }
         }));
         add(form);
+        form.add(new I18nStringEditor("dbI18nName"));
         form.add(new CheckBox("headerVisible"));
         form.add(new CheckBox("footerVisible"));
         form.add(new CheckBox("adsVisible"));

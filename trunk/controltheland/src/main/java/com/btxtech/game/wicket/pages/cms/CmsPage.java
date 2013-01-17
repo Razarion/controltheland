@@ -127,7 +127,7 @@ public class CmsPage extends WebPage implements IHeaderContributor {
             if (dbPage.getPredefinedType() == CmsUtil.CmsPredefinedPage.FACEBOOK_START) {
                 cmsUiService.handleFacebookRequest(pageParameters, this);
             }
-            add(new Label("title", dbPage.getName()));
+            add(new Label("title", dbPage.getDbI18nName().getString(getLocale())));
             add(CmsCssResource.createCss("css", dbPage));
             add(new Menu("menu", dbPage.getMenu(), contentContext));
             add(new Header("header", dbPage));
