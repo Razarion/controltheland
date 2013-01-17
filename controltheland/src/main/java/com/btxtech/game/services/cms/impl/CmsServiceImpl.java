@@ -25,6 +25,7 @@ import com.btxtech.game.services.cms.layout.DbContentBooleanExpressionImage;
 import com.btxtech.game.services.cms.layout.DbContentGameLink;
 import com.btxtech.game.services.cms.layout.DbContentList;
 import com.btxtech.game.services.cms.layout.DbContentPageLink;
+import com.btxtech.game.services.cms.layout.DbContentStaticHtml;
 import com.btxtech.game.services.cms.page.DbAds;
 import com.btxtech.game.services.cms.page.DbMenu;
 import com.btxtech.game.services.cms.page.DbMenuItem;
@@ -32,6 +33,7 @@ import com.btxtech.game.services.cms.page.DbPage;
 import com.btxtech.game.services.cms.page.DbPageStyle;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
+import com.btxtech.game.services.common.db.DbI18nString;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
@@ -184,6 +186,9 @@ public class CmsServiceImpl implements CmsService {
             Hibernate.initialize(((DbContentBooleanExpressionImage) dbContent).getTrueImage());
             Hibernate.initialize(((DbContentBooleanExpressionImage) dbContent).getFalseImage());
         }
+        if(dbContent instanceof DbContentStaticHtml) {
+            initializeI18n(((DbContentStaticHtml) dbContent).getDbI18nHtml());
+        }
         if (dbContent instanceof DbContentBook) {
             DbContentBook dbContentBook = (DbContentBook) dbContent;
             if (dbContentBook.getClassName() != null) {
@@ -210,11 +215,15 @@ public class CmsServiceImpl implements CmsService {
         }
     }
 
+    private void initializeI18n(DbI18nString dbI18nName) {
+        Hibernate.initialize(dbI18nName);
+        Hibernate.initialize(dbI18nName.getLocalizedStrings());
+    }
+
     private void initializeLazyDependencies(DbPage dbPage) {
         Hibernate.initialize(dbPage);
         Hibernate.initialize(dbPage.getStyle());
-        Hibernate.initialize(dbPage.getDbI18nName());
-        Hibernate.initialize(dbPage.getDbI18nName().getLocalizedStrings());
+        initializeI18n(dbPage.getDbI18nName());
         initializeLazyMenu(dbPage.getMenu());
     }
 
@@ -228,8 +237,7 @@ public class CmsServiceImpl implements CmsService {
             }
             for (DbMenuItem dbMenuItem : dbMenu.getMenuItemCrudChildServiceHelper().readDbChildren()) {
                 Hibernate.initialize(dbMenuItem);
-                Hibernate.initialize(dbMenuItem.getDbI18nName());
-                Hibernate.initialize(dbMenuItem.getDbI18nName().getLocalizedStrings());
+                initializeI18n(dbMenuItem.getDbI18nName());
                 Hibernate.initialize(dbMenuItem.getPage());
                 if (dbMenuItem.getSubMenu() != null) {
                     initializeLazyMenu(dbMenuItem.getSubMenu());

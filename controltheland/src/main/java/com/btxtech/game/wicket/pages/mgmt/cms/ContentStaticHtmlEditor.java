@@ -4,6 +4,8 @@ import com.btxtech.game.services.cms.layout.DbContentStaticHtml;
 import com.btxtech.game.services.cms.layout.DbExpressionProperty;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
+import com.btxtech.game.wicket.uiservices.I18nStringAreaEditor;
+import com.btxtech.game.wicket.uiservices.I18nStringWYSIWYGEditor;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -37,7 +39,7 @@ public class ContentStaticHtmlEditor extends MgmtWebPage {
         add(form);
 
         form.add(new ContentCommonPanel("commonPanel", true, false, false, false));
-        form.add(new TextArea("html"));
+        form.add(new I18nStringAreaEditor("dbI18nHtml"));
         form.add(new DropDownChoice<>("editorType", Arrays.asList(DbExpressionProperty.EditorType.values())));
         form.add(new Button("save") {
 

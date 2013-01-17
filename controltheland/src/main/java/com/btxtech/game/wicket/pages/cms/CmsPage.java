@@ -122,7 +122,7 @@ public class CmsPage extends WebPage implements IHeaderContributor {
         }));
         try {
             cmsUiService.addLscErrorHandler(this, "InPageError(CmsPage)");
-            contentContext = new ContentContext(pageParameters);
+            contentContext = new ContentContext(pageParameters, getLocale());
             DbPage dbPage = (DbPage) getDefaultModelObject();
             if (dbPage.getPredefinedType() == CmsUtil.CmsPredefinedPage.FACEBOOK_START) {
                 cmsUiService.handleFacebookRequest(pageParameters, this);

@@ -1,8 +1,12 @@
 package com.btxtech.game.services.cms.layout;
 
-import javax.persistence.Column;
+import com.btxtech.game.services.common.db.DbI18nString;
+
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
 
 /**
  * User: beat
@@ -12,16 +16,12 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("STATIC_HTML")
 public class DbContentStaticHtml extends DbContent {
-    @Column(length = 500000)
-    private String html;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private DbI18nString dbI18nHtml = new DbI18nString();
     private DbExpressionProperty.EditorType editorType = DbExpressionProperty.EditorType.PLAIN_TEXT_FILED;
 
-    public String getHtml() {
-        return html;
-    }
-
-    public void setHtml(String html) {
-        this.html = html;
+    public DbI18nString getDbI18nHtml() {
+        return dbI18nHtml;
     }
 
     public DbExpressionProperty.EditorType getEditorType() {

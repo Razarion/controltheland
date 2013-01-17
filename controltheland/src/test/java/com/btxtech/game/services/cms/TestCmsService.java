@@ -2895,7 +2895,7 @@ public class TestCmsService extends AbstractServiceTest {
         DbPage dbPage2 = pageCrud.createDbChild();
         dbPage2.setName("Page 2");
         DbContentStaticHtml dbContentStaticHtml = new DbContentStaticHtml();
-        dbContentStaticHtml.setHtml("This is page two");
+        dbContentStaticHtml.getDbI18nHtml().putString("This is page two");
         dbPage2.setContentAndAccessWrites(dbContentStaticHtml);
 
         // Smart link
@@ -2979,6 +2979,49 @@ public class TestCmsService extends AbstractServiceTest {
         // Click mail button
         tester.newFormTester("form").submit("content:button");
         tester.assertLabel("form:content", "This is page two");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testStaticContentI18n() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        DbContentStaticHtml dbContentStaticHtml1 = new DbContentStaticHtml();
+        dbContentStaticHtml1.getDbI18nHtml().putString("This is page two <br>");
+        dbContentStaticHtml1.getDbI18nHtml().putString(Locale.GERMAN, "Seite 2 <br>");
+        dbContentStaticHtml1.setEditorType(DbExpressionProperty.EditorType.HTML_AREA);
+        dbPage.setContentAndAccessWrites(dbContentStaticHtml1);
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.ENGLISH);
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("form:content", "This is page two <br>");
+        tester.getWicketSession().setLocale(Locale.GERMAN);
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("form:content", "Seite 2 <br>");
+        tester.getWicketSession().setLocale(Locale.CHINESE);
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("form:content", "This is page two <br>");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -3312,7 +3355,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage.setAdsVisible(true);
         DbContentStaticHtml dbContentStaticHtml = new DbContentStaticHtml();
-        dbContentStaticHtml.setHtml("This is a page");
+        dbContentStaticHtml.getDbI18nHtml().putString("This is a page");
         dbPage.setContentAndAccessWrites(dbContentStaticHtml);
 
         pageCrud.updateDbChild(dbPage);
