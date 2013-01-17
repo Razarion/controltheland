@@ -226,6 +226,8 @@ public class CmsServiceImpl implements CmsService {
             }
             for (DbMenuItem dbMenuItem : dbMenu.getMenuItemCrudChildServiceHelper().readDbChildren()) {
                 Hibernate.initialize(dbMenuItem);
+                Hibernate.initialize(dbMenuItem.getDbI18nName());
+                Hibernate.initialize(dbMenuItem.getDbI18nName().getLocalizedStrings());
                 Hibernate.initialize(dbMenuItem.getPage());
                 if (dbMenuItem.getSubMenu() != null) {
                     initializeLazyMenu(dbMenuItem.getSubMenu());

@@ -450,6 +450,7 @@ public class TestCmsService extends AbstractServiceTest {
     private DbMenuItem createMenuItem(DbPage dbPage, DbMenu dbMenu, String name) {
         DbMenuItem dbMenuItem = dbMenu.getMenuItemCrudChildServiceHelper().createDbChild();
         dbMenuItem.setName(name);
+        dbMenuItem.getDbI18nName().putString(name);
         dbMenuItem.setPage(dbPage);
         dbMenuItem.setCssClass("itemCss");
         dbMenuItem.setCssLinkClass("linkCss");
@@ -459,6 +460,62 @@ public class TestCmsService extends AbstractServiceTest {
         dbMenuItem.setSelectedCssTrClass("selectedTrCss");
         dbPage.setMenu(dbMenu);
         return dbMenuItem;
+    }
+
+    @Test
+    @DirtiesContext
+    public void testMenuI18n() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        // Menu
+        CrudRootServiceHelper<DbMenu> menuCrud = cmsService.getMenuCrudRootServiceHelper();
+        DbMenu dbMenu = menuCrud.createDbChild();
+        dbMenu.setName("MainMenu");
+        DbMenuItem dbMenuItem = dbMenu.getMenuItemCrudChildServiceHelper().createDbChild();
+        dbMenuItem.setName("Internal Name");
+        dbMenuItem.getDbI18nName().putString(Locale.GERMAN, "German");
+        dbMenuItem.getDbI18nName().putString("English");
+        dbMenuItem.setPage(dbPage);
+        dbMenuItem.setCssClass("itemCss");
+        dbMenuItem.setCssLinkClass("linkCss");
+        dbMenuItem.setCssTrClass("trCss");
+        dbMenuItem.setSelectedCssClass("selectedItemCss");
+        dbMenuItem.setSelectedCssLinkClass("selectedLinkCss");
+        dbMenuItem.setSelectedCssTrClass("selectedTrCss");
+        dbPage.setMenu(dbMenu);
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.ENGLISH);
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("menu:menuTable:1:menuLink:menuLinkName", "English");
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.GERMAN);
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("menu:menuTable:1:menuLink:menuLinkName", "German");
+        tester.setupRequestAndResponse();
+        tester.getWicketSession().setLocale(Locale.CHINESE);
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("menu:menuTable:1:menuLink:menuLinkName", "English");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test

@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.page.DbMenu;
 import com.btxtech.game.services.cms.page.DbMenuItem;
 import com.btxtech.game.services.cms.page.DbPage;
+import com.btxtech.game.services.mgmt.ServerI18nHelper;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.Component;
@@ -28,6 +29,8 @@ import java.util.List;
 public class Menu extends Panel {
     @SpringBean
     private CmsUiService cmsUiService;
+    @SpringBean
+    private ServerI18nHelper serverI18nHelper;
     private ContentContext contentContext;
 
     public Menu(String id, DbMenu dbMenu, ContentContext contentContext) {
@@ -56,7 +59,7 @@ public class Menu extends Panel {
                 pageParameters.add(CmsUtil.ID, Integer.toString(item.getModelObject().getPage().getId()));
                 BookmarkablePageLink<CmsPage> link = new BookmarkablePageLink<CmsPage>("menuLink", CmsPage.class, pageParameters);
 
-                Label label = new Label("menuLinkName", item.getModelObject().getName());
+                Label label = new Label("menuLinkName", serverI18nHelper.getString(item.getModelObject().getDbI18nName().getString(getLocale())));
                 link.add(label);
                 item.add(link);
 

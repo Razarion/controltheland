@@ -6,6 +6,7 @@ import com.btxtech.game.services.cms.page.DbMenuItem;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
+import com.btxtech.game.wicket.uiservices.I18nStringEditor;
 import com.btxtech.game.wicket.uiservices.PageSelector;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
@@ -39,6 +40,7 @@ public class MenuItemEditor extends MgmtWebPage {
         }));
         add(form);
 
+        form.add(new I18nStringEditor("dbI18nName"));
         form.add(new PageSelector("page"));
         form.add(new TextField("cssClass"));
         form.add(new TextField("selectedCssClass"));

@@ -14,6 +14,7 @@
 package com.btxtech.game.services.cms.page;
 
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.common.db.DbI18nString;
 import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
 
@@ -39,6 +40,8 @@ public class DbMenuItem implements CrudChild<DbMenu> {
     @ManyToOne(fetch = FetchType.LAZY)
     private DbPage page;
     private String name;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private DbI18nString dbI18nName = new DbI18nString();
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "dbMenu_id", insertable = false, updatable = false, nullable = false)
     private DbMenu dbMenu;
@@ -62,6 +65,10 @@ public class DbMenuItem implements CrudChild<DbMenu> {
 
     public String getName() {
         return name;
+    }
+
+    public DbI18nString getDbI18nName() {
+        return dbI18nName;
     }
 
     public DbMenu getSubMenu() {
