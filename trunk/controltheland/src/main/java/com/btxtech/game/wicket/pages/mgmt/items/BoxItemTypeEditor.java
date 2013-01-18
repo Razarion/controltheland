@@ -58,7 +58,6 @@ public class BoxItemTypeEditor extends MgmtWebPage {
         }));
         add(form);
         form.add(new ItemTypeImagePanel("itemTypeImagePanel", dbBoxItemType.getId()));
-        form.add(new TextField<String>("name"));
         form.add(new I18nStringEditor("dbI18nName"));
         form.add(new I18nStringWYSIWYGEditor("dbI18nDescription"));
         form.add(new DropDownChoice<>("terrainType", Arrays.asList(TerrainType.values())));

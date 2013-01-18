@@ -44,13 +44,13 @@ public class ItemTypeTable extends MgmtWebPage {
         Form form = new Form("itemTypeForm");
         add(form);
 
-        new CrudRootTableHelper<DbItemType>("itemTypes", null, null, true, form, false) {
+        new CrudRootTableHelper<DbItemType>("itemTypes", "save", null, true, form, false) {
 
             @Override
             protected void extendedPopulateItem(Item<DbItemType> dbItemTypeItem) {
                 displayId(dbItemTypeItem);
                 // Name
-                dbItemTypeItem.add(new Label("name", dbItemTypeItem.getModelObject().getName()));
+                super.extendedPopulateItem(dbItemTypeItem);
                 // alternating row color
                 dbItemTypeItem.add(new AttributeModifier("class", true, new Model<>(dbItemTypeItem.getIndex() % 2 == 0 ? "even" : "odd")));
             }
