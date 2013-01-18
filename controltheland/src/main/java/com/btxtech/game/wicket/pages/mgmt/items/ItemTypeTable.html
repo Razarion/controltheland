@@ -37,7 +37,7 @@
             <td valign="center">
                 <!--img border="1" wicket:id="image"/-->
             </td>
-            <td wicket:id="name" align="left" valign="center"/>
+            <td><input wicket:id="name" type="text" size="20"></td>
             <td wicket:id="id" align="right" valign="center"/>
             <td valign="center">
                 <input type="submit" value="Edit" wicket:id="edit"/>
@@ -50,14 +50,13 @@
     <br/>
     <br/>
     <br/>
-
+    <input type="submit" wicket:id="save" value="Save">
+    <br/>
     <input type="submit" wicket:id="activate" value="Activate">
     <input type="submit" wicket:id="addBaseItemType" value="Add Base Item Type">
     <input type="submit" wicket:id="addResourceItemType" value="Add Resource Item Type">
     <input type="submit" wicket:id="addBoxItemType" value="Add Box Item Type">
     <input type="submit" wicket:id="addProjectileItemType" value="Add Projectile Item Type">
-
-
 </form>
 
 </body>
