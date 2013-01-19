@@ -50,7 +50,7 @@ public interface ClientI18nConstants extends Messages {
 
     String startOver();
 
-    String abort();
+    String stop();
 
     String mission();
 
