@@ -46,7 +46,7 @@
 				<g:Image resource='{res.abort}' width="28px" styleName="{style.abort}"
 					ui:field="abortImage" />
 				<g:Cell verticalAlignment="ALIGN_MIDDLE">
-					<g:InlineLabel text='{msg.abort}' styleName="{style.abort}"
+					<g:InlineLabel text='{msg.stop}' styleName="{style.abort}"
 						ui:field="abortLabel" />
 				</g:Cell>
 			</g:HorizontalPanel>
