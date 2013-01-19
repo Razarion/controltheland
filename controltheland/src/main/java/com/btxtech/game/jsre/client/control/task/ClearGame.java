@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client.control.task;
 import com.btxtech.game.jsre.client.ClientChatHandler;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameCommon;
+import com.btxtech.game.jsre.client.SoundHandler;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
@@ -39,6 +40,7 @@ public class ClearGame extends AbstractStartupTask {
 
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
+        SoundHandler.getInstance().stop();
         TerrainView.getInstance().cleanup();
         GameTipManager.getInstance().stop();
         Renderer.getInstance().stop();
