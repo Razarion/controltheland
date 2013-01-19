@@ -13,6 +13,7 @@
 
 package com.btxtech.game.wicket.pages.mgmt.usermgmt;
 
+import com.btxtech.game.services.finance.FinanceService;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
@@ -58,6 +59,8 @@ public class UserStateEditor extends MgmtWebPage {
     private GlobalInventoryService globalInventoryService;
     @SpringBean
     private StatisticsService statisticsService;
+    @SpringBean
+    private FinanceService financeService;
     private Integer dbLevelId;
     private Integer xp;
     private Integer razarionBought;
@@ -121,7 +124,7 @@ public class UserStateEditor extends MgmtWebPage {
             @Override
             public void onSubmit() {
                 if (razarionBought != null) {
-                    userGuidanceService.razarionBought(razarionBought, form.getModelObject());
+                    financeService.razarionBought(razarionBought, form.getModelObject());
                     razarionBought = null;
                 }
             }

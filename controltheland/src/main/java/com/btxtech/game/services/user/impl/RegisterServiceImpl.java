@@ -114,7 +114,7 @@ public class RegisterServiceImpl implements RegisterService {
         criteria.add(Restrictions.eq("verificationId", verificationId));
         List<User> users = criteria.list();
         if (users == null || users.isEmpty()) {
-            throw new UserDoesNotExitException(verificationId);
+            throw new UserDoesNotExitException("No user with verification id: " + verificationId);
         } else if (users.size() > 1) {
             throw new IllegalArgumentException("More than one user with verification id found: " + verificationId);
         }
