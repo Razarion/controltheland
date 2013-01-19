@@ -43,8 +43,9 @@ public class MapEditorRenderer {
         animationCallback = new AnimationScheduler.AnimationCallback() {
             @Override
             public void execute(double timestamp) {
+                // timestamp can not be converted to a long in google chrome
                 try {
-                    doRender((long) timestamp);
+                    doRender(System.currentTimeMillis());
                 } catch (Exception e) {
                     log.log(Level.SEVERE, "MapEditorRenderer Callback", e);
                 }
