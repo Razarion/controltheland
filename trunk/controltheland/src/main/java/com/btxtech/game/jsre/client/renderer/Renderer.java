@@ -59,6 +59,7 @@ public class Renderer {
         gameAnimationCallback = new AnimationScheduler.AnimationCallback() {
             @Override
             public void execute(double timestamp) {
+                // timestamp can not be converted to a long in google chrome
                 try {
                     Perfmon.getInstance().onEntered(PerfmonEnum.RENDERER);
                     // Statistics
@@ -76,7 +77,7 @@ public class Renderer {
                         frameCount++;
                     }
                     // Main work
-                    doRender((long) timestamp);
+                    doRender(System.currentTimeMillis());
                     // Statistics
                     if (Game.isDebug()) {
                         renderTime += (int) (System.currentTimeMillis() - startTime);
@@ -110,9 +111,10 @@ public class Renderer {
             overlayAnimationCallback = new AnimationScheduler.AnimationCallback() {
                 @Override
                 public void execute(double timestamp) {
+                    // timestamp can not be converted to a long in google chrome
                     try {
                         Perfmon.getInstance().onEntered(PerfmonEnum.RENDERER_OVERLAY);
-                        doOverlayRender((long) timestamp);
+                        doOverlayRender(System.currentTimeMillis());
                     } catch (Exception e) {
                         ClientExceptionHandler.handleException("Overlay Renderer Callback", e);
                     } finally {

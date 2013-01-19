@@ -5,16 +5,12 @@ import com.btxtech.game.jsre.client.common.info.ImageSpriteMapInfo;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
 
-import java.util.logging.Logger;
-
 /**
  * User: beat
  * Date: 31.07.12
  * Time: 19:43
  */
 public abstract class AbstractClipRenderTask extends AbstractRenderTask {
-    private Logger log = Logger.getLogger(AbstractClipRenderTask.class.getName());
-
     public void renderClip(Context2d context2d, ClipRendererModel clipRendererModel) {
         // Load Image
         ImageSpriteMapInfo imageSpriteMapInfo = clipRendererModel.getImageSpriteMapInfo();

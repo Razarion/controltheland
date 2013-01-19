@@ -21,8 +21,9 @@ public class ImageSpriteMapEditorRenderer {
         renderCallback = new AnimationScheduler.AnimationCallback() {
             @Override
             public void execute(double timestamp) {
+                // timestamp can not be converted to a long in google chrome
                 try {
-                    doRender((long) timestamp);
+                    doRender(System.currentTimeMillis());
                 } catch (Exception e) {
                     ClientExceptionHandler.handleException(e);
                 } finally {
