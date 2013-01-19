@@ -375,6 +375,7 @@ public class SideCockpit {
         }
         if (sideCockpitMission == null) {
             sideCockpitMission = new SideCockpitMission();
+            sideCockpitMission.setPixelSize(LEVEL_PANEL_W, LEVEL_PANEL_H);
             levelPanel.add(sideCockpitMission, REAL_GAME_MISSION_X, REAL_GAME_MISSION_Y);
         }
         sideCockpitMission.setAbortable(simulationInfo.isAbortable());
@@ -388,6 +389,7 @@ public class SideCockpit {
         }
         if (sideCockpitRealGame == null) {
             sideCockpitRealGame = new SideCockpitRealGame();
+            sideCockpitRealGame.setPixelSize(LEVEL_PANEL_W, LEVEL_PANEL_H);
             levelPanel.add(sideCockpitRealGame, REAL_GAME_MISSION_X, REAL_GAME_MISSION_Y);
         }
         sideCockpitRealGame.setXp(realGameInfo.getXpPacket().getXp(), realGameInfo.getXpPacket().getXp2LevelUp());
