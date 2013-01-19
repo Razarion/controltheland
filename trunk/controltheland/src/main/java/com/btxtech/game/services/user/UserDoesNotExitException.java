@@ -7,7 +7,9 @@ package com.btxtech.game.services.user;
  * Time: 15:13
  */
 public class UserDoesNotExitException extends Exception {
-    public UserDoesNotExitException(String verificationCode) {
-        super("No user with verification id: " + verificationCode);
+    public UserDoesNotExitException(String message) {
+        super(message);
     }
+
+
 }

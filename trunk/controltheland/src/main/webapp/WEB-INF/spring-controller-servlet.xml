@@ -39,6 +39,7 @@
                 <prop key="statJS">statisticsController</prop>
                 <prop key="lsc">loadScriptCommunicationController</prop>
                 <prop key="sound">soundController</prop>
+                <prop key="ipnHandler">payPalIpnHandlerController</prop>
             </props>
         </property>
     </bean>

@@ -7,6 +7,7 @@ import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
+import com.btxtech.game.jsre.common.PayPalButton;
 import com.btxtech.game.jsre.common.PayPalUtils;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -41,16 +42,16 @@ public class BuyPanel extends VerticalPanel {
     private void fillBuyOptions() {
         FlexTable flexTable = new FlexTable();
         // 1000 Razarion
-        flexTable.setWidget(0, 0, PayPalUtils.createBuyNowButton("PE44JA3J2AZ2J"));
+        flexTable.setWidget(0, 0, PayPalUtils.createBuyNowButton(PayPalButton.B_1000));
         flexTable.setWidget(0, 1, createHtml(ClientI18nHelper.CONSTANTS.buyRazarionPaypal1000(), 14));
         // 2200 Razarion
-        flexTable.setWidget(1, 0, PayPalUtils.createBuyNowButton("T6UDKDH59Y43E"));
+        flexTable.setWidget(1, 0, PayPalUtils.createBuyNowButton(PayPalButton.B_2200));
         flexTable.setWidget(1, 1, createHtml(ClientI18nHelper.CONSTANTS.buyRazarionPaypal2200(), 14));
         // 4600 Razarion
-        flexTable.setWidget(2, 0, PayPalUtils.createBuyNowButton("7LSHFG9LM88VL"));
+        flexTable.setWidget(2, 0, PayPalUtils.createBuyNowButton(PayPalButton.B_4600));
         flexTable.setWidget(2, 1, createHtml(ClientI18nHelper.CONSTANTS.buyRazarionPaypal4600(), 14));
         // 12500 Razarion
-        flexTable.setWidget(3, 0, PayPalUtils.createBuyNowButton("YLVYNLXBSJXGY"));
+        flexTable.setWidget(3, 0, PayPalUtils.createBuyNowButton(PayPalButton.B_12500));
         flexTable.setWidget(3, 1, createHtml(ClientI18nHelper.CONSTANTS.buyRazarionPaypal12500(), 14));
         add(flexTable);
     }

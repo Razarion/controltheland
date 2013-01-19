@@ -11,6 +11,7 @@ import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.bot.DbBotEnragementStateConfig;
 import com.btxtech.game.services.common.HibernateUtil;
+import com.btxtech.game.services.finance.FinanceService;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryArtifactCount;
 import com.btxtech.game.services.inventory.DbInventoryItem;
@@ -57,6 +58,8 @@ public class TestHistoryService extends AbstractServiceTest {
     private GlobalInventoryService globalInventoryService;
     @Autowired
     private PlanetSystemService planetSystemService;
+    @Autowired
+    private FinanceService financeService;
 
     @Test
     @DirtiesContext
@@ -630,6 +633,34 @@ public class TestHistoryService extends AbstractServiceTest {
         Assert.assertEquals(3, displayHistoryElements.size());
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
         Assert.assertEquals("You have angered Bot1: Angry", displayHistoryElements.get(0).getMessage());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testRazarionBought() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        financeService.razarionBought("U1", "RAZ1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
+        financeService.razarionBought("U1", "RAZ2200", "10", "USD", "2", "payer email", "finance@razarion.com", "Completed", "1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 1000);
+        System.out.println("----- u1 Target-----");
+        for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
+            System.out.println(displayHistoryElement);
+        }
+        Assert.assertEquals(2, displayHistoryElements.size());
+        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
+        Assert.assertEquals("Bought Razarion 2200 via PayPal", displayHistoryElements.get(0).getMessage());
+        Assert.assertEquals("Bought Razarion 1000 via PayPal", displayHistoryElements.get(1).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

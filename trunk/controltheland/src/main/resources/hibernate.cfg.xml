@@ -149,7 +149,9 @@
         <!-- Planet -->
         <mapping class="com.btxtech.game.services.planet.db.DbPlanet"/>
         <mapping class="com.btxtech.game.services.planet.db.DbPlanetItemTypeLimitation"/>
-        <!-- Planet -->
+        <!-- Common -->
         <mapping class="com.btxtech.game.services.common.db.DbI18nString"/>
+        <!-- Finance -->
+        <mapping class="com.btxtech.game.services.finance.DbPayPalTransaction"/>
     </session-factory>
 </hibernate-configuration>
