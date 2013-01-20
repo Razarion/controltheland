@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.services.cms.NoDbContentInCacheException;
+import com.btxtech.game.services.cms.NoDbPageException;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.NoSuchChildException;
 import com.btxtech.game.services.common.Utils;
@@ -143,6 +144,9 @@ public class WicketApplication extends AuthenticatedWebApplication implements Ap
                 printInfo(cause, e);
                 return cmsUiService.getPredefinedNotFound();
             } else if (CommonJava.getMostInnerThrowable(e) instanceof NoDbContentInCacheException) {
+                printInfo(cause, e);
+                return cmsUiService.getPredefinedNotFound();
+            } else if (CommonJava.getMostInnerThrowable(e) instanceof NoDbPageException) {
                 printInfo(cause, e);
                 return cmsUiService.getPredefinedNotFound();
             } else {
