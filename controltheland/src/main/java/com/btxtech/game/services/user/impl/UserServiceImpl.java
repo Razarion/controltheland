@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.connection.Session;
@@ -113,7 +114,7 @@ public class UserServiceImpl implements UserService {
         } catch (BadCredentialsException e) {
             return false;
         } catch (AuthenticationException authenticationException) {
-            log.error("", authenticationException);
+            ExceptionHandler.handleException(authenticationException);
             return false;
         }
     }
