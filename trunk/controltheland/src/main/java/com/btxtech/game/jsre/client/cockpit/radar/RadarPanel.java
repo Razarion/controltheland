@@ -51,9 +51,9 @@ public class RadarPanel implements TerrainScrollListener {
     private static final int ZOOM_QUEST_X = 138;
     private static final int ZOOM_QUEST_Y = 1;
     private static final int PAGE_UP_X = 70;
-    private static final int PAGE_UP_Y = 9;
+    private static final int PAGE_UP_Y = 4;
     private static final int PAGE_DOWN_X = 70;
-    private static final int PAGE_DOWN_Y = 169;
+    private static final int PAGE_DOWN_Y = 164;
     private static final int PAGE_RIGHT_X = 161;
     private static final int PAGE_RIGHT_Y = 78;
     private static final int PAGE_LEFT_X = 1;
