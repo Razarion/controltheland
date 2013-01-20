@@ -19,6 +19,7 @@ import com.btxtech.game.services.cms.CmsSectionInfo;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbCmsImage;
 import com.btxtech.game.services.cms.NoDbContentInCacheException;
+import com.btxtech.game.services.cms.NoDbPageException;
 import com.btxtech.game.services.cms.layout.DbContent;
 import com.btxtech.game.services.cms.layout.DbContentBook;
 import com.btxtech.game.services.cms.layout.DbContentBooleanExpressionImage;
@@ -38,7 +39,6 @@ import com.btxtech.game.services.common.db.DbI18nString;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
-import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,8 +61,6 @@ import java.util.Map;
 public class CmsServiceImpl implements CmsService {
     private Log log = LogFactory.getLog(CmsServiceImpl.class);
     @Autowired
-    private UserGuidanceService userGuidanceService;
-    @Autowired
     private CrudRootServiceHelper<DbCmsImage> imageCrudRootServiceHelper;
     @Autowired
     private CrudRootServiceHelper<DbPage> pageCrudRootServiceHelper;
@@ -79,11 +77,11 @@ public class CmsServiceImpl implements CmsService {
     @Autowired
     private SessionFactory sessionFactory;
 
-    private Map<Integer, DbCmsImage> imageCache = new HashMap<Integer, DbCmsImage>();
-    private Map<Integer, DbPage> pageCache = new HashMap<Integer, DbPage>();
-    private Map<Integer, DbContent> contentCache = new HashMap<Integer, DbContent>();
-    private Map<CmsUtil.CmsPredefinedPage, DbPage> predefinedDbPages = new HashMap<CmsUtil.CmsPredefinedPage, DbPage>();
-    private Map<String, CmsSectionInfo> cmsSectionInfoMap = new HashMap<String, CmsSectionInfo>();
+    private Map<Integer, DbCmsImage> imageCache = new HashMap<>();
+    private Map<Integer, DbPage> pageCache = new HashMap<>();
+    private Map<Integer, DbContent> contentCache = new HashMap<>();
+    private Map<CmsUtil.CmsPredefinedPage, DbPage> predefinedDbPages = new HashMap<>();
+    private Map<String, CmsSectionInfo> cmsSectionInfoMap = new HashMap<>();
     private String adsCode;
 
     @PostConstruct
@@ -187,10 +185,10 @@ public class CmsServiceImpl implements CmsService {
             Hibernate.initialize(((DbContentBooleanExpressionImage) dbContent).getTrueImage());
             Hibernate.initialize(((DbContentBooleanExpressionImage) dbContent).getFalseImage());
         }
-        if(dbContent instanceof DbContentStaticHtml) {
+        if (dbContent instanceof DbContentStaticHtml) {
             initializeI18n(((DbContentStaticHtml) dbContent).getDbI18nHtml());
         }
-        if(dbContent instanceof DbContentRow) {
+        if (dbContent instanceof DbContentRow) {
             initializeI18n(((DbContentRow) dbContent).getDbI18nName());
         }
         if (dbContent instanceof DbContentBook) {
@@ -312,7 +310,7 @@ public class CmsServiceImpl implements CmsService {
     public DbPage getPage(int pageId) {
         DbPage dbPage = pageCache.get(pageId);
         if (dbPage == null) {
-            throw new IllegalArgumentException("No DbPage for id: " + pageId);
+            throw new NoDbPageException(pageId);
         }
         return dbPage;
     }
