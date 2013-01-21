@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
         } catch (BadCredentialsException e) {
             return false;
         } catch (AuthenticationException authenticationException) {
-            ExceptionHandler.handleException(authenticationException);
+            ExceptionHandler.handleException(authenticationException, "login failed: " + userName);
             return false;
         }
     }
