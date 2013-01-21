@@ -30,8 +30,8 @@ import java.util.List;
  * Time: 14:01:59
  */
 public class TestAttackFormation extends AbstractServiceTest {
-    @Autowired
-    private DebugService debugService;
+    // @Autowired
+    // private DebugService debugService;
     @Autowired
     private ServerItemTypeService serverItemTypeService;
     @Autowired
@@ -45,10 +45,9 @@ public class TestAttackFormation extends AbstractServiceTest {
         ItemType targetItemType = serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID);
         targetItemType.setBoundingBox(new BoundingBox(200, ANGELS_24));
         SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(1500, 1500), new Id(1, -100));
-
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(2, -100));
 
-        int count = 15;
+        int count = 18;
         int range = 200;
         double targetAngel = 0;
         double attackerAngel = 0;
@@ -73,6 +72,7 @@ public class TestAttackFormation extends AbstractServiceTest {
                         if (attackFormationItem.isInRange()) {
                             Assert.assertTrue("Not in range: " + attacker.getSyncItemArea().getDistance(target.getSyncItemArea()), attacker.getSyncItemArea().getDistanceRounded(target.getSyncItemArea()) <= range);
                             Assert.assertEquals(attacker.getSyncItemArea().getTurnToAngel(target.getSyncItemArea()), attackFormationItem.getDestinationAngel(), 0.001);
+
                         } else {
                             Assert.assertTrue("In range", attacker.getSyncItemArea().getDistance(target.getSyncItemArea()) > range);
                             Assert.fail("Overbooked not expected");
@@ -93,69 +93,40 @@ public class TestAttackFormation extends AbstractServiceTest {
     }
 
 
-    // @Test
+    @Test
     @DirtiesContext
-    public void testAttackFormationNoBlockingObject__TMP() throws Throwable {
+    public void testAttackFormationAngel() throws Throwable {
         configureSimplePlanet();
 
-        ItemType targetItemType = serverItemTypeService.getItemType(TEST_SIMPLE_BUILDING_ID);
-        targetItemType.setBoundingBox(new BoundingBox(200, ANGELS_24));
-        SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(1500, 1500), new Id(1, -100));
-
-        //ItemType attackItemType = serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID);
-        //attackItemType.setBoundingBox(new BoundingBox(100, 100, 80, 80, 24));
-        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(2, -100));
-
-        double targetAngel = MathHelper.gradToRad(31.512678732195273);
-        double attackerAngel = MathHelper.gradToRad(0);
-
-        int count = 15;
-        int range = 200;
-        target.getSyncItemArea().turnTo(targetAngel);
+        SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(1000, 500), new Id(1, -100));
+        SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 500), new Id(2, -100));
 
         List<AttackFormationItem> items = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            items.add(new AttackFormationItem(syncBaseItem, range));
-        }
-
-        AttackFormation attackFormation = AttackFormationFactory.create(target.getSyncItemArea(), attackerAngel, items);
-        List<SyncBaseItem> attackers = new ArrayList<>();
-        attackers.add(target);
-        debugService.drawSyncItemArea(target.getSyncItemArea(), Color.BLUE);
-        debugService.drawPosition(target.getSyncItemArea().getPosition(), Color.BLUE);
-        //debugService.drawSegments(((CircleAttackFormation) attackFormation).getClockwiseTrack().getSegments());
-        //debugService.drawSegments(((CircleAttackFormation) attackFormation).getCounterClockwiseTrack().getSegments());
-
-        while (attackFormation.hasNext()) {
-            AttackFormationItem attackFormationItem = attackFormation.calculateNextEntry();
-            SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, attackFormationItem.getDestinationHint(), new Id(2, -100));
-            attacker.getSyncItemArea().turnTo(attackFormationItem.getDestinationAngel());
-            if (attackFormationItem.isInRange()) {
-                //debugService.drawSyncItemArea(attacker.getSyncItemArea(), Color.GREEN);
-                //debugService.drawPosition(attacker.getSyncItemArea().getPosition(), Color.GREEN);
-                double distance = attacker.getSyncItemArea().getDistanceRounded(target.getSyncItemArea());
-                if (distance > range) {
-                    //debugService.waitForClose();
-                    //Assert.fail("Not in range: " + attacker.getSyncItemArea().getDistance(target.getSyncItemArea()));
-                    debugService.drawSyncItemArea(attacker.getSyncItemArea(), Color.MAGENTA);
-                    debugService.drawPosition(attacker.getSyncItemArea().getPosition(), Color.MAGENTA);
-                    Assert.assertEquals(attacker.getSyncItemArea().getTurnToAngel(target.getSyncItemArea()), attackFormationItem.getDestinationAngel(), 0.001);
-                } else {
-                    debugService.drawSyncItemArea(attacker.getSyncItemArea(), Color.GREEN);
-                    debugService.drawPosition(attacker.getSyncItemArea().getPosition(), Color.GREEN);
-                }
-            } else {
-                //Assert.assertTrue("In range", attacker.getSyncItemArea().getDistance(target.getSyncItemArea()) > range);
-                //Assert.fail("Overbooked not expected");
-                debugService.drawSyncItemArea(attacker.getSyncItemArea(), Color.GRAY);
-                debugService.drawPosition(attacker.getSyncItemArea().getPosition(), Color.GRAY);
-            }
-            attackFormation.lastAccepted();
-            attackers.add(attacker);
-        }
-        Assert.assertEquals(count + 1, attackers.size());
-        debugService.displayOverlapping(attackers);
-        debugService.waitForClose();
+        items.add(new AttackFormationItem(attacker, 100));
+        // North
+        AttackFormation attackFormation = AttackFormationFactory.create(target.getSyncItemArea(), MathHelper.NORTH, items);
+        Assert.assertTrue(attackFormation.hasNext());
+        AttackFormationItem attackFormationItem = attackFormation.calculateNextEntry();
+        Assert.assertTrue(attackFormationItem.isInRange());
+        Assert.assertEquals(new Index(1000, 241), attackFormationItem.getDestinationHint());
+        // East
+        attackFormation = AttackFormationFactory.create(target.getSyncItemArea(), MathHelper.EAST, items);
+        Assert.assertTrue(attackFormation.hasNext());
+        attackFormationItem = attackFormation.calculateNextEntry();
+        Assert.assertTrue(attackFormationItem.isInRange());
+        Assert.assertEquals(new Index(1259, 500), attackFormationItem.getDestinationHint());
+        // South
+        attackFormation = AttackFormationFactory.create(target.getSyncItemArea(), MathHelper.SOUTH, items);
+        Assert.assertTrue(attackFormation.hasNext());
+        attackFormationItem = attackFormation.calculateNextEntry();
+        Assert.assertTrue(attackFormationItem.isInRange());
+        Assert.assertEquals(new Index(1000, 759), attackFormationItem.getDestinationHint());
+        // West
+        attackFormation = AttackFormationFactory.create(target.getSyncItemArea(), MathHelper.WEST, items);
+        Assert.assertTrue(attackFormation.hasNext());
+        attackFormationItem = attackFormation.calculateNextEntry();
+        Assert.assertTrue(attackFormationItem.isInRange());
+        Assert.assertEquals(new Index(741, 500), attackFormationItem.getDestinationHint());
     }
 
     @Test
@@ -357,7 +328,7 @@ public class TestAttackFormation extends AbstractServiceTest {
             System.out.println("-----------------");
             System.out.println("targetAngel: " + MathHelper.radToGrad(targetAngel));
             System.out.println("attackerAngel: " + MathHelper.radToGrad(attackerAngel));
-           throw t;
+            throw t;
         }
     }
 }

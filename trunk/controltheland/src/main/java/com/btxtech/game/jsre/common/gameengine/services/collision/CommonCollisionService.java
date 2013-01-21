@@ -43,7 +43,7 @@ public interface CommonCollisionService {
 
     Path setupPathToDestination(Index position, Index destinationHint, TerrainType terrainType, BoundingBox boundingBox);
 
-    List<AttackFormationItem> setupDestinationHints(SyncItemArea target, TerrainType targetTerrainType, List<AttackFormationItem> items);
+    List<AttackFormationItem> setupDestinationHints(SyncItemArea target, List<AttackFormationItem> items);
 
     List<AttackFormationItem> setupDestinationHints(SyncItem target, List<AttackFormationItem> items);
 

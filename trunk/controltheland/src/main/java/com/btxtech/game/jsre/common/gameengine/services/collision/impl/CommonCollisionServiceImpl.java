@@ -80,7 +80,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
         return path;
     }
 
-    private void setupDestinationHintTerrain(SyncItemArea target, List<AttackFormationItem> items, TerrainType terrainType, TerrainType targetTerrainType) {
+    private void setupDestinationHintTerrain(SyncItemArea target, List<AttackFormationItem> items, TerrainType terrainType) {
         SyncItem actorItem = items.get(0).getSyncBaseItem();
         Path path = setupPathToDestination(actorItem.getSyncItemArea().getPosition(), target.getPosition(), terrainType, actorItem.getSyncItemArea().getBoundingBox());
 
@@ -107,7 +107,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
     }
 
     @Override
-    public List<AttackFormationItem> setupDestinationHints(SyncItemArea target, TerrainType targetTerrainType, List<AttackFormationItem> items) {
+    public List<AttackFormationItem> setupDestinationHints(SyncItemArea target, List<AttackFormationItem> items) {
         Map<TerrainType, List<AttackFormationItem>> terrainTypeCollectionMap = new HashMap<TerrainType, List<AttackFormationItem>>();
         for (AttackFormationItem item : items) {
             TerrainType terrainType = item.getSyncBaseItem().getTerrainType();
@@ -120,7 +120,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
         }
 
         for (Map.Entry<TerrainType, List<AttackFormationItem>> entry : terrainTypeCollectionMap.entrySet()) {
-            setupDestinationHintTerrain(target, entry.getValue(), entry.getKey(), targetTerrainType);
+            setupDestinationHintTerrain(target, entry.getValue(), entry.getKey());
         }
         return items;
     }
@@ -129,13 +129,13 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
     public AttackFormationItem getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItemArea target, TerrainType targetTerrainType) {
         List<AttackFormationItem> formationItems = new ArrayList<AttackFormationItem>();
         formationItems.add(new AttackFormationItem(syncBaseItem, range));
-        setupDestinationHints(target, targetTerrainType, formationItems);
+        setupDestinationHints(target, formationItems);
         return formationItems.get(0);
     }
 
     @Override
     public List<AttackFormationItem> setupDestinationHints(SyncItem target, List<AttackFormationItem> items) {
-        return setupDestinationHints(target.getSyncItemArea(), target.getTerrainType(), items);
+        return setupDestinationHints(target.getSyncItemArea(), items);
     }
 
     @Override
