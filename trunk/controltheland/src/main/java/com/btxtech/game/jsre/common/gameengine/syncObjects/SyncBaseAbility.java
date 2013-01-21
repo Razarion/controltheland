@@ -62,7 +62,12 @@ public abstract class SyncBaseAbility {
         return getPlanetServices().getConnectionService().getGameEngineMode() == GameEngineMode.MASTER;
     }
 
-    public void recalculateNewPath(int range, SyncItemArea target, TerrainType targetTerrainType) {
+    public void recalculateAndSetNewPath(int range, SyncItemArea target, TerrainType targetTerrainType) {
+        Path path = recalculateNewPath(range, target, targetTerrainType);
+        setPathToDestinationIfSyncMovable(path);
+    }
+
+    public Path recalculateNewPath(int range, SyncItemArea target, TerrainType targetTerrainType) {
         SyncBaseItem syncItem = getSyncBaseItem();
         AttackFormationItem format = getPlanetServices().getCollisionService().getDestinationHint(syncItem,
                 range,
@@ -73,7 +78,7 @@ public abstract class SyncBaseAbility {
             if (!path.isDestinationReachable()) {
                 throw new PathCanNotBeFoundException("Can not find path in recalculateNewPath: " + syncItem, syncItem.getSyncItemArea().getPosition(), null);
             }
-            setPathToDestinationIfSyncMovable(path);
+            return path;
         } else {
             throw new PathCanNotBeFoundException("Not in range recalculateNewPath: " + syncItem, syncItem.getSyncItemArea().getPosition(), null);
         }

@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.HarvesterType;
+import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 
@@ -26,6 +27,18 @@ import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 public class SyncHarvester extends SyncBaseAbility {
     private HarvesterType harvesterType;
     private Id target;
+    private SyncMovable.OverlappingHandler overlappingHandler = new SyncMovable.OverlappingHandler() {
+        @Override
+        public Path calculateNewPath() {
+            try {
+                SyncResourceItem resource = (SyncResourceItem) getPlanetServices().getItemService().getItem(target);
+                return recalculateNewPath(harvesterType.getRange(), resource.getSyncItemArea(), resource.getTerrainType());
+            } catch (ItemDoesNotExistException e) {
+                stop();
+                return null;
+            }
+        }
+    };
 
     public SyncHarvester(HarvesterType harvesterType, SyncBaseItem syncBaseItem) {
         super(syncBaseItem);
@@ -41,7 +54,7 @@ public class SyncHarvester extends SyncBaseAbility {
             return false;
         }
 
-        if (getSyncBaseItem().getSyncMovable().tickMove(factor)) {
+        if (getSyncBaseItem().getSyncMovable().tickMove(factor, overlappingHandler)) {
             return true;
         }
 
@@ -50,7 +63,7 @@ public class SyncHarvester extends SyncBaseAbility {
             if (!isInRange(resource)) {
                 if (isNewPathRecalculationAllowed()) {
                     // Destination place was may be taken. Calculate a new one.
-                    recalculateNewPath(harvesterType.getRange(), resource.getSyncItemArea(), resource.getTerrainType());
+                    recalculateAndSetNewPath(harvesterType.getRange(), resource.getSyncItemArea(), resource.getTerrainType());
                     getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                     return true;
                 } else {
