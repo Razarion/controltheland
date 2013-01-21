@@ -95,8 +95,8 @@ public class TestPathFinding extends AbstractServiceTest {
         List<AttackFormationItem> attacker = new ArrayList<>();
         attacker.add(new AttackFormationItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1450, 350), new Id(0, 0)), 250));
         attacker = collisionService.setupDestinationHints(target, attacker);
-        Assert.assertEquals(new Index(2378, 136), attacker.get(0).getDestinationHint());
-        Assert.assertEquals(4.190352700775026, attacker.get(0).getDestinationAngel(), 0.001);
+        Assert.assertEquals(new Index(2325, 289), attacker.get(0).getDestinationHint());
+        Assert.assertEquals(4.569833164347493, attacker.get(0).getDestinationAngel(), 0.001);
         Assert.assertTrue(attacker.get(0).isInRange());
     }
 
