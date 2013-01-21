@@ -62,8 +62,8 @@ public class CircleAttackFormation implements AttackFormation {
         overbookedDeltaAngel = Math.atan((maxDiameter + DISTANCE) / 2.0 / overbookedRange) * 2.0;
 
         int totalRadius = range + target.getBoundingBox().getRadius();
-        counterClockwiseTrackCircle = new CircleAttackFormationTrack(startAngel, target, totalRadius, true);
-        clockwiseTrackCircle = new CircleAttackFormationTrack(startAngel, target, totalRadius, false);
+        counterClockwiseTrackCircle = new CircleAttackFormationTrack(this.startAngel, target, totalRadius, true);
+        clockwiseTrackCircle = new CircleAttackFormationTrack(this.startAngel, target, totalRadius, false);
     }
 
     @Override

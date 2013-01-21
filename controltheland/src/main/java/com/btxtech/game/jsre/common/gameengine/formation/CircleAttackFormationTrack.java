@@ -26,6 +26,7 @@ public class CircleAttackFormationTrack {
     }
 
     public SyncItemArea getStartPoint(AttackFormationItem attackFormationItem) {
+        SyncItemArea startPoint =  createSyncItemArea(attackFormationItem);
         BoundingBox boundingBox = attackFormationItem.getSyncBaseItem().getSyncItemArea().getBoundingBox();
         double deltaAngel = 2.0 * Math.asin((boundingBox.getRadius() + 1.0) / (double) (radius + boundingBox.getRadius()));
         if (counterClock) {
@@ -33,7 +34,7 @@ public class CircleAttackFormationTrack {
         } else {
             currentAngel -= deltaAngel;
         }
-        return createSyncItemArea(attackFormationItem);
+        return startPoint;
     }
 
     public SyncItemArea getNextPoint(AttackFormationItem attackFormationItem) {
