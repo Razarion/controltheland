@@ -36,7 +36,6 @@ import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
 import com.btxtech.game.jsre.common.packets.EnergyPacket;
 import com.btxtech.game.jsre.common.packets.HouseSpacePacket;
-import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.connection.NoBaseException;
@@ -135,7 +134,10 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     @Override
     public void surrenderBase(Base base) {
         serverGlobalServices.getHistoryService().addBaseSurrenderedEntry(base.getSimpleBase());
-        serverGlobalServices.getUserTrackingService().onBaseSurrender(serverGlobalServices.getUserService().getUser(), base);
+        User user = serverGlobalServices.getUserService().getUser();
+        if (user != null) {
+            serverGlobalServices.getUserTrackingService().onBaseSurrender(user, base);
+        }
         UserState userState = getUserState(base.getSimpleBase());
         userState.setSendResurrectionMessage();
         planetServices.getConnectionService().closeConnection(base.getSimpleBase(), NoConnectionException.Type.BASE_SURRENDERED);

@@ -29,6 +29,7 @@ import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.connection.Session;
@@ -65,8 +66,6 @@ import com.btxtech.game.services.utg.tracker.DbUserCommand;
 import com.btxtech.game.services.utg.tracker.DbUserHistory;
 import com.btxtech.game.services.utg.tracker.DbWindowClosed;
 import com.btxtech.game.wicket.pages.Game;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -102,7 +101,6 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     private SessionFactory sessionFactory;
     @Autowired
     private PlanetSystemService planetSystemService;
-    private Log log = LogFactory.getLog(UserTrackingServiceImpl.class);
 
     @Override
     @Transactional
@@ -132,7 +130,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         try {
             sessionFactory.getCurrentSession().saveOrUpdate(dbSessionDetail);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -311,7 +309,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 }
             }
         } catch (Exception e) {
-            log.error("getLifecycleTrackingInfos", e);
+            ExceptionHandler.handleException(e, "getLifecycleTrackingInfos");
         }
         return null;
     }
@@ -365,7 +363,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             // log.debug("User Command: " + dbUserCommand);
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserCommand);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -381,7 +379,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             dbUserHistory.setAwaitingVerificationDate(user.getAwaitingVerificationDate());
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -396,7 +394,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             dbUserHistory.setVerificationId(user.getVerificationId());
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -408,7 +406,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             dbUserHistory.setVerificationId(user.getVerificationId());
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -425,7 +423,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             }
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -437,7 +435,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             dbUserHistory.setLoggedOut();
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -451,7 +449,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             dbUserHistory.setBaseName(baseName);
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -465,7 +463,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             dbUserHistory.setBaseName(planetSystemService.getServerPlanetServices(base.getSimpleBase()).getBaseService().getBaseName(base.getSimpleBase()));
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -479,7 +477,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             dbUserHistory.setBaseName(planetSystemService.getServerPlanetServices(base.getSimpleBase()).getBaseService().getBaseName(base.getSimpleBase()));
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -493,7 +491,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             dbUserHistory.setGameEntered();
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -505,7 +503,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             dbUserHistory.setGameLeft();
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -526,7 +524,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         try {
             sessionFactory.getCurrentSession().saveOrUpdate(new DbChatMessage(session.getSessionId(), chatMessage));
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -536,7 +534,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         try {
             sessionFactory.getCurrentSession().saveOrUpdate(new DbWindowClosed(session.getSessionId(), startUUid));
         } catch (Throwable t) {
-            log.error("", t);
+            ExceptionHandler.handleException(t);
         }
     }
 
@@ -562,7 +560,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             DbLevelTask dbLevelTask = (DbLevelTask) sessionFactory.getCurrentSession().get(DbLevelTask.class, taskId);
             sessionFactory.getCurrentSession().save(new DbTutorialProgress(session.getSessionId(), type.name(), startUuid, dbLevelTask.getName(), tutorialTaskName, duration, clientTimeStamp));
         } catch (Exception e) {
-            log.error("onTutorialProgressChanged", e);
+            ExceptionHandler.handleException(e, "onTutorialProgressChanged");
         }
     }
 
