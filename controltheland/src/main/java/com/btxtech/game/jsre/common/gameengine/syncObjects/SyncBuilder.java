@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
-import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
@@ -23,6 +22,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BuilderType;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderFinalizeCommand;
@@ -38,6 +38,12 @@ public class SyncBuilder extends SyncBaseAbility {
     private SyncBaseItem currentBuildup;
     private Index toBeBuildPosition;
     private BaseItemType toBeBuiltType;
+    private SyncMovable.OverlappingHandler overlappingHandler = new SyncMovable.OverlappingHandler() {
+        @Override
+        public Path calculateNewPath() {
+            return recalculateNewPath(builderType.getRange(), getTargetSyncItemArea(), toBeBuiltType.getTerrainType());
+        }
+    };
 
     public SyncBuilder(BuilderType builderType, SyncBaseItem syncBaseItem) {
         super(syncBaseItem);
@@ -53,20 +59,15 @@ public class SyncBuilder extends SyncBaseAbility {
             return false;
         }
 
-        if (getSyncBaseItem().getSyncMovable().tickMove(factor)) {
+        if (getSyncBaseItem().getSyncMovable().tickMove(factor, overlappingHandler)) {
             return true;
         }
 
         if (!isInRange()) {
             // Destination place was may be taken. Calculate a new one.
             if (isNewPathRecalculationAllowed()) {
-                SyncItemArea syncItemArea;
-                if (currentBuildup != null) {
-                    syncItemArea = currentBuildup.getSyncItemArea();
-                } else {
-                    syncItemArea = toBeBuiltType.getBoundingBox().createSyntheticSyncItemArea(toBeBuildPosition);
-                }
-                recalculateNewPath(builderType.getRange(), syncItemArea, toBeBuiltType.getTerrainType());
+                SyncItemArea syncItemArea = getTargetSyncItemArea();
+                recalculateAndSetNewPath(builderType.getRange(), syncItemArea, toBeBuiltType.getTerrainType());
                 getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                 return true;
             } else {
@@ -113,6 +114,14 @@ public class SyncBuilder extends SyncBaseAbility {
             // It has may be killed
             stop();
             return false;
+        }
+    }
+
+    private SyncItemArea getTargetSyncItemArea() {
+        if (currentBuildup != null) {
+            return currentBuildup.getSyncItemArea();
+        } else {
+            return toBeBuiltType.getBoundingBox().createSyntheticSyncItemArea(toBeBuildPosition);
         }
     }
 

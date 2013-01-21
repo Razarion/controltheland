@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemContainerType;
+import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
@@ -38,6 +39,13 @@ public class SyncItemContainer extends SyncBaseAbility {
     private ItemContainerType itemContainerType;
     private List<Id> containedItems = new ArrayList<Id>();
     private Index unloadPos;
+    private SyncMovable.OverlappingHandler overlappingHandler = new SyncMovable.OverlappingHandler() {
+        @Override
+        public Path calculateNewPath() {
+            TerrainType targetTerrainType = getUglyTerrainType(SyncItemContainer.this);
+            return recalculateNewPath(itemContainerType.getRange(), getSyncItemArea().getBoundingBox().createSyntheticSyncItemArea(unloadPos), targetTerrainType);
+        }
+    };
 
     public SyncItemContainer(ItemContainerType itemContainerType, SyncBaseItem syncBaseItem) {
         super(syncBaseItem);
@@ -112,7 +120,7 @@ public class SyncItemContainer extends SyncBaseAbility {
             return false;
         }
 
-        if (getSyncBaseItem().getSyncMovable().tickMove(factor)) {
+        if (getSyncBaseItem().getSyncMovable().tickMove(factor, overlappingHandler)) {
             return true;
         }
 
@@ -120,7 +128,7 @@ public class SyncItemContainer extends SyncBaseAbility {
             if (isNewPathRecalculationAllowed()) {
                 // Destination place was may be taken. Calculate a new one.
                 TerrainType targetTerrainType = getUglyTerrainType(this);
-                recalculateNewPath(itemContainerType.getRange(), getSyncItemArea().getBoundingBox().createSyntheticSyncItemArea(unloadPos), targetTerrainType);
+                recalculateAndSetNewPath(itemContainerType.getRange(), getSyncItemArea().getBoundingBox().createSyntheticSyncItemArea(unloadPos), targetTerrainType);
                 getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                 return true;
             } else {
@@ -146,7 +154,7 @@ public class SyncItemContainer extends SyncBaseAbility {
         if (getPlanetServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
             return;
         }
-        for (Iterator<Id> iterator = containedItems.iterator(); iterator.hasNext();) {
+        for (Iterator<Id> iterator = containedItems.iterator(); iterator.hasNext(); ) {
             Id containedItem = iterator.next();
             if (allowedUnload(unloadPos, containedItem)) {
                 SyncBaseItem syncItem = (SyncBaseItem) getPlanetServices().getItemService().getItem(containedItem);

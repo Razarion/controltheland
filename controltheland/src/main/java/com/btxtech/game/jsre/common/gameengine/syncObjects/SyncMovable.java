@@ -33,11 +33,33 @@ import java.util.List;
  * Time: 14:39:38
  */
 public class SyncMovable extends SyncBaseAbility {
+    public interface OverlappingHandler {
+        Path calculateNewPath();
+    }
+
     private MovableType movableType;
     private List<Index> pathToDestination;
     private Double destinationAngel;
     private Id targetContainer;
     private Id syncBoxItemId;
+    private OverlappingHandler overlappingHandler = new OverlappingHandler() {
+        @Override
+        public Path calculateNewPath() {
+            try {
+                if (syncBoxItemId != null) {
+                    SyncBoxItem syncBoxItem = (SyncBoxItem) getPlanetServices().getItemService().getItem(syncBoxItemId);
+                    return recalculateNewPath(getSyncBaseItem().getBaseItemType().getBoxPickupRange(), syncBoxItem.getSyncItemArea(), syncBoxItem.getTerrainType());
+                } else if (targetContainer != null) {
+                    throw new IllegalStateException("Don't know what to do...: " + getSyncBaseItem());
+                } else {
+                    return getPlanetServices().getCollisionService().setupPathToSyncMovableRandomPositionIfTaken(getSyncBaseItem());
+                }
+            } catch (ItemDoesNotExistException e) {
+                stop();
+                return null;
+            }
+        }
+    };
 
     public SyncMovable(MovableType movableType, SyncBaseItem syncBaseItem) {
         super(syncBaseItem);
@@ -53,11 +75,11 @@ public class SyncMovable extends SyncBaseAbility {
      * @return true if more tick are needed to fulfil the job
      */
     public boolean tick(double factor) {
-        return tickMove(factor) || targetContainer != null && putInContainer() || syncBoxItemId != null && pickupBox();
+        return tickMove(factor, overlappingHandler) || targetContainer != null && putInContainer() || syncBoxItemId != null && pickupBox();
 
     }
 
-    boolean tickMove(double factor) {
+    boolean tickMove(double factor, OverlappingHandler overlappingHandler) {
         if (pathToDestination == null) {
             return false;
         }
@@ -65,7 +87,7 @@ public class SyncMovable extends SyncBaseAbility {
         if (pathToDestination.isEmpty()) {
             pathToDestination = null;
             // no new destination
-            return onFinished();
+            return onFinished(overlappingHandler);
         }
 
         Index destination = pathToDestination.get(0);
@@ -77,7 +99,7 @@ public class SyncMovable extends SyncBaseAbility {
                 pathToDestination = null;
                 getSyncItemArea().turnTo(destinationAngel);
                 getSyncItemArea().setDecimalPosition(decimalPoint);
-                return onFinished();
+                return onFinished(overlappingHandler);
             }
         }
 
@@ -86,7 +108,7 @@ public class SyncMovable extends SyncBaseAbility {
         if (factor - relativeDistance > DecimalPosition.FACTOR) {
             getSyncItemArea().turnTo(destination);
             getSyncItemArea().setDecimalPosition(decimalPoint);
-            return tickMove(factor - relativeDistance);
+            return tickMove(factor - relativeDistance, overlappingHandler);
         }
 
         getSyncItemArea().turnTo(destination);
@@ -94,18 +116,22 @@ public class SyncMovable extends SyncBaseAbility {
         return true;
     }
 
-    public boolean onFinished() {
+    public boolean onFinished(OverlappingHandler overlappingHandler) {
         if (getPlanetServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
             return false;
         }
         SyncBaseItem syncBaseItem = getSyncBaseItem();
         if (getPlanetServices().getItemService().isSyncItemOverlapping(syncBaseItem)) {
-            Path path = getPlanetServices().getCollisionService().setupPathToSyncMovableRandomPositionIfTaken(syncBaseItem);
-            pathToDestination = path.getPath();
-            destinationAngel = path.getActualDestinationAngel();
-            getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
-            return true;
-        }  else {
+            Path path = overlappingHandler.calculateNewPath();
+            if (path != null) {
+                pathToDestination = path.getPath();
+                destinationAngel = path.getActualDestinationAngel();
+                getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+                return true;
+            } else {
+                return false;
+            }
+        } else {
             return false;
         }
     }
@@ -139,7 +165,7 @@ public class SyncMovable extends SyncBaseAbility {
             } else {
                 if (isNewPathRecalculationAllowed()) {
                     // Destination place was may be taken. Calculate a new one or target has moved away
-                    recalculateNewPath(getSyncBaseItem().getBaseItemType().getBoxPickupRange(), syncBoxItem.getSyncItemArea(), syncBoxItem.getTerrainType());
+                    recalculateAndSetNewPath(getSyncBaseItem().getBaseItemType().getBoxPickupRange(), syncBoxItem.getSyncItemArea(), syncBoxItem.getTerrainType());
                     getPlanetServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                     return true;
                 } else {

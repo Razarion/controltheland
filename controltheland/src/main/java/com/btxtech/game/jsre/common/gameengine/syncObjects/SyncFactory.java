@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.FactoryType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
@@ -77,10 +78,15 @@ public class SyncFactory extends SyncBaseAbility {
                 if (!getPlanetServices().getBaseService().isItemLimit4ItemAddingAllowed(toBeBuiltType, getSyncBaseItem().getBase())) {
                     return true;
                 }
-                SyncBaseItem item = (SyncBaseItem) getPlanetServices().getItemService().createSyncObject(toBeBuiltType, rallyPoint, getSyncBaseItem(), getSyncBaseItem().getBase());
+                final SyncBaseItem item = (SyncBaseItem) getPlanetServices().getItemService().createSyncObject(toBeBuiltType, rallyPoint, getSyncBaseItem(), getSyncBaseItem().getBase());
                 item.setBuildup(buildup);
                 stop();
-                if (item.hasSyncMovable() && item.getSyncMovable().onFinished()) {
+                if (item.hasSyncMovable() && item.getSyncMovable().onFinished(new SyncMovable.OverlappingHandler() {
+                    @Override
+                    public Path calculateNewPath() {
+                        return getPlanetServices().getCollisionService().setupPathToSyncMovableRandomPositionIfTaken(item);
+                    }
+                })) {
                     getPlanetServices().getActionService().syncItemActivated(item);
                 }
                 return false;
