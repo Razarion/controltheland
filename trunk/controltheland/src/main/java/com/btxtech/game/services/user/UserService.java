@@ -44,6 +44,8 @@ public interface UserService extends UserDetailsService {
 
     User getUser(String name);
 
+    User getUser(Integer userId);
+
     void logout();
 
     void save(User user);
@@ -88,7 +90,7 @@ public interface UserService extends UserDetailsService {
 
     InvalidNickName isNickNameValid(String nickName);
 
-    UserState createUserState(String userName);
+    UserState createUserState(User user);
 
     Session getSession4ExceptionHandler();
 

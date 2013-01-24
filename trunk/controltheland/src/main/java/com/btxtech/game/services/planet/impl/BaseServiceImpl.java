@@ -268,9 +268,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
                 serverGlobalServices.getHistoryService().addBaseDefeatedEntry(actor, base.getSimpleBase());
                 sendDefeatedMessage(syncItem, actor);
             }
-            String userName = null;
+            Integer userId = null;
             if (base.getUserState() != null && base.getUserState().getUser() != null) {
-                userName = base.getUserState().getUser();
+                userId = base.getUserState().getUser();
                 serverGlobalServices.getUserTrackingService().onBaseDefeated(serverGlobalServices.getUserService().getUser(base.getUserState().getUser()), base);
             }
             serverGlobalServices.getStatisticsService().onBaseKilled(base.getSimpleBase(), actor);
@@ -279,8 +279,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
                 base.getUserState().setBase(null);
                 base.getUserState().setSendResurrectionMessage();
             }
-            if (userName != null) {
-                serverGlobalServices.getAllianceService().onBaseCreatedOrDeleted(userName);
+            if (userId != null) {
+                serverGlobalServices.getAllianceService().onBaseCreatedOrDeleted(userId);
             }
         } else {
             handleHouseSpaceChanged(base);
@@ -360,7 +360,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
 
     private String setupBaseName(Base base) {
         if (!base.isAbandoned() && base.getUserState() != null && base.getUserState().isRegistered()) {
-            return base.getUserState().getUser();
+            return serverGlobalServices.getUserService().getUser(base.getUserState().getUser()).getUsername();
         } else {
             return DEFAULT_BASE_NAME_PREFIX + base.getBaseId();
         }

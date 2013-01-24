@@ -74,7 +74,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
 
         // Mock objects
         userState1 = new UserState();
-        userState1.setUser("TestUser1");
+        userState1.setUser(1);
         userState1.setDbLevelId(TEST_LEVEL_2_REAL_ID);
         base1 = new Base(userState1, planetSystemService.getPlanet(TEST_PLANET_1_ID), 1);
         int itemId = 0;
@@ -86,7 +86,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
         building1B1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(100, 100), new Id(++itemId, 0), createMockGlobalServices(), createMockPlanetServices(), base1.getSimpleBase());
 
         UserState userState2 = new UserState();
-        userState2.setUser("TestUser2");
+        userState2.setUser(2);
         Base base2 = new Base(userState2, planetSystemService.getPlanet(TEST_PLANET_1_ID), 2);
         builder1B2 = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(++itemId, 0), createMockGlobalServices(), createMockPlanetServices(), base2.getSimpleBase());
 

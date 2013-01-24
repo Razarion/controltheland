@@ -2665,7 +2665,7 @@ public class TestCmsService extends AbstractServiceTest {
         securityCmsUiServiceMock.signIn("U1", "test");
         User user = new User();
         user.registerUser("TestUser", "", "");
-        EasyMock.expectLastCall().andThrow(new AlreadyLoggedInException(user.getUsername()));
+        EasyMock.expectLastCall().andThrow(new AlreadyLoggedInException(null));
         EasyMock.replay(securityCmsUiServiceMock);
 
         ReflectionTestUtils.setField(cmsUiService, "securityCmsUiService", securityCmsUiServiceMock);
@@ -3787,8 +3787,10 @@ public class TestCmsService extends AbstractServiceTest {
         TestPlanetHelper planet = new TestPlanetHelper();
         planet.setServerPlanetServices(serverPlanetServices);
 
+        User user1 = new User();
+        user1.registerUser("aaa", null, null);
         userState = new UserState();
-        userState.setUser("aaa");
+        userState.setUser(1);
         Base base1 = new Base(userState, planet, 1);
         base1.setAccountBalance(1234);
         setPrivateField(Base.class, base1, "startTime", new Date(System.currentTimeMillis() - ClientDateUtil.MILLIS_IN_HOUR));
@@ -3798,8 +3800,10 @@ public class TestCmsService extends AbstractServiceTest {
         userState.setDbLevelId(TEST_LEVEL_2_REAL_ID);
         userStates.add(userState);
 
+        User user2 = new User();
+        user2.registerUser("xxx", null, null);
         userState = new UserState();
-        userState.setUser("xxx");
+        userState.setUser(2);
         Base base2 = new Base(userState, planet, 2);
         base2.setAccountBalance(90);
         setPrivateField(Base.class, base2, "startTime", new Date(System.currentTimeMillis() - ClientDateUtil.MILLIS_IN_MINUTE));
@@ -3812,8 +3816,10 @@ public class TestCmsService extends AbstractServiceTest {
         userState.setDbLevelId(TEST_LEVEL_2_REAL_ID);
         userStates.add(userState);
 
-        UserService userServiceMock = EasyMock.createMock(UserService.class);
-        EasyMock.expect(userServiceMock.getAllUserStates()).andReturn(userStates).times(4);
+        UserService userServiceMock = EasyMock.createNiceMock(UserService.class);
+        EasyMock.expect(userServiceMock.getAllUserStates()).andReturn(userStates).anyTimes();
+        EasyMock.expect(userServiceMock.getUser(1)).andReturn(user1).anyTimes();
+        EasyMock.expect(userServiceMock.getUser(2)).andReturn(user2).anyTimes();
         EasyMock.replay(userServiceMock);
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "userService", userServiceMock);
 
@@ -4081,12 +4087,13 @@ public class TestCmsService extends AbstractServiceTest {
         TestPlanetHelper planet = new TestPlanetHelper();
         planet.setServerPlanetServices(serverPlanetServices);
 
+        User user1 = new User();
+        user1.registerUser("aaa", null, null);
         UserState userState = new UserState();
         userState.setDbLevelId(TEST_LEVEL_1_SIMULATED_ID);
         userStates.add(userState);
-
         userState = new UserState();
-        userState.setUser("aaa");
+        userState.setUser(1);
         Base base1 = new Base(userState, planet, 1);
         base1.setAccountBalance(1234);
         setPrivateField(Base.class, base1, "startTime", new Date(System.currentTimeMillis() - ClientDateUtil.MILLIS_IN_HOUR));
@@ -4096,8 +4103,10 @@ public class TestCmsService extends AbstractServiceTest {
         userState.setDbLevelId(TEST_LEVEL_2_REAL_ID);
         userStates.add(userState);
 
+        User user2 = new User();
+        user2.registerUser("xxx", null, null);
         userState = new UserState();
-        userState.setUser("xxx");
+        userState.setUser(2);
         Base base2 = new Base(userState, planet, 2);
         base2.setAccountBalance(90);
         setPrivateField(Base.class, base2, "startTime", new Date(System.currentTimeMillis() - ClientDateUtil.MILLIS_IN_MINUTE));
@@ -4110,8 +4119,10 @@ public class TestCmsService extends AbstractServiceTest {
         userState.setDbLevelId(TEST_LEVEL_2_REAL_ID);
         userStates.add(userState);
 
-        UserService userServiceMock = EasyMock.createMock(UserService.class);
-        EasyMock.expect(userServiceMock.getAllUserStates()).andReturn(userStates).times(8);
+        UserService userServiceMock = EasyMock.createNiceMock(UserService.class);
+        EasyMock.expect(userServiceMock.getAllUserStates()).andReturn(userStates).anyTimes();
+        EasyMock.expect(userServiceMock.getUser(1)).andReturn(user1).anyTimes();
+        EasyMock.expect(userServiceMock.getUser(2)).andReturn(user2).anyTimes();
         EasyMock.replay(userServiceMock);
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "userService", userServiceMock);
 

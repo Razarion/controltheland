@@ -112,7 +112,7 @@ public class UserStateTable extends MgmtWebPage {
             @Override
             public void onSubmit() {
                 if (userName4Creation != null) {
-                    userService.createUserState(userService.getUser(userName4Creation).getUsername());
+                    userService.createUserState(userService.getUser(userName4Creation));
                 }
             }
         });

@@ -172,9 +172,9 @@ public class TestBaseService extends AbstractServiceTest {
 
         AllianceService allianceServiceMock = EasyMock.createStrictMock(AllianceService.class);
         setPrivateField(ServerGlobalServicesImpl.class, serverGlobalServices, "allianceService", allianceServiceMock);
-        allianceServiceMock.onBaseCreatedOrDeleted("U1");
+        allianceServiceMock.onBaseCreatedOrDeleted(1);
         allianceServiceMock.onMakeBaseAbandoned(new SimpleBase(1, TEST_PLANET_1_ID));
-        allianceServiceMock.onBaseCreatedOrDeleted("U1");
+        allianceServiceMock.onBaseCreatedOrDeleted(1);
         EasyMock.replay(allianceServiceMock);
 
         beginHttpSession();

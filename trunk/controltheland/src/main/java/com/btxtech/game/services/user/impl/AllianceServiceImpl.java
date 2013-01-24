@@ -160,13 +160,13 @@ public class AllianceServiceImpl implements AllianceService {
     }
 
     @Override
-    public void onBaseCreatedOrDeleted(String userName) {
+    public void onBaseCreatedOrDeleted(int userId) {
         if (HibernateUtil.hasOpenSession(sessionFactory)) {
-            onBaseCreatedOrDeletedInSession(userService.getUser(userName));
+            onBaseCreatedOrDeletedInSession(userService.getUser(userId));
         } else {
             HibernateUtil.openSession4InternalCall(sessionFactory);
             try {
-                onBaseCreatedOrDeletedInSession(userService.getUser(userName));
+                onBaseCreatedOrDeletedInSession(userService.getUser(userId));
             } finally {
                 HibernateUtil.closeSession4InternalCall(sessionFactory);
             }

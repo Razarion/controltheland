@@ -26,7 +26,7 @@ import java.util.Locale;
  * Time: 10:42:00
  */
 public class UserState implements Serializable {
-    private String userName;
+    private Integer userId;
     private Base base;
     private int dbLevelId;
     private int xp;
@@ -38,7 +38,7 @@ public class UserState implements Serializable {
     private Locale locale;
 
     public boolean isRegistered() {
-        return userName != null;
+        return userId != null;
     }
 
     public void setBase(Base base) {
@@ -81,17 +81,17 @@ public class UserState implements Serializable {
         return sessionId != null;
     }
 
-    public String getUser() {
-        return userName;
+    public Integer getUser() {
+        return userId;
     }
 
-    public void setUser(String userName) {
-        this.userName = userName;
+    public void setUser(Integer userId) {
+        this.userId = userId;
     }
 
     @Override
     public String toString() {
-        return "UserState: user=" + userName;
+        return "UserState: user=" + userId;
     }
 
     public void setSendResurrectionMessage() {

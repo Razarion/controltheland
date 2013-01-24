@@ -291,7 +291,7 @@ public class TestConnection extends AbstractServiceTest {
         Assert.assertTrue(serverAfter.getTime() >= debugEntry1.getTimeStamp().getTime());
         Assert.assertEquals(clientDate, debugEntry1.getClientTimeStamp());
         Assert.assertEquals(sessionId1, debugEntry1.getSessionId());
-        Assert.assertNull(debugEntry1.getUserName());
+        Assert.assertNull(debugEntry1.getUserId());
         Assert.assertEquals("CAT1", debugEntry1.getCategory());
         Assert.assertEquals("Text Text", debugEntry1.getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -311,6 +311,7 @@ public class TestConnection extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("TestUser");
         getMyBase(); // Opens a connection
+        int userId = getUserState().getUser();
         getMovableService().sendDebug(clientDate, "CAT1", "Text Text");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -325,7 +326,7 @@ public class TestConnection extends AbstractServiceTest {
         Assert.assertTrue(serverAfter.getTime() >= debugEntry1.getTimeStamp().getTime());
         Assert.assertEquals(clientDate, debugEntry1.getClientTimeStamp());
         Assert.assertEquals(sessionId1, debugEntry1.getSessionId());
-        Assert.assertEquals("TestUser", debugEntry1.getUserName());
+        Assert.assertEquals(userId, (int)debugEntry1.getUserId());
         Assert.assertEquals("CAT1", debugEntry1.getCategory());
         Assert.assertEquals("Text Text", debugEntry1.getMessage());
         endHttpRequestAndOpenSessionInViewFilter();

@@ -85,9 +85,9 @@ public class DbHistoryElement implements Serializable {
     @Enumerated(EnumType.STRING)
     private Type type;
     @Index(name = "GAME_HISTORY_INDEX_ACTOR_USER")
-    private String actorUserName;
+    private Integer actorUserId;
     @Index(name = "GAME_HISTORY_INDEX_TARGET_USER")
-    private String targetUserName;
+    private Integer targetUserId;
     private Integer actorBaseId;
     private String actorBaseName;
     private Integer targetBaseId;
@@ -124,8 +124,8 @@ public class DbHistoryElement implements Serializable {
         timeStamp = new Date();
         timeStampMs = timeStamp.getTime();
         this.type = type;
-        actorUserName = actorUser != null ? actorUser.getUsername() : null;
-        targetUserName = targetUser != null ? targetUser.getUsername() : null;
+        actorUserId = actorUser != null ? actorUser.getId() : null;
+        targetUserId = targetUser != null ? targetUser.getId() : null;
         actorBaseId = actorBase != null ? actorBase.getBaseId() : null;
         actorBaseName = actorBase != null ? planetSystemService.getServerPlanetServices(actorBase).getBaseService().getBaseName(actorBase) : null;
         targetBaseId = targetBase != null ? targetBase.getBaseId() : null;
@@ -148,12 +148,12 @@ public class DbHistoryElement implements Serializable {
         return actorBaseName;
     }
 
-    public String getActorUserName() {
-        return actorUserName;
+    public Integer getActorUserId() {
+        return actorUserId;
     }
 
-    public String getTargetUserName() {
-        return targetUserName;
+    public Integer getTargetUserId() {
+        return targetUserId;
     }
 
     public Type getType() {

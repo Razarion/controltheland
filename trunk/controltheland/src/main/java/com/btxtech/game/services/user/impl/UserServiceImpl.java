@@ -92,9 +92,7 @@ public class UserServiceImpl implements UserService {
     private PlanetSystemService planetSystemService;
     @Value(value = "${security.md5salt}")
     private String md5HashSalt;
-
     private final Collection<UserState> userStates = new ArrayList<>();
-    private Log log = LogFactory.getLog(UserServiceImpl.class);
 
     @Override
     public boolean login(String userName, String password) throws AlreadyLoggedInException {
@@ -258,7 +256,7 @@ public class UserServiceImpl implements UserService {
         privateSave(user);
         userTrackingService.onUserCreated(user);
 
-        getUserState().setUser(name);
+        getUserState().setUser(user.getId());
         planetSystemService.onUserRegistered();
     }
 
@@ -298,12 +296,13 @@ public class UserServiceImpl implements UserService {
         privateSave(user);
         userTrackingService.onUserCreated(user);
 
-        getUserState().setUser(name);
+        getUserState().setUser(user.getId());
         planetSystemService.onUserRegistered();
 
         return user;
     }
 
+    @SuppressWarnings("unchecked")
     private void checkExits(String email) throws EmailAlreadyExitsException {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
@@ -329,7 +328,7 @@ public class UserServiceImpl implements UserService {
         privateSave(user);
         userTrackingService.onUserCreated(user);
 
-        getUserState().setUser(nickName);
+        getUserState().setUser(user.getId());
         planetSystemService.onUserRegistered();
 
         loginFacebookUser(facebookSignedRequest);
@@ -363,16 +362,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUser() {
-        String userName = getUserName();
-        if (userName == null) {
+        UserState userState = getUserState();
+        if (userState.isRegistered()) {
+            return loadUserFromDb(userState.getUser());
+        } else {
             return null;
         }
-        return loadUserFromDb(userName);
     }
 
     @Override
     public String getUserName() {
-        return getUserState().getUser();
+        User user = getUser();
+        if (user != null) {
+            return user.getUsername();
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -386,6 +391,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUser(String name) {
         return loadUserFromDb(name);
+    }
+
+    @Override
+    public User getUser(Integer userId) {
+        if(userId == null) {
+            return null;
+        }
+        return loadUserFromDb(userId);
     }
 
     @Override
@@ -445,6 +458,19 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    private User loadUserFromDb(int userId) {
+        if (HibernateUtil.hasOpenSession(sessionFactory)) {
+            return loadUserFromDbInSession(userId);
+        } else {
+            HibernateUtil.openSession4InternalCall(sessionFactory);
+            try {
+                return loadUserFromDbInSession(userId);
+            } finally {
+                HibernateUtil.closeSession4InternalCall(sessionFactory);
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private User loadFacebookUserFromDb(String facebookUserId) {
         // Get user from DB
@@ -474,6 +500,20 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private User loadUserFromDbInSession(int userId) {
+        // Get user from DB
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        criteria.add(Restrictions.eq("id", userId));
+        List<User> users = criteria.list();
+        if (users == null || users.isEmpty()) {
+            return null;
+        } else {
+            return users.get(0);
+        }
+    }
+
     private boolean isNicknameFree(String nickName) {
         // Get user from DB
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
@@ -482,12 +522,12 @@ public class UserServiceImpl implements UserService {
         return ((Number) criteria.list().get(0)).intValue() == 0;
     }
 
-    private String getUserFromSecurityContext() {
+    private User getUserFromSecurityContext() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
             return null;
         }
-        return ((User) authentication.getPrincipal()).getUsername();
+        return ((User) authentication.getPrincipal());
     }
 
     @Override
@@ -569,12 +609,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserState createUserState(String userName) {
-        if (userName != null) {
+    public UserState createUserState(User user) {
+        if (user != null) {
             synchronized (userStates) {
                 for (UserState userState : userStates) {
-                    if (userState.getUser() != null && userState.getUser().equals(userName)) {
-                        throw new IllegalArgumentException("User already has a user state: " + userName);
+                    if (userState.getUser() != null && userState.getUser().equals(user.getId())) {
+                        throw new IllegalArgumentException("User already has a user state: " + user);
                     }
                 }
             }
@@ -585,7 +625,9 @@ public class UserServiceImpl implements UserService {
         }
         userGuidanceService.setLevelForNewUser(userState);
         globalInventoryService.setupNewUserState(userState);
-        userState.setUser(userName);
+        if (user != null) {
+            userState.setUser(user.getId());
+        }
         return userState;
     }
 
@@ -608,7 +650,7 @@ public class UserServiceImpl implements UserService {
     public UserState getUserState(User user) {
         synchronized (userStates) {
             for (UserState userState : userStates) {
-                if (user.getUsername().equals(userState.getUser())) {
+                if (user.getId().equals(userState.getUser())) {
                     return userState;
                 }
             }

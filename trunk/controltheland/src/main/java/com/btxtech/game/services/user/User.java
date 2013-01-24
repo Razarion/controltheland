@@ -16,6 +16,7 @@ package com.btxtech.game.services.user;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
+import org.hibernate.annotations.Index;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,12 +29,14 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,6 +51,10 @@ public class User implements UserDetails, Serializable, CrudParent {
     }
 
     @Id
+    @GeneratedValue
+    private Integer id;
+    @Index(name = "USER_NAME")
+    @Column(unique=true)
     private String name;
     @Column(name = "passwordHash")
     private String password;
@@ -69,15 +76,15 @@ public class User implements UserDetails, Serializable, CrudParent {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "USER_ALLIANCES",
-            joinColumns = @JoinColumn(name = "theUser"),
-            inverseJoinColumns = @JoinColumn(name = "allianceUser")
+            joinColumns = @JoinColumn(name = "userId"),
+            inverseJoinColumns = @JoinColumn(name = "allianceUserId")
     )
     private Collection<User> alliances;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "USER_ALLIANCE_OFFERS",
-            joinColumns = @JoinColumn(name = "receiver"),
-            inverseJoinColumns = @JoinColumn(name = "allianceOffer")
+            joinColumns = @JoinColumn(name = "receiverUserId"),
+            inverseJoinColumns = @JoinColumn(name = "allianceOfferUserId")
     )
     private Collection<User> allianceOffers;
     @Enumerated(EnumType.STRING)
@@ -90,6 +97,9 @@ public class User implements UserDetails, Serializable, CrudParent {
     @Transient
     private CrudChildServiceHelper<DbPageAccessControl> pageCrud;
 
+    public Integer getId() {
+        return id;
+    }
 
     public String getUsername() {
         return name;
@@ -137,21 +147,17 @@ public class User implements UserDetails, Serializable, CrudParent {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        User user = (User) o;
-
-        return name != null && name.equals(user.name);
+        User that = (User) o;
+        return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        if (name != null) {
-            return name.hashCode();
-        } else {
-            return System.identityHashCode(this);
-        }
+        return id != null ? id : System.identityHashCode(this);
     }
+
 
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
@@ -264,6 +270,6 @@ public class User implements UserDetails, Serializable, CrudParent {
 
     @Override
     public String toString() {
-        return "User: '" + name + "'";
+        return "User: '" + name + "' id: " + id;
     }
 }
