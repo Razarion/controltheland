@@ -61,7 +61,7 @@ public class TestCountComparison extends AbstractServiceTest implements ServerCo
 
         // Mock objects
         userState1 = new UserState();
-        userState1.setUser("TestUser1");
+        userState1.setUser(1);
         userState1.setDbLevelId(TEST_LEVEL_2_REAL_ID);
 
         base1 = new Base(userState1, planetSystemService.getPlanet(TEST_PLANET_1_ID), 1);

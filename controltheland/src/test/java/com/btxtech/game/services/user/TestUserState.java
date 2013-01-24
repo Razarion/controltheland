@@ -294,8 +294,12 @@ public class TestUserState extends AbstractServiceTest {
     }
 
     private UserState getRegUserState(String userName) {
+        User user = userService.getUser(userName);
+        if(user == null) {
+            Assert.fail("No such user: " + userName);
+        }
         for (UserState userState : userService.getAllUserStates()) {
-            if (userState.isRegistered() && userState.getUser().equals(userName)) {
+            if (userState.isRegistered() && userState.getUser().equals(user.getId())) {
                 return userState;
             }
         }

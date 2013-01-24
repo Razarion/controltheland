@@ -18,7 +18,7 @@ public class DbPayPalTransaction {
     @GeneratedValue
     private Integer id;
     private Date date;
-    private String user;
+    private int user;
     private String itemNumber;
     private String txnId;
     private String payerEmail;
@@ -31,7 +31,7 @@ public class DbPayPalTransaction {
 
     public DbPayPalTransaction(User user, String itemNumber, String txnId, String payerEmail) {
         date = new Date();
-        this.user = user.getUsername();
+        this.user = user.getId();
         this.itemNumber = itemNumber;
         this.txnId = txnId;
         this.payerEmail = payerEmail;
@@ -45,7 +45,7 @@ public class DbPayPalTransaction {
         return date;
     }
 
-    public String getUser() {
+    public int getUser() {
         return user;
     }
 

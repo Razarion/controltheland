@@ -707,9 +707,9 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         private void verifyUserStates(List<UserState> newUserStates, List<UserState> oldUserStates) {
         Assert.assertEquals(oldUserStates.size(), newUserStates.size());
         for (UserState oldUserState : oldUserStates) {
-            String oldUser = oldUserState.getUser();
+            Integer oldUser = oldUserState.getUser();
             UserState newUserState = findUserState(oldUserState, newUserStates);
-            String newUser = newUserState.getUser();
+            Integer newUser = newUserState.getUser();
             Assert.assertEquals(oldUser, newUser);
             Assert.assertEquals(oldUserState.getXp(), newUserState.getXp());
             Assert.assertEquals(oldUserState.getDbLevelId(), newUserState.getDbLevelId());
@@ -723,9 +723,9 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
     private UserState findUserState(UserState oldUserState, List<UserState> newUserStates) {
         UserState foundUserState = null;
-        String oldUsr = oldUserState.getUser();
+        Integer oldUsr = oldUserState.getUser();
         for (UserState newUserState : newUserStates) {
-            String newUsr = newUserState.getUser();
+            Integer newUsr = newUserState.getUser();
             if (newUsr != null && newUsr.equals(oldUsr)) {
                 if (foundUserState != null) {
                     Assert.fail("Second matching UserState found: " + newUserState + " fist matching base: " + foundUserState);

@@ -225,7 +225,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             Long upTime = null;
             String planetName = null;
             if (userState.isRegistered()) {
-                userName = userState.getUser();
+                userName = userService.getUser(userState.getUser()).getUsername();
             }
             if (userState.getBase() != null) {
                 if (!userState.isRegistered()) {

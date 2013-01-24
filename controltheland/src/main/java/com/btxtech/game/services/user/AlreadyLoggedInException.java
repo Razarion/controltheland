@@ -8,9 +8,9 @@ package com.btxtech.game.services.user;
 public class AlreadyLoggedInException extends RuntimeException {
     private String userName;
 
-    public AlreadyLoggedInException(String userName) {
-        super("Already logged in as: " + userName);
-        this.userName = userName;
+    public AlreadyLoggedInException(User user) {
+        super("Already logged in as: " + user);
+        userName = user.getUsername();
     }
 
     public String getUserName() {

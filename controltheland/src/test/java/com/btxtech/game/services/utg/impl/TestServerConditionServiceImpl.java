@@ -75,12 +75,12 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         configureSimplePlanetNoResources();
 
         UserState userState1 = new UserState();
-        userState1.setUser("TestUser1");
+        userState1.setUser(1);
         userState1.setDbLevelId(TEST_LEVEL_2_REAL_ID);
         Base base1 = new Base(userState1, planetSystemService.getPlanet(TEST_PLANET_1_ID), 1);
 
         UserState userState2 = new UserState();
-        userState2.setUser("TestUser2");
+        userState2.setUser(2);
         userState2.setDbLevelId(TEST_LEVEL_2_REAL_ID);
         Base base2 = new Base(userState2, planetSystemService.getPlanet(TEST_PLANET_1_ID), 2);
 
@@ -313,9 +313,8 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         assertClearActorAndIdentifier();
         sendMoveCommand(builder, new Index(700, 700));
         waitForActionServiceDone();
-        assertActorAndIdentifierAndClear(userService.getUserState(), 1);
-
-        itemTypes = new HashMap<>();
+        // TODO test failed (expected:<UserState: user=null> but was:<null>) 24.01.2013
+        assertActorAndIdentifierAndClear(userService.getUserState(), 1);        itemTypes = new HashMap<>();
         itemTypes.put(serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), 1);
         serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.SYNC_ITEM_POSITION, new ItemTypePositionComparisonConfig(itemTypes, createRegion(new Rectangle(500, 500, 1000, 1000), 1), null, false), null, null, false), userService.getUserState(), 1);
         sendBuildCommand(builder, new Index(900, 900), TEST_FACTORY_ITEM_ID);

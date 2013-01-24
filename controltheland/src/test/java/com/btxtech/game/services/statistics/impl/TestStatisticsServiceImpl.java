@@ -18,6 +18,7 @@ import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
 import com.btxtech.game.services.statistics.CurrentStatisticEntry;
 import com.btxtech.game.services.statistics.StatisticsService;
+import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -61,12 +62,14 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
 
         SimpleBase unregBase = new SimpleBase(1, 1);
+        User regUser = new User();
+        regUser.registerUser("xxx", null, null);
         UserState unregUserState = new UserState();
         unregUserState.setDbLevelId(TEST_LEVEL_1_SIMULATED);
         SimpleBase regBase = new SimpleBase(2, 1);
         UserState regUserState = new UserState();
         regUserState.setDbLevelId(TEST_LEVEL_1_SIMULATED);
-        regUserState.setUser("xxx");
+        regUserState.setUser(1);
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -79,6 +82,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         UserService userService = EasyMock.createNiceMock(UserService.class);
         EasyMock.expect(userService.getAllUserStates()).andReturn(Arrays.asList(regUserState, unregUserState)).anyTimes();
         EasyMock.expect(userService.getUserState()).andReturn(regUserState).anyTimes();
+        EasyMock.expect(userService.getUser(1)).andReturn(regUser).anyTimes();
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "userService", userService);
 
         SyncBaseItem item1RegBase = EasyMock.createNiceMock(SyncBaseItem.class);
