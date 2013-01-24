@@ -55,6 +55,7 @@ public class Register extends Panel {
             protected void onSubmit() {
                 try {
                     // TODO email verification userService.createUser(name, password, confirmPassword, email);
+                    // TODO 2 times facebook api in page
                     cmsUiService.getSecurityCmsUiService().signIn(name, password);
                     PageParameters parameters = new PageParameters();
                     if (!userGuidanceService.isStartRealGame()) {
