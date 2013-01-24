@@ -176,13 +176,13 @@ public class FacebookUtils {
             isLoaded = nativeCheckFbApiLoaded();
             isLoadedChecked = true;
             if (!isLoaded) {
-                log.warning("Facebook API not loaded: " + debugInfo);
+                log.warning("FacebookUtils.checkFbApiLoaded() Facebook API not loaded: " + debugInfo);
             }
         }
         return isLoaded;
     }
 
     native private static boolean nativeCheckFbApiLoaded()/*-{
-        return typeof $wnd.FB.getLoginStatus == 'function'
+        return typeof $wnd.FB != undefined && typeof $wnd.FB.getLoginStatus == 'function';
     }-*/;
 }
