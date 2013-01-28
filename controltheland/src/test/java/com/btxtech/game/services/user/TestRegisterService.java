@@ -35,8 +35,6 @@ public class TestRegisterService extends AbstractServiceTest {
     private UserService userService;
     @Autowired
     private PlanetSystemService planetSystemService;
-    @Autowired
-    private JavaMailSenderImpl javaMailSender;
 
     @Test
     @DirtiesContext
@@ -384,11 +382,5 @@ public class TestRegisterService extends AbstractServiceTest {
         endHttpSession();
 
         setPrivateStaticField(RegisterServiceImpl.class, "CLEANUP_DELAY", 1 * ClientDateUtil.MILLIS_IN_DAY);
-    }
-
-    @Test
-    @DirtiesContext
-    public void testEMailServerHost() throws Exception {
-        Assert.assertEquals("localhost", javaMailSender.getHost());
     }
 }
