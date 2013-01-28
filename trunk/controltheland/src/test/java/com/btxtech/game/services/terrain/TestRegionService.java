@@ -110,6 +110,7 @@ public class TestRegionService extends AbstractServiceTest {
     }
 
     @Test
+    @DirtiesContext
     public void testSimple1() {
         Region region = new Region(1, Collections.<Rectangle>emptyList());
         RegionBuilder regionBuilder = new RegionBuilder(region);
@@ -135,6 +136,7 @@ public class TestRegionService extends AbstractServiceTest {
     }
 
     @Test
+    @DirtiesContext
     public void testSimple2() {
         Region region = new Region(1, Collections.<Rectangle>emptyList());
         RegionBuilder regionBuilder = new RegionBuilder(region);
@@ -163,6 +165,7 @@ public class TestRegionService extends AbstractServiceTest {
     }
 
     @Test
+    @DirtiesContext
     public void multipleSameInsert() {
         Region region = new Region(1, Collections.<Rectangle>emptyList());
         RegionBuilder regionBuilder = new RegionBuilder(region);

@@ -1,10 +1,12 @@
 package com.btxtech.game.wicket;
 
+import com.btxtech.game.jsre.client.AdCellHelper;
 import com.btxtech.game.services.user.UserService;
 import org.apache.wicket.Request;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.apache.wicket.authorization.strategies.role.Roles;
 import org.apache.wicket.injection.web.InjectorHolder;
+import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -16,11 +18,20 @@ import org.springframework.security.core.GrantedAuthority;
 public class WicketAuthenticatedWebSession extends AuthenticatedWebSession {
     @SpringBean
     private UserService userService;
+    private String adCellBid;
+    private boolean isAdCellBidCookieNeeded;
+    private String trackingCookieId;
+    private boolean isTrackingCookieIdCookieNeeded;
+    private boolean newUserTracking;
 
     public WicketAuthenticatedWebSession(Request request) {
         super(request);
+        // If not bound, two session object will be generated
+        bind();
         // Inject AuthenticationManager
         InjectorHolder.getInjector().inject(this);
+        handleAdCellBid(request);
+        handleCookieTracking(request);
     }
 
     @Override
@@ -47,5 +58,57 @@ public class WicketAuthenticatedWebSession extends AuthenticatedWebSession {
             }
         }
         return roles;
+    }
+
+    public String getAdCellBid() {
+        return adCellBid;
+    }
+
+    public String getTrackingCookieId() {
+        return trackingCookieId;
+    }
+
+    public boolean isNewUserTracking() {
+        return newUserTracking;
+    }
+
+    public boolean isAdCellBidCookieNeeded() {
+        return isAdCellBidCookieNeeded;
+    }
+
+    public boolean isTrackingCookieIdCookieNeeded() {
+        return isTrackingCookieIdCookieNeeded;
+    }
+
+    public void clearAdCellBidCookieNeeded() {
+        isAdCellBidCookieNeeded = false;
+    }
+
+    public void clearTrackingCookieIdCookieNeeded() {
+        isTrackingCookieIdCookieNeeded = false;
+    }
+
+    private void handleAdCellBid(Request request) {
+        String adCellBidCookie = WebCommon.getAdCellBidCookie(((WebRequest) request).getCookies());
+        if (adCellBidCookie != null) {
+            adCellBid = adCellBidCookie;
+            isAdCellBidCookieNeeded = false;
+        } else {
+            adCellBid = request.getParameter(AdCellHelper.BID_URL_KEY);
+            if (adCellBid != null) {
+                isAdCellBidCookieNeeded = true;
+            }
+        }
+    }
+
+    private void handleCookieTracking(Request request) {
+        trackingCookieId = WebCommon.getTrackingCookie(((WebRequest) request).getCookies());
+        isTrackingCookieIdCookieNeeded = true;
+        if (trackingCookieId != null) {
+            newUserTracking = false;
+        } else {
+            trackingCookieId = WebCommon.generateTrackingCookieId();
+            newUserTracking = true;
+        }
     }
 }

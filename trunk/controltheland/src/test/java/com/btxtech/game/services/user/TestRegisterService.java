@@ -1,5 +1,6 @@
 package com.btxtech.game.services.user;
 
+import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
@@ -11,6 +12,7 @@ import com.btxtech.game.services.utg.tracker.DbUserHistory;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.test.annotation.DirtiesContext;
 import org.subethamail.wiser.Wiser;
 import org.subethamail.wiser.WiserMessage;
@@ -33,6 +35,8 @@ public class TestRegisterService extends AbstractServiceTest {
     private UserService userService;
     @Autowired
     private PlanetSystemService planetSystemService;
+    @Autowired
+    private JavaMailSenderImpl javaMailSender;
 
     @Test
     @DirtiesContext
@@ -45,7 +49,9 @@ public class TestRegisterService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         getMockHttpServletRequest().addPreferredLocale(Locale.ENGLISH);
         Date dateBefore = new Date();
-        registerService.register("U1", "xxx", "xxx", "test.yyy@testXXX.com");
+        SimpleUser simpleUser = registerService.register("U1", "xxx", "xxx", "test.yyy@testXXX.com");
+        Assert.assertEquals((int) userService.getUser("U1").getId(), simpleUser.getId());
+        Assert.assertEquals("U1", simpleUser.getName());
         Date dateAfter = new Date();
         String verificationId = userService.getUser().getVerificationId();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -178,7 +184,7 @@ public class TestRegisterService extends AbstractServiceTest {
                 "\r\n" +
                 "<div>\r\n" +
                 "    Vielen Dank für die Registrierung bei Razarion. Bitte bestätige deine E-Mail-Adresse, indem du auf den folgenden Link klickst:\r\n" +
-                "    <br>\r\n"  +
+                "    <br>\r\n" +
                 "    <a href=\"http://www.razarion.com/verification_code/" +
                 verifyCode +
                 "\">http://www.razarion.com/verification_code/" +
@@ -377,8 +383,12 @@ public class TestRegisterService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-
         setPrivateStaticField(RegisterServiceImpl.class, "CLEANUP_DELAY", 1 * ClientDateUtil.MILLIS_IN_DAY);
     }
 
+    @Test
+    @DirtiesContext
+    public void testEMailServerHost() throws Exception {
+        Assert.assertEquals("localhost", javaMailSender.getHost());
+    }
 }

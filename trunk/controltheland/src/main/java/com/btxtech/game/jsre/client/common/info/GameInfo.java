@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.common.info;
 
+import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.TerrainInfo;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -39,7 +40,7 @@ public abstract class GameInfo implements TerrainInfo, Serializable {
     private Collection<SurfaceImage> surfaceImages;
     private Collection<TerrainImage> terrainImages;
     private TerrainImageBackground terrainImageBackground;
-    private String userName;
+    private SimpleUser simpleUser;
     private int registerDialogDelay;
     private Collection<ItemType> itemTypes;
     private Map<CmsUtil.CmsPredefinedPage, String> predefinedUrls;
@@ -101,12 +102,12 @@ public abstract class GameInfo implements TerrainInfo, Serializable {
         this.terrainImageBackground = terrainImageBackground;
     }
 
-    public String getUserName() {
-        return userName;
+    public SimpleUser getSimpleUser() {
+        return simpleUser;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setSimpleUser(SimpleUser simpleUser) {
+        this.simpleUser = simpleUser;
     }
 
     public int getRegisterDialogDelayInS() {

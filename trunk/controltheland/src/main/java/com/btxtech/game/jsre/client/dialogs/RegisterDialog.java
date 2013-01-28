@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client.dialogs;
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.common.FacebookUtils;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
@@ -143,7 +144,7 @@ public class RegisterDialog extends Dialog {
             return;
         }
 
-        Connection.getMovableServiceAsync().register(nickNameField.getText(), password.getText(), confirmPassword.getText(), email.getText(), new AsyncCallback<Void>() {
+        Connection.getMovableServiceAsync().register(nickNameField.getText(), password.getText(), confirmPassword.getText(), email.getText(), new AsyncCallback<SimpleUser>() {
             @Override
             public void onFailure(Throwable throwable) {
                 if (throwable instanceof UserAlreadyExistsException) {
@@ -158,8 +159,8 @@ public class RegisterDialog extends Dialog {
             }
 
             @Override
-            public void onSuccess(Void aVoid) {
-                Connection.getInstance().setUserName(nickNameField.getText());
+            public void onSuccess(SimpleUser simpleUser) {
+                Connection.getInstance().setSimpleUser(simpleUser);
                 hide(true);
                 DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.registerThanks(), ClientI18nHelper.CONSTANTS.registerConfirmationEmailSent(email.getText())), DialogManager.Type.PROMPTLY);
             }

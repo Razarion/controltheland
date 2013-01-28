@@ -13,7 +13,9 @@
 
 package com.btxtech.game.services.user.impl;
 
+import com.btxtech.game.jsre.client.AdCellProvision;
 import com.btxtech.game.jsre.client.InvalidNickName;
+import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
@@ -27,6 +29,7 @@ import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
+import com.btxtech.game.services.user.DbAdCellProvision;
 import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.DbPageAccessControl;
 import com.btxtech.game.services.user.NotAuthorizedException;
@@ -36,8 +39,6 @@ import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -252,7 +253,7 @@ public class UserServiceImpl implements UserService {
 
         User user = new User();
         String passwordHash = new Md5PasswordEncoder().encodePassword(password, md5HashSalt);
-        user.registerUser(name, passwordHash, email);
+        user.registerUser(name, passwordHash, email, userTrackingService.getAdCellPid());
         privateSave(user);
         userTrackingService.onUserCreated(user);
 
@@ -291,7 +292,7 @@ public class UserServiceImpl implements UserService {
 
         User user = new User();
         String passwordHash = new Md5PasswordEncoder().encodePassword(password, md5HashSalt);
-        user.registerUser(name, passwordHash, email);
+        user.registerUser(name, passwordHash, email, userTrackingService.getAdCellPid());
         user.setAwaitingVerification();
         privateSave(user);
         userTrackingService.onUserCreated(user);
@@ -324,7 +325,7 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = new User();
-        user.registerFacebookUser(facebookSignedRequest, nickName);
+        user.registerFacebookUser(facebookSignedRequest, nickName, userTrackingService.getAdCellPid());
         privateSave(user);
         userTrackingService.onUserCreated(user);
 
@@ -381,6 +382,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public SimpleUser getSimpleUser() {
+        User user = getUser();
+        if (user != null) {
+            return user.createSimpleUser();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public User getUser(UserState userState) {
         if (!userState.isRegistered()) {
             return null;
@@ -395,7 +406,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUser(Integer userId) {
-        if(userId == null) {
+        if (userId == null) {
             return null;
         }
         return loadUserFromDb(userId);
@@ -705,10 +716,37 @@ public class UserServiceImpl implements UserService {
     public Session getSession4ExceptionHandler() {
         try {
             // To figure out if session is active
-            session.getCookieId();
+            session.getTrackingCookieId();
             return session;
         } catch (Throwable t) {
             return null;
         }
+    }
+
+    @Override
+    @Transactional
+    public AdCellProvision handleAdCellProvision() {
+        User user = getUser();
+        if (user == null) {
+            throw new IllegalStateException("No user");
+        }
+        String adCellPid = user.getAdCellBid();
+        if (adCellPid != null && !isAdCellProvisionAlreadyExecuted(adCellPid)) {
+            saveExecutedAdCellProvision(user);
+            return new AdCellProvision(user.createSimpleUser(), adCellPid);
+        } else {
+            return new AdCellProvision(user.createSimpleUser(), null);
+        }
+    }
+
+    private boolean isAdCellProvisionAlreadyExecuted(String adCellPid) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbAdCellProvision.class);
+        criteria.add(Restrictions.eq("adCellPid", adCellPid));
+        criteria.setProjection(Projections.rowCount());
+        return ((Number) criteria.list().get(0)).intValue() > 0;
+    }
+
+    private void saveExecutedAdCellProvision(User user) {
+        sessionFactory.getCurrentSession().save(new DbAdCellProvision(user));
     }
 }

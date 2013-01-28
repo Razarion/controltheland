@@ -14,7 +14,9 @@
 package com.btxtech.game.services.user;
 
 
+import com.btxtech.game.jsre.client.AdCellProvision;
 import com.btxtech.game.jsre.client.InvalidNickName;
+import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
@@ -41,6 +43,8 @@ public interface UserService extends UserDetailsService {
     User getUser();
 
     String getUserName();
+
+    SimpleUser getSimpleUser();
 
     User getUser(String name);
 
@@ -99,4 +103,6 @@ public interface UserService extends UserDetailsService {
     void removeUserState(UserState userState);
 
     UserState getUserState(SimpleBase simpleBase);
+
+    AdCellProvision handleAdCellProvision();
 }

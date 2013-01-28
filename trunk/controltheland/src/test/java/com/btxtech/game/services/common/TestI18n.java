@@ -12,7 +12,6 @@ import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.wicket.WicketApplication;
 import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
 import com.btxtech.game.wicket.pages.mgmt.I18nMgmtPage;
 import junit.framework.Assert;
@@ -35,8 +34,6 @@ import java.util.Locale;
 public class TestI18n extends AbstractServiceTest {
     @Autowired
     private TutorialService tutorialService;
-    @Autowired
-    private WicketApplication wicketApplication;
     @Autowired
     private CmsService cmsService;
     @Autowired
@@ -213,40 +210,39 @@ public class TestI18n extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
-        WicketTester tester = new WicketTester(wicketApplication);
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("Admin", "admin");
         try {
             // First call crashes. Wickets need to set up wicket-session first
-            tester.startPage(I18nMgmtPage.class);
+            getWicketTester().startPage(I18nMgmtPage.class);
         } catch (Exception e) {
             // Ignore
         }
         ((WicketAuthenticatedWebSession) AuthenticatedWebSession.get()).setSignIn();
-        tester.startPage(I18nMgmtPage.class);
-        tester.assertRenderedPage(I18nMgmtPage.class);
+        getWicketTester().startPage(I18nMgmtPage.class);
+        getWicketTester().assertRenderedPage(I18nMgmtPage.class);
 
-        assertTextArea(tester, "form:table:1:default", "xxxxx1");
-        assertTextAreaNull(tester, "form:table:1:german");
-        assertTextArea(tester, "form:table:2:default", "xxxxx2");
-        assertTextAreaNull(tester, "form:table:2:german");
-        assertTextArea(tester, "form:table:3:default", "xxxxx3");
-        assertTextArea(tester, "form:table:3:german", "yyyyy3");
+        assertTextArea(getWicketTester(), "form:table:1:default", "xxxxx1");
+        assertTextAreaNull(getWicketTester(), "form:table:1:german");
+        assertTextArea(getWicketTester(), "form:table:2:default", "xxxxx2");
+        assertTextAreaNull(getWicketTester(), "form:table:2:german");
+        assertTextArea(getWicketTester(), "form:table:3:default", "xxxxx3");
+        assertTextArea(getWicketTester(), "form:table:3:german", "yyyyy3");
 
-        FormTester formTester = tester.newFormTester("form");
+        FormTester formTester = getWicketTester().newFormTester("form");
         formTester.setValue("table:1:german", "yyyy1");
         formTester.setValue("table:2:default", "xxxxx2---");
         formTester.setValue("table:2:german", "yyyy2");
         formTester.submit("save");
-        tester.debugComponentTrees();
+        getWicketTester().debugComponentTrees();
 
-        assertTextArea(tester, "form:table:4:default", "xxxxx1");
-        assertTextArea(tester, "form:table:4:german", "yyyy1");
-        assertTextArea(tester, "form:table:5:default", "xxxxx2---");
-        assertTextArea(tester, "form:table:5:german", "yyyy2");
-        assertTextArea(tester, "form:table:6:default", "xxxxx3");
-        assertTextArea(tester, "form:table:6:german", "yyyyy3");
+        assertTextArea(getWicketTester(), "form:table:4:default", "xxxxx1");
+        assertTextArea(getWicketTester(), "form:table:4:german", "yyyy1");
+        assertTextArea(getWicketTester(), "form:table:5:default", "xxxxx2---");
+        assertTextArea(getWicketTester(), "form:table:5:german", "yyyy2");
+        assertTextArea(getWicketTester(), "form:table:6:default", "xxxxx3");
+        assertTextArea(getWicketTester(), "form:table:6:german", "yyyyy3");
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

@@ -97,6 +97,8 @@ import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
+import com.btxtech.game.wicket.WicketApplication;
+import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
 import com.btxtech.game.wicket.pages.cms.CmsImageResource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -154,8 +156,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -290,6 +294,8 @@ abstract public class AbstractServiceTest {
     private PlanetSystemService planetSystemService;
     @Autowired
     private RegionService regionService;
+    @Autowired
+    private WicketApplication wicketApplication;
     private MockHttpServletRequest mockHttpServletRequest;
     private MockHttpServletResponse mockHttpServletResponse;
     private MockHttpSession mockHttpSession;
@@ -299,6 +305,7 @@ abstract public class AbstractServiceTest {
     private JdbcTemplate jdbcTemplate;
     private Wiser wiser;
     private Log log = LogFactory.getLog(AbstractServiceTest.class);
+    private WicketTester wicketTester;
 
     protected PlatformTransactionManager getTransactionManager() {
         return transactionManager;
@@ -1908,6 +1915,7 @@ abstract public class AbstractServiceTest {
         }
         mockHttpSession = new MockHttpSession();
         securityContext = SecurityContextHolder.createEmptyContext();
+        wicketTester.setupRequestAndResponse();
     }
 
     protected void endHttpSession() {
@@ -1981,6 +1989,10 @@ abstract public class AbstractServiceTest {
         endHttpRequest();
     }
 
+    public WicketTester getWicketTester() {
+        return wicketTester;
+    }
+
     @Before
     public void setup() {
         configurableListableBeanFactory.registerResolvableDependency(ServletRequest.class, new ObjectFactory<ServletRequest>() {
@@ -2043,6 +2055,31 @@ abstract public class AbstractServiceTest {
         Assert.assertEquals((int) descImg.getId(), valueMap.getInt(CmsImageResource.ID));
     }
 
+    public void setWicketParameterAdCellBid(String adCellBid) throws Exception {
+        WicketAuthenticatedWebSession wicketSession = (WicketAuthenticatedWebSession) getWicketTester().getWicketSession();
+        setPrivateField(WicketAuthenticatedWebSession.class, wicketSession, "adCellBid", adCellBid);
+    }
+
+    public void setWicketParameterAdCellBidCookie(boolean cookieNeeded) throws Exception {
+        WicketAuthenticatedWebSession wicketSession = (WicketAuthenticatedWebSession) getWicketTester().getWicketSession();
+        setPrivateField(WicketAuthenticatedWebSession.class, wicketSession, "isAdCellBidCookieNeeded", cookieNeeded);
+    }
+
+    public void setWicketParameterTrackingCookie(String trackingCookieId) throws Exception {
+        WicketAuthenticatedWebSession wicketSession = (WicketAuthenticatedWebSession) getWicketTester().getWicketSession();
+        setPrivateField(WicketAuthenticatedWebSession.class, wicketSession, "trackingCookieId", trackingCookieId);
+    }
+
+    public void setWicketParameterTrackingCookieNeeded(boolean cookieNeeded) throws Exception {
+        WicketAuthenticatedWebSession wicketSession = (WicketAuthenticatedWebSession) getWicketTester().getWicketSession();
+        setPrivateField(WicketAuthenticatedWebSession.class, wicketSession, "isTrackingCookieIdCookieNeeded", cookieNeeded);
+    }
+
+    @Before
+    public void setupWicketTester() {
+        wicketTester = new WicketTester(wicketApplication);
+    }
+
     // ------------------- User --------------------
     protected UserState getUserState() {
         return userService.getUserState();
@@ -2097,6 +2134,12 @@ abstract public class AbstractServiceTest {
         } else {
             return object;
         }
+    }
+
+    public static void assertStringIgnoreWhitespace(String expected, String actual) {
+        expected = expected.replaceAll("\\s", "");
+        actual = actual.replaceAll("\\s", "");
+        Assert.assertEquals(expected, actual);
     }
 
     // ---------- Mail Helper -------

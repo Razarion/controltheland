@@ -5,12 +5,9 @@ import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.page.DbPage;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
-import com.btxtech.game.wicket.WicketApplication;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import junit.framework.Assert;
-import org.apache.wicket.util.tester.WicketTester;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -26,15 +23,7 @@ public class TestUserServiceFacebook extends AbstractServiceTest {
     @Autowired
     private CmsService cmsService;
     @Autowired
-    private WicketApplication wicketApplication;
-    @Autowired
     private CmsUiService cmsUiService;
-    private WicketTester tester;
-
-    @Before
-    public void setUp() {
-        tester = new WicketTester(wicketApplication);
-    }
 
     @Test
     @DirtiesContext
@@ -55,7 +44,7 @@ public class TestUserServiceFacebook extends AbstractServiceTest {
         // Register FB user
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        tester.startPage(CmsPage.class);
+        getWicketTester().startPage(CmsPage.class);
         FacebookSignedRequest facebookSignedRequest = new FacebookSignedRequest(null, 0, null, null, "12345");
         facebookSignedRequest.setEmail("email");
         Assert.assertFalse(userService.isFacebookUserRegistered(facebookSignedRequest));

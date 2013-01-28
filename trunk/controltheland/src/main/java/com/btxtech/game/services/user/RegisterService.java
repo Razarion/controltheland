@@ -1,5 +1,6 @@
 package com.btxtech.game.services.user;
 
+import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
@@ -11,7 +12,7 @@ import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsEx
  * Time: 10:14
  */
 public interface RegisterService {
-    void register(String userName, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, EmailAlreadyExitsException;
+    SimpleUser register(String userName, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, EmailAlreadyExitsException;
 
     User onVerificationPageCalled(String verificationId) throws EmailIsAlreadyVerifiedException, UserDoesNotExitException;
 }

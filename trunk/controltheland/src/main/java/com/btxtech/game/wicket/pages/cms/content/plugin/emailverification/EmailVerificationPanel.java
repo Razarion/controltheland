@@ -13,6 +13,7 @@
 
 package com.btxtech.game.wicket.pages.cms.content.plugin.emailverification;
 
+import com.btxtech.game.jsre.client.AdCellProvision;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.user.EmailIsAlreadyVerifiedException;
@@ -22,6 +23,7 @@ import com.btxtech.game.services.user.UserDoesNotExitException;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
@@ -44,7 +46,12 @@ public class EmailVerificationPanel extends Panel {
             String verificationId = contentContext.getPageParameters().getString(CmsUtil.EMAIL_VERIFICATION_KEY);
             User user = registerService.onVerificationPageCalled(verificationId);
             userService.loginIfNotLoggedIn(user);
-            cmsUiService.setMessageResponsePage(this, "registerThanks", null);
+            AdCellProvision adCellProvision = userService.handleAdCellProvision();
+            if (adCellProvision.isProvisionExpected()) {
+                add(new AdCellProvisionPanel("adCellProvision", adCellProvision));
+            } else {
+                add(new Label("adCellProvision").setVisible(false));
+            }
         } catch (EmailIsAlreadyVerifiedException e) {
             ExceptionHandler.handleException(e);
             cmsUiService.setMessageResponsePage(this, "registerEmailVerified", null);

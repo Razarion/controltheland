@@ -645,8 +645,10 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        financeService.razarionBought("U1", "RAZ1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
-        financeService.razarionBought("U1", "RAZ2200", "10", "USD", "2", "payer email", "finance@razarion.com", "Completed", "1");
+        int userId = getUserState().getUser();
+        String userIdString = Integer.toString(userId);
+        financeService.razarionBought(userIdString, "RAZ1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
+        financeService.razarionBought(userIdString, "RAZ2200", "10", "USD", "2", "payer email", "finance@razarion.com", "Completed", "1");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

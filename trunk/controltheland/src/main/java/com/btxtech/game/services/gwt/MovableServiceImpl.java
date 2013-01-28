@@ -14,8 +14,10 @@
 package com.btxtech.game.services.gwt;
 
 
+import com.btxtech.game.jsre.client.AdCellProvision;
 import com.btxtech.game.jsre.client.InvalidNickName;
 import com.btxtech.game.jsre.client.MovableService;
+import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
@@ -233,7 +235,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     public static void setCommonInfo(GameInfo gameInfo, UserService userService, ServerItemTypeService serverItemTypeService, MgmtService mgmtService, CmsUiService cmsUiService, SoundService soundService, ClipService clipService) {
-        gameInfo.setUserName(userService.getUserName());
+        gameInfo.setSimpleUser(userService.getSimpleUser());
         gameInfo.setItemTypes(serverItemTypeService.getItemTypes());
         StartupData startupData = mgmtService.getStartupData();
         gameInfo.setRegisterDialogDelay(startupData.getRegisterDialogDelay());
@@ -254,29 +256,30 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public void register(String userName, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, EmailAlreadyExitsException {
+    public SimpleUser register(String userName, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, EmailAlreadyExitsException {
         try {
-            registerService.register(userName, password, confirmPassword, email);
-        } catch (UserAlreadyExistsException | PasswordNotMatchException |EmailAlreadyExitsException e) {
+            return registerService.register(userName, password, confirmPassword, email);
+        } catch (UserAlreadyExistsException | PasswordNotMatchException | EmailAlreadyExitsException e) {
             throw e;
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
+            return null;
         }
-
     }
 
     @Override
-    public void createAndLoginFacebookUser(String signedRequestParameter, String nickname, String email) throws UserAlreadyExistsException {
+    public AdCellProvision createAndLoginFacebookUser(String signedRequestParameter, String nickname, String email) throws UserAlreadyExistsException {
         try {
             FacebookSignedRequest facebookSignedRequest = FacebookUtil.createAndCheckFacebookSignedRequest(cmsUiService.getFacebookAppSecret(), signedRequestParameter);
             facebookSignedRequest.setEmail(email);
             userService.createAndLoginFacebookUser(facebookSignedRequest, nickname);
+            return userService.handleAdCellProvision();
         } catch (UserAlreadyExistsException e) {
             throw e;
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
+            return null;
         }
-
     }
 
     @Override

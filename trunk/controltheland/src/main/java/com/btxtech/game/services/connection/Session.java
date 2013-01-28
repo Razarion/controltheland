@@ -31,11 +31,7 @@ public interface Session {
 
     String getSessionId();
 
-    String getCookieId();
-
-    String getCookieIdToBeSet();
-
-    void clearCookieIdToBeSet();
+    String getTrackingCookieId();
 
     String getUserAgent();
 
@@ -62,4 +58,6 @@ public interface Session {
     FacebookSignedRequest getFacebookSignedRequest();
 
     void setFacebookSignedRequest(FacebookSignedRequest facebookSignedRequest);
+
+    String getAdCellBid();
 }

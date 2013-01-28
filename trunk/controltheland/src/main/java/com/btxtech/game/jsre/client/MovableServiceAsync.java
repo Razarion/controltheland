@@ -61,9 +61,9 @@ public interface MovableServiceAsync {
 
     void getAllSyncInfo(AsyncCallback<Collection<SyncItemInfo>> async);
 
-    void register(String userName, String password, String confirmPassword, String email, AsyncCallback<Void> asyncCallback);
+    void register(String userName, String password, String confirmPassword, String email, AsyncCallback<SimpleUser> asyncCallback);
 
-    void createAndLoginFacebookUser(String signedRequestParameter, String nickname, String email, AsyncCallback<Void> async);
+    void createAndLoginFacebookUser(String signedRequestParameter, String nickname, String email, AsyncCallback<AdCellProvision> asyncCallback);
 
     void loginFacebookUser(String signedRequestParameter, AsyncCallback<Void> async);
 

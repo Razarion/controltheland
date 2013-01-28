@@ -1,5 +1,6 @@
 package com.btxtech.game.services.user.impl;
 
+import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
@@ -98,9 +99,10 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     @Override
-    public void register(String userName, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, EmailAlreadyExitsException {
+    public SimpleUser register(String userName, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, EmailAlreadyExitsException {
         User user = userService.createUnverifiedUser(userName, password, confirmPassword, email);
         sendEmailVerificationMail(user, generateLink(user));
+        return user.createSimpleUser();
     }
 
     private String generateLink(User user) {

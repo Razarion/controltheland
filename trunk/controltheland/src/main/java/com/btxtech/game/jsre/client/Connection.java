@@ -22,7 +22,11 @@ import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
-import com.btxtech.game.jsre.client.control.*;
+import com.btxtech.game.jsre.client.control.GameStartupSeq;
+import com.btxtech.game.jsre.client.control.StartupProgressListener;
+import com.btxtech.game.jsre.client.control.StartupScreen;
+import com.btxtech.game.jsre.client.control.StartupSeq;
+import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.DeferredStartup;
 import com.btxtech.game.jsre.client.dialogs.AllianceDialog;
@@ -38,25 +42,52 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
-import com.btxtech.game.jsre.common.*;
+import com.btxtech.game.jsre.common.CmsUtil;
+import com.btxtech.game.jsre.common.CommonJava;
+import com.btxtech.game.jsre.common.FacebookUtils;
+import com.btxtech.game.jsre.common.Html5NotSupportedException;
+import com.btxtech.game.jsre.common.NoConnectionException;
+import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.services.connection.CommonConnectionService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.btxtech.game.jsre.common.packets.*;
+import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
+import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
+import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
+import com.btxtech.game.jsre.common.packets.BoxPickedPacket;
+import com.btxtech.game.jsre.common.packets.ChatMessage;
+import com.btxtech.game.jsre.common.packets.EnergyPacket;
+import com.btxtech.game.jsre.common.packets.HouseSpacePacket;
+import com.btxtech.game.jsre.common.packets.LevelPacket;
+import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
+import com.btxtech.game.jsre.common.packets.Message;
+import com.btxtech.game.jsre.common.packets.Packet;
+import com.btxtech.game.jsre.common.packets.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.XpPacket;
 import com.btxtech.game.jsre.common.perfmon.Perfmon;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.jsre.common.utg.tracking.*;
+import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
+import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -70,7 +101,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
     public static final int MIN_DELAY_BETWEEN_POLL = 200;
     public static final int STATISTIC_DELAY = 10000;
     public static final Connection INSTANCE = new Connection();
-    private String userName;
+    private SimpleUser simpleUser;
     private GameInfo gameInfo;
     private Collection<SyncItemInfo> syncInfos;
     private ArrayList<BaseCommand> commandQueue = new ArrayList<BaseCommand>();
@@ -467,15 +498,23 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
     }
 
     public boolean isRegistered() {
-        return userName != null;
+        return simpleUser != null;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setSimpleUser(SimpleUser simpleUser) {
+        this.simpleUser = simpleUser;
     }
 
     public String getUserName() {
-        return userName;
+        if (simpleUser != null) {
+            return simpleUser.getName();
+        } else {
+            return null;
+        }
+    }
+
+    public SimpleUser getSimpleUser() {
+        return simpleUser;
     }
 
     public GameInfo getGameInfo() {
