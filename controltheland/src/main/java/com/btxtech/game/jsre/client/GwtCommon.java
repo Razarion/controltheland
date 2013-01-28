@@ -40,6 +40,7 @@ public class GwtCommon {
     public static final String DEBUG_CATEGORY_DEFINITELY_KILL = "CAN_NOT_DEFINITELY_KILL";
     public static final String DEBUG_CATEGORY_IMAGE_LOADER = "IMAGE_LOADER";
     public static final String DEBUG_CATEGORY_TELEPORTATION = "TELEPORTATION";
+    public static final String DEBUG_CATEGORY_HTTP_STATUS_CODE_0 = "HTTP_STATUS_CODE_0";
     private static Boolean isIe;
     private static Boolean isOpera;
     private static Logger log = Logger.getLogger(GwtCommon.class.getName());
@@ -55,7 +56,7 @@ public class GwtCommon {
 
     public static boolean checkAndReportHttpStatusCode0(String message, Throwable t) {
         if (t instanceof StatusCodeException && ((StatusCodeException) t).getStatusCode() == 0) {
-            sendLogViaLoadScriptCommunication("HTTP status code 0 detected: " + message);
+            sendDebug(GwtCommon.DEBUG_CATEGORY_HTTP_STATUS_CODE_0, message);
             return true;
         } else {
             return false;
@@ -98,11 +99,9 @@ public class GwtCommon {
     public static void sendDebug(String category, String message) {
         try {
             Connection.getInstance().sendDebug(new Date(), category, message);
-            return;
         } catch (Throwable ignore) {
-            // Ignore
+            sendLogViaLoadScriptCommunication("Can not send debug message to server: " + ignore);
         }
-        sendLogViaLoadScriptCommunication("Can not send debug message to server: ");
     }
 
     public static void sendLogViaLoadScriptCommunication(String logMessage) {
