@@ -320,7 +320,7 @@ public class UserServiceImpl implements UserService {
             throw new AlreadyLoggedInException(getUserFromSecurityContext());
         }
 
-        if (getUser(facebookSignedRequest.getUserId()) != null) {
+        if (getUser(nickName) != null) {
             throw new UserAlreadyExistsException();
         }
 
