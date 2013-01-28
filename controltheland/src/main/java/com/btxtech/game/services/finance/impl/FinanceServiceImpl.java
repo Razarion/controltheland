@@ -47,7 +47,7 @@ public class FinanceServiceImpl implements FinanceService {
 
     @Override
     @Transactional
-    public void razarionBought(String userName, String itemNumber, String paymentAmount, String paymentCurrency, String txnId, String payerEmail, String receiverEmail, String paymentStatus, String quantity) throws UserDoesNotExitException {
+    public void razarionBought(String userId, String itemNumber, String paymentAmount, String paymentCurrency, String txnId, String payerEmail, String receiverEmail, String paymentStatus, String quantity) throws UserDoesNotExitException {
         if (!(PayPalUtils.IS_SANDBOX ? SANDBOX_RECEIVER_EMAIL : RECEIVER_EMAIL).equalsIgnoreCase(receiverEmail)) {
             throw new IllegalArgumentException("Receiver email is wrong: " + receiverEmail);
         }
@@ -58,13 +58,13 @@ public class FinanceServiceImpl implements FinanceService {
             throw new IllegalArgumentException("Quantity is wrong: " + quantity);
         }
 
-        User user = userService.getUser(userName);
+        User user = userService.getUser(Integer.parseInt(userId));
         if (user == null) {
-            throw new UserDoesNotExitException("User does not exist: " + userName);
+            throw new UserDoesNotExitException("User Id does not exist: " + userId);
         }
         UserState userState = userService.getUserState(user);
         if (userState == null) {
-            throw new IllegalStateException("No UserState for user: " + userName);
+            throw new IllegalStateException("No UserState for user Id: " + userId);
         }
 
         PayPalButton payPalButton = PayPalButton.getButton4ItemNumber(itemNumber);

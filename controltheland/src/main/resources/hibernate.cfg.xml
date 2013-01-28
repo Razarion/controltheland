@@ -153,5 +153,7 @@
         <mapping class="com.btxtech.game.services.common.db.DbI18nString"/>
         <!-- Finance -->
         <mapping class="com.btxtech.game.services.finance.DbPayPalTransaction"/>
+        <!-- AdCell -->
+        <mapping class="com.btxtech.game.services.user.DbAdCellProvision"/>
     </session-factory>
 </hibernate-configuration>

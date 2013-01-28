@@ -177,7 +177,7 @@ public class TestTracking extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userTrackingService.pageAccess("Page 1", null);
         userTrackingService.onJavaScriptDetected(true);
-        String cookieId1 = session.getCookieId();
+        String cookieId1 = session.getTrackingCookieId();
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -188,7 +188,7 @@ public class TestTracking extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userTrackingService.pageAccess("Page 1", null);
-        String cookieId2 = session.getCookieId();
+        String cookieId2 = session.getTrackingCookieId();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

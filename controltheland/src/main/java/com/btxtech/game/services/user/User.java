@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.user;
 
+import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
@@ -36,7 +37,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,7 +54,7 @@ public class User implements UserDetails, Serializable, CrudParent {
     @GeneratedValue
     private Integer id;
     @Index(name = "USER_NAME")
-    @Column(unique=true)
+    @Column(unique = true)
     private String name;
     @Column(name = "passwordHash")
     private String password;
@@ -92,6 +92,8 @@ public class User implements UserDetails, Serializable, CrudParent {
     private String socialNetUserId;
     private Date awaitingVerificationDate;
     private String verificationId;
+    @Column(length = 1000)
+    private String adCellBid;
     @Transient
     private CrudChildServiceHelper<DbContentAccessControl> contentCrud;
     @Transient
@@ -117,15 +119,17 @@ public class User implements UserDetails, Serializable, CrudParent {
         return email;
     }
 
-    public void registerUser(String name, String password, String email) {
+    public void registerUser(String name, String password, String email, String adCellBid) {
         this.name = name;
         this.password = password;
         this.email = email;
+        this.adCellBid = adCellBid;
         registerDate = new Date();
     }
 
-    public void registerFacebookUser(FacebookSignedRequest facebookSignedRequest, String nickName) {
+    public void registerFacebookUser(FacebookSignedRequest facebookSignedRequest, String nickName, String adCellBid) {
         name = nickName;
+        this.adCellBid = adCellBid;
         socialNet = SocialNet.FACEBOOK;
         socialNetUserId = facebookSignedRequest.getUserId();
         email = facebookSignedRequest.getEmail();
@@ -266,6 +270,14 @@ public class User implements UserDetails, Serializable, CrudParent {
 
     public String getVerificationId() {
         return verificationId;
+    }
+
+    public String getAdCellBid() {
+        return adCellBid;
+    }
+
+    public SimpleUser createSimpleUser() {
+        return new SimpleUser(name, id);
     }
 
     @Override

@@ -33,7 +33,7 @@ public abstract class GameEngineStartupTask extends AbstractStartupTask {
     }
 
     protected void setupGameStructure(GameInfo gameInfo) {
-        Connection.getInstance().setUserName(gameInfo.getUserName());
+        Connection.getInstance().setSimpleUser(gameInfo.getSimpleUser());
         ClientEnergyService.getInstance().init();
         TerrainView.getInstance().setupTerrain(gameInfo.getTerrainSettings(),
                 gameInfo.getTerrainImagePositions(),
@@ -47,7 +47,7 @@ public abstract class GameEngineStartupTask extends AbstractStartupTask {
     }
 
     protected void deltaSetupGameStructure(GameInfo gameInfo) {
-        Connection.getInstance().setUserName(gameInfo.getUserName());
+        Connection.getInstance().setSimpleUser(gameInfo.getSimpleUser());
         ClientEnergyService.getInstance().init();
         TerrainView.getInstance().deltaSetupTerrain(gameInfo.getTerrainSettings(),
                 gameInfo.getTerrainImagePositions(),

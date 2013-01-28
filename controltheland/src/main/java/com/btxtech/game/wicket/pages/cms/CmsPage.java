@@ -21,6 +21,7 @@ import com.btxtech.game.services.cms.page.DbPage;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WebCommon;
+import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
 import com.btxtech.game.wicket.uiservices.DisplayPageViewLink;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.commons.logging.Log;
@@ -33,7 +34,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 public class CmsPage extends WebPage implements IHeaderContributor {
@@ -175,8 +175,17 @@ public class CmsPage extends WebPage implements IHeaderContributor {
             log.error("", e);
         }
         super.onBeforeRender();
-        if (userTrackingService.hasCookieToAdd()) {
-            WebCommon.addCookieId(((WebResponse) getRequestCycle().getResponse()).getHttpServletResponse(), userTrackingService.getAndClearCookieToAdd());
+        WicketAuthenticatedWebSession wicketSession = (WicketAuthenticatedWebSession) getSession();
+
+
+        if (wicketSession.isTrackingCookieIdCookieNeeded()) {
+            WebCommon.setTrackingCookie(getWebRequestCycle().getWebResponse(), wicketSession.getTrackingCookieId());
+            wicketSession.clearTrackingCookieIdCookieNeeded();
+        }
+
+        if (wicketSession.isAdCellBidCookieNeeded()) {
+            WebCommon.setAdCellBidCookie(getWebRequestCycle().getWebResponse(), wicketSession.getAdCellBid());
+            wicketSession.clearAdCellBidCookieNeeded();
         }
     }
 }

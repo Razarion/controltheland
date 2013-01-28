@@ -21,7 +21,7 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.tracker.DbSessionDetail;
-import com.btxtech.game.wicket.WebCommon;
+import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +50,6 @@ public class SessionImpl implements Session, Serializable {
     @Autowired
     UserService userService;
     private String sessionId;
-    private String cookieId;
-    private String cookieIdToBeSet;
     private String userAgent;
     private boolean javaScriptDetected = false;
     private DbSessionDetail dbSessionDetail;
@@ -61,6 +59,8 @@ public class SessionImpl implements Session, Serializable {
     private EditMode editMode;
     private boolean html5Support = true;
     private FacebookSignedRequest facebookSignedRequest;
+    private String adCellBid;
+    private String trackingCookieId;
 
     @Override
     public Connection getConnection() {
@@ -76,28 +76,23 @@ public class SessionImpl implements Session, Serializable {
     public void init() {
         sessionId = request.getSession().getId();
         userAgent = request.getHeader("user-agent");
-        cookieId = WebCommon.getCookieId(request);
-        if (cookieId == null) {
-            cookieId = WebCommon.generateCookieId();
-            cookieIdToBeSet = cookieId;
-        }
+        WicketAuthenticatedWebSession wicketSession = (WicketAuthenticatedWebSession) WicketAuthenticatedWebSession.get();
+        adCellBid = wicketSession.getAdCellBid();
+        trackingCookieId = wicketSession.getTrackingCookieId();
         dbSessionDetail = new DbSessionDetail(sessionId,
-                cookieId,
+                wicketSession.getTrackingCookieId(),
                 userAgent,
                 request.getHeader("Accept-Language"),
                 request.getRemoteAddr(),
-                request.getHeader("Referer"));
+                request.getHeader("Referer"),
+                wicketSession.isNewUserTracking(),
+                adCellBid);
         userTrackingService.saveBrowserDetails(dbSessionDetail);
     }
 
     @Override
-    public String getCookieIdToBeSet() {
-        return cookieIdToBeSet;
-    }
-
-    @Override
-    public void clearCookieIdToBeSet() {
-        cookieIdToBeSet = null;
+    public String getAdCellBid() {
+        return adCellBid;
     }
 
     @PreDestroy
@@ -117,8 +112,8 @@ public class SessionImpl implements Session, Serializable {
     }
 
     @Override
-    public String getCookieId() {
-        return cookieId;
+    public String getTrackingCookieId() {
+        return trackingCookieId;
     }
 
     @Override

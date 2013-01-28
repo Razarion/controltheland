@@ -127,6 +127,8 @@ public interface ClientI18nConstants extends Messages {
 
     String registerThanks();
 
+    String registerThanksLong();
+
     String registerConfirmationEmailSent(String email);
 
     String register();

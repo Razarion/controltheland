@@ -14,9 +14,9 @@
 package com.btxtech.game.wicket;
 
 import org.apache.wicket.authentication.AuthenticatedWebSession;
+import org.apache.wicket.protocol.http.WebResponse;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
@@ -26,30 +26,38 @@ import java.util.UUID;
  * Time: 2:03:23 PM
  */
 public class WebCommon {
-    public static final String COOKIE_ID = "cookieId";
+    public static final String AD_CELL_COOKIE_ID = "adCellBid";
+    public static final String RAZARION_COOKIE_ID = "cookieId";
+    private static final int AD_CELL_COOKIE_TIME_SECONDS = 60 * 60 * 24 * 45;
 
-    public static String getCookieId(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
+    public static String getCookie(Cookie[] cookies, String name) {
         if (cookies == null) {
             return null;
         }
         for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(COOKIE_ID)) {
+            if (cookie.getName().equals(name)) {
                 return cookie.getValue();
             }
         }
         return null;
     }
 
-    public static String generateCookieId() {
+    public static void setCookie(WebResponse response, String name, String cookieValue, int maxAgeInSecond) {
+        Cookie cookie = new Cookie(name, cookieValue);
+        cookie.setMaxAge(maxAgeInSecond);
+        response.addCookie(cookie);
+    }
+
+    public static String getTrackingCookie(Cookie[] cookies) {
+        return getCookie(cookies, RAZARION_COOKIE_ID);
+    }
+
+    public static String generateTrackingCookieId() {
         return UUID.randomUUID().toString().toUpperCase();
     }
 
-    public static String addCookieId(HttpServletResponse response, String cookieValue) {
-        Cookie cookie = new Cookie(COOKIE_ID, cookieValue);
-        cookie.setMaxAge(Integer.MAX_VALUE);
-        response.addCookie(cookie);
-        return cookie.getValue();
+    public static void setTrackingCookie(WebResponse response, String cookieValue) {
+        setCookie(response, RAZARION_COOKIE_ID, cookieValue, Integer.MAX_VALUE);
     }
 
     public static boolean isAuthorized(String role) {
@@ -57,4 +65,11 @@ public class WebCommon {
         return session.getRoles().hasRole(role);
     }
 
+    public static String getAdCellBidCookie(Cookie[] cookies) {
+        return getCookie(cookies, AD_CELL_COOKIE_ID);
+    }
+
+    public static void setAdCellBidCookie(WebResponse response, String pid) {
+        setCookie(response, AD_CELL_COOKIE_ID, pid, AD_CELL_COOKIE_TIME_SECONDS);
+    }
 }

@@ -35,7 +35,7 @@ public class PayPalUtils {
         FlowPanel flowPanel = new FlowPanel();
         form.setWidget(flowPanel);
         flowPanel.add(new Hidden("cmd", "_s-xclick"));
-        flowPanel.add(new Hidden("custom", Connection.getInstance().getUserName()));
+        flowPanel.add(new Hidden("custom", Integer.toString(Connection.getInstance().getSimpleUser().getId())));
 
         if (IS_SANDBOX) {
             form.setAction(SANDBOX_ACTION_URL);

@@ -72,17 +72,26 @@ public class TestFinanceService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
+        int userId = getUserState().getUser();
+        String userIdString = Integer.toString(userId);
         Assert.assertEquals(0, getUserState().getRazarion());
         // User exists
         try {
-            financeService.razarionBought("U2", "RAZ1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
+            financeService.razarionBought("120", "RAZ1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
             Assert.fail("UserDoesNotExitException expected");
         } catch (UserDoesNotExitException e) {
             // Expected
         }
+        // Wrong user Id
+        try {
+            financeService.razarionBought("aaaa", "RAZ1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
+            Assert.fail("UserDoesNotExitException expected");
+        } catch (NumberFormatException e) {
+            // Expected
+        }
         // Correct item name
         try {
-            financeService.razarionBought("U1", "RAZ_XXXXX", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
+            financeService.razarionBought(userIdString, "RAZ_XXXXX", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
             // Expected
@@ -90,7 +99,7 @@ public class TestFinanceService extends AbstractServiceTest {
         }
         // Correct cost
         try {
-            financeService.razarionBought("U1", "RAZ1000", "6.00", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
+            financeService.razarionBought(userIdString, "RAZ1000", "6.00", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
             // Expected
@@ -98,7 +107,7 @@ public class TestFinanceService extends AbstractServiceTest {
         }
         // Email
         try {
-            financeService.razarionBought("U1", "RAZ1000", "5.00", "USD", "1", "payer email", "lulola", "Completed", "1");
+            financeService.razarionBought(userIdString, "RAZ1000", "5.00", "USD", "1", "payer email", "lulola", "Completed", "1");
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
             // Expected
@@ -106,7 +115,7 @@ public class TestFinanceService extends AbstractServiceTest {
         }
         // Payment status
         try {
-            financeService.razarionBought("U1", "RAZ1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "kikoka", "1");
+            financeService.razarionBought(userIdString, "RAZ1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "kikoka", "1");
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
             // Expected
@@ -114,7 +123,7 @@ public class TestFinanceService extends AbstractServiceTest {
         }
         // Quantity
         try {
-            financeService.razarionBought("U1", "RAZ1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Completed", "10");
+            financeService.razarionBought(userIdString, "RAZ1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Completed", "10");
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
             // Expected
@@ -122,7 +131,7 @@ public class TestFinanceService extends AbstractServiceTest {
         }
         // Currency
         try {
-            financeService.razarionBought("U1", "RAZ1000", "5.00", "EUR", "1", "payer email", "finance@razarion.com", "Completed", "1");
+            financeService.razarionBought(userIdString, "RAZ1000", "5.00", "EUR", "1", "payer email", "finance@razarion.com", "Completed", "1");
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
             // Expected
@@ -130,10 +139,10 @@ public class TestFinanceService extends AbstractServiceTest {
         }
         Assert.assertEquals(0, getUserState().getRazarion());
         // Transaction id already used
-        financeService.razarionBought("U1", "RAZ1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
+        financeService.razarionBought(userIdString, "RAZ1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
         Assert.assertEquals(1000, getUserState().getRazarion());
         try {
-            financeService.razarionBought("U1", "RAZ1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
+            financeService.razarionBought(userIdString, "RAZ1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
             // Expected
@@ -152,30 +161,32 @@ public class TestFinanceService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
+        int userId = getUserState().getUser();
+        String userIdString = Integer.toString(userId);
         Assert.assertEquals(0, getUserState().getRazarion());
-        financeService.razarionBought("U1", "RAZ1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
+        financeService.razarionBought(userIdString, "RAZ1000", "5", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
         Assert.assertEquals(1000, getUserState().getRazarion());
-        financeService.razarionBought("U1", "RAZ2200", "10", "USD", "2", "payer email", "finance@razarion.com", "Completed", "1");
+        financeService.razarionBought(userIdString, "RAZ2200", "10", "USD", "2", "payer email", "finance@razarion.com", "Completed", "1");
         Assert.assertEquals(3200, getUserState().getRazarion());
-        financeService.razarionBought("U1", "RAZ4600", "20", "USD", "3", "payer email", "finance@razarion.com", "Completed", "1");
+        financeService.razarionBought(userIdString, "RAZ4600", "20", "USD", "3", "payer email", "finance@razarion.com", "Completed", "1");
         Assert.assertEquals(7800, getUserState().getRazarion());
-        financeService.razarionBought("U1", "RAZ12500", "50", "USD", "4", "payer email", "finance@razarion.com", "Completed", "1");
+        financeService.razarionBought(userIdString, "RAZ12500", "50", "USD", "4", "payer email", "finance@razarion.com", "Completed", "1");
         Assert.assertEquals(20300, getUserState().getRazarion());
 
         List<DbPayPalTransaction> transactions = HibernateUtil.loadAll(getSessionFactory(), DbPayPalTransaction.class);
 
         Assert.assertEquals(4, transactions.size());
-        assertTransaction(transactions.get(0), "U1", "RAZ1000", "1", "payer email");
-        assertTransaction(transactions.get(1), "U1", "RAZ2200", "2", "payer email");
-        assertTransaction(transactions.get(2), "U1", "RAZ4600", "3", "payer email");
-        assertTransaction(transactions.get(3), "U1", "RAZ12500", "4", "payer email");
+        assertTransaction(transactions.get(0), userId, "RAZ1000", "1", "payer email");
+        assertTransaction(transactions.get(1), userId, "RAZ2200", "2", "payer email");
+        assertTransaction(transactions.get(2), userId, "RAZ4600", "3", "payer email");
+        assertTransaction(transactions.get(3), userId, "RAZ12500", "4", "payer email");
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
 
-    private void assertTransaction(DbPayPalTransaction payPalTransaction, String userName, String itemName, String txnId, String payerEmail) {
-        Assert.assertEquals(userName, payPalTransaction.getUser());
+    private void assertTransaction(DbPayPalTransaction payPalTransaction, int userId, String itemName, String txnId, String payerEmail) {
+        Assert.assertEquals(userId, payPalTransaction.getUser());
         Assert.assertEquals(itemName, payPalTransaction.getItemNumber());
         Assert.assertEquals(txnId, payPalTransaction.getTxnId());
         Assert.assertEquals(payerEmail, payPalTransaction.getPayerEmail());

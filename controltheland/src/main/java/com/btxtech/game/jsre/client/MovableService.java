@@ -67,9 +67,9 @@ public interface MovableService extends RemoteService {
 
     Collection<SyncItemInfo> getAllSyncInfo();
 
-    void register(String userName, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, EmailAlreadyExitsException;
+    SimpleUser register(String userName, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, EmailAlreadyExitsException;
 
-    void createAndLoginFacebookUser(String signedRequestParameter, String nickname, String email) throws UserAlreadyExistsException, PasswordNotMatchException;
+    AdCellProvision createAndLoginFacebookUser(String signedRequestParameter, String nickname, String email) throws UserAlreadyExistsException, PasswordNotMatchException;
 
     void loginFacebookUser(String signedRequestParameter) throws UserAlreadyExistsException;
 

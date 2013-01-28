@@ -110,18 +110,8 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public boolean hasCookieToAdd() {
-        return session.getCookieIdToBeSet() != null;
-    }
-
-    @Override
-    public String getAndClearCookieToAdd() {
-        String cookieId = session.getCookieIdToBeSet();
-        if (cookieId == null) {
-            throw new IllegalStateException("cookieId == null");
-        }
-        session.clearCookieIdToBeSet();
-        return cookieId;
+    public String getAdCellPid() {
+        return session.getAdCellBid();
     }
 
     @Override
@@ -373,10 +363,11 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         try {
             DbUserHistory dbUserHistory = new DbUserHistory(user);
             dbUserHistory.setSessionId(session.getSessionId());
-            dbUserHistory.setCookieId(session.getCookieId());
+            dbUserHistory.setCookieId(session.getTrackingCookieId());
             dbUserHistory.setCreated();
             dbUserHistory.setVerificationId(user.getVerificationId());
             dbUserHistory.setAwaitingVerificationDate(user.getAwaitingVerificationDate());
+            dbUserHistory.setAdCellPid(user.getAdCellBid());
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
@@ -389,9 +380,10 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         try {
             DbUserHistory dbUserHistory = new DbUserHistory(user);
             dbUserHistory.setSessionId(session.getSessionId());
-            dbUserHistory.setCookieId(session.getCookieId());
+            dbUserHistory.setCookieId(session.getTrackingCookieId());
             dbUserHistory.setVerified();
             dbUserHistory.setVerificationId(user.getVerificationId());
+            dbUserHistory.setAdCellPid(user.getAdCellBid());
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
@@ -404,6 +396,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             DbUserHistory dbUserHistory = new DbUserHistory(user);
             dbUserHistory.setDeleteUnverifiedUser();
             dbUserHistory.setVerificationId(user.getVerificationId());
+            dbUserHistory.setAdCellPid(user.getAdCellBid());
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
@@ -416,11 +409,12 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         try {
             DbUserHistory dbUserHistory = new DbUserHistory(user);
             dbUserHistory.setSessionId(session.getSessionId());
-            dbUserHistory.setCookieId(session.getCookieId());
+            dbUserHistory.setCookieId(session.getTrackingCookieId());
             dbUserHistory.setLoggedIn();
             if (userState != null && userState.getBase() != null) {
                 dbUserHistory.setBaseName(planetSystemService.getServerPlanetServices(userState.getBase().getSimpleBase()).getBaseService().getBaseName(userState.getBase().getSimpleBase()));
             }
+            dbUserHistory.setAdCellPid(user.getAdCellBid());
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
@@ -433,6 +427,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         try {
             DbUserHistory dbUserHistory = new DbUserHistory(user);
             dbUserHistory.setLoggedOut();
+            dbUserHistory.setAdCellPid(user.getAdCellBid());
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
@@ -447,6 +442,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             DbUserHistory dbUserHistory = new DbUserHistory(user);
             dbUserHistory.setBaseCreated();
             dbUserHistory.setBaseName(baseName);
+            dbUserHistory.setAdCellPid(user.getAdCellBid());
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
@@ -461,6 +457,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             DbUserHistory dbUserHistory = new DbUserHistory(user);
             dbUserHistory.setBaseDefeated();
             dbUserHistory.setBaseName(planetSystemService.getServerPlanetServices(base.getSimpleBase()).getBaseService().getBaseName(base.getSimpleBase()));
+            dbUserHistory.setAdCellPid(user.getAdCellBid());
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
@@ -475,6 +472,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             DbUserHistory dbUserHistory = new DbUserHistory(user);
             dbUserHistory.setBaseSurrender();
             dbUserHistory.setBaseName(planetSystemService.getServerPlanetServices(base.getSimpleBase()).getBaseService().getBaseName(base.getSimpleBase()));
+            dbUserHistory.setAdCellPid(user.getAdCellBid());
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
@@ -484,11 +482,11 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     @Transactional
-    // ???
     public void onUserEnterGame(User user) {
         try {
             DbUserHistory dbUserHistory = new DbUserHistory(user);
             dbUserHistory.setGameEntered();
+            dbUserHistory.setAdCellPid(user.getAdCellBid());
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
@@ -501,6 +499,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         try {
             DbUserHistory dbUserHistory = new DbUserHistory(user);
             dbUserHistory.setGameLeft();
+            dbUserHistory.setAdCellPid(user.getAdCellBid());
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);

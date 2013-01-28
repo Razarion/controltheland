@@ -12,5 +12,5 @@ import org.springframework.transaction.annotation.Transactional;
 public interface FinanceService {
     void razarionBought(int razarionBought, UserState userState);
 
-    void razarionBought(String userName, String itemNumber, String paymentAmount, String paymentCurrency, String txnId, String payerEmail, String receiverEmail, String paymentStatus, String quantity) throws UserDoesNotExitException;
+    void razarionBought(String userId, String itemNumber, String paymentAmount, String paymentCurrency, String txnId, String payerEmail, String receiverEmail, String paymentStatus, String quantity) throws UserDoesNotExitException;
 }

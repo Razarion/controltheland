@@ -74,6 +74,7 @@
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="defaultEncoding" value="UTF-8"/>
         <property name="host" value="localhost"/>
+        <!-- property name="host" value="razarion.com"/ -->
     </bean>
 
     <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">

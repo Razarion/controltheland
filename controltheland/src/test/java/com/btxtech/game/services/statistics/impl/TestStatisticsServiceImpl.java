@@ -63,7 +63,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
 
         SimpleBase unregBase = new SimpleBase(1, 1);
         User regUser = new User();
-        regUser.registerUser("xxx", null, null);
+        regUser.registerUser("xxx", null, null, null);
         UserState unregUserState = new UserState();
         unregUserState.setDbLevelId(TEST_LEVEL_1_SIMULATED);
         SimpleBase regBase = new SimpleBase(2, 1);

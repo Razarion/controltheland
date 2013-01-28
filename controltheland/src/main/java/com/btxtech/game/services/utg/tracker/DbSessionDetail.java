@@ -37,7 +37,7 @@ public class DbSessionDetail implements Serializable {
     @Column(nullable = false)
     private Date timeStamp;
     @Column(nullable = false)
-    @Index(name = "TRACKER_BROWSER_DETAILS_INDEX_SESSION")        
+    @Index(name = "TRACKER_BROWSER_DETAILS_INDEX_SESSION")
     private String sessionId;
     @Column(length = 10000)
     private String userAgent;
@@ -45,6 +45,9 @@ public class DbSessionDetail implements Serializable {
     private String remoteHost;
     private String remoteAddr;
     private String cookieId;
+    private boolean newUser;
+    @Column(length = 1000)
+    private String adCellBid;
     @Column(length = 50000)
     private String referer;
     private boolean javaScriptDetected = false;
@@ -57,8 +60,10 @@ public class DbSessionDetail implements Serializable {
     public DbSessionDetail() {
     }
 
-    public DbSessionDetail(String sessionId, String cookieId, String userAgent, String language, String remoteAddr, String Referer) {
+    public DbSessionDetail(String sessionId, String cookieId, String userAgent, String language, String remoteAddr, String referer, boolean newUser, String adCellBid) {
         this.cookieId = cookieId;
+        this.newUser = newUser;
+        this.adCellBid = adCellBid;
         timeStamp = new Date();
         this.sessionId = sessionId;
         this.userAgent = userAgent;
@@ -70,7 +75,7 @@ public class DbSessionDetail implements Serializable {
         } catch (UnknownHostException e) {
             remoteHost = "???";
         }
-        referer = Referer;
+        this.referer = referer;
     }
 
     public Date getTimeStamp() {
@@ -116,6 +121,14 @@ public class DbSessionDetail implements Serializable {
 
     public boolean isHtml5Support() {
         return html5Support;
+    }
+
+    public boolean isNewUser() {
+        return newUser;
+    }
+
+    public String getAdCellBid() {
+        return adCellBid;
     }
 
     @Override

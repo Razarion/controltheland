@@ -35,7 +35,6 @@ import com.btxtech.game.services.utg.tracker.DbScrollTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbSelectionTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbSessionDetail;
 import com.btxtech.game.services.utg.tracker.DbSyncItemInfo;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
@@ -49,10 +48,6 @@ public interface UserTrackingService {
     void saveBrowserDetails(DbSessionDetail dbSessionDetail);
 
     void pageAccess(String pageName, String additional);
-
-    boolean hasCookieToAdd();
-
-    String getAndClearCookieToAdd();
 
     List<SessionOverviewDto> getSessionOverviewDtos(UserTrackingFilter filter);
 
@@ -121,4 +116,6 @@ public interface UserTrackingService {
     List<DbDialogTracking> getDbDialogTrackings(String startUuid);
 
     LifecycleTrackingInfo getLifecycleTrackingInfo(String startUuid);
+
+    String getAdCellPid();
 }
