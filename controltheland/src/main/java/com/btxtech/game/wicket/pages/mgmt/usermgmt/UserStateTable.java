@@ -67,7 +67,7 @@ public class UserStateTable extends MgmtWebPage {
                 item.add(new LevelReadonlyPanel("dbLevelId"));
                 item.add(new Label("sessionId"));
                 item.add(new Label("online"));
-                item.add(new Label("user"));
+                item.add(new Label("user", userService.getUserName(item.getModelObject())));
                 if (item.getModelObject().getBase() != null) {
                     Planet planet = planetSystemService.getPlanet(item.getModelObject());
                     item.add(new Label("planet", planet.getPlanetServices().getPlanetInfo().getName()));
