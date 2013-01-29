@@ -183,6 +183,6 @@ public class FacebookUtils {
     }
 
     native private static boolean nativeCheckFbApiLoaded()/*-{
-        return typeof $wnd.FB != undefined && typeof $wnd.FB.getLoginStatus == 'function';
+        return $wnd.FB != undefined && typeof $wnd.FB.getLoginStatus == 'function';
     }-*/;
 }
