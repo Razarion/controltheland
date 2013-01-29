@@ -49,7 +49,7 @@ public class ExceptionHandler {
                 log.error("Session Id: " + session.getSessionId());
                 log.error("IP: " + session.getRequest().getRemoteAddr());
                 log.error("Referer: " + session.getRequest().getHeader("Referer"));
-                log.error("User: " + (userService.getUserState().getUser() != null ? userService.getUserState().getUser() : "unregistered"));
+                log.error("User: " + (userService.getUserName() != null ? userService.getUserName() : "unregistered"));
             }
         } catch (Exception e) {
             log.error("ExceptionHandler.logParameters()", e);
