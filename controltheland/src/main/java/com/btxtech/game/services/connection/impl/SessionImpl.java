@@ -14,6 +14,7 @@
 package com.btxtech.game.services.connection.impl;
 
 import com.btxtech.game.services.cms.EditMode;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
@@ -76,16 +77,22 @@ public class SessionImpl implements Session, Serializable {
     public void init() {
         sessionId = request.getSession().getId();
         userAgent = request.getHeader("user-agent");
-        WicketAuthenticatedWebSession wicketSession = (WicketAuthenticatedWebSession) WicketAuthenticatedWebSession.get();
-        adCellBid = wicketSession.getAdCellBid();
-        trackingCookieId = wicketSession.getTrackingCookieId();
+        boolean isNewUserTracking = false;
+        try {
+            WicketAuthenticatedWebSession wicketSession = (WicketAuthenticatedWebSession) WicketAuthenticatedWebSession.get();
+            adCellBid = wicketSession.getAdCellBid();
+            trackingCookieId = wicketSession.getTrackingCookieId();
+            isNewUserTracking =  wicketSession.isNewUserTracking();
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+        }
         dbSessionDetail = new DbSessionDetail(sessionId,
-                wicketSession.getTrackingCookieId(),
+                trackingCookieId,
                 userAgent,
                 request.getHeader("Accept-Language"),
                 request.getRemoteAddr(),
                 request.getHeader("Referer"),
-                wicketSession.isNewUserTracking(),
+                isNewUserTracking,
                 adCellBid);
         userTrackingService.saveBrowserDetails(dbSessionDetail);
     }
