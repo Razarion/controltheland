@@ -353,9 +353,11 @@ public class TestHistoryService extends AbstractServiceTest {
             System.out.println(displayHistoryElement);
         }
         System.out.println("----- Actor End -----");
-        Assert.assertEquals(3, displayHistoryElements.size());
+        Assert.assertEquals(4, displayHistoryElements.size());
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
-        Assert.assertEquals(TEST_START_BUILDER_ITEM + " has been sold", displayHistoryElements.get(0).getMessage());
+        Assert.assertEquals("Your base has been destroyed", displayHistoryElements.get(0).getMessage());
+        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
+        Assert.assertEquals(TEST_START_BUILDER_ITEM + " has been sold", displayHistoryElements.get(1).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
