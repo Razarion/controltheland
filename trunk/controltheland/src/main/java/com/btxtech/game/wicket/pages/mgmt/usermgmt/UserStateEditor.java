@@ -93,7 +93,8 @@ public class UserStateEditor extends MgmtWebPage {
         add(form);
 
         form.add(new Label("sessionId"));
-        form.add(new Label("userName"));
+        form.add(new Label("userName", userService.getUserName(userState)));
+        form.add(new Label("userId"));
         setupRazarionBought(form);
         setupLevel(form);
         setupInventoryItem(form);

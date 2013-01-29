@@ -382,6 +382,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public String getUserName(UserState userState) {
+        User user = getUser(userState);
+        if (user != null) {
+            return user.getUsername();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public SimpleUser getSimpleUser() {
         User user = getUser();
         if (user != null) {

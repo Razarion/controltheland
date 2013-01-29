@@ -44,6 +44,8 @@ public interface UserService extends UserDetailsService {
 
     String getUserName();
 
+    String getUserName(UserState userState);
+
     SimpleUser getSimpleUser();
 
     User getUser(String name);
