@@ -183,6 +183,7 @@ public class TestHistoryService extends AbstractServiceTest {
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(actorBase, TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
+        // TODO failed on 19.01.2013
         sendAttackCommand(getFirstSynItemId(actorBase, TEST_ATTACK_ITEM_ID), getFirstSynItemId(targetBase, TEST_START_BUILDER_ITEM_ID));
         waitForActionServiceDone();
         endHttpRequestAndOpenSessionInViewFilter();
