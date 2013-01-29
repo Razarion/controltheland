@@ -38,6 +38,7 @@ import java.util.logging.Logger;
  * Time: 11:41:21
  */
 public class BotItemContainer {
+    private static final int KILL_ITERATION_MAXIMUM = 100;
     private final HashMap<SyncBaseItem, BotSyncBaseItem> botItems = new HashMap<SyncBaseItem, BotSyncBaseItem>();
     private Need need;
     private Logger log = Logger.getLogger(BotItemContainer.class.getName());
@@ -63,16 +64,30 @@ public class BotItemContainer {
     }
 
     public void killAllItems(SimpleBase simpleBase) {
-        if (simpleBase != null) {
-            updateState(simpleBase);
+        try {
+            internalKillAllItems(simpleBase);
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "bot killAllItems failed " + botName, e);
         }
-        synchronized (botItems) {
-            for (SyncBaseItem syncBaseItem : botItems.keySet()) {
-                if (syncBaseItem.isAlive()) {
-                    planetServices.getItemService().killSyncItem(syncBaseItem, null, true, false);
+    }
+
+    public void internalKillAllItems(SimpleBase simpleBase) {
+        for (int i = 0; i < KILL_ITERATION_MAXIMUM; i++) {
+            if (simpleBase != null) {
+                updateState(simpleBase);
+            }
+            if (botItems.isEmpty()) {
+                return;
+            }
+            synchronized (botItems) {
+                for (SyncBaseItem syncBaseItem : botItems.keySet()) {
+                    if (syncBaseItem.isAlive()) {
+                        planetServices.getItemService().killSyncItem(syncBaseItem, null, true, false);
+                    }
                 }
             }
         }
+        throw new IllegalStateException("internalKillAllItems has been called for more than " + KILL_ITERATION_MAXIMUM + " times.");
     }
 
     public Collection<BotSyncBaseItem> getAllIdleAttackers() {

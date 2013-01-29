@@ -264,8 +264,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         Base base = getBase(syncItem);
         base.removeItem(syncItem);
         if (!base.hasItems()) {
+            serverGlobalServices.getHistoryService().addBaseDefeatedEntry(actor, base.getSimpleBase());
             if (actor != null) {
-                serverGlobalServices.getHistoryService().addBaseDefeatedEntry(actor, base.getSimpleBase());
                 sendDefeatedMessage(syncItem, actor);
             }
             Integer userId = null;

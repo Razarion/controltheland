@@ -441,6 +441,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         assertNoHistoryType(DbHistoryElement.Type.BOX_PICKED);
         sendPickupBoxCommand(TEST_PLANET_1_ID, getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), boxItem.getId());
+        // TODO failed 29.01.2013
         waitForHistoryType(DbHistoryElement.Type.BOX_PICKED);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

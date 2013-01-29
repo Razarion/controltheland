@@ -631,7 +631,11 @@ public class HistoryServiceImpl implements HistoryService {
                     if (userId.equals(dbHistoryElement.getActorUserId())) {
                         displayHistoryElement.setMessage("Base destroyed: " + dbHistoryElement.getTargetBaseName());
                     } else if (userName.equals(dbHistoryElement.getTargetBaseName())) {
-                        displayHistoryElement.setMessage("Your base has been destroyed by " + dbHistoryElement.getActorBaseName());
+                        if (dbHistoryElement.getActorBaseName() != null) {
+                            displayHistoryElement.setMessage("Your base has been destroyed by " + dbHistoryElement.getActorBaseName());
+                        } else {
+                            displayHistoryElement.setMessage("Your base has been destroyed");
+                        }
                     } else {
                         displayHistoryElement.setMessage("Internal error 1");
                         log.error("Unknown state 1: " + userId + " " + dbHistoryElement.getActorUserId() + " " + dbHistoryElement.getTargetBaseName());

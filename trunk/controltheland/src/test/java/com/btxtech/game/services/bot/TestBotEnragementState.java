@@ -85,8 +85,32 @@ public class TestBotEnragementState extends AbstractServiceTest {
         SimpleBase botBase = new SimpleBase(1, 1);
         SimpleBase actorBase = new SimpleBase(2, 1);
         SyncBaseItem botItem1State1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(200, 200), new Id(1, Id.NO_ID), botBase);
-        SyncBaseItem botItem2State1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(200, 200), new Id(2, Id.NO_ID), botBase);
-        SyncBaseItem botItem3State2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(3, Id.NO_ID), botBase);
+        SyncBaseItem botItem2State1 = EasyMock.createStrictMock(SyncBaseItem.class);
+        botItem2State1.setBuildup(1.0);
+        EasyMock.expect(botItem2State1.isAlive()).andReturn(true);
+        EasyMock.expect(botItem2State1.isIdle()).andReturn(true);
+        EasyMock.expect(botItem2State1.getId()).andReturn(new Id(2, Id.NO_ID));
+        EasyMock.expect(botItem2State1.isAlive()).andReturn(true);
+        EasyMock.expect(botItem2State1.isIdle()).andReturn(true);
+        EasyMock.expect(botItem2State1.getId()).andReturn(new Id(2, Id.NO_ID));
+        EasyMock.expect(botItem2State1.isAlive()).andReturn(true);
+        EasyMock.expect(botItem2State1.isIdle()).andReturn(true);
+        EasyMock.expect(botItem2State1.getId()).andReturn(new Id(2, Id.NO_ID));
+        EasyMock.expect(botItem2State1.isAlive()).andReturn(true);
+        EasyMock.expect(botItem2State1.isAlive()).andReturn(false);
+        EasyMock.expect(botItem2State1.getId()).andReturn(new Id(2, Id.NO_ID));
+        botItem2State1.setBuildup(1.0);
+
+
+
+        SyncBaseItem botItem3State2 = EasyMock.createStrictMock(SyncBaseItem.class);
+        botItem3State2.setBuildup(1.0);
+        EasyMock.expect(botItem3State2.isAlive()).andReturn(true);
+        EasyMock.expect(botItem3State2.isIdle()).andReturn(true);
+        EasyMock.expect(botItem3State2.getId()).andReturn(new Id(3, Id.NO_ID));
+        EasyMock.expect(botItem3State2.isAlive()).andReturn(true);
+        EasyMock.expect(botItem3State2.isAlive()).andReturn(false);
+        EasyMock.expect(botItem3State2.getId()).andReturn(new Id(3, Id.NO_ID));
         SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(4, Id.NO_ID), actorBase);
 
         List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
@@ -113,6 +137,8 @@ public class TestBotEnragementState extends AbstractServiceTest {
         EasyMock.expect(baseServiceMock.getItems(botBase)).andReturn(null);
         EasyMock.expect(baseServiceMock.getItems(botBase)).andReturn(null);
         EasyMock.expect(baseServiceMock.getItems(botBase)).andReturn(null);
+        EasyMock.expect(baseServiceMock.getItems(botBase)).andReturn(null);
+        EasyMock.expect(baseServiceMock.getItems(botBase)).andReturn(null);
         testServices.setBaseService(baseServiceMock);
 
         ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
@@ -131,12 +157,12 @@ public class TestBotEnragementState extends AbstractServiceTest {
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(botItem1State1.getBaseItemType(), region1, 0, false, true)).andReturn(new Index(200, 200));
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(botItem1State1.getBaseItemType(), region1, 0, false, true)).andReturn(new Index(200, 200));
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(botItem1State1.getBaseItemType(), region1, 0, false, true)).andReturn(new Index(200, 200));
-        EasyMock.expect(mockCollisionService.getFreeRandomPosition(botItem3State2.getBaseItemType(), region1, 0, false, true)).andReturn(new Index(200, 200));
+        EasyMock.expect(mockCollisionService.getFreeRandomPosition(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), region1, 0, false, true)).andReturn(new Index(200, 200));
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(botItem1State1.getBaseItemType(), region1, 0, false, true)).andReturn(new Index(200, 200));
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(botItem1State1.getBaseItemType(), region1, 0, false, true)).andReturn(new Index(200, 200));
         testServices.setCollisionService(mockCollisionService);
 
-        EasyMock.replay(listener, baseServiceMock, mockServerItemService, mockCollisionService);
+        EasyMock.replay(listener, baseServiceMock, mockServerItemService, mockCollisionService, botItem2State1, botItem3State2);
 
         BotEnragementState botEnragementState = new BotEnragementState(botEnragementStateConfigs, region1, testServices, "TestBot", listener);
         botEnragementState.work(botBase);
@@ -156,7 +182,7 @@ public class TestBotEnragementState extends AbstractServiceTest {
         // Normal enrage reached
         botEnragementState.work(botBase);
 
-        EasyMock.verify(listener, baseServiceMock, mockServerItemService, mockCollisionService);
+        EasyMock.verify(listener, baseServiceMock, mockServerItemService, mockCollisionService, botItem2State1, botItem3State2);
     }
 
     @Test
@@ -167,7 +193,26 @@ public class TestBotEnragementState extends AbstractServiceTest {
         SimpleBase botBase = new SimpleBase(1, 1);
         SimpleBase actorBase = new SimpleBase(2, 1);
         SyncBaseItem botItem1State1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(200, 200), new Id(1, Id.NO_ID), botBase);
-        SyncBaseItem botItem2State1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(200, 200), new Id(2, Id.NO_ID), botBase);
+        SyncBaseItem botItem2State1 = EasyMock.createStrictMock(SyncBaseItem.class);
+        botItem2State1.setBuildup(1.0);
+        EasyMock.expect(botItem2State1.isAlive()).andReturn(true);
+        EasyMock.expect(botItem2State1.isIdle()).andReturn(true);
+        EasyMock.expect(botItem2State1.getId()).andReturn(new Id(2, Id.NO_ID));
+        EasyMock.expect(botItem2State1.isAlive()).andReturn(true);
+        EasyMock.expect(botItem2State1.isIdle()).andReturn(true);
+        EasyMock.expect(botItem2State1.getId()).andReturn(new Id(2, Id.NO_ID));
+        EasyMock.expect(botItem2State1.isAlive()).andReturn(true);
+        EasyMock.expect(botItem2State1.isIdle()).andReturn(true);
+        EasyMock.expect(botItem2State1.getId()).andReturn(new Id(2, Id.NO_ID));
+        EasyMock.expect(botItem2State1.isAlive()).andReturn(true);
+        EasyMock.expect(botItem2State1.isIdle()).andReturn(true);
+        EasyMock.expect(botItem2State1.getId()).andReturn(new Id(2, Id.NO_ID));
+        EasyMock.expect(botItem2State1.isAlive()).andReturn(true);
+        EasyMock.expect(botItem2State1.isIdle()).andReturn(true);
+        EasyMock.expect(botItem2State1.getId()).andReturn(new Id(2, Id.NO_ID));
+        EasyMock.expect(botItem2State1.isAlive()).andReturn(true);
+        EasyMock.expect(botItem2State1.isAlive()).andReturn(false);
+        EasyMock.expect(botItem2State1.getId()).andReturn(new Id(2, Id.NO_ID));
         SyncBaseItem attacker1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(4, Id.NO_ID), actorBase);
 
         List<BotEnragementStateConfig> botEnragementStateConfigs = new ArrayList<>();
@@ -192,6 +237,7 @@ public class TestBotEnragementState extends AbstractServiceTest {
         EasyMock.expect(baseServiceMock.getItems(botBase)).andReturn(null);
         EasyMock.expect(baseServiceMock.getItems(botBase)).andReturn(null);
         EasyMock.expect(baseServiceMock.getItems(botBase)).andReturn(null);
+        EasyMock.expect(baseServiceMock.getItems(botBase)).andReturn(null);
         testServices.setBaseService(baseServiceMock);
 
         ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
@@ -210,7 +256,7 @@ public class TestBotEnragementState extends AbstractServiceTest {
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(botItem1State1.getBaseItemType(), region1, 0, false, true)).andReturn(new Index(200, 200));
         testServices.setCollisionService(mockCollisionService);
 
-        EasyMock.replay(listener, baseServiceMock, mockServerItemService, mockCollisionService);
+        EasyMock.replay(listener, baseServiceMock, mockServerItemService, mockCollisionService, botItem2State1);
 
         BotEnragementState botEnragementState = new BotEnragementState(botEnragementStateConfigs, region1, testServices, "TestBot", listener);
         botEnragementState.work(botBase);
@@ -235,7 +281,7 @@ public class TestBotEnragementState extends AbstractServiceTest {
         botItem1State1.setHealth(0);
         botEnragementState.onBotItemKilled(botItem1State1, actorBase);
 
-        EasyMock.verify(listener, baseServiceMock, mockServerItemService, mockCollisionService);
+        EasyMock.verify(listener, baseServiceMock, mockServerItemService, mockCollisionService, botItem2State1);
     }
 
     @Test
@@ -247,7 +293,27 @@ public class TestBotEnragementState extends AbstractServiceTest {
         SimpleBase actorBase1 = new SimpleBase(2, 1);
         SimpleBase actorBase2 = new SimpleBase(3, 1);
         SyncBaseItem botItem1State1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(200, 200), new Id(1, Id.NO_ID), botBase);
-        SyncBaseItem botItem2State1 = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(200, 200), new Id(2, Id.NO_ID), botBase);
+        SyncBaseItem botItem2State1 = EasyMock.createStrictMock(SyncBaseItem.class);
+        botItem2State1.setBuildup(1.0);
+        EasyMock.expect(botItem2State1.isAlive()).andReturn(true);
+        EasyMock.expect(botItem2State1.isIdle()).andReturn(true);
+        EasyMock.expect(botItem2State1.getId()).andReturn(new Id(2, Id.NO_ID));
+        EasyMock.expect(botItem2State1.isAlive()).andReturn(true);
+        EasyMock.expect(botItem2State1.isIdle()).andReturn(true);
+        EasyMock.expect(botItem2State1.getId()).andReturn(new Id(2, Id.NO_ID));
+        EasyMock.expect(botItem2State1.isAlive()).andReturn(true);
+        EasyMock.expect(botItem2State1.isIdle()).andReturn(true);
+        EasyMock.expect(botItem2State1.getId()).andReturn(new Id(2, Id.NO_ID));
+        EasyMock.expect(botItem2State1.isAlive()).andReturn(true);
+        EasyMock.expect(botItem2State1.isIdle()).andReturn(true);
+        EasyMock.expect(botItem2State1.getId()).andReturn(new Id(2, Id.NO_ID));
+        EasyMock.expect(botItem2State1.isAlive()).andReturn(true);
+        EasyMock.expect(botItem2State1.isIdle()).andReturn(true);
+        EasyMock.expect(botItem2State1.getId()).andReturn(new Id(2, Id.NO_ID));
+        EasyMock.expect(botItem2State1.isAlive()).andReturn(true);
+        EasyMock.expect(botItem2State1.isAlive()).andReturn(false);
+        EasyMock.expect(botItem2State1.getId()).andReturn(new Id(2, Id.NO_ID));
+
         SyncBaseItem attacker1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(4, Id.NO_ID), actorBase1);
         SyncBaseItem attacker2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(5, Id.NO_ID), actorBase2);
 
@@ -273,6 +339,7 @@ public class TestBotEnragementState extends AbstractServiceTest {
         EasyMock.expect(baseServiceMock.getItems(botBase)).andReturn(null);
         EasyMock.expect(baseServiceMock.getItems(botBase)).andReturn(null);
         EasyMock.expect(baseServiceMock.getItems(botBase)).andReturn(null);
+        EasyMock.expect(baseServiceMock.getItems(botBase)).andReturn(null);
         testServices.setBaseService(baseServiceMock);
 
         ServerItemService mockServerItemService = EasyMock.createStrictMock(ServerItemService.class);
@@ -291,7 +358,7 @@ public class TestBotEnragementState extends AbstractServiceTest {
         EasyMock.expect(mockCollisionService.getFreeRandomPosition(botItem1State1.getBaseItemType(), region1, 0, false, true)).andReturn(new Index(200, 200));
         testServices.setCollisionService(mockCollisionService);
 
-        EasyMock.replay(listener, baseServiceMock, mockServerItemService, mockCollisionService);
+        EasyMock.replay(listener, baseServiceMock, mockServerItemService, mockCollisionService, botItem2State1);
 
         BotEnragementState botEnragementState = new BotEnragementState(botEnragementStateConfigs, region1, testServices, "TestBot", listener);
         botEnragementState.work(botBase);
@@ -316,7 +383,7 @@ public class TestBotEnragementState extends AbstractServiceTest {
         botItem1State1.setHealth(0);
         botEnragementState.onBotItemKilled(botItem1State1, actorBase2);
 
-        EasyMock.verify(listener, baseServiceMock, mockServerItemService, mockCollisionService);
+        EasyMock.verify(listener, baseServiceMock, mockServerItemService, mockCollisionService, botItem2State1);
     }
 
 }
