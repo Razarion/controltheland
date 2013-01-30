@@ -12,6 +12,7 @@ import com.btxtech.game.jsre.client.dialogs.NickNameDialog;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -42,7 +43,7 @@ public class FacebookUtils {
     }-*/;
 
     public static void fbUiCallBack(JavaScriptObject object) {
-        log.severe("FacebookUtils.fbUiCallBack() " + object);
+        GwtCommon.sendDebug(GwtCommon.DEBUG_FACEBOOK_INVITE, new JSONObject(object).toString());
     }
 
     public static void login(RegisterDialog registerDialog) {
@@ -111,7 +112,6 @@ public class FacebookUtils {
                 nativePostToFeed(Connection.getInstance().getUserName() + " completed a level task on Razarion",
                         "'" + questInfo.getTitle() + "' completed on " + ClientPlanetServices.getInstance().getPlanetInfo().getName(),
                         "Build your base, attack other players and gather resources. A browser multiplayer real-time strategy game.",
-                        GwtCommon.getPredefinedUrl(CmsUtil.CmsPredefinedPage.FACEBOOK_START),
                         RAZARION_APP_URL,
                         ImageHandler.getFacebookFeedImageUrl());
             }
@@ -132,7 +132,6 @@ public class FacebookUtils {
                 nativePostToFeed(Connection.getInstance().getUserName() + " leveled up on Razarion",
                         "Reached level " + levelScope.getNumber() + " on " + ClientPlanetServices.getInstance().getPlanetInfo().getName(),
                         "Build your base, attack other players and gather resources. A browser multiplayer real-time strategy game.",
-                        GwtCommon.getPredefinedUrl(CmsUtil.CmsPredefinedPage.FACEBOOK_START),
                         RAZARION_APP_URL,
                         ImageHandler.getFacebookFeedImageUrl());
             }
@@ -142,12 +141,11 @@ public class FacebookUtils {
         }
     }
 
-    native private static void nativePostToFeed(String name, String caption, String description, String redirectUri, String link, String picture)/*-{
+    native private static void nativePostToFeed(String name, String caption, String description, String link, String picture)/*-{
         $wnd.FB.getLoginStatus(function (response) {
             if (response.status === 'connected') {
                 var obj = {
                     method:'feed',
-                    redirect_uri:redirectUri,
                     link:link,
                     picture:picture,
                     name:name,
@@ -160,7 +158,7 @@ public class FacebookUtils {
     }-*/;
 
     public static void fbUiCallBackPostToFeed(JavaScriptObject object) {
-        log.severe("FacebookUtils.fbUiCallBackPostToFeed() " + object);
+        GwtCommon.sendDebug(GwtCommon.DEBUG_FACEBOOK_POST_FEED, new JSONObject(object).toString());
     }
 
 

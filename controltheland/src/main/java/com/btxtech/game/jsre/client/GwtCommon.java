@@ -41,6 +41,8 @@ public class GwtCommon {
     public static final String DEBUG_CATEGORY_IMAGE_LOADER = "IMAGE_LOADER";
     public static final String DEBUG_CATEGORY_TELEPORTATION = "TELEPORTATION";
     public static final String DEBUG_CATEGORY_HTTP_STATUS_CODE_0 = "HTTP_STATUS_CODE_0";
+    public static final String DEBUG_FACEBOOK_INVITE = "FACEBOOK_INVITE";
+    public static final String DEBUG_FACEBOOK_POST_FEED = "FACEBOOK_POST_FEED";
     private static Boolean isIe;
     private static Boolean isOpera;
     private static Logger log = Logger.getLogger(GwtCommon.class.getName());
