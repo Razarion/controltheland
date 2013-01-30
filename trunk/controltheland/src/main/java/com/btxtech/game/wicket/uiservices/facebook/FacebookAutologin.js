@@ -9,7 +9,16 @@ window.fbAsyncInit = function () {
 
     FB.getLoginStatus(function (response) {
         if (response.status === 'connected') {
-            window.location.href = '${FACEBOOK_START}' + '?signed_request=' + response.authResponse.signedRequest;
+            var form = document.createElement('form');
+            form.setAttribute('method', 'post');
+            form.setAttribute('action', '${FACEBOOK_START}');
+            var hiddenField = document.createElement('input');
+            hiddenField.setAttribute('type', 'hidden');
+            hiddenField.setAttribute('name', 'signed_request');
+            hiddenField.setAttribute("value", response.authResponse.signedRequest);
+            form.appendChild(hiddenField);
+            document.body.appendChild(form);
+            form.submit();
         }
     });
 };
