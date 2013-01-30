@@ -1102,6 +1102,7 @@ public class CmsUiServiceImpl implements CmsUiService {
                 if (!userGuidanceService.isStartRealGame()) {
                     gamePageParameters.add(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, Integer.toString(userGuidanceService.getDefaultLevelTaskId()));
                 }
+                component.setRedirect(true);
                 component.setResponsePage(Game.class, gamePageParameters);
             } else {
                 String signedRequestParameter = pageParameters.getString("signed_request");
@@ -1117,6 +1118,7 @@ public class CmsUiServiceImpl implements CmsUiService {
                         if (!userGuidanceService.isStartRealGame()) {
                             gamePageParameters.add(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, Integer.toString(userGuidanceService.getDefaultLevelTaskId()));
                         }
+                        component.setRedirect(true);
                         component.setResponsePage(Game.class, gamePageParameters);
                     } else {
                         String email;
