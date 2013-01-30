@@ -78,6 +78,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.protocol.http.request.InvalidUrlException;
+import org.apache.wicket.util.string.StringValueConversionException;
 import org.apache.wicket.util.template.JavaScriptTemplate;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hibernate.SessionFactory;
@@ -360,7 +361,11 @@ public class CmsUiServiceImpl implements CmsUiService {
         List<Integer> beanIds = new ArrayList<>();
         for (int level = 0; level < CmsPage.MAX_LEVELS; level++) {
             if (pageParameters.containsKey(CmsPage.getChildUrlParameter(level))) {
-                beanIds.add(pageParameters.getInt(CmsPage.getChildUrlParameter(level)));
+                try {
+                    beanIds.add(pageParameters.getInt(CmsPage.getChildUrlParameter(level)));
+                } catch (StringValueConversionException e) {
+                    throw new InvalidUrlException(e.getMessage());
+                }
             }
         }
 
