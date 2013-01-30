@@ -34,6 +34,7 @@
     <http pattern="/spring/statJS/**" security="none"/>
     <http pattern="/spring/lsc/**" security="none"/>
     <http pattern="/spring/sound/**" security="none"/>
+    <http pattern="/spring/ipnHandler/**" security="none"/>
 
     <http>
         <http-basic/>
