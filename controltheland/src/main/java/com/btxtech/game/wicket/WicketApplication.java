@@ -149,6 +149,9 @@ public class WicketApplication extends AuthenticatedWebApplication implements Ap
             } else if (CommonJava.getMostInnerThrowable(e) instanceof NoDbPageException) {
                 printInfo(cause, e);
                 return cmsUiService.getPredefinedNotFound();
+            } else if (CommonJava.getMostInnerThrowable(e) instanceof NumberFormatException) {
+                printInfo(cause, e);
+                return cmsUiService.getPredefinedNotFound();
             } else {
                 log.error("------------------CMS Unknown Exception---------------------------------");
                 ExceptionHandler.logParameters(log, userService);
