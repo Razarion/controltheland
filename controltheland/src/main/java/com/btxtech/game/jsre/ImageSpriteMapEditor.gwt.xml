@@ -6,6 +6,8 @@
 	<source path="common" />
 
 	<inherits name="com.google.gwt.user.User" />
+    <inherits name="com.google.gwt.logging.Logging"/>
+    <inherits name='com.google.gwt.user.theme.standard.Standard'/>
 
-	<entry-point class="com.btxtech.game.jsre.imagespritemapeditor.ImageSpriteMapEditor" />
+    <entry-point class="com.btxtech.game.jsre.imagespritemapeditor.ImageSpriteMapEditor" />
 </module>
