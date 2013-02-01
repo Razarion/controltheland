@@ -16,6 +16,7 @@ package com.btxtech.game.services.mgmt.impl;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.services.common.ExceptionHandler;
+import com.btxtech.game.services.common.ExtendedVelocityEngineUtils;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.mgmt.BackupSummary;
@@ -26,10 +27,12 @@ import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.SecurityRoles;
+import com.btxtech.game.services.user.User;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
+import org.apache.velocity.app.VelocityEngine;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -42,6 +45,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
@@ -50,6 +56,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import javax.mail.internet.MimeMessage;
 import javax.sql.DataSource;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -76,6 +83,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Component("mgmtService")
 public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
+    public static final String REPLY_EMAIL = "no-reply@razarion.com";
     private static final int MEMORY_SAMPLE_SIZE = 200;
     private static final int MEMORY_SAMPLE_DELAY_SECONDS = 120;
     private Date startTime = new Date();
@@ -88,6 +96,10 @@ public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
     private PlanetSystemService planetSystemService;
     @Autowired
     private ApplicationContext applicationContext;
+    @Autowired
+    private JavaMailSender mailSender;
+    @Autowired
+    private VelocityEngine velocityEngine;
     private static Log log = LogFactory.getLog(MgmtServiceImpl.class);
     private StartupData startupData;
     private MemoryUsageContainer heapMemory = new MemoryUsageContainer(MEMORY_SAMPLE_SIZE);
@@ -432,5 +444,30 @@ public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
         }
         return clientPerfmonDto;
     }
+
+    @Override
+    public void sendEmail(final User user, final String subject, final String inString) {
+        try {
+            if (user.getEmail() == null) {
+                throw new IllegalArgumentException("User has no email address: " + user.getUsername());
+            }
+            MimeMessagePreparator preparator = new MimeMessagePreparator() {
+                public void prepare(MimeMessage mimeMessage) throws Exception {
+                    MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
+                    message.setTo(user.getEmail());
+                    message.setFrom(REPLY_EMAIL);
+                    message.setSubject(subject);
+                    Map<Object, Object> model = new HashMap<>();
+                    model.put("USER", user);
+                    String text = ExtendedVelocityEngineUtils.evaluate(velocityEngine, inString, model);
+                    message.setText(text, true);
+                }
+            };
+            mailSender.send(preparator);
+        } catch (Exception ex) {
+            ExceptionHandler.handleException(ex);
+        }
+    }
+
 }
 
