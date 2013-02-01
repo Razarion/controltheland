@@ -9,6 +9,7 @@ import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsEx
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.mgmt.ServerI18nHelper;
+import com.btxtech.game.services.mgmt.impl.MgmtServiceImpl;
 import com.btxtech.game.services.user.EmailIsAlreadyVerifiedException;
 import com.btxtech.game.services.user.RegisterService;
 import com.btxtech.game.services.user.User;
@@ -52,7 +53,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Component("registerService")
 public class RegisterServiceImpl implements RegisterService {
-    private static final String REPLY_EMAIL = "no-reply@razarion.com";
     private static long CLEANUP_DELAY = 1 * ClientDateUtil.MILLIS_IN_DAY; // Is used in test cases
     @Autowired
     private JavaMailSender mailSender;
@@ -136,7 +136,7 @@ public class RegisterServiceImpl implements RegisterService {
                 public void prepare(MimeMessage mimeMessage) throws Exception {
                     MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
                     message.setTo(user.getEmail());
-                    message.setFrom(REPLY_EMAIL);
+                    message.setFrom(MgmtServiceImpl.REPLY_EMAIL);
                     message.setSubject(serverI18nHelper.getString("emailSubject"));
                     Map<Object, Object> model = new HashMap<>();
                     model.put("greeting", serverI18nHelper.getString("emailVeriGreeting", new Object[]{user.getUsername()}));

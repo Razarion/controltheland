@@ -15,6 +15,7 @@ package com.btxtech.game.services.mgmt;
 
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
+import com.btxtech.game.services.user.User;
 
 import java.util.Date;
 import java.util.List;
@@ -59,4 +60,6 @@ public interface MgmtService {
     List<ClientPerfmonDto> getClientPerfmonData();
 
     ClientPerfmonDto getClientPerfmonData(String sessionId);
+
+    void sendEmail(User user, String subject, String inString);
 }
