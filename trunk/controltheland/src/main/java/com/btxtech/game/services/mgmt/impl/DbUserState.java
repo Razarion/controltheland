@@ -42,7 +42,7 @@ public class DbUserState {
     @Id
     @GeneratedValue
     private Integer id;
-    private int userId;
+    private Integer userId;
     @OneToOne(fetch = FetchType.LAZY)
     private DbBase base;
     @ManyToOne(fetch = FetchType.LAZY)
