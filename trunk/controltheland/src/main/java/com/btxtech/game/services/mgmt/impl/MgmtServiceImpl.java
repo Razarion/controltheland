@@ -446,27 +446,24 @@ public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void sendEmail(final User user, final String subject, final String inString) {
-        try {
-            if (user.getEmail() == null) {
-                throw new IllegalArgumentException("User has no email address: " + user.getUsername());
-            }
-            MimeMessagePreparator preparator = new MimeMessagePreparator() {
-                public void prepare(MimeMessage mimeMessage) throws Exception {
-                    MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
-                    message.setTo(user.getEmail());
-                    message.setFrom(REPLY_EMAIL);
-                    message.setSubject(subject);
-                    Map<Object, Object> model = new HashMap<>();
-                    model.put("USER", user);
-                    String text = ExtendedVelocityEngineUtils.evaluate(velocityEngine, inString, model);
-                    message.setText(text, true);
-                }
-            };
-            mailSender.send(preparator);
-        } catch (Exception ex) {
-            ExceptionHandler.handleException(ex);
+        if (user.getEmail() == null) {
+            throw new IllegalArgumentException("User has no email address: " + user.getUsername());
         }
+        MimeMessagePreparator preparator = new MimeMessagePreparator() {
+            public void prepare(MimeMessage mimeMessage) throws Exception {
+                MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
+                message.setTo(user.getEmail());
+                message.setFrom(REPLY_EMAIL);
+                message.setSubject(subject);
+                Map<Object, Object> model = new HashMap<>();
+                model.put("USER", user);
+                String text = ExtendedVelocityEngineUtils.evaluate(velocityEngine, inString, model);
+                message.setText(text, true);
+            }
+        };
+        mailSender.send(preparator);
     }
 
 }

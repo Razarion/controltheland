@@ -145,5 +145,6 @@ public class MgmtPage extends MgmtWebPage {
         toolPages.add(new LinkAndName("Common Sounds", CommonSounds.class));
         toolPages.add(new LinkAndName("Clip Library", ClipLibrary.class));
         toolPages.add(new LinkAndName("Internationalisation", I18nMgmtPage.class));
+        toolPages.add(new LinkAndName("Send Email", SendEmailPage.class));
     }
 }

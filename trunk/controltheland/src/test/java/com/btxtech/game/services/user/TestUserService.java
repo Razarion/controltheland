@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.AdCellProvision;
 import com.btxtech.game.jsre.client.InvalidNickName;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.HibernateUtil;
+import com.btxtech.game.services.common.NameErrorPair;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import com.btxtech.game.wicket.WebCommon;
 import junit.framework.Assert;
@@ -502,4 +503,91 @@ public class TestUserService extends AbstractServiceTest {
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void checkUserEmails() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createUser("U1", "xxx", "test1.yyy@testXXX.com");
+        createUser("U2", "xxx", "test2.yyy@testXXX.com");
+        createUser("U3", "xxx", null);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        List<NameErrorPair> nameErrorPairs = userService.checkUserEmails("U1\n\rU2\nU3 U4");
+        Assert.assertEquals(2, nameErrorPairs.size());
+        Assert.assertEquals("U3", nameErrorPairs.get(0).getName());
+        Assert.assertEquals("No email address", nameErrorPairs.get(0).getError());
+        Assert.assertEquals("U4", nameErrorPairs.get(1).getName());
+        Assert.assertEquals("Nu such user", nameErrorPairs.get(1).getError());
+    }
+
+    @Test
+    @DirtiesContext
+    public void checkUserEmailsInSession() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createUser("U1", "xxx", "test1.yyy@testXXX.com");
+        createUser("U2", "xxx", "test2.yyy@testXXX.com");
+        createUser("U3", "xxx", null);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<NameErrorPair> nameErrorPairs = userService.checkUserEmails("U1\n\rU2\nU3 U4");
+        Assert.assertEquals(2, nameErrorPairs.size());
+        Assert.assertEquals("U3", nameErrorPairs.get(0).getName());
+        Assert.assertEquals("No email address", nameErrorPairs.get(0).getError());
+        Assert.assertEquals("U4", nameErrorPairs.get(1).getName());
+        Assert.assertEquals("Nu such user", nameErrorPairs.get(1).getError());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void getUsersWithEmail() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createUser("U1", "xxx", "test1.yyy@testXXX.com");
+        createUser("U2", "xxx", "test2.yyy@testXXX.com");
+        createUser("U3", "xxx", null);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        List<User> users = userService.getUsersWithEmail("U1\n\rU2\nU3 U4");
+        Assert.assertEquals(2, users.size());
+        Assert.assertEquals("U1", users.get(0).getUsername());
+        Assert.assertEquals("U2", users.get(1).getUsername());
+    }
+
+    @Test
+    @DirtiesContext
+    public void getUsersWithEmailInSession() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createUser("U1", "xxx", "test1.yyy@testXXX.com");
+        createUser("U2", "xxx", "test2.yyy@testXXX.com");
+        createUser("U3", "xxx", null);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<User> users = userService.getUsersWithEmail("U1\n\rU2\nU3 U4");
+        Assert.assertEquals(2, users.size());
+        Assert.assertEquals("U1", users.get(0).getUsername());
+        Assert.assertEquals("U2", users.get(1).getUsername());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
 }

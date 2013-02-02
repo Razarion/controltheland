@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchExc
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
+import com.btxtech.game.services.common.NameErrorPair;
 import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
@@ -39,6 +40,7 @@ import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -70,6 +72,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.StringTokenizer;
 
 @Component("userService")
 public class UserServiceImpl implements UserService {
@@ -758,5 +761,48 @@ public class UserServiceImpl implements UserService {
 
     private void saveExecutedAdCellProvision(User user) {
         sessionFactory.getCurrentSession().save(new DbAdCellProvision(user));
+    }
+
+    @Override
+    public List<NameErrorPair> checkUserEmails(String usersAsString) {
+        List<NameErrorPair> result = new ArrayList<>();
+        if (StringUtils.isBlank(usersAsString)) {
+            return result;
+        }
+        List<String> userNames = getUserNameList(usersAsString);
+        for (String userName : userNames) {
+            User user = loadUserFromDb(userName);
+            if (user == null) {
+                result.add(new NameErrorPair(userName, "Nu such user"));
+            } else if (user.getEmail() == null) {
+                result.add(new NameErrorPair(userName, "No email address"));
+            }
+        }
+        return result;
+    }
+
+    private List<String> getUserNameList(String usersAsString) {
+        StringTokenizer tokenizer = new StringTokenizer(usersAsString);
+        List<String> userNames = new ArrayList<>();
+        while (tokenizer.hasMoreTokens()) {
+            userNames.add(tokenizer.nextToken());
+        }
+        return userNames;
+    }
+
+    @Override
+    public List<User> getUsersWithEmail(String usersAsString) {
+        List<User> result = new ArrayList<>();
+        if (StringUtils.isBlank(usersAsString)) {
+            return result;
+        }
+        List<String> userNames = getUserNameList(usersAsString);
+        for (String userName : userNames) {
+            User user = loadUserFromDb(userName);
+            if (user != null && user.getEmail() != null) {
+                result.add(user);
+            }
+        }
+        return result;
     }
 }
