@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC>
+<html xmlns:wicket>
+<head>
+    <title>Send Emails to Users</title>
+</head>
+<body>
+<h2>Send Emails to Users</h2>
+<span wicket:id="msgs"/>
+
+<form wicket:id="form">
+    Receiver user<br>
+    One user name per line. No delimiter charackter expected<br>
+    <textarea wicket:id="users" rows="10" cols="40"></textarea>
+
+    <div wicket:id="modalWindow"></div>
+    <br>
+    <input type="submit" wicket:id="checkUserButton" value="Check Users">
+    <br>
+    <br>
+    Email subject<br>
+    <input type="text" wicket:id="subjectField" size="20">
+    <br>
+    <br>
+    Email text. HTML allowed. ${USER.property} for user property.<br>
+    E.g. ${USER.username} for user name.<br>
+    <textarea wicket:id="bodyField" rows="20" cols="80"></textarea>
+    <br>
+    <br>
+    <input type="submit" wicket:id="sendButton" value="Send">
+</form>
+
+</body>
+</html>

@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
+import com.btxtech.game.services.common.NameErrorPair;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import org.springframework.security.core.GrantedAuthority;
@@ -107,4 +108,8 @@ public interface UserService extends UserDetailsService {
     UserState getUserState(SimpleBase simpleBase);
 
     AdCellProvision handleAdCellProvision();
+
+    List<NameErrorPair> checkUserEmails(String usersAsString);
+
+    List<User> getUsersWithEmail(String usersAsString);
 }
