@@ -23,6 +23,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImageBackground;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
+import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -46,7 +47,7 @@ public abstract class GameInfo implements TerrainInfo, Serializable {
     private Map<CmsUtil.CmsPredefinedPage, String> predefinedUrls;
     private CommonSoundInfo commonSoundInfo;
     private Collection<ImageSpriteMapInfo> imageSpriteMapLibrary;
-    private Collection<ClipInfo> clipLibrary;    
+    private Collection<ClipInfo> clipLibrary;
     private PreloadedImageSpriteMapInfo preloadedImageSpriteMapInfo;
 
     public TerrainSettings getTerrainSettings() {

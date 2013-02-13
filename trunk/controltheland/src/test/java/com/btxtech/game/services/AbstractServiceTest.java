@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainUtil;
+import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
@@ -36,6 +37,7 @@ import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.UnlockContainerPacket;
 import com.btxtech.game.jsre.common.packets.XpPacket;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.bot.BotService;
@@ -156,10 +158,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -649,6 +649,17 @@ abstract public class AbstractServiceTest {
             return expected.getMessage().equals(received.getMessage())
                     && expected.getName().equals(received.getName())
                     && expected.getMessageId() == received.getMessageId();
+        } else if (expectedPacket instanceof UnlockContainerPacket) {
+            try {
+                UnlockContainer expected = ((UnlockContainerPacket) expectedPacket).getUnlockContainer();
+                UnlockContainer received = ((UnlockContainerPacket) receivedPacket).getUnlockContainer();
+                Set<Integer> expectedTypes = (Set<Integer>) getPrivateField(UnlockContainer.class, expected, "itemTypes");
+                Set<Integer> receivedTypes = (Set<Integer>) getPrivateField(UnlockContainer.class, received, "itemTypes");
+                return expectedTypes.size() == receivedTypes.size() && expectedTypes.containsAll(receivedTypes) && receivedTypes.containsAll(expectedTypes);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
         } else {
             Assert.fail("Unhandled packet: " + expectedPacket);
             return false;
@@ -1828,6 +1839,10 @@ abstract public class AbstractServiceTest {
 
     protected void createUser(String userName, String password) {
         createUser(userName, password, "fakeemail");
+    }
+
+    protected void loginUser(String userName) {
+        loginUser(userName, "test");
     }
 
     protected void loginUser(String userName, String password) {

@@ -17,12 +17,14 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncProjectileItem;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
@@ -35,6 +37,7 @@ import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.Planet;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.statistics.StatisticsService;
+import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -73,6 +76,8 @@ public class GenericItemConverter {
     private GlobalInventoryService globalInventoryService;
     @Autowired
     private ServerGlobalServices serverGlobalServices;
+    @Autowired
+    private ServerUnlockService serverUnlockService;
     private BackupEntry backupEntry;
     private HashMap<Id, GenericItem> genericItems = new HashMap<>();
     private HashMap<Id, SyncBaseObject> syncBaseObject = new HashMap<>();
@@ -136,12 +141,14 @@ public class GenericItemConverter {
         for (Integer inventoryArtifactId : userState.getInventoryArtifactIds()) {
             inventoryArtifacts.add(globalInventoryService.getArtifactCrud().readDbChild(inventoryArtifactId));
         }
+
         DbUserState dbUserState = new DbUserState(backupEntry,
                 userService.getUser(userState.getUser()),
                 userState,
                 userGuidanceService.getDbLevel(userState),
                 inventoryItems,
-                inventoryArtifacts);
+                inventoryArtifacts,
+                serverUnlockService.getUnlockDbBaseItemTypes(userState));
         if (userState.getBase() != null) {
             DbBase dbBase = bases.get(userState.getBase());
             if (dbBase != null) {
@@ -201,6 +208,7 @@ public class GenericItemConverter {
         }
 
         userService.restore(userStates.values());
+        serverUnlockService.fillAllUnlockContainer(userStates);
         userGuidanceService.restoreBackup(userStates);
         statisticsService.restoreBackup(userStates);
         planetSystemService.restore(dbBases.values(), syncBaseObject.values());

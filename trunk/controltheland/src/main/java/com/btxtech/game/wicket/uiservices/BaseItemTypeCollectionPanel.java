@@ -2,20 +2,13 @@ package com.btxtech.game.wicket.uiservices;
 
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.item.itemType.DbItemTypeI;
 import com.btxtech.game.wicket.pages.mgmt.items.ItemsUtil;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
@@ -28,7 +21,11 @@ public class BaseItemTypeCollectionPanel extends Panel {
     private ServerItemTypeService serverItemTypeService;
 
     public BaseItemTypeCollectionPanel(String id) {
-        super(id);
+        this(id, null);
+    }
+
+    public BaseItemTypeCollectionPanel(String id, IModel<Collection<DbBaseItemType>> model) {
+        super(id, model);
         add(new TextField<>("baseItemTypeIds", new IModel<String>() {
 
             @Override

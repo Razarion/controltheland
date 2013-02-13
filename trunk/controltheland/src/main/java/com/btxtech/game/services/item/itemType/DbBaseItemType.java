@@ -77,6 +77,7 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbLauncherType dbLauncherType;
     private Integer upgradeProgress;
+    private Integer unlockRazarion;
 
     @Override
     public int getHealth() {
@@ -274,6 +275,14 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
         this.upgradeProgress = upgradeProgress;
     }
 
+    public Integer getUnlockRazarion() {
+        return unlockRazarion;
+    }
+
+    public void setUnlockRazarion(Integer unlockRazarion) {
+        this.unlockRazarion = unlockRazarion;
+    }
+
     @Override
     public DbLauncherType getDbLauncherType() {
         return dbLauncherType;
@@ -302,6 +311,7 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
         baseItemType.setBuildup(buildup);
         baseItemType.setDropBoxPossibility(dropBoxPossibility);
         baseItemType.setBoxPickupRange(boxPickupRange);
+        baseItemType.setUnlockRazarion(unlockRazarion);
         if (dbMovableType != null) {
             baseItemType.setMovableType(new MovableType(dbMovableType.getSpeed()));
         }

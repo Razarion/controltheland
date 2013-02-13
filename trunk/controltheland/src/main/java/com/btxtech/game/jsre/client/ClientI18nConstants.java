@@ -74,6 +74,8 @@ public interface ClientI18nConstants extends Messages {
 
     String description();
 
+    String abort();
+
     // Radar
     String tooltipRadar();
 
@@ -268,6 +270,10 @@ public interface ClientI18nConstants extends Messages {
 
     String questType();
 
+    String abortMission();
+
+    String reallyAbortMission();
+
     // No money dialog
     String noMoney();
 
@@ -404,4 +410,17 @@ public interface ClientI18nConstants extends Messages {
     String startupRunSimulatedGame();
 
     String startupDeltaStartSimulatedGame();
+
+    // Unlock dialogs
+    String unlockDialogTitle();
+
+    String itemDialogNoRazarionMessage(String itemTypeName, Integer unlockRazarion, Integer razarion);
+
+    String itemIsLocked(String itemTypeName);
+
+    String unlockRazarionCost(int unlockRazarion);
+
+    String availableRazarion(int razarion);
+
+    String unlockButton();
 }

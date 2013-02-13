@@ -23,6 +23,7 @@ import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
+import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
@@ -125,4 +126,8 @@ public interface MovableService extends RemoteService {
     Collection<CurrentStatisticEntryInfo> loadCurrentStatisticEntryInfos();
 
     void sendPerfmonData(Map<PerfmonEnum, Integer> workTimes, int totalTime);
+
+    int getRazarion();
+
+    UnlockContainer unlockItemType(int itemTypeId);
 }

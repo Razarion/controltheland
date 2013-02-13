@@ -177,8 +177,13 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
     }
 
     @Override
+    public boolean hasPlanet(UserState userState) {
+        return getPlanetNoThrow(userState) != null;
+    }
+
+    @Override
     public boolean hasPlanet() {
-        return getPlanetNoThrow(userService.getUserState()) != null;
+        return hasPlanet(userService.getUserState());
     }
 
     @Override

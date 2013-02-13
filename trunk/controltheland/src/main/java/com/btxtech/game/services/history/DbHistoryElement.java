@@ -14,6 +14,7 @@
 package com.btxtech.game.services.history;
 
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.common.db.IndexUserType;
 import com.btxtech.game.services.planet.PlanetSystemService;
@@ -67,7 +68,8 @@ public class DbHistoryElement implements Serializable {
         INVENTORY_ITEM_BOUGHT,
         INVENTORY_ARTIFACT_BOUGHT,
         BOT_ENRAGE_NORMAL,
-        BOT_ENRAGE_UP
+        BOT_ENRAGE_UP,
+        UNLOCKED_ITEM
     }
 
     public enum Source {
@@ -93,6 +95,7 @@ public class DbHistoryElement implements Serializable {
     private Integer targetBaseId;
     private String targetBaseName;
     private String itemTypeName;
+    private Integer itemId;
     private Integer itemTypeId;
     private String levelName;
     private String levelTaskName;
@@ -115,7 +118,7 @@ public class DbHistoryElement implements Serializable {
     protected DbHistoryElement() {
     }
 
-    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncItem syncItem, DbLevel level, DbLevelTask levelTask, PlanetSystemService planetSystemService, String sessionId, Source source, com.btxtech.game.jsre.client.common.Index position, Integer deltaRazarion, Integer razarion, String inventory, String botName, String botInfo) {
+    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncItem syncItem, DbLevel level, DbLevelTask levelTask, PlanetSystemService planetSystemService, String sessionId, Source source, com.btxtech.game.jsre.client.common.Index position, Integer deltaRazarion, Integer razarion, String inventory, String botName, String botInfo, ItemType itemType) {
         this.sessionId = sessionId;
         this.deltaRazarion = deltaRazarion;
         this.razarion = razarion;
@@ -130,8 +133,14 @@ public class DbHistoryElement implements Serializable {
         actorBaseName = actorBase != null ? planetSystemService.getServerPlanetServices(actorBase).getBaseService().getBaseName(actorBase) : null;
         targetBaseId = targetBase != null ? targetBase.getBaseId() : null;
         targetBaseName = targetBase != null ? planetSystemService.getServerPlanetServices(targetBase).getBaseService().getBaseName(targetBase) : null;
-        itemTypeName = syncItem != null ? syncItem.getItemType().getName() : null;
-        itemTypeId =  syncItem != null ? syncItem.getId().getId() : null;
+        if (syncItem != null) {
+            itemTypeName = syncItem.getItemType().getName();
+            itemTypeId = syncItem.getItemType().getId();
+            itemId = syncItem.getId().getId();
+        } else if (itemType != null) {
+            itemTypeName = itemType.getName();
+            itemTypeId = itemType.getId();
+        }
         levelName = level != null ? level.getName() : null;
         levelTaskName = levelTask != null ? levelTask.getName() : null;
         this.source = source;
@@ -174,6 +183,10 @@ public class DbHistoryElement implements Serializable {
 
     public Integer getItemTypeId() {
         return itemTypeId;
+    }
+
+    public Integer getItemId() {
+        return itemId;
     }
 
     public String getLevelName() {

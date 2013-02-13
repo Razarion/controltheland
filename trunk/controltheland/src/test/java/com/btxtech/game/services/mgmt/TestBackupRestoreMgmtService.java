@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
@@ -22,6 +23,7 @@ import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.RegisterService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
@@ -59,6 +61,8 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
     private PlanetSystemService planetSystemService;
     @Autowired
     private RegisterService registerService;
+    @Autowired
+    private ServerUnlockService unlockService;
 
     @Test
     @DirtiesContext
@@ -686,6 +690,170 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Backup
+        backupAndRestore();
+
+        Assert.assertEquals(Locale.FRANCE, userService.getUserState(userService.getUser("U1")).getLocale());
+        Assert.assertEquals(Locale.ENGLISH, userService.getUserState(userService.getUser("U2")).getLocale());
+        Assert.assertEquals(Locale.GERMAN, userService.getUserState(userService.getUser("U3")).getLocale());
+    }
+
+    @Test
+    @DirtiesContext
+    public void testUnlocked() throws Exception {
+        configureSimplePlanetNoResources();
+        // Preparation
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBaseItemType attacker = serverItemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID);
+        attacker.setUnlockRazarion(10);
+        serverItemTypeService.saveDbItemType(attacker);
+        DbBaseItemType factory = serverItemTypeService.getDbBaseItemType(TEST_FACTORY_ITEM_ID);
+        factory.setUnlockRazarion(8);
+        serverItemTypeService.saveDbItemType(factory);
+        serverItemTypeService.activate();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // U1 reg user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        // Verify & modify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        getUserState().setRazarion(100);
+        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
+        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        // Verify & modify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
+        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        unlockService.unlockItemType(TEST_FACTORY_ITEM_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // U2 reg user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U2");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        // Verify U1
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify U2 & modify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U2");
+        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
+        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        getUserState().setRazarion(100);
+        unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
+        unlockService.unlockItemType(TEST_FACTORY_ITEM_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        // Verify U1
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify U2
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U2");
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Unregistered user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getUserState().setRazarion(100);
+        getMyBase(); // Create base
+        unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
+        unlockService.unlockItemType(TEST_FACTORY_ITEM_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        // Verify U1
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify U2
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U2");
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Restore before user unlocked something
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<BackupSummary>backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(5).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify U1
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
+        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+    }
+
+    private void backupAndRestore() throws NoSuchItemTypeException {
+        // Backup
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         mgmtService.backup();
@@ -698,13 +866,9 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         mgmtService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-
-        Assert.assertEquals(Locale.FRANCE, userService.getUserState(userService.getUser("U1")).getLocale());
-        Assert.assertEquals(Locale.ENGLISH, userService.getUserState(userService.getUser("U2")).getLocale());
-        Assert.assertEquals(Locale.GERMAN, userService.getUserState(userService.getUser("U3")).getLocale());
     }
 
-        private void verifyUserStates(List<UserState> newUserStates, List<UserState> oldUserStates) {
+    private void verifyUserStates(List<UserState> newUserStates, List<UserState> oldUserStates) {
         Assert.assertEquals(oldUserStates.size(), newUserStates.size());
         for (UserState oldUserState : oldUserStates) {
             Integer oldUser = oldUserState.getUser();

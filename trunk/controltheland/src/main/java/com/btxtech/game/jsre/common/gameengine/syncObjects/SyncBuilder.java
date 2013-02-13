@@ -179,8 +179,10 @@ public class SyncBuilder extends SyncBaseAbility {
         if (!builderType.isAbleToBuild(builderCommand.getToBeBuilt())) {
             throw new IllegalArgumentException(this + " can not build: " + builderCommand.getToBeBuilt());
         }
-
         BaseItemType tmpToBeBuiltType = (BaseItemType) getGlobalServices().getItemTypeService().getItemType(builderCommand.getToBeBuilt());
+        if (getGlobalServices().getUnlockService().isItemLocked(tmpToBeBuiltType, getSyncBaseItem().getBase())) {
+            throw new IllegalArgumentException(this + " item is locked: " + builderCommand.getToBeBuilt());
+        }
         if (!getPlanetServices().getTerrainService().isFree(builderCommand.getPositionToBeBuilt(), tmpToBeBuiltType)) {
             throw new PositionTakenException(builderCommand.getPositionToBeBuilt(), builderCommand.getToBeBuilt());
         }

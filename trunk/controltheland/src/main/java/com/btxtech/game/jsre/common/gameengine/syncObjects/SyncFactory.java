@@ -142,8 +142,13 @@ public class SyncFactory extends SyncBaseAbility {
         if (!factoryType.isAbleToBuild(factoryCommand.getToBeBuilt())) {
             throw new IllegalArgumentException(this + " can not fabricate: " + factoryCommand.getToBeBuilt());
         }
+        BaseItemType tmpToBeBuiltType = (BaseItemType) getGlobalServices().getItemTypeService().getItemType(factoryCommand.getToBeBuilt());
+
+        if (getGlobalServices().getUnlockService().isItemLocked(tmpToBeBuiltType, getSyncBaseItem().getBase())) {
+            throw new IllegalArgumentException(this + " item is locked: " + factoryCommand.getToBeBuilt());
+        }
         if (toBeBuiltType == null) {
-            toBeBuiltType = (BaseItemType) getGlobalServices().getItemTypeService().getItemType(factoryCommand.getToBeBuilt());
+            toBeBuiltType = tmpToBeBuiltType;
         }
     }
 

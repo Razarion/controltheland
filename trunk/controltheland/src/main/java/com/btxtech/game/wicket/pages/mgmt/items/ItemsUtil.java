@@ -14,7 +14,6 @@
 package com.btxtech.game.wicket.pages.mgmt.items;
 
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,7 +45,7 @@ public class ItemsUtil {
         if (itemsString == null) {
             return null;
         }
-        Set<DbBaseItemType> result = new HashSet<DbBaseItemType>();
+        Set<DbBaseItemType> result = new HashSet<>();
         StringTokenizer st = new StringTokenizer(itemsString, DELIMITER);
         while (st.hasMoreTokens()) {
             int id = Integer.parseInt(st.nextToken());
@@ -64,12 +63,13 @@ public class ItemsUtil {
         throw new IllegalArgumentException("Item type does not exist: " + id);
     }
 
-    public static Collection<Integer> itemTypesToCollection(Set<DbBaseItemType> itemTypes) {
-        ArrayList<Integer> result = new ArrayList<Integer>();
-        for (DbBaseItemType itemType : itemTypes) {
-            result.add(itemType.getId());
+    public static Collection<Integer> itemTypesToIntegers(Collection<DbBaseItemType> itemTypes) {
+        ArrayList<Integer> result = new ArrayList<>();
+        if (itemTypes != null) {
+            for (DbBaseItemType itemType : itemTypes) {
+                result.add(itemType.getId());
+            }
         }
         return result;
     }
-
 }

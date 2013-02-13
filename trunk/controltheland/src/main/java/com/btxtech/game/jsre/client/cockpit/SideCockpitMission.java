@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.cockpit;
 
+import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualtsationModel;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
@@ -51,6 +52,9 @@ public class SideCockpitMission extends Composite {
                 QuestVisualtsationModel.getInstance().abortMission();
             }
         };
-        DialogManager.showDialog(new YesNoDialog("Abort Mission", "Do you really want to abort this Mission?", "Abort", clickHandler, "Cancel", null), DialogManager.Type.QUEUE_ABLE);
+        DialogManager.showDialog(new YesNoDialog(ClientI18nHelper.CONSTANTS.abortMission(),
+                ClientI18nHelper.CONSTANTS.reallyAbortMission(),
+                ClientI18nHelper.CONSTANTS.abort(), clickHandler, ClientI18nHelper.CONSTANTS.cancel(),
+                null), DialogManager.Type.QUEUE_ABLE);
     }
 }

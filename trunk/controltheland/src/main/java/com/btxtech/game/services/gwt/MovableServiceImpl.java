@@ -29,6 +29,7 @@ import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
+import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
@@ -66,6 +67,7 @@ import com.btxtech.game.services.terrain.TerrainDbUtil;
 import com.btxtech.game.services.terrain.TerrainImageService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
+import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.AllianceService;
 import com.btxtech.game.services.user.RegisterService;
 import com.btxtech.game.services.user.UserService;
@@ -118,6 +120,8 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     private RegisterService registerService;
     @Autowired
     private HttpServletRequest request;
+    @Autowired
+    private ServerUnlockService serverUnlockService;
 
     @Override
     public void sendCommands(List<BaseCommand> baseCommands) {
@@ -192,6 +196,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             realGameInfo.setAllPlanets(planetSystemService.getAllPlanetLiteInfos());
             userGuidanceService.fillRealGameInfo(realGameInfo, request.getLocale());
             realGameInfo.setAllianceOffers(allianceService.getPendingAllianceOffers());
+            realGameInfo.setUnlockContainer(serverUnlockService.getUnlockContainer(base.getSimpleBase()));
             return realGameInfo;
         } catch (InvalidLevelStateException invalidLevelStateException) {
             throw invalidLevelStateException;
@@ -521,6 +526,26 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             mgmtService.saveClientPerfmonData(session.getSessionId(), workTimes, totalTime);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
+        }
+    }
+
+    @Override
+    public int getRazarion() {
+        try {
+            return userService.getUserState().getRazarion();
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return 0;
+        }
+    }
+
+    @Override
+    public UnlockContainer unlockItemType(int itemTypeId) {
+        try {
+            return serverUnlockService.unlockItemType(itemTypeId);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
         }
     }
 }

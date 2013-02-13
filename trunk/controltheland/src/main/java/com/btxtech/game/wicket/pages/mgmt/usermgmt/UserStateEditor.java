@@ -17,13 +17,16 @@ import com.btxtech.game.services.finance.FinanceService;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.statistics.StatisticsEntry;
 import com.btxtech.game.services.statistics.StatisticsService;
+import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.XpService;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
+import com.btxtech.game.wicket.uiservices.BaseItemTypeCollectionPanel;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
 import com.btxtech.game.wicket.uiservices.LevelReadonlyPanel;
 import org.apache.wicket.markup.html.basic.Label;
@@ -35,10 +38,12 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +66,8 @@ public class UserStateEditor extends MgmtWebPage {
     private StatisticsService statisticsService;
     @SpringBean
     private FinanceService financeService;
+    @SpringBean
+    private ServerUnlockService unlockService;
     private Integer dbLevelId;
     private Integer xp;
     private Integer razarionBought;
@@ -100,6 +107,7 @@ public class UserStateEditor extends MgmtWebPage {
         setupInventoryItem(form);
         setupInventoryArtifact(form);
         setupRazarion(form);
+        setupUnlockedItems(form);
         setupHighScore(form);
     }
 
@@ -386,5 +394,23 @@ public class UserStateEditor extends MgmtWebPage {
         form.add(new TextField<>("basesLostPlayer"));
         form.add(new Button("activate"));
     }
+
+
+    private void setupUnlockedItems(final Form<UserState> form) {
+        final LoadableDetachableModel<Collection<DbBaseItemType>> model = new LoadableDetachableModel<Collection<DbBaseItemType>>() {
+            @Override
+            protected Collection<DbBaseItemType> load() {
+                return unlockService.getUnlockDbBaseItemTypes(form.getModelObject());
+            }
+        };
+        form.add(new BaseItemTypeCollectionPanel("unlockedItems", model));
+        form.add(new Button("saveUnlockedItems") {
+            @Override
+            public void onSubmit() {
+                unlockService.setUnlockedBaseItemTypesBackend(model.getObject(), form.getModelObject());
+            }
+        });
+    }
+
 
 }

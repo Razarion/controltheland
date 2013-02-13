@@ -23,6 +23,7 @@ import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.renderer.Renderer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.client.unlock.ClientUnlockServiceImpl;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
 import com.btxtech.game.jsre.client.utg.tip.dialog.TipManager;
@@ -52,5 +53,6 @@ public class ClearGame extends AbstractStartupTask {
         TipManager.getInstance().deactivate();
         RadarPanel.getInstance().cleanup();
         TerrainView.getInstance().moveAbsolute(new Index(0, 0));
+        ClientUnlockServiceImpl.getInstance().setUnlockContainer(null);
     }
 }
