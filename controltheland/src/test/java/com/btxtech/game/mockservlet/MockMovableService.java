@@ -29,6 +29,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -303,6 +304,16 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     @Override
     public void sendPerfmonData(Map<PerfmonEnum, Integer> workTimes, int totalTime) {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public int getRazarion() {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public UnlockContainer unlockItemType(int itemTypeId) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override

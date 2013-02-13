@@ -9,6 +9,7 @@ import com.btxtech.game.services.mgmt.ServerI18nHelper;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.terrain.TerrainImageService;
+import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.AllianceService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -53,6 +54,8 @@ public class ServerGlobalServicesImpl implements ServerGlobalServices {
     private ServerGlobalConnectionService serverGlobalConnectionService;
     @Autowired
     private ServerI18nHelper serverI18nHelper;
+    @Autowired
+    private ServerUnlockService serverUnlockService;
 
     @Override
     public HistoryService getHistoryService() {
@@ -122,5 +125,10 @@ public class ServerGlobalServicesImpl implements ServerGlobalServices {
     @Override
     public ServerI18nHelper getServerI18nHelper() {
         return serverI18nHelper;
+    }
+
+    @Override
+    public ServerUnlockService getUnlockService() {
+        return serverUnlockService;
     }
 }

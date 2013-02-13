@@ -36,6 +36,8 @@ public interface PlanetSystemService {
 
     void createBase(UserState userState) throws InvalidLevelStateException;
 
+    boolean hasPlanet(UserState userState);
+
     boolean hasPlanet();
 
     Planet getPlanet(SimpleBase simpleBase) throws NoSuchPlanetException;

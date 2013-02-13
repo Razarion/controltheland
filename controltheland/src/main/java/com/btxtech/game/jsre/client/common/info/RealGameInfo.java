@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
+import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
 import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.packets.XpPacket;
@@ -44,6 +45,7 @@ public class RealGameInfo extends GameInfo {
     private LevelScope levelScope;
     private PlanetInfo planetInfo;
     private List<PlanetLiteInfo> allPlanets;
+    private UnlockContainer unlockContainer;
 
     public SimpleBase getBase() {
         return base;
@@ -139,6 +141,14 @@ public class RealGameInfo extends GameInfo {
 
     public void setAllPlanets(List<PlanetLiteInfo> allPlanets) {
         this.allPlanets = allPlanets;
+    }
+
+    public UnlockContainer getUnlockContainer() {
+        return unlockContainer;
+    }
+
+    public void setUnlockContainer(UnlockContainer unlockContainer) {
+        this.unlockContainer = unlockContainer;
     }
 
     @Override

@@ -40,6 +40,7 @@ import com.btxtech.game.jsre.client.dialogs.quest.QuestDialog;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
+import com.btxtech.game.jsre.client.unlock.ClientUnlockServiceImpl;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.CmsUtil;
@@ -50,6 +51,7 @@ import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.services.connection.CommonConnectionService;
+import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
@@ -65,6 +67,7 @@ import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
+import com.btxtech.game.jsre.common.packets.UnlockContainerPacket;
 import com.btxtech.game.jsre.common.packets.XpPacket;
 import com.btxtech.game.jsre.common.perfmon.Perfmon;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
@@ -303,6 +306,8 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                 } else if (packet instanceof XpPacket) {
                     XpPacket xpPacket = (XpPacket) packet;
                     SideCockpit.getInstance().setXp(xpPacket.getXp(), xpPacket.getXp2LevelUp());
+                } else if (packet instanceof UnlockContainerPacket) {
+                    ClientUnlockServiceImpl.getInstance().setUnlockContainer(((UnlockContainerPacket) packet).getUnlockContainer());
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }
@@ -800,6 +805,44 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
     public void surrenderBase() {
         if (movableServiceAsync != null) {
             movableServiceAsync.surrenderBase(new VoidAsyncCallback("surrenderBase"));
+        }
+    }
+
+    public void getRazarion(final ParametrisedRunnable<Integer> runnable) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.getRazarion(new AsyncCallback<Integer>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    handleDisconnection("getRazarion", caught);
+                }
+
+                @Override
+                public void onSuccess(Integer razarion) {
+                    runnable.run(razarion);
+                }
+            });
+        }
+    }
+
+
+    public void unlockItemType(int itemTypeId, final Runnable successRunnable) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.unlockItemType(itemTypeId, new AsyncCallback<UnlockContainer>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    handleDisconnection("getRazarion", caught);
+                }
+
+                @Override
+                public void onSuccess(UnlockContainer unlockContainer) {
+                    if (unlockContainer != null) {
+                        ClientUnlockServiceImpl.getInstance().setUnlockContainer(unlockContainer);
+                    }
+                    successRunnable.run();
+                }
+            });
         }
     }
 

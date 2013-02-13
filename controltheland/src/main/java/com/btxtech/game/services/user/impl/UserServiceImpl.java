@@ -29,6 +29,7 @@ import com.btxtech.game.services.inventory.GlobalInventoryService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import com.btxtech.game.services.statistics.StatisticsService;
+import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.DbAdCellProvision;
 import com.btxtech.game.services.user.DbContentAccessControl;
@@ -94,6 +95,8 @@ public class UserServiceImpl implements UserService {
     private GlobalInventoryService globalInventoryService;
     @Autowired
     private PlanetSystemService planetSystemService;
+    @Autowired
+    private ServerUnlockService serverUnlockService;
     @Value(value = "${security.md5salt}")
     private String md5HashSalt;
     private final Collection<UserState> userStates = new ArrayList<>();
@@ -225,6 +228,7 @@ public class UserServiceImpl implements UserService {
             }
             userGuidanceService.onRemoveUserState(userState);
             statisticsService.onRemoveUserState(userState);
+            serverUnlockService.onUserStateRemoved(userState);
         }
     }
 
@@ -649,6 +653,7 @@ public class UserServiceImpl implements UserService {
         }
         userGuidanceService.setLevelForNewUser(userState);
         globalInventoryService.setupNewUserState(userState);
+        serverUnlockService.onUserStateCreated(userState);
         if (user != null) {
             userState.setUser(user.getId());
         }

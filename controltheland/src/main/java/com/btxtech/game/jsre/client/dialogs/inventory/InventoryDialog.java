@@ -20,9 +20,15 @@ public class InventoryDialog extends Dialog {
     private Integer filterPlanetId;
     private boolean filterLevel;
     private boolean isCenterCalledOnce;
+    private boolean showBuyTab;
 
     public InventoryDialog() {
+        this(false);
+    }
+
+    public InventoryDialog(boolean showBuyTab) {
         super(ClientI18nHelper.CONSTANTS.inventory());
+        this.showBuyTab = showBuyTab;
     }
 
     @Override
@@ -46,6 +52,10 @@ public class InventoryDialog extends Dialog {
         mainTabbedPanel.displayDealerItems(inventoryInfo, inventoryInfo.getAllInventoryItemInfos());
         mainTabbedPanel.displayDealerFunds(inventoryInfo, inventoryInfo.getAllInventoryItemInfos());
         mainTabbedPanel.displayDealerArtifacts(inventoryInfo, inventoryInfo.getAllInventoryArtifactInfos());
+
+        if (showBuyTab) {
+            mainTabbedPanel.showBuyTab();
+        }
 
         if (!isCenterCalledOnce) {
             center();

@@ -5,9 +5,11 @@ import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.unlock.ClientUnlockServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -15,7 +17,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.event.dom.client.MouseDownEvent;
 
 /**
  * User: beat Date: 08.04.2011 Time: 14:48:13
@@ -129,7 +130,7 @@ public class BuildupItem extends Composite {
         buildupItemButtonContent.setEnabled(enableState.isEnabled());
         buildupItemButtonContent.setText(itemCount + "/" + itemLimit);
         button.setEnabled(enableState.isEnabled());
-}
+    }
 
     public void onMoneyChanged(double accountBalance) {
         int price = itemType.getPrice();
@@ -144,7 +145,17 @@ public class BuildupItem extends Composite {
 
     @UiHandler("button")
     void onButtonMouseDown(MouseDownEvent event) {
-        buttonListener.onButtonPressed(new Index(event.getX(), event.getY()));
+        final Index relativeMousePosition = new Index(event.getX(), event.getY());
+        if (ClientUnlockServiceImpl.getInstance().isItemLocked(itemType)) {
+            ClientUnlockServiceImpl.getInstance().askUnlockItem(itemType, new Runnable() {
+                @Override
+                public void run() {
+                    buttonListener.onButtonPressed(relativeMousePosition);
+                }
+            });
+        } else {
+            buttonListener.onButtonPressed(relativeMousePosition);
+        }
         GwtCommon.preventDefault(event);
     }
 }

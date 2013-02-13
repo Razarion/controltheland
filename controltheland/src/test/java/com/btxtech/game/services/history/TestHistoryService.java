@@ -17,10 +17,12 @@ import com.btxtech.game.services.inventory.DbInventoryArtifactCount;
 import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
 import com.btxtech.game.services.item.ServerItemTypeService;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
+import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.AllianceService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -60,6 +62,10 @@ public class TestHistoryService extends AbstractServiceTest {
     private PlanetSystemService planetSystemService;
     @Autowired
     private FinanceService financeService;
+    @Autowired
+    private ServerUnlockService unlockService;
+    @Autowired
+    private ServerItemTypeService itemTypeService;
 
     @Test
     @DirtiesContext
@@ -666,6 +672,48 @@ public class TestHistoryService extends AbstractServiceTest {
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
         Assert.assertEquals("Bought Razarion 2200 via PayPal", displayHistoryElements.get(0).getMessage());
         Assert.assertEquals("Bought Razarion 1000 via PayPal", displayHistoryElements.get(1).getMessage());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testItemUnlocked() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBaseItemType attacker = itemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID);
+        attacker.setUnlockRazarion(10);
+        itemTypeService.saveDbItemType(attacker);
+        DbBaseItemType factory = itemTypeService.getDbBaseItemType(TEST_FACTORY_ITEM_ID);
+        factory.setUnlockRazarion(8);
+        itemTypeService.saveDbItemType(factory);
+        itemTypeService.activate();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        getUserState().setRazarion(100);
+        getMyBase(); // Create Base
+        unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
+        unlockService.unlockItemType(TEST_FACTORY_ITEM_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 1000);
+        System.out.println("----- u1 Target-----");
+        for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
+            System.out.println(displayHistoryElement);
+        }
+        Assert.assertEquals(4, displayHistoryElements.size());
+        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
+        Assert.assertEquals("Item unlocked TestFactoryItem", displayHistoryElements.get(0).getMessage());
+        Assert.assertEquals("Item unlocked TestAttackItem", displayHistoryElements.get(1).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

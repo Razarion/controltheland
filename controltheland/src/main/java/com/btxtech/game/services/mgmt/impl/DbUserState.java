@@ -3,6 +3,7 @@ package com.btxtech.game.services.mgmt.impl;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryItem;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.statistics.StatisticsEntry;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
@@ -10,6 +11,7 @@ import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.condition.DbGenericComparisonValue;
+import com.btxtech.game.wicket.pages.mgmt.items.ItemsUtil;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.TypeDef;
@@ -77,6 +79,12 @@ public class DbUserState {
     private int razarion;
     @org.hibernate.annotations.Type(type = "locale")
     private Locale locale;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "BACKUP_USER_STATUS_UNLOCKED_ITEM",
+            joinColumns = {@JoinColumn(name = "userState")},
+            inverseJoinColumns = {@JoinColumn(name = "unlockedItem")})
+    private Collection<DbBaseItemType> unlockedItemTypes;
+
 
     /**
      * Used by hibernate
@@ -84,7 +92,7 @@ public class DbUserState {
     protected DbUserState() {
     }
 
-    public DbUserState(BackupEntry backupEntry, User user, UserState userState, DbLevel dbLevel, Collection<DbInventoryItem> inventoryItems, Collection<DbInventoryArtifact> inventoryArtifacts) {
+    public DbUserState(BackupEntry backupEntry, User user, UserState userState, DbLevel dbLevel, Collection<DbInventoryItem> inventoryItems, Collection<DbInventoryArtifact> inventoryArtifacts, Collection<DbBaseItemType> unlockedItemTypes) {
         this.backupEntry = backupEntry;
         if (user != null) {
             this.userId = user.getId();
@@ -95,6 +103,7 @@ public class DbUserState {
         sendResurrectionMessage = userState.isSendResurrectionMessage();
         this.inventoryItems = inventoryItems;
         this.inventoryArtifacts = inventoryArtifacts;
+        this.unlockedItemTypes = unlockedItemTypes;
         locale = userState.getLocale();
     }
 
@@ -115,7 +124,6 @@ public class DbUserState {
         userState.setXp(xp);
         userState.setRazarion(razarion);
         userState.setLocale(locale);
-
         if (sendResurrectionMessage) {
             userState.setSendResurrectionMessage();
         }
@@ -172,6 +180,10 @@ public class DbUserState {
 
     public void setStatisticsEntry(StatisticsEntry statisticsEntry) {
         this.statisticsEntry = statisticsEntry;
+    }
+
+    public Collection<DbBaseItemType> getUnlockedItemTypes() {
+        return unlockedItemTypes;
     }
 
     @Override

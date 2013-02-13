@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
+import com.btxtech.game.jsre.client.unlock.ClientUnlockServiceImpl;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 
 /**
@@ -44,6 +45,7 @@ public class RealDeltaStartupTask extends GameEngineStartupTask {
         ClientBase.getInstance().setHouseSpace(realGameInfo.getHouseSpace());
         ClientPlanetServices.getInstance().setPlanetInfo(realGameInfo.getPlanetInfo());
         ClientLevelHandler.getInstance().setLevel(realGameInfo.getLevelScope());
+        ClientUnlockServiceImpl.getInstance().setUnlockContainer(realGameInfo.getUnlockContainer());
     }
 
 }

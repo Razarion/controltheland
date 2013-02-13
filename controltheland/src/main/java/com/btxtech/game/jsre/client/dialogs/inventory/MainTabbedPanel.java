@@ -65,6 +65,10 @@ public class MainTabbedPanel extends Composite {
         buyPanel.setWidget(new BuyPanel(inventoryDialog));
     }
 
+    public void showBuyTab() {
+        tabPanel.selectTab(3);
+    }
+
     private void setupFilter() {
         GameInfo gameInfo = Connection.getInstance().getGameInfo();
         if (!(gameInfo instanceof RealGameInfo)) {

@@ -17,13 +17,12 @@ import com.btxtech.game.jsre.client.control.ClientRunner;
 import com.btxtech.game.jsre.client.control.StartupScreen;
 import com.btxtech.game.jsre.client.item.ItemTypeContainer;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
+import com.btxtech.game.jsre.client.unlock.ClientUnlockServiceImpl;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
-import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
-import com.btxtech.game.jsre.common.gameengine.services.connection.CommonConnectionService;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemTypeService;
+import com.btxtech.game.jsre.common.gameengine.services.unlock.UnlockService;
 import com.btxtech.game.jsre.common.gameengine.services.utg.CommonUserGuidanceService;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.utg.ConditionService;
 
 /**
@@ -67,5 +66,10 @@ public class ClientGlobalServices implements GlobalServices {
 
     public ClientRunner getClientRunner() {
         return clientRunner;
+    }
+
+    @Override
+    public UnlockService getUnlockService() {
+        return ClientUnlockServiceImpl.getInstance();
     }
 }

@@ -39,6 +39,7 @@ public class BaseItemType extends ItemType {
     private int upgradeProgress;
     private double dropBoxPossibility;
     private int boxPickupRange;
+    private Integer unlockRazarion;
 
     public int getHealth() {
         return health;
@@ -200,6 +201,18 @@ public class BaseItemType extends ItemType {
         this.consumingHouseSpace = consumingHouseSpace;
     }
 
+    public boolean isUnlockNeeded() {
+        return unlockRazarion != null;
+    }
+
+    public Integer getUnlockRazarion() {
+        return unlockRazarion;
+    }
+
+    public void setUnlockRazarion(Integer unlockRazarion) {
+        this.unlockRazarion = unlockRazarion;
+    }
+
     @Override
     public void changeTo(ItemType itemType) {
         super.changeTo(itemType);
@@ -213,6 +226,7 @@ public class BaseItemType extends ItemType {
         upgradeProgress = baseItemType.upgradeProgress;
         dropBoxPossibility = baseItemType.dropBoxPossibility;
         boxPickupRange = baseItemType.getBoxPickupRange();
+        unlockRazarion = baseItemType.getUnlockRazarion();
 
         if (movableType != null) {
             movableType.changeTo(baseItemType.movableType);
