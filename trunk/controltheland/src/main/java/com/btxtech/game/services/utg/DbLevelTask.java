@@ -55,6 +55,7 @@ public class DbLevelTask implements CrudChild<DbLevel> {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private DbConditionConfig dbConditionConfig;
+    private Integer unlockRazarion;
 
     @Override
     public Integer getId() {
@@ -143,6 +144,18 @@ public class DbLevelTask implements CrudChild<DbLevel> {
         this.questTypeEnum = questTypeEnum;
     }
 
+    public Integer getUnlockRazarion() {
+        return unlockRazarion;
+    }
+
+    public void setUnlockRazarion(Integer unlockRazarion) {
+        this.unlockRazarion = unlockRazarion;
+    }
+
+    public boolean isUnlockNeeded() {
+        return unlockRazarion != null;
+    }
+
     public QuestInfo createQuestInfo(Locale locale) {
         String additionalDescription = null;
         Index radarPositionHint = null;
@@ -152,7 +165,7 @@ public class DbLevelTask implements CrudChild<DbLevel> {
             radarPositionHint = dbConditionConfig.getRadarPositionHint();
             hideQuestProgress = dbConditionConfig.isHideQuestProgress();
         }
-        return new QuestInfo(i18nTitle.getString(locale), i18nDescription.getString(locale), additionalDescription, questTypeEnum, xp, money, id, isDbTutorialConfig() ? QuestInfo.Type.MISSION : QuestInfo.Type.QUEST, radarPositionHint, hideQuestProgress);
+        return new QuestInfo(i18nTitle.getString(locale), i18nDescription.getString(locale), additionalDescription, questTypeEnum, xp, money, id, isDbTutorialConfig() ? QuestInfo.Type.MISSION : QuestInfo.Type.QUEST, radarPositionHint, hideQuestProgress, unlockRazarion);
     }
 
     @Override

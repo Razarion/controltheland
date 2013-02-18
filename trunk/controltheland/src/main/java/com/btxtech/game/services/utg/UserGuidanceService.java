@@ -74,4 +74,8 @@ public interface UserGuidanceService extends CommonUserGuidanceService {
     QuestOverview getQuestOverview(Locale locale);
 
     int getXp2LevelUp(UserState userState);
+
+    DbLevelTask getDbLevelTask4Id(int questId);
+
+    void onQuestUnlocked(int dbLevelTaskId);
 }

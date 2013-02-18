@@ -412,15 +412,23 @@ public interface ClientI18nConstants extends Messages {
     String startupDeltaStartSimulatedGame();
 
     // Unlock dialogs
-    String unlockDialogTitle();
+    String unlockItemDialogTitle();
+
+    String unlockQuestDialogTitle();
 
     String itemDialogNoRazarionMessage(String itemTypeName, Integer unlockRazarion, Integer razarion);
 
+    String questDialogNoRazarionMessage(String questName, Integer unlockRazarion, Integer razarion);
+
     String itemIsLocked(String itemTypeName);
+
+    String questIsLocked(String title);
 
     String unlockRazarionCost(int unlockRazarion);
 
     String availableRazarion(int razarion);
 
     String unlockButton();
+
+    String questLocked();
 }

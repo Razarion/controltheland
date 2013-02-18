@@ -1,6 +1,7 @@
 package com.btxtech.game.services.history;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
@@ -8,6 +9,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
+import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.bot.DbBotEnragementStateConfig;
 import com.btxtech.game.services.common.HibernateUtil;
@@ -25,7 +27,11 @@ import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
 import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.AllianceService;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.condition.DbConditionConfig;
+import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,6 +43,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * User: beat
@@ -714,6 +721,63 @@ public class TestHistoryService extends AbstractServiceTest {
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
         Assert.assertEquals("Item unlocked TestFactoryItem", displayHistoryElements.get(0).getMessage());
         Assert.assertEquals("Item unlocked TestAttackItem", displayHistoryElements.get(1).getMessage());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    private void setupCondition(DbLevelTask dbLevelTask1) {
+        DbConditionConfig dbConditionConfig = new DbConditionConfig();
+        dbConditionConfig.setConditionTrigger(ConditionTrigger.MONEY_INCREASED);
+        DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
+        dbCountComparisonConfig.setCount(3);
+        dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
+        dbLevelTask1.setDbConditionConfig(dbConditionConfig);
+    }
+
+    @Test
+    @DirtiesContext
+    public void testQuestUnlocked() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbLevel dbLevel = userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID);
+        DbLevelTask dbLevelTask1 = dbLevel.getLevelTaskCrud().createDbChild();
+        dbLevelTask1.setName("LT1");
+        dbLevelTask1.setUnlockRazarion(10);
+        setupCondition(dbLevelTask1);
+        DbLevelTask dbLevelTask2 = dbLevel.getLevelTaskCrud().createDbChild();
+        dbLevelTask2.setName("LT2");
+        dbLevelTask2.setUnlockRazarion(20);
+        setupCondition(dbLevelTask2);
+        userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
+        userGuidanceService.activateLevels();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        getUserState().setRazarion(100);
+        getMyBase(); // Create Base
+        unlockService.unlockQuest(dbLevelTask1.getId());
+        unlockService.unlockQuest(dbLevelTask2.getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 1000);
+        System.out.println("----- u1 Target-----");
+        for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
+            System.out.println(displayHistoryElement);
+        }
+        Assert.assertEquals(5, displayHistoryElements.size());
+        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
+        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
+        Assert.assertEquals("Quest unlocked LT2", displayHistoryElements.get(0).getMessage());
+        Assert.assertEquals("Level Task activated: LT1", displayHistoryElements.get(1).getMessage());
+        Assert.assertEquals("Quest unlocked LT1", displayHistoryElements.get(2).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

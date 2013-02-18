@@ -1,5 +1,6 @@
 package com.btxtech.game.services.unlock.impl;
 
+import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
@@ -10,6 +11,7 @@ import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockServic
 import com.btxtech.game.jsre.common.packets.UnlockContainerPacket;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.ServerPlanetServices;
+import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
@@ -18,7 +20,8 @@ import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.wicket.pages.mgmt.items.ItemsUtil;
+import com.btxtech.game.services.utg.DbLevelTask;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -45,10 +48,17 @@ public class ServerUnlockServiceImpl extends UnlockServiceImpl implements Server
     private HistoryService historyService;
     @Autowired
     private ServerItemTypeService serverItemTypeService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
 
     @Override
     protected boolean isMission() {
         return false;
+    }
+
+    @Override
+    public boolean isQuestLocked(QuestInfo questInfo, UserState userState) {
+       return isQuestLocked(questInfo, getUnlockContainer(userState));
     }
 
     @Override
@@ -66,7 +76,10 @@ public class ServerUnlockServiceImpl extends UnlockServiceImpl implements Server
         synchronized (unlockContainers) {
             unlockContainers.clear();
             for (Map.Entry<DbUserState, UserState> entry : userStates.entrySet()) {
-                unlockContainers.put(entry.getValue(), new UnlockContainer(ItemsUtil.itemTypesToIntegers(entry.getKey().getUnlockedItemTypes())));
+                UnlockContainer unlockContainer = new UnlockContainer();
+                unlockContainer.setItemTypes(Utils.dbBaseItemTypesToInts(entry.getKey().getUnlockedItemTypes()));
+                unlockContainer.setQuests(Utils.crudChildToInts(entry.getKey().getUnlockedQuests()));
+                unlockContainers.put(entry.getValue(), unlockContainer);
             }
         }
     }
@@ -81,7 +94,7 @@ public class ServerUnlockServiceImpl extends UnlockServiceImpl implements Server
     @Override
     public void onUserStateCreated(UserState userState) {
         synchronized (unlockContainers) {
-            unlockContainers.put(userState, new UnlockContainer(null));
+            unlockContainers.put(userState, new UnlockContainer());
         }
     }
 
@@ -102,7 +115,7 @@ public class ServerUnlockServiceImpl extends UnlockServiceImpl implements Server
                 throw new IllegalStateException("unlockContainer == null");
             }
             if (unlockContainer.containsItemTypeId(itemTypeId)) {
-                throw new IllegalArgumentException("itemTypeId is already unlocked: " + itemTypeId);
+                throw new IllegalArgumentException("questId is already unlocked: " + itemTypeId);
             }
             unlockContainer.unlockItemType(itemTypeId);
             userState.subRazarion(baseItemType.getUnlockRazarion());
@@ -112,22 +125,72 @@ public class ServerUnlockServiceImpl extends UnlockServiceImpl implements Server
     }
 
     @Override
+    public UnlockContainer unlockQuest(int questId) throws NoSuchItemTypeException {
+        UserState userState = userService.getUserState();
+        DbLevelTask dbLevelTask = userGuidanceService.getDbLevelTask4Id(questId);
+        if (!dbLevelTask.isUnlockNeeded()) {
+            throw new IllegalArgumentException("Quest can not be unlocked: " + dbLevelTask);
+        }
+        if (dbLevelTask.getUnlockRazarion() > userState.getRazarion()) {
+            throw new IllegalArgumentException("Not enough razarion to by: " + dbLevelTask + " user: " + userState);
+        }
+        UnlockContainer unlockContainer;
+        synchronized (unlockContainers) {
+            unlockContainer = unlockContainers.get(userState);
+            if (unlockContainer == null) {
+                throw new IllegalStateException("unlockContainer == null");
+            }
+            if (unlockContainer.containsQuestId(questId)) {
+                throw new IllegalArgumentException("questId is already unlocked: " + questId);
+            }
+            unlockContainer.unlockQuest(questId);
+            userState.subRazarion(dbLevelTask.getUnlockRazarion());
+            historyService.addQuestUnlocked(userState, dbLevelTask);
+        }
+        userGuidanceService.onQuestUnlocked(questId);
+        return unlockContainer;
+    }
+
+    @Override
     public Collection<DbBaseItemType> getUnlockDbBaseItemTypes(UserState userState) {
         Collection<DbBaseItemType> unlockedItems = new ArrayList<>();
-        try {
-            UnlockContainer unlockContainer = getUnlockContainer(userState);
-            for (Integer itemTypeId : unlockContainer.getItemTypes()) {
+        UnlockContainer unlockContainer = getUnlockContainer(userState);
+        for (Integer itemTypeId : unlockContainer.getItemTypes()) {
+            try {
                 unlockedItems.add(serverItemTypeService.getDbBaseItemType(itemTypeId));
+            } catch (Exception e) {
+                ExceptionHandler.handleException(e, "Unable to generate DbBaseItemType collection for: " + userState);
             }
-        } catch (Exception e) {
-            ExceptionHandler.handleException(e, "Unable to generate DbBaseItemType collection for: " + userState);
         }
         return unlockedItems;
     }
 
     @Override
+    public Collection<DbLevelTask> getUnlockQuests(UserState userState) {
+        Collection<DbLevelTask> unlockedQuests = new ArrayList<>();
+        UnlockContainer unlockContainer = getUnlockContainer(userState);
+        for (Integer questId : unlockContainer.getQuests()) {
+            try {
+                unlockedQuests.add(userGuidanceService.getDbLevelTask4Id(questId));
+            } catch (Exception e) {
+                ExceptionHandler.handleException(e, "Unable to generate DbLevelTask collection for: " + userState);
+            }
+        }
+        return unlockedQuests;
+    }
+
+    @Override
     public void setUnlockedBaseItemTypesBackend(Collection<DbBaseItemType> dbBaseItemTypes, UserState userStates) {
-        UnlockContainer unlockContainer = new UnlockContainer(ItemsUtil.itemTypesToIntegers(dbBaseItemTypes));
+        UnlockContainer unlockContainer = getUnlockContainer(userStates);
+        unlockContainer.setItemTypes(Utils.dbBaseItemTypesToInts(dbBaseItemTypes));
+        unlockContainers.put(userStates, unlockContainer);
+        sendPacket(userStates, unlockContainer);
+    }
+
+    @Override
+    public void setUnlockedQuestsBackend(Collection<DbLevelTask> dbLevelTasks, UserState userStates) {
+        UnlockContainer unlockContainer = getUnlockContainer(userStates);
+        unlockContainer.setQuests(Utils.crudChildToInts(dbLevelTasks));
         unlockContainers.put(userStates, unlockContainer);
         sendPacket(userStates, unlockContainer);
     }

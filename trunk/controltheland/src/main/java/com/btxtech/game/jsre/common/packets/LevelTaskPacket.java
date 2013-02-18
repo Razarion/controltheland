@@ -37,4 +37,13 @@ public class LevelTaskPacket extends Packet{
     public void setCompleted() {
         completed = true;
     }
+
+    @Override
+    public String toString() {
+        return "LevelTaskPacket{" +
+                "questInfo=" + questInfo +
+                ", questProgressInfo=" + questProgressInfo +
+                ", completed=" + completed +
+                '}';
+    }
 }

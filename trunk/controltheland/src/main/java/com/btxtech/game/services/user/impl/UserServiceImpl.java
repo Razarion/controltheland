@@ -651,9 +651,9 @@ public class UserServiceImpl implements UserService {
         synchronized (userStates) {
             userStates.add(userState);
         }
+        serverUnlockService.onUserStateCreated(userState);
         userGuidanceService.setLevelForNewUser(userState);
         globalInventoryService.setupNewUserState(userState);
-        serverUnlockService.onUserStateCreated(userState);
         if (user != null) {
             userState.setUser(user.getId());
         }

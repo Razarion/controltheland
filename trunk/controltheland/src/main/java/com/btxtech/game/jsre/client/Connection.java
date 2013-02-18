@@ -825,14 +825,13 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         }
     }
 
-
     public void unlockItemType(int itemTypeId, final Runnable successRunnable) {
         if (movableServiceAsync != null) {
             movableServiceAsync.unlockItemType(itemTypeId, new AsyncCallback<UnlockContainer>() {
 
                 @Override
                 public void onFailure(Throwable caught) {
-                    handleDisconnection("getRazarion", caught);
+                    handleDisconnection("unlockItemType", caught);
                 }
 
                 @Override
@@ -841,6 +840,28 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                         ClientUnlockServiceImpl.getInstance().setUnlockContainer(unlockContainer);
                     }
                     successRunnable.run();
+                }
+            });
+        }
+    }
+
+    public void unlockQuest(int questId, final Runnable successRunnable) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.unlockQuest(questId, new AsyncCallback<UnlockContainer>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    handleDisconnection("unlockQuest", caught);
+                }
+
+                @Override
+                public void onSuccess(UnlockContainer unlockContainer) {
+                    if (unlockContainer != null) {
+                        ClientUnlockServiceImpl.getInstance().setUnlockContainer(unlockContainer);
+                    }
+                    if (successRunnable != null) {
+                        successRunnable.run();
+                    }
                 }
             });
         }

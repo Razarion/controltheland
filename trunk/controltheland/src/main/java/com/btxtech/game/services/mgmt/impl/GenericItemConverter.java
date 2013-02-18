@@ -148,7 +148,8 @@ public class GenericItemConverter {
                 userGuidanceService.getDbLevel(userState),
                 inventoryItems,
                 inventoryArtifacts,
-                serverUnlockService.getUnlockDbBaseItemTypes(userState));
+                serverUnlockService.getUnlockDbBaseItemTypes(userState),
+                serverUnlockService.getUnlockQuests(userState));
         if (userState.getBase() != null) {
             DbBase dbBase = bases.get(userState.getBase());
             if (dbBase != null) {

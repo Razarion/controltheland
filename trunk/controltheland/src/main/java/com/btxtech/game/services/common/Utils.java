@@ -87,6 +87,17 @@ public class Utils {
         return ints;
     }
 
+    public static Collection<Integer> crudChildToInts(Collection<? extends CrudChild> crudChildren) {
+        ArrayList<Integer> ints = new ArrayList<>();
+        if (crudChildren == null) {
+            return ints;
+        }
+        for (CrudChild item : crudChildren) {
+            ints.add((Integer) item.getId());
+        }
+        return ints;
+    }
+
     public static void printJarLocation(Class clazz) {
         try {
             File jarFile = new File(clazz.getProtectionDomain().getCodeSource().getLocation().toURI());

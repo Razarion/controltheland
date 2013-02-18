@@ -12,10 +12,10 @@
 	 <ui:with field='msg'
          type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
 		
-	<g:VerticalPanel>
-		<g:Label text="msg.questLocked" styleName="{style.text}"/>
+	<g:VerticalPanel spacing="10">
+		<g:Label text="{msg.questLocked}" styleName="{style.text}"/>
 		<g:Cell horizontalAlignment="ALIGN_CENTER">
-			<g:Button text="{msg.unlockButton}" ui:field="button"/>
+			<g:Button text="{msg.unlockButton}" ui:field="button" styleName="singleButton"/>
 		</g:Cell>
 	</g:VerticalPanel>
 </ui:UiBinder> 

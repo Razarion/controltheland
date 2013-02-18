@@ -317,6 +317,11 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
+    public UnlockContainer unlockQuest(int questId) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
     public void surrenderBase() {
         //To change body of implemented methods use File | Settings | File Templates.
     }

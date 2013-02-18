@@ -125,4 +125,6 @@ public interface MovableServiceAsync {
     void getRazarion(AsyncCallback<Integer> async);
 
     void unlockItemType(int itemTypeId, AsyncCallback<UnlockContainer> async);
+
+    void unlockQuest(int questId, AsyncCallback<UnlockContainer> async);
 }

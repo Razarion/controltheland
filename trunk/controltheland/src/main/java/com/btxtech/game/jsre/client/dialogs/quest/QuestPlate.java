@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualtsationModel;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
+import com.btxtech.game.jsre.client.unlock.ClientUnlockServiceImpl;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -22,6 +23,7 @@ public class QuestPlate extends Composite {
     private static QuestPlateUiBinder uiBinder = GWT.create(QuestPlateUiBinder.class);
     private static QuestImages questImages = GWT.create(QuestImages.class);
     private int questId;
+    private QuestInfo info;
     private QuestDialog questDialog;
     @UiField
     Button button;
@@ -38,6 +40,7 @@ public class QuestPlate extends Composite {
     }
 
     public QuestPlate(QuestInfo info, QuestDialog questDialog) {
+        this.info = info;
         this.questDialog = questDialog;
         if (info.getType() == QuestInfo.Type.MISSION) {
             icon = new Image(questImages.mission());
@@ -52,10 +55,28 @@ public class QuestPlate extends Composite {
             descriptionPanel.add(new DescriptionBlock(ClientI18nHelper.CONSTANTS.questType(), info.getQuestTypeEnum().getString()));
         }
         descriptionPanel.add(new DescriptionBlock(ClientI18nHelper.CONSTANTS.description(), info.getDescription()));
+        if (ClientUnlockServiceImpl.getInstance().isQuestLocked(info)) {
+            button.setText(ClientI18nHelper.CONSTANTS.unlockButton());
+        } else {
+            button.setText(ClientI18nHelper.CONSTANTS.activate());
+        }
     }
 
     @UiHandler("button")
     void onButtonClick(ClickEvent event) {
+        if (ClientUnlockServiceImpl.getInstance().isQuestLocked(info)) {
+            ClientUnlockServiceImpl.getInstance().askUnlockQuest(info, new Runnable() {
+                @Override
+                public void run() {
+                    activateQuest();
+                }
+            });
+        } else {
+            activateQuest();
+        }
+    }
+
+    private void activateQuest() {
         if (QuestVisualtsationModel.getInstance().hasActiveQuest()) {
             ClickHandler clickHandler = new ClickHandler() {
                 @Override

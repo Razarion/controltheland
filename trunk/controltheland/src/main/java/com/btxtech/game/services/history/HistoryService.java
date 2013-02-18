@@ -14,6 +14,7 @@
 package com.btxtech.game.services.history;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotEnragementStateConfig;
@@ -84,6 +85,8 @@ public interface HistoryService {
     void addBotEnrageNormal(String botName, BotEnragementStateConfig botEnragementState);
 
     void addItemUnlocked(UserState userState, BaseItemType baseItemType);
+
+    void addQuestUnlocked(UserState userState, DbLevelTask dbLevelTask);
 
     List<DisplayHistoryElement> getNewestHistoryElements(User user, int count);
 

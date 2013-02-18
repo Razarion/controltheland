@@ -19,6 +19,7 @@ public class QuestInfo implements Serializable {
     private int id;
     private Index radarPosition;
     private boolean hideQuestProgress;
+    private Integer unlockRazarion;
 
     /**
      * Used by GWT
@@ -26,7 +27,7 @@ public class QuestInfo implements Serializable {
     QuestInfo() {
     }
 
-    public QuestInfo(String title, String description, String additionDescription, QuestTypeEnum questTypeEnum, int xp, int gold, int id, Type type, Index radarPosition, boolean hideQuestProgress) {
+    public QuestInfo(String title, String description, String additionDescription, QuestTypeEnum questTypeEnum, int xp, int gold, int id, Type type, Index radarPosition, boolean hideQuestProgress, Integer unlockRazarion) {
         this.title = title;
         this.description = description;
         this.additionDescription = additionDescription;
@@ -37,6 +38,7 @@ public class QuestInfo implements Serializable {
         this.type = type;
         this.radarPosition = radarPosition;
         this.hideQuestProgress = hideQuestProgress;
+        this.unlockRazarion = unlockRazarion;
     }
 
     public String getTitle() {
@@ -79,6 +81,18 @@ public class QuestInfo implements Serializable {
         return questTypeEnum;
     }
 
+    public boolean isUnlockNeeded() {
+        return unlockRazarion != null;
+    }
+
+    public Integer getUnlockRazarion() {
+        return unlockRazarion;
+    }
+
+    public void setUnlockRazarion(Integer unlockRazarion) {
+        this.unlockRazarion = unlockRazarion;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -95,6 +109,7 @@ public class QuestInfo implements Serializable {
                 && !(description != null ? !description.equals(questInfo.description) : questInfo.description != null)
                 && !(radarPosition != null ? !radarPosition.equals(questInfo.radarPosition) : questInfo.radarPosition != null)
                 && !(title != null ? !title.equals(questInfo.title) : questInfo.title != null)
+                && !(unlockRazarion != null ? !unlockRazarion.equals(questInfo.unlockRazarion) : questInfo.unlockRazarion != null)
                 && type == questInfo.type;
     }
 
@@ -109,6 +124,7 @@ public class QuestInfo implements Serializable {
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + id;
         result = 31 * result + (radarPosition != null ? radarPosition.hashCode() : 0);
+        result = 31 * result + (unlockRazarion != null ? unlockRazarion.hashCode() : 0);
         result = 31 * result + (hideQuestProgress ? 1 : 0);
         return result;
     }

@@ -84,6 +84,11 @@ public class DbUserState {
             joinColumns = {@JoinColumn(name = "userState")},
             inverseJoinColumns = {@JoinColumn(name = "unlockedItem")})
     private Collection<DbBaseItemType> unlockedItemTypes;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "BACKUP_USER_STATUS_UNLOCKED_QUESTS",
+            joinColumns = {@JoinColumn(name = "userState")},
+            inverseJoinColumns = {@JoinColumn(name = "unlockedQuests")})
+    private Collection<DbLevelTask> unlockedQuests;
 
 
     /**
@@ -92,7 +97,7 @@ public class DbUserState {
     protected DbUserState() {
     }
 
-    public DbUserState(BackupEntry backupEntry, User user, UserState userState, DbLevel dbLevel, Collection<DbInventoryItem> inventoryItems, Collection<DbInventoryArtifact> inventoryArtifacts, Collection<DbBaseItemType> unlockedItemTypes) {
+    public DbUserState(BackupEntry backupEntry, User user, UserState userState, DbLevel dbLevel, Collection<DbInventoryItem> inventoryItems, Collection<DbInventoryArtifact> inventoryArtifacts, Collection<DbBaseItemType> unlockedItemTypes, Collection<DbLevelTask> unlockedQuests) {
         this.backupEntry = backupEntry;
         if (user != null) {
             this.userId = user.getId();
@@ -103,8 +108,9 @@ public class DbUserState {
         sendResurrectionMessage = userState.isSendResurrectionMessage();
         this.inventoryItems = inventoryItems;
         this.inventoryArtifacts = inventoryArtifacts;
-        this.unlockedItemTypes = unlockedItemTypes;
         locale = userState.getLocale();
+        this.unlockedItemTypes = unlockedItemTypes;
+        this.unlockedQuests = unlockedQuests;
     }
 
     public UserState createUserState(UserService userService) {
@@ -184,6 +190,10 @@ public class DbUserState {
 
     public Collection<DbBaseItemType> getUnlockedItemTypes() {
         return unlockedItemTypes;
+    }
+
+    public Collection<DbLevelTask> getUnlockedQuests() {
+        return unlockedQuests;
     }
 
     @Override

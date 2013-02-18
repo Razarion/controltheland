@@ -8,6 +8,7 @@ import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestDialog;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
+import com.btxtech.game.jsre.client.unlock.ClientUnlockServiceImpl;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -82,6 +83,9 @@ public class QuestVisualisationCockpit extends Composite {
         if (QuestVisualtsationModel.getInstance().isNoQuest()) {
             mainPanel.clear();
             titleLabel.setText(ClientI18nHelper.CONSTANTS.noActiveQuest());
+        } else if (ClientUnlockServiceImpl.getInstance().isQuestLocked(questInfo)) {
+            mainPanel.setWidget(new QuestLockedPanel(questInfo));
+            titleLabel.setText(questInfo.getTitle());
         } else if (QuestVisualtsationModel.getInstance().isShowStartMission()) {
             mainPanel.setWidget(new StartMissionPanel());
             titleLabel.setText(questInfo.getTitle());
