@@ -10,6 +10,7 @@ import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.UnlockDialog;
 import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
@@ -33,6 +34,10 @@ public class ClientUnlockServiceImpl extends UnlockServiceImpl {
 
     public boolean isItemLocked(BaseItemType baseItemType) {
         return isItemLocked(baseItemType, ClientBase.getInstance().getSimpleBase());
+    }
+
+    public boolean isQuestLocked(QuestInfo questInfo) {
+        return super.isQuestLocked(questInfo, ClientBase.getInstance().getSimpleBase());
     }
 
     @Override
@@ -65,7 +70,7 @@ public class ClientUnlockServiceImpl extends UnlockServiceImpl {
             @Override
             public void run(Integer razarion) {
                 if (baseItemType.getUnlockRazarion() > razarion) {
-                    DialogManager.showDialog(new YesNoDialog(ClientI18nHelper.CONSTANTS.unlockDialogTitle(),
+                    DialogManager.showDialog(new YesNoDialog(ClientI18nHelper.CONSTANTS.unlockItemDialogTitle(),
                             ClientI18nHelper.CONSTANTS.itemDialogNoRazarionMessage(ClientI18nHelper.getLocalizedString(baseItemType.getI18Name()), baseItemType.getUnlockRazarion(), razarion),
                             ClientI18nHelper.CONSTANTS.buy(),
                             new ClickHandler() {
@@ -79,6 +84,33 @@ public class ClientUnlockServiceImpl extends UnlockServiceImpl {
                             DialogManager.Type.PROMPTLY);
                 } else {
                     DialogManager.showDialog(new UnlockDialog(baseItemType, razarion, successRunnable), DialogManager.Type.PROMPTLY);
+                }
+            }
+        });
+    }
+
+    public void askUnlockQuest(final QuestInfo questInfo, final Runnable successRunnable) {
+        if (!questInfo.isUnlockNeeded()) {
+            throw new IllegalArgumentException("No unlock needed for questInfo: " + questInfo);
+        }
+        Connection.getInstance().getRazarion(new ParametrisedRunnable<Integer>() {
+            @Override
+            public void run(Integer razarion) {
+                if (questInfo.getUnlockRazarion() > razarion) {
+                    DialogManager.showDialog(new YesNoDialog(ClientI18nHelper.CONSTANTS.unlockQuestDialogTitle(),
+                            ClientI18nHelper.CONSTANTS.questDialogNoRazarionMessage(questInfo.getTitle(), questInfo.getUnlockRazarion(), razarion),
+                            ClientI18nHelper.CONSTANTS.buy(),
+                            new ClickHandler() {
+                                @Override
+                                public void onClick(ClickEvent event) {
+                                    DialogManager.showDialog(new InventoryDialog(true), DialogManager.Type.PROMPTLY);
+                                }
+                            },
+                            ClientI18nHelper.CONSTANTS.close(),
+                            null),
+                            DialogManager.Type.PROMPTLY);
+                } else {
+                    DialogManager.showDialog(new UnlockDialog(questInfo, razarion, successRunnable), DialogManager.Type.PROMPTLY);
                 }
             }
         });

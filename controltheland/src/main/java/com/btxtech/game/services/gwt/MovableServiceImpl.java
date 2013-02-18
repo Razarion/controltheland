@@ -548,4 +548,14 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             return null;
         }
     }
+
+    @Override
+    public UnlockContainer unlockQuest(int questId) {
+        try {
+            return serverUnlockService.unlockQuest(questId);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
+        }
+    }
 }

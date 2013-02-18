@@ -69,7 +69,8 @@ public class DbHistoryElement implements Serializable {
         INVENTORY_ARTIFACT_BOUGHT,
         BOT_ENRAGE_NORMAL,
         BOT_ENRAGE_UP,
-        UNLOCKED_ITEM
+        UNLOCKED_ITEM,
+        UNLOCKED_QUEST
     }
 
     public enum Source {
@@ -99,6 +100,7 @@ public class DbHistoryElement implements Serializable {
     private Integer itemTypeId;
     private String levelName;
     private String levelTaskName;
+    private Integer levelTaskId;
     @Index(name = "GAME_HISTORY_INDEX_SESSION")
     private String sessionId;
     private Source source;
@@ -142,7 +144,10 @@ public class DbHistoryElement implements Serializable {
             itemTypeId = itemType.getId();
         }
         levelName = level != null ? level.getName() : null;
-        levelTaskName = levelTask != null ? levelTask.getName() : null;
+        if (levelTask != null) {
+            levelTaskName = levelTask.getName();
+            levelTaskId = levelTask.getId();
+        }
         this.source = source;
         this.position = position;
         this.inventory = inventory;
@@ -195,6 +200,10 @@ public class DbHistoryElement implements Serializable {
 
     public String getLevelTaskName() {
         return levelTaskName;
+    }
+
+    public Integer getLevelTaskId() {
+        return levelTaskId;
     }
 
     public String getSessionId() {

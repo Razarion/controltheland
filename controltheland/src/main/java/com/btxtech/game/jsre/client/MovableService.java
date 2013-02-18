@@ -130,4 +130,6 @@ public interface MovableService extends RemoteService {
     int getRazarion();
 
     UnlockContainer unlockItemType(int itemTypeId);
+
+    UnlockContainer unlockQuest(int questId);
 }

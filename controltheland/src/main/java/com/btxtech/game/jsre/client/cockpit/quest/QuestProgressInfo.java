@@ -41,6 +41,15 @@ public class QuestProgressInfo implements Serializable {
         this.amount = amount;
     }
 
+    @Override
+    public String toString() {
+        return "QuestProgressInfo{" +
+                "conditionTrigger=" + conditionTrigger +
+                ", itemIdAmounts=" + itemIdAmounts +
+                ", amount=" + amount +
+                '}';
+    }
+
     public static class Amount implements Serializable {
         private int amount;
         private int totalAmount;
@@ -66,6 +75,31 @@ public class QuestProgressInfo implements Serializable {
 
         public boolean isFulfilled() {
             return amount >= totalAmount;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Amount amount1 = (Amount) o;
+
+            return amount == amount1.amount && totalAmount == amount1.totalAmount;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = amount;
+            result = 31 * result + totalAmount;
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "Amount{" +
+                    "amount=" + amount +
+                    ", totalAmount=" + totalAmount +
+                    '}';
         }
     }
 }

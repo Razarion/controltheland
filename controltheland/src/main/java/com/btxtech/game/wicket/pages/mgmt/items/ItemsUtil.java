@@ -62,14 +62,4 @@ public class ItemsUtil {
         }
         throw new IllegalArgumentException("Item type does not exist: " + id);
     }
-
-    public static Collection<Integer> itemTypesToIntegers(Collection<DbBaseItemType> itemTypes) {
-        ArrayList<Integer> result = new ArrayList<>();
-        if (itemTypes != null) {
-            for (DbBaseItemType itemType : itemTypes) {
-                result.add(itemType.getId());
-            }
-        }
-        return result;
-    }
 }

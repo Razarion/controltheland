@@ -2,6 +2,7 @@ package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
@@ -10,6 +11,7 @@ import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
+import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
@@ -70,7 +72,11 @@ public class TestLevelTask extends AbstractServiceTest {
         mockHistoryService.addLevelTaskCompletedEntry(EasyMock.eq(userState), EasyMock.<DbLevelTask>anyObject());
         setPrivateField(UserGuidanceServiceImpl.class, userGuidanceService, "historyService", mockHistoryService);
 
-        EasyMock.replay(mockUserService,  mockServerConditionService,mockHistoryService);
+        ServerUnlockService serverUnlockServiceMock = EasyMock.createStrictMock(ServerUnlockService.class);
+        EasyMock.expect(serverUnlockServiceMock.isQuestLocked(EasyMock.<QuestInfo>anyObject(), EasyMock.eq(userState))).andReturn(false).times(5);
+        setPrivateField(UserGuidanceServiceImpl.class, userGuidanceService, "serverUnlockService", serverUnlockServiceMock);
+
+        EasyMock.replay(mockUserService,  mockServerConditionService,mockHistoryService,serverUnlockServiceMock);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -126,7 +132,7 @@ public class TestLevelTask extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        EasyMock.verify(mockUserService, mockServerConditionService, mockHistoryService);
+        EasyMock.verify(mockUserService, mockServerConditionService, mockHistoryService,serverUnlockServiceMock);
     }
 
     private Integer getActiveQuestId() {

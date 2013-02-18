@@ -14,6 +14,7 @@ import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.client.unlock.ClientUnlockServiceImpl;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.FacebookUtils;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -65,6 +66,9 @@ public class QuestVisualtsationModel {
             currentQuestProgressInfo = levelTaskPacket.getQuestProgressInfo();
             if (levelTaskPacket.getQuestInfo() != null) {
                 currentQuest = levelTaskPacket.getQuestInfo();
+                if (ClientUnlockServiceImpl.getInstance().isQuestLocked(currentQuest)) {
+                    ClientUnlockServiceImpl.getInstance().askUnlockQuest(currentQuest, null);
+                }
                 updateType();
                 if (Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE && currentQuest.getType() == QuestInfo.Type.MISSION) {
                     startMission();

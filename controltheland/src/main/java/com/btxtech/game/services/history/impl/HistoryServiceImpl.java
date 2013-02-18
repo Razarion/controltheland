@@ -574,6 +574,28 @@ public class HistoryServiceImpl implements HistoryService {
                 baseItemType));
     }
 
+    @Override
+    public void addQuestUnlocked(UserState userState, DbLevelTask dbLevelTask) {
+        save(new DbHistoryElement(DbHistoryElement.Type.UNLOCKED_QUEST,
+                userService.getUser(userState),
+                null,
+                userState.getBase() != null ? userState.getBase().getSimpleBase() : null,
+                null,
+                null,
+                null,
+                dbLevelTask,
+                planetSystemService,
+                null,
+                DbHistoryElement.Source.HUMAN,
+                null,
+                dbLevelTask.getUnlockRazarion(),
+                userState.getRazarion(),
+                null,
+                null,
+                null,
+                null));
+    }
+
     private String getSessionId(SimpleBase simpleBase) {
         if (simpleBase == null) {
             return null;
@@ -813,6 +835,9 @@ public class HistoryServiceImpl implements HistoryService {
                 break;
             case UNLOCKED_ITEM:
                 displayHistoryElement.setMessage("Item unlocked " + dbHistoryElement.getItemTypeName());
+                break;
+            case UNLOCKED_QUEST:
+                displayHistoryElement.setMessage("Quest unlocked " + dbHistoryElement.getLevelTaskName());
                 break;
             default:
                 displayHistoryElement.setMessage("Internal error 10");

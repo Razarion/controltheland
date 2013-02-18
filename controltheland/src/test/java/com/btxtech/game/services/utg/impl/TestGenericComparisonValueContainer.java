@@ -143,7 +143,7 @@ public class TestGenericComparisonValueContainer extends AbstractServiceTest {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 BackupEntry backupEntry = new BackupEntry();
                 UserState userState = new UserState();
-                DbUserState dbUserState = new DbUserState(backupEntry, userService.getUser(userState.getUser()), userState, null, null, null, null);
+                DbUserState dbUserState = new DbUserState(backupEntry, userService.getUser(userState.getUser()), userState, null, null, null, null, null);
                 dbUserState.addDbGenericComparisonValue(new DbGenericComparisonValue(1, save, serverItemTypeService));
                 statisticsService.createAndAddBackup(dbUserState, userState);
                 dbUserState.setStatisticsEntry(new StatisticsEntry());

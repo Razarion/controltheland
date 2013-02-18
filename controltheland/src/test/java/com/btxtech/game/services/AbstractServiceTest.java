@@ -1,6 +1,7 @@
 package com.btxtech.game.services;
 
 import com.btxtech.game.jsre.client.MovableService;
+import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
@@ -22,7 +23,6 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainUtil;
-import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
@@ -102,6 +102,7 @@ import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import com.btxtech.game.wicket.WicketApplication;
 import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
 import com.btxtech.game.wicket.pages.cms.CmsImageResource;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.Component;
@@ -514,6 +515,16 @@ abstract public class AbstractServiceTest {
         Assert.assertEquals(count, planetSystemService.getServerPlanetServices(planetId).getItemService().getItemsCopy().size());
     }
 
+    protected void assertWholeBaseItemCount(int planetId, int count) {
+        int actualCount = 0;
+        for (SyncItem syncItem : planetSystemService.getServerPlanetServices(planetId).getItemService().getItemsCopy()) {
+            if (syncItem instanceof SyncBaseItem) {
+                actualCount++;
+            }
+        }
+        Assert.assertEquals(count, actualCount);
+    }
+
     protected void killSyncItem(int planetId, Id id) throws Exception {
         SyncItem syncItem = planetSystemService.getServerPlanetServices(planetId).getItemService().getItem(id);
         planetSystemService.getServerPlanetServices(planetId).getItemService().killSyncItem(syncItem, null, true, false);
@@ -608,12 +619,46 @@ abstract public class AbstractServiceTest {
             AccountBalancePacket received = (AccountBalancePacket) receivedPacket;
             return MathHelper.compareWithPrecision(expected.getAccountBalance(), received.getAccountBalance());
         } else if (expectedPacket instanceof LevelTaskPacket) {
-            throw new UnsupportedOperationException();
-            //  LevelTaskPacket expected = (LevelTaskPacket) expectedPacket;
-            //  LevelTaskPacket received = (LevelTaskPacket) receivedPacket;
-            //  return expected.isCompleted() == received.isCompleted() && ;
-            //  Assert.assertEquals(expected.getQuestProgressInfo(), received.getQuestProgressInfo());
-            //  Assert.assertEquals(expected.getQuestInfo(), received.getQuestInfo());
+            LevelTaskPacket expected = (LevelTaskPacket) expectedPacket;
+            LevelTaskPacket received = (LevelTaskPacket) receivedPacket;
+            if (expected.isCompleted() != received.isCompleted()) {
+                return false;
+            }
+            if (!ObjectUtils.equals(expected.getQuestInfo(), received.getQuestInfo())) {
+                return false;
+            }
+            QuestProgressInfo expectedProgressInfo = expected.getQuestProgressInfo();
+            QuestProgressInfo receivedProgressInfo = received.getQuestProgressInfo();
+            if (((expectedProgressInfo == null) && (receivedProgressInfo != null)) || ((expectedProgressInfo != null) && (receivedProgressInfo == null))) {
+                return false;
+            }
+            if (expectedProgressInfo != null && receivedProgressInfo != null) {
+                if (expectedProgressInfo.getConditionTrigger() != receivedProgressInfo.getConditionTrigger()) {
+                    return false;
+                }
+                if (!ObjectUtils.equals(expectedProgressInfo.getAmount(), receivedProgressInfo.getAmount())) {
+                    return false;
+                }
+                Map<Integer, QuestProgressInfo.Amount> expectedMap = expectedProgressInfo.getItemIdAmounts();
+                Map<Integer, QuestProgressInfo.Amount> receivedMap = receivedProgressInfo.getItemIdAmounts();
+                if (((expectedMap == null) && (receivedMap != null)) || ((expectedMap != null) && (receivedMap == null))) {
+                    return false;
+                }
+                if (expectedMap != null && receivedMap != null) {
+                    if (expectedMap.size() != receivedMap.size()) {
+                        return false;
+                    }
+                    for (Map.Entry<Integer, QuestProgressInfo.Amount> expectedEntry : expectedMap.entrySet()) {
+                        if (!receivedMap.containsKey(expectedEntry.getKey())) {
+                            return false;
+                        }
+                        if (!expectedEntry.getValue().equals(receivedMap.get(expectedEntry.getKey()))) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
         } else if (expectedPacket instanceof LevelPacket) {
             LevelPacket expected = (LevelPacket) expectedPacket;
             LevelPacket received = (LevelPacket) receivedPacket;
@@ -651,11 +696,17 @@ abstract public class AbstractServiceTest {
                     && expected.getMessageId() == received.getMessageId();
         } else if (expectedPacket instanceof UnlockContainerPacket) {
             try {
-                UnlockContainer expected = ((UnlockContainerPacket) expectedPacket).getUnlockContainer();
-                UnlockContainer received = ((UnlockContainerPacket) receivedPacket).getUnlockContainer();
-                Set<Integer> expectedTypes = (Set<Integer>) getPrivateField(UnlockContainer.class, expected, "itemTypes");
-                Set<Integer> receivedTypes = (Set<Integer>) getPrivateField(UnlockContainer.class, received, "itemTypes");
-                return expectedTypes.size() == receivedTypes.size() && expectedTypes.containsAll(receivedTypes) && receivedTypes.containsAll(expectedTypes);
+                Set<Integer> expectedItems = ((UnlockContainerPacket) expectedPacket).getUnlockContainer().getItemTypes();
+                Set<Integer> receivedTypes = ((UnlockContainerPacket) receivedPacket).getUnlockContainer().getItemTypes();
+                if (expectedItems.size() != receivedTypes.size() || !expectedItems.containsAll(receivedTypes) || !receivedTypes.containsAll(expectedItems)) {
+                    return false;
+                }
+                Set<Integer> expectedQuests = ((UnlockContainerPacket) expectedPacket).getUnlockContainer().getQuests();
+                Set<Integer> receivedQuests = ((UnlockContainerPacket) receivedPacket).getUnlockContainer().getQuests();
+                if (expectedQuests.size() != receivedQuests.size() || !expectedQuests.containsAll(receivedQuests) || !receivedQuests.containsAll(expectedQuests)) {
+                    return false;
+                }
+                return true;
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
@@ -1638,7 +1689,7 @@ abstract public class AbstractServiceTest {
         return dbTutorialConfig;
     }
 
-    private DbLevelTask setupCreateLevelTask1RealGameLevel(DbLevel dbLevel) {
+    protected DbLevelTask setupCreateLevelTask1RealGameLevel(DbLevel dbLevel) {
         DbLevelTask dbLevelTask = dbLevel.getLevelTaskCrud().createDbChild();
         dbLevelTask.getI18nTitle().putString(TEST_LEVEL_TASK_1_2_REAL_NAME);
         dbLevelTask.setName(TEST_LEVEL_TASK_1_2_REAL_NAME);

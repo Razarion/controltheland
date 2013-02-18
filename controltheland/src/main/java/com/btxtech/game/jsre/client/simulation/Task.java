@@ -49,7 +49,8 @@ public class Task {
                         0,
                         QuestInfo.Type.MISSION,
                         taskConfig.getConditionConfig().getRadarPositionHint(),
-                        taskConfig.getConditionConfig().isHideQuestProgress()));
+                        taskConfig.getConditionConfig().isHideQuestProgress(),
+                        null));
                 levelTaskPacket.setQuestProgressInfo(SimulationConditionServiceImpl.getInstance().getQuestProgressInfo(ClientBase.getInstance().getSimpleBase(), null));
                 QuestVisualtsationModel.getInstance().setLevelTask(levelTaskPacket);
                 GameTipManager.getInstance().start(taskConfig.getGameTipConfig());

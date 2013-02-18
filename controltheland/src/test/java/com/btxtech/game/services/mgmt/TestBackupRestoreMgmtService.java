@@ -2,6 +2,7 @@ package com.btxtech.game.services.mgmt;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -17,6 +18,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncMovable;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
+import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.item.ServerItemTypeService;
@@ -29,7 +31,11 @@ import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.user.impl.RegisterServiceImpl;
+import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.condition.DbConditionConfig;
+import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -699,7 +705,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testUnlocked() throws Exception {
+    public void testUnlockedItem() throws Exception {
         configureSimplePlanetNoResources();
         // Preparation
         beginHttpSession();
@@ -836,7 +842,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         // Restore before user unlocked something
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<BackupSummary>backupSummaries = mgmtService.getBackupSummary();
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(5).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -850,6 +856,174 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
+    }
+
+    @Test
+    @DirtiesContext
+    public void testUnlockedQuest() throws Exception {
+        configureSimplePlanetNoResources();
+        // Preparation
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbLevel dbLevel = userGuidanceService.getDbLevelCrud().readDbChild(TEST_LEVEL_2_REAL_ID);
+        DbLevelTask dbLevelTask1 = dbLevel.getLevelTaskCrud().createDbChild();
+        dbLevelTask1.setUnlockRazarion(10);
+        setupCondition(dbLevelTask1);
+        DbLevelTask dbLevelTask2 = dbLevel.getLevelTaskCrud().createDbChild();
+        dbLevelTask2.setUnlockRazarion(20);
+        setupCondition(dbLevelTask2);
+        userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
+        userGuidanceService.activateLevels();
+        QuestInfo questInfo1 = dbLevelTask1.createQuestInfo(Locale.ENGLISH);
+        QuestInfo questInfo2 = dbLevelTask2.createQuestInfo(Locale.ENGLISH);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // U1 reg user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        // Verify & modify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        getUserState().setRazarion(100);
+        Assert.assertTrue(unlockService.isQuestLocked(questInfo1, getMyBase()));
+        Assert.assertTrue(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        unlockService.unlockQuest(dbLevelTask1.getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        // Verify & modify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getMyBase()));
+        Assert.assertTrue(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        unlockService.unlockQuest(dbLevelTask2.getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getMyBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // U2 reg user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U2");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        // Verify U1
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getMyBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify U2 & modify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U2");
+        Assert.assertTrue(unlockService.isQuestLocked(questInfo1, getMyBase()));
+        Assert.assertTrue(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        getUserState().setRazarion(100);
+        unlockService.unlockQuest(dbLevelTask1.getId());
+        unlockService.unlockQuest(dbLevelTask2.getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        // Verify U1
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getMyBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify U2
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U2");
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getMyBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Unregistered user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getUserState().setRazarion(100);
+        getMyBase(); // Create base
+        unlockService.unlockQuest(dbLevelTask1.getId());
+        unlockService.unlockQuest(dbLevelTask2.getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        // Verify U1
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getMyBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify U2
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U2");
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getMyBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Restore before user unlocked something
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(5).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify U1
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        Assert.assertTrue(unlockService.isQuestLocked(questInfo1, getMyBase()));
+        Assert.assertTrue(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+    }
+
+    private void setupCondition(DbLevelTask dbLevelTask1) {
+        DbConditionConfig dbConditionConfig = new DbConditionConfig();
+        dbConditionConfig.setConditionTrigger(ConditionTrigger.MONEY_INCREASED);
+        DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
+        dbCountComparisonConfig.setCount(3);
+        dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
+        dbLevelTask1.setDbConditionConfig(dbConditionConfig);
     }
 
     private void backupAndRestore() throws NoSuchItemTypeException {

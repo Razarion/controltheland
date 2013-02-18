@@ -23,12 +23,14 @@ import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.XpService;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.BaseItemTypeCollectionPanel;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
 import com.btxtech.game.wicket.uiservices.LevelReadonlyPanel;
+import com.btxtech.game.wicket.uiservices.QuestCollectionPanel;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -108,6 +110,7 @@ public class UserStateEditor extends MgmtWebPage {
         setupInventoryArtifact(form);
         setupRazarion(form);
         setupUnlockedItems(form);
+        setupUnlockedQuests(form);
         setupHighScore(form);
     }
 
@@ -395,7 +398,6 @@ public class UserStateEditor extends MgmtWebPage {
         form.add(new Button("activate"));
     }
 
-
     private void setupUnlockedItems(final Form<UserState> form) {
         final LoadableDetachableModel<Collection<DbBaseItemType>> model = new LoadableDetachableModel<Collection<DbBaseItemType>>() {
             @Override
@@ -410,6 +412,23 @@ public class UserStateEditor extends MgmtWebPage {
                 unlockService.setUnlockedBaseItemTypesBackend(model.getObject(), form.getModelObject());
             }
         });
+    }
+
+    private void setupUnlockedQuests(final Form<UserState> form) {
+        final LoadableDetachableModel<Collection<DbLevelTask>> model = new LoadableDetachableModel<Collection<DbLevelTask>>() {
+            @Override
+            protected Collection<DbLevelTask> load() {
+                return unlockService.getUnlockQuests(form.getModelObject());
+            }
+        };
+        form.add(new QuestCollectionPanel("unlockedQuests", model));
+        form.add(new Button("saveUnlockedQuests") {
+            @Override
+            public void onSubmit() {
+                unlockService.setUnlockedQuestsBackend(model.getObject(), form.getModelObject());
+            }
+        });
+
     }
 
 
