@@ -132,4 +132,6 @@ public interface MovableService extends RemoteService {
     UnlockContainer unlockItemType(int itemTypeId);
 
     UnlockContainer unlockQuest(int questId);
+
+    UnlockContainer unlockPlanet(int planetId);
 }

@@ -1,7 +1,7 @@
 package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ClientI18nHelper;
-import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualtsationModel;
+import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualisationModel;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
 import com.google.gwt.core.client.GWT;
@@ -49,7 +49,7 @@ public class SideCockpitMission extends Composite {
         ClickHandler clickHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                QuestVisualtsationModel.getInstance().abortMission();
+                QuestVisualisationModel.getInstance().abortMission();
             }
         };
         DialogManager.showDialog(new YesNoDialog(ClientI18nHelper.CONSTANTS.abortMission(),

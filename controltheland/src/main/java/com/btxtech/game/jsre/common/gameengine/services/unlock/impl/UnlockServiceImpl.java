@@ -3,6 +3,8 @@ package com.btxtech.game.jsre.common.gameengine.services.unlock.impl;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.UnlockService;
 
@@ -27,6 +29,10 @@ public abstract class UnlockServiceImpl implements UnlockService {
 
     protected boolean isQuestLocked(QuestInfo questInfo, UnlockContainer unlockContainer) {
         return !isMission() && questInfo.isUnlockNeeded() && !unlockContainer.containsQuestId(questInfo.getId());
+    }
+
+    protected boolean isPlanetLocked(PlanetLiteInfo planetLiteInfo, UnlockContainer unlockContainer) {
+        return !isMission() && planetLiteInfo.isUnlockNeeded() && !unlockContainer.containsPlanetId(planetLiteInfo.getPlanetId());
     }
 
     protected abstract PlanetServices getPlanetServices(SimpleBase simpleBase);

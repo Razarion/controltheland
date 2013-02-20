@@ -9,6 +9,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
@@ -25,6 +26,7 @@ import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.RegisterService;
 import com.btxtech.game.services.user.User;
@@ -1012,6 +1014,172 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         loginUser("U1");
         Assert.assertTrue(unlockService.isQuestLocked(questInfo1, getMyBase()));
         Assert.assertTrue(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+    }
+
+    @Test
+    @DirtiesContext
+    public void testUnlockedPlanet() throws Exception {
+        configureMultiplePlanetsAndLevels();
+        // Prepare
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        PlanetLiteInfo planetInfo1 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID).createPlanetInfo().getPlanetLiteInfo();
+        DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
+        dbPlanet2.setUnlockRazarion(15);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
+        planetSystemService.deactivatePlanet(TEST_PLANET_2_ID);
+        planetSystemService.activatePlanet(TEST_PLANET_2_ID);
+        PlanetLiteInfo planetInfo2 = dbPlanet2.createPlanetInfo().getPlanetLiteInfo();
+        DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
+        dbPlanet3.setUnlockRazarion(15);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
+        planetSystemService.deactivatePlanet(TEST_PLANET_3_ID);
+        planetSystemService.activatePlanet(TEST_PLANET_3_ID);
+        PlanetLiteInfo planetInfo3 = dbPlanet3.createPlanetInfo().getPlanetLiteInfo();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // U1 reg user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        userGuidanceService.promote(getUserState(), TEST_LEVEL_2_REAL);
+        getMyBase(); // Create base
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        // Verify & modify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        getUserState().setRazarion(100);
+        Assert.assertTrue(unlockService.isPlanetLocked(planetInfo2, getUserState()));
+        Assert.assertTrue(unlockService.isPlanetLocked(planetInfo3, getUserState()));
+        unlockService.unlockPlanet(planetInfo2.getPlanetId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        // Verify & modify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        Assert.assertFalse(unlockService.isPlanetLocked(planetInfo2, getUserState()));
+        Assert.assertTrue(unlockService.isPlanetLocked(planetInfo3, getUserState()));
+        unlockService.unlockPlanet(planetInfo3.getPlanetId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        Assert.assertFalse(unlockService.isPlanetLocked(planetInfo2, getUserState()));
+        Assert.assertFalse(unlockService.isPlanetLocked(planetInfo3, getUserState()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // U2 reg user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U2");
+        userGuidanceService.promote(getUserState(), TEST_LEVEL_2_REAL);
+        getMyBase(); // Create base
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        // Verify U1
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        Assert.assertFalse(unlockService.isPlanetLocked(planetInfo2, getUserState()));
+        Assert.assertFalse(unlockService.isPlanetLocked(planetInfo3, getUserState()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify U2 & modify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U2");
+        Assert.assertTrue(unlockService.isPlanetLocked(planetInfo2, getUserState()));
+        Assert.assertTrue(unlockService.isPlanetLocked(planetInfo3, getUserState()));
+        getUserState().setRazarion(100);
+        unlockService.unlockPlanet(planetInfo2.getPlanetId());
+        unlockService.unlockPlanet(planetInfo3.getPlanetId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        // Verify U1
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        Assert.assertFalse(unlockService.isPlanetLocked(planetInfo2, getUserState()));
+        Assert.assertFalse(unlockService.isPlanetLocked(planetInfo3, getUserState()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify U2
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U2");
+        Assert.assertFalse(unlockService.isPlanetLocked(planetInfo2, getUserState()));
+        Assert.assertFalse(unlockService.isPlanetLocked(planetInfo3, getUserState()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Unregistered user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getUserState().setRazarion(100);
+        userGuidanceService.promote(getUserState(), TEST_LEVEL_2_REAL);
+        getMyBase(); // Create base
+        unlockService.unlockPlanet(planetInfo2.getPlanetId());
+        unlockService.unlockPlanet(planetInfo3.getPlanetId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        // Verify U1
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        Assert.assertFalse(unlockService.isPlanetLocked(planetInfo2, getUserState()));
+        Assert.assertFalse(unlockService.isPlanetLocked(planetInfo3, getUserState()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify U2
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U2");
+        Assert.assertFalse(unlockService.isPlanetLocked(planetInfo2, getUserState()));
+        Assert.assertFalse(unlockService.isPlanetLocked(planetInfo3, getUserState()));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Restore before user unlocked something
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(5).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify U1
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        Assert.assertTrue(unlockService.isPlanetLocked(planetInfo2, getUserState()));
+        Assert.assertTrue(unlockService.isPlanetLocked(planetInfo3, getUserState()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

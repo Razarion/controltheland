@@ -1,9 +1,9 @@
 package com.btxtech.game.services.history;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -23,6 +23,7 @@ import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
 import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.AllianceService;
@@ -43,7 +44,6 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
-import java.util.Locale;
 
 /**
  * User: beat
@@ -778,6 +778,52 @@ public class TestHistoryService extends AbstractServiceTest {
         Assert.assertEquals("Quest unlocked LT2", displayHistoryElements.get(0).getMessage());
         Assert.assertEquals("Level Task activated: LT1", displayHistoryElements.get(1).getMessage());
         Assert.assertEquals("Quest unlocked LT1", displayHistoryElements.get(2).getMessage());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testPlanetUnlocked() throws Exception {
+        configureMultiplePlanetsAndLevels();
+        // Prepare
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
+        dbPlanet2.setUnlockRazarion(20);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
+        planetSystemService.deactivatePlanet(TEST_PLANET_2_ID);
+        planetSystemService.activatePlanet(TEST_PLANET_2_ID);
+        DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
+        dbPlanet3.setUnlockRazarion(15);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
+        planetSystemService.deactivatePlanet(TEST_PLANET_3_ID);
+        planetSystemService.activatePlanet(TEST_PLANET_3_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        userGuidanceService.promote(getUserState(), TEST_LEVEL_4_REAL);
+        getUserState().setRazarion(100);
+        getMyBase(); // Create Base
+        unlockService.unlockPlanet(TEST_PLANET_2_ID);
+        unlockService.unlockPlanet(TEST_PLANET_3_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 1000);
+        System.out.println("----- u1 Target-----");
+        for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
+            System.out.println(displayHistoryElement);
+        }
+        Assert.assertEquals(6, displayHistoryElements.size());
+        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
+        Assert.assertEquals("Planet unlocked TEST_PLANET_3", displayHistoryElements.get(0).getMessage());
+        Assert.assertEquals("Planet unlocked TEST_PLANET_2", displayHistoryElements.get(1).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

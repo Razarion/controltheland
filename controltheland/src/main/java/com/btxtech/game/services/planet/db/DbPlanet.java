@@ -2,7 +2,6 @@ package com.btxtech.game.services.planet.db;
 
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
-import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
@@ -74,6 +73,7 @@ public class DbPlanet implements CrudChild, CrudParent {
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     @JoinColumn(name = "dbPlanet_id")
     private Collection<DbRegionResource> dbRegionResources;
+    private Integer unlockRazarion;
 
     @Transient
     private CrudChildServiceHelper<DbPlanetItemTypeLimitation> itemLimitationCrud;
@@ -220,9 +220,17 @@ public class DbPlanet implements CrudChild, CrudParent {
         this.html = html;
     }
 
+    public Integer getUnlockRazarion() {
+        return unlockRazarion;
+    }
+
+    public void setUnlockRazarion(Integer unlockRazarion) {
+        this.unlockRazarion = unlockRazarion;
+    }
+
     public PlanetInfo createPlanetInfo() {
         PlanetInfo planetInfo = new PlanetInfo();
-        planetInfo.setPlanetIdAndName(id, name);
+        planetInfo.setPlanetIdAndName(id, name, unlockRazarion);
         planetInfo.setHouseSpace(houseSpace);
         planetInfo.setMaxMoney(maxMoney);
         Map<Integer, Integer> itemTypeLimitation = new HashMap<>();

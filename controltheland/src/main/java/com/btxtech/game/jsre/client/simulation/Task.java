@@ -14,7 +14,7 @@
 package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualtsationModel;
+import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualisationModel;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
@@ -52,7 +52,7 @@ public class Task {
                         taskConfig.getConditionConfig().isHideQuestProgress(),
                         null));
                 levelTaskPacket.setQuestProgressInfo(SimulationConditionServiceImpl.getInstance().getQuestProgressInfo(ClientBase.getInstance().getSimpleBase(), null));
-                QuestVisualtsationModel.getInstance().setLevelTask(levelTaskPacket);
+                QuestVisualisationModel.getInstance().setLevelTask(levelTaskPacket);
                 GameTipManager.getInstance().start(taskConfig.getGameTipConfig());
             }
         }.schedule(200);

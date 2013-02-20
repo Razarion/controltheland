@@ -4,6 +4,7 @@ import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.statistics.StatisticsEntry;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
@@ -11,7 +12,6 @@ import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.condition.DbGenericComparisonValue;
-import com.btxtech.game.wicket.pages.mgmt.items.ItemsUtil;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.TypeDef;
@@ -89,6 +89,11 @@ public class DbUserState {
             joinColumns = {@JoinColumn(name = "userState")},
             inverseJoinColumns = {@JoinColumn(name = "unlockedQuests")})
     private Collection<DbLevelTask> unlockedQuests;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "BACKUP_USER_STATUS_UNLOCKED_PLANETS",
+            joinColumns = {@JoinColumn(name = "userState")},
+            inverseJoinColumns = {@JoinColumn(name = "unlockedPlanets")})
+    private Collection<DbPlanet> unlockedPlanets;
 
 
     /**
@@ -97,7 +102,7 @@ public class DbUserState {
     protected DbUserState() {
     }
 
-    public DbUserState(BackupEntry backupEntry, User user, UserState userState, DbLevel dbLevel, Collection<DbInventoryItem> inventoryItems, Collection<DbInventoryArtifact> inventoryArtifacts, Collection<DbBaseItemType> unlockedItemTypes, Collection<DbLevelTask> unlockedQuests) {
+    public DbUserState(BackupEntry backupEntry, User user, UserState userState, DbLevel dbLevel, Collection<DbInventoryItem> inventoryItems, Collection<DbInventoryArtifact> inventoryArtifacts, Collection<DbBaseItemType> unlockedItemTypes, Collection<DbLevelTask> unlockedQuests, Collection<DbPlanet> unlockedPlanets) {
         this.backupEntry = backupEntry;
         if (user != null) {
             this.userId = user.getId();
@@ -111,6 +116,7 @@ public class DbUserState {
         locale = userState.getLocale();
         this.unlockedItemTypes = unlockedItemTypes;
         this.unlockedQuests = unlockedQuests;
+        this.unlockedPlanets = unlockedPlanets;
     }
 
     public UserState createUserState(UserService userService) {
@@ -194,6 +200,10 @@ public class DbUserState {
 
     public Collection<DbLevelTask> getUnlockedQuests() {
         return unlockedQuests;
+    }
+
+    public Collection<DbPlanet> getUnlockedPlanets() {
+        return unlockedPlanets;
     }
 
     @Override

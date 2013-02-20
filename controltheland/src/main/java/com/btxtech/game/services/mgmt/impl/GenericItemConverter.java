@@ -149,7 +149,8 @@ public class GenericItemConverter {
                 inventoryItems,
                 inventoryArtifacts,
                 serverUnlockService.getUnlockDbBaseItemTypes(userState),
-                serverUnlockService.getUnlockQuests(userState));
+                serverUnlockService.getUnlockQuests(userState),
+                serverUnlockService.getUnlockPlanets(userState));
         if (userState.getBase() != null) {
             DbBase dbBase = bases.get(userState.getBase());
             if (dbBase != null) {

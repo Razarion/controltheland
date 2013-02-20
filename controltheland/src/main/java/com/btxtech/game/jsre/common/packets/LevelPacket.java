@@ -17,4 +17,9 @@ public class LevelPacket extends Packet {
     public void setLevel(LevelScope levelScope) {
         this.levelScope = levelScope;
     }
+
+    @Override
+    public String toString() {
+        return "LevelPacket{levelScope=" + levelScope + '}';
+    }
 }

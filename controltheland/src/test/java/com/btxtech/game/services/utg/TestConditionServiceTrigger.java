@@ -26,7 +26,7 @@ public class TestConditionServiceTrigger {
         TestPlanetHelper testPlanetHelper = new TestPlanetHelper();
         ServerPlanetServicesImpl serverPlanetServices = new ServerPlanetServicesImpl();
         PlanetInfo planetInfo = new PlanetInfo();
-        planetInfo.setPlanetIdAndName(1, "TestPlanet");
+        planetInfo.setPlanetIdAndName(1, "TestPlanet", null);
         planetInfo.setMaxMoney(10);
         serverPlanetServices.setPlanetInfo(planetInfo);
         testPlanetHelper.setServerPlanetServices(serverPlanetServices);

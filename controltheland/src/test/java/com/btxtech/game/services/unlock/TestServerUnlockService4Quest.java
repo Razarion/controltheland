@@ -236,7 +236,7 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
             unlockService.unlockQuest(TEST_LEVEL_TASK_2_2_REAL_ID);
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
-            Assert.assertEquals("Not enough razarion to by: DbLevelTask{id=3, name='TEST_LEVEL_TASK_2_2_REAL_NAME} user: UserState: user=null", e.getMessage());
+            Assert.assertEquals("Not enough razarion to unlock: DbLevelTask{id=3, name='TEST_LEVEL_TASK_2_2_REAL_NAME} user: UserState: user=null", e.getMessage());
         }
         Assert.assertEquals(0, getUserState().getRazarion());
         Assert.assertTrue(unlockService.isQuestLocked(questInfo, getUserState()));

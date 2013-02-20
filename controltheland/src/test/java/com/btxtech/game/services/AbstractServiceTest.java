@@ -3,6 +3,7 @@ package com.btxtech.game.services;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.common.MathHelper;
@@ -15,6 +16,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.BoxItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
 import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -92,6 +94,7 @@ import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelItemTypeLimitation;
 import com.btxtech.game.services.utg.DbLevelTask;
+import com.btxtech.game.services.utg.LevelActivationException;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.XpService;
 import com.btxtech.game.services.utg.condition.DbComparisonItemCount;
@@ -214,12 +217,14 @@ abstract public class AbstractServiceTest {
     protected static int TEST_LEVEL_3_REAL_ID = -1;
     protected static int TEST_LEVEL_4_REAL_ID = -1;
     protected static int TEST_LEVEL_5_REAL_ID = -1;
+    protected static int TEST_LEVEL_6_REAL_ID = -1;
     // Level numbers
     protected static final int TEST_LEVEL_1_SIMULATED = 1;
     protected static final int TEST_LEVEL_2_REAL = 2;
     protected static final int TEST_LEVEL_3_REAL = 3;
     protected static final int TEST_LEVEL_4_REAL = 4;
     protected static final int TEST_LEVEL_5_REAL = 5;
+    protected static final int TEST_LEVEL_6_REAL = 6;
     // Level Task ID
     protected static int TEST_LEVEL_TASK_1_1_SIMULATED_ID = -1;
     protected static int TEST_LEVEL_TASK_1_2_REAL_ID = -1;
@@ -660,9 +665,52 @@ abstract public class AbstractServiceTest {
             }
             return true;
         } else if (expectedPacket instanceof LevelPacket) {
-            LevelPacket expected = (LevelPacket) expectedPacket;
-            LevelPacket received = (LevelPacket) receivedPacket;
-            return expected.getLevel().equals(received.getLevel());
+            LevelScope expected = ((LevelPacket) expectedPacket).getLevel();
+            LevelScope received = ((LevelPacket) receivedPacket).getLevel();
+            if (!expected.equals(received)) {
+                return false;
+            }
+            if (expected.getNumber() != received.getNumber()) {
+                return false;
+            }
+            if (expected.getXp2LevelUp() != received.getXp2LevelUp()) {
+                return false;
+            }
+            Map<Integer, Integer> expectedMap = expected.getItemTypeLimitation();
+            Map<Integer, Integer> receivedMap = received.getItemTypeLimitation();
+            if (((expectedMap == null) && (receivedMap != null)) || ((expectedMap != null) && (receivedMap == null))) {
+                return false;
+            }
+            if (expectedMap != null && receivedMap != null) {
+                if (expectedMap.size() != receivedMap.size()) {
+                    return false;
+                }
+                for (Map.Entry<Integer, Integer> expectedEntry : expectedMap.entrySet()) {
+                    if (!receivedMap.containsKey(expectedEntry.getKey())) {
+                        return false;
+                    }
+                    if (!expectedEntry.getValue().equals(receivedMap.get(expectedEntry.getKey()))) {
+                        return false;
+                    }
+                }
+            }
+            PlanetLiteInfo expectedPlanetLiteInfo = expected.getPlanetLiteInfo();
+            PlanetLiteInfo receivedPlanetLiteInfo = received.getPlanetLiteInfo();
+            if (((expectedPlanetLiteInfo == null) && (receivedPlanetLiteInfo != null)) || ((expectedPlanetLiteInfo != null) && (receivedPlanetLiteInfo == null))) {
+                return false;
+            }
+            if (expectedPlanetLiteInfo != null && receivedPlanetLiteInfo != null) {
+                if (!ObjectUtils.equals(expectedPlanetLiteInfo.getName(), receivedPlanetLiteInfo.getName())) {
+                    return false;
+                }
+                if (!ObjectUtils.equals(expectedPlanetLiteInfo.getUnlockRazarion(), receivedPlanetLiteInfo.getUnlockRazarion())) {
+                    return false;
+                }
+                if (expectedPlanetLiteInfo.getPlanetId() != receivedPlanetLiteInfo.getPlanetId()) {
+                    return false;
+                }
+            }
+            return true;
         } else if (expectedPacket instanceof XpPacket) {
             XpPacket expected = (XpPacket) expectedPacket;
             XpPacket received = (XpPacket) receivedPacket;
@@ -704,6 +752,11 @@ abstract public class AbstractServiceTest {
                 Set<Integer> expectedQuests = ((UnlockContainerPacket) expectedPacket).getUnlockContainer().getQuests();
                 Set<Integer> receivedQuests = ((UnlockContainerPacket) receivedPacket).getUnlockContainer().getQuests();
                 if (expectedQuests.size() != receivedQuests.size() || !expectedQuests.containsAll(receivedQuests) || !receivedQuests.containsAll(expectedQuests)) {
+                    return false;
+                }
+                Set<Integer> expectedPlanets = ((UnlockContainerPacket) expectedPacket).getUnlockContainer().getPlanets();
+                Set<Integer> receivedPlanets = ((UnlockContainerPacket) receivedPacket).getUnlockContainer().getPlanets();
+                if (expectedPlanets.size() != receivedPlanets.size() || !expectedPlanets.containsAll(receivedPlanets) || !receivedPlanets.containsAll(expectedPlanets)) {
                     return false;
                 }
                 return true;
@@ -911,6 +964,7 @@ abstract public class AbstractServiceTest {
         // User Guidance
         setupMultipleLevels(dbPlanet1);
         setupMultipleLevels2(dbPlanet2);
+        setupMultipleLevels3(dbPlanet3);
         // Resource fields
         setupResource1(dbPlanet1, 10, new Rectangle(5000, 5000, 1000, 1000));
         setupResource1(dbPlanet2, 5, new Rectangle(5000, 5000, 1000, 1000));
@@ -1578,7 +1632,7 @@ abstract public class AbstractServiceTest {
 
         DbLevel dbLevel3 = userGuidanceService.getDbLevelCrud().createDbChild();
         dbLevel3.setDbPlanet(dbPlanet);
-        dbLevel3.setXp(Integer.MAX_VALUE);
+        dbLevel3.setXp(100000);
         dbLevel3.setNumber(TEST_LEVEL_4_REAL);
         setLimitation(dbLevel3);
         DbLevelTask dbLevelTask5 = setupCreateLevelTask5RealGameLevel(dbLevel3);
@@ -1610,6 +1664,18 @@ abstract public class AbstractServiceTest {
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel5);
 
         TEST_LEVEL_5_REAL_ID = dbLevel5.getId();
+        userGuidanceService.activateLevels();
+    }
+
+    private void setupMultipleLevels3(DbPlanet dbPlanet3) throws LevelActivationException {
+        DbLevel dbLevel6 = userGuidanceService.getDbLevelCrud().createDbChild();
+        dbLevel6.setDbPlanet(dbPlanet3);
+        dbLevel6.setNumber(TEST_LEVEL_6_REAL);
+        dbLevel6.setXp(220);
+        setLimitation(dbLevel6);
+        userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel6);
+
+        TEST_LEVEL_6_REAL_ID = dbLevel6.getId();
         userGuidanceService.activateLevels();
     }
 

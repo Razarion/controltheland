@@ -100,7 +100,7 @@ public class TaskConfig implements Serializable {
 
     public PlanetInfo createPlanetInfo() {
         PlanetInfo planetInfo = new PlanetInfo();
-        planetInfo.setPlanetIdAndName(PlanetInfo.MISSION_PLANET_ID, null);
+        planetInfo.setPlanetIdAndName(PlanetInfo.MISSION_PLANET_ID.getPlanetId(), null, null);
         planetInfo.setHouseSpace(houseCount);
         planetInfo.setMaxMoney(maxMoney);
         planetInfo.setItemTypeLimitation(itemTypeLimitation);
