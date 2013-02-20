@@ -13,6 +13,8 @@
 
 package com.btxtech.game.jsre.client.common;
 
+import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -22,7 +24,7 @@ import java.util.Map;
  * Time: 18:48:18
  */
 public class LevelScope implements Serializable {
-    private Integer planetId;
+    private PlanetLiteInfo planetLiteInfo;
     private int levelId;
     private int number;
     private Map<Integer, Integer> itemTypeLimitation;
@@ -34,20 +36,20 @@ public class LevelScope implements Serializable {
     public LevelScope() {
     }
 
-    public LevelScope(Integer planetId, int levelId, int number, Map<Integer, Integer> itemTypeLimitation, int xp2LevelUp) {
-        this.planetId = planetId;
+    public LevelScope(PlanetLiteInfo planetLiteInfo, int levelId, int number, Map<Integer, Integer> itemTypeLimitation, int xp2LevelUp) {
+        this.planetLiteInfo = planetLiteInfo;
         this.levelId = levelId;
         this.number = number;
         this.itemTypeLimitation = itemTypeLimitation;
         this.xp2LevelUp = xp2LevelUp;
     }
 
-    public Integer getPlanetId() {
-        return planetId;
+    public PlanetLiteInfo getPlanetLiteInfo() {
+        return planetLiteInfo;
     }
 
     public boolean hasPlanet() {
-        return planetId != null;
+        return planetLiteInfo != null;
     }
 
     public int getNumber() {
@@ -61,6 +63,10 @@ public class LevelScope implements Serializable {
         } else {
             return 0;
         }
+    }
+
+    public Map<Integer, Integer> getItemTypeLimitation() {
+        return itemTypeLimitation;
     }
 
     public int getXp2LevelUp() {
@@ -85,6 +91,12 @@ public class LevelScope implements Serializable {
 
     @Override
     public String toString() {
-        return "LevelScope{levelId=" + levelId + ", number=" + number + ", planetId=" + planetId + '}';
+        return "LevelScope{" +
+                "planetLiteInfo=" + planetLiteInfo +
+                ", levelId=" + levelId +
+                ", number=" + number +
+                ", itemTypeLimitation=" + itemTypeLimitation +
+                ", xp2LevelUp=" + xp2LevelUp +
+                '}';
     }
 }

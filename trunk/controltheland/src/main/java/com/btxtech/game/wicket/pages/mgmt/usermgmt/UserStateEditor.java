@@ -18,6 +18,7 @@ import com.btxtech.game.services.inventory.DbInventoryArtifact;
 import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.statistics.StatisticsEntry;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.unlock.ServerUnlockService;
@@ -30,6 +31,7 @@ import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.BaseItemTypeCollectionPanel;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
 import com.btxtech.game.wicket.uiservices.LevelReadonlyPanel;
+import com.btxtech.game.wicket.uiservices.PlanetCollectionPanel;
 import com.btxtech.game.wicket.uiservices.QuestCollectionPanel;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -111,6 +113,7 @@ public class UserStateEditor extends MgmtWebPage {
         setupRazarion(form);
         setupUnlockedItems(form);
         setupUnlockedQuests(form);
+        setupUnlockedPlanet(form);
         setupHighScore(form);
     }
 
@@ -428,8 +431,22 @@ public class UserStateEditor extends MgmtWebPage {
                 unlockService.setUnlockedQuestsBackend(model.getObject(), form.getModelObject());
             }
         });
-
     }
 
+    private void setupUnlockedPlanet(final Form<UserState> form) {
+        final LoadableDetachableModel<Collection<DbPlanet>> model = new LoadableDetachableModel<Collection<DbPlanet>>() {
+            @Override
+            protected Collection<DbPlanet> load() {
+                return unlockService.getUnlockPlanets(form.getModelObject());
+            }
+        };
+        form.add(new PlanetCollectionPanel("unlockedPlanets", model));
+        form.add(new Button("saveUnlockedPlanets") {
+            @Override
+            public void onSubmit() {
+                unlockService.setUnlockedPlanetsBackend(model.getObject(), form.getModelObject());
+            }
+        });
+    }
 
 }

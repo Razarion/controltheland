@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotEnragementStateConfig;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
@@ -87,6 +88,8 @@ public interface HistoryService {
     void addItemUnlocked(UserState userState, BaseItemType baseItemType);
 
     void addQuestUnlocked(UserState userState, DbLevelTask dbLevelTask);
+
+    void addPlanetUnlocked(UserState userState, PlanetLiteInfo planetLiteInfo);
 
     List<DisplayHistoryElement> getNewestHistoryElements(User user, int count);
 

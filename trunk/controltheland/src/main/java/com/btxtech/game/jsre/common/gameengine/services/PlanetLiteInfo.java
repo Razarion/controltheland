@@ -13,6 +13,7 @@ import java.util.Map;
 public class PlanetLiteInfo implements Serializable {
     private int planetId;
     private String name;
+    private Integer unlockRazarion;
 
     /**
      * Used by GWT
@@ -20,9 +21,10 @@ public class PlanetLiteInfo implements Serializable {
     PlanetLiteInfo() {
     }
 
-    public PlanetLiteInfo(int planetId, String name) {
+    public PlanetLiteInfo(int planetId, String name, Integer unlockRazarion) {
         this.planetId = planetId;
         this.name = name;
+        this.unlockRazarion = unlockRazarion;
     }
 
     public int getPlanetId() {
@@ -31,6 +33,14 @@ public class PlanetLiteInfo implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public Integer getUnlockRazarion() {
+        return unlockRazarion;
+    }
+
+    public boolean isUnlockNeeded() {
+        return unlockRazarion != null;
     }
 
     @Override
@@ -47,5 +57,14 @@ public class PlanetLiteInfo implements Serializable {
     @Override
     public int hashCode() {
         return planetId;
+    }
+
+    @Override
+    public String toString() {
+        return "PlanetLiteInfo{" +
+                "planetId=" + planetId +
+                ", name='" + name + '\'' +
+                ", unlockRazarion=" + unlockRazarion +
+                '}';
     }
 }

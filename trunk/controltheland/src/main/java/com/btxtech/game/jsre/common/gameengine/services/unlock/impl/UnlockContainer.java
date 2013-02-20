@@ -13,6 +13,7 @@ import java.util.Set;
 public class UnlockContainer implements Serializable {
     private Set<Integer> itemTypes = new HashSet<Integer>();
     private Set<Integer> quests = new HashSet<Integer>();
+    private Set<Integer> planets = new HashSet<Integer>();
 
     public boolean containsItemTypeId(int itemTypeId) {
         return itemTypes.contains(itemTypeId);
@@ -46,8 +47,24 @@ public class UnlockContainer implements Serializable {
         return quests;
     }
 
+    public boolean containsPlanetId(int planetId) {
+        return planets.contains(planetId);
+    }
+
+    public void unlockPlanet(int planetId) {
+        planets.add(planetId);
+    }
+
+    public void setPlanets(Collection<Integer> planets) {
+        this.planets = new HashSet<Integer>(planets);
+    }
+
+    public Set<Integer> getPlanets() {
+        return planets;
+    }
+
     @Override
     public String toString() {
-        return "UnlockContainer{itemTypes=" + itemTypes + " quests=" + quests + '}';
+        return "UnlockContainer{itemTypes=" + itemTypes + " quests=" + quests + " planets=" + planets + '}';
     }
 }

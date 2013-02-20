@@ -167,7 +167,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
     @DirtiesContext
     public void baseDeleted() throws Exception {
         PlanetInfo planetInfo = new PlanetInfo();
-        planetInfo.setPlanetIdAndName(0, null);
+        planetInfo.setPlanetIdAndName(0, null, null);
         ServerPlanetServicesImpl serverPlanetServices = new ServerPlanetServicesImpl();
         serverPlanetServices.setPlanetInfo(planetInfo);
         TestPlanetHelper testPlanetHelper = new TestPlanetHelper();
@@ -231,7 +231,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
     @DirtiesContext
     public void baseDeleted2() throws Exception {
         PlanetInfo planetInfo = new PlanetInfo();
-        planetInfo.setPlanetIdAndName(0, null);
+        planetInfo.setPlanetIdAndName(0, null, null);
         ServerPlanetServicesImpl serverPlanetServices = new ServerPlanetServicesImpl();
         serverPlanetServices.setPlanetInfo(planetInfo);
         TestPlanetHelper testPlanetHelper = new TestPlanetHelper();

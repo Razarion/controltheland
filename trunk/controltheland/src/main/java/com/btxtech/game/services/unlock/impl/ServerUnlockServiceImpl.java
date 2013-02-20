@@ -3,6 +3,7 @@ package com.btxtech.game.services.unlock.impl;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemTypeService;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -17,6 +18,7 @@ import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
@@ -58,7 +60,12 @@ public class ServerUnlockServiceImpl extends UnlockServiceImpl implements Server
 
     @Override
     public boolean isQuestLocked(QuestInfo questInfo, UserState userState) {
-       return isQuestLocked(questInfo, getUnlockContainer(userState));
+        return isQuestLocked(questInfo, getUnlockContainer(userState));
+    }
+
+    @Override
+    public boolean isPlanetLocked(PlanetLiteInfo planetLiteInfo, UserState userState) {
+        return isPlanetLocked(planetLiteInfo, getUnlockContainer(userState));
     }
 
     @Override
@@ -79,6 +86,7 @@ public class ServerUnlockServiceImpl extends UnlockServiceImpl implements Server
                 UnlockContainer unlockContainer = new UnlockContainer();
                 unlockContainer.setItemTypes(Utils.dbBaseItemTypesToInts(entry.getKey().getUnlockedItemTypes()));
                 unlockContainer.setQuests(Utils.crudChildToInts(entry.getKey().getUnlockedQuests()));
+                unlockContainer.setPlanets(Utils.crudChildToInts(entry.getKey().getUnlockedPlanets()));
                 unlockContainers.put(entry.getValue(), unlockContainer);
             }
         }
@@ -106,7 +114,7 @@ public class ServerUnlockServiceImpl extends UnlockServiceImpl implements Server
             throw new IllegalArgumentException("Base item type can not be unlocked: " + baseItemType);
         }
         if (baseItemType.getUnlockRazarion() > userState.getRazarion()) {
-            throw new IllegalArgumentException("Not enough razarion to by: " + baseItemType + " user: " + userState);
+            throw new IllegalArgumentException("Not enough razarion to unlock: " + baseItemType + " user: " + userState);
         }
         UnlockContainer unlockContainer;
         synchronized (unlockContainers) {
@@ -132,7 +140,7 @@ public class ServerUnlockServiceImpl extends UnlockServiceImpl implements Server
             throw new IllegalArgumentException("Quest can not be unlocked: " + dbLevelTask);
         }
         if (dbLevelTask.getUnlockRazarion() > userState.getRazarion()) {
-            throw new IllegalArgumentException("Not enough razarion to by: " + dbLevelTask + " user: " + userState);
+            throw new IllegalArgumentException("Not enough razarion to unlock: " + dbLevelTask + " user: " + userState);
         }
         UnlockContainer unlockContainer;
         synchronized (unlockContainers) {
@@ -148,6 +156,32 @@ public class ServerUnlockServiceImpl extends UnlockServiceImpl implements Server
             historyService.addQuestUnlocked(userState, dbLevelTask);
         }
         userGuidanceService.onQuestUnlocked(questId);
+        return unlockContainer;
+    }
+
+    @Override
+    public UnlockContainer unlockPlanet(int planetId) {
+        UserState userState = userService.getUserState();
+        PlanetLiteInfo planetLiteInfo = planetSystemService.getPlanet(planetId).getPlanetServices().getPlanetInfo().getPlanetLiteInfo();
+        if (!planetLiteInfo.isUnlockNeeded()) {
+            throw new IllegalArgumentException("Planet can not be unlocked: " + planetLiteInfo);
+        }
+        if (planetLiteInfo.getUnlockRazarion() > userState.getRazarion()) {
+            throw new IllegalArgumentException("Not enough razarion to unlock: " + planetLiteInfo + " user: " + userState);
+        }
+        UnlockContainer unlockContainer;
+        synchronized (unlockContainers) {
+            unlockContainer = unlockContainers.get(userState);
+            if (unlockContainer == null) {
+                throw new IllegalStateException("unlockContainer == null");
+            }
+            if (unlockContainer.containsPlanetId(planetId)) {
+                throw new IllegalArgumentException("planetId is already unlocked: " + planetId);
+            }
+            unlockContainer.unlockPlanet(planetId);
+            userState.subRazarion(planetLiteInfo.getUnlockRazarion());
+            historyService.addPlanetUnlocked(userState, planetLiteInfo);
+        }
         return unlockContainer;
     }
 
@@ -180,19 +214,41 @@ public class ServerUnlockServiceImpl extends UnlockServiceImpl implements Server
     }
 
     @Override
-    public void setUnlockedBaseItemTypesBackend(Collection<DbBaseItemType> dbBaseItemTypes, UserState userStates) {
-        UnlockContainer unlockContainer = getUnlockContainer(userStates);
-        unlockContainer.setItemTypes(Utils.dbBaseItemTypesToInts(dbBaseItemTypes));
-        unlockContainers.put(userStates, unlockContainer);
-        sendPacket(userStates, unlockContainer);
+    public Collection<DbPlanet> getUnlockPlanets(UserState userState) {
+        Collection<DbPlanet> unlockedPlanets = new ArrayList<>();
+        UnlockContainer unlockContainer = getUnlockContainer(userState);
+        for (Integer planetId : unlockContainer.getPlanets()) {
+            try {
+                unlockedPlanets.add(planetSystemService.getDbPlanetCrud().readDbChild(planetId));
+            } catch (Exception e) {
+                ExceptionHandler.handleException(e, "Unable to generate DbPlanet collection for: " + userState);
+            }
+        }
+        return unlockedPlanets;
     }
 
     @Override
-    public void setUnlockedQuestsBackend(Collection<DbLevelTask> dbLevelTasks, UserState userStates) {
-        UnlockContainer unlockContainer = getUnlockContainer(userStates);
+    public void setUnlockedBaseItemTypesBackend(Collection<DbBaseItemType> dbBaseItemTypes, UserState userState) {
+        UnlockContainer unlockContainer = getUnlockContainer(userState);
+        unlockContainer.setItemTypes(Utils.dbBaseItemTypesToInts(dbBaseItemTypes));
+        unlockContainers.put(userState, unlockContainer);
+        sendPacket(userState, unlockContainer);
+    }
+
+    @Override
+    public void setUnlockedQuestsBackend(Collection<DbLevelTask> dbLevelTasks, UserState userState) {
+        UnlockContainer unlockContainer = getUnlockContainer(userState);
         unlockContainer.setQuests(Utils.crudChildToInts(dbLevelTasks));
-        unlockContainers.put(userStates, unlockContainer);
-        sendPacket(userStates, unlockContainer);
+        unlockContainers.put(userState, unlockContainer);
+        sendPacket(userState, unlockContainer);
+    }
+
+    @Override
+    public void setUnlockedPlanetsBackend(Collection<DbPlanet> dbPlanets, UserState userState) {
+        UnlockContainer unlockContainer = getUnlockContainer(userState);
+        unlockContainer.setPlanets(Utils.crudChildToInts(dbPlanets));
+        unlockContainers.put(userState, unlockContainer);
+        sendPacket(userState, unlockContainer);
     }
 
     private void sendPacket(UserState userState, UnlockContainer unlockContainer) {

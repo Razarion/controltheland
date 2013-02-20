@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -44,6 +45,19 @@ public class UnlockDialog extends Dialog {
             @Override
             public void run() {
                 Connection.getInstance().unlockQuest(questInfo.getId(), successRunnable);
+            }
+        };
+    }
+
+    public UnlockDialog(final PlanetLiteInfo planetLiteInfo, Integer razarion, final Runnable successRunnable) {
+        super(ClientI18nHelper.CONSTANTS.unlockPlanetDialogTitle());
+        this.razarion = razarion;
+        unlockRazarion = planetLiteInfo.getUnlockRazarion();
+        message = ClientI18nHelper.CONSTANTS.planetIsLocked(planetLiteInfo.getName());
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                Connection.getInstance().unlockPlanet(planetLiteInfo, successRunnable);
             }
         };
     }

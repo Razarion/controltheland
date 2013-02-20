@@ -2,7 +2,7 @@ package com.btxtech.game.jsre.client.renderer;
 
 import com.btxtech.game.jsre.client.cockpit.quest.InGameQuestDirectionVisualisation;
 import com.btxtech.game.jsre.client.cockpit.quest.InGameQuestItemVisualisation;
-import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualtsationModel;
+import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualisationModel;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -25,7 +25,7 @@ public class InGameQuestVisualisationRenderTask extends AbstractRenderTask {
 
     @Override
     public void render(long timeStamp, Collection<SyncItem> itemsInView, Rectangle viewRect, Rectangle tileViewRect) {
-        Collection<InGameQuestItemVisualisation> inGameQuestItemVisualisations = QuestVisualtsationModel.getInstance().getInGameItemQuestVisualisation(itemsInView, viewRect);
+        Collection<InGameQuestItemVisualisation> inGameQuestItemVisualisations = QuestVisualisationModel.getInstance().getInGameItemQuestVisualisation(itemsInView, viewRect);
         if (inGameQuestItemVisualisations == null || inGameQuestItemVisualisations.isEmpty()) {
             renderArrow(timeStamp, viewRect);
             return;
@@ -45,7 +45,7 @@ public class InGameQuestVisualisationRenderTask extends AbstractRenderTask {
     }
 
     private void renderArrow(long timeStamp, Rectangle viewRect) {
-        InGameQuestDirectionVisualisation inGameQuestDirectionVisualisation = QuestVisualtsationModel.getInstance().getInGameQuestDirectionVisualisationAngel(viewRect);
+        InGameQuestDirectionVisualisation inGameQuestDirectionVisualisation = QuestVisualisationModel.getInstance().getInGameQuestDirectionVisualisationAngel(viewRect);
         if (inGameQuestDirectionVisualisation == null) {
             return;
         }

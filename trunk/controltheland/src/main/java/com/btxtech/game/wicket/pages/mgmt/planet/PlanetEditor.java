@@ -101,6 +101,7 @@ public class PlanetEditor extends MgmtWebPage {
                 return consumedHouseSpace;
             }
         }));
+        form.add(new TextField("unlockRazarion"));
 
         // Terrain
         form.add(new TerrainPanel("dbTerrainSetting", new TerrainLinkHelper(dbPlanet)));

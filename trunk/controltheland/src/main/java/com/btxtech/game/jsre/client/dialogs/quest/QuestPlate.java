@@ -2,7 +2,7 @@ package com.btxtech.game.jsre.client.dialogs.quest;
 
 import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
-import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualtsationModel;
+import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualisationModel;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
 import com.btxtech.game.jsre.client.unlock.ClientUnlockServiceImpl;
@@ -77,7 +77,7 @@ public class QuestPlate extends Composite {
     }
 
     private void activateQuest() {
-        if (QuestVisualtsationModel.getInstance().hasActiveQuest()) {
+        if (QuestVisualisationModel.getInstance().hasActiveQuest()) {
             ClickHandler clickHandler = new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {

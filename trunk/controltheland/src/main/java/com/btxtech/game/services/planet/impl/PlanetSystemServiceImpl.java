@@ -25,9 +25,9 @@ import com.btxtech.game.services.planet.Planet;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
-import com.btxtech.game.services.terrain.RegionService;
 import com.btxtech.game.services.terrain.TerrainDbUtil;
 import com.btxtech.game.services.terrain.TerrainImageService;
+import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
@@ -71,9 +71,9 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
     @Autowired
     private CrudRootServiceHelper<DbPlanet> dbPlanetCrud;
     @Autowired
-    private RegionService regionService;
-    @Autowired
     private TerrainImageService terrainImageService;
+    @Autowired
+    private ServerUnlockService serverUnlockService;
     private final Map<Integer, PlanetImpl> planetImpls = new HashMap<>();
 
     @PostConstruct
@@ -116,10 +116,7 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
     @Override
     public void createBase(UserState userState) throws InvalidLevelStateException {
         DbLevel dbLevel = userGuidanceService.getDbLevel(userState);
-        DbPlanet dbPlanet = dbLevel.getDbPlanet();
-        if (dbPlanet == null) {
-            throw userGuidanceService.createInvalidLevelState();
-        }
+        DbPlanet dbPlanet = getUnlockedPlanet(dbLevel, userState);
         try {
             Planet planet = getPlanet(dbPlanet);
             planet.getPlanetServices().getBaseService().createNewBase(userState, dbPlanet.getStartItemType(), dbPlanet.getStartMoney(), planet.getPlanetServices().getStartRegion(), dbPlanet.getStartItemFreeRange());
@@ -128,6 +125,25 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
         }
 
         log.debug("Base for user '" + userState + "' created on planet: " + dbPlanet);
+    }
+
+    private DbPlanet getUnlockedPlanet(DbLevel dbLevel, UserState userState) throws InvalidLevelStateException {
+        try {
+            DbPlanet dbPlanet = dbLevel.getDbPlanet();
+            if (dbPlanet == null) {
+                return getUnlockedPlanet(userGuidanceService.getPreviousDbLevel(dbLevel), userState);
+            }
+            Planet planet = getPlanet(dbPlanet);
+
+            if (serverUnlockService.isPlanetLocked(planet.getPlanetServices().getPlanetInfo().getPlanetLiteInfo(), userState)) {
+                return getUnlockedPlanet(userGuidanceService.getPreviousDbLevel(dbLevel), userState);
+            } else {
+                return dbPlanet;
+            }
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+            throw userGuidanceService.createInvalidLevelState();
+        }
     }
 
     @Override
@@ -173,7 +189,7 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
         if (!levelScope.hasPlanet()) {
             return null;
         }
-        return getPlanet(levelScope.getPlanetId());
+        return getPlanet(levelScope.getPlanetLiteInfo().getPlanetId());
     }
 
     @Override

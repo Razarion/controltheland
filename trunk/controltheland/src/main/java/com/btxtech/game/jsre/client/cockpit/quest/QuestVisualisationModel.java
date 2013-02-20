@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.unlock.ClientUnlockServiceImpl;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.FacebookUtils;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
@@ -31,19 +32,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-public class QuestVisualtsationModel {
+public class QuestVisualisationModel {
     private static final String COLOR_ATTACK = "#FF0000";
     private static final String COLOR_COLLECT = "#FFFF00";
     private static final String COLOR_PLACE = "#00FF00";
-    private static final QuestVisualtsationModel INSTANCE = new QuestVisualtsationModel();
-    private static Logger log = Logger.getLogger(QuestVisualtsationModel.class.getName());
+    private static final QuestVisualisationModel INSTANCE = new QuestVisualisationModel();
+    private static Logger log = Logger.getLogger(QuestVisualisationModel.class.getName());
     private QuestInfo currentQuest;
     private QuestProgressInfo currentQuestProgressInfo;
     private QuestVisualisationCockpit listener;
-    private boolean nextPlanet;
+    private PlanetLiteInfo nextPlanet;
     private boolean showInGameVisualisation;
 
-    public static QuestVisualtsationModel getInstance() {
+    public static QuestVisualisationModel getInstance() {
         return INSTANCE;
     }
 
@@ -141,11 +142,20 @@ public class QuestVisualtsationModel {
     }
 
     public void onLevelChange(LevelScope levelScope) {
-        if (levelScope.getPlanetId() != null && levelScope.getPlanetId() != ClientPlanetServices.getInstance().getPlanetInfo().getPlanetId()) {
-            nextPlanet = true;
-            moveToNextPlanet();
+        if (levelScope.getPlanetLiteInfo() != null && levelScope.getPlanetLiteInfo().getPlanetId() != ClientPlanetServices.getInstance().getPlanetInfo().getPlanetId()) {
+            nextPlanet = levelScope.getPlanetLiteInfo();
+            if (ClientUnlockServiceImpl.getInstance().isPlanetLocked(nextPlanet)) {
+                ClientUnlockServiceImpl.getInstance().askUnlockPlanet(nextPlanet, new Runnable() {
+                    @Override
+                    public void run() {
+                        moveToNextPlanet();
+                    }
+                });
+            } else {
+                moveToNextPlanet();
+            }
         } else {
-            nextPlanet = false;
+            nextPlanet = null;
         }
         currentQuest = null;
         currentQuestProgressInfo = null;
@@ -157,6 +167,10 @@ public class QuestVisualtsationModel {
     }
 
     public boolean isNextPlanet() {
+        return nextPlanet != null;
+    }
+
+    public PlanetLiteInfo getNextPlanet() {
         return nextPlanet;
     }
 

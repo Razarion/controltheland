@@ -416,13 +416,19 @@ public interface ClientI18nConstants extends Messages {
 
     String unlockQuestDialogTitle();
 
+    String unlockPlanetDialogTitle();
+
     String itemDialogNoRazarionMessage(String itemTypeName, Integer unlockRazarion, Integer razarion);
 
     String questDialogNoRazarionMessage(String questName, Integer unlockRazarion, Integer razarion);
 
+    String planetDialogNoRazarionMessage(String planetName, Integer unlockRazarion, Integer razarion);
+
     String itemIsLocked(String itemTypeName);
 
     String questIsLocked(String title);
+
+    String planetIsLocked(String planetName);
 
     String unlockRazarionCost(int unlockRazarion);
 
@@ -431,4 +437,6 @@ public interface ClientI18nConstants extends Messages {
     String unlockButton();
 
     String questLocked();
+
+    String planetLocked();
 }

@@ -40,7 +40,6 @@ import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -81,7 +80,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     public void createOwnSimulationBaseIfNotExist(String onwBaseName) {
         if (simpleBase == null) {
             int baseId = getFreeBaseId();
-            simpleBase = new SimpleBase(baseId, PlanetInfo.MISSION_PLANET_ID);
+            simpleBase = new SimpleBase(baseId, PlanetInfo.MISSION_PLANET_ID.getPlanetId());
             createBase(simpleBase, onwBaseName, false);
         }
     }
@@ -320,7 +319,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     @Override
     public SimpleBase createBotBase(BotConfig botConfig) {
         int baseId = getFreeBaseId();
-        SimpleBase simpleBase = new SimpleBase(baseId, PlanetInfo.MISSION_PLANET_ID);
+        SimpleBase simpleBase = new SimpleBase(baseId, PlanetInfo.MISSION_PLANET_ID.getPlanetId());
         createBase(simpleBase, botConfig.getName(), false);
         setBot(simpleBase, true);
         return simpleBase;

@@ -24,6 +24,6 @@ public class StartMissionPanel extends Composite {
 
     @UiHandler("startButton")
     void onStartButtonClick(ClickEvent event) {
-        QuestVisualtsationModel.getInstance().startMission();
+        QuestVisualisationModel.getInstance().startMission();
     }
 }

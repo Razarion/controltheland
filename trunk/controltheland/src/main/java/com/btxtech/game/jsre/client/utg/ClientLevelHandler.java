@@ -16,7 +16,7 @@ package com.btxtech.game.jsre.client.utg;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
-import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualtsationModel;
+import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualisationModel;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupScreen;
@@ -48,7 +48,7 @@ public class ClientLevelHandler implements CommonUserGuidanceService {
     public void setLevel(LevelScope levelScope) {
         // Setup values
         this.levelScope = levelScope;
-        QuestVisualtsationModel.getInstance().onLevelChange(levelScope);
+        QuestVisualisationModel.getInstance().onLevelChange(levelScope);
         // Setup GUI
         SideCockpit.getInstance().setLevel(levelScope);
         SideCockpit.getInstance().updateItemLimit();

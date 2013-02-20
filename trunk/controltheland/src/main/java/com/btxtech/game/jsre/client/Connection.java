@@ -15,7 +15,8 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.SplashManager;
-import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualtsationModel;
+import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualisationCockpit;
+import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualisationModel;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
@@ -50,6 +51,7 @@ import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.connection.CommonConnectionService;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -292,7 +294,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                     QuestDialog.updateQuestDialog();
                     FacebookUtils.postToFeedLevelUp(((LevelPacket) packet).getLevel());
                 } else if (packet instanceof LevelTaskPacket) {
-                    QuestVisualtsationModel.getInstance().setLevelTask((LevelTaskPacket) packet);
+                    QuestVisualisationModel.getInstance().setLevelTask((LevelTaskPacket) packet);
                     QuestDialog.updateQuestDialog();
                 } else if (packet instanceof HouseSpacePacket) {
                     HouseSpacePacket houseSpacePacket = (HouseSpacePacket) packet;
@@ -858,6 +860,30 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                 public void onSuccess(UnlockContainer unlockContainer) {
                     if (unlockContainer != null) {
                         ClientUnlockServiceImpl.getInstance().setUnlockContainer(unlockContainer);
+                    }
+                    if (successRunnable != null) {
+                        successRunnable.run();
+                    }
+                }
+            });
+        }
+    }
+
+
+    public void unlockPlanet(final PlanetLiteInfo planetLiteInfo, final Runnable successRunnable) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.unlockPlanet(planetLiteInfo.getPlanetId(), new AsyncCallback<UnlockContainer>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    handleDisconnection("unlockPlanet", caught);
+                }
+
+                @Override
+                public void onSuccess(UnlockContainer unlockContainer) {
+                    if (unlockContainer != null) {
+                        ClientUnlockServiceImpl.getInstance().setUnlockContainer(unlockContainer);
+                        QuestVisualisationCockpit.getInstance().displayNextPlanetPanel();
                     }
                     if (successRunnable != null) {
                         successRunnable.run();

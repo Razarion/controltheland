@@ -23,6 +23,6 @@ public class NextPlanetPanel extends Composite {
 
     @UiHandler("startButton")
     void onStartButtonClick(ClickEvent event) {
-        QuestVisualtsationModel.getInstance().moveToNextPlanet();
+        QuestVisualisationModel.getInstance().moveToNextPlanet();
     }
 }

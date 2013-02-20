@@ -13,6 +13,7 @@ import com.btxtech.game.jsre.client.dialogs.inventory.InventoryDialog;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockServiceImpl;
@@ -38,6 +39,10 @@ public class ClientUnlockServiceImpl extends UnlockServiceImpl {
 
     public boolean isQuestLocked(QuestInfo questInfo) {
         return super.isQuestLocked(questInfo, ClientBase.getInstance().getSimpleBase());
+    }
+
+    public boolean isPlanetLocked(PlanetLiteInfo planetLiteInfo) {
+        return isPlanetLocked(planetLiteInfo, getUnlockContainer(ClientBase.getInstance().getSimpleBase()));
     }
 
     @Override
@@ -111,6 +116,33 @@ public class ClientUnlockServiceImpl extends UnlockServiceImpl {
                             DialogManager.Type.PROMPTLY);
                 } else {
                     DialogManager.showDialog(new UnlockDialog(questInfo, razarion, successRunnable), DialogManager.Type.PROMPTLY);
+                }
+            }
+        });
+    }
+
+    public void askUnlockPlanet(final PlanetLiteInfo planetLiteInfo, final Runnable successRunnable) {
+        if (!planetLiteInfo.isUnlockNeeded()) {
+            throw new IllegalArgumentException("No unlock needed for planetLiteInfo: " + planetLiteInfo);
+        }
+        Connection.getInstance().getRazarion(new ParametrisedRunnable<Integer>() {
+            @Override
+            public void run(Integer razarion) {
+                if (planetLiteInfo.getUnlockRazarion() > razarion) {
+                    DialogManager.showDialog(new YesNoDialog(ClientI18nHelper.CONSTANTS.unlockPlanetDialogTitle(),
+                            ClientI18nHelper.CONSTANTS.planetDialogNoRazarionMessage(planetLiteInfo.getName(), planetLiteInfo.getUnlockRazarion(), razarion),
+                            ClientI18nHelper.CONSTANTS.buy(),
+                            new ClickHandler() {
+                                @Override
+                                public void onClick(ClickEvent event) {
+                                    DialogManager.showDialog(new InventoryDialog(true), DialogManager.Type.PROMPTLY);
+                                }
+                            },
+                            ClientI18nHelper.CONSTANTS.close(),
+                            null),
+                            DialogManager.Type.PROMPTLY);
+                } else {
+                    DialogManager.showDialog(new UnlockDialog(planetLiteInfo, razarion, successRunnable), DialogManager.Type.PROMPTLY);
                 }
             }
         });

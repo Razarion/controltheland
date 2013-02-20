@@ -11,8 +11,8 @@ import java.util.Map;
  * Time: 00:36
  */
 public class PlanetInfo implements Serializable {
-    public static final int MISSION_PLANET_ID = -1;
-    public static final int EDITOR_PLANET_ID = -2;
+    public static final PlanetLiteInfo MISSION_PLANET_ID = new PlanetLiteInfo(-1, "Mission", null);
+    public static final PlanetLiteInfo EDITOR_PLANET_ID = new PlanetLiteInfo(-2, "Editor", null);
     private PlanetLiteInfo planetLiteInfo;
     private int maxMoney;
     private int houseSpace;
@@ -23,8 +23,8 @@ public class PlanetInfo implements Serializable {
         return planetLiteInfo.getPlanetId();
     }
 
-    public void setPlanetIdAndName(int planetId, String name) {
-        planetLiteInfo = new PlanetLiteInfo(planetId, name);
+    public void setPlanetIdAndName(int planetId, String name, Integer unlockRazarion) {
+        planetLiteInfo = new PlanetLiteInfo(planetId, name, unlockRazarion);
     }
 
     public String getName() {

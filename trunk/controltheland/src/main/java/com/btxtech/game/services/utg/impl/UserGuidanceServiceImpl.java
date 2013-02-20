@@ -45,7 +45,9 @@ import com.btxtech.game.services.utg.XpService;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -328,6 +330,24 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     }
 
     @Override
+    public DbLevel getPreviousDbLevel(DbLevel dbLevel) {
+        List<DbLevel> dbLevels = new ArrayList<>(dbLevelCrud.readDbChildren());
+        int index = dbLevels.indexOf(dbLevel);
+        if (index < 0) {
+            throw new IllegalArgumentException("DbLevel can not be found in own DbPlanet: " + dbLevel);
+        }
+        index--;
+        if(index < 0) {
+            throw new IllegalArgumentException("No previous level for: " + dbLevel);
+        }
+        if (dbLevels.size() > index) {
+            return dbLevels.get(index);
+        } else {
+            throw new IllegalArgumentException("No previous level for: " + dbLevel);
+        }
+    }
+
+    @Override
     public DbLevel getDbLevelCms() {
         // Prevent creating a UserState -> search engine
         if (userService.hasUserState()) {
@@ -541,7 +561,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         if (levelTaskDone.containsKey(userState) && levelTaskDone.get(userState).contains(dbLevelTaskId)) {
             throw new IllegalArgumentException("DbLevelTask has already been done: " + dbLevelTask);
         }
-        if(activeQuestIds.containsKey(userState) && activeQuestIds.get(userState) == dbLevelTaskId) {
+        if (activeQuestIds.containsKey(userState) && activeQuestIds.get(userState) == dbLevelTaskId) {
             serverConditionService.activateCondition(dbLevelTask.createConditionConfig(serverItemTypeService, userState.getLocale()), userState, dbLevelTask.getId());
             historyService.addLevelTaskActivated(userState, dbLevelTask);
             sendLevelTaskPacket(userState, dbLevelTask, dbLevelTask.createQuestInfo(userState.getLocale()));

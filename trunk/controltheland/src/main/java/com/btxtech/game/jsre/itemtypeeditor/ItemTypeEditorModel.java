@@ -11,7 +11,6 @@ import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
-import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -31,6 +30,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemTypeSpriteMap;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
@@ -60,8 +60,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ItemTypeEditorModel {
-    public static final SimpleBase MY_BASE = new SimpleBase(1, PlanetInfo.EDITOR_PLANET_ID);
-    public static final SimpleBase ENEMY_BASE = new SimpleBase(2, PlanetInfo.EDITOR_PLANET_ID);
+    public static final SimpleBase MY_BASE = new SimpleBase(1, PlanetInfo.EDITOR_PLANET_ID.getPlanetId());
+    public static final SimpleBase ENEMY_BASE = new SimpleBase(2, PlanetInfo.EDITOR_PLANET_ID.getPlanetId());
     public static final int SIM_WIDTH = 700;
     public static final int SIM_HEIGHT = 700;
 
@@ -160,7 +160,7 @@ public class ItemTypeEditorModel {
         if (moving) {
             executeMoveCommand();
         }
-        if( getBoundingBox().getAngelCount() > 1) {
+        if (getBoundingBox().getAngelCount() > 1) {
             syncItem.getSyncItemArea().setAngel(getBoundingBox().getAngels()[currentAngelIndex]);
         }
     }
@@ -511,9 +511,9 @@ public class ItemTypeEditorModel {
                     Connection.getInstance().init4ItemTypeEditor();
                     PlanetInfo planetInfo = new PlanetInfo();
                     planetInfo.setRadarMode(RadarMode.NONE);
-                    planetInfo.setPlanetIdAndName(PlanetInfo.EDITOR_PLANET_ID, null);
+                    planetInfo.setPlanetIdAndName(PlanetInfo.EDITOR_PLANET_ID.getPlanetId(), null, null);
                     ClientPlanetServices.getInstance().setPlanetInfo(planetInfo);
-                    ClientLevelHandler.getInstance().setLevel(new LevelScope(PlanetInfo.EDITOR_PLANET_ID, 0, 0, null, 0));
+                    ClientLevelHandler.getInstance().setLevel(new LevelScope(new PlanetLiteInfo(PlanetInfo.EDITOR_PLANET_ID.getPlanetId(), "", null), 0, 0, null, 0));
                     // /--- Setup terrain
                     ArrayList<SurfaceImage> surfaceImages = new ArrayList<SurfaceImage>();
                     if (itemType.getTerrainType() == null) {

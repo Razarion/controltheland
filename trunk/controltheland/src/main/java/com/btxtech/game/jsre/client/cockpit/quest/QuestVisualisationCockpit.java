@@ -9,6 +9,7 @@ import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestDialog;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.client.unlock.ClientUnlockServiceImpl;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -50,7 +51,7 @@ public class QuestVisualisationCockpit extends Composite {
     private QuestVisualisationCockpit() {
         initWidget(uiBinder.createAndBindUi(this));
         minimizeButton.addWidgetToHide(this);
-        QuestVisualtsationModel.getInstance().setListener(this);
+        QuestVisualisationModel.getInstance().setListener(this);
         questDialogButton.setStyleName("singleButton");
     }
 
@@ -80,18 +81,17 @@ public class QuestVisualisationCockpit extends Composite {
 
     public void updateType(QuestInfo questInfo) {
         questVisualisationPanel = null;
-        if (QuestVisualtsationModel.getInstance().isNoQuest()) {
+        if (QuestVisualisationModel.getInstance().isNoQuest()) {
             mainPanel.clear();
             titleLabel.setText(ClientI18nHelper.CONSTANTS.noActiveQuest());
         } else if (ClientUnlockServiceImpl.getInstance().isQuestLocked(questInfo)) {
             mainPanel.setWidget(new QuestLockedPanel(questInfo));
             titleLabel.setText(questInfo.getTitle());
-        } else if (QuestVisualtsationModel.getInstance().isShowStartMission()) {
+        } else if (QuestVisualisationModel.getInstance().isShowStartMission()) {
             mainPanel.setWidget(new StartMissionPanel());
             titleLabel.setText(questInfo.getTitle());
-        } else if (QuestVisualtsationModel.getInstance().isNextPlanet()) {
-            mainPanel.setWidget(new NextPlanetPanel());
-            titleLabel.setText("");
+        } else if (QuestVisualisationModel.getInstance().isNextPlanet()) {
+            displayNextPlanetPanel();
         } else {
             questVisualisationPanel = new QuestVisualisationPanel(questInfo);
             mainPanel.setWidget(questVisualisationPanel);
@@ -99,12 +99,24 @@ public class QuestVisualisationCockpit extends Composite {
         }
         minimizeButton.maximize();
         visualiseCheckBox.setValue(true);
-        QuestVisualtsationModel.getInstance().setShowInGameVisualisation(true);
+        QuestVisualisationModel.getInstance().setShowInGameVisualisation(true);
         questDialogButton.setVisible(Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE);
     }
 
+    public void displayNextPlanetPanel() {
+        if(!QuestVisualisationModel.getInstance().isNextPlanet()) {
+            throw new IllegalArgumentException("QuestVisualisationCockpit.displayNextPlanetPanel() has no next planet");
+        }
+        if (ClientUnlockServiceImpl.getInstance().isPlanetLocked(QuestVisualisationModel.getInstance().getNextPlanet())) {
+            mainPanel.setWidget(new NextPlanetLocketPanel());
+        } else {
+            mainPanel.setWidget(new NextPlanetPanel());
+        }
+        titleLabel.setText("");
+    }
+
     public void updateQuestProgress(QuestProgressInfo questProgressInfo) {
-        if (QuestVisualtsationModel.getInstance().isNextPlanet()) {
+        if (QuestVisualisationModel.getInstance().isNextPlanet()) {
             return;
         }
         if (questVisualisationPanel == null) {
@@ -119,6 +131,6 @@ public class QuestVisualisationCockpit extends Composite {
 
     @UiHandler("visualiseCheckBox")
     void onVisualiseCheckBoxClick(ClickEvent event) {
-        QuestVisualtsationModel.getInstance().setShowInGameVisualisation(visualiseCheckBox.getValue());
+        QuestVisualisationModel.getInstance().setShowInGameVisualisation(visualiseCheckBox.getValue());
     }
 }

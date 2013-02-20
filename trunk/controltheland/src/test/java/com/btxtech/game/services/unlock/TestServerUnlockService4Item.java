@@ -130,7 +130,7 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
             unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
-            Assert.assertEquals("Not enough razarion to by: ItemType: TestAttackItem user: UserState: user=null", e.getMessage());
+            Assert.assertEquals("Not enough razarion to unlock: ItemType: TestAttackItem user: UserState: user=null", e.getMessage());
         }
         Assert.assertEquals(0, getUserState().getRazarion());
         assertItems(unlockService.getUnlockContainer(getMyBase()));

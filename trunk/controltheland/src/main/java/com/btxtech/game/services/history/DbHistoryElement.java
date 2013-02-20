@@ -15,6 +15,8 @@ package com.btxtech.game.services.history;
 
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.common.db.IndexUserType;
 import com.btxtech.game.services.planet.PlanetSystemService;
@@ -70,7 +72,8 @@ public class DbHistoryElement implements Serializable {
         BOT_ENRAGE_NORMAL,
         BOT_ENRAGE_UP,
         UNLOCKED_ITEM,
-        UNLOCKED_QUEST
+        UNLOCKED_QUEST,
+        UNLOCKED_PLANET
     }
 
     public enum Source {
@@ -112,6 +115,7 @@ public class DbHistoryElement implements Serializable {
     private String inventory;
     private String botName;
     private String botInfo;
+    private Integer planetId;
     private String planetName;
 
     /**
@@ -120,7 +124,7 @@ public class DbHistoryElement implements Serializable {
     protected DbHistoryElement() {
     }
 
-    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncItem syncItem, DbLevel level, DbLevelTask levelTask, PlanetSystemService planetSystemService, String sessionId, Source source, com.btxtech.game.jsre.client.common.Index position, Integer deltaRazarion, Integer razarion, String inventory, String botName, String botInfo, ItemType itemType) {
+    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncItem syncItem, DbLevel level, DbLevelTask levelTask, PlanetSystemService planetSystemService, String sessionId, Source source, com.btxtech.game.jsre.client.common.Index position, Integer deltaRazarion, Integer razarion, String inventory, String botName, String botInfo, ItemType itemType, PlanetLiteInfo planetLiteInfo) {
         this.sessionId = sessionId;
         this.deltaRazarion = deltaRazarion;
         this.razarion = razarion;
@@ -151,7 +155,14 @@ public class DbHistoryElement implements Serializable {
         this.source = source;
         this.position = position;
         this.inventory = inventory;
-        planetName = actorBase != null ? planetSystemService.getServerPlanetServices(actorBase).getPlanetInfo().getName() : null;
+        if (planetLiteInfo != null) {
+            planetName = planetLiteInfo.getName();
+            planetId = planetLiteInfo.getPlanetId();
+        } else if (actorBase != null) {
+            PlanetInfo planetInfo = planetSystemService.getServerPlanetServices(actorBase).getPlanetInfo();
+            planetName = planetInfo.getName();
+            planetId = planetInfo.getPlanetId();
+        }
     }
 
     public Integer getId() {
@@ -244,6 +255,10 @@ public class DbHistoryElement implements Serializable {
 
     public String getBotInfo() {
         return botInfo;
+    }
+
+    public Integer getPlanetId() {
+        return planetId;
     }
 
     public String getPlanetName() {

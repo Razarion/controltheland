@@ -1,10 +1,13 @@
 package com.btxtech.game.services.unlock;
 
+import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -27,11 +30,13 @@ public class TestServerUnlockService extends AbstractServiceTest {
     private ServerItemTypeService itemTypeService;
     @Autowired
     private UserGuidanceService userGuidanceService;
+    @Autowired
+    private PlanetSystemService planetSystemService;
 
     @Test
     @DirtiesContext
     public void testRealGameInfo() throws Exception {
-        configureSimplePlanetNoResources();
+        configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -56,11 +61,23 @@ public class TestServerUnlockService extends AbstractServiceTest {
         dbLevelTask3.setUnlockRazarion(1);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         userGuidanceService.activateLevels();
+        // Setup planets
+        DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
+        dbPlanet2.setUnlockRazarion(15);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
+        planetSystemService.deactivatePlanet(TEST_PLANET_2_ID);
+        planetSystemService.activatePlanet(TEST_PLANET_2_ID);
+        DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
+        dbPlanet3.setUnlockRazarion(15);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
+        planetSystemService.deactivatePlanet(TEST_PLANET_3_ID);
+        planetSystemService.activatePlanet(TEST_PLANET_3_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.promote(getUserState(), TEST_LEVEL_2_REAL);
         getUserState().setRazarion(100);
         getMyBase(); // Create Base
         // Setup
@@ -69,6 +86,8 @@ public class TestServerUnlockService extends AbstractServiceTest {
         unlockService.unlockQuest(dbLevelTask1.getId());
         unlockService.unlockQuest(dbLevelTask2.getId());
         unlockService.unlockQuest(dbLevelTask3.getId());
+        unlockService.unlockPlanet(TEST_PLANET_2_ID);
+        unlockService.unlockPlanet(TEST_PLANET_3_ID);
         // Verify
         UnlockContainer unlockContainer = getMovableService().getRealGameInfo(START_UID_1).getUnlockContainer();
         Assert.assertNotNull(unlockContainer);
@@ -81,6 +100,12 @@ public class TestServerUnlockService extends AbstractServiceTest {
         Assert.assertTrue(unlockContainer.getQuests().contains(dbLevelTask1.getId()));
         Assert.assertTrue(unlockContainer.getQuests().contains(dbLevelTask2.getId()));
         Assert.assertTrue(unlockContainer.getQuests().contains(dbLevelTask3.getId()));
+        // Verify planets
+        Assert.assertEquals(2, unlockContainer.getPlanets().size());
+        Assert.assertTrue(unlockContainer.getPlanets().contains(TEST_PLANET_2_ID));
+        Assert.assertTrue(unlockContainer.getPlanets().contains(TEST_PLANET_3_ID));
+        // Verify planet
+        Assert.assertNull(getMovableService().getRealGameInfo(START_UID_1).getLevelScope().getPlanetLiteInfo().getUnlockRazarion());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -97,7 +122,7 @@ public class TestServerUnlockService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testRealGameInfoLoginLogoff() throws Exception {
-        configureSimplePlanetNoResources();
+        configureMultiplePlanetsAndLevels();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -122,12 +147,24 @@ public class TestServerUnlockService extends AbstractServiceTest {
         dbLevelTask3.setUnlockRazarion(1);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         userGuidanceService.activateLevels();
+        // Setup planets
+        DbPlanet dbPlanet2 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_2_ID);
+        dbPlanet2.setUnlockRazarion(15);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet2);
+        planetSystemService.deactivatePlanet(TEST_PLANET_2_ID);
+        planetSystemService.activatePlanet(TEST_PLANET_2_ID);
+        DbPlanet dbPlanet3 = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_3_ID);
+        dbPlanet3.setUnlockRazarion(15);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet3);
+        planetSystemService.deactivatePlanet(TEST_PLANET_3_ID);
+        planetSystemService.activatePlanet(TEST_PLANET_3_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Create user
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
+        userGuidanceService.promote(getUserState(), TEST_LEVEL_2_REAL);
         getUserState().setRazarion(100);
         getMyBase(); // Create Base
         unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
@@ -135,6 +172,8 @@ public class TestServerUnlockService extends AbstractServiceTest {
         unlockService.unlockQuest(dbLevelTask1.getId());
         unlockService.unlockQuest(dbLevelTask2.getId());
         unlockService.unlockQuest(dbLevelTask3.getId());
+        unlockService.unlockPlanet(TEST_PLANET_2_ID);
+        unlockService.unlockPlanet(TEST_PLANET_3_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -153,6 +192,10 @@ public class TestServerUnlockService extends AbstractServiceTest {
         Assert.assertTrue(unlockContainer.getQuests().contains(dbLevelTask1.getId()));
         Assert.assertTrue(unlockContainer.getQuests().contains(dbLevelTask2.getId()));
         Assert.assertTrue(unlockContainer.getQuests().contains(dbLevelTask3.getId()));
+        // Verify planets
+        Assert.assertEquals(2, unlockContainer.getPlanets().size());
+        Assert.assertTrue(unlockContainer.getPlanets().contains(TEST_PLANET_2_ID));
+        Assert.assertTrue(unlockContainer.getPlanets().contains(TEST_PLANET_3_ID));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

@@ -181,7 +181,7 @@ public class DbLevel implements CrudChild, CrudParent {
         for (DbLevelItemTypeLimitation dbLevelItemTypeLimitation : this.levelItemTypeLimitation) {
             itemTypeLimitation.put(dbLevelItemTypeLimitation.getDbBaseItemType().getId(), dbLevelItemTypeLimitation.getCount());
         }
-        return new LevelScope(dbPlanet != null ? dbPlanet.getId() : null, id, number, itemTypeLimitation, xp);
+        return new LevelScope(dbPlanet != null ? dbPlanet.createPlanetInfo().getPlanetLiteInfo() : null, id, number, itemTypeLimitation, xp);
     }
 
     public int getXp() {

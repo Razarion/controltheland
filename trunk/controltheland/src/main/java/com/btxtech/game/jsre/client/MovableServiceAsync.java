@@ -127,4 +127,6 @@ public interface MovableServiceAsync {
     void unlockItemType(int itemTypeId, AsyncCallback<UnlockContainer> async);
 
     void unlockQuest(int questId, AsyncCallback<UnlockContainer> async);
+
+    void unlockPlanet(int planetId, AsyncCallback<UnlockContainer> async);
 }

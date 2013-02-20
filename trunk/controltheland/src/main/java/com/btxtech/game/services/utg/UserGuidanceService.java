@@ -43,6 +43,8 @@ public interface UserGuidanceService extends CommonUserGuidanceService {
 
     DbLevel getDbLevelCms();
 
+    DbLevel getPreviousDbLevel(DbLevel dbLevel);
+
     void setLevelForNewUser(UserState userState);
 
     void activateLevels() throws LevelActivationException;

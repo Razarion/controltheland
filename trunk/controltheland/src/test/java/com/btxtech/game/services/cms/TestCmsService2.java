@@ -1114,7 +1114,7 @@ public class TestCmsService2 extends AbstractServiceTest {
         userStates.add(userState);
 
         PlanetInfo planetInfo = new PlanetInfo();
-        planetInfo.setPlanetIdAndName(1, null);
+        planetInfo.setPlanetIdAndName(1, null, null);
         ServerPlanetServicesImpl serverPlanetServices = new ServerPlanetServicesImpl();
         serverPlanetServices.setPlanetInfo(planetInfo);
         TestPlanetHelper planet = new TestPlanetHelper();
@@ -1414,7 +1414,7 @@ public class TestCmsService2 extends AbstractServiceTest {
         List<UserState> userStates = new ArrayList<>();
 
         PlanetInfo planetInfo = new PlanetInfo();
-        planetInfo.setPlanetIdAndName(1, null);
+        planetInfo.setPlanetIdAndName(1, null, null);
         ServerPlanetServicesImpl serverPlanetServices = new ServerPlanetServicesImpl();
         serverPlanetServices.setPlanetInfo(planetInfo);
         TestPlanetHelper planet = new TestPlanetHelper();
