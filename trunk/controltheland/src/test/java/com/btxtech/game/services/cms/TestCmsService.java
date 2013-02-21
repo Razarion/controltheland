@@ -1923,12 +1923,12 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertRenderedPage(CmsPage.class);
-        getWicketTester().assertLabel("form:content:table:rows:6:cells:1:cell", "TestFactoryItem");
-        getWicketTester().assertLabel("form:content:table:rows:6:cells:2:cell:link:label", "Details");
-        getWicketTester().assertLabel("form:content:table:rows:9:cells:1:cell", "TestResourceItem");
+        getWicketTester().assertLabel("form:content:table:rows:9:cells:1:cell", "TestFactoryItem");
         getWicketTester().assertLabel("form:content:table:rows:9:cells:2:cell:link:label", "Details");
+        getWicketTester().assertLabel("form:content:table:rows:12:cells:1:cell", "TestResourceItem");
+        getWicketTester().assertLabel("form:content:table:rows:12:cells:2:cell:link:label", "Details");
         // Click link
-        getWicketTester().clickLink("form:content:table:rows:6:cells:2:cell:link");
+        getWicketTester().clickLink("form:content:table:rows:9:cells:2:cell:link");
         getWicketTester().assertLabel("form:content:table:rows:1:cells:2:cell", "TestFactoryItem");
         getWicketTester().assertLabel("form:content:table:rows:2:cells:2:cell", "1000.0");
         getWicketTester().assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:1:cell", "TEST_HARVESTER_ITEM");
@@ -1951,8 +1951,8 @@ public class TestCmsService extends AbstractServiceTest {
         // Go back to table and click the resource item type
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertRenderedPage(CmsPage.class);
+        getWicketTester().clickLink("form:content:table:rows:12:cells:2:cell:link");
         getWicketTester().debugComponentTrees();
-        getWicketTester().clickLink("form:content:table:rows:9:cells:2:cell:link");
         getWicketTester().assertLabel("form:content:table:rows:1:cells:2:cell", "TestResourceItem");
         getWicketTester().assertLabel("form:content:table:rows:2:cells:2:cell", "3");
 
@@ -1974,7 +1974,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbPage.setName("Home");
 
         DbContentList dbContentList = new DbContentList();
-        dbContentList.setRowsPerPage(6);
+        dbContentList.setRowsPerPage(9);
         dbContentList.init(userService);
         dbPage.setContentAndAccessWrites(dbContentList);
         dbContentList.setSpringBeanName("serverItemTypeService");
@@ -2035,17 +2035,17 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertRenderedPage(CmsPage.class);
-        getWicketTester().debugComponentTrees();
-        getWicketTester().assertLabel("form:content:table:rows:6:cells:1:cell", "TestFactoryItem");
-        getWicketTester().assertLabel("form:content:table:rows:6:cells:2:cell:link:label", "Details");
+        getWicketTester().assertLabel("form:content:table:rows:9:cells:1:cell", "TestFactoryItem");
+        getWicketTester().assertLabel("form:content:table:rows:9:cells:2:cell:link:label", "Details");
         // Click link
-        getWicketTester().clickLink("form:content:table:rows:6:cells:2:cell:link");
+        getWicketTester().clickLink("form:content:table:rows:9:cells:2:cell:link");
+        getWicketTester().debugComponentTrees();
         getWicketTester().assertLabel("form:content:table:rows:1:cells:2:cell", "TestFactoryItem");
         getWicketTester().assertLabel("form:content:table:rows:2:cells:2:cell", "1000.0");
         getWicketTester().assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:1:cell", "TEST_HARVESTER_ITEM");
         getWicketTester().assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:2:cell", "TestAttackItem");
         getWicketTester().assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:3:cell", "TestContainerItem");
-        getWicketTester().assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:4:cell", "");
+        getWicketTester().assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:4:cell", "TEST_CONSUMER_ATTACK_MOVABLE_TYPE");
         getWicketTester().assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:5:cell", "");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -2141,10 +2141,10 @@ public class TestCmsService extends AbstractServiceTest {
         getWicketTester().startPage(CmsPage.class);
         getWicketTester().assertRenderedPage(CmsPage.class);
         getWicketTester().debugComponentTrees();
-        getWicketTester().assertLabel("form:content:table:rows:6:cells:1:cell", "TestFactoryItem");
-        getWicketTester().assertLabel("form:content:table:rows:6:cells:2:cell:link:label", "Details");
+        getWicketTester().assertLabel("form:content:table:rows:9:cells:1:cell", "TestFactoryItem");
+        getWicketTester().assertLabel("form:content:table:rows:9:cells:2:cell:link:label", "Details");
         // Click link
-        getWicketTester().clickLink("form:content:table:rows:6:cells:2:cell:link");
+        getWicketTester().clickLink("form:content:table:rows:9:cells:2:cell:link");
         getWicketTester().assertLabel("form:content:table:rows:1:cells:2:cell", "TestFactoryItem");
         getWicketTester().assertLabel("form:content:table:rows:2:cells:2:cell", "1000.0");
         getWicketTester().assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:1:cell:link:label", "TEST_HARVESTER_ITEM");
@@ -2281,7 +2281,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbPage.setName("Home");
 
         DbContentList dbContentList = new DbContentList();
-        dbContentList.setRowsPerPage(5);
+        dbContentList.setRowsPerPage(9);
         dbContentList.init(userService);
         dbPage.setContentAndAccessWrites(dbContentList);
         dbContentList.setSpringBeanName("serverItemTypeService");
@@ -2394,11 +2394,14 @@ public class TestCmsService extends AbstractServiceTest {
         getWicketTester().clickLink("form:content:navigation:nextLink");
         getWicketTester().clickLink("form:content:navigation:nextLink");
         getWicketTester().clickLink("form:content:navigation:nextLink");
+        getWicketTester().clickLink("form:content:navigation:nextLink");
+        getWicketTester().clickLink("form:content:navigation:nextLink");
+        getWicketTester().clickLink("form:content:navigation:nextLink");
         getWicketTester().assertLabel("form:content:navigation:previousLink:previousLabel", "previous");
         getWicketTester().assertEnabled("form:content:navigation:previousLink:previousLabel");
         getWicketTester().assertEnabled("form:content:navigation:previousLink");
         pageParameters = new PageParameters("page=1");
-        pageParameters.put("childId", 7);
+        pageParameters.put("childId", 10);
         pageParameters.put("detailId", "1");
         assertBookmarkablePageLink(getWicketTester(), "form:content:navigation:previousLink", CmsPage.class, pageParameters);
 
@@ -2417,7 +2420,7 @@ public class TestCmsService extends AbstractServiceTest {
         getWicketTester().assertEnabled("form:content:navigation:previousLink:previousLabel");
         getWicketTester().assertEnabled("form:content:navigation:previousLink");
         pageParameters = new PageParameters("page=1");
-        pageParameters.put("childId", 6);
+        pageParameters.put("childId", 9);
         pageParameters.put("detailId", "1");
         assertBookmarkablePageLink(getWicketTester(), "form:content:navigation:previousLink", CmsPage.class, pageParameters);
 
@@ -2430,7 +2433,7 @@ public class TestCmsService extends AbstractServiceTest {
         getWicketTester().assertEnabled("form:content:navigation:nextLink:nextLabel");
         getWicketTester().assertEnabled("form:content:navigation:nextLink");
         pageParameters = new PageParameters("page=1");
-        pageParameters.put("childId", 8);
+        pageParameters.put("childId", 11);
         pageParameters.put("detailId", "1");
         assertBookmarkablePageLink(getWicketTester(), "form:content:navigation:nextLink", CmsPage.class, pageParameters);
 

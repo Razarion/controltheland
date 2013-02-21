@@ -72,15 +72,15 @@ public class ServerEnergyServiceImpl implements ServerEnergyService {
     }
 
     private void onBaseItemRestored(SyncBaseItem syncBaseItem) {
-        if (pause || !syncBaseItem.isReady()) {
+        if (!syncBaseItem.isReady()) {
             return;
         }
         if (syncBaseItem.hasSyncConsumer()) {
-            consumerActivated(syncBaseItem.getSyncConsumer());
+            getBaseEnergy(syncBaseItem).consumerActivated(syncBaseItem.getSyncConsumer());
         }
 
         if (syncBaseItem.hasSyncGenerator()) {
-            generatorActivated(syncBaseItem.getSyncGenerator());
+            getBaseEnergy(syncBaseItem).generatorActivated(syncBaseItem.getSyncGenerator());
         }
     }
 
