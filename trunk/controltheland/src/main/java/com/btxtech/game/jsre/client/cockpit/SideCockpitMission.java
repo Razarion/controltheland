@@ -54,7 +54,7 @@ public class SideCockpitMission extends Composite {
         };
         DialogManager.showDialog(new YesNoDialog(ClientI18nHelper.CONSTANTS.abortMission(),
                 ClientI18nHelper.CONSTANTS.reallyAbortMission(),
-                ClientI18nHelper.CONSTANTS.abort(), clickHandler, ClientI18nHelper.CONSTANTS.cancel(),
+                ClientI18nHelper.CONSTANTS.yes(), clickHandler, ClientI18nHelper.CONSTANTS.no(),
                 null), DialogManager.Type.QUEUE_ABLE);
     }
 }
