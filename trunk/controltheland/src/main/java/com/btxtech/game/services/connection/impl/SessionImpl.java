@@ -25,6 +25,7 @@ import com.btxtech.game.services.utg.tracker.DbSessionDetail;
 import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wicket.RequestCycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -33,8 +34,11 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * User: beat
@@ -79,10 +83,35 @@ public class SessionImpl implements Session, Serializable {
         userAgent = request.getHeader("user-agent");
         boolean isNewUserTracking = false;
         try {
-            WicketAuthenticatedWebSession wicketSession = (WicketAuthenticatedWebSession) WicketAuthenticatedWebSession.get();
-            adCellBid = wicketSession.getAdCellBid();
-            trackingCookieId = wicketSession.getTrackingCookieId();
-            isNewUserTracking =  wicketSession.isNewUserTracking();
+            RequestCycle requestCycle = RequestCycle.get();
+            if (requestCycle != null) {
+                WicketAuthenticatedWebSession wicketSession = (WicketAuthenticatedWebSession) WicketAuthenticatedWebSession.get();
+                adCellBid = wicketSession.getAdCellBid();
+                trackingCookieId = wicketSession.getTrackingCookieId();
+                isNewUserTracking = wicketSession.isNewUserTracking();
+            } else {
+                // TODO remove when error found
+                log.error("----------------------Unknown request----------------------------");
+                log.error("Thread: " + Thread.currentThread().getName());
+                log.error("User Agent: " + userAgent);
+                log.error("Session Id: " + sessionId);
+                log.error("IP: " + request.getRemoteAddr());
+                try {
+                    InetAddress inetAddress = InetAddress.getByName(request.getRemoteAddr());
+                    log.error("Remote Host: " + inetAddress.getHostName());
+                } catch (UnknownHostException e) {
+                    // Ignore
+                }
+                log.error("Referer: " + request.getHeader("Referer"));
+                log.error("Request URI: " + request.getRequestURI());
+                log.error("Query String: " + request.getQueryString());
+                if(request.getCookies() != null) {
+                    for (Cookie cookie : request.getCookies()) {
+                        log.error("Cookie: " + cookie.getName() + "=" + cookie.getValue());
+                    }
+                }
+                log.error("-----------------------------------------------------------------");
+            }
         } catch (Exception e) {
             ExceptionHandler.handleException(e);
         }
