@@ -26,6 +26,7 @@ import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.ServerEnergyService;
 import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.RegisterService;
@@ -1192,6 +1193,76 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         dbCountComparisonConfig.setCount(3);
         dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
         dbLevelTask1.setDbConditionConfig(dbConditionConfig);
+    }
+
+    @Test
+    @DirtiesContext
+    public void testEnergy() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        // Build consumer
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000), TEST_CONSUMER_TYPE_ID);
+        waitForActionServiceDone();
+        ServerEnergyService serverEnergyService = planetSystemService.getServerPlanetServices().getEnergyService();
+        Assert.assertEquals(20, serverEnergyService.getConsuming());
+        Assert.assertEquals(0, serverEnergyService.getGenerating());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        // Verify and build generator
+        serverEnergyService = planetSystemService.getServerPlanetServices().getEnergyService();
+        Assert.assertEquals(20, serverEnergyService.getConsuming());
+        Assert.assertEquals(0, serverEnergyService.getGenerating());
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(2000, 2000), TEST_GENERATOR_TYPE_ID);
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        // Verify and sell consumer
+        serverEnergyService = planetSystemService.getServerPlanetServices().getEnergyService();
+        Assert.assertEquals(20, serverEnergyService.getConsuming());
+        Assert.assertEquals(30, serverEnergyService.getGenerating());
+        getMovableService().sellItem(getFirstSynItemId(getMyBase(), TEST_CONSUMER_TYPE_ID));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        // Verify and sell generator
+        serverEnergyService = planetSystemService.getServerPlanetServices().getEnergyService();
+        Assert.assertEquals(0, serverEnergyService.getConsuming());
+        Assert.assertEquals(30, serverEnergyService.getGenerating());
+        getMovableService().sellItem(getFirstSynItemId(getMyBase(), TEST_GENERATOR_TYPE_ID));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        backupAndRestore();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        // Verify
+        serverEnergyService = planetSystemService.getServerPlanetServices().getEnergyService();
+        Assert.assertEquals(0, serverEnergyService.getConsuming());
+        Assert.assertEquals(0, serverEnergyService.getGenerating());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     private void backupAndRestore() throws NoSuchItemTypeException {

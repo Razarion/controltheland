@@ -33,6 +33,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
+import com.btxtech.game.jsre.common.packets.EnergyPacket;
 import com.btxtech.game.jsre.common.packets.HouseSpacePacket;
 import com.btxtech.game.jsre.common.packets.LevelPacket;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
@@ -57,7 +58,9 @@ import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBoxItemType;
 import com.btxtech.game.services.item.itemType.DbBuilderType;
+import com.btxtech.game.services.item.itemType.DbConsumerType;
 import com.btxtech.game.services.item.itemType.DbFactoryType;
+import com.btxtech.game.services.item.itemType.DbGeneratorType;
 import com.btxtech.game.services.item.itemType.DbHarvesterType;
 import com.btxtech.game.services.item.itemType.DbHouseType;
 import com.btxtech.game.services.item.itemType.DbItemContainerType;
@@ -204,6 +207,12 @@ abstract public class AbstractServiceTest {
     protected static int TEST_BOX_ITEM_1_ID = -1;
     protected static final String TEST_BOX_ITEM_2 = "TEST_BOX_ITEM_2";
     protected static int TEST_BOX_ITEM_2_ID = -1;
+    protected static final String TEST_CONSUMER_TYPE = "TEST_CONSUMER_TYPE";
+    protected static int TEST_CONSUMER_TYPE_ID = -1;
+    protected static final String TEST_CONSUMER_ATTACK_MOVABLE_TYPE = "TEST_CONSUMER_ATTACK_MOVABLE_TYPE";
+    protected static int TEST_CONSUMER_ATTACK_MOVABLE_TYPE_ID = -1;
+    protected static final String TEST_GENERATOR_TYPE = "TEST_GENERATOR_TYPE";
+    protected static int TEST_GENERATOR_TYPE_ID = -1;
     // Planets
     protected static final String TEST_PLANET_1 = "TEST_PLANET_1";
     protected static int TEST_PLANET_1_ID = -1;
@@ -764,6 +773,10 @@ abstract public class AbstractServiceTest {
                 e.printStackTrace();
                 return false;
             }
+        } else if (expectedPacket instanceof EnergyPacket) {
+            EnergyPacket expected = (EnergyPacket) expectedPacket;
+            EnergyPacket received = (EnergyPacket) receivedPacket;
+            return expected.equals(received);
         } else {
             Assert.fail("Unhandled packet: " + expectedPacket);
             return false;
@@ -985,10 +998,14 @@ abstract public class AbstractServiceTest {
         createAttackBaseItemType();
         createContainerBaseItemType();
         createHouseItemType();
+        createConsumerType();
+        createConsumerAttackMovableType();
+        createGeneratorType();
         createFactoryBaseItemType();
         createBuilderBaseItemType();
         finishAttackBaseItemType();
         finishContainerBaseItemType();
+        finishConsumerAttackMovableType();
         createAttackBaseItemType2();
         createMoney();
     }
@@ -1001,11 +1018,15 @@ abstract public class AbstractServiceTest {
         createAttackBaseItemType();
         createContainerBaseItemType();
         createHouseItemType();
+        createConsumerType();
+        createConsumerAttackMovableType();
+        createGeneratorType();
         createFactoryBaseItemType();
         createBuilderBaseItemType();
         createSimpleBuilding();
         finishAttackBaseItemType();
         finishContainerBaseItemType();
+        finishConsumerAttackMovableType();
         createMoney();
         // Planet
         DbPlanet dbPlanet1 = setupPlanet1();
@@ -1028,11 +1049,15 @@ abstract public class AbstractServiceTest {
         createAttackBaseItemType();
         createContainerBaseItemType();
         createHouseItemType();
+        createConsumerType();
+        createConsumerAttackMovableType();
+        createGeneratorType();
         createFactoryBaseItemType();
         createBuilderBaseItemType();
         createSimpleBuilding();
         finishAttackBaseItemType();
         finishContainerBaseItemType();
+        finishConsumerAttackMovableType();
         createMoney();
         // Planet
         DbPlanet dbPlanet1 = setupPlanet1();
@@ -1067,6 +1092,8 @@ abstract public class AbstractServiceTest {
         Set<DbBaseItemType> ableToBuild = new HashSet<DbBaseItemType>();
         ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_FACTORY_ITEM_ID));
         ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_HOUSE_ID));
+        ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONSUMER_TYPE_ID));
+        ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_GENERATOR_TYPE_ID));
         dbBuilderType.setAbleToBuild(ableToBuild);
         dbBaseItemType.setDbBuilderType(dbBuilderType);
         // DbMovableType
@@ -1098,6 +1125,7 @@ abstract public class AbstractServiceTest {
         ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID));
         ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONTAINER_ITEM_ID));
         ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_HARVESTER_ITEM_ID));
+        ableToBuild.add((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONSUMER_ATTACK_MOVABLE_TYPE_ID));
         dbFactoryType.setAbleToBuild(ableToBuild);
         dbBaseItemType.setDbFactoryType(dbFactoryType);
 
@@ -1142,7 +1170,15 @@ abstract public class AbstractServiceTest {
         dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_ATTACK_ITEM_ID), true);
         dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_FACTORY_ITEM_ID), true);
         dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID), true);
+        dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONSUMER_ATTACK_MOVABLE_TYPE_ID), true);
 
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.activate();
+    }
+
+    private void finishConsumerAttackMovableType() {
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONSUMER_ATTACK_MOVABLE_TYPE_ID);
+        dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID), true);
         serverItemTypeService.saveDbItemType(dbBaseItemType);
         serverItemTypeService.activate();
     }
@@ -1231,6 +1267,74 @@ abstract public class AbstractServiceTest {
         serverItemTypeService.saveDbItemType(dbBaseItemType);
         serverItemTypeService.activate();
         TEST_HOUSE_ID = dbBaseItemType.getId();
+        return dbBaseItemType;
+    }
+
+
+    private DbBaseItemType createConsumerType() {
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        setupImages(dbBaseItemType, 1);
+        dbBaseItemType.setName(TEST_CONSUMER_TYPE);
+        dbBaseItemType.setTerrainType(TerrainType.LAND);
+        dbBaseItemType.setBounding(new BoundingBox(80, ANGELS_1));
+        dbBaseItemType.setHealth(10);
+        dbBaseItemType.setBuildup(10);
+        // DbConsumer
+        DbConsumerType dbConsumer = new DbConsumerType();
+        dbConsumer.setWattage(20);
+        dbBaseItemType.setDbConsumerType(dbConsumer);
+
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.activate();
+        TEST_CONSUMER_TYPE_ID = dbBaseItemType.getId();
+        return dbBaseItemType;
+    }
+
+    private DbBaseItemType createConsumerAttackMovableType() {
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        setupImages(dbBaseItemType, 24);
+        dbBaseItemType.setName(TEST_CONSUMER_ATTACK_MOVABLE_TYPE);
+        dbBaseItemType.setTerrainType(TerrainType.LAND);
+        dbBaseItemType.setBounding(new BoundingBox(80, ANGELS_24));
+        dbBaseItemType.setHealth(10);
+        dbBaseItemType.setBuildup(10);
+        // DbConsumer
+        DbConsumerType dbConsumer = new DbConsumerType();
+        dbConsumer.setWattage(10);
+        dbBaseItemType.setDbConsumerType(dbConsumer);
+        // DbMovableType
+        DbMovableType dbMovableType = new DbMovableType();
+        dbMovableType.setSpeed(10000);
+        dbBaseItemType.setDbMovableType(dbMovableType);
+        // DbWeaponType
+        DbWeaponType dbWeaponType = new DbWeaponType();
+        dbWeaponType.setRange(100);
+        dbWeaponType.setReloadTime(1);
+        dbWeaponType.setDamage(1000);
+        dbBaseItemType.setDbWeaponType(dbWeaponType);
+
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.activate();
+        TEST_CONSUMER_ATTACK_MOVABLE_TYPE_ID = dbBaseItemType.getId();
+        return dbBaseItemType;
+    }
+
+    private DbBaseItemType createGeneratorType() {
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) serverItemTypeService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        setupImages(dbBaseItemType, 1);
+        dbBaseItemType.setName(TEST_GENERATOR_TYPE);
+        dbBaseItemType.setTerrainType(TerrainType.LAND);
+        dbBaseItemType.setBounding(new BoundingBox(80, ANGELS_1));
+        dbBaseItemType.setHealth(10);
+        dbBaseItemType.setBuildup(10);
+        // DbConsumer
+        DbGeneratorType dbGeneratorType = new DbGeneratorType();
+        dbGeneratorType.setWattage(30);
+        dbBaseItemType.setDbGeneratorType(dbGeneratorType);
+
+        serverItemTypeService.saveDbItemType(dbBaseItemType);
+        serverItemTypeService.activate();
+        TEST_GENERATOR_TYPE_ID = dbBaseItemType.getId();
         return dbBaseItemType;
     }
 
@@ -1356,6 +1460,15 @@ abstract public class AbstractServiceTest {
         DbPlanetItemTypeLimitation house = dbPlanet.getItemLimitationCrud().createDbChild();
         house.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_HOUSE_ID));
         house.setCount(10);
+        DbPlanetItemTypeLimitation generator = dbPlanet.getItemLimitationCrud().createDbChild();
+        generator.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_GENERATOR_TYPE_ID));
+        generator.setCount(10);
+        DbPlanetItemTypeLimitation consumer = dbPlanet.getItemLimitationCrud().createDbChild();
+        consumer.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONSUMER_TYPE_ID));
+        consumer.setCount(10);
+        DbPlanetItemTypeLimitation consumerMovableAttacker =  dbPlanet.getItemLimitationCrud().createDbChild();
+        consumerMovableAttacker.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONSUMER_ATTACK_MOVABLE_TYPE_ID));
+        consumerMovableAttacker.setCount(10);
 
         planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
         TEST_PLANET_1_ID = dbPlanet.getId();
@@ -1578,6 +1691,15 @@ abstract public class AbstractServiceTest {
         DbLevelItemTypeLimitation house = dbLevel.getItemTypeLimitationCrud().createDbChild();
         house.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_HOUSE_ID));
         house.setCount(10);
+        DbLevelItemTypeLimitation generator = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        generator.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_GENERATOR_TYPE_ID));
+        generator.setCount(10);
+        DbLevelItemTypeLimitation consumer = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        consumer.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONSUMER_TYPE_ID));
+        consumer.setCount(10);
+        DbLevelItemTypeLimitation consumerMovableAttacker = dbLevel.getItemTypeLimitationCrud().createDbChild();
+        consumerMovableAttacker.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONSUMER_ATTACK_MOVABLE_TYPE_ID));
+        consumerMovableAttacker.setCount(10);
         userGuidanceService.getDbLevelCrud().updateDbChild(dbLevel);
         userGuidanceService.activateLevels();
         TEST_LEVEL_2_REAL_ID = dbLevel.getId();
