@@ -37,6 +37,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.TargetHasNoPositionException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncProjectileItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 
@@ -323,10 +324,14 @@ abstract public class AbstractItemService implements ItemService {
         return iterateOverItems(false, false, null, new ItemHandler<SyncBaseItem>() {
             @Override
             public SyncBaseItem handleItem(SyncItem syncItem) {
-                if (syncItem instanceof SyncBaseItem
-                        && baseSyncItem.isEnemy((SyncBaseItem) syncItem)
-                        && baseSyncItem.getSyncWeapon().isAttackAllowedWithoutMoving(syncItem)) {
-                    return (SyncBaseItem) syncItem;
+                try {
+                    if (syncItem instanceof SyncBaseItem
+                            && baseSyncItem.isEnemy((SyncBaseItem) syncItem)
+                            && baseSyncItem.getSyncWeapon().isAttackAllowedWithoutMoving(syncItem)) {
+                        return (SyncBaseItem) syncItem;
+                    }
+                } catch (TargetHasNoPositionException e) {
+                    // Target moved to a container
                 }
                 return null;
             }

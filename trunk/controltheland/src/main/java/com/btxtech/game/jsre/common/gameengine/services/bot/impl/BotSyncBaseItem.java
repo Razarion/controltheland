@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.common.gameengine.services.PlanetServices;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotItemConfig;
 import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.TargetHasNoPositionException;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -150,7 +151,7 @@ public class BotSyncBaseItem {
         setIdle();
     }
 
-    public double getDistanceTo(SyncBaseItem syncBaseItem) {
+    public double getDistanceTo(SyncBaseItem syncBaseItem) throws TargetHasNoPositionException {
         return this.syncBaseItem.getSyncItemArea().getDistance(syncBaseItem);
     }
 

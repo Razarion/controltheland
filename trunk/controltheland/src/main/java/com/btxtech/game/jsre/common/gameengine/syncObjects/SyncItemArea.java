@@ -3,10 +3,11 @@ package com.btxtech.game.jsre.common.gameengine.syncObjects;
 import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
+
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -18,6 +19,7 @@ public class SyncItemArea {
     private double angel = 0;
     private SyncItem syncItem;
     private BoundingBox boundingBox;
+    private Logger log = Logger.getLogger(SyncItemArea.class.getName());
 
     public SyncItemArea(SyncItem syncItem) {
         this.syncItem = syncItem;
@@ -232,7 +234,7 @@ public class SyncItemArea {
         Rectangle biggestScope = Rectangle.generateRectangleFromMiddlePoint(rectangle.getCenter(),
                 rectangle.getWidth() + boundingBox.getDiameter(),
                 rectangle.getHeight() + boundingBox.getDiameter());
-        if(!biggestScope.containsExclusive(getPosition())) {
+        if (!biggestScope.containsExclusive(getPosition())) {
             return false;
         }
         return rectangle.getNearestPoint(getPosition()).getDistanceDouble(getPosition()) <= boundingBox.getRadius();
@@ -249,11 +251,11 @@ public class SyncItemArea {
         return getPosition().getDistance(position) - getBoundingBox().getRadius();
     }
 
-    public double getDistance(SyncItem syncItem) {
+    public double getDistance(SyncItem syncItem) throws TargetHasNoPositionException {
         return getDistance(syncItem.getSyncItemArea());
     }
 
-    public int getDistanceRounded(SyncItem syncItem) {
+    public int getDistanceRounded(SyncItem syncItem) throws TargetHasNoPositionException {
         return (int) Math.round(getDistance(syncItem.getSyncItemArea()));
     }
 
@@ -261,30 +263,38 @@ public class SyncItemArea {
         return (int) Math.round(getDistance(position));
     }
 
-    public int getDistanceRounded(SyncItemArea syncItemArea) {
+    public int getDistanceRounded(SyncItemArea syncItemArea) throws TargetHasNoPositionException {
         return (int) Math.round(getDistance(syncItemArea));
     }
 
-    public double getDistance(SyncItemArea syncItemArea) {
+    public double getDistance(SyncItemArea syncItemArea) throws TargetHasNoPositionException {
+        if(!syncItemArea.hasPosition()) {
+            throw new TargetHasNoPositionException(syncItem);
+        }
         if (contains(syncItemArea)) {
             return 0;
         }
         return getPosition().getDistanceDouble(syncItemArea.getPosition()) - getBoundingBox().getRadius() - syncItemArea.getBoundingBox().getRadius();
     }
 
-    public boolean isInRange(int range, SyncItem target) {
+    public boolean isInRange(int range, SyncItem target) throws TargetHasNoPositionException {
         return range >= getDistanceRounded(target);
     }
 
     public boolean isInRange(int range, Index position, ItemType toBeBuiltType) {
-        return isInRange(range, toBeBuiltType.getBoundingBox().createSyntheticSyncItemArea(position));
+        try {
+            return isInRange(range, toBeBuiltType.getBoundingBox().createSyntheticSyncItemArea(position));
+        } catch (TargetHasNoPositionException e) {
+            log.warning("SyncItemArea.isInRange() synthetic item area should always have a position");
+            return false;
+        }
     }
 
     public boolean isInRange(int range, Index position) {
         return range >= getDistanceRounded(position);
     }
 
-    public boolean isInRange(int range, SyncItemArea syncItemArea) {
+    public boolean isInRange(int range, SyncItemArea syncItemArea) throws TargetHasNoPositionException {
         return range >= getDistanceRounded(syncItemArea);
     }
 

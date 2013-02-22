@@ -1,12 +1,13 @@
 package com.btxtech.game.jsre.client.action;
 
+import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.collision.ClientCollisionService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
-import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.TargetHasNoPositionException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,12 +45,12 @@ public abstract class GroupCommandHelperItemType<T extends SyncItem> {
             }
 
             Connection.getInstance().sendCommandQueue();
-        } catch (PathCanNotBeFoundException e) {
-            log.warning("GroupCommandHelperItemType.process(): " + e.getMessage());
+        } catch (Exception e) {
+            ClientExceptionHandler.handleException("GroupCommandHelperItemType.process()", e);
         }
     }
 
-    private boolean isAllowedAllowedWithoutMoving(SyncBaseItem syncBaseItem, T target) {
+    private boolean isAllowedAllowedWithoutMoving(SyncBaseItem syncBaseItem, T target) throws TargetHasNoPositionException {
         return syncBaseItem.getSyncItemArea().isInRange(getRange(syncBaseItem, target), target);
     }
 
