@@ -278,7 +278,7 @@ public class ServerItemServiceImpl extends AbstractItemService implements Server
     protected <T> T iterateOverItems(boolean includeNoPosition, boolean includeDead, T defaultReturn, ItemHandler<T> itemHandler) {
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
-                if (!includeDead & !syncItem.isAlive()) {
+                if (!includeDead && !syncItem.isAlive()) {
                     continue;
                 }
                 if (!includeNoPosition && !syncItem.getSyncItemArea().hasPosition()) {
