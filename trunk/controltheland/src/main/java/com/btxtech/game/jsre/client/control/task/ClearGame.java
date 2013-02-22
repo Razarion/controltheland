@@ -47,12 +47,13 @@ public class ClearGame extends AbstractStartupTask {
         Renderer.getInstance().stop();
         ClientChatHandler.getInstance().stop();
         ClientUserTracker.getInstance().stopEventTracking();
-        Connection.getInstance().clear();
+        Connection.getInstance().disconnect();
         GameCommon.clearGame();
         Simulation.getInstance().cleanup();
         TipManager.getInstance().deactivate();
         RadarPanel.getInstance().cleanup();
         TerrainView.getInstance().moveAbsolute(new Index(0, 0));
         ClientUnlockServiceImpl.getInstance().setUnlockContainer(null);
+        Connection.getInstance().clear();
     }
 }

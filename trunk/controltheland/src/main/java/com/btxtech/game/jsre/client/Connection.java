@@ -613,13 +613,16 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         return gameEngineMode;
     }
 
-    public void clear() {
+    public void disconnect() {
         if (timer != null) {
             timer.cancel();
             timer = null;
         }
-        gameEngineMode = null;
         commandQueue.clear();
+    }
+
+    public void clear() {
+        gameEngineMode = null;
     }
 
     class VoidAsyncCallback implements AsyncCallback<Void> {
