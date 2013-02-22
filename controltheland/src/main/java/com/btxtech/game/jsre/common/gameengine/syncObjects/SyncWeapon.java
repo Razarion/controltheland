@@ -106,6 +106,8 @@ public class SyncWeapon extends SyncBaseAbility {
             targetItem.onAttacked(getSyncBaseItem());
         } catch (ItemDoesNotExistException e) {
             // Ignore
+        } catch (TargetHasNoPositionException e) {
+            // Ignore
         }
         reloadProgress = 0;
         projectilePositions = null;
@@ -170,6 +172,10 @@ public class SyncWeapon extends SyncBaseAbility {
             return true;
         } catch (ItemDoesNotExistException ignore) {
             // It has may be killed
+            stop();
+            return returnFalseIfReloaded();
+        } catch (TargetHasNoPositionException e) {
+            // Target may moved to a container
             stop();
             return returnFalseIfReloaded();
         }
@@ -244,7 +250,7 @@ public class SyncWeapon extends SyncBaseAbility {
         return weaponType.isItemTypeAllowed(target.getBaseItemType().getId());
     }
 
-    public boolean isAttackAllowedWithoutMoving(SyncItem target) {
+    public boolean isAttackAllowedWithoutMoving(SyncItem target) throws TargetHasNoPositionException {
         if (!(target instanceof SyncBaseItem)) {
             return false;
         }
@@ -260,7 +266,7 @@ public class SyncWeapon extends SyncBaseAbility {
                 && isItemTypeAllowed((SyncBaseItem) target);
     }
 
-    public boolean isInRange(SyncBaseItem target) {
+    public boolean isInRange(SyncBaseItem target) throws TargetHasNoPositionException {
         return getSyncItemArea().isInRange(weaponType.getRange(), target);
     }
 

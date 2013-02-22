@@ -91,15 +91,17 @@ public class SyncItemContainer extends SyncBaseAbility {
     }
 
     public boolean isAbleToLoad(SyncBaseItem syncBaseItem) {
-        if (!isInLoadRange(syncBaseItem)) {
-            return false;
-        }
         try {
+            if (!isInLoadRange(syncBaseItem)) {
+                return false;
+            }
             isAbleToContainThrow(syncBaseItem);
             return true;
         } catch (IllegalArgumentException ignore) {
             return false;
         } catch (ItemContainerFullException ignore) {
+            return false;
+        } catch (TargetHasNoPositionException e) {
             return false;
         }
     }
@@ -146,7 +148,7 @@ public class SyncItemContainer extends SyncBaseAbility {
         return getSyncItemArea().isInRange(itemContainerType.getRange(), unloadPos);
     }
 
-    private boolean isInLoadRange(SyncBaseItem syncBaseItem) {
+    private boolean isInLoadRange(SyncBaseItem syncBaseItem) throws TargetHasNoPositionException {
         return getSyncItemArea().isInRange(itemContainerType.getRange(), syncBaseItem);
     }
 

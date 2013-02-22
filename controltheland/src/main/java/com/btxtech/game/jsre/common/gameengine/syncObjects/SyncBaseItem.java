@@ -718,7 +718,7 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
         return getBaseItemType().getDropBoxPossibility();
     }
 
-    public void onAttacked(SyncBaseItem syncBaseItem) {
+    public void onAttacked(SyncBaseItem syncBaseItem) throws TargetHasNoPositionException {
         fireItemChanged(SyncItemListener.Change.UNDER_ATTACK);
         if (getPlanetServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
             return;

@@ -149,6 +149,8 @@ public class SyncMovable extends SyncBaseAbility {
             // Item container may be killed
         } catch (ItemContainerFullException e) {
             // Item container full
+        } catch (TargetHasNoPositionException e) {
+            // Target container has moved to a container
         }
         stop();
         return false;
@@ -173,7 +175,11 @@ public class SyncMovable extends SyncBaseAbility {
                 }
             }
         } catch (ItemDoesNotExistException ignore) {
-            // Item container may be killed
+            // Target may be killed
+            stop();
+            return false;
+        } catch (TargetHasNoPositionException e) {
+            // Target moved to a container
             stop();
             return false;
         }

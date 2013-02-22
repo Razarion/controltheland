@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.common.gameengine.services.bot.impl;
 
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.TargetHasNoPositionException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,7 +59,11 @@ public class ShortestWaySorter {
             this.attacker = attacker;
             for (SyncBaseItem target : targets) {
                 if (attacker.isAbleToAttack(target.getBaseItemType())) {
-                    targetDistance.add(new TargetDistance(attacker, target));
+                    try {
+                        targetDistance.add(new TargetDistance(attacker, target));
+                    } catch (TargetHasNoPositionException e) {
+                        // Target has move to a container
+                    }
                 }
             }
             Collections.sort(targetDistance, targetDistanceCmp);
@@ -95,7 +100,7 @@ public class ShortestWaySorter {
         private double distance;
         private SyncBaseItem target;
 
-        public TargetDistance(BotSyncBaseItem attacker, SyncBaseItem target) {
+        public TargetDistance(BotSyncBaseItem attacker, SyncBaseItem target) throws TargetHasNoPositionException {
             this.target = target;
             distance = attacker.getDistanceTo(target);
         }

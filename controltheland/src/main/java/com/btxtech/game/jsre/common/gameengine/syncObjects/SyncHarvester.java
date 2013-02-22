@@ -78,6 +78,10 @@ public class SyncHarvester extends SyncBaseAbility {
             // Target may be empty
             stop();
             return false;
+        } catch (TargetHasNoPositionException e) {
+            // Target moved to a container
+            stop();
+            return false;
         }
     }
 
@@ -103,7 +107,7 @@ public class SyncHarvester extends SyncBaseAbility {
         setPathToDestinationIfSyncMovable(attackCommand.getPathToDestination());
     }
 
-    public boolean isInRange(SyncResourceItem target) {
+    public boolean isInRange(SyncResourceItem target) throws TargetHasNoPositionException {
         return getSyncItemArea().isInRange(harvesterType.getRange(), target);
     }
 
