@@ -171,7 +171,7 @@ public class Simulation implements ConditionServiceListener<SimpleBase, Void>, C
         Timer timer = new TimerPerfmon(PerfmonEnum.SIMULATION) {
             @Override
             public void runPerfmon() {
-                StartupScreen.getInstance().fadeOutAndStart(GameStartupSeq.WARM_RESTART_SIMULATED);
+                StartupScreen.getInstance().fadeOutAndStart(GameStartupSeq.WARM_SIMULATED);
             }
         };
         timer.schedule(1000);

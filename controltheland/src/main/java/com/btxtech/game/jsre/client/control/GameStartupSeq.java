@@ -23,27 +23,26 @@ public enum GameStartupSeq implements StartupSeq {
         @Override
         public StartupTaskEnum[] getAbstractStartupTaskEnum() {
             return ColdRealGameStartupTaskEnum.values();
-        }},
+        }
+    },
     COLD_SIMULATED(true) {
         @Override
         public StartupTaskEnum[] getAbstractStartupTaskEnum() {
             return ColdSimulatedGameStartupTaskEnum.values();
-        }},
+        }
+    },
     WARM_REAL(false) {
         @Override
         public StartupTaskEnum[] getAbstractStartupTaskEnum() {
             return WarmRealGameStartupTaskEnum.values();
-        }},
+        }
+    },
     WARM_SIMULATED(false) {
         @Override
         public StartupTaskEnum[] getAbstractStartupTaskEnum() {
             return WarmSimulatedGameStartupTaskEnum.values();
-        }},
-    WARM_RESTART_SIMULATED(false) {
-        @Override
-        public StartupTaskEnum[] getAbstractStartupTaskEnum() {
-            return WarmRestartSimulatedGameStartupTaskEnum.values();
-        }};
+        }
+    };
     private boolean cold;
 
     GameStartupSeq(boolean isCold) {
