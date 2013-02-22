@@ -66,15 +66,20 @@ public abstract class BotRunner {
                     if (botEnragementState == null || intruderHandler == null) {
                         return;
                     }
-                    if (base == null || !getPlanetServices().getBaseService().isAlive(base)) {
-                        base = getPlanetServices().getBaseService().createBotBase(botConfig);
-                    }
+                    createBaseIfNeeded();
                     botEnragementState.work(base);
+                    createBaseIfNeeded();
                     intruderHandler.handleIntruders(base);
                 }
             } catch (Throwable t) {
                 log.log(Level.SEVERE, "Exception in BotRunner (BotTicker): " + botConfig.getName(), t);
             }
+        }
+    }
+
+    private void createBaseIfNeeded() {
+        if (base == null || !getPlanetServices().getBaseService().isAlive(base)) {
+            base = getPlanetServices().getBaseService().createBotBase(botConfig);
         }
     }
 
