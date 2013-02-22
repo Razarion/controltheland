@@ -2,6 +2,11 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui">
     <ui:style>
+        .scrollpanel {
+            max-height: 300px;
+            overflow-y: scroll;
+        }
+
         .razarionplate {
             background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgba(245, 246, 246, 1)), color-stop(21%, rgba(219, 220, 226, 1)), color-stop(49%, rgba(184, 186, 198, 1)), color-stop(80%, rgba(221, 223, 227, 1)), color-stop(100%, rgba(245, 246, 246, 1)));
             background: -webkit-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%, rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%, rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100%);
@@ -40,26 +45,36 @@
         </g:HorizontalPanel>
         <g:TabPanel ui:field="tabPanel">
             <g:Tab text="{msg.inventory}">
-                <g:FlexTable width="5cm" height="3cm" ui:field="inventoryTable"/>
+                <g:SimplePanel styleName="{style.scrollpanel}">
+                    <g:FlexTable width="5cm" ui:field="inventoryTable"/>
+                </g:SimplePanel>
             </g:Tab>
             <g:Tab text="{msg.workshop}">
-                <g:FlexTable width="5cm" height="3cm" ui:field="workshopTable"/>
+                <g:SimplePanel styleName="{style.scrollpanel}">
+                    <g:FlexTable width="5cm" ui:field="workshopTable"/>
+                </g:SimplePanel>
             </g:Tab>
             <g:Tab text="{msg.dealer}">
                 <g:TabPanel width="5cm" height="3cm" ui:field="dealerPanel">
                     <g:Tab text="{msg.items}">
-                        <g:FlexTable width="5cm" height="3cm" ui:field="itemTable"/>
+                        <g:SimplePanel styleName="{style.scrollpanel}">
+                            <g:FlexTable width="5cm" ui:field="itemTable"/>
+                        </g:SimplePanel>
                     </g:Tab>
                     <g:Tab text="{msg.funds}">
-                        <g:FlexTable width="5cm" height="3cm" ui:field="fundsTable"/>
+                        <g:SimplePanel styleName="{style.scrollpanel}">
+                            <g:FlexTable width="5cm" ui:field="fundsTable"/>
+                        </g:SimplePanel>
                     </g:Tab>
                     <g:Tab text="{msg.artifacts}">
-                        <g:FlexTable width="5cm" height="3cm" ui:field="artefactTable"/>
+                        <g:SimplePanel styleName="{style.scrollpanel}">
+                            <g:FlexTable width="5cm" ui:field="artefactTable"/>
+                        </g:SimplePanel>
                     </g:Tab>
                 </g:TabPanel>
             </g:Tab>
             <g:Tab text="{msg.buy}">
-            	<g:SimplePanel width="12cm" height="9cm" ui:field="buyPanel"/>
+                <g:SimplePanel width="12cm" ui:field="buyPanel" styleName="{style.scrollpanel}"/>
             </g:Tab>
         </g:TabPanel>
     </g:VerticalPanel>
