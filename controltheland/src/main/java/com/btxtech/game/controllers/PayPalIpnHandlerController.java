@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Enumeration;
@@ -42,8 +43,10 @@ public class PayPalIpnHandlerController implements Controller {
             return null;
         }
         String params = "No set yet";
+        String encoding = null;
         try {
-            params = buildParamString(request);
+            encoding = getEncoding(request);
+            params = buildParamString(request, encoding);
             String res = sendVerification(url, params);
             if (res.equals("VERIFIED")) {
                 financeService.razarionBought(request.getParameter("custom"),
@@ -59,13 +62,21 @@ public class PayPalIpnHandlerController implements Controller {
                 throw new IllegalStateException("Return value from verification is wrong: " + res);
             }
         } catch (Exception e) {
-            ExceptionHandler.handleException(e, "PayPal IPN failed: URL: " + url + " params:" + params);
+            ExceptionHandler.handleException(e, "PayPal IPN failed: URL: " + url + " encoding: " + encoding + " params:" + params);
             httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
         return null;
     }
 
-    private String sendVerification(URL url, String params) throws IOException {
+    private String getEncoding(HttpServletRequest request) {
+        String[] encodings = request.getParameterValues("charset");
+        if (encodings == null || encodings.length == 0) {
+            throw new IllegalArgumentException("No encoding (charset) in IPN request found");
+        }
+        return encodings[0];
+    }
+
+    protected String sendVerification(URL url, String params) throws IOException {
         HttpsURLConnection uc = (HttpsURLConnection) url.openConnection();
         uc.setDoOutput(true);
         uc.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -80,14 +91,14 @@ public class PayPalIpnHandlerController implements Controller {
         return res;
     }
 
-    private String buildParamString(HttpServletRequest request) {
+    private String buildParamString(HttpServletRequest request, String encoding) throws UnsupportedEncodingException {
         // read post from PayPal system and add 'cmd'
         Enumeration en = request.getParameterNames();
         StringBuilder builder = new StringBuilder("cmd=_notify-validate");
         while (en.hasMoreElements()) {
             String paramName = (String) en.nextElement();
             String paramValue = request.getParameter(paramName);
-            builder.append("&").append(paramName).append("=").append(URLEncoder.encode(paramValue));
+            builder.append("&").append(paramName).append("=").append(URLEncoder.encode(paramValue, encoding));
         }
         return builder.toString();
     }
