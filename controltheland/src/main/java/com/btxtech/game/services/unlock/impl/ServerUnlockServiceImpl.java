@@ -253,6 +253,9 @@ public class ServerUnlockServiceImpl extends UnlockServiceImpl implements Server
 
     private void sendPacket(UserState userState, UnlockContainer unlockContainer) {
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(userState);
+        if (serverPlanetServices.getBaseService().getBase(userState) == null) {
+            return;
+        }
         UnlockContainerPacket unlockContainerPacket = new UnlockContainerPacket();
         unlockContainerPacket.setUnlockContainer(unlockContainer);
         serverPlanetServices.getConnectionService().sendPacket(serverPlanetServices.getBaseService().getBase(userState).getSimpleBase(), unlockContainerPacket);
