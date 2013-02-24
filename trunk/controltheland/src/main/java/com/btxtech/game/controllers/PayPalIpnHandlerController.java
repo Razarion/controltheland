@@ -33,10 +33,18 @@ public class PayPalIpnHandlerController implements Controller {
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse httpServletResponse) throws Exception {
+        URL url;
+        try {
+            url = new URL(PayPalUtils.IS_SANDBOX ? SANDBOX_PAY_PAL_URL : PAY_PAL_URL);
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e, "PayPal IPN failed");
+            httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return null;
+        }
         String params = "No set yet";
         try {
             params = buildParamString(request);
-            String res = sendVerification(params);
+            String res = sendVerification(url, params);
             if (res.equals("VERIFIED")) {
                 financeService.razarionBought(request.getParameter("custom"),
                         request.getParameter("item_number"),
@@ -51,19 +59,14 @@ public class PayPalIpnHandlerController implements Controller {
                 throw new IllegalStateException("Return value from verification is wrong: " + res);
             }
         } catch (Exception e) {
-            ExceptionHandler.handleException(e, "PayPal IPN failed: " + params);
+            ExceptionHandler.handleException(e, "PayPal IPN failed: URL: " + url + " params:" + params);
             httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
         return null;
     }
 
-    private String sendVerification(String params) throws IOException {
-        // post back to PayPal system to validate
-        // NOTE: change http: to https: in the following URL to verify using SSL (for increased security).
-        // using HTTPS requires either Java 1.4 or greater, or Java Secure Socket Extension (JSSE)
-        // and configured for older versions.
-        URL u = new URL(PayPalUtils.IS_SANDBOX ? SANDBOX_PAY_PAL_URL : PAY_PAL_URL);
-        HttpsURLConnection uc = (HttpsURLConnection) u.openConnection();
+    private String sendVerification(URL url, String params) throws IOException {
+        HttpsURLConnection uc = (HttpsURLConnection) url.openConnection();
         uc.setDoOutput(true);
         uc.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         uc.setRequestProperty("Host", "www.paypal.com");
