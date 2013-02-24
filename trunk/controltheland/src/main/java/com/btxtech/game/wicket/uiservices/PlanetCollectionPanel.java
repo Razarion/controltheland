@@ -6,7 +6,7 @@ import com.btxtech.game.wicket.pages.mgmt.items.ItemsUtil;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.util.Collection;
 import java.util.StringTokenizer;
@@ -17,7 +17,7 @@ import java.util.StringTokenizer;
  * Time: 20:33:57
  */
 public class PlanetCollectionPanel extends Panel {
-    @Autowired
+    @SpringBean
     private PlanetSystemService planetSystemService;
 
     public PlanetCollectionPanel(String id) {

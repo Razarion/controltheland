@@ -1,14 +1,12 @@
 package com.btxtech.game.wicket.uiservices;
 
-import com.btxtech.game.services.common.ContentProvider;
-import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.utg.DbLevelTask;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.pages.mgmt.items.ItemsUtil;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.util.Collection;
 import java.util.StringTokenizer;
@@ -19,7 +17,7 @@ import java.util.StringTokenizer;
  * Time: 20:33:57
  */
 public class QuestCollectionPanel extends Panel {
-    @Autowired
+    @SpringBean
     private UserGuidanceService userGuidanceService;
 
     public QuestCollectionPanel(String id) {
