@@ -17,6 +17,8 @@ import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.SimpleUser;
+import com.btxtech.game.jsre.client.cockpit.SideCockpit;
+import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.FacebookUtils;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
@@ -49,6 +51,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class RegisterDialog extends Dialog {
     private static Timer timer;
     private NickNameField nickNameField;
+    private TextBox confirmEmail;
     private TextBox email;
     private PasswordTextBox password;
     private PasswordTextBox confirmPassword;
@@ -110,22 +113,25 @@ public class RegisterDialog extends Dialog {
         grid.setWidget(1, 0, new Label(ClientI18nHelper.CONSTANTS.email()));
         email = new TextBox();
         grid.setWidget(1, 1, email);
-        grid.setWidget(2, 0, new Label(ClientI18nHelper.CONSTANTS.password()));
+        grid.setWidget(2, 0, new Label(ClientI18nHelper.CONSTANTS.confirmEmail()));
+        confirmEmail = new TextBox();
+        grid.setWidget(2, 1, confirmEmail);
+        grid.setWidget(3, 0, new Label(ClientI18nHelper.CONSTANTS.password()));
         password = new PasswordTextBox();
-        grid.setWidget(2, 1, password);
-        grid.setWidget(3, 0, new Label(ClientI18nHelper.CONSTANTS.confirmPassword()));
+        grid.setWidget(3, 1, password);
+        grid.setWidget(4, 0, new Label(ClientI18nHelper.CONSTANTS.confirmPassword()));
         confirmPassword = new PasswordTextBox();
-        grid.setWidget(3, 1, confirmPassword);
+        grid.setWidget(4, 1, confirmPassword);
         Button register = new Button(ClientI18nHelper.CONSTANTS.register());
-        grid.setWidget(4, 0, register);
+        grid.setWidget(5, 0, register);
         register.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 register();
             }
         });
-        grid.getFlexCellFormatter().setColSpan(4, 0, 2);
-        grid.getFlexCellFormatter().setHorizontalAlignment(4, 0, HasHorizontalAlignment.ALIGN_CENTER);
+        grid.getFlexCellFormatter().setColSpan(5, 0, 2);
+        grid.getFlexCellFormatter().setHorizontalAlignment(5, 0, HasHorizontalAlignment.ALIGN_CENTER);
 
         // In IE9 caption legend text color is black
         CaptionPanel captionPanel = new CaptionPanel("<span style='color: #C7C4BB;'>" + ClientI18nHelper.CONSTANTS.registerDirect() + "</span>", true);
@@ -134,8 +140,18 @@ public class RegisterDialog extends Dialog {
     }
 
     private void register() {
-        if (nickNameField.getText().isEmpty() || email.getText().isEmpty() || password.getText().isEmpty() || confirmPassword.getText().isEmpty()) {
+        if (nickNameField.getText().isEmpty() || email.getText().isEmpty() || confirmEmail.getText().isEmpty() || password.getText().isEmpty() || confirmPassword.getText().isEmpty()) {
             DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.registrationFailed(), ClientI18nHelper.CONSTANTS.registrationFilled()), DialogManager.Type.STACK_ABLE);
+            return;
+        }
+
+        if (!CommonJava.isValidEmail(email.getText())) {
+            DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.registrationFailed(), ClientI18nHelper.CONSTANTS.registrationEmailNotValid()), DialogManager.Type.STACK_ABLE);
+            return;
+        }
+
+        if (!email.getText().equals(confirmEmail.getText())) {
+            DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.registrationFailed(), ClientI18nHelper.CONSTANTS.registrationEmailMatch()), DialogManager.Type.STACK_ABLE);
             return;
         }
 
@@ -161,6 +177,7 @@ public class RegisterDialog extends Dialog {
             @Override
             public void onSuccess(SimpleUser simpleUser) {
                 Connection.getInstance().setSimpleUser(simpleUser);
+                SideCockpit.getInstance().setSimpleUser(simpleUser);
                 hide(true);
                 DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.registerThanks(), ClientI18nHelper.CONSTANTS.registerConfirmationEmailSent(email.getText())), DialogManager.Type.PROMPTLY);
             }

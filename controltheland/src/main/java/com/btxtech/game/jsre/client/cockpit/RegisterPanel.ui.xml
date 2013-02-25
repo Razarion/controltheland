@@ -1,0 +1,62 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+    <ui:style>
+
+        .registerbutton {
+            width: 64px;
+            height: 17px;
+            padding: 0;
+            -moz-box-shadow: inset 0px 1px 0px 0px #9ec8f0;
+            -webkit-box-shadow: inset 0px 1px 0px 0px #9ec8f0;
+            box-shadow: inset 0px 1px 0px 0px #9ec8f0;
+            background: literal("-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #4095eb), color-stop(1, #0d2238))");
+            background: literal("-moz-linear-gradient(center top, #4095eb 5%, #0d2238 100%)");
+            background: literal("-o-linear-gradient(#4095eb, #0d2238)");
+            filter: literal("progid:DXImageTransform.Microsoft.gradient(startColorstr = '#4095eb', endColorstr = '#0d2238')");
+            background-color: #4095eb;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            border-radius: 3px;
+            border: 1px solid #1e3a57;
+            display: inline-block;
+            color: #C7C4BB;
+            text-decoration: none;
+            text-shadow: 1px 1px 0px #0a131c;
+            font-size: 10px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .registerbutton:hover {
+            background: literal("-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0d2238), color-stop(1, #4095eb))");
+            background: literal("-moz-linear-gradient(center top, #0d2238 5%, #4095eb 100%)");
+            background: literal("-o-linear-gradient(#0d2238, #4095eb)");
+            background-color: #0d2238;
+            filter: literal("progid:DXImageTransform.Microsoft.gradient(startColorstr = '#0d2238', endColorstr = '#4095eb')");
+        }
+
+        .registerbutton:active {
+            position: relative;
+            top: 1px;
+        }
+
+        .label {
+            color: #000;
+            text-decoration: none;
+            font-size: 10px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+    </ui:style>
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+    <g:AbsolutePanel width="65px" height="20px">
+        <g:at left="0" top="0">
+            <g:Button text="{msg.register}" ui:field="button" title="{msg.register}"
+                      styleName="{style.registerbutton}"/>
+        </g:at>
+        <g:at left="1" top="1">
+            <g:Label ui:field="label" title="{msg.userName}" styleName="{style.label}"/>
+        </g:at>
+    </g:AbsolutePanel>
+</ui:UiBinder> 

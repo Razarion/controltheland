@@ -199,4 +199,29 @@ public class TestCommonJava {
         Assert.assertFalse(CommonJava.compareExceptions(exception1, exception2));
         Assert.assertFalse(CommonJava.compareExceptionsDeep(exception1, exception2));
     }
+
+
+    @Test
+    public void isValidEmail() {
+        // Valid
+        Assert.assertTrue(CommonJava.isValidEmail("xxx@yyy.com"));
+        Assert.assertTrue(CommonJava.isValidEmail("xxx.aaaa@yyy.com"));
+        Assert.assertTrue(CommonJava.isValidEmail("xxx@aaaa.yyy.com"));
+        Assert.assertTrue(CommonJava.isValidEmail("xxx@aaa-aaaa.yyy.com"));
+        Assert.assertTrue(CommonJava.isValidEmail("xxx@aaa.bbb.yyy.com"));
+        Assert.assertTrue(CommonJava.isValidEmail("xxx.yyy.xxx@aaa.bbb.yyy.com"));
+        Assert.assertTrue(CommonJava.isValidEmail("x@yyy.qqq"));
+        Assert.assertTrue(CommonJava.isValidEmail("x@y.qqq"));
+        Assert.assertTrue(CommonJava.isValidEmail("x@y.aa"));
+        Assert.assertTrue(CommonJava.isValidEmail("x-x@y.aa"));
+        Assert.assertTrue(CommonJava.isValidEmail("x_x@y.aa"));
+        //Assert.assertTrue(CommonJava.isValidEmail("x@123.123.123.123"));
+        // Invalid
+        Assert.assertFalse(CommonJava.isValidEmail(null));
+        Assert.assertFalse(CommonJava.isValidEmail(""));
+        Assert.assertFalse(CommonJava.isValidEmail("1234"));
+        Assert.assertFalse(CommonJava.isValidEmail("aaaa"));
+        Assert.assertFalse(CommonJava.isValidEmail("@"));
+        Assert.assertFalse(CommonJava.isValidEmail("x@y.a"));
+    }
 }
