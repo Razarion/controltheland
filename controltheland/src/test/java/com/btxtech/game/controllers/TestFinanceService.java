@@ -6,6 +6,7 @@ import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.finance.DbPayPalTransaction;
 import com.btxtech.game.services.finance.FinanceService;
+import com.btxtech.game.services.finance.TransactionAlreadyProcessedException;
 import com.btxtech.game.services.history.DisplayHistoryElement;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.user.UserDoesNotExitException;
@@ -144,7 +145,7 @@ public class TestFinanceService extends AbstractServiceTest {
         try {
             financeService.razarionBought(userIdString, "RAZ1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Completed", "1");
             Assert.fail("IllegalArgumentException expected");
-        } catch (IllegalArgumentException e) {
+        } catch (TransactionAlreadyProcessedException e) {
             // Expected
             Assert.assertEquals("Transaction has already been used: 1", e.getMessage());
         }

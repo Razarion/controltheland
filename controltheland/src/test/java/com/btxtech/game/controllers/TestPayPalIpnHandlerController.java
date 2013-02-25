@@ -2,6 +2,7 @@ package com.btxtech.game.controllers;
 
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.finance.FinanceService;
+import com.btxtech.game.services.finance.TransactionAlreadyProcessedException;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
@@ -116,5 +117,41 @@ public class TestPayPalIpnHandlerController {
         };
         payPalIpnHandlerController.handleRequest(mockHttpServletRequest, mockHttpServletResponse);
         Assert.assertEquals(400, mockHttpServletResponse.getStatus());
+    }
+
+    @Test
+    public void payPalReturnsRefunded() throws Exception {
+        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest("get", "payment_type=instant&receiver_id=7A9K5VMDK42WY&address_street=Stj%3Frngatan+4E");
+        mockHttpServletRequest.setParameter("charset", "windows-1252");
+        MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+        PayPalIpnHandlerController payPalIpnHandlerController = new PayPalIpnHandlerController() {
+            @Override
+            protected String sendVerification(URL url, String params) throws IOException {
+                return "Refunded";
+            }
+        };
+        payPalIpnHandlerController.handleRequest(mockHttpServletRequest, mockHttpServletResponse);
+        Assert.assertEquals(200, mockHttpServletResponse.getStatus());
+    }
+
+    @Test
+    public void transactionAlreadyProcessed() throws Exception {
+        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest("get", "payment_type=instant&receiver_id=7A9K5VMDK42WY&address_street=Stj%3Frngatan+4E");
+        mockHttpServletRequest.setParameter("charset", "windows-1252");
+        MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+        PayPalIpnHandlerController payPalIpnHandlerController = new PayPalIpnHandlerController() {
+            @Override
+            protected String sendVerification(URL url, String params) throws IOException {
+                return "VERIFIED";
+            }
+        };
+        FinanceService financeServiceMock = EasyMock.createStrictMock(FinanceService.class);
+        financeServiceMock.razarionBought(null, null, null, null, null, null, null, null, null);
+        EasyMock.expectLastCall().andThrow(new TransactionAlreadyProcessedException("1"));
+        EasyMock.replay(financeServiceMock);
+        AbstractServiceTest.setPrivateField(PayPalIpnHandlerController.class, payPalIpnHandlerController, "financeService", financeServiceMock);
+        payPalIpnHandlerController.handleRequest(mockHttpServletRequest, mockHttpServletResponse);
+        Assert.assertEquals(200, mockHttpServletResponse.getStatus());
+        EasyMock.verify(financeServiceMock);
     }
 }

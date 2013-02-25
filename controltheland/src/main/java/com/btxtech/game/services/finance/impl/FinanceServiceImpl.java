@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.common.PayPalButton;
 import com.btxtech.game.jsre.common.PayPalUtils;
 import com.btxtech.game.services.finance.DbPayPalTransaction;
 import com.btxtech.game.services.finance.FinanceService;
+import com.btxtech.game.services.finance.TransactionAlreadyProcessedException;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserDoesNotExitException;
@@ -47,7 +48,7 @@ public class FinanceServiceImpl implements FinanceService {
 
     @Override
     @Transactional
-    public void razarionBought(String userId, String itemNumber, String paymentAmount, String paymentCurrency, String txnId, String payerEmail, String receiverEmail, String paymentStatus, String quantity) throws UserDoesNotExitException {
+    public void razarionBought(String userId, String itemNumber, String paymentAmount, String paymentCurrency, String txnId, String payerEmail, String receiverEmail, String paymentStatus, String quantity) throws UserDoesNotExitException, TransactionAlreadyProcessedException {
         if (!(PayPalUtils.IS_SANDBOX ? SANDBOX_RECEIVER_EMAIL : RECEIVER_EMAIL).equalsIgnoreCase(receiverEmail)) {
             throw new IllegalArgumentException("Receiver email is wrong: " + receiverEmail);
         }
@@ -80,7 +81,7 @@ public class FinanceServiceImpl implements FinanceService {
         }
 
         if (transactionIdAlreadyExits(txnId)) {
-            throw new IllegalArgumentException("Transaction has already been used: " + txnId);
+            throw new TransactionAlreadyProcessedException(txnId);
         }
 
         sessionFactory.getCurrentSession().save(new DbPayPalTransaction(user, itemNumber, txnId, payerEmail));

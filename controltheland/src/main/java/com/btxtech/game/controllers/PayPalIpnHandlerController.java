@@ -3,6 +3,7 @@ package com.btxtech.game.controllers;
 import com.btxtech.game.jsre.common.PayPalUtils;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.finance.FinanceService;
+import com.btxtech.game.services.finance.TransactionAlreadyProcessedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
@@ -39,7 +40,7 @@ public class PayPalIpnHandlerController implements Controller {
             url = new URL(PayPalUtils.IS_SANDBOX ? SANDBOX_PAY_PAL_URL : PAY_PAL_URL);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, "PayPal IPN failed");
-            httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            httpServletResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return null;
         }
         String params = "No set yet";
@@ -48,7 +49,7 @@ public class PayPalIpnHandlerController implements Controller {
             encoding = getEncoding(request);
             params = buildParamString(request, encoding);
             String res = sendVerification(url, params);
-            if (res.equals("VERIFIED")) {
+            if (res.equalsIgnoreCase("VERIFIED")) {
                 financeService.razarionBought(request.getParameter("custom"),
                         request.getParameter("item_number"),
                         request.getParameter("mc_gross"),
@@ -58,9 +59,13 @@ public class PayPalIpnHandlerController implements Controller {
                         request.getParameter("receiver_email"),
                         request.getParameter("payment_status"),
                         request.getParameter("quantity"));
+            } else if(res.equalsIgnoreCase("REFUNDED")) {
+                ExceptionHandler.handleException(null, "PayPal REFUNDED IPN received: URL: " + url + " encoding: " + encoding + " params:" + params);
             } else {
                 throw new IllegalStateException("Return value from verification is wrong: " + res);
             }
+        } catch (TransactionAlreadyProcessedException e) {
+            ExceptionHandler.handleException(e, "PayPal IPN received. Transaction has already been processed: URL: " + url + " encoding: " + encoding + " params:" + params);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, "PayPal IPN failed: URL: " + url + " encoding: " + encoding + " params:" + params);
             httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
