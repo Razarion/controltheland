@@ -110,4 +110,7 @@ public class CommonJava {
         return o1 == o2 || (o1 != null && o1.equals(o2));
     }
 
+    public static boolean isValidEmail(String email) {
+        return email != null && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.(?:[a-zA-Z]{2,6})$");
+    }
 }

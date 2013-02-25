@@ -14,6 +14,8 @@ public interface ClientI18nConstants extends Messages {
 
     String email();
 
+    String confirmEmail();
+
     String password();
 
     String confirmPassword();
@@ -144,6 +146,10 @@ public interface ClientI18nConstants extends Messages {
     String registrationFilled();
 
     String registrationMatch();
+
+    String registrationEmailNotValid();
+
+    String registrationEmailMatch();
 
     String registrationEmail(String email);
 
