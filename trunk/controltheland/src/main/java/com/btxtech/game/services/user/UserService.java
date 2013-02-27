@@ -65,6 +65,8 @@ public interface UserService extends UserDetailsService {
 
     void createAndLoginFacebookUser(FacebookSignedRequest facebookSignedRequest, String nickName) throws UserAlreadyExistsException, AlreadyLoggedInException;
 
+    void setNewPassword(User user, String password);
+
     User getUser(UserState userState);
 
     UserState getUserState4Hash(int userStateHash);

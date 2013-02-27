@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,4 +16,8 @@ public interface RegisterService {
     SimpleUser register(String userName, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, EmailAlreadyExitsException;
 
     User onVerificationPageCalled(String verificationId) throws EmailIsAlreadyVerifiedException, UserDoesNotExitException;
+
+    void onForgotPassword(String email) throws EmailDoesNotExitException;
+
+    void onPasswordReset(String uuid, String password, String confirmPassword) throws PasswordNotMatchException, NoForgotPasswordEntryException;
 }

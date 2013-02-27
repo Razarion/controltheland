@@ -28,4 +28,7 @@
     <entry key="emailVeriClosing">Wir freuen uns darauf, dich bei Razarion begrüssen zu dürfen!</entry>
     <entry key="emailVeriRazarionTeam">Dein Razarion-Team</entry>
     <entry key="loggedIn">Eingeloggt</entry>
+    <entry key="emailForgotPasswordSubject">Razarion - Konto Passworthilfe</entry>
+    <entry key="emailForgotPasswordSubjectMain1">Du erhältst dieses Email, weil du ein neues Passwort für dein Razarion Konto beantragt hast. Falls Du kein neues Password beantragt hast, kann dieses Email ignoriert werden.</entry>
+    <entry key="emailForgotPasswordSubjectMain2">Um den Vorgang abzuschliessen, klicke bitte auf den Link:</entry>
 </properties>

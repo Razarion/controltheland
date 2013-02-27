@@ -31,6 +31,7 @@
         <mapping class="com.btxtech.game.services.terrain.DbTerrainSetting"/>
         <mapping class="com.btxtech.game.services.terrain.DbRegion"/>
         <mapping class="com.btxtech.game.services.user.User"/>
+        <mapping class="com.btxtech.game.services.user.DbForgotPassword"/>
         <mapping class="com.btxtech.game.services.user.DbContentAccessControl"/>
         <mapping class="com.btxtech.game.services.user.DbPageAccessControl"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.SavedQuery"/>

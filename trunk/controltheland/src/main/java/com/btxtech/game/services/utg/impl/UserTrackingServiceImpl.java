@@ -37,6 +37,7 @@ import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.user.DbForgotPassword;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
@@ -397,6 +398,42 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             dbUserHistory.setDeleteUnverifiedUser();
             dbUserHistory.setVerificationId(user.getVerificationId());
             dbUserHistory.setAdCellPid(user.getAdCellBid());
+            sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+        }
+    }
+
+    @Override
+    public void onPasswordForgotRequested(User user, String forgotPasswordUuid) {
+        try {
+            DbUserHistory dbUserHistory = new DbUserHistory(user);
+            dbUserHistory.setForgotPasswordRequest();
+            dbUserHistory.setForgotPasswordUuid(forgotPasswordUuid);
+            sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+        }
+    }
+
+    @Override
+    public void onPasswordReset(User user, String forgotPasswordUuid) {
+        try {
+            DbUserHistory dbUserHistory = new DbUserHistory(user);
+            dbUserHistory.setPasswordChanged();
+            dbUserHistory.setForgotPasswordUuid(forgotPasswordUuid);
+            sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+        }
+    }
+
+    @Override
+    public void onPasswordForgotRequestedRemoved(DbForgotPassword dbForgotPassword) {
+        try {
+            DbUserHistory dbUserHistory = new DbUserHistory(dbForgotPassword.getUser());
+            dbUserHistory.setForgotPasswordRequestRemoved();
+            dbUserHistory.setForgotPasswordUuid(dbForgotPassword.getUuid());
             sessionFactory.getCurrentSession().saveOrUpdate(dbUserHistory);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);

@@ -51,7 +51,7 @@ public class TestExceptionHandlerNoSpring {
     }
 
     @Test
-    public void handleExceptionOnlyMessage() throws Exception {
+    public void handleExceptionOnlyMessage1() throws Exception {
         AbstractServiceTest.setPrivateStaticField(ExceptionHandler.class, "applicationContext", null);
         String threadName = Thread.currentThread().getName();
         Log mockLog = EasyMock.createStrictMock(Log.class);
@@ -62,6 +62,23 @@ public class TestExceptionHandlerNoSpring {
         EasyMock.replay(mockLog);
         AbstractServiceTest.setPrivateStaticField(ExceptionHandler.class, "log", mockLog);
         ExceptionHandler.handleException(null, "test message");
+        EasyMock.verify(mockLog);
+
+        AbstractServiceTest.setPrivateStaticField(ExceptionHandler.class, "log", LogFactory.getLog(ExceptionHandler.class));
+    }
+
+    @Test
+    public void handleExceptionOnlyMessage2() throws Exception {
+        AbstractServiceTest.setPrivateStaticField(ExceptionHandler.class, "applicationContext", null);
+        String threadName = Thread.currentThread().getName();
+        Log mockLog = EasyMock.createStrictMock(Log.class);
+        mockLog.error("--------------------------------------------------------------------");
+        mockLog.error("ExceptionHandler.handleException() applicationContext is not set");
+        mockLog.error("Thread: " + threadName);
+        mockLog.error("test message", null);
+        EasyMock.replay(mockLog);
+        AbstractServiceTest.setPrivateStaticField(ExceptionHandler.class, "log", mockLog);
+        ExceptionHandler.handleException("test message");
         EasyMock.verify(mockLog);
 
         AbstractServiceTest.setPrivateStaticField(ExceptionHandler.class, "log", LogFactory.getLog(ExceptionHandler.class));
