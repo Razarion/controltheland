@@ -10,7 +10,10 @@ import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.mgmt.ServerI18nHelper;
 import com.btxtech.game.services.mgmt.impl.MgmtServiceImpl;
+import com.btxtech.game.services.user.DbForgotPassword;
+import com.btxtech.game.services.user.EmailDoesNotExitException;
 import com.btxtech.game.services.user.EmailIsAlreadyVerifiedException;
+import com.btxtech.game.services.user.NoForgotPasswordEntryException;
 import com.btxtech.game.services.user.RegisterService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserDoesNotExitException;
@@ -42,6 +45,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -86,6 +90,14 @@ public class RegisterServiceImpl implements RegisterService {
                 } finally {
                     HibernateUtil.closeSession4InternalCall(sessionFactory);
                 }
+                HibernateUtil.openSession4InternalCall(sessionFactory);
+                try {
+                    removeOldPasswordForgetEntries();
+                } catch (Throwable throwable) {
+                    ExceptionHandler.handleException(throwable);
+                } finally {
+                    HibernateUtil.closeSession4InternalCall(sessionFactory);
+                }
             }
         }, CLEANUP_DELAY, CLEANUP_DELAY, TimeUnit.MILLISECONDS);
     }
@@ -101,12 +113,16 @@ public class RegisterServiceImpl implements RegisterService {
     @Override
     public SimpleUser register(String userName, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, EmailAlreadyExitsException {
         User user = userService.createUnverifiedUser(userName, password, confirmPassword, email);
-        sendEmailVerificationMail(user, generateLink(user));
+        sendEmailVerificationMail(user, generateVerificationLink(user));
         return user.createSimpleUser();
     }
 
-    private String generateLink(User user) {
+    private String generateVerificationLink(User user) {
         return "http://www.razarion.com" + cmsUiService.getUrl4CmsPage(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION) + "/" + CmsUtil.EMAIL_VERIFICATION_KEY + "/" + user.getVerificationId();
+    }
+
+    private String generateForgotPasswordLink(String uuid) {
+        return "http://www.razarion.com" + cmsUiService.getUrl4CmsPage(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_CHANGE) + "/" + CmsUtil.FORGOT_PASSWORD_UUID_KEY + "/" + uuid;
     }
 
     @Override
@@ -130,6 +146,66 @@ public class RegisterServiceImpl implements RegisterService {
         return user;
     }
 
+    @Override
+    @Transactional
+    public void onForgotPassword(String email) throws EmailDoesNotExitException {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
+        criteria.add(Restrictions.eq("email", email));
+        List<User> users = criteria.list();
+        if (users == null || users.isEmpty()) {
+            throw new EmailDoesNotExitException(email);
+        } else if (users.size() > 1) {
+            ExceptionHandler.handleException("More then one user have this email: " + email);
+        }
+        User user = users.get(0);
+        String uuid = UUID.randomUUID().toString().toUpperCase();
+        saveForgotPassword(user, uuid);
+        sendEmailForgotPassword(user, generateForgotPasswordLink(uuid));
+        userTrackingService.onPasswordForgotRequested(user, uuid);
+    }
+
+    private void saveForgotPassword(User user, String uuid) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbForgotPassword.class);
+        criteria.add(Restrictions.eq("user", user));
+        List<DbForgotPassword> dbForgotPasswords = criteria.list();
+        if (dbForgotPasswords != null && !dbForgotPasswords.isEmpty()) {
+            sessionFactory.getCurrentSession().delete(dbForgotPasswords.get(0));
+        }
+        sessionFactory.getCurrentSession().save(new DbForgotPassword(user, uuid));
+    }
+
+    @Override
+    @Transactional
+    public void onPasswordReset(String uuid, String password, String confirmPassword) throws PasswordNotMatchException, NoForgotPasswordEntryException {
+        if (!password.equals(confirmPassword)) {
+            throw new PasswordNotMatchException();
+        }
+        User user = retrieveAndDeleteForgotPassword(uuid);
+        if(user == null) {
+            throw new IllegalStateException("User is null: " + uuid);
+        }
+        userService.setNewPassword(user, password);
+        userService.loginIfNotLoggedIn(user);
+        userTrackingService.onPasswordReset(user, uuid);
+    }
+
+    private User retrieveAndDeleteForgotPassword(String uuid) throws NoForgotPasswordEntryException {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbForgotPassword.class);
+        criteria.add(Restrictions.eq("uuid", uuid));
+        List<DbForgotPassword> dbForgotPasswords = criteria.list();
+        if (dbForgotPasswords == null || dbForgotPasswords.isEmpty()) {
+            throw new NoForgotPasswordEntryException(uuid);
+        } else if (dbForgotPasswords.size() > 1) {
+            ExceptionHandler.handleException("More then one DbForgotPassword for exists for uuid: " + uuid);
+        }
+        User user = null;
+        for (DbForgotPassword dbForgotPassword : dbForgotPasswords) {
+            user = dbForgotPassword.getUser();
+            sessionFactory.getCurrentSession().delete(dbForgotPassword);
+        }
+        return user;
+    }
+
     private void sendEmailVerificationMail(final User user, final String link) {
         try {
             MimeMessagePreparator preparator = new MimeMessagePreparator() {
@@ -146,6 +222,30 @@ public class RegisterServiceImpl implements RegisterService {
                     model.put("closing", serverI18nHelper.getString("emailVeriClosing"));
                     model.put("razarionTeam", serverI18nHelper.getString("emailVeriRazarionTeam"));
                     String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "com/btxtech/game/services/user/registration-confirmation.vm", "UTF-8", model);
+                    message.setText(text, true);
+                }
+            };
+            mailSender.send(preparator);
+        } catch (Exception ex) {
+            ExceptionHandler.handleException(ex);
+        }
+    }
+
+    private void sendEmailForgotPassword(final User user, final String link) {
+        try {
+            MimeMessagePreparator preparator = new MimeMessagePreparator() {
+                public void prepare(MimeMessage mimeMessage) throws Exception {
+                    MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
+                    message.setTo(user.getEmail());
+                    message.setFrom(MgmtServiceImpl.REPLY_EMAIL);
+                    message.setSubject(serverI18nHelper.getString("emailForgotPasswordSubject"));
+                    Map<Object, Object> model = new HashMap<>();
+                    model.put("greeting", serverI18nHelper.getString("emailVeriGreeting", new Object[]{user.getUsername()}));
+                    model.put("main1", serverI18nHelper.getString("emailForgotPasswordSubjectMain1"));
+                    model.put("main2", serverI18nHelper.getString("emailForgotPasswordSubjectMain2"));
+                    model.put("link", link);
+                    model.put("razarionTeam", serverI18nHelper.getString("emailVeriRazarionTeam"));
+                    String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "com/btxtech/game/services/user/forgot-password.vm", "UTF-8", model);
                     message.setText(text, true);
                 }
             };
@@ -184,6 +284,29 @@ public class RegisterServiceImpl implements RegisterService {
                 if (userState != null) {
                     userState.setUser(null);
                     userService.removeUserState(userState);
+                }
+            }
+        });
+    }
+
+    private void removeOldPasswordForgetEntries() {
+        GregorianCalendar gregorianCalendar = new GregorianCalendar();
+        gregorianCalendar.add(GregorianCalendar.DAY_OF_YEAR, -1);
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbForgotPassword.class);
+        criteria.add(Restrictions.lt("date", gregorianCalendar.getTime()));
+        List<DbForgotPassword> dbForgotPasswords = criteria.list();
+        if (dbForgotPasswords != null && !dbForgotPasswords.isEmpty()) {
+            removeOldPasswordForgetEntriesInTransaction(dbForgotPasswords);
+        }
+    }
+
+    private void removeOldPasswordForgetEntriesInTransaction(final List<DbForgotPassword> dbForgotPasswords) {
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            public void doInTransactionWithoutResult(TransactionStatus status) {
+                for (DbForgotPassword dbForgotPassword : dbForgotPasswords) {
+                    sessionFactory.getCurrentSession().delete(dbForgotPassword);
+                    userTrackingService.onPasswordForgotRequestedRemoved(dbForgotPassword);
                 }
             }
         });

@@ -25,6 +25,7 @@ import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.services.planet.Base;
+import com.btxtech.game.services.user.DbForgotPassword;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.tracker.DbBrowserWindowTracking;
@@ -64,6 +65,12 @@ public interface UserTrackingService {
     void onUserLoggedIn(User user, UserState userState);
 
     void onUserLoggedOut(User user);
+
+    void onPasswordForgotRequested(User user, String forgotPasswordUuid);
+
+    void onPasswordForgotRequestedRemoved(DbForgotPassword dbForgotPassword);
+
+    void onPasswordReset(User user, String forgotPasswordUuid);
 
     void onBaseCreated(User user, String baseName);
 

@@ -19,7 +19,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import java.util.Date;
 
 /**
@@ -50,6 +49,10 @@ public class DbUserHistory {
     private Date verified;
     private Date deleteUnverifiedUser;
     private String adCellPid;
+    private Date forgotPasswordRequest;
+    private Date forgotPasswordRequestRemoved;
+    private Date passwordChanged;
+    private String forgotPasswordUuid;
 
     /**
      * Used by hibernate
@@ -191,6 +194,38 @@ public class DbUserHistory {
 
     public void setAdCellPid(String adCellPid) {
         this.adCellPid = adCellPid;
+    }
+
+    public Date getForgotPasswordRequest() {
+        return forgotPasswordRequest;
+    }
+
+    public void setForgotPasswordRequest() {
+        forgotPasswordRequest = new Date();
+    }
+
+    public Date getForgotPasswordRequestRemoved() {
+        return forgotPasswordRequestRemoved;
+    }
+
+    public void setForgotPasswordRequestRemoved() {
+        forgotPasswordRequestRemoved = new Date();
+    }
+
+    public Date getPasswordChanged() {
+        return passwordChanged;
+    }
+
+    public void setPasswordChanged() {
+        passwordChanged = new Date();
+    }
+
+    public String getForgotPasswordUuid() {
+        return forgotPasswordUuid;
+    }
+
+    public void setForgotPasswordUuid(String forgotPasswordUuid) {
+        this.forgotPasswordUuid = forgotPasswordUuid;
     }
 
     @Override

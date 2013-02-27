@@ -33,6 +33,10 @@ public class ExceptionHandler {
         handleException(t, null);
     }
 
+    public static void handleException(String message) {
+        handleException(null, message);
+    }
+
     public static void init(ApplicationContext applicationContext) {
         ExceptionHandler.applicationContext = applicationContext;
     }

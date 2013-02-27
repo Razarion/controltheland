@@ -29,6 +29,7 @@ public class CmsUtil {
 
     // Keys
     public static final String EMAIL_VERIFICATION_KEY = "verification_code";
+    public static final String FORGOT_PASSWORD_UUID_KEY = "uuid";
 
     /**
      * User: beat
@@ -47,7 +48,9 @@ public class CmsUtil {
         LEVEL_TASK_DONE,
         FACEBOOK_START,
         CHOOSE_NICKNAME,
-        EMAIL_VERIFICATION
+        EMAIL_VERIFICATION,
+        FORGOT_PASSWORD,
+        FORGOT_PASSWORD_CHANGE
         }
 
     public static String getUrl4CmsPage(String id) {

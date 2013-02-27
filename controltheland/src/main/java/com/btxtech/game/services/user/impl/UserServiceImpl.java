@@ -310,6 +310,13 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Override
+    public void setNewPassword(User user, String password) {
+        String passwordHash = new Md5PasswordEncoder().encodePassword(password, md5HashSalt);
+        user.setPassword(passwordHash);
+        privateSave(user);
+    }
+
     @SuppressWarnings("unchecked")
     private void checkExits(String email) throws EmailAlreadyExitsException {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
