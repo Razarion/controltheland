@@ -542,8 +542,33 @@ public class TestRegisterService extends AbstractServiceTest {
         Assert.assertEquals("no-reply@razarion.com", wiserMessage.getEnvelopeSender());
         Assert.assertEquals("Razarion - Konto Passworthilfe", wiserMessage.getMimeMessage().getSubject());
         Assert.assertEquals("text/html;charset=UTF-8", wiserMessage.getMimeMessage().getContentType());
-        assertStringIgnoreWhitespace("<html><body><h3>Hallo U1,</h3><div>Du erhältst dieses Email, weil du ein neues Passwort für dein Razarion Konto beantragt hast. Falls Du kein neues Password beantragt hast, kann dieses Email ignoriert werden.<br><br>Um den Vorgang abzuschliessen, klicke bitte auf den Link:<br><ahref=\"http://www.razarion.com/uuid/" + uuid + "\">http://www.razarion.com/uuid/" + uuid + "</a><br><br><br>DeinRazarion-Team</div></body></html>\n", wiserMessage.getMimeMessage().getContent().toString());
+        assertStringIgnoreWhitespace("<html><body><h3>Hallo U1,</h3><div>Du erhältst dieses Email, weil du ein neues Passwort für dein Razarion Konto beantragt hast. Falls Du kein neues Password beantragt hast, kannst du diese Email ignorieren.<br><br>Um den Vorgang abzuschliessen, klicke bitte auf den Link:<br><ahref=\"http://www.razarion.com/uuid/" + uuid + "\">http://www.razarion.com/uuid/" + uuid + "</a><br><br><br>DeinRazarion-Team</div></body></html>\n", wiserMessage.getMimeMessage().getContent().toString());
         stopFakeMailServer();
+    }
+
+    @Test
+    @DirtiesContext
+    public void onForgotPasswordUserNotConfirmed() throws Exception {
+        configureSimplePlanetNoResources();
+
+        // Prepare user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUnverifiedUser("U1", "xxx", "xxx", "yyy@xxx.com");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // trigger
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        try {
+            registerService.onForgotPassword("yyy@xxx.com");
+            Assert.fail("UserIsNotConfirmedException expected");
+        } catch (UserIsNotConfirmedException e) {
+            // Expected
+        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test

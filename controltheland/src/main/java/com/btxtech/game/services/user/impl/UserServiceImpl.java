@@ -480,7 +480,8 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private User loadUserFromDb(String name) {
+    @Override
+    public User loadUserFromDb(String name) {
         if (HibernateUtil.hasOpenSession(sessionFactory)) {
             return loadUserFromDbInSession(name);
         } else {

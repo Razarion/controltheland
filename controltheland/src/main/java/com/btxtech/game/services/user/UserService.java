@@ -114,4 +114,6 @@ public interface UserService extends UserDetailsService {
     List<NameErrorPair> checkUserEmails(String usersAsString);
 
     List<User> getUsersWithEmail(String usersAsString);
+
+    User loadUserFromDb(String name);
 }

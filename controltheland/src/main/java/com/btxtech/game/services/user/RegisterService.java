@@ -17,7 +17,7 @@ public interface RegisterService {
 
     User onVerificationPageCalled(String verificationId) throws EmailIsAlreadyVerifiedException, UserDoesNotExitException;
 
-    void onForgotPassword(String email) throws EmailDoesNotExitException;
+    void onForgotPassword(String email) throws EmailDoesNotExitException, UserIsNotConfirmedException;
 
     void onPasswordReset(String uuid, String password, String confirmPassword) throws PasswordNotMatchException, NoForgotPasswordEntryException;
 }

@@ -27,6 +27,7 @@ import com.btxtech.game.services.cms.page.DbAds;
 import com.btxtech.game.services.cms.page.DbPage;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.messenger.InvalidFieldException;
 import com.btxtech.game.services.messenger.MessengerService;
 import com.btxtech.game.services.planet.Base;
@@ -35,6 +36,7 @@ import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.statistics.impl.StatisticsServiceImpl;
+import com.btxtech.game.services.user.DbForgotPassword;
 import com.btxtech.game.services.user.RegisterService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
@@ -102,10 +104,25 @@ public class TestCmsService2 extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        // Home
         DbPage dbPage = pageCrud.createDbChild();
         dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage.setName("Home");
         pageCrud.updateDbChild(dbPage);
+        // Login failed
+        DbPage loginFailedPage = pageCrud.createDbChild();
+        loginFailedPage.setPredefinedType(CmsUtil.CmsPredefinedPage.LOGIN_FAILED);
+        loginFailedPage.setName("LoginFailed");
+        DbContentPlugin contentPlugin = new DbContentPlugin();
+        contentPlugin.setPluginEnum(PluginEnum.LOGIN_FAILED);
+        contentPlugin.init(userService);
+        loginFailedPage.setContentAndAccessWrites(contentPlugin);
+        pageCrud.updateDbChild(loginFailedPage);
+        // Forgot password
+        DbPage forgotPassword = pageCrud.createDbChild();
+        forgotPassword.setPredefinedType(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_REQUEST);
+        forgotPassword.setName("ForgotPassword");
+        pageCrud.updateDbChild(forgotPassword);
         cmsService.activateCms();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -118,9 +135,67 @@ public class TestCmsService2 extends AbstractServiceTest {
         getWicketTester().startPage(CmsPage.class);
         FormTester formTester = getWicketTester().newFormTester("header:loginBox:loginForm");
         formTester.setValue("loginName", "U1");
-        formTester.setValue("loginPassowrd", "xxx");
+        formTester.setValue("loginPassword", "xxx");
         formTester.submit();
-        getWicketTester().assertLabel("form:content:border:borderContent:message", "Login failed. Please try again.<br><br>Newly created accounts must be activated first. Check your email.");
+        getWicketTester().debugComponentTrees();
+        getWicketTester().assertLabel("form:content:text", "Login failed. Please try again.");
+        getWicketTester().assertVisible("form:content:forgotPassword");
+        getWicketTester().assertBookmarkablePageLink("form:content:forgotPassword", CmsPage.class, "page=3");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testLoginWrongPassword() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createUser("U1", "aaaa", "");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        // Home
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        pageCrud.updateDbChild(dbPage);
+        // Login failed
+        DbPage loginFailedPage = pageCrud.createDbChild();
+        loginFailedPage.setPredefinedType(CmsUtil.CmsPredefinedPage.LOGIN_FAILED);
+        loginFailedPage.setName("LoginFailed");
+        DbContentPlugin contentPlugin = new DbContentPlugin();
+        contentPlugin.setPluginEnum(PluginEnum.LOGIN_FAILED);
+        contentPlugin.init(userService);
+        loginFailedPage.setContentAndAccessWrites(contentPlugin);
+        pageCrud.updateDbChild(loginFailedPage);
+        // Forgot password
+        DbPage forgotPassword = pageCrud.createDbChild();
+        forgotPassword.setPredefinedType(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_REQUEST);
+        forgotPassword.setName("ForgotPassword");
+        pageCrud.updateDbChild(forgotPassword);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().setupRequestAndResponse();
+        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        getWicketTester().startPage(CmsPage.class);
+        FormTester formTester = getWicketTester().newFormTester("header:loginBox:loginForm");
+        formTester.setValue("loginName", "U1");
+        formTester.setValue("loginPassword", "xxx");
+        formTester.submit();
+        getWicketTester().debugComponentTrees();
+        getWicketTester().assertLabel("form:content:text", "Login failed. Please try again.");
+        getWicketTester().assertVisible("form:content:forgotPassword");
+        getWicketTester().assertBookmarkablePageLink("form:content:forgotPassword", CmsPage.class, "page=3");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -143,6 +218,15 @@ public class TestCmsService2 extends AbstractServiceTest {
         dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage.setName("Home");
         pageCrud.updateDbChild(dbPage);
+        // Login failed
+        DbPage loginFailedPage = pageCrud.createDbChild();
+        loginFailedPage.setPredefinedType(CmsUtil.CmsPredefinedPage.LOGIN_FAILED);
+        loginFailedPage.setName("LoginFailed");
+        DbContentPlugin contentPlugin = new DbContentPlugin();
+        contentPlugin.setPluginEnum(PluginEnum.LOGIN_FAILED);
+        contentPlugin.init(userService);
+        loginFailedPage.setContentAndAccessWrites(contentPlugin);
+        pageCrud.updateDbChild(loginFailedPage);
         cmsService.activateCms();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -155,9 +239,11 @@ public class TestCmsService2 extends AbstractServiceTest {
         getWicketTester().startPage(CmsPage.class);
         FormTester formTester = getWicketTester().newFormTester("header:loginBox:loginForm");
         formTester.setValue("loginName", "U1");
-        formTester.setValue("loginPassowrd", "xxx");
+        formTester.setValue("loginPassword", "xxx");
         formTester.submit();
-        getWicketTester().assertLabel("form:content:border:borderContent:message", "Login failed. Please try again.<br><br>Newly created accounts must be activated first. Check your email.");
+        getWicketTester().debugComponentTrees();
+        getWicketTester().assertLabel("form:content:text", "This account has not been confirmed by email. Please check your email and click the confirmation link.");
+        getWicketTester().assertInvisible("form:content:forgotPassword");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -195,13 +281,369 @@ public class TestCmsService2 extends AbstractServiceTest {
         getWicketTester().startPage(CmsPage.class);
         FormTester formTester = getWicketTester().newFormTester("header:loginBox:loginForm");
         formTester.setValue("loginName", "U1");
-        formTester.setValue("loginPassowrd", "xxx");
+        formTester.setValue("loginPassword", "xxx");
         formTester.submit();
         getWicketTester().assertLabel("title", "USerPage");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void testForgotPassword() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createUser("U1", "aaaa", "xxx@yyy.com");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        // Home
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        pageCrud.updateDbChild(dbPage);
+        // Login failed
+        DbPage loginFailedPage = pageCrud.createDbChild();
+        loginFailedPage.setPredefinedType(CmsUtil.CmsPredefinedPage.LOGIN_FAILED);
+        loginFailedPage.setName("LoginFailed");
+        DbContentPlugin loginFailedPlugin = new DbContentPlugin();
+        loginFailedPlugin.setPluginEnum(PluginEnum.LOGIN_FAILED);
+        loginFailedPlugin.init(userService);
+        loginFailedPage.setContentAndAccessWrites(loginFailedPlugin);
+        pageCrud.updateDbChild(loginFailedPage);
+        // Forgot password
+        DbPage forgotPassword = pageCrud.createDbChild();
+        forgotPassword.setPredefinedType(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_REQUEST);
+        forgotPassword.setName("ForgotPassword");
+        DbContentPlugin forgotPasswordPlugin = new DbContentPlugin();
+        forgotPasswordPlugin.setPluginEnum(PluginEnum.FORGOT_PASSWORD_REQUEST);
+        forgotPasswordPlugin.init(userService);
+        forgotPassword.setContentAndAccessWrites(forgotPasswordPlugin);
+        pageCrud.updateDbChild(forgotPassword);
+        // Message
+        DbPage dbMessagePage = pageCrud.createDbChild();
+        dbMessagePage.setPredefinedType(CmsUtil.CmsPredefinedPage.MESSAGE);
+        dbMessagePage.setName("Message Page");
+        pageCrud.updateDbChild(dbMessagePage);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().setupRequestAndResponse();
+        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        getWicketTester().startPage(CmsPage.class);
+        FormTester formTester = getWicketTester().newFormTester("header:loginBox:loginForm");
+        formTester.setValue("loginName", "U1");
+        formTester.setValue("loginPassword", "xxx");
+        formTester.submit();
+        getWicketTester().clickLink("form:content:forgotPassword");
+        formTester = getWicketTester().newFormTester("form:content:form");
+        formTester.setValue("emailField", "xxx@yyy.com");
+        formTester.submit();
+        getWicketTester().assertLabel("form:content:border:borderContent:message", "An email has been sent to reset the password.");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testForgotPasswordUserNotConfirmed() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUnverifiedUser("U1", "aaaa", "aaaa", "xxx@yyy.com");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        // Home
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        pageCrud.updateDbChild(dbPage);
+        // Login failed
+        DbPage loginFailedPage = pageCrud.createDbChild();
+        loginFailedPage.setPredefinedType(CmsUtil.CmsPredefinedPage.LOGIN_FAILED);
+        loginFailedPage.setName("LoginFailed");
+        DbContentPlugin loginFailedPlugin = new DbContentPlugin();
+        loginFailedPlugin.setPluginEnum(PluginEnum.LOGIN_FAILED);
+        loginFailedPlugin.init(userService);
+        loginFailedPage.setContentAndAccessWrites(loginFailedPlugin);
+        pageCrud.updateDbChild(loginFailedPage);
+        // Forgot password
+        DbPage forgotPassword = pageCrud.createDbChild();
+        forgotPassword.setPredefinedType(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_REQUEST);
+        forgotPassword.setName("ForgotPassword");
+        DbContentPlugin forgotPasswordPlugin = new DbContentPlugin();
+        forgotPasswordPlugin.setPluginEnum(PluginEnum.FORGOT_PASSWORD_REQUEST);
+        forgotPasswordPlugin.init(userService);
+        forgotPassword.setContentAndAccessWrites(forgotPasswordPlugin);
+        pageCrud.updateDbChild(forgotPassword);
+        // Message
+        DbPage dbMessagePage = pageCrud.createDbChild();
+        dbMessagePage.setPredefinedType(CmsUtil.CmsPredefinedPage.MESSAGE);
+        dbMessagePage.setName("Message Page");
+        pageCrud.updateDbChild(dbMessagePage);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().setupRequestAndResponse();
+        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        PageParameters pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_REQUEST);
+        getWicketTester().startPage(CmsPage.class, pageParameters);
+        FormTester formTester = getWicketTester().newFormTester("form:content:form");
+        formTester.setValue("emailField", "xxx@yyy.com");
+        formTester.submit();
+        getWicketTester().assertLabel("form:content:border:borderContent:message", "This account has not been confirmed by email. Please check your email and click the confirmation link.");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testForgotPasswordWrongEmail() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        // Home
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        pageCrud.updateDbChild(dbPage);
+        // Login failed
+        DbPage loginFailedPage = pageCrud.createDbChild();
+        loginFailedPage.setPredefinedType(CmsUtil.CmsPredefinedPage.LOGIN_FAILED);
+        loginFailedPage.setName("LoginFailed");
+        DbContentPlugin loginFailedPlugin = new DbContentPlugin();
+        loginFailedPlugin.setPluginEnum(PluginEnum.LOGIN_FAILED);
+        loginFailedPlugin.init(userService);
+        loginFailedPage.setContentAndAccessWrites(loginFailedPlugin);
+        pageCrud.updateDbChild(loginFailedPage);
+        // Forgot password
+        DbPage forgotPassword = pageCrud.createDbChild();
+        forgotPassword.setPredefinedType(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_REQUEST);
+        forgotPassword.setName("ForgotPassword");
+        DbContentPlugin forgotPasswordPlugin = new DbContentPlugin();
+        forgotPasswordPlugin.setPluginEnum(PluginEnum.FORGOT_PASSWORD_REQUEST);
+        forgotPasswordPlugin.init(userService);
+        forgotPassword.setContentAndAccessWrites(forgotPasswordPlugin);
+        pageCrud.updateDbChild(forgotPassword);
+        // Message
+        DbPage dbMessagePage = pageCrud.createDbChild();
+        dbMessagePage.setPredefinedType(CmsUtil.CmsPredefinedPage.MESSAGE);
+        dbMessagePage.setName("Message Page");
+        pageCrud.updateDbChild(dbMessagePage);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().setupRequestAndResponse();
+        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        getWicketTester().startPage(CmsPage.class);
+        FormTester formTester = getWicketTester().newFormTester("header:loginBox:loginForm");
+        formTester.setValue("loginName", "U1");
+        formTester.setValue("loginPassword", "xxx");
+        formTester.submit();
+        getWicketTester().clickLink("form:content:forgotPassword");
+        formTester = getWicketTester().newFormTester("form:content:form");
+        formTester.setValue("emailField", "xxx@yyy.com");
+        formTester.submit();
+        getWicketTester().assertLabel("form:content:border:borderContent:message", "Unknown email address");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testForgotPasswordChange() throws Exception {
+        configureSimplePlanetNoResources();
+
+        // Prepare
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createUser("U1", "xxx", "xxx@yyy.com");
+        registerService.onForgotPassword("xxx@yyy.com");
+        String uuid = HibernateUtil.loadAll(getSessionFactory(), DbForgotPassword.class).get(0).getUuid();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        // Home
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        pageCrud.updateDbChild(dbPage);
+        // User
+        DbPage userPage = pageCrud.createDbChild();
+        userPage.setPredefinedType(CmsUtil.CmsPredefinedPage.USER_PAGE);
+        userPage.setName("userPage");
+        pageCrud.updateDbChild(dbPage);
+        // Login failed
+        DbPage forgotPasswordChangePage = pageCrud.createDbChild();
+        forgotPasswordChangePage.setPredefinedType(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_CHANGE);
+        forgotPasswordChangePage.setName("testForgotPasswordChange");
+        DbContentPlugin forgotPasswordChangePlugin = new DbContentPlugin();
+        forgotPasswordChangePlugin.setPluginEnum(PluginEnum.FORGOT_PASSWORD_CHANGE);
+        forgotPasswordChangePlugin.init(userService);
+        forgotPasswordChangePage.setContentAndAccessWrites(forgotPasswordChangePlugin);
+        pageCrud.updateDbChild(forgotPasswordChangePage);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().setupRequestAndResponse();
+        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        PageParameters pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_CHANGE);
+        pageParameters.put(CmsUtil.FORGOT_PASSWORD_UUID_KEY, uuid);
+        getWicketTester().startPage(CmsPage.class, pageParameters);
+        FormTester formTester = getWicketTester().newFormTester("form:content:form");
+        formTester.setValue("password", "aaa");
+        formTester.setValue("confirmPassword", "aaa");
+        formTester.submit();
+        getWicketTester().assertVisible("header:loggedinBox:loginForm:nameLink:name");
+        getWicketTester().assertLabel("header:loggedinBox:loginForm:nameLink:name", "U1");
+        Assert.assertEquals("U1", userService.getUser().getUsername());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testForgotPasswordUnknownUuid() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        // Home
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        pageCrud.updateDbChild(dbPage);
+        // User
+        DbPage userPage = pageCrud.createDbChild();
+        userPage.setPredefinedType(CmsUtil.CmsPredefinedPage.USER_PAGE);
+        userPage.setName("userPage");
+        pageCrud.updateDbChild(dbPage);
+        // Message
+        DbPage dbMessagePage = pageCrud.createDbChild();
+        dbMessagePage.setPredefinedType(CmsUtil.CmsPredefinedPage.MESSAGE);
+        dbMessagePage.setName("Message Page");
+        pageCrud.updateDbChild(dbMessagePage);
+        // Login failed
+        DbPage forgotPasswordChangePage = pageCrud.createDbChild();
+        forgotPasswordChangePage.setPredefinedType(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_CHANGE);
+        forgotPasswordChangePage.setName("testForgotPasswordChange");
+        DbContentPlugin forgotPasswordChangePlugin = new DbContentPlugin();
+        forgotPasswordChangePlugin.setPluginEnum(PluginEnum.FORGOT_PASSWORD_CHANGE);
+        forgotPasswordChangePlugin.init(userService);
+        forgotPasswordChangePage.setContentAndAccessWrites(forgotPasswordChangePlugin);
+        pageCrud.updateDbChild(forgotPasswordChangePage);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().setupRequestAndResponse();
+        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        PageParameters pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_CHANGE);
+        pageParameters.put(CmsUtil.FORGOT_PASSWORD_UUID_KEY, "xxxxxxx");
+        getWicketTester().startPage(CmsPage.class, pageParameters);
+        FormTester formTester = getWicketTester().newFormTester("form:content:form");
+        formTester.setValue("password", "aaa");
+        formTester.setValue("confirmPassword", "aaa");
+        formTester.submit();
+        getWicketTester().assertLabel("form:content:border:borderContent:message", "This link is invalid. There is no request to reset the password.");
+        Assert.assertNull(userService.getUser());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testForgotPasswordChangeNotMatch() throws Exception {
+        configureSimplePlanetNoResources();
+
+        // Prepare
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createUser("U1", "xxx", "xxx@yyy.com");
+        registerService.onForgotPassword("xxx@yyy.com");
+        String uuid = HibernateUtil.loadAll(getSessionFactory(), DbForgotPassword.class).get(0).getUuid();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        // Home
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+        pageCrud.updateDbChild(dbPage);
+        // User
+        DbPage userPage = pageCrud.createDbChild();
+        userPage.setPredefinedType(CmsUtil.CmsPredefinedPage.USER_PAGE);
+        userPage.setName("userPage");
+        pageCrud.updateDbChild(dbPage);
+        // Login failed
+        DbPage forgotPasswordChangePage = pageCrud.createDbChild();
+        forgotPasswordChangePage.setPredefinedType(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_CHANGE);
+        forgotPasswordChangePage.setName("testForgotPasswordChange");
+        DbContentPlugin forgotPasswordChangePlugin = new DbContentPlugin();
+        forgotPasswordChangePlugin.setPluginEnum(PluginEnum.FORGOT_PASSWORD_CHANGE);
+        forgotPasswordChangePlugin.init(userService);
+        forgotPasswordChangePage.setContentAndAccessWrites(forgotPasswordChangePlugin);
+        pageCrud.updateDbChild(forgotPasswordChangePage);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().setupRequestAndResponse();
+        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
+        PageParameters pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_CHANGE);
+        pageParameters.put(CmsUtil.FORGOT_PASSWORD_UUID_KEY, uuid);
+        getWicketTester().startPage(CmsPage.class, pageParameters);
+        FormTester formTester = getWicketTester().newFormTester("form:content:form");
+        formTester.setValue("password", "aaa");
+        formTester.setValue("confirmPassword", "bbb");
+        formTester.submit();
+        getWicketTester().debugComponentTrees();
+        getWicketTester().assertLabel("form:content:msgs:feedbackul:messages:0:message", "The password and confirmation password do not match.");
+        Assert.assertNull(userService.getUser());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
 
     @Test
     @DirtiesContext
@@ -1003,6 +1445,18 @@ public class TestCmsService2 extends AbstractServiceTest {
 
         dbPage = pageCrud.createDbChild();
         dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION);
+        pageCrud.updateDbChild(dbPage);
+
+        dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_REQUEST);
+        pageCrud.updateDbChild(dbPage);
+
+        dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_CHANGE);
+        pageCrud.updateDbChild(dbPage);
+
+        dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.LOGIN_FAILED);
         pageCrud.updateDbChild(dbPage);
 
         endHttpRequestAndOpenSessionInViewFilter();

@@ -49,8 +49,9 @@ public class CmsUtil {
         FACEBOOK_START,
         CHOOSE_NICKNAME,
         EMAIL_VERIFICATION,
-        FORGOT_PASSWORD,
-        FORGOT_PASSWORD_CHANGE
+        FORGOT_PASSWORD_REQUEST,
+        FORGOT_PASSWORD_CHANGE,
+        LOGIN_FAILED
         }
 
     public static String getUrl4CmsPage(String id) {
