@@ -17,6 +17,7 @@ import com.btxtech.game.services.user.NoForgotPasswordEntryException;
 import com.btxtech.game.services.user.RegisterService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserDoesNotExitException;
+import com.btxtech.game.services.user.UserIsNotConfirmedException;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -148,7 +149,7 @@ public class RegisterServiceImpl implements RegisterService {
 
     @Override
     @Transactional
-    public void onForgotPassword(String email) throws EmailDoesNotExitException {
+    public void onForgotPassword(String email) throws EmailDoesNotExitException, UserIsNotConfirmedException {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
         criteria.add(Restrictions.eq("email", email));
         List<User> users = criteria.list();
@@ -158,6 +159,9 @@ public class RegisterServiceImpl implements RegisterService {
             ExceptionHandler.handleException("More then one user have this email: " + email);
         }
         User user = users.get(0);
+        if(!user.isAccountNonLocked()) {
+            throw new UserIsNotConfirmedException();
+        }
         String uuid = UUID.randomUUID().toString().toUpperCase();
         saveForgotPassword(user, uuid);
         sendEmailForgotPassword(user, generateForgotPasswordLink(uuid));

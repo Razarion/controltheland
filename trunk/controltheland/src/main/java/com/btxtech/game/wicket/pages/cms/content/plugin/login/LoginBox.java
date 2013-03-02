@@ -36,7 +36,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 @AuthorizeAction(action = Action.RENDER, deny = SecurityRoles.ROLE_USER)
 public class LoginBox extends Panel {
     private String loginName = "User name";
-    private String loginPassowrd = "12345678";
+    private String loginPassword = "12345678";
     @SpringBean
     private CmsUiService cmsUiService;
 
@@ -48,10 +48,10 @@ public class LoginBox extends Panel {
             protected void onSubmit() {
                 try {
                     AuthenticatedWebSession session = AuthenticatedWebSession.get();
-                    if (session.signIn(loginName, loginPassowrd)) {
+                    if (session.signIn(loginName, loginPassword)) {
                         cmsUiService.setPredefinedResponsePage(this, CmsUtil.CmsPredefinedPage.USER_PAGE);
                     } else {
-                        cmsUiService.setMessageResponsePage(this, "loginFailed", null);
+                        cmsUiService.setPredefinedResponsePage(this, CmsUtil.CmsPredefinedPage.LOGIN_FAILED, loginName);
                     }
                 } catch (AlreadyLoggedInException e) {
                     cmsUiService.setMessageResponsePage(this, "loginAlready", e.getUserName());
@@ -60,7 +60,7 @@ public class LoginBox extends Panel {
         };
 
         form.add(new TextField<String>("loginName"));
-        form.add(new PasswordTextField("loginPassowrd"));
+        form.add(new PasswordTextField("loginPassword"));
         // form.add(new BookmarkablePageLink<CmsPage>("createAccountLink", CmsPage.class, cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.REGISTER)).setVisible(showRegisterLink));
 
         add(form);

@@ -17,17 +17,12 @@
 </head>
 <body>
 <wicket:panel>
-    <div wicket:id="facebook"></div>
-    <table>
-        <form wicket:id="loginForm">
-            <tr>
-                <td><input type="text" size="10" wicket:id="loginName"/></td>
-                <td><input type="password" size="10" wicket:id="loginPassword"/></td>
-                <td><input type="submit" value="Login"/></td>
-                <!-- td><a href="LoginBox.html#" wicket:id="createAccountLink" class="account">Register</a></td -->
-            </tr>
-        </form>
-    </table>
+    <h2><wicket:message key="loginFailedTitle">loginFailedTitle</wicket:message></h2>
+    <div wicket:id="text"></div>
+    <br />
+    <a wicket:id="forgotPassword"><wicket:message key="forgotPassword">forgotPassword</wicket:message></a>
 </wicket:panel>
 </body>
 </html>
+
+

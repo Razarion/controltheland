@@ -42,6 +42,7 @@ public class CmsPage extends WebPage implements IHeaderContributor {
     public static final String INVOKE_ID = "invokeId";
     public static final String MESSAGE_ID = "messageId";
     public static final String MESSAGE_ADDITIONAL_PARAMETER = "messageAdditional";
+    public static final String RESPONSE_PAGE_ADDITIONAL_PARAMETER = "responsePageAdditional";
     public static final String PAGING_NUMBER = "paging";
     public static final String SORT_INFO = "sort";
     public static final String HTML5_KEY = "html5";

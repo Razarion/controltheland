@@ -255,6 +255,13 @@ public class CmsUiServiceImpl implements CmsUiService {
     }
 
     @Override
+    public void setPredefinedResponsePage(Component component, CmsUtil.CmsPredefinedPage predefinedType, String additionalParameter) {
+        PageParameters pageParameters = getPredefinedDbPageParameters(predefinedType);
+        pageParameters.put(CmsPage.RESPONSE_PAGE_ADDITIONAL_PARAMETER, additionalParameter);
+        component.setResponsePage(CmsPage.class, pageParameters);
+    }
+
+    @Override
     public void setMessageResponsePage(Component component, String key, String additionalParameter) {
         PageParameters pageParameters = getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.MESSAGE);
         pageParameters.put(CmsPage.MESSAGE_ID, key);
