@@ -21,7 +21,7 @@ import com.btxtech.game.services.user.RegisterService;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
@@ -60,7 +60,7 @@ public class ChangePassword extends Panel {
             }
         };
         add(form);
-        form.add(new TextField<>("password", password));
-        form.add(new TextField<>("confirmPassword", confirmPassword));
+        form.add(new PasswordTextField("password", password));
+        form.add(new PasswordTextField("confirmPassword", confirmPassword));
     }
 }
