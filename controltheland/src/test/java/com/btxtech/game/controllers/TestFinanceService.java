@@ -6,6 +6,7 @@ import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.finance.DbPayPalTransaction;
 import com.btxtech.game.services.finance.FinanceService;
+import com.btxtech.game.services.finance.PaymentStatusRefundedException;
 import com.btxtech.game.services.finance.TransactionAlreadyProcessedException;
 import com.btxtech.game.services.history.DisplayHistoryElement;
 import com.btxtech.game.services.history.HistoryService;
@@ -114,13 +115,20 @@ public class TestFinanceService extends AbstractServiceTest {
             // Expected
             Assert.assertEquals("Receiver email is wrong: lulola", e.getMessage());
         }
-        // Payment status
+        // Payment status unknown
         try {
             financeService.razarionBought(userIdString, "RAZ1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "kikoka", "1");
             Assert.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
             // Expected
             Assert.assertEquals("Payment Status is wrong: kikoka", e.getMessage());
+        }
+        // Payment status refunded
+        try {
+            financeService.razarionBought(userIdString, "RAZ1000", "5.00", "USD", "1", "payer email", "finance@razarion.com", "Refunded", "1");
+            Assert.fail("PaymentStatusRefundedException expected");
+        } catch (PaymentStatusRefundedException e) {
+            // Expected
         }
         // Quantity
         try {
