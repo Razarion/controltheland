@@ -3,6 +3,7 @@ package com.btxtech.game.controllers;
 import com.btxtech.game.jsre.common.PayPalUtils;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.finance.FinanceService;
+import com.btxtech.game.services.finance.PaymentStatusRefundedException;
 import com.btxtech.game.services.finance.TransactionAlreadyProcessedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -59,13 +60,13 @@ public class PayPalIpnHandlerController implements Controller {
                         request.getParameter("receiver_email"),
                         request.getParameter("payment_status"),
                         request.getParameter("quantity"));
-            } else if(res.equalsIgnoreCase("REFUNDED")) {
-                ExceptionHandler.handleException(null, "PayPal REFUNDED IPN received: URL: " + url + " encoding: " + encoding + " params:" + params);
             } else {
                 throw new IllegalStateException("Return value from verification is wrong: " + res);
             }
         } catch (TransactionAlreadyProcessedException e) {
             ExceptionHandler.handleException(e, "PayPal IPN received. Transaction has already been processed: URL: " + url + " encoding: " + encoding + " params:" + params);
+        } catch (PaymentStatusRefundedException e) {
+            ExceptionHandler.handleException(e, "PayPal payment status refunded received.: " + url + " encoding: " + encoding + " params:" + params);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, "PayPal IPN failed: URL: " + url + " encoding: " + encoding + " params:" + params);
             httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);

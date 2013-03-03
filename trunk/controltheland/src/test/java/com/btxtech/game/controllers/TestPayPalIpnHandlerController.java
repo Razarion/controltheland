@@ -2,6 +2,7 @@ package com.btxtech.game.controllers;
 
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.finance.FinanceService;
+import com.btxtech.game.services.finance.PaymentStatusRefundedException;
 import com.btxtech.game.services.finance.TransactionAlreadyProcessedException;
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -18,8 +19,8 @@ import java.net.URL;
  * Time: 14:11:49
  */
 public class TestPayPalIpnHandlerController {
-    @Test
-    public void normal() throws Exception {
+
+    private MockHttpServletRequest createMockServletRequest() {
         MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest("get", "payment_type=instant&receiver_id=7A9K5VMDK42WY&address_street=Stj%3Frngatan+4E");
         mockHttpServletRequest.setParameter("item_number", "RAZ1000");
         mockHttpServletRequest.setParameter("shipping_method", "Default");
@@ -66,6 +67,12 @@ public class TestPayPalIpnHandlerController {
         mockHttpServletRequest.setParameter("payment_type", "instant");
         mockHttpServletRequest.setParameter("receiver_id", "xxxxxxx");
         mockHttpServletRequest.setParameter("address_street", "ÄÄÄÖÖÖÜÜÜ");
+        return mockHttpServletRequest;
+    }
+
+    @Test
+    public void normal() throws Exception {
+        MockHttpServletRequest mockHttpServletRequest = createMockServletRequest();
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         PayPalIpnHandlerController payPalIpnHandlerController = new PayPalIpnHandlerController() {
             @Override
@@ -121,16 +128,21 @@ public class TestPayPalIpnHandlerController {
 
     @Test
     public void payPalReturnsRefunded() throws Exception {
-        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest("get", "payment_type=instant&receiver_id=7A9K5VMDK42WY&address_street=Stj%3Frngatan+4E");
-        mockHttpServletRequest.setParameter("charset", "windows-1252");
+        MockHttpServletRequest mockHttpServletRequest = createMockServletRequest();
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
         PayPalIpnHandlerController payPalIpnHandlerController = new PayPalIpnHandlerController() {
             @Override
             protected String sendVerification(URL url, String params) throws IOException {
-                return "Refunded";
+                return "VERIFIED";
             }
         };
+        FinanceService financeServiceMock = EasyMock.createStrictMock(FinanceService.class);
+        financeServiceMock.razarionBought("00001", "RAZ1000", "5.00", "USD", "11112222", "hallo@cxyyyy.qqq", "wwwww@qqqqq.sssss", "Completed", "1");
+        EasyMock.expectLastCall().andThrow(new PaymentStatusRefundedException());
+        EasyMock.replay(financeServiceMock);
+        AbstractServiceTest.setPrivateField(PayPalIpnHandlerController.class, payPalIpnHandlerController, "financeService", financeServiceMock);
         payPalIpnHandlerController.handleRequest(mockHttpServletRequest, mockHttpServletResponse);
+        EasyMock.verify(financeServiceMock);
         Assert.assertEquals(200, mockHttpServletResponse.getStatus());
     }
 

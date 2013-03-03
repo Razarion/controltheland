@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.common.PayPalButton;
 import com.btxtech.game.jsre.common.PayPalUtils;
 import com.btxtech.game.services.finance.DbPayPalTransaction;
 import com.btxtech.game.services.finance.FinanceService;
+import com.btxtech.game.services.finance.PaymentStatusRefundedException;
 import com.btxtech.game.services.finance.TransactionAlreadyProcessedException;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.user.User;
@@ -29,7 +30,8 @@ public class FinanceServiceImpl implements FinanceService {
     private static final String PAYMENT_CURRENCY = "USD";
     private static final String RECEIVER_EMAIL = "finance@razarion.com";
     private static final String SANDBOX_RECEIVER_EMAIL = "beat.k_1358507890_biz@btxtech.com";
-    private static final String PAYMENT_STATUS = "Completed";
+    private static final String PAYMENT_STATUS_COMPLETED = "Completed";
+    private static final String PAYMENT_STATUS_REFUNDED = "Refunded";
     @Autowired
     private HistoryService historyService;
     @Autowired
@@ -48,11 +50,13 @@ public class FinanceServiceImpl implements FinanceService {
 
     @Override
     @Transactional
-    public void razarionBought(String userId, String itemNumber, String paymentAmount, String paymentCurrency, String txnId, String payerEmail, String receiverEmail, String paymentStatus, String quantity) throws UserDoesNotExitException, TransactionAlreadyProcessedException {
+    public void razarionBought(String userId, String itemNumber, String paymentAmount, String paymentCurrency, String txnId, String payerEmail, String receiverEmail, String paymentStatus, String quantity) throws UserDoesNotExitException, TransactionAlreadyProcessedException, PaymentStatusRefundedException {
         if (!(PayPalUtils.IS_SANDBOX ? SANDBOX_RECEIVER_EMAIL : RECEIVER_EMAIL).equalsIgnoreCase(receiverEmail)) {
             throw new IllegalArgumentException("Receiver email is wrong: " + receiverEmail);
         }
-        if (!PAYMENT_STATUS.equalsIgnoreCase(paymentStatus)) {
+        if (PAYMENT_STATUS_REFUNDED.equalsIgnoreCase(paymentStatus)) {
+            throw new PaymentStatusRefundedException();
+        } else if (!PAYMENT_STATUS_COMPLETED.equalsIgnoreCase(paymentStatus)) {
             throw new IllegalArgumentException("Payment Status is wrong: " + paymentStatus);
         }
         if (Integer.parseInt(quantity) != 1) {
