@@ -173,6 +173,12 @@ public class PlanetEditor extends MgmtWebPage {
                 return form.getModelObject();
             }
         };
+        form.add(new Button("reactivateBot"){
+            @Override
+            public void onSubmit() {
+                planetSystemService.getServerPlanetServices(form.getModelObject().getId()).getBotService().reactivate(form.getModelObject());
+            }
+        });
         // Inventory box regions
         new CrudChildTableHelper<DbPlanet, DbBoxRegion>("boxRegions", null, "createBoxRegion", true, form, false) {
 

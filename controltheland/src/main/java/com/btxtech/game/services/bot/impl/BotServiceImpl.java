@@ -62,6 +62,12 @@ public class BotServiceImpl extends CommonBotServiceImpl implements BotService {
         }
     }
 
+    @Override
+    public void reactivate(DbPlanet dbPlanet) {
+        deactivate();
+        activate(dbPlanet);
+    }
+
     private void fillBotConfigs(DbPlanet dbPlanet) {
         Collection<BotConfig> realGameBotConfigs = new ArrayList<>();
         for (DbBotConfig botConfig : dbPlanet.getBotCrud().readDbChildren()) {
