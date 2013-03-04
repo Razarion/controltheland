@@ -217,6 +217,12 @@ public class PlanetEditor extends MgmtWebPage {
                 setResponsePage(new BoxRegionEditor(dbBoxRegion));
             }
         };
+        form.add(new Button("reactivateBoxRegion"){
+            @Override
+            public void onSubmit() {
+                planetSystemService.getServerPlanetServices(form.getModelObject().getId()).getInventoryService().reactivate(form.getModelObject());
+            }
+        });
 
         form.add(new Button("save") {
             @Override
