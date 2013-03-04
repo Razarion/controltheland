@@ -18,9 +18,27 @@
 <body>
 <h1>Online utils</h1>
 
-<span wicket:id="msgs"/>
+<h2>Online Users</h2>
+<table border="0">
+    <tr>
+        <td bgcolor="#dadada">Real game (Planets)</td>
+        <td wicket:id="planetUsers">15</td>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Mission</td>
+        <td wicket:id="missionUsers">15</td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <form wicket:id="onlineUserForm">
+                <input type="submit" value="Reload"/>
+            </form>
+        </td>
+    </tr>
+</table>
 
 <h2>Send server reboot message</h2>
+<span wicket:id="msgs"/>
 
 <form wicket:id="rebootMessageForm">
     <table border="0">
@@ -40,7 +58,6 @@
             <td colspan="2"><input type="submit" wicket:id="send" value="Send"/></td>
         </tr>
     </table>
-    <br>
 </form>
 
 

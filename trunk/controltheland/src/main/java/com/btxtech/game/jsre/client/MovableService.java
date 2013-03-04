@@ -81,7 +81,7 @@ public interface MovableService extends RemoteService {
 
     void sendChatMessage(ChatMessage chatMessage);
 
-    List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId);
+    List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId, GameEngineMode gameEngineMode);
 
     void sendStartupTask(StartupTaskInfo startupTaskInfo, String uuid, Integer levelTaskId);
 

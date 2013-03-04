@@ -398,4 +398,13 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
         }
         return planetLiteInfos;
     }
+
+    @Override
+    public Collection<SimpleBase> getAllOnlineBases() {
+        Collection<SimpleBase> onlineBases = new ArrayList<>();
+        for (PlanetImpl planet : planetImpls.values()) {
+            onlineBases.addAll(planet.getPlanetServices().getConnectionService().getOnlineBases());
+        }
+        return onlineBases;
+    }
 }

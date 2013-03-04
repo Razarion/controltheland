@@ -15,6 +15,7 @@ package com.btxtech.game.services.gwt;
 
 
 import com.btxtech.game.jsre.client.AdCellProvision;
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.InvalidNickName;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.SimpleUser;
@@ -330,9 +331,9 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId) {
+    public List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId, GameEngineMode gameEngineMode) {
         try {
-            return serverGlobalConnectionService.pollMessageIdPackets(lastMessageId);
+            return serverGlobalConnectionService.pollMessageIdPackets(lastMessageId, gameEngineMode);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return null;

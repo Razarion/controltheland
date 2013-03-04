@@ -1,9 +1,11 @@
 package com.btxtech.game.services.connection;
 
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.common.packets.MessageIdPacket;
 import com.btxtech.game.jsre.common.packets.Packet;
+import com.btxtech.game.services.user.UserState;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
@@ -20,7 +22,7 @@ public interface ServerGlobalConnectionService {
 
     void createConnectionStatisticsNoSession(String baseName, String sessionId, double ticksPerSecond);
 
-    List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId);
+    List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId, GameEngineMode gameEngineMode);
 
     void sendChatMessage(ChatMessage chatMessage);
 
@@ -29,4 +31,6 @@ public interface ServerGlobalConnectionService {
     Collection<SimpleBase> getOnlineBases();
 
     void saveClientDebug(Date date, String category, String message);
+
+    Collection<UserState> getAllOnlineMissionUserState();
 }
