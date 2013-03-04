@@ -49,6 +49,8 @@ import com.btxtech.game.services.terrain.DbRegion;
 import com.btxtech.game.services.terrain.RegionService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
@@ -83,10 +85,12 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
     private ServerGlobalServices serverGlobalServices;
     @Autowired
     private RegionService regionService;
+    private Log log = LogFactory.getLog(TestInventoryServiceImpl.class);
 
     @Test
     @DirtiesContext
     public void testDbBoxRegionReal() throws Exception {
+        log.error("----------start testDbBoxRegionReal----------");
         setPrivateStaticField(InventoryServiceImpl.class, "SCHEDULE_RATE", 10);
         configureSimplePlanetNoResources();
 
@@ -95,8 +99,10 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         createDbBoxItemType1();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+        log.error("----------x1----------");
 
         assertWholeItemCount(TEST_PLANET_1_ID, 0);
+        log.error("----------x2----------");
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -115,13 +121,18 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         planetSystemService.activatePlanet(TEST_PLANET_1_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+        log.error("----------x3----------");
 
         Thread.sleep(150);
+        log.error("----------x4----------");
         assertWholeItemCount(TEST_PLANET_1_ID, 0);
+        log.error("----------x5----------");
         Thread.sleep(100);
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         List<SyncItem> allItems = serverPlanetServices.getItemService().getItemsCopy();
+        log.error("----------x6----------");
+        // TODO failed on 03.03.2013, 03.03.2013
         Assert.assertEquals(1, allItems.size());
         Assert.assertEquals(TEST_BOX_ITEM_1_ID, allItems.get(0).getItemType().getId());
         Thread.sleep(100);
@@ -1622,4 +1633,56 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
 
         EasyMock.verify(mockHistoryService);
     }
+
+    @Test
+    @DirtiesContext
+    public void testReactivate() throws Exception {
+        setPrivateStaticField(InventoryServiceImpl.class, "SCHEDULE_RATE", 50);
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createDbBoxItemType2();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbPlanet dbPlanet = planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID);
+        DbBoxRegion dbBoxRegion = dbPlanet.getBoxRegionCrud().createDbChild();
+        dbBoxRegion.setItemFreeRange(100);
+        dbBoxRegion.setMinInterval(300);
+        dbBoxRegion.setMaxInterval(300);
+        dbBoxRegion.setName("DbBoxRegion1");
+        dbBoxRegion.setRegion(createDbRegion(new Rectangle(100, 100, 1000, 1000)));
+        DbBoxRegionCount dbBoxRegionCount = dbBoxRegion.getBoxRegionCountCrud().createDbChild();
+        dbBoxRegionCount.setDbBoxItemType(serverItemTypeService.getDbBoxItemType(TEST_BOX_ITEM_2_ID));
+        dbBoxRegionCount.setCount(1);
+        planetSystemService.getDbPlanetCrud().updateDbChild(dbPlanet);
+        planetSystemService.deactivatePlanet(TEST_PLANET_1_ID);
+        planetSystemService.activatePlanet(TEST_PLANET_1_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        Thread.sleep(400);
+        List<SyncItem> items1 = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getItemService().getItemsCopy();
+        Assert.assertEquals(1, items1.size());
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getInventoryService().reactivate(planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        assertWholeItemCount(TEST_PLANET_1_ID, 0);
+
+        Thread.sleep(400);
+        List<SyncItem> items2 = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getItemService().getItemsCopy();
+        Assert.assertEquals(1, items2.size());
+
+        Assert.assertFalse(CommonJava.getFirst(items1).isAlive());
+        Assert.assertTrue(CommonJava.getFirst(items2).isAlive());
+
+    }
+
 }

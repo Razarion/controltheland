@@ -26,4 +26,6 @@ public interface InventoryService extends CommonInventoryService {
     void activate(DbPlanet dbPlanet);
 
     void deactivate();
+
+    void reactivate(DbPlanet dbPlanet);
 }

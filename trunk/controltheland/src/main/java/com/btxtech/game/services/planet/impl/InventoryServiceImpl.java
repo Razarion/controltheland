@@ -130,6 +130,12 @@ public class InventoryServiceImpl implements InventoryService, Runnable {
     }
 
     @Override
+    public void reactivate(DbPlanet dbPlanet) {
+        deactivate();
+        activate(dbPlanet);
+    }
+
+    @Override
     public void run() {
         try {
             synchronized (boxRegions) {
