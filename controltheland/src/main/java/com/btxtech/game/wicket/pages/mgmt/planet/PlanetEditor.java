@@ -137,6 +137,12 @@ public class PlanetEditor extends MgmtWebPage {
                 return getParent().getRegionResourceCrud();
             }
         };
+        form.add(new Button("reactivateRegionResource"){
+            @Override
+            public void onSubmit() {
+                planetSystemService.getServerPlanetServices(form.getModelObject().getId()).getResourceService().reactivate(form.getModelObject());
+            }
+        });
         // Bot
         new CrudChildTableHelper<DbPlanet, DbBotConfig>("bots", null, "createBot", true, form, false) {
 
