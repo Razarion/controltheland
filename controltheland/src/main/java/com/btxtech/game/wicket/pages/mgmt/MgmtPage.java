@@ -125,6 +125,7 @@ public class MgmtPage extends MgmtWebPage {
 
     static {
         toolPages = new ArrayList<>();
+        toolPages.add(new LinkAndName("Online utils", OnlineUtils.class));
         toolPages.add(new LinkAndName("Startup", Startup.class));
         toolPages.add(new LinkAndName("DB View", DbView.class));
         toolPages.add(new LinkAndName("Terrain Tile Editor", TerrainTileEditor.class));

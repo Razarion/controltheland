@@ -15,6 +15,8 @@ package com.btxtech.game.services.connection.impl;
 
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
+import com.btxtech.game.jsre.common.packets.MessageIdPacket;
+import com.btxtech.game.jsre.common.packets.ServerRebootMessagePacket;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.connection.ClientDebugEntry;
 import com.btxtech.game.services.connection.ConnectionStatistics;
@@ -55,7 +57,7 @@ public class ServerGlobalConnectionServiceImpl implements ServerGlobalConnection
     private PlanetSystemService planetSystemService;
     @Autowired
     private ServerI18nHelper serverI18nHelper;
-    private ChatMessageQueue chatMessageQueue = new ChatMessageQueue();
+    private MessageIdPacketQueue messageIdPacketQueue = new MessageIdPacketQueue();
 
     @Override
     public Session getSession() {
@@ -84,7 +86,8 @@ public class ServerGlobalConnectionServiceImpl implements ServerGlobalConnection
         } else {
             name = serverI18nHelper.getString("guest");
         }
-        chatMessageQueue.initAndPutMessage(name, chatMessage);
+        chatMessage.setName(name);
+        messageIdPacketQueue.initAndPutMessage(chatMessage);
         for (Planet planet : planetSystemService.getAllPlanets()) {
             planet.getPlanetServices().getConnectionService().sendPacket(chatMessage);
         }
@@ -92,8 +95,19 @@ public class ServerGlobalConnectionServiceImpl implements ServerGlobalConnection
     }
 
     @Override
-    public List<ChatMessage> pollChatMessages(Integer lastMessageId) {
-        return chatMessageQueue.peekMessages(lastMessageId);
+    public void sendServerRebootMessage(int rebootInSeconds, int downTimeInMinutes) {
+        ServerRebootMessagePacket packet = new ServerRebootMessagePacket();
+        packet.setRebootInSeconds(rebootInSeconds);
+        packet.setDownTimeInMinutes(downTimeInMinutes);
+        messageIdPacketQueue.initAndPutMessage(packet);
+        for (Planet planet : planetSystemService.getAllPlanets()) {
+            planet.getPlanetServices().getConnectionService().sendPacket(packet);
+        }
+    }
+
+    @Override
+    public List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId) {
+        return messageIdPacketQueue.peekMessages(lastMessageId);
     }
 
     @Override

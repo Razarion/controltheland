@@ -39,6 +39,7 @@ import com.btxtech.game.jsre.common.packets.LevelPacket;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.jsre.common.packets.Packet;
+import com.btxtech.game.jsre.common.packets.ServerRebootMessagePacket;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.packets.UnlockContainerPacket;
 import com.btxtech.game.jsre.common.packets.XpPacket;
@@ -777,8 +778,14 @@ abstract public class AbstractServiceTest {
             EnergyPacket expected = (EnergyPacket) expectedPacket;
             EnergyPacket received = (EnergyPacket) receivedPacket;
             return expected.equals(received);
+        } else if (expectedPacket instanceof ServerRebootMessagePacket) {
+            ServerRebootMessagePacket expected = (ServerRebootMessagePacket) expectedPacket;
+            ServerRebootMessagePacket received = (ServerRebootMessagePacket) receivedPacket;
+            return expected.getMessageId() == received.getMessageId()
+                    && expected.getRebootInSeconds() == received.getRebootInSeconds()
+                    && expected.getDownTimeInMinutes() == received.getDownTimeInMinutes();
         } else {
-            Assert.fail("Unhandled packet: " + expectedPacket);
+            Assert.fail("Unknown packet: " + expectedPacket);
             return false;
         }
     }

@@ -1,9 +1,9 @@
 package com.btxtech.game.services.connection;
 
 import com.btxtech.game.jsre.common.packets.ChatMessage;
+import com.btxtech.game.jsre.common.packets.MessageIdPacket;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.HibernateUtil;
-import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.DbChatMessage;
 import org.hibernate.SessionFactory;
 import org.junit.Assert;
@@ -22,8 +22,6 @@ import java.util.Locale;
 public class TestChat extends AbstractServiceTest {
     @Autowired
     private SessionFactory sessionFactory;
-    @Autowired
-    private UserService userService;
 
     @Test
     @DirtiesContext
@@ -41,11 +39,11 @@ public class TestChat extends AbstractServiceTest {
         sendMessage("m3");
         assertPackagesIgnoreSyncItemInfoAndClear(createMessage("m2", "Base 1", 1), createMessage("m3", "Base 1", 2));
         assertPackagesIgnoreSyncItemInfoAndClear();
-        List<ChatMessage> chatMessages = getMovableService().pollChatMessages(null);
-        Assert.assertEquals(3, chatMessages.size());
-        TestChatMessageQueue.assertMessage("m3", "Base 1", chatMessages.get(0));
-        TestChatMessageQueue.assertMessage("m2", "Base 1", chatMessages.get(1));
-        TestChatMessageQueue.assertMessage("m1", "Base 1", chatMessages.get(2));
+        List<MessageIdPacket> messageIdPackets = getMovableService().pollMessageIdPackets(null);
+        Assert.assertEquals(3, messageIdPackets.size());
+        TestMessageIdPacketQueue.assertChatMessage("m3", "Base 1", messageIdPackets.get(0));
+        TestMessageIdPacketQueue.assertChatMessage("m2", "Base 1", messageIdPackets.get(1));
+        TestMessageIdPacketQueue.assertChatMessage("m1", "Base 1", messageIdPackets.get(2));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -77,11 +75,11 @@ public class TestChat extends AbstractServiceTest {
         sendMessage("m3");
         assertPackagesIgnoreSyncItemInfoAndClear(createMessage("m2", "User 1", 1), createMessage("m3", "User 1", 2));
         assertPackagesIgnoreSyncItemInfoAndClear();
-        List<ChatMessage> chatMessages = getMovableService().pollChatMessages(null);
-        Assert.assertEquals(3, chatMessages.size());
-        TestChatMessageQueue.assertMessage("m3", "User 1", chatMessages.get(0));
-        TestChatMessageQueue.assertMessage("m2", "User 1", chatMessages.get(1));
-        TestChatMessageQueue.assertMessage("m1", "User 1", chatMessages.get(2));
+        List<MessageIdPacket> messageIdPackets = getMovableService().pollMessageIdPackets(null);
+        Assert.assertEquals(3, messageIdPackets.size());
+        TestMessageIdPacketQueue.assertChatMessage("m3", "User 1", messageIdPackets.get(0));
+        TestMessageIdPacketQueue.assertChatMessage("m2", "User 1", messageIdPackets.get(1));
+        TestMessageIdPacketQueue.assertChatMessage("m1", "User 1", messageIdPackets.get(2));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -107,13 +105,13 @@ public class TestChat extends AbstractServiceTest {
         sendMessage("m1");
         sendMessage("m2");
         sendMessage("m3");
-        List<ChatMessage> chatMessages = getMovableService().pollChatMessages(null);
-        Assert.assertEquals("Guest", chatMessages.get(0).getName());
-        Assert.assertEquals("m3", chatMessages.get(0).getMessage());
-        Assert.assertEquals("Guest", chatMessages.get(1).getName());
-        Assert.assertEquals("m2", chatMessages.get(1).getMessage());
-        Assert.assertEquals("Guest", chatMessages.get(2).getName());
-        Assert.assertEquals("m1", chatMessages.get(2).getMessage());
+        List<MessageIdPacket> messageIdPackets = getMovableService().pollMessageIdPackets(null);
+        Assert.assertEquals("Guest", ((ChatMessage) messageIdPackets.get(0)).getName());
+        Assert.assertEquals("m3", ((ChatMessage) messageIdPackets.get(0)).getMessage());
+        Assert.assertEquals("Guest", ((ChatMessage) messageIdPackets.get(1)).getName());
+        Assert.assertEquals("m2", ((ChatMessage) messageIdPackets.get(1)).getMessage());
+        Assert.assertEquals("Guest", ((ChatMessage) messageIdPackets.get(2)).getName());
+        Assert.assertEquals("m1", ((ChatMessage) messageIdPackets.get(2)).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -137,9 +135,9 @@ public class TestChat extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         getMockHttpServletRequest().addPreferredLocale(Locale.GERMAN);
         sendMessage("m1");
-        List<ChatMessage> chatMessages = getMovableService().pollChatMessages(null);
-        Assert.assertEquals("Gast", chatMessages.get(0).getName());
-        Assert.assertEquals("m1", chatMessages.get(0).getMessage());
+        List<MessageIdPacket> messageIdPackets = getMovableService().pollMessageIdPackets(null);
+        Assert.assertEquals("Gast", ((ChatMessage) messageIdPackets.get(0)).getName());
+        Assert.assertEquals("m1", ((ChatMessage) messageIdPackets.get(0)).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

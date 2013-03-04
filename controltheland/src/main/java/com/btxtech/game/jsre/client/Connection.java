@@ -67,7 +67,9 @@ import com.btxtech.game.jsre.common.packets.HouseSpacePacket;
 import com.btxtech.game.jsre.common.packets.LevelPacket;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.packets.Message;
+import com.btxtech.game.jsre.common.packets.MessageIdPacket;
 import com.btxtech.game.jsre.common.packets.Packet;
+import com.btxtech.game.jsre.common.packets.ServerRebootMessagePacket;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.packets.UnlockContainerPacket;
 import com.btxtech.game.jsre.common.packets.XpPacket;
@@ -287,7 +289,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                 } else if (packet instanceof EnergyPacket) {
                     ClientEnergyService.getInstance().onEnergyPacket((EnergyPacket) packet);
                 } else if (packet instanceof ChatMessage) {
-                    ClientChatHandler.getInstance().onMessageReceived((ChatMessage) packet);
+                    ClientMessageIdPacketHandler.getInstance().onMessageReceived((ChatMessage) packet);
                 } else if (packet instanceof LevelPacket) {
                     ClientLevelHandler.getInstance().setLevel(((LevelPacket) packet).getLevel());
                     SplashManager.getInstance().onLevelUp();
@@ -310,6 +312,8 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                     SideCockpit.getInstance().setXp(xpPacket.getXp(), xpPacket.getXp2LevelUp());
                 } else if (packet instanceof UnlockContainerPacket) {
                     ClientUnlockServiceImpl.getInstance().setUnlockContainer(((UnlockContainerPacket) packet).getUnlockContainer());
+                } else if (packet instanceof ServerRebootMessagePacket) {
+                    ClientMessageIdPacketHandler.getInstance().onMessageReceived((ServerRebootMessagePacket) packet);
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }
@@ -376,7 +380,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
 
                 @Override
                 public void onSuccess(Void result) {
-                    ClientChatHandler.getInstance().pollMessagesIfInPollMode();
+                    ClientMessageIdPacketHandler.getInstance().pollMessagesIfInPollMode();
                 }
             });
         }
@@ -385,15 +389,15 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
     @Override
     public void pollChatMessages(Integer lastMessageId) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.pollChatMessages(lastMessageId, new AsyncCallback<List<ChatMessage>>() {
+            movableServiceAsync.pollMessageIdPackets(lastMessageId, new AsyncCallback<List<MessageIdPacket>>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     ClientExceptionHandler.handleExceptionOnlyOnce("Chat message polling failed", caught);
                 }
 
                 @Override
-                public void onSuccess(List<ChatMessage> chatMessages) {
-                    ClientChatHandler.getInstance().onMessageReceived(chatMessages);
+                public void onSuccess(List<MessageIdPacket> messageIdPackets) {
+                    ClientMessageIdPacketHandler.getInstance().onMessageReceived(messageIdPackets);
                 }
             });
         }

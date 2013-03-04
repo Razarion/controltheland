@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.ClientChatHandler;
+import com.btxtech.game.jsre.client.ClientMessageIdPacketHandler;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Rectangle;
@@ -149,7 +149,7 @@ public class ChatCockpit extends AbsolutePanel implements ChatListener {
             @Override
             public void onKeyDown(KeyDownEvent event) {
                 if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-                    ClientChatHandler.getInstance().sendMessage(send.getText());
+                    ClientMessageIdPacketHandler.getInstance().sendMessage(send.getText());
                     send.setText("");
                     TerrainView.getInstance().setFocus();
                 }

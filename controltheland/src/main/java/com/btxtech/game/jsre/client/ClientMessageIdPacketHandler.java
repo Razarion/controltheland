@@ -1,11 +1,16 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.ChatListener;
+import com.btxtech.game.jsre.client.dialogs.DialogManager;
+import com.btxtech.game.jsre.client.dialogs.ServerRestartDialog;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
+import com.btxtech.game.jsre.common.packets.MessageIdPacket;
+import com.btxtech.game.jsre.common.packets.ServerRebootMessagePacket;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.user.client.Timer;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -14,44 +19,51 @@ import java.util.logging.Logger;
  * Date: 03.04.2012
  * Time: 12:45:48
  */
-public class ClientChatHandler {
+public class ClientMessageIdPacketHandler {
     public static final int START_DELAY = 3000;
     public static final int POLL_DELAY = 5000;
-    private static final ClientChatHandler INSTANCE = new ClientChatHandler();
+    private static final ClientMessageIdPacketHandler INSTANCE = new ClientMessageIdPacketHandler();
     private Timer startTimer;
     private Timer pollTimer;
-    private ChatMessage lastMessage;
     private GlobalCommonConnectionService globalCommonConnectionService;
     private ChatListener chatListener;
-    private Logger log = Logger.getLogger(ClientChatHandler.class.getName());
+    private Logger log = Logger.getLogger(ClientMessageIdPacketHandler.class.getName());
+    private MessageIdPacket lastMessageIdPacket;
 
     /**
      * Singleton
      */
-    private ClientChatHandler() {
+    private ClientMessageIdPacketHandler() {
 
     }
 
-    public static ClientChatHandler getInstance() {
+    public static ClientMessageIdPacketHandler getInstance() {
         return INSTANCE;
     }
 
-    public void onMessageReceived(List<ChatMessage> chatMessages) {
-        if (chatMessages != null) {
-            for (int i = chatMessages.size() - 1; i >= 0; i--) {
-                ChatMessage chatMessage = chatMessages.get(i);
-                onMessageReceived(chatMessage);
+    public void onMessageReceived(List<MessageIdPacket> messageIdPackets) {
+        if (messageIdPackets != null) {
+            // Handle in reverse order
+            Collections.reverse(messageIdPackets);
+            for (MessageIdPacket messageIdPacket : messageIdPackets) {
+                onMessageReceived(messageIdPacket);
             }
         }
     }
 
-    public void onMessageReceived(ChatMessage chatMessage) {
+    public void onMessageReceived(MessageIdPacket messageIdPacket) {
         if (startTimer != null) {
             return;
         }
-        lastMessage = chatMessage;
-        if (chatListener != null) {
-            chatListener.addMessage(chatMessage);
+        lastMessageIdPacket = messageIdPacket;
+        if (messageIdPacket instanceof ChatMessage) {
+            if (chatListener != null) {
+                chatListener.addMessage((ChatMessage) messageIdPacket);
+            }
+        } else if (messageIdPacket instanceof ServerRebootMessagePacket) {
+            DialogManager.showDialog(new ServerRestartDialog((ServerRebootMessagePacket) messageIdPacket), DialogManager.Type.PROMPTLY);
+        } else {
+            log.warning("ClientMessageIdPacketHandler.onMessageReceived() can not handle packet: " + messageIdPacket);
         }
     }
 
@@ -64,7 +76,7 @@ public class ClientChatHandler {
             pollTimer.cancel();
             pollTimer = null;
         }
-        lastMessage = null;
+        lastMessageIdPacket = null;
     }
 
     public void runRealGame(GlobalCommonConnectionService globalCommonConnectionService, ChatListener chatListener, int startDelay) {
@@ -105,10 +117,10 @@ public class ClientChatHandler {
 
     private void pollMessages() {
         if (globalCommonConnectionService == null) {
-            log.severe("ClientChatHandler.poll() connection == null");
+            log.severe("ClientMessageIdPacketHandler.poll() connection == null");
             return;
         }
-        Integer lastMessageId = lastMessage != null ? lastMessage.getMessageId() : null;
+        Integer lastMessageId = lastMessageIdPacket != null ? lastMessageIdPacket.getMessageId() : null;
         globalCommonConnectionService.pollChatMessages(lastMessageId);
     }
 

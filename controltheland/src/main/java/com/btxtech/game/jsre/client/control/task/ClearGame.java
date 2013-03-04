@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.client.control.task;
 
-import com.btxtech.game.jsre.client.ClientChatHandler;
+import com.btxtech.game.jsre.client.ClientMessageIdPacketHandler;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameCommon;
 import com.btxtech.game.jsre.client.SoundHandler;
@@ -45,7 +45,7 @@ public class ClearGame extends AbstractStartupTask {
         TerrainView.getInstance().cleanup();
         GameTipManager.getInstance().stop();
         Renderer.getInstance().stop();
-        ClientChatHandler.getInstance().stop();
+        ClientMessageIdPacketHandler.getInstance().stop();
         ClientUserTracker.getInstance().stopEventTracking();
         Connection.getInstance().disconnect();
         GameCommon.clearGame();

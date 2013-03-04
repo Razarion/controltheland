@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.client.control.task;
 
-import com.btxtech.game.jsre.client.ClientChatHandler;
+import com.btxtech.game.jsre.client.ClientMessageIdPacketHandler;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.SoundHandler;
 import com.btxtech.game.jsre.client.cockpit.ChatCockpit;
@@ -40,7 +40,7 @@ public class RunSimulationStartupTask extends AbstractStartupTask {
         RegisterDialog.showDialogRepeating();
         Simulation.getInstance().start();
         SideCockpit.getInstance().updateItemLimit();
-        ClientChatHandler.getInstance().runSimulatedGame(Connection.getInstance(), ChatCockpit.getInstance(), ClientChatHandler.START_DELAY, ClientChatHandler.POLL_DELAY);
+        ClientMessageIdPacketHandler.getInstance().runSimulatedGame(Connection.getInstance(), ChatCockpit.getInstance(), ClientMessageIdPacketHandler.START_DELAY, ClientMessageIdPacketHandler.POLL_DELAY);
         Renderer.getInstance().start();
         SoundHandler.getInstance().start(Connection.getInstance().getGameInfo().getCommonSoundInfo());
         TerrainView.getInstance().setFocus();

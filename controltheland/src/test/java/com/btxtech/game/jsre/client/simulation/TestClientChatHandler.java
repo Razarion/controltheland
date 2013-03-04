@@ -1,7 +1,7 @@
 package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.ClientChatHandler;
+import com.btxtech.game.jsre.client.ClientMessageIdPacketHandler;
 import com.btxtech.game.jsre.client.GlobalCommonConnectionService;
 import com.btxtech.game.jsre.client.cockpit.ChatListener;
 import com.btxtech.game.jsre.client.common.AbstractGwtTest;
@@ -36,32 +36,32 @@ public class TestClientChatHandler extends AbstractGwtTest implements GlobalComm
         assertEquals(0, sentMessages.size());
         assertNull(lastMessageId);
         assertEquals(0, displayMessages.size());
-        ClientChatHandler.getInstance().runSimulatedGame(this, this, 100, 100);
+        ClientMessageIdPacketHandler.getInstance().runSimulatedGame(this, this, 100, 100);
         sleep(120, new GwtTestRunnable() {
             @Override
             public void run() throws Throwable {
                 assertEquals(1, pollChatMessagesCalled);
-                ClientChatHandler.getInstance().onMessageReceived(Arrays.asList(createChatMessage("m3", "u3", 1), createChatMessage("m2", "u2", 2)));
+                // TODO ClientMessageIdPacketHandler.getInstance().onMessageReceived(Arrays.asList(createChatMessage("m3", "u3", 1), createChatMessage("m2", "u2", 2)));
                 assertNull(lastMessageId);
                 assertEquals(2, displayMessages.size());
                 assertDisplayChatMessage("m2", "u2", 0);
                 assertDisplayChatMessage("m3", "u3", 1);
-                ClientChatHandler.getInstance().sendMessage("m4");
+                ClientMessageIdPacketHandler.getInstance().sendMessage("m4");
                 assertEquals(1, sentMessages.size());
                 assertSentChatMessage("m4", "lvl1", 0);
-                ClientChatHandler.getInstance().sendMessage("m5");
-                ClientChatHandler.getInstance().sendMessage("m6");
+                ClientMessageIdPacketHandler.getInstance().sendMessage("m5");
+                ClientMessageIdPacketHandler.getInstance().sendMessage("m6");
                 assertEquals(3, sentMessages.size());
                 assertSentChatMessage("m4", "lvl1", 0);
                 assertSentChatMessage("m5", "lvl1", 1);
                 assertSentChatMessage("m6", "lvl1", 2);
-                ClientChatHandler.getInstance().onMessageReceived(Arrays.asList(createChatMessage("m12", "u12", 13), createChatMessage("m11", "u11", 12)));
+                // TODO ClientMessageIdPacketHandler.getInstance().onMessageReceived(Arrays.asList(createChatMessage("m12", "u12", 13), createChatMessage("m11", "u11", 12)));
                 sleep(100, new GwtTestRunnable() {
                     @Override
                     public void run() throws Throwable {
                         assertEquals(2, pollChatMessagesCalled);
                         assertEquals(13, (int) lastMessageId);
-                        ClientChatHandler.getInstance().stop();
+                        ClientMessageIdPacketHandler.getInstance().stop();
                         sentMessages.clear();
                         displayMessages.clear();
                         sleep(200, new GwtTestRunnable() {
@@ -77,36 +77,36 @@ public class TestClientChatHandler extends AbstractGwtTest implements GlobalComm
                                 lastMessageId = null;
                                 assertEquals(0, sentMessages.size());
                                 assertNull(lastMessageId);
-                                ClientChatHandler.getInstance().runRealGame(TestClientChatHandler.this, TestClientChatHandler.this, 100);
-                                ClientChatHandler.getInstance().onMessageReceived(createChatMessage("m1", "u1", null));
+                                ClientMessageIdPacketHandler.getInstance().runRealGame(TestClientChatHandler.this, TestClientChatHandler.this, 100);
+                                ClientMessageIdPacketHandler.getInstance().onMessageReceived(createChatMessage("m1", "u1", null));
                                 assertEquals(0, displayMessages.size());
                                 sleep(150, new GwtTestRunnable() {
                                     @Override
                                     public void run() throws Throwable {
                                         assertEquals(1, pollChatMessagesCalled);
-                                        ClientChatHandler.getInstance().onMessageReceived(Arrays.asList(createChatMessage("m3", "u3", null), createChatMessage("m2", "u2", null)));
+                                        // TODO ClientMessageIdPacketHandler.getInstance().onMessageReceived(Arrays.asList(createChatMessage("m3", "u3", null), createChatMessage("m2", "u2", null)));
                                         assertEquals(2, displayMessages.size());
                                         assertDisplayChatMessage("m2", "u2", 0);
                                         assertDisplayChatMessage("m3", "u3", 1);
-                                        ClientChatHandler.getInstance().sendMessage("m4");
+                                        ClientMessageIdPacketHandler.getInstance().sendMessage("m4");
                                         assertEquals(1, sentMessages.size());
                                         assertSentChatMessage("m4", "test", 0);
-                                        ClientChatHandler.getInstance().sendMessage("m5");
-                                        ClientChatHandler.getInstance().sendMessage("m6");
+                                        ClientMessageIdPacketHandler.getInstance().sendMessage("m5");
+                                        ClientMessageIdPacketHandler.getInstance().sendMessage("m6");
                                         assertEquals(3, sentMessages.size());
                                         assertSentChatMessage("m4", "test", 0);
                                         assertSentChatMessage("m5", "test", 1);
                                         assertSentChatMessage("m6", "test", 2);
-                                        ClientChatHandler.getInstance().onMessageReceived(createChatMessage("m1", "u1", null));
+                                        ClientMessageIdPacketHandler.getInstance().onMessageReceived(createChatMessage("m1", "u1", null));
                                         assertEquals(3, displayMessages.size());
                                         assertDisplayChatMessage("m2", "u2", 0);
                                         assertDisplayChatMessage("m3", "u3", 1);
                                         assertDisplayChatMessage("m1", "u1", 2);
                                         // Stop and Stop
                                         pollChatMessagesCalled = 0;
-                                        ClientChatHandler.getInstance().stop();
-                                        ClientChatHandler.getInstance().runRealGame(TestClientChatHandler.this, TestClientChatHandler.this, 100);
-                                        ClientChatHandler.getInstance().stop();
+                                        ClientMessageIdPacketHandler.getInstance().stop();
+                                        ClientMessageIdPacketHandler.getInstance().runRealGame(TestClientChatHandler.this, TestClientChatHandler.this, 100);
+                                        ClientMessageIdPacketHandler.getInstance().stop();
                                         assertEquals(0, pollChatMessagesCalled);
                                         finishTest();
                                     }
