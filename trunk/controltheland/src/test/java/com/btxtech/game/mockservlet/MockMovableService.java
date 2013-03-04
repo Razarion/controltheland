@@ -35,6 +35,7 @@ import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsEx
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
+import com.btxtech.game.jsre.common.packets.MessageIdPacket;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
@@ -197,7 +198,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public List<ChatMessage> pollChatMessages(Integer lastMessageId) {
+    public List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

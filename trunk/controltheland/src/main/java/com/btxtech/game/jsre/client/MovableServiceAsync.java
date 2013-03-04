@@ -26,6 +26,7 @@ import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsEx
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
+import com.btxtech.game.jsre.common.packets.MessageIdPacket;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
@@ -74,7 +75,7 @@ public interface MovableServiceAsync {
 
     void sendChatMessage(ChatMessage chatMessage, AsyncCallback<Void> asyncCallback);
 
-    void pollChatMessages(Integer lastMessageId, AsyncCallback<List<ChatMessage>> asyncCallback);
+    void pollMessageIdPackets(Integer lastMessageId, AsyncCallback<List<MessageIdPacket>> asyncCallback);
 
     void sendTutorialProgress(TutorialConfig.TYPE type, String startUuid, int levelTaskId, String name, long duration, long clientTimeStamp, AsyncCallback<GameFlow> asyncCallback);
 

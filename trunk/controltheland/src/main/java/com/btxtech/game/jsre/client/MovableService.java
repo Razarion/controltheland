@@ -30,6 +30,7 @@ import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsEx
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
+import com.btxtech.game.jsre.common.packets.MessageIdPacket;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
@@ -80,7 +81,7 @@ public interface MovableService extends RemoteService {
 
     void sendChatMessage(ChatMessage chatMessage);
 
-    List<ChatMessage> pollChatMessages(Integer lastMessageId);
+    List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId);
 
     void sendStartupTask(StartupTaskInfo startupTaskInfo, String uuid, Integer levelTaskId);
 

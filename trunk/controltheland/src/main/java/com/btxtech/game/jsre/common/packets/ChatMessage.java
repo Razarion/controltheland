@@ -18,10 +18,9 @@ package com.btxtech.game.jsre.common.packets;
  * Date: 12.03.2010
  * Time: 23:42:44
  */
-public class ChatMessage extends Packet {
+public class ChatMessage extends MessageIdPacket {
     private String name;
     private String message;
-    private int messageId;
 
     public String getName() {
         return name;
@@ -37,32 +36,5 @@ public class ChatMessage extends Packet {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public int getMessageId() {
-        return messageId;
-    }
-
-    public void setMessageId(int messageId) {
-        this.messageId = messageId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ChatMessage that = (ChatMessage) o;
-
-        return messageId == that.messageId && !(message != null ? !message.equals(that.message) : that.message != null) && name.equals(that.name);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = name.hashCode();
-        result = 31 * result + (message != null ? message.hashCode() : 0);
-        result = 31 * result + messageId;
-        return result;
     }
 }

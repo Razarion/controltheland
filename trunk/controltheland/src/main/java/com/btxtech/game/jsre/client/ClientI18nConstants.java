@@ -445,4 +445,12 @@ public interface ClientI18nConstants extends Messages {
     String questLocked();
 
     String planetLocked();
+
+    String serverRebootTitle();
+
+    String serverRebootMessage(int rebootInSeconds, int downTimeInMinutes);
+
+    String serverRebootMissionNotSaved();
+
+    String serverRebootNotRegistered();
 }
