@@ -75,7 +75,7 @@ public interface MovableServiceAsync {
 
     void sendChatMessage(ChatMessage chatMessage, AsyncCallback<Void> asyncCallback);
 
-    void pollMessageIdPackets(Integer lastMessageId, AsyncCallback<List<MessageIdPacket>> asyncCallback);
+    void pollMessageIdPackets(Integer lastMessageId, GameEngineMode gameEngineMode, AsyncCallback<List<MessageIdPacket>> asyncCallback);
 
     void sendTutorialProgress(TutorialConfig.TYPE type, String startUuid, int levelTaskId, String name, long duration, long clientTimeStamp, AsyncCallback<GameFlow> asyncCallback);
 

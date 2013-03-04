@@ -39,7 +39,7 @@ public class TestChat extends AbstractServiceTest {
         sendMessage("m3");
         assertPackagesIgnoreSyncItemInfoAndClear(createMessage("m2", "Base 1", 1), createMessage("m3", "Base 1", 2));
         assertPackagesIgnoreSyncItemInfoAndClear();
-        List<MessageIdPacket> messageIdPackets = getMovableService().pollMessageIdPackets(null);
+        List<MessageIdPacket> messageIdPackets = getMovableService().pollMessageIdPackets(null, null);
         Assert.assertEquals(3, messageIdPackets.size());
         TestMessageIdPacketQueue.assertChatMessage("m3", "Base 1", messageIdPackets.get(0));
         TestMessageIdPacketQueue.assertChatMessage("m2", "Base 1", messageIdPackets.get(1));
@@ -75,7 +75,7 @@ public class TestChat extends AbstractServiceTest {
         sendMessage("m3");
         assertPackagesIgnoreSyncItemInfoAndClear(createMessage("m2", "User 1", 1), createMessage("m3", "User 1", 2));
         assertPackagesIgnoreSyncItemInfoAndClear();
-        List<MessageIdPacket> messageIdPackets = getMovableService().pollMessageIdPackets(null);
+        List<MessageIdPacket> messageIdPackets = getMovableService().pollMessageIdPackets(null, null);
         Assert.assertEquals(3, messageIdPackets.size());
         TestMessageIdPacketQueue.assertChatMessage("m3", "User 1", messageIdPackets.get(0));
         TestMessageIdPacketQueue.assertChatMessage("m2", "User 1", messageIdPackets.get(1));
@@ -105,7 +105,7 @@ public class TestChat extends AbstractServiceTest {
         sendMessage("m1");
         sendMessage("m2");
         sendMessage("m3");
-        List<MessageIdPacket> messageIdPackets = getMovableService().pollMessageIdPackets(null);
+        List<MessageIdPacket> messageIdPackets = getMovableService().pollMessageIdPackets(null, null);
         Assert.assertEquals("Guest", ((ChatMessage) messageIdPackets.get(0)).getName());
         Assert.assertEquals("m3", ((ChatMessage) messageIdPackets.get(0)).getMessage());
         Assert.assertEquals("Guest", ((ChatMessage) messageIdPackets.get(1)).getName());
@@ -135,7 +135,7 @@ public class TestChat extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         getMockHttpServletRequest().addPreferredLocale(Locale.GERMAN);
         sendMessage("m1");
-        List<MessageIdPacket> messageIdPackets = getMovableService().pollMessageIdPackets(null);
+        List<MessageIdPacket> messageIdPackets = getMovableService().pollMessageIdPackets(null, null);
         Assert.assertEquals("Gast", ((ChatMessage) messageIdPackets.get(0)).getName());
         Assert.assertEquals("m1", ((ChatMessage) messageIdPackets.get(0)).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();

@@ -35,7 +35,7 @@ public class TestServerRebootPacket extends AbstractServiceTest {
         connectionService.sendServerRebootMessage(5, 6);
         assertPackagesIgnoreSyncItemInfoAndClear(createServerRebootMessage(3, 4, 1), createServerRebootMessage(5, 6, 2));
         assertPackagesIgnoreSyncItemInfoAndClear();
-        List<MessageIdPacket> messageIdPackets = getMovableService().pollMessageIdPackets(null);
+        List<MessageIdPacket> messageIdPackets = getMovableService().pollMessageIdPackets(null, null);
         Assert.assertEquals(3, messageIdPackets.size());
         TestMessageIdPacketQueue.assertRebootPacket(5, 6, messageIdPackets.get(0));
         TestMessageIdPacketQueue.assertRebootPacket(3, 4, messageIdPackets.get(1));

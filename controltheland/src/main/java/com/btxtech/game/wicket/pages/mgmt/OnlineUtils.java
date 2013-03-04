@@ -13,16 +13,14 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.jsre.client.GlobalCommonConnectionService;
 import com.btxtech.game.services.connection.ServerGlobalConnectionService;
-import com.btxtech.game.services.mgmt.MgmtService;
-import com.btxtech.game.services.mgmt.StartupData;
+import com.btxtech.game.services.planet.PlanetSystemService;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
@@ -34,12 +32,38 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class OnlineUtils extends MgmtWebPage {
     @SpringBean
     private ServerGlobalConnectionService connectionService;
+    @SpringBean
+    private PlanetSystemService planetSystemService;
 
     public OnlineUtils() {
         FeedbackPanel feedbackPanel = new FeedbackPanel("msgs");
         add(feedbackPanel);
 
+        setupOnlineUserPanel();
         setupRebootMessage();
+    }
+
+    private void setupOnlineUserPanel() {
+        add(new Label("planetUsers", new AbstractReadOnlyModel<Integer>() {
+            @Override
+            public Integer getObject() {
+                return planetSystemService.getAllOnlineBases().size();
+            }
+        }));
+        add(new Label("missionUsers", new AbstractReadOnlyModel<Integer>() {
+            @Override
+            public Integer getObject() {
+                return connectionService.getAllOnlineMissionUserState().size();
+            }
+        }));
+        Form form = new Form("onlineUserForm") {
+            @Override
+            protected void onSubmit() {
+                // Just reload
+            }
+        };
+        add(form);
+
     }
 
     private void setupRebootMessage() {
@@ -55,7 +79,7 @@ public class OnlineUtils extends MgmtWebPage {
         form.add(new Button("send") {
             @Override
             public void onSubmit() {
-                if(rebootModel.getObject() == null || downTimeModel.getObject() == null) {
+                if (rebootModel.getObject() == null || downTimeModel.getObject() == null) {
                     error("Enter a valid number for 'Reboot in seconds' and 'Downtime in minutes'");
                 }
                 connectionService.sendServerRebootMessage(rebootModel.getObject(), downTimeModel.getObject());

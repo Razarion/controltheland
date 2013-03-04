@@ -1,6 +1,7 @@
 package com.btxtech.game.mockservlet;
 
 import com.btxtech.game.jsre.client.AdCellProvision;
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.InvalidNickName;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.SimpleUser;
@@ -198,7 +199,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId) {
+    public List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId, GameEngineMode gameEngineMode) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

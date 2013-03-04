@@ -389,7 +389,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
     @Override
     public void pollChatMessages(Integer lastMessageId) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.pollMessageIdPackets(lastMessageId, new AsyncCallback<List<MessageIdPacket>>() {
+            movableServiceAsync.pollMessageIdPackets(lastMessageId, gameEngineMode, new AsyncCallback<List<MessageIdPacket>>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     ClientExceptionHandler.handleExceptionOnlyOnce("Chat message polling failed", caught);
