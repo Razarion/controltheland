@@ -1,10 +1,13 @@
 package com.btxtech.game.services.planet;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.services.AbstractServiceTest;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 /**
@@ -13,6 +16,8 @@ import org.springframework.test.annotation.DirtiesContext;
  * Time: 12:28
  */
 public class TestResourceService extends AbstractServiceTest {
+    @Autowired
+    private PlanetSystemService planetSystemService;
 
     @Test
     @DirtiesContext
@@ -43,5 +48,28 @@ public class TestResourceService extends AbstractServiceTest {
         Assert.assertFalse(resource1.equals(resource3));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void reactivate() throws Exception {
+        configureSimplePlanet();
+
+        assertWholeItemCount(TEST_PLANET_1_ID, 1);
+        SyncResourceItem syncResourceItem1 = CommonJava.getFirst(getAllResourceItems(TEST_PLANET_1_ID, TEST_RESOURCE_ITEM_ID));
+        Assert.assertNotNull(syncResourceItem1);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getResourceService().reactivate(planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        SyncResourceItem syncResourceItem2 = CommonJava.getFirst(getAllResourceItems(TEST_PLANET_1_ID, TEST_RESOURCE_ITEM_ID));
+        Assert.assertNotNull(syncResourceItem2);
+
+        Assert.assertFalse(syncResourceItem1.isAlive());
+        Assert.assertFalse(syncResourceItem1.getId().equals(syncResourceItem2.getId()));
+
     }
 }

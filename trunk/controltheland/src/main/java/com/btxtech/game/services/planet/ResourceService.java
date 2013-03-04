@@ -27,4 +27,6 @@ public interface ResourceService {
     void activate(DbPlanet dbPlanet);
 
     void deactivate();
+
+    void reactivate(DbPlanet dbPlanet);
 }

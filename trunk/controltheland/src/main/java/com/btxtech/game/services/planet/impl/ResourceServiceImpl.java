@@ -64,6 +64,12 @@ public class ResourceServiceImpl implements ResourceService, CollisionServiceCha
     }
 
     @Override
+    public void reactivate(DbPlanet dbPlanet) {
+        deactivate();
+        activate(dbPlanet);
+    }
+
+    @Override
     public void resourceItemDeleted(SyncResourceItem syncResourceItem) {
         for (RegionResource regionResource : regionResources) {
             if (regionResource.resourceItemDeleted(syncResourceItem)) {
