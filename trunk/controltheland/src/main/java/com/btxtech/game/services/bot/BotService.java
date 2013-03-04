@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.bot;
 
-import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.bot.CommonBotService;
 import com.btxtech.game.services.planet.db.DbPlanet;
 
@@ -26,4 +25,6 @@ public interface BotService extends CommonBotService {
     void activate(DbPlanet dbPlanet);
 
     void deactivate();
+
+    void reactivate(DbPlanet dbPlanet);
 }

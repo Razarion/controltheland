@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.history.DbHistoryElement;
@@ -18,6 +19,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.List;
 
 /**
  * User: beat
@@ -225,6 +228,45 @@ public class TestBotService extends AbstractServiceTest {
         waitForHistoryType(DbHistoryElement.Type.BOT_ENRAGE_NORMAL);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testReactivate() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBotConfig dbBotConfig = setupMinimalBot(TEST_PLANET_1_ID, new Rectangle(1, 1, 5000, 5000));
+        BotConfig botConfig = dbBotConfig.createBotConfig(serverItemTypeService);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Wait for bot to complete
+        waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<SyncItem> syncItems1 = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getItemService().getItemsCopy();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBotService().reactivate(planetSystemService.getDbPlanetCrud().readDbChild(TEST_PLANET_1_ID));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Wait for bot to complete
+        waitForBotToBuildup(TEST_PLANET_1_ID, botConfig);
+
+        for (SyncItem syncItem : syncItems1) {
+            Assert.assertFalse(syncItem.isAlive());
+        }
+        List<SyncItem> syncItems2 = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getItemService().getItemsCopy();
+        for (SyncItem syncItem : syncItems2) {
+            Assert.assertTrue(syncItem.isAlive());
+        }
     }
 
 }
