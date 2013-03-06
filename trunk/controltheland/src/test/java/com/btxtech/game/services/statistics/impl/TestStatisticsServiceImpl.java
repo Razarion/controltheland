@@ -355,6 +355,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         botBase = serverPlanetServices.getBaseService().createBotBase(new BotConfig(1, 1, null, null, "bot", null, null, null, null));
         SyncBaseItem botAttackUnit = (SyncBaseItem) serverPlanetServices.getItemService().createSyncObject(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), new Index(3000, 2000), null, botBase);
         botAttackUnit.setHealth(Integer.MAX_VALUE);
+        botAttackUnit.setBuildup(1.0);
         sendAttackCommand(botAttackUnit.getId(), u1AttackerId, TEST_PLANET_1_ID);
         waitForActionServiceDone(TEST_PLANET_1_ID);
 

@@ -228,6 +228,9 @@ public class SyncWeapon extends SyncBaseAbility {
     }
 
     public void executeCommand(AttackCommand attackCommand) throws ItemDoesNotExistException {
+        if (!getSyncBaseItem().isReady()) {
+            return;
+        }
         SyncBaseItem target = (SyncBaseItem) getPlanetServices().getItemService().getItem(attackCommand.getTarget());
         if (!getSyncBaseItem().isEnemy(target)) {
             throw new IllegalArgumentException("Can not attack friendly target. Own: " + getSyncBaseItem() + " target: " + target);
