@@ -361,6 +361,10 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
                 return;
             }
 
+            if (!syncBaseItem.isReady()) {
+                return;
+            }
+
             if (syncBaseItem.hasSyncConsumer() && !syncBaseItem.getSyncConsumer().isOperating()) {
                 return;
             }
