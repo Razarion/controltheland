@@ -34,7 +34,7 @@ public class WysiwygEditor extends Panel implements IHeaderContributor {
             @Override
             public void setObject(String html) {
                 if (html != null && !html.isEmpty()) {
-                    setDefaultModelObject(Jsoup.clean(html, Whitelist.basicWithImages()));
+                    setDefaultModelObject(Jsoup.clean(html, Whitelist.basicWithImages().addTags("hr")));
                 } else {
                     setDefaultModelObject(null);
                 }
