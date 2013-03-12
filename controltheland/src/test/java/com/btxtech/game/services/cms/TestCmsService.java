@@ -540,7 +540,7 @@ public class TestCmsService extends AbstractServiceTest {
         createMenuItem(dbPage, dbMenu, "Home Menu");
 
         DbContentGameLink dbContentGameLink = (DbContentGameLink) cmsService.getContentCrud().createDbChild(DbContentGameLink.class);
-        dbContentGameLink.setLinkText("Hallo Galli");
+        dbContentGameLink.getDbI18nName().putString("Hallo Galli");
         dbContentGameLink.setReadRestricted(DbContent.Access.ALLOWED);
         dbContentGameLink.setWriteRestricted(DbContent.Access.DENIED);
         dbContentGameLink.setCreateRestricted(DbContent.Access.DENIED);
@@ -2458,7 +2458,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbPage.setName("Home");
 
         DbContentPageLink dbContentPageLink = new DbContentPageLink();
-        dbContentPageLink.setName("PAGE LINK");
+        dbContentPageLink.getDbI18nName().putString("PAGE LINK");
         dbContentPageLink.setDbPage(dbPage);
         dbPage.setContentAndAccessWrites(dbContentPageLink);
 
@@ -2502,7 +2502,7 @@ public class TestCmsService extends AbstractServiceTest {
         cmsService.getImageCrudRootServiceHelper().updateDbChild(dbCmsImage);
 
         DbContentPageLink dbContentPageLink = new DbContentPageLink();
-        dbContentPageLink.setName("PAGE LINK");
+        dbContentPageLink.getDbI18nName().putString("PAGE LINK");
         dbContentPageLink.setDbPage(dbPage);
         dbContentPageLink.setDbCmsImage(dbCmsImage);
         dbPage.setContentAndAccessWrites(dbContentPageLink);

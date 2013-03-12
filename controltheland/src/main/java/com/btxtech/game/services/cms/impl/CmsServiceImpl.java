@@ -173,13 +173,16 @@ public class CmsServiceImpl implements CmsService {
         predefinedDbPages.put(dbPage.getPredefinedType(), dbPage);
     }
 
+
     private void initializeLazyDependenciesAndFillContentCache(DbContent dbContent, DbPage dbPage) {
         Hibernate.initialize(dbContent);
         if (dbContent instanceof DbContentPageLink) {
             Hibernate.initialize(((DbContentPageLink) dbContent).getDbCmsImage());
+            initializeI18n(((DbContentPageLink) dbContent).getDbI18nName());
         }
         if (dbContent instanceof DbContentGameLink) {
             Hibernate.initialize(((DbContentGameLink) dbContent).getDbCmsImage());
+            initializeI18n(((DbContentGameLink) dbContent).getDbI18nName());
         }
         if (dbContent instanceof DbContentBooleanExpressionImage) {
             Hibernate.initialize(((DbContentBooleanExpressionImage) dbContent).getTrueImage());
@@ -233,7 +236,7 @@ public class CmsServiceImpl implements CmsService {
         Hibernate.initialize(dbMenu);
         if (dbMenu != null) {
             if (dbMenu.getBottom() != null) {
-                initializeLazyDependenciesAndFillContentCache(dbMenu.getBottom(), null);
+                initializeLazyDependenciesAndFillContentCache(HibernateUtil.deproxy(dbMenu.getBottom(), DbContent.class), null);
                 dbMenu.setBottom(HibernateUtil.deproxy(dbMenu.getBottom(), DbContent.class));
                 contentCache.put(dbMenu.getBottom().getId(), dbMenu.getBottom());
             }

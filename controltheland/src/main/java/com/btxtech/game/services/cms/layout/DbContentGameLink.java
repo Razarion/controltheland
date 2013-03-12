@@ -1,11 +1,14 @@
 package com.btxtech.game.services.cms.layout;
 
 import com.btxtech.game.services.cms.DbCmsImage;
+import com.btxtech.game.services.common.db.DbI18nString;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 /**
  * User: beat
@@ -17,7 +20,8 @@ import javax.persistence.ManyToOne;
 public class DbContentGameLink extends DbContent {
     @ManyToOne(fetch = FetchType.LAZY)
     private DbCmsImage dbCmsImage;
-    private String linkText;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private DbI18nString dbI18nName = new DbI18nString();
 
     public DbCmsImage getDbCmsImage() {
         return dbCmsImage;
@@ -27,11 +31,7 @@ public class DbContentGameLink extends DbContent {
         this.dbCmsImage = dbCmsImage;
     }
 
-    public String getLinkText() {
-        return linkText;
-    }
-
-    public void setLinkText(String linkText) {
-        this.linkText = linkText;
+    public DbI18nString getDbI18nName() {
+        return dbI18nName;
     }
 }

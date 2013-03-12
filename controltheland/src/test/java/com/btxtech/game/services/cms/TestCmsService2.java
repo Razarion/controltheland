@@ -1221,7 +1221,7 @@ public class TestCmsService2 extends AbstractServiceTest {
         dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage.setAdsVisible(true);
         DbContentGameLink gameLink = new DbContentGameLink();
-        gameLink.setLinkText("GAME LINK");
+        gameLink.getDbI18nName().putString("GAME LINK");
         dbPage.setContentAndAccessWrites(gameLink);
 
         pageCrud.updateDbChild(dbPage);

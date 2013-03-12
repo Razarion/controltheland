@@ -28,12 +28,12 @@ public class ContentPageLink extends Panel {
         contentId = dbContentPageLink.getId();
         PageParameters pageParameters = new PageParameters();
         pageParameters.add(CmsUtil.ID, Integer.toString(dbContentPageLink.getDbPage().getId()));
-        BookmarkablePageLink<CmsPage> link = new BookmarkablePageLink<CmsPage>("link", CmsPage.class, pageParameters);
+        BookmarkablePageLink<CmsPage> link = new BookmarkablePageLink<>("link", CmsPage.class, pageParameters);
         if (dbContentPageLink.getDbCmsImage() != null) {
             link.add(new Label("label", "").setVisible(false));
             link.add(CmsImageResource.createImage("image", dbContentPageLink.getDbCmsImage()));
         } else {
-            link.add(new Label("label", dbContentPageLink.getName()));
+            link.add(new Label("label", dbContentPageLink.getDbI18nName().getString(getLocale())));
             link.add(new Image("image").setVisible(false));
         }
         add(link);
