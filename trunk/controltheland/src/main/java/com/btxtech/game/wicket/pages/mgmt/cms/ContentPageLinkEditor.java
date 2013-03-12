@@ -4,6 +4,7 @@ import com.btxtech.game.services.cms.layout.DbContentPageLink;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CmsImageSelector;
+import com.btxtech.game.wicket.uiservices.I18nStringEditor;
 import com.btxtech.game.wicket.uiservices.PageSelector;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
@@ -34,6 +35,7 @@ public class ContentPageLinkEditor extends MgmtWebPage {
         form.add(new ContentCommonPanel("commonPanel", true, false, false, false));
         form.add(new PageSelector("dbPage"));
         form.add(new CmsImageSelector("dbCmsImage"));
+        form.add(new I18nStringEditor("dbI18nName"));
 
         form.add(new Button("save") {
 

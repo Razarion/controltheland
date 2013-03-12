@@ -32,7 +32,7 @@ public class ContentGameLink extends Panel {
             pageLink.add(new Label("label", "").setVisible(false));
             pageLink.add(CmsImageResource.createImage("image", dbContentGameLink.getDbCmsImage()));
         } else {
-            pageLink.add(new Label("label", dbContentGameLink.getLinkText()));
+            pageLink.add(new Label("label", dbContentGameLink.getDbI18nName().getString(getLocale())));
             pageLink.add(new Image("image").setVisible(false));
         }
         if (!userGuidanceService.isStartRealGame()) {
