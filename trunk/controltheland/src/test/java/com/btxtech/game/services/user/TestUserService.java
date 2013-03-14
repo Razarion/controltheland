@@ -423,20 +423,20 @@ public class TestUserService extends AbstractServiceTest {
         setWicketParameterAdCellBid("898uji898");
         userService.createUnverifiedUser("U1", "xxx", "xxx", null);
         registerService.onVerificationPageCalled(userService.getUser().getVerificationId());
-        int userId = userService.getUser("U1").getId();
-        long timeBefore = System.currentTimeMillis();
+        int userId1 = userService.getUser("U1").getId();
+        long timeBefore1 = System.currentTimeMillis();
         AdCellProvision adCellProvision = userService.handleAdCellProvision();
-        long timeAfter = System.currentTimeMillis();
+        long timeAfter1 = System.currentTimeMillis();
         Assert.assertNotNull(adCellProvision.getSimpleUser());
         Assert.assertTrue(adCellProvision.isProvisionExpected());
         Assert.assertEquals("898uji898", adCellProvision.getBid());
         // History
         List<DbAdCellProvision> dbAdCellProvisions = HibernateUtil.loadAll(getSessionFactory(), DbAdCellProvision.class);
         Assert.assertEquals(1, dbAdCellProvisions.size());
-        Assert.assertEquals(userId, dbAdCellProvisions.get(0).getUserId());
+        Assert.assertEquals(userId1, dbAdCellProvisions.get(0).getUserId());
         Assert.assertEquals("898uji898", dbAdCellProvisions.get(0).getAdCellPid());
-        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() >= timeBefore);
-        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() <= timeAfter);
+        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() >= timeBefore1);
+        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() <= timeAfter1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Same bid check
@@ -445,16 +445,24 @@ public class TestUserService extends AbstractServiceTest {
         getMockHttpServletRequest().setParameter("bid", "898uji898");
         userService.createUnverifiedUser("U2", "xxx", "xxx", null);
         registerService.onVerificationPageCalled(userService.getUser().getVerificationId());
+        int userId2 = userService.getUser("U2").getId();
+        long timeBefore2 = System.currentTimeMillis();
         adCellProvision = userService.handleAdCellProvision();
+        long timeAfter2 = System.currentTimeMillis();
         Assert.assertNotNull(adCellProvision.getSimpleUser());
-        Assert.assertFalse(adCellProvision.isProvisionExpected());
+        Assert.assertTrue(adCellProvision.isProvisionExpected());
+        Assert.assertEquals("898uji898", adCellProvision.getBid());
         // History
         dbAdCellProvisions = HibernateUtil.loadAll(getSessionFactory(), DbAdCellProvision.class);
-        Assert.assertEquals(1, dbAdCellProvisions.size());
-        Assert.assertEquals(userId, dbAdCellProvisions.get(0).getUserId());
+        Assert.assertEquals(2, dbAdCellProvisions.size());
+        Assert.assertEquals(userId1, dbAdCellProvisions.get(0).getUserId());
         Assert.assertEquals("898uji898", dbAdCellProvisions.get(0).getAdCellPid());
-        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() >= timeBefore);
-        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() <= timeAfter);
+        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() >= timeBefore1);
+        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() <= timeAfter1);
+        Assert.assertEquals(userId2, dbAdCellProvisions.get(1).getUserId());
+        Assert.assertEquals("898uji898", dbAdCellProvisions.get(1).getAdCellPid());
+        Assert.assertTrue(dbAdCellProvisions.get(1).getDate().getTime() >= timeBefore2);
+        Assert.assertTrue(dbAdCellProvisions.get(1).getDate().getTime() <= timeAfter2);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -467,38 +475,46 @@ public class TestUserService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         setWicketParameterAdCellBid("898uji898xxx");
-        userService.createAndLoginFacebookUser(new FacebookSignedRequest(null, 0, null, null, "12345"), "N1");
-        int userId = userService.getUser("N1").getId();
-        long timeBefore = System.currentTimeMillis();
+        userService.createAndLoginFacebookUser(new FacebookSignedRequest(null, 0, null, null, "11111"), "N1");
+        int userId1 = userService.getUser("N1").getId();
+        long timeBefore1 = System.currentTimeMillis();
         AdCellProvision adCellProvision = userService.handleAdCellProvision();
-        long timeAfter = System.currentTimeMillis();
+        long timeAfter1 = System.currentTimeMillis();
         Assert.assertNotNull(adCellProvision.getSimpleUser());
         Assert.assertTrue(adCellProvision.isProvisionExpected());
         Assert.assertEquals("898uji898xxx", adCellProvision.getBid());
         // History
         List<DbAdCellProvision> dbAdCellProvisions = HibernateUtil.loadAll(getSessionFactory(), DbAdCellProvision.class);
         Assert.assertEquals(1, dbAdCellProvisions.size());
-        Assert.assertEquals(userId, dbAdCellProvisions.get(0).getUserId());
+        Assert.assertEquals(userId1, dbAdCellProvisions.get(0).getUserId());
         Assert.assertEquals("898uji898xxx", dbAdCellProvisions.get(0).getAdCellPid());
-        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() >= timeBefore);
-        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() <= timeAfter);
+        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() >= timeBefore1);
+        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() <= timeAfter1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Same bid check
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMockHttpServletRequest().setCookies(new Cookie(WebCommon.AD_CELL_COOKIE_ID, "898uji898xxx"));
-        userService.createAndLoginFacebookUser(new FacebookSignedRequest(null, 0, null, null, "12345"), "N2");
+        userService.createAndLoginFacebookUser(new FacebookSignedRequest(null, 0, null, null, "22222"), "N2");
+        int userId2 = userService.getUser("N2").getId();
+        long timeBefore2 = System.currentTimeMillis();
         adCellProvision = userService.handleAdCellProvision();
+        long timeAfter2 = System.currentTimeMillis();
         Assert.assertNotNull(adCellProvision.getSimpleUser());
-        Assert.assertFalse(adCellProvision.isProvisionExpected());
+        Assert.assertTrue(adCellProvision.isProvisionExpected());
+        Assert.assertEquals("898uji898xxx", adCellProvision.getBid());
         // History
         dbAdCellProvisions = HibernateUtil.loadAll(getSessionFactory(), DbAdCellProvision.class);
-        Assert.assertEquals(1, dbAdCellProvisions.size());
-        Assert.assertEquals(userId, dbAdCellProvisions.get(0).getUserId());
+        Assert.assertEquals(2, dbAdCellProvisions.size());
+        Assert.assertEquals(userId1, dbAdCellProvisions.get(0).getUserId());
         Assert.assertEquals("898uji898xxx", dbAdCellProvisions.get(0).getAdCellPid());
-        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() >= timeBefore);
-        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() <= timeAfter);
+        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() >= timeBefore1);
+        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() <= timeAfter1);
+        Assert.assertEquals(userId2, dbAdCellProvisions.get(1).getUserId());
+        Assert.assertEquals("898uji898xxx", dbAdCellProvisions.get(1).getAdCellPid());
+        Assert.assertTrue(dbAdCellProvisions.get(1).getDate().getTime() >= timeBefore2);
+        Assert.assertTrue(dbAdCellProvisions.get(1).getDate().getTime() <= timeAfter2);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
