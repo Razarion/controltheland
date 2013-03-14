@@ -16,9 +16,12 @@
 			background: -webkit-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%,
 				rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%,
 				rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100% );
-			background: -moz-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%,
-				rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%,
-				rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100% );
+            background: -ms-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%,
+                rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%,
+                rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100% );
+            background: -moz-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%,
+            rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%,
+            rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100% );
 			background: -o-linear-gradient(-45deg, rgba(245, 246, 246, 1) 0%,
 				rgba(219, 220, 226, 1) 21%, rgba(184, 186, 198, 1) 49%,
 				rgba(221, 223, 227, 1) 80%, rgba(245, 246, 246, 1) 100% );
@@ -32,8 +35,10 @@
 			border-radius: 4px;
 			-webkit-box-shadow: inset 1px 1px 1px 1px rgba(100, 100, 100, 1);
 			box-shadow: inset 1px 1px 1px 1px rgba(100, 100, 100, 1);
-			background: -moz-linear-gradient(90deg, rgba(200, 200, 200, 1) 0%,
-				rgba(230, 230, 230, 1) 90% );
+            background: -moz-linear-gradient(90deg, rgba(200, 200, 200, 1) 0%,
+            rgba(230, 230, 230, 1) 90% );
+            background: -ms-linear-gradient(90deg, rgba(200, 200, 200, 1) 0%,
+            rgba(230, 230, 230, 1) 90% );
 		}
 	</ui:style>
 	<g:VerticalPanel styleName="{style.platte}">

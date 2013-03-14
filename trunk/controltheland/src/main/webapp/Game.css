@@ -239,6 +239,7 @@ td.box {
     padding: 2px 3px;
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0d2238), color-stop(1, #4095eb));
     background: -moz-linear-gradient(center top, #0d2238 5%, #4095eb 100%);
+    background: -ms-linear-gradient(top, #0d2238 5%, #4095eb 100%);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#0d2238', endColorstr = '#4095eb');
     background: -o-linear-gradient(#0d2238, #4095eb);
     background-color: #4095eb;
@@ -265,6 +266,7 @@ td.box {
     -moz-box-shadow: inset 0px 1px 0px 0px #9ec8f0;
     -webkit-box-shadow: inset 0px 1px 0px 0px #9ec8f0;
     box-shadow: inset 0px 1px 0px 0px #9ec8f0;
+    background: -ms-linear-gradient(top, #4095eb 5%, #0d2238 100%);
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #4095eb), color-stop(1, #0d2238));
     background: -moz-linear-gradient(center top, #4095eb 5%, #0d2238 100%);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#4095eb', endColorstr = '#0d2238');
@@ -282,6 +284,7 @@ td.box {
 }
 
 .dialogBox button:hover {
+    background: -ms-linear-gradient(top, #0d2238 5%, #4095eb 100%);
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0d2238), color-stop(1, #4095eb));
     background: -moz-linear-gradient(center top, #0d2238 5%, #4095eb 100%);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#0d2238', endColorstr = '#4095eb');
@@ -299,7 +302,8 @@ td.box {
     -moz-box-shadow: inset 0px 1px 0px 0px #ebebeb;
     -webkit-box-shadow: inset 0px 1px 0px 0px #ebebeb;
     box-shadow: inset 0px 1px 0px 0px #ebebeb;
-    background-image: linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
+    background: linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
+    background: -ms-linear-gradient(top, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
     background-image: -o-linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
     background-image: -moz-linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
     background-image: -webkit-linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
@@ -390,6 +394,7 @@ td.box {
     box-shadow: inset 0px 1px 0px 0px #9ec8f0;
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #4095eb), color-stop(1, #0d2238));
     background: -moz-linear-gradient(center top, #4095eb 5%, #0d2238 100%);
+    background: -ms-linear-gradient(top, #4095eb 5%, #0d2238 100%);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#4095eb', endColorstr = '#0d2238');
     background: -o-linear-gradient(#4095eb, #0d2238);
     background-color: #4095eb;
@@ -409,6 +414,7 @@ td.box {
 .singleButton:hover {
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0d2238), color-stop(1, #4095eb));
     background: -moz-linear-gradient(center top, #0d2238 5%, #4095eb 100%);
+    background: -ms-linear-gradient(top, #0d2238 5%, #4095eb 100%);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#0d2238', endColorstr = '#4095eb');
     background: -o-linear-gradient(#0d2238, #4095eb);
     background-color: #0d2238;
@@ -427,6 +433,7 @@ td.box {
     background-image: linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
     background-image: -o-linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
     background-image: -moz-linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
+    background-image: -ms-linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
     background-image: -webkit-linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
     background-image: -ms-linear-gradient(bottom, rgb(92, 99, 99) 42%, rgb(184, 184, 184) 73%);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#404040', endColorstr = '#808080');
