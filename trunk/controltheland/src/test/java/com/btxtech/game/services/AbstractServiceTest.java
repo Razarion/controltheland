@@ -2321,11 +2321,6 @@ abstract public class AbstractServiceTest {
         setPrivateField(WicketAuthenticatedWebSession.class, wicketSession, "adCellBid", adCellBid);
     }
 
-    public void setWicketParameterAdCellBidCookie(boolean cookieNeeded) throws Exception {
-        WicketAuthenticatedWebSession wicketSession = (WicketAuthenticatedWebSession) getWicketTester().getWicketSession();
-        setPrivateField(WicketAuthenticatedWebSession.class, wicketSession, "isAdCellBidCookieNeeded", cookieNeeded);
-    }
-
     public void setWicketParameterTrackingCookie(String trackingCookieId) throws Exception {
         WicketAuthenticatedWebSession wicketSession = (WicketAuthenticatedWebSession) getWicketTester().getWicketSession();
         setPrivateField(WicketAuthenticatedWebSession.class, wicketSession, "trackingCookieId", trackingCookieId);

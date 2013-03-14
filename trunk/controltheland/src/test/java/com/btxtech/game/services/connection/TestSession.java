@@ -26,7 +26,7 @@ public class TestSession extends AbstractServiceTest {
     public void testAdCellNoParams() throws Exception {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertNull(session.getAdCellBid());
+        session.getSessionId(); // Activating session
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -46,7 +46,7 @@ public class TestSession extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         setWicketParameterAdCellBid("adCellStringBid");
-        Assert.assertEquals("adCellStringBid", session.getAdCellBid());
+        session.getSessionId(); // Activating session
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

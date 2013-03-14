@@ -37,6 +37,7 @@ public class TestServerGlobalConnectionService extends AbstractServiceTest {
         endHttpSession();
 
         Thread.sleep(510);
+        // TODO failed on 14.03.2013
         Assert.assertEquals(1, connection.getAllOnlineMissionUserState().size());
     }
 

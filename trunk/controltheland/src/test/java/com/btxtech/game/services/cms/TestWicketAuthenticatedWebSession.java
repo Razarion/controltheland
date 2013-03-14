@@ -32,7 +32,6 @@ public class TestWicketAuthenticatedWebSession extends AbstractServiceTest {
         EasyMock.replay(request);
         WicketAuthenticatedWebSession wicketSession = new WicketAuthenticatedWebSession(request);
         Assert.assertEquals(null, wicketSession.getAdCellBid());
-        Assert.assertFalse(wicketSession.isAdCellBidCookieNeeded());
     }
 
     @Test
@@ -44,32 +43,6 @@ public class TestWicketAuthenticatedWebSession extends AbstractServiceTest {
         EasyMock.replay(request);
         WicketAuthenticatedWebSession wicketSession = new WicketAuthenticatedWebSession(request);
         Assert.assertEquals("adCellStringBid", wicketSession.getAdCellBid());
-        Assert.assertTrue(wicketSession.isAdCellBidCookieNeeded());
-    }
-
-    @Test
-    @DirtiesContext
-    public void testAdCellCookie() throws Exception {
-        WebRequest request = EasyMock.createNiceMock(WebRequest.class);
-        EasyMock.expect(request.getLocale()).andReturn(Locale.ENGLISH);
-        EasyMock.expect(request.getCookies()).andReturn(new Cookie[]{new Cookie(WebCommon.AD_CELL_COOKIE_ID, "qwertzui")});
-        EasyMock.replay(request);
-        WicketAuthenticatedWebSession wicketSession = new WicketAuthenticatedWebSession(request);
-        Assert.assertEquals("qwertzui", wicketSession.getAdCellBid());
-        Assert.assertFalse(wicketSession.isAdCellBidCookieNeeded());
-    }
-
-    @Test
-    @DirtiesContext
-    public void testAdCellCookieAndUrlParameter() throws Exception {
-        WebRequest request = EasyMock.createNiceMock(WebRequest.class);
-        EasyMock.expect(request.getLocale()).andReturn(Locale.ENGLISH);
-        EasyMock.expect(request.getCookies()).andReturn(new Cookie[]{new Cookie(WebCommon.AD_CELL_COOKIE_ID, "qwertzui")});
-        EasyMock.expect(request.getParameter("bid")).andReturn("adCellStringBid");
-        EasyMock.replay(request);
-        WicketAuthenticatedWebSession wicketSession = new WicketAuthenticatedWebSession(request);
-        Assert.assertEquals("adCellStringBid", wicketSession.getAdCellBid());
-        Assert.assertTrue(wicketSession.isAdCellBidCookieNeeded());
     }
 
     @Test

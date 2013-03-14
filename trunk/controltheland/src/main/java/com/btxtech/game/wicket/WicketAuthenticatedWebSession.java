@@ -19,7 +19,6 @@ public class WicketAuthenticatedWebSession extends AuthenticatedWebSession {
     @SpringBean
     private UserService userService;
     private String adCellBid;
-    private boolean isAdCellBidCookieNeeded;
     private String trackingCookieId;
     private boolean isTrackingCookieIdCookieNeeded;
     private boolean newUserTracking;
@@ -72,16 +71,8 @@ public class WicketAuthenticatedWebSession extends AuthenticatedWebSession {
         return newUserTracking;
     }
 
-    public boolean isAdCellBidCookieNeeded() {
-        return isAdCellBidCookieNeeded;
-    }
-
     public boolean isTrackingCookieIdCookieNeeded() {
         return isTrackingCookieIdCookieNeeded;
-    }
-
-    public void clearAdCellBidCookieNeeded() {
-        isAdCellBidCookieNeeded = false;
     }
 
     public void clearTrackingCookieIdCookieNeeded() {
@@ -90,14 +81,6 @@ public class WicketAuthenticatedWebSession extends AuthenticatedWebSession {
 
     private void handleAdCellBid(Request request) {
         adCellBid = request.getParameter(AdCellHelper.BID_URL_KEY);
-        if(adCellBid != null) {
-            isAdCellBidCookieNeeded = true;
-        } else {
-            adCellBid = WebCommon.getAdCellBidCookie(((WebRequest) request).getCookies());
-            if (adCellBid != null) {
-                isAdCellBidCookieNeeded = false;
-            }
-        }
     }
 
     private void handleCookieTracking(Request request) {

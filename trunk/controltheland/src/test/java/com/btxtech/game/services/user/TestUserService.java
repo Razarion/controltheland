@@ -1,19 +1,14 @@
 package com.btxtech.game.services.user;
 
-import com.btxtech.game.jsre.client.AdCellProvision;
 import com.btxtech.game.jsre.client.InvalidNickName;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.NameErrorPair;
-import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
-import com.btxtech.game.wicket.WebCommon;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.test.annotation.DirtiesContext;
 
-import javax.servlet.http.Cookie;
 import java.util.List;
 
 /**
@@ -388,133 +383,6 @@ public class TestUserService extends AbstractServiceTest {
         Assert.assertNull(userService.getSimpleUser());
         createAndLoginUser("U1");
         Assert.assertNotNull(userService.getSimpleUser());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void handleAdCellProvisionNoPromotion() throws Exception {
-        configureSimplePlanetNoResources();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        try {
-            Assert.assertNull(userService.handleAdCellProvision().isProvisionExpected());
-            Assert.fail("IllegalStateException expected");
-        } catch (IllegalStateException e) {
-            Assert.assertEquals("No user", e.getMessage());
-        }
-        createAndLoginUser("U1");
-        AdCellProvision adCellProvision = userService.handleAdCellProvision();
-        Assert.assertNotNull(adCellProvision.getSimpleUser());
-        Assert.assertFalse(adCellProvision.isProvisionExpected());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void handleAdCellProvisionPromotionNormal() throws Exception {
-        configureSimplePlanetNoResources();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        setWicketParameterAdCellBid("898uji898");
-        userService.createUnverifiedUser("U1", "xxx", "xxx", null);
-        registerService.onVerificationPageCalled(userService.getUser().getVerificationId());
-        int userId1 = userService.getUser("U1").getId();
-        long timeBefore1 = System.currentTimeMillis();
-        AdCellProvision adCellProvision = userService.handleAdCellProvision();
-        long timeAfter1 = System.currentTimeMillis();
-        Assert.assertNotNull(adCellProvision.getSimpleUser());
-        Assert.assertTrue(adCellProvision.isProvisionExpected());
-        Assert.assertEquals("898uji898", adCellProvision.getBid());
-        // History
-        List<DbAdCellProvision> dbAdCellProvisions = HibernateUtil.loadAll(getSessionFactory(), DbAdCellProvision.class);
-        Assert.assertEquals(1, dbAdCellProvisions.size());
-        Assert.assertEquals(userId1, dbAdCellProvisions.get(0).getUserId());
-        Assert.assertEquals("898uji898", dbAdCellProvisions.get(0).getAdCellPid());
-        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() >= timeBefore1);
-        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() <= timeAfter1);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        // Same bid check
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        getMockHttpServletRequest().setParameter("bid", "898uji898");
-        userService.createUnverifiedUser("U2", "xxx", "xxx", null);
-        registerService.onVerificationPageCalled(userService.getUser().getVerificationId());
-        int userId2 = userService.getUser("U2").getId();
-        long timeBefore2 = System.currentTimeMillis();
-        adCellProvision = userService.handleAdCellProvision();
-        long timeAfter2 = System.currentTimeMillis();
-        Assert.assertNotNull(adCellProvision.getSimpleUser());
-        Assert.assertTrue(adCellProvision.isProvisionExpected());
-        Assert.assertEquals("898uji898", adCellProvision.getBid());
-        // History
-        dbAdCellProvisions = HibernateUtil.loadAll(getSessionFactory(), DbAdCellProvision.class);
-        Assert.assertEquals(2, dbAdCellProvisions.size());
-        Assert.assertEquals(userId1, dbAdCellProvisions.get(0).getUserId());
-        Assert.assertEquals("898uji898", dbAdCellProvisions.get(0).getAdCellPid());
-        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() >= timeBefore1);
-        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() <= timeAfter1);
-        Assert.assertEquals(userId2, dbAdCellProvisions.get(1).getUserId());
-        Assert.assertEquals("898uji898", dbAdCellProvisions.get(1).getAdCellPid());
-        Assert.assertTrue(dbAdCellProvisions.get(1).getDate().getTime() >= timeBefore2);
-        Assert.assertTrue(dbAdCellProvisions.get(1).getDate().getTime() <= timeAfter2);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void handleAdCellProvisionPromotionFacebook() throws Exception {
-        configureSimplePlanetNoResources();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        setWicketParameterAdCellBid("898uji898xxx");
-        userService.createAndLoginFacebookUser(new FacebookSignedRequest(null, 0, null, null, "11111"), "N1");
-        int userId1 = userService.getUser("N1").getId();
-        long timeBefore1 = System.currentTimeMillis();
-        AdCellProvision adCellProvision = userService.handleAdCellProvision();
-        long timeAfter1 = System.currentTimeMillis();
-        Assert.assertNotNull(adCellProvision.getSimpleUser());
-        Assert.assertTrue(adCellProvision.isProvisionExpected());
-        Assert.assertEquals("898uji898xxx", adCellProvision.getBid());
-        // History
-        List<DbAdCellProvision> dbAdCellProvisions = HibernateUtil.loadAll(getSessionFactory(), DbAdCellProvision.class);
-        Assert.assertEquals(1, dbAdCellProvisions.size());
-        Assert.assertEquals(userId1, dbAdCellProvisions.get(0).getUserId());
-        Assert.assertEquals("898uji898xxx", dbAdCellProvisions.get(0).getAdCellPid());
-        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() >= timeBefore1);
-        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() <= timeAfter1);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        // Same bid check
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        getMockHttpServletRequest().setCookies(new Cookie(WebCommon.AD_CELL_COOKIE_ID, "898uji898xxx"));
-        userService.createAndLoginFacebookUser(new FacebookSignedRequest(null, 0, null, null, "22222"), "N2");
-        int userId2 = userService.getUser("N2").getId();
-        long timeBefore2 = System.currentTimeMillis();
-        adCellProvision = userService.handleAdCellProvision();
-        long timeAfter2 = System.currentTimeMillis();
-        Assert.assertNotNull(adCellProvision.getSimpleUser());
-        Assert.assertTrue(adCellProvision.isProvisionExpected());
-        Assert.assertEquals("898uji898xxx", adCellProvision.getBid());
-        // History
-        dbAdCellProvisions = HibernateUtil.loadAll(getSessionFactory(), DbAdCellProvision.class);
-        Assert.assertEquals(2, dbAdCellProvisions.size());
-        Assert.assertEquals(userId1, dbAdCellProvisions.get(0).getUserId());
-        Assert.assertEquals("898uji898xxx", dbAdCellProvisions.get(0).getAdCellPid());
-        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() >= timeBefore1);
-        Assert.assertTrue(dbAdCellProvisions.get(0).getDate().getTime() <= timeAfter1);
-        Assert.assertEquals(userId2, dbAdCellProvisions.get(1).getUserId());
-        Assert.assertEquals("898uji898xxx", dbAdCellProvisions.get(1).getAdCellPid());
-        Assert.assertTrue(dbAdCellProvisions.get(1).getDate().getTime() >= timeBefore2);
-        Assert.assertTrue(dbAdCellProvisions.get(1).getDate().getTime() <= timeAfter2);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

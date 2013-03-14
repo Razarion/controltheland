@@ -17,7 +17,6 @@ import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.apache.wicket.protocol.http.WebResponse;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 /**
@@ -26,9 +25,7 @@ import java.util.UUID;
  * Time: 2:03:23 PM
  */
 public class WebCommon {
-    public static final String AD_CELL_COOKIE_ID = "adCellBid";
     public static final String RAZARION_COOKIE_ID = "cookieId";
-    private static final int AD_CELL_COOKIE_TIME_SECONDS = 60 * 60 * 24 * 45;
 
     public static String getCookie(Cookie[] cookies, String name) {
         if (cookies == null) {
@@ -63,13 +60,5 @@ public class WebCommon {
     public static boolean isAuthorized(String role) {
         AuthenticatedWebSession session = AuthenticatedWebSession.get();
         return session.getRoles().hasRole(role);
-    }
-
-    public static String getAdCellBidCookie(Cookie[] cookies) {
-        return getCookie(cookies, AD_CELL_COOKIE_ID);
-    }
-
-    public static void setAdCellBidCookie(WebResponse response, String pid) {
-        setCookie(response, AD_CELL_COOKIE_ID, pid, AD_CELL_COOKIE_TIME_SECONDS);
     }
 }

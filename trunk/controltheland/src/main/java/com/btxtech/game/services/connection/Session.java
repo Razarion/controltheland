@@ -58,6 +58,4 @@ public interface Session {
     FacebookSignedRequest getFacebookSignedRequest();
 
     void setFacebookSignedRequest(FacebookSignedRequest facebookSignedRequest);
-
-    String getAdCellBid();
 }

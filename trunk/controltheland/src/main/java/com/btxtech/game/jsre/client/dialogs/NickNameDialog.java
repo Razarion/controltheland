@@ -1,9 +1,9 @@
 package com.btxtech.game.jsre.client.dialogs;
 
-import com.btxtech.game.jsre.client.AdCellProvision;
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -46,7 +46,7 @@ public class NickNameDialog extends Dialog implements NickNameField.ValidListene
             public void onClick(ClickEvent event) {
                 connectButton.setEnabled(false);
                 if (Connection.getMovableServiceAsync() != null) {
-                    Connection.getMovableServiceAsync().createAndLoginFacebookUser(signedRequestParameter, nickNameField.getText(), email, new AsyncCallback<AdCellProvision>() {
+                    Connection.getMovableServiceAsync().createAndLoginFacebookUser(signedRequestParameter, nickNameField.getText(), email, new AsyncCallback<SimpleUser>() {
                         @Override
                         public void onFailure(Throwable caught) {
                             connectButton.setEnabled(true);
@@ -58,12 +58,12 @@ public class NickNameDialog extends Dialog implements NickNameField.ValidListene
                         }
 
                         @Override
-                        public void onSuccess(AdCellProvision adCellProvision) {
-                            Connection.getInstance().setSimpleUser(adCellProvision.getSimpleUser());
-                            SideCockpit.getInstance().setSimpleUser(adCellProvision.getSimpleUser());
+                        public void onSuccess(SimpleUser simpleUser) {
+                            Connection.getInstance().setSimpleUser(simpleUser);
+                            SideCockpit.getInstance().setSimpleUser(simpleUser);
                             NickNameDialog.this.hide();
                             registerDialog.hide();
-                            DialogManager.showDialog(new FacebookRegisterThanksDialog(adCellProvision), DialogManager.Type.PROMPTLY);
+                            DialogManager.showDialog(new FacebookRegisterThanksDialog(simpleUser), DialogManager.Type.PROMPTLY);
                         }
                     });
                 }

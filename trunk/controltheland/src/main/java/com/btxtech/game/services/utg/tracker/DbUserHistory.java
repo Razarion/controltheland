@@ -48,7 +48,6 @@ public class DbUserHistory {
     private Date awaitingVerificationDate;
     private Date verified;
     private Date deleteUnverifiedUser;
-    private String adCellPid;
     private Date forgotPasswordRequest;
     private Date forgotPasswordRequestRemoved;
     private Date passwordChanged;
@@ -186,14 +185,6 @@ public class DbUserHistory {
 
     public void setDeleteUnverifiedUser() {
         deleteUnverifiedUser = new Date();
-    }
-
-    public String getAdCellPid() {
-        return adCellPid;
-    }
-
-    public void setAdCellPid(String adCellPid) {
-        this.adCellPid = adCellPid;
     }
 
     public Date getForgotPasswordRequest() {

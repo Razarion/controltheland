@@ -123,6 +123,4 @@ public interface UserTrackingService {
     List<DbDialogTracking> getDbDialogTrackings(String startUuid);
 
     LifecycleTrackingInfo getLifecycleTrackingInfo(String startUuid);
-
-    String getAdCellPid();
 }

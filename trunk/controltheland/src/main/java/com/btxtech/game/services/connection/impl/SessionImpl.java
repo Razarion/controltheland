@@ -64,7 +64,6 @@ public class SessionImpl implements Session, Serializable {
     private EditMode editMode;
     private boolean html5Support = true;
     private FacebookSignedRequest facebookSignedRequest;
-    private String adCellBid;
     private String trackingCookieId;
 
     @Override
@@ -81,6 +80,7 @@ public class SessionImpl implements Session, Serializable {
     public void init() {
         sessionId = request.getSession().getId();
         userAgent = request.getHeader("user-agent");
+        String adCellBid = null;
         boolean isNewUserTracking = false;
         try {
             RequestCycle requestCycle = RequestCycle.get();
@@ -124,11 +124,6 @@ public class SessionImpl implements Session, Serializable {
                 isNewUserTracking,
                 adCellBid);
         userTrackingService.saveBrowserDetails(dbSessionDetail);
-    }
-
-    @Override
-    public String getAdCellBid() {
-        return adCellBid;
     }
 
     @PreDestroy

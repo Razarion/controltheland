@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.user.impl;
 
-import com.btxtech.game.jsre.client.AdCellProvision;
 import com.btxtech.game.jsre.client.InvalidNickName;
 import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -31,7 +30,6 @@ import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
-import com.btxtech.game.services.user.DbAdCellProvision;
 import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.DbPageAccessControl;
 import com.btxtech.game.services.user.NotAuthorizedException;
@@ -260,7 +258,7 @@ public class UserServiceImpl implements UserService {
 
         User user = new User();
         String passwordHash = new Md5PasswordEncoder().encodePassword(password, md5HashSalt);
-        user.registerUser(name, passwordHash, email, userTrackingService.getAdCellPid());
+        user.registerUser(name, passwordHash, email);
         privateSave(user);
         userTrackingService.onUserCreated(user);
 
@@ -299,7 +297,7 @@ public class UserServiceImpl implements UserService {
 
         User user = new User();
         String passwordHash = new Md5PasswordEncoder().encodePassword(password, md5HashSalt);
-        user.registerUser(name, passwordHash, email, userTrackingService.getAdCellPid());
+        user.registerUser(name, passwordHash, email);
         user.setAwaitingVerification();
         privateSave(user);
         userTrackingService.onUserCreated(user);
@@ -339,7 +337,7 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = new User();
-        user.registerFacebookUser(facebookSignedRequest, nickName, userTrackingService.getAdCellPid());
+        user.registerFacebookUser(facebookSignedRequest, nickName);
         privateSave(user);
         userTrackingService.onUserCreated(user);
 
@@ -747,26 +745,6 @@ public class UserServiceImpl implements UserService {
         } catch (Throwable t) {
             return null;
         }
-    }
-
-    @Override
-    @Transactional
-    public AdCellProvision handleAdCellProvision() {
-        User user = getUser();
-        if (user == null) {
-            throw new IllegalStateException("No user");
-        }
-        String adCellPid = user.getAdCellBid();
-        if (adCellPid != null) {
-            saveExecutedAdCellProvision(user);
-            return new AdCellProvision(user.createSimpleUser(), adCellPid);
-        } else {
-            return new AdCellProvision(user.createSimpleUser(), null);
-        }
-    }
-
-    private void saveExecutedAdCellProvision(User user) {
-        sessionFactory.getCurrentSession().save(new DbAdCellProvision(user));
     }
 
     @Override
