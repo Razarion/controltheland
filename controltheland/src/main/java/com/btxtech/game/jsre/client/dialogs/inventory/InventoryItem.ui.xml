@@ -15,6 +15,7 @@
             background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(206, 206, 206, 1)), color-stop(51%, rgba(239, 245, 247, 1)), color-stop(95%, rgba(198, 198, 198, 1)));
             background: -webkit-linear-gradient(top, rgba(206, 206, 206, 1) 0%, rgba(239, 245, 247, 1) 51%, rgba(198, 198, 198, 1) 95%);
             background: -moz-linear-gradient(top, rgba(206, 206, 206, 1) 0%, rgba(239, 245, 247, 1) 51%, rgba(198, 198, 198, 1) 95%);
+            background: -ms-linear-gradient(top, rgba(206, 206, 206, 1) 0%, rgba(239, 245, 247, 1) 51%, rgba(198, 198, 198, 1) 95%);
             background: -o-linear-gradient(top, rgba(206, 206, 206, 1) 0%, rgba(239, 245, 247, 1) 51%, rgba(198, 198, 198, 1) 95%);
             filter: literal("progid:DXImageTransform.Microsoft.gradient(startColorstr = '#F8F8F8', endColorstr = '#A0A0A0')");
         }
