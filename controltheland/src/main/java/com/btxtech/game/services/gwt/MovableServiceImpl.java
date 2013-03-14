@@ -14,7 +14,6 @@
 package com.btxtech.game.services.gwt;
 
 
-import com.btxtech.game.jsre.client.AdCellProvision;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.InvalidNickName;
 import com.btxtech.game.jsre.client.MovableService;
@@ -275,12 +274,12 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     }
 
     @Override
-    public AdCellProvision createAndLoginFacebookUser(String signedRequestParameter, String nickname, String email) throws UserAlreadyExistsException {
+    public SimpleUser createAndLoginFacebookUser(String signedRequestParameter, String nickname, String email) throws UserAlreadyExistsException {
         try {
             FacebookSignedRequest facebookSignedRequest = FacebookUtil.createAndCheckFacebookSignedRequest(cmsUiService.getFacebookAppSecret(), signedRequestParameter);
             facebookSignedRequest.setEmail(email);
             userService.createAndLoginFacebookUser(facebookSignedRequest, nickname);
-            return userService.handleAdCellProvision();
+            return userService.getSimpleUser();
         } catch (UserAlreadyExistsException e) {
             throw e;
         } catch (Throwable t) {

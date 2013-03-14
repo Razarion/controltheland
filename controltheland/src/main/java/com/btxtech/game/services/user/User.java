@@ -92,8 +92,6 @@ public class User implements UserDetails, Serializable, CrudParent {
     private String socialNetUserId;
     private Date awaitingVerificationDate;
     private String verificationId;
-    @Column(length = 1000)
-    private String adCellBid;
     @Transient
     private CrudChildServiceHelper<DbContentAccessControl> contentCrud;
     @Transient
@@ -119,17 +117,15 @@ public class User implements UserDetails, Serializable, CrudParent {
         return email;
     }
 
-    public void registerUser(String name, String password, String email, String adCellBid) {
+    public void registerUser(String name, String password, String email) {
         this.name = name;
         this.password = password;
         this.email = email;
-        this.adCellBid = adCellBid;
         registerDate = new Date();
     }
 
-    public void registerFacebookUser(FacebookSignedRequest facebookSignedRequest, String nickName, String adCellBid) {
+    public void registerFacebookUser(FacebookSignedRequest facebookSignedRequest, String nickName) {
         name = nickName;
-        this.adCellBid = adCellBid;
         socialNet = SocialNet.FACEBOOK;
         socialNetUserId = facebookSignedRequest.getUserId();
         email = facebookSignedRequest.getEmail();
@@ -270,10 +266,6 @@ public class User implements UserDetails, Serializable, CrudParent {
 
     public String getVerificationId() {
         return verificationId;
-    }
-
-    public String getAdCellBid() {
-        return adCellBid;
     }
 
     public SimpleUser createSimpleUser() {

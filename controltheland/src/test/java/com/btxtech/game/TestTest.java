@@ -20,13 +20,11 @@ public class TestTest {
         String expected = "Adcell.user.track({\n" +
                 "    'pid':'3111',\n" +
                 "    'eventid':'3820',\n" +
-                "    'bid':'hallohallo',\n" +
                 "    'referenz':'1'\n" +
                 "});";
         String actual = "Adcell.user.track({\n" +
                 "'pid':'3111'," +
                 "'eventid':'3820'," +
-                "'bid':'hallohallo'," +
                 "'referenz':'1'" +
                 "});";
         AbstractServiceTest.assertStringIgnoreWhitespace(expected, actual);
@@ -37,13 +35,11 @@ public class TestTest {
         String expected = "Adcell.user.track({\n" +
                 "    'pid':'3110',\n" +
                 "    'eventid':'3820',\n" +
-                "    'bid':'hallohallo',\n" +
                 "    'referenz':'1'\n" +
                 "});";
         String actual = "Adcell.user.track({\n" +
                 "'pid':'3111'," +
                 "'eventid':'3820'," +
-                "'bid':'hallohallo'," +
                 "'referenz':'1'" +
                 "});";
         try {

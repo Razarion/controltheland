@@ -183,10 +183,5 @@ public class CmsPage extends WebPage implements IHeaderContributor {
             WebCommon.setTrackingCookie(getWebRequestCycle().getWebResponse(), wicketSession.getTrackingCookieId());
             wicketSession.clearTrackingCookieIdCookieNeeded();
         }
-
-        if (wicketSession.isAdCellBidCookieNeeded()) {
-            WebCommon.setAdCellBidCookie(getWebRequestCycle().getWebResponse(), wicketSession.getAdCellBid());
-            wicketSession.clearAdCellBidCookieNeeded();
-        }
     }
 }

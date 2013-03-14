@@ -1,6 +1,5 @@
 package com.btxtech.game.mockservlet;
 
-import com.btxtech.game.jsre.client.AdCellProvision;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.InvalidNickName;
 import com.btxtech.game.jsre.client.MovableService;
@@ -173,7 +172,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
-    public AdCellProvision createAndLoginFacebookUser(String signedRequestParameter, String nickname, String email) throws UserAlreadyExistsException, PasswordNotMatchException {
+    public SimpleUser createAndLoginFacebookUser(String signedRequestParameter, String nickname, String email) throws UserAlreadyExistsException, PasswordNotMatchException {
         //To change body of implemented methods use File | Settings | File Templates.
         return null;
     }

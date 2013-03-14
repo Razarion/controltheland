@@ -1,6 +1,6 @@
 package com.btxtech.game.services.gwt;
 
-import com.btxtech.game.jsre.client.AdCellProvision;
+import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
@@ -8,17 +8,12 @@ import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.user.RegisterService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.wicket.WebCommon;
-import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import com.btxtech.game.wicket.uiservices.cms.impl.CmsUiServiceImpl;
 import junit.framework.Assert;
-import org.apache.wicket.protocol.http.servlet.WicketSessionFilter;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
-
-import javax.servlet.http.Cookie;
 
 /**
  * User: beat
@@ -122,13 +117,10 @@ public class TestMovableService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        setWicketParameterAdCellBid("ieieieie");
-        AdCellProvision adCellProvision = getMovableService().createAndLoginFacebookUser("v3-O8s1WrS9B2XnYXpRo61n2hKc9wboofRDHOxcF8XI.eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsImV4cGlyZXMiOjEzNDMxNTI4MDAsImlzc3VlZF9hdCI6MTM0MzE0NjY4Mywib2F1dGhfdG9rZW4iOiJBQUFFa3RlWVZ1WkNNQkFDS29mOGpkWDMxcnVTWkN3RXFuRnFWd3Z2NnBBNldNMTVaQ1V6bzlRNmliUXJiWGtRVkJOeEF0UDJmc2EzVzY3ZXJITW5EWkFvNlZHRzVPajg4U2FJMWZOYkVyYjhCeDBuOURRWkIyIiwidXNlciI6eyJjb3VudHJ5IjoiY2giLCJsb2NhbGUiOiJlbl9VUyIsImFnZSI6eyJtaW4iOjIxfX0sInVzZXJfaWQiOiIxMDAwMDM2MzQwOTQxMzkifQ", "Nick1", "Email");
+        SimpleUser simpleUser = getMovableService().createAndLoginFacebookUser("v3-O8s1WrS9B2XnYXpRo61n2hKc9wboofRDHOxcF8XI.eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsImV4cGlyZXMiOjEzNDMxNTI4MDAsImlzc3VlZF9hdCI6MTM0MzE0NjY4Mywib2F1dGhfdG9rZW4iOiJBQUFFa3RlWVZ1WkNNQkFDS29mOGpkWDMxcnVTWkN3RXFuRnFWd3Z2NnBBNldNMTVaQ1V6bzlRNmliUXJiWGtRVkJOeEF0UDJmc2EzVzY3ZXJITW5EWkFvNlZHRzVPajg4U2FJMWZOYkVyYjhCeDBuOURRWkIyIiwidXNlciI6eyJjb3VudHJ5IjoiY2giLCJsb2NhbGUiOiJlbl9VUyIsImFnZSI6eyJtaW4iOjIxfX0sInVzZXJfaWQiOiIxMDAwMDM2MzQwOTQxMzkifQ", "Nick1", "Email");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        Assert.assertEquals("Nick1", adCellProvision.getSimpleUser().getName());
-        Assert.assertTrue(adCellProvision.isProvisionExpected());
-        Assert.assertEquals("ieieieie", adCellProvision.getBid());
+        Assert.assertEquals("Nick1", simpleUser.getName());
     }
 }

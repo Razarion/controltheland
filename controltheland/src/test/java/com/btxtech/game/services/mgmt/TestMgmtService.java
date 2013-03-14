@@ -24,7 +24,7 @@ public class TestMgmtService extends AbstractServiceTest {
     public void sendEmail() throws Exception {
         startFakeMailServer();
         User user = new User();
-        user.registerUser("U1", "xxx", "test@email.com", null);
+        user.registerUser("U1", "xxx", "test@email.com");
         mgmtService.sendEmail(user, "hallo", "<html><body><h3>Hi ${USER.username},</h3><div>Hi hi hi</div></body></html>");
         List<WiserMessage> wiserMessages = getFakeMailServer().getMessages();
         stopFakeMailServer();
@@ -42,7 +42,7 @@ public class TestMgmtService extends AbstractServiceTest {
     public void sendEmailUmlaute() throws Exception {
         startFakeMailServer();
         User user = new User();
-        user.registerUser("U1", "xxx", "test@email.com", null);
+        user.registerUser("U1", "xxx", "test@email.com");
         mgmtService.sendEmail(user, "halloüöä", "<html><body><h3>Hi öö ${USER.username},</h3><div>Hi ü hi öhi</div></body></html>");
         List<WiserMessage> wiserMessages = getFakeMailServer().getMessages();
         stopFakeMailServer();

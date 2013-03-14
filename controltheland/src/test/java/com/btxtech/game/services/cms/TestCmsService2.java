@@ -1575,7 +1575,7 @@ public class TestCmsService2 extends AbstractServiceTest {
         planet.setServerPlanetServices(serverPlanetServices);
 
         User user1 = new User();
-        user1.registerUser("aaa", null, null, null);
+        user1.registerUser("aaa", null, null);
         userState = new UserState();
         userState.setUser(1);
         Base base1 = new Base(userState, planet, 1);
@@ -1588,7 +1588,7 @@ public class TestCmsService2 extends AbstractServiceTest {
         userStates.add(userState);
 
         User user2 = new User();
-        user2.registerUser("xxx", null, null, null);
+        user2.registerUser("xxx", null, null);
         userState = new UserState();
         userState.setUser(2);
         Base base2 = new Base(userState, planet, 2);
@@ -1875,7 +1875,7 @@ public class TestCmsService2 extends AbstractServiceTest {
         planet.setServerPlanetServices(serverPlanetServices);
 
         User user1 = new User();
-        user1.registerUser("aaa", null, null, null);
+        user1.registerUser("aaa", null, null);
         UserState userState = new UserState();
         userState.setDbLevelId(TEST_LEVEL_1_SIMULATED_ID);
         userStates.add(userState);
@@ -1891,7 +1891,7 @@ public class TestCmsService2 extends AbstractServiceTest {
         userStates.add(userState);
 
         User user2 = new User();
-        user2.registerUser("xxx", null, null, null);
+        user2.registerUser("xxx", null, null);
         userState = new UserState();
         userState.setUser(2);
         Base base2 = new Base(userState, planet, 2);
@@ -2344,59 +2344,6 @@ public class TestCmsService2 extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testEmailVerificationPageOkNoAdCellProvision() throws Exception {
-        configureSimplePlanetNoResources();
-        startFakeMailServer();
-
-        // Setup CMS content
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
-        DbPage dbPage = pageCrud.createDbChild();
-        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
-        dbPage.setName("Home");
-        pageCrud.updateDbChild(dbPage);
-
-        DbPage dbEmail = pageCrud.createDbChild();
-        dbEmail.setPredefinedType(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION);
-        dbEmail.setName("Email");
-        DbContentPlugin contentPlugin = new DbContentPlugin();
-        contentPlugin.setPluginEnum(PluginEnum.EMAIL_VERIFICATION);
-        contentPlugin.init(userService);
-        dbEmail.setContentAndAccessWrites(contentPlugin);
-        pageCrud.updateDbChild(dbEmail);
-        cmsService.activateCms();
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Setup user
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        registerService.register("U1", "xxx", "xxx", "xxx@yyy.com");
-        User user = userService.getUser();
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Verify
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().setupRequestAndResponse();
-        getWicketTester().getWicketSession().setLocale(Locale.ENGLISH);
-        getWicketTester().startPage(CmsPage.class);
-        getWicketTester().assertRenderedPage(CmsPage.class);
-        PageParameters pageParameters = cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.EMAIL_VERIFICATION);
-        pageParameters.put(CmsUtil.EMAIL_VERIFICATION_KEY, user.getVerificationId());
-        getWicketTester().startPage(CmsPage.class, pageParameters);
-        getWicketTester().assertInvisible("form:content:adCellProvision");
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        stopFakeMailServer();
-    }
-
-    @Test
-    @DirtiesContext
     public void testEmailVerificationPageOkAdCellProvision() throws Exception {
         configureSimplePlanetNoResources();
         startFakeMailServer();
@@ -2426,7 +2373,6 @@ public class TestCmsService2 extends AbstractServiceTest {
         // Setup user
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        setWicketParameterAdCellBid("hallohallo");
         registerService.register("U1", "xxx", "xxx", "xxx@yyy.com");
         User user = userService.getUser();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -2450,11 +2396,10 @@ public class TestCmsService2 extends AbstractServiceTest {
         assertStringIgnoreWhitespace("Adcell.user.track({\n" +
                 "    'pid':'3111',\n" +
                 "    'eventid':'3820',\n" +
-                "    'bid':'hallohallo',\n" +
                 "    'referenz':'1'\n" +
                 "});", label.getDefaultModelObjectAsString());
         ExternalImage adCellImage = (ExternalImage) getWicketTester().getComponentFromLastRenderedPage("form:content:adCellProvision:adCellImage");
-        Assert.assertEquals("http://www.adcell.de/event.php?pid=3111&eventid=3820&referenz=1&bid=hallohallo", adCellImage.getUrl());
+        Assert.assertEquals("http://www.adcell.de/event.php?pid=3111&eventid=3820&referenz=1", adCellImage.getUrl());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -2729,64 +2674,6 @@ public class TestCmsService2 extends AbstractServiceTest {
         BookmarkablePageRequestTarget requestTarget = (BookmarkablePageRequestTarget) RequestCycle.get().getRequestTarget();
         getWicketTester().startPage(requestTarget.getPageClass(), requestTarget.getPageParameters());
         getWicketTester().assertLabel("form:content:border:borderContent:message", "Already logged in as: KUH");
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void testAdCellCookie() throws Exception {
-        configureSimplePlanetNoResources();
-
-        // Setup CMS content
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
-        DbPage dbPage = pageCrud.createDbChild();
-        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
-        dbPage.setName("Home");
-        pageCrud.updateDbChild(dbPage);
-        cmsService.activateCms();
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Setup first access
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        setWicketParameterAdCellBid("hallohallo");
-        setWicketParameterAdCellBidCookie(true);
-        getWicketTester().startPage(CmsPage.class);
-        Assert.assertEquals("hallohallo", session.getAdCellBid());
-        MockHttpServletResponse response = (MockHttpServletResponse) getWicketTester().getWicketResponse().getHttpServletResponse();
-        assertCookie(response, "adCellBid", "hallohallo", 3888000);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void testNoAdCellCookieNoUrlParam() throws Exception {
-        configureSimplePlanetNoResources();
-
-        // Setup CMS content
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
-        DbPage dbPage = pageCrud.createDbChild();
-        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
-        dbPage.setName("Home");
-        pageCrud.updateDbChild(dbPage);
-        cmsService.activateCms();
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Setup first access
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        getWicketTester().startPage(CmsPage.class);
-        Assert.assertNull(session.getAdCellBid());
-        MockHttpServletResponse response = (MockHttpServletResponse) getWicketTester().getWicketResponse().getHttpServletResponse();
-        assertCookieNotSet(response, "adCellBid");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
