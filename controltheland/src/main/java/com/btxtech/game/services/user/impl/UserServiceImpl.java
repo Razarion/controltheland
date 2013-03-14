@@ -757,19 +757,12 @@ public class UserServiceImpl implements UserService {
             throw new IllegalStateException("No user");
         }
         String adCellPid = user.getAdCellBid();
-        if (adCellPid != null && !isAdCellProvisionAlreadyExecuted(adCellPid)) {
+        if (adCellPid != null) {
             saveExecutedAdCellProvision(user);
             return new AdCellProvision(user.createSimpleUser(), adCellPid);
         } else {
             return new AdCellProvision(user.createSimpleUser(), null);
         }
-    }
-
-    private boolean isAdCellProvisionAlreadyExecuted(String adCellPid) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbAdCellProvision.class);
-        criteria.add(Restrictions.eq("adCellPid", adCellPid));
-        criteria.setProjection(Projections.rowCount());
-        return ((Number) criteria.list().get(0)).intValue() > 0;
     }
 
     private void saveExecutedAdCellProvision(User user) {

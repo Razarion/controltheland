@@ -68,8 +68,8 @@ public class TestWicketAuthenticatedWebSession extends AbstractServiceTest {
         EasyMock.expect(request.getParameter("bid")).andReturn("adCellStringBid");
         EasyMock.replay(request);
         WicketAuthenticatedWebSession wicketSession = new WicketAuthenticatedWebSession(request);
-        Assert.assertEquals("qwertzui", wicketSession.getAdCellBid());
-        Assert.assertFalse(wicketSession.isAdCellBidCookieNeeded());
+        Assert.assertEquals("adCellStringBid", wicketSession.getAdCellBid());
+        Assert.assertTrue(wicketSession.isAdCellBidCookieNeeded());
     }
 
     @Test

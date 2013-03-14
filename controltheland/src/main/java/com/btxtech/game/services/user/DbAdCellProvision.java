@@ -19,7 +19,6 @@ public class DbAdCellProvision {
     @GeneratedValue
     private Integer id;
     private Date date;
-    @Index(name = "AD_CELL_PROVISION_PID_INDEX")
     @Column(length = 500)
     private String adCellPid;
     private int userId;

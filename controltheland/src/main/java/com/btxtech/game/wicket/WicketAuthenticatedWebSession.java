@@ -89,14 +89,13 @@ public class WicketAuthenticatedWebSession extends AuthenticatedWebSession {
     }
 
     private void handleAdCellBid(Request request) {
-        String adCellBidCookie = WebCommon.getAdCellBidCookie(((WebRequest) request).getCookies());
-        if (adCellBidCookie != null) {
-            adCellBid = adCellBidCookie;
-            isAdCellBidCookieNeeded = false;
+        adCellBid = request.getParameter(AdCellHelper.BID_URL_KEY);
+        if(adCellBid != null) {
+            isAdCellBidCookieNeeded = true;
         } else {
-            adCellBid = request.getParameter(AdCellHelper.BID_URL_KEY);
+            adCellBid = WebCommon.getAdCellBidCookie(((WebRequest) request).getCookies());
             if (adCellBid != null) {
-                isAdCellBidCookieNeeded = true;
+                isAdCellBidCookieNeeded = false;
             }
         }
     }
