@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.cockpit.radar;
 
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.Html5NotSupportedException;
@@ -236,73 +237,34 @@ public abstract class MiniMap implements MouseMoveHandler, MouseDownHandler, Mou
 
     @Override
     public void onMouseMove(MouseMoveEvent event) {
-        int x = event.getRelativeX(canvas.getElement());
-        if (x < 0) {
-            x = 0;
-        }
-        int y = event.getRelativeY(canvas.getElement());
-        if (y < 0) {
-            y = 0;
-        }
-        x -= xShiftRadarPixel;
-        y -= yShiftRadarPixel;
-
-        x = (int) (x / scale);
-        y = (int) (y / scale);
-
-        x += viewOrigin.getX();
-        y += viewOrigin.getY();
-
+        Index position = Index.createSaveIndex(GwtCommon.createSaveIndexRelative(event, canvas.getElement()));
+        position = position.sub(xShiftRadarPixel, yShiftRadarPixel);
+        position = position.scaleInverse(scale);
+        position = position.add(viewOrigin);
         for (MiniMapMouseMoveListener miniMapMouseMoveListener : miniMapMouseMoveListeners) {
-            miniMapMouseMoveListener.onMouseMove(x, y);
+            miniMapMouseMoveListener.onMouseMove(position.getX(), position.getY());
         }
     }
 
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
-        int x = mouseDownEvent.getRelativeX(canvas.getElement());
-        if (x < 0) {
-            x = 0;
-        }
-        int y = mouseDownEvent.getRelativeY(canvas.getElement());
-        if (y < 0) {
-            y = 0;
-        }
-        x -= xShiftRadarPixel;
-        y -= yShiftRadarPixel;
-
-        x = (int) (x / scale);
-        y = (int) (y / scale);
-
-        x += viewOrigin.getX();
-        y += viewOrigin.getY();
-
+        Index position = Index.createSaveIndex(GwtCommon.createSaveIndexRelative(mouseDownEvent, canvas.getElement()));
+        position = position.sub(xShiftRadarPixel, yShiftRadarPixel);
+        position = position.scaleInverse(scale);
+        position = position.add(viewOrigin);
         for (MiniMapMouseDownListener miniMapMouseDownListener : miniMapMouseDownListeners) {
-            miniMapMouseDownListener.onMouseDown(x, y, mouseDownEvent);
+            miniMapMouseDownListener.onMouseDown(position.getX(), position.getY(), mouseDownEvent);
         }
     }
 
     @Override
     public void onMouseUp(MouseUpEvent event) {
-        int x = event.getRelativeX(canvas.getElement());
-        if (x < 0) {
-            x = 0;
-        }
-        int y = event.getRelativeY(canvas.getElement());
-        if (y < 0) {
-            y = 0;
-        }
-        x -= xShiftRadarPixel;
-        y -= yShiftRadarPixel;
-
-        x = (int) (x / scale);
-        y = (int) (y / scale);
-
-        x += viewOrigin.getX();
-        y += viewOrigin.getY();
-
+        Index position = Index.createSaveIndex(GwtCommon.createSaveIndexRelative(event, canvas.getElement()));
+        position = position.sub(xShiftRadarPixel, yShiftRadarPixel);
+        position = position.scaleInverse(scale);
+        position = position.add(viewOrigin);
         for (MiniMapMouseUpListener miniMapMouseUpListener : miniMapMouseUpListeners) {
-            miniMapMouseUpListener.onMouseUp(x, y, event);
+            miniMapMouseUpListener.onMouseUp(position.getX(), position.getY(), event);
         }
     }
 

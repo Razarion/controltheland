@@ -145,7 +145,7 @@ public class BuildupItem extends Composite {
 
     @UiHandler("button")
     void onButtonMouseDown(MouseDownEvent event) {
-        final Index relativeMousePosition = new Index(event.getX(), event.getY());
+        final Index relativeMousePosition = GwtCommon.createSaveIndex(event);
         if (ClientUnlockServiceImpl.getInstance().isItemLocked(itemType)) {
             ClientUnlockServiceImpl.getInstance().askUnlockItem(itemType, new Runnable() {
                 @Override
