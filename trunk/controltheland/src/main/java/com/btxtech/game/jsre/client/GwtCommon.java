@@ -14,14 +14,17 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseEvent;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.http.client.UrlBuilder;
@@ -215,6 +218,7 @@ public class GwtCommon {
 
     /**
      * See checkInt
+     *
      * @param integer to correct
      * @return corrected integer
      */
@@ -222,7 +226,7 @@ public class GwtCommon {
         return (int) Math.floor(integer);
     }
 
-    
+
     public static void dumpStackToServer(String message) {
         log.log(Level.SEVERE, "Dump Stack: " + message, new Exception("StackTrace"));
     }
@@ -253,5 +257,13 @@ public class GwtCommon {
             urlBuilder.setPort(Integer.parseInt(port));
 
         return urlBuilder.buildString();
+    }
+
+    public static Index createSaveIndex(MouseDownEvent event) {
+        return new Index(correctInt(event.getX()), correctInt(event.getY()));
+    }
+
+    public static Index createSaveIndexRelative(MouseEvent mouseEvent, Element target) {
+        return new Index(correctInt(mouseEvent.getRelativeX(target)), correctInt(mouseEvent.getRelativeY(target)));
     }
 }

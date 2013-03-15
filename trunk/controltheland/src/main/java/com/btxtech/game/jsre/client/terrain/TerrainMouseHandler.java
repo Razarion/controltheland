@@ -56,8 +56,9 @@ public class TerrainMouseHandler implements MouseMoveHandler {
                 try {
                     Perfmon.getInstance().onEntered(PerfmonEnum.TERRAIN_MOUSE_DOWN);
                     ChatCockpit.getInstance().blurFocus();
-                    int absoluteX = mouseDownEvent.getRelativeX(canvas.getElement()) + terrainView.getViewOriginLeft();
-                    int absoluteY = mouseDownEvent.getRelativeY(canvas.getElement()) + terrainView.getViewOriginTop();
+                    Index relative = GwtCommon.createSaveIndexRelative(mouseDownEvent, canvas.getElement());
+                    int absoluteX = relative.getX() + terrainView.getViewOriginLeft();
+                    int absoluteY = relative.getY() + terrainView.getViewOriginTop();
 
                     if (CockpitMode.getInstance().getMode() == CockpitMode.Mode.LAUNCH) {
                         ActionHandler.getInstance().executeLaunchCommand(absoluteX, absoluteY);
@@ -132,8 +133,9 @@ public class TerrainMouseHandler implements MouseMoveHandler {
             public void onMouseUp(MouseUpEvent event) {
                 try {
                     Perfmon.getInstance().onEntered(PerfmonEnum.TERRAIN_MOUSE_UP);
-                    int absoluteX = event.getRelativeX(canvas.getElement()) + terrainView.getViewOriginLeft();
-                    int absoluteY = event.getRelativeY(canvas.getElement()) + terrainView.getViewOriginTop();
+                    Index relative = GwtCommon.createSaveIndexRelative(event, canvas.getElement());
+                    int absoluteX = relative.getX() + terrainView.getViewOriginLeft();
+                    int absoluteY = relative.getY() + terrainView.getViewOriginTop();
                     if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
                         if (CockpitMode.getInstance().getMode() == CockpitMode.Mode.LAUNCH) {
                             ActionHandler.getInstance().executeLaunchCommand(absoluteX, absoluteY);
@@ -180,8 +182,9 @@ public class TerrainMouseHandler implements MouseMoveHandler {
 
             if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
                 if (CockpitMode.getInstance().hasToBeBuildPlacer()) {
-                    int absoluteX = event.getRelativeX(canvas.getElement()) + terrainView.getViewOriginLeft();
-                    int absoluteY = event.getRelativeY(canvas.getElement()) + terrainView.getViewOriginTop();
+                    Index relative = GwtCommon.createSaveIndexRelative(event, canvas.getElement());
+                    int absoluteX = relative.getX() + terrainView.getViewOriginLeft();
+                    int absoluteY = relative.getY() + terrainView.getViewOriginTop();
                     finalizeToBeBuildPlacer(absoluteX, absoluteY);
                     return;
                 }
@@ -211,18 +214,17 @@ public class TerrainMouseHandler implements MouseMoveHandler {
     public void onOverlayMouseMove(MouseMoveEvent event) {
         try {
             Perfmon.getInstance().onEntered(PerfmonEnum.TERRAIN_MOUSE_MOVE);
-            int relativeX = event.getRelativeX(canvas.getElement());
-            int relativeY = event.getRelativeY(canvas.getElement());
+            Index relative = GwtCommon.createSaveIndexRelative(event, canvas.getElement());
             int width = canvas.getOffsetWidth();
             int height = canvas.getOffsetHeight();
 
-            terrainScrollHandler.handleMouseMoveScroll(relativeX, relativeY, width, height);
+            terrainScrollHandler.handleMouseMoveScroll(relative.getX(), relative.getY(), width, height);
 
-            int absoluteX = event.getRelativeX(canvas.getElement()) + terrainView.getViewOriginLeft();
-            int absoluteY = event.getRelativeY(canvas.getElement()) + terrainView.getViewOriginTop();
+            int absoluteX = relative.getX() + terrainView.getViewOriginLeft();
+            int absoluteY = relative.getY() + terrainView.getViewOriginTop();
 
             if (CockpitMode.getInstance().hasToBeBuildPlacer()) {
-                CockpitMode.getInstance().getToBeBuildPlacer().onMove(relativeX, relativeY, absoluteX, absoluteY);
+                CockpitMode.getInstance().getToBeBuildPlacer().onMove(relative.getX(), relative.getY(), absoluteX, absoluteY);
                 CursorHandler.getInstance().noCursor();
             }
         } finally {
@@ -282,23 +284,23 @@ public class TerrainMouseHandler implements MouseMoveHandler {
     public void onMouseMove(MouseMoveEvent event) {
         try {
             Perfmon.getInstance().onEntered(PerfmonEnum.TERRAIN_MOUSE_MOVE);
-            int relativeX = event.getRelativeX(canvas.getElement());
-            int relativeY = event.getRelativeY(canvas.getElement());
+            Index relative = GwtCommon.createSaveIndexRelative(event, canvas.getElement());
+
             int width = canvas.getOffsetWidth();
             int height = canvas.getOffsetHeight();
 
-            terrainScrollHandler.handleMouseMoveScroll(relativeX, relativeY, width, height);
+            terrainScrollHandler.handleMouseMoveScroll(relative.getX(), relative.getY(), width, height);
 
-            int absoluteX = event.getRelativeX(canvas.getElement()) + terrainView.getViewOriginLeft();
-            int absoluteY = event.getRelativeY(canvas.getElement()) + terrainView.getViewOriginTop();
+            int absoluteX = relative.getX() + terrainView.getViewOriginLeft();
+            int absoluteY = relative.getY() + terrainView.getViewOriginTop();
 
             ItemMouseOverHandler.getInstance().setMouseOver(null);
             if (CockpitMode.getInstance().hasGroupSelectionFrame()) {
                 CockpitMode.getInstance().getGroupSelectionFrame().onMove(absoluteX, absoluteY);
             } else if (CockpitMode.getInstance().hasInventoryItemPlacer()) {
-                CockpitMode.getInstance().getInventoryItemPlacer().onMove(relativeX, relativeY, absoluteX, absoluteY);
+                CockpitMode.getInstance().getInventoryItemPlacer().onMove(relative.getX(), relative.getY(), absoluteX, absoluteY);
             } else if (CockpitMode.getInstance().hasToBeBuildPlacer()) {
-                CockpitMode.getInstance().getToBeBuildPlacer().onMove(relativeX, relativeY, absoluteX, absoluteY);
+                CockpitMode.getInstance().getToBeBuildPlacer().onMove(relative.getX(), relative.getY(), absoluteX, absoluteY);
                 CursorHandler.getInstance().noCursor();
             } else {
                 SyncItem syncItem = ItemContainer.getInstance().getItemAtAbsolutePosition(new Index(absoluteX, absoluteY));
@@ -307,7 +309,7 @@ public class TerrainMouseHandler implements MouseMoveHandler {
             }
 
             if (Game.isDebug()) {
-                SideCockpit.getInstance().debugAbsoluteCursorPos(relativeX + terrainView.getViewOriginLeft(), relativeY + terrainView.getViewOriginTop());
+                SideCockpit.getInstance().debugAbsoluteCursorPos(relative.getX() + terrainView.getViewOriginLeft(), relative.getY() + terrainView.getViewOriginTop());
             }
         } finally {
             Perfmon.getInstance().onLeft(PerfmonEnum.TERRAIN_MOUSE_MOVE);
