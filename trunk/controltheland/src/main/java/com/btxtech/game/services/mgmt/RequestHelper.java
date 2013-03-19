@@ -1,5 +1,6 @@
 package com.btxtech.game.services.mgmt;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 
 /**
@@ -7,6 +8,8 @@ import java.util.Locale;
  * Date: 15.01.13
  * Time: 16:52
  */
-public abstract class RequestHelper {
-    public abstract Locale getLocale();
+public interface RequestHelper {
+   Locale getLocale();
+
+    HttpServletRequest getRequest();
 }

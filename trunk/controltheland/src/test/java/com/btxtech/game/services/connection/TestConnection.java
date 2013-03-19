@@ -284,9 +284,9 @@ public class TestConnection extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<ClientDebugEntry> dbEntries = HibernateUtil.loadAll(getSessionFactory(), ClientDebugEntry.class);
+        List<DbClientDebugEntry> dbEntries = HibernateUtil.loadAll(getSessionFactory(), DbClientDebugEntry.class);
         Assert.assertEquals(1, dbEntries.size());
-        ClientDebugEntry debugEntry1 = dbEntries.get(0);
+        DbClientDebugEntry debugEntry1 = dbEntries.get(0);
         Assert.assertTrue(serverBefore.getTime() <= debugEntry1.getTimeStamp().getTime());
         Assert.assertTrue(serverAfter.getTime() >= debugEntry1.getTimeStamp().getTime());
         Assert.assertEquals(clientDate, debugEntry1.getClientTimeStamp());
@@ -319,9 +319,9 @@ public class TestConnection extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<ClientDebugEntry> dbEntries = HibernateUtil.loadAll(getSessionFactory(), ClientDebugEntry.class);
+        List<DbClientDebugEntry> dbEntries = HibernateUtil.loadAll(getSessionFactory(), DbClientDebugEntry.class);
         Assert.assertEquals(1, dbEntries.size());
-        ClientDebugEntry debugEntry1 = dbEntries.get(0);
+        DbClientDebugEntry debugEntry1 = dbEntries.get(0);
         Assert.assertTrue(serverBefore.getTime() <= debugEntry1.getTimeStamp().getTime());
         Assert.assertTrue(serverAfter.getTime() >= debugEntry1.getTimeStamp().getTime());
         Assert.assertEquals(clientDate, debugEntry1.getClientTimeStamp());

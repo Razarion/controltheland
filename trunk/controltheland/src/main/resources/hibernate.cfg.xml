@@ -21,7 +21,8 @@
     <session-factory>
         <mapping class="com.btxtech.game.services.history.DbHistoryElement"/>
         <mapping class="com.btxtech.game.services.connection.ConnectionStatistics"/>
-        <mapping class="com.btxtech.game.services.connection.ClientDebugEntry"/>
+        <mapping class="com.btxtech.game.services.connection.DbClientDebugEntry"/>
+        <mapping class="com.btxtech.game.services.mgmt.DbServerDebugEntry"/>
         <mapping class="com.btxtech.game.services.terrain.DbTerrainImagePosition"/>
         <mapping class="com.btxtech.game.services.terrain.DbSurfaceRect"/>
         <mapping class="com.btxtech.game.services.terrain.DbTerrainImageGroup"/>

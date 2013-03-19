@@ -25,7 +25,7 @@ import java.util.Date;
  * Time: 9:03:13 PM
  */
 @Entity(name = "TRACKER_CLIENT_DEBUG")
-public class ClientDebugEntry {
+public class DbClientDebugEntry {
     @Id
     @GeneratedValue
     private Integer id;
@@ -43,10 +43,10 @@ public class ClientDebugEntry {
     /**
      * Used by hibernate
      */
-    public ClientDebugEntry() {
+    public DbClientDebugEntry() {
     }
 
-    public ClientDebugEntry(Date date, Session session, Integer userId, String category, String message) {
+    public DbClientDebugEntry(Date date, Session session, Integer userId, String category, String message) {
         timeStamp = new Date();
         clientTimeStamp = date;
         userAgent = session.getUserAgent();
@@ -88,9 +88,9 @@ public class ClientDebugEntry {
     public boolean equals(Object o) {
         if (this == o) return true;
 
-        if (!(o instanceof ClientDebugEntry)) return false;
+        if (!(o instanceof DbClientDebugEntry)) return false;
 
-        ClientDebugEntry debugEntry = (ClientDebugEntry) o;
+        DbClientDebugEntry debugEntry = (DbClientDebugEntry) o;
 
         return id != null && id.equals(debugEntry.id);
 

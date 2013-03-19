@@ -17,12 +17,17 @@ import java.util.Locale;
  */
 @Component
 @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class RequestHelperImpl extends RequestHelper {
+public class RequestHelperImpl implements RequestHelper {
     @Autowired
     private HttpServletRequest request;
 
     @Override
     public Locale getLocale() {
         return request.getLocale();
+    }
+
+    @Override
+    public HttpServletRequest getRequest() {
+        return request;
     }
 }

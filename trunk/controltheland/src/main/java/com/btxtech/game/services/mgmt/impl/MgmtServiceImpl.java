@@ -21,18 +21,23 @@ import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.mgmt.BackupSummary;
 import com.btxtech.game.services.mgmt.ClientPerfmonDto;
+import com.btxtech.game.services.mgmt.DbServerDebugEntry;
 import com.btxtech.game.services.mgmt.DbViewDTO;
 import com.btxtech.game.services.mgmt.MemoryUsageHistory;
 import com.btxtech.game.services.mgmt.MgmtService;
+import com.btxtech.game.services.mgmt.RequestHelper;
 import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserService;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.wicket.Page;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -57,6 +62,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -100,6 +106,10 @@ public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
     private JavaMailSender mailSender;
     @Autowired
     private VelocityEngine velocityEngine;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private RequestHelper requestHelper;
     private static Log log = LogFactory.getLog(MgmtServiceImpl.class);
     private StartupData startupData;
     private MemoryUsageContainer heapMemory = new MemoryUsageContainer(MEMORY_SAMPLE_SIZE);
@@ -466,5 +476,47 @@ public class MgmtServiceImpl implements MgmtService, SmartLifecycle {
         mailSender.send(preparator);
     }
 
+    @Override
+    @Transactional
+    public void saveServerDebug(String category, HttpServletRequest request, Page cause, Throwable throwable) {
+        saveServerDebug(category, request, cause != null ? cause.toString() : null, null, throwable);
+    }
+
+    @Override
+    @Transactional
+    public void saveServerDebug(String category, Throwable throwable) {
+        HttpServletRequest request = null;
+        try {
+            request = requestHelper.getRequest();
+        } catch (Exception ignore) {
+            // Ignore
+        }
+        saveServerDebug(category, request, null, null, throwable);
+    }
+
+    private void saveServerDebug(String category, HttpServletRequest request, String causePage, String message, Throwable throwable) {
+        try {
+            DbServerDebugEntry dbServerDebugEntry = new DbServerDebugEntry(category, message, throwable.getMessage(), ExceptionUtils.getFullStackTrace(throwable));
+            if (request != null) {
+                dbServerDebugEntry.setSessionId(request.getSession().getId());
+                dbServerDebugEntry.setUserAgent(request.getHeader("user-agent"));
+                dbServerDebugEntry.setRemoteAddress(request.getRemoteAddr());
+                dbServerDebugEntry.setReferer(request.getHeader("Referer"));
+                dbServerDebugEntry.setRequestUri(request.getRequestURI());
+                dbServerDebugEntry.setQueryString(request.getQueryString());
+            }
+            try {
+                dbServerDebugEntry.setUserName(userService.getUserName());
+            } catch (Exception ignore) {
+                // Ignore
+            }
+            dbServerDebugEntry.setCausePage(causePage);
+            dbServerDebugEntry.setThread(Thread.currentThread().getName());
+            // @Transaction opens session
+            sessionFactory.getCurrentSession().save(dbServerDebugEntry);
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e, "Can not save dbServerDebugEntry. Category: " + category + " message: " + message + " throwable: " + throwable);
+        }
+    }
 }
 
