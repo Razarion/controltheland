@@ -21,6 +21,7 @@ import com.btxtech.game.services.cms.NoDbPageException;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.NoSuchChildException;
 import com.btxtech.game.services.common.Utils;
+import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsCssResource;
@@ -61,6 +62,8 @@ public class WicketApplication extends AuthenticatedWebApplication implements Ap
     private CmsUiService cmsUiService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private MgmtService mgmtService;
     private String configurationType;
     private Log log = LogFactory.getLog(WicketApplication.class);
     private ApplicationContext applicationContext;
@@ -138,19 +141,19 @@ public class WicketApplication extends AuthenticatedWebApplication implements Ap
                 log.error(e.getMessage());
                 return cmsUiService.getPredefinedNotFound();
             } else if (CommonJava.getMostInnerThrowable(e) instanceof NoSuchChildException) {
-                printInfo(cause, e);
+                saveServerDebug(cause, e);
                 return cmsUiService.getPredefinedNotFound();
             } else if (CommonJava.getMostInnerThrowable(e) instanceof InvalidUrlException) {
-                printInfo(cause, e);
+                saveServerDebug(cause, e);
                 return cmsUiService.getPredefinedNotFound();
             } else if (CommonJava.getMostInnerThrowable(e) instanceof NoDbContentInCacheException) {
-                printInfo(cause, e);
+                saveServerDebug(cause, e);
                 return cmsUiService.getPredefinedNotFound();
             } else if (CommonJava.getMostInnerThrowable(e) instanceof NoDbPageException) {
-                printInfo(cause, e);
+                saveServerDebug(cause, e);
                 return cmsUiService.getPredefinedNotFound();
             } else if (CommonJava.getMostInnerThrowable(e) instanceof NumberFormatException) {
-                printInfo(cause, e);
+                saveServerDebug(cause, e);
                 return cmsUiService.getPredefinedNotFound();
             } else {
                 log.error("------------------CMS Unknown Exception---------------------------------");
@@ -162,12 +165,8 @@ public class WicketApplication extends AuthenticatedWebApplication implements Ap
             }
         }
 
-        private void printInfo(final Page cause, Exception e) {
-            log.error("------------------CMS Exception---------------------------------");
-            ExceptionHandler.logParameters(log, userService);
-            log.error("URL: " + getRequest().getURL());
-            log.error("Page: " + cause);
-            log.error(CommonJava.getMostInnerThrowable(e));
+        private void saveServerDebug(final Page cause, Exception e) {
+            mgmtService.saveServerDebug(MgmtService.SERVER_DEBUG_CMS, ((WebRequest)getRequest()).getHttpServletRequest(), cause, e);
         }
 
         @Override

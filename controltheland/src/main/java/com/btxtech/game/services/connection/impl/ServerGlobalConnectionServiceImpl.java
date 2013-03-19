@@ -20,7 +20,7 @@ import com.btxtech.game.jsre.common.packets.MessageIdPacket;
 import com.btxtech.game.jsre.common.packets.ServerRebootMessagePacket;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
-import com.btxtech.game.services.connection.ClientDebugEntry;
+import com.btxtech.game.services.connection.DbClientDebugEntry;
 import com.btxtech.game.services.connection.ConnectionStatistics;
 import com.btxtech.game.services.connection.ServerGlobalConnectionService;
 import com.btxtech.game.services.connection.Session;
@@ -31,7 +31,6 @@ import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserTrackingService;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
@@ -171,8 +170,8 @@ public class ServerGlobalConnectionServiceImpl implements ServerGlobalConnection
     @Override
     @Transactional
     public void saveClientDebug(Date date, String category, String message) {
-        ClientDebugEntry clientDebugEntry = new ClientDebugEntry(date, session, userService.getUserState().getUser(), category, message);
-        sessionFactory.getCurrentSession().saveOrUpdate(clientDebugEntry);
+        DbClientDebugEntry dbClientDebugEntry = new DbClientDebugEntry(date, session, userService.getUserState().getUser(), category, message);
+        sessionFactory.getCurrentSession().saveOrUpdate(dbClientDebugEntry);
     }
 
     @Override

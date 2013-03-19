@@ -16,7 +16,9 @@ package com.btxtech.game.services.mgmt;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.services.user.User;
+import org.apache.wicket.Page;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,10 @@ import java.util.Map;
  * Time: 1:59:32 PM
  */
 public interface MgmtService {
+    static String SERVER_DEBUG_CMS = "cms";
+    static String SERVER_DEBUG_EMAIL_VERIFICATION_ALREADY = "Email already verified";
+    static String SERVER_DEBUG_GET_UNLOCKED_PLANET = "Get unlocked planet exception";
+
     Date getStartTime();
 
     DbViewDTO queryDb(String sql);
@@ -62,4 +68,8 @@ public interface MgmtService {
     ClientPerfmonDto getClientPerfmonData(String sessionId);
 
     void sendEmail(User user, String subject, String inString);
+
+    void saveServerDebug(String category, HttpServletRequest request, Page cause, Throwable throwable);
+
+    void saveServerDebug(String category, Throwable throwable);
 }

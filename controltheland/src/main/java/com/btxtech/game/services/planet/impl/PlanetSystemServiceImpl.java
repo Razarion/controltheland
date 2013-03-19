@@ -19,6 +19,7 @@ import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.inventory.DbInventoryItem;
+import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.NoSuchPlanetException;
 import com.btxtech.game.services.planet.Planet;
@@ -74,6 +75,8 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
     private TerrainImageService terrainImageService;
     @Autowired
     private ServerUnlockService serverUnlockService;
+    @Autowired
+    private MgmtService mgmtService;
     private final Map<Integer, PlanetImpl> planetImpls = new HashMap<>();
 
     @PostConstruct
@@ -141,7 +144,7 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
                 return dbPlanet;
             }
         } catch (Exception e) {
-            ExceptionHandler.handleException(e);
+            mgmtService.saveServerDebug(MgmtService.SERVER_DEBUG_GET_UNLOCKED_PLANET, e);
             throw userGuidanceService.createInvalidLevelState();
         }
     }
