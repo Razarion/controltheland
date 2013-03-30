@@ -930,4 +930,127 @@ public class TestTracking extends AbstractServiceTest {
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void testUserTracking() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        String sessionId1 = getHttpSessionId();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U2");
+        String sessionId2 = getHttpSessionId();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        String sessionId3 = getHttpSessionId();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U2");
+        String sessionId4 = getHttpSessionId();
+        userService.logout();
+        loginUser("U2");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U2");
+        String sessionId5 = getHttpSessionId();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<SessionOverviewDto> sessionOverviewDtos = userTrackingService.getSessionOverviewDtos(userService.getUser("U1"));
+        Assert.assertEquals(2, sessionOverviewDtos.size());
+        Assert.assertEquals(sessionId3, sessionOverviewDtos.get(0).getSessionId());
+        Assert.assertEquals(sessionId1, sessionOverviewDtos.get(1).getSessionId());
+        Assert.assertEquals(2, userTrackingService.getLoginCount(userService.getUser("U1")));
+        sessionOverviewDtos = userTrackingService.getSessionOverviewDtos(userService.getUser("U2"));
+        Assert.assertEquals(3, sessionOverviewDtos.size());
+        Assert.assertEquals(sessionId5, sessionOverviewDtos.get(0).getSessionId());
+        Assert.assertEquals(sessionId4, sessionOverviewDtos.get(1).getSessionId());
+        Assert.assertEquals(sessionId2, sessionOverviewDtos.get(2).getSessionId());
+        Assert.assertEquals(4, userTrackingService.getLoginCount(userService.getUser("U2")));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testInGameTime() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        getMyBase();
+        Thread.sleep(100);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        getMyBase();
+        Thread.sleep(200);
+        getMyBase();
+        Thread.sleep(300);
+        getMyBase(); // This session will not count due to session time-out is to long
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        System.out.println(userTrackingService.calculateInGameTime(userService.getUser("U1")));
+        Assert.assertTrue(userTrackingService.calculateInGameTime(userService.getUser("U1")) > 600);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testInGameTimeRegisterAfter() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getMyBase();
+        Thread.sleep(100);
+        createAndLoginUser("U1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        getMyBase();
+        Thread.sleep(200);
+        getMyBase();
+        Thread.sleep(300);
+        getMyBase(); // This session will not count due to session time-out is to long
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        System.out.println(userTrackingService.calculateInGameTime(userService.getUser("U1")));
+        Assert.assertTrue(userTrackingService.calculateInGameTime(userService.getUser("U1")) > 500);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 }

@@ -69,6 +69,7 @@ import com.btxtech.game.services.utg.tracker.DbWindowClosed;
 import com.btxtech.game.wicket.pages.Game;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -168,6 +169,95 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                     browserDetail.getReferer()));
         }
         return sessionOverviewDtos;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<SessionOverviewDto> getSessionOverviewDtos(User user) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbUserHistory.class);
+        criteria.add(Restrictions.eq("user", user.getUsername()));
+        criteria.add(Restrictions.isNotNull("loggedIn"));
+        criteria.addOrder(Order.desc("loggedIn"));
+        criteria.setProjection(Projections.property("sessionId"));
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        List<String> userSessions = criteria.list();
+        if (userSessions == null || userSessions.isEmpty()) {
+            return null;
+        }
+        criteria = sessionFactory.getCurrentSession().createCriteria(DbSessionDetail.class);
+        criteria.add(Restrictions.in("sessionId", userSessions));
+        criteria.addOrder(Order.desc("timeStamp"));
+        criteria.addOrder(Order.desc("id"));
+        List<DbSessionDetail> browserDetails = criteria.list();
+        ArrayList<SessionOverviewDto> sessionOverviewDtos = new ArrayList<>();
+        for (DbSessionDetail browserDetail : browserDetails) {
+            int hits = getPageHits(browserDetail.getSessionId());
+            int startAttempts = getStartAttempts(browserDetail.getSessionId());
+            int startSuccess = getStartSucceeded(browserDetail.getSessionId());
+            boolean failure = hasFailureStarts(browserDetail.getSessionId()) || startAttempts != startSuccess;
+            int enterGameHits = getGameAttempts(browserDetail.getSessionId());
+            int commands = getUserCommandCount(browserDetail.getSessionId(), null, null, null);
+            int levelPromotions = historyService.getLevelPromotionCount(browserDetail.getSessionId());
+            sessionOverviewDtos.add(new SessionOverviewDto(browserDetail.getTimeStamp(),
+                    browserDetail.getSessionId(),
+                    hits,
+                    enterGameHits,
+                    startAttempts,
+                    startSuccess,
+                    failure,
+                    commands,
+                    levelPromotions,
+                    browserDetail.getReferer()));
+        }
+        return sessionOverviewDtos;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public int getLoginCount(User user) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbUserHistory.class);
+        criteria.add(Restrictions.eq("user", user.getUsername()));
+        criteria.add(Restrictions.isNotNull("loggedIn"));
+        criteria.setProjection(Projections.rowCount());
+        return ((Number) criteria.list().get(0)).intValue();
+    }
+
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public long calculateInGameTime(User user) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbUserHistory.class);
+        criteria.add(Restrictions.eq("user", user.getUsername()));
+        criteria.add(Restrictions.isNotNull("gameEntered"));
+        criteria.addOrder(Order.asc("gameEntered"));
+        List<DbUserHistory> gameEntered = criteria.list();
+        if (gameEntered == null || gameEntered.isEmpty()) {
+            return 0;
+        }
+        criteria = sessionFactory.getCurrentSession().createCriteria(DbUserHistory.class);
+        criteria.add(Restrictions.eq("user", user.getUsername()));
+        criteria.add(Restrictions.isNotNull("gameLeft"));
+        criteria.addOrder(Order.asc("gameLeft"));
+        List<DbUserHistory> gameLeft = criteria.list();
+        if (gameLeft == null || gameLeft.isEmpty()) {
+            return 0;
+        }
+
+        long gameTimeInMillis = 0;
+        while (!gameEntered.isEmpty() && !gameLeft.isEmpty()) {
+            Date enterTime = gameEntered.get(0).getGameEntered();
+            Date leftTime = gameLeft.get(0).getGameLeft();
+
+            if (enterTime.getTime() < leftTime.getTime()) {
+                gameTimeInMillis += leftTime.getTime() - enterTime.getTime();
+                gameEntered.remove(0);
+                gameLeft.remove(0);
+            } else {
+                gameLeft.remove(0);
+            }
+
+        }
+        return gameTimeInMillis;
     }
 
     private int getStartAttempts(String sessionId) {

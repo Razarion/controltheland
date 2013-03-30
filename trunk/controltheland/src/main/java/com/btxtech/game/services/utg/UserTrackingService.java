@@ -52,6 +52,8 @@ public interface UserTrackingService {
 
     List<SessionOverviewDto> getSessionOverviewDtos(UserTrackingFilter filter);
 
+    List<SessionOverviewDto> getSessionOverviewDtos(User user);
+
     SessionDetailDto getSessionDetailDto(String sessionId);
 
     void saveUserCommand(BaseCommand baseCommand);
@@ -123,4 +125,8 @@ public interface UserTrackingService {
     List<DbDialogTracking> getDbDialogTrackings(String startUuid);
 
     LifecycleTrackingInfo getLifecycleTrackingInfo(String startUuid);
+
+    long calculateInGameTime(User user);
+
+    int getLoginCount(User user);
 }
