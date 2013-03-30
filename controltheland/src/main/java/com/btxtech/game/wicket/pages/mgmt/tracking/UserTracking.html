@@ -15,42 +15,87 @@
         "http://www.w3.org/TR/html4/loose.dtd">
 <html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
 <head>
-    <title>Session Tracking</title>
+    <title>User Tracking</title>
 </head>
 <body>
-<h1>Session Tracking</h1>
+<h1>User Tracking</h1>
 
 <span wicket:id="msgs"/>
 
 <form wicket:id="filterForm">
     <table style="border: 2px dotted #000000; width: 400px; padding: 5px;">
         <tr>
-            <td valign="top">JavaScript enabled</td>
-            <td><span valign="top" wicket:id="jsEnabled"></span></td>
+            <td valign="top">User Name</td>
+            <td valign="top"><input wicket:id="userName" type="text" size="20"></td>
         </tr>
         <tr>
-            <td valign="top">Show last days</td>
-            <td valign="top"><input wicket:id="days" type="text" size="6" maxlength="6"></td>
-        </tr>
-        <tr>
-            <td valign="top">Page Hits (>=)</td>
-            <td valign="top"><input wicket:id="hits" type="text" size="6" maxlength="6"></td>
-        </tr>
-        <tr>
-            <td valign="top">Session Id</td>
-            <td valign="top"><input wicket:id="sessionId" type="text" size="40"></td>
-        </tr>
-        <tr>
-            <td valign="top">Cookie Id</td>
-            <td valign="top"><input wicket:id="cookieId" type="text" size="40"></td>
+            <td valign="top">User Id</td>
+            <td valign="top"><input wicket:id="userId" type="text" size="6"></td>
         </tr>
         <tr>
             <td colspan="2" align="center">
-                <input type="submit" value="Search"/>
+                <input wicket:id="search" type="submit" value="Search"/>
             </td>
         </tr>
     </table>
 </form>
+
+<h2>User Details</h2>
+<table border="0">
+    <tr>
+        <td bgcolor="#dadada">User Name</td>
+        <td wicket:id="username"></td>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">User Id</td>
+        <td wicket:id="id"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Account Verified</td>
+        <td wicket:id="accountNonLocked"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Register Date</td>
+        <td wicket:id="registerDate"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Last Login Date</td>
+        <td wicket:id="lastLoginDate"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Social Net</td>
+        <td wicket:id="socialNet"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Email</td>
+        <td wicket:id="email"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Login count</td>
+        <td wicket:id="loginCount"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">In Game Time [h:mm:ss]<br><span style="color:red;font-size:12px;">experimental, no tutorials</span></td>
+        <td wicket:id="inGameTime"/>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">User state</td>
+        <td>
+            <form wicket:id="userStateForm">
+                <input type="submit" value="Go"/>
+            </form>
+        </td>
+    </tr>
+    <tr>
+        <td bgcolor="#dadada">Base</td>
+        <td>
+            <form wicket:id="baseForm">
+                <input type="submit" value="Go"/>
+            </form>
+        </td>
+    </tr>
+</table>
+
 
 <h2>History</h2>
 <table border="0">

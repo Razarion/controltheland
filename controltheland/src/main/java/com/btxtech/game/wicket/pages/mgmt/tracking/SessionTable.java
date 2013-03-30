@@ -54,7 +54,7 @@ public class SessionTable extends MgmtWebPage {
     private void filter() {
         add(new FeedbackPanel("msgs"));
 
-        Form<UserTrackingFilter> form = new Form<UserTrackingFilter>("filterForm", new CompoundPropertyModel<UserTrackingFilter>(userTrackingFilter));
+        Form<UserTrackingFilter> form = new Form<>("filterForm", new CompoundPropertyModel<UserTrackingFilter>(userTrackingFilter));
         add(form);
         form.add(new RadioChoice<UserTrackingFilter>("jsEnabled", UserTrackingFilter.JS_ENABLED_CHOICES));
         form.add(new TextField("days"));
@@ -97,7 +97,7 @@ public class SessionTable extends MgmtWebPage {
                 listItem.add(new Label("levelPromotions", Integer.toString(listItem.getModelObject().getLevelPromotions())));
                 PageParameters pageParameters = new PageParameters();
                 pageParameters.add(SessionDetail.SESSION_KEY, listItem.getModelObject().getSessionId());
-                BookmarkablePageLink<SessionDetail> link = new BookmarkablePageLink<SessionDetail>("visitorLink", SessionDetail.class, pageParameters);
+                BookmarkablePageLink<SessionDetail> link = new BookmarkablePageLink<>("visitorLink", SessionDetail.class, pageParameters);
                 link.add(new Label("sessionId", listItem.getModelObject().getSessionId()));
                 listItem.add(link);
                 listItem.add(new Label("referer", listItem.getModelObject().getReferer()));
