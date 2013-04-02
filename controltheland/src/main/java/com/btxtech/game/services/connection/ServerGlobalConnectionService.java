@@ -32,5 +32,5 @@ public interface ServerGlobalConnectionService {
 
     void saveClientDebug(Date date, String category, String message);
 
-    Collection<UserState> getAllOnlineMissionUserState();
+    List<UserState> getAllOnlineMissionUserState();
 }

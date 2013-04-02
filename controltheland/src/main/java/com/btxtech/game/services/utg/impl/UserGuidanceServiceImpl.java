@@ -699,4 +699,13 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         }
     }
 
+    @Override
+    public DbLevelTask getActiveQuest(UserState userState) {
+        Integer questId = activeQuestIds.get(userState);
+        if (questId == null) {
+            return null;
+        }
+        return getDbLevelTask4Id(questId);
+    }
+
 }
