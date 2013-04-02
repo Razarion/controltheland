@@ -56,14 +56,16 @@ public class OnlineUtils extends MgmtWebPage {
                 return connectionService.getAllOnlineMissionUserState().size();
             }
         }));
-        Form form = new Form("onlineUserForm") {
-            @Override
-            protected void onSubmit() {
-                // Just reload
-            }
-        };
+        Form form = new Form("onlineUserForm");
         add(form);
+        form.add(new Button("reload"));
+        form.add(new Button("details") {
 
+            @Override
+            public void onSubmit() {
+                setResponsePage(new OnlineUserDetails());
+            }
+        });
     }
 
     private void setupRebootMessage() {

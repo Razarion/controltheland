@@ -93,4 +93,6 @@ public interface UserGuidanceService extends CommonUserGuidanceService {
     void setDoneDbLevelTasks(Collection<DbLevelTask> dbLevelTasksDone, UserState userState);
 
     QuestState getLevelTaskState(int levelTaskId, UserState userState);
+
+    DbLevelTask getActiveQuest(UserState userState);
 }

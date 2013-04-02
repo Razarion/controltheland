@@ -403,8 +403,8 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
     }
 
     @Override
-    public Collection<SimpleBase> getAllOnlineBases() {
-        Collection<SimpleBase> onlineBases = new ArrayList<>();
+    public List<SimpleBase> getAllOnlineBases() {
+        List<SimpleBase> onlineBases = new ArrayList<>();
         for (PlanetImpl planet : planetImpls.values()) {
             onlineBases.addAll(planet.getPlanetServices().getConnectionService().getOnlineBases());
         }

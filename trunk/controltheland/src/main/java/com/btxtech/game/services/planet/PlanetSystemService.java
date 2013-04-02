@@ -87,5 +87,5 @@ public interface PlanetSystemService {
 
     List<PlanetLiteInfo> getAllPlanetLiteInfos();
 
-    Collection<SimpleBase> getAllOnlineBases();
+    List<SimpleBase> getAllOnlineBases();
 }

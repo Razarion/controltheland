@@ -49,6 +49,7 @@ import java.util.List;
  * Time: 10:31:43 PM
  */
 public class UserTracking extends MgmtWebPage {
+    public static final String USER_ID = "userId";
     @SpringBean
     private UserTrackingService userTrackingService;
     @SpringBean
@@ -58,14 +59,14 @@ public class UserTracking extends MgmtWebPage {
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DateUtil.DATE_TIME_FORMAT_STRING);
     private Integer userId;
 
-    public UserTracking() {
+    public UserTracking(PageParameters pageParameters) {
         setDefaultModel(new CompoundPropertyModel<User>(new LoadableDetachableModel<User>() {
             @Override
             protected User load() {
                 return userService.getUser(userId);
             }
         }));
-        filter();
+        filter(pageParameters);
         userDetails();
         resultTable();
     }
@@ -126,7 +127,7 @@ public class UserTracking extends MgmtWebPage {
         });
     }
 
-    private void filter() {
+    private void filter(PageParameters pageParameters) {
         add(new FeedbackPanel("msgs"));
         Form<UserTrackingFilter> form = new Form<>("filterForm");
         add(form);
@@ -151,6 +152,10 @@ public class UserTracking extends MgmtWebPage {
                 }
             }
         });
+        Integer userId = pageParameters.getAsInteger(USER_ID);
+        if (userId != null) {
+            this.userId = userId;
+        }
     }
 
     private void resultTable() {

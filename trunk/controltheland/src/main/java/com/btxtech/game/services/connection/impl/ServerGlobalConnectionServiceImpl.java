@@ -175,7 +175,7 @@ public class ServerGlobalConnectionServiceImpl implements ServerGlobalConnection
     }
 
     @Override
-    public Collection<UserState> getAllOnlineMissionUserState() {
+    public List<UserState> getAllOnlineMissionUserState() {
         synchronized (onlineMissionUserStates) {
             return new ArrayList<>(onlineMissionUserStates);
         }

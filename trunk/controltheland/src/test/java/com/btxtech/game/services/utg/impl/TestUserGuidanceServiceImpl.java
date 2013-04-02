@@ -460,7 +460,28 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         userGuidanceService.setDoneDbLevelTasks(dbLevelTasksDone, userState);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-
     }
+
+    @Test
+    @DirtiesContext
+    public void getActiveQuest() throws Exception {
+        configureMultiplePlanetsAndLevels();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        UserState userState = userService.getUserState();
+        userGuidanceService.promote(userState, TEST_LEVEL_3_REAL_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(TEST_LEVEL_TASK_1_3_REAL_ID, (int)userGuidanceService.getActiveQuest(userState).getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+
 
 }
