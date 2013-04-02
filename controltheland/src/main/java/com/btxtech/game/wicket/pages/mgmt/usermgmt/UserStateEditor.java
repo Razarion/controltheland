@@ -33,6 +33,7 @@ import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
 import com.btxtech.game.wicket.uiservices.LevelReadonlyPanel;
 import com.btxtech.game.wicket.uiservices.PlanetCollectionPanel;
 import com.btxtech.game.wicket.uiservices.QuestCollectionPanel;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -114,6 +115,7 @@ public class UserStateEditor extends MgmtWebPage {
         setupUnlockedItems(form);
         setupUnlockedQuests(form);
         setupUnlockedPlanet(form);
+        setupQuests(form);
         setupHighScore(form);
     }
 
@@ -165,6 +167,12 @@ public class UserStateEditor extends MgmtWebPage {
             }
         }, Integer.class));
         form.add(new Label("xp"));
+        form.add(new Label("xpToLevelUp", new LoadableDetachableModel<Integer>() {
+            @Override
+            protected Integer load() {
+                return userGuidanceService.getXp2LevelUp(form.getModelObject());
+            }
+        }));
         form.add(new TextField<>("addXp", new IModel<Integer>() {
             @Override
             public Integer getObject() {
@@ -447,6 +455,71 @@ public class UserStateEditor extends MgmtWebPage {
                 unlockService.setUnlockedPlanetsBackend(model.getObject(), form.getModelObject());
             }
         });
+    }
+
+
+    public void setupQuests(final Form<UserState> form) {
+        final LoadableDetachableModel<Collection<DbLevelTask>> model = new LoadableDetachableModel<Collection<DbLevelTask>>() {
+            @Override
+            protected Collection<DbLevelTask> load() {
+                return userGuidanceService.getDoneDbLevelTasks(form.getModelObject());
+            }
+        };
+        form.add(new QuestCollectionPanel("questsDone", model));
+        form.add(new Button("saveQuestsDone") {
+            @Override
+            public void onSubmit() {
+                userGuidanceService.setDoneDbLevelTasks(model.getObject(), form.getModelObject());
+            }
+        });
+
+        DetachHashListProvider<DbLevelTask> provider = new DetachHashListProvider<DbLevelTask>() {
+            @Override
+            protected List<DbLevelTask> createList() {
+                return userGuidanceService.getDbLevel(form.getModelObject()).getLevelTaskCrud().readDbChildren();
+            }
+        };
+
+        form.add(new DataView<DbLevelTask>("questTable", provider) {
+            @Override
+            protected void populateItem(final Item<DbLevelTask> item) {
+                item.add(new Label("id"));
+                item.add(new Label("name"));
+                item.add(new Label("type", new LoadableDetachableModel<String>() {
+                    @Override
+                    protected String load() {
+                        return item.getModelObject().getDbTutorialConfig() != null ? "Mission" : "Quest";
+                    }
+                }));
+                item.add(new Label("state", new LoadableDetachableModel<String>() {
+                    @Override
+                    protected String load() {
+                        switch (userGuidanceService.getLevelTaskState(item.getModelObject().getId(), form.getModelObject())) {
+                            case OPEN:
+                                return "Open";
+                            case ACTIVE:
+                                return "Active";
+                            case DONE:
+                                return "Done";
+                            default:
+                                return "???";
+                        }
+                    }
+                }));
+                switch (userGuidanceService.getLevelTaskState(item.getModelObject().getId(), form.getModelObject())) {
+                    case OPEN:
+                        item.add(new AttributeModifier("bgcolor", true, new Model<>("#FFBBBB")));
+                        break;
+                    case ACTIVE:
+                        item.add(new AttributeModifier("bgcolor", true, new Model<>("#FFFFBB")));
+                        break;
+                    case DONE:
+                        item.add(new AttributeModifier("bgcolor", true, new Model<>("#BBFFBB")));
+                        break;
+                }
+            }
+        });
+
     }
 
 }

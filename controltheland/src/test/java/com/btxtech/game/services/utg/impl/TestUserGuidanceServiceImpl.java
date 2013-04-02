@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -364,4 +365,102 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(2, questOverview.getTotalMissions());
         Assert.assertEquals(0, questOverview.getQuestInfos().size());
     }
+
+    @Test
+    @DirtiesContext
+    public void setAndGetDoneDbLevelTasks() throws Exception {
+        configureMultiplePlanetsAndLevels();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        UserState userState = userService.getUserState();
+        userGuidanceService.promote(userState, TEST_LEVEL_3_REAL_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(0, userGuidanceService.getDoneDbLevelTasks(userState).size());
+        Collection<DbLevelTask> dbLevelTasksDone = new ArrayList<>();
+        dbLevelTasksDone.add(userGuidanceService.getDbLevelTask4Id(TEST_LEVEL_TASK_1_3_REAL_ID));
+        dbLevelTasksDone.add(userGuidanceService.getDbLevelTask4Id(TEST_LEVEL_TASK_2_3_REAL_ID));
+        dbLevelTasksDone.add(userGuidanceService.getDbLevelTask4Id(TEST_LEVEL_TASK_3_3_SIMULATED_ID));
+        dbLevelTasksDone.add(userGuidanceService.getDbLevelTask4Id(TEST_LEVEL_TASK_4_3_SIMULATED_ID));
+        userGuidanceService.setDoneDbLevelTasks(dbLevelTasksDone, userState);
+        Assert.assertEquals(4, userGuidanceService.getDoneDbLevelTasks(userState).size());
+        Assert.assertTrue(userGuidanceService.getDoneDbLevelTasks(userState).contains(userGuidanceService.getDbLevelTask4Id(TEST_LEVEL_TASK_1_3_REAL_ID)));
+        Assert.assertTrue(userGuidanceService.getDoneDbLevelTasks(userState).contains(userGuidanceService.getDbLevelTask4Id(TEST_LEVEL_TASK_2_3_REAL_ID)));
+        Assert.assertTrue(userGuidanceService.getDoneDbLevelTasks(userState).contains(userGuidanceService.getDbLevelTask4Id(TEST_LEVEL_TASK_3_3_SIMULATED_ID)));
+        Assert.assertTrue(userGuidanceService.getDoneDbLevelTasks(userState).contains(userGuidanceService.getDbLevelTask4Id(TEST_LEVEL_TASK_4_3_SIMULATED_ID)));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        QuestOverview questOverview = userGuidanceService.getQuestOverview(Locale.ENGLISH);
+        Assert.assertEquals(2, questOverview.getQuestsDone());
+        Assert.assertEquals(2, questOverview.getMissionsDone());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void setDoneDbLevelTasksFail() throws Exception {
+        configureMultiplePlanetsAndLevels();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        UserState userState = userService.getUserState();
+        userGuidanceService.promote(userState, TEST_LEVEL_3_REAL_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Collection<DbLevelTask> dbLevelTasksDone = new ArrayList<>();
+        dbLevelTasksDone.add(userGuidanceService.getDbLevelTask4Id(TEST_LEVEL_TASK_1_2_REAL_ID));
+        try {
+            userGuidanceService.setDoneDbLevelTasks(dbLevelTasksDone, userState);
+            Assert.fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals("Quest does not belong to level: DbLevelTask{id=2, name='TEST_LEVEL_TASK_1_2_REAL_NAME}", e.getMessage());
+        }
+        Assert.assertEquals(0, userGuidanceService.getDoneDbLevelTasks(userState).size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void getLevelTaskState() throws Exception {
+        configureMultiplePlanetsAndLevels();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        UserState userState = userService.getUserState();
+        userGuidanceService.promote(userState, TEST_LEVEL_3_REAL_ID);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Collection<DbLevelTask> dbLevelTasksDone = new ArrayList<>();
+        dbLevelTasksDone.add(userGuidanceService.getDbLevelTask4Id(TEST_LEVEL_TASK_2_3_REAL_ID));
+        userGuidanceService.setDoneDbLevelTasks(dbLevelTasksDone, userState);
+        // Verify
+        Assert.assertEquals(UserGuidanceService.QuestState.ACTIVE, userGuidanceService.getLevelTaskState(TEST_LEVEL_TASK_1_3_REAL_ID, userState));
+        Assert.assertEquals(UserGuidanceService.QuestState.DONE, userGuidanceService.getLevelTaskState(TEST_LEVEL_TASK_2_3_REAL_ID, userState));
+        Assert.assertEquals(UserGuidanceService.QuestState.OPEN, userGuidanceService.getLevelTaskState(TEST_LEVEL_TASK_3_3_SIMULATED_ID, userState));
+        Assert.assertEquals(UserGuidanceService.QuestState.OPEN, userGuidanceService.getLevelTaskState(TEST_LEVEL_TASK_4_3_SIMULATED_ID, userState));
+        userGuidanceService.setDoneDbLevelTasks(dbLevelTasksDone, userState);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+    }
+
 }
