@@ -79,6 +79,13 @@ public class DbChatMessage implements Serializable {
         this.message = message;
     }
 
+    public ChatMessage createMessageIdPacket() {
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setMessage(message);
+        chatMessage.setName(name);
+        return chatMessage;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
