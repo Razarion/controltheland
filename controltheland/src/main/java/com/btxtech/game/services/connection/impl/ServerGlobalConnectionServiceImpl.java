@@ -20,8 +20,8 @@ import com.btxtech.game.jsre.common.packets.MessageIdPacket;
 import com.btxtech.game.jsre.common.packets.ServerRebootMessagePacket;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
-import com.btxtech.game.services.connection.DbClientDebugEntry;
 import com.btxtech.game.services.connection.ConnectionStatistics;
+import com.btxtech.game.services.connection.DbClientDebugEntry;
 import com.btxtech.game.services.connection.ServerGlobalConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.mgmt.ServerI18nHelper;
@@ -30,8 +30,11 @@ import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.utg.DbChatMessage;
 import com.btxtech.game.services.utg.UserTrackingService;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.stereotype.Component;
@@ -41,6 +44,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -90,7 +94,27 @@ public class ServerGlobalConnectionServiceImpl implements ServerGlobalConnection
                 }
             }
         }, ONLINE_MISSION_TIMER_DELAY, ONLINE_MISSION_TIMER_DELAY, TimeUnit.MILLISECONDS);
+        loadChatMessages();
+    }
 
+    private void loadChatMessages() {
+        try {
+            HibernateUtil.openSession4InternalCall(sessionFactory);
+            Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbChatMessage.class);
+            criteria.setMaxResults(10);
+            criteria.addOrder(Order.desc("timeStamp"));
+            List<DbChatMessage> dbChatMessages = criteria.list();
+            if (dbChatMessages != null) {
+                Collections.reverse(dbChatMessages);
+                for (DbChatMessage dbChatMessage : dbChatMessages) {
+                    messageIdPacketQueue.initAndPutMessage(dbChatMessage.createMessageIdPacket());
+                }
+            }
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+        } finally {
+            HibernateUtil.closeSession4InternalCall(sessionFactory);
+        }
     }
 
     @PreDestroy
