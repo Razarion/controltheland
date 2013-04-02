@@ -24,6 +24,7 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.user.UserState;
 
+import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
@@ -33,6 +34,12 @@ import java.util.Map;
  * Time: 22:02:57
  */
 public interface UserGuidanceService extends CommonUserGuidanceService {
+    enum QuestState {
+        OPEN,
+        ACTIVE,
+        DONE
+    }
+
     void promote(UserState userState, int newDbLevelId);
 
     DbLevel getDbLevel();
@@ -80,4 +87,10 @@ public interface UserGuidanceService extends CommonUserGuidanceService {
     DbLevelTask getDbLevelTask4Id(int questId);
 
     void onQuestUnlocked(int dbLevelTaskId);
+
+    Collection<DbLevelTask> getDoneDbLevelTasks(UserState userState);
+
+    void setDoneDbLevelTasks(Collection<DbLevelTask> dbLevelTasksDone, UserState userState);
+
+    QuestState getLevelTaskState(int levelTaskId, UserState userState);
 }

@@ -62,6 +62,10 @@
             <td wicket:id="xp"/>
         </tr>
         <tr>
+            <td bgcolor="#dadada">XP for next Level</td>
+            <td wicket:id="xpToLevelUp"/>
+        </tr>
+        <tr>
             <td bgcolor="#dadada">Add XP (Like Reward)</td>
             <td><input type="text" wicket:id="addXp" size="4"/></td>
             <td><input type="submit" wicket:id="activateXp" value="Activate"></td>
@@ -144,6 +148,31 @@
             <td wicket:id="unlockedPlanets" size="20"></td>
             <td><input type="submit" wicket:id="saveUnlockedPlanets" value="Activate"></td>
         </tr>
+        <td bgcolor="#aaaaaa" colspan="3" valign="top">Quests</td>
+        <tr>
+            <td bgcolor="#dadada">Quests done [Id with ';']<br><span style="color:red;font-size:12px;">Active task not affected<br>No XP rewards</span></td>
+            <td wicket:id="questsDone" size="20"></td>
+            <td><input type="submit" wicket:id="saveQuestsDone" value="Activate"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Quests overview</td>
+            <td colspan="2">
+                <table border="1" style="border-collapse:collapse">
+                    <tr>
+                        <th bgcolor="#dadada">Id</th>
+                        <th bgcolor="#dadada">Quest</th>
+                        <th bgcolor="#dadada">Type</th>
+                        <th bgcolor="#dadada">State</th>
+                    </tr>
+                    <tr wicket:id="questTable">
+                        <td wicket:id="id"></td>
+                        <td wicket:id="name"></td>
+                        <td wicket:id="type"></td>
+                        <td wicket:id="state"></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
         <td bgcolor="#aaaaaa" colspan="3" valign="top">HighScore</td>
     </table>
 </form>
@@ -207,7 +236,7 @@
         </tr>
         <tr>
             <td bgcolor="#dadada">Activate</td>
-            <td ><input type="submit" wicket:id="activate" value="Activate"></td>
+            <td><input type="submit" wicket:id="activate" value="Activate"></td>
         </tr>
     </table>
 </form>

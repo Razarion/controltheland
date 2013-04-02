@@ -35,6 +35,7 @@ import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.unlock.ServerUnlockService;
+import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbLevel;
@@ -45,10 +46,9 @@ import com.btxtech.game.services.utg.XpService;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -337,7 +337,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
             throw new IllegalArgumentException("DbLevel can not be found in own DbPlanet: " + dbLevel);
         }
         index--;
-        if(index < 0) {
+        if (index < 0) {
             throw new IllegalArgumentException("No previous level for: " + dbLevel);
         }
         if (dbLevels.size() > index) {
@@ -646,4 +646,57 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         }
         return dbLevelTask;
     }
+
+    @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
+    public Collection<DbLevelTask> getDoneDbLevelTasks(UserState userState) {
+        Collection<DbLevelTask> dbLevelTasksDone = new ArrayList<>();
+        synchronized (levelTaskDone) {
+            Collection<Integer> levelDoneIds = levelTaskDone.get(userState);
+            if (levelDoneIds != null) {
+                for (Integer levelDoneId : levelDoneIds) {
+                    dbLevelTasksDone.add(getDbLevelTask4Id(levelDoneId));
+                }
+            }
+        }
+        return dbLevelTasksDone;
+    }
+
+    @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
+    public void setDoneDbLevelTasks(Collection<DbLevelTask> dbLevelTasksDone, UserState userState) {
+        synchronized (levelTaskDone) {
+            Collection<Integer> levelDoneIds = levelTaskDone.get(userState);
+            if (levelDoneIds == null) {
+                levelDoneIds = new ArrayList<>();
+                levelTaskDone.put(userState, levelDoneIds);
+            }
+            levelDoneIds.clear();
+            Collection<DbLevelTask> availableLevelTasks = getDbLevel(userState).getLevelTaskCrud().readDbChildren();
+            for (DbLevelTask dbLevelTaskDone : dbLevelTasksDone) {
+                if (!availableLevelTasks.contains(dbLevelTaskDone)) {
+                    throw new IllegalArgumentException("Quest does not belong to level: " + dbLevelTaskDone);
+                }
+                levelDoneIds.add(dbLevelTaskDone.getId());
+            }
+        }
+    }
+
+    @Override
+    public QuestState getLevelTaskState(int levelTaskId, UserState userState) {
+        synchronized (levelTaskDone) {
+            Integer activeQuestId = activeQuestIds.get(userState);
+            if (activeQuestId != null && activeQuestId == levelTaskId) {
+                return QuestState.ACTIVE;
+            }
+            Collection<Integer> levelTasksDone = levelTaskDone.get(userState);
+            if (levelTasksDone != null && levelTasksDone.contains(levelTaskId)) {
+                return QuestState.DONE;
+            } else {
+                return QuestState.OPEN;
+            }
+
+        }
+    }
+
 }
