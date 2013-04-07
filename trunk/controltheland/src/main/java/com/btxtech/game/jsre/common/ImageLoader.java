@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.dom.client.ImageElement;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.user.client.Timer;
@@ -27,6 +28,7 @@ import java.util.logging.Logger;
  */
 public class ImageLoader<T> {
     private static final int SEND_DEBUG_DELAY = 20000;
+
     public interface Listener<T> {
         void onLoaded(Map<T, ImageElement> imageElements);
     }
@@ -72,9 +74,10 @@ public class ImageLoader<T> {
                             log.warning("ImageLoader onLoad returned unknown name: " + event.getAssociatedType().getName() + " " + image.getUrl());
                         }
                         onImageLoaded(userObjects.get(imageIndex), image, listener);
-                        image.setVisible(false); // Remove from RootPanel not possible due to IE9
+                        image.getElement().getStyle().setVisibility(Style.Visibility.HIDDEN); // Remove from RootPanel not possible due to IE9
                     }
                 });
+                image.setPixelSize(1, 1);
                 image.getElement().getStyle().setZIndex(-100);
                 RootPanel.get().add(image, 0, 0);
             } else {
