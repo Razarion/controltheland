@@ -474,4 +474,73 @@ public class TestUserService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void getSimilarUserName() throws Exception {
+        // HSQLDB does not support ilike
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createUser("ABCED", "xxx");
+        createUser("ABQU", "xxx");
+        createUser("FBRD", "xxx");
+        createUser("FBLXY", "xxx");
+        createUser("BZ51", "xxx");
+        createUser("BZ52", "xxx");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<String> names = userService.getSimilarUserName("");
+        Assert.assertTrue(names.isEmpty());
+        names = userService.getSimilarUserName("a");
+        Assert.assertEquals(2, names.size());
+        Assert.assertEquals("ABCED", names.get(0));
+        Assert.assertEquals("ABQU", names.get(1));
+        names = userService.getSimilarUserName("ab");
+        Assert.assertEquals(2, names.size());
+        Assert.assertEquals("ABCED", names.get(0));
+        Assert.assertEquals("ABQU", names.get(1));
+        names = userService.getSimilarUserName("abc");
+        Assert.assertEquals(1, names.size());
+        Assert.assertEquals("ABCED", names.get(0));
+        names = userService.getSimilarUserName("abqu");
+        Assert.assertEquals(1, names.size());
+        Assert.assertEquals("ABQU", names.get(0));
+        names = userService.getSimilarUserName("%z");
+        Assert.assertEquals(2, names.size());
+        Assert.assertEquals("BZ51", names.get(0));
+        Assert.assertEquals("BZ52", names.get(1));
+        names = userService.getSimilarUserName("%z5");
+        Assert.assertEquals(2, names.size());
+        Assert.assertEquals("BZ51", names.get(0));
+        Assert.assertEquals("BZ52", names.get(1));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void getSimilarUserNameSize() throws Exception {
+        // HSQLDB does not support ilike
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        for(int i = 0; i < 50; i++) {
+            createUser("ABCD" + i, "xxx");
+        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<String> names = userService.getSimilarUserName("abcd");
+        Assert.assertEquals(20, names.size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
 }
