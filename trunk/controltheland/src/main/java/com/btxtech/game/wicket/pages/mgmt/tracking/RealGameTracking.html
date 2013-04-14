@@ -32,7 +32,12 @@
     </table>
 
     <h3>User Action</h3>
-    <table border="0">
+
+    <form wicket:id="filterForm" style="background-color: #DDDDDD">
+        <div wicket:id="historyFilter"></div>
+        <input type="submit" value="Go" wicket:id="go"/>
+    </form>
+    <table border="0" wicket:id="userActionContainer">
         <tr>
             <th bgcolor="#dadada">Time</th>
             <th bgcolor="#dadada">Delta</th>

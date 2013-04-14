@@ -4,7 +4,10 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.control.ColdRealGameStartupTaskEnum;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
+import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
@@ -16,6 +19,11 @@ import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.jsre.playback.PlaybackInfo;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.connection.Session;
+import com.btxtech.game.services.history.DbHistoryElement;
+import com.btxtech.game.services.history.GameHistoryFilter;
+import com.btxtech.game.services.history.GameHistoryFrame;
+import com.btxtech.game.services.history.HistoryService;
+import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.tracker.DbStartupTask;
 import org.junit.Assert;
@@ -41,6 +49,8 @@ public class TestTracking extends AbstractServiceTest {
     private UserGuidanceService userGuidanceService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private HistoryService historyService;
 
     @Test
     @DirtiesContext
@@ -856,7 +866,7 @@ public class TestTracking extends AbstractServiceTest {
         Assert.assertEquals(ColdRealGameStartupTaskEnum.PRELOAD_IMAGE_SPRITE_MAPS.getStartupTaskEnumHtmlHelper().getNiceText(), dbStartupTasks.get(1).getTask());
         Assert.assertEquals(ColdRealGameStartupTaskEnum.LOAD_UNITS.getStartupTaskEnumHtmlHelper().getNiceText(), dbStartupTasks.get(2).getTask());
         // Real Game
-        RealGameTrackingInfo realGameTrackingInfo = userTrackingService.getGameTracking(lifecycleTrackingInfos.get(2));
+        RealGameTrackingInfo realGameTrackingInfo = userTrackingService.getGameTracking(lifecycleTrackingInfos.get(2).createGameHistoryFrame(), createGameHistoryFilter(true, DbHistoryElement.Type.ITEM_CREATED));
         List<UserCommandHistoryElement> userCommandHistoryElements = realGameTrackingInfo.getUserCommandHistoryElements();
         System.out.println("----------History----------");
         for (UserCommandHistoryElement userCommandHistoryElement : userCommandHistoryElements) {
@@ -886,7 +896,7 @@ public class TestTracking extends AbstractServiceTest {
         Assert.assertEquals(ColdRealGameStartupTaskEnum.INIT_GAME.getStartupTaskEnumHtmlHelper().getNiceText(), dbStartupTasks.get(0).getTask());
         Assert.assertEquals(ColdRealGameStartupTaskEnum.DOWNLOAD_GAME_INFO.getStartupTaskEnumHtmlHelper().getNiceText(), dbStartupTasks.get(1).getTask());
         // Real Game
-        RealGameTrackingInfo realGameTrackingInfo = userTrackingService.getGameTracking(lifecycleTrackingInfos.get(3));
+        RealGameTrackingInfo realGameTrackingInfo = userTrackingService.getGameTracking(lifecycleTrackingInfos.get(3).createGameHistoryFrame(), createGameHistoryFilter(true, DbHistoryElement.Type.ITEM_CREATED));
         List<UserCommandHistoryElement> userCommandHistoryElements = realGameTrackingInfo.getUserCommandHistoryElements();
         System.out.println("----------History----------");
         for (UserCommandHistoryElement userCommandHistoryElement : userCommandHistoryElements) {
@@ -898,6 +908,64 @@ public class TestTracking extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void testGetGameTrackingFilter() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        User u1 = userService.getUser("U1");
+        SimpleBase simpleBase1 = getMyBase();
+        String session1 = getHttpSessionId();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U2");
+        User u2 = userService.getUser("U2");
+        SimpleBase simpleBase2 = getMyBase();
+        String session2 = getHttpSessionId();
+        historyService.addAllianceOffered(u2, u1);
+        historyService.addAllianceOfferAccepted(u2, u1);
+        historyService.addAllianceBroken(u2, u1);
+        historyService.addAllianceOfferRejected(u2, u1);
+        MoveCommand moveCommand = new MoveCommand();
+        moveCommand.setId(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
+        moveCommand.setTimeStamp();
+        moveCommand.setPathToDestination(new Path(new Index(1000,1000), new Index(3000,3000), true));
+        userTrackingService.saveUserCommand(moveCommand);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<UserCommandHistoryElement> userCommandHistoryElements = userTrackingService.getGameTracking(new GameHistoryFrame(session1, null, 0, 0), createGameHistoryFilter(false)).getUserCommandHistoryElements();
+        Assert.assertTrue(userCommandHistoryElements.isEmpty());
+        userCommandHistoryElements = userTrackingService.getGameTracking(new GameHistoryFrame(session2, null, 0, 0), createGameHistoryFilter(false, DbHistoryElement.Type.ALLIANCE_BROKEN)).getUserCommandHistoryElements();
+        Assert.assertEquals(1, userCommandHistoryElements.size());
+        Assert.assertTrue(userCommandHistoryElements.get(0).getInfo1().contains("Alliance broken by"));
+        userCommandHistoryElements = userTrackingService.getGameTracking(new GameHistoryFrame(session2, null, 0, 0), createGameHistoryFilter(false, DbHistoryElement.Type.ALLIANCE_OFFER_ACCEPTED, DbHistoryElement.Type.ALLIANCE_BROKEN)).getUserCommandHistoryElements();
+        Assert.assertEquals(2, userCommandHistoryElements.size());
+        userCommandHistoryElements = userTrackingService.getGameTracking(new GameHistoryFrame(session2, null, 0, 0), createGameHistoryFilter(true)).getUserCommandHistoryElements();
+        Assert.assertEquals(1, userCommandHistoryElements.size());
+        Assert.assertTrue(userCommandHistoryElements.get(0).getInfo1().contains("MoveCommand"));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    private GameHistoryFilter createGameHistoryFilter(boolean showCommands, DbHistoryElement.Type... types) {
+        GameHistoryFilter gameHistoryFilter = new GameHistoryFilter();
+        gameHistoryFilter.setShowCommands(showCommands);
+        for (DbHistoryElement.Type type : types) {
+            gameHistoryFilter.setType(type, true);
+        }
+        return gameHistoryFilter;
+    }
+
 
     @Test
     @DirtiesContext
