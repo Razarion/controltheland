@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.utg;
 
+import com.btxtech.game.services.history.GameHistoryFrame;
 import com.btxtech.game.services.utg.tracker.DbStartupTask;
 import com.btxtech.game.services.utg.tracker.DbStartupTerminated;
 
@@ -26,7 +27,7 @@ import java.util.List;
  * Time: 14:03:07
  */
 public class LifecycleTrackingInfo implements Serializable, Comparable<LifecycleTrackingInfo> {
-    private List<DbStartupTask> dbStartupTasks = new ArrayList<DbStartupTask>();
+    private List<DbStartupTask> dbStartupTasks = new ArrayList<>();
     private String levelTaskName;
     private String sessionId;
     private String startUuid;
@@ -72,18 +73,18 @@ public class LifecycleTrackingInfo implements Serializable, Comparable<Lifecycle
         }
     }
 
-    public Long getNextStartServer() {
+    public long getNextStartServer() {
         if (nextReaGameLifecycleTrackingInfo != null) {
             return nextReaGameLifecycleTrackingInfo.getStartServer();
         } else {
-            return null;
+            return 0;
         }
     }
 
     public long getStartupDuration() {
-        if(startupTerminateds != null && startupTerminateds.size() == 1) {
+        if (startupTerminateds != null && startupTerminateds.size() == 1) {
             return startupTerminateds.get(0).getTotalTime();
-        }  else {
+        } else {
             return 0;
         }
     }
@@ -144,5 +145,9 @@ public class LifecycleTrackingInfo implements Serializable, Comparable<Lifecycle
 
     public boolean isSuccessFul() {
         return startupTerminateds != null && startupTerminateds.size() == 1 && startupTerminateds.get(0).isSuccessful();
+    }
+
+    public GameHistoryFrame createGameHistoryFrame() {
+        return new GameHistoryFrame(sessionId, getBaseId(), getStartServer(), getNextStartServer());
     }
 }

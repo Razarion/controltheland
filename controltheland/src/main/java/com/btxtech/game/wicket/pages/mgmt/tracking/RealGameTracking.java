@@ -14,14 +14,23 @@
 package com.btxtech.game.wicket.pages.mgmt.tracking;
 
 import com.btxtech.game.services.common.DateUtil;
+import com.btxtech.game.services.history.GameHistoryFilter;
+import com.btxtech.game.services.history.GameHistoryFrame;
 import com.btxtech.game.services.utg.LifecycleTrackingInfo;
 import com.btxtech.game.services.utg.RealGameTrackingInfo;
 import com.btxtech.game.services.utg.UserCommandHistoryElement;
 import com.btxtech.game.services.utg.UserTrackingService;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.util.List;
@@ -38,13 +47,32 @@ public class RealGameTracking extends Panel {
     public RealGameTracking(String id, LifecycleTrackingInfo lifecycleTrackingInfo) {
         super(id);
         add(new LifecyclePanel("lifecycle", lifecycleTrackingInfo));
-        RealGameTrackingInfo realGameTrackingInfo = userTrackingService.getGameTracking(lifecycleTrackingInfo);
         add(new Label("baseName", lifecycleTrackingInfo.getBaseName()));
-        userActions(realGameTrackingInfo.getUserCommandHistoryElements());
+        final Form<GameHistoryFilter> filterForm = new Form<>("filterForm", new CompoundPropertyModel<GameHistoryFilter>(new Model<>(new GameHistoryFilter())));
+        add(filterForm);
+        final WebMarkupContainer listContainer = new WebMarkupContainer("userActionContainer");
+        listContainer.add(userActions(filterForm, lifecycleTrackingInfo.createGameHistoryFrame()));
+        listContainer.setOutputMarkupId(true);
+        add(listContainer);
+
+        filterForm.add(new GameHistoryFilterView("historyFilter"));
+        filterForm.add(new AjaxButton("go", filterForm) {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                filterForm.setDefaultModelObject(filterForm.getModelObject());
+                target.addComponent(listContainer);
+            }
+        });
     }
 
-    private void userActions(List<UserCommandHistoryElement> userCommandHistoryElements) {
-        ListView<UserCommandHistoryElement> userActionList = new ListView<UserCommandHistoryElement>("userActions", userCommandHistoryElements) {
+    private ListView<UserCommandHistoryElement> userActions(final Form<GameHistoryFilter> filterForm, final GameHistoryFrame gameHistoryFrame) {
+        ListView<UserCommandHistoryElement> userActionList = new ListView<UserCommandHistoryElement>("userActions", new LoadableDetachableModel<List<? extends UserCommandHistoryElement>>() {
+            @Override
+            protected List<? extends UserCommandHistoryElement> load() {
+                RealGameTrackingInfo realGameTrackingInfo = userTrackingService.getGameTracking(gameHistoryFrame, filterForm.getModelObject());
+                return realGameTrackingInfo.getUserCommandHistoryElements();
+            }
+        }) {
             private Long previous;
 
             @Override
@@ -67,5 +95,6 @@ public class RealGameTracking extends Panel {
             }
         };
         add(userActionList);
+        return userActionList;
     }
 }

@@ -24,6 +24,8 @@ import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.history.DbHistoryElement;
 import com.btxtech.game.services.history.DisplayHistoryElement;
+import com.btxtech.game.services.history.GameHistoryFilter;
+import com.btxtech.game.services.history.GameHistoryFrame;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.User;
@@ -652,24 +654,32 @@ public class HistoryServiceImpl implements HistoryService {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<DisplayHistoryElement> getHistoryElements(final Long from, final Long to, final String sessionId, final Integer baseId) {
+    public List<DisplayHistoryElement> getHistoryElements(GameHistoryFrame gameHistoryFrame, GameHistoryFilter gameHistoryFilter) {
         ArrayList<DisplayHistoryElement> displayHistoryElements = new ArrayList<>();
+        if (!gameHistoryFilter.hasTypes()) {
+            return displayHistoryElements;
+        }
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbHistoryElement.class);
-        if (baseId != null) {
-            criteria.add(Restrictions.or(Restrictions.eq("sessionId", sessionId), Restrictions.or(Restrictions.eq("actorBaseId", baseId), Restrictions.eq("targetBaseId", baseId))));
+
+        if (gameHistoryFrame.getBaseId() != null) {
+            criteria.add(Restrictions.or(Restrictions.eq("sessionId", gameHistoryFrame.getSessionId()), Restrictions.or(Restrictions.eq("actorBaseId", gameHistoryFrame.getBaseId()), Restrictions.eq("targetBaseId", gameHistoryFrame.getBaseId()))));
         } else {
-            criteria.add(Restrictions.eq("sessionId", sessionId));
+            criteria.add(Restrictions.eq("sessionId", gameHistoryFrame.getSessionId()));
         }
-        if (from != null) {
-            criteria.add(Restrictions.ge("timeStampMs", from));
+
+
+        if (gameHistoryFrame.hasStartTime()) {
+            criteria.add(Restrictions.ge("timeStampMs", gameHistoryFrame.getStartTime()));
         }
-        if (to != null) {
-            criteria.add(Restrictions.lt("timeStampMs", to));
+        if (gameHistoryFrame.hasEndTimeExclusive()) {
+            criteria.add(Restrictions.lt("timeStampMs", gameHistoryFrame.getEndTimeExclusive()));
         }
+        criteria.add(Restrictions.in("type", gameHistoryFilter.getTypes()));
         criteria.addOrder(Property.forName("timeStampMs").desc());
+
         criteria.addOrder(Property.forName("id").desc()); // If Timestamp is equals, assume id is in ascending form
         for (DbHistoryElement dbHistoryElement : (Collection<DbHistoryElement>) criteria.list()) {
-            displayHistoryElements.add(convert(null, baseId, dbHistoryElement));
+            displayHistoryElements.add(convert(null, gameHistoryFrame.getBaseId(), dbHistoryElement));
         }
         return displayHistoryElements;
     }

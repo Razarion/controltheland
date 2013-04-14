@@ -24,6 +24,8 @@ import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
+import com.btxtech.game.services.history.GameHistoryFilter;
+import com.btxtech.game.services.history.GameHistoryFrame;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.user.DbForgotPassword;
 import com.btxtech.game.services.user.User;
@@ -110,7 +112,7 @@ public interface UserTrackingService {
 
     void saveStartupTerminated(boolean successful, long totalTime, String startUuid, Integer levelTaskId);
 
-    RealGameTrackingInfo getGameTracking(LifecycleTrackingInfo lifecycleTrackingInfo);
+    RealGameTrackingInfo getGameTracking(GameHistoryFrame gameHistoryFrame, GameHistoryFilter gameHistoryFilter);
 
     TutorialTrackingInfo getTutorialTrackingInfo(LifecycleTrackingInfo lifecycleTrackingInfo);
 

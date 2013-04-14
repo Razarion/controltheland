@@ -50,12 +50,12 @@ public class SessionDetail extends MgmtWebPage {
 
         gameOverview(sessionDetailDto);
 
-        pageHostory(sessionDetailDto);
+        pageHistory(sessionDetailDto);
 
         detailTrackingInfo(sessionDetailDto);
     }
 
-    private void pageHostory(final SessionDetailDto sessionDetailDto) {
+    private void pageHistory(final SessionDetailDto sessionDetailDto) {
         ListView<DbPageAccess> pageAccessHistory = new ListView<DbPageAccess>("pageAccessHistory", sessionDetailDto.getPageAccessHistory()) {
             private Date previous;
 

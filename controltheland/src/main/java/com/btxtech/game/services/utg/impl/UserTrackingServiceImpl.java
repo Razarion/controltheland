@@ -43,6 +43,8 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbChatMessage;
 import com.btxtech.game.services.utg.DbLevelTask;
+import com.btxtech.game.services.history.GameHistoryFilter;
+import com.btxtech.game.services.history.GameHistoryFrame;
 import com.btxtech.game.services.utg.LifecycleTrackingInfo;
 import com.btxtech.game.services.utg.RealGameTrackingInfo;
 import com.btxtech.game.services.utg.SessionDetailDto;
@@ -315,14 +317,18 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @SuppressWarnings("unchecked")
-    private List<DbUserCommand> getUserCommand(LifecycleTrackingInfo lifecycleTrackingInfo) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbUserCommand.class);
-        criteria.add(Restrictions.eq("sessionId", lifecycleTrackingInfo.getSessionId()));
-        criteria.add(Restrictions.ge("timeStampMs", lifecycleTrackingInfo.getStartServer()));
-        if (lifecycleTrackingInfo.getNextReaGameLifecycleTrackingInfo() != null) {
-            criteria.add(Restrictions.lt("timeStampMs", lifecycleTrackingInfo.getNextReaGameLifecycleTrackingInfo().getStartServer()));
+    private List<DbUserCommand> getUserCommand(GameHistoryFrame gameHistoryFrame, GameHistoryFilter gameHistoryFilter) {
+        if (gameHistoryFilter.isShowCommands()) {
+            Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbUserCommand.class);
+            criteria.add(Restrictions.eq("sessionId", gameHistoryFrame.getSessionId()));
+            criteria.add(Restrictions.ge("timeStampMs", gameHistoryFrame.getStartTime()));
+            if (gameHistoryFrame.getEndTimeExclusive() > 0) {
+                criteria.add(Restrictions.lt("timeStampMs", gameHistoryFrame.getEndTimeExclusive()));
+            }
+            return (List<DbUserCommand>) criteria.list();
+        } else {
+            return Collections.EMPTY_LIST;
         }
-        return (List<DbUserCommand>) criteria.list();
     }
 
     @Override
@@ -400,10 +406,10 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public RealGameTrackingInfo getGameTracking(LifecycleTrackingInfo lifecycleTrackingInfo) {
+    public RealGameTrackingInfo getGameTracking(GameHistoryFrame gameHistoryFrame, GameHistoryFilter gameHistoryFilter) {
         RealGameTrackingInfo trackingInfoReal = new RealGameTrackingInfo();
-        trackingInfoReal.setUserCommands(getUserCommand(lifecycleTrackingInfo));
-        trackingInfoReal.setHistoryElements(historyService.getHistoryElements(lifecycleTrackingInfo.getStartServer(), lifecycleTrackingInfo.getNextStartServer(), lifecycleTrackingInfo.getSessionId(), lifecycleTrackingInfo.getBaseId()));
+        trackingInfoReal.setUserCommands(getUserCommand(gameHistoryFrame, gameHistoryFilter));
+        trackingInfoReal.setHistoryElements(historyService.getHistoryElements(gameHistoryFrame, gameHistoryFilter));
         return trackingInfoReal;
     }
 
