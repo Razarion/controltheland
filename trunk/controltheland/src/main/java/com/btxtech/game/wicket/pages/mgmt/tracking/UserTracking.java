@@ -26,6 +26,7 @@ import com.btxtech.game.wicket.pages.mgmt.BaseEditor;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.pages.mgmt.usermgmt.UserStateEditor;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteTextField;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -41,6 +42,8 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.string.Strings;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -133,7 +136,17 @@ public class UserTracking extends MgmtWebPage {
         add(form);
         final Model<String> userNameModel = new Model<>();
         final Model<Integer> userIdModel = new Model<>();
-        form.add(new TextField<>("userName", userNameModel));
+        final AutoCompleteTextField<String> field = new AutoCompleteTextField<String>("userName", userNameModel) {
+            @Override
+            protected Iterator<String> getChoices(String input) {
+                if (Strings.isEmpty(input)) {
+                    List<String> emptyList = Collections.emptyList();
+                    return emptyList.iterator();
+                }
+                return userService.getSimilarUserName(input).iterator();
+            }
+        };
+        form.add(field);
         form.add(new TextField<>("userId", userIdModel, Integer.class));
         form.add(new Button("search") {
             @Override

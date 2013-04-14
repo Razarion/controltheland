@@ -16,6 +16,31 @@
 <html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
 <head>
     <title>User Tracking</title>
+    <style>
+        div.wicket-aa {
+            font-family: "Lucida Grande", "Lucida Sans Unicode", Tahoma, Verdana;
+            font-size: 12px;
+            background-color: white;
+            border-width: 1px;
+            border-color: #cccccc;
+            border-style: solid;
+            padding: 2px;
+            margin: 1px 0 0 0;
+            text-align: left;
+        }
+
+        div.wicket-aa ul {
+            list-style: none;
+            padding: 2px;
+            margin: 0;
+        }
+
+        div.wicket-aa ul li.selected {
+            background-color: #FFFF00;
+            padding: 2px;
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
 <h1>User Tracking</h1>
@@ -25,7 +50,7 @@
 <form wicket:id="filterForm">
     <table style="border: 2px dotted #000000; width: 400px; padding: 5px;">
         <tr>
-            <td valign="top">User Name</td>
+            <td valign="top">User Name [%/_ allowed]</td>
             <td valign="top"><input wicket:id="userName" type="text" size="20"></td>
         </tr>
         <tr>
@@ -75,7 +100,8 @@
         <td wicket:id="loginCount"/>
     </tr>
     <tr>
-        <td bgcolor="#dadada">In Game Time [h:mm:ss]<br><span style="color:red;font-size:12px;">experimental, no tutorials</span></td>
+        <td bgcolor="#dadada">In Game Time [h:mm:ss]<br><span style="color:red;font-size:12px;">experimental, no tutorials</span>
+        </td>
         <td wicket:id="inGameTime"/>
     </tr>
     <tr>

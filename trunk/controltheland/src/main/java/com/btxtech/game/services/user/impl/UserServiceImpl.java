@@ -44,6 +44,7 @@ import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -598,6 +599,26 @@ public class UserServiceImpl implements UserService {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         return (List<User>) criteria.list();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<String> getSimilarUserName(String string) {
+        if (StringUtils.isEmpty(string)) {
+            return Collections.emptyList();
+        }
+        string = string.toUpperCase();
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
+        criteria.add(Restrictions.ilike("name", string + "%"));
+        criteria.setProjection(Projections.property("name"));
+        criteria.addOrder(Order.asc("name"));
+        criteria.setMaxResults(20);
+        List<String> usersName = criteria.list();
+        if (usersName != null) {
+            return usersName;
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     @Override

@@ -58,6 +58,8 @@ public interface UserService extends UserDetailsService {
 
     List<User> getAllUsers();
 
+    List<String> getSimilarUserName(String string);
+
     void createUser(String name, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, AlreadyLoggedInException;
 
     User createUnverifiedUser(String name, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, AlreadyLoggedInException, EmailAlreadyExitsException;
