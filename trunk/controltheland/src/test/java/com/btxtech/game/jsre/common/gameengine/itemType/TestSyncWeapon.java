@@ -143,6 +143,7 @@ public class TestSyncWeapon extends AbstractServiceTest {
         // Finish buildup
         towerItem.setBuildup(1.0);
         waitForActionServiceDone();
+        // TODO failed on 14.04.2013
         Assert.assertFalse(target.isAlive());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

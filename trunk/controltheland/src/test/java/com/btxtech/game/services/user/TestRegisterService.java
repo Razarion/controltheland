@@ -998,6 +998,7 @@ public class TestRegisterService extends AbstractServiceTest {
         List<DbUserHistory> historyElements = HibernateUtil.loadAll(getSessionFactory(), DbUserHistory.class);
         Assert.assertEquals(9, historyElements.size());
         Assert.assertEquals("U1", historyElements.get(6).getUser());
+        // TODO failed on 14.04.2013
         Assert.assertTrue(historyElements.get(6).getForgotPasswordRequestRemoved().getTime() >= timeBefore);
         Assert.assertTrue(historyElements.get(6).getForgotPasswordRequestRemoved().getTime() <= timeAfter);
         Assert.assertEquals(uuid1, historyElements.get(6).getForgotPasswordUuid());
