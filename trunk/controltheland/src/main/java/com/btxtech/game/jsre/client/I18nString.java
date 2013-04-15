@@ -17,7 +17,9 @@ public class I18nString implements Serializable {
     private Map<Language, String> localizedStrings;
 
     public static Language convert(String localName) {
-        if (localName.startsWith("de")) {
+        if (localName.toLowerCase().startsWith("default")) {
+            return Language.DEFAULT;
+        } else if (localName.toLowerCase().startsWith("de")) {
             return Language.DE;
         } else {
             return Language.DEFAULT;
