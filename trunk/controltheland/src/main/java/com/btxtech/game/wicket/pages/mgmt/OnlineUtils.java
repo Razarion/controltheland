@@ -36,11 +36,8 @@ public class OnlineUtils extends MgmtWebPage {
     private PlanetSystemService planetSystemService;
 
     public OnlineUtils() {
-        FeedbackPanel feedbackPanel = new FeedbackPanel("msgs");
-        add(feedbackPanel);
-
+        add(new FeedbackPanel("msgs"));
         setupOnlineUserPanel();
-        setupRebootMessage();
     }
 
     private void setupOnlineUserPanel() {
@@ -64,27 +61,6 @@ public class OnlineUtils extends MgmtWebPage {
             @Override
             public void onSubmit() {
                 setResponsePage(new OnlineUserDetails());
-            }
-        });
-    }
-
-    private void setupRebootMessage() {
-        Form form = new Form("rebootMessageForm");
-        add(form);
-
-        final Model<Integer> rebootModel = new Model<>(60);
-        final Model<Integer> downTimeModel = new Model<>(5);
-        form.add(new TextField<>("rebootInSeconds", rebootModel, Integer.class));
-        form.add(new TextField<>("downTimInMinutes", downTimeModel, Integer.class));
-
-
-        form.add(new Button("send") {
-            @Override
-            public void onSubmit() {
-                if (rebootModel.getObject() == null || downTimeModel.getObject() == null) {
-                    error("Enter a valid number for 'Reboot in seconds' and 'Downtime in minutes'");
-                }
-                connectionService.sendServerRebootMessage(rebootModel.getObject(), downTimeModel.getObject());
             }
         });
     }
