@@ -3,9 +3,11 @@ package com.btxtech.game.services.utg;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -22,6 +24,7 @@ import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.planet.impl.PlanetSystemServiceImpl;
 import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
@@ -82,10 +85,18 @@ public class TestSyncItemTypeComparison extends AbstractServiceTest implements S
 
         BaseService baseServiceMock = EasyMock.createNiceMock(BaseService.class);
         EasyMock.expect(baseServiceMock.getUserState(base1.getSimpleBase())).andReturn(userState1).anyTimes();
+        EasyMock.expect(baseServiceMock.getUserState(base2.getSimpleBase())).andReturn(userState2).anyTimes();
         EasyMock.replay(baseServiceMock);
+
+        LevelScope levelScope = new LevelScope(new PlanetLiteInfo(TEST_PLANET_1_ID,"",null),0,0,null,0);
+        UserGuidanceService userGuidanceServiceMock = EasyMock.createNiceMock(UserGuidanceService.class);
+        EasyMock.expect(userGuidanceServiceMock.getLevelScope(userState1)).andReturn(levelScope).anyTimes();
+        EasyMock.expect(userGuidanceServiceMock.getLevelScope(userState2)).andReturn(levelScope).anyTimes();
+        EasyMock.replay(userGuidanceServiceMock);
 
         ((ServerConditionServiceImpl) deAopProxy(serverConditionService)).setRate(50);
         ((ServerPlanetServicesImpl) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID)).setBaseService(baseServiceMock);
+        setPrivateField(PlanetSystemServiceImpl.class, planetSystemService, "userGuidanceService", userGuidanceServiceMock);
         overrideConnectionService(((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices()), this);
     }
 

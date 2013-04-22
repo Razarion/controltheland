@@ -29,6 +29,8 @@ public class TestXpService extends AbstractServiceTest {
     private ServerItemTypeService serverItemTypeService;
     @Autowired
     private PlanetSystemService planetSystemService;
+    @Autowired
+    private UserGuidanceService guidanceService;
 
     @Test
     @DirtiesContext
@@ -116,5 +118,54 @@ public class TestXpService extends AbstractServiceTest {
             throw new IllegalStateException("Actual created targets and specified target count do not match. Actual: " + targets.size() + " Specified: " + count);
         }
         return targets;
+    }
+
+    @Test
+    @DirtiesContext
+    public void testKillItemXpWrongPlanet() throws Exception {
+        configureMultiplePlanetsAndLevels();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBaseItemType dbBaseItemType = serverItemTypeService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID);
+        dbBaseItemType.setXpOnKilling(11);
+        serverItemTypeService.getDbItemTypeCrud().updateDbChild(dbBaseItemType);
+        serverItemTypeService.activate();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Create target
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        guidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
+        getMyBase(); // Build base
+        Id target = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
+        sendMoveCommand(target, new Index(8000, 8000));
+        waitForActionServiceDone();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        guidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
+        getMyBase();  // Build base
+        guidanceService.promote(userService.getUserState(), TEST_LEVEL_5_REAL_ID);
+        Assert.assertEquals(TEST_PLANET_1_ID, getMyBase().getPlanetId());
+        Id builder = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
+        sendBuildCommand(builder, new Index(500, 100), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        Id factory = getFirstSynItemId(TEST_FACTORY_ITEM_ID);
+        sendFactoryCommand(factory, TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        Id attacker = getFirstSynItemId(TEST_ATTACK_ITEM_ID);
+        Assert.assertEquals(0, userService.getUserState().getXp());
+
+        sendAttackCommand(attacker, target);
+        waitForActionServiceDone();
+        Thread.sleep(200);
+        Assert.assertEquals(0, userService.getUserState().getXp());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 }

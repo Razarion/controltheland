@@ -35,6 +35,8 @@ public interface PlanetSystemService {
 
     boolean hasPlanet();
 
+    boolean isUserOnCorrectPlanet(UserState userState);
+
     Planet getPlanet(SimpleBase simpleBase) throws NoSuchPlanetException;
 
     Planet getPlanet(UserState userState) throws NoSuchPlanetException;

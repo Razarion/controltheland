@@ -206,6 +206,16 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
     }
 
     @Override
+    public boolean isUserOnCorrectPlanet(UserState userState) {
+        Base base = userState.getBase();
+        if (base == null) {
+            return false;
+        }
+        LevelScope levelScope = userGuidanceService.getLevelScope(userState);
+        return levelScope.hasPlanet() && levelScope.getPlanetLiteInfo().getPlanetId() == base.getPlanet().getPlanetServices().getPlanetInfo().getPlanetId();
+    }
+
+    @Override
     public ServerPlanetServices getServerPlanetServices(int planetId) throws NoSuchPlanetException {
         return getPlanet(planetId).getPlanetServices();
     }
