@@ -9,7 +9,6 @@ import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestDialog;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.client.unlock.ClientUnlockServiceImpl;
-import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -98,14 +97,14 @@ public class QuestVisualisationCockpit extends Composite {
             titleLabel.setText(questInfo.getTitle());
         }
         minimizeButton.maximize();
-        visualiseCheckBox.setValue(true);
+        visualiseCheckBox.setValue(!QuestVisualisationModel.getInstance().isNextPlanet());
         QuestVisualisationModel.getInstance().setShowInGameVisualisation(true);
-        questDialogButton.setVisible(Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE);
+        questDialogButton.setVisible(Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE && !QuestVisualisationModel.getInstance().isNextPlanet());
     }
 
     public void displayNextPlanetPanel() {
         if(!QuestVisualisationModel.getInstance().isNextPlanet()) {
-            throw new IllegalArgumentException("QuestVisualisationCockpit.displayNextPlanetPanel() has no next planet");
+            throw new IllegalArgumentException("QuestVisualisationCockpit.displayNextPlanetPanel() is not next planet");
         }
         if (ClientUnlockServiceImpl.getInstance().isPlanetLocked(QuestVisualisationModel.getInstance().getNextPlanet())) {
             mainPanel.setWidget(new NextPlanetLocketPanel());

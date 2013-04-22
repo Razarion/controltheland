@@ -331,11 +331,13 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
 
     @Override
     public void onIncreaseXp(UserState userState, int xp) {
+        // No suppress check due to level 0 has no planet
         triggerValue(userState, ConditionTrigger.XP_INCREASED, xp);
     }
 
     @Override
     public void onTutorialFinished(UserState userState, int taskId) {
+        // No suppress check due to level 0 has no planet
         Collection<AbstractConditionTrigger<UserState, Integer>> abstractConditionTriggers = getAbstractConditions(userState, taskId, ConditionTrigger.TUTORIAL);
         triggerSimple(abstractConditionTriggers);
     }
@@ -387,5 +389,10 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState, 
                 }
             }
         }
+    }
+
+    @Override
+    protected boolean isTriggerSuppressed(UserState actor) {
+       return !planetSystemService.isUserOnCorrectPlanet(actor);
     }
 }

@@ -21,6 +21,7 @@ import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.QueueWorker;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.XpService;
@@ -51,6 +52,8 @@ public class XpServiceImpl implements XpService {
     private UserGuidanceService userGuidanceService;
     @Autowired
     private PlanetSystemService planetSystemService;
+    @Autowired
+    private UserService userService;
     @Value(value = "${xpService.killQueuePeriod}")
     private long killQueuePeriodMs;
     @Value(value = "${xpService.killQueueSize}")
@@ -117,7 +120,7 @@ public class XpServiceImpl implements XpService {
 
     @Override
     public void onItemKilled(SimpleBase actorBase, SyncBaseItem killedItem, PlanetServices planetServices) {
-        if (!planetServices.getBaseService().isBot(actorBase)) {
+        if (!planetServices.getBaseService().isBot(actorBase) && planetSystemService.isUserOnCorrectPlanet(userService.getUserState(actorBase))) {
             xpPerKillQueueWorker.put(new XpPerKill(actorBase, killedItem, planetServices));
         }
     }

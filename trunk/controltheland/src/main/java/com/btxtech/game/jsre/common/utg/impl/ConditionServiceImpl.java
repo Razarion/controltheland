@@ -151,6 +151,9 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
     @Override
     public void onSyncItemKilled(SimpleBase actorBase, SyncBaseItem killedItem) {
         A actor = getActor(actorBase);
+        if (isActorIgnored(actor)) {
+            return;
+        }
         triggerSyncItem(actor, ConditionTrigger.SYNC_ITEM_KILLED, killedItem);
         triggerSyncItem(actor, ConditionTrigger.SYNC_ITEM_POSITION, killedItem);
     }
@@ -158,6 +161,9 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
     @Override
     public void onSyncItemBuilt(SyncBaseItem syncBaseItem) {
         A actor = getActor(syncBaseItem.getBase());
+        if (isActorIgnored(actor)) {
+            return;
+        }
         triggerSyncItem(actor, ConditionTrigger.SYNC_ITEM_BUILT, syncBaseItem);
         triggerSyncItem(actor, ConditionTrigger.SYNC_ITEM_POSITION, syncBaseItem);
     }
@@ -165,6 +171,9 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
     @Override
     public void onSyncItemDeactivated(SyncBaseItem syncBaseItem) {
         A actor = getActor(syncBaseItem.getBase());
+        if (isActorIgnored(actor)) {
+            return;
+        }
         if (syncBaseItem.isReady()) {
             triggerSyncItem(actor, ConditionTrigger.SYNC_ITEM_POSITION, syncBaseItem);
         }
@@ -173,18 +182,27 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
     @Override
     public void onSyncItemUnloaded(SyncBaseItem syncBaseItem) {
         A actor = getActor(syncBaseItem.getBase());
+        if (isActorIgnored(actor)) {
+            return;
+        }
         triggerSyncItem(actor, ConditionTrigger.SYNC_ITEM_POSITION, syncBaseItem);
     }
 
     @Override
     public void onMoneyIncrease(SimpleBase actorBase, double accountBalance) {
         A actor = getActor(actorBase);
+        if (isActorIgnored(actor)) {
+            return;
+        }
         triggerValue(actor, ConditionTrigger.MONEY_INCREASED, accountBalance);
     }
 
     @Override
     public void onBaseDeleted(SimpleBase actorBase) {
         A actor = getActor(actorBase);
+        if (isActorIgnored(actor)) {
+            return;
+        }
         triggerValue(actor, ConditionTrigger.BASE_KILLED, 1.0);
     }
 
@@ -261,5 +279,13 @@ public abstract class ConditionServiceImpl<A, I> implements ConditionService<A, 
         for (AbstractConditionTrigger<A, I> trigger : triggers) {
             conditionPassed(trigger);
         }
+    }
+
+    protected boolean isActorIgnored(A actor) {
+        return actor == null || isTriggerSuppressed(actor);
+    }
+
+    protected boolean isTriggerSuppressed(A actor) {
+        return false;
     }
 }

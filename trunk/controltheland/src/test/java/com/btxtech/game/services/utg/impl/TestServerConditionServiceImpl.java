@@ -197,8 +197,11 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         // Mock PlanetSystemService
         PlanetSystemService planetSystemService = EasyMock.createStrictMock(PlanetSystemService.class);
         EasyMock.expect(planetSystemService.getServerPlanetServices(simpleBase1)).andReturn(serverPlanetServices);
+        EasyMock.expect(planetSystemService.isUserOnCorrectPlanet(userState)).andReturn(true);
         EasyMock.expect(planetSystemService.getServerPlanetServices(simpleBase2)).andReturn(serverPlanetServices);
-        EasyMock.expect(planetSystemService.getServerPlanetServices(simpleBase1)).andReturn(serverPlanetServices).times(2);
+        EasyMock.expect(planetSystemService.getServerPlanetServices(simpleBase1)).andReturn(serverPlanetServices);
+        EasyMock.expect(planetSystemService.isUserOnCorrectPlanet(userState)).andReturn(true);
+        EasyMock.expect(planetSystemService.getServerPlanetServices(simpleBase1)).andReturn(serverPlanetServices);
         EasyMock.replay(planetSystemService);
         setPrivateField(ServerConditionServiceImpl.class, serverConditionService, "planetSystemService", planetSystemService);
 
@@ -225,6 +228,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         Assert.assertFalse(passed);
         serverConditionService.onBaseDeleted(simpleBase1);
         Assert.assertTrue(passed);
+        EasyMock.verify(serverConnectionService, planetSystemService, userGuidanceService);
     }
 
     @Test
@@ -252,13 +256,17 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         // Mock ConnectionService
         ServerConnectionService serverConnectionService = EasyMock.createStrictMock(ServerConnectionService.class);
         serverConnectionService.sendPacket(EasyMock.eq(simpleBase1), EasyMock.<LevelTaskPacket>anyObject());
-        serverConnectionService.sendPacket(EasyMock.eq(simpleBase1), EasyMock.<LevelTaskPacket>anyObject());
         EasyMock.replay(serverConnectionService);
         serverPlanetServices.setServerConnectionService(serverConnectionService);
 
         // Mock PlanetSystemService
         PlanetSystemService planetSystemService = EasyMock.createStrictMock(PlanetSystemService.class);
-        EasyMock.expect(planetSystemService.getServerPlanetServices(simpleBase1)).andReturn(serverPlanetServices).times(4);
+        EasyMock.expect(planetSystemService.getServerPlanetServices(simpleBase1)).andReturn(serverPlanetServices);
+        EasyMock.expect(planetSystemService.isUserOnCorrectPlanet(userState)).andReturn(true);
+        EasyMock.expect(planetSystemService.getServerPlanetServices(simpleBase1)).andReturn(serverPlanetServices);
+        EasyMock.expect(planetSystemService.isUserOnCorrectPlanet(userState)).andReturn(true);
+        EasyMock.expect(planetSystemService.getServerPlanetServices(simpleBase1)).andReturn(serverPlanetServices).times(2);
+        EasyMock.expect(planetSystemService.isUserOnCorrectPlanet(userState)).andReturn(true);
         EasyMock.replay(planetSystemService);
         setPrivateField(ServerConditionServiceImpl.class, serverConditionService, "planetSystemService", planetSystemService);
 
@@ -287,6 +295,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         // TODO test failed (Unexpected method call getServerPlanetServices) 31.12.2012, 02.01.2013, 09.01.2013
         serverConditionService.onBaseDeleted(simpleBase1);
         Assert.assertTrue(passed);
+        EasyMock.verify(serverConnectionService, planetSystemService, userGuidanceService);
     }
 
     @Test

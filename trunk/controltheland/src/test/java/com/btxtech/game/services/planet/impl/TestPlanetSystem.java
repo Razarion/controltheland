@@ -109,4 +109,22 @@ public class TestPlanetSystem extends AbstractServiceTest {
         endHttpSession();
 
     }
+
+    @Test
+    @DirtiesContext
+    public void isUserOnCorrectPlanet() throws Exception {
+        configureMultiplePlanetsAndLevels();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        UserState userState = userService.getUserState();
+        Assert.assertFalse(planetSystemService.isUserOnCorrectPlanet(userState));
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
+        getMyBase();  // Build base
+        Assert.assertTrue(planetSystemService.isUserOnCorrectPlanet(userState));
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_5_REAL_ID);
+        Assert.assertFalse(planetSystemService.isUserOnCorrectPlanet(userState));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
 }
