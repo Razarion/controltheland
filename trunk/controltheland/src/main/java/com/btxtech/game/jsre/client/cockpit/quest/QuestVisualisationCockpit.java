@@ -97,7 +97,12 @@ public class QuestVisualisationCockpit extends Composite {
             titleLabel.setText(questInfo.getTitle());
         }
         minimizeButton.maximize();
-        visualiseCheckBox.setValue(!QuestVisualisationModel.getInstance().isNextPlanet());
+        if(QuestVisualisationModel.getInstance().isNextPlanet()) {
+            visualiseCheckBox.getElement().getStyle().setVisibility(Style.Visibility.HIDDEN);
+        } else {
+            visualiseCheckBox.getElement().getStyle().setVisibility(Style.Visibility.VISIBLE);
+            visualiseCheckBox.setValue(true);
+        }
         QuestVisualisationModel.getInstance().setShowInGameVisualisation(true);
         questDialogButton.setVisible(Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE && !QuestVisualisationModel.getInstance().isNextPlanet());
     }
