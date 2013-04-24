@@ -47,7 +47,14 @@
             <td valign="top"><input wicket:id="health" type="text" size="30" maxlength="40"></td>
         </tr>
         <tr bgcolor="#DDDDDD">
-            <td colspan="2" valign="top">Price</td>
+            <td colspan="2" valign="top">Price
+                <br>
+                <span style="color:red;font-size: 12px">
+                If this item is a money collector, this price is used in the DeadEnd detection
+                <br>
+                Make price 0 if this item price should be omitted (e.g. item shop)
+            </span>
+            </td>
             <td valign="top"><input wicket:id="price" type="text" size="30" maxlength="40"></td>
         </tr>
         <tr bgcolor="#DDDDDD">

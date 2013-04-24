@@ -405,6 +405,13 @@ abstract public class AbstractServiceTest {
         return syncBaseItem;
     }
 
+    protected SyncBaseItem createFactorySyncBaseItem(int itemTypeId, Index position, Id id, GlobalServices globalServices, PlanetServices planetServices, SimpleBase simpleBase) throws Exception {
+        // Due to realy point calculation
+        SyncBaseItem syncBaseItem = new SyncBaseItem(id, position, (BaseItemType) serverItemTypeService.getItemType(itemTypeId), globalServices, planetServices, simpleBase);
+        syncBaseItem.setBuildup(1.0);
+        return syncBaseItem;
+    }
+
     protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id, GlobalServices globalServices, PlanetServices planetServices) throws Exception {
         return createSyncBaseItem(itemTypeId, position, id, globalServices, planetServices, new SimpleBase(1, planetServices.getPlanetInfo().getPlanetId()));
     }
@@ -2255,7 +2262,7 @@ abstract public class AbstractServiceTest {
     }
 
     @Before
-    public void setup() {
+    public void setup() throws Exception {
         configurableListableBeanFactory.registerResolvableDependency(ServletRequest.class, new ObjectFactory<ServletRequest>() {
             // This is used to inject HttpServletRequest into SessionImpl
             @Override

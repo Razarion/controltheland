@@ -23,14 +23,9 @@ import com.btxtech.game.jsre.common.FacebookUtils;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
-import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
-import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CaptionPanel;
@@ -39,7 +34,6 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -48,8 +42,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * Date: 20.02.2010
  * Time: 18:36:49
  */
-public class RegisterDialog extends Dialog {
-    private static Timer timer;
+public class RegisterDialog extends PeriodicDialog {
     private NickNameField nickNameField;
     private TextBox confirmEmail;
     private TextBox email;
@@ -78,16 +71,11 @@ public class RegisterDialog extends Dialog {
 
         facebookRegister(dialogVPanel);
         normalRegister(dialogVPanel);
+    }
 
-        addCloseHandler(new CloseHandler<PopupPanel>() {
-            @Override
-            public void onClose(CloseEvent<PopupPanel> popupPanelCloseEvent) {
-                if (!Connection.getInstance().isRegistered()) {
-                    timer.schedule(Connection.getInstance().getGameInfo().getRegisterDialogDelayInS());
-                }
-            }
-        });
-
+    @Override
+    protected boolean isReshowNeeded() {
+        return !Connection.getInstance().isRegistered();
     }
 
     private void facebookRegister(VerticalPanel dialogVPanel) {
@@ -191,23 +179,6 @@ public class RegisterDialog extends Dialog {
     }
 
     public static void showDialogRepeating() {
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-        if (Connection.getInstance().isRegistered()) {
-            return;
-        }
-
-        timer = new TimerPerfmon(PerfmonEnum.REGISTER_DIALOG) {
-            @Override
-            public void runPerfmon() {
-                if (!Connection.getInstance().isRegistered()) {
-                    DialogManager.showDialog(new RegisterDialog(), DialogManager.Type.QUEUE_ABLE);
-                }
-            }
-        };
-        timer.schedule(Connection.getInstance().getGameInfo().getRegisterDialogDelayInS());
+        new RegisterDialog().start(false, Connection.getInstance().getGameInfo().getRegisterDialogDelayInS());
     }
-
 }

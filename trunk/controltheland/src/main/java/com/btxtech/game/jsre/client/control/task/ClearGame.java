@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.client.renderer.Renderer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.unlock.ClientUnlockServiceImpl;
+import com.btxtech.game.jsre.client.utg.ClientDeadEndProtection;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.utg.tip.GameTipManager;
 import com.btxtech.game.jsre.client.utg.tip.dialog.TipManager;
@@ -41,6 +42,7 @@ public class ClearGame extends AbstractStartupTask {
 
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
+        ClientDeadEndProtection.getInstance().stop();
         SoundHandler.getInstance().stop();
         TerrainView.getInstance().cleanup();
         GameTipManager.getInstance().stop();
