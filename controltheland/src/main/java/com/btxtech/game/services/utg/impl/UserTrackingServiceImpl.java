@@ -33,6 +33,8 @@ import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.connection.NoBaseException;
 import com.btxtech.game.services.connection.Session;
+import com.btxtech.game.services.history.GameHistoryFilter;
+import com.btxtech.game.services.history.GameHistoryFrame;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.BaseService;
@@ -43,8 +45,6 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbChatMessage;
 import com.btxtech.game.services.utg.DbLevelTask;
-import com.btxtech.game.services.history.GameHistoryFilter;
-import com.btxtech.game.services.history.GameHistoryFrame;
 import com.btxtech.game.services.utg.LifecycleTrackingInfo;
 import com.btxtech.game.services.utg.RealGameTrackingInfo;
 import com.btxtech.game.services.utg.SessionDetailDto;
@@ -162,6 +162,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             sessionOverviewDtos.add(new SessionOverviewDto(browserDetail.getTimeStamp(),
                     browserDetail.getSessionId(),
                     hits,
+                    browserDetail.isNewUser(),
                     enterGameHits,
                     startAttempts,
                     startSuccess,
@@ -203,6 +204,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             sessionOverviewDtos.add(new SessionOverviewDto(browserDetail.getTimeStamp(),
                     browserDetail.getSessionId(),
                     hits,
+                    browserDetail.isNewUser(),
                     enterGameHits,
                     startAttempts,
                     startSuccess,

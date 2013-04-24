@@ -25,6 +25,7 @@ public class SessionOverviewDto {
     private Date date;
     private String sessionId;
     private int pageHits;
+    private boolean newUser;
     private int enterGameHits;
     private int startAttempts;
     private int startSucceeded;
@@ -36,6 +37,7 @@ public class SessionOverviewDto {
     public SessionOverviewDto(Date date,
                        String sessionId,
                        int pageHits,
+                       boolean newUser,
                        int enterGameHits,
                        int startAttempts,
                        int startSucceeded,
@@ -45,6 +47,7 @@ public class SessionOverviewDto {
         this.date = date;
         this.sessionId = sessionId;
         this.pageHits = pageHits;
+        this.newUser = newUser;
         this.enterGameHits = enterGameHits;
         this.startAttempts = startAttempts;
         this.startSucceeded = startSucceeded;
@@ -68,6 +71,10 @@ public class SessionOverviewDto {
 
     public int getPageHits() {
         return pageHits;
+    }
+
+    public boolean isNewUser() {
+        return newUser;
     }
 
     public int getEnterGameHits() {
