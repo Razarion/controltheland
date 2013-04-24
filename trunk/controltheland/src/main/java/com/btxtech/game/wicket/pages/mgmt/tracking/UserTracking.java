@@ -188,6 +188,7 @@ public class UserTracking extends MgmtWebPage {
             protected void populateItem(ListItem<SessionOverviewDto> listItem) {
                 listItem.add(new Label("date", simpleDateFormat.format(listItem.getModelObject().getDate())));
                 listItem.add(new Label("pageHits", Integer.toString(listItem.getModelObject().getPageHits())));
+                listItem.add(new Label("newUser", listItem.getModelObject().isNewUser() ? "Y" : "N"));
                 listItem.add(new Label("enterGame", Integer.toString(listItem.getModelObject().getEnterGameHits())));
                 listItem.add(new Label("startAttempts", Integer.toString(listItem.getModelObject().getStartAttempts())));
                 listItem.add(new Label("successfulStarts", Integer.toString(listItem.getModelObject().getStartSucceeded())));
