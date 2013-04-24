@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.client.dialogs.UnfrequentDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemTypeContainer;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
+import com.btxtech.game.jsre.client.utg.ClientDeadEndProtection;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -100,6 +101,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     public void setAccountBalance(double accountBalance) {
         this.accountBalance = accountBalance;
         SideCockpit.getInstance().updateMoney();
+        ClientDeadEndProtection.getInstance().onMoneyChanged((int) accountBalance);
     }
 
     public boolean isMyOwnProperty(SyncBaseItem syncItem) {
@@ -130,6 +132,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
             } else {
                 accountBalance += price;
             }
+            ClientDeadEndProtection.getInstance().onMoneyChanged((int) accountBalance);
             SideCockpit.getInstance().updateMoney();
         }
     }
@@ -152,6 +155,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         } else {
             accountBalance -= price;
             SideCockpit.getInstance().updateMoney();
+            ClientDeadEndProtection.getInstance().onMoneyChanged((int) accountBalance);
         }
     }
 

@@ -30,6 +30,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.effects.AttackHandler;
 import com.btxtech.game.jsre.client.effects.ExplosionHandler;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
+import com.btxtech.game.jsre.client.utg.ClientDeadEndProtection;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -127,6 +128,9 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
         syncItem = createAndAddItem(syncItemInfo.getId(), syncItemInfo.getPosition(), syncItemInfo.getItemTypeId(), syncItemInfo.getBase());
         if (syncItem instanceof SyncBaseItem) {
             ClientBase.getInstance().onItemCreated((SyncBaseItem) syncItem);
+            if (ClientBase.getInstance().isMyOwnProperty((SyncBaseItem) syncItem)) {
+                ClientDeadEndProtection.getInstance().onSyncItemCreated((SyncBaseItem) syncItem);
+            }
         }
     }
 
@@ -188,6 +192,9 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
             ActionHandler.getInstance().addGuardingBaseItem(syncBaseItem);
             ActionHandler.getInstance().interactionGuardingItems(syncBaseItem);
             ClientBase.getInstance().onItemCreated(syncBaseItem);
+            if (ClientBase.getInstance().isMyOwnProperty((SyncBaseItem) syncItem)) {
+                ClientDeadEndProtection.getInstance().onSyncItemCreated((SyncBaseItem) syncItem);
+            }
         }
         Connection.getInstance().sendSyncInfo(syncItem);
         return syncItem;
@@ -300,6 +307,7 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
             SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
             if (ClientBase.getInstance().isMyOwnProperty(syncBaseItem)) {
                 ClientBase.getInstance().recalculate4FakedHouseSpace(syncBaseItem);
+                ClientDeadEndProtection.getInstance().onSyncItemLost(syncBaseItem);
             }
             ClientBase.getInstance().onItemDeleted(syncBaseItem, actor);
         }

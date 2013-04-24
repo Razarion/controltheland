@@ -276,7 +276,7 @@ td.box {
     -webkit-border-radius: 6px;
     border-radius: 6px;
     border: 1px solid #1e3a57;
-    width: 6em;
+    min-width: 6em;
     display: inline-block;
     color: #C7C4BB;
     text-decoration: none;
@@ -314,7 +314,7 @@ td.box {
     -webkit-border-radius: 6px;
     border-radius: 6px;
     border: 1px solid #575757;
-    width: 6em;
+    min-width: 6em;
     display: inline-block;
     color: #C7C4BB;
     text-decoration: none;
@@ -442,7 +442,7 @@ td.box {
     -webkit-border-radius: 6px;
     border-radius: 6px;
     border: 1px solid #575757;
-    width: 6em;
+    min-width: 6em;
     display: inline-block;
     color: #C7C4BB;
     text-decoration: none;

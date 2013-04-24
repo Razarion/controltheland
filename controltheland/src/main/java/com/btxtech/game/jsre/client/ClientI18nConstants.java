@@ -40,6 +40,10 @@ public interface ClientI18nConstants extends Messages {
 
     String houseSpace();
 
+    String noMoney();
+
+    String notEnoughMoney();
+
     String tooManyItems();
 
     String spaceLimitExceeded();
@@ -280,12 +284,12 @@ public interface ClientI18nConstants extends Messages {
 
     String reallyAbortMission();
 
-    // No money dialog
-    String noMoney();
+    // Dead and and new base
+    String reachedDeadEnd();
 
-    String notEnoughMoney();
+    String reachedDeadEndItem();
 
-    String noMoneyNewBase();
+    String reachedDeadEndMoney();
 
     String startNewBase();
 
