@@ -15,7 +15,7 @@ import com.btxtech.game.jsre.common.gameengine.services.items.ItemTypeService;
  * Time: 14:34
  */
 public class ClientDeadEndProtection extends DeadEndProtection implements DeadEndListener {
-    private static final int DIALOG_PERIOD = 10000;
+    private static final int DIALOG_PERIOD = 15000;
     private static final ClientDeadEndProtection INSTANCE = new ClientDeadEndProtection();
     private DeadEndDialog itemDeadEndDialog = new DeadEndDialog(ClientI18nHelper.CONSTANTS.reachedDeadEndItem());
     private DeadEndDialog moneyDeadEndDialog = new DeadEndDialog(ClientI18nHelper.CONSTANTS.reachedDeadEndMoney());

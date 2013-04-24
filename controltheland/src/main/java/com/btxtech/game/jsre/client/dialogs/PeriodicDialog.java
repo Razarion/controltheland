@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
  * Time: 22:59
  */
 public abstract class PeriodicDialog extends Dialog {
-    private static Timer timer;
+    private Timer timer;
     private int period;
 
     public PeriodicDialog(String title) {
