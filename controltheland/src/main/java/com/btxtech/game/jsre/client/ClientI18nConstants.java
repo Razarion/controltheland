@@ -405,6 +405,8 @@ public interface ClientI18nConstants extends Messages {
 
     String startupRunRealGame();
 
+    String startupCheckCompatibility();
+
     String startupLoadJavaScript();
 
     String startupInitGui();
