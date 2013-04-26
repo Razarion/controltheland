@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client.control;
 
 import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
+import com.btxtech.game.jsre.client.control.task.CompatibilityCheckerStartupTask;
 import com.btxtech.game.jsre.client.control.task.GuiStartupTask;
 import com.btxtech.game.jsre.client.control.task.ImageSpriteMapPreloaderStartupTask;
 import com.btxtech.game.jsre.client.control.task.LoadSimulationInfoStartupTask;
@@ -37,6 +38,17 @@ public enum ColdSimulatedGameStartupTaskEnum implements StartupTaskEnum {
         @Override
         public String getI18nText() {
             return ClientI18nHelper.CONSTANTS.startupLoadJavaScript();
+        }
+    },
+    COMPATIBILITY_CHECK("Check compatibility") {
+        @Override
+        public AbstractStartupTask createTask() {
+            return new CompatibilityCheckerStartupTask(this);
+        }
+
+        @Override
+        public String getI18nText() {
+            return ClientI18nHelper.CONSTANTS.startupCheckCompatibility();
         }
     },
     INIT_GUI("Init GUI") {

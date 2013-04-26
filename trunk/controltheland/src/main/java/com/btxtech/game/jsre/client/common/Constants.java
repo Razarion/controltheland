@@ -19,8 +19,12 @@ package com.btxtech.game.jsre.client.common;
  * Time: 3:07:05 PM
  */
 public class Constants {
+    // System
+    public static final int INTERFACE_VERSION = 1;
+
     // Game
     public static final double ITEM_SELL_FACTOR = 0.5;
+
     // Terrain
     public static final int TERRAIN_TILE_WIDTH = 100;
     public static final int TERRAIN_TILE_HEIGHT = 100;

@@ -64,6 +64,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>compatibilityChecker-dispatcher</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.CompatibilityCheckerImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>compatibilityChecker-dispatcher</servlet-name>
+        <url-pattern>/game/compatibilityChecker</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>pathfinding-dispatcher</servlet-name>
         <servlet-class>com.btxtech.game.services.gwt.PathfindingImpl</servlet-class>
     </servlet>
