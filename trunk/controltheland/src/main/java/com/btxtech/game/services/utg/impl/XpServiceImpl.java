@@ -120,7 +120,7 @@ public class XpServiceImpl implements XpService {
 
     @Override
     public void onItemKilled(SimpleBase actorBase, SyncBaseItem killedItem, PlanetServices planetServices) {
-        if (!planetServices.getBaseService().isBot(actorBase) && planetSystemService.isUserOnCorrectPlanet(userService.getUserState(actorBase))) {
+        if (!planetServices.getBaseService().isBot(actorBase) && !planetServices.getBaseService().isAbandoned(actorBase) && planetSystemService.isUserOnCorrectPlanet(userService.getUserState(actorBase))) {
             xpPerKillQueueWorker.put(new XpPerKill(actorBase, killedItem, planetServices));
         }
     }
