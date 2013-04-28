@@ -414,8 +414,8 @@ public class ItemTypeEditorModel {
         itemTypeImageLoader.addImageUrl(ImageHandler.getItemTypeSpriteMapUrl(itemTypeId), itemTypeId);
         itemTypeImageLoader.startLoading(new ImageLoader.Listener<Integer>() {
             @Override
-            public void onLoaded(Map<Integer, ImageElement> imageElements) {
-                spriteMapImageElement = imageElements.get(itemTypeId);
+            public void onLoaded(Map<Integer, ImageElement> loadedImageElements, Collection<Integer> failed) {
+                spriteMapImageElement = loadedImageElements.get(itemTypeId);
                 fireUpdate();
             }
         });
