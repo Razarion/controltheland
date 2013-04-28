@@ -1,6 +1,7 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -31,6 +32,8 @@ public class TestXpService extends AbstractServiceTest {
     private PlanetSystemService planetSystemService;
     @Autowired
     private UserGuidanceService guidanceService;
+    @Autowired
+    private XpService xpService;
 
     @Test
     @DirtiesContext
@@ -168,4 +171,29 @@ public class TestXpService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void testKillAbandonmentBase() throws Exception {
+        configureSimplePlanetNoResources();
+
+        // Create actor
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        SimpleBase actorBase = getMyBase();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        Assert.assertTrue(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService().isAbandoned(actorBase));
+
+        // Create target
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        SyncBaseItem target = (SyncBaseItem) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getItemService().getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        xpService.onItemKilled(actorBase, target, planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID));
+    }
+
 }
