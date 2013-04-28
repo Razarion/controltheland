@@ -51,9 +51,10 @@ public abstract class ImageLoaderContainer<T> implements ImageLoader.Listener<T>
     }
 
     @Override
-    public void onLoaded(Map<T, ImageElement> imageElements) {
-        images.putAll(imageElements);
-        currentlyLoading.removeAll(imageElements.keySet());
+    public void onLoaded(Map<T, ImageElement> loadedImageElements, Collection<T> failed) {
+        images.putAll(loadedImageElements);
+        currentlyLoading.removeAll(loadedImageElements.keySet());
+        currentlyLoading.removeAll(failed);
         for (LoadListener loadListener : loadListeners) {
             loadListener.onLoaded();
         }
