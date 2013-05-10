@@ -1,6 +1,5 @@
 package com.btxtech.game.services.unlock;
 
-import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.AbstractServiceTest;
@@ -79,7 +78,7 @@ public class TestServerUnlockService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.promote(getUserState(), TEST_LEVEL_2_REAL);
         getUserState().setRazarion(100);
-        getMyBase(); // Create Base
+        getOrCreateBase(); // Create Base
         // Setup
         unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
         unlockService.unlockItemType(TEST_FACTORY_ITEM_ID);
@@ -166,7 +165,7 @@ public class TestServerUnlockService extends AbstractServiceTest {
         createAndLoginUser("U1");
         userGuidanceService.promote(getUserState(), TEST_LEVEL_2_REAL);
         getUserState().setRazarion(100);
-        getMyBase(); // Create Base
+        getOrCreateBase(); // Create Base
         unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
         unlockService.unlockItemType(TEST_FACTORY_ITEM_ID);
         unlockService.unlockQuest(dbLevelTask1.getId());

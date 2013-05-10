@@ -812,7 +812,7 @@ public class TestInventoryService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMyBase();
+        getOrCreateBase();
         UserState userState = userService.getUserState();
         Assert.assertEquals(33, userState.getRazarion());
 

@@ -372,7 +372,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         createAndLoginUser("U1");
         UserState userState1 = userService.getUserState();
         userGuidanceService.promote(userState1, TEST_LEVEL_2_REAL_ID);
-        SimpleBase simpleBase1 = getMyBase();
+        SimpleBase simpleBase1 = getOrCreateBase();
 
         serverConditionService.onMoneyIncrease(simpleBase1, 2.0);
         serverConditionService.onIncreaseXp(userState1, 10);
@@ -408,7 +408,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
-        simpleBase1 = getMyBase();
+        simpleBase1 = getOrCreateBase();
         serverConditionService.onMoneyIncrease(simpleBase1, 1.0);
         Assert.assertEquals(TEST_LEVEL_TASK_2_2_REAL_ID, getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket().getQuestInfo().getId());
         Assert.assertEquals(0, userGuidanceService.getQuestOverview(Locale.ENGLISH).getMissionsDone());
@@ -607,7 +607,7 @@ public class TestServerConditionServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
 
-        SimpleBase simpleBase = getMyBase();
+        SimpleBase simpleBase = getOrCreateBase();
 
         Map<ItemType, Integer> itemTypes = new HashMap<>();
         itemTypes.put(serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), 10);

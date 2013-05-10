@@ -3,6 +3,7 @@ package com.btxtech.game.mockservlet;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.InvalidNickName;
 import com.btxtech.game.jsre.client.MovableService;
+import com.btxtech.game.jsre.client.PositionInBotException;
 import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.client.common.AbstractGwtTest;
 import com.btxtech.game.jsre.client.common.Index;
@@ -330,5 +331,10 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     @Override
     public void surrenderBase() {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public RealGameInfo createBase(Index position) throws PositionInBotException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

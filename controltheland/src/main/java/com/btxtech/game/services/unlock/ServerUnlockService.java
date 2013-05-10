@@ -48,4 +48,6 @@ public interface ServerUnlockService extends UnlockService {
     boolean isQuestLocked(QuestInfo questInfo, UserState userState);
 
     boolean isPlanetLocked(PlanetLiteInfo planetLiteInfo, UserState userState);
+
+    UnlockContainer getUnlockContainer(UserState userState);
 }

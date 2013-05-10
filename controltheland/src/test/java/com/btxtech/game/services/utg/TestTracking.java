@@ -6,7 +6,6 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
@@ -390,7 +389,7 @@ public class TestTracking extends AbstractServiceTest {
         Assert.assertTrue(lifecycleTrackingInfo.isRealGame());
         Assert.assertTrue(timeS1 <= lifecycleTrackingInfo.getStartServer());
         Assert.assertTrue(timeS2 >= lifecycleTrackingInfo.getStartServer());
-        Assert.assertEquals("Base 1", lifecycleTrackingInfo.getBaseName());
+        // TODO no more basename Assert.assertEquals("Base 1", lifecycleTrackingInfo.getBaseName());
         Assert.assertEquals(Integer.toString(TEST_LEVEL_3_REAL), lifecycleTrackingInfo.getLevel());
         Assert.assertEquals(1000, lifecycleTrackingInfo.getStartupDuration());
         Assert.assertEquals(4, lifecycleTrackingInfo.getGameStartups().size());
@@ -474,7 +473,7 @@ public class TestTracking extends AbstractServiceTest {
         Assert.assertTrue(lifecycleTrackingInfo.isRealGame());
         Assert.assertTrue(timeS1 <= lifecycleTrackingInfo.getStartServer());
         Assert.assertTrue(timeS2 >= lifecycleTrackingInfo.getStartServer());
-        Assert.assertEquals("Base 1", lifecycleTrackingInfo.getBaseName());
+        // TODO no more basename Assert.assertEquals("Base 1", lifecycleTrackingInfo.getBaseName());
         Assert.assertEquals(Integer.toString(TEST_LEVEL_3_REAL), lifecycleTrackingInfo.getLevel());
         Assert.assertEquals(0, lifecycleTrackingInfo.getStartupDuration());
         Assert.assertEquals(4, lifecycleTrackingInfo.getGameStartups().size());
@@ -672,7 +671,7 @@ public class TestTracking extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase simpleBase = getMyBase();
+        SimpleBase simpleBase = getOrCreateBase();
         sendBuildCommand(getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(simpleBase, TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
@@ -694,7 +693,7 @@ public class TestTracking extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase simpleBase = getMyBase();
+        SimpleBase simpleBase = getOrCreateBase();
         sendFactoryCommand(getFirstSynItemId(simpleBase, TEST_FACTORY_ITEM_ID), TEST_CONTAINER_ITEM_ID);
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(simpleBase, TEST_FACTORY_ITEM_ID), TEST_HARVESTER_ITEM_ID);
@@ -872,9 +871,10 @@ public class TestTracking extends AbstractServiceTest {
         for (UserCommandHistoryElement userCommandHistoryElement : userCommandHistoryElements) {
             System.out.println(userCommandHistoryElement.getTimeStamp() + "|" + userCommandHistoryElement.getInfo1() + "|" + userCommandHistoryElement.getInfo2());
         }
-        Assert.assertEquals(2, userCommandHistoryElements.size());
-        Assert.assertEquals("Item created: TestFactoryItem", userCommandHistoryElements.get(0).getInfo1());
-        Assert.assertEquals("Item created: TestAttackItem", userCommandHistoryElements.get(1).getInfo1());
+        Assert.assertEquals(3, userCommandHistoryElements.size());
+        Assert.assertEquals("Item created: TestStartBuilderItem", userCommandHistoryElements.get(0).getInfo1());
+        Assert.assertEquals("Item created: TestFactoryItem", userCommandHistoryElements.get(1).getInfo1());
+        Assert.assertEquals("Item created: TestAttackItem", userCommandHistoryElements.get(2).getInfo1());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -918,7 +918,7 @@ public class TestTracking extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
         User u1 = userService.getUser("U1");
-        SimpleBase simpleBase1 = getMyBase();
+        createBase(new Index(1000, 1000));
         String session1 = getHttpSessionId();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -927,7 +927,7 @@ public class TestTracking extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U2");
         User u2 = userService.getUser("U2");
-        SimpleBase simpleBase2 = getMyBase();
+        createBase(new Index(2000, 2000));
         String session2 = getHttpSessionId();
         historyService.addAllianceOffered(u2, u1);
         historyService.addAllianceOfferAccepted(u2, u1);
@@ -936,7 +936,7 @@ public class TestTracking extends AbstractServiceTest {
         MoveCommand moveCommand = new MoveCommand();
         moveCommand.setId(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
         moveCommand.setTimeStamp();
-        moveCommand.setPathToDestination(new Path(new Index(1000,1000), new Index(3000,3000), true));
+        moveCommand.setPathToDestination(new Path(new Index(1000, 1000), new Index(3000, 3000), true));
         userTrackingService.saveUserCommand(moveCommand);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -1065,7 +1065,7 @@ public class TestTracking extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        getMyBase();
+        getOrCreateBase();
         Thread.sleep(100);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -1073,11 +1073,11 @@ public class TestTracking extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
-        getMyBase();
+        getOrCreateBase();
         Thread.sleep(200);
-        getMyBase();
+        getOrCreateBase();
         Thread.sleep(300);
-        getMyBase(); // This session will not count due to session time-out is to long
+        getOrCreateBase(); // This session will not count due to session time-out is to long
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -1096,7 +1096,7 @@ public class TestTracking extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMyBase();
+        getOrCreateBase();
         Thread.sleep(100);
         createAndLoginUser("U1");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -1105,11 +1105,11 @@ public class TestTracking extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
-        getMyBase();
+        getOrCreateBase();
         Thread.sleep(200);
-        getMyBase();
+        getOrCreateBase();
         Thread.sleep(300);
-        getMyBase(); // This session will not count due to session time-out is to long
+        getOrCreateBase(); // This session will not count due to session time-out is to long
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

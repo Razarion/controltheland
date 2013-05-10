@@ -1,5 +1,6 @@
 package com.btxtech.game.services.unlock;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
@@ -59,7 +60,7 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.promote(getUserState(), TEST_LEVEL_4_REAL);
-        getMyBase();
+        getOrCreateBase();
         xpService.onReward(getUserState(), 100001);
         getMovableService().surrenderBase();
         Assert.assertEquals(TEST_PLANET_1_ID, getMovableService().getRealGameInfo(START_UID_1).getPlanetInfo().getPlanetId());
@@ -91,7 +92,7 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.promote(getUserState(), TEST_LEVEL_4_REAL);
-        getMyBase();
+        getOrCreateBase();
         getUserState().setRazarion(100);
         UnlockContainer unlockContainer = unlockService.unlockPlanet(TEST_PLANET_2_ID);
         Assert.assertEquals(85, getUserState().getRazarion());
@@ -122,7 +123,7 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.promote(getUserState(), TEST_LEVEL_6_REAL);
-        getMyBase();
+        createBase(new Index(500, 500));
         getUserState().setRazarion(100);
         Assert.assertEquals(TEST_PLANET_2_ID, getMovableService().getRealGameInfo(START_UID_1).getPlanetInfo().getPlanetId());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -152,7 +153,7 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.promote(getUserState(), TEST_LEVEL_6_REAL);
-        getMyBase();
+        getOrCreateBase();
         getUserState().setRazarion(100);
         Assert.assertEquals(TEST_PLANET_1_ID, getMovableService().getRealGameInfo(START_UID_1).getPlanetInfo().getPlanetId());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -178,7 +179,7 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.promote(getUserState(), TEST_LEVEL_2_REAL);
-        getMyBase();
+        getOrCreateBase();
         Thread.sleep(1000);
         clearPackets();
         userGuidanceService.promote(getUserState(), TEST_LEVEL_5_REAL);
@@ -275,7 +276,7 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.promote(getUserState(), TEST_LEVEL_4_REAL);
-        getMyBase(); // Create Base
+        getOrCreateBase(); // Create Base
         getUserState().setRazarion(100);
         unlockService.unlockPlanet(TEST_PLANET_2_ID);
         Assert.assertFalse(unlockService.isPlanetLocked(planetInfo1, getUserState()));
@@ -310,7 +311,7 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         createAndLoginUser("U1");
         userGuidanceService.promote(getUserState(), TEST_LEVEL_4_REAL);
         getUserState().setRazarion(100);
-        getMyBase(); // Create Base
+        getOrCreateBase(); // Create Base
         unlockService.unlockPlanet(TEST_PLANET_2_ID);
         unlockService.unlockPlanet(TEST_PLANET_3_ID);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -360,7 +361,7 @@ public class TestServerUnlockService4Planet extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.promote(getUserState(), TEST_LEVEL_4_REAL);
-        getMyBase(); // Create Base
+        getOrCreateBase(); // Create Base
         // Assert empty
         Collection<DbPlanet> unlockedPlanets = unlockService.getUnlockPlanets(getUserState());
         Assert.assertTrue(unlockedPlanets.isEmpty());

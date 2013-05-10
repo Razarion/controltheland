@@ -90,6 +90,14 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         this.simpleBase = simpleBase;
     }
 
+    public void recalculateOnwItems() {
+        myItemTypeCount.clear();
+        ownItemCount = 0;
+        for (SyncBaseItem syncBaseItem : ItemContainer.getInstance().getItems4Base(simpleBase)) {
+            addOwnItem(syncBaseItem);
+        }
+    }
+
     public SimpleBase getSimpleBase() {
         return simpleBase;
     }
@@ -201,6 +209,11 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
                 updateBase(baseChangedPacket.getBaseAttributes());
                 break;
             case CREATED:
+                if (simpleBase != null && getBaseAttributes(baseChangedPacket.getBaseAttributes().getSimpleBase()) != null && baseChangedPacket.getBaseAttributes().getSimpleBase().equals(simpleBase)) {
+                    // Do not add own base twice. This happens if base is created during ask for start position mode
+                    // The base is sent twice via createBase() return and create base packet
+                    break;
+                }
                 createBase(baseChangedPacket.getBaseAttributes());
                 break;
             case REMOVED:
@@ -372,16 +385,19 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     @Override
     public void onItemCreated(SyncBaseItem syncBaseItem) {
         if (isMyOwnProperty(syncBaseItem)) {
-            ownItemCount++;
-            Integer count = myItemTypeCount.get(syncBaseItem.getBaseItemType());
-            if (count == null) {
-                count = 0;
-            }
-            count++;
-            myItemTypeCount.put(syncBaseItem.getBaseItemType(), count);
-
+            addOwnItem(syncBaseItem);
             SideCockpit.getInstance().updateItemLimit();
         }
+    }
+
+    private void addOwnItem(SyncBaseItem syncBaseItem) {
+        ownItemCount++;
+        Integer count = myItemTypeCount.get(syncBaseItem.getBaseItemType());
+        if (count == null) {
+            count = 0;
+        }
+        count++;
+        myItemTypeCount.put(syncBaseItem.getBaseItemType(), count);
     }
 
     @Override
@@ -430,5 +446,9 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     @Override
     protected PlanetServices getPlanetServices() {
         return ClientPlanetServices.getInstance();
+    }
+
+    public boolean isBaseDead() {
+        return ownItemCount <= 0;
     }
 }

@@ -141,6 +141,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
         userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
+        getOrCreateBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -160,6 +161,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U2", "test");
         userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
+        createBase(new Index(2000, 2000));
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -214,7 +216,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         sendFactoryCommand(u1Factory, TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
         userGuidanceService.activateQuest(TEST_LEVEL_TASK_1_2_REAL_ID, Locale.ENGLISH);
-        serverPlanetServices.getBaseService().depositResource(3.0, getMyBase());
+        serverPlanetServices.getBaseService().depositResource(3.0, getOrCreateBase());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -510,6 +512,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
         userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
+        getOrCreateBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         //Backup
@@ -542,7 +545,8 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U2", "test");
         userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
-        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000), TEST_FACTORY_ITEM_ID);
+        createBase(new Index(2000,2000));
+        sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(2300, 2300), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -604,7 +608,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         sendFactoryCommand(u1Factory, TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
         userGuidanceService.activateQuest(TEST_LEVEL_TASK_1_2_REAL_ID, Locale.ENGLISH);
-        serverPlanetServices.getBaseService().depositResource(3.0, getMyBase());
+        serverPlanetServices.getBaseService().depositResource(3.0, getOrCreateBase());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

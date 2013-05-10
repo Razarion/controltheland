@@ -22,7 +22,6 @@ import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
-import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
@@ -130,4 +129,6 @@ public interface MovableServiceAsync {
     void unlockQuest(int questId, AsyncCallback<UnlockContainer> async);
 
     void unlockPlanet(int planetId, AsyncCallback<UnlockContainer> async);
+
+    void createBase(Index position, AsyncCallback<RealGameInfo> async);
 }

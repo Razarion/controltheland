@@ -3,7 +3,6 @@ package com.btxtech.game.services.history;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
-import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -89,6 +88,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         int levelTaskId = userGuidanceService.getDefaultLevelTaskId();
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", levelTaskId, "xx", 0, 0);
+        getOrCreateBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify
@@ -104,13 +104,13 @@ public class TestHistoryService extends AbstractServiceTest {
 
         Assert.assertEquals(5, displayHistoryElements.size());
 
-        Assert.assertEquals("Level Task activated: " + TEST_LEVEL_TASK_1_2_REAL_NAME, displayHistoryElements.get(0).getMessage());
+        Assert.assertEquals("Item created: " + TEST_START_BUILDER_ITEM, displayHistoryElements.get(0).getMessage());
 
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
-        Assert.assertEquals("Item created: " + TEST_START_BUILDER_ITEM, displayHistoryElements.get(1).getMessage());
+        Assert.assertEquals("Base created: U1", displayHistoryElements.get(1).getMessage());
 
         Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
-        Assert.assertEquals("Base created: U1", displayHistoryElements.get(2).getMessage());
+        Assert.assertEquals("Level Task activated: " + TEST_LEVEL_TASK_1_2_REAL_NAME, displayHistoryElements.get(2).getMessage());
 
         Assert.assertTrue(displayHistoryElements.get(2).getTimeStamp() >= displayHistoryElements.get(3).getTimeStamp());
         Assert.assertEquals("Level reached: " + TEST_LEVEL_2_REAL, displayHistoryElements.get(3).getMessage());
@@ -182,8 +182,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("Target");
-        SimpleBase targetBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
-        sendMoveCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000));
+        SimpleBase targetBase = getOrCreateBase();
         waitForActionServiceDone();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -191,8 +190,8 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("Actor");
-        SimpleBase actorBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
-        sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), new Index(200, 200), TEST_FACTORY_ITEM_ID);
+        SimpleBase actorBase = createBase(new Index(2000, 2000));
+        sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), new Index(2200, 2200), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(actorBase, TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
@@ -242,7 +241,7 @@ public class TestHistoryService extends AbstractServiceTest {
         System.out.println("**** testKillAnonymousItem ****");
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase targetBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
+        SimpleBase targetBase = getOrCreateBase();
         sendMoveCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000));
         waitForActionServiceDone();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -251,7 +250,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("Actor");
-        SimpleBase actorBase = getMovableService().getRealGameInfo(START_UID_2).getBase();
+        SimpleBase actorBase = createBase(new Index(2000, 2000));
         sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), new Index(200, 200), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(actorBase, TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
@@ -289,7 +288,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("Target");
-        SimpleBase targetBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
+        SimpleBase targetBase = getOrCreateBase();
         sendMoveCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000));
         waitForActionServiceDone();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -297,7 +296,7 @@ public class TestHistoryService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase actorBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
+        SimpleBase actorBase = createBase(new Index(2000, 2000));
         sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), new Index(200, 200), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         // TODO failed on 03.12.2012, 03.12.2012
@@ -311,7 +310,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("Target", "test");
-        getMyBase(); // Connection -> resurrection
+        createBase(new Index(3000, 3000)); // Connection -> resurrection
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -352,7 +351,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("Actor");
-        SimpleBase simpleBase = getMyBase();
+        SimpleBase simpleBase = getOrCreateBase();
         getMovableService().sellItem(getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -478,14 +477,14 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        SimpleBase simpleBase1 = getMyBase();
+        SimpleBase simpleBase1 = getOrCreateBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U2");
-        SimpleBase simpleBase2 = getMyBase();
+        SimpleBase simpleBase2 = createBase(new Index(2000, 2000));
         allianceService.proposeAlliance(simpleBase1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -580,7 +579,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        SimpleBase simpleBase = getMyBase();
+        SimpleBase simpleBase = getOrCreateBase();
         SyncBoxItem syncBoxItem = createSyncBoxItem(dbBoxItemType.getId(), new Index(1000, 1000), new Id(1, 1));
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(2000, 2000), new Id(2, 2), simpleBase);
 
@@ -632,7 +631,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        SimpleBase simpleBase = getMyBase();
+        SimpleBase simpleBase = getOrCreateBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -704,7 +703,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
         getUserState().setRazarion(100);
-        getMyBase(); // Create Base
+        getOrCreateBase(); // Create Base
         unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
         unlockService.unlockItemType(TEST_FACTORY_ITEM_ID);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -759,7 +758,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
         getUserState().setRazarion(100);
-        getMyBase(); // Create Base
+        getOrCreateBase(); // Create Base
         unlockService.unlockQuest(dbLevelTask1.getId());
         unlockService.unlockQuest(dbLevelTask2.getId());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -807,7 +806,7 @@ public class TestHistoryService extends AbstractServiceTest {
         createAndLoginUser("U1");
         userGuidanceService.promote(getUserState(), TEST_LEVEL_4_REAL);
         getUserState().setRazarion(100);
-        getMyBase(); // Create Base
+        getOrCreateBase(); // Create Base
         unlockService.unlockPlanet(TEST_PLANET_2_ID);
         unlockService.unlockPlanet(TEST_PLANET_3_ID);
         endHttpRequestAndOpenSessionInViewFilter();

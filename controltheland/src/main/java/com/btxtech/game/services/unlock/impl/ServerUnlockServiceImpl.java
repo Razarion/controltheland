@@ -74,6 +74,17 @@ public class ServerUnlockServiceImpl extends UnlockServiceImpl implements Server
     }
 
     @Override
+    public UnlockContainer getUnlockContainer(UserState userState) {
+        synchronized (unlockContainers) {
+            UnlockContainer unlockContainer = unlockContainers.get(userState);
+            if (unlockContainer == null) {
+                throw new IllegalStateException("unlockContainer == null");
+            }
+            return unlockContainer;
+        }
+    }
+
+    @Override
     protected PlanetServices getPlanetServices(SimpleBase simpleBase) {
         return planetSystemService.getServerPlanetServices(simpleBase);
     }
@@ -259,15 +270,5 @@ public class ServerUnlockServiceImpl extends UnlockServiceImpl implements Server
         UnlockContainerPacket unlockContainerPacket = new UnlockContainerPacket();
         unlockContainerPacket.setUnlockContainer(unlockContainer);
         serverPlanetServices.getConnectionService().sendPacket(serverPlanetServices.getBaseService().getBase(userState).getSimpleBase(), unlockContainerPacket);
-    }
-
-    private UnlockContainer getUnlockContainer(UserState userState) {
-        synchronized (unlockContainers) {
-            UnlockContainer unlockContainer = unlockContainers.get(userState);
-            if (unlockContainer == null) {
-                throw new IllegalStateException("unlockContainer == null");
-            }
-            return unlockContainer;
-        }
     }
 }

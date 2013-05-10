@@ -237,7 +237,7 @@ public class TestBotRunner extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase targetBase = getMyBase();
+        SimpleBase targetBase = getOrCreateBase();
         Id targetId = getFirstSynItemId(targetBase, TEST_START_BUILDER_ITEM_ID);
         sendMoveCommand(targetId, new Index(2000, 2000));
         waitForActionServiceDone();

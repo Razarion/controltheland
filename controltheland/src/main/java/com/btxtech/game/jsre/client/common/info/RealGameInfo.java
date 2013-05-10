@@ -46,6 +46,7 @@ public class RealGameInfo extends GameInfo {
     private PlanetInfo planetInfo;
     private List<PlanetLiteInfo> allPlanets;
     private UnlockContainer unlockContainer;
+    private StartPointInfo startPointInfo;
 
     public SimpleBase getBase() {
         return base;
@@ -154,5 +155,13 @@ public class RealGameInfo extends GameInfo {
     @Override
     public boolean isSellAllowed() {
         return true;
+    }
+
+    public StartPointInfo getStartPointInfo() {
+        return startPointInfo;
+    }
+
+    public void setStartPointInfo(StartPointInfo startPointInfo) {
+        this.startPointInfo = startPointInfo;
     }
 }

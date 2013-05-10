@@ -133,7 +133,7 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
             Assert.assertEquals("Not enough razarion to unlock: ItemType: TestAttackItem user: UserState: user=null", e.getMessage());
         }
         Assert.assertEquals(0, getUserState().getRazarion());
-        assertItems(unlockService.getUnlockContainer(getMyBase()));
+        assertItems(unlockService.getUnlockContainer(getOrCreateBase()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -152,7 +152,7 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
         } catch (IllegalArgumentException e) {
             Assert.assertEquals("Base item type can not be unlocked: ItemType: TestAttackItem", e.getMessage());
         }
-        assertItems(unlockService.getUnlockContainer(getMyBase()));
+        assertItems(unlockService.getUnlockContainer(getOrCreateBase()));
         Assert.assertEquals(100, getUserState().getRazarion());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -178,12 +178,12 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getUserState().setRazarion(100);
-        getMyBase(); // Create Base
+        getOrCreateBase(); // Create Base
         unlockService.unlockItemType(TEST_FACTORY_ITEM_ID);
-        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
-        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
-        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_CONTAINER_ITEM_ID), getMyBase()));
-        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_HARVESTER_ITEM_ID), getMyBase()));
+        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getOrCreateBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getOrCreateBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_CONTAINER_ITEM_ID), getOrCreateBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_HARVESTER_ITEM_ID), getOrCreateBase()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -239,7 +239,7 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
         getUserState().setRazarion(100);
-        getMyBase(); // Create Base
+        getOrCreateBase(); // Create Base
         unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
         unlockService.unlockItemType(TEST_FACTORY_ITEM_ID);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -283,7 +283,7 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMyBase(); // Create Base
+        getOrCreateBase(); // Create Base
         // Assert empty
         Collection<DbBaseItemType> unlockedItems = unlockService.getUnlockDbBaseItemTypes(getUserState());
         Assert.assertTrue(unlockedItems.isEmpty());
@@ -300,7 +300,7 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
         unlockedItems = unlockService.getUnlockDbBaseItemTypes(getUserState());
         Assert.assertEquals(1, unlockedItems.size());
         Assert.assertTrue(unlockedItems.contains(itemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID)));
-        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getOrCreateBase()));
         // Add item
         clearPackets();
         unlockService.setUnlockedBaseItemTypesBackend(Arrays.asList(itemTypeService.getDbBaseItemType(TEST_FACTORY_ITEM_ID), itemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID)), getUserState());
@@ -314,8 +314,8 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
         Assert.assertEquals(2, unlockedItems.size());
         Assert.assertTrue(unlockedItems.contains(itemTypeService.getDbBaseItemType(TEST_ATTACK_ITEM_ID)));
         Assert.assertTrue(unlockedItems.contains(itemTypeService.getDbBaseItemType(TEST_FACTORY_ITEM_ID)));
-        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
-        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getOrCreateBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getOrCreateBase()));
         // Set no items
         clearPackets();
         unlockService.setUnlockedBaseItemTypesBackend(new ArrayList<DbBaseItemType>(), getUserState());
@@ -327,8 +327,8 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
         assertPackagesIgnoreSyncItemInfoAndClear(unlockContainerPacket);
         unlockedItems = unlockService.getUnlockDbBaseItemTypes(getUserState());
         Assert.assertEquals(0, unlockedItems.size());
-        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
-        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getOrCreateBase()));
+        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getOrCreateBase()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -356,11 +356,11 @@ public class TestServerUnlockService4Item extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMyBase(); // Force base
+        getOrCreateBase(); // Force base
         getUserState().setRazarion(100);
-        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
+        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) itemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getOrCreateBase()));
         globalInventoryService.buyInventoryItem(dbInventoryItem.getId());
-        globalInventoryService.useInventoryItem(dbInventoryItem.getId(), Arrays.asList(new Index(1000, 1000)));
+        globalInventoryService.useInventoryItem(dbInventoryItem.getId(), Arrays.asList(new Index(2000, 2000)));
         assertWholeItemCount(TEST_PLANET_1_ID, 2);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

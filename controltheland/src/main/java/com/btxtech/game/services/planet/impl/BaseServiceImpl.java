@@ -13,11 +13,12 @@
 
 package com.btxtech.game.services.planet.impl;
 
+import com.btxtech.game.jsre.client.PositionInBotException;
+import com.btxtech.game.jsre.client.StartPointItemPlacerChecker;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
+import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
-import com.btxtech.game.jsre.common.NoConnectionException;
-import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -34,11 +35,14 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
+import com.btxtech.game.jsre.common.packets.BaseLostPacket;
 import com.btxtech.game.jsre.common.packets.EnergyPacket;
 import com.btxtech.game.jsre.common.packets.HouseSpacePacket;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.connection.NoBaseException;
+import com.btxtech.game.services.gwt.MovableServiceImpl;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.BaseService;
@@ -52,6 +56,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
  * User: beat
@@ -60,6 +65,7 @@ import java.util.List;
  */
 public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseService {
     private static final String DEFAULT_BASE_NAME_PREFIX = "Base ";
+    private static final String DEFAULT_BASE_NAME_FAKE = "Your Base";
     private Log log = LogFactory.getLog(BaseServiceImpl.class);
     private ServerPlanetServices planetServices;
     private ServerGlobalServices serverGlobalServices;
@@ -91,7 +97,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public Base createNewBase(UserState userState, DbBaseItemType dbBaseItemType, int startMoney, Region region, int startItemFreeRange) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
+    public Base createNewBase(UserState userState, DbBaseItemType dbBaseItemType, int startMoney, Index startPoint, int startItemFreeRange) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException, PositionInBotException {
+        BaseItemType startItem = (BaseItemType) serverGlobalServices.getItemTypeService().getItemType(dbBaseItemType.getId());
+        checkPosition(userState, startItem, startPoint, startItemFreeRange);
         Base base;
         synchronized (bases) {
             lastBaseId++;
@@ -101,9 +109,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             bases.put(base.getSimpleBase(), base);
         }
         serverGlobalServices.getHistoryService().addBaseStartEntry(base.getSimpleBase());
-        BaseItemType startItem = (BaseItemType) serverGlobalServices.getItemTypeService().getItemType(dbBaseItemType.getId());
         sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());
-        Index startPoint = planetServices.getCollisionService().getFreeRandomPosition(startItem, region, startItemFreeRange, true, false);
         SyncBaseItem syncBaseItem = (SyncBaseItem) planetServices.getItemService().createSyncObject(startItem, startPoint, null, base.getSimpleBase());
         syncBaseItem.setBuildup(1.0);
         syncBaseItem.getSyncItemArea().setCosmeticsAngel();
@@ -114,6 +120,31 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         base.setAccountBalance(startMoney);
         sendAccountBaseUpdate(base.getSimpleBase());
         return base;
+    }
+
+    private void checkPosition(UserState userState, BaseItemType startItem, final Index startPoint, final int startItemFreeRange) throws PositionInBotException {
+        final Set<SimpleBase> friendlyBases = serverGlobalServices.getAllianceService().getAllianceBases(userState, planetServices.getPlanetInfo());
+        StartPointItemPlacerChecker startPointItemPlacerChecker = new StartPointItemPlacerChecker(startItem, startItemFreeRange, planetServices) {
+
+            @Override
+            protected boolean hasEnemyInRange(Index absoluteMiddlePosition, int itemFreeRadius) {
+                return planetServices.getItemService().hasEnemyInRange(friendlyBases, startPoint, startItemFreeRange);
+            }
+        };
+        startPointItemPlacerChecker.check(startPoint);
+        if (!startPointItemPlacerChecker.isEnemiesOk()) {
+            throw new IllegalArgumentException("Enemy items too near " + startItem + " " + userState);
+        }
+        if (!startPointItemPlacerChecker.isItemsOk()) {
+            throw new IllegalArgumentException("Can not place over other items " + startItem + " " + userState);
+        }
+        if (!startPointItemPlacerChecker.isTerrainOk()) {
+            throw new IllegalArgumentException("Terrain is not free " + startItem + " " + userState);
+        }
+
+        if (planetServices.getBotService().isInRealm(startPoint)) {
+            throw new PositionInBotException(startPoint);
+        }
     }
 
     @Override
@@ -140,12 +171,12 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         }
         UserState userState = getUserState(base.getSimpleBase());
         userState.setSendResurrectionMessage();
-        planetServices.getConnectionService().closeConnection(base.getSimpleBase(), NoConnectionException.Type.BASE_SURRENDERED);
         makeBaseAbandoned(base);
         if (userState.isRegistered()) {
             serverGlobalServices.getAllianceService().onMakeBaseAbandoned(base.getSimpleBase());
             serverGlobalServices.getAllianceService().onBaseCreatedOrDeleted(userState.getUser());
         }
+        askForStartPosition(userState);
     }
 
     @Override
@@ -153,7 +184,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         super.setBot(simpleBase, bot);
     }
 
-    private void deleteBase(SimpleBase actor, Base base) {
+    private void deleteBase(SimpleBase actor, Base base, UserState userState) {
         log.debug("Base deleted: " + getBaseName(base.getSimpleBase()) + " (" + base + ")");
         boolean isBot = isBot(actor);
         synchronized (bases) {
@@ -169,8 +200,15 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
                 serverGlobalServices.getConditionService().onBaseDeleted(actor);
             }
         }
-        if (planetServices.getConnectionService().hasConnection(base.getSimpleBase())) {
-            planetServices.getConnectionService().closeConnection(base.getSimpleBase(), NoConnectionException.Type.BASE_LOST);
+    }
+
+    private void askForStartPosition(UserState userState) {
+        if (userState != null && planetServices.getConnectionService().hasConnection(userState)) {
+            RealGameInfo realGameInfo = new RealGameInfo();
+            MovableServiceImpl.askForStartPosition(planetServices, userState, realGameInfo, serverGlobalServices.getPlanetSystemService(), true);
+            BaseLostPacket baseLostPacket = new BaseLostPacket();
+            baseLostPacket.setRealGameInfo(realGameInfo);
+            planetServices.getConnectionService().sendPacket(userState, baseLostPacket);
         }
     }
 
@@ -262,6 +300,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     @Override
     public void onItemDeleted(SyncBaseItem syncItem, SimpleBase actor) {
         Base base = getBase(syncItem);
+        UserState userState = base.getUserState();
         base.removeItem(syncItem);
         if (!base.hasItems()) {
             serverGlobalServices.getHistoryService().addBaseDefeatedEntry(actor, base.getSimpleBase());
@@ -269,19 +308,20 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
                 sendDefeatedMessage(syncItem, actor);
             }
             Integer userId = null;
-            if (base.getUserState() != null && base.getUserState().getUser() != null) {
-                userId = base.getUserState().getUser();
-                serverGlobalServices.getUserTrackingService().onBaseDefeated(serverGlobalServices.getUserService().getUser(base.getUserState().getUser()), base);
+            if (userState != null && userState.isRegistered()) {
+                userId = userState.getUser();
+                serverGlobalServices.getUserTrackingService().onBaseDefeated(serverGlobalServices.getUserService().getUser(userState), base);
             }
             serverGlobalServices.getStatisticsService().onBaseKilled(base.getSimpleBase(), actor);
-            deleteBase(actor, base);
-            if (!base.isAbandoned() && base.getUserState() != null) {
+            deleteBase(actor, base, userState);
+            if (!base.isAbandoned() && userState != null) {
                 base.getUserState().setBase(null);
-                base.getUserState().setSendResurrectionMessage();
+                base.getUserState().setSendResurrectionMessage(); // TODO needed?
             }
             if (userId != null) {
                 serverGlobalServices.getAllianceService().onBaseCreatedOrDeleted(userId);
             }
+            askForStartPosition(userState);
         } else {
             handleHouseSpaceChanged(base);
         }
@@ -363,6 +403,14 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             return serverGlobalServices.getUserService().getUser(base.getUserState().getUser()).getUsername();
         } else {
             return DEFAULT_BASE_NAME_PREFIX + base.getBaseId();
+        }
+    }
+
+    private String setupFakeBaseName(UserState userState) {
+        if (userState.isRegistered()) {
+            return serverGlobalServices.getUserService().getUser(userState).getUsername();
+        } else {
+            return DEFAULT_BASE_NAME_FAKE;
         }
     }
 
@@ -517,5 +565,37 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     @Override
     protected PlanetServices getPlanetServices() {
         return planetServices;
+    }
+
+    @Override
+    public Collection<BaseAttributes> createAllBaseAttributes4FakeBase(SimpleBase fakeBase, UserState uSerState, int planetId) {
+        HashMap<SimpleBase, BaseAttributes> allFakeBaseAttributes = new HashMap<>();
+        for (BaseAttributes baseAttribute : getAllBaseAttributes()) {
+            BaseAttributes otherBaseAttribute = new BaseAttributes(baseAttribute.getSimpleBase(), baseAttribute.getName(), baseAttribute.isAbandoned());
+            otherBaseAttribute.setBot(baseAttribute.isBot());
+            allFakeBaseAttributes.put(baseAttribute.getSimpleBase(), otherBaseAttribute);
+        }
+        BaseAttributes ownFakeBseAttributes = new BaseAttributes(fakeBase, setupFakeBaseName(uSerState), false);
+        allFakeBaseAttributes.put(fakeBase, ownFakeBseAttributes);
+        serverGlobalServices.getAllianceService().fillAlliancesForFakeBases(ownFakeBseAttributes, allFakeBaseAttributes, uSerState, planetId);
+        return new ArrayList<>(allFakeBaseAttributes.values());
+    }
+
+
+    @Override
+    public void sendAlliancesChanged4FakeBase(UserState uSerState) {
+        SimpleBase fakeBase = SimpleBase.createFakeUser(planetServices.getPlanetInfo().getPlanetId());
+
+        HashMap<SimpleBase, BaseAttributes> allFakeBaseAttributes = new HashMap<>();
+        for (BaseAttributes baseAttribute : getAllBaseAttributes()) {
+            allFakeBaseAttributes.put(baseAttribute.getSimpleBase(), new BaseAttributes(baseAttribute.getSimpleBase(), baseAttribute.getName(), baseAttribute.isAbandoned()));
+        }
+        BaseAttributes ownFakeBseAttributes = new BaseAttributes(fakeBase, setupFakeBaseName(uSerState), false);
+        allFakeBaseAttributes.put(fakeBase, ownFakeBseAttributes);
+        serverGlobalServices.getAllianceService().fillAlliancesForFakeBases(ownFakeBseAttributes, allFakeBaseAttributes, uSerState, planetServices.getPlanetInfo().getPlanetId());
+        BaseChangedPacket baseChangedPacket = new BaseChangedPacket();
+        baseChangedPacket.setType(BaseChangedPacket.Type.CHANGED);
+        baseChangedPacket.setBaseAttributes(ownFakeBseAttributes);
+        planetServices.getConnectionService().sendPacket(uSerState, baseChangedPacket);
     }
 }

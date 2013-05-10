@@ -1,7 +1,9 @@
 package com.btxtech.game.services.planet;
 
+import com.btxtech.game.jsre.client.PositionInBotException;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
+import com.btxtech.game.jsre.client.common.info.StartPointInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
@@ -11,8 +13,11 @@ import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeExce
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
+import com.btxtech.game.jsre.common.packets.Packet;
+import com.btxtech.game.jsre.common.packets.XpPacket;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.ServerPlanetServices;
+import com.btxtech.game.services.connection.OnlineUserDTO;
 import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.planet.db.DbPlanet;
 import com.btxtech.game.services.user.User;
@@ -27,9 +32,9 @@ import java.util.List;
  * Time: 02:29
  */
 public interface PlanetSystemService {
-    void continuePlanet(String startUuid) throws InvalidLevelStateException;
+    void handleResurrectionMessage(UserState userState, String startUuid) throws InvalidLevelStateException;
 
-    void createBase(UserState userState) throws InvalidLevelStateException;
+    void createBase(UserState userState, Index position) throws InvalidLevelStateException, PositionInBotException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException;
 
     boolean hasPlanet(UserState userState);
 
@@ -69,6 +74,10 @@ public interface PlanetSystemService {
 
     ServerPlanetServices getServerPlanetServices(UserState userState) throws NoSuchPlanetException;
 
+    ServerPlanetServices getUnlockedServerPlanetServices(UserState userState) throws InvalidLevelStateException;
+
+    ServerPlanetServices getUnlockedServerPlanetServices() throws InvalidLevelStateException;
+
     void activate();
 
     void activatePlanet(int planetId);
@@ -89,5 +98,13 @@ public interface PlanetSystemService {
 
     List<PlanetLiteInfo> getAllPlanetLiteInfos();
 
-    List<SimpleBase> getAllOnlineBases();
+    List<OnlineUserDTO> getAllOnlineUsers();
+
+    StartPointInfo createStartPoint(PlanetInfo planetInfo, boolean setStartPosition);
+
+    void sendPacket(UserState userState, Packet packet);
+
+    ServerPlanetServices getPlanet4BaselessConnection(UserState userState);
+
+    void sendMessage(UserState userState, String key, Object[] args, boolean showRegisterDialog);
 }

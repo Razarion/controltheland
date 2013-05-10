@@ -13,6 +13,7 @@ import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.planet.PlanetSystemService;
+import com.btxtech.game.services.user.UserState;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class TestConnection extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void noPendingPackets() {
-        Connection connection = new Connection("1234", null);
+        Connection connection = new Connection(new UserState(), "1234", null);
         Assert.assertTrue(connection.getAndRemovePendingPackets(false).isEmpty());
         Assert.assertTrue(connection.getAndRemovePendingPackets(false).isEmpty());
         Assert.assertTrue(connection.getAndRemovePendingPackets(false).isEmpty());
@@ -46,7 +47,7 @@ public class TestConnection extends AbstractServiceTest {
     public void pendingPackets() throws Exception {
         configureSimplePlanetNoResources();
 
-        Connection connection = new Connection("1234", null);
+        Connection connection = new Connection(new UserState(), "1234", null);
         SyncBaseItem attackItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1));
         connection.sendBaseSyncItem(attackItem);
         AccountBalancePacket accountBalancePacket = new AccountBalancePacket();
@@ -64,7 +65,7 @@ public class TestConnection extends AbstractServiceTest {
     public void pendingPacketsResendLast() throws Exception {
         configureSimplePlanetNoResources();
 
-        Connection connection = new Connection("1234", null);
+        Connection connection = new Connection(new UserState(), "1234", null);
         SyncBaseItem attackItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1));
         connection.sendBaseSyncItem(attackItem);
         AccountBalancePacket accountBalancePacket = new AccountBalancePacket();
@@ -109,7 +110,7 @@ public class TestConnection extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMyBase(); // Opens a connection
+        getOrCreateBase(); // Opens a connection
         Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -117,82 +118,65 @@ public class TestConnection extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void closeConnectionBaseKilled1() throws Exception {
+    public void openConnectionOnBaseKilled1() throws Exception {
         configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMyBase(); // Opens a connection
+        getOrCreateBase(); // Opens a connection
         Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
         SyncBaseItem builder = (SyncBaseItem) serverPlanetServices.getItemService().getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
         serverPlanetServices.getBaseService().onItemDeleted(builder, null);
-
-        try {
-            Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
-            Assert.fail("NoConnectionException expected");
-        } catch (com.btxtech.game.jsre.common.NoConnectionException e) {
-            Assert.assertEquals(NoConnectionException.Type.BASE_LOST, e.getType());
-        }
+        Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
 
     @Test
     @DirtiesContext
-    public void closeConnectionBaseKilled2() throws Exception {
+    public void openConnectionBaseKilled2() throws Exception {
         configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase humanBase = getMyBase(); // Opens a connection
+        SimpleBase humanBase = getOrCreateBase(); // Opens a connection
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMyBase(); // Opens a connection
+        createBase(new Index(2000, 2000)); // Opens a connection
         Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
         SyncBaseItem builder = (SyncBaseItem) serverPlanetServices.getItemService().getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
         serverPlanetServices.getBaseService().onItemDeleted(builder, humanBase);
-
-        try {
-            Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
-            Assert.fail("NoConnectionException expected");
-        } catch (com.btxtech.game.jsre.common.NoConnectionException e) {
-            Assert.assertEquals(NoConnectionException.Type.BASE_LOST, e.getType());
-        }
+        Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
 
     @Test
     @DirtiesContext
-    public void closeConnectionBaseKilled3() throws Exception {
+    public void openConnectionBaseKilled3() throws Exception {
         configureSimplePlanetNoResources();
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase botBase = getMyBase(); // Opens a connection
+        SimpleBase botBase = getOrCreateBase();
         serverPlanetServices.getBaseService().setBot(botBase, true);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMyBase(); // Opens a connection
+        getMovableService().getRealGameInfo(START_UID_2); // Open connection
+        createBase(new Index(3000, 3000));
         Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
         SyncBaseItem builder = (SyncBaseItem) serverPlanetServices.getItemService().getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
         serverPlanetServices.getBaseService().onItemDeleted(builder, botBase);
-
-        try {
-            Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
-            Assert.fail("NoConnectionException expected");
-        } catch (com.btxtech.game.jsre.common.NoConnectionException e) {
-            Assert.assertEquals(NoConnectionException.Type.BASE_LOST, e.getType());
-        }
+        Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -256,12 +240,7 @@ public class TestConnection extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         getMovableService().getRealGameInfo(START_UID_1);
         getMovableService().surrenderBase();
-        try {
-            getMovableService().getSyncInfo(START_UID_1, false);
-            Assert.fail("NoConnectionException expected");
-        } catch (NoConnectionException e) {
-            Assert.assertEquals(NoConnectionException.Type.BASE_SURRENDERED, e.getType());
-        }
+        Assert.assertNotNull(getMovableService().getSyncInfo(START_UID_1, false));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -310,7 +289,7 @@ public class TestConnection extends AbstractServiceTest {
         String sessionId1 = getHttpSessionId();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("TestUser");
-        getMyBase(); // Opens a connection
+        getOrCreateBase(); // Opens a connection
         int userId = getUserState().getUser();
         getMovableService().sendDebug(clientDate, "CAT1", "Text Text");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -326,7 +305,7 @@ public class TestConnection extends AbstractServiceTest {
         Assert.assertTrue(serverAfter.getTime() >= debugEntry1.getTimeStamp().getTime());
         Assert.assertEquals(clientDate, debugEntry1.getClientTimeStamp());
         Assert.assertEquals(sessionId1, debugEntry1.getSessionId());
-        Assert.assertEquals(userId, (int)debugEntry1.getUserId());
+        Assert.assertEquals(userId, (int) debugEntry1.getUserId());
         Assert.assertEquals("CAT1", debugEntry1.getCategory());
         Assert.assertEquals("Text Text", debugEntry1.getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -341,7 +320,7 @@ public class TestConnection extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMockHttpServletRequest().addPreferredLocale(Locale.ENGLISH);
-        SimpleBase simpleBase = getMyBase();
+        SimpleBase simpleBase = getOrCreateBase();
         clearPackets();
         planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().sendMessage(simpleBase, "alliancesOfferedNotRegistered", new Object[]{"Hallo"}, true);
         Message message = new Message();
@@ -360,7 +339,7 @@ public class TestConnection extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMockHttpServletRequest().addPreferredLocale(Locale.GERMAN);
-        SimpleBase simpleBase = getMyBase();
+        SimpleBase simpleBase = getOrCreateBase();
         clearPackets();
         planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().sendMessage(simpleBase, "alliancesOfferedNotRegistered", new Object[]{"Hallo"}, false);
         Message message = new Message();
@@ -379,7 +358,7 @@ public class TestConnection extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMockHttpServletRequest().addPreferredLocale(Locale.GERMAN);
-        final SimpleBase simpleBase = getMyBase();
+        final SimpleBase simpleBase = getOrCreateBase();
         clearPackets();
         Thread thread = new Thread(new Runnable() {
             @Override

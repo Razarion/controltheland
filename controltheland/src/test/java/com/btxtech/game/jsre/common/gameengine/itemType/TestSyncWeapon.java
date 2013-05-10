@@ -7,7 +7,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.item.itemType.DbMovableType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.planet.db.DbPlanet;
@@ -60,12 +59,13 @@ public class TestSyncWeapon extends AbstractServiceTest {
         // Create Attacker
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        createBase(new Index(2000, 2000));
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(2000, 2000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
         assertWholeItemCount(TEST_PLANET_1_ID, 4);
-        sendAttackCommand(getFirstSynItemId(TEST_ATTACK_ITEM_ID),target);
+        sendAttackCommand(getFirstSynItemId(TEST_ATTACK_ITEM_ID), target);
         waitForActionServiceDone();
         assertWholeItemCount(TEST_PLANET_1_ID, 3);
         endHttpRequestAndOpenSessionInViewFilter();

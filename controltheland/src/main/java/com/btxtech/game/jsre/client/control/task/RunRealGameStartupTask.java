@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.ClientAllianceHandler;
 import com.btxtech.game.jsre.client.ClientMessageIdPacketHandler;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.SoundHandler;
+import com.btxtech.game.jsre.client.StartPointMode;
 import com.btxtech.game.jsre.client.cockpit.ChatCockpit;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualisationModel;
@@ -50,6 +51,9 @@ public class RunRealGameStartupTask extends AbstractStartupTask {
         Renderer.getInstance().start();
         SoundHandler.getInstance().start(Connection.getInstance().getGameInfo().getCommonSoundInfo());
         TerrainView.getInstance().setFocus();
-        ClientDeadEndProtection.getInstance().start();
+        StartPointMode.getInstance().activateIfNeeded();
+        if(!StartPointMode.getInstance().isActive()) {
+            ClientDeadEndProtection.getInstance().start();
+        }
     }
 }

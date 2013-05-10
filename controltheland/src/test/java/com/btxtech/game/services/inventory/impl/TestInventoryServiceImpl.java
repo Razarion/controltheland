@@ -445,6 +445,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         Thread.sleep(230);
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
         List<SyncItem> syncItems = serverPlanetServices.getItemService().getItemsCopy();
+        // TODO failed 05.04.2013
         Assert.assertEquals(1, syncItems.size());
         SyncBoxItem boxItem = (SyncBoxItem) syncItems.get(0);
 
@@ -565,13 +566,12 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         // Target item
         Id targetId = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
-        sendMoveCommand(targetId, new Index(1000, 1000));
-        waitForActionServiceDone();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        createBase(new Index(4000, 4000));
         // Actor item
         sendBuildCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(5000, 5000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -587,9 +587,8 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         // Target item
+        createBase(new Index(1000, 5000));
         targetId = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
-        sendMoveCommand(targetId, new Index(1000, 5000));
-        waitForActionServiceDone();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -1008,7 +1007,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        getMyBase(); // Create Base
+        getOrCreateBase(); // Create Base
         UserState userState = userService.getUserState();
         userState.setRazarion(111);
         userState.addInventoryItem(dbInventoryArtifact1.getId());
@@ -1042,7 +1041,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
-        getMyBase(); // Create Base
+        getOrCreateBase(); // Create Base
         userState = userService.getUserState();
         Assert.assertEquals(111, userState.getRazarion());
 
@@ -1304,7 +1303,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMyBase(); // Create Base
+        getOrCreateBase(); // Create Base
         // Verify new
         InventoryInfo inventoryInfo = globalInventoryService.getInventory(null, false);
         Assert.assertEquals(2, inventoryInfo.getAllInventoryItemInfos().size());
@@ -1482,7 +1481,7 @@ public class TestInventoryServiceImpl extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase simpleBase = getMyBase();
+        SimpleBase simpleBase = getOrCreateBase();
         Id starterItem = getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID);
         sendMoveCommand(starterItem, new Index(5000, 5000));
         waitForActionServiceDone();

@@ -52,7 +52,7 @@ public class TestMoneyDeadEndProtection extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        simpleBase = getMyBase();
+        simpleBase = getOrCreateBase();
         builder = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(1, 0), serverGlobalServices, planetSystemService.getServerPlanetServices(), simpleBase);
         factory = createFactorySyncBaseItem(TEST_FACTORY_ITEM_ID, new Index(100, 100), new Id(2, 0), serverGlobalServices, planetSystemService.getServerPlanetServices(), simpleBase);
         jeep = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(3, 0), serverGlobalServices, planetSystemService.getServerPlanetServices(), simpleBase);
@@ -90,8 +90,18 @@ public class TestMoneyDeadEndProtection extends AbstractServiceTest {
             }
 
             @Override
+            protected boolean isBaseDead() {
+                return false;
+            }
+
+            @Override
             protected int getMyMoney() {
                 return startMoney;
+            }
+
+            @Override
+            protected boolean isSuppressed() {
+                return false;
             }
         };
         deadEndProtection.setDeadEndListener(deadEndListenerMock);

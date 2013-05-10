@@ -1,18 +1,15 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
-import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.jsre.common.utg.condition.AbstractSyncItemComparison;
@@ -22,14 +19,12 @@ import com.btxtech.game.jsre.common.utg.config.CountComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.ItemTypePositionComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.SyncItemTypeComparisonConfig;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.TestPlanetHelper;
-import com.btxtech.game.services.common.TestGlobalServices;
 import com.btxtech.game.services.connection.Connection;
+import com.btxtech.game.services.connection.OnlineUserDTO;
 import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.PlanetSystemService;
-import com.btxtech.game.services.planet.impl.BaseServiceImpl;
 import com.btxtech.game.services.planet.impl.PlanetSystemServiceImpl;
 import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
 import com.btxtech.game.services.user.UserState;
@@ -43,7 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -258,7 +252,7 @@ public class TestConditionServiceWrongPlanet extends AbstractServiceTest impleme
     }
 
     @Override
-    public boolean hasConnection(SimpleBase simpleBase) {
+    public boolean hasConnection(UserState userState) {
         return false;
     }
 
@@ -268,13 +262,18 @@ public class TestConditionServiceWrongPlanet extends AbstractServiceTest impleme
     }
 
     @Override
-    public void createConnection(Base base, String startUuid) {
+    public void createConnection(UserState userState, String startUuid) {
 
     }
 
     @Override
-    public void closeConnection(SimpleBase simpleBase, NoConnectionException.Type closedReason) {
+    public void sendMessage(UserState userState, String key, Object[] args, boolean showRegisterDialog) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 
+    @Override
+    public void sendPacket(UserState userState, Packet packet) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
@@ -297,7 +296,7 @@ public class TestConditionServiceWrongPlanet extends AbstractServiceTest impleme
     }
 
     @Override
-    public Collection<SimpleBase> getOnlineBases() {
+    public Collection<OnlineUserDTO> getOnlineConnections() {
         return null;
     }
 

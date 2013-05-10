@@ -1,6 +1,7 @@
 package com.btxtech.game.services.user;
 
 import com.btxtech.game.jsre.client.SimpleUser;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
@@ -302,7 +303,8 @@ public class TestRegisterService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         registerService.register("U1", "xxx", "xxx", "fake");
-        SimpleBase simpleBase = getMyBase();
+        getMovableService().getRealGameInfo(START_UID_1);
+        SimpleBase simpleBase = getMovableService().createBase(new Index(1000, 1000)).getBase();
         User user = userService.getUser();
         user.setAwaitingVerification();
         String verificationId = userService.getUser().getVerificationId();
@@ -347,7 +349,8 @@ public class TestRegisterService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         registerService.register("U1", "xxx", "xxx", "fake");
-        simpleBase = getMyBase();
+        getMovableService().getRealGameInfo(START_UID_2);
+        simpleBase = getMovableService().createBase(new Index(3000, 3000)).getBase();
         user = userService.getUser();
         user.setAwaitingVerification();
         verificationId = userService.getUser().getVerificationId();

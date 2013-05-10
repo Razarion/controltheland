@@ -5,7 +5,7 @@ import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
+import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -439,11 +439,39 @@ abstract public class AbstractServiceTest {
      *
      * @return Simple Base
      */
-    protected SimpleBase getMyBase() {
+    protected SimpleBase getOrCreateBase() {
         try {
-            return getMovableService().getRealGameInfo(START_UID_1).getBase();
-        } catch (InvalidLevelStateException invalidLevelStateException) {
-            throw new RuntimeException(invalidLevelStateException);
+            if (getMovableService().getRealGameInfo(START_UID_1).getStartPointInfo() != null) {
+                return createBase(new Index(1000, 1000));
+            }
+            SimpleBase simpleBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
+            if (simpleBase == null) {
+                throw new IllegalStateException("simpleBase == null");
+            }
+            return simpleBase;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Attention: closes the current connection!!!
+     *
+     * @return Simple Base
+     */
+    protected SimpleBase createBase(Index startPoint) {
+        try {
+            RealGameInfo realGameInfo = getMovableService().createBase(startPoint);
+            if (realGameInfo == null) {
+                throw new IllegalStateException("realGameInfo == null");
+            }
+            SimpleBase simpleBase = getMovableService().getRealGameInfo(START_UID_1).getBase();
+            if (simpleBase == null) {
+                throw new IllegalStateException("simpleBase == null");
+            }
+            return simpleBase;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -462,7 +490,7 @@ abstract public class AbstractServiceTest {
     }
 
     protected Id getFirstSynItemId(int itemTypeId, Rectangle region) {
-        return getFirstSynItemId(getMyBase(), itemTypeId, region);
+        return getFirstSynItemId(getOrCreateBase(), itemTypeId, region);
     }
 
     protected Id getFirstSynItemId(SimpleBase simpleBase, int itemTypeId) {
@@ -493,7 +521,7 @@ abstract public class AbstractServiceTest {
     }
 
     protected List<Id> getAllSynItemId(int itemTypeId) {
-        return getAllSynItemId(getMyBase(), itemTypeId, null);
+        return getAllSynItemId(getOrCreateBase(), itemTypeId, null);
     }
 
     protected List<Id> getAllSynItemId(SimpleBase simpleBase, int itemTypeId, Rectangle region) {
@@ -1449,6 +1477,7 @@ abstract public class AbstractServiceTest {
         dbPlanet.setStartItemFreeRange(300);
         dbPlanet.setStartMoney(1000);
         dbPlanet.setStartItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
+        dbPlanet.setStartPosition(new Index(1001, 1001));
         dbPlanet.setHouseSpace(20);
         dbPlanet.setMaxMoney(10000);
         dbPlanet.setStartRegion(createDbRegion(new Rectangle(0, 0, 5000, 5000)));
@@ -1480,7 +1509,7 @@ abstract public class AbstractServiceTest {
         DbPlanetItemTypeLimitation consumer = dbPlanet.getItemLimitationCrud().createDbChild();
         consumer.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONSUMER_TYPE_ID));
         consumer.setCount(10);
-        DbPlanetItemTypeLimitation consumerMovableAttacker =  dbPlanet.getItemLimitationCrud().createDbChild();
+        DbPlanetItemTypeLimitation consumerMovableAttacker = dbPlanet.getItemLimitationCrud().createDbChild();
         consumerMovableAttacker.setDbBaseItemType((DbBaseItemType) serverItemTypeService.getDbItemType(TEST_CONSUMER_ATTACK_MOVABLE_TYPE_ID));
         consumerMovableAttacker.setCount(10);
 

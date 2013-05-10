@@ -46,6 +46,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * User: beat
@@ -335,5 +336,19 @@ public class ServerItemServiceImpl extends AbstractItemService implements Server
         });
 
         serverPlanetServices.getActionService().onAllianceBroken(idleAttackItems);
+    }
+
+    @Override
+    public boolean hasEnemyInRange(final Set<SimpleBase> friendlyBases, final Index middlePoint, final int range) {
+        return iterateOverItems(false, false, false, new ItemHandler<Boolean>() {
+            @Override
+            public Boolean handleItem(SyncItem syncItem) {
+                if (syncItem instanceof SyncBaseItem && !friendlyBases.contains(((SyncBaseItem) syncItem).getBase()) && syncItem.getSyncItemArea().getDistance(middlePoint) <= range) {
+                    return true;
+                }
+
+                return null;
+            }
+        });
     }
 }

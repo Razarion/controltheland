@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
+import com.btxtech.game.jsre.client.PositionInBotException;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.GlobalServices;
@@ -54,10 +55,10 @@ public class TestSyncBaseItem extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Base base1 = createBase(planetServices);
-        Base base2 = createBase(planetServices);
-        Base base3 = createBase(planetServices);
-        Base base4 = createBase(planetServices);
+        Base base1 = createBase(planetServices, new Index(1000, 1000));
+        Base base2 = createBase(planetServices, new Index(2000, 2000));
+        Base base3 = createBase(planetServices, new Index(3000, 3000));
+        Base base4 = createBase(planetServices, new Index(4000, 4000));
         SimpleBase botBase1 = createBotBase(planetServices);
         SimpleBase botBase2 = createBotBase(planetServices);
         SyncBaseItem syncBaseItem1 = (SyncBaseItem) planetServices.getItemService().getItem(getFirstSynItemId(base1.getSimpleBase(), TEST_START_BUILDER_ITEM_ID));
@@ -162,10 +163,10 @@ public class TestSyncBaseItem extends AbstractServiceTest {
         endHttpSession();
     }
 
-    private Base createBase(ServerPlanetServices baseService) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
+    private Base createBase(ServerPlanetServices baseService, Index startPosition) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException, PositionInBotException {
         UserState userState2 = new UserState();
         userState2.setDbLevelId(TEST_LEVEL_2_REAL_ID);
-        return baseService.getBaseService().createNewBase(userState2, serverItemTypeService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID), 100, createSimpleRegion(1), 100);
+        return baseService.getBaseService().createNewBase(userState2, serverItemTypeService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID), 100, startPosition, 100);
     }
 
     private SimpleBase createBotBase(ServerPlanetServices baseService) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {

@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.StartPointMode;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.ChatCockpit;
 import com.btxtech.game.jsre.client.cockpit.CockpitMode;
@@ -60,6 +61,11 @@ public class TerrainMouseHandler implements MouseMoveHandler {
                     int absoluteX = relative.getX() + terrainView.getViewOriginLeft();
                     int absoluteY = relative.getY() + terrainView.getViewOriginTop();
 
+                    if (StartPointMode.getInstance().isActive()) {
+                        StartPointMode.getInstance().execute(relative.getX(), relative.getY(), absoluteX, absoluteY);
+                        return;
+                    }
+
                     if (CockpitMode.getInstance().getMode() == CockpitMode.Mode.LAUNCH) {
                         ActionHandler.getInstance().executeLaunchCommand(absoluteX, absoluteY);
                         CockpitMode.getInstance().setMode(null);
@@ -90,8 +96,8 @@ public class TerrainMouseHandler implements MouseMoveHandler {
                         // On item clicked
                         if (CockpitMode.getInstance().getMode() == CockpitMode.Mode.SELL) {
                             if (syncItem instanceof SyncBaseItem && ClientBase.getInstance().isMyOwnProperty((SyncBaseItem) syncItem)) {
-                                Connection.getInstance().sellItem((SyncBaseItem) syncItem);
                                 CockpitMode.getInstance().setMode(null);
+                                Connection.getInstance().sellItem((SyncBaseItem) syncItem);
                             }
                         } else {
                             if (syncItem instanceof SyncResourceItem) {
@@ -295,7 +301,9 @@ public class TerrainMouseHandler implements MouseMoveHandler {
             int absoluteY = relative.getY() + terrainView.getViewOriginTop();
 
             ItemMouseOverHandler.getInstance().setMouseOver(null);
-            if (CockpitMode.getInstance().hasGroupSelectionFrame()) {
+            if (StartPointMode.getInstance().isActive()) {
+                StartPointMode.getInstance().getStartPointPlacer().onMove(relative.getX(), relative.getY(), absoluteX, absoluteY);
+            } else if (CockpitMode.getInstance().hasGroupSelectionFrame()) {
                 CockpitMode.getInstance().getGroupSelectionFrame().onMove(absoluteX, absoluteY);
             } else if (CockpitMode.getInstance().hasInventoryItemPlacer()) {
                 CockpitMode.getInstance().getInventoryItemPlacer().onMove(relative.getX(), relative.getY(), absoluteX, absoluteY);

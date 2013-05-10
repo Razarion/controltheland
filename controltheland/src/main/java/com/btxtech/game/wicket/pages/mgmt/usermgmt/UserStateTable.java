@@ -71,7 +71,7 @@ public class UserStateTable extends MgmtWebPage {
                 if (item.getModelObject().getBase() != null) {
                     Planet planet = planetSystemService.getPlanet(item.getModelObject());
                     item.add(new Label("planet", planet.getPlanetServices().getPlanetInfo().getName()));
-                    if (planet.getPlanetServices().getConnectionService().hasConnection(item.getModelObject().getBase().getSimpleBase())) {
+                    if (planet.getPlanetServices().getConnectionService().hasConnection(item.getModelObject())) {
                         item.add(new Label("inGame", "yes"));
                     } else {
                         item.add(new Label("inGame", ""));

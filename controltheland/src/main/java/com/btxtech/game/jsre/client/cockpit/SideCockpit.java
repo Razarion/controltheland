@@ -11,6 +11,7 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.client.SoundHandler;
+import com.btxtech.game.jsre.client.StartPointMode;
 import com.btxtech.game.jsre.client.WebBrowserCustomButton;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
@@ -210,10 +211,12 @@ public class SideCockpit {
         ExtendedCustomButton inventory = new ExtendedCustomButton("inventoryButton", false, ClientI18nHelper.CONSTANTS.tooltipInventory(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                if (Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE) {
+                if (StartPointMode.getInstance().isActive()) {
+                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.inventory(), ClientI18nHelper.CONSTANTS.inventoryNotAvailableBase()), DialogManager.Type.QUEUE_ABLE);
+                } else if (Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE) {
                     DialogManager.showDialog(new InventoryDialog(), DialogManager.Type.QUEUE_ABLE);
                 } else {
-                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.inventory(), ClientI18nHelper.CONSTANTS.inventoryNotAvailable()), DialogManager.Type.QUEUE_ABLE);
+                    DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.inventory(), ClientI18nHelper.CONSTANTS.inventoryNotAvailableMission()), DialogManager.Type.QUEUE_ABLE);
                 }
             }
         });

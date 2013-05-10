@@ -56,7 +56,7 @@ public interface UserGuidanceService extends CommonUserGuidanceService {
 
     void activateLevels() throws LevelActivationException;
 
-    void sendResurrectionMessage(SimpleBase simpleBase);
+    void sendResurrectionMessage(UserState userState);
 
     LevelScope getLevelScope(UserState userState);
 

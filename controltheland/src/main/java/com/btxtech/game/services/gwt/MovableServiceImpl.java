@@ -17,6 +17,7 @@ package com.btxtech.game.services.gwt;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.InvalidNickName;
 import com.btxtech.game.jsre.client.MovableService;
+import com.btxtech.game.jsre.client.PositionInBotException;
 import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
@@ -72,6 +73,7 @@ import com.btxtech.game.services.unlock.ServerUnlockService;
 import com.btxtech.game.services.user.AllianceService;
 import com.btxtech.game.services.user.RegisterService;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
@@ -127,7 +129,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public void sendCommands(List<BaseCommand> baseCommands) {
         try {
-            planetSystemService.getServerPlanetServices().getActionService().executeCommands(baseCommands);
+            planetSystemService.getUnlockedServerPlanetServices().getActionService().executeCommands(baseCommands);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
         }
@@ -136,10 +138,10 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public List<Packet> getSyncInfo(String startUuid, boolean resendLast) throws NoConnectionException {
         try {
-            return planetSystemService.getServerPlanetServices().getConnectionService().getConnection(startUuid).getAndRemovePendingPackets(resendLast);
+            return planetSystemService.getUnlockedServerPlanetServices().getConnectionService().getConnection(startUuid).getAndRemovePendingPackets(resendLast);
         } catch (NoConnectionException e) {
             throw e;
-        } catch (NoSuchPlanetException e) {
+        } catch (InvalidLevelStateException | NoSuchPlanetException e) {
             // Happens during server restart while client (user on a planet) still polls server
             ExceptionHandler.handleException(e);
             throw new NoConnectionException(NoConnectionException.Type.NON_EXISTENT);
@@ -152,7 +154,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public Collection<SyncItemInfo> getAllSyncInfo() {
         try {
-            return planetSystemService.getServerPlanetServices().getItemService().getSyncInfo();
+            return planetSystemService.getUnlockedServerPlanetServices().getItemService().getSyncInfo();
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return null;
@@ -180,24 +182,26 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public RealGameInfo getRealGameInfo(String startUuid) throws InvalidLevelStateException {
         try {
-            planetSystemService.continuePlanet(startUuid);
+            UserState userState = userService.getUserState();
+            ServerPlanetServices serverPlanetServices = planetSystemService.getUnlockedServerPlanetServices(userState);
             RealGameInfo realGameInfo = new RealGameInfo();
             setCommonInfo(realGameInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService, clipService);
-            ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices();
-            Base base = serverPlanetServices.getBaseService().getBase();
-            realGameInfo.setBase(base.getSimpleBase());
-            realGameInfo.setAccountBalance(base.getAccountBalance());
-            realGameInfo.setEnergyConsuming(serverPlanetServices.getEnergyService().getConsuming());
-            realGameInfo.setEnergyGenerating(serverPlanetServices.getEnergyService().getGenerating());
+            if (userState == null) {
+                throw new IllegalStateException("No UserState available: " + userState);
+            }
+            if (userState.getBase() != null) {
+                continueBase(serverPlanetServices, userState, startUuid, realGameInfo);
+            } else {
+                askForStartPosition(serverPlanetServices, userState, realGameInfo, planetSystemService, false);
+            }
+            realGameInfo.setAllianceOffers(allianceService.getPendingAllianceOffers());
             terrainImageService.setupTerrainImages(realGameInfo);
             serverPlanetServices.getTerrainService().setupTerrainRealGame(realGameInfo);
-            realGameInfo.setAllBases(planetSystemService.getServerPlanetServices(base.getSimpleBase()).getBaseService().getAllBaseAttributes());
-            realGameInfo.setHouseSpace(base.getHouseSpace());
-            realGameInfo.setPlanetInfo(planetSystemService.getServerPlanetServices(base.getSimpleBase()).getPlanetInfo());
+            realGameInfo.setPlanetInfo(serverPlanetServices.getPlanetInfo());
             realGameInfo.setAllPlanets(planetSystemService.getAllPlanetLiteInfos());
             userGuidanceService.fillRealGameInfo(realGameInfo, request.getLocale());
-            realGameInfo.setAllianceOffers(allianceService.getPendingAllianceOffers());
-            realGameInfo.setUnlockContainer(serverUnlockService.getUnlockContainer(base.getSimpleBase()));
+            serverPlanetServices.getConnectionService().createConnection(userState, startUuid);
+            realGameInfo.setUnlockContainer(serverUnlockService.getUnlockContainer(userState));
             return realGameInfo;
         } catch (InvalidLevelStateException invalidLevelStateException) {
             throw invalidLevelStateException;
@@ -205,6 +209,31 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             ExceptionHandler.handleException(t);
         }
         return null;
+    }
+
+    public static void askForStartPosition(ServerPlanetServices serverPlanetServices, UserState userState, RealGameInfo realGameInfo, PlanetSystemService planetSystemService, boolean existingGame) {
+        SimpleBase fakeBase = SimpleBase.createFakeUser(serverPlanetServices.getPlanetInfo().getPlanetId());
+        realGameInfo.setBase(fakeBase);
+        realGameInfo.setAllBases(serverPlanetServices.getBaseService().createAllBaseAttributes4FakeBase(fakeBase, userState, serverPlanetServices.getPlanetInfo().getPlanetId()));
+        realGameInfo.setStartPointInfo(planetSystemService.createStartPoint(serverPlanetServices.getPlanetInfo(), !existingGame));
+    }
+
+    private void continueBase(ServerPlanetServices serverPlanetServices, UserState userState, String startUuid, RealGameInfo realGameInfo) throws InvalidLevelStateException {
+        // planetSystemService.handleResurrectionMessage(userState, startUuid); // TODO needed?
+        fillRealGameInfo(realGameInfo);
+        Base base = serverPlanetServices.getBaseService().getBase();
+        realGameInfo.setUnlockContainer(serverUnlockService.getUnlockContainer(base.getSimpleBase()));
+    }
+
+    private void fillRealGameInfo(RealGameInfo realGameInfo) {
+        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices();
+        Base base = serverPlanetServices.getBaseService().getBase();
+        realGameInfo.setBase(base.getSimpleBase());
+        realGameInfo.setAccountBalance(base.getAccountBalance());
+        realGameInfo.setEnergyConsuming(serverPlanetServices.getEnergyService().getConsuming());
+        realGameInfo.setEnergyGenerating(serverPlanetServices.getEnergyService().getGenerating());
+        realGameInfo.setAllBases(planetSystemService.getServerPlanetServices(base.getSimpleBase()).getBaseService().getAllBaseAttributes());
+        realGameInfo.setHouseSpace(base.getHouseSpace());
     }
 
     @Override
@@ -380,7 +409,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public void sellItem(Id id) {
         try {
-            planetSystemService.getServerPlanetServices().getItemService().sellItem(id);
+            planetSystemService.getUnlockedServerPlanetServices().getItemService().sellItem(id);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
         }
@@ -564,6 +593,25 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     public UnlockContainer unlockPlanet(int planetId) {
         try {
             return serverUnlockService.unlockPlanet(planetId);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
+        }
+    }
+
+    @Override
+    public RealGameInfo createBase(Index position) throws PositionInBotException {
+        try {
+            UserState userState = userService.getUserState();
+            if (planetSystemService.getUnlockedServerPlanetServices().getBaseService().getBase(userState) != null) {
+                throw new IllegalStateException("User does already have a base: " + userState);
+            }
+            planetSystemService.createBase(userState, position);
+            RealGameInfo realGameInfo = new RealGameInfo();
+            fillRealGameInfo(realGameInfo);
+            return realGameInfo;
+        } catch (PositionInBotException e) {
+            throw e;
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return null;

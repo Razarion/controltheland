@@ -7,10 +7,12 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.services.connection.Connection;
+import com.btxtech.game.services.connection.OnlineUserDTO;
 import com.btxtech.game.services.connection.ServerConnectionService;
-import com.btxtech.game.services.planet.Base;
+import com.btxtech.game.services.user.UserState;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Assert;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,7 +29,7 @@ public class ServerConnectionServiceTestHelper implements ServerConnectionServic
     private static Log log = LogFactory.getLog(ServerConnectionServiceTestHelper.class);
 
     @Override
-    public boolean hasConnection(SimpleBase simpleBase) {
+    public boolean hasConnection(UserState userState) {
         return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -37,12 +39,7 @@ public class ServerConnectionServiceTestHelper implements ServerConnectionServic
     }
 
     @Override
-    public void createConnection(Base base, String startUuid) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void closeConnection(SimpleBase simpleBase, NoConnectionException.Type closedReason) {
+    public void createConnection(UserState userState, String startUuid) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -70,7 +67,7 @@ public class ServerConnectionServiceTestHelper implements ServerConnectionServic
     }
 
     @Override
-    public Collection<SimpleBase> getOnlineBases() {
+    public Collection<OnlineUserDTO> getOnlineConnections() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -92,6 +89,16 @@ public class ServerConnectionServiceTestHelper implements ServerConnectionServic
     @Override
     public void deactivate() {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void sendMessage(UserState userState, String key, Object[] args, boolean showRegisterDialog) {
+        Assert.fail();
+    }
+
+    @Override
+    public void sendPacket(UserState userState, Packet packet) {
+        Assert.fail();
     }
 
     public void clearReceivedPackets() {

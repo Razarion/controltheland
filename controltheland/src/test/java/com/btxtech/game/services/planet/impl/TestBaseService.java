@@ -1,14 +1,17 @@
 package com.btxtech.game.services.planet.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.NoConnectionException;
+import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
+import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.TestPlanetHelper;
+import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.common.TestGlobalServices;
 import com.btxtech.game.services.common.impl.ServerGlobalServicesImpl;
@@ -19,6 +22,8 @@ import com.btxtech.game.services.planet.BaseService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.AllianceService;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.condition.ServerConditionService;
 import junit.framework.Assert;
 import org.easymock.EasyMock;
@@ -26,7 +31,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * User: beat
@@ -44,6 +51,10 @@ public class TestBaseService extends AbstractServiceTest {
     private ServerItemTypeService serverItemTypeService;
     @Autowired
     private MgmtService mgmtService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
+    @Autowired
+    private AllianceService allianceService;
 
     @Test
     @DirtiesContext
@@ -56,7 +67,7 @@ public class TestBaseService extends AbstractServiceTest {
         Assert.assertNull(userService.getUser());
         createAndLoginUser("U1");
         // $1000
-        SimpleBase simpleBase = getMyBase(); // Setup connection & create two account balance package
+        SimpleBase simpleBase = getOrCreateBase(); // Setup connection & create two account balance package
         Id id = getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID);
         sendBuildCommand(id, new Index(400, 400), TEST_FACTORY_ITEM_ID);
         // $998
@@ -82,18 +93,13 @@ public class TestBaseService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertNull(userService.getUser());
         createAndLoginUser("U1");
-        SimpleBase simpleBase = getMyBase(); // Setup connection
+        SimpleBase simpleBase = getOrCreateBase(); // Setup connection
         Id id = getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID);
         clearPackets();
         getMovableService().sellItem(id);
 
-        try {
-            getMovableService().getSyncInfo(START_UID_1, false);
-            Assert.fail("NoConnectionException expected");
-        } catch (NoConnectionException e) {
-            Assert.assertEquals(NoConnectionException.Type.BASE_LOST, e.getType());
-        }
-
+        Assert.assertNotNull(getMovableService().getRealGameInfo(START_UID_1).getStartPointInfo());
+        Assert.assertNotNull(getMovableService().getSyncInfo(START_UID_1, false));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -107,7 +113,7 @@ public class TestBaseService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        SimpleBase simpleBase = getMyBase(); // Setup connection
+        SimpleBase simpleBase = getOrCreateBase(); // Setup connection
         sendBuildCommand(getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID), new Index(100, 100), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         // TODO failed on 02.07.2012
@@ -131,7 +137,7 @@ public class TestBaseService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase simpleBase = getMyBase(); // Setup connection
+        SimpleBase simpleBase = getOrCreateBase(); // Setup connection
         sendBuildCommand(getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID), new Index(100, 100), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         Assert.assertEquals(2, baseService.getBase().getItemCount());
@@ -148,15 +154,19 @@ public class TestBaseService extends AbstractServiceTest {
     public void surrenderBaseAllianceUnregistered() throws Exception {
         configureSimplePlanetNoResources();
         BaseService baseService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService();
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        SimpleBase simpleBase = getOrCreateBase();
+        waitForActionServiceDone(TEST_PLANET_1_ID);
 
         AllianceService allianceServiceMock = EasyMock.createStrictMock(AllianceService.class);
+        allianceServiceMock.fillAlliancesForFakeBases(EasyMock.<BaseAttributes>anyObject(),
+                EasyMock.<HashMap<SimpleBase, BaseAttributes>>anyObject(),
+                EasyMock.<UserState>anyObject(),
+                EasyMock.anyInt());
         setPrivateField(ServerGlobalServicesImpl.class, serverGlobalServices, "allianceService", allianceServiceMock);
         EasyMock.replay(allianceServiceMock);
 
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase simpleBase = getMyBase(); // Setup connection
-        waitForActionServiceDone(TEST_PLANET_1_ID);
         baseService.surrenderBase(baseService.getBase(simpleBase));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -170,18 +180,22 @@ public class TestBaseService extends AbstractServiceTest {
         configureSimplePlanetNoResources();
         BaseService baseService = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService();
 
-        AllianceService allianceServiceMock = EasyMock.createStrictMock(AllianceService.class);
-        setPrivateField(ServerGlobalServicesImpl.class, serverGlobalServices, "allianceService", allianceServiceMock);
-        allianceServiceMock.onBaseCreatedOrDeleted(1);
-        allianceServiceMock.onMakeBaseAbandoned(new SimpleBase(1, TEST_PLANET_1_ID));
-        allianceServiceMock.onBaseCreatedOrDeleted(1);
-        EasyMock.replay(allianceServiceMock);
-
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
-        SimpleBase simpleBase = getMyBase(); // Setup connection
+        SimpleBase simpleBase = getOrCreateBase(); // Setup connection
         waitForActionServiceDone();
+
+        AllianceService allianceServiceMock = EasyMock.createStrictMock(AllianceService.class);
+        setPrivateField(ServerGlobalServicesImpl.class, serverGlobalServices, "allianceService", allianceServiceMock);
+        allianceServiceMock.onMakeBaseAbandoned(new SimpleBase(1, TEST_PLANET_1_ID));
+        allianceServiceMock.onBaseCreatedOrDeleted(1);
+        allianceServiceMock.fillAlliancesForFakeBases(EasyMock.<BaseAttributes>anyObject(),
+                EasyMock.<HashMap<SimpleBase, BaseAttributes>>anyObject(),
+                EasyMock.<UserState>anyObject(),
+                EasyMock.anyInt());
+        EasyMock.replay(allianceServiceMock);
+
         baseService.surrenderBase(baseService.getBase(simpleBase));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -200,7 +214,7 @@ public class TestBaseService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase simpleBase = getMyBase(); // Setup connection
+        SimpleBase simpleBase = getOrCreateBase(); // Setup connection
         BaseService baseService = planetSystemService.getServerPlanetServices().getBaseService();
         Assert.assertEquals(1, baseService.getUsedHouseSpace(simpleBase));
         Assert.assertEquals(0, baseService.getHouseSpace(simpleBase));
@@ -299,7 +313,7 @@ public class TestBaseService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
-        SimpleBase simpleBase = getMyBase(); // Setup connection
+        SimpleBase simpleBase = getOrCreateBase(); // Setup connection
         BaseService baseService = planetSystemService.getServerPlanetServices().getBaseService();
         Assert.assertEquals(5, baseService.getUsedHouseSpace(simpleBase));
         Assert.assertEquals(10, baseService.getHouseSpace(simpleBase));
@@ -358,4 +372,227 @@ public class TestBaseService extends AbstractServiceTest {
         Assert.assertEquals(10.0, testBase.getAccountBalance());
 
     }
+
+    @Test
+    @DirtiesContext
+    public void fillAlliancesForFakeBasesAloneUnreg() throws Exception {
+        configureMultiplePlanetsAndLevels();
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
+        SimpleBase ownFakeBase = new SimpleBase(SimpleBase.FAKE_BASE_START_POINT, TEST_PLANET_1_ID);
+        Collection<BaseAttributes> allBaseAttributes = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService().createAllBaseAttributes4FakeBase(ownFakeBase, getUserState(), TEST_PLANET_1_ID);
+        Assert.assertEquals(1, allBaseAttributes.size());
+        BaseAttributes baseAttributes = CommonJava.getFirst(allBaseAttributes);
+        Assert.assertEquals(ownFakeBase, baseAttributes.getSimpleBase());
+        Assert.assertEquals("Your Base", baseAttributes.getName());
+        Assert.assertFalse(baseAttributes.isBot());
+        Assert.assertTrue(baseAttributes.getAlliances().isEmpty());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void fillAlliancesForFakeBasesAloneReg() throws Exception {
+        configureMultiplePlanetsAndLevels();
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
+        SimpleBase ownFakeBase = new SimpleBase(SimpleBase.FAKE_BASE_START_POINT, TEST_PLANET_1_ID);
+        Collection<BaseAttributes> allBaseAttributes = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService().createAllBaseAttributes4FakeBase(ownFakeBase, getUserState(), TEST_PLANET_1_ID);
+        Assert.assertEquals(1, allBaseAttributes.size());
+        BaseAttributes baseAttributes = CommonJava.getFirst(allBaseAttributes);
+        Assert.assertEquals(ownFakeBase, baseAttributes.getSimpleBase());
+        Assert.assertEquals("U1", baseAttributes.getName());
+        Assert.assertFalse(baseAttributes.isBot());
+        Assert.assertTrue(baseAttributes.getAlliances().isEmpty());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void fillAlliancesForFakeBasesAloneRegBot() throws Exception {
+        configureMultiplePlanetsAndLevels();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBotConfig dbBotConfig = setupMinimalNoAttackBot(TEST_PLANET_1_ID, new Rectangle(0, 0, 5000, 5000));
+        waitForBotToBuildup(TEST_PLANET_1_ID, dbBotConfig.createBotConfig(serverItemTypeService));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
+        SimpleBase ownFakeBase = new SimpleBase(SimpleBase.FAKE_BASE_START_POINT, TEST_PLANET_1_ID);
+        Collection<BaseAttributes> allBaseAttributes = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService().createAllBaseAttributes4FakeBase(ownFakeBase, getUserState(), TEST_PLANET_1_ID);
+        Assert.assertEquals(2, allBaseAttributes.size());
+        for (BaseAttributes baseAttributes : allBaseAttributes) {
+            if(baseAttributes.getSimpleBase().equals(ownFakeBase)) {
+                Assert.assertEquals("U1", baseAttributes.getName());
+                Assert.assertFalse(baseAttributes.isBot());
+                Assert.assertTrue(baseAttributes.getAlliances().isEmpty());
+            } else {
+                Assert.assertTrue(baseAttributes.isBot());
+                Assert.assertTrue(baseAttributes.getAlliances().isEmpty());
+            }
+        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void fillAlliancesForFakeBasesUnreg() throws Exception {
+        configureMultiplePlanetsAndLevels();
+
+        for (int i = 0; i < 10; i++) {
+            createOtherBase(new Index(500, 500 * (i + 1)), "user" + i, null, null);
+        }
+
+        for (int i = 0; i < 10; i++) {
+            createOtherBase(new Index(1000, 500 * (i + 1)), null, null, null);
+        }
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
+        SimpleBase ownFakeBase = new SimpleBase(SimpleBase.FAKE_BASE_START_POINT, TEST_PLANET_1_ID);
+        Collection<BaseAttributes> allBaseAttributes = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService().createAllBaseAttributes4FakeBase(ownFakeBase, getUserState(), TEST_PLANET_1_ID);
+        Assert.assertEquals(21, allBaseAttributes.size());
+        BaseAttributes baseAttributes = getOwnBase(allBaseAttributes, ownFakeBase);
+        Assert.assertEquals(ownFakeBase, baseAttributes.getSimpleBase());
+        Assert.assertEquals("Your Base", baseAttributes.getName());
+        Assert.assertFalse(baseAttributes.isBot());
+        Assert.assertTrue(baseAttributes.getAlliances().isEmpty());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void fillAlliancesForFakeBasesReg() throws Exception {
+        configureMultiplePlanetsAndLevels();
+
+        for (int i = 0; i < 10; i++) {
+            createOtherBase(new Index(500, 500 * (i + 1)), "user" + i, null, null);
+        }
+
+        for (int i = 0; i < 10; i++) {
+            createOtherBase(new Index(1000, 500 * (i + 1)), null, null, null);
+        }
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
+        SimpleBase ownFakeBase = new SimpleBase(SimpleBase.FAKE_BASE_START_POINT, TEST_PLANET_1_ID);
+        Collection<BaseAttributes> allBaseAttributes = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService().createAllBaseAttributes4FakeBase(ownFakeBase, getUserState(), TEST_PLANET_1_ID);
+        Assert.assertEquals(21, allBaseAttributes.size());
+        BaseAttributes baseAttributes = getOwnBase(allBaseAttributes, ownFakeBase);
+        Assert.assertEquals(ownFakeBase, baseAttributes.getSimpleBase());
+        Assert.assertEquals("U1", baseAttributes.getName());
+        Assert.assertFalse(baseAttributes.isBot());
+        Assert.assertTrue(baseAttributes.getAlliances().isEmpty());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void fillAlliancesForFakeBasesRegAlliances() throws Exception {
+        configureMultiplePlanetsAndLevels();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
+        SimpleBase myBase = createBase(new Index(3000, 1000));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        for (int i = 0; i < 10; i++) {
+            createOtherBase(new Index(500, 500 * (i + 1)), "user" + i, null, null);
+        }
+
+        for (int i = 0; i < 10; i++) {
+            createOtherBase(new Index(1000, 500 * (i + 1)), null, null, null);
+        }
+
+        for (int i = 0; i < 10; i++) {
+            createOtherBase(new Index(1500, 500 * (i + 1)), "user1" + i, myBase, "U1");
+        }
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        getMovableService().surrenderBase();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        loginUser("U1");
+        SimpleBase ownFakeBase = new SimpleBase(SimpleBase.FAKE_BASE_START_POINT, TEST_PLANET_1_ID);
+        Collection<BaseAttributes> allBaseAttributes = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService().createAllBaseAttributes4FakeBase(ownFakeBase, getUserState(), TEST_PLANET_1_ID);
+        Assert.assertEquals(32, allBaseAttributes.size());
+        BaseAttributes baseAttributes = getOwnBase(allBaseAttributes, ownFakeBase);
+        Assert.assertEquals(ownFakeBase, baseAttributes.getSimpleBase());
+        Assert.assertEquals("U1", baseAttributes.getName());
+        Assert.assertFalse(baseAttributes.isBot());
+        Assert.assertEquals(10, baseAttributes.getAlliances().size());
+        checkAlliances(baseAttributes, allBaseAttributes);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    private void checkAlliances(BaseAttributes myBaseAttributes, Collection<BaseAttributes> allBaseAttributes) {
+        for (BaseAttributes baseAttributes : allBaseAttributes) {
+            if (baseAttributes.getSimpleBase().equals(myBaseAttributes.getSimpleBase())) {
+                continue;
+            }
+            if (!baseAttributes.getAlliances().isEmpty()) {
+                baseAttributes.getAlliances().contains(myBaseAttributes.getSimpleBase());
+                myBaseAttributes.getAlliances().contains(baseAttributes.getSimpleBase());
+            }
+        }
+    }
+
+    private BaseAttributes getOwnBase(Collection<BaseAttributes> allBaseAttributes, SimpleBase ownFakeBase) {
+        for (BaseAttributes allBaseAttribute : allBaseAttributes) {
+            if (allBaseAttribute.getSimpleBase().equals(ownFakeBase)) {
+                return allBaseAttribute;
+            }
+        }
+        throw new IllegalArgumentException("Own base not found: " + ownFakeBase);
+    }
+
+    private void createOtherBase(Index startPoint, String userName, SimpleBase makeAllianceTo, String allianceUser) {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        if (userName != null) {
+            createAndLoginUser(userName);
+        }
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
+        createBase(startPoint);
+        if (makeAllianceTo != null) {
+            allianceService.proposeAlliance(makeAllianceTo);
+        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        if (allianceUser != null) {
+            beginHttpSession();
+            beginHttpRequestAndOpenSessionInViewFilter();
+            loginUser(allianceUser);
+            allianceService.acceptAllianceOffer(userName);
+            endHttpRequestAndOpenSessionInViewFilter();
+            endHttpSession();
+        }
+    }
+
 }

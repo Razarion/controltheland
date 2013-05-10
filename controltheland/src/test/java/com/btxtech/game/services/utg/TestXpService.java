@@ -141,7 +141,7 @@ public class TestXpService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         guidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
-        getMyBase(); // Build base
+        getOrCreateBase(); // Build base
         Id target = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
         sendMoveCommand(target, new Index(8000, 8000));
         waitForActionServiceDone();
@@ -151,9 +151,9 @@ public class TestXpService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         guidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
-        getMyBase();  // Build base
+        getOrCreateBase();  // Build base
         guidanceService.promote(userService.getUserState(), TEST_LEVEL_5_REAL_ID);
-        Assert.assertEquals(TEST_PLANET_1_ID, getMyBase().getPlanetId());
+        Assert.assertEquals(TEST_PLANET_1_ID, getOrCreateBase().getPlanetId());
         Id builder = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
         sendBuildCommand(builder, new Index(500, 100), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -180,7 +180,7 @@ public class TestXpService extends AbstractServiceTest {
         // Create actor
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase actorBase = getMyBase();
+        SimpleBase actorBase = getOrCreateBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -189,6 +189,7 @@ public class TestXpService extends AbstractServiceTest {
         // Create target
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        createBase(new Index(2000, 2000));
         SyncBaseItem target = (SyncBaseItem) planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getItemService().getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

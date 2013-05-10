@@ -52,6 +52,7 @@ public class Renderer {
         gameRenderTasks.add(new InventoryItemPlacerRenderTask(TerrainView.getInstance().getContext2d()));
         gameRenderTasks.add(new InGameTipTopRenderTask(TerrainView.getInstance().getContext2d()));
         gameRenderTasks.add(new InGameQuestVisualisationRenderTask(TerrainView.getInstance().getContext2d()));
+        gameRenderTasks.add(new StartPointItemPlacerRenderTask(TerrainView.getInstance().getContext2d()));
         gameRenderTasks.add(new SplashRenderTask(TerrainView.getInstance().getContext2d()));
     }
 

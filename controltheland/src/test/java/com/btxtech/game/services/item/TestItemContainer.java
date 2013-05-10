@@ -32,7 +32,7 @@ public class TestItemContainer extends AbstractServiceTest {
         beginHttpSession();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase actorBase = getMyBase();
+        SimpleBase actorBase = getOrCreateBase();
         Id builderId = getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID);
         SyncBaseItem builder = (SyncBaseItem) serverPlanetServices.getItemService().getItem(builderId);
 

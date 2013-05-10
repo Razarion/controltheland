@@ -1,9 +1,13 @@
 package com.btxtech.game.services.user;
 
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
+import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  * User: beat
@@ -28,4 +32,8 @@ public interface AllianceService {
     void onBaseCreatedOrDeleted(int userId);
 
     void onMakeBaseAbandoned(SimpleBase simpleBase);
+
+    void fillAlliancesForFakeBases(BaseAttributes fakeBaseAttributes, HashMap<SimpleBase, BaseAttributes> allFakeBaseAttributes, UserState userState, int planetId);
+
+    Set<SimpleBase> getAllianceBases(UserState userState, PlanetInfo planetInfo);
 }

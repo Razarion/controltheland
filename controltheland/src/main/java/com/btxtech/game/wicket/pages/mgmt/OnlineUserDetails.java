@@ -1,7 +1,7 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.services.common.ServerPlanetServices;
+import com.btxtech.game.services.connection.OnlineUserDTO;
 import com.btxtech.game.services.connection.ServerGlobalConnectionService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.UserService;
@@ -44,37 +44,33 @@ public class OnlineUserDetails extends MgmtWebPage {
     }
 
     private void setupRealGameTable() {
-        DetachHashListProvider<SimpleBase> provider = new DetachHashListProvider<SimpleBase>() {
+        DetachHashListProvider<OnlineUserDTO> provider = new DetachHashListProvider<OnlineUserDTO>() {
             @Override
-            protected List<SimpleBase> createList() {
-                return planetSystemService.getAllOnlineBases();
+            protected List<OnlineUserDTO> createList() {
+                return planetSystemService.getAllOnlineUsers();
             }
         };
 
-        add(new DataView<SimpleBase>("realGameTable", provider) {
+        add(new DataView<OnlineUserDTO>("realGameTable", provider) {
             @Override
-            protected void populateItem(final Item<SimpleBase> item) {
-                ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(item.getModelObject());
-                // Planet name
-                item.add(new Label("planet", serverPlanetServices.getPlanetInfo().getName()));
-                UserState userState = userService.getUserState(item.getModelObject());
+            protected void populateItem(final Item<OnlineUserDTO> item) {
+                item.add(new Label("planet", item.getModelObject().getPlanetName()));
+                item.add(new Label("baseName", item.getModelObject().getBaseName()));
                 // User Link
-                if (userState.isRegistered()) {
+                if (item.getModelObject().isRegistered()) {
                     PageParameters pageParameters = new PageParameters();
-                    pageParameters.add(UserTracking.USER_ID, Integer.toString(userState.getUser()));
+                    pageParameters.add(UserTracking.USER_ID, Integer.toString(item.getModelObject().getUser().getId()));
                     BookmarkablePageLink<UserTracking> link = new BookmarkablePageLink<>("userLink", UserTracking.class, pageParameters);
-                    link.add(new Label("userName", userService.getUserName(userState)));
+                    link.add(new Label("userName", item.getModelObject().getUser().getUsername()));
                     item.add(link);
-                    item.add(new Label("baseName").setVisible(false));
                 } else {
                     item.add(new BookmarkablePageLink<UserTracking>("userLink", UserTracking.class).setVisible(false));
-                    item.add(new Label("baseName", serverPlanetServices.getBaseService().getBaseName(item.getModelObject())));
                 }
                 // Session link
                 PageParameters pageParameters = new PageParameters();
-                pageParameters.add(SessionDetail.SESSION_KEY, userState.getSessionId());
+                pageParameters.add(SessionDetail.SESSION_KEY, item.getModelObject().getSessionId());
                 BookmarkablePageLink<SessionDetail> link = new BookmarkablePageLink<>("sessionLink", SessionDetail.class, pageParameters);
-                link.add(new Label("sessionId", userState.getSessionId()));
+                link.add(new Label("sessionId", item.getModelObject().getSessionId()));
                 item.add(link);
             }
         });

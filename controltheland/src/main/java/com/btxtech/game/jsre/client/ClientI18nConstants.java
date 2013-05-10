@@ -110,7 +110,9 @@ public interface ClientI18nConstants extends Messages {
 
     String inventory();
 
-    String inventoryNotAvailable();
+    String inventoryNotAvailableMission();
+
+    String inventoryNotAvailableBase();
 
     // Connection
     String connectionFailed();
@@ -459,4 +461,10 @@ public interface ClientI18nConstants extends Messages {
     String serverRebootMissionNotSaved();
 
     String serverRebootNotRegistered();
+
+    String createBase();
+
+    String createBaseInBotFailed();
+
+    String chooseYourStartPoint();
 }

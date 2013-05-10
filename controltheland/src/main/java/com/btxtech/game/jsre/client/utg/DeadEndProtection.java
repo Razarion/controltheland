@@ -32,13 +32,20 @@ abstract public class DeadEndProtection {
 
     protected abstract SimpleBase getMyBase();
 
+    protected abstract boolean isBaseDead();
+
     protected abstract int getMyMoney();
+
+    protected abstract boolean isSuppressed();
 
     public void setDeadEndListener(DeadEndListener deadEndListener) {
         this.deadEndListener = deadEndListener;
     }
 
     public void start() {
+        if(isSuppressed()){
+            return;
+        }
         running = true;
         itemDeadEnd = false;
         moneyDeadEnd = false;
@@ -62,7 +69,7 @@ abstract public class DeadEndProtection {
         }
 
         checkForItemDeadEnd(getMyBase());
-        checkHashHarvester(getMyBase());
+        checkHasHarvester(getMyBase());
         onMoneyChanged(getMyMoney());
     }
 
@@ -91,7 +98,7 @@ abstract public class DeadEndProtection {
         }
         if (hasHarvester) {
             if (syncBaseItem.hasSyncHarvester()) {
-                checkHashHarvester(simpleBase);
+                checkHasHarvester(simpleBase);
                 checkHarvesterAlert();
             }
         }
@@ -124,11 +131,17 @@ abstract public class DeadEndProtection {
     }
 
     private void checkHarvesterAlert() {
-        boolean tmpMoneyDeadEnd = false;
-        tmpMoneyDeadEnd = !hasMoney4Harvester && !hasHarvester;
+        boolean tmpMoneyDeadEnd = !hasMoney4Harvester && !hasHarvester;
         if (tmpMoneyDeadEnd != moneyDeadEnd) {
-            moneyDeadEnd = tmpMoneyDeadEnd;
-            fireListener(false, true);
+            if (tmpMoneyDeadEnd) {
+                if (!isBaseDead()) {
+                    moneyDeadEnd = true;
+                    fireListener(false, true);
+                }
+            } else {
+                moneyDeadEnd = false;
+                fireListener(false, true);
+            }
         }
 
     }
@@ -159,7 +172,7 @@ abstract public class DeadEndProtection {
         }
     }
 
-    private void checkHashHarvester(SimpleBase simpleBase) {
+    private void checkHasHarvester(SimpleBase simpleBase) {
         hasHarvester = false;
         for (BaseItemType harvesterTypes : harvesterItemTypes) {
             if (!getItemService().getItems4BaseAndType(simpleBase, harvesterTypes.getId()).isEmpty()) {
@@ -175,7 +188,9 @@ abstract public class DeadEndProtection {
                 return;
             }
         }
-        itemDeadEnd = true;
-        fireListener(true, false);
+        if (!isBaseDead()) {
+            itemDeadEnd = true;
+            fireListener(true, false);
+        }
     }
 }

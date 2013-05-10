@@ -55,7 +55,7 @@ public class TestServerI18nHelper extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         getMockHttpServletRequest().addPreferredLocale(Locale.CHINA);
         createAndLoginUser("U1");
-        SimpleBase simpleBase = getMyBase();
+        SimpleBase simpleBase = getOrCreateBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -72,7 +72,7 @@ public class TestServerI18nHelper extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         getMockHttpServletRequest().addPreferredLocale(Locale.ENGLISH);
         createAndLoginUser("U1");
-        SimpleBase simpleBase = getMyBase();
+        SimpleBase simpleBase = getOrCreateBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -89,7 +89,7 @@ public class TestServerI18nHelper extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         getMockHttpServletRequest().addPreferredLocale(Locale.GERMAN);
         createAndLoginUser("U1");
-        SimpleBase simpleBase = getMyBase();
+        SimpleBase simpleBase = getOrCreateBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -105,7 +105,7 @@ public class TestServerI18nHelper extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMockHttpServletRequest().addPreferredLocale(Locale.ENGLISH);
-        SimpleBase simpleBase = getMyBase();
+        SimpleBase simpleBase = getOrCreateBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

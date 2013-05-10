@@ -14,13 +14,12 @@
 package com.btxtech.game.services.connection.impl;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
-import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.common.packets.MessageIdPacket;
 import com.btxtech.game.jsre.common.packets.ServerRebootMessagePacket;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
-import com.btxtech.game.services.connection.ConnectionStatistics;
+import com.btxtech.game.services.connection.DbConnectionStatistics;
 import com.btxtech.game.services.connection.DbClientDebugEntry;
 import com.btxtech.game.services.connection.ServerGlobalConnectionService;
 import com.btxtech.game.services.connection.Session;
@@ -43,7 +42,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -132,8 +130,8 @@ public class ServerGlobalConnectionServiceImpl implements ServerGlobalConnection
     }
 
     @Override
-    public void createConnectionStatisticsNoSession(String baseName, String sessionId, double ticksPerSecond) {
-        ConnectionStatistics connectionStatistics = new ConnectionStatistics(baseName, sessionId, ticksPerSecond);
+    public void createConnectionStatisticsNoSession(String sessionId, double ticksPerSecond, int planetId) {
+        DbConnectionStatistics connectionStatistics = new DbConnectionStatistics(sessionId, ticksPerSecond, planetId);
         HibernateUtil.openSession4InternalCall(sessionFactory);
         try {
             sessionFactory.getCurrentSession().saveOrUpdate(connectionStatistics);
@@ -180,15 +178,6 @@ public class ServerGlobalConnectionServiceImpl implements ServerGlobalConnection
             }
         }
         return messageIdPacketQueue.peekMessages(lastMessageId);
-    }
-
-    @Override
-    public Collection<SimpleBase> getOnlineBases() {
-        HashSet<SimpleBase> simpleBases = new HashSet<>();
-        for (Planet planet : planetSystemService.getAllPlanets()) {
-            simpleBases.addAll(planet.getPlanetServices().getConnectionService().getOnlineBases());
-        }
-        return simpleBases;
     }
 
     @Override
