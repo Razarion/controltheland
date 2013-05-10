@@ -48,7 +48,7 @@ public class TestLevel extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
-        getMyBase(); // Generate Base
+        getOrCreateBase(); // Generate Base
         Assert.assertTrue(getPackages(LevelPacket.class).isEmpty());
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_3_REAL_ID);
         List<LevelPacket> levelPackets = getPackages(LevelPacket.class);

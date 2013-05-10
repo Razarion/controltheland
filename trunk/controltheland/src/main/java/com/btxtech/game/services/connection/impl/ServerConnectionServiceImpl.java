@@ -22,16 +22,19 @@ import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.connection.Connection;
+import com.btxtech.game.services.connection.OnlineUserDTO;
 import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
+import com.btxtech.game.services.user.UserState;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -43,14 +46,14 @@ import java.util.TimerTask;
 public class ServerConnectionServiceImpl implements ServerConnectionService {
     private static final long USER_TRACKING_PERIODE = 10 * 1000;
     private static final int MAX_NO_TICK_COUNT = 20;
-    private ServerPlanetServicesImpl planetSystemService;
+    private ServerPlanetServicesImpl planetServices;
     private ServerGlobalServices serverGlobalServices;
     private Timer timer;
     private Log log = LogFactory.getLog(ServerConnectionServiceImpl.class);
-    private final ArrayList<Connection> onlineConnection = new ArrayList<>();
+    private final Map<UserState, Connection> onlineConnection = new HashMap<>();
 
     public void init(ServerPlanetServicesImpl planetServices, ServerGlobalServices serverGlobalServices) {
-        this.planetSystemService = planetServices;
+        this.planetServices = planetServices;
         this.serverGlobalServices = serverGlobalServices;
     }
 
@@ -62,22 +65,20 @@ public class ServerConnectionServiceImpl implements ServerConnectionService {
             public void run() {
                 try {
                     synchronized (onlineConnection) {
-                        for (Iterator<Connection> it = onlineConnection.iterator(); it.hasNext(); ) {
+                        for (Iterator<Connection> it = onlineConnection.values().iterator(); it.hasNext(); ) {
                             Connection connection = it.next();
                             try {
                                 int tickCount = connection.resetAndGetTickCount();
                                 if (connection.getNoTickCount() > MAX_NO_TICK_COUNT) {
-                                    log.info("User kicked due timeout: " + planetSystemService.getBaseService().getBaseName(connection.getBase().getSimpleBase()));
-                                    if (connection.getBase() != null && connection.getBase().getUserState() != null && connection.getBase().getUserState().getUser() != null) {
-                                        serverGlobalServices.getUserTrackingService().onUserLeftGameNoSession(serverGlobalServices.getUserService().getUser(connection.getBase().getUserState().getUser()));
+                                    if (connection.getUserState().isRegistered()) {
+                                        serverGlobalServices.getUserTrackingService().onUserLeftGameNoSession(serverGlobalServices.getUserService().getUser(connection.getUserState()));
                                     }
                                     connection.setClosed(NoConnectionException.Type.TIMED_OUT);
                                     it.remove();
                                 } else {
                                     double ticksPerSecond = (double) tickCount / (double) (USER_TRACKING_PERIODE / 1000);
                                     if (!Double.isInfinite(ticksPerSecond) && !Double.isNaN(ticksPerSecond)) {
-                                        String baseName = planetSystemService.getBaseService().getBaseName(connection.getBase().getSimpleBase());
-                                        serverGlobalServices.getServerGlobalConnectionService().createConnectionStatisticsNoSession(baseName, connection.getSessionId(), ticksPerSecond);
+                                        serverGlobalServices.getServerGlobalConnectionService().createConnectionStatisticsNoSession(connection.getSessionId(), ticksPerSecond, planetServices.getPlanetInfo().getPlanetId());
                                     }
                                 }
                             } catch (Throwable t) {
@@ -107,7 +108,7 @@ public class ServerConnectionServiceImpl implements ServerConnectionService {
     @Override
     public void sendSyncInfo(SyncItem syncItem) {
         synchronized (onlineConnection) {
-            for (Connection connection : onlineConnection) {
+            for (Connection connection : onlineConnection.values()) {
                 try {
                     connection.sendBaseSyncItem(syncItem);
                 } catch (Throwable t) {
@@ -127,7 +128,7 @@ public class ServerConnectionServiceImpl implements ServerConnectionService {
     @Override
     public void sendPacket(Packet packet) {
         synchronized (onlineConnection) {
-            for (Connection connection : onlineConnection) {
+            for (Connection connection : onlineConnection.values()) {
                 try {
                     connection.sendPacket(packet);
                 } catch (Throwable t) {
@@ -139,18 +140,42 @@ public class ServerConnectionServiceImpl implements ServerConnectionService {
 
     @Override
     public void sendPacket(SimpleBase base, Packet packet) {
-        synchronized (onlineConnection) {
-            for (Connection connection : onlineConnection) {
-                try {
-                    if (connection.getBase().getSimpleBase().equals(base)) {
-                        connection.sendPacket(packet);
-                        return;
-                    }
-                } catch (Throwable t) {
-                    log.error("", t);
+        try {
+            UserState userState = planetServices.getBaseService().getUserState(base);
+            if (userState == null) {
+                return;
+            }
+            synchronized (onlineConnection) {
+                Connection connection = onlineConnection.get(userState);
+                if (connection != null) {
+                    connection.sendPacket(packet);
                 }
             }
+        } catch (Throwable t) {
+            log.error("", t);
         }
+    }
+
+    @Override
+    public void sendPacket(UserState userState, Packet packet) {
+        try {
+            synchronized (onlineConnection) {
+                Connection connection = onlineConnection.get(userState);
+                if (connection != null) {
+                    connection.sendPacket(packet);
+                }
+            }
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public void sendMessage(UserState userState, String key, Object[] args, boolean showRegisterDialog) {
+        Message message = new Message();
+        message.setMessage(serverGlobalServices.getServerI18nHelper().getStringNoRequest(userState, key, args));
+        message.setShowRegisterDialog(showRegisterDialog);
+        sendPacket(userState, message);
     }
 
     @Override
@@ -162,71 +187,59 @@ public class ServerConnectionServiceImpl implements ServerConnectionService {
     }
 
     @Override
-    public void createConnection(Base base, String startUuid) {
+    public void createConnection(UserState userState, String startUuid) {
         // Connection to same base from same browser
         Connection connection = serverGlobalServices.getServerGlobalConnectionService().getSession().getConnection();
         if (connection != null) {
-            log.warn("Existing connection will be terminated I");
+            log.warn("Existing connection will be terminated due to another connection" + userState);
             closeConnection(connection, NoConnectionException.Type.ANOTHER_CONNECTION_EXISTS);
         }
         // Connection to same base from different browser
-        Connection preventConcurrentException = null;
         synchronized (onlineConnection) {
-            for (Connection existingConnection : onlineConnection) {
-                if (existingConnection.getBase().equals(base)) {
-                    preventConcurrentException = existingConnection;
-                    break;
-                }
+            Connection existingConnection = onlineConnection.remove(userState);
+            if (existingConnection != null) {
+                log.warn("Existing connection will be terminated" + userState);
+                closeConnection(existingConnection, NoConnectionException.Type.ANOTHER_CONNECTION_EXISTS);
             }
         }
-        if (preventConcurrentException != null) {
-            log.warn("Existing connection will be terminated II");
-            closeConnection(preventConcurrentException, NoConnectionException.Type.ANOTHER_CONNECTION_EXISTS);
-        }
 
-        connection = new Connection(serverGlobalServices.getServerGlobalConnectionService().getSession().getSessionId(), startUuid);
-        connection.setBase(base);
+        connection = new Connection(userState, serverGlobalServices.getServerGlobalConnectionService().getSession().getSessionId(), startUuid);
         serverGlobalServices.getServerGlobalConnectionService().getSession().setConnection(connection);
-        log.debug("Connection established");
+        log.debug("Connection established: " + userState);
         synchronized (onlineConnection) {
-            onlineConnection.add(connection);
+            onlineConnection.put(userState, connection);
         }
-        if (base.getUserState() != null && base.getUserState().getUser() != null) {
-            serverGlobalServices.getUserTrackingService().onUserEnterGame(serverGlobalServices.getUserService().getUser(base.getUserState().getUser()));
+        if (userState.isRegistered()) {
+            serverGlobalServices.getUserTrackingService().onUserEnterGame(serverGlobalServices.getUserService().getUser(userState));
         }
     }
 
     private void closeConnection(Connection connection, NoConnectionException.Type closedReason) {
-        if (connection.getBase() != null && connection.getBase().getUserState() != null && connection.getBase().getUserState().getUser() != null) {
-            serverGlobalServices.getUserTrackingService().onUserLeftGame(serverGlobalServices.getUserService().getUser(connection.getBase().getUserState().getUser()));
+        UserState userState = connection.getUserState();
+        if (userState.isRegistered()) {
+            serverGlobalServices.getUserTrackingService().onUserLeftGame(serverGlobalServices.getUserService().getUser(userState));
         }
         connection.setClosed(closedReason);
-        log.debug("Connection closed 1");
         synchronized (onlineConnection) {
-            onlineConnection.remove(connection);
+            onlineConnection.remove(userState);
         }
+        log.debug("Connection closed: " + userState);
     }
 
+/*
     @Override
-    public void closeConnection(SimpleBase simpleBase, NoConnectionException.Type closedReason) {
+    public void closeConnection(UserState userState, NoConnectionException.Type closedReason) {
         Connection connection = null;
         synchronized (onlineConnection) {
-            for (Iterator<Connection> iterator = onlineConnection.iterator(); iterator.hasNext(); ) {
-                Connection online = iterator.next();
-                if (online.getBase().getSimpleBase().equals(simpleBase)) {
-                    connection = online;
-                    iterator.remove();
-                }
-            }
+            connection = onlineConnection.remove(userState);
         }
         if (connection == null) {
-            throw new IllegalStateException("Online connection does not exist for base: " + simpleBase);
+            throw new IllegalStateException("Online connection does not exist for base: " + userState);
         }
-
         connection.setClosed(closedReason);
-        log.debug("Connection closed 2");
+        log.debug("Connection closed 2" + userState);
     }
-
+*/
 
     @Override
     public Connection getConnection(String startUuid) throws NoConnectionException {
@@ -244,28 +257,33 @@ public class ServerConnectionServiceImpl implements ServerConnectionService {
     }
 
     @Override
-    public boolean hasConnection(SimpleBase simpleBase) {
+    public boolean hasConnection(UserState userState) {
         synchronized (onlineConnection) {
-            for (Connection connection : onlineConnection) {
-                if (connection.getBase().getSimpleBase().equals(simpleBase)) {
-                    return true;
-                }
-            }
+            return onlineConnection.containsKey(userState);
         }
-        return false;
     }
 
     @Override
-    public Collection<SimpleBase> getOnlineBases() {
-        HashSet<SimpleBase> simpleBases = new HashSet<>();
+    public Collection<OnlineUserDTO> getOnlineConnections() {
+        ArrayList<UserState> onlineUserStates = new ArrayList<>();
         synchronized (onlineConnection) {
-            for (Connection connection : onlineConnection) {
-                if (connection.getBase() != null) {
-                    simpleBases.add(connection.getBase().getSimpleBase());
-                }
+            for (Connection connection : onlineConnection.values()) {
+                onlineUserStates.add(connection.getUserState());
             }
         }
-        return simpleBases;
+        Collection<OnlineUserDTO> onlineUsers = new ArrayList<>();
+        for (UserState userState : onlineUserStates) {
+            OnlineUserDTO onlineUserDTO = new OnlineUserDTO(userState, planetServices.getPlanetInfo().getName());
+            Base base = planetServices.getBaseService().getBase(userState);
+            if (base != null) {
+                onlineUserDTO.setBaseName(planetServices.getBaseService().getBaseName(base.getSimpleBase()));
+            }
+            if (userState.isRegistered()) {
+                onlineUserDTO.setUser(serverGlobalServices.getUserService().getUser(userState));
+            }
+            onlineUsers.add(onlineUserDTO);
+        }
+        return onlineUsers;
     }
 
     @Override

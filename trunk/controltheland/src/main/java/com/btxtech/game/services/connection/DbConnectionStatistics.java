@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.connection;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -25,28 +24,24 @@ import java.util.Date;
  * Time: 12:56:17 PM
  */
 @Entity(name = "TRACKER_CONNECTION_STATISTICS")
-public class ConnectionStatistics {
+public class DbConnectionStatistics {
     @Id
     @GeneratedValue
     private Integer id;
-    @Column(nullable = false)
     private Date timeStamp;
-    @Column(nullable = false)
     private String sessionId;
-    @Column(nullable = false)
     private double ticksPerSecond;
-    @Column(nullable = false)
-    private String simpleBase;
+    private int planetId;
 
     /**
      * Used by Hibernate
      */
-    protected ConnectionStatistics() {
+    protected DbConnectionStatistics() {
     }
 
-    public ConnectionStatistics(String simpleBase, String sessionId, double ticksPerSecond) {
+    public DbConnectionStatistics(String sessionId, double ticksPerSecond, int planetId) {
         this.sessionId = sessionId;
-        this.simpleBase = simpleBase;
+        this.planetId = planetId;
         this.ticksPerSecond = ticksPerSecond;
         timeStamp = new Date();
     }
@@ -63,8 +58,8 @@ public class ConnectionStatistics {
         return ticksPerSecond;
     }
 
-    public String getSimpleBase() {
-        return simpleBase;
+    public int getPlanetId() {
+        return planetId;
     }
 
     @Override
@@ -72,14 +67,14 @@ public class ConnectionStatistics {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ConnectionStatistics that = (ConnectionStatistics) o;
+        DbConnectionStatistics that = (DbConnectionStatistics) o;
 
-        return !(id != null ? !id.equals(that.id) : that.id != null);
+        return id != null && id.equals(that.id);
 
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id : 0;
     }
 }

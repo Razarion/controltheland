@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.ClientMessageIdPacketHandler;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameCommon;
 import com.btxtech.game.jsre.client.SoundHandler;
+import com.btxtech.game.jsre.client.StartPointMode;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
@@ -57,5 +58,6 @@ public class ClearGame extends AbstractStartupTask {
         TerrainView.getInstance().moveAbsolute(new Index(0, 0));
         ClientUnlockServiceImpl.getInstance().setUnlockContainer(null);
         Connection.getInstance().clear();
+        StartPointMode.getInstance().deactivate();
     }
 }

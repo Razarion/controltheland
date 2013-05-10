@@ -60,6 +60,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
 import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
+import com.btxtech.game.jsre.common.packets.BaseLostPacket;
 import com.btxtech.game.jsre.common.packets.BoxPickedPacket;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.common.packets.EnergyPacket;
@@ -314,6 +315,8 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                     ClientUnlockServiceImpl.getInstance().setUnlockContainer(((UnlockContainerPacket) packet).getUnlockContainer());
                 } else if (packet instanceof ServerRebootMessagePacket) {
                     ClientMessageIdPacketHandler.getInstance().onMessageReceived((ServerRebootMessagePacket) packet);
+                } else if (packet instanceof BaseLostPacket) {
+                    StartPointMode.getInstance().onBaseLost((BaseLostPacket) packet);
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }
@@ -470,11 +473,6 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                     messageDialog.setGlassEnabled(true);
                     DialogManager.showDialog(messageDialog, DialogManager.Type.PROMPTLY);
                     movableServiceAsync = null;
-                    return true;
-                }
-                case BASE_SURRENDERED:
-                case BASE_LOST: {
-                    StartupScreen.getInstance().fadeOutAndStart(GameStartupSeq.WARM_REAL);
                     return true;
                 }
                 case ANOTHER_CONNECTION_EXISTS: {

@@ -37,15 +37,18 @@ public class RealDeltaStartupTask extends GameEngineStartupTask {
     protected void privateStart(DeferredStartup deferredStartup) {
         RealGameInfo realGameInfo = (RealGameInfo) Connection.getInstance().getGameInfo();
         deltaSetupGameStructure(realGameInfo);
+        setCommon(realGameInfo);
+        ClientPlanetServices.getInstance().setPlanetInfo(realGameInfo.getPlanetInfo());
+        ClientUnlockServiceImpl.getInstance().setUnlockContainer(realGameInfo.getUnlockContainer());
+        ClientLevelHandler.getInstance().setLevel(realGameInfo.getLevelScope()); // TODO
+    }
+
+    public static void setCommon(RealGameInfo realGameInfo) {
         ClientBase.getInstance().setAllBaseAttributes(realGameInfo.getAllBase());
         ClientBase.getInstance().setBase(realGameInfo.getBase());
         ClientBase.getInstance().setAccountBalance(realGameInfo.getAccountBalance());
         ClientBase.getInstance().setConnectedToServer4FakedHouseSpace(true);
         ClientEnergyService.getInstance().onEnergyPacket(realGameInfo.getEnergyGenerating(), realGameInfo.getEnergyConsuming());
         ClientBase.getInstance().setHouseSpace(realGameInfo.getHouseSpace());
-        ClientPlanetServices.getInstance().setPlanetInfo(realGameInfo.getPlanetInfo());
-        ClientUnlockServiceImpl.getInstance().setUnlockContainer(realGameInfo.getUnlockContainer());
-        ClientLevelHandler.getInstance().setLevel(realGameInfo.getLevelScope());
     }
-
 }

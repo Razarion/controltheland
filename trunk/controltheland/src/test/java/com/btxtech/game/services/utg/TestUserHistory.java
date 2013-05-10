@@ -92,7 +92,8 @@ public class TestUserHistory extends AbstractServiceTest {
 
         beginHttpRequestAndOpenSessionInViewFilter();
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
-        getMyBase(); // Setup connection
+        getMovableService().getRealGameInfo(START_UID_1);
+        getMovableService().createBase(new Index(1000, 1000));
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -100,8 +101,8 @@ public class TestUserHistory extends AbstractServiceTest {
         List<DbUserHistory> dbUserHistories = getUserHistory();
         Assert.assertEquals(5, dbUserHistories.size());
         Assert.assertNotNull(dbUserHistories.get(0).getLoggedOut());
-        Assert.assertNotNull(dbUserHistories.get(1).getGameEntered());
-        Assert.assertNotNull(dbUserHistories.get(2).getBaseCreated());
+        Assert.assertNotNull(dbUserHistories.get(1).getBaseCreated());
+        Assert.assertNotNull(dbUserHistories.get(2).getGameEntered());
         Assert.assertNotNull(dbUserHistories.get(3).getLoggedIn());
         Assert.assertNotNull(dbUserHistories.get(4).getCreated());
     }
@@ -118,18 +119,16 @@ public class TestUserHistory extends AbstractServiceTest {
 
         beginHttpRequestAndOpenSessionInViewFilter();
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
-        SimpleBase target = getMyBase(); // Setup connection
-        sendMoveCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(1000, 1000));
-        waitForActionServiceDone();
-
+        getMovableService().getRealGameInfo(START_UID_1);
+        SimpleBase target = getMovableService().createBase(new Index(1000, 1000)).getBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
-        SimpleBase actor = getMyBase(); // Setup connection
-        sendBuildCommand(getFirstSynItemId(actor, TEST_START_BUILDER_ITEM_ID), new Index(200, 200), TEST_FACTORY_ITEM_ID);
+        SimpleBase actor = createBase(new Index(3000, 3000));
+        sendBuildCommand(getFirstSynItemId(actor, TEST_START_BUILDER_ITEM_ID), new Index(3300, 3300), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(actor, TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
@@ -141,16 +140,14 @@ public class TestUserHistory extends AbstractServiceTest {
         endHttpSession();
 
         List<DbUserHistory> dbUserHistories = getUserHistory();
-        Assert.assertEquals(8, dbUserHistories.size());
+        Assert.assertEquals(6, dbUserHistories.size());
         Assert.assertEquals("U1", dbUserHistories.get(0).getBaseName());
         Assert.assertNotNull(dbUserHistories.get(0).getBaseDefeated());
         Assert.assertNotNull(dbUserHistories.get(1).getLoggedOut());
-        Assert.assertNotNull(dbUserHistories.get(2).getGameEntered());
-        Assert.assertNotNull(dbUserHistories.get(3).getGameLeft());
-        Assert.assertNotNull(dbUserHistories.get(4).getGameEntered());
-        Assert.assertNotNull(dbUserHistories.get(5).getBaseCreated());
-        Assert.assertNotNull(dbUserHistories.get(6).getLoggedIn());
-        Assert.assertNotNull(dbUserHistories.get(7).getCreated());
+        Assert.assertNotNull(dbUserHistories.get(2).getBaseCreated());
+        Assert.assertNotNull(dbUserHistories.get(3).getGameEntered());
+        Assert.assertNotNull(dbUserHistories.get(4).getLoggedIn());
+        Assert.assertNotNull(dbUserHistories.get(5).getCreated());
     }
 
     @SuppressWarnings("unchecked")

@@ -135,4 +135,6 @@ public interface MovableService extends RemoteService {
     UnlockContainer unlockQuest(int questId);
 
     UnlockContainer unlockPlanet(int planetId);
+
+    RealGameInfo createBase(Index position) throws PositionInBotException;
 }

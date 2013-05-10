@@ -103,8 +103,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     }
 
     @Override
-    public void sendResurrectionMessage(SimpleBase simpleBase) {
-        planetSystemService.getServerPlanetServices(simpleBase).getConnectionService().sendMessage(simpleBase, "baseLost", null, false);
+    public void sendResurrectionMessage(UserState userState) {
+        planetSystemService.getServerPlanetServices(userState).getConnectionService().sendMessage(userState, "baseLost", null, false);
     }
 
     @Override
@@ -122,26 +122,16 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         historyService.addLevelPromotionEntry(userState, dbNextLevel);
         log.debug("User: " + userState + " has been promoted: " + dbOldLevel + " to " + dbNextLevel);
 
-        if (userState.getBase() != null) {
-            Base base = userState.getBase();
-            // Send XP
-            XpPacket xpPacket = new XpPacket();
-            xpPacket.setXp(0);
-            xpPacket.setXp2LevelUp(dbNextLevel.getXp());
-            base.getPlanet().getPlanetServices().getConnectionService().sendPacket(base.getSimpleBase(), xpPacket);
-            // Level
-            LevelPacket levelPacket = new LevelPacket();
-            levelPacket.setLevel(getLevelScope(dbNextLevel.getId()));
-            base.getPlanet().getPlanetServices().getConnectionService().sendPacket(base.getSimpleBase(), levelPacket);
-        }
-        // Create base if needed
-        if (userState.getBase() == null && dbNextLevel.hasDbPlanet()) {
-            try {
-                planetSystemService.createBase(userState);
-            } catch (InvalidLevelStateException invalidLevelStateException) {
-                log.error("Error during base creation: " + userState, invalidLevelStateException);
-            }
-        }
+        // Send XP
+        XpPacket xpPacket = new XpPacket();
+        xpPacket.setXp(0);
+        xpPacket.setXp2LevelUp(dbNextLevel.getXp());
+        planetSystemService.sendPacket(userState, xpPacket);
+        // Level
+        LevelPacket levelPacket = new LevelPacket();
+        levelPacket.setLevel(getLevelScope(dbNextLevel.getId()));
+        planetSystemService.sendPacket(userState, levelPacket);
+
         // Prepare next level
         activateConditions4Level(userState, dbNextLevel);
         // Post processing
@@ -250,16 +240,14 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         // Communication
         log.debug("Level Task completed. userState: " + userState + " " + dbLevelTask);
         historyService.addLevelTaskCompletedEntry(userState, dbLevelTask);
-        Base base = userState.getBase();
-        if (base != null) {
-            LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
-            levelTaskPacket.setCompleted();
-            base.getPlanet().getPlanetServices().getConnectionService().sendPacket(base.getSimpleBase(), levelTaskPacket);
-        }
+        LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
+        levelTaskPacket.setCompleted();
+        planetSystemService.sendPacket(userState, levelTaskPacket);
         // Rewards
         if (dbLevelTask.getXp() > 0) {
             xpService.onReward(userState, dbLevelTask.getXp());
         }
+        Base base = userState.getBase();
         if (base != null && dbLevelTask.getMoney() > 0) {
             base.getPlanet().getPlanetServices().getBaseService().depositResource(dbLevelTask.getMoney(), base.getSimpleBase());
             base.getPlanet().getPlanetServices().getBaseService().sendAccountBaseUpdate(base.getSimpleBase());
@@ -585,14 +573,12 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     }
 
     private void sendLevelTaskPacket(UserState userState, DbLevelTask dbLevelTask, QuestInfo questInfo) {
-        if (userState.getBase() != null) {
-            LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
-            levelTaskPacket.setQuestInfo(questInfo);
-            if (!dbLevelTask.isDbTutorialConfig() && !serverUnlockService.isQuestLocked(questInfo, userState.getBase().getSimpleBase())) {
-                levelTaskPacket.setQuestProgressInfo(serverConditionService.getQuestProgressInfo(userState, dbLevelTask.getId()));
-            }
-            userState.getBase().getPlanet().getPlanetServices().getConnectionService().sendPacket(userState.getBase().getSimpleBase(), levelTaskPacket);
+        LevelTaskPacket levelTaskPacket = new LevelTaskPacket();
+        levelTaskPacket.setQuestInfo(questInfo);
+        if (!dbLevelTask.isDbTutorialConfig() && !serverUnlockService.isQuestLocked(questInfo, userState)) {
+            levelTaskPacket.setQuestProgressInfo(serverConditionService.getQuestProgressInfo(userState, dbLevelTask.getId()));
         }
+        planetSystemService.sendPacket(userState, levelTaskPacket);
     }
 
     private void deactivateLevelTask(DbLevelTask dbLevelTask) {

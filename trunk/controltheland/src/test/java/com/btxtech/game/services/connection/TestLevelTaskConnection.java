@@ -1,6 +1,7 @@
 package com.btxtech.game.services.connection;
 
 import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
 import com.btxtech.game.jsre.common.packets.LevelPacket;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
@@ -31,6 +32,7 @@ public class TestLevelTaskConnection extends AbstractServiceTest {
     @Autowired
     private UserService userService;
 
+
     @Test
     @DirtiesContext
     public void realGameInfo() throws Exception {
@@ -41,11 +43,12 @@ public class TestLevelTaskConnection extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
+        createBase(new Index(1000,1000));
         LevelTaskPacket levelTaskPacket = getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket();
         Assert.assertEquals(new QuestInfo(TEST_LEVEL_TASK_1_2_REAL_NAME, "Descr2", null, null, 100, 10, TEST_LEVEL_TASK_1_2_REAL_ID, QuestInfo.Type.QUEST, null, false, null), levelTaskPacket.getQuestInfo());
         Assert.assertFalse(levelTaskPacket.isCompleted());
         assertQuestProgressInfo(levelTaskPacket.getQuestProgressInfo(), ConditionTrigger.MONEY_INCREASED, 0, 3);
-        serverConditionService.onMoneyIncrease(getMyBase(), 11);
+        serverConditionService.onMoneyIncrease(getOrCreateBase(), 11);
         levelTaskPacket = getMovableService().getRealGameInfo(START_UID_1).getLevelTaskPacket();
         Assert.assertEquals(new QuestInfo(TEST_LEVEL_TASK_2_2_REAL_NAME, "Descr222", null, null, 120, 80, TEST_LEVEL_TASK_2_2_REAL_ID, QuestInfo.Type.QUEST, null, false, null), levelTaskPacket.getQuestInfo());
         Assert.assertFalse(levelTaskPacket.isCompleted());
@@ -76,15 +79,15 @@ public class TestLevelTaskConnection extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
-        getMyBase(); // Generate Base
+        getOrCreateBase(); // Generate Base
         Assert.assertTrue(getPackages(LevelPacket.class).isEmpty());
-        serverConditionService.onMoneyIncrease(getMyBase(), 1);
+        serverConditionService.onMoneyIncrease(getOrCreateBase(), 1);
         List<LevelTaskPacket> levelTaskPackets = getPackages(LevelTaskPacket.class);
         Assert.assertEquals(1, levelTaskPackets.size());
         Assert.assertFalse(levelTaskPackets.get(0).isCompleted());
         Assert.assertNull(levelTaskPackets.get(0).getQuestInfo());
         assertQuestProgressInfo(levelTaskPackets.get(0).getQuestProgressInfo(), ConditionTrigger.MONEY_INCREASED, 1, 3);
-        serverConditionService.onMoneyIncrease(getMyBase(), 3);
+        serverConditionService.onMoneyIncrease(getOrCreateBase(), 3);
         levelTaskPackets = getPackages(LevelTaskPacket.class);
         Assert.assertEquals(2, levelTaskPackets.size());
         Assert.assertTrue(levelTaskPackets.get(0).isCompleted());

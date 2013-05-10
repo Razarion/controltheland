@@ -8,7 +8,7 @@ import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
 import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.ServerConnectionServiceTestHelper;
+import com.btxtech.game.services.ServerConnectionServiceTestHelperNew;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.planet.impl.ServerPlanetServicesImpl;
@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -44,7 +45,7 @@ public class TestAllianceService extends AbstractServiceTest {
     @DirtiesContext
     public void addAllianceAndBreak() throws Exception {
         configureSimplePlanetNoResources();
-        ServerConnectionServiceTestHelper connectionServiceTestHelper = new ServerConnectionServiceTestHelper();
+        ServerConnectionServiceTestHelperNew connectionServiceTestHelper = new ServerConnectionServiceTestHelperNew();
         overrideConnectionService(((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices()), connectionServiceTestHelper);
 
         beginHttpSession();
@@ -53,16 +54,18 @@ public class TestAllianceService extends AbstractServiceTest {
         verifyAllianceOffers();
         verifyAlliances();
         verifyAlliancesFromUser();
-        SimpleBase simpleBase1 = getMyBase();
+        SimpleBase simpleBase1 = getOrCreateBase();
+        UserState userState1 = getUserState();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertNoMessages(connectionServiceTestHelper, new SimpleBase(1, 1));
+        assertNoMessages(connectionServiceTestHelper, userState1);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("u2");
-        SimpleBase simpleBase2 = getMyBase();
+        SimpleBase simpleBase2 = createBase(new Index(2000, 2000));
+        UserState userState2 = getUserState();
         verifyAllianceOffers();
         verifyAlliances();
         verifyAlliancesFromUser();
@@ -73,10 +76,10 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1));
-        assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(2, 1));
-        assertNoMessages(connectionServiceTestHelper, new SimpleBase(1, 1));
-        assertNoMessages(connectionServiceTestHelper, new SimpleBase(2, 1));
+        assertNoAlliancesInPackets(connectionServiceTestHelper, userState1);
+        assertNoAlliancesInPackets(connectionServiceTestHelper, userState2);
+        assertNoMessages(connectionServiceTestHelper, userState1);
+        assertNoMessages(connectionServiceTestHelper, userState2);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -93,9 +96,9 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertNoMessages(connectionServiceTestHelper, simpleBase1);
-        assertMessage(connectionServiceTestHelper, simpleBase2, "alliancesAccepted", "u1", false);
-        List<ServerConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelper.getPacketEntriesToAllBases(BaseChangedPacket.class);
+        assertNoMessages(connectionServiceTestHelper, userState1);
+        assertMessage(connectionServiceTestHelper, userState2, "alliancesAccepted", "u1", false);
+        List<ServerConnectionServiceTestHelperNew.PacketEntry> packets = connectionServiceTestHelper.getPacketEntriesToAllBases(BaseChangedPacket.class);
         Assert.assertEquals(2, packets.size());
         assertAlliancesInPacketToAll(packets, simpleBase1, "u2");
         assertAlliancesInPacketToAll(packets, simpleBase2, "u1");
@@ -114,8 +117,8 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertNoMessages(connectionServiceTestHelper, new SimpleBase(1, 1));
-        assertMessage(connectionServiceTestHelper, new SimpleBase(2, 1), "alliancesBroken", "u1", false);
+        assertNoMessages(connectionServiceTestHelper, userState1);
+        assertMessage(connectionServiceTestHelper, userState2, "alliancesBroken", "u1", false);
         packets = connectionServiceTestHelper.getPacketEntriesToAllBases(BaseChangedPacket.class);
         Assert.assertEquals(2, packets.size());
         assertAlliancesInPacketToAll(packets, simpleBase1);
@@ -144,22 +147,26 @@ public class TestAllianceService extends AbstractServiceTest {
     @DirtiesContext
     public void rejectAlliance() throws Exception {
         configureSimplePlanetNoResources();
-        ServerConnectionServiceTestHelper connectionServiceTestHelper = new ServerConnectionServiceTestHelper();
+        ServerConnectionServiceTestHelperNew connectionServiceTestHelper = new ServerConnectionServiceTestHelperNew();
         overrideConnectionService(((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices()), connectionServiceTestHelper);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
+        UserState userState1 = getUserState();
+        getOrCreateBase();
         verifyAllianceOffers();
         verifyAlliances();
         verifyAlliancesFromUser();
-        SimpleBase simpleBase1 = getMyBase();
+        SimpleBase simpleBase1 = getOrCreateBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U2");
+        UserState userState2 = getUserState();
+        createBase(new Index(2000, 2000));
         verifyAllianceOffers();
         verifyAlliances();
         verifyAlliancesFromUser();
@@ -169,10 +176,10 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1));
-        assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(2, 1));
-        assertNoMessages(connectionServiceTestHelper, new SimpleBase(1, 1));
-        assertNoMessages(connectionServiceTestHelper, new SimpleBase(2, 1));
+        assertNoAlliancesInPackets(connectionServiceTestHelper, userState1);
+        assertNoAlliancesInPackets(connectionServiceTestHelper, userState2);
+        assertNoMessages(connectionServiceTestHelper, userState1);
+        assertNoMessages(connectionServiceTestHelper, userState2);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -188,10 +195,10 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(1, 1));
-        assertNoAlliancesInPackets(connectionServiceTestHelper, new SimpleBase(2, 1));
-        assertNoMessages(connectionServiceTestHelper, new SimpleBase(1, 1));
-        assertMessage(connectionServiceTestHelper, new SimpleBase(2, 1), "alliancesRejected", "U1", false);
+        assertNoAlliancesInPackets(connectionServiceTestHelper, userState1);
+        assertNoAlliancesInPackets(connectionServiceTestHelper, userState2);
+        assertNoMessages(connectionServiceTestHelper, userState1);
+        assertMessage(connectionServiceTestHelper, userState2, "alliancesRejected", "U1", false);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -216,19 +223,22 @@ public class TestAllianceService extends AbstractServiceTest {
     @DirtiesContext
     public void addAllianceBothUnregistered() throws Exception {
         configureSimplePlanetNoResources();
-        ServerConnectionServiceTestHelper connectionServiceTestHelper = new ServerConnectionServiceTestHelper();
+        ServerConnectionServiceTestHelperNew connectionServiceTestHelper = new ServerConnectionServiceTestHelperNew();
         overrideConnectionService(((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices()), connectionServiceTestHelper);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         verifyAllianceOffers();
         verifyAlliances();
-        SimpleBase simpleBase1 = getMyBase();
+        UserState userState1 = getUserState();
+        SimpleBase simpleBase1 = getOrCreateBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        createBase(new Index(2000, 2000));
+        UserState userState2 = getUserState();
         verifyAllianceOffers();
         verifyAlliances();
         allianceService.proposeAlliance(simpleBase1);
@@ -243,8 +253,8 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertNoMessages(connectionServiceTestHelper, new SimpleBase(1, 1));
-        assertMessage(connectionServiceTestHelper, new SimpleBase(2, 1), "alliancesOnlyRegistered", null, true);
+        assertNoMessages(connectionServiceTestHelper, userState1);
+        assertMessage(connectionServiceTestHelper, userState2, "alliancesOnlyRegistered", null, true);
     }
 
     @Test
@@ -252,19 +262,22 @@ public class TestAllianceService extends AbstractServiceTest {
     public void addAllianceU1Unverified() throws Exception {
         startFakeMailServer();
         configureSimplePlanetNoResources();
-        ServerConnectionServiceTestHelper connectionServiceTestHelper = new ServerConnectionServiceTestHelper();
+        ServerConnectionServiceTestHelperNew connectionServiceTestHelper = new ServerConnectionServiceTestHelperNew();
         overrideConnectionService(((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices()), connectionServiceTestHelper);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         verifyAllianceOffers();
         verifyAlliances();
-        SimpleBase simpleBase1 = getMyBase();
+        SimpleBase simpleBase1 = getOrCreateBase();
+        UserState userState1 = getUserState();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        createBase(new Index(2000, 2000));
+        UserState userState2 = getUserState();
         verifyAllianceOffers();
         verifyAlliances();
         registerService.register("u1", "xxx", "xxx", "xxx");
@@ -275,8 +288,8 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertNoMessages(connectionServiceTestHelper, new SimpleBase(1, 1));
-        assertMessage(connectionServiceTestHelper, new SimpleBase(2, 1), "alliancesOnlyRegistered", null, false);
+        assertNoMessages(connectionServiceTestHelper, userState1);
+        assertMessage(connectionServiceTestHelper, userState2, "alliancesOnlyRegistered", null, false);
         stopFakeMailServer();
     }
 
@@ -285,20 +298,23 @@ public class TestAllianceService extends AbstractServiceTest {
     public void addAllianceU2Unverified() throws Exception {
         startFakeMailServer();
         configureSimplePlanetNoResources();
-        ServerConnectionServiceTestHelper connectionServiceTestHelper = new ServerConnectionServiceTestHelper();
+        ServerConnectionServiceTestHelperNew connectionServiceTestHelper = new ServerConnectionServiceTestHelperNew();
         overrideConnectionService(((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices()), connectionServiceTestHelper);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         verifyAllianceOffers();
         verifyAlliances();
+        UserState userState1 = getUserState();
         registerService.register("u2", "xxx", "xxx", "xxx");
-        SimpleBase simpleBase1 = getMyBase();
+        SimpleBase simpleBase1 = getOrCreateBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        createBase(new Index(2000, 2000));
+        UserState userState2 = getUserState();
         verifyAllianceOffers();
         verifyAlliances();
         createAndLoginUser("u1");
@@ -308,8 +324,8 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertMessage(connectionServiceTestHelper, new SimpleBase(1, 1), "alliancesOfferedOnlyRegistered", "u1", false);
-        assertMessage(connectionServiceTestHelper, new SimpleBase(2, 1), "alliancesOfferedNotRegistered", "u2", false);
+        assertMessage(connectionServiceTestHelper, userState1, "alliancesOfferedOnlyRegistered", "u1", false);
+        assertMessage(connectionServiceTestHelper, userState2, "alliancesOfferedNotRegistered", "u2", false);
         stopFakeMailServer();
     }
 
@@ -317,26 +333,28 @@ public class TestAllianceService extends AbstractServiceTest {
     @DirtiesContext
     public void createDeleteBase() throws Exception {
         configureSimplePlanetNoResources();
-        ServerConnectionServiceTestHelper connectionServiceTestHelper = new ServerConnectionServiceTestHelper();
+        ServerConnectionServiceTestHelperNew connectionServiceTestHelper = new ServerConnectionServiceTestHelperNew();
         overrideConnectionService(((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices()), connectionServiceTestHelper);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
+        UserState userState1 = getUserState();
         verifyAllianceOffers();
         verifyAlliances();
         verifyAlliancesFromUser();
-        SimpleBase simpleBase1 = getMyBase();
+        SimpleBase simpleBase1 = getOrCreateBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U2");
+        UserState userState2 = getUserState();
         verifyAllianceOffers();
         verifyAlliances();
         verifyAlliancesFromUser();
-        SimpleBase simpleBase2 = getMyBase();
+        SimpleBase simpleBase2 = createBase(new Index(2000, 2000));
         allianceService.proposeAlliance(simpleBase1);
         verifyAllianceOffers();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -355,8 +373,8 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertNoMessages(connectionServiceTestHelper, new SimpleBase(1, 1));
-        assertMessage(connectionServiceTestHelper, new SimpleBase(2, 1), "alliancesAccepted", "U1", false);
+        assertNoMessages(connectionServiceTestHelper, userState1);
+        assertMessage(connectionServiceTestHelper, userState2, "alliancesAccepted", "U1", false);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -370,12 +388,12 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        List<ServerConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelper.getPacketEntriesToAllBases(BaseChangedPacket.class);
+        List<ServerConnectionServiceTestHelperNew.PacketEntry> packets = connectionServiceTestHelper.getPacketEntriesToAllBases(BaseChangedPacket.class);
         Assert.assertEquals(2, packets.size()); // REMOVE and CHANGE packet
         assertAlliancesInPacketToAll(packets, simpleBase1);
         assertBaseDeletedPacket(connectionServiceTestHelper, simpleBase2);
-        assertNoMessages(connectionServiceTestHelper, new SimpleBase(1, 1));
-        assertNoMessages(connectionServiceTestHelper, new SimpleBase(2, 1));
+        assertNoMessages(connectionServiceTestHelper, userState1);
+        assertNoMessages(connectionServiceTestHelper, userState2);
         connectionServiceTestHelper.clearReceivedPackets();
         connectionServiceTestHelper.clearMessageEntries();
 
@@ -394,7 +412,7 @@ public class TestAllianceService extends AbstractServiceTest {
         verifyAllianceOffers();
         verifyAlliances("U1");
         verifyAlliancesFromUser("U1");
-        SimpleBase simpleBase3 = getMyBase();
+        SimpleBase simpleBase3 = createBase(new Index(3000, 3000));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -408,8 +426,8 @@ public class TestAllianceService extends AbstractServiceTest {
         assertAlliancesInPacketToAll(packets, simpleBase1, "U2");
         assertAlliancesInPacketToAll(packets, simpleBase3, "U1");
 
-        assertNoMessages(connectionServiceTestHelper, new SimpleBase(1, 1));
-        assertNoMessages(connectionServiceTestHelper, new SimpleBase(2, 1));
+        assertNoMessages(connectionServiceTestHelper, userState1);
+        assertNoMessages(connectionServiceTestHelper, userState2);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -424,33 +442,69 @@ public class TestAllianceService extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void addAlliancePartnerUnregistered() throws Exception {
-        configureSimplePlanetNoResources();
+        // TODO can not be testes because base becomes abandoned
+        /*configureSimplePlanetNoResources();
 
-        ServerConnectionServiceTestHelper connectionServiceTestHelper = new ServerConnectionServiceTestHelper();
+        ServerConnectionServiceTestHelperNew connectionServiceTestHelper = new ServerConnectionServiceTestHelperNew();
         overrideConnectionService(((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices()), connectionServiceTestHelper);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         verifyAllianceOffers();
         verifyAlliances();
-        SimpleBase simpleBase1 = getMyBase();
+        SimpleBase simpleBase1 = getOrCreateBase();
+        UserState userState1 = getUserState();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("u2");
+        UserState userState2 = getUserState();
         verifyAllianceOffers();
         verifyAlliances();
         verifyAlliancesFromUser();
-        SimpleBase simpleBase2 = getMyBase();
+        createBase(new Index(2000, 2000));
         allianceService.proposeAlliance(simpleBase1);
         verifyAllianceOffers();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertMessage(connectionServiceTestHelper, simpleBase1, "alliancesOfferedOnlyRegistered", "u2", true);
-        assertMessage(connectionServiceTestHelper, simpleBase2, "alliancesOfferedNotRegistered", "Base 1", false);
+        assertMessage(connectionServiceTestHelper, userState1, "alliancesOfferedOnlyRegistered", "u2", true);
+        assertMessage(connectionServiceTestHelper, userState2, "alliancesOfferedNotRegistered", "Base 1", false);*/
+    }
+
+    @Test
+    @DirtiesContext
+    public void addAlliancePartnerAbandoned() throws Exception {
+        configureSimplePlanetNoResources();
+
+        ServerConnectionServiceTestHelperNew connectionServiceTestHelper = new ServerConnectionServiceTestHelperNew();
+        overrideConnectionService(((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices()), connectionServiceTestHelper);
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        verifyAllianceOffers();
+        verifyAlliances();
+        SimpleBase simpleBase1 = getOrCreateBase();
+        UserState userState1 = getUserState();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("u2");
+        UserState userState2 = getUserState();
+        verifyAllianceOffers();
+        verifyAlliances();
+        verifyAlliancesFromUser();
+        createBase(new Index(2000, 2000));
+        allianceService.proposeAlliance(simpleBase1);
+        verifyAllianceOffers();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        assertMessage(connectionServiceTestHelper, userState2, "alliancesOfferedBaseAbandoned", "Base 1", false);
 
     }
 
@@ -465,13 +519,14 @@ public class TestAllianceService extends AbstractServiceTest {
         verifyAllianceOffers();
         verifyAlliances();
         verifyAlliancesFromUser();
-        SimpleBase simpleBase1 = getMyBase();
+        SimpleBase simpleBase1 = getOrCreateBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("u2");
+        createBase(new Index(2000, 2000));
         verifyAllianceOffers();
         verifyAlliances();
         verifyAlliancesFromUser();
@@ -576,16 +631,16 @@ public class TestAllianceService extends AbstractServiceTest {
     @DirtiesContext
     public void createDeleteBaseDifferentPlanets() throws Exception {
         configureMultiplePlanetsAndLevels();
-        ServerConnectionServiceTestHelper connectionServiceTestHelperP1 = new ServerConnectionServiceTestHelper();
+        ServerConnectionServiceTestHelperNew connectionServiceTestHelperP1 = new ServerConnectionServiceTestHelperNew();
         overrideConnectionService(((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_1_ID).getPlanetServices()), connectionServiceTestHelperP1);
-        ServerConnectionServiceTestHelper connectionServiceTestHelperP2 = new ServerConnectionServiceTestHelper();
+        ServerConnectionServiceTestHelperNew connectionServiceTestHelperP2 = new ServerConnectionServiceTestHelperNew();
         overrideConnectionService(((ServerPlanetServicesImpl) planetSystemService.getPlanet(TEST_PLANET_2_ID).getPlanetServices()), connectionServiceTestHelperP2);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("u1p2");
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
-        SimpleBase simpleBase1P1 = getMyBase();
+        SimpleBase simpleBase1P1 = getOrCreateBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -593,7 +648,7 @@ public class TestAllianceService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("u2p1");
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
-        SimpleBase simpleBase2P1 = getMyBase();
+        SimpleBase simpleBase2P1 = createBase(new Index(2000, 2000));
         allianceService.proposeAlliance(simpleBase1P1);
         verifyAllianceOffers();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -611,7 +666,7 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        List<ServerConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelperP1.getPacketEntriesToAllBases(BaseChangedPacket.class);
+        List<ServerConnectionServiceTestHelperNew.PacketEntry> packets = connectionServiceTestHelperP1.getPacketEntriesToAllBases(BaseChangedPacket.class);
         Assert.assertEquals(3, packets.size());
         Assert.assertEquals("Base 1", (((BaseChangedPacket) packets.get(0).getPacket()).getBaseAttributes()).getName());
         Assert.assertEquals(BaseChangedPacket.Type.CHANGED, (((BaseChangedPacket) packets.get(0).getPacket()).getType()));
@@ -624,7 +679,7 @@ public class TestAllianceService extends AbstractServiceTest {
         connectionServiceTestHelperP1.clearReceivedPackets();
         connectionServiceTestHelperP2.clearReceivedPackets();
         loginUser("u1p2", "test");
-        SimpleBase simpleBase1P2 = getMyBase();
+        SimpleBase simpleBase1P2 = createBase(new Index(3000, 3000));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -669,7 +724,7 @@ public class TestAllianceService extends AbstractServiceTest {
         connectionServiceTestHelperP1.clearReceivedPackets();
         connectionServiceTestHelperP2.clearReceivedPackets();
         loginUser("u2p1", "test");
-        SimpleBase simpleBase2P2 = getMyBase();
+        SimpleBase simpleBase2P2 = createBase(new Index(4000, 4000));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -695,14 +750,14 @@ public class TestAllianceService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("u1");
-        SimpleBase simpleBase1 = getMyBase();
+        SimpleBase simpleBase1 = getOrCreateBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("u2");
-        SimpleBase simpleBase2 = getMyBase();
+        SimpleBase simpleBase2 = createBase(new Index(2000, 2000));
         sendMoveCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(2000, 2000));
         waitForActionServiceDone();
         allianceService.proposeAlliance(simpleBase1);
@@ -736,8 +791,8 @@ public class TestAllianceService extends AbstractServiceTest {
         Assert.assertFalse(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getBaseService().isAlive(simpleBase2));
     }
 
-    private BaseAttributes getBaseChangedPacket(List<ServerConnectionServiceTestHelper.PacketEntry> packets, SimpleBase simpleBase) {
-        for (ServerConnectionServiceTestHelper.PacketEntry packet : packets) {
+    private BaseAttributes getBaseChangedPacket(List<ServerConnectionServiceTestHelperNew.PacketEntry> packets, SimpleBase simpleBase) {
+        for (ServerConnectionServiceTestHelperNew.PacketEntry packet : packets) {
             if (((BaseChangedPacket) packet.getPacket()).getBaseAttributes().getSimpleBase().equals(simpleBase)) {
                 return ((BaseChangedPacket) packet.getPacket()).getBaseAttributes();
             }
@@ -787,8 +842,8 @@ public class TestAllianceService extends AbstractServiceTest {
         }
     }
 
-    private void assertAlliancesInPacketToAll(List<ServerConnectionServiceTestHelper.PacketEntry> packets, SimpleBase simpleBase, String... allianceNames) {
-        for (ServerConnectionServiceTestHelper.PacketEntry packet : packets) {
+    private void assertAlliancesInPacketToAll(List<ServerConnectionServiceTestHelperNew.PacketEntry> packets, SimpleBase simpleBase, String... allianceNames) {
+        for (ServerConnectionServiceTestHelperNew.PacketEntry packet : packets) {
             BaseChangedPacket baseChangedPacket = (BaseChangedPacket) packet.getPacket();
             if (!baseChangedPacket.getBaseAttributes().getSimpleBase().equals(simpleBase)) {
                 continue;
@@ -808,9 +863,9 @@ public class TestAllianceService extends AbstractServiceTest {
         Assert.fail("No BaseChangedPacket for base found: " + simpleBase);
     }
 
-    private void assertBaseDeletedPacket(ServerConnectionServiceTestHelper connectionServiceTestHelper, SimpleBase deletedBase) {
-        List<ServerConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelper.getPacketEntriesToAllBases(BaseChangedPacket.class);
-        for (ServerConnectionServiceTestHelper.PacketEntry packet : packets) {
+    private void assertBaseDeletedPacket(ServerConnectionServiceTestHelperNew connectionServiceTestHelper, SimpleBase deletedBase) {
+        List<ServerConnectionServiceTestHelperNew.PacketEntry> packets = connectionServiceTestHelper.getPacketEntriesToAllBases(BaseChangedPacket.class);
+        for (ServerConnectionServiceTestHelperNew.PacketEntry packet : packets) {
             BaseChangedPacket baseChangedPacket = (BaseChangedPacket) packet.getPacket();
             if (baseChangedPacket.getType() == BaseChangedPacket.Type.REMOVED) {
                 Assert.assertEquals(deletedBase, baseChangedPacket.getBaseAttributes().getSimpleBase());
@@ -820,21 +875,21 @@ public class TestAllianceService extends AbstractServiceTest {
         Assert.fail("No delete BaseChangedPacket for base found");
     }
 
-    private void assertNoAlliancesInPackets(ServerConnectionServiceTestHelper connectionServiceTestHelper, SimpleBase myBase) {
-        List<ServerConnectionServiceTestHelper.PacketEntry> packets = connectionServiceTestHelper.getPacketEntries(myBase, BaseChangedPacket.class);
+    private void assertNoAlliancesInPackets(ServerConnectionServiceTestHelperNew connectionServiceTestHelper, UserState userState) {
+        List<ServerConnectionServiceTestHelperNew.PacketEntry> packets = connectionServiceTestHelper.getPacketEntries(userState, BaseChangedPacket.class);
         Assert.assertEquals(0, packets.size());
     }
 
-    private void assertNoMessages(ServerConnectionServiceTestHelper connectionServiceTestHelper, SimpleBase myBase) {
-        List<ServerConnectionServiceTestHelper.MessageEntry> packets = connectionServiceTestHelper.getMessageEntries(myBase);
+    private void assertNoMessages(ServerConnectionServiceTestHelperNew connectionServiceTestHelper, UserState userState) {
+        List<ServerConnectionServiceTestHelperNew.MessageEntry> packets = connectionServiceTestHelper.getMessageEntries(userState);
         Assert.assertEquals(0, packets.size());
     }
 
-    private void assertMessage(ServerConnectionServiceTestHelper connectionServiceTestHelper, SimpleBase myBase, String messages, String arg, boolean showRegisterButton) {
-        List<ServerConnectionServiceTestHelper.MessageEntry> packets = connectionServiceTestHelper.getMessageEntries(myBase);
+    private void assertMessage(ServerConnectionServiceTestHelperNew connectionServiceTestHelper, UserState userState, String messages, String arg, boolean showRegisterButton) {
+        List<ServerConnectionServiceTestHelperNew.MessageEntry> packets = connectionServiceTestHelper.getMessageEntries(userState);
         Assert.assertEquals(1, packets.size());
-        ServerConnectionServiceTestHelper.MessageEntry messageEntry = packets.get(0);
-        Assert.assertEquals(myBase, messageEntry.getSimpleBase());
+        ServerConnectionServiceTestHelperNew.MessageEntry messageEntry = packets.get(0);
+        Assert.assertEquals(userState, messageEntry.getUserState());
         Assert.assertEquals(messages, messageEntry.getKey());
         if (arg != null) {
             Assert.assertEquals(1, messageEntry.getArgs().length);

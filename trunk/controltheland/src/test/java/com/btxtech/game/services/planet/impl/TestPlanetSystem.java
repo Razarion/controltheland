@@ -1,8 +1,11 @@
 package com.btxtech.game.services.planet.impl;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.jsre.common.packets.LevelPacket;
+import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.planet.Planet;
@@ -22,6 +25,8 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.List;
 
 /**
  * User: beat
@@ -102,7 +107,7 @@ public class TestPlanetSystem extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         UserState userState = userService.getUserState();
-        planetSystemService.createBase(userState);
+        planetSystemService.createBase(userState, new Index(100, 100));
         Assert.assertEquals(1, planet.getPlanetServices().getBaseService().getBases().size());
         Assert.assertEquals(1, getAllSynItemId(TEST_START_BUILDER_ITEM_ID).size());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -120,11 +125,41 @@ public class TestPlanetSystem extends AbstractServiceTest {
         UserState userState = userService.getUserState();
         Assert.assertFalse(planetSystemService.isUserOnCorrectPlanet(userState));
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_2_REAL_ID);
-        getMyBase();  // Build base
+        getOrCreateBase();  // Build base
         Assert.assertTrue(planetSystemService.isUserOnCorrectPlanet(userState));
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_5_REAL_ID);
         Assert.assertFalse(planetSystemService.isUserOnCorrectPlanet(userState));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void sendPacket() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        UserState userState = userService.getUserState();
+        planetSystemService.sendPacket(userState, new LevelPacket());
+
+        getMovableService().getRealGameInfo(START_UID_1); // Create Connection
+        List<Packet> packets = getMovableService().getSyncInfo(START_UID_1, false);
+        Assert.assertTrue(packets.isEmpty());
+        planetSystemService.sendPacket(userState, new LevelPacket());
+        packets = getMovableService().getSyncInfo(START_UID_1, false);
+        Assert.assertEquals(1, packets.size());
+        Assert.assertTrue(CommonJava.getFirst(packets) instanceof LevelPacket);
+
+        getMovableService().createBase(new Index(1000, 1000));
+        clearPackets();
+
+        planetSystemService.sendPacket(userState, new LevelPacket());
+        packets = getMovableService().getSyncInfo(START_UID_1, false);
+        Assert.assertEquals(1, packets.size());
+        Assert.assertTrue(CommonJava.getFirst(packets) instanceof LevelPacket);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 }

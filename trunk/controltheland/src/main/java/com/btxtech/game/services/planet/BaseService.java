@@ -13,9 +13,12 @@
 
 package com.btxtech.game.services.planet;
 
+import com.btxtech.game.jsre.client.PositionInBotException;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
+import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -48,7 +51,7 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     Base getBaseCms();
 
-    Base createNewBase(UserState userState, DbBaseItemType dbBaseItemType, int startMoney, Region region, int startItemFreeRange) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException;
+    Base createNewBase(UserState userState, DbBaseItemType dbBaseItemType, int startMoney, Index startPoint, int startItemFreeRange) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException, PositionInBotException;
 
     void setBot(SimpleBase simpleBase, boolean bot);
 
@@ -81,4 +84,8 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
     void sendAlliancesChanged(SimpleBase simpleBase);
 
     void surrenderBase(Base base);
+
+    Collection<BaseAttributes> createAllBaseAttributes4FakeBase(SimpleBase fakeBase, UserState uSerState, int planetId);
+
+    void sendAlliancesChanged4FakeBase(UserState uSerState);
 }

@@ -2,6 +2,8 @@ package com.btxtech.game.jsre.client.utg;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientI18nHelper;
+import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.dialogs.DeadEndDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemTypeContainer;
@@ -47,8 +49,18 @@ public class ClientDeadEndProtection extends DeadEndProtection implements DeadEn
     }
 
     @Override
+    protected boolean isBaseDead() {
+        return ClientBase.getInstance().isBaseDead();
+    }
+
+    @Override
     protected int getMyMoney() {
         return (int) ClientBase.getInstance().getAccountBalance();
+    }
+
+    @Override
+    protected boolean isSuppressed() {
+        return Connection.getInstance().getGameEngineMode() != GameEngineMode.SLAVE;
     }
 
     @Override

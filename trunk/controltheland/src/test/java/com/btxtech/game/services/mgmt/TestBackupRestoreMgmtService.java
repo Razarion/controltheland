@@ -92,7 +92,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.getDbLevel();
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
-        SimpleBase unregKillBase = getMyBase();
+        SimpleBase unregKillBase = getOrCreateBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -101,7 +101,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U2");
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
-        SimpleBase u2Base = getMyBase();
+        SimpleBase u2Base = createBase(new Index(2000, 2000));
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
         Index buildPos = serverPlanetServices.getCollisionService().getFreeRandomPosition(serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
         sendBuildCommand(getFirstSynItemId(u2Base, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
@@ -118,6 +118,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U3");
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        createBase(new Index(3000, 3000));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -133,6 +134,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        createBase(new Index(4000, 4000));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -248,6 +250,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
+        createBase(new Index(1000, 1000));
         mgmtService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -359,7 +362,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
-        SimpleBase realUser = getMyBase();
+        SimpleBase realUser = getOrCreateBase();
         Index buildPos = serverPlanetServices.getCollisionService().getFreeRandomPosition(serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true, false);
         sendBuildCommand(getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -409,7 +412,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
         getMovableService().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", userGuidanceService.getDefaultLevelTaskId(), "", 0, 0);
-        SimpleBase realUser = getMyBase();
+        SimpleBase realUser = getOrCreateBase();
         Id id = getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID);
         ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
         SyncBaseItem syncBaseItem = (SyncBaseItem) serverPlanetServices.getItemService().getItem(id);
@@ -435,7 +438,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
-        realUser = getMyBase();
+        realUser = getOrCreateBase();
         id = getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID);
         syncBaseItem = (SyncBaseItem) serverPlanetServices.getItemService().getItem(id);
         SyncMovable syncMovable = syncBaseItem.getSyncMovable();
@@ -462,7 +465,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1", "test");
-        realUser = getMyBase();
+        realUser = getOrCreateBase();
         id = getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID);
         syncBaseItem = (SyncBaseItem) serverPlanetServices.getItemService().getItem(id);
         // Assert path has at lease more the 50 entries (original it was 130 but some are may be already achievement)
@@ -736,8 +739,8 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
         getUserState().setRazarion(100);
-        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
-        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getOrCreateBase()));
+        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getOrCreateBase()));
         unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -748,8 +751,8 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
-        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
-        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getOrCreateBase()));
+        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getOrCreateBase()));
         unlockService.unlockItemType(TEST_FACTORY_ITEM_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -760,8 +763,8 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
-        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
-        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getOrCreateBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getOrCreateBase()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -778,16 +781,17 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
-        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
-        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getOrCreateBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getOrCreateBase()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify U2 & modify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U2");
-        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
-        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        createBase(new Index(2000, 200));
+        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getOrCreateBase()));
+        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getOrCreateBase()));
         getUserState().setRazarion(100);
         unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
         unlockService.unlockItemType(TEST_FACTORY_ITEM_ID);
@@ -800,16 +804,16 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
-        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
-        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getOrCreateBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getOrCreateBase()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify U2
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U2");
-        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
-        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getOrCreateBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getOrCreateBase()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -817,7 +821,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getUserState().setRazarion(100);
-        getMyBase(); // Create base
+        createBase(new Index(3000, 3000)); // Create base
         unlockService.unlockItemType(TEST_ATTACK_ITEM_ID);
         unlockService.unlockItemType(TEST_FACTORY_ITEM_ID);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -829,16 +833,16 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
-        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
-        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getOrCreateBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getOrCreateBase()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify U2
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U2");
-        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
-        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getOrCreateBase()));
+        Assert.assertFalse(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getOrCreateBase()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -854,8 +858,9 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
-        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getMyBase()));
-        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getMyBase()));
+        createBase(new Index(5000, 5000));
+        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_ATTACK_ITEM_ID), getOrCreateBase()));
+        Assert.assertTrue(unlockService.isItemLocked((BaseItemType) serverItemTypeService.getItemType(TEST_FACTORY_ITEM_ID), getOrCreateBase()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -895,8 +900,8 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
         getUserState().setRazarion(100);
-        Assert.assertTrue(unlockService.isQuestLocked(questInfo1, getMyBase()));
-        Assert.assertTrue(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        Assert.assertTrue(unlockService.isQuestLocked(questInfo1, getOrCreateBase()));
+        Assert.assertTrue(unlockService.isQuestLocked(questInfo2, getOrCreateBase()));
         unlockService.unlockQuest(dbLevelTask1.getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -907,8 +912,8 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
-        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getMyBase()));
-        Assert.assertTrue(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getOrCreateBase()));
+        Assert.assertTrue(unlockService.isQuestLocked(questInfo2, getOrCreateBase()));
         unlockService.unlockQuest(dbLevelTask2.getId());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -919,8 +924,8 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
-        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getMyBase()));
-        Assert.assertFalse(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getOrCreateBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo2, getOrCreateBase()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -937,16 +942,17 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
-        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getMyBase()));
-        Assert.assertFalse(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getOrCreateBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo2, getOrCreateBase()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify U2 & modify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U2");
-        Assert.assertTrue(unlockService.isQuestLocked(questInfo1, getMyBase()));
-        Assert.assertTrue(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        createBase(new Index(2000, 2000));
+        Assert.assertTrue(unlockService.isQuestLocked(questInfo1, getOrCreateBase()));
+        Assert.assertTrue(unlockService.isQuestLocked(questInfo2, getOrCreateBase()));
         getUserState().setRazarion(100);
         unlockService.unlockQuest(dbLevelTask1.getId());
         unlockService.unlockQuest(dbLevelTask2.getId());
@@ -959,16 +965,16 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
-        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getMyBase()));
-        Assert.assertFalse(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getOrCreateBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo2, getOrCreateBase()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify U2
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U2");
-        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getMyBase()));
-        Assert.assertFalse(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getOrCreateBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo2, getOrCreateBase()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -976,7 +982,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getUserState().setRazarion(100);
-        getMyBase(); // Create base
+        createBase(new Index(3000, 3000)); // Create base
         unlockService.unlockQuest(dbLevelTask1.getId());
         unlockService.unlockQuest(dbLevelTask2.getId());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -988,16 +994,16 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
-        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getMyBase()));
-        Assert.assertFalse(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getOrCreateBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo2, getOrCreateBase()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Verify U2
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U2");
-        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getMyBase()));
-        Assert.assertFalse(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getOrCreateBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo2, getOrCreateBase()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -1013,8 +1019,9 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         loginUser("U1");
-        Assert.assertTrue(unlockService.isQuestLocked(questInfo1, getMyBase()));
-        Assert.assertTrue(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        createBase(new Index(4000, 4000));
+        Assert.assertTrue(unlockService.isQuestLocked(questInfo1, getOrCreateBase()));
+        Assert.assertTrue(unlockService.isQuestLocked(questInfo2, getOrCreateBase()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -1047,7 +1054,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
         userGuidanceService.promote(getUserState(), TEST_LEVEL_2_REAL);
-        getMyBase(); // Create base
+        getOrCreateBase(); // Create base
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -1092,7 +1099,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U2");
         userGuidanceService.promote(getUserState(), TEST_LEVEL_2_REAL);
-        getMyBase(); // Create base
+        createBase(new Index(2000, 2000)); // Create base
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -1142,7 +1149,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         getUserState().setRazarion(100);
         userGuidanceService.promote(getUserState(), TEST_LEVEL_2_REAL);
-        getMyBase(); // Create base
+        createBase(new Index(3000, 3000)); // Create base
         unlockService.unlockPlanet(planetInfo2.getPlanetId());
         unlockService.unlockPlanet(planetInfo3.getPlanetId());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -1235,7 +1242,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         serverEnergyService = planetSystemService.getServerPlanetServices().getEnergyService();
         Assert.assertEquals(20, serverEnergyService.getConsuming());
         Assert.assertEquals(30, serverEnergyService.getGenerating());
-        getMovableService().sellItem(getFirstSynItemId(getMyBase(), TEST_CONSUMER_TYPE_ID));
+        getMovableService().sellItem(getFirstSynItemId(getOrCreateBase(), TEST_CONSUMER_TYPE_ID));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -1248,7 +1255,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         serverEnergyService = planetSystemService.getServerPlanetServices().getEnergyService();
         Assert.assertEquals(0, serverEnergyService.getConsuming());
         Assert.assertEquals(30, serverEnergyService.getGenerating());
-        getMovableService().sellItem(getFirstSynItemId(getMyBase(), TEST_GENERATOR_TYPE_ID));
+        getMovableService().sellItem(getFirstSynItemId(getOrCreateBase(), TEST_GENERATOR_TYPE_ID));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

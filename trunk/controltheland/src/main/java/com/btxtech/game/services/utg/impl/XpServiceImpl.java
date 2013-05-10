@@ -19,7 +19,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.packets.XpPacket;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.QueueWorker;
-import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
@@ -139,13 +138,10 @@ public class XpServiceImpl implements XpService {
 
     private void increaseXpPerUserState(UserState userState, int deltaXp) {
         userState.increaseXp(deltaXp);
-        Base base = userState.getBase();
-        if (base != null) {
-            XpPacket xpPacket = new XpPacket();
-            xpPacket.setXp(userState.getXp());
-            xpPacket.setXp2LevelUp(userGuidanceService.getXp2LevelUp(userState));
-            base.getPlanet().getPlanetServices().getConnectionService().sendPacket(base.getSimpleBase(), xpPacket);
-        }
+        XpPacket xpPacket = new XpPacket();
+        xpPacket.setXp(userState.getXp());
+        xpPacket.setXp2LevelUp(userGuidanceService.getXp2LevelUp(userState));
+        planetSystemService.sendPacket(userState, xpPacket);
         serverConditionService.onIncreaseXp(userState, deltaXp);
     }
 

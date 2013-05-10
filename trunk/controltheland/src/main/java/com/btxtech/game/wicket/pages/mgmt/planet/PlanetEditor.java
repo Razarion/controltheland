@@ -14,6 +14,7 @@ import com.btxtech.game.wicket.pages.mgmt.bot.BotEditor;
 import com.btxtech.game.wicket.pages.mgmt.inventory.BoxRegionEditor;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
+import com.btxtech.game.wicket.uiservices.IndexPanel;
 import com.btxtech.game.wicket.uiservices.MinutePanel;
 import com.btxtech.game.wicket.uiservices.RegionPanel;
 import com.btxtech.game.wicket.uiservices.TerrainLinkHelper;
@@ -62,6 +63,7 @@ public class PlanetEditor extends MgmtWebPage {
                 serviceHelper.updateDbEntity(form.getModelObject());
             }
         });
+        form.add(new IndexPanel("startPosition"));
         form.add(new BaseItemTypePanel("startItemType"));
         form.add(new TextField("startItemFreeRange"));
         form.add(new TextField("startMoney"));

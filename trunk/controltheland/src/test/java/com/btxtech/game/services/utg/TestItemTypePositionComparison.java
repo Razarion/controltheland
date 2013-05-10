@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.ItemTypePositionComparisonConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.connection.Connection;
+import com.btxtech.game.services.connection.OnlineUserDTO;
 import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.planet.Base;
 import com.btxtech.game.services.planet.BaseService;
@@ -1171,7 +1172,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     }
 
     @Override
-    public boolean hasConnection(SimpleBase simpleBase) {
+    public boolean hasConnection(UserState userState) {
         return false;
     }
 
@@ -1181,13 +1182,18 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     }
 
     @Override
-    public void createConnection(Base base, String startUuid) {
+    public void createConnection(UserState userState, String startUuid) {
 
     }
 
     @Override
-    public void closeConnection(SimpleBase simpleBase, NoConnectionException.Type closedReason) {
+    public void sendMessage(UserState userState, String key, Object[] args, boolean showRegisterDialog) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 
+    @Override
+    public void sendPacket(UserState userState, Packet packet) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
@@ -1213,7 +1219,7 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     }
 
     @Override
-    public Collection<SimpleBase> getOnlineBases() {
+    public Collection<OnlineUserDTO> getOnlineConnections() {
         return null;
     }
 

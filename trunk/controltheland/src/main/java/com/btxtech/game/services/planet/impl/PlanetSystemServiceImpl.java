@@ -1,8 +1,10 @@
 package com.btxtech.game.services.planet.impl;
 
+import com.btxtech.game.jsre.client.PositionInBotException;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
+import com.btxtech.game.jsre.client.common.info.StartPointInfo;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
@@ -13,11 +15,13 @@ import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeExce
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
+import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.common.ServerPlanetServices;
+import com.btxtech.game.services.connection.OnlineUserDTO;
 import com.btxtech.game.services.inventory.DbInventoryItem;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.planet.Base;
@@ -93,40 +97,19 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
     }
 
     @Override
-    public void continuePlanet(String startUuid) throws InvalidLevelStateException {
-        UserState userState = userService.getUserState();
-        if (userState == null) {
-            throw new IllegalStateException("No UserState available.");
-        }
-
-        Base base = userState.getBase();
-        if (base == null) {
-            createBase(userState);
-        }
-
-        base = userState.getBase();
-        if (base == null) {
-            throw new IllegalStateException("No Base in user UserState: " + userState);
-        }
-
-        base.getPlanet().getPlanetServices().getConnectionService().createConnection(base, startUuid);
+    public void handleResurrectionMessage(UserState userState, String startUuid) throws InvalidLevelStateException {
         if (userState.isSendResurrectionMessage()) {
-            userGuidanceService.sendResurrectionMessage(base.getSimpleBase());
+            userGuidanceService.sendResurrectionMessage(userState);
             userState.clearSendResurrectionMessageAndClear();
         }
     }
 
     @Override
-    public void createBase(UserState userState) throws InvalidLevelStateException {
+    public void createBase(UserState userState, Index position) throws InvalidLevelStateException, PositionInBotException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
         DbLevel dbLevel = userGuidanceService.getDbLevel(userState);
         DbPlanet dbPlanet = getUnlockedPlanet(dbLevel, userState);
-        try {
-            Planet planet = getPlanet(dbPlanet);
-            planet.getPlanetServices().getBaseService().createNewBase(userState, dbPlanet.getStartItemType(), dbPlanet.getStartMoney(), planet.getPlanetServices().getStartRegion(), dbPlanet.getStartItemFreeRange());
-        } catch (Exception e) {
-            log.error("Can not create base for user: " + userState, e);
-        }
-
+        Planet planet = getPlanet(dbPlanet);
+        planet.getPlanetServices().getBaseService().createNewBase(userState, dbPlanet.getStartItemType(), dbPlanet.getStartMoney(), position, dbPlanet.getStartItemFreeRange());
         log.debug("Base for user '" + userState + "' created on planet: " + dbPlanet);
     }
 
@@ -234,6 +217,22 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
     @Override
     public ServerPlanetServices getServerPlanetServices(UserState userState) {
         return getPlanet(userState).getPlanetServices();
+    }
+
+    @Override
+    public ServerPlanetServices getUnlockedServerPlanetServices(UserState userState) throws InvalidLevelStateException {
+        if (userState.getBase() != null) {
+            return getServerPlanetServices(userState.getBase().getSimpleBase());
+        }
+        DbLevel dbLevel = userGuidanceService.getDbLevel(userState);
+        DbPlanet dbPlanet = getUnlockedPlanet(dbLevel, userState);
+        Planet planet = getPlanet(dbPlanet);
+        return planet.getPlanetServices();
+    }
+
+    @Override
+    public ServerPlanetServices getUnlockedServerPlanetServices() throws InvalidLevelStateException {
+        return getUnlockedServerPlanetServices(userService.getUserState());
     }
 
     @Override
@@ -413,11 +412,54 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
     }
 
     @Override
-    public List<SimpleBase> getAllOnlineBases() {
-        List<SimpleBase> onlineBases = new ArrayList<>();
+    public List<OnlineUserDTO> getAllOnlineUsers() {
+        List<OnlineUserDTO> onlineBases = new ArrayList<>();
         for (PlanetImpl planet : planetImpls.values()) {
-            onlineBases.addAll(planet.getPlanetServices().getConnectionService().getOnlineBases());
+            onlineBases.addAll(planet.getPlanetServices().getConnectionService().getOnlineConnections());
         }
         return onlineBases;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public StartPointInfo createStartPoint(PlanetInfo planetInfo, boolean setStartPosition) {
+        DbPlanet dbPlanet = getDbPlanetCrud().readDbChild(planetInfo.getPlanetId());
+        return dbPlanet.createStartPoint(setStartPosition);
+    }
+
+    @Override
+    public void sendPacket(UserState userState, Packet packet) {
+        try {
+            for (PlanetImpl planet : planetImpls.values()) {
+                planet.getPlanetServices().getConnectionService().sendPacket(userState, packet);
+            }
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+        }
+    }
+
+    @Override
+    public void sendMessage(UserState userState, String key, Object[] args, boolean showRegisterDialog) {
+        try {
+            for (PlanetImpl planet : planetImpls.values()) {
+                planet.getPlanetServices().getConnectionService().sendMessage(userState, key, args, showRegisterDialog);
+            }
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+        }
+    }
+
+    @Override
+    public ServerPlanetServices getPlanet4BaselessConnection(UserState userState) {
+        try {
+            for (PlanetImpl planet : planetImpls.values()) {
+                if (planet.getPlanetServices().getConnectionService().hasConnection(userState)) {
+                    return planet.getPlanetServices();
+                }
+            }
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+        }
+        return null;
     }
 }

@@ -305,11 +305,14 @@ public class ItemContainer extends AbstractItemService implements SyncItemListen
         items.remove(syncItem.getId());
         if (syncItem instanceof SyncBaseItem) {
             SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
-            if (ClientBase.getInstance().isMyOwnProperty(syncBaseItem)) {
+            boolean isMyOwnProperty = ClientBase.getInstance().isMyOwnProperty(syncBaseItem);
+            if (isMyOwnProperty) {
                 ClientBase.getInstance().recalculate4FakedHouseSpace(syncBaseItem);
-                ClientDeadEndProtection.getInstance().onSyncItemLost(syncBaseItem);
             }
             ClientBase.getInstance().onItemDeleted(syncBaseItem, actor);
+            if (isMyOwnProperty) {
+                ClientDeadEndProtection.getInstance().onSyncItemLost(syncBaseItem);
+            }
         }
         checkSpecialRemoved(syncItem);
         seeminglyDeadItems.remove(syncItem.getId());

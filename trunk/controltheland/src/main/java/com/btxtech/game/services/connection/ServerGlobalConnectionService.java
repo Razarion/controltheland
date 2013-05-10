@@ -20,15 +20,13 @@ import java.util.List;
 public interface ServerGlobalConnectionService {
     Session getSession();
 
-    void createConnectionStatisticsNoSession(String baseName, String sessionId, double ticksPerSecond);
+    void createConnectionStatisticsNoSession(String sessionId, double ticksPerSecond, int planetId);
 
     List<MessageIdPacket> pollMessageIdPackets(Integer lastMessageId, GameEngineMode gameEngineMode);
 
     void sendChatMessage(ChatMessage chatMessage);
 
     void sendServerRebootMessage(int rebootInSeconds, int downTimeInMinutes);
-
-    Collection<SimpleBase> getOnlineBases();
 
     void saveClientDebug(Date date, String category, String message);
 

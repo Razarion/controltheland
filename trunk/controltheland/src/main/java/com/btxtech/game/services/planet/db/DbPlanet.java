@@ -1,16 +1,21 @@
 package com.btxtech.game.services.planet.db;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.RadarMode;
+import com.btxtech.game.jsre.client.common.info.StartPointInfo;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetInfo;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
+import com.btxtech.game.services.common.db.IndexUserType;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.terrain.DbRegion;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -36,6 +41,7 @@ import java.util.Map;
  * Time: 14:44:56
  */
 @Entity(name = "PLANET")
+@TypeDef(name = "index", typeClass = IndexUserType.class)
 public class DbPlanet implements CrudChild, CrudParent {
     @Id
     @GeneratedValue
@@ -58,6 +64,9 @@ public class DbPlanet implements CrudChild, CrudParent {
     private DbBaseItemType startItemType;
     private int startItemFreeRange;
     private int startMoney;
+    @org.hibernate.annotations.Type(type = "index")
+    @Columns(columns = {@Column(name = "startXPos"), @Column(name = "startYPos")})
+    private Index startPosition;
     // ----- Config -----
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
@@ -176,6 +185,14 @@ public class DbPlanet implements CrudChild, CrudParent {
         this.startMoney = startMoney;
     }
 
+    public Index getStartPosition() {
+        return startPosition;
+    }
+
+    public void setStartPosition(Index startPosition) {
+        this.startPosition = startPosition;
+    }
+
     public DbTerrainSetting getDbTerrainSetting() {
         return dbTerrainSetting;
     }
@@ -242,6 +259,14 @@ public class DbPlanet implements CrudChild, CrudParent {
         return planetInfo;
     }
 
+    public StartPointInfo createStartPoint(boolean setStartPosition) {
+        StartPointInfo startPointInfo = new StartPointInfo(startItemType.getId(), startItemFreeRange);
+        if (setStartPosition) {
+            startPointInfo.setSuggestedPosition(startPosition);
+        }
+        return startPointInfo;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -261,4 +286,6 @@ public class DbPlanet implements CrudChild, CrudParent {
     public String toString() {
         return getClass().getName() + " " + name + " id: " + id;
     }
+
+
 }

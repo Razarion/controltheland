@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.ClientPlanetServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
+import com.btxtech.game.jsre.client.StartPointMode;
 import com.btxtech.game.jsre.client.cockpit.SplashManager;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Rectangle;
@@ -24,6 +25,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -132,13 +134,24 @@ public class QuestVisualisationModel {
 
     // Move to a user guidance class
     public void moveToNextPlanet() {
-        YesNoDialog yesNoDialog = new YesNoDialog(ClientI18nHelper.CONSTANTS.nextPlanet(), ClientI18nHelper.CONSTANTS.leaveBaseNextPlanet(), ClientI18nHelper.CONSTANTS.go(), new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                Connection.getInstance().surrenderBase();
-            }
-        }, ClientI18nHelper.CONSTANTS.cancel(), null);
-        DialogManager.showDialog(yesNoDialog, DialogManager.Type.QUEUE_ABLE);
+        if (StartPointMode.getInstance().isActive()) {
+            YesNoDialog yesNoDialog = new YesNoDialog(ClientI18nHelper.CONSTANTS.nextPlanet(), ClientI18nHelper.CONSTANTS.leaveBaseNextPlanet(), ClientI18nHelper.CONSTANTS.go(), new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    Window.Location.reload();
+                }
+            }, ClientI18nHelper.CONSTANTS.cancel(), null);
+            DialogManager.showDialog(yesNoDialog, DialogManager.Type.QUEUE_ABLE);
+        } else {
+            YesNoDialog yesNoDialog = new YesNoDialog(ClientI18nHelper.CONSTANTS.nextPlanet(), ClientI18nHelper.CONSTANTS.leaveBaseNextPlanet(), ClientI18nHelper.CONSTANTS.go(), new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    Connection.getInstance().surrenderBase();
+                    Window.Location.reload();
+                }
+            }, ClientI18nHelper.CONSTANTS.cancel(), null);
+            DialogManager.showDialog(yesNoDialog, DialogManager.Type.QUEUE_ABLE);
+        }
     }
 
     public void onLevelChange(LevelScope levelScope) {

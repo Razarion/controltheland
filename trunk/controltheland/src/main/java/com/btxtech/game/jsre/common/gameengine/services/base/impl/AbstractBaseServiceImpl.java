@@ -28,8 +28,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
-import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -39,7 +37,6 @@ import java.util.logging.Logger;
 abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
     private static final String UNDEFINED_NAME = "undefined";
     final private HashMap<SimpleBase, BaseAttributes> bases = new HashMap<SimpleBase, BaseAttributes>();
-    private Logger log = Logger.getLogger(AbstractBaseServiceImpl.class.getName());
 
     protected abstract GlobalServices getGlobalServices();
 
@@ -111,7 +108,7 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
 
     protected void createBase(BaseAttributes baseAttributes) {
         if (bases.containsKey(baseAttributes.getSimpleBase())) {
-            throw new IllegalArgumentException(this + " The base already exits: " + baseAttributes.getSimpleBase());
+            throw new IllegalArgumentException(this + " The base already exits: " + baseAttributes.getName() + "(" + baseAttributes.getSimpleBase() + ")");
         }
         synchronized (bases) {
             bases.put(baseAttributes.getSimpleBase(), baseAttributes);
@@ -133,7 +130,9 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
     protected void updateBase(BaseAttributes baseAttributes) {
         BaseAttributes oldBaseAttributes = getBaseAttributes(baseAttributes.getSimpleBase());
         if (oldBaseAttributes == null) {
-            throw new IllegalArgumentException(this + " base does not exits " + baseAttributes.getSimpleBase());
+            // TODO temporary ignore this exception due to allaince & startpoint hack
+            // TODO throw new IllegalArgumentException(this + " base does not exits " + baseAttributes.getSimpleBase());
+            return;
         }
         bases.put(baseAttributes.getSimpleBase(), baseAttributes);
     }

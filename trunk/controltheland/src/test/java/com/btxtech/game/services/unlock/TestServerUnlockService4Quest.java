@@ -101,7 +101,7 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.promote(getUserState(), TEST_LEVEL_2_REAL_ID);
-        getMyBase();
+        getOrCreateBase();
         Thread.sleep(1000); // Wait for money packet
         clearPackets();
         // Activate
@@ -187,7 +187,7 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.promote(getUserState(), TEST_LEVEL_2_REAL_ID);
-        getMyBase();
+        getOrCreateBase();
         Thread.sleep(1000); // Wait for money packet
         clearPackets();
         // Unlock quest
@@ -290,13 +290,13 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         getUserState().setRazarion(100);
-        getMyBase(); // Create Base
+        getOrCreateBase(); // Create Base
         unlockService.unlockQuest(dbLevelTask1.getId());
-        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getMyBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getOrCreateBase()));
         Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getUserState()));
-        Assert.assertTrue(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        Assert.assertTrue(unlockService.isQuestLocked(questInfo2, getOrCreateBase()));
         Assert.assertTrue(unlockService.isQuestLocked(questInfo2, getUserState()));
-        Assert.assertFalse(unlockService.isQuestLocked(questInfo3, getMyBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo3, getOrCreateBase()));
         Assert.assertFalse(unlockService.isQuestLocked(questInfo3, getUserState()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -336,7 +336,7 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         createAndLoginUser("U1");
         getUserState().setRazarion(100);
-        getMyBase(); // Create Base
+        getOrCreateBase(); // Create Base
         unlockService.unlockQuest(dbLevelTask1.getId());
         unlockService.unlockQuest(dbLevelTask2.getId());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -386,7 +386,7 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMyBase(); // Create Base
+        getOrCreateBase(); // Create Base
         // Assert empty
         Collection<DbLevelTask> unlockedQuests = unlockService.getUnlockQuests(getUserState());
         Assert.assertTrue(unlockedQuests.isEmpty());
@@ -403,7 +403,7 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         unlockedQuests = unlockService.getUnlockQuests(getUserState());
         Assert.assertEquals(1, unlockedQuests.size());
         Assert.assertTrue(unlockedQuests.contains(userGuidanceService.getDbLevelTask4Id(dbLevelTask1.getId())));
-        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getMyBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getOrCreateBase()));
         Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getUserState()));
         // Add item
         clearPackets();
@@ -418,9 +418,9 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         Assert.assertEquals(2, unlockedQuests.size());
         Assert.assertTrue(unlockedQuests.contains(userGuidanceService.getDbLevelTask4Id(dbLevelTask1.getId())));
         Assert.assertTrue(unlockedQuests.contains(userGuidanceService.getDbLevelTask4Id(dbLevelTask2.getId())));
-        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getMyBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getOrCreateBase()));
         Assert.assertFalse(unlockService.isQuestLocked(questInfo1, getUserState()));
-        Assert.assertFalse(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        Assert.assertFalse(unlockService.isQuestLocked(questInfo2, getOrCreateBase()));
         Assert.assertFalse(unlockService.isQuestLocked(questInfo2, getUserState()));
         // Set no items
         clearPackets();
@@ -433,9 +433,9 @@ public class TestServerUnlockService4Quest extends AbstractServiceTest {
         assertPackagesIgnoreSyncItemInfoAndClear(unlockContainerPacket);
         unlockedQuests = unlockService.getUnlockQuests(getUserState());
         Assert.assertEquals(0, unlockedQuests.size());
-        Assert.assertTrue(unlockService.isQuestLocked(questInfo1, getMyBase()));
+        Assert.assertTrue(unlockService.isQuestLocked(questInfo1, getOrCreateBase()));
         Assert.assertTrue(unlockService.isQuestLocked(questInfo1, getUserState()));
-        Assert.assertTrue(unlockService.isQuestLocked(questInfo2, getMyBase()));
+        Assert.assertTrue(unlockService.isQuestLocked(questInfo2, getOrCreateBase()));
         Assert.assertTrue(unlockService.isQuestLocked(questInfo2, getUserState()));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

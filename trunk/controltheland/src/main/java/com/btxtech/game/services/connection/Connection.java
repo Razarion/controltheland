@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.services.planet.Base;
+import com.btxtech.game.services.user.UserState;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ import java.util.List;
  * User: beat Date: May 31, 2009 Time: 8:16:32 PM
  */
 public class Connection implements Serializable {
-    private Base base;
+    private UserState userState;
     private final HashSet<SyncItem> pendingSyncItem = new HashSet<>();
     private final List<Packet> pendingPackets = new ArrayList<>();
     private int tickCount = 0;
@@ -39,17 +40,14 @@ public class Connection implements Serializable {
     private List<Packet> sentPackager = new ArrayList<>();
 
 
-    public Connection(String sessionId, String startUuid) {
+    public Connection(UserState userState, String sessionId, String startUuid) {
+        this.userState = userState;
         this.sessionId = sessionId;
         this.startUuid = startUuid;
     }
 
-    public Base getBase() {
-        return base;
-    }
-
-    public void setBase(Base base) {
-        this.base = base;
+    public UserState getUserState() {
+        return userState;
     }
 
     public String getStartUuid() {

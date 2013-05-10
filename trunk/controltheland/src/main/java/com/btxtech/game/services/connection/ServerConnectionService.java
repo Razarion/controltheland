@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.services.planet.Base;
+import com.btxtech.game.services.user.UserState;
 
 import java.util.Collection;
 import java.util.Date;
@@ -31,23 +32,25 @@ import java.util.List;
  * Time: 1:20:07 PM
  */
 public interface ServerConnectionService extends CommonConnectionService {
-    boolean hasConnection(SimpleBase simpleBase);
+    boolean hasConnection(UserState userState);
 
     Connection getConnection(String startUuid) throws NoConnectionException;
 
-    void createConnection(Base base, String startUuid);
-
-    void closeConnection(SimpleBase simpleBase, NoConnectionException.Type closedReason);
+    void createConnection(UserState userState, String startUuid);
 
     void sendPacket(SimpleBase base, Packet packet);
 
+    void sendPacket(UserState userState, Packet packet);
+
     void sendPacket(Packet packet);
+
+    void sendMessage(UserState userState, String key, Object[] args, boolean showRegisterDialog);
 
     void sendMessage(SimpleBase simpleBase, String key, Object[] args, boolean showRegisterDialog);
 
     void sendSyncInfos(Collection<SyncBaseItem> syncItem);
 
-    Collection<SimpleBase> getOnlineBases();
+    Collection<OnlineUserDTO> getOnlineConnections();
 
     void activate();
 

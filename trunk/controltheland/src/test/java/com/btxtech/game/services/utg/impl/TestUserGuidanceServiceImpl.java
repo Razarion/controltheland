@@ -59,7 +59,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
             getMovableService().getRealGameInfo(START_UID_1);
             Assert.fail("InvalidLevelStateException expected");
         } catch (InvalidLevelStateException invalidLevelStateException) {
-
+            // Expected
         }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -89,6 +89,7 @@ public class TestUserGuidanceServiceImpl extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertEquals(TEST_LEVEL_2_REAL, userGuidanceService.getDbLevelCms().getNumber());
         Assert.assertTrue(userGuidanceService.isStartRealGame());
+        createBase(new Index(1000,1000));
         RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
         Assert.assertNotNull(realGameInfo);
         Assert.assertEquals(1, planetSystemService.getServerPlanetServices().getBaseService().getBases().size());

@@ -26,7 +26,7 @@ public class TestServerRebootPacket extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        getMyBase(); // Setup connection
+        getOrCreateBase(); // Setup connection
         Thread.sleep(1000); // Wait for the account balance package
         getPackagesIgnoreSyncItemInfoAndClear(false);
         connectionService.sendServerRebootMessage(1, 2);

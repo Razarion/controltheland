@@ -57,7 +57,7 @@ public class TestXp extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userGuidanceService.onTutorialFinished(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
-        getMyBase(); // Generate Base
+        getOrCreateBase(); // Generate Base
         Assert.assertTrue(getPackages(XpPacket.class).isEmpty());
         xpService.onReward(userService.getUserState(), 10);
         List<XpPacket> xpPackets = getPackages(XpPacket.class);

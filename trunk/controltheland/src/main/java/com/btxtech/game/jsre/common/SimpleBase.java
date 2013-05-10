@@ -21,6 +21,10 @@ import java.io.Serializable;
  * Time: 2:03:06 PM
  */
 public class SimpleBase implements Serializable {
+    public static final int ITEM_TYPE_EDITOR_MY = -1;
+    public static final int ITEM_TYPE_EDITOR_ENEMY = -2;
+    public static final int FAKE_BASE_START_POINT = -3;
+
     private int baseId;
     private int planetId;
 
@@ -63,5 +67,9 @@ public class SimpleBase implements Serializable {
     @Override
     public String toString() {
         return "Base Id: " + baseId + " Planet Id: " + planetId;
+    }
+
+    public static SimpleBase createFakeUser(int planetId) {
+        return new SimpleBase(SimpleBase.FAKE_BASE_START_POINT, planetId);
     }
 }

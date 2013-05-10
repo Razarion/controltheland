@@ -1,6 +1,8 @@
 package com.btxtech.game.services.gwt;
 
 import com.btxtech.game.jsre.client.SimpleUser;
+import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.RadarMode;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
@@ -39,6 +41,125 @@ public class TestMovableService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         SimulationInfo simulationInfo = getMovableService().getSimulationGameInfo(TEST_LEVEL_TASK_1_1_SIMULATED_ID);
         Assert.assertNotNull(simulationInfo);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void getRealGameStartPosition() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
+        assertWholeItemCount(TEST_PLANET_1_ID, 0);
+        Assert.assertEquals(-3, realGameInfo.getBase().getBaseId());
+        Assert.assertEquals(TEST_PLANET_1_ID, realGameInfo.getBase().getPlanetId());
+        Assert.assertEquals(0.0, realGameInfo.getAccountBalance(), 0.001);
+        Assert.assertEquals(0, realGameInfo.getEnergyConsuming());
+        Assert.assertEquals(0, realGameInfo.getEnergyGenerating());
+        Assert.assertEquals(0, realGameInfo.getHouseSpace());
+        Assert.assertTrue(realGameInfo.isSellAllowed());
+        Assert.assertEquals(TEST_PLANET_1, realGameInfo.getLevelScope().getPlanetLiteInfo().getName());
+        Assert.assertEquals(TEST_PLANET_1_ID, realGameInfo.getLevelScope().getPlanetLiteInfo().getPlanetId());
+        Assert.assertNull(realGameInfo.getLevelScope().getPlanetLiteInfo().getUnlockRazarion());
+        Assert.assertEquals(Integer.MAX_VALUE, realGameInfo.getLevelScope().getXp2LevelUp());
+        Assert.assertEquals(TEST_LEVEL_2_REAL, realGameInfo.getLevelScope().getNumber());
+        Assert.assertNotNull(realGameInfo.getLevelScope().getItemTypeLimitation());
+        // TODO Assert.assertNotNull(realGameInfo.getLevelTaskPacket().getQuestInfo());
+        Assert.assertEquals(1, realGameInfo.getAllBase().size());
+        Assert.assertEquals(0, realGameInfo.getAllianceOffers().size());
+        Assert.assertEquals(0, realGameInfo.getXpPacket().getXp());
+        Assert.assertEquals(Integer.MAX_VALUE, realGameInfo.getXpPacket().getXp2LevelUp());
+        Assert.assertEquals(20, realGameInfo.getPlanetInfo().getHouseSpace());
+        Assert.assertEquals(10000, realGameInfo.getPlanetInfo().getMaxMoney());
+        Assert.assertEquals(TEST_PLANET_1, realGameInfo.getPlanetInfo().getName());
+        Assert.assertEquals(TEST_PLANET_1_ID, realGameInfo.getPlanetInfo().getPlanetId());
+        Assert.assertNotNull(realGameInfo.getPlanetInfo().getPlanetLiteInfo());
+        Assert.assertEquals(RadarMode.NONE, realGameInfo.getPlanetInfo().getRadarMode());
+        Assert.assertEquals(1, realGameInfo.getAllPlanets().size());
+        Assert.assertNotNull(realGameInfo.getUnlockContainer().getItemTypes());
+        Assert.assertNotNull(realGameInfo.getUnlockContainer().getPlanets());
+        Assert.assertNotNull(realGameInfo.getUnlockContainer().getQuests());
+        Assert.assertEquals(TEST_START_BUILDER_ITEM_ID, realGameInfo.getStartPointInfo().getBaseItemTypeId());
+        Assert.assertEquals(300, realGameInfo.getStartPointInfo().getItemFreeRange());
+        Assert.assertEquals(new Index(1001, 1001), realGameInfo.getStartPointInfo().getSuggestedPosition());
+        assertWholeItemCount(TEST_PLANET_1_ID, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void getRealGameWithBase() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createBase(new Index(1000, 1000));
+        RealGameInfo realGameInfo = getMovableService().getRealGameInfo(START_UID_1);
+        assertWholeItemCount(TEST_PLANET_1_ID, 1);
+        Assert.assertEquals(1, realGameInfo.getBase().getBaseId());
+        Assert.assertEquals(TEST_PLANET_1_ID, realGameInfo.getBase().getPlanetId());
+        Assert.assertEquals(1000.0, realGameInfo.getAccountBalance(), 0.001);
+        Assert.assertEquals(0, realGameInfo.getEnergyConsuming());
+        Assert.assertEquals(0, realGameInfo.getEnergyGenerating());
+        Assert.assertEquals(0, realGameInfo.getHouseSpace());
+        Assert.assertTrue(realGameInfo.isSellAllowed());
+        Assert.assertEquals(TEST_PLANET_1, realGameInfo.getLevelScope().getPlanetLiteInfo().getName());
+        Assert.assertEquals(TEST_PLANET_1_ID, realGameInfo.getLevelScope().getPlanetLiteInfo().getPlanetId());
+        Assert.assertNull(realGameInfo.getLevelScope().getPlanetLiteInfo().getUnlockRazarion());
+        Assert.assertEquals(Integer.MAX_VALUE, realGameInfo.getLevelScope().getXp2LevelUp());
+        Assert.assertEquals(TEST_LEVEL_2_REAL, realGameInfo.getLevelScope().getNumber());
+        Assert.assertNotNull(realGameInfo.getLevelScope().getItemTypeLimitation());
+        // TODO Assert.assertNotNull(realGameInfo.getLevelTaskPacket().getQuestInfo());
+        Assert.assertEquals(1, realGameInfo.getAllBase().size());
+        Assert.assertEquals(0, realGameInfo.getAllianceOffers().size());
+        Assert.assertEquals(0, realGameInfo.getXpPacket().getXp());
+        Assert.assertEquals(Integer.MAX_VALUE, realGameInfo.getXpPacket().getXp2LevelUp());
+        Assert.assertEquals(20, realGameInfo.getPlanetInfo().getHouseSpace());
+        Assert.assertEquals(10000, realGameInfo.getPlanetInfo().getMaxMoney());
+        Assert.assertEquals(TEST_PLANET_1, realGameInfo.getPlanetInfo().getName());
+        Assert.assertEquals(TEST_PLANET_1_ID, realGameInfo.getPlanetInfo().getPlanetId());
+        Assert.assertNotNull(realGameInfo.getPlanetInfo().getPlanetLiteInfo());
+        Assert.assertEquals(RadarMode.NONE, realGameInfo.getPlanetInfo().getRadarMode());
+        Assert.assertEquals(1, realGameInfo.getAllPlanets().size());
+        Assert.assertNotNull(realGameInfo.getUnlockContainer().getItemTypes());
+        Assert.assertNotNull(realGameInfo.getUnlockContainer().getPlanets());
+        Assert.assertNotNull(realGameInfo.getUnlockContainer().getQuests());
+        Assert.assertNull(realGameInfo.getStartPointInfo());
+        assertWholeItemCount(TEST_PLANET_1_ID, 1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void createBase() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        RealGameInfo realGameInfo = getMovableService().createBase(new Index(1000,1000));
+        assertWholeItemCount(TEST_PLANET_1_ID, 1);
+        Assert.assertEquals(1, realGameInfo.getBase().getBaseId());
+        Assert.assertEquals(TEST_PLANET_1_ID, realGameInfo.getBase().getPlanetId());
+        Assert.assertEquals(1000.0, realGameInfo.getAccountBalance(), 0.001);
+        Assert.assertEquals(0, realGameInfo.getEnergyConsuming());
+        Assert.assertEquals(0, realGameInfo.getEnergyGenerating());
+        Assert.assertEquals(0, realGameInfo.getHouseSpace());
+        Assert.assertTrue(realGameInfo.isSellAllowed());
+        Assert.assertNull(realGameInfo.getLevelScope());
+        // TODO Assert.assertNotNull(realGameInfo.getLevelTaskPacket().getQuestInfo());
+        Assert.assertEquals(1, realGameInfo.getAllBase().size());
+        Assert.assertEquals(0, realGameInfo.getAllianceOffers().size());
+        Assert.assertNull(realGameInfo.getXpPacket());
+        Assert.assertNull(realGameInfo.getPlanetInfo());
+        Assert.assertNull(realGameInfo.getAllPlanets());
+        Assert.assertNull(realGameInfo.getUnlockContainer());
+        Assert.assertNull(realGameInfo.getStartPointInfo());
+        assertWholeItemCount(TEST_PLANET_1_ID, 1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

@@ -47,7 +47,7 @@ public class TestItemAndMoneyDeadEndProtection extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        simpleBase = getMyBase();
+        simpleBase = getOrCreateBase();
         builder = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(1, 0), serverGlobalServices, planetSystemService.getServerPlanetServices(), simpleBase);
         factory = createFactorySyncBaseItem(TEST_FACTORY_ITEM_ID, new Index(100, 100), new Id(2, 0), serverGlobalServices, planetSystemService.getServerPlanetServices(), simpleBase);
         jeep = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(3, 0), serverGlobalServices, planetSystemService.getServerPlanetServices(), simpleBase);
@@ -85,8 +85,18 @@ public class TestItemAndMoneyDeadEndProtection extends AbstractServiceTest {
             }
 
             @Override
+            protected boolean isBaseDead() {
+                return false;
+            }
+
+            @Override
             protected int getMyMoney() {
                 return startMoney;
+            }
+
+            @Override
+            protected boolean isSuppressed() {
+                return false;
             }
         };
         deadEndProtection.setDeadEndListener(deadEndListenerMock);
@@ -295,12 +305,73 @@ public class TestItemAndMoneyDeadEndProtection extends AbstractServiceTest {
             }
 
             @Override
+            protected boolean isBaseDead() {
+                return false;
+            }
+
+            @Override
             protected int getMyMoney() {
                 return 0;
+            }
+
+            @Override
+            protected boolean isSuppressed() {
+                return false;
             }
         };
         deadEndProtection.setDeadEndListener(deadEndListenerMock);
 
         EasyMock.verify(deadEndListenerMock);
     }
+
+
+    @Test
+    @DirtiesContext
+    public void isSuppressed() throws Exception {
+        final ItemService itemServiceMock = EasyMock.createStrictMock(AbstractItemService.class);
+
+        EasyMock.expect(itemServiceMock.getItems4BaseAndType(simpleBase, TEST_START_BUILDER_ITEM_ID)).andReturn(Collections.<SyncBaseItem>emptyList());
+        EasyMock.expect(itemServiceMock.getItems4BaseAndType(simpleBase, TEST_FACTORY_ITEM_ID)).andReturn(Collections.<SyncBaseItem>emptyList());
+        EasyMock.expect(itemServiceMock.getItems4BaseAndType(simpleBase, TEST_HARVESTER_ITEM_ID)).andReturn(Collections.<SyncBaseItem>emptyList());
+        EasyMock.replay(itemServiceMock);
+        DeadEndListener deadEndListenerMock = EasyMock.createStrictMock(DeadEndListener.class);
+        EasyMock.replay(deadEndListenerMock);
+
+        DeadEndProtection deadEndProtection = new DeadEndProtection() {
+            @Override
+            protected ItemService getItemService() {
+                return itemServiceMock;
+            }
+
+            @Override
+            protected ItemTypeService getItemTypeService() {
+                return itemTypeServiceMock;
+            }
+
+            @Override
+            protected SimpleBase getMyBase() {
+                return simpleBase;
+            }
+
+            @Override
+            protected boolean isBaseDead() {
+                return false;
+            }
+
+            @Override
+            protected int getMyMoney() {
+                return 0;
+            }
+
+            @Override
+            protected boolean isSuppressed() {
+                return true;
+            }
+        };
+        deadEndProtection.setDeadEndListener(deadEndListenerMock);
+        deadEndProtection.start();
+
+        EasyMock.verify(deadEndListenerMock);
+    }
+
 }

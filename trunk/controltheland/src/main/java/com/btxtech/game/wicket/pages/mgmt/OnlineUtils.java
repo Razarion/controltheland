@@ -18,10 +18,8 @@ import com.btxtech.game.services.planet.PlanetSystemService;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -44,7 +42,7 @@ public class OnlineUtils extends MgmtWebPage {
         add(new Label("planetUsers", new AbstractReadOnlyModel<Integer>() {
             @Override
             public Integer getObject() {
-                return planetSystemService.getAllOnlineBases().size();
+                return planetSystemService.getAllOnlineUsers().size();
             }
         }));
         add(new Label("missionUsers", new AbstractReadOnlyModel<Integer>() {

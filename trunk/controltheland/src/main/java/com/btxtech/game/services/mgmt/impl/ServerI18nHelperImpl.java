@@ -41,6 +41,11 @@ public class ServerI18nHelperImpl implements ServerI18nHelper {
     }
 
     @Override
+    public String getStringNoRequest(UserState userState, String key, Object[] args) {
+        return messageSource.getMessage(key, args, key, getLocale(userState));
+    }
+
+    @Override
     public String getStringNoRequest(SimpleBase simpleBase, String key, Object[] args) {
         return messageSource.getMessage(key, args, key, getLocale(simpleBase));
     }
@@ -60,6 +65,15 @@ public class ServerI18nHelperImpl implements ServerI18nHelper {
             return userState.getLocale();
         } else {
             log.warn("No locale for SimpleBase: " + simpleBase);
+            return DEFAULT;
+        }
+    }
+
+    private Locale getLocale(UserState userState) {
+        if (userState != null && userState.getLocale() != null) {
+            return userState.getLocale();
+        } else {
+            log.warn("No locale for SimpleBase: " + userState);
             return DEFAULT;
         }
     }

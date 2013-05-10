@@ -32,6 +32,7 @@
     <entry key="error">Error: {0}</entry>
     <entry key="loadingGame">Loading game...</entry>
     <entry key="alliancesOfferedNotRegistered">The player {0} is not registered. Only registered user can form alliances. Use the chat to persuade him to register!</entry>
+    <entry key="alliancesOfferedBaseAbandoned">The Base {0} is abandoned.</entry>
     <entry key="alliancesOfferedOnlyRegistered">{0} offers you an alliance. Only registered user can form alliances.</entry>
     <entry key="registerNoMatch">Password and confirm password do not match</entry>
     <entry key="alliancesOnlyRegistered">Only registered user can form alliances.</entry>

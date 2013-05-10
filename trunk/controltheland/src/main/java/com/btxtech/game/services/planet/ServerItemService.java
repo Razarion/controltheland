@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.planet;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
@@ -21,6 +22,7 @@ import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * User: beat
@@ -39,4 +41,6 @@ public interface ServerItemService extends com.btxtech.game.jsre.common.gameengi
     void restore(Collection<SyncBaseObject> syncBaseObjects);
 
     void onAllianceBroken(SimpleBase simpleBase1, SimpleBase simpleBase2);
+
+    boolean hasEnemyInRange(Set<SimpleBase> friendlyBases, Index middlePoint, int range);
 }

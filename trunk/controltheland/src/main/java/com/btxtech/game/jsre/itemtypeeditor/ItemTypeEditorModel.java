@@ -60,8 +60,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ItemTypeEditorModel {
-    public static final SimpleBase MY_BASE = new SimpleBase(1, PlanetInfo.EDITOR_PLANET_ID.getPlanetId());
-    public static final SimpleBase ENEMY_BASE = new SimpleBase(2, PlanetInfo.EDITOR_PLANET_ID.getPlanetId());
+    public static final SimpleBase MY_BASE = new SimpleBase(SimpleBase.ITEM_TYPE_EDITOR_MY, PlanetInfo.EDITOR_PLANET_ID.getPlanetId());
+    public static final SimpleBase ENEMY_BASE = new SimpleBase(SimpleBase.ITEM_TYPE_EDITOR_ENEMY, PlanetInfo.EDITOR_PLANET_ID.getPlanetId());
     public static final int SIM_WIDTH = 700;
     public static final int SIM_HEIGHT = 700;
 

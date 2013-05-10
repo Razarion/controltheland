@@ -33,6 +33,7 @@
     <entry key="error">Fehler: {0}</entry>
     <entry key="loadingGame">Lade Spiel...</entry>
     <entry key="alliancesOfferedNotRegistered">Der Spieler {0} ist nicht registriert. Nur registrierte Spieler können Allianzen eingehen. Benutze den Chat um den Spieler zum Registrieren zu überreden!</entry>
+    <entry key="alliancesOfferedBaseAbandoned">Die Basis {0} ist verlassen.</entry>
     <entry key="alliancesOfferedOnlyRegistered">{0} hat eine Allianz vorgeschlagen. Nur registrierte Benutzer können Allianzen eingehen.</entry>
     <entry key="registerNoMatch">Passwort und bestätigungs Passwort sind nicht gleich</entry>
     <entry key="alliancesOnlyRegistered">Nur registrierte Benutzer können Allianzen eingehen.</entry>
