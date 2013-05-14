@@ -184,6 +184,16 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
     }
 
     @Override
+    public SimpleUser login(String name, String password) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void logout() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
     public boolean isFacebookUserRegistered(String signedRequestParameter) {
         return false;  //To change body of implemented methods use File | Settings | File Templates.
     }

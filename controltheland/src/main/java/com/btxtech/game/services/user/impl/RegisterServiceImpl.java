@@ -6,10 +6,12 @@ import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
+import com.btxtech.game.jsre.common.packets.UserPacket;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.mgmt.ServerI18nHelper;
 import com.btxtech.game.services.mgmt.impl.MgmtServiceImpl;
+import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.DbForgotPassword;
 import com.btxtech.game.services.user.EmailDoesNotExitException;
 import com.btxtech.game.services.user.EmailIsAlreadyVerifiedException;
@@ -75,6 +77,8 @@ public class RegisterServiceImpl implements RegisterService {
     private PlatformTransactionManager transactionManager;
     @Autowired
     private ServerI18nHelper serverI18nHelper;
+    @Autowired
+    private PlanetSystemService planetSystemService;
     private ScheduledThreadPoolExecutor cleanupTimer;
 
     @PostConstruct
@@ -144,7 +148,14 @@ public class RegisterServiceImpl implements RegisterService {
         user.setVerified();
         sessionFactory.getCurrentSession().saveOrUpdate(user);
         userTrackingService.onUserVerified(user);
+        sendRegistrationCompletedPacket(user);
         return user;
+    }
+
+    private void sendRegistrationCompletedPacket(User user) {
+        UserPacket userPacket = new UserPacket();
+        userPacket.setSimpleUser(user.createSimpleUser());
+        planetSystemService.sendPacket(userService.getUserState(user), userPacket);
     }
 
     @Override
@@ -159,7 +170,7 @@ public class RegisterServiceImpl implements RegisterService {
             ExceptionHandler.handleException("More then one user have this email: " + email);
         }
         User user = users.get(0);
-        if(!user.isAccountNonLocked()) {
+        if (!user.isAccountNonLocked()) {
             throw new UserIsNotConfirmedException();
         }
         String uuid = UUID.randomUUID().toString().toUpperCase();
@@ -185,7 +196,7 @@ public class RegisterServiceImpl implements RegisterService {
             throw new PasswordNotMatchException();
         }
         User user = retrieveAndDeleteForgotPassword(uuid);
-        if(user == null) {
+        if (user == null) {
             throw new IllegalStateException("User is null: " + uuid);
         }
         userService.setNewPassword(user, password);

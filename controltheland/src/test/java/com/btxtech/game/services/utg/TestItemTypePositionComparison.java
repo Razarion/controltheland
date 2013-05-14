@@ -5,7 +5,6 @@ import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Region;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -21,7 +20,6 @@ import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.ItemTypePositionComparisonConfig;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.OnlineUserDTO;
 import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.planet.Base;
@@ -1177,11 +1175,6 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
     }
 
     @Override
-    public Connection getConnection(String startUuid) throws NoConnectionException {
-        return null;
-    }
-
-    @Override
     public void createConnection(UserState userState, String startUuid) {
 
     }
@@ -1229,6 +1222,11 @@ public class TestItemTypePositionComparison extends AbstractServiceTest implemen
 
     @Override
     public void deactivate() {
+    }
+
+    @Override
+    public void onLogout() {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
 }

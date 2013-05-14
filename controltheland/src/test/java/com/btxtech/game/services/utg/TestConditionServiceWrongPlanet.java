@@ -3,7 +3,6 @@ package com.btxtech.game.services.utg;
 import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
-import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
@@ -19,7 +18,6 @@ import com.btxtech.game.jsre.common.utg.config.CountComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.ItemTypePositionComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.SyncItemTypeComparisonConfig;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.OnlineUserDTO;
 import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.planet.Base;
@@ -257,11 +255,6 @@ public class TestConditionServiceWrongPlanet extends AbstractServiceTest impleme
     }
 
     @Override
-    public Connection getConnection(String startUuid) throws NoConnectionException {
-        return null;
-    }
-
-    @Override
     public void createConnection(UserState userState, String startUuid) {
 
     }
@@ -306,6 +299,11 @@ public class TestConditionServiceWrongPlanet extends AbstractServiceTest impleme
 
     @Override
     public void deactivate() {
+    }
+
+    @Override
+    public void onLogout() {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
 }

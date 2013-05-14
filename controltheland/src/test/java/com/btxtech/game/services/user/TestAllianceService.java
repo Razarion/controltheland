@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -241,7 +240,12 @@ public class TestAllianceService extends AbstractServiceTest {
         UserState userState2 = getUserState();
         verifyAllianceOffers();
         verifyAlliances();
-        allianceService.proposeAlliance(simpleBase1);
+        try {
+            allianceService.proposeAlliance(simpleBase1);
+            Assert.fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException e) {
+            // Expected
+        }
         verifyAllianceOffers();
         verifyAlliances();
         try {
@@ -254,7 +258,7 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpSession();
 
         assertNoMessages(connectionServiceTestHelper, userState1);
-        assertMessage(connectionServiceTestHelper, userState2, "alliancesOnlyRegistered", null, true);
+        assertNoMessages(connectionServiceTestHelper, userState2);
     }
 
     @Test
@@ -281,7 +285,12 @@ public class TestAllianceService extends AbstractServiceTest {
         verifyAllianceOffers();
         verifyAlliances();
         registerService.register("u1", "xxx", "xxx", "xxx");
-        allianceService.proposeAlliance(simpleBase1);
+        try {
+            allianceService.proposeAlliance(simpleBase1);
+            Assert.fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException e) {
+            // Expected
+        }
         verifyAllianceOffers();
         verifyAlliances();
         verifyAlliancesFromUser();
@@ -289,7 +298,7 @@ public class TestAllianceService extends AbstractServiceTest {
         endHttpSession();
 
         assertNoMessages(connectionServiceTestHelper, userState1);
-        assertMessage(connectionServiceTestHelper, userState2, "alliancesOnlyRegistered", null, false);
+        assertNoMessages(connectionServiceTestHelper, userState2);
         stopFakeMailServer();
     }
 

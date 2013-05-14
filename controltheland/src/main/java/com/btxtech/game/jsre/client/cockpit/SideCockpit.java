@@ -59,8 +59,9 @@ public class SideCockpit {
     private static final int LEVEL_PANEL_X = 215;
     private static final int LEVEL_PANEL_W = 116;
     private static final int LEVEL_PANEL_H = 77;
+    public static final int SIDE_COCKPIT_ENDS = LEVEL_PANEL_X + LEVEL_PANEL_W;
     // Information panel
-    public static final int INFORMATION_COCKPIT_X = LEVEL_PANEL_X + LEVEL_PANEL_W + 10;
+    public static final int INFORMATION_COCKPIT_X = SIDE_COCKPIT_ENDS + 10;
     public static final int INFORMATION_COCKPIT_Y = 10;
     // Money
     private static final int MONEY_X = 25;
@@ -99,9 +100,6 @@ public class SideCockpit {
     private static final int BNT_FB_COMMUNITY_Y = 213;
     private static final int BNT_FB_INVITE_X = 177;
     private static final int BNT_FB_INVITE_Y = 49;
-    // Social net
-    private static final int REGISTER_PANEL_X = 109;
-    private static final int REGISTER_PANEL_Y = 221;
     // Debug
     private static final int DEBUG_X = 10;
     private static final int DEBUG_Y = 200;
@@ -118,7 +116,6 @@ public class SideCockpit {
     private InformationCockpit informationCockpit;
     private SideCockpitRealGame sideCockpitRealGame;
     private SideCockpitMission sideCockpitMission;
-    private RegisterPanel registerPanel;
     private MinimizeButton minimizeButton = new MinimizeButton(false);
 
     public static SideCockpit getInstance() {
@@ -137,7 +134,6 @@ public class SideCockpit {
         setupRadar();
         setupButtonPanel();
         setupSocialNetPanel();
-        setupRegisterPanel();
         informationCockpit = new InformationCockpit();
     }
 
@@ -279,11 +275,6 @@ public class SideCockpit {
         }), BNT_FB_INVITE_X, BNT_FB_INVITE_Y);
     }
 
-    private void setupRegisterPanel() {
-        registerPanel = new RegisterPanel();
-        mainPanel.add(registerPanel, REGISTER_PANEL_X, REGISTER_PANEL_Y);
-    }
-
     public void debugAbsoluteCursorPos(int x, int y) {
         debugPosition.setText(x + ":" + y);
     }
@@ -382,7 +373,6 @@ public class SideCockpit {
     }
 
     public void initMission(SimulationInfo simulationInfo) {
-        setSimpleUser(simulationInfo.getSimpleUser());
         minimizeButton.maximize();
         if (sideCockpitRealGame != null) {
             levelPanel.remove(sideCockpitRealGame);
@@ -397,7 +387,6 @@ public class SideCockpit {
     }
 
     public void initRealGame(RealGameInfo realGameInfo) {
-        setSimpleUser(realGameInfo.getSimpleUser());
         minimizeButton.maximize();
         if (sideCockpitMission != null) {
             levelPanel.remove(sideCockpitMission);
@@ -411,9 +400,5 @@ public class SideCockpit {
         sideCockpitRealGame.setXp(realGameInfo.getXpPacket().getXp(), realGameInfo.getXpPacket().getXp2LevelUp());
         sideCockpitRealGame.setLevel(realGameInfo.getLevelScope());
         sideCockpitRealGame.setPlanetName(realGameInfo.getPlanetInfo().getName());
-    }
-
-    public void setSimpleUser(SimpleUser simpleUser) {
-        registerPanel.setSimpleUser(simpleUser);
     }
 }

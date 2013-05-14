@@ -82,6 +82,19 @@ public interface ClientI18nConstants extends Messages {
 
     String abort();
 
+    // Login logout
+    String login();
+
+    String loginFailed();
+
+    String loginFailedText();
+
+    String loginFailedNotVerifiedText();
+
+    String logout();
+
+    String logoutText(String name);
+
     // Radar
     String tooltipRadar();
 
@@ -122,6 +135,8 @@ public interface ClientI18nConstants extends Messages {
     String connectionAnotherExits();
 
     String connectionNone();
+
+    String connectionNoneLoggedOut();
 
     String wrongBase();
 
@@ -198,7 +213,7 @@ public interface ClientI18nConstants extends Messages {
 
     String xp();
 
-    // Alliance dialog
+    // Alliance
     String alliances();
 
     String alliancesAll();
@@ -212,6 +227,10 @@ public interface ClientI18nConstants extends Messages {
     String alliancesOffered(String userName);
 
     String breakAlliance();
+
+    String alliancesOnlyRegisteredVerified();
+
+    String alliancesOnlyRegistered();
 
     // Quests
     String quests();
@@ -373,6 +392,8 @@ public interface ClientI18nConstants extends Messages {
     String buyRazarionPaypal12500();
 
     String buyRazarionPaypalOnlyRegistered();
+
+    String buyRazarionPaypalOnlyRegisteredVerified();
 
     String youOwn(int ownCount);
 

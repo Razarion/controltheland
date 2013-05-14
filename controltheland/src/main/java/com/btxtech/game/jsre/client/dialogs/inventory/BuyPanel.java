@@ -24,8 +24,10 @@ public class BuyPanel extends VerticalPanel {
     public BuyPanel(InventoryDialog inventoryDialog) {
         add(createHtml(ClientI18nHelper.CONSTANTS.buyRazarionPaypal(), 16));
 
-        if (Connection.getInstance().isRegistered()) {
+        if (Connection.getInstance().isRegisteredAndVerified()) {
             fillBuyOptions();
+        } else if (Connection.getInstance().isRegistered()) {
+            fillUnverified();
         } else {
             fillUnregistered(inventoryDialog);
         }
@@ -54,6 +56,10 @@ public class BuyPanel extends VerticalPanel {
         flexTable.setWidget(3, 0, PayPalUtils.createBuyNowButton(PayPalButton.B_12500));
         flexTable.setWidget(3, 1, createHtml(ClientI18nHelper.CONSTANTS.buyRazarionPaypal12500(), 14));
         add(flexTable);
+    }
+
+    private void fillUnverified() {
+        add(new HTML(ClientI18nHelper.CONSTANTS.buyRazarionPaypalOnlyRegisteredVerified()));
     }
 
     private void fillUnregistered(final InventoryDialog inventoryDialog) {

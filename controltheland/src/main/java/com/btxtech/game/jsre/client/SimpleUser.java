@@ -10,6 +10,7 @@ import java.io.Serializable;
 public class SimpleUser implements Serializable {
     private String name;
     private int id;
+    private boolean verified;
 
     /**
      * Used by GWT
@@ -17,9 +18,10 @@ public class SimpleUser implements Serializable {
     SimpleUser() {
     }
 
-    public SimpleUser(String name, int id) {
+    public SimpleUser(String name, int id, boolean verified) {
         this.name = name;
         this.id = id;
+        this.verified = verified;
     }
 
     public String getName() {
@@ -28,6 +30,10 @@ public class SimpleUser implements Serializable {
 
     public int getId() {
         return id;
+    }
+
+    public boolean isVerified() {
+        return verified;
     }
 
     @Override

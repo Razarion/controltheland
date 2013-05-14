@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
+import com.btxtech.game.jsre.client.cockpit.menu.MenuBarCockpit;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -60,7 +61,7 @@ public class NickNameDialog extends Dialog implements NickNameField.ValidListene
                         @Override
                         public void onSuccess(SimpleUser simpleUser) {
                             Connection.getInstance().setSimpleUser(simpleUser);
-                            SideCockpit.getInstance().setSimpleUser(simpleUser);
+                            MenuBarCockpit.getInstance().setSimpleUser(simpleUser);
                             NickNameDialog.this.hide();
                             registerDialog.hide();
                             DialogManager.showDialog(new FacebookRegisterThanksDialog(simpleUser), DialogManager.Type.PROMPTLY);

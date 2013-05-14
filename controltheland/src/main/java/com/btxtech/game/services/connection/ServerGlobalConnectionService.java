@@ -1,10 +1,12 @@
 package com.btxtech.game.services.connection;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
+import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.common.packets.MessageIdPacket;
 import com.btxtech.game.jsre.common.packets.Packet;
+import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserState;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,4 +33,8 @@ public interface ServerGlobalConnectionService {
     void saveClientDebug(Date date, String category, String message);
 
     List<UserState> getAllOnlineMissionUserState();
+
+    void onLogout();
+
+    Connection getConnection(String startUuid) throws NoConnectionException;
 }

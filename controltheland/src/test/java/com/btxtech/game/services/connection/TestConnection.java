@@ -11,7 +11,6 @@ import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.HibernateUtil;
-import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.UserState;
 import junit.framework.Assert;
@@ -29,13 +28,10 @@ import java.util.Locale;
  * Time: 11:22
  */
 public class TestConnection extends AbstractServiceTest {
-    @Autowired
-    private PlanetSystemService planetSystemService;
-
     @Test
     @DirtiesContext
     public void noPendingPackets() {
-        Connection connection = new Connection(new UserState(), "1234", null);
+        Connection connection = new Connection(new UserState(), null, "1234", null);
         Assert.assertTrue(connection.getAndRemovePendingPackets(false).isEmpty());
         Assert.assertTrue(connection.getAndRemovePendingPackets(false).isEmpty());
         Assert.assertTrue(connection.getAndRemovePendingPackets(false).isEmpty());
@@ -47,7 +43,7 @@ public class TestConnection extends AbstractServiceTest {
     public void pendingPackets() throws Exception {
         configureSimplePlanetNoResources();
 
-        Connection connection = new Connection(new UserState(), "1234", null);
+        Connection connection = new Connection(new UserState(), null, "1234", null);
         SyncBaseItem attackItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1));
         connection.sendBaseSyncItem(attackItem);
         AccountBalancePacket accountBalancePacket = new AccountBalancePacket();
@@ -65,7 +61,7 @@ public class TestConnection extends AbstractServiceTest {
     public void pendingPacketsResendLast() throws Exception {
         configureSimplePlanetNoResources();
 
-        Connection connection = new Connection(new UserState(), "1234", null);
+        Connection connection = new Connection(new UserState(), null, "1234", null);
         SyncBaseItem attackItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1));
         connection.sendBaseSyncItem(attackItem);
         AccountBalancePacket accountBalancePacket = new AccountBalancePacket();
@@ -85,295 +81,4 @@ public class TestConnection extends AbstractServiceTest {
         packets = connection.getAndRemovePendingPackets(false);
         Assert.assertEquals(0, packets.size());
     }
-
-    @Test
-    @DirtiesContext
-    public void noConnection() throws Exception {
-        configureSimplePlanetNoResources();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        try {
-            planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1);
-            Assert.fail("NoConnectionException expected");
-        } catch (com.btxtech.game.jsre.common.NoConnectionException e) {
-            Assert.assertEquals(NoConnectionException.Type.NON_EXISTENT, e.getType());
-        }
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void validConnection() throws Exception {
-        configureSimplePlanetNoResources();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        getOrCreateBase(); // Opens a connection
-        Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void openConnectionOnBaseKilled1() throws Exception {
-        configureSimplePlanetNoResources();
-        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        getOrCreateBase(); // Opens a connection
-        Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
-        SyncBaseItem builder = (SyncBaseItem) serverPlanetServices.getItemService().getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
-        serverPlanetServices.getBaseService().onItemDeleted(builder, null);
-        Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void openConnectionBaseKilled2() throws Exception {
-        configureSimplePlanetNoResources();
-        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase humanBase = getOrCreateBase(); // Opens a connection
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        createBase(new Index(2000, 2000)); // Opens a connection
-        Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
-        SyncBaseItem builder = (SyncBaseItem) serverPlanetServices.getItemService().getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
-        serverPlanetServices.getBaseService().onItemDeleted(builder, humanBase);
-        Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void openConnectionBaseKilled3() throws Exception {
-        configureSimplePlanetNoResources();
-        ServerPlanetServices serverPlanetServices = planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID);
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        SimpleBase botBase = getOrCreateBase();
-        serverPlanetServices.getBaseService().setBot(botBase, true);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().getRealGameInfo(START_UID_2); // Open connection
-        createBase(new Index(3000, 3000));
-        Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
-        SyncBaseItem builder = (SyncBaseItem) serverPlanetServices.getItemService().getItem(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID));
-        serverPlanetServices.getBaseService().onItemDeleted(builder, botBase);
-        Assert.assertNotNull(planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().getConnection(START_UID_1));
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void syncInfoStartUid() throws Exception {
-        configureSimplePlanetNoResources();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().getRealGameInfo(START_UID_1);
-        getMovableService().getSyncInfo(START_UID_1, false);
-        try {
-            getMovableService().getSyncInfo(START_UID_2, false);
-            Assert.fail("NoConnectionException expected");
-        } catch (NoConnectionException e) {
-            Assert.assertEquals(NoConnectionException.Type.ANOTHER_CONNECTION_EXISTS, e.getType());
-        }
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void twoConnectionSameSession() throws Exception {
-        configureSimplePlanetNoResources();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().getRealGameInfo(START_UID_1);
-        getMovableService().getSyncInfo(START_UID_1, false);
-        getMovableService().getRealGameInfo(START_UID_2);
-        getMovableService().getSyncInfo(START_UID_2, false);
-        try {
-            getMovableService().getSyncInfo(START_UID_1, false);
-            Assert.fail("NoConnectionException expected");
-        } catch (NoConnectionException e) {
-            Assert.assertEquals(NoConnectionException.Type.ANOTHER_CONNECTION_EXISTS, e.getType());
-        }
-        getMovableService().getSyncInfo(START_UID_2, false);
-        getMovableService().getRealGameInfo(START_UID_1);
-        getMovableService().getSyncInfo(START_UID_1, false);
-        try {
-            getMovableService().getSyncInfo(START_UID_2, false);
-            Assert.fail("NoConnectionException expected");
-        } catch (NoConnectionException e) {
-            Assert.assertEquals(NoConnectionException.Type.ANOTHER_CONNECTION_EXISTS, e.getType());
-        }
-        getMovableService().getSyncInfo(START_UID_1, false);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void surrender() throws Exception {
-        configureSimplePlanetNoResources();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().getRealGameInfo(START_UID_1);
-        getMovableService().surrenderBase();
-        Assert.assertNotNull(getMovableService().getSyncInfo(START_UID_1, false));
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void sendDebug() throws Exception {
-        configureSimplePlanetNoResources();
-
-        Date clientDate = new Date(1000000);
-
-        Date serverBefore = new Date();
-        beginHttpSession();
-        String sessionId1 = getHttpSessionId();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        getMovableService().sendDebug(clientDate, "CAT1", "Text Text");
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        Date serverAfter = new Date();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        List<DbClientDebugEntry> dbEntries = HibernateUtil.loadAll(getSessionFactory(), DbClientDebugEntry.class);
-        Assert.assertEquals(1, dbEntries.size());
-        DbClientDebugEntry debugEntry1 = dbEntries.get(0);
-        Assert.assertTrue(serverBefore.getTime() <= debugEntry1.getTimeStamp().getTime());
-        Assert.assertTrue(serverAfter.getTime() >= debugEntry1.getTimeStamp().getTime());
-        Assert.assertEquals(clientDate, debugEntry1.getClientTimeStamp());
-        Assert.assertEquals(sessionId1, debugEntry1.getSessionId());
-        Assert.assertNull(debugEntry1.getUserId());
-        Assert.assertEquals("CAT1", debugEntry1.getCategory());
-        Assert.assertEquals("Text Text", debugEntry1.getMessage());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void sendDebugRegistered() throws Exception {
-        configureSimplePlanetNoResources();
-
-        Date clientDate = new Date(1000000);
-
-        Date serverBefore = new Date();
-        beginHttpSession();
-        String sessionId1 = getHttpSessionId();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        createAndLoginUser("TestUser");
-        getOrCreateBase(); // Opens a connection
-        int userId = getUserState().getUser();
-        getMovableService().sendDebug(clientDate, "CAT1", "Text Text");
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-        Date serverAfter = new Date();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        List<DbClientDebugEntry> dbEntries = HibernateUtil.loadAll(getSessionFactory(), DbClientDebugEntry.class);
-        Assert.assertEquals(1, dbEntries.size());
-        DbClientDebugEntry debugEntry1 = dbEntries.get(0);
-        Assert.assertTrue(serverBefore.getTime() <= debugEntry1.getTimeStamp().getTime());
-        Assert.assertTrue(serverAfter.getTime() >= debugEntry1.getTimeStamp().getTime());
-        Assert.assertEquals(clientDate, debugEntry1.getClientTimeStamp());
-        Assert.assertEquals(sessionId1, debugEntry1.getSessionId());
-        Assert.assertEquals(userId, (int) debugEntry1.getUserId());
-        Assert.assertEquals("CAT1", debugEntry1.getCategory());
-        Assert.assertEquals("Text Text", debugEntry1.getMessage());
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void sendPackageEn() throws Exception {
-        configureSimplePlanetNoResources();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        getMockHttpServletRequest().addPreferredLocale(Locale.ENGLISH);
-        SimpleBase simpleBase = getOrCreateBase();
-        clearPackets();
-        planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().sendMessage(simpleBase, "alliancesOfferedNotRegistered", new Object[]{"Hallo"}, true);
-        Message message = new Message();
-        message.setMessage("The player Hallo is not registered. Only registered user can form alliances. Use the chat to persuade him to register!");
-        message.setShowRegisterDialog(true);
-        assertPackagesIgnoreSyncItemInfoAndClear(true, message);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void sendPackageDe() throws Exception {
-        configureSimplePlanetNoResources();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        getMockHttpServletRequest().addPreferredLocale(Locale.GERMAN);
-        SimpleBase simpleBase = getOrCreateBase();
-        clearPackets();
-        planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().sendMessage(simpleBase, "alliancesOfferedNotRegistered", new Object[]{"Hallo"}, false);
-        Message message = new Message();
-        message.setMessage("Der Spieler Hallo ist nicht registriert. Nur registrierte Spieler können Allianzen eingehen. Benutze den Chat um den Spieler zum Registrieren zu überreden!");
-        message.setShowRegisterDialog(false);
-        assertPackagesIgnoreSyncItemInfoAndClear(true, message);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void sendPackageNoRequest() throws Exception {
-        configureSimplePlanetNoResources();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        getMockHttpServletRequest().addPreferredLocale(Locale.GERMAN);
-        final SimpleBase simpleBase = getOrCreateBase();
-        clearPackets();
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                planetSystemService.getServerPlanetServices(TEST_PLANET_1_ID).getConnectionService().sendMessage(simpleBase, "alliancesOfferedNotRegistered", new Object[]{"Hallo"}, false);
-            }
-        });
-        thread.start();
-        thread.join();
-        Message message = new Message();
-        message.setMessage("Der Spieler Hallo ist nicht registriert. Nur registrierte Spieler können Allianzen eingehen. Benutze den Chat um den Spieler zum Registrieren zu überreden!");
-        message.setShowRegisterDialog(false);
-        assertPackagesIgnoreSyncItemInfoAndClear(true, message);
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
 }

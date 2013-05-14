@@ -38,7 +38,6 @@ import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
 import com.btxtech.game.jsre.common.packets.BaseLostPacket;
 import com.btxtech.game.jsre.common.packets.EnergyPacket;
 import com.btxtech.game.jsre.common.packets.HouseSpacePacket;
-import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.connection.NoBaseException;
@@ -184,7 +183,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         super.setBot(simpleBase, bot);
     }
 
-    private void deleteBase(SimpleBase actor, Base base, UserState userState) {
+    private void deleteBase(SimpleBase actor, Base base) {
         log.debug("Base deleted: " + getBaseName(base.getSimpleBase()) + " (" + base + ")");
         boolean isBot = isBot(actor);
         synchronized (bases) {
@@ -313,7 +312,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
                 serverGlobalServices.getUserTrackingService().onBaseDefeated(serverGlobalServices.getUserService().getUser(userState), base);
             }
             serverGlobalServices.getStatisticsService().onBaseKilled(base.getSimpleBase(), actor);
-            deleteBase(actor, base, userState);
+            deleteBase(actor, base);
             if (!base.isAbandoned() && userState != null) {
                 base.getUserState().setBase(null);
                 base.getUserState().setSendResurrectionMessage(); // TODO needed?

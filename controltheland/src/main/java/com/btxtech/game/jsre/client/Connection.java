@@ -475,6 +475,15 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                     movableServiceAsync = null;
                     return true;
                 }
+                case LOGGED_OUT: {
+                    log.warning("Client disconnected due to logged out");
+                    MessageDialog messageDialog = new MessageDialog(ClientI18nHelper.CONSTANTS.connectionFailed(), ClientI18nHelper.CONSTANTS.connectionNoneLoggedOut());
+                    messageDialog.setShowCloseButton(false);
+                    messageDialog.setGlassEnabled(true);
+                    DialogManager.showDialog(messageDialog, DialogManager.Type.PROMPTLY);
+                    movableServiceAsync = null;
+                    return true;
+                }
                 case ANOTHER_CONNECTION_EXISTS: {
                     log.warning("Client disconnected due to another connection");
                     MessageDialog messageDialog = new MessageDialog(ClientI18nHelper.CONSTANTS.connectionFailed(), ClientI18nHelper.CONSTANTS.connectionAnotherExits());
@@ -508,6 +517,10 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
 
     public boolean isRegistered() {
         return simpleUser != null;
+    }
+
+    public boolean isRegisteredAndVerified() {
+        return isRegistered() && simpleUser.isVerified();
     }
 
     public void setSimpleUser(SimpleUser simpleUser) {
@@ -670,7 +683,7 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
     }
 
     public void getAllAlliances(final AllianceDialog allianceDialog) {
-        if (movableServiceAsync != null && isRegistered()) {
+        if (movableServiceAsync != null && isRegisteredAndVerified()) {
             movableServiceAsync.getAllAlliances(new AsyncCallback<Collection<String>>() {
                 @Override
                 public void onFailure(Throwable caught) {
@@ -898,4 +911,9 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
         }
     }
 
+    public void logout() {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.logout(new VoidAsyncCallback("logout"));
+        }
+    }
 }

@@ -34,8 +34,6 @@ import java.util.List;
 public interface ServerConnectionService extends CommonConnectionService {
     boolean hasConnection(UserState userState);
 
-    Connection getConnection(String startUuid) throws NoConnectionException;
-
     void createConnection(UserState userState, String startUuid);
 
     void sendPacket(SimpleBase base, Packet packet);
@@ -55,4 +53,6 @@ public interface ServerConnectionService extends CommonConnectionService {
     void activate();
 
     void deactivate();
+
+    void onLogout();
 }

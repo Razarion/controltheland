@@ -1,0 +1,24 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		
+	</ui:style>
+	<!-- g:HTMLPanel -->
+		<g:MenuBar>
+			<g:MenuItem text="Register" ui:field="registerSubMenuBar">
+				<g:MenuBar vertical="true">
+					<g:MenuItem text="Register" ui:field="register" />
+					<g:MenuItem text="Login" ui:field="login" />
+				</g:MenuBar>
+			</g:MenuItem>
+			<g:MenuItem text="Logout" ui:field="logout"/>
+			<g:MenuItem text="Messages" ui:field="messages"/>
+			<g:MenuItem text="New Base" ui:field="newBase"/>
+			<g:MenuItem text="Forum" title="This is the nenu tooltip"/>
+			<g:MenuItem text="News" ui:field="news" title="This is the nenu tooltip 2"/>
+			<g:MenuItem text="Game Info"/>
+			<g:MenuItem text="History"/>
+		</g:MenuBar>
+	<!-- /g:HTMLPanel -->
+</ui:UiBinder> 

@@ -36,7 +36,6 @@
     <entry key="alliancesOfferedBaseAbandoned">Die Basis {0} ist verlassen.</entry>
     <entry key="alliancesOfferedOnlyRegistered">{0} hat eine Allianz vorgeschlagen. Nur registrierte Benutzer können Allianzen eingehen.</entry>
     <entry key="registerNoMatch">Passwort und bestätigungs Passwort sind nicht gleich</entry>
-    <entry key="alliancesOnlyRegistered">Nur registrierte Benutzer können Allianzen eingehen.</entry>
     <entry key="alliancesRejected">Der Spieler {0}  hat die Allianz abgelehnt.</entry>
     <entry key="emailSubject">Razarion - Bestätige deine E-Mail-Adresse</entry>
     <entry key="emailVeriGreeting">Hallo {0}</entry>

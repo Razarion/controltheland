@@ -22,6 +22,8 @@ import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
+import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
+import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
@@ -65,6 +67,8 @@ public interface MovableServiceAsync {
     void register(String userName, String password, String confirmPassword, String email, AsyncCallback<SimpleUser> asyncCallback);
 
     void createAndLoginFacebookUser(String signedRequestParameter, String nickname, String email, AsyncCallback<SimpleUser> asyncCallback);
+
+    void login(String name, String password, AsyncCallback<SimpleUser> async);
 
     void loginFacebookUser(String signedRequestParameter, AsyncCallback<Void> async);
 
@@ -127,8 +131,10 @@ public interface MovableServiceAsync {
     void unlockItemType(int itemTypeId, AsyncCallback<UnlockContainer> async);
 
     void unlockQuest(int questId, AsyncCallback<UnlockContainer> async);
-
+                                        
     void unlockPlanet(int planetId, AsyncCallback<UnlockContainer> async);
 
     void createBase(Index position, AsyncCallback<RealGameInfo> async);
+
+    void logout(AsyncCallback<Void> async);
 }

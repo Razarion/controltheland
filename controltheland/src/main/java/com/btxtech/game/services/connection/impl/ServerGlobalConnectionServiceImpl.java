@@ -14,13 +14,15 @@
 package com.btxtech.game.services.connection.impl;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
+import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
 import com.btxtech.game.jsre.common.packets.MessageIdPacket;
 import com.btxtech.game.jsre.common.packets.ServerRebootMessagePacket;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
-import com.btxtech.game.services.connection.DbConnectionStatistics;
+import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.DbClientDebugEntry;
+import com.btxtech.game.services.connection.DbConnectionStatistics;
 import com.btxtech.game.services.connection.ServerGlobalConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.mgmt.ServerI18nHelper;
@@ -192,6 +194,35 @@ public class ServerGlobalConnectionServiceImpl implements ServerGlobalConnection
         synchronized (onlineMissionUserStates) {
             return new ArrayList<>(onlineMissionUserStates);
         }
+    }
+
+    @Override
+    public void onLogout() {
+        try {
+            Connection connection = session.getConnection();
+            if(connection == null) {
+                return;
+            }
+            connection.getServerPlanetServices().getConnectionService().onLogout();
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+        }
+    }
+
+
+    @Override
+    public Connection getConnection(String startUuid) throws NoConnectionException {
+        Connection connection = session.getConnection();
+        if(connection == null) {
+            throw new NoConnectionException(NoConnectionException.Type.NON_EXISTENT);
+        }
+        if(connection.isClosed())  {
+            throw new NoConnectionException(connection.getClosedReason());
+        }
+        if (!connection.getStartUuid().equals(startUuid)) {
+            throw new NoConnectionException(NoConnectionException.Type.ANOTHER_CONNECTION_EXISTS);
+        }
+        return connection;
     }
 
 }

@@ -1,6 +1,8 @@
 package com.btxtech.game.services.user;
 
 import com.btxtech.game.jsre.client.InvalidNickName;
+import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedException;
+import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedNotVerifiedException;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.NameErrorPair;
 import junit.framework.Assert;
@@ -530,7 +532,7 @@ public class TestUserService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        for(int i = 0; i < 50; i++) {
+        for (int i = 0; i < 50; i++) {
             createUser("ABCD" + i, "xxx");
         }
         endHttpRequestAndOpenSessionInViewFilter();
@@ -543,4 +545,63 @@ public class TestUserService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void inGameLogin() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createUser("U1", "xxx");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        assertNotLoggedIn();
+        userService.inGameLogin("U1", "xxx");
+        assertLoggedIn();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        assertNotLoggedIn();
+        try {
+            userService.inGameLogin("U1", "yyy");
+            Assert.fail();
+        } catch (LoginFailedException e) {
+            // Expected
+        }
+        assertNotLoggedIn();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void inGameLoginNotVerified() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        registerService.register("U1", "xxx", "xxx", "");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        assertNotLoggedIn();
+        try {
+            userService.inGameLogin("U1", "xxx");
+            Assert.fail("LoginFailedNotVerifiedException");
+        } catch (LoginFailedNotVerifiedException e) {
+            // Expected
+        }
+        assertNotLoggedIn();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 }
