@@ -1,12 +1,10 @@
 package com.btxtech.game.services;
 
 import com.btxtech.game.jsre.client.GameEngineMode;
-import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.packets.Packet;
-import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.OnlineUserDTO;
 import com.btxtech.game.services.connection.ServerConnectionService;
 import com.btxtech.game.services.user.UserState;
@@ -30,11 +28,6 @@ public class ServerConnectionServiceTestHelperNew implements ServerConnectionSer
     @Override
     public boolean hasConnection(UserState userState) {
         return false;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public Connection getConnection(String startUuid) throws NoConnectionException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
@@ -85,6 +78,11 @@ public class ServerConnectionServiceTestHelperNew implements ServerConnectionSer
 
     @Override
     public void deactivate() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onLogout() {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 

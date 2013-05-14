@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.ChatCockpit;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
+import com.btxtech.game.jsre.client.cockpit.menu.MenuBarCockpit;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualisationCockpit;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
@@ -43,6 +44,7 @@ public class GuiStartupTask extends AbstractStartupTask {
         ItemCockpit.getInstance().addToParentAndRegister(MapWindow.getAbsolutePanel());
         RootPanel.get().add(MapWindow.getAbsolutePanel(), 0, 0);
         ChatCockpit.getInstance().addToParent(MapWindow.getAbsolutePanel());
+        MenuBarCockpit.getInstance().addToParent(MapWindow.getAbsolutePanel());
 
         TerrainView.getInstance().addToParent(MapWindow.getAbsolutePanel());
         TerrainView.getInstance().getCanvas().getElement().getStyle().setZIndex(Constants.Z_INDEX_TERRAIN);

@@ -244,7 +244,11 @@ public class GwtCommon {
     }
 
     public static String getPredefinedUrl(CmsUtil.CmsPredefinedPage cmsPredefinedPage) {
-        return getUrlString(Connection.getInstance().getGameInfo().getPredefinedUrls().get(cmsPredefinedPage));
+        String predefinedUrl = Connection.getInstance().getGameInfo().getPredefinedUrls().get(cmsPredefinedPage);
+        if (predefinedUrl == null) {
+            throw new IllegalArgumentException("Predefined url does not exist: " + cmsPredefinedPage);
+        }
+        return getUrlString(predefinedUrl);
     }
 
     public static String getUrlString(String path) {

@@ -7,6 +7,8 @@ import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.common.HibernateUtil;
+import com.btxtech.game.services.connection.DbClientDebugEntry;
 import com.btxtech.game.services.user.RegisterService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -16,6 +18,9 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * User: beat
@@ -243,5 +248,72 @@ public class TestMovableService extends AbstractServiceTest {
         endHttpSession();
 
         Assert.assertEquals("Nick1", simpleUser.getName());
+    }
+
+    @Test
+    @DirtiesContext
+    public void sendDebug() throws Exception {
+        configureSimplePlanetNoResources();
+
+        Date clientDate = new Date(1000000);
+
+        Date serverBefore = new Date();
+        beginHttpSession();
+        String sessionId1 = getHttpSessionId();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getMovableService().sendDebug(clientDate, "CAT1", "Text Text");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        Date serverAfter = new Date();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<DbClientDebugEntry> dbEntries = HibernateUtil.loadAll(getSessionFactory(), DbClientDebugEntry.class);
+        Assert.assertEquals(1, dbEntries.size());
+        DbClientDebugEntry debugEntry1 = dbEntries.get(0);
+        Assert.assertTrue(serverBefore.getTime() <= debugEntry1.getTimeStamp().getTime());
+        Assert.assertTrue(serverAfter.getTime() >= debugEntry1.getTimeStamp().getTime());
+        Assert.assertEquals(clientDate, debugEntry1.getClientTimeStamp());
+        Assert.assertEquals(sessionId1, debugEntry1.getSessionId());
+        Assert.assertNull(debugEntry1.getUserId());
+        Assert.assertEquals("CAT1", debugEntry1.getCategory());
+        Assert.assertEquals("Text Text", debugEntry1.getMessage());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void sendDebugRegistered() throws Exception {
+        configureSimplePlanetNoResources();
+
+        Date clientDate = new Date(1000000);
+
+        Date serverBefore = new Date();
+        beginHttpSession();
+        String sessionId1 = getHttpSessionId();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("TestUser");
+        getOrCreateBase(); // Opens a connection
+        int userId = getUserState().getUser();
+        getMovableService().sendDebug(clientDate, "CAT1", "Text Text");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        Date serverAfter = new Date();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<DbClientDebugEntry> dbEntries = HibernateUtil.loadAll(getSessionFactory(), DbClientDebugEntry.class);
+        Assert.assertEquals(1, dbEntries.size());
+        DbClientDebugEntry debugEntry1 = dbEntries.get(0);
+        Assert.assertTrue(serverBefore.getTime() <= debugEntry1.getTimeStamp().getTime());
+        Assert.assertTrue(serverAfter.getTime() >= debugEntry1.getTimeStamp().getTime());
+        Assert.assertEquals(clientDate, debugEntry1.getClientTimeStamp());
+        Assert.assertEquals(sessionId1, debugEntry1.getSessionId());
+        Assert.assertEquals(userId, (int) debugEntry1.getUserId());
+        Assert.assertEquals("CAT1", debugEntry1.getCategory());
+        Assert.assertEquals("Text Text", debugEntry1.getMessage());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 }

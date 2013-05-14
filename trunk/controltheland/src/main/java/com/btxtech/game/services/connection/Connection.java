@@ -17,7 +17,7 @@ import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.packets.Packet;
 import com.btxtech.game.jsre.common.packets.SyncItemInfo;
-import com.btxtech.game.services.planet.Base;
+import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.user.UserState;
 
 import java.io.Serializable;
@@ -38,10 +38,12 @@ public class Connection implements Serializable {
     private NoConnectionException.Type closedReason;
     private String startUuid;
     private List<Packet> sentPackager = new ArrayList<>();
+    private ServerPlanetServices serverPlanetServices;
 
 
-    public Connection(UserState userState, String sessionId, String startUuid) {
+    public Connection(UserState userState, ServerPlanetServices serverPlanetServices, String sessionId, String startUuid) {
         this.userState = userState;
+        this.serverPlanetServices = serverPlanetServices;
         this.sessionId = sessionId;
         this.startUuid = startUuid;
     }
@@ -52,6 +54,10 @@ public class Connection implements Serializable {
 
     public String getStartUuid() {
         return startUuid;
+    }
+
+    public ServerPlanetServices getServerPlanetServices() {
+        return serverPlanetServices;
     }
 
     public List<Packet> getAndRemovePendingPackets(boolean resendLast) {

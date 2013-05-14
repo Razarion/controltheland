@@ -63,7 +63,7 @@ public class TestBackend extends AbstractServiceTest {
         } catch (Exception e) {
             // Ignore
         }
-        ((WicketAuthenticatedWebSession) AuthenticatedWebSession.get()).setSignIn();
+        ((WicketAuthenticatedWebSession) AuthenticatedWebSession.get()).setSignIn(true);
         getWicketTester().startPage(MgmtPage.class);
         getWicketTester().assertRenderedPage(MgmtPage.class);
 

@@ -57,6 +57,8 @@ import org.apache.wicket.behavior.StringHeaderContributor;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.protocol.http.MockHttpServletResponse;
 import org.apache.wicket.request.target.component.BookmarkablePageRequestTarget;
 import org.apache.wicket.util.tester.FormTester;
@@ -266,11 +268,6 @@ public class TestCmsService2 extends AbstractServiceTest {
         dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage.setName("Home2");
         pageCrud.updateDbChild(dbPage);
-        DbPage userPage = pageCrud.createDbChild();
-        userPage.setPredefinedType(CmsUtil.CmsPredefinedPage.USER_PAGE);
-        userPage.setName("USerPage 2");
-        userPage.getDbI18nName().putString("USerPage");
-        pageCrud.updateDbChild(userPage);
         cmsService.activateCms();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -283,7 +280,122 @@ public class TestCmsService2 extends AbstractServiceTest {
         formTester.setValue("loginName", "U1");
         formTester.setValue("loginPassword", "xxx");
         formTester.submit();
-        getWicketTester().assertLabel("title", "USerPage");
+        getWicketTester().assertRenderedPage(Game.class);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testInGameLogin() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createUser("U1", "xxx");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home2");
+        pageCrud.updateDbChild(dbPage);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Test
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().startPage(CmsPage.class);
+        getWicketTester().assertVisible("header:loginBox:loginForm:loginName");
+        getWicketTester().assertVisible("header:loginBox:loginForm:loginPassword");
+        getWicketTester().assertInvisible("header:loggedinBox:loginForm:nameLink");
+        getMovableService().login("U1", "xxx");
+        getWicketTester().startPage(CmsPage.class);
+        getWicketTester().assertInvisible("header:loginBox:loginForm:loginName");
+        getWicketTester().assertInvisible("header:loginBox:loginForm:loginPassword");
+        getWicketTester().assertVisible("header:loggedinBox:loginForm:nameLink:name");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+
+    @Test
+    @DirtiesContext
+    public void testInGameLogout() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createUser("U1", "xxx");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home2");
+        pageCrud.updateDbChild(dbPage);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().startPage(CmsPage.class);
+        FormTester formTester = getWicketTester().newFormTester("header:loginBox:loginForm");
+        formTester.setValue("loginName", "U1");
+        formTester.setValue("loginPassword", "xxx");
+        formTester.submit();
+        getWicketTester().assertRenderedPage(Game.class);
+        getWicketTester().startPage(CmsPage.class);
+        getWicketTester().assertInvisible("header:loginBox:loginForm:loginName");
+        getWicketTester().assertInvisible("header:loginBox:loginForm:loginPassword");
+        getWicketTester().assertVisible("header:loggedinBox:loginForm:nameLink:name");
+        getMovableService().logout();
+        getWicketTester().startPage(CmsPage.class);
+        getWicketTester().assertVisible("header:loginBox:loginForm:loginName");
+        getWicketTester().assertVisible("header:loginBox:loginForm:loginPassword");
+        getWicketTester().assertInvisible("header:loggedinBox:loginForm:nameLink");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testInGameRegister() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home2");
+        pageCrud.updateDbChild(dbPage);
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        getWicketTester().startPage(CmsPage.class);
+        getWicketTester().assertVisible("header:loginBox:loginForm:loginName");
+        getWicketTester().assertVisible("header:loginBox:loginForm:loginPassword");
+        getWicketTester().assertInvisible("header:loggedinBox:loginForm:nameLink");
+        getMovableService().register("U1", "xxx", "xxx", "");
+        getWicketTester().startPage(CmsPage.class);
+        getWicketTester().assertVisible("header:loginBox:loginForm:loginName");
+        getWicketTester().assertVisible("header:loginBox:loginForm:loginPassword");
+        getWicketTester().assertInvisible("header:loggedinBox:loginForm:nameLink");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

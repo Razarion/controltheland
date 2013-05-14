@@ -44,8 +44,7 @@ public class AllianceServiceImpl implements AllianceService {
     public void proposeAlliance(SimpleBase partner) {
         User user = userService.getUser();
         if (user == null || !user.isAccountNonLocked()) {
-            sendMessage(userService.getUserState(), "alliancesOnlyRegistered", null, user == null);
-            return;
+            throw new IllegalArgumentException("User is not registered or not verified: " + user);
         }
         User partnerUser = userService.getUser(partner);
         if (partnerUser == null || !partnerUser.isAccountNonLocked()) {

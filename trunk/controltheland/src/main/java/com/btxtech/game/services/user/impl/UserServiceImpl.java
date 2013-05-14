@@ -17,12 +17,15 @@ import com.btxtech.game.jsre.client.InvalidNickName;
 import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
+import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedException;
+import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedNotVerifiedException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.NameErrorPair;
 import com.btxtech.game.services.connection.NoBaseException;
+import com.btxtech.game.services.connection.ServerGlobalConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
 import com.btxtech.game.services.planet.PlanetSystemService;
@@ -52,6 +55,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.core.Authentication;
@@ -96,6 +100,8 @@ public class UserServiceImpl implements UserService {
     private PlanetSystemService planetSystemService;
     @Autowired
     private ServerUnlockService serverUnlockService;
+    @Autowired
+    private ServerGlobalConnectionService serverGlobalConnectionService;
     @Value(value = "${security.md5salt}")
     private String md5HashSalt;
     private final Collection<UserState> userStates = new ArrayList<>();
@@ -124,6 +130,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public SimpleUser inGameLogin(String userName, String password) throws LoginFailedException, LoginFailedNotVerifiedException {
+        if (getUserFromSecurityContext() != null) {
+            throw new AlreadyLoggedInException(getUserFromSecurityContext());
+        }
+        try {
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, password));
+            if (authentication.isAuthenticated()) {
+                User user = (User) authentication.getPrincipal();
+                loginUserFull(user, authentication);
+                return user.createSimpleUser();
+            } else {
+                throw new LoginFailedException();
+            }
+        } catch (BadCredentialsException e) {
+            throw new LoginFailedException();
+        } catch (LockedException e) {
+            throw new LoginFailedNotVerifiedException();
+        } catch (AuthenticationException authenticationException) {
+            ExceptionHandler.handleException(authenticationException, "login failed: " + userName);
+            throw new LoginFailedException();
+        }
+    }
+
+    @Override
     public void loginFacebookUser(FacebookSignedRequest facebookSignedRequest) {
         User user = loadFacebookUserFromDb(facebookSignedRequest.getUserId());
 
@@ -135,20 +165,29 @@ public class UserServiceImpl implements UserService {
         loginUserFull(user, authentication);
     }
 
-    private void loginUserFull(User user, Authentication authentication) {
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
+    private void setWicketSignedIn(boolean signedIn) {
         try {
-            ((WicketAuthenticatedWebSession) AuthenticatedWebSession.get()).setSignIn();
+            ((WicketAuthenticatedWebSession) AuthenticatedWebSession.get()).setSignIn(signedIn);
         } catch (Exception e) {
             // If coming from movable service, no wicket session available
             Object o = session.getRequest().getSession().getAttribute("wicket:wicket:" + org.apache.wicket.Session.SESSION_ATTRIBUTE_NAME);
             if (o == null) {
                 throw new RuntimeException("Wicket session not found");
             }
-            ((WicketAuthenticatedWebSession) o).setSignIn();
+            ((WicketAuthenticatedWebSession) o).setSignIn(signedIn);
         }
+    }
+
+    private void loginUserFull(User user, Authentication authentication) {
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        setWicketSignedIn(true);
         loginUser(user);
+    }
+
+    @Override
+    public void inGameLogout() {
+        logout();
+        setWicketSignedIn(false);
     }
 
     private void loginUser(User user) {
@@ -187,6 +226,7 @@ public class UserServiceImpl implements UserService {
         if (user != null) {
             userTrackingService.onUserLoggedOut(user);
         }
+        serverGlobalConnectionService.onLogout();
         if (session.getUserState() != null) {
             session.getUserState().setSessionId(null);
             session.setUserState(null);

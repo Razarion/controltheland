@@ -479,4 +479,25 @@ td.box {
 .fbconnectbuttonBold{
     font-weight: bold;
 }
+/* ------------------------------------------------------------------------------ */
+
+.gwt-MenuBar-blink {
+    animation:myfirst 1s infinite;
+    -webkit-animation:myfirst 1s infinite; /* Safari and Chrome */
+}
+
+@keyframes myfirst
+{
+    0%   {background:none;}
+    50%  {background:red;}
+    100%  {background:none;}
+}
+
+@-webkit-keyframes myfirst /* Safari and Chrome */
+{
+    0%   {background:none;}
+    50%  {background:red;}
+    100%  {background:none;}
+}
+
 

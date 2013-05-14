@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.client.SoundHandler;
 import com.btxtech.game.jsre.client.StartPointMode;
 import com.btxtech.game.jsre.client.cockpit.ChatCockpit;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
+import com.btxtech.game.jsre.client.cockpit.menu.MenuBarCockpit;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualisationModel;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
@@ -42,6 +43,7 @@ public class RunRealGameStartupTask extends AbstractStartupTask {
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
         SideCockpit.getInstance().initRealGame((RealGameInfo) Connection.getInstance().getGameInfo());
+        MenuBarCockpit.getInstance().setSimpleUser(Connection.getInstance().getGameInfo().getSimpleUser());
         QuestVisualisationModel.getInstance().setLevelTask(((RealGameInfo) Connection.getInstance().getGameInfo()).getLevelTaskPacket());
         Connection.getInstance().startSyncInfoPoll();
         RegisterDialog.showDialogRepeating();

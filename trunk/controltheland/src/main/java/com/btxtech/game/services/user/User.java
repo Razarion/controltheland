@@ -269,7 +269,7 @@ public class User implements UserDetails, Serializable, CrudParent {
     }
 
     public SimpleUser createSimpleUser() {
-        return new SimpleUser(name, id);
+        return new SimpleUser(name, id, accountNonLocked);
     }
 
     @Override

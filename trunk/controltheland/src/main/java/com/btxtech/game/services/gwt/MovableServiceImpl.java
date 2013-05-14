@@ -32,6 +32,8 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
+import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedException;
+import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedNotVerifiedException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -138,13 +140,9 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     @Override
     public List<Packet> getSyncInfo(String startUuid, boolean resendLast) throws NoConnectionException {
         try {
-            return planetSystemService.getUnlockedServerPlanetServices().getConnectionService().getConnection(startUuid).getAndRemovePendingPackets(resendLast);
+            return serverGlobalConnectionService.getConnection(startUuid).getAndRemovePendingPackets(resendLast);
         } catch (NoConnectionException e) {
             throw e;
-        } catch (InvalidLevelStateException | NoSuchPlanetException e) {
-            // Happens during server restart while client (user on a planet) still polls server
-            ExceptionHandler.handleException(e);
-            throw new NoConnectionException(NoConnectionException.Type.NON_EXISTENT);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return null;
@@ -299,6 +297,27 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return null;
+        }
+    }
+
+    @Override
+    public SimpleUser login(String name, String password) throws LoginFailedException, LoginFailedNotVerifiedException {
+        try {
+            return userService.inGameLogin(name, password);
+        } catch (LoginFailedException | LoginFailedNotVerifiedException e) {
+            throw e;
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            throw new LoginFailedException();
+        }
+    }
+
+    @Override
+    public void logout() {
+        try {
+            userService.inGameLogout();
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
         }
     }
 

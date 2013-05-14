@@ -6,6 +6,7 @@ import com.btxtech.game.jsre.common.ClientDateUtil;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
+import com.btxtech.game.jsre.common.packets.UserPacket;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.planet.PlanetSystemService;
@@ -244,8 +245,14 @@ public class TestRegisterService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         Date dateBefore = new Date();
+        getMovableService().getRealGameInfo(START_UID_1);
+        clearPackets();
         registerService.onVerificationPageCalled(verificationId);
         Date dateAfter = new Date();
+        // Check package
+        UserPacket userPacket = new UserPacket();
+        userPacket.setSimpleUser(user.createSimpleUser());
+        assertPackagesIgnoreSyncItemInfoAndClear(userPacket);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

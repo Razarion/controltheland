@@ -219,7 +219,7 @@ public class TestI18n extends AbstractServiceTest {
         } catch (Exception e) {
             // Ignore
         }
-        ((WicketAuthenticatedWebSession) AuthenticatedWebSession.get()).setSignIn();
+        ((WicketAuthenticatedWebSession) AuthenticatedWebSession.get()).setSignIn(true);
         getWicketTester().startPage(I18nMgmtPage.class);
         getWicketTester().assertRenderedPage(I18nMgmtPage.class);
 

@@ -6,6 +6,8 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.dialogs.DialogManager;
+import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
@@ -88,7 +90,13 @@ public class OtherInfoPanel extends Composite {
 
     @UiHandler("offerAlliance")
     void onButtonClick(ClickEvent event) {
-        Connection.getInstance().proposeAlliance(simpleBase);
+        if (Connection.getInstance().isRegisteredAndVerified()) {
+            Connection.getInstance().proposeAlliance(simpleBase);
+        } else if (Connection.getInstance().isRegistered()) {
+            DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.alliances(), ClientI18nHelper.CONSTANTS.alliancesOnlyRegisteredVerified()), DialogManager.Type.QUEUE_ABLE);
+        } else {
+            DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.alliances(), ClientI18nHelper.CONSTANTS.alliancesOnlyRegistered()), DialogManager.Type.QUEUE_ABLE);
+        }
     }
 
 }

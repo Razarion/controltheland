@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
+import com.btxtech.game.jsre.client.cockpit.menu.MenuBarCockpit;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.FacebookUtils;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
@@ -165,7 +166,7 @@ public class RegisterDialog extends PeriodicDialog {
             @Override
             public void onSuccess(SimpleUser simpleUser) {
                 Connection.getInstance().setSimpleUser(simpleUser);
-                SideCockpit.getInstance().setSimpleUser(simpleUser);
+                MenuBarCockpit.getInstance().setSimpleUser(simpleUser);
                 hide(true);
                 DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.registerThanks(), ClientI18nHelper.CONSTANTS.registerConfirmationEmailSent(email.getText())), DialogManager.Type.PROMPTLY);
             }

@@ -11,34 +11,29 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common;
+package com.btxtech.game.jsre.common.packets;
+
+
+import com.btxtech.game.jsre.client.SimpleUser;
 
 /**
  * User: beat
- * Date: 21.12.2009
- * Time: 21:36:34
+ * Date: 14.05.2013
+ * Time: 14:38:58
  */
-public class NoConnectionException extends Exception {
-    private Type type;
+public class UserPacket extends Packet {
+    private SimpleUser simpleUser;
 
-    public enum Type {
-        NON_EXISTENT,
-        ANOTHER_CONNECTION_EXISTS,
-        TIMED_OUT,
-        LOGGED_OUT
+    public SimpleUser getSimpleUser() {
+        return simpleUser;
     }
 
-    /**
-     * Used by GWT
-     */
-    NoConnectionException() {
+    public void setSimpleUser(SimpleUser simpleUser) {
+        this.simpleUser = simpleUser;
     }
 
-    public NoConnectionException(Type type) {
-        this.type = type;
-    }
-
-    public Type getType() {
-        return type;
+    @Override
+    public String toString() {
+        return "UserPacket{SimpleUser=" + simpleUser + '}';
     }
 }

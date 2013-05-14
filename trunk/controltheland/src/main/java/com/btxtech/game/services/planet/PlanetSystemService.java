@@ -14,7 +14,6 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.jsre.common.packets.Packet;
-import com.btxtech.game.jsre.common.packets.XpPacket;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.connection.OnlineUserDTO;

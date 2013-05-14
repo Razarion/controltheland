@@ -18,6 +18,8 @@ import com.btxtech.game.jsre.client.InvalidNickName;
 import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
+import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedException;
+import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedNotVerifiedException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.services.common.NameErrorPair;
@@ -31,6 +33,8 @@ import java.util.List;
 
 public interface UserService extends UserDetailsService {
     boolean login(String userName, String password) throws AlreadyLoggedInException;
+
+    SimpleUser inGameLogin(String userName, String password) throws LoginFailedException, LoginFailedNotVerifiedException;
 
     boolean isRegistered();
 
@@ -53,6 +57,8 @@ public interface UserService extends UserDetailsService {
     User getUser(Integer userId);
 
     void logout();
+
+    void inGameLogout();
 
     void save(User user);
 

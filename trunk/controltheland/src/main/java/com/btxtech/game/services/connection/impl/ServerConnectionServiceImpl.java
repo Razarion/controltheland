@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.packets.Message;
 import com.btxtech.game.jsre.common.packets.Packet;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.ServerGlobalServices;
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.OnlineUserDTO;
@@ -33,7 +34,6 @@ import org.apache.commons.logging.LogFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -44,7 +44,7 @@ import java.util.TimerTask;
  * Time: 1:20:27 PM
  */
 public class ServerConnectionServiceImpl implements ServerConnectionService {
-    private static final long USER_TRACKING_PERIODE = 10 * 1000;
+    private static long USER_TRACKING_PERIODE = 10 * 1000;
     private static final int MAX_NO_TICK_COUNT = 20;
     private ServerPlanetServicesImpl planetServices;
     private ServerGlobalServices serverGlobalServices;
@@ -65,16 +65,12 @@ public class ServerConnectionServiceImpl implements ServerConnectionService {
             public void run() {
                 try {
                     synchronized (onlineConnection) {
-                        for (Iterator<Connection> it = onlineConnection.values().iterator(); it.hasNext(); ) {
-                            Connection connection = it.next();
+                        Collection<Connection> timedOutConnections = new ArrayList<>();
+                        for (Connection connection: onlineConnection.values()) {
                             try {
                                 int tickCount = connection.resetAndGetTickCount();
                                 if (connection.getNoTickCount() > MAX_NO_TICK_COUNT) {
-                                    if (connection.getUserState().isRegistered()) {
-                                        serverGlobalServices.getUserTrackingService().onUserLeftGameNoSession(serverGlobalServices.getUserService().getUser(connection.getUserState()));
-                                    }
-                                    connection.setClosed(NoConnectionException.Type.TIMED_OUT);
-                                    it.remove();
+                                    timedOutConnections.add(connection);
                                 } else {
                                     double ticksPerSecond = (double) tickCount / (double) (USER_TRACKING_PERIODE / 1000);
                                     if (!Double.isInfinite(ticksPerSecond) && !Double.isNaN(ticksPerSecond)) {
@@ -82,7 +78,14 @@ public class ServerConnectionServiceImpl implements ServerConnectionService {
                                     }
                                 }
                             } catch (Throwable t) {
-                                log.error("", t);
+                                ExceptionHandler.handleException(t);
+                            }
+                        }
+                        for (Connection timedOutConnection : timedOutConnections) {
+                            try {
+                                closeConnection(timedOutConnection, NoConnectionException.Type.TIMED_OUT);
+                            } catch (Throwable t) {
+                                ExceptionHandler.handleException(t);
                             }
                         }
                     }
@@ -191,21 +194,18 @@ public class ServerConnectionServiceImpl implements ServerConnectionService {
         // Connection to same base from same browser
         Connection connection = serverGlobalServices.getServerGlobalConnectionService().getSession().getConnection();
         if (connection != null) {
-            log.warn("Existing connection will be terminated due to another connection" + userState);
             closeConnection(connection, NoConnectionException.Type.ANOTHER_CONNECTION_EXISTS);
         }
         // Connection to same base from different browser
         synchronized (onlineConnection) {
-            Connection existingConnection = onlineConnection.remove(userState);
+            Connection existingConnection = onlineConnection.get(userState);
             if (existingConnection != null) {
-                log.warn("Existing connection will be terminated" + userState);
                 closeConnection(existingConnection, NoConnectionException.Type.ANOTHER_CONNECTION_EXISTS);
             }
         }
 
-        connection = new Connection(userState, serverGlobalServices.getServerGlobalConnectionService().getSession().getSessionId(), startUuid);
+        connection = new Connection(userState, planetServices, serverGlobalServices.getServerGlobalConnectionService().getSession().getSessionId(), startUuid);
         serverGlobalServices.getServerGlobalConnectionService().getSession().setConnection(connection);
-        log.debug("Connection established: " + userState);
         synchronized (onlineConnection) {
             onlineConnection.put(userState, connection);
         }
@@ -223,37 +223,6 @@ public class ServerConnectionServiceImpl implements ServerConnectionService {
         synchronized (onlineConnection) {
             onlineConnection.remove(userState);
         }
-        log.debug("Connection closed: " + userState);
-    }
-
-/*
-    @Override
-    public void closeConnection(UserState userState, NoConnectionException.Type closedReason) {
-        Connection connection = null;
-        synchronized (onlineConnection) {
-            connection = onlineConnection.remove(userState);
-        }
-        if (connection == null) {
-            throw new IllegalStateException("Online connection does not exist for base: " + userState);
-        }
-        connection.setClosed(closedReason);
-        log.debug("Connection closed 2" + userState);
-    }
-*/
-
-    @Override
-    public Connection getConnection(String startUuid) throws NoConnectionException {
-        Connection connection = serverGlobalServices.getServerGlobalConnectionService().getSession().getConnection();
-        if (connection == null) {
-            throw new NoConnectionException(NoConnectionException.Type.NON_EXISTENT);
-        }
-        if (connection.isClosed()) {
-            throw new NoConnectionException(connection.getClosedReason());
-        }
-        if (!connection.getStartUuid().equals(startUuid)) {
-            throw new NoConnectionException(NoConnectionException.Type.ANOTHER_CONNECTION_EXISTS);
-        }
-        return connection;
     }
 
     @Override
@@ -289,5 +258,17 @@ public class ServerConnectionServiceImpl implements ServerConnectionService {
     @Override
     public GameEngineMode getGameEngineMode() {
         return GameEngineMode.MASTER;
+    }
+
+    @Override
+    public void onLogout() {
+        UserState userState = serverGlobalServices.getUserService().getUserState();
+        Connection connection;
+        synchronized (onlineConnection) {
+            connection = onlineConnection.get(userState);
+        }
+        if (connection != null) {
+            closeConnection(connection, NoConnectionException.Type.LOGGED_OUT);
+        }
     }
 }

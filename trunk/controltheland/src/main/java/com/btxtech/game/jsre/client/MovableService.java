@@ -25,6 +25,8 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
 import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
+import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedException;
+import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedNotVerifiedException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -74,6 +76,10 @@ public interface MovableService extends RemoteService {
     SimpleUser createAndLoginFacebookUser(String signedRequestParameter, String nickname, String email) throws UserAlreadyExistsException, PasswordNotMatchException;
 
     void loginFacebookUser(String signedRequestParameter) throws UserAlreadyExistsException;
+
+    SimpleUser login(String name, String password) throws LoginFailedException, LoginFailedNotVerifiedException;
+
+    void logout();
 
     boolean isFacebookUserRegistered(String signedRequestParameter);
 

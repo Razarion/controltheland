@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.SoundHandler;
 import com.btxtech.game.jsre.client.cockpit.ChatCockpit;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
+import com.btxtech.game.jsre.client.cockpit.menu.MenuBarCockpit;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
@@ -37,6 +38,7 @@ public class RunSimulationStartupTask extends AbstractStartupTask {
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
         SideCockpit.getInstance().initMission(((SimulationInfo) Connection.getInstance().getGameInfo()));
+        MenuBarCockpit.getInstance().setSimpleUser(Connection.getInstance().getGameInfo().getSimpleUser());
         RegisterDialog.showDialogRepeating();
         Simulation.getInstance().start();
         SideCockpit.getInstance().updateItemLimit();

@@ -38,8 +38,8 @@ public class WicketAuthenticatedWebSession extends AuthenticatedWebSession {
         return userService.login(userName, password);
     }
 
-    public void setSignIn() {
-        signIn(true);
+    public void setSignIn(boolean signedIn) {
+        signIn(signedIn);
     }
 
     @Override
