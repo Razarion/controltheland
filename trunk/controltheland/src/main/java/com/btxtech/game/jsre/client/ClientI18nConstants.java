@@ -95,6 +95,14 @@ public interface ClientI18nConstants extends Messages {
 
     String logoutText(String name);
 
+    String tooltipNotRegistered();
+
+    String tooltipNotVerified(String userName);
+
+    String tooltipLoggedIn(String userName);
+
+    String tooltipLoggedInViaFacebook(String userName);
+
     // Radar
     String tooltipRadar();
 

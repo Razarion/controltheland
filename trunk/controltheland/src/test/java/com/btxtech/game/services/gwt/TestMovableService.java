@@ -244,10 +244,12 @@ public class TestMovableService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         SimpleUser simpleUser = getMovableService().createAndLoginFacebookUser("v3-O8s1WrS9B2XnYXpRo61n2hKc9wboofRDHOxcF8XI.eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsImV4cGlyZXMiOjEzNDMxNTI4MDAsImlzc3VlZF9hdCI6MTM0MzE0NjY4Mywib2F1dGhfdG9rZW4iOiJBQUFFa3RlWVZ1WkNNQkFDS29mOGpkWDMxcnVTWkN3RXFuRnFWd3Z2NnBBNldNMTVaQ1V6bzlRNmliUXJiWGtRVkJOeEF0UDJmc2EzVzY3ZXJITW5EWkFvNlZHRzVPajg4U2FJMWZOYkVyYjhCeDBuOURRWkIyIiwidXNlciI6eyJjb3VudHJ5IjoiY2giLCJsb2NhbGUiOiJlbl9VUyIsImFnZSI6eyJtaW4iOjIxfX0sInVzZXJfaWQiOiIxMDAwMDM2MzQwOTQxMzkifQ", "Nick1", "Email");
+        Assert.assertEquals((int) userService.getUser("Nick1").getId(), simpleUser.getId());
+        Assert.assertEquals("Nick1", simpleUser.getName());
+        Assert.assertTrue(simpleUser.isVerified());
+        Assert.assertTrue(simpleUser.isFacebook());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-
-        Assert.assertEquals("Nick1", simpleUser.getName());
     }
 
     @Test

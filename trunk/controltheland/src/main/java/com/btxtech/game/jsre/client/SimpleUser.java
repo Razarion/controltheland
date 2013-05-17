@@ -11,6 +11,7 @@ public class SimpleUser implements Serializable {
     private String name;
     private int id;
     private boolean verified;
+    private boolean facebook;
 
     /**
      * Used by GWT
@@ -18,10 +19,11 @@ public class SimpleUser implements Serializable {
     SimpleUser() {
     }
 
-    public SimpleUser(String name, int id, boolean verified) {
+    public SimpleUser(String name, int id, boolean verified, boolean facebook) {
         this.name = name;
         this.id = id;
         this.verified = verified;
+        this.facebook = facebook;
     }
 
     public String getName() {
@@ -34,6 +36,10 @@ public class SimpleUser implements Serializable {
 
     public boolean isVerified() {
         return verified;
+    }
+
+    public boolean isFacebook() {
+        return facebook;
     }
 
     @Override
@@ -49,5 +55,15 @@ public class SimpleUser implements Serializable {
     @Override
     public int hashCode() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return "SimpleUser{" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                ", verified=" + verified +
+                ", facebook=" + facebook +
+                '}';
     }
 }

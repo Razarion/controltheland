@@ -46,4 +46,5 @@
     <entry key="emailForgotPasswordSubject">Razarion - Account password help</entry>
     <entry key="emailForgotPasswordSubjectMain1">You're receiving this email because you requested a password reset for your Razarion account. If you did not request this change, you can safely ignore this email.</entry>
     <entry key="emailForgotPasswordSubjectMain2">To choose a new password and complete your request, please follow the link below:</entry>
+    <entry key="play">Play</entry>
 </properties>

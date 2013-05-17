@@ -47,4 +47,5 @@
     <entry key="emailForgotPasswordSubject">Razarion - Konto Passworthilfe</entry>
     <entry key="emailForgotPasswordSubjectMain1">Du erhältst dieses Email, weil du ein neues Passwort für dein Razarion Konto beantragt hast. Falls Du kein neues Password beantragt hast, kannst du diese Email ignorieren.</entry>
     <entry key="emailForgotPasswordSubjectMain2">Um den Vorgang abzuschliessen, klicke bitte auf den Link:</entry>
+    <entry key="play">Spielen</entry>
 </properties>
