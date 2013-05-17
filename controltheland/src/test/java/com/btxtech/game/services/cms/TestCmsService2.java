@@ -2512,6 +2512,7 @@ public class TestCmsService2 extends AbstractServiceTest {
                 "});", label.getDefaultModelObjectAsString());
         ExternalImage adCellImage = (ExternalImage) getWicketTester().getComponentFromLastRenderedPage("form:content:adCellProvision:adCellImage");
         Assert.assertEquals("http://www.adcell.de/event.php?pid=3111&eventid=3820&referenz=1", adCellImage.getUrl());
+        getWicketTester().assertVisible("form:content:enterGame");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

@@ -20,9 +20,11 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Widget;
 
-public class MenuBarPanel extends Composite {
+import java.util.logging.Logger;
 
+public class MenuBarPanel extends Composite {
     private static MenuBarPanelUiBinder uiBinder = GWT.create(MenuBarPanelUiBinder.class);
+    private Logger log = Logger.getLogger(MenuBarPanel.class.getName());
     @UiField
     MenuItem register;
     @UiField
@@ -98,12 +100,24 @@ public class MenuBarPanel extends Composite {
     }
 
     public void setSimpleUser(SimpleUser simpleUser) {
-        if (simpleUser != null) {
+        if (simpleUser != null && simpleUser.isVerified()) {
             logout.setVisible(true);
             registerSubMenuBar.setVisible(false);
+            if(simpleUser.isFacebook()) {
+                logout.setEnabled(false);
+                logout.setTitle(ClientI18nHelper.CONSTANTS.tooltipLoggedInViaFacebook(simpleUser.getName()));
+            } else {
+                logout.setEnabled(true);
+                logout.setTitle(ClientI18nHelper.CONSTANTS.tooltipLoggedIn(simpleUser.getName()));
+            }
         } else {
             logout.setVisible(false);
             registerSubMenuBar.setVisible(true);
+            if (simpleUser == null) {
+                registerSubMenuBar.setTitle(ClientI18nHelper.CONSTANTS.tooltipNotRegistered());
+            } else {
+                registerSubMenuBar.setTitle(ClientI18nHelper.CONSTANTS.tooltipNotVerified(simpleUser.getName()));
+            }
         }
     }
 

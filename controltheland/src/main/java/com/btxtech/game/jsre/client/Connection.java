@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.SplashManager;
+import com.btxtech.game.jsre.client.cockpit.menu.MenuBarCockpit;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualisationCockpit;
 import com.btxtech.game.jsre.client.cockpit.quest.QuestVisualisationModel;
 import com.btxtech.game.jsre.client.common.Index;
@@ -57,23 +58,7 @@ import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContai
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.btxtech.game.jsre.common.packets.AccountBalancePacket;
-import com.btxtech.game.jsre.common.packets.AllianceOfferPacket;
-import com.btxtech.game.jsre.common.packets.BaseChangedPacket;
-import com.btxtech.game.jsre.common.packets.BaseLostPacket;
-import com.btxtech.game.jsre.common.packets.BoxPickedPacket;
-import com.btxtech.game.jsre.common.packets.ChatMessage;
-import com.btxtech.game.jsre.common.packets.EnergyPacket;
-import com.btxtech.game.jsre.common.packets.HouseSpacePacket;
-import com.btxtech.game.jsre.common.packets.LevelPacket;
-import com.btxtech.game.jsre.common.packets.LevelTaskPacket;
-import com.btxtech.game.jsre.common.packets.Message;
-import com.btxtech.game.jsre.common.packets.MessageIdPacket;
-import com.btxtech.game.jsre.common.packets.Packet;
-import com.btxtech.game.jsre.common.packets.ServerRebootMessagePacket;
-import com.btxtech.game.jsre.common.packets.SyncItemInfo;
-import com.btxtech.game.jsre.common.packets.UnlockContainerPacket;
-import com.btxtech.game.jsre.common.packets.XpPacket;
+import com.btxtech.game.jsre.common.packets.*;
 import com.btxtech.game.jsre.common.perfmon.Perfmon;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.jsre.common.perfmon.TimerPerfmon;
@@ -317,6 +302,16 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                     ClientMessageIdPacketHandler.getInstance().onMessageReceived((ServerRebootMessagePacket) packet);
                 } else if (packet instanceof BaseLostPacket) {
                     StartPointMode.getInstance().onBaseLost((BaseLostPacket) packet);
+                } else if (packet instanceof UserPacket) {
+                    SimpleUser oldSimpleUser = Connection.getInstance().getSimpleUser();
+                    SimpleUser simpleUser = ((UserPacket)packet).getSimpleUser();
+                    Connection.getInstance().setSimpleUser(simpleUser);
+                    MenuBarCockpit.getInstance().setSimpleUser(simpleUser);
+                    if((oldSimpleUser == null || !oldSimpleUser.isVerified()) && simpleUser.isVerified()) {
+                        DialogManager.showDialog(new MessageDialog(ClientI18nHelper.CONSTANTS.registerThanks(),
+                                ClientI18nHelper.CONSTANTS.registerThanksLong()
+                                ), DialogManager.Type.QUEUE_ABLE);
+                    }
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }

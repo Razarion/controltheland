@@ -16,16 +16,15 @@ package com.btxtech.game.wicket.pages.cms.content.plugin.emailverification;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.mgmt.MgmtService;
-import com.btxtech.game.services.user.EmailIsAlreadyVerifiedException;
-import com.btxtech.game.services.user.RegisterService;
-import com.btxtech.game.services.user.User;
-import com.btxtech.game.services.user.UserDoesNotExitException;
-import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.user.*;
+import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import org.apache.wicket.PageParameters;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * User: beat
@@ -41,6 +40,8 @@ public class EmailVerificationPanel extends Panel {
     private CmsUiService cmsUiService;
     @SpringBean
     private MgmtService mgmtService;
+    @SpringBean
+    private UserGuidanceService userGuidanceService;
 
     public EmailVerificationPanel(String id, ContentContext contentContext) {
         super(id);
@@ -49,6 +50,16 @@ public class EmailVerificationPanel extends Panel {
             User user = registerService.onVerificationPageCalled(verificationId);
             userService.loginIfNotLoggedIn(user);
             add(new AdCellProvisionPanel("adCellProvision", user));
+            add(new Form("enterGame") {
+                @Override
+                protected void onSubmit() {
+                    PageParameters parameters = new PageParameters();
+                    if (!userGuidanceService.isStartRealGame()) {
+                        parameters.put(com.btxtech.game.jsre.client.Game.LEVEL_TASK_ID, userGuidanceService.getDefaultLevelTaskId());
+                    }
+                    setResponsePage(Game.class, parameters);
+                }
+            });
         } catch (EmailIsAlreadyVerifiedException e) {
             mgmtService.saveServerDebug(MgmtService.SERVER_DEBUG_EMAIL_VERIFICATION_ALREADY, e);
             cmsUiService.setMessageResponsePage(this, "registerEmailVerified", null);

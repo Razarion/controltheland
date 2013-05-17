@@ -52,6 +52,8 @@ public class TestRegisterService extends AbstractServiceTest {
         SimpleUser simpleUser = registerService.register("U1", "xxx", "xxx", "test.yyy@testXXX.com");
         Assert.assertEquals((int) userService.getUser("U1").getId(), simpleUser.getId());
         Assert.assertEquals("U1", simpleUser.getName());
+        Assert.assertFalse(simpleUser.isVerified());
+        Assert.assertFalse(simpleUser.isFacebook());
         Date dateAfter = new Date();
         String verificationId = userService.getUser().getVerificationId();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -245,14 +247,8 @@ public class TestRegisterService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         Date dateBefore = new Date();
-        getMovableService().getRealGameInfo(START_UID_1);
-        clearPackets();
         registerService.onVerificationPageCalled(verificationId);
         Date dateAfter = new Date();
-        // Check package
-        UserPacket userPacket = new UserPacket();
-        userPacket.setSimpleUser(user.createSimpleUser());
-        assertPackagesIgnoreSyncItemInfoAndClear(userPacket);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -277,6 +273,30 @@ public class TestRegisterService extends AbstractServiceTest {
         Assert.assertTrue(historyElements.get(1).getVerified().getTime() <= dateAfter.getTime());
         Assert.assertEquals(verificationId, historyElements.get(1).getVerificationId());
         Assert.assertNull(historyElements.get(1).getAwaitingVerificationDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+
+    @Test
+    @DirtiesContext
+    public void verifySendPacket() throws Exception {
+        configureSimplePlanetNoResources();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createUser("U1", "xxx", "test.yyy@testXXX.com");
+        User user = userService.getUser();
+        user.setAwaitingVerification();
+        String verificationId = userService.getUser().getVerificationId();
+        saveOrUpdateInTransaction(user);
+        getMovableService().getRealGameInfo(START_UID_1); // Create connection
+        clearPackets();
+        registerService.onVerificationPageCalled(verificationId);
+        // Check package
+        UserPacket userPacket = new UserPacket();
+        userPacket.setSimpleUser(new SimpleUser("U1", 1, true, false));
+        assertPackagesIgnoreSyncItemInfoAndClear(userPacket);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -1008,7 +1028,7 @@ public class TestRegisterService extends AbstractServiceTest {
         List<DbUserHistory> historyElements = HibernateUtil.loadAll(getSessionFactory(), DbUserHistory.class);
         Assert.assertEquals(9, historyElements.size());
         Assert.assertEquals("U1", historyElements.get(6).getUser());
-        // TODO failed on 14.04.2013, 29.04.2013
+        // TODO failed on 14.04.2013, 29.04.2013, 15.05.2013
         Assert.assertTrue(historyElements.get(6).getForgotPasswordRequestRemoved().getTime() >= timeBefore);
         Assert.assertTrue(historyElements.get(6).getForgotPasswordRequestRemoved().getTime() <= timeAfter);
         Assert.assertEquals(uuid1, historyElements.get(6).getForgotPasswordUuid());
