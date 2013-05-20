@@ -127,8 +127,8 @@ public class CmsUiServiceImpl implements CmsUiService {
     private String facebookAppSecret;
     @Value(value = "${facebook.appid}")
     private String facebookAppId;
-    @Value(value = "${facebook.appnamespace}")
-    private String facebookAppNameSpace;
+    @Value(value = "${facebook.redirectUri}")
+    private String facebookRedirectUri;
 
     private Log log = LogFactory.getLog(CmsUiServiceImpl.class);
     private Map<CmsUtil.CmsPredefinedPage, String> predefinedUrls = new HashMap<>();
@@ -1143,7 +1143,7 @@ public class CmsUiServiceImpl implements CmsUiService {
                     PackagedTextTemplate jsTemplate = new PackagedTextTemplate(CmsPage.class, "FacebookOAuthDialogRedirect.js");
                     Map<String, Object> parameters = new HashMap<>();
                     parameters.put("FACEBOOK_APP_ID", facebookAppId);
-                    parameters.put("FACEBOOK_APP_NAMESPACE", facebookAppNameSpace);
+                    parameters.put("FACEBOOK_REDIRECT_URI", facebookRedirectUri);
                     parameters.put("FACEBOOK_PERMISSIONS", "email");
                     component.add(new StringHeaderContributor(new JavaScriptTemplate(jsTemplate).asString(parameters)));
                 }
@@ -1164,8 +1164,8 @@ public class CmsUiServiceImpl implements CmsUiService {
     }
 
     @Override
-    public String getFacebookAppNameSpace() {
-        return facebookAppNameSpace;
+    public String getFacebookRedirectUri() {
+        return facebookRedirectUri;
     }
 
     @Override

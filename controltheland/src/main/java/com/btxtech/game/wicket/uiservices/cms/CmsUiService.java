@@ -116,7 +116,7 @@ public interface CmsUiService {
 
     String getFacebookAppId();
 
-    String getFacebookAppNameSpace();
+    String getFacebookRedirectUri();
 
     void addLscErrorHandler(WebPage webPage, String displayErrorPrefix);
 
