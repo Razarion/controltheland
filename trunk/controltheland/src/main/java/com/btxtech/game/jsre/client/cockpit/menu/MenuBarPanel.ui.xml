@@ -4,21 +4,22 @@
 	<ui:style>
 		
 	</ui:style>
-	<!-- g:HTMLPanel -->
+
+    <ui:with field='msg'
+             type='com.btxtech.game.jsre.client.ClientI18nConstants'/>
+
+    <!-- g:HTMLPanel -->
 		<g:MenuBar>
-			<g:MenuItem text="Register" ui:field="registerSubMenuBar">
+			<g:MenuItem text="{msg.register}" ui:field="registerSubMenuBar"  title="{msg.menuTooltipRegisterLogin}">
 				<g:MenuBar vertical="true">
-					<g:MenuItem text="Register" ui:field="register" />
-					<g:MenuItem text="Login" ui:field="login" />
+					<g:MenuItem text="{msg.register}" ui:field="register" />
+					<g:MenuItem text="{msg.login}" ui:field="login" />
 				</g:MenuBar>
 			</g:MenuItem>
-			<g:MenuItem text="Logout" ui:field="logout"/>
-			<g:MenuItem text="Messages" ui:field="messages"/>
-			<g:MenuItem text="New Base" ui:field="newBase"/>
-			<g:MenuItem text="Forum" title="This is the nenu tooltip"/>
-			<g:MenuItem text="News" ui:field="news" title="This is the nenu tooltip 2"/>
-			<g:MenuItem text="Game Info"/>
-			<g:MenuItem text="History"/>
+			<g:MenuItem text="{msg.logout}" ui:field="logout"/>
+            <g:MenuItem text="{msg.newBase}" ui:field="newBase" title="{msg.menuTooltipNewBase}"/>
+            <g:MenuItem text="{msg.menuNews}" ui:field="news" title="{msg.menuTooltipNews}"/>
+			<g:MenuItem text="{msg.menuHistory}" ui:field="history" title="{msg.menuTooltipHistory}" />
 		</g:MenuBar>
 	<!-- /g:HTMLPanel -->
 </ui:UiBinder> 

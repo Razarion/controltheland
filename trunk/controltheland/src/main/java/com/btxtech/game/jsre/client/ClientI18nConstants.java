@@ -496,4 +496,27 @@ public interface ClientI18nConstants extends Messages {
     String createBaseInBotFailed();
 
     String chooseYourStartPoint();
+
+    // Menu
+    String tooltipMenuNewBaseSimulated();
+
+    String tooltipMenuNewBaseRealGame();
+
+    String menuNews();
+
+    String menuHistory();
+
+    String menuTooltipRegisterLogin();
+
+    String menuTooltipNewBase();
+
+    String menuTooltipNews();
+
+    String menuTooltipHistory();
+
+    // News Dialog
+    String newsDialogTitle();
+
+    // History Dialog
+    String historyDialogTitle();
 }
