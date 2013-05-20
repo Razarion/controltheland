@@ -10,6 +10,7 @@ import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.test.annotation.DirtiesContext;
 
 /**
@@ -128,7 +129,61 @@ public class TestUserServiceFacebook extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
+    public void logoutDuringFacebookRegisterLogin() throws Exception {
+        configureSimplePlanetNoResources();
+
+        // Create FB user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        assertLoggedIn("U1");
+        FacebookSignedRequest facebookSignedRequest = new FacebookSignedRequest(null, 0, null, null, "12345");
+        facebookSignedRequest.setEmail("email");
+        userService.createAndLoginFacebookUser(facebookSignedRequest, "F1");
+        assertLoggedIn("F1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void logoutDuringFacebookLogin() throws Exception {
+        configureSimplePlanetNoResources();
+
+        // Create FB user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        FacebookSignedRequest facebookSignedRequest = new FacebookSignedRequest(null, 0, null, null, "12345");
+        facebookSignedRequest.setEmail("email");
+        userService.createAndLoginFacebookUser(facebookSignedRequest, "F1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Create FB user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U1");
+        assertLoggedIn("U1");
+        userService.loginFacebookUser(new FacebookSignedRequest(null, 0, null, null, "12345"));
+        assertLoggedIn("F1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    private void assertLoggedIn(String userName) {
+        Assert.assertEquals(userName, userService.getSimpleUser().getName());
+        for (GrantedAuthority grantedAuthority : userService.getAuthorities()) {
+            if (grantedAuthority.getAuthority().equals(SecurityRoles.ROLE_USER)) {
+                return;
+            }
+        }
+        Assert.fail("User is not logged in");
+    }
+
+
+    @Test
+    @DirtiesContext
     public void testFacebookProperties() throws Exception {
-        Assert.assertEquals("razarion", cmsUiService.getFacebookAppNameSpace());
+        Assert.assertEquals("https://apps.facebook.com/razarion/", cmsUiService.getFacebookRedirectUri());
     }
 }

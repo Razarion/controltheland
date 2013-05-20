@@ -155,12 +155,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void loginFacebookUser(FacebookSignedRequest facebookSignedRequest) {
-        User user = loadFacebookUserFromDb(facebookSignedRequest.getUserId());
-
         if (getUserFromSecurityContext() != null) {
-            throw new AlreadyLoggedInException(getUserFromSecurityContext());
+            logout();
         }
 
+        User user = loadFacebookUserFromDb(facebookSignedRequest.getUserId());
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, "", user.getAuthorities());
         loginUserFull(user, authentication);
     }
@@ -370,7 +369,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void createAndLoginFacebookUser(FacebookSignedRequest facebookSignedRequest, String nickName) throws UserAlreadyExistsException, AlreadyLoggedInException {
         if (getUserFromSecurityContext() != null) {
-            throw new AlreadyLoggedInException(getUserFromSecurityContext());
+            logout();
         }
 
         if (getUser(nickName) != null) {
