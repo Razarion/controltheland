@@ -38,7 +38,7 @@ public class RunSimulationStartupTask extends AbstractStartupTask {
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
         SideCockpit.getInstance().initMission(((SimulationInfo) Connection.getInstance().getGameInfo()));
-        MenuBarCockpit.getInstance().setSimpleUser(Connection.getInstance().getGameInfo().getSimpleUser());
+        MenuBarCockpit.getInstance().initSimulated(Connection.getInstance().getGameInfo().getSimpleUser());
         RegisterDialog.showDialogRepeating();
         Simulation.getInstance().start();
         SideCockpit.getInstance().updateItemLimit();

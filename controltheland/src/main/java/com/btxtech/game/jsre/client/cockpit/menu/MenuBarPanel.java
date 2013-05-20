@@ -4,10 +4,7 @@ import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.SimpleUser;
-import com.btxtech.game.jsre.client.dialogs.DialogManager;
-import com.btxtech.game.jsre.client.dialogs.LoginDialog;
-import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
-import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
+import com.btxtech.game.jsre.client.dialogs.*;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -20,11 +17,8 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Widget;
 
-import java.util.logging.Logger;
-
 public class MenuBarPanel extends Composite {
     private static MenuBarPanelUiBinder uiBinder = GWT.create(MenuBarPanelUiBinder.class);
-    private Logger log = Logger.getLogger(MenuBarPanel.class.getName());
     @UiField
     MenuItem register;
     @UiField
@@ -34,11 +28,11 @@ public class MenuBarPanel extends Composite {
     @UiField
     MenuItem logout;
     @UiField
-    MenuItem messages;
+    MenuItem newBase;
     @UiField
     MenuItem news;
     @UiField
-    MenuItem newBase;
+    MenuItem history;
 
     interface MenuBarPanelUiBinder extends UiBinder<Widget, MenuBarPanel> {
     }
@@ -81,21 +75,28 @@ public class MenuBarPanel extends Composite {
                 ), DialogManager.Type.PROMPTLY);
             }
         });
-        messages.setCommand(new Command() {
-
-            @Override
-            public void execute() {
-                newBase.addStyleName("gwt-MenuBar-blink");
-            }
-        });
-        news.setEnabled(false);
         newBase.setCommand(new Command() {
 
             @Override
             public void execute() {
-                newBase.removeStyleName("gwt-MenuBar-blink");
+                DialogManager.showDialog(new StartNewBaseDialog(), DialogManager.Type.STACK_ABLE);
             }
         });
+        news.setCommand(new Command() {
+
+            @Override
+            public void execute() {
+                DialogManager.showDialog(new NewsDialog(), DialogManager.Type.STACK_ABLE);
+            }
+        });
+        history.setCommand(new Command() {
+
+            @Override
+            public void execute() {
+                DialogManager.showDialog(new HistoryDialog(), DialogManager.Type.STACK_ABLE);
+            }
+        });
+
         setSimpleUser(null);
     }
 
@@ -103,7 +104,7 @@ public class MenuBarPanel extends Composite {
         if (simpleUser != null && simpleUser.isVerified()) {
             logout.setVisible(true);
             registerSubMenuBar.setVisible(false);
-            if(simpleUser.isFacebook()) {
+            if (simpleUser.isFacebook()) {
                 logout.setEnabled(false);
                 logout.setTitle(ClientI18nHelper.CONSTANTS.tooltipLoggedInViaFacebook(simpleUser.getName()));
             } else {
@@ -121,4 +122,21 @@ public class MenuBarPanel extends Composite {
         }
     }
 
+    public void blinkNewBase(boolean blink) {
+        if (blink) {
+            newBase.addStyleName("gwt-MenuBar-blink");
+        } else {
+            newBase.removeStyleName("gwt-MenuBar-blink");
+        }
+    }
+
+    public void initRealGame() {
+        newBase.setEnabled(true);
+        newBase.setTitle(ClientI18nHelper.CONSTANTS.tooltipMenuNewBaseRealGame());
+    }
+
+    public void initSimulated() {
+        newBase.setEnabled(false);
+        newBase.setTitle(ClientI18nHelper.CONSTANTS.tooltipMenuNewBaseSimulated());
+    }
 }

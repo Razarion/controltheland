@@ -15,14 +15,11 @@ package com.btxtech.game.jsre.client.dialogs;
 
 import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.*;
 
 /**
  * User: beat
@@ -31,8 +28,11 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  */
 public class StartNewBaseDialog extends Dialog {
 
-    protected StartNewBaseDialog() {
+    public StartNewBaseDialog() {
         super(ClientI18nHelper.CONSTANTS.newBase());
+        if (Connection.getInstance().getGameEngineMode() != GameEngineMode.SLAVE) {
+            throw new IllegalArgumentException("StartNewBaseDialog: only allowed if real game");
+        }
     }
 
     @Override

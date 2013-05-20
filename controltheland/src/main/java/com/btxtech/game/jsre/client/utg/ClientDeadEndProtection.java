@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameEngineMode;
+import com.btxtech.game.jsre.client.cockpit.menu.MenuBarCockpit;
 import com.btxtech.game.jsre.client.dialogs.DeadEndDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemTypeContainer;
@@ -66,20 +67,24 @@ public class ClientDeadEndProtection extends DeadEndProtection implements DeadEn
     @Override
     public void activateItemDeadEnd() {
         itemDeadEndDialog.start(true, DIALOG_PERIOD);
+        MenuBarCockpit.getInstance().blinkNewBase(true);
     }
 
     @Override
     public void revokeItemDeadEnd() {
         itemDeadEndDialog.stop();
+        MenuBarCockpit.getInstance().blinkNewBase(false);
     }
 
     @Override
     public void activateMoneyDeadEnd() {
         moneyDeadEndDialog.start(true, DIALOG_PERIOD);
+        MenuBarCockpit.getInstance().blinkNewBase(true);
     }
 
     @Override
     public void revokeMoneyDeadEnd() {
         moneyDeadEndDialog.stop();
+        MenuBarCockpit.getInstance().blinkNewBase(false);
     }
 }
