@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.client.dialogs.*;
+import com.btxtech.game.jsre.client.dialogs.history.HistoryDialog;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

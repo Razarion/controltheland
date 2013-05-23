@@ -1,6 +1,7 @@
-package com.btxtech.game.jsre.client.dialogs;
+package com.btxtech.game.jsre.client.dialogs.history;
 
 import com.btxtech.game.jsre.client.ClientI18nHelper;
+import com.btxtech.game.jsre.client.dialogs.Dialog;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
