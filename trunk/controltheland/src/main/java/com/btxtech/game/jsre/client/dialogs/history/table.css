@@ -1,0 +1,50 @@
+@def selectionBorderWidth 2px;
+
+.cellTableHeader {
+	padding: 0px;
+	color: #545454;
+	text-align: center;
+	font-size: 13px;
+	background-image: none;
+	background-color: #cfcfcf;
+	height: 25px;
+	vertical-align: middle;
+	font-size: 13px;
+    font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	text-shadow: 0 1px 1px rgba(255, 255, 255, .7);
+}
+
+.cellTableCell {
+	padding: 4px;
+	overflow: hidden;
+    font-size: 12px;
+    font-family: Arial, Helvetica, sans-serif;
+	color: #454545;
+}
+
+.cellTableEvenRow {
+	background: #ffffff;
+}
+
+.cellTableOddRow {
+	background: #ECECEC;
+}
+
+.cellTableHoveredRow {
+  background: #F2F5A9;
+}
+
+.cellTableHoveredRowCell {
+  border: selectionBorderWidth solid #F2F5A9;
+}
+
+.cellTableKeyboardSelectedRowCell {
+  border: selectionBorderWidth solid yellow;
+  background: yellow;
+}
+
+.cellTableKeyboardSelectedCell {
+  border: selectionBorderWidth solid yellow;
+  background: yellow;
+}

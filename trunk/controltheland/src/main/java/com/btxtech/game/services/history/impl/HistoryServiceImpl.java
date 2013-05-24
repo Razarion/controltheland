@@ -14,6 +14,8 @@
 package com.btxtech.game.services.history.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.dialogs.history.HistoryElement;
+import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
@@ -22,11 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBoxItem;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
-import com.btxtech.game.services.history.DbHistoryElement;
-import com.btxtech.game.services.history.DisplayHistoryElement;
-import com.btxtech.game.services.history.GameHistoryFilter;
-import com.btxtech.game.services.history.GameHistoryFrame;
-import com.btxtech.game.services.history.HistoryService;
+import com.btxtech.game.services.history.*;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
@@ -44,10 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * User: beat
@@ -639,10 +634,11 @@ public class HistoryServiceImpl implements HistoryService {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<DisplayHistoryElement> getNewestHistoryElements(final User user, final int count) {
+    public List<DisplayHistoryElement> getNewestHistoryElements(final User user, int start, final int count) {
         ArrayList<DisplayHistoryElement> displayHistoryElements = new ArrayList<>();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbHistoryElement.class);
         criteria.setMaxResults(count);
+        criteria.setFirstResult(start);
         criteria.add(Restrictions.or(Restrictions.eq("actorUserId", user.getId()), Restrictions.eq("targetUserId", user.getId())));
         criteria.addOrder(Property.forName("timeStampMs").desc());
         criteria.addOrder(Property.forName("id").desc()); // If Timestamp is equals, assume id is in ascending form
@@ -650,6 +646,13 @@ public class HistoryServiceImpl implements HistoryService {
             displayHistoryElements.add(convert(user, null, dbHistoryElement));
         }
         return displayHistoryElements;
+    }
+
+    private int getHistoryElementCount(User user) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DbHistoryElement.class);
+        criteria.add(Restrictions.or(Restrictions.eq("actorUserId", user.getId()), Restrictions.eq("targetUserId", user.getId())));
+        criteria.setProjection(Projections.rowCount());
+        return ((Number) criteria.list().get(0)).intValue();
     }
 
     @Override
@@ -895,11 +898,28 @@ public class HistoryServiceImpl implements HistoryService {
     public ReadonlyListContentProvider<DisplayHistoryElement> getNewestHistoryElements() {
         User user = userService.getUser();
         if (user != null) {
-            return new ReadonlyListContentProvider<>(getNewestHistoryElements(user, NEWEST_HISTORY_ELEMENT_COUNT));
+            return new ReadonlyListContentProvider<>(getNewestHistoryElements(user, 0, NEWEST_HISTORY_ELEMENT_COUNT));
         } else {
             DisplayHistoryElement displayHistoryElement = new DisplayHistoryElement(System.currentTimeMillis(), 0);
             displayHistoryElement.setMessage("History only visible to registered users");
             return new ReadonlyListContentProvider<>(Collections.singletonList(displayHistoryElement));
         }
+    }
+
+    @Override
+    public HistoryElementInfo getHistoryElements(int start, int length) {
+        User user = userService.getUser();
+        if (user == null) {
+            throw new IllegalStateException("User is not registered");
+        }
+        int total = getHistoryElementCount(user);
+        List<HistoryElement> historyElements = new ArrayList<>();
+        if (start < total) {
+            int fixedLength = Math.min(length, total - start);
+            for (DisplayHistoryElement displayHistoryElement : getNewestHistoryElements(user, start, fixedLength)) {
+                historyElements.add(new HistoryElement(new Date(displayHistoryElement.getTimeStamp()), displayHistoryElement.getMessage()));
+            }
+        }
+        return new HistoryElementInfo(historyElements, start, total);
     }
 }

@@ -14,28 +14,21 @@
 package com.btxtech.game.services.gwt;
 
 
-import com.btxtech.game.jsre.client.GameEngineMode;
-import com.btxtech.game.jsre.client.InvalidNickName;
-import com.btxtech.game.jsre.client.MovableService;
-import com.btxtech.game.jsre.client.PositionInBotException;
-import com.btxtech.game.jsre.client.SimpleUser;
+import com.btxtech.game.jsre.client.*;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
+import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
-import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
-import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedException;
-import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedNotVerifiedException;
-import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
-import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
+import com.btxtech.game.jsre.common.gameengine.services.user.*;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
@@ -45,16 +38,12 @@ import com.btxtech.game.jsre.common.packets.SyncItemInfo;
 import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
-import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
-import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
-import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
-import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
-import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
+import com.btxtech.game.jsre.common.utg.tracking.*;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.connection.ServerGlobalConnectionService;
 import com.btxtech.game.services.connection.Session;
+import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.inventory.GlobalInventoryService;
 import com.btxtech.game.services.item.ServerItemTypeService;
 import com.btxtech.game.services.media.ClipService;
@@ -62,7 +51,6 @@ import com.btxtech.game.services.media.SoundService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.planet.Base;
-import com.btxtech.game.services.planet.NoSuchPlanetException;
 import com.btxtech.game.services.planet.PlanetSystemService;
 import com.btxtech.game.services.socialnet.facebook.FacebookSignedRequest;
 import com.btxtech.game.services.socialnet.facebook.FacebookUtil;
@@ -82,11 +70,7 @@ import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements MovableService {
     @Autowired
@@ -127,6 +111,8 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     private HttpServletRequest request;
     @Autowired
     private ServerUnlockService serverUnlockService;
+    @Autowired
+    private HistoryService historyService;
 
     @Override
     public void sendCommands(List<BaseCommand> baseCommands) {
@@ -631,6 +617,16 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             return realGameInfo;
         } catch (PositionInBotException e) {
             throw e;
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
+        }
+    }
+
+    @Override
+    public HistoryElementInfo getHistoryElements(int start, int length) {
+        try {
+            return historyService.getHistoryElements(start, length);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return null;

@@ -16,5 +16,6 @@ public class HistoryDialog extends Dialog {
 
     @Override
     protected void setupPanel(VerticalPanel dialogVPanel) {
+        dialogVPanel.add(new HistoryPanel());
     }
 }

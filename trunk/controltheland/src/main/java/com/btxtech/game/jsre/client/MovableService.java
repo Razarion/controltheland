@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
+import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.NoConnectionException;
@@ -143,4 +144,6 @@ public interface MovableService extends RemoteService {
     UnlockContainer unlockPlanet(int planetId);
 
     RealGameInfo createBase(Index position) throws PositionInBotException;
+
+    HistoryElementInfo getHistoryElements(int start, int length);
 }

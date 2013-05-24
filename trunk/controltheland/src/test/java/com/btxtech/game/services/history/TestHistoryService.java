@@ -1,6 +1,7 @@
 package com.btxtech.game.services.history;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
@@ -94,7 +95,7 @@ public class TestHistoryService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 1000);
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 0, 1000);
 
         System.out.println("----- History -----");
         for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
@@ -156,7 +157,7 @@ public class TestHistoryService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 1000);
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 0, 1000);
 
         System.out.println("----- History -----");
         for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
@@ -205,7 +206,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
 
-        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("Actor"), 1000);
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("Actor"), 0, 1000);
         System.out.println("----- History Actor-----");
         for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
             System.out.println(displayHistoryElement);
@@ -218,7 +219,7 @@ public class TestHistoryService extends AbstractServiceTest {
         Assert.assertEquals("Base destroyed: Target", displayHistoryElements.get(0).getMessage());
 
 
-        displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("Target"), 1000);
+        displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("Target"), 0, 1000);
         System.out.println("----- History Target-----");
         for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
             System.out.println(displayHistoryElement);
@@ -264,7 +265,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
 
-        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("Actor"), 1000);
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("Actor"), 0, 1000);
         System.out.println("----- History Actor-----");
         for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
             System.out.println(displayHistoryElement);
@@ -319,7 +320,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
 
-        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("Target"), 1000);
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("Target"), 0, 1000);
         System.out.println("----- Target Target-----");
         for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
             System.out.println(displayHistoryElement);
@@ -360,7 +361,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
 
-        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("Actor"), 1000);
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("Actor"), 0, 1000);
         System.out.println("----- Actor Target-----");
         for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
             System.out.println(displayHistoryElement);
@@ -509,7 +510,7 @@ public class TestHistoryService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         // verify u1
-        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 1000);
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 0, 1000);
         System.out.println("----- u1 Target-----");
         for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
             System.out.println(displayHistoryElement);
@@ -526,7 +527,7 @@ public class TestHistoryService extends AbstractServiceTest {
         Assert.assertTrue(displayHistoryElements.get(4).getTimeStamp() >= displayHistoryElements.get(5).getTimeStamp());
         Assert.assertEquals("U2 offered you an alliance", displayHistoryElements.get(4).getMessage());
         // verify u2
-        displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U2"), 1000);
+        displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U2"), 0, 1000);
         System.out.println("----- u2 Target-----");
         for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
             System.out.println(displayHistoryElement);
@@ -594,7 +595,7 @@ public class TestHistoryService extends AbstractServiceTest {
         historyService.addInventoryArtifactFromBox(userService.getUserState(), "inventoryArtifactName");
         historyService.addInventoryItemUsed(userService.getUserState(), "inventoryItemName");
 
-        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 1000);
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 0, 1000);
         System.out.println("----- u1 Target-----");
         for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
             System.out.println(displayHistoryElement);
@@ -640,7 +641,7 @@ public class TestHistoryService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 1000);
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 0, 1000);
         System.out.println("----- u1 Target-----");
         for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
             System.out.println(displayHistoryElement);
@@ -669,7 +670,7 @@ public class TestHistoryService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 1000);
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 0, 1000);
         System.out.println("----- u1 Target-----");
         for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
             System.out.println(displayHistoryElement);
@@ -711,7 +712,7 @@ public class TestHistoryService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 1000);
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 0, 1000);
         System.out.println("----- u1 Target-----");
         for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
             System.out.println(displayHistoryElement);
@@ -766,7 +767,7 @@ public class TestHistoryService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 1000);
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 0, 1000);
         System.out.println("----- u1 Target-----");
         for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
             System.out.println(displayHistoryElement);
@@ -814,7 +815,7 @@ public class TestHistoryService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 1000);
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("U1"), 0, 1000);
         System.out.println("----- u1 Target-----");
         for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
             System.out.println(displayHistoryElement);
@@ -823,6 +824,106 @@ public class TestHistoryService extends AbstractServiceTest {
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
         Assert.assertEquals("Planet unlocked TEST_PLANET_3", displayHistoryElements.get(0).getMessage());
         Assert.assertEquals("Planet unlocked TEST_PLANET_2", displayHistoryElements.get(1).getMessage());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void getHistoryElements() throws Exception {
+        configureSimplePlanetNoResources();
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U2");
+        historyService.addRazarionBought(getUserState(), 1);
+        historyService.addRazarionBought(getUserState(), 2);
+        historyService.addRazarionBought(getUserState(), 3);
+        historyService.addRazarionBought(getUserState(), 4);
+        historyService.addRazarionBought(getUserState(), 5);
+        historyService.addRazarionBought(getUserState(), 6);
+        historyService.addRazarionBought(getUserState(), 7);
+        historyService.addRazarionBought(getUserState(), 8);
+        historyService.addRazarionBought(getUserState(), 9);
+        historyService.addRazarionBought(getUserState(), 10);
+        // Verify 1
+        HistoryElementInfo historyElementInfo = historyService.getHistoryElements(0, 10);
+        Assert.assertEquals(0, historyElementInfo.getStartRow());
+        Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
+        Assert.assertEquals(10, historyElementInfo.getHistoryElements().size());
+        Assert.assertEquals("Bought Razarion 10 via PayPal", historyElementInfo.getHistoryElements().get(0).getMessage());
+        Assert.assertEquals("Bought Razarion 9 via PayPal", historyElementInfo.getHistoryElements().get(1).getMessage());
+        Assert.assertEquals("Bought Razarion 8 via PayPal", historyElementInfo.getHistoryElements().get(2).getMessage());
+        Assert.assertEquals("Bought Razarion 7 via PayPal", historyElementInfo.getHistoryElements().get(3).getMessage());
+        Assert.assertEquals("Bought Razarion 6 via PayPal", historyElementInfo.getHistoryElements().get(4).getMessage());
+        Assert.assertEquals("Bought Razarion 5 via PayPal", historyElementInfo.getHistoryElements().get(5).getMessage());
+        Assert.assertEquals("Bought Razarion 4 via PayPal", historyElementInfo.getHistoryElements().get(6).getMessage());
+        Assert.assertEquals("Bought Razarion 3 via PayPal", historyElementInfo.getHistoryElements().get(7).getMessage());
+        Assert.assertEquals("Bought Razarion 2 via PayPal", historyElementInfo.getHistoryElements().get(8).getMessage());
+        Assert.assertEquals("Bought Razarion 1 via PayPal", historyElementInfo.getHistoryElements().get(9).getMessage());
+        // Verify 2
+        historyElementInfo = historyService.getHistoryElements(2, 5);
+        Assert.assertEquals(2, historyElementInfo.getStartRow());
+        Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
+        Assert.assertEquals(5, historyElementInfo.getHistoryElements().size());
+        Assert.assertEquals("Bought Razarion 8 via PayPal", historyElementInfo.getHistoryElements().get(0).getMessage());
+        Assert.assertEquals("Bought Razarion 7 via PayPal", historyElementInfo.getHistoryElements().get(1).getMessage());
+        Assert.assertEquals("Bought Razarion 6 via PayPal", historyElementInfo.getHistoryElements().get(2).getMessage());
+        Assert.assertEquals("Bought Razarion 5 via PayPal", historyElementInfo.getHistoryElements().get(3).getMessage());
+        Assert.assertEquals("Bought Razarion 4 via PayPal", historyElementInfo.getHistoryElements().get(4).getMessage());
+        // Verify 3
+        historyElementInfo = historyService.getHistoryElements(8, 2);
+        Assert.assertEquals(8, historyElementInfo.getStartRow());
+        Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
+        Assert.assertEquals(2, historyElementInfo.getHistoryElements().size());
+        Assert.assertEquals("Bought Razarion 2 via PayPal", historyElementInfo.getHistoryElements().get(0).getMessage());
+        Assert.assertEquals("Bought Razarion 1 via PayPal", historyElementInfo.getHistoryElements().get(1).getMessage());
+        // Verify 4
+        historyElementInfo = historyService.getHistoryElements(8, 4);
+        Assert.assertEquals(8, historyElementInfo.getStartRow());
+        Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
+        Assert.assertEquals(2, historyElementInfo.getHistoryElements().size());
+        Assert.assertEquals("Bought Razarion 2 via PayPal", historyElementInfo.getHistoryElements().get(0).getMessage());
+        Assert.assertEquals("Bought Razarion 1 via PayPal", historyElementInfo.getHistoryElements().get(1).getMessage());
+        // Verify 5
+        historyElementInfo = historyService.getHistoryElements(10, 6);
+        Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
+        Assert.assertEquals(0, historyElementInfo.getHistoryElements().size());
+        // Verify 6
+        historyElementInfo = historyService.getHistoryElements(100, 6);
+        Assert.assertEquals(10, historyElementInfo.getTotalRowCount());
+        Assert.assertEquals(0, historyElementInfo.getHistoryElements().size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void getHistoryElementsNoEntries() throws Exception {
+        configureSimplePlanetNoResources();
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        createAndLoginUser("U2");
+        // Verify 1
+        HistoryElementInfo historyElementInfo = historyService.getHistoryElements(0, 10);
+        Assert.assertEquals(0, historyElementInfo.getTotalRowCount());
+        Assert.assertEquals(0, historyElementInfo.getHistoryElements().size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void getHistoryElementsUnregistered() throws Exception {
+        configureSimplePlanetNoResources();
+        // Prepare
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        try {
+            historyService.getHistoryElements(0, 10);
+            Assert.fail("IllegalStateException expected");
+        } catch (IllegalStateException e) {
+            Assert.assertEquals("User is not registered", e.getMessage());
+        }
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

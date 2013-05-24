@@ -17,13 +17,12 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
+import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
-import com.btxtech.game.jsre.common.gameengine.services.user.EmailAlreadyExitsException;
-import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.packets.ChatMessage;
@@ -137,4 +136,6 @@ public interface MovableServiceAsync {
     void createBase(Index position, AsyncCallback<RealGameInfo> async);
 
     void logout(AsyncCallback<Void> async);
+
+    void getHistoryElements(int start, int length, 	AsyncCallback<HistoryElementInfo> callback);
 }
