@@ -14,7 +14,7 @@
 package com.btxtech.game.services.history;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.dialogs.quest.QuestInfo;
+import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.PlanetLiteInfo;
@@ -91,11 +91,13 @@ public interface HistoryService {
 
     void addPlanetUnlocked(UserState userState, PlanetLiteInfo planetLiteInfo);
 
-    List<DisplayHistoryElement> getNewestHistoryElements(User user, int count);
+    List<DisplayHistoryElement> getNewestHistoryElements(User user, int start, int count);
 
     List<DisplayHistoryElement> getHistoryElements(GameHistoryFrame gameHistoryFrame, GameHistoryFilter gameHistoryFilter);
 
     int getLevelPromotionCount(final String sessionId);
 
     ReadonlyListContentProvider<DisplayHistoryElement> getNewestHistoryElements();
+
+    HistoryElementInfo getHistoryElements(int start, int length);
 }

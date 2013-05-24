@@ -12,6 +12,7 @@ import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
+import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.CmsUtil;
@@ -49,6 +50,7 @@ import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.common.ExceptionHandler;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import junit.framework.Assert;
 
@@ -345,6 +347,11 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
 
     @Override
     public RealGameInfo createBase(Index position) throws PositionInBotException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public HistoryElementInfo getHistoryElements(int start, int length) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

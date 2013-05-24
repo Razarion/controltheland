@@ -519,4 +519,11 @@ public interface ClientI18nConstants extends Messages {
 
     // History Dialog
     String historyDialogTitle();
+
+    String historyOnlyRegisteredVerified();
+
+    String historyOnlyRegistered();
+
+    String historyOnlyRealGame();
+
 }
