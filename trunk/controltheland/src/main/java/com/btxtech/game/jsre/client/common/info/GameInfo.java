@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImageBack
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.common.gameengine.services.unlock.impl.UnlockContainer;
+import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -49,6 +50,7 @@ public abstract class GameInfo implements TerrainInfo, Serializable {
     private Collection<ImageSpriteMapInfo> imageSpriteMapLibrary;
     private Collection<ClipInfo> clipLibrary;
     private PreloadedImageSpriteMapInfo preloadedImageSpriteMapInfo;
+    private UserAttentionPacket userAttentionPacket;
 
     public TerrainSettings getTerrainSettings() {
         return terrainSettings;
@@ -165,6 +167,14 @@ public abstract class GameInfo implements TerrainInfo, Serializable {
 
     public void setImageSpriteMapLibrary(Collection<ImageSpriteMapInfo> imageSpriteMapLibrary) {
         this.imageSpriteMapLibrary = imageSpriteMapLibrary;
+    }
+
+    public UserAttentionPacket getUserAttentionPacket() {
+        return userAttentionPacket;
+    }
+
+    public void setUserAttentionPacket(UserAttentionPacket userAttentionPacket) {
+        this.userAttentionPacket = userAttentionPacket;
     }
 
     public abstract boolean isSellAllowed();

@@ -103,6 +103,8 @@ public interface PlanetSystemService {
 
     void sendPacket(UserState userState, Packet packet);
 
+    void sendPacket(Packet packet);
+
     ServerPlanetServices getPlanet4BaselessConnection(UserState userState);
 
     void sendMessage(UserState userState, String key, Object[] args, boolean showRegisterDialog);

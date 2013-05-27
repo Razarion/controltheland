@@ -14,6 +14,7 @@ import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
+import com.btxtech.game.jsre.client.dialogs.news.NewsEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.NoConnectionException;
@@ -352,6 +353,11 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
 
     @Override
     public HistoryElementInfo getHistoryElements(int start, int length) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public NewsEntryInfo getNewsEntry(int index) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

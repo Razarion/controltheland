@@ -3,6 +3,8 @@ package com.btxtech.game.jsre.client.cockpit.menu;
 import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.common.info.GameInfo;
+import com.btxtech.game.jsre.common.packets.UserAttentionPacket;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 
 /**
@@ -30,14 +32,16 @@ public class MenuBarCockpit {
         menuBarPanel.getElement().getStyle().setZIndex(Constants.Z_INDEX_SIDE_COCKPIT);
     }
 
-    public void initRealGame(SimpleUser simpleUser) {
-        setSimpleUser(simpleUser);
+    public void initRealGame(GameInfo gameInfo) {
+        setSimpleUser(gameInfo.getSimpleUser());
         menuBarPanel.initRealGame();
+        onUserAttentionPacket(gameInfo.getUserAttentionPacket());
     }
 
-    public void initSimulated(SimpleUser simpleUser) {
-        setSimpleUser(simpleUser);
+    public void initSimulated(GameInfo gameInfo) {
+        setSimpleUser(gameInfo.getSimpleUser());
         menuBarPanel.initSimulated();
+        onUserAttentionPacket(gameInfo.getUserAttentionPacket());
     }
 
     public void setSimpleUser(SimpleUser simpleUser) {
@@ -48,4 +52,9 @@ public class MenuBarCockpit {
         menuBarPanel.blinkNewBase(blink);
     }
 
+    public void onUserAttentionPacket(UserAttentionPacket userAttentionPacket) {
+        if (userAttentionPacket.isNews()) {
+            menuBarPanel.blinkNews(userAttentionPacket.getNews() == UserAttentionPacket.Type.RAISE);
+        }
+    }
 }

@@ -1,6 +1,7 @@
-package com.btxtech.game.jsre.client.dialogs;
+package com.btxtech.game.jsre.client.dialogs.news;
 
 import com.btxtech.game.jsre.client.ClientI18nHelper;
+import com.btxtech.game.jsre.client.dialogs.Dialog;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
@@ -15,6 +16,6 @@ public class NewsDialog extends Dialog {
 
     @Override
     protected void setupPanel(VerticalPanel dialogVPanel) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        dialogVPanel.add(new NewsPanel());
     }
 }

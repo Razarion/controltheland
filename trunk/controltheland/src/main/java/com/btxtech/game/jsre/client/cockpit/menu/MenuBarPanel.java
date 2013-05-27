@@ -6,6 +6,7 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.client.dialogs.*;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryDialog;
+import com.btxtech.game.jsre.client.dialogs.news.NewsDialog;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -131,13 +132,31 @@ public class MenuBarPanel extends Composite {
         }
     }
 
+    public void blinkNews(boolean blink) {
+        if (blink) {
+            news.addStyleName("gwt-MenuBar-blink");
+        } else {
+            news.removeStyleName("gwt-MenuBar-blink");
+        }
+    }
+
     public void initRealGame() {
         newBase.setEnabled(true);
         newBase.setTitle(ClientI18nHelper.CONSTANTS.tooltipMenuNewBaseRealGame());
+        history.setEnabled(true);
+        if (Connection.getInstance().isRegisteredAndVerified()) {
+            history.setTitle(ClientI18nHelper.CONSTANTS.menuTooltipHistory());
+        } else if (Connection.getInstance().isRegistered()) {
+            history.setTitle(ClientI18nHelper.CONSTANTS.menuTooltipHistoryOnlyRegisteredVerified());
+        } else {
+            history.setTitle(ClientI18nHelper.CONSTANTS.menuTooltipHistoryOnlyRegistered());
+        }
     }
 
     public void initSimulated() {
         newBase.setEnabled(false);
         newBase.setTitle(ClientI18nHelper.CONSTANTS.tooltipMenuNewBaseSimulated());
+        history.setEnabled(false);
+        history.setTitle(ClientI18nHelper.CONSTANTS.menuTooltipHistoryOnlyRealGame());
     }
 }

@@ -508,11 +508,13 @@ public interface ClientI18nConstants extends Messages {
 
     String menuTooltipRegisterLogin();
 
-    String menuTooltipNewBase();
-
     String menuTooltipNews();
 
     String menuTooltipHistory();
+
+    String menuTooltipHistoryOnlyRegistered();
+
+    String menuTooltipHistoryOnlyRealGame();
 
     // News Dialog
     String newsDialogTitle();
@@ -520,10 +522,5 @@ public interface ClientI18nConstants extends Messages {
     // History Dialog
     String historyDialogTitle();
 
-    String historyOnlyRegisteredVerified();
-
-    String historyOnlyRegistered();
-
-    String historyOnlyRealGame();
-
+    String menuTooltipHistoryOnlyRegisteredVerified();
 }

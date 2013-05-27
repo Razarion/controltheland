@@ -62,6 +62,8 @@ public interface UserService extends UserDetailsService {
 
     void save(User user);
 
+    void updateLastNews(User user);
+
     List<User> getAllUsers();
 
     List<String> getSimilarUserName(String string);

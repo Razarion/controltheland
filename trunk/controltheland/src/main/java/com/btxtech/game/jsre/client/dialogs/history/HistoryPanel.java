@@ -8,12 +8,16 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.*;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.*;
+import com.google.gwt.view.client.AsyncDataProvider;
+import com.google.gwt.view.client.HasData;
+import com.google.gwt.view.client.Range;
 
 import java.util.Date;
 import java.util.logging.Level;
@@ -28,41 +32,21 @@ public class HistoryPanel extends Composite {
     CellTable<HistoryElement> cellTable = new CellTable<HistoryElement>(ENTRY_COUNT, tableRes);
     @UiField
     SimplePager simplePager;
-    @UiField
-    Label notRegisteredLabel;
 
     interface HistoryPanelUiBinder extends UiBinder<Widget, HistoryPanel> {
     }
-    
+
     interface TableRes extends CellTable.Resources {
         @Source({CellTable.Style.DEFAULT_CSS, "com/btxtech/game/jsre/client/dialogs/history/table.css"})
         TableStyle cellTableStyle();
 
-        interface TableStyle extends CellTable.Style {}
+        interface TableStyle extends CellTable.Style {
+        }
     }
 
     public HistoryPanel() {
         initWidget(uiBinder.createAndBindUi(this));
-        if (Connection.getInstance().getGameEngineMode() != GameEngineMode.SLAVE) {
-            notRegisteredLabel.setVisible(true);
-            notRegisteredLabel.setText(ClientI18nHelper.CONSTANTS.historyOnlyRealGame());
-            simplePager.setVisible(false);
-            cellTable.setVisible(false);
-        } else if (Connection.getInstance().isRegisteredAndVerified()) {
-            notRegisteredLabel.setVisible(false);
-            simplePager.setVisible(true);
-            cellTable.setVisible(true);
-            setupCellTable();
-        } else {
-            notRegisteredLabel.setVisible(true);
-            simplePager.setVisible(false);
-            cellTable.setVisible(false);
-            if (Connection.getInstance().isRegistered()) {
-                notRegisteredLabel.setText(ClientI18nHelper.CONSTANTS.historyOnlyRegisteredVerified());
-            } else {
-                notRegisteredLabel.setText(ClientI18nHelper.CONSTANTS.historyOnlyRegistered());
-            }
-        }
+        setupCellTable();
     }
 
     private void setupCellTable() {
@@ -125,9 +109,7 @@ public class HistoryPanel extends Composite {
                             // Set the total row count. This isn't strictly necessary, but it affects
                             // paging calculations, so its good habit to keep the row count up to date.
                             cellTable.setRowCount(historyElementInfo.getTotalRowCount(), true);
-                            if (!historyElementInfo.getHistoryElements().isEmpty()) {
-                                cellTable.setRowData(historyElementInfo.getStartRow(), historyElementInfo.getHistoryElements());
-                            }
+                            cellTable.setRowData(historyElementInfo.getStartRow(), historyElementInfo.getHistoryElements());
                         }
                     });
 

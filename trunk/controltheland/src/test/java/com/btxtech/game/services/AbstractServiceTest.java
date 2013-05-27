@@ -6,6 +6,7 @@ import com.btxtech.game.jsre.client.cockpit.quest.QuestProgressInfo;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.LevelScope;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.common.info.InvalidLevelStateException;
 import com.btxtech.game.jsre.client.common.info.RealGameInfo;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.Region;
@@ -106,6 +107,7 @@ import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
 
@@ -557,7 +559,6 @@ abstract public class AbstractServiceTest {
         return packets;
     }
 
-
     protected void assertPackagesIgnoreSyncItemInfoAndClear(Packet... expectedPackets) throws Exception {
         assertPackagesIgnoreSyncItemInfoAndClear(false, expectedPackets);
     }
@@ -765,6 +766,10 @@ abstract public class AbstractServiceTest {
                     && expected.getName().equals(received.getName())
                     && expected.isVerified() == received.isVerified()
                     && expected.isFacebook() == received.isFacebook();
+        } else if (expectedPacket instanceof UserAttentionPacket) {
+            UserAttentionPacket expected = (UserAttentionPacket) expectedPacket;
+            UserAttentionPacket received = (UserAttentionPacket) receivedPacket;
+            return expected.getNews() == received.getNews();
         } else {
             Assert.fail("Unknown packet: " + expectedPacket);
             return false;
@@ -776,6 +781,11 @@ abstract public class AbstractServiceTest {
         messagePacket.setMessage(message);
         messagePacket.setShowRegisterDialog(showRegisterDialog);
         return messagePacket;
+    }
+
+    protected void createConnection() throws InvalidLevelStateException {
+        ServerPlanetServices serverPlanetServices = planetSystemService.getUnlockedServerPlanetServices(getUserState());
+        serverPlanetServices.getConnectionService().createConnection(getUserState(), START_UID_1);
     }
     // ------------------- Action Service --------------------
 
@@ -2378,6 +2388,15 @@ abstract public class AbstractServiceTest {
         expected = expected.replaceAll("\\s", "");
         actual = actual.replaceAll("\\s", "");
         Assert.assertEquals(expected, actual);
+    }
+
+    public static void assertDate(long before, long after, Date time) {
+        Assert.assertTrue("Time is too small", before <= time.getTime());
+        Assert.assertTrue("Time is too big", after >= time.getTime());
+    }
+
+    public static void debugDate(String message, Date time) {
+        System.out.println(message + ": " + new SimpleDateFormat("ddd.MM.yyy HH:mm:ss.S").format(time));
     }
 
     // ---------- Mail Helper -------
