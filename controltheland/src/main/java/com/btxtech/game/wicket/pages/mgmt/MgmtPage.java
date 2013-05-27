@@ -150,5 +150,6 @@ public class MgmtPage extends MgmtWebPage {
         toolPages.add(new LinkAndName("Internationalisation", I18nMgmtPage.class));
         toolPages.add(new LinkAndName("Send Email", SendEmailPage.class));
         toolPages.add(new LinkAndName("Send Server Restart", SendServerRebootMessage.class));
+        toolPages.add(new LinkAndName("Add News Entry", AddNewsEntry.class));
     }
 }

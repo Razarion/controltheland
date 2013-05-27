@@ -23,6 +23,7 @@ import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
+import com.btxtech.game.jsre.client.dialogs.news.NewsEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -39,6 +40,7 @@ import com.btxtech.game.jsre.common.perfmon.PerfmonEnum;
 import com.btxtech.game.jsre.common.tutorial.GameFlow;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.*;
+import com.btxtech.game.services.cms.ContentService;
 import com.btxtech.game.services.common.ExceptionHandler;
 import com.btxtech.game.services.common.ServerPlanetServices;
 import com.btxtech.game.services.connection.ServerGlobalConnectionService;
@@ -113,6 +115,8 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     private ServerUnlockService serverUnlockService;
     @Autowired
     private HistoryService historyService;
+    @Autowired
+    private ContentService contentService;
 
     @Override
     public void sendCommands(List<BaseCommand> baseCommands) {
@@ -169,7 +173,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             UserState userState = userService.getUserState();
             ServerPlanetServices serverPlanetServices = planetSystemService.getUnlockedServerPlanetServices(userState);
             RealGameInfo realGameInfo = new RealGameInfo();
-            setCommonInfo(realGameInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService, clipService);
+            setCommonInfo(realGameInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService, clipService, contentService);
             if (userState == null) {
                 throw new IllegalStateException("No UserState available: " + userState);
             }
@@ -226,7 +230,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
             SimulationInfo simulationInfo = new SimulationInfo();
             DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialConfig(levelTaskId);
             // Common
-            setCommonInfo(simulationInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService, clipService);
+            setCommonInfo(simulationInfo, userService, serverItemTypeService, mgmtService, cmsUiService, soundService, clipService, contentService);
             simulationInfo.setTutorialConfig(dbTutorialConfig.getTutorialConfig(serverItemTypeService, request.getLocale()));
             simulationInfo.setLevelTaskId(levelTaskId);
             simulationInfo.setLevelNumber(userGuidanceService.getDbLevel().getNumber());
@@ -253,7 +257,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         }
     }
 
-    public static void setCommonInfo(GameInfo gameInfo, UserService userService, ServerItemTypeService serverItemTypeService, MgmtService mgmtService, CmsUiService cmsUiService, SoundService soundService, ClipService clipService) {
+    public static void setCommonInfo(GameInfo gameInfo, UserService userService, ServerItemTypeService serverItemTypeService, MgmtService mgmtService, CmsUiService cmsUiService, SoundService soundService, ClipService clipService, ContentService contentService) {
         gameInfo.setSimpleUser(userService.getSimpleUser());
         gameInfo.setItemTypes(serverItemTypeService.getItemTypes());
         StartupData startupData = mgmtService.getStartupData();
@@ -263,6 +267,7 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
         gameInfo.setImageSpriteMapLibrary(clipService.getImageSpriteMapLibrary());
         gameInfo.setClipLibrary(clipService.getClipLibrary());
         gameInfo.setPreloadedImageSpriteMapInfo(clipService.getPreloadedImageSpriteMapInfo());
+        gameInfo.setUserAttentionPacket(contentService.createUserAttentionPacket(userService.getUser()));
     }
 
     @Override
@@ -627,6 +632,16 @@ public class MovableServiceImpl extends AutowiredRemoteServiceServlet implements
     public HistoryElementInfo getHistoryElements(int start, int length) {
         try {
             return historyService.getHistoryElements(start, length);
+        } catch (Throwable t) {
+            ExceptionHandler.handleException(t);
+            return null;
+        }
+    }
+
+    @Override
+    public NewsEntryInfo getNewsEntry(int index) {
+        try {
+            return contentService.getNewsEntry(index);
         } catch (Throwable t) {
             ExceptionHandler.handleException(t);
             return null;

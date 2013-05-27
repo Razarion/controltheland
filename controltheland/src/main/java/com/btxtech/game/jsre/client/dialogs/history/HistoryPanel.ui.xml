@@ -6,6 +6,7 @@
         .simplepager {
             background: #FFFFFF;
             border-top: 2px solid #6f7277;
+            color: black;
         }
     </ui:style>
     <g:VerticalPanel>
@@ -19,6 +20,5 @@
                 <p1:SimplePager location="CENTER" ui:field="simplePager"/>
             </g:SimplePanel>
         </g:Cell>
-        <g:Label ui:field="notRegisteredLabel"/>
     </g:VerticalPanel>
 </ui:UiBinder> 

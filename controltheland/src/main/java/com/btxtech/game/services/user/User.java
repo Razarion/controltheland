@@ -96,6 +96,7 @@ public class User implements UserDetails, Serializable, CrudParent {
     private CrudChildServiceHelper<DbContentAccessControl> contentCrud;
     @Transient
     private CrudChildServiceHelper<DbPageAccessControl> pageCrud;
+    private Date lastNews;
 
     public Integer getId() {
         return id;
@@ -122,6 +123,7 @@ public class User implements UserDetails, Serializable, CrudParent {
         this.password = password;
         this.email = email;
         registerDate = new Date();
+        lastNews = registerDate;
     }
 
     public void registerFacebookUser(FacebookSignedRequest facebookSignedRequest, String nickName) {
@@ -130,6 +132,7 @@ public class User implements UserDetails, Serializable, CrudParent {
         socialNetUserId = facebookSignedRequest.getUserId();
         email = facebookSignedRequest.getEmail();
         registerDate = new Date();
+        lastNews = registerDate;
     }
 
     public Date getRegisterDate() {
@@ -270,6 +273,14 @@ public class User implements UserDetails, Serializable, CrudParent {
 
     public SimpleUser createSimpleUser() {
         return new SimpleUser(name, id, accountNonLocked, socialNet == SocialNet.FACEBOOK);
+    }
+
+    public Date getLastNews() {
+        return lastNews;
+    }
+
+    public void updateLastNews() {
+        lastNews = new Date();
     }
 
     @Override

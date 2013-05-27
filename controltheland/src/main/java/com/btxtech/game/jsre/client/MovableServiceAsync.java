@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.dialogs.highscore.CurrentStatisticEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.history.HistoryElementInfo;
 import com.btxtech.game.jsre.client.dialogs.inventory.InventoryInfo;
+import com.btxtech.game.jsre.client.dialogs.news.NewsEntryInfo;
 import com.btxtech.game.jsre.client.dialogs.quest.QuestOverview;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
@@ -138,4 +139,6 @@ public interface MovableServiceAsync {
     void logout(AsyncCallback<Void> async);
 
     void getHistoryElements(int start, int length, 	AsyncCallback<HistoryElementInfo> callback);
+
+    void getNewsEntry(int index, AsyncCallback<NewsEntryInfo> callback);
 }

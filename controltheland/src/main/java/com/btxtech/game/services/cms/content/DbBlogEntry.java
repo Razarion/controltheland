@@ -1,5 +1,6 @@
 package com.btxtech.game.services.cms.content;
 
+import com.btxtech.game.jsre.client.dialogs.news.NewsEntryInfo;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.user.UserService;
 
@@ -8,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * User: beat
@@ -64,6 +66,10 @@ public class DbBlogEntry implements CrudChild {
     @Override
     public Object getParent() {
         return null;
+    }
+
+    public NewsEntryInfo createNewsEntryInfo(int totalCount) {
+        return new NewsEntryInfo(name, new Date(timeStamp), html, totalCount);
     }
 
     @Override

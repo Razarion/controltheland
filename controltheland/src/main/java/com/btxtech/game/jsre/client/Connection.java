@@ -312,6 +312,8 @@ public class Connection implements StartupProgressListener, GlobalCommonConnecti
                                 ClientI18nHelper.CONSTANTS.registerThanksLong()
                                 ), DialogManager.Type.QUEUE_ABLE);
                     }
+                } else if (packet instanceof UserAttentionPacket) {
+                   MenuBarCockpit.getInstance().onUserAttentionPacket((UserAttentionPacket)packet);
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }

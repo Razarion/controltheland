@@ -620,6 +620,13 @@ public class UserServiceImpl implements UserService {
         sessionFactory.getCurrentSession().saveOrUpdate(user);
     }
 
+    @Override
+    @Transactional
+    public void updateLastNews(User user) {
+        user.updateLastNews();
+        save(user);
+    }
+
     private void privateSave(final User user) {
         // @Transactional not working here
         // It's an limitation with Spring AOP. (dynamic objects and CGLIB)

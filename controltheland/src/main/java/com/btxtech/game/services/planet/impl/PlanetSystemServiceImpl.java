@@ -439,6 +439,17 @@ public class PlanetSystemServiceImpl implements PlanetSystemService {
     }
 
     @Override
+    public void sendPacket(Packet packet) {
+        try {
+            for (PlanetImpl planet : planetImpls.values()) {
+                planet.getPlanetServices().getConnectionService().sendPacket(packet);
+            }
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e);
+        }
+    }
+
+    @Override
     public void sendMessage(UserState userState, String key, Object[] args, boolean showRegisterDialog) {
         try {
             for (PlanetImpl planet : planetImpls.values()) {

@@ -1,6 +1,8 @@
 package com.btxtech.game.jsre.client.dialogs.history;
 
 import com.btxtech.game.jsre.client.ClientI18nHelper;
+import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.dialogs.Dialog;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -12,6 +14,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class HistoryDialog extends Dialog {
     public HistoryDialog() {
         super(ClientI18nHelper.CONSTANTS.historyDialogTitle());
+        if (Connection.getInstance().getGameEngineMode() != GameEngineMode.SLAVE) {
+            throw new IllegalArgumentException("HistoryDialog: only allowed if real game");
+        }
     }
 
     @Override
