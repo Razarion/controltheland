@@ -380,6 +380,15 @@ td.box {
     padding: 8px;
 }
 
+.dialogBox a, .dialogBox a:visited{
+    color: #C7C4BB;
+}
+
+.dialogBox a:hover{
+    color: #fcf9f0;
+}
+
+
 /* -------------- Dialog ends----------------- */
 /* -------------- Button----------------- */
 .excustombutton:focus {
