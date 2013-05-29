@@ -3,14 +3,17 @@ package com.btxtech.game.jsre.client.dialogs;
 import com.btxtech.game.jsre.client.ClientExceptionHandler;
 import com.btxtech.game.jsre.client.ClientI18nHelper;
 import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.SimpleUser;
 import com.btxtech.game.jsre.client.cockpit.menu.MenuBarCockpit;
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedException;
 import com.btxtech.game.jsre.common.gameengine.services.user.LoginFailedNotVerifiedException;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -77,6 +80,10 @@ public class LoginDialog extends Dialog {
         });
         grid.getFlexCellFormatter().setColSpan(2, 0, 2);
         grid.getFlexCellFormatter().setHorizontalAlignment(2, 0, HasHorizontalAlignment.ALIGN_CENTER);
+        // Forgot password
+        grid.setWidget(3, 0, new Anchor(ClientI18nHelper.CONSTANTS.forgotPassword(), GwtCommon.getPredefinedUrl(CmsUtil.CmsPredefinedPage.FORGOT_PASSWORD_REQUEST)));
+        grid.getFlexCellFormatter().setColSpan(3, 0, 2);
+        grid.getFlexCellFormatter().setHorizontalAlignment(3, 0, HasHorizontalAlignment.ALIGN_LEFT);
 
         dialogVPanel.add(grid);
     }

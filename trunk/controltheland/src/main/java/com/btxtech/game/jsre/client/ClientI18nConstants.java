@@ -103,6 +103,8 @@ public interface ClientI18nConstants extends Messages {
 
     String tooltipLoggedInViaFacebook(String userName);
 
+    String forgotPassword();
+
     // Radar
     String tooltipRadar();
 
